@@ -4,7 +4,6 @@
 #
 #    pip-compile --output-file requirements-dev.txt requirements-dev.in
 #
-appnope==0.1.0            # via ipython
 click==6.7                # via pip-tools
 coverage==4.3.4           # via pytest-cov
 decorator==4.0.11         # via ipython, traitlets
