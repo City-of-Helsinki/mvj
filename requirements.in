@@ -1,4 +1,6 @@
 Django~=1.11.0
+django-crispy-forms
 django-environ
+django-filter
 djangorestframework
 psycopg2
