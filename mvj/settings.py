@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'leasing',
+    'users',
 ]
 
 MIDDLEWARE_CLASSES = [
