@@ -1,0 +1,3 @@
+django-environ
+Django~=1.11.0
+psycopg2

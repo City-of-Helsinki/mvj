@@ -1,0 +1,28 @@
+sudo: false
+language: python
+services:
+  - postgresql
+
+cache: pip
+
+env:
+  global:
+    - SECRET_KEY=xxx
+    - DATABASE_URL=postgres://postgres:@localhost/mvj
+
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+
+install:
+  - pip install -U pip
+  - pip install -r requirements.txt -r requirements-dev.txt
+
+before_script:
+  - psql -c 'create database mvj;' -U postgres
+
+script:
+  - flake8
+  - py.test -ra -vvv --cov=mvj --cov=leasing
+  - isort -c
