@@ -1,0 +1,10 @@
+*.py[cod]
+.coverage*
+.DS_Store
+/.env
+/.venv
+/.idea/
+/.tox/
+/media/
+/static/
+/venv/
