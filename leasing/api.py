@@ -1,5 +1,5 @@
-from rest_framework import serializers, viewsets
 from enumfields.drf import EnumSupportSerializerMixin
+from rest_framework import serializers, viewsets
 
 from .models import Application, BuildingFootprint
 
