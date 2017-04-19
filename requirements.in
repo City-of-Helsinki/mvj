@@ -1,5 +1,6 @@
 Django~=1.11.0
 django-crispy-forms
+django-enumfields
 django-environ
 django-filter
 djangorestframework
