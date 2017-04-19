@@ -1,3 +1,4 @@
+-c requirements.txt
 django-extensions
 flake8
 ipython

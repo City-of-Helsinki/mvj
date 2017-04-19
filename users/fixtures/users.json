@@ -1,0 +1,37 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 10001,
+        "fields": {
+            "username": "admin",
+            "first_name": "Pasi",
+            "last_name": "Pääkäyttäjä",
+            "email": "admin@autocreated.invalid",
+            "is_superuser": true,
+            "is_staff": true,
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 10002,
+        "fields": {
+            "username": "applicant",
+            "first_name": "Harri",
+            "last_name": "Hakija",
+            "email": "applicant@autocreated.invalid",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 10003,
+        "fields": {
+            "username": "preparer",
+            "first_name": "Vanttu",
+            "last_name": "Valmistelija",
+            "email": "preparer@autocreated.invalid",
+            "is_active": true
+        }
+    }
+]
