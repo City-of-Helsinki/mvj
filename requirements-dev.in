@@ -9,4 +9,5 @@ pydocstyle
 pytest
 pytest-cov
 pytest-django
+pytest-factoryboy
 werkzeug
