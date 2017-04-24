@@ -1,6 +1,7 @@
 *.py[cod]
 .coverage*
 .DS_Store
+/local_settings.py
 /.env
 /.venv
 /.cache/
