@@ -9,6 +9,7 @@ env = environ.Env(
     DEBUG=(bool, True),
     SECRET_KEY=(str, ''),
     ALLOWED_HOSTS=(list, []),
+    ADMINS=(list, []),
     DATABASE_URL=(str, 'postgres://mvj:mvj@localhost/mvj'),
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
@@ -21,12 +22,11 @@ if os.path.exists(env_file):
     env.read_env(env_file)
 
 DEBUG = env.bool('DEBUG')
-SECRET_KEY = env.str('SECRET_KEY')
-
-if DEBUG and not SECRET_KEY:
-    SECRET_KEY = 'xxx'
+SECRET_KEY = env.str('SECRET_KEY', default=('xxx' if DEBUG else ''))
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+
+ADMINS = env.list('ADMINS')
 
 DATABASES = {
     'default': env.db()
