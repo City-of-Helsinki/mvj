@@ -1,6 +1,7 @@
 import os
 
 import environ
+import raven
 
 project_root = environ.Path(__file__) - 2
 
@@ -11,6 +12,7 @@ env = environ.Env(
     DATABASE_URL=(str, 'postgres://mvj:mvj@localhost/mvj'),
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
+    SENTRY_DSN=(str, ''),
 )
 
 env_file = project_root('.env')
@@ -35,6 +37,13 @@ CACHES = {
 }
 
 vars().update(env.email_url())  # EMAIL_BACKEND etc.
+
+try:
+    version = raven.fetch_git_sha(project_root())
+except Exception:
+    version = None
+
+RAVEN_CONFIG = {'dsn': env.str('SENTRY_DSN'), 'release': version}
 
 MEDIA_ROOT = project_root('media')
 STATIC_ROOT = project_root('static')
@@ -66,6 +75,8 @@ INSTALLED_APPS = [
     'leasing',
     'users',
 ]
+if RAVEN_CONFIG['dsn']:
+    INSTALLED_APPS += ['raven.contrib.django.raven_compat']
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
