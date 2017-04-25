@@ -121,3 +121,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+local_settings = project_root('local_settings.py')
+if os.path.exists(local_settings):
+    with open(local_settings) as fp:
+        code = compile(fp.read(), local_settings, 'exec')
+    exec(code, globals(), locals())
