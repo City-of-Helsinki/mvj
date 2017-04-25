@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 contextlib2==0.5.4        # via raven
+django-cors-headers==2.0.2
 django-crispy-forms==1.6.1
 django-enumfields==0.9.0
 django-environ==0.4.1

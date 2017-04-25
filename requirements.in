@@ -1,4 +1,5 @@
 Django~=1.11.0
+django-cors-headers
 django-crispy-forms
 django-enumfields
 django-environ
