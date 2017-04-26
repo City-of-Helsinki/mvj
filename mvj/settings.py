@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_filters',
     'rest_framework',
+    'corsheaders',
 
     'leasing',
     'users',
@@ -81,6 +82,7 @@ if RAVEN_CONFIG['dsn']:
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,6 +119,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 local_settings = project_root('local_settings.py')
 if os.path.exists(local_settings):
