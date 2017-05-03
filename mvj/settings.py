@@ -79,6 +79,11 @@ INSTALLED_APPS = [
 if RAVEN_CONFIG['dsn']:
     INSTALLED_APPS += ['raven.contrib.django.raven_compat']
 
+if DEBUG:
+    INSTALLED_APPS += [
+        'django_extensions',
+    ]
+
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -108,6 +113,8 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'ALLOWED_VERSIONS': ('v1',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.DummyTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
