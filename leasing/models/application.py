@@ -2,10 +2,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import ApplicationType, ShortTermReason
+from leasing.enums import ApplicationState, ApplicationType, ShortTermReason
+from leasing.models.mixins import TimestampedModelMixin
 
 
-class Application(models.Model):
+class Application(TimestampedModelMixin):
+    state = EnumField(ApplicationState, verbose_name=_("Application state"), max_length=255,
+                      default=ApplicationState.UNHANDLED)
     type = EnumField(ApplicationType, verbose_name=_("Application type"), max_length=255)
     is_open = models.BooleanField(verbose_name=_("Is an open application"), default=False)
     reasons = models.TextField(verbose_name=_("Application reasons"), null=True, blank=True)
@@ -26,7 +29,7 @@ class Application(models.Model):
     organization_revenue = models.CharField(verbose_name=_("Organization revenue"), null=True, blank=True,
                                             max_length=255)
 
-    contact_person = models.CharField(verbose_name=_("Contact person"), null=True, blank=True, max_length=255)
+    contact_name = models.CharField(verbose_name=_("Contact name"), null=True, blank=True, max_length=255)
     contact_address = models.CharField(verbose_name=_("Contacts address"), null=True, blank=True, max_length=2048)
     contact_billing_address = models.CharField(verbose_name=_("Contacts billing address"), null=True, blank=True,
                                                max_length=2048)
@@ -39,3 +42,7 @@ class Application(models.Model):
     land_id = models.CharField(verbose_name=_("Land id"), null=True, blank=True, max_length=255)
     land_address = models.CharField(verbose_name=_("Land address"), null=True, blank=True, max_length=2048)
     land_map_link = models.CharField(verbose_name=_("Land map link"), null=True, blank=True, max_length=2048)
+
+    def __str__(self):
+        return '#{id} {type} {contact_person}'.format(id=self.id, type=self.type.label,
+                                                      contact_person=str(self.contact_name))

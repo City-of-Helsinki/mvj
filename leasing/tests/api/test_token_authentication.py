@@ -12,7 +12,7 @@ def test_regular_user_should_not_be_allowed_to_delete_an_application(user_factor
     api_client = APIClient()
     api_client.credentials(HTTP_AUTHORIZATION='Token ' + user1.username)
 
-    url = reverse('application-detail', kwargs={'pk': application1.pk})
+    url = reverse('v1:application-detail', kwargs={'pk': application1.pk})
 
     response = api_client.delete(url)
 
@@ -28,7 +28,7 @@ def test_superuser_should_be_allowed_to_delete_an_application(user_factory, appl
     api_client = APIClient()
     api_client.credentials(HTTP_AUTHORIZATION='Token ' + user1.username)
 
-    url = reverse('application-detail', kwargs={'pk': application1.pk})
+    url = reverse('v1:application-detail', kwargs={'pk': application1.pk})
 
     response = api_client.delete(url)
 
