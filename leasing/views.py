@@ -16,59 +16,21 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     filter_class = ApplicationFilter
 
 
-class NestedViewSetMixin:
-    parent_field_name = None
-    parent_model = None
-
-    @property
-    def parent_argument_name(self):
-        return '{}_pk'.format(self.parent_field_name)
-
-    @property
-    def parent_filter_name(self):
-        return '{}_id'.format(self.parent_field_name)
-
-    def get_queryset(self):
-        if self.parent_argument_name in self.kwargs:
-            pk = self.kwargs[self.parent_argument_name]
-            queryset = super().get_queryset().filter(**{self.parent_filter_name: pk})
-        else:
-            queryset = super().get_queryset()
-
-        return queryset
-
-    def perform_create(self, serializer):
-        additional_params = {}
-
-        if self.kwargs[self.parent_argument_name]:
-            additional_params = {
-                self.parent_field_name: self.parent_model.objects.get(pk=self.kwargs[self.parent_argument_name])
-            }
-
-        serializer.save(**additional_params)
-
-
-class DecisionViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
-    parent_field_name = 'lease'
-    parent_model = Lease
     filter_class = DecisionFilter
 
 
-class RentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class RentViewSet(viewsets.ModelViewSet):
     queryset = Rent.objects.all()
     serializer_class = RentSerializer
-    parent_field_name = 'lease'
-    parent_model = Lease
     filter_fields = ['lease']
 
 
-class TenantViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class TenantViewSet(viewsets.ModelViewSet):
     queryset = Tenant.objects.all().select_related('contact', 'contact_contact', 'billing_contact')
     serializer_class = TenantSerializer
-    parent_field_name = 'lease'
-    parent_model = Lease
     filter_class = TenantFilter
 
     def get_serializer_class(self):
