@@ -95,8 +95,7 @@ class DecisionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
 
     class Meta:
         model = Decision
-        fields = ('id', 'name', 'date', 'article', 'type', 'type_description', 'decision_maker', 'link', 'abstract',
-                  'added_by')
+        fields = '__all__'
 
 
 class RentSerializer(serializers.ModelSerializer):
@@ -104,9 +103,7 @@ class RentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rent
-        fields = ('id', 'created_at', 'modified_at', 'rent_id', 'use', 'quantity', 'unit_price', 'rent_percent',
-                  'discount', 'discount_start_date', 'discount_end_date', 'increase', 'increase_start_date',
-                  'increase_end_date', 'index')
+        fields = '__all__'
 
 
 class TenantSerializer(serializers.ModelSerializer):
@@ -117,7 +114,7 @@ class TenantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tenant
-        fields = ('id', 'contact', 'contact_contact', 'billing_contact', 'share')
+        fields = '__all__'
 
 
 class TenantCreateUpdateSerializer(serializers.ModelSerializer):
