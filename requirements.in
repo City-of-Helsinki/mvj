@@ -5,6 +5,5 @@ django-enumfields
 django-environ
 django-filter
 djangorestframework
-drf-nested-routers
 psycopg2
 raven
