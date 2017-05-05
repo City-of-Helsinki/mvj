@@ -1,7 +1,7 @@
 import django_filters
 
-from leasing.enums import ApplicationState, ApplicationType, DecisionType, LeaseState
-from leasing.models import Application, Decision, Lease, Tenant
+from leasing.enums import ApplicationState, ApplicationType, DecisionType, LeaseState, RentType
+from leasing.models import Application, Decision, Lease, Rent, Tenant
 
 
 class ApplicationFilter(django_filters.rest_framework.FilterSet):
@@ -30,6 +30,14 @@ class LeaseFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = Lease
         fields = ['application_id', 'is_reservation', 'lease_id', 'preparer_id', 'state']
+
+
+class RentFilter(django_filters.rest_framework.FilterSet):
+    type = django_filters.ChoiceFilter(choices=[(i.value, getattr(i, 'label', i.name)) for i in RentType])
+
+    class Meta:
+        model = Rent
+        fields = ['lease', 'type']
 
 
 class TenantFilter(django_filters.rest_framework.FilterSet):

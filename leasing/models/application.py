@@ -46,3 +46,25 @@ class Application(TimestampedModelMixin):
     def __str__(self):
         return '#{id} {type} {contact_person}'.format(id=self.id, type=self.type.label,
                                                       contact_person=str(self.contact_name))
+
+    def as_contact(self):
+        from .contact import Contact
+
+        field_names = [
+            'contact_name',
+            'contact_address',
+            'contact_billing_address',
+            'contact_electronic_billing',
+            'contact_email',
+            'contact_phone',
+            'organization_name',
+            'organization_address',
+            'organization_is_company',
+            'organization_id',
+            'organization_revenue',
+        ]
+
+        values = {key.replace('contact_', ''): getattr(self, key) for key in field_names}
+        values['electronic_billing_details'] = values.pop('electronic_billing')
+
+        return Contact(**values)

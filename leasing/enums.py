@@ -76,3 +76,18 @@ class DecisionType(Enum):
         CONTRACT_CHANGE = _('Contract change')
         CONSTRUCTION_DRAFT_REVIEW = _('Construction Draft Overview')
         OTHER = _('Other')
+
+
+class RentType(Enum):
+    FIXED = 'fixed'
+    INDEX = 'index'
+    ONE_TIME = 'one_time'
+    FREE = 'free'
+    MANUAL = 'manual'
+
+    class Labels:
+        FIXED = _('Fixed sum')
+        INDEX = _('Index-linked')
+        ONE_TIME = _('One time')
+        FREE = _('Free')
+        MANUAL = _('Manual')
