@@ -2,6 +2,7 @@ import rest_framework.urls
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 
 from leasing.views import ApplicationViewSet, ContactViewSet, DecisionViewSet, LeaseViewSet, RentViewSet, TenantViewSet
 from users.views import UserViewSet
@@ -19,4 +20,5 @@ urlpatterns = [
     url(r'^v1/', include(router.urls, namespace="v1")),
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include(rest_framework.urls, namespace='rest_framework')),
+    url(r'^docs/', get_swagger_view(title='MVJ API')),
 ]

@@ -98,7 +98,7 @@ class DecisionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
         fields = '__all__'
 
 
-class RentSerializer(serializers.ModelSerializer):
+class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:

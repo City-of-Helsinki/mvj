@@ -1,7 +1,10 @@
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
-from leasing.filters import ApplicationFilter, DecisionFilter, LeaseFilter, TenantFilter
+from leasing.enums import LeaseState
+from leasing.filters import ApplicationFilter, DecisionFilter, LeaseFilter, RentFilter, TenantFilter
 from leasing.models import Decision, Rent, Tenant
 from leasing.serializers import (
     ApplicationSerializer, ContactSerializer, DecisionSerializer, LeaseCreateUpdateSerializer, LeaseSerializer,
@@ -15,6 +18,40 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = ApplicationSerializer
     filter_class = ApplicationFilter
 
+    @detail_route(methods=['post'])
+    def create_lease(self, request, pk=None):
+        """Create a new Lease instance from an application.
+
+        Preparer is set as the current user. The contact details on the
+        application will be added as a new Contact. The new contact is added
+        as a Tenant to the Lease.
+        """
+        application = self.get_object()
+
+        lease_data = {
+            'application': application.id,
+            'reasons': application.reasons,
+            'preparer': request.user.id,
+            'state': LeaseState.DRAFT
+        }
+
+        lease_serializer = LeaseCreateUpdateSerializer(data=lease_data)
+
+        if lease_serializer.is_valid():
+            lease = lease_serializer.save()
+            contact = application.as_contact()
+            contact.save()
+
+            Tenant.objects.create(
+                contact_id=contact.id,
+                lease=lease,
+                share=1
+            )
+
+            return Response(lease_serializer.data)
+        else:
+            return Response(lease_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
@@ -25,7 +62,7 @@ class DecisionViewSet(viewsets.ModelViewSet):
 class RentViewSet(viewsets.ModelViewSet):
     queryset = Rent.objects.all()
     serializer_class = RentSerializer
-    filter_fields = ['lease']
+    filter_class = RentFilter
 
 
 class TenantViewSet(viewsets.ModelViewSet):

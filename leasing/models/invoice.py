@@ -10,4 +10,4 @@ class Invoice(TimestampedModelMixin):
     period_start_date = models.DateField(verbose_name=_("Period start date"), null=True, blank=True)
     period_end_date = models.DateField(verbose_name=_("Period end date"), null=True, blank=True)
     due_date = models.DateField(verbose_name=_("Due date"), null=True, blank=True)
-    amount = models.DecimalField(verbose_name=_("Unit price"), max_digits=6, decimal_places=2)
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=6, decimal_places=2)

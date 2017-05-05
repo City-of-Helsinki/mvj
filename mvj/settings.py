@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'corsheaders',
+    'rest_framework_swagger',
 
     'leasing',
     'users',

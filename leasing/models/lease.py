@@ -19,6 +19,7 @@ class Lease(TimestampedModelMixin):
     detailed_plan_area = models.IntegerField(verbose_name=_("Detailed plan area in full square meters"), null=True,
                                              blank=True)
     preparer = models.ForeignKey(User, null=True, blank=True)
+    is_billing_enabled = models.BooleanField(verbose_name=_("Is billing enabled?"), default=False)
 
     def __str__(self):
         return "id:{} lease_id:{}".format(self.id, self.lease_id)
