@@ -55,8 +55,8 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
         for building_footprint in building_footprints:
             ApplicationBuildingFootprint.objects.create(
                 application=instance,
-                use=building_footprint['use'],
-                area=building_footprint['area']
+                use=building_footprint.get('use', None),
+                area=building_footprint.get('area', None)
             )
 
         return instance
@@ -69,8 +69,8 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
         for building_footprint in building_footprints:
             ApplicationBuildingFootprint.objects.create(
                 application=instance,
-                use=building_footprint['use'],
-                area=building_footprint['area']
+                use=building_footprint.get('use', None),
+                area=building_footprint.get('area', None)
             )
 
         instance = super().update(instance, validated_data)
