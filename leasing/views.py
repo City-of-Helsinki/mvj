@@ -78,7 +78,7 @@ class TenantViewSet(viewsets.ModelViewSet):
 
 
 class LeaseViewSet(viewsets.ModelViewSet):
-    queryset = Lease.objects.all().select_related('application', 'preparer')
+    queryset = Lease.objects.all().select_related('application', 'identifier', 'preparer')
     serializer_class = LeaseSerializer
     filter_class = LeaseFilter
 

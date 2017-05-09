@@ -1,18 +1,41 @@
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import LeaseConditionType, LeaseState
+from leasing.enums import (
+    LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, LeaseConditionType, LeaseState)
 from leasing.models import Application
 from leasing.models.mixins import TimestampedModelMixin
+
+
+class LeaseIdentifier(models.Model):
+    type = models.CharField(verbose_name=_("Type"), max_length=2, choices=LEASE_IDENTIFIER_TYPE)
+    municipality = models.CharField(verbose_name=_("Municipality"), max_length=1,
+                                    choices=LEASE_IDENTIFIER_MUNICIPALITY)
+    district = models.CharField(verbose_name=_("District"), max_length=2, choices=LEASE_IDENTIFIER_DISTRICT)
+    sequence = models.IntegerField(verbose_name=_("Sequence number"))
+
+    class Meta:
+        unique_together = ('type', 'municipality', 'district', 'sequence')
+
+    def __str__(self):
+        return '{}{}{}-{}'.format(self.type, self.municipality, self.district, self.sequence)
 
 
 class Lease(TimestampedModelMixin):
     application = models.ForeignKey(Application, null=True, blank=True)
     is_reservation = models.BooleanField(verbose_name=_("Is a reservation?"), default=False)
     state = EnumField(LeaseState, verbose_name=_("State"), max_length=255)
-    lease_id = models.CharField(verbose_name=_("Lease id"), null=True, blank=True, max_length=255)
+    identifier_type = models.CharField(verbose_name=_("Lease identifier type"), choices=LEASE_IDENTIFIER_TYPE,
+                                       null=True, blank=True, max_length=2)
+    identifier_municipality = models.CharField(verbose_name=_("Lease identifier municipality"),
+                                               choices=LEASE_IDENTIFIER_MUNICIPALITY, null=True, blank=True,
+                                               max_length=1)
+    identifier_district = models.CharField(verbose_name=_("Lease identifier district"),
+                                           choices=LEASE_IDENTIFIER_DISTRICT, null=True, blank=True, max_length=2)
+    identifier = models.OneToOneField(LeaseIdentifier, null=True, blank=True, on_delete=models.PROTECT)
     reasons = models.TextField(verbose_name=_("Reasons"), null=True, blank=True)
     detailed_plan = models.CharField(verbose_name=_("Detailed plan number"), null=True, blank=True,
                                      max_length=2048)
@@ -22,7 +45,35 @@ class Lease(TimestampedModelMixin):
     is_billing_enabled = models.BooleanField(verbose_name=_("Is billing enabled?"), default=False)
 
     def __str__(self):
-        return "id:{} lease_id:{}".format(self.id, self.lease_id)
+        return "id:{} identifier:{}".format(self.id, self.identifier)
+
+    def identifier_string(self):
+        if not self.identifier:
+            return ''
+
+        return str(self.identifier)
+
+    @transaction.atomic
+    def create_identifier(self):
+        if not self.identifier_type or not self.identifier_municipality or not self.identifier_district:
+            return
+
+        max_sequence = LeaseIdentifier.objects.filter(
+            type=self.identifier_type,
+            municipality=self.identifier_municipality,
+            district=self.identifier_district).aggregate(Max('sequence'))['sequence__max']
+
+        if not max_sequence:
+            max_sequence = 0
+
+        lease_identifier = LeaseIdentifier.objects.create(
+            type=self.identifier_type,
+            municipality=self.identifier_municipality,
+            district=self.identifier_district,
+            sequence=max_sequence + 1)
+
+        self.identifier = lease_identifier
+        self.save()
 
 
 class LeaseRealPropertyUnit(models.Model):

@@ -1,4 +1,6 @@
 import pytest
+from django.urls import reverse
+from rest_framework.test import APIClient
 
 from leasing.enums import LeaseState
 from leasing.serializers import LeaseCreateUpdateSerializer, TenantCreateUpdateSerializer
@@ -54,7 +56,7 @@ def test_create_lease(contact_factory):
     ],
     "is_reservation": false,
     "state": "draft",
-    "lease_id": null,
+    "identifier": null,
     "reasons": "Reason",
     "detailed_plan": null,
     "detailed_plan_area": null
@@ -99,3 +101,46 @@ def test_create_tenant(lease_factory, contact_factory):
     instance = serializer.save(lease=lease1)
 
     assert instance.id
+
+
+@pytest.mark.django_db
+def test_create_lease_without_identifier(user_factory, application_factory):
+    user1 = user_factory(username='user1', password='user1', email='user1@example.com', is_superuser=True)
+
+    data = {
+        "preparer": user1.id,
+        "state": "draft"
+    }
+
+    api_client = APIClient()
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + user1.username)
+
+    url = reverse('v1:lease-list')
+
+    response = api_client.post(url, data=data)
+
+    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    assert response.data['identifier'] == ''
+
+
+@pytest.mark.django_db
+def test_create_lease_with_identifier(user_factory, application_factory):
+    user1 = user_factory(username='user1', password='user1', email='user1@example.com', is_superuser=True)
+
+    data = {
+        "preparer": user1.id,
+        "identifier_type": "A2",
+        "identifier_municipality": "1",
+        "identifier_district": "05",
+        "state": "draft"
+    }
+
+    api_client = APIClient()
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + user1.username)
+
+    url = reverse('v1:lease-list')
+
+    response = api_client.post(url, data=data)
+
+    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    assert response.data['identifier'] == 'A2105-1'
