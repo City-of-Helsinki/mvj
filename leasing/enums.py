@@ -93,6 +93,17 @@ class RentType(Enum):
         MANUAL = _('Manual')
 
 
+class InvoiceState(Enum):
+    PENDING = 'pending'
+    SENT = 'sent'
+    PAID = 'paid'
+
+    class Labels:
+        PENDING = _('Pending')
+        SENT = _('Sent')
+        PAID = _('Paid')
+
+
 LEASE_IDENTIFIER_TYPE = (
     ('A1', 'Asuntotontit'),
     ('A2', 'Opiskelija-asuntotontit'),

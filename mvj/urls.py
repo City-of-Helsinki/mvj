@@ -4,7 +4,8 @@ from django.contrib import admin
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from leasing.views import ApplicationViewSet, ContactViewSet, DecisionViewSet, LeaseViewSet, RentViewSet, TenantViewSet
+from leasing.views import (
+    ApplicationViewSet, ContactViewSet, DecisionViewSet, InvoiceViewSet, LeaseViewSet, RentViewSet, TenantViewSet)
 from users.views import UserViewSet
 
 router = routers.DefaultRouter()
@@ -13,6 +14,7 @@ router.register(r'application', ApplicationViewSet)
 router.register(r'lease', LeaseViewSet)
 router.register(r'contact', ContactViewSet)
 router.register(r'decision', DecisionViewSet)
+router.register(r'invoice', InvoiceViewSet)
 router.register(r'rent', RentViewSet)
 router.register(r'tenant', TenantViewSet)
 

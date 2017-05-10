@@ -5,7 +5,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from leasing.models import (
-    Contact, Decision, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, Rent, Tenant)
+    Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, Rent,
+    Tenant)
 from users.serializers import UserSerializer
 
 from .models import Application, ApplicationBuildingFootprint, Lease
@@ -95,6 +96,15 @@ class DecisionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
 
     class Meta:
         model = Decision
+        fields = '__all__'
+
+
+class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    reference_number = serializers.ReadOnlyField()
+    billing_contact = ContactSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = Invoice
         fields = '__all__'
 
 
