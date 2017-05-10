@@ -43,6 +43,9 @@ class Lease(TimestampedModelMixin):
                                              blank=True)
     preparer = models.ForeignKey(User, null=True, blank=True)
     is_billing_enabled = models.BooleanField(verbose_name=_("Is billing enabled?"), default=False)
+    bills_per_year = models.IntegerField(verbose_name=_("Bills per year"), null=True, blank=True)
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
     def __str__(self):
         return "id:{} identifier:{}".format(self.id, self.identifier)

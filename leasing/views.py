@@ -4,11 +4,11 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
 from leasing.enums import LeaseState
-from leasing.filters import ApplicationFilter, DecisionFilter, LeaseFilter, RentFilter, TenantFilter
-from leasing.models import Decision, Rent, Tenant
+from leasing.filters import ApplicationFilter, DecisionFilter, InvoiceFilter, LeaseFilter, RentFilter, TenantFilter
+from leasing.models import Decision, Invoice, Rent, Tenant
 from leasing.serializers import (
-    ApplicationSerializer, ContactSerializer, DecisionSerializer, LeaseCreateUpdateSerializer, LeaseSerializer,
-    RentSerializer, TenantCreateUpdateSerializer, TenantSerializer)
+    ApplicationSerializer, ContactSerializer, DecisionSerializer, InvoiceSerializer, LeaseCreateUpdateSerializer,
+    LeaseSerializer, RentSerializer, TenantCreateUpdateSerializer, TenantSerializer)
 
 from .models import Application, Contact, Lease
 
@@ -57,6 +57,12 @@ class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
     filter_class = DecisionFilter
+
+
+class InvoiceViewSet(viewsets.ModelViewSet):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+    filter_class = InvoiceFilter
 
 
 class RentViewSet(viewsets.ModelViewSet):

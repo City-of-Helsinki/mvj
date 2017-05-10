@@ -2,8 +2,8 @@ import django_filters
 
 from leasing.enums import (
     LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, ApplicationState, ApplicationType,
-    DecisionType, LeaseState, RentType)
-from leasing.models import Application, Decision, Lease, Rent, Tenant
+    DecisionType, InvoiceState, LeaseState, RentType)
+from leasing.models import Application, Decision, Invoice, Lease, Rent, Tenant
 
 
 class ApplicationFilter(django_filters.rest_framework.FilterSet):
@@ -22,6 +22,15 @@ class DecisionFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = Decision
         fields = ['lease', 'type', 'added_by_id']
+
+
+class InvoiceFilter(django_filters.rest_framework.FilterSet):
+    state = django_filters.ChoiceFilter(choices=[(i.value, getattr(i, 'label', i.name)) for i in InvoiceState])
+    lease_id = django_filters.NumberFilter(name="tenant__lease__id")
+
+    class Meta:
+        model = Invoice
+        fields = ['tenant', 'lease_id']
 
 
 class LeaseFilter(django_filters.rest_framework.FilterSet):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from leasing.models import Contact, Decision, Tenant
+from leasing.models import Contact, Decision, Invoice, Tenant
 from leasing.models.building_footprint import LeaseBuildingFootprint
 from leasing.models.lease import (
     LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
@@ -17,6 +17,7 @@ class ApplicationBuildingFootprintInline(admin.TabularInline):
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('contact_name', 'organization_name', 'type', 'state')
     inlines = [ApplicationBuildingFootprintInline]
+    readonly_fields = ('created_at', 'modified_at')
 
 
 admin.site.register(Application, ApplicationAdmin)
@@ -24,9 +25,18 @@ admin.site.register(Application, ApplicationAdmin)
 
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('name', 'organization_name')
+    readonly_fields = ('created_at', 'modified_at')
 
 
 admin.site.register(Contact, ContactAdmin)
+
+
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('tenant', 'due_date', 'amount')
+    readonly_fields = ('reference_number', 'created_at', 'modified_at')
+
+
+admin.site.register(Invoice, InvoiceAdmin)
 
 
 class RentInline(admin.StackedInline):
@@ -60,14 +70,15 @@ class LeaseConditionInline(admin.TabularInline):
 
 
 class LeaseAdmin(admin.ModelAdmin):
-    list_display = ('identifier', 'is_reservation', 'state')
+    list_display = ('identifier', 'is_reservation', 'is_billing_enabled', 'state')
     inlines = [RentInline, TenantInline, DecisionInline, LeaseBuildingFootprintInline, LeaseAdditionalFieldInline,
                LeaseConditionInline]
 
     fieldsets = (
         (None, {
             'fields': ('application', 'identifier', 'identifier_type', 'identifier_municipality', 'identifier_district',
-                       'state', 'is_reservation', 'reasons')
+                       'state', 'is_reservation', 'reasons', 'start_date', 'end_date', 'bills_per_year',
+                       'is_billing_enabled')
         }),
         (_('Detailed plan'), {
             'fields': ('detailed_plan', 'detailed_plan_area'),
