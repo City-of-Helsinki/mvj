@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from leasing.models import Contact, Decision, Tenant
 from leasing.models.building_footprint import LeaseBuildingFootprint
 from leasing.models.lease import (
-    LeaseAdditionalField, LeaseCondition, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
+    LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
 
 from .models import Application, ApplicationBuildingFootprint, Lease, Rent
 
@@ -60,13 +60,14 @@ class LeaseConditionInline(admin.TabularInline):
 
 
 class LeaseAdmin(admin.ModelAdmin):
-    list_display = ('lease_id', 'is_reservation', 'state')
+    list_display = ('identifier', 'is_reservation', 'state')
     inlines = [RentInline, TenantInline, DecisionInline, LeaseBuildingFootprintInline, LeaseAdditionalFieldInline,
                LeaseConditionInline]
 
     fieldsets = (
         (None, {
-            'fields': ('application', 'lease_id', 'state', 'is_reservation', 'reasons')
+            'fields': ('application', 'identifier', 'identifier_type', 'identifier_municipality', 'identifier_district',
+                       'state', 'is_reservation', 'reasons')
         }),
         (_('Detailed plan'), {
             'fields': ('detailed_plan', 'detailed_plan_area'),
@@ -76,10 +77,17 @@ class LeaseAdmin(admin.ModelAdmin):
         }),
     )
 
-    readonly_fields = ('created_at', 'modified_at')
+    readonly_fields = ('identifier', 'created_at', 'modified_at')
 
 
 admin.site.register(Lease, LeaseAdmin)
+
+
+class LeaseIdentifierAdmin(admin.ModelAdmin):
+    list_display = ('type', 'municipality', 'district', 'sequence')
+
+
+admin.site.register(LeaseIdentifier, LeaseIdentifierAdmin)
 
 
 class LeaseRealPropertyUnitAddressInline(admin.TabularInline):

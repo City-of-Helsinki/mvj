@@ -55,8 +55,8 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
         for building_footprint in building_footprints:
             ApplicationBuildingFootprint.objects.create(
                 application=instance,
-                use=building_footprint['use'],
-                area=building_footprint['area']
+                use=building_footprint.get('use', None),
+                area=building_footprint.get('area', None)
             )
 
         return instance
@@ -69,8 +69,8 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
         for building_footprint in building_footprints:
             ApplicationBuildingFootprint.objects.create(
                 application=instance,
-                use=building_footprint['use'],
-                area=building_footprint['area']
+                use=building_footprint.get('use', None),
+                area=building_footprint.get('area', None)
             )
 
         instance = super().update(instance, validated_data)
@@ -173,6 +173,7 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
     rents = RentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
+    identifier = serializers.ReadOnlyField(source='identifier_string')
 
     class Meta:
         model = Lease
@@ -233,6 +234,7 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
     rents = RentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    identifier = serializers.ReadOnlyField(source='identifier_string')
 
     class Meta:
         model = Lease
@@ -261,6 +263,8 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
 
         lease_replace_related(lease=instance, related_name='tenants', serializer_class=TenantCreateUpdateSerializer,
                               validated_data=tenants)
+
+        instance.create_identifier()
 
         return instance
 
@@ -293,5 +297,7 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
             lease_create_or_update_related(lease=instance, related_name='tenants',
                                            serializer_class=TenantCreateUpdateSerializer,
                                            validated_data=tenants)
+
+        instance.create_identifier()
 
         return instance
