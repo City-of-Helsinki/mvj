@@ -14,3 +14,9 @@ class Tenant(TimestampedModelMixin):
     billing_contact = models.ForeignKey(Contact, related_name="tenant_billing_contacts", null=True, blank=True,
                                         on_delete=models.CASCADE)
     share = models.DecimalField(verbose_name=_("Share of the rent"), max_digits=7, decimal_places=6)
+
+    def get_billing_contact(self):
+        return self.billing_contact if self.billing_contact else self.contact
+
+    def __str__(self):
+        return 'tenant contact: {} lease: {} '.format(self.contact, self.lease)

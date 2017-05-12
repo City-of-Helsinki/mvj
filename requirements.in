@@ -7,4 +7,5 @@ django-filter
 djangorestframework
 django-rest-swagger
 psycopg2
+python-dateutil
 raven

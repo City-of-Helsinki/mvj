@@ -99,15 +99,6 @@ class DecisionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
         fields = '__all__'
 
 
-class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    reference_number = serializers.ReadOnlyField()
-    billing_contact = ContactSerializer(required=False, allow_null=True)
-
-    class Meta:
-        model = Invoice
-        fields = '__all__'
-
-
 class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -124,6 +115,16 @@ class TenantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tenant
+        fields = '__all__'
+
+
+class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    reference_number = serializers.ReadOnlyField()
+    billing_contact = ContactSerializer(required=False, allow_null=True)
+    tenants = TenantSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Invoice
         fields = '__all__'
 
 

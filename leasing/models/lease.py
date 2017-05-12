@@ -1,3 +1,7 @@
+from datetime import date
+
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import MONTHLY, rrule
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.db.models import Max
@@ -77,6 +81,50 @@ class Lease(TimestampedModelMixin):
 
         self.identifier = lease_identifier
         self.save()
+
+    def get_billing_periods_for_year(self, year):
+        """Returns a list of tuples with start and end dates for the billing periods of the supplied year"""
+        periods = []
+
+        if not self.bills_per_year:
+            return periods
+
+        months_per_period = 12 // self.bills_per_year
+        first_date_of_year = date(year=year, month=1, day=1)
+
+        for start_date in rrule(freq=MONTHLY, interval=months_per_period, count=self.bills_per_year,
+                                dtstart=first_date_of_year):
+            end_date = start_date + relativedelta(months=months_per_period, days=-1)
+            periods.append((start_date.date(), end_date.date()))
+
+        return periods
+
+    def get_current_billing_period_for_date(self, the_date):
+        billing_periods = self.get_billing_periods_for_year(the_date.year)
+
+        for (start_date, end_date) in billing_periods:
+            if start_date <= the_date <= end_date:
+                return start_date, end_date
+
+        return None
+
+    def get_next_billing_period_for_date(self, the_date):
+        billing_periods = self.get_billing_periods_for_year(the_date.year) + self.get_billing_periods_for_year(
+            the_date.year + 1)
+
+        for i, (start_date, end_date) in enumerate(billing_periods):
+            if start_date <= the_date <= end_date:
+                return billing_periods[i + 1]
+
+        return None
+
+    def get_rent_amount_for_period(self, start_date, end_date):
+        amount = 0.0
+
+        for rent in self.rents.all():
+            amount += rent.get_amount_for_period(start_date, end_date)
+
+        return amount
 
 
 class LeaseRealPropertyUnit(models.Model):

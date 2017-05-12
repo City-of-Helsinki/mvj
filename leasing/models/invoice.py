@@ -7,7 +7,7 @@ from leasing.models.mixins import TimestampedModelMixin
 
 
 class Invoice(TimestampedModelMixin):
-    tenant = models.ForeignKey('leasing.Tenant', related_name="invoices", on_delete=models.PROTECT)
+    tenants = models.ManyToManyField('leasing.Tenant')
     note = models.CharField(verbose_name=_("Note"), null=True, blank=True, max_length=2048)
     period_start_date = models.DateField(verbose_name=_("Period start date"), null=True, blank=True)
     period_end_date = models.DateField(verbose_name=_("Period end date"), null=True, blank=True)
@@ -18,3 +18,14 @@ class Invoice(TimestampedModelMixin):
                                         blank=True, on_delete=models.PROTECT)
     state = EnumField(InvoiceState, verbose_name=_("State"), max_length=255,
                       default=InvoiceState.PENDING)
+
+    def create_reference_number(self):
+        if not self.id:
+            return None
+
+        reference_number = '91112{}880'.format(self.id)
+
+        self.reference_number = reference_number + str(
+            (10 - (sum((7, 3, 1)[i % 3] * x for i, x in enumerate(map(int, str(reference_number)[::-1]))) % 10)) % 10)
+
+        self.save()

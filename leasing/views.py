@@ -1,5 +1,5 @@
 from rest_framework import status, viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
@@ -63,6 +63,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filter_class = InvoiceFilter
+
+    @list_route(methods=['post'])
+    def create_invoices(self, request, pk=None):
+        """Runs the create_invoices management command"""
+        from django.core.management import call_command
+
+        call_command('create_invoices')
+
+        return Response()
 
 
 class RentViewSet(viewsets.ModelViewSet):
