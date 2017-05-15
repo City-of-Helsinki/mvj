@@ -32,7 +32,7 @@ admin.site.register(Contact, ContactAdmin)
 
 
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ('tenant', 'due_date', 'amount')
+    list_display = ('period_start_date', 'period_end_date', 'due_date', 'amount')
     readonly_fields = ('reference_number', 'created_at', 'modified_at')
 
 
@@ -112,3 +112,10 @@ class LeaseRealPropertyUnitAdmin(admin.ModelAdmin):
 
 
 admin.site.register(LeaseRealPropertyUnit, LeaseRealPropertyUnitAdmin)
+
+
+class RentAdmin(admin.ModelAdmin):
+    model = Rent
+
+
+admin.site.register(Rent, RentAdmin)

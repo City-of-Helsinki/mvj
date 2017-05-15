@@ -26,11 +26,13 @@ class DecisionFilter(django_filters.rest_framework.FilterSet):
 
 class InvoiceFilter(django_filters.rest_framework.FilterSet):
     state = django_filters.ChoiceFilter(choices=[(i.value, getattr(i, 'label', i.name)) for i in InvoiceState])
-    lease_id = django_filters.NumberFilter(name="tenant__lease__id")
+    contact_id = django_filters.NumberFilter(name="tenants__contact__id")
+    tenant_id = django_filters.NumberFilter(name="tenants__id")
+    lease_id = django_filters.NumberFilter(name="tenants__lease__id")
 
     class Meta:
         model = Invoice
-        fields = ['tenant', 'lease_id']
+        fields = ['contact_id', 'tenant_id', 'lease_id']
 
 
 class LeaseFilter(django_filters.rest_framework.FilterSet):
