@@ -17,9 +17,9 @@ class Rent(TimestampedModelMixin):
                                  decimal_places=2, help_text=_("Per month if rent type is Fixed or Index."))
 
     def get_amount_for_period(self, period_start_date, period_end_date):
-        if not self.amount or self.type in (RentType.FREE, RentType.MANUAL) or \
-                (self.start_date and self.start_date > period_end_date) or \
-                (self.end_date and self.end_date < period_start_date):
+        if not self.amount or self.type in (RentType.FREE, RentType.MANUAL) or (
+                (self.start_date and self.start_date > period_end_date) or
+                (self.end_date and self.end_date < period_start_date)):
             return 0.0
 
         if self.type == RentType.ONE_TIME:

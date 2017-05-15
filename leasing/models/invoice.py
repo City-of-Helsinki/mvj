@@ -25,7 +25,8 @@ class Invoice(TimestampedModelMixin):
 
         reference_number = '91112{}880'.format(self.id)
 
-        self.reference_number = reference_number + str(
-            (10 - (sum((7, 3, 1)[i % 3] * x for i, x in enumerate(map(int, str(reference_number)[::-1]))) % 10)) % 10)
+        reversed_digits = reversed(str(reference_number))
+        checksum = -sum((7, 3, 1)[i % 3] * int(x) for (i, x) in enumerate(reversed_digits)) % 10
+        self.reference_number = reference_number + str(checksum)
 
         self.save()
