@@ -2,13 +2,16 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
+from rest_framework_gis.filters import InBBoxFilter
 
 from leasing.enums import LeaseState
-from leasing.filters import ApplicationFilter, DecisionFilter, InvoiceFilter, LeaseFilter, RentFilter, TenantFilter
-from leasing.models import Decision, Invoice, Rent, Tenant
+from leasing.filters import (
+    ApplicationFilter, DecisionFilter, InvoiceFilter, LeaseFilter, NoteFilter, RentFilter, TenantFilter)
+from leasing.models import Area, Decision, Invoice, Note, Rent, Tenant
 from leasing.serializers import (
-    ApplicationSerializer, ContactSerializer, DecisionSerializer, InvoiceSerializer, LeaseCreateUpdateSerializer,
-    LeaseSerializer, RentSerializer, TenantCreateUpdateSerializer, TenantSerializer)
+    ApplicationSerializer, AreaSerializer, ContactSerializer, DecisionSerializer, InvoiceSerializer,
+    LeaseCreateUpdateSerializer, LeaseSerializer, NoteSerializer, RentSerializer, TenantCreateUpdateSerializer,
+    TenantSerializer)
 
 from .models import Application, Contact, Lease
 
@@ -53,6 +56,15 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return Response(lease_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AreaViewSet(viewsets.ModelViewSet):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+    filter_backends = (SearchFilter, InBBoxFilter)
+    search_fields = ('name', )
+    bbox_filter_field = 'mpoly'
+    bbox_filter_include_overlapping = True
+
+
 class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
@@ -72,6 +84,13 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         call_command('create_invoices')
 
         return Response()
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    filter_class = NoteFilter
+    search_fields = ('title', 'text')
 
 
 class RentViewSet(viewsets.ModelViewSet):

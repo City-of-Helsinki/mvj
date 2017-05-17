@@ -43,6 +43,9 @@ class Application(TimestampedModelMixin):
     land_address = models.CharField(verbose_name=_("Land address"), null=True, blank=True, max_length=2048)
     land_map_link = models.CharField(verbose_name=_("Land map link"), null=True, blank=True, max_length=2048)
 
+    areas = models.ManyToManyField('leasing.Area', blank=True)
+    notes = models.ManyToManyField('leasing.Note', blank=True)
+
     def __str__(self):
         return '#{id} {type} {contact_person}'.format(id=self.id, type=self.type.label,
                                                       contact_person=str(self.contact_name))

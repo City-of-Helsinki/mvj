@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from leasing.enums import ApplicationState
@@ -5,9 +7,7 @@ from leasing.serializers import ApplicationSerializer
 
 
 @pytest.mark.django_db
-def test_create_application(contact_factory):
-    import json
-
+def test_create_application():
     data = """{
     "type": "detached_house",
     "building_footprints": [
@@ -21,6 +21,12 @@ def test_create_application(contact_factory):
         {
             "area": "33"
         }
+    ],
+    "notes": [
+        {
+            "title": "Test note",
+            "text": "Note test"
+        }
     ]
 }"""
 
@@ -32,3 +38,4 @@ def test_create_application(contact_factory):
     assert instance.id
     assert instance.state == ApplicationState.UNHANDLED
     assert len(instance.building_footprints.all()) == 3
+    assert len(instance.notes.all()) == 1

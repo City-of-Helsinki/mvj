@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -8,8 +10,6 @@ from leasing.serializers import LeaseCreateUpdateSerializer, TenantCreateUpdateS
 
 @pytest.mark.django_db
 def test_create_lease(contact_factory):
-    import json
-
     contact_factory(name="Test contact")
 
     data = """{
@@ -83,8 +83,6 @@ def test_create_lease(contact_factory):
 
 @pytest.mark.django_db
 def test_create_tenant(lease_factory, contact_factory):
-    import json
-
     lease1 = lease_factory(state=LeaseState.DRAFT)
     contact_factory(id=1, name="Test contact")
 
