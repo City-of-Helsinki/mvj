@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import Contact, Decision, Invoice, Tenant
@@ -6,7 +6,15 @@ from leasing.models.building_footprint import LeaseBuildingFootprint
 from leasing.models.lease import (
     LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
 
-from .models import Application, ApplicationBuildingFootprint, Lease, Rent
+from .models import Application, ApplicationBuildingFootprint, Area, Lease, Note, Rent
+
+
+class AreaAdmin(admin.OSMGeoAdmin):
+    list_display = ('name', )
+    readonly_fields = ('created_at', 'modified_at')
+
+
+admin.site.register(Area, AreaAdmin)
 
 
 class ApplicationBuildingFootprintInline(admin.TabularInline):
@@ -78,7 +86,7 @@ class LeaseAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('application', 'identifier', 'identifier_type', 'identifier_municipality', 'identifier_district',
                        'state', 'is_reservation', 'reasons', 'start_date', 'end_date', 'bills_per_year',
-                       'is_billing_enabled')
+                       'is_billing_enabled', 'notes', 'areas')
         }),
         (_('Detailed plan'), {
             'fields': ('detailed_plan', 'detailed_plan_area'),
@@ -114,8 +122,18 @@ class LeaseRealPropertyUnitAdmin(admin.ModelAdmin):
 admin.site.register(LeaseRealPropertyUnit, LeaseRealPropertyUnitAdmin)
 
 
+class NoteAdmin(admin.ModelAdmin):
+    model = Note
+    list_display = ('title',)
+    readonly_fields = ('created_at', 'modified_at')
+
+
+admin.site.register(Note, NoteAdmin)
+
+
 class RentAdmin(admin.ModelAdmin):
     model = Rent
+    readonly_fields = ('created_at', 'modified_at')
 
 
 admin.site.register(Rent, RentAdmin)

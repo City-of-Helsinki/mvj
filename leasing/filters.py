@@ -3,7 +3,7 @@ import django_filters
 from leasing.enums import (
     LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, ApplicationState, ApplicationType,
     DecisionType, InvoiceState, LeaseState, RentType)
-from leasing.models import Application, Decision, Invoice, Lease, Rent, Tenant
+from leasing.models import Application, Decision, Invoice, Lease, Note, Rent, Tenant
 
 
 class ApplicationFilter(django_filters.rest_framework.FilterSet):
@@ -46,6 +46,19 @@ class LeaseFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = Lease
         fields = ['application_id', 'is_reservation', 'identifier', 'preparer_id', 'state']
+
+
+class NoteFilter(django_filters.rest_framework.FilterSet):
+    title = django_filters.CharFilter(lookup_expr='icontains')
+    text = django_filters.CharFilter(lookup_expr='icontains')
+    author = django_filters.NumberFilter(name="author__id")
+    application_id = django_filters.NumberFilter(label="Application ID", name="application__id")
+    area_id = django_filters.NumberFilter(label="Area ID", name="area__id")
+    lease_id = django_filters.NumberFilter(label="Lease ID", name="lease__id")
+
+    class Meta:
+        model = Note
+        fields = ['title', 'text', 'author', 'application_id', 'area_id', 'lease_id']
 
 
 class RentFilter(django_filters.rest_framework.FilterSet):

@@ -5,11 +5,68 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from leasing.models import (
-    Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, Rent,
-    Tenant)
+    Area, Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, Note,
+    Rent, Tenant)
 from users.serializers import UserSerializer
 
 from .models import Application, ApplicationBuildingFootprint, Lease
+
+
+def instance_replace_related(instance=None, instance_name=None, related_name=None, serializer_class=None,
+                             validated_data=None):
+    manager = getattr(instance, related_name)
+    manager.all().delete()
+
+    for item in validated_data:
+        serializer = serializer_class(data=item)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            raise ValidationError({
+                related_name: e.detail
+            })
+
+        item_instance = serializer.save(**{
+            instance_name: instance
+        })
+
+        if item_instance and hasattr(manager, 'add'):
+            manager.add(item_instance)
+
+
+def instance_create_or_update_related(instance=None, instance_name=None, related_name=None, serializer_class=None,
+                                      validated_data=None):
+    for item in validated_data:
+        pk = item.pop('id', None)
+        manager = getattr(instance, related_name)
+
+        serializer_params = {
+            'data': item,
+        }
+
+        if pk:
+            try:
+                item_instance = manager.get(id=pk)
+                serializer_params['instance'] = item_instance
+            except ObjectDoesNotExist:
+                pass
+
+        serializer = serializer_class(**serializer_params)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            raise ValidationError({
+                related_name: e.detail
+            })
+
+        item_instance = serializer.save(**{
+            instance_name: instance
+        })
+
+        if item_instance and hasattr(manager, 'add'):
+            manager.add(item_instance)
 
 
 class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -34,6 +91,23 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return super().to_internal_value(pk)
 
 
+class NoteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Note
+        fields = '__all__'
+
+
+class AreaSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    notes = NoteSerializer(many=True, required=False)
+
+    class Meta:
+        model = Area
+        fields = '__all__'
+
+
 class ApplicationBuildingFootprintSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationBuildingFootprint
@@ -42,37 +116,52 @@ class ApplicationBuildingFootprintSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
-    building_footprints = ApplicationBuildingFootprintSerializer(many=True)
+    building_footprints = ApplicationBuildingFootprintSerializer(many=True, required=False)
+    areas = AreaSerializer(many=True, required=False)
+    notes = NoteSerializer(many=True, required=False)
 
     class Meta:
         model = Application
         fields = '__all__'
 
     def create(self, validated_data):
-        building_footprints = validated_data.pop('building_footprints', None)
+        building_footprints = validated_data.pop('building_footprints', [])
+        areas = validated_data.pop('areas', [])
+        notes = validated_data.pop('notes', [])
 
         instance = super().create(validated_data)
 
-        for building_footprint in building_footprints:
-            ApplicationBuildingFootprint.objects.create(
-                application=instance,
-                use=building_footprint.get('use', None),
-                area=building_footprint.get('area', None)
-            )
+        instance_replace_related(instance=instance, instance_name='application', related_name='building_footprints',
+                                 serializer_class=ApplicationBuildingFootprintSerializer,
+                                 validated_data=building_footprints)
+
+        instance_replace_related(instance=instance, instance_name='application', related_name='areas',
+                                 serializer_class=AreaSerializer, validated_data=areas)
+
+        instance_replace_related(instance=instance, instance_name='application', related_name='notes',
+                                 serializer_class=NoteSerializer, validated_data=notes)
 
         return instance
 
     def update(self, instance, validated_data):
         building_footprints = validated_data.pop('building_footprints', None)
+        areas = validated_data.pop('areas', None)
+        notes = validated_data.pop('notes', None)
 
         instance.building_footprints.all().delete()
 
-        for building_footprint in building_footprints:
-            ApplicationBuildingFootprint.objects.create(
-                application=instance,
-                use=building_footprint.get('use', None),
-                area=building_footprint.get('area', None)
-            )
+        if building_footprints:
+            instance_replace_related(instance=instance, instance_name='application', related_name='building_footprints',
+                                     serializer_class=ApplicationBuildingFootprintSerializer,
+                                     validated_data=building_footprints)
+
+        if areas:
+            instance_create_or_update_related(instance=instance, instance_name='application', related_name='areas',
+                                              serializer_class=AreaSerializer, validated_data=areas)
+
+        if notes:
+            instance_create_or_update_related(instance=instance, instance_name='application', related_name='notes',
+                                              serializer_class=NoteSerializer, validated_data=notes)
 
         instance = super().update(instance, validated_data)
 
@@ -185,55 +274,12 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     rents = RentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(source='identifier_string')
+    areas = AreaSerializer(many=True, required=False)
+    notes = NoteSerializer(many=True, required=False)
 
     class Meta:
         model = Lease
         fields = '__all__'
-
-
-def lease_replace_related(lease=None, related_name=None, serializer_class=None, validated_data=None):
-    manager = getattr(lease, related_name)
-    manager.all().delete()
-
-    for item in validated_data:
-        serializer = serializer_class(data=item)
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as e:
-            raise ValidationError({
-                related_name: e.detail
-            })
-
-        serializer.save(lease=lease)
-
-
-def lease_create_or_update_related(lease=None, related_name=None, serializer_class=None, validated_data=None):
-    for item in validated_data:
-        pk = item.pop('id', None)
-
-        serializer_params = {
-            'data': item,
-        }
-
-        if pk:
-            try:
-                manager = getattr(lease, related_name)
-                item_instance = manager.get(id=pk)
-                serializer_params['instance'] = item_instance
-            except ObjectDoesNotExist:
-                pass
-
-        serializer = serializer_class(**serializer_params)
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as e:
-            raise ValidationError({
-                related_name: e.detail
-            })
-
-        serializer.save(lease=lease)
 
 
 class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -246,6 +292,8 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
     rents = RentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(source='identifier_string')
+    areas = AreaSerializer(many=True, required=False, allow_null=True)
+    notes = NoteSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -257,23 +305,31 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         real_property_units = validated_data.pop('real_property_units', [])
         rents = validated_data.pop('rents', [])
         tenants = validated_data.pop('tenants', [])
+        areas = validated_data.pop('areas', [])
+        notes = validated_data.pop('notes', [])
 
         instance = super().create(validated_data)
 
-        lease_replace_related(lease=instance, related_name='building_footprints',
-                              serializer_class=LeaseBuildingFootprintSerializer, validated_data=building_footprints)
+        instance_replace_related(instance=instance, instance_name='lease', related_name='building_footprints',
+                                 serializer_class=LeaseBuildingFootprintSerializer, validated_data=building_footprints)
 
-        lease_replace_related(lease=instance, related_name='decisions',
-                              serializer_class=DecisionSerializer, validated_data=decisions)
+        instance_replace_related(instance=instance, instance_name='lease', related_name='decisions',
+                                 serializer_class=DecisionSerializer, validated_data=decisions)
 
-        lease_replace_related(lease=instance, related_name='real_property_units',
-                              serializer_class=LeaseRealPropertyUnitSerializer, validated_data=real_property_units)
+        instance_replace_related(instance=instance, instance_name='lease', related_name='real_property_units',
+                                 serializer_class=LeaseRealPropertyUnitSerializer, validated_data=real_property_units)
 
-        lease_replace_related(lease=instance, related_name='rents',
-                              serializer_class=RentSerializer, validated_data=rents)
+        instance_replace_related(instance=instance, instance_name='lease', related_name='rents',
+                                 serializer_class=RentSerializer, validated_data=rents)
 
-        lease_replace_related(lease=instance, related_name='tenants', serializer_class=TenantCreateUpdateSerializer,
-                              validated_data=tenants)
+        instance_replace_related(instance=instance, instance_name='lease', related_name='tenants',
+                                 serializer_class=TenantCreateUpdateSerializer, validated_data=tenants)
+
+        instance_replace_related(instance=instance, instance_name='lease', related_name='areas',
+                                 serializer_class=AreaSerializer, validated_data=areas)
+
+        instance_replace_related(instance=instance, instance_name='lease', related_name='notes',
+                                 serializer_class=NoteSerializer, validated_data=notes)
 
         instance.create_identifier()
 
@@ -285,29 +341,44 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         real_property_units = validated_data.pop('real_property_units', None)
         rents = validated_data.pop('rents', None)
         tenants = validated_data.pop('tenants', None)
+        areas = validated_data.pop('areas', None)
+        notes = validated_data.pop('notes', None)
 
         instance = super().update(instance, validated_data)
 
         if building_footprints:
-            lease_replace_related(lease=instance, related_name='building_footprints',
-                                  serializer_class=LeaseBuildingFootprintSerializer, validated_data=building_footprints)
+            instance_replace_related(instance=instance, related_name='building_footprints',
+                                     serializer_class=LeaseBuildingFootprintSerializer,
+                                     validated_data=building_footprints)
 
         if decisions:
-            lease_create_or_update_related(lease=instance, related_name='decisions',
-                                           serializer_class=DecisionSerializer, validated_data=decisions)
+            instance_create_or_update_related(instance=instance, instance_name='lease', related_name='decisions',
+                                              serializer_class=DecisionSerializer, validated_data=decisions)
 
         if real_property_units:
-            lease_replace_related(lease=instance, related_name='real_property_units',
-                                  serializer_class=LeaseRealPropertyUnitSerializer, validated_data=real_property_units)
+            instance_replace_related(instance=instance, instance_name='lease', related_name='real_property_units',
+                                     serializer_class=LeaseRealPropertyUnitSerializer,
+                                     validated_data=real_property_units)
 
         if rents:
-            lease_create_or_update_related(lease=instance, related_name='rents', serializer_class=RentSerializer,
-                                           validated_data=rents)
+            instance_create_or_update_related(instance=instance, instance_name='lease', related_name='rents',
+                                              serializer_class=RentSerializer,
+                                              validated_data=rents)
 
         if tenants:
-            lease_create_or_update_related(lease=instance, related_name='tenants',
-                                           serializer_class=TenantCreateUpdateSerializer,
-                                           validated_data=tenants)
+            instance_create_or_update_related(instance=instance, instance_name='lease', related_name='tenants',
+                                              serializer_class=TenantCreateUpdateSerializer,
+                                              validated_data=tenants)
+
+        if areas:
+            instance_create_or_update_related(instance=instance, instance_name='lease', related_name='areas',
+                                              serializer_class=AreaSerializer,
+                                              validated_data=areas)
+
+        if notes:
+            instance_create_or_update_related(instance=instance, instance_name='lease', related_name='notes',
+                                              serializer_class=NoteSerializer,
+                                              validated_data=notes)
 
         instance.create_identifier()
 

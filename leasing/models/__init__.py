@@ -1,16 +1,19 @@
 from .application import Application
+from .area import Area
 from .building_footprint import ApplicationBuildingFootprint, LeaseBuildingFootprint
 from .contact import Contact
 from .decision import Decision
 from .invoice import Invoice
 from .lease import (
     Lease, LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
+from .note import Note
 from .rent import Rent
 from .tenant import Tenant
 
 __all__ = [
     'Application',
     'ApplicationBuildingFootprint',
+    'Area',
     'Contact',
     'Decision',
     'Invoice',
@@ -21,6 +24,7 @@ __all__ = [
     'LeaseIdentifier',
     'LeaseRealPropertyUnit',
     'LeaseRealPropertyUnitAddress',
+    'Note',
     'Rent',
     'Tenant',
 ]

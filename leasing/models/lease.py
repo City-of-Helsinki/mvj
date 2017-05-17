@@ -51,6 +51,9 @@ class Lease(TimestampedModelMixin):
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
+    areas = models.ManyToManyField('leasing.Area', blank=True)
+    notes = models.ManyToManyField('leasing.Note', blank=True)
+
     def __str__(self):
         return "id:{} identifier:{}".format(self.id, self.identifier)
 

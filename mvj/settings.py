@@ -10,7 +10,7 @@ env = environ.Env(
     SECRET_KEY=(str, ''),
     ALLOWED_HOSTS=(list, []),
     ADMINS=(list, []),
-    DATABASE_URL=(str, 'postgres://mvj:mvj@localhost/mvj'),
+    DATABASE_URL=(str, 'postgis://mvj:mvj@localhost/mvj'),
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
@@ -67,12 +67,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'crispy_forms',
     'django_filters',
     'rest_framework',
-    'corsheaders',
+    'rest_framework_gis',
     'rest_framework_swagger',
+    'corsheaders',
 
     'leasing',
     'users',
@@ -126,6 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'DEFAULT_METADATA_CLASS': 'leasing.metadata.FieldsMetadata',
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
