@@ -8,7 +8,7 @@ cache: pip
 env:
   global:
     - SECRET_KEY=xxx
-    - DATABASE_URL=postgres://postgres:@localhost/mvj
+    - DATABASE_URL=postgis://postgres:@localhost/mvj
 
 python:
   - "3.4"
@@ -20,7 +20,8 @@ install:
   - pip install -r requirements.txt -r requirements-dev.txt
 
 before_script:
-  - psql -c 'create database mvj;' -U postgres
+  - psql -U postgres -c 'create database mvj;'
+  - psql -U postgres -c "create extension postgis;"
 
 script:
   - flake8
