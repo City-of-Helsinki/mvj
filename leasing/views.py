@@ -1,11 +1,11 @@
 import requests
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseServerError, StreamingHttpResponse
 from requests.auth import HTTPBasicAuth
 from rest_framework import status, viewsets
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import api_view, detail_route, list_route, permission_classes
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -135,7 +135,8 @@ class ContactViewSet(viewsets.ModelViewSet):
     search_fields = ('email', 'name', 'organization_name')
 
 
-@login_required
+@api_view()
+@permission_classes([IsAuthenticated])
 def ktj_proxy(request, base_type, print_type):
     required_settings = ('KTJ_PRINT_ROOT_URL', 'KTJ_PRINT_USERNAME', 'KTJ_PRINT_PASSWORD')
 
