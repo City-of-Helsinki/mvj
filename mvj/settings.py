@@ -14,6 +14,9 @@ env = environ.Env(
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
+    KTJ_PRINT_ROOT_URL=(str, 'https://ktjws.nls.fi'),
+    KTJ_PRINT_USERNAME=(str, ''),
+    KTJ_PRINT_PASSWORD=(str, ''),
 )
 
 env_file = project_root('.env')
@@ -132,6 +135,10 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+KTJ_PRINT_ROOT_URL = env.str('KTJ_PRINT_ROOT_URL')
+KTJ_PRINT_USERNAME = env.str('KTJ_PRINT_USERNAME')
+KTJ_PRINT_PASSWORD = env.str('KTJ_PRINT_PASSWORD')
 
 local_settings = project_root('local_settings.py')
 if os.path.exists(local_settings):

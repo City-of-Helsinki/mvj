@@ -6,7 +6,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 from leasing.views import (
     ApplicationViewSet, AreaViewSet, ContactViewSet, DecisionViewSet, InvoiceViewSet, LeaseViewSet, NoteViewSet,
-    RentViewSet, TenantViewSet)
+    RentViewSet, TenantViewSet, ktj_proxy)
 from users.views import UserViewSet
 
 router = routers.DefaultRouter()
@@ -23,6 +23,7 @@ router.register(r'user', UserViewSet)
 
 urlpatterns = [
     url(r'^v1/', include(router.urls, namespace="v1")),
+    url(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include(rest_framework.urls, namespace='rest_framework')),
     url(r'^docs/', get_swagger_view(title='MVJ API')),
