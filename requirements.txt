@@ -13,7 +13,7 @@ django-enumfields==0.9.0
 django-environ==0.4.3
 django-filter==1.0.3
 django-rest-swagger==2.1.2
-django==1.11.1            # via django-environ
+django==1.11.1
 djangorestframework-gis==0.11.1
 djangorestframework==3.6.3
 itypes==1.1.0             # via coreapi
@@ -24,7 +24,7 @@ psycopg2==2.7.1
 python-dateutil==2.6.0
 pytz==2017.2              # via django
 raven==6.0.0
-requests==2.14.2          # via coreapi
+requests==2.14.2
 simplejson==3.10.0        # via django-rest-swagger
 six==1.10.0               # via django-environ, python-dateutil
 uritemplate==3.0.0        # via coreapi
