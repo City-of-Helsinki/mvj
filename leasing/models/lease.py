@@ -9,7 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import (
-    LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, LeaseConditionType, LeaseState)
+    LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, DetailedPlanState,
+    LeaseConditionType, LeaseState, PlotDivisionState)
 from leasing.models import Application
 from leasing.models.mixins import TimestampedModelMixin
 
@@ -142,6 +143,26 @@ class LeaseRealPropertyUnit(models.Model):
 class LeaseRealPropertyUnitAddress(models.Model):
     lease_property_unit = models.ForeignKey(LeaseRealPropertyUnit, related_name="addresses", on_delete=models.CASCADE)
     address = models.CharField(verbose_name=_("Address"), null=True, blank=True, max_length=2048)
+
+
+class LeaseRealPropertyUnitDetailedPlan(models.Model):
+    lease_property_unit = models.ForeignKey(LeaseRealPropertyUnit, related_name="detailed_plans",
+                                            on_delete=models.CASCADE)
+    identification_number = models.CharField(verbose_name=_("Detailed plan identification number"), null=True,
+                                             blank=True, max_length=255)
+    description = models.CharField(verbose_name=_("Description"), null=True, blank=True, max_length=2048)
+    date = models.DateField(verbose_name=_("Date"), null=True, blank=True)
+    state = EnumField(DetailedPlanState, verbose_name=_("State"), max_length=255)
+
+
+class LeaseRealPropertyUnitPlotDivision(models.Model):
+    lease_property_unit = models.ForeignKey(LeaseRealPropertyUnit, related_name="plot_divisions",
+                                            on_delete=models.CASCADE)
+    identification_number = models.CharField(verbose_name=_("Plot division identification number"), null=True,
+                                             blank=True, max_length=255)
+    description = models.CharField(verbose_name=_("Description"), null=True, blank=True, max_length=2048)
+    date = models.DateField(verbose_name=_("Date"), null=True, blank=True)
+    state = EnumField(PlotDivisionState, verbose_name=_("State"), max_length=255)
 
 
 class LeaseAdditionalField(models.Model):

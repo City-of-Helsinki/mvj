@@ -26,26 +26,45 @@ class ApplicationType(Enum):
         OTHER = _('Other')
 
 
-class ShortTermReason(Enum):
-    EARTHWORKS = 'earthworks'
-    BUILDING_PERMIT = 'building_permit'
+class DecisionType(Enum):
+    RENT_REVIEW = 'rent_review'
+    TERM_CHANGE = 'term_change'
+    CONTRACT_CHANGE = 'contract_change'
+    CONSTRUCTION_DRAFT_REVIEW = 'construction_draft_overview'
+    OTHER = 'other'
 
     class Labels:
-        EARTHWORKS = _('For starting the earthworks')
-        BUILDING_PERMIT = _('For applying for a building permit')
+        RENT_REVIEW = _('Rent review')
+        TERM_CHANGE = _('Term change')
+        CONTRACT_CHANGE = _('Contract change')
+        CONSTRUCTION_DRAFT_REVIEW = _('Construction Draft Overview')
+        OTHER = _('Other')
 
 
-class LeaseState(Enum):
-    DRAFT = 'draft'
-    ARCHIVED = 'archived'
-    SENT = 'sent'
+class DetailedPlanState(Enum):
+    PROPOSAL = 'proposal'
     APPROVED = 'approved'
+    CONFIRMED = 'confirmed'
+    DRAFT = 'draft'
+    FINAL_DECISION = 'final_decision'
 
     class Labels:
-        DRAFT = _('Draft')
-        ARCHIVED = _('Archived')
-        SENT = _('Sent')
+        PROPOSAL = _('Proposal')
         APPROVED = _('Approved')
+        CONFIRMED = _('Confirmed')
+        DRAFT = _('Draft')
+        FINAL_DECISION = _('Final decision')
+
+
+class InvoiceState(Enum):
+    PENDING = 'pending'
+    SENT = 'sent'
+    PAID = 'paid'
+
+    class Labels:
+        PENDING = _('Pending')
+        SENT = _('Sent')
+        PAID = _('Paid')
 
 
 class LeaseConditionType(Enum):
@@ -63,19 +82,32 @@ class LeaseConditionType(Enum):
         OTHER = _('Other')
 
 
-class DecisionType(Enum):
-    RENT_REVIEW = 'rent_review'
-    TERM_CHANGE = 'term_change'
-    CONTRACT_CHANGE = 'contract_change'
-    CONSTRUCTION_DRAFT_REVIEW = 'construction_draft_overview'
-    OTHER = 'other'
+class LeaseState(Enum):
+    DRAFT = 'draft'
+    ARCHIVED = 'archived'
+    SENT = 'sent'
+    APPROVED = 'approved'
 
     class Labels:
-        RENT_REVIEW = _('Rent review')
-        TERM_CHANGE = _('Term change')
-        CONTRACT_CHANGE = _('Contract change')
-        CONSTRUCTION_DRAFT_REVIEW = _('Construction Draft Overview')
-        OTHER = _('Other')
+        DRAFT = _('Draft')
+        ARCHIVED = _('Archived')
+        SENT = _('Sent')
+        APPROVED = _('Approved')
+
+
+class PlotDivisionState(Enum):
+    PROPOSAL = 'proposal'
+    APPROVED = 'approved'
+    CONFIRMED = 'confirmed'
+    DRAFT = 'draft'
+    FINAL_DECISION = 'final_decision'
+
+    class Labels:
+        PROPOSAL = _('Proposal')
+        APPROVED = _('Approved')
+        CONFIRMED = _('Confirmed')
+        DRAFT = _('Draft')
+        FINAL_DECISION = _('Final decision')
 
 
 class RentType(Enum):
@@ -93,15 +125,13 @@ class RentType(Enum):
         MANUAL = _('Manual')
 
 
-class InvoiceState(Enum):
-    PENDING = 'pending'
-    SENT = 'sent'
-    PAID = 'paid'
+class ShortTermReason(Enum):
+    EARTHWORKS = 'earthworks'
+    BUILDING_PERMIT = 'building_permit'
 
     class Labels:
-        PENDING = _('Pending')
-        SENT = _('Sent')
-        PAID = _('Paid')
+        EARTHWORKS = _('For starting the earthworks')
+        BUILDING_PERMIT = _('For applying for a building permit')
 
 
 LEASE_IDENTIFIER_TYPE = (

@@ -5,8 +5,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from leasing.models import (
-    Area, Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, Note,
-    Rent, Tenant)
+    Area, Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress,
+    LeaseRealPropertyUnitDetailedPlan, LeaseRealPropertyUnitPlotDivision, Note, Rent, Tenant)
 from users.serializers import UserSerializer
 
 from .models import Application, ApplicationBuildingFootprint, Lease
@@ -236,30 +236,65 @@ class LeaseRealPropertyUnitAddressSerializer(serializers.ModelSerializer):
         fields = ('address',)
 
 
+class LeaseRealPropertyUnitDetailedPlanSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = LeaseRealPropertyUnitDetailedPlan
+        fields = ('identification_number', 'description', 'date', 'state')
+
+
+class LeaseRealPropertyUnitPlotDivisionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = LeaseRealPropertyUnitPlotDivision
+        fields = ('identification_number', 'description', 'date', 'state')
+
+
 class LeaseRealPropertyUnitSerializer(serializers.ModelSerializer):
     addresses = LeaseRealPropertyUnitAddressSerializer(many=True, required=False, allow_null=True)
+    detailed_plans = LeaseRealPropertyUnitDetailedPlanSerializer(many=True, required=False, allow_null=True)
+    plot_divisions = LeaseRealPropertyUnitPlotDivisionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = LeaseRealPropertyUnit
-        fields = ('identification_number', 'name', 'area', 'registry_date', 'addresses')
+        fields = ('identification_number', 'name', 'area', 'registry_date', 'addresses', 'detailed_plans',
+                  'plot_divisions')
 
     def create(self, validated_data):
         addresses = validated_data.pop('addresses', [])
+        detailed_plans = validated_data.pop('detailed_plans', [])
+        plot_divisions = validated_data.pop('plot_divisions', [])
 
         instance = super().create(validated_data)
 
-        for address in addresses:
-            LeaseRealPropertyUnitAddress.objects.create(lease_property_unit=instance, address=address['address'])
+        instance_replace_related(instance=instance, instance_name='lease_property_unit', related_name='addresses',
+                                 serializer_class=LeaseRealPropertyUnitAddressSerializer, validated_data=addresses)
+        instance_replace_related(instance=instance, instance_name='lease_property_unit', related_name='detailed_plans',
+                                 serializer_class=LeaseRealPropertyUnitDetailedPlanSerializer,
+                                 validated_data=detailed_plans)
+        instance_replace_related(instance=instance, instance_name='lease_property_unit', related_name='plot_divisions',
+                                 serializer_class=LeaseRealPropertyUnitPlotDivisionSerializer,
+                                 validated_data=plot_divisions)
 
         return instance
 
     def update(self, instance, validated_data):
         addresses = validated_data.pop('addresses', [])
+        detailed_plans = validated_data.pop('detailed_plans', [])
+        plot_divisions = validated_data.pop('plot_divisions', [])
 
-        instance.addresses.all().delete()
+        instance = super().update(instance, validated_data)
 
-        for address in addresses:
-            LeaseRealPropertyUnitAddress.objects.create(lease_property_unit=instance, address=address['address'])
+        instance_replace_related(instance=instance, instance_name='lease_property_unit', related_name='addresses',
+                                 serializer_class=LeaseRealPropertyUnitAddressSerializer, validated_data=addresses)
+
+        instance_replace_related(instance=instance, instance_name='lease_property_unit',
+                                 related_name='detailed_plans',
+                                 serializer_class=LeaseRealPropertyUnitDetailedPlanSerializer,
+                                 validated_data=detailed_plans)
+
+        instance_replace_related(instance=instance, instance_name='lease_property_unit',
+                                 related_name='plot_divisions',
+                                 serializer_class=LeaseRealPropertyUnitPlotDivisionSerializer,
+                                 validated_data=plot_divisions)
 
         return instance
 

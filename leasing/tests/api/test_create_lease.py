@@ -20,7 +20,29 @@ def test_create_lease(contact_factory):
             "identification_number": "123-456-789-123",
             "name": null,
             "area": 2000,
-            "registry_date": "1999-01-20"
+            "registry_date": "1999-01-20",
+            "detailed_plans": [
+                {
+                    "identification_number": "DP-12345",
+                    "description": "Detailed plan 1",
+                    "date": "2017-05-22",
+                    "state": "proposal"
+                }
+            ],
+            "plot_divisions": [
+                {
+                    "identification_number": "PD-1",
+                    "description": "Plot division 1",
+                    "date": null,
+                    "state": "draft"
+                },
+                {
+                    "identification_number": "PD-2",
+                    "description": "Plot division 2",
+                    "date": "2016-01-01",
+                    "state": "final_decision"
+                }
+            ]
         },
         {
             "identification_number": "123-456-789-456",
@@ -72,8 +94,15 @@ def test_create_lease(contact_factory):
 
     assert len(instance.real_property_units.all()) == 2
 
+    rpu = instance.real_property_units.filter(identification_number="123-456-789-123").first()
+    assert len(rpu.addresses.all()) == 0
+    assert len(rpu.detailed_plans.all()) == 1
+    assert len(rpu.plot_divisions.all()) == 2
+
     rpu = instance.real_property_units.filter(identification_number="123-456-789-456").first()
     assert len(rpu.addresses.all()) == 2
+    assert len(rpu.detailed_plans.all()) == 0
+    assert len(rpu.plot_divisions.all()) == 0
 
     assert len(instance.building_footprints.all()) == 2
     assert len(instance.tenants.all()) == 1
