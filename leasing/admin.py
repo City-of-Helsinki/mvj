@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from leasing.models import Contact, Decision, Invoice, Tenant
 from leasing.models.building_footprint import LeaseBuildingFootprint
 from leasing.models.lease import (
-    LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress)
+    LeaseAdditionalField, LeaseCondition, LeaseIdentifier, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress,
+    LeaseRealPropertyUnitDetailedPlan, LeaseRealPropertyUnitPlotDivision)
 
 from .models import Application, ApplicationBuildingFootprint, Area, Lease, Note, Rent
 
@@ -114,9 +115,20 @@ class LeaseRealPropertyUnitAddressInline(admin.TabularInline):
     extra = 0
 
 
+class LeaseRealPropertyUnitDetailedPlanInline(admin.TabularInline):
+    model = LeaseRealPropertyUnitDetailedPlan
+    extra = 0
+
+
+class LeaseRealPropertyUnitPlotDivisionInline(admin.TabularInline):
+    model = LeaseRealPropertyUnitPlotDivision
+    extra = 0
+
+
 class LeaseRealPropertyUnitAdmin(admin.ModelAdmin):
     model = LeaseRealPropertyUnit
-    inlines = [LeaseRealPropertyUnitAddressInline]
+    inlines = [LeaseRealPropertyUnitAddressInline, LeaseRealPropertyUnitDetailedPlanInline,
+               LeaseRealPropertyUnitPlotDivisionInline]
 
 
 admin.site.register(LeaseRealPropertyUnit, LeaseRealPropertyUnitAdmin)
