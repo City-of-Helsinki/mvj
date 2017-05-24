@@ -5,8 +5,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from leasing.models import (
-    Area, Contact, Decision, Invoice, LeaseBuildingFootprint, LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress,
-    LeaseRealPropertyUnitDetailedPlan, LeaseRealPropertyUnitPlotDivision, Note, Rent, Tenant)
+    Area, Contact, Decision, Invoice, LeaseAdditionalField, LeaseBuildingFootprint, LeaseCondition,
+    LeaseRealPropertyUnit, LeaseRealPropertyUnitAddress, LeaseRealPropertyUnitDetailedPlan,
+    LeaseRealPropertyUnitPlotDivision, Note, Rent, Tenant)
 from users.serializers import UserSerializer
 
 from .models import Application, ApplicationBuildingFootprint, Lease
@@ -230,6 +231,18 @@ class TenantCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ('id', 'contact', 'contact_contact', 'billing_contact', 'share')
 
 
+class LeaseAdditionalFieldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LeaseAdditionalField
+        fields = ('name', 'value', 'date', 'requires_review', 'reviewed_by', 'reviewed_at')
+
+
+class LeaseConditionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = LeaseCondition
+        fields = ('type', 'description', 'date')
+
+
 class LeaseRealPropertyUnitAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaseRealPropertyUnitAddress
@@ -299,6 +312,14 @@ class LeaseRealPropertyUnitSerializer(serializers.ModelSerializer):
         return instance
 
 
+class LeaseRentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Rent
+        fields = ('id', 'type', 'use', 'start_date', 'end_date', 'amount')
+
+
 class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     application = ApplicationSerializer(required=False, allow_null=True)
@@ -306,11 +327,13 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     building_footprints = LeaseBuildingFootprintSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
-    rents = RentSerializer(many=True, required=False, allow_null=True)
+    rents = LeaseRentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(source='identifier_string')
     areas = AreaSerializer(many=True, required=False)
     notes = NoteSerializer(many=True, required=False)
+    additional_fields = LeaseAdditionalFieldSerializer(many=True, required=False, allow_null=True)
+    conditions = LeaseConditionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -324,11 +347,13 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
     building_footprints = LeaseBuildingFootprintSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
-    rents = RentSerializer(many=True, required=False, allow_null=True)
+    rents = LeaseRentSerializer(many=True, required=False, allow_null=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(source='identifier_string')
     areas = AreaSerializer(many=True, required=False, allow_null=True)
     notes = NoteSerializer(many=True, required=False, allow_null=True)
+    additional_fields = LeaseAdditionalFieldSerializer(many=True, required=False, allow_null=True)
+    conditions = LeaseConditionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -342,6 +367,8 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         tenants = validated_data.pop('tenants', [])
         areas = validated_data.pop('areas', [])
         notes = validated_data.pop('notes', [])
+        additional_fields = validated_data.pop('additional_fields', [])
+        conditions = validated_data.pop('conditions', [])
 
         instance = super().create(validated_data)
 
@@ -355,7 +382,7 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
                                  serializer_class=LeaseRealPropertyUnitSerializer, validated_data=real_property_units)
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='rents',
-                                 serializer_class=RentSerializer, validated_data=rents)
+                                 serializer_class=LeaseRentSerializer, validated_data=rents)
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='tenants',
                                  serializer_class=TenantCreateUpdateSerializer, validated_data=tenants)
@@ -365,6 +392,12 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='notes',
                                  serializer_class=NoteSerializer, validated_data=notes)
+
+        instance_replace_related(instance=instance, instance_name='lease', related_name='additional_fields',
+                                 serializer_class=LeaseAdditionalFieldSerializer, validated_data=additional_fields)
+
+        instance_replace_related(instance=instance, instance_name='lease', related_name='conditions',
+                                 serializer_class=LeaseConditionSerializer, validated_data=conditions)
 
         instance.create_identifier()
 
@@ -378,6 +411,8 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         tenants = validated_data.pop('tenants', None)
         areas = validated_data.pop('areas', None)
         notes = validated_data.pop('notes', None)
+        additional_fields = validated_data.pop('additional_fields', [])
+        conditions = validated_data.pop('conditions', [])
 
         instance = super().update(instance, validated_data)
 
@@ -397,7 +432,7 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
 
         if rents:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='rents',
-                                              serializer_class=RentSerializer,
+                                              serializer_class=LeaseRentSerializer,
                                               validated_data=rents)
 
         if tenants:
@@ -414,6 +449,18 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='notes',
                                               serializer_class=NoteSerializer,
                                               validated_data=notes)
+
+        if additional_fields:
+            instance_create_or_update_related(instance=instance, instance_name='lease',
+                                              related_name='additional_fields',
+                                              serializer_class=LeaseAdditionalFieldSerializer,
+                                              validated_data=additional_fields)
+
+        if conditions:
+            instance_create_or_update_related(instance=instance, instance_name='lease',
+                                              related_name='conditions',
+                                              serializer_class=LeaseConditionSerializer,
+                                              validated_data=conditions)
 
         instance.create_identifier()
 
