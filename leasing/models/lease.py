@@ -66,6 +66,9 @@ class Lease(TimestampedModelMixin):
 
     @transaction.atomic
     def create_identifier(self):
+        if self.identifier_id:
+            return
+
         if not self.identifier_type or not self.identifier_municipality or not self.identifier_district:
             return
 

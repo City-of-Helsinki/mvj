@@ -132,6 +132,13 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     'DEFAULT_METADATA_CLASS': 'leasing.metadata.FieldsMetadata',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # Render the browsable API without the html form because the form uses RelatedField.get_choices. Which
+        # needs that serializers to_representation returns a hashable value. We return the whole instance
+        # which is not hashable.
+        'leasing.renderers.BrowsableAPIRendererWithoutHtmlForm',
+    ],
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

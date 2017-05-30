@@ -77,8 +77,16 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
     def __init__(self, *args, **kwargs):
         self.instance_class = kwargs.pop('instance_class', None)
+        self.related_serializer = kwargs.pop('related_serializer', None)
 
         super().__init__(**kwargs)
+
+    def to_representation(self, obj):
+        if self.related_serializer and hasattr(obj, 'pk') and obj.pk:
+            obj = self.get_queryset().get(pk=obj.pk)
+            return self.related_serializer(obj, context=self.context).to_representation(obj)
+
+        return super().to_representation(obj)
 
     def to_internal_value(self, value):
         pk = value
@@ -220,11 +228,14 @@ class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer)
 
 class TenantCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all())
+    contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
+                                                 related_serializer=ContactSerializer)
     contact_contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                         required=False, allow_null=True)
+                                                         required=False, allow_null=True,
+                                                         related_serializer=ContactSerializer)
     billing_contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                         required=False, allow_null=True)
+                                                         required=False, allow_null=True,
+                                                         related_serializer=ContactSerializer)
 
     class Meta:
         model = Tenant
@@ -342,8 +353,10 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
 class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     application = InstanceDictPrimaryKeyRelatedField(instance_class=Application, queryset=Application.objects.all(),
-                                                     required=False, allow_null=True)
-    preparer = InstanceDictPrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True)
+                                                     required=False, allow_null=True,
+                                                     related_serializer=ApplicationSerializer)
+    preparer = InstanceDictPrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True,
+                                                  related_serializer=UserSerializer)
     building_footprints = LeaseBuildingFootprintSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
