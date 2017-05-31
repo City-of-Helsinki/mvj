@@ -175,7 +175,7 @@ class LeaseAdditionalField(models.Model):
     date = models.DateField(verbose_name=_("Date"), null=True, blank=True)
     requires_review = models.BooleanField(verbose_name=_("Requires review?"), default=False)
     reviewed_by = models.ForeignKey(User, null=True, blank=True)
-    reviewed_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time reviewed"))
+    reviewed_at = models.DateTimeField(verbose_name=_("Time reviewed"), null=True, blank=True)
 
 
 class LeaseCondition(models.Model):
