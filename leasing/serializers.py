@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from enumfields.drf import EnumSupportSerializerMixin
@@ -38,9 +40,11 @@ def instance_replace_related(instance=None, instance_name=None, related_name=Non
 
 def instance_create_or_update_related(instance=None, instance_name=None, related_name=None, serializer_class=None,
                                       validated_data=None):
+    manager = getattr(instance, related_name)
+    new_items = set()
+
     for item in validated_data:
         pk = item.pop('id', None)
-        manager = getattr(instance, related_name)
 
         serializer_params = {
             'data': item,
@@ -66,8 +70,16 @@ def instance_create_or_update_related(instance=None, instance_name=None, related
             instance_name: instance
         })
 
-        if item_instance and hasattr(manager, 'add'):
-            manager.add(item_instance)
+        new_items.add(item_instance)
+
+    if new_items and hasattr(manager, 'add'):
+        existing_items = set(manager.all())
+
+        for item in existing_items.difference(new_items):
+            manager.remove(item)
+
+        for item in new_items.difference(existing_items):
+            manager.add(item)
 
 
 class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -77,8 +89,16 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
     def __init__(self, *args, **kwargs):
         self.instance_class = kwargs.pop('instance_class', None)
+        self.related_serializer = kwargs.pop('related_serializer', None)
 
         super().__init__(**kwargs)
+
+    def to_representation(self, obj):
+        if self.related_serializer and hasattr(obj, 'pk') and obj.pk:
+            obj = self.get_queryset().get(pk=obj.pk)
+            return self.related_serializer(obj, context=self.context).to_representation(obj)
+
+        return super().to_representation(obj)
 
     def to_internal_value(self, value):
         pk = value
@@ -91,9 +111,22 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
         return super().to_internal_value(pk)
 
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+
+        if queryset is None:
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict((item.pk, self.display_value(item)) for item in queryset)
+
 
 class NoteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    author = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(), allow_null=True,
+                                                required=False, related_serializer=UserSerializer)
 
     class Meta:
         model = Note
@@ -151,16 +184,16 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
 
         instance.building_footprints.all().delete()
 
-        if building_footprints:
+        if building_footprints is not None:
             instance_replace_related(instance=instance, instance_name='application', related_name='building_footprints',
                                      serializer_class=ApplicationBuildingFootprintSerializer,
                                      validated_data=building_footprints)
 
-        if areas:
+        if areas is not None:
             instance_create_or_update_related(instance=instance, instance_name='application', related_name='areas',
                                               serializer_class=AreaSerializer, validated_data=areas)
 
-        if notes:
+        if notes is not None:
             instance_create_or_update_related(instance=instance, instance_name='application', related_name='notes',
                                               serializer_class=NoteSerializer, validated_data=notes)
 
@@ -220,11 +253,14 @@ class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer)
 
 class TenantCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all())
+    contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
+                                                 related_serializer=ContactSerializer)
     contact_contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                         required=False, allow_null=True)
+                                                         required=False, allow_null=True,
+                                                         related_serializer=ContactSerializer)
     billing_contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                         required=False, allow_null=True)
+                                                         required=False, allow_null=True,
+                                                         related_serializer=ContactSerializer)
 
     class Meta:
         model = Tenant
@@ -342,8 +378,10 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
 class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     application = InstanceDictPrimaryKeyRelatedField(instance_class=Application, queryset=Application.objects.all(),
-                                                     required=False, allow_null=True)
-    preparer = InstanceDictPrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True)
+                                                     required=False, allow_null=True,
+                                                     related_serializer=ApplicationSerializer)
+    preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(), allow_null=True,
+                                                  related_serializer=UserSerializer)
     building_footprints = LeaseBuildingFootprintSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     real_property_units = LeaseRealPropertyUnitSerializer(many=True, required=False, allow_null=True)
@@ -411,56 +449,52 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         tenants = validated_data.pop('tenants', None)
         areas = validated_data.pop('areas', None)
         notes = validated_data.pop('notes', None)
-        additional_fields = validated_data.pop('additional_fields', [])
-        conditions = validated_data.pop('conditions', [])
+        additional_fields = validated_data.pop('additional_fields', None)
+        conditions = validated_data.pop('conditions', None)
 
         instance = super().update(instance, validated_data)
 
-        if building_footprints:
+        if building_footprints is not None:
             instance_replace_related(instance=instance, related_name='building_footprints',
                                      serializer_class=LeaseBuildingFootprintSerializer,
                                      validated_data=building_footprints)
 
-        if decisions:
+        if decisions is not None:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='decisions',
                                               serializer_class=DecisionSerializer, validated_data=decisions)
 
-        if real_property_units:
+        if real_property_units is not None:
             instance_replace_related(instance=instance, instance_name='lease', related_name='real_property_units',
                                      serializer_class=LeaseRealPropertyUnitSerializer,
                                      validated_data=real_property_units)
 
-        if rents:
+        if rents is not None:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='rents',
                                               serializer_class=LeaseRentSerializer,
                                               validated_data=rents)
 
-        if tenants:
+        if tenants is not None:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='tenants',
                                               serializer_class=TenantCreateUpdateSerializer,
                                               validated_data=tenants)
 
-        if areas:
+        if areas is not None:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='areas',
                                               serializer_class=AreaSerializer,
                                               validated_data=areas)
 
-        if notes:
+        if notes is not None:
             instance_create_or_update_related(instance=instance, instance_name='lease', related_name='notes',
                                               serializer_class=NoteSerializer,
                                               validated_data=notes)
 
-        if additional_fields:
-            instance_create_or_update_related(instance=instance, instance_name='lease',
-                                              related_name='additional_fields',
-                                              serializer_class=LeaseAdditionalFieldSerializer,
-                                              validated_data=additional_fields)
+        if additional_fields is not None:
+            instance_replace_related(instance=instance, instance_name='lease', related_name='additional_fields',
+                                     serializer_class=LeaseAdditionalFieldSerializer, validated_data=additional_fields)
 
-        if conditions:
-            instance_create_or_update_related(instance=instance, instance_name='lease',
-                                              related_name='conditions',
-                                              serializer_class=LeaseConditionSerializer,
-                                              validated_data=conditions)
+        if conditions is not None:
+            instance_replace_related(instance=instance, instance_name='lease', related_name='conditions',
+                                     serializer_class=LeaseConditionSerializer, validated_data=conditions)
 
         instance.create_identifier()
 
