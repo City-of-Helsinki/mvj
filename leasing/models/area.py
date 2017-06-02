@@ -10,4 +10,4 @@ class Area(TimestampedModelMixin):
     notes = models.ManyToManyField('leasing.Note', blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else ''
