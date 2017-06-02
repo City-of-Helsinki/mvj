@@ -1,6 +1,9 @@
+from xml.dom import minidom
+from xml.etree import ElementTree
+
 import requests
 from django.conf import settings
-from django.http import Http404, HttpResponseServerError, StreamingHttpResponse
+from django.http import Http404, HttpResponse, HttpResponseServerError, StreamingHttpResponse
 from requests.auth import HTTPBasicAuth
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, detail_route, list_route, permission_classes
@@ -81,7 +84,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer
     filter_class = InvoiceFilter
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], permission_classes=[IsAuthenticated])
     def create_invoices(self, request, pk=None):
         """Runs the create_invoices management command"""
         from django.core.management import call_command
@@ -89,6 +92,17 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         call_command('create_invoices')
 
         return Response()
+
+    @list_route(permission_classes=[IsAuthenticated])
+    def laske_xml(self, request, pk=None):
+        root = ElementTree.Element('SBO_SalesOrders')
+
+        for invoice in Invoice.objects.order_by('-created_at'):
+            root.append(invoice.as_laske_xml())
+
+        xml_string = ElementTree.tostring(root)
+
+        return HttpResponse(minidom.parseString(xml_string).toprettyxml(), content_type='text/xml')
 
 
 class NoteViewSet(viewsets.ModelViewSet):
