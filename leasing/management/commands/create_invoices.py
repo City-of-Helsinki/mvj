@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -42,7 +44,7 @@ class Command(BaseCommand):
                     period_start_date=next_billing_period[0],
                     period_end_date=next_billing_period[1],
                     due_date=next_billing_period[0],
-                    amount=amount * float(share['share']),
+                    amount=amount * Decimal(share['share']),
                     billing_contact=contact,
                 )
 

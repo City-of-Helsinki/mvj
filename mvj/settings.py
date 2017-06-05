@@ -145,3 +145,13 @@ if os.path.exists(local_settings):
     with open(local_settings) as fp:
         code = compile(fp.read(), local_settings, 'exec')
     exec(code, globals(), locals())
+
+LASKE_VALUES = {
+    'SenderId': 'ID175',
+    'OrderType': 'ZTY1',
+    'SalesOrg': '8000',
+    'DistributionChannel': '10',
+    'Division': '10',
+    'SalesOffice': '8060',
+    'PMNTTERM': 'Z100',
+}

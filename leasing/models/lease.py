@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
@@ -9,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import (
-    LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE, DetailedPlanState,
-    LeaseConditionType, LeaseState, PlotDivisionState)
+    LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE,
+    LEASE_IDENTIFIER_TYPE_CONTRACT_CODE, DetailedPlanState, LeaseConditionType, LeaseState, PlotDivisionState)
 from leasing.models import Application
 from leasing.models.mixins import TimestampedModelMixin
 
@@ -126,12 +127,34 @@ class Lease(TimestampedModelMixin):
         return None
 
     def get_rent_amount_for_period(self, start_date, end_date):
-        amount = 0.0
+        return sum((
+            rent.get_amount_for_period(start_date, end_date)
+            for rent in self.rents.all()), Decimal(0))
 
-        for rent in self.rents.all():
-            amount += rent.get_amount_for_period(start_date, end_date)
+    def get_contract_number(self):
+        if not self.identifier:
+            return '0000000000'
 
-        return amount
+        return '{:02d}{:01d}{:02d}{:05d}'.format(
+            LEASE_IDENTIFIER_TYPE_CONTRACT_CODE[self.identifier_type] if self.identifier_type else 0,
+            int(self.identifier_municipality),
+            int(self.identifier_district),
+            self.identifier.sequence,
+        )
+
+    def get_year_rent(self):
+        return sum((rent.amount for rent in self.rents.all()), Decimal(0))
+
+    def get_real_property_unit_identifiers(self):
+        return [rpu.identification_number for rpu in self.real_property_units.all()]
+
+    def get_real_property_unit_addresses(self):
+        addresses = []
+
+        for rpu in self.real_property_units.all():
+            addresses.extend([rpua.address for rpua in rpu.addresses.all()])
+
+        return addresses
 
 
 class LeaseRealPropertyUnit(models.Model):
