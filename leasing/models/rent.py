@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -20,10 +22,10 @@ class Rent(TimestampedModelMixin):
         if not self.amount or self.type in (RentType.FREE, RentType.MANUAL) or (
                 (self.start_date and self.start_date > period_end_date) or
                 (self.end_date and self.end_date < period_start_date)):
-            return 0.0
+            return Decimal(0)
 
         if self.type == RentType.ONE_TIME:
-            return float(self.amount)
+            return self.amount
 
         start_date = period_start_date
         end_date = period_end_date
@@ -35,4 +37,4 @@ class Rent(TimestampedModelMixin):
             end_date = self.end_date
 
         # TODO: This calculation is only for demonstration
-        return round((end_date - start_date).days / 30) * float(self.amount)
+        return int(round((end_date - start_date).days / 30)) * self.amount

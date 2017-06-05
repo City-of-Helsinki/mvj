@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
@@ -126,12 +127,9 @@ class Lease(TimestampedModelMixin):
         return None
 
     def get_rent_amount_for_period(self, start_date, end_date):
-        amount = 0.0
-
-        for rent in self.rents.all():
-            amount += rent.get_amount_for_period(start_date, end_date)
-
-        return amount
+        return sum((
+            rent.get_amount_for_period(start_date, end_date)
+            for rent in self.rents.all()), Decimal(0))
 
     def get_contract_number(self):
         if not self.identifier:
@@ -145,12 +143,7 @@ class Lease(TimestampedModelMixin):
         )
 
     def get_year_rent(self):
-        amount = 0.0
-
-        for rent in self.rents.all():
-            amount += float(rent.amount)
-
-        return amount
+        return sum((rent.amount for rent in self.rents.all()), Decimal(0))
 
     def get_real_property_unit_identifiers(self):
         return [rpu.identification_number for rpu in self.real_property_units.all()]
