@@ -1,5 +1,3 @@
-from xml.etree import ElementTree
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -34,62 +32,3 @@ class Contact(TimestampedModelMixin):
             parts.append(self.organization_name)
 
         return ' '.join(parts)
-
-    def as_laske_xml(self, tag_name):
-        root = ElementTree.Element(tag_name)
-        ElementTree.SubElement(root, 'SAPCustomerID')
-        ElementTree.SubElement(root, 'CustomerID')
-        customer_yid = ElementTree.SubElement(root, 'CustomerYID')
-        customer_yid.text = self.organization_id if self.organization_id else None
-        ElementTree.SubElement(root, 'CustomerOVT')
-        ElementTree.SubElement(root, 'TemporaryAddress1')
-        ElementTree.SubElement(root, 'TemporaryAddress2')
-        ElementTree.SubElement(root, 'TemporaryPOCode')
-        ElementTree.SubElement(root, 'TemporaryPOCity')
-        ElementTree.SubElement(root, 'TemporaryPOPostalcode')
-        ElementTree.SubElement(root, 'TemporaryCity')
-        ElementTree.SubElement(root, 'TemporaryPostalcode')
-        priority_name1 = ElementTree.SubElement(root, 'PriorityName1')
-        if self.organization_name:
-            priority_name1.text = self.organization_name
-        elif self.name:
-            priority_name1.text = self.name
-        ElementTree.SubElement(root, 'PriorityName2')
-        ElementTree.SubElement(root, 'PriorityName3')
-        ElementTree.SubElement(root, 'PriorityName4')
-        priority_address1 = ElementTree.SubElement(root, 'PriorityAddress1')
-        if self.organization_address:
-            priority_address1.text = self.organization_address
-        elif self.address:
-            priority_address1.text = self.address
-        ElementTree.SubElement(root, 'PriorityAddress2')
-        ElementTree.SubElement(root, 'PriorityPOCode')
-        ElementTree.SubElement(root, 'PriorityPOCity')
-        ElementTree.SubElement(root, 'PriorityPOPostalcode')
-        ElementTree.SubElement(root, 'PriorityCity')
-        ElementTree.SubElement(root, 'PriorityPostalcode')
-        ElementTree.SubElement(root, 'InfoCustomerID')
-        info_customer_yid = ElementTree.SubElement(root, 'InfoCustomerYID')
-        info_customer_yid.text = self.organization_id if self.organization_id else None
-        ElementTree.SubElement(root, 'InfoCustomerOVT')
-        info_name1 = ElementTree.SubElement(root, 'InfoName1')
-        if self.organization_name:
-            info_name1.text = self.organization_name
-        elif self.name:
-            info_name1.text = self.name
-        ElementTree.SubElement(root, 'InfoName2')
-        ElementTree.SubElement(root, 'InfoName3')
-        ElementTree.SubElement(root, 'InfoName4')
-        info_address1 = ElementTree.SubElement(root, 'InfoAddress1')
-        if self.organization_address:
-            info_address1.text = self.organization_address
-        elif self.address:
-            info_address1.text = self.address
-        ElementTree.SubElement(root, 'InfoAddress2')
-        ElementTree.SubElement(root, 'InfoPOCode')
-        ElementTree.SubElement(root, 'InfoPOCity')
-        ElementTree.SubElement(root, 'InfoPOPostalcode')
-        ElementTree.SubElement(root, 'InfoCity')
-        ElementTree.SubElement(root, 'InfoPostalcode')
-
-        return root

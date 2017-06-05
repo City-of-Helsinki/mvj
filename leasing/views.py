@@ -21,6 +21,7 @@ from leasing.serializers import (
     LeaseCreateUpdateSerializer, LeaseSerializer, NoteSerializer, RentSerializer, TenantCreateUpdateSerializer,
     TenantSerializer)
 
+from . import laske
 from .models import Application, Contact, Lease
 
 
@@ -98,7 +99,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         root = ElementTree.Element('SBO_SalesOrders')
 
         for invoice in Invoice.objects.order_by('-created_at'):
-            root.append(invoice.as_laske_xml())
+            root.append(laske.serialize_invoice(invoice))
 
         xml_string = ElementTree.tostring(root)
 
