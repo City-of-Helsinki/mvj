@@ -5,7 +5,7 @@ from leasing.models.mixins import TimestampedModelMixin
 
 class Area(TimestampedModelMixin):
     name = models.CharField(max_length=255)
-    mpoly = models.MultiPolygonField(srid=3857)
+    mpoly = models.MultiPolygonField(srid=4326)
 
     notes = models.ManyToManyField('leasing.Note', blank=True)
 
