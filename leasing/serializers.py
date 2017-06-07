@@ -52,7 +52,7 @@ def instance_create_or_update_related(instance=None, instance_name=None, related
 
         if pk:
             try:
-                item_instance = manager.get(id=pk)
+                item_instance = serializer_class.Meta.model._default_manager.get(id=pk)
                 serializer_params['instance'] = item_instance
             except ObjectDoesNotExist:
                 pass
@@ -141,6 +141,27 @@ class AreaSerializer(serializers.ModelSerializer):
         model = Area
         fields = '__all__'
 
+    def create(self, validated_data):
+        notes = validated_data.pop('notes', [])
+
+        instance = super().create(validated_data)
+
+        instance_create_or_update_related(instance=instance, instance_name='area', related_name='notes',
+                                          serializer_class=NoteSerializer, validated_data=notes)
+
+        return instance
+
+    def update(self, instance, validated_data):
+        notes = validated_data.pop('notes', None)
+
+        if notes is not None:
+            instance_create_or_update_related(instance=instance, instance_name='area', related_name='notes',
+                                              serializer_class=NoteSerializer, validated_data=notes)
+
+        instance = super().update(instance, validated_data)
+
+        return instance
+
 
 class ApplicationBuildingFootprintSerializer(serializers.ModelSerializer):
     class Meta:
@@ -169,11 +190,11 @@ class ApplicationSerializer(EnumSupportSerializerMixin, serializers.ModelSeriali
                                  serializer_class=ApplicationBuildingFootprintSerializer,
                                  validated_data=building_footprints)
 
-        instance_replace_related(instance=instance, instance_name='application', related_name='areas',
-                                 serializer_class=AreaSerializer, validated_data=areas)
+        instance_create_or_update_related(instance=instance, instance_name='application', related_name='areas',
+                                          serializer_class=AreaSerializer, validated_data=areas)
 
-        instance_replace_related(instance=instance, instance_name='application', related_name='notes',
-                                 serializer_class=NoteSerializer, validated_data=notes)
+        instance_create_or_update_related(instance=instance, instance_name='application', related_name='notes',
+                                          serializer_class=NoteSerializer, validated_data=notes)
 
         return instance
 
@@ -413,23 +434,23 @@ class LeaseCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelS
         instance_replace_related(instance=instance, instance_name='lease', related_name='building_footprints',
                                  serializer_class=LeaseBuildingFootprintSerializer, validated_data=building_footprints)
 
-        instance_replace_related(instance=instance, instance_name='lease', related_name='decisions',
-                                 serializer_class=DecisionSerializer, validated_data=decisions)
+        instance_create_or_update_related(instance=instance, instance_name='lease', related_name='decisions',
+                                          serializer_class=DecisionSerializer, validated_data=decisions)
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='real_property_units',
                                  serializer_class=LeaseRealPropertyUnitSerializer, validated_data=real_property_units)
 
-        instance_replace_related(instance=instance, instance_name='lease', related_name='rents',
-                                 serializer_class=LeaseRentSerializer, validated_data=rents)
+        instance_create_or_update_related(instance=instance, instance_name='lease', related_name='rents',
+                                          serializer_class=LeaseRentSerializer, validated_data=rents)
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='tenants',
                                  serializer_class=TenantCreateUpdateSerializer, validated_data=tenants)
 
-        instance_replace_related(instance=instance, instance_name='lease', related_name='areas',
-                                 serializer_class=AreaSerializer, validated_data=areas)
+        instance_create_or_update_related(instance=instance, instance_name='lease', related_name='areas',
+                                          serializer_class=AreaSerializer, validated_data=areas)
 
-        instance_replace_related(instance=instance, instance_name='lease', related_name='notes',
-                                 serializer_class=NoteSerializer, validated_data=notes)
+        instance_create_or_update_related(instance=instance, instance_name='lease', related_name='notes',
+                                          serializer_class=NoteSerializer, validated_data=notes)
 
         instance_replace_related(instance=instance, instance_name='lease', related_name='additional_fields',
                                  serializer_class=LeaseAdditionalFieldSerializer, validated_data=additional_fields)
