@@ -1,3 +1,7 @@
+[![Build status](https://travis-ci.org/City-of-Helsinki/mvj.svg)](https://travis-ci.org/City-of-Helsinki/mvj)
+[![codecov](https://codecov.io/gh/City-of-Helsinki/mvj/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/mvj)
+[![Requirements](https://requires.io/github/City-of-Helsinki/mvj/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/mvj/requirements/?branch=master)
+
 # mvj
 City of Helsinki ground rent system
 
@@ -83,4 +87,4 @@ same context so that the variables defined in the settings are available.
 
 ## Running tests
 
-* Run `py.test`
+* Run `pytest`
