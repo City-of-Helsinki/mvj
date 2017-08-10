@@ -18,7 +18,7 @@ python:
 
 install:
   - pip install -U pip
-  - pip install -r requirements.txt -r requirements-dev.txt
+  - pip install codecov -r requirements.txt -r requirements-dev.txt
 
 before_script:
   - psql -U postgres -c 'create database mvj;'
