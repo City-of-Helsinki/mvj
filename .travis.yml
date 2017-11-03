@@ -16,13 +16,19 @@ python:
   - "3.6"
   - "nightly"
 
+addons:
+  postgresql: '9.4'
+  apt:
+    packages:
+      postgresql-9.4-postgis-2.3
+
 install:
   - pip install -U pip
   - pip install codecov -r requirements.txt -r requirements-dev.txt
 
 before_script:
   - psql -U postgres -c 'create database mvj;'
-  - psql -U postgres -c "create extension postgis;"
+  - psql -U postgres -c "create extension if not exists postgis;"
 
 script:
   - flake8
