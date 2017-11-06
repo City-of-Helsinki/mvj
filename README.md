@@ -23,8 +23,8 @@ Install PostgreSQL and PostGIS.
 
 ### Creating a Python virtualenv
 
-Create a Python 3.x virtualenv either using the [`venv`](https://docs.python.org/3/library/venv.html) tool or using 
-the great [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) toolset. Assuming the latter, 
+Create a Python 3.x virtualenv either using the [`venv`](https://docs.python.org/3/library/venv.html) tool or using
+the great [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) toolset. Assuming the latter,
 once installed, simply do:
 
     mkvirtualenv -p /usr/bin/python3 mvj
@@ -59,21 +59,21 @@ Create user and database
 
 Enable PostGIS
 
-    sudo -u postgres psql -d "mvj" -c "CREATE EXTENSION postgis;"
+    sudo -u postgres psql -d "mvj" -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 
 Allow the mvj user to create databases when running tests
 
     sudo -u postgres psql -c "ALTER USER mvj CREATEDB;"
-    
-Tests also require that PostGIS extension is installed on the test database. This can be achieved the easiest by 
+
+Tests also require that PostGIS extension is installed on the test database. This can be achieved the easiest by
 adding PostGIS extension to the default template which is then used when the test databases are created:
 
     sudo -u postgres psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 
 ### Django configuration
 
-Environment variables are used to customize configuration in `mvj/settings.py`. If you wish to override any 
-settings, you can place them in a local `.env` file which will automatically be sourced when Django imports 
+Environment variables are used to customize configuration in `mvj/settings.py`. If you wish to override any
+settings, you can place them in a local `.env` file which will automatically be sourced when Django imports
 the settings file.
 
 Alternatively you can create a `local_settings.py` which is executed at the end of the `mvj/settings.py` in the
