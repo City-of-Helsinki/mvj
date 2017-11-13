@@ -31,10 +31,13 @@ class Tenant(TimestampedModelMixin):
         blank=True,
         on_delete=models.CASCADE,
     )
-    share = models.DecimalField(
-        verbose_name=_("Share of the rent"),
-        max_digits=7,
-        decimal_places=6,
+    share_numerator = models.IntegerField(
+        default=1,
+        verbose_name=_("Numerator for the share of the rent"),
+    )
+    share_denominator = models.IntegerField(
+        default=1,
+        verbose_name=_("Denominator for the share of the rent"),
     )
 
     def get_billing_contact(self):
