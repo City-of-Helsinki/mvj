@@ -27,7 +27,7 @@ class Command(BaseCommand):
                         'tenants': []
                     }
 
-                shares[tenant.get_billing_contact()]['share'] += tenant.share
+                shares[tenant.get_billing_contact()]['share'] += tenant.get_share()
                 shares[tenant.get_billing_contact()]['tenants'].append(tenant)
 
             for contact, share in shares.items():
