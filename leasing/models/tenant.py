@@ -43,5 +43,8 @@ class Tenant(TimestampedModelMixin):
     def get_billing_contact(self):
         return self.billing_contact if self.billing_contact else self.contact
 
+    def get_share(self):
+        return self.share_numerator / self.share_denominator
+
     def __str__(self):
         return 'tenant contact: {} lease: {} '.format(self.contact, self.lease)
