@@ -285,7 +285,7 @@ class TenantCreateUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tenant
-        fields = ('id', 'contact', 'contact_contact', 'billing_contact', 'share')
+        fields = ('id', 'contact', 'contact_contact', 'billing_contact', 'share_numerator', 'share_denominator')
 
 
 class LeaseAdditionalFieldSerializer(serializers.ModelSerializer):

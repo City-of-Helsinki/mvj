@@ -63,7 +63,8 @@ def test_create_lease(contact_factory):
         {
             "contact": 1,
             "billing_contact": 1,
-            "share": "1.000000"
+            "share_numerator": 1,
+            "share_denominator": 1
         }
     ],
     "building_footprints": [
@@ -107,7 +108,8 @@ def test_create_lease(contact_factory):
     assert len(instance.building_footprints.all()) == 2
     assert len(instance.tenants.all()) == 1
     assert instance.tenants.all()[0].contact.name == "Test contact"
-    assert instance.tenants.all()[0].share == 1.0
+    assert instance.tenants.all()[0].share_numerator == 1
+    assert instance.tenants.all()[0].share_denominator == 1
 
 
 @pytest.mark.django_db
@@ -118,7 +120,8 @@ def test_create_tenant(lease_factory, contact_factory):
     data = """{
         "contact": 1,
         "billing_contact": 1,
-        "share": "1.000000"
+        "share_numerator": 1,
+        "share_denominator": 1
     }"""
 
     serializer = TenantCreateUpdateSerializer(data=json.loads(data))
