@@ -75,12 +75,12 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_filters',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_gis',
     'rest_framework_swagger',
     'corsheaders',
 
     'leasing',
-    'users',
 ]
 if RAVEN_CONFIG['dsn']:
     INSTALLED_APPS += ['raven.contrib.django.raven_compat']
@@ -122,11 +122,11 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'ALLOWED_VERSIONS': ('v1',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'users.authentication.DummyTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
