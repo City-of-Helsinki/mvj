@@ -132,6 +132,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     'DEFAULT_METADATA_CLASS': 'leasing.metadata.FieldsMetadata',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 30,
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
