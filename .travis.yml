@@ -9,6 +9,11 @@ env:
   global:
     - SECRET_KEY=xxx
     - DATABASE_URL=postgis://postgres:@localhost/mvj
+    - LEGACY_USER=''
+    - LEGACY_PASSWORD=''
+    - LEGACY_HOST=''
+    - LEGACY_PORT=''
+    - LEGACY_SERVICES=''
 
 python:
   - "3.4"
