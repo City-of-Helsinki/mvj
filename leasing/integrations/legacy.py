@@ -1,7 +1,7 @@
 from django.conf import settings
 
 import cx_Oracle
-from leasing.models import Lease
+from leasing.models import Asset, Lease
 
 
 def get_cursor():
@@ -47,8 +47,18 @@ def import_lease(row):
     return lease
 
 
+def import_asset(row):
+    asset, created = Asset.objects.get_or_create(
+        type=row[1],
+        surface_area=row[2],
+        address=row[3],
+    )
+    return asset
+
+
 IMPORTERS_AND_TABLE_NAMES = [
     (import_lease, 'vuokraus'),
+    (import_asset, 'vuokrakohde'),
 ]
 
 

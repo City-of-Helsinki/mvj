@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-21 16:06+0200\n"
+"POT-Creation-Date: 2017-11-29 15:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,9 +18,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: leasing/models/lease.py:10
+#: leasing/models/asset.py:14
+msgid "Plot"
+msgstr "Kaavatontti"
+
+#: leasing/models/asset.py:15
+msgid "Real estate"
+msgstr "Kiinteistö"
+
+#: leasing/models/asset.py:16
+msgid "Allotment garden parcel"
+msgstr "Siirtolapuutarhapalsta"
+
+#: leasing/models/asset.py:20 leasing/models/lease.py:10
 msgid "Type"
 msgstr "Tyyppi"
+
+#: leasing/models/asset.py:27
+msgid "Leases"
+msgstr "Vuokraukset"
+
+#: leasing/models/asset.py:33
+msgid "Address"
+msgstr "Osoite"
+
+#: leasing/models/asset.py:38
+msgid "Surface area in square meters"
+msgstr "Pinta-ala neliömetreinä"
+
+#: leasing/models/asset.py:44
+msgid "Asset"
+msgstr "Vuokrakohde"
+
+#: leasing/models/asset.py:45
+msgid "Assets"
+msgstr "Vuokrakohteet"
 
 #: leasing/models/lease.py:16
 msgid "Municipality"
@@ -50,6 +82,6 @@ msgstr "Luontiaika"
 msgid "Time modified"
 msgstr "Muokkausaika"
 
-#: leasing/serializers.py:15
+#: leasing/serializers.py:28
 msgid "Start date must be before end date."
 msgstr "Alkamispäivän on oltava ennen loppumispäivää"
