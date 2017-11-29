@@ -3,12 +3,21 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from leasing.models import Lease
+from leasing.models import Asset, Lease
+
+
+class AssetSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Asset
+        fields = '__all__'
 
 
 class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     identifier = serializers.ReadOnlyField(source='identifier_string')
+    assets = AssetSerializer(read_only=True, many=True)
 
     def validate(self, data):
         start_date = data['start_date']
