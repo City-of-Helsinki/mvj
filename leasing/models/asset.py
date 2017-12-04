@@ -40,6 +40,13 @@ class Asset(TimestampedModelMixin):
         blank=True,
     )
 
+    legacy_id = models.PositiveIntegerField(
+        verbose_name=_("ID in the legacy system"),
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+
     class Meta:
         verbose_name = _("Asset")
         verbose_name_plural = _("Assets")
