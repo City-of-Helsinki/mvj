@@ -2,6 +2,7 @@ import re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from enumfields import Enum, EnumField
 
 from leasing.enums import LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE
 from leasing.models.mixins import TimestampedModelMixin
@@ -29,6 +30,15 @@ class LeaseManager(models.Manager):
         }
 
 
+class LeaseStatus(Enum):
+    RESERVATION = 'R'
+    LEASE = 'V'
+    PERMISSION = 'L'
+    TRANSFER = 'S'
+    APPLICATION = 'H'
+    FREE = 'T'
+
+
 class Lease(TimestampedModelMixin):
     objects = LeaseManager()
 
@@ -36,6 +46,12 @@ class Lease(TimestampedModelMixin):
         verbose_name=_("Type"),
         max_length=2,
         choices=LEASE_IDENTIFIER_TYPE,
+    )
+
+    status = EnumField(
+        LeaseStatus,
+        verbose_name=_("State"),
+        max_length=1,
     )
 
     municipality = models.CharField(
