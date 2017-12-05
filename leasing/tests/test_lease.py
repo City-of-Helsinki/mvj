@@ -32,7 +32,8 @@ class LeaseTests(APITestCase):
             'district': '01',
             'sequence': 1,
             'start_date': '2001-01-01',
-            'end_date': '2000-01-01'
+            'end_date': '2000-01-01',
+            'status': 'V',
         }
 
         response = client.post(
