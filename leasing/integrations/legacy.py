@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 import cx_Oracle
 from leasing.models import Asset, Lease
@@ -23,6 +24,7 @@ def get_cursor():
     return connection.cursor()
 
 
+@transaction.atomic
 def import_table(importer, table_name):
     cursor = get_cursor()
     cursor.execute("SELECT count(*) FROM %s" % table_name)
