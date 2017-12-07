@@ -6,7 +6,7 @@ from leasing.models import Asset, Lease
 class LeaseFilter(FilterSet):
     class Meta:
         model = Lease
-        fields = ['type', 'municipality', 'district', 'sequence']
+        fields = ['type', 'municipality', 'district', 'sequence', 'status']
 
 
 class AssetFilter(FilterSet):
