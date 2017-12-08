@@ -14,7 +14,7 @@ class LeaseManager(models.Manager):
         return Lease.objects.get(**parts)
 
     def get_identifier_parts(self, identifier):
-        if not re.match("^[A-Z]{1}[0-9]{4}-[0-9]{1,4}$", identifier):
+        if not re.match("^[A-Z]{1}[A-Z0-9]{1}[0-9]{3}-[0-9]{1,4}$", identifier):
             raise ValueError("Cannot parse identifier:", identifier)
 
         type = identifier[:2]
