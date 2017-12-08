@@ -77,7 +77,7 @@ def import_lease_and_asset_relations(row):
     asset = None
 
     try:
-        lease = Lease.get_from_identifier(lease_id)
+        lease = Lease.objects.get_from_identifier(lease_id)
     except ObjectDoesNotExist:
         orphan_leases.append(lease_id)
 
