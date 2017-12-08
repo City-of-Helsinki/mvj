@@ -1,15 +1,57 @@
+import re
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from enumfields import Enum, EnumField
 
 from leasing.enums import LEASE_IDENTIFIER_DISTRICT, LEASE_IDENTIFIER_MUNICIPALITY, LEASE_IDENTIFIER_TYPE
 from leasing.models.mixins import TimestampedModelMixin
 
 
+class LeaseManager(models.Manager):
+    def get_from_identifier(self, identifier):
+        parts = self.get_identifier_parts(identifier)
+        return Lease.objects.get(**parts)
+
+    def get_identifier_parts(self, identifier):
+        if not re.match("^[A-Z]{1}[0-9]{4}-[0-9]{1,4}$", identifier):
+            raise ValueError("Cannot parse identifier:", identifier)
+
+        type = identifier[:2]
+        municipality = identifier[2:3]
+        district = identifier[3:5]
+        sequence = identifier[6:]
+
+        return {
+            'type': type,
+            'municipality': municipality,
+            'district': district,
+            'sequence': int(sequence),
+        }
+
+
+class LeaseStatus(Enum):
+    RESERVATION = 'R'
+    LEASE = 'V'
+    PERMISSION = 'L'
+    TRANSFER = 'S'
+    APPLICATION = 'H'
+    FREE = 'T'
+
+
 class Lease(TimestampedModelMixin):
+    objects = LeaseManager()
+
     type = models.CharField(
         verbose_name=_("Type"),
         max_length=2,
         choices=LEASE_IDENTIFIER_TYPE,
+    )
+
+    status = EnumField(
+        LeaseStatus,
+        verbose_name=_("State"),
+        max_length=1,
     )
 
     municipality = models.CharField(

@@ -22,6 +22,13 @@ class AssetViewSet(viewsets.ModelViewSet):
     serializer_class = AssetSerializer
     filter_class = AssetFilter
 
+    def get_serializer(self, *args, **kwargs):
+        if "data" in kwargs:
+            if isinstance(kwargs["data"], list):
+                kwargs["many"] = True
+
+        return super().get_serializer(*args, **kwargs)
+
 
 @api_view()
 @permission_classes([IsAuthenticated])

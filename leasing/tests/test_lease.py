@@ -6,6 +6,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APITestCase
 
+from leasing.models import Lease
+
 
 class LeaseTests(APITestCase):
     @pytest.mark.django_db(transaction=True)
@@ -32,7 +34,8 @@ class LeaseTests(APITestCase):
             'district': '01',
             'sequence': 1,
             'start_date': '2001-01-01',
-            'end_date': '2000-01-01'
+            'end_date': '2000-01-01',
+            'status': 'V',
         }
 
         response = client.post(
@@ -50,3 +53,25 @@ class LeaseTests(APITestCase):
             content_type='application/json',
         )
         assert response.status_code == 201
+
+    def test_lease_identifier(self):
+        expected_id = 'A1234-5678'
+        lease = Lease(
+            type='A1',
+            municipality='2',
+            district='34',
+            sequence=5678,
+            status='V',
+        )
+        lease.save()
+
+        assert lease.__str__() == expected_id
+        assert lease.get_identifier() == expected_id
+
+        assert Lease.objects.get_from_identifier(expected_id) == lease
+        assert Lease.objects.get_identifier_parts(expected_id) == {
+            "type": "A1",
+            "municipality": "2",
+            "district": "34",
+            "sequence": 5678,
+        }
