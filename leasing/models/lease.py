@@ -26,7 +26,7 @@ class LeaseManager(models.Manager):
             'type': type,
             'municipality': municipality,
             'district': district,
-            'sequence': sequence,
+            'sequence': int(sequence),
         }
 
 
