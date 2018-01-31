@@ -4,6 +4,7 @@ django-crispy-forms
 django-enumfields
 django-environ
 django-filter
+django-helusers
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
