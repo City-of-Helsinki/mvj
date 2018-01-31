@@ -21,7 +21,7 @@ class LeaseTests(APITestCase):
         token.save()
 
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        client.force_authenticate(user=user)
         self.client = client
         return self.client
 
