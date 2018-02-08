@@ -5,6 +5,7 @@
 /.env
 /.venv
 /.cache/
+/.pytest_cache/
 /.idea/
 /.tox/
 /media/
