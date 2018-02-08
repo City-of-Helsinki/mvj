@@ -1,6 +1,6 @@
 import rest_framework.urls
-from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
@@ -11,9 +11,9 @@ router.register(r'asset', AssetViewSet)
 router.register(r'lease', LeaseViewSet)
 
 urlpatterns = [
-    url(r'^v1/', include(router.urls, namespace="v1")),
-    url(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
-    url(r'^admin/', admin.site.urls),
-    url(r'^auth/', include(rest_framework.urls, namespace='rest_framework')),
-    url(r'^docs/', get_swagger_view(title='MVJ API')),
+    path('v1/', include(router.urls)),
+    re_path(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
+    path('admin/', admin.site.urls),
+    path('auth/', include(rest_framework.urls)),
+    path('docs/', get_swagger_view(title='MVJ API')),
 ]
