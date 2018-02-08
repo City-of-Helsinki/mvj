@@ -10,7 +10,5 @@ pytest
 pytest-cov
 pytest-django
 pytest-factoryboy
-# factory-boy 2.9.2 is broken, using an older version instead.
-# See https://github.com/pytest-dev/pytest-factoryboy/issues/47
-factory-boy==2.8.1
+factory-boy
 werkzeug

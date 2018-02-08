@@ -39,7 +39,7 @@ class LeaseTests(APITestCase):
         }
 
         response = client.post(
-            reverse('v1:lease-list'),
+            reverse('lease-list'),
             json.dumps(data),
             content_type='application/json',
         )
@@ -48,7 +48,7 @@ class LeaseTests(APITestCase):
         # fix the start date and try again
         data['start_date'] = '2000-01-01'
         response = client.post(
-            reverse('v1:lease-list'),
+            reverse('lease-list'),
             json.dumps(data),
             content_type='application/json',
         )
