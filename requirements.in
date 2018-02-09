@@ -8,6 +8,7 @@ django-helusers
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
+drf-enum-field
 psycopg2
 raven
 requests
