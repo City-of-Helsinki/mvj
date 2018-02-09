@@ -6,9 +6,15 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from leasing.filters import AssetFilter, LeaseFilter
-from leasing.models import Asset, Lease
-from leasing.serializers import AssetSerializer, LeaseSerializer
+from leasing.filters import AssetFilter, ClientFilter, LeaseFilter
+from leasing.models import Asset, Client, Lease
+from leasing.serializers import AssetSerializer, ClientSerializer, LeaseSerializer
+
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    filter_class = ClientFilter
 
 
 class LeaseViewSet(viewsets.ModelViewSet):

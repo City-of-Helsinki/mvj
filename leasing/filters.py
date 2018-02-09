@@ -1,6 +1,12 @@
 from django_filters.rest_framework import FilterSet
 
-from leasing.models import Asset, Lease
+from leasing.models import Asset, Client, Lease
+
+
+class ClientFilter(FilterSet):
+    class Meta:
+        model = Client
+        fields = ['legacy_id']
 
 
 class LeaseFilter(FilterSet):
