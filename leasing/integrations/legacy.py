@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 import cx_Oracle
-from leasing.models import Asset, Lease
+from leasing.models import Asset, Client, ClientLanguage, ClientType, Lease, PhoneNumber
 
 orphan_leases = []
 orphan_assets = []
@@ -92,10 +92,53 @@ def import_lease_and_asset_relations(row):
     asset.leases.add(lease)
 
 
+def import_clients(row):
+    client_language = None
+    client_type = None
+
+    if row[5] is not None:
+        client_language = ClientLanguage(int(row[5]))
+
+    if row[16] is not None:
+        client_type = ClientType(int(row[16]))
+
+    client, created = Client.objects.get_or_create(
+        legacy_id=row[0],
+        name=row[1],
+        address=row[2] or "",
+        postal_code=row[3] or "",
+        country=row[4] or "",
+        language=client_language,
+        # row[6] ignored on purpose
+        business_id=row[7] or "",
+        comment=row[15] or "",
+        client_type=client_type,
+        debt_collection=row[17] or "",
+        partnership_code=row[18] or "",
+        email=row[19] or "",
+        trade_register=row[20] or "",
+        # rows 21-28 ignored on purpose
+        ssid=row[29] or "",
+        # row 30 ignored on purpose (original data contains only nulls)
+    )
+
+    phone_strings = row[8:11]
+
+    for string in phone_strings:
+        if string is None:
+            continue
+
+        phone_number, created = PhoneNumber.objects.get_or_create(
+            number=string
+        )
+        client.phone_numbers.add(phone_number)
+
+
 IMPORTERS_AND_TABLE_NAMES = [
     (import_lease, 'vuokraus'),
     (import_asset, 'vuokrakohde'),
     (import_lease_and_asset_relations, 'hallinta'),
+    (import_clients, 'asiakas'),
 ]
 
 
