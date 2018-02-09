@@ -161,8 +161,10 @@ class ClientRole():
 
     client = models.ForeignKey(
         Client,
+        on_delete=models.CASCADE,
     )
 
     lease = models.ForeignKey(
         Lease,
+        on_delete=models.CASCADE,
     )
