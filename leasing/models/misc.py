@@ -13,3 +13,6 @@ class PhoneNumber(models.Model):
         max_length=255,
         blank=False,
     )
+
+    def __str__(self):
+        return self.number
