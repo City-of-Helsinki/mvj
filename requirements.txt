@@ -18,6 +18,7 @@ django-rest-swagger==2.1.2
 django==2.0.2
 djangorestframework-gis==0.12
 djangorestframework==3.7.7
+drf-enum-field==0.9.2
 drf-oidc-auth==0.9        # via django-helusers
 future==0.16.0            # via pyjwkest
 idna==2.6                 # via requests

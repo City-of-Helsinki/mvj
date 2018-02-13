@@ -4,11 +4,12 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from leasing.views import AssetViewSet, LeaseViewSet, ktj_proxy
+from leasing.views import AssetViewSet, ClientViewSet, LeaseViewSet, ktj_proxy
 
 router = routers.DefaultRouter()
 router.register(r'asset', AssetViewSet)
 router.register(r'lease', LeaseViewSet)
+router.register(r'client', ClientViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),
