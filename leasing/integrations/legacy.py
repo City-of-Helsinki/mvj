@@ -5,9 +5,11 @@ from django.db import transaction
 import cx_Oracle
 from leasing.models import Asset, Client, ClientLanguage, ClientRole, ClientType, Lease, PhoneNumber
 
-orphan_leases = []
-orphan_assets = []
-orphan_client_roles = []
+orphans = {
+    "lease_and_asset_relations_leases": [],
+    "lease_and_asset_relations_assets": [],
+    "client_roles": [],
+}
 
 
 def get_cursor():
@@ -71,6 +73,8 @@ def import_asset(row):
 
 
 def import_lease_and_asset_relations(row):
+    orphaned = False
+
     lease_id = row[0] + '-' + str(row[1])
     asset_id = row[2]
 
@@ -80,14 +84,16 @@ def import_lease_and_asset_relations(row):
     try:
         lease = Lease.objects.get_from_identifier(lease_id)
     except ObjectDoesNotExist:
-        orphan_leases.append(lease_id)
+        orphaned = True
+        orphans["lease_and_asset_relations_leases"].append(lease_id)
 
     try:
         asset = Asset.objects.get(legacy_id=asset_id)
     except ObjectDoesNotExist:
-        orphan_assets.append(asset_id)
+        orphaned = True
+        orphans["lease_and_asset_relations_assets"].append(asset_id)
 
-    if not lease or not asset:
+    if orphaned:
         return
 
     asset.leases.add(lease)
@@ -162,7 +168,7 @@ def import_client_roles(row):
         orphaned = True
 
     if orphaned:
-        orphan_client_roles.append({
+        orphans['client_roles'].append({
             "client_id": client_id,
             "lease_id": lease_id,
             "related_client_id": related_client_id
@@ -198,6 +204,7 @@ def run_import():
 
 
 def print_report():
-    print(len(orphan_leases), 'orphan leases')
-    print(len(orphan_assets), 'orphan assets')
-    print(len(orphan_client_roles), 'orphan_client_roles')
+    print("Orphans found:")
+    for key in orphans:
+        value = orphans[key]
+        print(len(value), key)
