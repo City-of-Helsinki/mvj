@@ -143,10 +143,32 @@ class RoleType(Enum):
     LESSEE = 'V'
 
 
-class ClientRole():
+class ClientRole(models.Model):
+
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+    )
+
+    lease = models.ForeignKey(
+        Lease,
+        on_delete=models.CASCADE,
+    )
 
     role_type = EnumField(
         RoleType,
+    )
+
+    shares_numerator = models.PositiveIntegerField(
+        verbose_name=_("Numerator"),
+        null=True,
+        blank=True,
+    )
+
+    shares_denominator = models.PositiveIntegerField(
+        verbose_name=_("Denominator"),
+        null=True,
+        blank=True,
     )
 
     start_date = models.DateField(
@@ -159,12 +181,14 @@ class ClientRole():
         blank=True,
     )
 
-    client = models.ForeignKey(
-        Client,
-        on_delete=models.CASCADE,
+    notification_method = models.CharField(
+        max_length=255,
+        verbose_name=_("Ilmoitustapa"),
+        blank=True,
     )
 
-    lease = models.ForeignKey(
-        Lease,
+    related_client = models.ForeignKey(
+        Client,
         on_delete=models.CASCADE,
+        related_name="related_clients",
     )
