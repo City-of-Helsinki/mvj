@@ -38,7 +38,7 @@ def import_table(importer, table_name):
     for row in cursor:
         importer(row)
         i += 1
-        percent = round(i/total*100, 1)
+        percent = round(i / total * 100, 1)
         print('Importing', table_name, str(percent) + '%\r', end='')
     print('')
 
