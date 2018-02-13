@@ -3,10 +3,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 import cx_Oracle
-from leasing.models import Asset, Client, ClientLanguage, ClientType, Lease, PhoneNumber
+from leasing.models import Asset, Client, ClientLanguage, ClientRole, ClientType, Lease, PhoneNumber
 
 orphan_leases = []
 orphan_assets = []
+orphan_client_roles = []
 
 
 def get_cursor():
@@ -134,21 +135,69 @@ def import_clients(row):
         client.phone_numbers.add(phone_number)
 
 
+def import_client_roles(row):
+    orphaned = False
+
+    client_id = row[0]
+    lease_id = row[1] + "-" + str(row[2])
+    related_client_id = row[9]
+
+    client = None
+    lease = None
+    related_client = None
+
+    try:
+        lease = Lease.objects.get_from_identifier(lease_id)
+    except ObjectDoesNotExist:
+        orphaned = True
+
+    try:
+        client = Client.objects.get(legacy_id=client_id)
+    except ObjectDoesNotExist:
+        orphaned = True
+
+    try:
+        related_client = Client.objects.get(legacy_id=related_client_id)
+    except ObjectDoesNotExist:
+        orphaned = True
+
+    if orphaned:
+        orphan_client_roles.append({
+            "client_id": client_id,
+            "lease_id": lease_id,
+            "related_client_id": related_client_id
+        })
+        return
+
+    client_role, created = ClientRole.objects.get_or_create(
+        client=client,
+        lease=lease,
+        role_type=row[3],
+        shares_numerator=row[4],
+        shares_denominator=row[5],
+        start_date=row[6],
+        end_date=row[7],
+        notification_method=row[8] or "",
+        related_client=related_client
+    )
+
+
 IMPORTERS_AND_TABLE_NAMES = [
     (import_lease, 'vuokraus'),
     (import_asset, 'vuokrakohde'),
     (import_lease_and_asset_relations, 'hallinta'),
     (import_clients, 'asiakas'),
+    (import_client_roles, 'asrooli'),
 ]
 
 
 def run_import():
     for method, table_name in IMPORTERS_AND_TABLE_NAMES:
         import_table(method, table_name)
-
     print_report()
 
 
 def print_report():
     print(len(orphan_leases), 'orphan leases')
     print(len(orphan_assets), 'orphan assets')
+    print(len(orphan_client_roles), 'orphan_client_roles')
