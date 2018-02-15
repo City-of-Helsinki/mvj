@@ -8,3 +8,13 @@ class TimestampedModelMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ConfigurableTextChoice(models.Model):
+    name = models.CharField(
+        verbose_name=_("Name"),
+        max_length=255,
+    )
+
+    class Meta:
+        abstract = True
