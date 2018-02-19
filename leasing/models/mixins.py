@@ -8,3 +8,23 @@ class TimestampedModelMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class AddressMixin(models.Model):
+    address = models.CharField(
+        verbose_name=_("Address"),
+        max_length=255,
+    )
+
+    postal_code = models.CharField(
+        verbose_name=_("Postal code"),
+        max_length=255,
+    )
+
+    city = models.CharField(
+        verbose_name=_("City"),
+        max_length=255,
+    )
+
+    class Meta:
+        abstract = True
