@@ -3,6 +3,7 @@ from .land_area import LandArea
 from .lease import Lease, LeaseStatus
 from .plan_plot import PlanPlot, PlanPlotState, PlanPlotType, PlanPlotUsagePurpose
 from .plot import Plot, PlotExplanation
+from .rent import Rent
 from .tenant import MainTenant, SubTenant
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     'LandArea',
     'MainTenant',
     'SubTenant',
+    'Rent',
 ]
