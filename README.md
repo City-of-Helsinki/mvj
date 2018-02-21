@@ -83,6 +83,7 @@ same context so that the variables defined in the settings are available.
 
 * Enable debug `echo 'DEBUG=True' >> .env`
 * Run `python manage.py migrate`
+* Run `python manage.py loaddata */fixtures/*.json`
 * Run `python manage.py runserver 0.0.0.0:8000`
 
 ## Running tests
