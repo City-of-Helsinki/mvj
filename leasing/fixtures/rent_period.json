@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.RentPeriod",
+    "pk": 1,
+    "fields": {
+      "name": "1.1 - 31.12"
+        }
+  },
+  {
+    "model": "leasing.RentPeriod",
+    "pk": 2,
+    "fields": {
+      "name": "1.4 - 31.3"
+    }
+  }
+]

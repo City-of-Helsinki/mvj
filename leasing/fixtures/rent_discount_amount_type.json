@@ -1,0 +1,30 @@
+[
+  {
+    "model": "leasing.RentDiscountAmountType",
+    "pk": 1,
+    "fields": {
+      "name": "% vuodessa"
+    }
+  },
+  {
+    "model": "leasing.RentDiscountAmountType",
+    "pk": 2,
+    "fields": {
+      "name": "% yhteensä"
+    }
+  },
+  {
+    "model": "leasing.RentDiscountAmountType",
+    "pk": 3,
+    "fields": {
+      "name": "€ vuodessa"
+    }
+  },
+  {
+    "model": "leasing.RentDiscountAmountType",
+    "pk": 4,
+    "fields": {
+      "name": "€ yhteensä"
+    }
+  }
+]

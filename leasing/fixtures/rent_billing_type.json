@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.RentBillingType",
+    "pk": 1,
+    "fields": {
+      "name": "Eräpäivät"
+    }
+  },
+  {
+    "model": "leasing.RentBillingType",
+    "pk": 2,
+    "fields": {
+      "name": "Laskut"
+    }
+  }
+]

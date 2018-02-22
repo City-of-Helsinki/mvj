@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.RentDiscountType",
+    "pk": 1,
+    "fields": {
+      "name": "Korotus"
+    }
+  },
+  {
+    "model": "leasing.RentDiscountType",
+    "pk": 2,
+    "fields": {
+      "name": "Alennus"
+    }
+  }
+]

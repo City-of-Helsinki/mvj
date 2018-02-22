@@ -1,0 +1,18 @@
+[
+  {
+    "model": "leasing.RentPaymentType",
+    "pk": 1,
+    "fields": {
+      "name": "€ / v",
+      "times_per_year": 1
+    }
+  },
+  {
+    "model": "leasing.RentPaymentType",
+    "pk": 2,
+    "fields": {
+      "name": "€ / kk",
+      "times_per_year": 12
+    }
+  }
+]
