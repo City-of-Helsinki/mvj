@@ -24,12 +24,6 @@ env_file = project_root('.env')
 if os.path.exists(env_file):
     env.read_env(env_file)
 
-LEGACY_USER = env.str('LEGACY_USER')
-LEGACY_PASSWORD = env.str('LEGACY_PASSWORD')
-LEGACY_HOST = env.str('LEGACY_HOST')
-LEGACY_PORT = env.str('LEGACY_PORT')
-LEGACY_SERVICES = env.str('LEGACY_SERVICES')
-
 DEBUG = env.bool('DEBUG')
 SECRET_KEY = env.str('SECRET_KEY', default=('xxx' if DEBUG else ''))
 
