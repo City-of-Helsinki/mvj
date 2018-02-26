@@ -1,0 +1,9 @@
+[
+  {
+    "model": "leasing.RuleMaker",
+    "pk": 1,
+    "fields": {
+      "name": "placeholder"
+    }
+  }
+]

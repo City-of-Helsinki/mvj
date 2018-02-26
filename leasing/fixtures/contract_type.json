@@ -1,0 +1,23 @@
+[
+  {
+    "model": "leasing.ContractType",
+    "pk": 1,
+    "fields": {
+      "name": "Vuokrasopimus"
+    }
+  },
+  {
+    "model": "leasing.ContractType",
+    "pk": 2,
+    "fields": {
+      "name": "Esisopimus"
+    }
+  },
+  {
+    "model": "leasing.ContractType",
+    "pk": 3,
+    "fields": {
+      "name": "Rasitesopimus"
+    }
+  }
+]
