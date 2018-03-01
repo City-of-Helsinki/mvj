@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.RentCondition",
+    "pk": 1,
+    "fields": {
+      "name": "Kysytty"
+    }
+  },
+  {
+    "model": "leasing.RentCondition",
+    "pk": 2,
+    "fields": {
+      "name": "Valmis"
+    }
+  }
+]
