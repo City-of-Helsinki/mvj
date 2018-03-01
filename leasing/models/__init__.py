@@ -7,6 +7,8 @@ from .land_area import LandArea
 from .lease import Lease, LeaseStatus
 from .plan_plot import PlanPlot, PlanPlotState, PlanPlotType, PlanPlotUsagePurpose
 from .plot import Plot, PlotExplanation
+from .preconstruction import (
+    ConstructionInvestigation, ConstructionInvestigationReport, Contamination, Demolition, Preconstuction)
 from .rent import Rent
 from .rule import Rule
 from .rule_term import RuleTerm
@@ -33,4 +35,9 @@ __all__ = [
     'Inspection',
     'Rule',
     'RuleTerm',
+    'Preconstuction',
+    'Demolition',
+    'Contamination',
+    'ConstructionInvestigation',
+    'ConstructionInvestigationReport',
 ]
