@@ -10,6 +10,6 @@ django-safedelete
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
-psycopg2
+psycopg2-binary
 raven
 requests
