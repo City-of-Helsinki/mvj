@@ -9,9 +9,7 @@ from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDe
 
 
 class LeaseType(NameModel):
-    """
-    In Finnish: Laji
-    """
+    """Name in Finnish: Laji"""
     id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     def __str__(self):
@@ -19,9 +17,7 @@ class LeaseType(NameModel):
 
 
 class Municipality(NameModel):
-    """
-    In Finnish: Kaupunki
-    """
+    """Name in Finnish: Kaupunki"""
 
     class Meta:
         verbose_name = 'Municipality'
@@ -30,9 +26,7 @@ class Municipality(NameModel):
 
 
 class District(NameModel):
-    """
-    In Finnish: Kaupunginosa
-    """
+    """Name in Finnish: Kaupunginosa"""
     municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), related_name='districts',
                                      on_delete=models.PROTECT)
     identifier = models.IntegerField(verbose_name=_('Identifier within the municipality'))
@@ -43,27 +37,19 @@ class District(NameModel):
 
 
 class IntendedUse(NameModel):
-    """
-    In Finnish: Käyttötarkoitus
-    """
+    """Name in Finnish: Käyttötarkoitus"""
 
 
 class StatisticalUse(NameModel):
-    """
-    In Finnish: Tilastollinen pääkäyttötarkoitus
-    """
+    """Name in Finnish: Tilastollinen pääkäyttötarkoitus"""
 
 
 class SupportiveHousing(NameModel):
-    """
-    In Finnish: Erityisasunnot
-    """
+    """Name in Finnish: Erityisasunnot"""
 
 
 class Financing(NameModel):
-    """
-    In Finnish: Rahoitusmuoto
-    """
+    """Name in Finnish: Rahoitusmuoto"""
     id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
@@ -73,9 +59,7 @@ class Financing(NameModel):
 
 
 class Management(NameModel):
-    """
-    In Finnish: Hallintamuoto
-    """
+    """Name in Finnish: Hallintamuoto"""
     id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
@@ -85,9 +69,7 @@ class Management(NameModel):
 
 
 class Regulation(NameModel):
-    """
-    In Finnish: Sääntelymuoto
-    """
+    """Name in Finnish: Sääntelymuoto"""
 
     class Meta:
         verbose_name = 'Form of regulation'
@@ -96,9 +78,7 @@ class Regulation(NameModel):
 
 
 class Hitas(NameModel):
-    """
-    In Finnish: Hitas
-    """
+    """Name in Finnish: Hitas"""
     id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
@@ -108,28 +88,24 @@ class Hitas(NameModel):
 
 
 class NoticePeriod(NameModel):
-    """
-    In Finnish: Irtisanomisaika
-    """
+    """Name in Finnish: Irtisanomisaika"""
     type = EnumField(PeriodType, verbose_name=_("Period type"), max_length=30)
     duration = models.CharField(verbose_name=_("Duration"), null=True, blank=True, max_length=255,
                                 help_text=_("In ISO 8601 Duration format"))
 
 
 class LeaseIdentifier(TimeStampedSafeDeleteModel):
-    """
-    In Finnish: Vuokraustunnus
-    """
-    # In Finnish: Laji
+    """Name in Finnish: Vuokraustunnus"""
+    # Name in Finnish: Laji
     type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), on_delete=models.PROTECT)
 
-    # In Finnish: Kaupunki
+    # Name in Finnish: Kaupunki
     municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), on_delete=models.PROTECT)
 
-    # In Finnish: Kaupunginosa
+    # Name in Finnish: Kaupunginosa
     district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.PROTECT)
 
-    # In Finnish: Juokseva numero
+    # Name in Finnish: Juokseva numero
     sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"))
 
     class Meta:
@@ -147,82 +123,80 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
 
 
 class Lease(TimeStampedSafeDeleteModel):
-    """
-    In Finnish: Vuokraus
-    """
+    """Name in Finnish: Vuokraus"""
     # Identifier fields
-    # In Finnish: Laji
+    # Name in Finnish: Laji
     type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), on_delete=models.PROTECT)
 
-    # In Finnish: Kaupunki
+    # Name in Finnish: Kaupunki
     municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), on_delete=models.PROTECT)
 
-    # In Finnish: Kaupunginosa
+    # Name in Finnish: Kaupunginosa
     district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.PROTECT)
 
-    # In Finnish: Juokseva numero
+    # Name in Finnish: Juokseva numero
     sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"), null=True, blank=True)
 
-    # In Finnish: Vuokratunnus
+    # Name in Finnish: Vuokratunnus
     identifier = models.OneToOneField(LeaseIdentifier, verbose_name=_("Lease identifier"), null=True, blank=True,
                                       on_delete=models.PROTECT)
 
     # Other fields
-    # In Finnish: Alkupäivämäärä
+    # Name in Finnish: Alkupäivämäärä
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
-    # In Finnish: Loppupäivämäärä
+    # Name in Finnish: Loppupäivämäärä
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
-    # In Finnish: Tila
+    # Name in Finnish: Tila
     state = EnumField(LeaseState, verbose_name=_("State"), null=True, blank=True, max_length=30)
 
-    # In Finnish: Julkisuusluokka
+    # Name in Finnish: Julkisuusluokka
     classification = EnumField(Classification, verbose_name=_("Classification"), null=True, blank=True, max_length=30)
 
-    # In Finnish: Käyttötarkoituksen selite
+    # Name in Finnish: Käyttötarkoituksen selite
     intended_use_note = models.TextField(verbose_name=_("Intended use note"), null=True, blank=True)
 
-    # In Finnish: Siirto-oikeus
+    # Name in Finnish: Siirto-oikeus
     transferable = models.BooleanField(verbose_name=_("Transferable"), default=True)
 
-    # In Finnish: Säännelty
+    # Name in Finnish: Säännelty
     regulated = models.BooleanField(verbose_name=_("Regulated"), default=False)
 
-    # In Finnish: Irtisanomisilmoituksen selite
+    # Name in Finnish: Irtisanomisilmoituksen selite
     notice_note = models.TextField(verbose_name=_("Notice note"), null=True, blank=True)
 
     # Relations
-    # In Finnish: Vuokranantaja
+    # Name in Finnish: Vuokranantaja
     lessor = models.ForeignKey(Contact, verbose_name=_("Lessor"), null=True, blank=True, on_delete=models.PROTECT)
 
-    # In Finnish: Käyttötarkoitus
+    # Name in Finnish: Käyttötarkoitus
     intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
                                      on_delete=models.PROTECT)
 
-    # In Finnish: Erityisasunnot
+    # Name in Finnish: Erityisasunnot
     supportive_housing = models.ForeignKey(SupportiveHousing, verbose_name=_("Supportive housing"), null=True,
                                            blank=True, on_delete=models.PROTECT)
 
-    # In Finnish: Tilastollinen pääkäyttötarkoitus
+    # Name in Finnish: Tilastollinen pääkäyttötarkoitus
     statistical_use = models.ForeignKey(StatisticalUse, verbose_name=_("Statistical use"), null=True, blank=True,
                                         on_delete=models.PROTECT)
 
-    # In Finnish: Rahoitusmuoto
+    # Name in Finnish: Rahoitusmuoto
     financing = models.ForeignKey(Financing, verbose_name=_("Form of financing"), null=True, blank=True,
                                   on_delete=models.PROTECT)
 
-    # In Finnish: Hallintamuoto
+    # Name in Finnish: Hallintamuoto
     management = models.ForeignKey(Management, verbose_name=_("Form of management"), null=True, blank=True,
                                    on_delete=models.PROTECT)
 
-    # In Finnish: Sääntelymuoto
+    # Name in Finnish: Sääntelymuoto
     regulation = models.ForeignKey(Regulation, verbose_name=_("Form of regulation"), null=True, blank=True,
                                    on_delete=models.PROTECT)
-    # In Finnish: Hitas
+    # Name in Finnish: Hitas
     hitas = models.ForeignKey(Hitas, verbose_name=_("Hitas"), null=True, blank=True, on_delete=models.PROTECT)
 
-    # In Finnish: Irtisanomisaika
+    # Name in Finnish: Irtisanomisaika
     notice_period = models.ForeignKey(NoticePeriod, verbose_name=_("Notice period"), on_delete=models.PROTECT)
 
     related_leases = models.ManyToManyField('self', through='leasing.RelatedLease', symmetrical=False,

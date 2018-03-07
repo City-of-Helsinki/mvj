@@ -17,90 +17,40 @@ class ContractLinkedRule(NameModel):
 
 
 class Contract(models.Model):
-    """Contract
+    """Name in Finnish: Sopimus"""
+    # Name in Finnish: Sopimuksen tyyppi
+    contract_type = models.ForeignKey(ContractType, verbose_name=_("Contract type"), on_delete=models.PROTECT)
 
-    Name in Finnish: Sopimus
+    # Name in Finnish: Sopimusnumero
+    contract_number = models.CharField(verbose_name=_("Contract number"), max_length=255)
 
-    Attributes:
-        contract_type (ForeignKey):
-            Name in Finnish: Sopimuksen tyyppi
-        contract_number (CharField):
-            Name in Finnish: Sopimusnumero
-        signing_date (DateField):
-            Name in Finnish: Allekirjoituspäivämäärä
-        signing_date_comment (TextField):
-            Name in Finnish: Kommentti allekirjoitukselle
-        setup_decision (ForeignKey):
-            Name in Finnish: Järjestelypäätös
-        linked_rule (ForeignKey):
-            Name in Finnish: Päätös
-        ktj_document (CharField):
-            Name in Finnish: KTJ vuokraoikeustodistuksen linkki
-        lease_deposit_number (CharField):
-            Name in Finnish: Vuokravakuusnumero
-        lease_deposit_starting_date (DateField):
-            Name in Finnish: Vuokravakuus alkupvm
-        lease_deposit_ending_date (DateField):
-            Name in Finnish: Vuokravakuus loppupvm
-        lease_deposit_comment (TextField):
-            Name in Finnish: Vuokravakuus kommentti
-        administration_number (CharField):
-            Name in Finnish: Laitostunnus
-    """
-    contract_type = models.ForeignKey(
-        ContractType,
-        verbose_name=_("Contract type"),
-        on_delete=models.PROTECT,
-    )
+    # Name in Finnish: Allekirjoituspäivämäärä
+    signing_date = models.DateField(verbose_name=_("Signing date"))
 
-    contract_number = models.CharField(
-        verbose_name=_("Contract number"),
-        max_length=255,
-    )
+    # Name in Finnish: Kommentti allekirjoitukselle
+    signing_date_comment = models.TextField(verbose_name=_("Signing date comment"))
 
-    signing_date = models.DateField(
-        verbose_name=_("Signing date"),
-    )
+    # Name in Finnish: Järjestelypäätös
+    setup_decision = models.ForeignKey(ContractSetupDecision, verbose_name=_("Setup decision"),
+                                       on_delete=models.PROTECT)
 
-    signing_date_comment = models.TextField(
-        verbose_name=_("Signing date comment"),
-    )
+    # Name in Finnish: Päätös
+    linked_rule = models.ForeignKey(ContractLinkedRule, verbose_name=_("Linked rule"), on_delete=models.PROTECT)
 
-    setup_decision = models.ForeignKey(
-        ContractSetupDecision,
-        verbose_name=_("Setup decision"),
-        on_delete=models.PROTECT,
-    )
+    # Name in Finnish: KTJ vuokraoikeustodistuksen linkki
+    ktj_document = models.CharField(verbose_name=_("Ktj document"), max_length=255)
 
-    linked_rule = models.ForeignKey(
-        ContractLinkedRule,
-        verbose_name=_("Linked rule"),
-        on_delete=models.PROTECT,
-    )
+    # Name in Finnish: Vuokravakuusnumero
+    lease_deposit_number = models.CharField(verbose_name=_("Lease deposit number"), max_length=255)
 
-    ktj_document = models.CharField(
-        verbose_name=_("Ktj document"),
-        max_length=255,
-    )
+    # Name in Finnish: Vuokravakuus alkupvm
+    lease_deposit_starting_date = models.DateField(verbose_name=_("Lease deposit starting date"))
 
-    lease_deposit_number = models.CharField(
-        verbose_name=_("Lease deposit number"),
-        max_length=255,
-    )
+    # Name in Finnish: Vuokravakuus loppupvm
+    lease_deposit_ending_date = models.DateField(verbose_name=_("Lease deposit ending date"))
 
-    lease_deposit_starting_date = models.DateField(
-        verbose_name=_("Lease deposit starting date"),
-    )
+    # Name in Finnish: Vuokravakuus kommentti
+    lease_deposit_comment = models.TextField(verbose_name=_("Lease deposit comment"))
 
-    lease_deposit_ending_date = models.DateField(
-        verbose_name=_("Lease deposit ending date"),
-    )
-
-    lease_deposit_comment = models.TextField(
-        verbose_name=_("Lease deposit comment"),
-    )
-
-    administration_number = models.CharField(
-        verbose_name=_("Administration number"),
-        max_length=255,
-    )
+    # Name in Finnish: Laitostunnus
+    administration_number = models.CharField(verbose_name=_("Administration number"), max_length=255)

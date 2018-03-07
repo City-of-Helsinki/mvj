@@ -13,43 +13,18 @@ class RuleType(NameModel):
 
 
 class Rule(models.Model):
-    """Rule
+    """Name in Finnish: Päätös"""
+    # Name in Finnish: Päättäjä
+    rule_maker = models.ForeignKey(RuleMaker, verbose_name=_("Rule maker"), on_delete=models.PROTECT)
 
-    Name in Finnish: Päätös
+    # Name in Finnish: Päätöspäivämäärä
+    rule_date = models.DateField(verbose_name=_("Rule date"))
 
-    Attributes:
-        rule_maker (ForeignKey):
-            Name in Finnish: Päättäjä
-        rule_date (DateField):
-            Name in Finnish: Päätöspäivämäärä
-        rule_clause (CharField):
-            Name in Finnish: Pykälä
-        rule_type (ForeignKey):
-            Name in Finnish: Päätöksen tyyppi
-        rule_description (TextField):
-            Name in Finnish: Selite
-    """
-    rule_maker = models.ForeignKey(
-        RuleMaker,
-        verbose_name=_("Rule maker"),
-        on_delete=models.PROTECT,
-    )
+    # Name in Finnish: Pykälä
+    rule_clause = models.CharField(verbose_name=_("Rule clause"), max_length=255)
 
-    rule_date = models.DateField(
-        verbose_name=_("Rule date"),
-    )
+    # Name in Finnish: Päätöksen tyyppi
+    rule_type = models.ForeignKey(RuleType, verbose_name=_("Rule type"), on_delete=models.PROTECT)
 
-    rule_clause = models.CharField(
-        verbose_name=_("Rule clause"),
-        max_length=255,
-    )
-
-    rule_type = models.ForeignKey(
-        RuleType,
-        verbose_name=_("Rule type"),
-        on_delete=models.PROTECT,
-    )
-
-    rule_description = models.TextField(
-        verbose_name=_("Rule description"),
-    )
+    # Name in Finnish: Selite
+    rule_description = models.TextField(verbose_name=_("Rule description"))

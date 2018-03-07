@@ -9,44 +9,20 @@ class TermPurpose(models.Model):
 
 
 class RuleTerm(models.Model):
-    """Rule term
+    """Name in Finnish: Ehto"""
 
-    Name in Finnish: Ehto
+    # Name in Finnish: Päätös
+    rule = models.ForeignKey(Rule, verbose_name=_("Rule"), on_delete=models.CASCADE, related_name="terms")
 
-    Attributes:
-        rule (ForeignKey):
-            Name in Finnish: Päätös
-        term_purpose (ForeignKey):
-            Name in Finnish: Käyttötarkoitusehto
-        supervision_date (DateField):
-            Name in Finnish: Valvonta päivämäärä
-        supervised_date (DateField):
-            Name in Finnish: Valvottu päivämäärä
-        term_description (TextField):
-            Name in Finnish: Selite
-    """
-    rule = models.ForeignKey(
-        Rule,
-        verbose_name=_("Rule"),
-        on_delete=models.CASCADE,
-        related_name="terms",
-    )
+    # Name in Finnish: Käyttötarkoitusehto
+    term_purpose = models.ForeignKey(TermPurpose, verbose_name=_("Term purpose"), on_delete=models.CASCADE,
+                                     related_name="+")
 
-    term_purpose = models.ForeignKey(
-        TermPurpose,
-        verbose_name=_("Term purpose"),
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
+    # Name in Finnish: Valvonta päivämäärä
+    supervision_date = models.DateField(verbose_name=_("Supervision date"))
 
-    supervision_date = models.DateField(
-        verbose_name=_("Supervision date"),
-    )
+    # Name in Finnish: Valvottu päivämäärä
+    supervised_date = models.DateField(verbose_name=_("Supervised date"))
 
-    supervised_date = models.DateField(
-        verbose_name=_("Supervised date"),
-    )
-
-    term_description = models.TextField(
-        verbose_name=_("Term description"),
-    )
+    # Name in Finnish: Selite
+    term_description = models.TextField(verbose_name=_("Term description"))
