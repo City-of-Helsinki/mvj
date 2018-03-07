@@ -1,10 +1,12 @@
 Django
+django-auditlog
 django-cors-headers
 django-crispy-forms
 django-enumfields
 django-environ
 django-filter
 django-helusers
+django-safedelete
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
