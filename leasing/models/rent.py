@@ -1,31 +1,31 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .mixins import CommentMixin, ConfigurableTextChoice
+from .mixins import NameModel
 
 
 # Note that this class is used in 4 other classes (unlike many other similar classes)
-class RentPurpose(ConfigurableTextChoice):
+class RentPurpose(NameModel):
     pass
 
 
-class RentType(ConfigurableTextChoice):
+class RentType(NameModel):
     pass
 
 
-class RentPeriod(ConfigurableTextChoice):
+class RentPeriod(NameModel):
     pass
 
 
-class RentIndexIDNumber(ConfigurableTextChoice):
+class RentIndexIDNumber(NameModel):
     pass
 
 
-class RentBillingType(ConfigurableTextChoice):
+class RentBillingType(NameModel):
     pass
 
 
-class RentBasicInfo(CommentMixin):
+class RentBasicInfo(models.Model):
     """This is the basic info for rent.
 
     Name in Finnish: Vuokran perustiedot
@@ -189,7 +189,7 @@ class DueDate(models.Model):
     )
 
 
-class RentPaymentType(ConfigurableTextChoice):
+class RentPaymentType(NameModel):
     """How many times per year is this rent paid?"""
     times_per_year = models.PositiveSmallIntegerField(
         verbose_name=_("Times paid per year"),
@@ -304,19 +304,19 @@ class IndexAdjustedRent(models.Model):
     )
 
 
-class RentDiscountType(ConfigurableTextChoice):
+class RentDiscountType(NameModel):
     pass
 
 
-class RentDiscountAmountType(ConfigurableTextChoice):
+class RentDiscountAmountType(NameModel):
     pass
 
 
-class RentDiscountRule(ConfigurableTextChoice):
+class RentDiscountRule(NameModel):
     pass
 
 
-class RentDiscount(CommentMixin):
+class RentDiscount(models.Model):
     """
     Name in Finnish: Alennukset ja korotukset
 

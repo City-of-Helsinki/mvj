@@ -1,0 +1,30 @@
+[
+  {
+    "model": "leasing.Regulation",
+    "pk": 1,
+    "fields": {
+      "name": "ARA"
+    }
+  },
+  {
+    "model": "leasing.Regulation",
+    "pk": 2,
+    "fields": {
+      "name": "ASO"
+    }
+  },
+  {
+    "model": "leasing.Regulation",
+    "pk": 3,
+    "fields": {
+      "name": "Hitas"
+    }
+  },
+  {
+    "model": "leasing.Regulation",
+    "pk": 4,
+    "fields": {
+      "name": "Puoli Hitas"
+    }
+  }
+]

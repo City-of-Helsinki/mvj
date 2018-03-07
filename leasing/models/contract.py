@@ -1,18 +1,18 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .mixins import ConfigurableTextChoice
+from .mixins import NameModel
 
 
-class ContractType(ConfigurableTextChoice):
+class ContractType(NameModel):
     pass
 
 
-class ContractSetupDecision(ConfigurableTextChoice):
+class ContractSetupDecision(NameModel):
     pass
 
 
-class ContractLinkedRule(ConfigurableTextChoice):
+class ContractLinkedRule(NameModel):
     pass
 
 

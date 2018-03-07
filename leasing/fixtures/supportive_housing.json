@@ -1,0 +1,37 @@
+[
+  {
+    "model": "leasing.SupportiveHousing",
+    "pk": 1,
+    "fields": {
+      "name": "Nuorisotalot"
+    }
+  },
+  {
+    "model": "leasing.SupportiveHousing",
+    "pk": 2,
+    "fields": {
+      "name": "Opiskelijatalot"
+    }
+  },
+  {
+    "model": "leasing.SupportiveHousing",
+    "pk": 3,
+    "fields": {
+      "name": "Senioritalot"
+    }
+  },
+  {
+    "model": "leasing.SupportiveHousing",
+    "pk": 4,
+    "fields": {
+      "name": "Omakotitalot"
+    }
+  },
+  {
+    "model": "leasing.SupportiveHousing",
+    "pk": 5,
+    "fields": {
+      "name": "Muut erityisryhmät"
+    }
+  }
+]

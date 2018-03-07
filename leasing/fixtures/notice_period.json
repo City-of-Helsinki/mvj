@@ -1,0 +1,146 @@
+[
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 1,
+    "fields": {
+      "name": "Ei irtisanomisaikaa (mm. rasite)",
+      "type": "no_period",
+      "duration": null
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 2,
+    "fields": {
+      "name": "1 viikon irtisanomisaika",
+      "type": "time_period",
+      "duration": "P1W"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 3,
+    "fields": {
+      "name": "2 viikon irtisanomisaika",
+      "type": "time_period",
+      "duration": "P2W"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 4,
+    "fields": {
+      "name": "3 viikon irtisanomisaika",
+      "type": "time_period",
+      "duration": "P3W"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 5,
+    "fields": {
+      "name": "14 vuorok. irtisanomisaika",
+      "type": "time_period",
+      "duration": "P14D"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 6,
+    "fields": {
+      "name": "30 päivän irtisanomisaika",
+      "type": "time_period",
+      "duration": "P30D"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 7,
+    "fields": {
+      "name": "1 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P1M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 8,
+    "fields": {
+      "name": "2 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P2M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 9,
+    "fields": {
+      "name": "3 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P3M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 10,
+    "fields": {
+      "name": "6 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P6M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 11,
+    "fields": {
+      "name": "9 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P9M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 12,
+    "fields": {
+      "name": "15 kk:n irtisanomisaika",
+      "type": "time_period",
+      "duration": "P15M"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 13,
+    "fields": {
+      "name": "1 vuoden irtisanomisaika",
+      "type": "time_period",
+      "duration": "P1Y"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 14,
+    "fields": {
+      "name": "2 vuoden irtisanomisaika",
+      "type": "time_period",
+      "duration": "P2Y"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 15,
+    "fields": {
+      "name": "3 vuoden irtisanomisaika",
+      "type": "time_period",
+      "duration": "P3Y"
+    }
+  },
+  {
+    "model": "leasing.NoticePeriod",
+    "pk": 16,
+    "fields": {
+      "name": "muu irtisanomisaika",
+      "type": "other",
+      "duration": null
+    }
+  }
+]

@@ -1,0 +1,282 @@
+[
+  {
+    "model": "leasing.LeaseType",
+    "pk": "A1",
+    "fields": {
+      "name": "Asuntotontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "A2",
+    "fields": {
+      "name": "Opiskelija-asuntotontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "A3",
+    "fields": {
+      "name": "Vanhusten asunto- ja vanhainkotitontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "A4",
+    "fields": {
+      "name": "Asuntotontteihin liittyvä pysäköintit."
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "S0",
+    "fields": {
+      "name": "Sekalaiset vuokraukset"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "T1",
+    "fields": {
+      "name": "Teollisuus- ja varastotontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "O1",
+    "fields": {
+      "name": "Käyttöoikeudet"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "T2",
+    "fields": {
+      "name": "Teollis./varastot. liittyv. pysäköintit."
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "H1",
+    "fields": {
+      "name": "Huoltoasema"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "H2",
+    "fields": {
+      "name": "Jakeluasema"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "L1",
+    "fields": {
+      "name": "Liike- ja toimistotontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "L2",
+    "fields": {
+      "name": "Yleisen rakennuksen tontit"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "L3",
+    "fields": {
+      "name": "Liike/Yleistenr. tonttien pysäköintit."
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "O2",
+    "fields": {
+      "name": "Laiturinpito ja poijuluvat"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "O3",
+    "fields": {
+      "name": "Kokoontumisluvat"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "O4",
+    "fields": {
+      "name": "Muut luvat"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "K0",
+    "fields": {
+      "name": "Kaupungin sisäiset (tilapäiset vuokr.)"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V5",
+    "fields": {
+      "name": "Helsingin Satama"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V2",
+    "fields": {
+      "name": "Helsingin Energia"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V6",
+    "fields": {
+      "name": "Helsingin Vesi"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V4",
+    "fields": {
+      "name": "Liikennelaitos"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V1",
+    "fields": {
+      "name": "Elintarviketukkukaupan keskus"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "V3",
+    "fields": {
+      "name": "Keskuspesula"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y3",
+    "fields": {
+      "name": "Liikuntavirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y5",
+    "fields": {
+      "name": "Rakennusvirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y6",
+    "fields": {
+      "name": "Sosiaalivirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y7",
+    "fields": {
+      "name": "Terveysvirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y2",
+    "fields": {
+      "name": "Opetusvirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y4",
+    "fields": {
+      "name": "Pelastuslaitos"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y1",
+    "fields": {
+      "name": "Korkeasaari"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y8",
+    "fields": {
+      "name": "Nuorisoasiainkeskus"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "TY",
+    "fields": {
+      "name": "TYHJÄ TONTTI"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "MA",
+    "fields": {
+      "name": "Maapoliittinen sopimus"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y9",
+    "fields": {
+      "name": "Kiinteistövirasto tilakeskus"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "MY",
+    "fields": {
+      "name": "Myynti/maksamaton kauppahinta"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "R0",
+    "fields": {
+      "name": "SIIRTOLAPUUTARHA ei käytössä"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "VS",
+    "fields": {
+      "name": "Väestönsuojakorvaukset"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "Y0",
+    "fields": {
+      "name": "Varhaiskasvatusvirasto"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "T3",
+    "fields": {
+      "name": "Teollisuus- ja varatotontit (alv:set)"
+    }
+  },
+  {
+    "model": "leasing.LeaseType",
+    "pk": "S1",
+    "fields": {
+      "name": "Liikuntaviraston ulosvuokraus"
+    }
+  }
+]

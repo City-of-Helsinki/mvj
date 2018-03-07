@@ -87,6 +87,8 @@ INSTALLED_APPS = [
     'rest_framework_gis',
     'rest_framework_swagger',
     'corsheaders',
+    'auditlog',
+    'safedelete',
 
     'users',
     'leasing',
@@ -108,6 +110,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 TEMPLATES = [

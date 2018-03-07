@@ -1,0 +1,23 @@
+[
+  {
+    "model": "leasing.StatisticalUse",
+    "pk": 1,
+    "fields": {
+      "name": "Asuntotontit"
+    }
+  },
+  {
+    "model": "leasing.StatisticalUse",
+    "pk": 2,
+    "fields": {
+      "name": "Yritystontit"
+    }
+  },
+  {
+    "model": "leasing.StatisticalUse",
+    "pk": 3,
+    "fields": {
+      "name": "Muut"
+    }
+  }
+]

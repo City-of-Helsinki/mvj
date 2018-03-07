@@ -1,0 +1,79 @@
+[
+  {
+    "model": "leasing.Hitas",
+    "pk": "A",
+    "fields": {
+      "name": "Puolihitas"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "0",
+    "fields": {
+      "name": "Ei Hitasta"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "1",
+    "fields": {
+      "name": "Hitas I"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "2",
+    "fields": {
+      "name": "Hitas II"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "3",
+    "fields": {
+      "name": "Laatusääntely"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "4",
+    "fields": {
+      "name": "Ei laatusääntelyä"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "5",
+    "fields": {
+      "name": "Hitas I tai laatusä."
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "6",
+    "fields": {
+      "name": "Ei tietoa"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "7",
+    "fields": {
+      "name": "Hitas II (loikkari)"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "8",
+    "fields": {
+      "name": "Hitas (vapautettu)"
+    }
+  },
+  {
+    "model": "leasing.Hitas",
+    "pk": "9",
+    "fields": {
+      "name": "Hintakontrolloitu"
+    }
+  }
+]

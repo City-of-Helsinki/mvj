@@ -4,10 +4,10 @@ These are all the models used in the construction worthiness page (Rakentamiskel
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .mixins import CommentMixin, ConfigurableTextChoice
+from .mixins import NameModel
 
 
-class ResearchState(ConfigurableTextChoice):
+class ResearchState(NameModel):
     pass
 
 
@@ -22,7 +22,7 @@ class ResearchStateMixin(models.Model):
         abstract = True
 
 
-class Decision(CommentMixin):
+class Decision(models.Model):
     """
     All the preconstruction models use this class to keep track of decisions.
 
@@ -61,7 +61,7 @@ class Demolition(DecisionMixin):
     pass
 
 
-class RentCondition(ConfigurableTextChoice):
+class RentCondition(NameModel):
     pass
 
 
@@ -106,7 +106,7 @@ class Contamination(DecisionMixin):
     )
 
 
-class ConstructionInvestigationReport(ConfigurableTextChoice):
+class ConstructionInvestigationReport(NameModel):
     pass
 
 

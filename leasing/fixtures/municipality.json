@@ -1,0 +1,65 @@
+[
+  {
+    "model": "leasing.Municipality",
+    "pk": 1,
+    "fields": {
+      "name": "Helsinki"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 2,
+    "fields": {
+      "name": "Espoo"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 3,
+    "fields": {
+      "name": "Inkoo"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 4,
+    "fields": {
+      "name": "Kirkkonummi"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 5,
+    "fields": {
+      "name": "Vihti"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 6,
+    "fields": {
+      "name": "Vantaa"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 7,
+    "fields": {
+      "name": "Sipoo"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 8,
+    "fields": {
+      "name": "Hanko"
+    }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 9,
+    "fields": {
+      "name": "Lohja"
+    }
+  }
+]

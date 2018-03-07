@@ -1,0 +1,848 @@
+[
+  {
+    "model": "leasing.District",
+    "pk": 1,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 0,
+      "name": "Koko Helsinki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 2,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 1,
+      "name": "Kruununhaka"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 3,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 2,
+      "name": "Kluuvi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 4,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 3,
+      "name": "Kaartinkaupunki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 5,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 4,
+      "name": "Kamppi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 6,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 5,
+      "name": "Punavuori"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 7,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 6,
+      "name": "Eira"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 8,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 7,
+      "name": "Ullanlinna"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 9,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 8,
+      "name": "Katajanokka"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 10,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 9,
+      "name": "Kaivopuisto"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 11,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 10,
+      "name": "Sörnäinen"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 12,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 11,
+      "name": "Kallio"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 13,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 12,
+      "name": "Alppiharju"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 14,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 13,
+      "name": "Etu-töölö"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 15,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 14,
+      "name": "Taka-töölö"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 16,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 15,
+      "name": "Meilahti"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 17,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 16,
+      "name": "Ruskeasuo"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 18,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 17,
+      "name": "Pasila"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 19,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 18,
+      "name": "Laakso"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 20,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 19,
+      "name": "Mustikkamaa-korkeas"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 21,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 20,
+      "name": "Länsisatama"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 22,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 21,
+      "name": "Hermanni"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 23,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 22,
+      "name": "Vallila"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 24,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 23,
+      "name": "Toukola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 25,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 24,
+      "name": "Kumpula"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 26,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 25,
+      "name": "Käpylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 27,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 26,
+      "name": "Koskela"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 28,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 27,
+      "name": "Vanhakaupunki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 29,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 28,
+      "name": "Oulunkylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 30,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 29,
+      "name": "Haaga"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 31,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 30,
+      "name": "Munkkiniemi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 32,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 31,
+      "name": "Lauttasaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 33,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 32,
+      "name": "Konala"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 34,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 33,
+      "name": "Kaarela"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 35,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 34,
+      "name": "Pakila"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 36,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 35,
+      "name": "Tuomarinkylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 37,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 36,
+      "name": "Viikki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 38,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 37,
+      "name": "Pukinmäki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 39,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 38,
+      "name": "Malmi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 40,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 39,
+      "name": "Tapaninkylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 41,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 40,
+      "name": "Suutarila"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 42,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 41,
+      "name": "Suurmetsä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 43,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 42,
+      "name": "Kulosaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 44,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 43,
+      "name": "Herttoniemi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 45,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 44,
+      "name": "Tammisalo"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 46,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 45,
+      "name": "Vartiokylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 47,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 46,
+      "name": "Pitäjänmäki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 48,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 47,
+      "name": "Mellunkylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 49,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 48,
+      "name": "Vartiosaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 50,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 49,
+      "name": "Laajasalo"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 51,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 50,
+      "name": "Villinki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 52,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 51,
+      "name": "Santahamina"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 53,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 52,
+      "name": "Suomenlinna"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 54,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 53,
+      "name": "Ulkosaaret"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 55,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 54,
+      "name": "Vuosaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 56,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 55,
+      "name": "Östersundom"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 57,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 56,
+      "name": "Salmenkallio"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 58,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 57,
+      "name": "Talosaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 59,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 58,
+      "name": "Karhusaari"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 60,
+    "fields": {
+      "municipality_id": 1,
+      "identifier": 59,
+      "name": "Ultuna"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 61,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 62,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 10,
+      "name": "Otaniemi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 63,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 12,
+      "name": "Tapiola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 64,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 16,
+      "name": "Pohjois-tapiola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 65,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 17,
+      "name": "Laajalahti"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 66,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 26,
+      "name": "Mankkaa"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 67,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 31,
+      "name": "Kaitaa"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 68,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 34,
+      "name": "Espoonlahti"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 69,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 40,
+      "name": "Espoon Keskus"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 70,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 51,
+      "name": "Leppävaara"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 71,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 54,
+      "name": "Kilo"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 72,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 76,
+      "name": "Siikajärvi"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 73,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 78,
+      "name": "Nuuksio"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 74,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 83,
+      "name": "Bodom"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 75,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 84,
+      "name": "Röylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 76,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 86,
+      "name": "Luukki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 77,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 87,
+      "name": "Lahnus"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 78,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 88,
+      "name": "Velskola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 79,
+    "fields": {
+      "municipality_id": 2,
+      "identifier": 89,
+      "name": "Lakisto"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 80,
+    "fields": {
+      "municipality_id": 3,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 81,
+    "fields": {
+      "municipality_id": 4,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 82,
+    "fields": {
+      "municipality_id": 5,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 83,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 84,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 71,
+      "name": "Ilola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 85,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 73,
+      "name": "Rekola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 86,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 83,
+      "name": "Metsola"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 87,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 91,
+      "name": "Länsimäki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 88,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 92,
+      "name": "Ojanko"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 89,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 93,
+      "name": "Vaarala"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 90,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 95,
+      "name": "Rajakylä"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 91,
+    "fields": {
+      "municipality_id": 6,
+      "identifier": 98,
+      "name": "Sotunki"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 92,
+    "fields": {
+      "municipality_id": 7,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 93,
+    "fields": {
+      "municipality_id": 8,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 94,
+    "fields": {
+      "municipality_id": 9,
+      "identifier": 0,
+      "name": "Muu"
+    }
+  }
+]

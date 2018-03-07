@@ -1,0 +1,100 @@
+[
+  {
+    "model": "leasing.Financing",
+    "pk": "A",
+    "fields": {
+      "name": "Korkotuki yht. pitkä"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "B",
+    "fields": {
+      "name": "Korkotuki yht. lyhyt"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "C",
+    "fields": {
+      "name": "Korkotuki osakk. om."
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "D",
+    "fields": {
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "0",
+    "fields": {
+      "name": "Ei tietoa"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "1",
+    "fields": {
+      "name": "Aravalainoitettu"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "2",
+    "fields": {
+      "name": "Vapaarahoitteinen"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "3",
+    "fields": {
+      "name": "Peruskorjauslaina"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "4",
+    "fields": {
+      "name": "Korkotuki"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "5",
+    "fields": {
+      "name": "Arava tai korkotuki"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "6",
+    "fields": {
+      "name": "Vapaarah. tai arava"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "7",
+    "fields": {
+      "name": "Vap. rah. tai korko"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "8",
+    "fields": {
+      "name": "Korkot./arava/vap.ra"
+    }
+  },
+  {
+    "model": "leasing.Financing",
+    "pk": "9",
+    "fields": {
+      "name": "Muu kuin AV ja p. KT"
+    }
+  }
+]

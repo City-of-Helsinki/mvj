@@ -1,14 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .mixins import ConfigurableTextChoice
+from .mixins import NameModel
 
 
-class RuleMaker(ConfigurableTextChoice):
+class RuleMaker(NameModel):
     pass
 
 
-class RuleType(ConfigurableTextChoice):
+class RuleType(NameModel):
     pass
 
 

@@ -1,0 +1,107 @@
+[
+  {
+    "model": "leasing.Management",
+    "pk": "A",
+    "fields": {
+      "name": "koe"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "B",
+    "fields": {
+      "name": "koe 2"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "C",
+    "fields": {
+      "name": "Asumisoikeus/omistus"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "D",
+    "fields": {
+      "name": "Asumisoikeus/vuokra"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "E",
+    "fields": {
+      "name": "Omistus ja vuokra"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "0",
+    "fields": {
+      "name": "Ei tietoa"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "1",
+    "fields": {
+      "name": "Omistus"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "2",
+    "fields": {
+      "name": "Vuokra"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "3",
+    "fields": {
+      "name": "Asumisoikeus"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "4",
+    "fields": {
+      "name": "Sekatalo"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "5",
+    "fields": {
+      "name": "Vuokra tai asumisoik"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "6",
+    "fields": {
+      "name": "Omistus tai vuokra"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "7",
+    "fields": {
+      "name": "Omist./vuokra/as.oik"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "8",
+    "fields": {
+      "name": "Osaomistus"
+    }
+  },
+  {
+    "model": "leasing.Management",
+    "pk": "9",
+    "fields": {
+      "name": "Asumisoik./osaomist."
+    }
+  }
+]

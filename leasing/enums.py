@@ -1,187 +1,90 @@
-LEASE_IDENTIFIER_TYPE = (
-    ('A1', 'Asuntotontit'),
-    ('A2', 'Opiskelija-asuntotontit'),
-    ('A3', 'Vanhusten asunto- ja vanhainkotitontit'),
-    ('A4', 'Asuntotontteihin liittyvä pysäköintit.'),
-    ('S0', 'Sekalaiset vuokraukset'),
-    ('T1', 'Teollisuus- ja varastotontit'),
-    ('O1', 'Käyttöoikeudet'),
-    ('T2', 'Teollis./varastot. liittyv. pysäköintit.'),
-    ('H1', 'Huoltoasema'),
-    ('H2', 'Jakeluasema'),
-    ('L1', 'Liike- ja toimistotontit'),
-    ('L2', 'Yleisen rakennuksen tontit'),
-    ('L3', 'Liike/Yleistenr. tonttien pysäköintit.'),
-    ('O2', 'Laiturinpito ja poijuluvat'),
-    ('O3', 'Kokoontumisluvat'),
-    ('O4', 'Muut luvat'),
-    ('K0', 'Kaupungin sisäiset (tilapäiset vuokr.)'),
-    ('V5', 'Helsingin Satama'),
-    ('V2', 'Helsingin Energia'),
-    ('V6', 'Helsingin Vesi'),
-    ('V4', 'Liikennelaitos'),
-    ('V1', 'Elintarviketukkukaupan keskus'),
-    ('V3', 'Keskuspesula'),
-    ('Y3', 'Liikuntavirasto'),
-    ('Y5', 'Rakennusvirasto'),
-    ('Y6', 'Sosiaalivirasto'),
-    ('Y7', 'Terveysvirasto'),
-    ('Y2', 'Opetusvirasto'),
-    ('Y4', 'Pelastuslaitos'),
-    ('Y1', 'Korkeasaari'),
-    ('Y8', 'Nuorisoasiainkeskus'),
-    ('TY', 'TYHJÄ TONTTI'),
-    ('MA', 'Maapoliittinen sopimus'),
-    ('Y9', 'Kiinteistövirasto tilakeskus'),
-    ('MY', 'Myynti/maksamaton kauppahinta'),
-    ('R0', 'SIIRTOLAPUUTARHA ei käytössä'),
-    ('VS', 'Väestönsuojakorvaukset'),
-    ('Y0', 'Varhaiskasvatusvirasto'),
-    ('T3', 'Teollisuus- ja varatotontit (alv:set)'),
-    ('S1', 'Liikuntaviraston ulosvuokraus'),
-)
+from django.utils.translation import ugettext_lazy as _
+from enumfields import Enum
 
-LEASE_IDENTIFIER_TYPE_CONTRACT_CODE = {
-    'A1': 11,
-    'A2': 12,
-    'A3': 13,
-    'A4': 14,
-    'H1': 21,
-    'H2': 22,
-    'K0': 30,
-    'L1': 41,
-    'L2': 42,
-    'L3': 43,
-    'MA': 0,
-    'MY': 0,
-    'O1': 0,
-    'O2': 0,
-    'O3': 0,
-    'O4': 0,
-    'R0': 0,
-    'S0': 60,
-    'S1': 61,
-    'T1': 71,
-    'T2': 72,
-    'T3': 73,
-    'TY': 0,
-    'V1': 81,
-    'V2': 82,
-    'V3': 83,
-    'V4': 84,
-    'V5': 85,
-    'V6': 86,
-    'VS': 0,
-    'Y0': 90,
-    'Y1': 91,
-    'Y2': 92,
-    'Y3': 93,
-    'Y4': 94,
-    'Y5': 95,
-    'Y6': 96,
-    'Y7': 97,
-    'Y8': 98,
-    'Y9': 99,
-}
 
-LEASE_IDENTIFIER_MUNICIPALITY = (
-    ('2', 'ESPOO'),
-    ('8', 'HANKO'),
-    ('1', 'HELSINKI'),
-    ('3', 'INKOO'),
-    ('4', 'KIRKKONUMMI'),
-    ('9', 'LOHJA'),
-    ('0', 'MUU'),
-    ('7', 'SIPOO'),
-    ('6', 'VANTAA'),
-    ('5', 'VIHTI'),
-)
+class Classification(Enum):
+    PUBLIC = 'public'
+    CONFIDENTIAL = 'confidential'
+    OFFICIAL = 'official'
 
-LEASE_IDENTIFIER_DISTRICT = (
-    ('01', 'KRUUNUNHAKA'),
-    ('02', 'KLUUVI'),
-    ('03', 'KAARTINKAUPUNKI'),
-    ('04', 'KAMPPI'),
-    ('05', 'PUNAVUORI'),
-    ('06', 'EIRA'),
-    ('07', 'ULLANLINNA'),
-    ('08', 'KATAJANOKKA'),
-    ('09', 'KAIVOPUISTO'),
-    ('10', 'SÖRNÄINEN'),
-    ('11', 'KALLIO'),
-    ('12', 'ALPPIHARJU'),
-    ('13', 'ETU-TÖÖLÖ'),
-    ('14', 'TAKA-TÖÖLÖ'),
-    ('15', 'MEILAHTI'),
-    ('16', 'RUSKEASUO'),
-    ('17', 'PASILA'),
-    ('18', 'LAAKSO'),
-    ('19', 'MUSTIKKAMAA-KORKEAS'),
-    ('20', 'LÄNSISATAMA'),
-    ('21', 'HERMANNI'),
-    ('22', 'VALLILA'),
-    ('23', 'TOUKOLA'),
-    ('24', 'KUMPULA'),
-    ('25', 'KÄPYLÄ'),
-    ('26', 'KOSKELA'),
-    ('27', 'VANHAKAUPUNKI'),
-    ('28', 'OULUNKYLÄ'),
-    ('29', 'HAAGA'),
-    ('30', 'MUNKKINIEMI'),
-    ('31', 'LAUTTASAARI'),
-    ('32', 'KONALA'),
-    ('33', 'KAARELA'),
-    ('34', 'PAKILA'),
-    ('35', 'TUOMARINKYLÄ'),
-    ('36', 'VIIKKI'),
-    ('37', 'PUKINMÄKI'),
-    ('38', 'MALMI'),
-    ('39', 'TAPANINKYLÄ'),
-    ('40', 'SUUTARILA'),
-    ('41', 'SUURMETSÄ'),
-    ('42', 'KULOSAARI'),
-    ('43', 'HERTTONIEMI'),
-    ('44', 'TAMMISALO'),
-    ('45', 'VARTIOKYLÄ'),
-    ('46', 'PITÄJÄNMÄKI'),
-    ('47', 'MELLUNKYLÄ'),
-    ('48', 'VARTIOSAARI'),
-    ('49', 'LAAJASALO'),
-    ('50', 'VILLINKI'),
-    ('51', 'SANTAHAMINA'),
-    ('52', 'SUOMENLINNA'),
-    ('53', 'ULKOSAARET'),
-    ('54', 'VUOSAARI'),
-    ('26', 'MANKKAA'),
-    ('10', 'OTANIEMI'),
-    ('12', 'TAPIOLA'),
-    ('16', 'POHJOIS-TAPIOLA'),
-    ('17', 'LAAJALAHTI'),
-    ('51', 'LEPPÄVAARA'),
-    ('54', 'KILO'),
-    ('00', 'MUU'),
-    ('31', 'KAITAA'),
-    ('71', 'ILOLA'),
-    ('73', 'REKOLA'),
-    ('83', 'METSOLA'),
-    ('98', 'SOTUNKI'),
-    ('89', 'LAKISTO'),
-    ('83', 'BODOM'),
-    ('40', 'ESPOON KESKUS'),
-    ('34', 'ESPOONLAHTI'),
-    ('87', 'LAHNUS'),
-    ('88', 'VELSKOLA'),
-    ('78', 'NUUKSIO'),
-    ('76', 'SIIKAJÄRVI'),
-    ('86', 'LUUKKI'),
-    ('84', 'RÖYLÄ'),
-    ('56', 'SALMENKALLIO'),
-    ('57', 'TALOSAARI'),
-    ('58', 'KARHUSAARI'),
-    ('59', 'ULTUNA'),
-    ('55', 'ÖSTERSUNDOM'),
-    ('93', 'VAARALA'),
-    ('91', 'LÄNSIMÄKI'),
-    ('95', 'RAJAKYLÄ'),
-    ('92', 'OJANKO'),
-)
+    class Labels:
+        PUBLIC = _('Public')
+        CONFIDENTIAL = _('Confidential')
+        OFFICIAL = _('Official')
+
+
+class LeaseState(Enum):
+    LEASE = 'lease'
+    RESERVATION = 'reservation'
+    PERMISSION = 'permission'
+    TRANSFERRED = 'transferred'
+    APPLICATION = 'application'
+    FREE = 'free'
+
+    class Labels:
+        LEASE = _('Lease')
+        RESERVATION = _('Reservation')
+        PERMISSION = _('Permission')
+        TRANSFERRED = _('Transferred')
+        APPLICATION = _('Application')
+        FREE = _('Free')
+
+
+class LeaseRelationType(Enum):
+    TRANSFER = 'transfer'
+
+    class Labels:
+        TRANSFER = _('Transfer')
+
+
+class PeriodType(Enum):
+    NO_PERIOD = 'no_period'
+    TIME_PERIOD = 'time_period'
+    OTHER = 'other'
+
+    class Labels:
+        NO_PERIOD = _('No period')
+        TIME_PERIOD = _('Time period')
+        OTHER = _('Other')
+
+
+class TenantContactType(Enum):
+    TENANT = 'tenant'
+    BILLING = 'billing'
+    CONTACT = 'contact'
+
+    class Labels:
+        TENANT = _("Tenant")
+        BILLING = _("Billing contact")
+        CONTACT = _("Contact")
+
+
+class LocationType(Enum):
+    SURFACE = 'surface'
+    UNDERGROUND = 'underground'
+
+    class Labels:
+        SURFACE = _('Surface')
+        UNDERGROUND = _('Underground')
+
+
+class LeaseAreaType(Enum):
+    PLAN_UNIT = 'plan_unit'
+    REAL_PROPERTY = 'real_property'
+    UNSEPARATED_PARCEL = 'unseparated_parcel'
+    OTHER = 'other'
+
+    class Labels:
+        PLAN_UNIT = _('Plan unit')
+        REAL_PROPERTY = _('Real property')
+        UNSEPARATED_PARCEL = _('Unseparated parcel')
+        OTHER = _('Other')
+
+
+class PlotType(Enum):
+    REAL_PROPERTY = 'real_property'
+    UNSEPARATED_PARCEL = 'unseparated_parcel'
+
+    class Labels:
+        REAL_PROPERTY = _('Real property')
+        UNSEPARATED_PARCEL = _('Unseparated parcel')

@@ -2,32 +2,8 @@ import requests
 from django.conf import settings
 from django.http import Http404, HttpResponseServerError, StreamingHttpResponse
 from requests.auth import HTTPBasicAuth
-from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-
-from leasing.filters import AssetFilter, LeaseFilter
-from leasing.models import Asset, Lease
-from leasing.serializers import AssetSerializer, LeaseSerializer
-
-
-class LeaseViewSet(viewsets.ModelViewSet):
-    queryset = Lease.objects.all()
-    serializer_class = LeaseSerializer
-    filter_class = LeaseFilter
-
-
-class AssetViewSet(viewsets.ModelViewSet):
-    queryset = Asset.objects.all()
-    serializer_class = AssetSerializer
-    filter_class = AssetFilter
-
-    def get_serializer(self, *args, **kwargs):
-        if "data" in kwargs:
-            if isinstance(kwargs["data"], list):
-                kwargs["many"] = True
-
-        return super().get_serializer(*args, **kwargs)
 
 
 @api_view()
