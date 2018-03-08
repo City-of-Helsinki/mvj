@@ -7,6 +7,9 @@ from .mixins import TimeStampedSafeDeleteModel
 
 
 class Contact(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Yhteystieto
+    """
     # In Finnish: Etunimi
     first_name = models.CharField(verbose_name=_("First name"), null=True, blank=True, max_length=255)
 
@@ -60,8 +63,8 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Kumppanikoodi
     partner_code = models.CharField(verbose_name=_("Partner code"), null=True, blank=True, max_length=255)
 
-    # # In Finnish: Onko vuokranantaja
-    # is_lessor = models.BooleanField(verbose_name=_("Is a lessor"), default=False)
+    # In Finnish: Onko vuokranantaja
+    is_lessor = models.BooleanField(verbose_name=_("Is a lessor"), default=False)
 
     def __str__(self):
         if self.is_business:

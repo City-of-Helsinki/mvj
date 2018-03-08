@@ -9,7 +9,9 @@ from leasing.models.mixins import TimeStampedSafeDeleteModel
 
 
 class Tenant(TimeStampedSafeDeleteModel):
-    """In Finnish: Vuokralainen"""
+    """
+    In Finnish: Vuokralainen
+    """
     lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='tenants',
                               on_delete=models.PROTECT)
 

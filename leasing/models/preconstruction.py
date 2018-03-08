@@ -10,7 +10,7 @@ class ResearchState(NameModel):
 
 
 class ResearchStateMixin(models.Model):
-    # Name in Finnish: Selvitysaste
+    # In Finnish: Selvitysaste
     research_state = models.ForeignKey(ResearchState, verbose_name=_("Research state"), on_delete=models.PROTECT)
 
     class Meta:
@@ -18,10 +18,13 @@ class ResearchStateMixin(models.Model):
 
 
 class Decision(models.Model):
-    """All the preconstruction models use this class to keep track of decisions."""
-    # Name in Finnish: Selitys
+    """All the preconstruction models use this class to keep track of decisions.
+
+    In Finnish: Päätös
+    """
+    # In Finnish: Selitys
     comment = models.CharField(verbose_name=_("Comment"), max_length=255)
-    # Name in Finnish: AHJO diaarinumero
+    # In Finnish: AHJO diaarinumero
     AHJO_number = models.CharField(verbose_name=_("AHJO number"), max_length=255)
 
 
@@ -45,20 +48,23 @@ class RentCondition(NameModel):
 
 
 class Contamination(DecisionMixin):
-    # Name in Finnish: ProjectWise kohdenumero
+    """
+    In Finnish: Pilaantunut maa-alue (PIMA)
+    """
+    # In Finnish: ProjectWise kohdenumero
     projectwise_number = models.CharField(verbose_name=_("Rule clause"), max_length=255)
 
-    # Name in Finnish: Matti raportti
+    # In Finnish: Matti raportti
     matti_report = models.CharField(verbose_name=_("Matti report"), max_length=255)
 
-    # Name in Finnish: Vuokraehdot
+    # In Finnish: Vuokraehdot
     rent_condition = models.ForeignKey(RentCondition, verbose_name=_("Rent conditions"), on_delete=models.CASCADE,
                                        related_name="+")
 
-    # Name in Finnish: Päivämäärä
+    # In Finnish: Päivämäärä
     rent_condition_date = models.DateField(verbose_name=_("Rent condition date"))
 
-    # Name in Finnish: PIMA valmistelija
+    # In Finnish: PIMA valmistelija
     contamination_author = models.CharField(verbose_name=_("Contamination author"), max_length=255)
 
 
@@ -67,17 +73,20 @@ class ConstructionInvestigationReport(NameModel):
 
 
 class ConstructionInvestigation(DecisionMixin):
-    # Name in Finnish: Geotekninen palvelun tiedosto
+    """
+    In Finnish: Rakennettavuusselvitys
+    """
+    # In Finnish: Geotekninen palvelun tiedosto
     geotechnical_number = models.CharField(verbose_name=_("Geotechnical number"), max_length=255)
 
-    # Name in Finnish: Selvitys
+    # In Finnish: Selvitys
     report = models.ForeignKey(ConstructionInvestigationReport, verbose_name=("Report"), on_delete=models.CASCADE,
                                related_name="+")
 
-    # Name in Finnish: Allekirjoituspäivämäärä
+    # In Finnish: Allekirjoituspäivämäärä
     signing_date = models.DateField(verbose_name=_("Signing date"))
 
-    # Name in Finnish: Allekirjoittaja
+    # In Finnish: Allekirjoittaja
     report_author = models.CharField(verbose_name=_("Report author"), max_length=255)
 
 
