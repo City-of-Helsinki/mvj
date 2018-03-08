@@ -1,4 +1,5 @@
 import rest_framework.urls
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework import routers
@@ -34,3 +35,8 @@ urlpatterns = [
     path('auth/', include(rest_framework.urls)),
     path('docs/', get_swagger_view(title='MVJ API')),
 ]
+
+if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
+    import debug_toolbar
+
+    urlpatterns = [path('__debug__/', include(debug_toolbar.urls)), ] + urlpatterns
