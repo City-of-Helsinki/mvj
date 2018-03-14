@@ -5,7 +5,7 @@ from ..models import Contact
 
 
 class ContactSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Contact

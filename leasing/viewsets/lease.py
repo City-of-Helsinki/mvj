@@ -5,9 +5,10 @@ from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     StatisticalUse, SupportiveHousing)
 from leasing.serializers.lease import (
-    DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseSerializer,
-    LeaseTypeSerializer, ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer,
-    StatisticalUseSerializer, SupportiveHousingSerializer)
+    DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
+    LeaseSerializer, LeaseTypeSerializer, ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer,
+    RegulationSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
+from leasing.viewsets.utils import AuditLogMixin
 
 
 class DistrictViewSet(viewsets.ModelViewSet):
@@ -65,7 +66,15 @@ class SupportiveHousingViewSet(viewsets.ModelViewSet):
     serializer_class = SupportiveHousingSerializer
 
 
-class LeaseViewSet(viewsets.ModelViewSet):
-    queryset = Lease.objects.all()
+class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
+    queryset = Lease.objects.all().select_related('type', 'municipality', 'district', 'identifier', 'lessor',
+                                                  'intended_use', 'supportive_housing', 'statistical_use', 'financing',
+                                                  'management', 'regulation', 'hitas', 'notice_period')
     serializer_class = LeaseSerializer
     filter_class = LeaseFilter
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return LeaseCreateUpdateSerializer
+
+        return LeaseSerializer
