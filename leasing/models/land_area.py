@@ -42,7 +42,7 @@ class LeaseArea(Land, SafeDeleteModel):
     """
     In Finnish: Vuokra-alue
     """
-    lease = models.ForeignKey(Lease, on_delete=models.PROTECT)
+    lease = models.ForeignKey(Lease, on_delete=models.PROTECT, related_name='lease_areas')
     type = EnumField(LeaseAreaType, verbose_name=_("Type"), max_length=30)
     # In Finnish: Sijainti (maanpäällinen, maanalainen)
     location = EnumField(LocationType, verbose_name=_("Location"))
