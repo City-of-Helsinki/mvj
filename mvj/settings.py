@@ -35,6 +35,8 @@ DATABASES = {
     'default': env.db()
 }
 
+DATABASES['default']['ATOMIC_REQUESTS'] = True
+
 CACHES = {
     'default': env.cache()
 }
