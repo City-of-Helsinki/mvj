@@ -6,6 +6,11 @@ from leasing.models import (
     StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 
 
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'is_business', 'is_lessor')
+    search_fields = ['first_name', 'last_name', 'business_name']
+
+
 class MunicipalityAdmin(admin.ModelAdmin):
     list_display = ('name', 'id')
     readonly_fields = ('id',)
@@ -13,6 +18,7 @@ class MunicipalityAdmin(admin.ModelAdmin):
 
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('name', 'municipality', 'identifier')
+    search_fields = ['name', 'municipality__name', 'identifier']
 
 
 class TenantContactInline(admin.TabularInline):
@@ -29,26 +35,31 @@ class LeaseAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Contact)
+class NameAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+
+
+admin.site.register(Contact, ContactAdmin)
 admin.site.register(District, DistrictAdmin)
-admin.site.register(Financing)
-admin.site.register(Hitas)
-admin.site.register(IntendedUse)
+admin.site.register(Financing, NameAdmin)
+admin.site.register(Hitas, NameAdmin)
+admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea)
 admin.site.register(LeaseIdentifier)
 admin.site.register(LeaseStateLog)
-admin.site.register(LeaseType)
-admin.site.register(Management)
+admin.site.register(LeaseType, NameAdmin)
+admin.site.register(Management, NameAdmin)
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(NoticePeriod)
 admin.site.register(Plot)
 admin.site.register(PlanUnit)
-admin.site.register(PlanUnitState)
-admin.site.register(PlanUnitType)
-admin.site.register(Regulation)
+admin.site.register(PlanUnitState, NameAdmin)
+admin.site.register(PlanUnitType, NameAdmin)
+admin.site.register(Regulation, NameAdmin)
 admin.site.register(RelatedLease)
-admin.site.register(StatisticalUse)
-admin.site.register(SupportiveHousing)
+admin.site.register(StatisticalUse, NameAdmin)
+admin.site.register(SupportiveHousing, NameAdmin)
 admin.site.register(Tenant, TenantAdmin)
 admin.site.register(TenantContact)
