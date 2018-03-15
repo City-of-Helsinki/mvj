@@ -1,3 +1,4 @@
+from .bill import Bill
 from .contact import Contact
 # from .contract import Contract
 # from .contract_change import ContractChange
@@ -48,4 +49,5 @@ __all__ = [
     'SupportiveHousing',
     'Tenant',
     'TenantContact',
+    'Bill',
 ]
