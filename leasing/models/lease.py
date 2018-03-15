@@ -160,9 +160,6 @@ class Lease(TimeStampedSafeDeleteModel):
     # In Finnish: Kaupunginosa
     district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.PROTECT)
 
-    # In Finnish: Juokseva numero
-    sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"), null=True, blank=True)
-
     # In Finnish: Vuokratunnus
     identifier = models.OneToOneField(LeaseIdentifier, verbose_name=_("Lease identifier"), null=True, blank=True,
                                       on_delete=models.PROTECT)
