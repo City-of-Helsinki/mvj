@@ -140,6 +140,10 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'leasing.renderers.BrowsableAPIRendererWithoutForms',
+    ],
     'DEFAULT_METADATA_CLASS': 'leasing.metadata.FieldsMetadata',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 30,
