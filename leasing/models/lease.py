@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -232,7 +233,36 @@ class Lease(TimeStampedSafeDeleteModel):
         if self.identifier:
             return str(self.identifier)
         else:
-            return '{}{}{:02}-{}'.format(self.type.id, self.municipality.id, self.district.identifier, self.sequence)
+            return '{}{}{:02}-'.format(self.type.id, self.municipality.id, self.district.identifier)
+
+    @transaction.atomic
+    def create_identifier(self):
+        if self.identifier_id:
+            return
+
+        if not self.type or not self.municipality or not self.district:
+            return
+
+        max_sequence = LeaseIdentifier.objects.filter(
+            type=self.type,
+            municipality=self.municipality,
+            district=self.district).aggregate(Max('sequence'))['sequence__max']
+
+        if not max_sequence:
+            max_sequence = 0
+
+        lease_identifier = LeaseIdentifier.objects.create(
+            type=self.type,
+            municipality=self.municipality,
+            district=self.district,
+            sequence=max_sequence + 1)
+
+        self.identifier = lease_identifier
+
+    def save(self, *args, **kwargs):
+        self.create_identifier()
+
+        super().save(*args, **kwargs)
 
 
 class LeaseStateLog(TimeStampedModel):
