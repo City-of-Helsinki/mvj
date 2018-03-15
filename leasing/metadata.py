@@ -1,6 +1,5 @@
 from django.utils.encoding import force_text
 from rest_framework.metadata import SimpleMetadata
-from rest_framework.relations import ManyRelatedField, RelatedField
 
 
 class FieldsMetadata(SimpleMetadata):
@@ -18,7 +17,7 @@ class FieldsMetadata(SimpleMetadata):
     def get_field_info(self, field):
         field_info = super().get_field_info(field)
 
-        if not isinstance(field, (RelatedField, ManyRelatedField)) and hasattr(field, 'choices'):
+        if hasattr(field, 'choices'):
             field_info['choices'] = [{
                 'value': choice_value,
                 'display_name': force_text(choice_name, strings_only=True)
