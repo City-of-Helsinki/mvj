@@ -1,6 +1,12 @@
 from django_filters.rest_framework import FilterSet
 
-from .models import Contact, Lease
+from .models import Comment, Contact, Lease
+
+
+class CommentFilter(FilterSet):
+    class Meta:
+        model = Comment
+        fields = ['lease', 'user', 'topic', 'is_archived']
 
 
 class ContactFilter(FilterSet):
