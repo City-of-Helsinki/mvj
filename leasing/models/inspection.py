@@ -7,13 +7,13 @@ class Inspection(models.Model):
     In Finnish: Tarkastukset ja huomautukset
     """
     # In Finnish: Tarkastaja
-    inspector = models.CharField(verbose_name=_("Inspector"), max_length=255)
+    inspector = models.CharField(verbose_name=_("Inspector"), null=True, blank=True, max_length=255)
 
     # In Finnish: Valvonta päivämäärä
-    supervision_date = models.DateField(verbose_name=_("Supervision date"))
+    supervision_date = models.DateField(verbose_name=_("Supervision date"), null=True, blank=True)
 
     # In Finnish: Valvottu päivämäärä
-    supervised_date = models.DateField(verbose_name=_("Supervised date"))
+    supervised_date = models.DateField(verbose_name=_("Supervised date"), null=True, blank=True)
 
     # In Finnish: Selite
-    inspection_description = models.TextField(verbose_name=_("Inspection description"))
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)

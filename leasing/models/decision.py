@@ -4,29 +4,58 @@ from django.utils.translation import ugettext_lazy as _
 from .mixins import NameModel
 
 
-class RuleMaker(NameModel):
+class DecisionMaker(NameModel):
     pass
 
 
-class RuleType(NameModel):
+class DecisionType(NameModel):
     pass
 
 
-class Rule(models.Model):
+class Decision(models.Model):
     """
     In Finnish: Päätös
     """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='decisions',
+                              on_delete=models.PROTECT)
+
     # In Finnish: Päättäjä
-    rule_maker = models.ForeignKey(RuleMaker, verbose_name=_("Rule maker"), on_delete=models.PROTECT)
+    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), on_delete=models.PROTECT)
 
     # In Finnish: Päätöspäivämäärä
-    rule_date = models.DateField(verbose_name=_("Rule date"))
+    decision_date = models.DateField(verbose_name=_("Decision date"))
 
     # In Finnish: Pykälä
-    rule_clause = models.CharField(verbose_name=_("Rule clause"), max_length=255)
+    section = models.CharField(verbose_name=_("Section"), max_length=255)
 
     # In Finnish: Päätöksen tyyppi
-    rule_type = models.ForeignKey(RuleType, verbose_name=_("Rule type"), on_delete=models.PROTECT)
+    type = models.ForeignKey(DecisionType, verbose_name=_("Type"), on_delete=models.PROTECT)
 
     # In Finnish: Selite
-    rule_description = models.TextField(verbose_name=_("Rule description"))
+    description = models.TextField(verbose_name=_("Description"))
+
+
+class PurposeCondition(NameModel):
+    pass
+
+
+class Condition(models.Model):
+    """
+    In Finnish: Ehto
+    """
+    # In Finnish: Päätös
+    decision = models.ForeignKey(Decision, verbose_name=_("Decision"), related_name="conditions",
+                                 on_delete=models.CASCADE)
+
+    # In Finnish: Käyttötarkoitusehto
+    purpose = models.ForeignKey(PurposeCondition, verbose_name=_("PurposeCondition"), related_name="+",
+                                on_delete=models.CASCADE)
+
+    # In Finnish: Valvontapäivämäärä
+    supervision_date = models.DateField(verbose_name=_("Supervision date"))
+
+    # In Finnish: Valvottu päivämäärä
+    supervised_date = models.DateField(verbose_name=_("Supervised date"))
+
+    # In Finnish: Selite
+    term_description = models.TextField(verbose_name=_("Term description"))

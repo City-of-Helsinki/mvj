@@ -88,3 +88,12 @@ class PlotType(Enum):
     class Labels:
         REAL_PROPERTY = _('Real property')
         UNSEPARATED_PARCEL = _('Unseparated parcel')
+
+
+class RentRatePeriod(Enum):
+    PER_MONTH = 'per_month'
+    PER_YEAR = 'per_year'
+
+    class Labels:
+        PER_MONTH = _('/ month')
+        PER_YEAR = _('/ year')

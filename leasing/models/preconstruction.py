@@ -52,7 +52,7 @@ class Contamination(DecisionMixin):
     In Finnish: Pilaantunut maa-alue (PIMA)
     """
     # In Finnish: ProjectWise kohdenumero
-    projectwise_number = models.CharField(verbose_name=_("Rule clause"), max_length=255)
+    projectwise_number = models.CharField(verbose_name=_("Projectwise number"), max_length=255)
 
     # In Finnish: Matti raportti
     matti_report = models.CharField(verbose_name=_("Matti report"), max_length=255)
