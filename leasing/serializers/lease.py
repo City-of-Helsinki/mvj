@@ -88,7 +88,7 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     lease_areas = LeaseAreaSerializer(many=True, required=False, allow_null=True)
-    lessor = ContactSerializer()
+    lessor = ContactSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -101,7 +101,7 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
     lease_areas = LeaseAreaCreateUpdateSerializer(many=True, required=False, allow_null=True)
     lessor = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.filter(is_lessor=True),
-                                                related_serializer=ContactSerializer)
+                                                related_serializer=ContactSerializer, required=False, allow_null=True)
 
     class Meta:
         model = Lease

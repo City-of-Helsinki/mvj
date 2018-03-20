@@ -221,7 +221,8 @@ class Lease(TimeStampedSafeDeleteModel):
     hitas = models.ForeignKey(Hitas, verbose_name=_("Hitas"), null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Irtisanomisaika
-    notice_period = models.ForeignKey(NoticePeriod, verbose_name=_("Notice period"), on_delete=models.PROTECT)
+    notice_period = models.ForeignKey(NoticePeriod, verbose_name=_("Notice period"), null=True, blank=True,
+                                      on_delete=models.PROTECT)
 
     related_leases = models.ManyToManyField('self', through='leasing.RelatedLease', symmetrical=False,
                                             related_name='related_to')
