@@ -1,9 +1,0 @@
-[
-  {
-    "model": "leasing.RuleType",
-    "pk": 1,
-    "fields": {
-      "name": "placeholder"
-    }
-  }
-]

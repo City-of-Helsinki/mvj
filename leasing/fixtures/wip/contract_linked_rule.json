@@ -1,9 +1,0 @@
-[
-  {
-    "model": "leasing.ContractSetupDecision",
-    "pk": 1,
-    "fields": {
-      "name": "placeholder"
-    }
-  }
-]
