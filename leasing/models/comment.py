@@ -11,7 +11,6 @@ class CommentTopic(NameModel):
     """
     In Finnish: Aihe
     """
-    pass
 
 
 class Comment(TimeStampedSafeDeleteModel):
@@ -27,9 +26,6 @@ class Comment(TimeStampedSafeDeleteModel):
 
     # In Finnish: Kommentti
     text = models.TextField(verbose_name=_("Text"), null=True, blank=True)
-
-    # In Finnish: Arkistoitu
-    is_archived = models.BooleanField(verbose_name=_("Is archived"), default=False)
 
     class Meta:
         ordering = ('-created_at', )
