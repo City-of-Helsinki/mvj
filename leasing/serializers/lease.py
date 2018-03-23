@@ -1,14 +1,15 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
-from leasing.serializers.land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
-
 from ..models import (
     Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, StatisticalUse, SupportiveHousing)
 from .contact import ContactSerializer
+from .contract import ContractCreateUpdateSerializer, ContractSerializer
+from .decision import DecisionCreateUpdateSerializer, DecisionSerializer
+from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
-from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
+from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -47,7 +48,7 @@ class ManagementSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MunicipalitySerializer(serializers.ModelSerializer):
+class MunicipalitySerializer(NameModelSerializer):
     class Meta:
         model = Municipality
         fields = '__all__'
@@ -59,19 +60,19 @@ class NoticePeriodSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
         fields = '__all__'
 
 
-class RegulationSerializer(serializers.ModelSerializer):
+class RegulationSerializer(NameModelSerializer):
     class Meta:
         model = Regulation
         fields = '__all__'
 
 
-class StatisticalUseSerializer(serializers.ModelSerializer):
+class StatisticalUseSerializer(NameModelSerializer):
     class Meta:
         model = StatisticalUse
         fields = '__all__'
 
 
-class SupportiveHousingSerializer(serializers.ModelSerializer):
+class SupportiveHousingSerializer(NameModelSerializer):
     class Meta:
         model = SupportiveHousing
         fields = '__all__'
@@ -89,6 +90,8 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     lease_areas = LeaseAreaSerializer(many=True, required=False, allow_null=True)
     lessor = ContactSerializer(required=False, allow_null=True)
+    contracts = ContractSerializer(many=True, required=False, allow_null=True)
+    decisions = DecisionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -102,6 +105,8 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     lease_areas = LeaseAreaCreateUpdateSerializer(many=True, required=False, allow_null=True)
     lessor = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.filter(is_lessor=True),
                                                 related_serializer=ContactSerializer, required=False, allow_null=True)
+    contracts = ContractCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    decisions = DecisionCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease

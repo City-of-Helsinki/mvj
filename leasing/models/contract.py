@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -5,15 +6,9 @@ from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class ContractType(NameModel):
-    pass
-
-
-class ContractSetupDecision(NameModel):
-    pass
-
-
-class ContractDecision(NameModel):
-    pass
+    """
+    In Finnish: Sopimuksen tyyppi
+    """
 
 
 class Contract(TimeStampedSafeDeleteModel):
@@ -36,11 +31,10 @@ class Contract(TimeStampedSafeDeleteModel):
     signing_note = models.TextField(verbose_name=_("Signing note"), null=True, blank=True)
 
     # In Finnish: Järjestelypäätös
-    readjustment_decision = models.ForeignKey(ContractSetupDecision, verbose_name=_("Readjustment decision"), null=True,
-                                              blank=True, on_delete=models.PROTECT)
+    is_readjustment_decision = models.BooleanField(verbose_name=_("Is readjustment decision"), default=False)
 
     # In Finnish: Päätös
-    decision = models.ForeignKey(ContractDecision, verbose_name=_("Decision"), null=True, blank=True,
+    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
                                  on_delete=models.PROTECT)
 
     # In Finnish: KTJ vuokraoikeustodistuksen linkki
@@ -106,4 +100,10 @@ class ContractChange(models.Model):
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
     # In Finnish: Päätös
-    decision = models.CharField(verbose_name=_("Decision"), null=True, blank=True, max_length=255)
+    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
+                                 on_delete=models.PROTECT)
+
+
+auditlog.register(Contract)
+auditlog.register(ContractChange)
+auditlog.register(MortgageDocument)

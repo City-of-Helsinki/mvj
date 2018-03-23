@@ -1,12 +1,12 @@
 from django_filters.rest_framework import FilterSet
 
-from .models import Comment, Contact, Lease
+from .models import Comment, Contact, Decision, Lease
 
 
 class CommentFilter(FilterSet):
     class Meta:
         model = Comment
-        fields = ['lease', 'user', 'topic', 'is_archived']
+        fields = ['lease', 'user', 'topic']
 
 
 class ContactFilter(FilterSet):
@@ -15,6 +15,12 @@ class ContactFilter(FilterSet):
         fields = ['first_name', 'last_name', 'is_business', 'business_name', 'business_id',
                   'national_identification_number', 'customer_number', 'sap_customer_number', 'partner_code',
                   'is_lessor']
+
+
+class DecisionFilter(FilterSet):
+    class Meta:
+        model = Decision
+        fields = ['lease', 'reference_number', 'decision_maker', 'decision_date', 'type']
 
 
 class LeaseFilter(FilterSet):

@@ -1,9 +1,10 @@
 from django.contrib.gis import admin
 
 from leasing.models import (
-    Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseArea, LeaseIdentifier, LeaseStateLog, LeaseType,
-    Management, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, Regulation, RelatedLease,
-    StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractType, Decision, DecisionMaker,
+    DecisionType, District, Financing, Hitas, IntendedUse, Lease, LeaseArea, LeaseIdentifier, LeaseStateLog, LeaseType,
+    Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, Regulation,
+    RelatedLease, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -35,12 +36,42 @@ class LeaseAdmin(admin.ModelAdmin):
     pass
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'topic', 'user', 'created_at', 'modified_at')
+
+
+class ContractChangeInline(admin.StackedInline):
+    model = ContractChange
+    extra = 0
+
+
+class MortgageDocumentInline(admin.StackedInline):
+    model = MortgageDocument
+    extra = 0
+
+
+class ContractAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'type', 'contract_number')
+    inlines = [ContractChangeInline, MortgageDocumentInline]
+
+
+class ConditionInline(admin.StackedInline):
+    model = Condition
+    extra = 0
+
+
+class DecisionAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'reference_number', 'decision_maker', 'type')
+    inlines = [ConditionInline]
+
+
 class NameAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', )
     search_fields = ['name']
 
 
 admin.site.register(Contact, ContactAdmin)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
@@ -63,3 +94,9 @@ admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
 admin.site.register(Tenant, TenantAdmin)
 admin.site.register(TenantContact)
+admin.site.register(Contract, ContractAdmin)
+admin.site.register(ContractType, NameAdmin)
+admin.site.register(Decision, DecisionAdmin)
+admin.site.register(DecisionType, NameAdmin)
+admin.site.register(DecisionMaker, NameAdmin)
+admin.site.register(ConditionType, NameAdmin)

@@ -1,0 +1,975 @@
+[
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 1,
+    "fields": {
+      "name": "Alueidenkäyttö toimistopäällik"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 2,
+    "fields": {
+      "name": "Alueiden käyttö tiimipäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 3,
+    "fields": {
+      "name": "Asuntopalvelut yksikön pääll."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 4,
+    "fields": {
+      "name": "Asuntoasiainosasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 5,
+    "fields": {
+      "name": "Asunto-os. tstopääll. ptl ."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 6,
+    "fields": {
+      "name": "Asuntoasiainosaston kirje"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 7,
+    "fields": {
+      "name": "Asuntolautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 8,
+    "fields": {
+      "name": "Asunto-os. osastopääll. ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 9,
+    "fields": {
+      "name": "Asuntotontti tstopääll. ptk"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 10,
+    "fields": {
+      "name": "Asuntotontti tstopääl. sähköp."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 11,
+    "fields": {
+      "name": "Asuntotonttitiimin pääl. s-pos"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 12,
+    "fields": {
+      "name": "Asuntotuotantotston tj ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 13,
+    "fields": {
+      "name": "Asuntotontit tiimipäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 14,
+    "fields": {
+      "name": "Asuntotuotantotoimikunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 15,
+    "fields": {
+      "name": "Eduskunnan oikeusasiamies"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 16,
+    "fields": {
+      "name": "Espoon kaupunginvaltuusto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 17,
+    "fields": {
+      "name": "Elinkeinot. tstop.(luvat)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 18,
+    "fields": {
+      "name": "Elinkeinot. tstop.(tilap.vuok)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 19,
+    "fields": {
+      "name": "Elinkeinot. tstop. (siirrot)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 20,
+    "fields": {
+      "name": "Elinkeinot.tstop. (toimit.ton)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 21,
+    "fields": {
+      "name": "Piirustusten tutkiminen"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 22,
+    "fields": {
+      "name": "Elinkeinot. tstop. (teoll.ton)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 23,
+    "fields": {
+      "name": "Hankinnat"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 24,
+    "fields": {
+      "name": "Elinkeinotoimisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 25,
+    "fields": {
+      "name": "Etelä-Suomen Aluevalv.vsto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 26,
+    "fields": {
+      "name": "Etelä-Suomen maanmittauststo"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 27,
+    "fields": {
+      "name": "Elintarviketukkukaupan keskus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 28,
+    "fields": {
+      "name": "ELINTARVIKETUKKULAUTAKUNTA"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 29,
+    "fields": {
+      "name": "Kaupungingeodeetti"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 30,
+    "fields": {
+      "name": "Helsingin hallinto-oikeus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 31,
+    "fields": {
+      "name": "Helsingin hallinto-oikeus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 32,
+    "fields": {
+      "name": "Helsingin hovioikeus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 33,
+    "fields": {
+      "name": "Liikennelaitos"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 34,
+    "fields": {
+      "name": "Hgin kgin liikennel. johtokunt"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 35,
+    "fields": {
+      "name": "Rakennusvirasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 36,
+    "fields": {
+      "name": "Rv:n ka- ja pu. al.käyt.pääl."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 37,
+    "fields": {
+      "name": "HKR, palveluos. tstopäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 38,
+    "fields": {
+      "name": "rak.viraston toim.johtajan ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 39,
+    "fields": {
+      "name": "Hitas-työryhmä"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 40,
+    "fields": {
+      "name": "Kansliaosasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 41,
+    "fields": {
+      "name": "Kansliaosaston pääll. ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 42,
+    "fields": {
+      "name": "Apulaiskaupunginjohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 43,
+    "fields": {
+      "name": "Kansliaosaston kirje"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 44,
+    "fields": {
+      "name": "Kaupungin lakimies"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 45,
+    "fields": {
+      "name": "KEISARILLINEN MÄÄRÄYS"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 46,
+    "fields": {
+      "name": "Keisarillinen senaatti"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 47,
+    "fields": {
+      "name": "Korkein Hallinto-Oikeus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 48,
+    "fields": {
+      "name": "Kaupunginhallitus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 49,
+    "fields": {
+      "name": "KHS:n elinkeinojaosto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 50,
+    "fields": {
+      "name": "kginhallituksen suunnit.jaosto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 51,
+    "fields": {
+      "name": "Kaupunginhallituksen yleisjaos"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 52,
+    "fields": {
+      "name": "Kirje/Juhani Tuuttila"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 53,
+    "fields": {
+      "name": "KIRJE"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 54,
+    "fields": {
+      "name": "KORKEIN OIKEUS"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 55,
+    "fields": {
+      "name": "Kiinteistölautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 56,
+    "fields": {
+      "name": "Kiinteistölaut. talo-jaos"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 57,
+    "fields": {
+      "name": "Kaupunginmittausosasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 58,
+    "fields": {
+      "name": "Konversio-ohjelmisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 59,
+    "fields": {
+      "name": "Kaupunkisuunnittelulautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 60,
+    "fields": {
+      "name": "Kaupunkisuunnitteluvirasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 61,
+    "fields": {
+      "name": "Ksv virastopäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 62,
+    "fields": {
+      "name": "Kiinteistövirasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 63,
+    "fields": {
+      "name": "KV:n Hallinto-osasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 64,
+    "fields": {
+      "name": "Kv hallinto-osasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 65,
+    "fields": {
+      "name": "Kaupunginvaltuusto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 66,
+    "fields": {
+      "name": "Kaupunkiympäristölautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 67,
+    "fields": {
+      "name": "KYLK YMPÄRISTÖ- JA LUPAJAOSTO"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 68,
+    "fields": {
+      "name": "KYLK ympäristö- ja lupajaosto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 69,
+    "fields": {
+      "name": "Kaupunkiympäristön toimialajoh"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 70,
+    "fields": {
+      "name": "Käräjäoikeus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 71,
+    "fields": {
+      "name": "Liikuntalautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 72,
+    "fields": {
+      "name": "Liikuntavirasto osastopääll."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 73,
+    "fields": {
+      "name": "Länsi-Suomen ympäristölupavira"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 74,
+    "fields": {
+      "name": "Maanluovut. tstop. päät (vuok)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 75,
+    "fields": {
+      "name": "Maanluovut. tstop. päät (piir)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 76,
+    "fields": {
+      "name": "Maanluovt. tstop. päät. (hank)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 77,
+    "fields": {
+      "name": "Maanluovutustoimisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 78,
+    "fields": {
+      "name": "Maanhank. tstopääll. lausunto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 79,
+    "fields": {
+      "name": "Maanhankintat. tstopääll. päät"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 80,
+    "fields": {
+      "name": "Sisäasiainministeriö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 81,
+    "fields": {
+      "name": "Maanmittauslaitos/-toimisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 82,
+    "fields": {
+      "name": "Maaomaisuuden hall. tiimipääl."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 83,
+    "fields": {
+      "name": "Maaomaisuus yksikön päällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 84,
+    "fields": {
+      "name": "Pelastuslautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 85,
+    "fields": {
+      "name": "Palvelutsto. tstopääll."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 86,
+    "fields": {
+      "name": "Rakennuslautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 87,
+    "fields": {
+      "name": "Rakennusvalvontavirasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 88,
+    "fields": {
+      "name": "Rakennuslautakunta Espoo"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 89,
+    "fields": {
+      "name": "Rahatoimikamari"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 90,
+    "fields": {
+      "name": "Helsingin sataman johtokunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 91,
+    "fields": {
+      "name": "Satamajohtajan päätösluettelo"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 92,
+    "fields": {
+      "name": "Satamalautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 93,
+    "fields": {
+      "name": "Vuokrasopimustiimi"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 94,
+    "fields": {
+      "name": "Sosiaalilautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 95,
+    "fields": {
+      "name": "Talo-os. tstopäällikön ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 96,
+    "fields": {
+      "name": "Taidemuseon johtajan päätöslue"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 97,
+    "fields": {
+      "name": "Testamentti"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 98,
+    "fields": {
+      "name": " Tilakes.päällikön ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 99,
+    "fields": {
+      "name": "KV TILAKESKUKSEN PÄÄLLIKKÖ"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 100,
+    "fields": {
+      "name": "Kiinteistöviraston tilakeskus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 101,
+    "fields": {
+      "name": "Tonttiosasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 102,
+    "fields": {
+      "name": "Tonttiosaston ap.os.pääll.ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 103,
+    "fields": {
+      "name": "Tonttios.pääll.päät."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 104,
+    "fields": {
+      "name": "Tonttiosasto Palvelutoimisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 105,
+    "fields": {
+      "name": "Tonttipäällikkö (Make)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 106,
+    "fields": {
+      "name": "Tonttios. pääll."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 107,
+    "fields": {
+      "name": "To.os.ap.os.pääll.ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 108,
+    "fields": {
+      "name": "To.os. ap.os.pääll.ptl piir."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 109,
+    "fields": {
+      "name": "Tonttijaosto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 110,
+    "fields": {
+      "name": "Tonttiosaston kirje"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 111,
+    "fields": {
+      "name": "Tonttiosaston op kirje"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 112,
+    "fields": {
+      "name": "Tonttiosaston pal.tstopääl.ptl"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 113,
+    "fields": {
+      "name": "Tonttios.pääll.päät.(lyh.vuok)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 114,
+    "fields": {
+      "name": "Tonttios.pääll.päät.(piirust.)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 115,
+    "fields": {
+      "name": "Tonttios.pääll.pä(rak.l.korv.)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 116,
+    "fields": {
+      "name": "Tonttios.pääll.(kiint.om.päät)"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 117,
+    "fields": {
+      "name": "Tontit-yksikön päällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 118,
+    "fields": {
+      "name": "Uudenmaan elykeskus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 119,
+    "fields": {
+      "name": "Uuudenmaan lääninhallitus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 120,
+    "fields": {
+      "name": "Uuudenmaan verovirasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 121,
+    "fields": {
+      "name": "Uudenmaan ympäristökeskus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 122,
+    "fields": {
+      "name": "Viraston kirje"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 123,
+    "fields": {
+      "name": "Virastopäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 124,
+    "fields": {
+      "name": "Virastopäällikön päät."
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 125,
+    "fields": {
+      "name": "Väestönsuojalautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 126,
+    "fields": {
+      "name": "Muu päättäjä"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 127,
+    "fields": {
+      "name": "Kaupunginhallituksen yleisjaos"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 128,
+    "fields": {
+      "name": "Ympäristökeskus"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 129,
+    "fields": {
+      "name": "Ympäristök. ymp.suojeluosasto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 130,
+    "fields": {
+      "name": "Ympäristök, ymp.valvontayksikk"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 131,
+    "fields": {
+      "name": "Ympäristölautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 132,
+    "fields": {
+      "name": "Ympäristöministeriö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 133,
+    "fields": {
+      "name": "Ymp.valv.yksikkö/teoll.valvont"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 134,
+    "fields": {
+      "name": "Yritystontti tstopääll. ptk"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 135,
+    "fields": {
+      "name": "Yleisten töiden lautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 136,
+    "fields": {
+      "name": "Yritystonttitiimi pääl. s-post"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 137,
+    "fields": {
+      "name": "Yritystontit tiimipäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 138,
+    "fields": {
+      "name": "Yritystonttitoimisto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 139,
+    "fields": {
+      "name": "Ympäristövalvontapäällikkö"
+    }
+  }
+]

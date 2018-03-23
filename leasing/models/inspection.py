@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -6,6 +7,9 @@ class Inspection(models.Model):
     """
     In Finnish: Tarkastukset ja huomautukset
     """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='inspections',
+                              on_delete=models.PROTECT)
+
     # In Finnish: Tarkastaja
     inspector = models.CharField(verbose_name=_("Inspector"), null=True, blank=True, max_length=255)
 
@@ -17,3 +21,6 @@ class Inspection(models.Model):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+
+auditlog.register(Inspection)

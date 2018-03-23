@@ -1,9 +1,9 @@
 # from .basis_of_rent import BasisOfRent, BasisOfRentPlotType
 from .comment import Comment, CommentTopic
 from .contact import Contact
-# from .contract import Contract, ContractChange, ContractDecision, ContractSetupDecision, MortgageDocument
-# from .decision import Decision, DecisionMaker, DecisionType, Condition, PurposeCondition
-# from .inspection import Inspection
+from .contract import Contract, ContractChange, ContractType, MortgageDocument
+from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
+from .inspection import Inspection
 from .land_area import LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
@@ -14,11 +14,21 @@ from .lease import (
 from .tenant import Tenant, TenantContact
 
 __all__ = [
-    'Comment', 'CommentTopic',
+    'Comment',
+    'CommentTopic',
+    'Condition',
+    'ConditionType',
     'Contact',
+    'Contract',
+    'ContractChange',
+    'ContractType',
+    'Decision',
+    'DecisionMaker',
+    'DecisionType',
     'District',
     'Financing',
     'Hitas',
+    'Inspection',
     'IntendedUse',
     'Lease',
     'LeaseArea',
@@ -26,12 +36,13 @@ __all__ = [
     'LeaseStateLog',
     'LeaseType',
     'Management',
+    'MortgageDocument',
     'Municipality',
     'NoticePeriod',
-    'Plot',
     'PlanUnit',
     'PlanUnitState',
     'PlanUnitType',
+    'Plot',
     'Regulation',
     'RelatedLease',
     'StatisticalUse',

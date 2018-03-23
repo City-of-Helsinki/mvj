@@ -76,13 +76,13 @@ class PlanUnitState(NameModel):
 class PlanUnit(Land):
     """Plan plots are like the atoms of city plans.
 
-    In Finnish: Kaavayksikkö
-
     Plan plots are the plan specialization of land areas. While one
     could say that they come before the parcel specializations of land
     areas, they may be planned according to preexisting land areas.
     Plan plots differ from parcels in that they cannot be physically
     owned. Plan plots can be divided (tonttijako).
+
+    In Finnish: Kaavayksikkö
     """
     type = EnumField(PlotType, verbose_name=_("Type"), max_length=30)
     lease_area = models.ForeignKey(LeaseArea, related_name='plan_units', on_delete=models.CASCADE)

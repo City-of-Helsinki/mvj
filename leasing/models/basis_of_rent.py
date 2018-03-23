@@ -51,6 +51,9 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
 
 
 class RentRate(models.Model):
+    """
+    In Finnish: Hinta
+    """
     basis_of_rent = models.ForeignKey(BasisOfRent, related_name='rent_rates', on_delete=models.CASCADE)
 
     # In Finnish: Pääkäyttötarkoitus
@@ -65,10 +68,16 @@ class RentRate(models.Model):
 
 
 class PropertyIdentifier(NameModel):
+    """
+    In Finnish: Kiinteistötunnus
+    """
     basis_of_rent = models.ForeignKey(BasisOfRent, related_name='property_identifiers', on_delete=models.CASCADE)
 
 
-class Decision(NameModel):
+class BasisOfRentDecision(NameModel):
+    """
+    In Finnish: Päätös
+    """
     basis_of_rent = models.ForeignKey(BasisOfRent, related_name='decisions', on_delete=models.CASCADE)
 
 

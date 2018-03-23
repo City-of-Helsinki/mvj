@@ -163,3 +163,8 @@ class UpdateNestedMixin:
         self.save_nested(instance, nested_data)
 
         return instance
+
+
+class NameModelSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    name = serializers.CharField(read_only=True)
