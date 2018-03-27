@@ -6,7 +6,8 @@ from ..models import (
     NoticePeriod, Regulation, StatisticalUse, SupportiveHousing)
 from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
-from .decision import DecisionCreateUpdateSerializer, DecisionSerializer
+from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
+from .inspection import InspectionSerializer
 from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
@@ -92,6 +93,7 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     lessor = ContactSerializer(required=False, allow_null=True)
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
+    inspections = InspectionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -106,7 +108,8 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     lessor = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.filter(is_lessor=True),
                                                 related_serializer=ContactSerializer, required=False, allow_null=True)
     contracts = ContractCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    decisions = DecisionCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    decisions = DecisionCreateUpdateNestedSerializer(many=True, required=False, allow_null=True)
+    inspections = InspectionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
