@@ -47,12 +47,12 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 def instance_replace_related(instance=None, related_name=None, serializer_class=None,
-                             validated_data=None):
+                             validated_data=None, context=None):
     manager = getattr(instance, related_name)
     manager.all().delete()
 
     for item in validated_data:
-        serializer = serializer_class(data=item)
+        serializer = serializer_class(data=item, context=context)
 
         try:
             serializer.is_valid(raise_exception=True)
@@ -86,7 +86,7 @@ def sync_new_items_to_manager(new_items, manager):
 
 
 def instance_create_or_update_related(instance=None, related_name=None, serializer_class=None,
-                                      validated_data=None):
+                                      validated_data=None, context=None):
     manager = getattr(instance, related_name)
     new_items = set()
 
@@ -95,6 +95,7 @@ def instance_create_or_update_related(instance=None, related_name=None, serializ
 
         serializer_params = {
             'data': item,
+            'context': context,
         }
 
         if pk:
@@ -140,18 +141,19 @@ class UpdateNestedMixin:
 
         return nested
 
-    def save_nested(self, instance, nested_data):
+    def save_nested(self, instance, nested_data, context=None):
         for nested_name, nested_datum in nested_data.items():
             instance_create_or_update_related(instance=instance, related_name=nested_name,
                                               serializer_class=self.fields[nested_name].child.__class__,
-                                              validated_data=nested_datum)
+                                              validated_data=nested_datum,
+                                              context=context)
 
     def create(self, validated_data):
         nested_data = self.extract_nested(validated_data)
 
         instance = super().create(validated_data)
 
-        self.save_nested(instance, nested_data)
+        self.save_nested(instance, nested_data, context=self.context)
 
         return instance
 
@@ -160,7 +162,7 @@ class UpdateNestedMixin:
 
         instance = super().update(instance, validated_data)
 
-        self.save_nested(instance, nested_data)
+        self.save_nested(instance, nested_data, context=self.context)
 
         return instance
 
