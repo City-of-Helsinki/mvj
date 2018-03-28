@@ -67,10 +67,11 @@ class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializ
 class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     user = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    modified_at = serializers.ReadOnlyField()
 
     class Meta:
         model = ConstructabilityDescription
-        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number')
+        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'modified_at')
 
 
 class LeaseAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
