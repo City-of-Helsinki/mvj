@@ -13,17 +13,18 @@ from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, StatisticalUseViewSet,
     SupportiveHousingViewSet)
+from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
-router.register(r'lease', LeaseViewSet)
-router.register(r'contact', ContactViewSet)
 router.register(r'comment', CommentViewSet)
 router.register(r'comment_topic', CommentTopicViewSet)
+router.register(r'contact', ContactViewSet)
 router.register(r'decision', DecisionViewSet)
 router.register(r'district', DistrictViewSet)
 router.register(r'financing', FinancingViewSet)
 router.register(r'hitas', HitasViewSet)
 router.register(r'intended_use', IntendedUseViewSet)
+router.register(r'lease', LeaseViewSet)
 router.register(r'lease_type', LeaseTypeViewSet)
 router.register(r'management', ManagementViewSet)
 router.register(r'municipality', MunicipalityViewSet)
@@ -31,6 +32,7 @@ router.register(r'notice_period', NoticePeriodViewSet)
 router.register(r'regulation', RegulationViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
 router.register(r'supportive_housing', SupportiveHousingViewSet)
+router.register(r'user', UserViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),
