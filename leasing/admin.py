@@ -70,6 +70,12 @@ class NameAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
+class LeaseTypeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', )
+    search_fields = ['id', 'name']
+    ordering = ('id',)
+
+
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(District, DistrictAdmin)
@@ -80,7 +86,7 @@ admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea)
 admin.site.register(LeaseIdentifier)
 admin.site.register(LeaseStateLog)
-admin.site.register(LeaseType, NameAdmin)
+admin.site.register(LeaseType, LeaseTypeAdmin)
 admin.site.register(Management, NameAdmin)
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(NoticePeriod)
