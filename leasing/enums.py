@@ -97,3 +97,49 @@ class RentRatePeriod(Enum):
     class Labels:
         PER_MONTH = _('/ month')
         PER_YEAR = _('/ year')
+
+
+class ConstructabilityState(Enum):
+    UNVERIFIED = 'unverified'
+    REQUIRES_MEASURES = 'requires_measures'
+    COMPLETE = 'complete'
+
+    class Labels:
+        UNVERIFIED = _('Unverified')
+        REQUIRES_MEASURES = _('Requires measures')
+        COMPLETE = _('Complete')
+
+
+class ConstructabilityType(Enum):
+    PRECONSTRUCTION = 'preconstruction'
+    DEMOLITION = 'demolition'
+    POLLUTED_LAND = 'polluted_land'
+    REPORT = 'report'
+    OTHER = 'other'
+
+    class Labels:
+        PRECONSTRUCTION = _('Preconstruction')
+        DEMOLITION = _('Demolition')
+        POLLUTED_LAND = _('Polluted land')
+        REPORT = _('Report')
+        OTHER = _('Other')
+
+
+class PollutedLandRentConditionState(Enum):
+    ASKED = 'asked'
+    READY = 'ready'
+
+    class Labels:
+        ASKED = _('Asked')
+        READY = _('Ready')
+
+
+class ConstructabilityReportInvestigationState(Enum):
+    NO_NEED = 'no_need'
+    ONGOING = 'ongoing'
+    READY = 'ready'
+
+    class Labels:
+        NO_NEED = _('No need')
+        ONGOING = _('Ongoing')
+        READY = _('Ready')

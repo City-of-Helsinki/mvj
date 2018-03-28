@@ -4,10 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from safedelete.models import SafeDeleteModel
 
-from leasing.enums import LeaseAreaType, LocationType, PlotType
+from leasing.enums import (
+    ConstructabilityReportInvestigationState, ConstructabilityState, ConstructabilityType, LeaseAreaType, LocationType,
+    PlotType, PollutedLandRentConditionState)
 from leasing.models.lease import Lease
+from users.models import User
 
-from .mixins import NameModel, TimeStampedModel
+from .mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 
 
 class Land(TimeStampedModel):
@@ -46,6 +49,79 @@ class LeaseArea(Land, SafeDeleteModel):
     type = EnumField(LeaseAreaType, verbose_name=_("Type"), max_length=30)
     # In Finnish: Sijainti (maanpäällinen, maanalainen)
     location = EnumField(LocationType, verbose_name=_("Location"), max_length=30)
+
+    # Constructability fields
+    # In Finnish: Rakentamiskelpoisuus
+
+    # In Finnish: Selvitysaste (Esirakentaminen, johtosiirrot ja kunnallistekniikka)
+    preconstruction_state = EnumField(ConstructabilityState, verbose_name=_("Preconstruction state"), null=True,
+                                      blank=True, max_length=30)
+
+    # In Finnish: Selvitysaste (Purku)
+    demolition_state = EnumField(ConstructabilityState, verbose_name=_("Demolition state"), null=True, blank=True,
+                                 max_length=30)
+
+    # In Finnish: Selvitysaste (Pilaantunut maa-alue (PIMA))
+    polluted_land_state = EnumField(ConstructabilityState, verbose_name=_("Polluted land state"), null=True, blank=True,
+                                    max_length=30)
+
+    # In Finnish: Vuokraehdot (kysyminen)
+    polluted_land_rent_condition_state = EnumField(PollutedLandRentConditionState,
+                                                   verbose_name=_("Polluted land rent condition state"), null=True,
+                                                   blank=True, max_length=30)
+
+    # In Finnish: Vuokraehtojen kysymisen päivämäärä
+    polluted_land_rent_condition_date = models.DateField(verbose_name=_("Polluted land rent condition date"), null=True,
+                                                         blank=True)
+
+    # In Finnish: PIMA valmistelija
+    polluted_land_planner = models.ForeignKey(User, verbose_name=_("User"), null=True, blank=True,
+                                              on_delete=models.PROTECT)
+
+    # In Finnish: ProjectWise kohdenumero
+    polluted_land_projectwise_number = models.CharField(verbose_name=_("ProjectWise number"), null=True, blank=True,
+                                                        max_length=255)
+
+    # In Finnish: Matti raportti
+    polluted_land_matti_report_number = models.CharField(verbose_name=_("Matti report number"), null=True, blank=True,
+                                                         max_length=255)
+
+    # In Finnish: Selvitysaste (Rakennettavuusselvitys)
+    constructability_report_state = EnumField(ConstructabilityState, verbose_name=_("Constructability report state"),
+                                              null=True, blank=True, max_length=30)
+
+    # In Finnish: Rakennettavuusselvityksen tila
+    constructability_report_investigation_state = EnumField(
+        ConstructabilityReportInvestigationState, verbose_name=_("Constructability report investigation state"),
+        null=True, blank=True, max_length=30)
+
+    # In Finnish: Allekirjoituspäivämäärä
+    constructability_report_signing_date = models.DateField(verbose_name=_("Constructability report signing date"),
+                                                            null=True, blank=True)
+
+    # In Finnish: Allekirjoittaja
+    constructability_report_signer = models.CharField(verbose_name=_("Constructability report signer"), null=True,
+                                                      blank=True, max_length=255)
+
+    # In Finnish: Geoteknisen palvelun tiedosto
+    constructability_report_geotechnical_number = models.CharField(
+        verbose_name=_("Constructability report geotechnical number"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Selvitysaste (Muut)
+    other_state = EnumField(ConstructabilityState, verbose_name=_("Other state"), null=True, blank=True, max_length=30)
+
+
+class ConstructabilityDescription(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Selitys (Rakentamiskelpoisuus)
+    """
+    lease_area = models.ForeignKey(LeaseArea, related_name='constructability_descriptions', on_delete=models.CASCADE)
+    type = EnumField(ConstructabilityType, verbose_name=_("Type"), max_length=30)
+    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.PROTECT)
+    text = models.TextField(verbose_name=_("Text"))
+    # In Finnish: AHJO diaarinumero
+    ahjo_reference_number = models.CharField(verbose_name=_("AHJO reference number"), null=True, blank=True,
+                                             max_length=255)
 
 
 class Plot(Land):
@@ -109,5 +185,6 @@ class PlanUnit(Land):
 
 
 auditlog.register(LeaseArea)
+auditlog.register(ConstructabilityDescription)
 auditlog.register(Plot)
 auditlog.register(PlanUnit)

@@ -4,12 +4,10 @@ from .contact import Contact
 from .contract import Contract, ContractChange, ContractType, MortgageDocument
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
 from .inspection import Inspection
-from .land_area import LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
+from .land_area import ConstructabilityDescription, LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, RelatedLease, StatisticalUse, SupportiveHousing)
-# from .preconstruction import (
-#     ConstructionInvestigation, ConstructionInvestigationReport, Contamination, Demolition, Preconstuction)
 # from .rent import Rent
 from .tenant import Tenant, TenantContact
 
@@ -18,6 +16,7 @@ __all__ = [
     'CommentTopic',
     'Condition',
     'ConditionType',
+    'ConstructabilityDescription',
     'Contact',
     'Contract',
     'ContractChange',
