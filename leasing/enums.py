@@ -3,6 +3,9 @@ from enumfields import Enum
 
 
 class Classification(Enum):
+    """
+    In Finnish: Julkisuusluokka
+    """
     PUBLIC = 'public'
     CONFIDENTIAL = 'confidential'
     OFFICIAL = 'official'
@@ -14,6 +17,9 @@ class Classification(Enum):
 
 
 class LeaseState(Enum):
+    """
+    In Finnish: Tila
+    """
     LEASE = 'lease'
     RESERVATION = 'reservation'
     PERMISSION = 'permission'
@@ -31,13 +37,19 @@ class LeaseState(Enum):
 
 
 class LeaseRelationType(Enum):
+    """
+    In Finnish: Liittyvän vuokrauksen tyyppi
+    """
     TRANSFER = 'transfer'
 
     class Labels:
         TRANSFER = _('Transfer')
 
 
-class PeriodType(Enum):
+class NoticePeriodType(Enum):
+    """
+    In Finnish: Irtisanomisajan tyyppi
+    """
     NO_PERIOD = 'no_period'
     TIME_PERIOD = 'time_period'
     OTHER = 'other'
@@ -49,6 +61,9 @@ class PeriodType(Enum):
 
 
 class TenantContactType(Enum):
+    """
+    In Finnish: Vuokralaisen yhteystiedon tyyppi
+    """
     TENANT = 'tenant'
     BILLING = 'billing'
     CONTACT = 'contact'
@@ -60,6 +75,9 @@ class TenantContactType(Enum):
 
 
 class LocationType(Enum):
+    """
+    In Finnish: Sijainti
+    """
     SURFACE = 'surface'
     UNDERGROUND = 'underground'
 
@@ -69,6 +87,9 @@ class LocationType(Enum):
 
 
 class LeaseAreaType(Enum):
+    """
+    In Finnish: Vuokra-alueen tyyppi
+    """
     PLAN_UNIT = 'plan_unit'
     REAL_PROPERTY = 'real_property'
     UNSEPARATED_PARCEL = 'unseparated_parcel'
@@ -82,6 +103,9 @@ class LeaseAreaType(Enum):
 
 
 class PlotType(Enum):
+    """
+    In Finnish: Tontin tyyppi
+    """
     REAL_PROPERTY = 'real_property'
     UNSEPARATED_PARCEL = 'unseparated_parcel'
 
@@ -90,7 +114,10 @@ class PlotType(Enum):
         UNSEPARATED_PARCEL = _('Unseparated parcel')
 
 
-class RentRatePeriod(Enum):
+class PeriodType(Enum):
+    """
+    In Finnish: Yksikkö
+    """
     PER_MONTH = 'per_month'
     PER_YEAR = 'per_year'
 
@@ -100,6 +127,9 @@ class RentRatePeriod(Enum):
 
 
 class ConstructabilityState(Enum):
+    """
+    In Finnish: Selvitysaste
+    """
     UNVERIFIED = 'unverified'
     REQUIRES_MEASURES = 'requires_measures'
     COMPLETE = 'complete'
@@ -111,6 +141,9 @@ class ConstructabilityState(Enum):
 
 
 class ConstructabilityType(Enum):
+    """
+    In Finnish: Rakentamiskelpoisuusselitteen tyyppi
+    """
     PRECONSTRUCTION = 'preconstruction'
     DEMOLITION = 'demolition'
     POLLUTED_LAND = 'polluted_land'
@@ -126,6 +159,9 @@ class ConstructabilityType(Enum):
 
 
 class PollutedLandRentConditionState(Enum):
+    """
+    In Finnish: Vuokraehtojen kysymisen tyyppi
+    """
     ASKED = 'asked'
     READY = 'ready'
 
@@ -135,6 +171,9 @@ class PollutedLandRentConditionState(Enum):
 
 
 class ConstructabilityReportInvestigationState(Enum):
+    """
+    In Finnish: Rakennettavuusselvityksen tila
+    """
     NO_NEED = 'no_need'
     ONGOING = 'ongoing'
     READY = 'ready'
