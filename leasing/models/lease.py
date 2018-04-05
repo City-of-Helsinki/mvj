@@ -4,7 +4,7 @@ from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import Classification, LeaseRelationType, LeaseState, PeriodType
+from leasing.enums import Classification, LeaseRelationType, LeaseState, NoticePeriodType
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 
@@ -112,7 +112,7 @@ class NoticePeriod(NameModel):
     """
     In Finnish: Irtisanomisaika
     """
-    type = EnumField(PeriodType, verbose_name=_("Period type"), max_length=30)
+    type = EnumField(NoticePeriodType, verbose_name=_("Period type"), max_length=30)
     duration = models.CharField(verbose_name=_("Duration"), null=True, blank=True, max_length=255,
                                 help_text=_("In ISO 8601 Duration format"))
 
