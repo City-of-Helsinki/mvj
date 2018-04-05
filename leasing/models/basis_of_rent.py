@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import RentRatePeriod
+from leasing.enums import PeriodType
 from leasing.models import Financing, IntendedUse, Management
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -44,41 +44,45 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     lease_rights_end_date = models.DateField(verbose_name=_("Lease rights end date"), null=True, blank=True)
 
     # In Finnish: Indeksi
-    index_number = models.PositiveIntegerField(verbose_name=_("Index number"))
+    index = models.PositiveIntegerField(verbose_name=_("Index"))
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
 
-class RentRate(models.Model):
+class RentRate(TimeStampedSafeDeleteModel):
     """
     In Finnish: Hinta
     """
-    basis_of_rent = models.ForeignKey(BasisOfRent, related_name='rent_rates', on_delete=models.CASCADE)
+    basis_of_rent = models.ForeignKey(BasisOfRent, verbose_name=_("Basis of rent"), related_name='rent_rates',
+                                      on_delete=models.CASCADE)
 
     # In Finnish: Pääkäyttötarkoitus
     intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
                                      on_delete=models.PROTECT)
 
     # In Finnish: Euroa
-    rate = models.DecimalField(verbose_name=_("Rate in EUR"), decimal_places=2, max_digits=12)
+    amount = models.DecimalField(verbose_name=_("Amount"), decimal_places=2, max_digits=12)
 
     # In Finnish: Yksikkö
-    period = EnumField(RentRatePeriod, verbose_name=_("Period"), max_length=20)
+    period = EnumField(PeriodType, verbose_name=_("Period"), max_length=20)
 
 
-class PropertyIdentifier(NameModel):
+class PropertyIdentifier(models.Model):
     """
     In Finnish: Kiinteistötunnus
     """
-    basis_of_rent = models.ForeignKey(BasisOfRent, related_name='property_identifiers', on_delete=models.CASCADE)
+    basis_of_rent = models.ForeignKey(BasisOfRent, verbose_name=_("Basis of rent"), related_name='property_identifiers',
+                                      on_delete=models.CASCADE)
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
 
 
-class BasisOfRentDecision(NameModel):
+class BasisOfRentDecision(models.Model):
     """
     In Finnish: Päätös
     """
     basis_of_rent = models.ForeignKey(BasisOfRent, related_name='decisions', on_delete=models.CASCADE)
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
 
 
 auditlog.register(BasisOfRent)
