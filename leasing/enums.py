@@ -182,3 +182,89 @@ class ConstructabilityReportInvestigationState(Enum):
         NO_NEED = _('No need')
         ONGOING = _('Ongoing')
         READY = _('Ready')
+
+
+class RentType(Enum):
+    """
+    In Finnish: Vuokralaji
+    """
+    INDEX = 'index'
+    ONE_TIME = 'one_time'
+    FIXED = 'fixed'
+    FREE = 'free'
+    MANUAL = 'manual'
+
+    class Labels:
+        INDEX = _('Index')
+        ONE_TIME = _('One time')
+        FIXED = _('Fixed')
+        FREE = _('Free')
+        MANUAL = _('Manual')
+
+
+class RentCycle(Enum):
+    """
+    In Finnish: Vuokrakausi
+    """
+    JANUARY_TO_DECEMBER = 'january_to_december'
+    APRIL_TO_MARCH = 'april_to_march'
+
+    class Labels:
+        JANUARY_TO_DECEMBER = _('January to december')
+        APRIL_TO_MARCH = _('April to march')
+
+
+class IndexType(Enum):
+    """
+    In Finnish: Indeksin tunnusnumero
+    """
+    TYPE_1 = 'type_1'
+    TYPE_2 = 'type_2'
+    TYPE_3 = 'type_3'
+    TYPE_4 = 'type_4'
+    TYPE_5 = 'type_5'
+    TYPE_6 = 'type_6'
+    TYPE_7 = 'type_7'
+
+    class Labels:
+        TYPE_1 = _('ind 50620 / 10/20%:n vaihtelut')
+        TYPE_2 = _('ind 4661 / 10/20%:n vaihtelut')
+        TYPE_3 = _('ind 418 / 10%:n vaihtelu')
+        TYPE_4 = _('ind 418 / 20%:n vaihtelu')
+        TYPE_5 = _('ind 392')
+        TYPE_6 = _('ind 100 (pyöristys)')
+        TYPE_7 = _('ind 100')
+
+
+class DueDatesType(Enum):
+    """
+    In Finnish: Laskutusjako
+    """
+    CUSTOM = 'custom'
+    FIXED = 'fixed'
+
+    class Labels:
+        CUSTOM = _('Custom')
+        FIXED = _('Fixed')
+
+
+class RentAdjustmentType(Enum):
+    DISCOUNT = 'discount'
+    INCREASE = 'increase'
+
+    class Labels:
+        DISCOUNT = _('Discount')
+        INCREASE = _('Increase')
+
+
+class RentAdjustmentAmountType(Enum):
+    PERCENT_PER_YEAR = 'percent_per_year'
+    PERCENT_TOTAL = 'percent_total'
+    AMOUNT_PER_YEAR = 'amount_per_year'
+    AMOUNT_TOTAL = 'amount_total'
+
+    class Labels:
+        PERCENT_PER_YEAR = _('% per year')
+        PERCENT_TOTAL = _('% total')
+        AMOUNT_PER_YEAR = _('€ per year')
+        AMOUNT_TOTAL = _('€ total')

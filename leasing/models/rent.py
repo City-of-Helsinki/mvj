@@ -1,57 +1,49 @@
+from auditlog.registry import auditlog
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
-from .mixins import NameModel
+from leasing.enums import (
+    DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType)
 
-
-# Note that this class is used in 4 other classes (unlike many other similar classes)
-class RentPurpose(NameModel):
-    pass
-
-
-class RentType(NameModel):
-    pass
+from .decision import Decision
+from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
-class RentPeriod(NameModel):
-    pass
+class RentIntendedUse(NameModel):
+    """
+    In Finnish: Käyttötarkoitus
+    """
 
 
-class RentIndexIDNumber(NameModel):
-    pass
-
-
-class RentBillingType(NameModel):
-    pass
-
-
-class RentBasicInfo(models.Model):
-    """This is the basic info for rent.
-
+class Rent(TimeStampedSafeDeleteModel):
+    """
     In Finnish: Vuokran perustiedot
     """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='rents',
+                              on_delete=models.PROTECT)
+
     # In Finnish: Vuokralaji
-    rent_type = models.ForeignKey(RentType, verbose_name=_("Rent type"), on_delete=models.PROTECT)
+    type = EnumField(RentType, verbose_name=_("Type"), max_length=30)
 
     # In Finnish: Vuokrakausi
-    rent_period = models.ForeignKey(RentPeriod, verbose_name=_("Rent period"), on_delete=models.PROTECT, null=True)
+    cycle = EnumField(RentCycle, verbose_name=_("Cycle"), null=True, blank=True, max_length=30)
 
     # In Finnish: Indeksin tunnusnumero
-    index_id_number = models.ForeignKey(RentIndexIDNumber, verbose_name=_("Index ID number"), on_delete=models.PROTECT,
-                                        null=True)
+    index_type = EnumField(IndexType, verbose_name=_("Index type"), null=True, blank=True, max_length=30)
 
     # In Finnish: Laskutusjako
-    billing_type = models.ForeignKey(RentBillingType, verbose_name=_("Rent billing type"), on_delete=models.PROTECT,
-                                     null=True, related_name="+")
+    due_dates_type = EnumField(DueDatesType, verbose_name=_("Due dates type"), null=True, blank=True, max_length=30)
 
     # In Finnish: Laskut kpl / vuodessa
-    bill_amount = models.PositiveIntegerField(verbose_name=_("Bill amount"), null=True, blank=True)
+    due_dates_per_year = models.PositiveIntegerField(verbose_name=_("Due dates per year"), null=True, blank=True)
 
     # In Finnish: Perusindeksi
-    basic_index = models.PositiveIntegerField(verbose_name=_("Basic index"), null=True, blank=True)
+    elementary_index = models.PositiveIntegerField(verbose_name=_("Elementary index"), null=True, blank=True)
 
     # In Finnish: Pyöristys
-    basic_index_rounding = models.PositiveIntegerField(verbose_name=_("Basic index rounding"), null=True, blank=True)
+    index_rounding = models.PositiveIntegerField(verbose_name=_("Index rounding"), null=True, blank=True)
 
     # In Finnish: X-luku
     x_value = models.PositiveIntegerField(verbose_name=_("X value"), null=True, blank=True)
@@ -63,205 +55,199 @@ class RentBasicInfo(models.Model):
     y_value_start = models.PositiveIntegerField(verbose_name=_("Y value start"), null=True, blank=True)
 
     # In Finnish: Tasaus alkupvm
-    adjustment_start_date = models.DateField(verbose_name=_("Adjustment start date"), null=True)
+    equalization_start_date = models.DateField(verbose_name=_("Equalization start date"), null=True, blank=True)
 
     # In Finnish: Tasaus loppupvm
-    adjustment_end_date = models.DateField(verbose_name=_("Adjustment end date"), null=True)
+    equalization_end_date = models.DateField(verbose_name=_("Equalization end date"), null=True, blank=True)
 
     # In Finnish: Kertakaikkinen vuokra and Kiinteä vuokra
-    rent_amount = models.PositiveIntegerField(verbose_name=_("Rent amount"), null=True, blank=True)
+    amount = models.DecimalField(verbose_name=_("Amount"), null=True, blank=True, max_digits=10, decimal_places=2)
+
+    # In Finnish: Kommentti
+    note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    is_active = models.BooleanField(verbose_name=_("Active?"), default=True)
 
 
-class FidexInitialYearRent(models.Model):
+class RentDueDate(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Eräpäivä
+    """
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name="due_dates", on_delete=models.CASCADE)
+    day = models.IntegerField(verbose_name=_("Day"), validators=[MinValueValidator(1), MaxValueValidator(31)])
+    month = models.IntegerField(verbose_name=_("Month"), validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+
+class FixedInitialYearRent(TimeStampedSafeDeleteModel):
     """
     In Finnish: Kiinteä alkuvuosivuokra
     """
-    # In Finnish: No translation
-    bill_amount = models.DecimalField(verbose_name=_("Bill amount"), max_digits=10, decimal_places=2)
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='fixed_initial_year_rents',
+                             on_delete=models.CASCADE)
 
     # In Finnish: Vuokra
-    rent = models.ForeignKey(RentBasicInfo, verbose_name=_("Rent"), on_delete=models.CASCADE)
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Alkupvm
-    start_date = models.DateField(verbose_name=_("Start date"), null=True)
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
     # In Finnish: Loppupvm
-    end_date = models.DateField(verbose_name=_("End date"), null=True)
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
 
-class DueDate(models.Model):
-    text = models.CharField(verbose_name=_("text"), max_length=255)
-    rent = models.ForeignKey(RentBasicInfo, verbose_name=_("Rent"), on_delete=models.PROTECT)
-
-
-class RentPaymentType(NameModel):
-    """How many times per year is this rent paid?"""
-    times_per_year = models.PositiveSmallIntegerField(verbose_name=_("Times paid per year"))
-
-
-class ContractRent(models.Model):
+class ContractRent(TimeStampedSafeDeleteModel):
     """
     In Finnish: Sopimusvuokra
     """
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='contract_rents', on_delete=models.CASCADE)
 
     # In Finnish: Sopimusvuokra
-    contract_rent = models.DecimalField(verbose_name=_("Contract rent"), max_digits=10, decimal_places=2)
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
-    # In Finnish: No translation
-    contract_rent_payment_type = models.ForeignKey(RentPaymentType, verbose_name=_("Contract rent payment type"),
-                                                   on_delete=models.PROTECT, related_name="+")
+    # In Finnish: Yksikkö
+    period = EnumField(PeriodType, verbose_name=_("Period"), max_length=30)
 
     # In Finnish: Käyttötarkoitus
-    purpose = models.ForeignKey(RentPurpose, verbose_name=_("Usage purpose"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
 
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
-    basic_rent = models.DecimalField(verbose_name=_("Basic rent"), max_digits=10, decimal_places=2)
+    base_amount = models.DecimalField(verbose_name=_("Base amount"), max_digits=10, decimal_places=2)
 
-    # In Finnish: No translation
-    basic_rent_payment_type = models.ForeignKey(RentPaymentType, verbose_name=_("Basic rent payment type"),
-                                                on_delete=models.PROTECT, related_name="+")
+    # In Finnish: Yksikkö
+    base_amount_period = EnumField(PeriodType, verbose_name=_("Base amount period"), max_length=30)
 
     # In Finnish: Uusi perusvuosi vuokra
-    new_basic_year_rent = models.CharField(verbose_name=_("New basic year rent"), max_length=255)
+    base_year_rent = models.DecimalField(verbose_name=_("Base year rent"), null=True, blank=True, max_digits=10,
+                                         decimal_places=2)
 
-    # In Finnish: Voimassaoloaika
-    start_date = models.DateField(verbose_name=_("Start date"), null=True)
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
-    # In Finnish: Voimassaoloaika
-    end_date = models.DateField(verbose_name=_("End date"), null=True)
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
 
 class IndexAdjustedRent(models.Model):
     """
     In Finnish: Indeksitarkistettu vuokra
     """
-    # In Finnish: Ind. tark. vuokra (€)
-    rent = models.DecimalField(verbose_name=_("Rent"), max_digits=10, decimal_places=2)
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='index_adjusted_rents',
+                             on_delete=models.CASCADE)
+
+    # In Finnish: Indeksitarkistettu vuokra
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Käyttötarkoitus
-    purpose = models.ForeignKey(RentPurpose, verbose_name=_("Usage purpose"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
 
-    # In Finnish: Voimassaoloaika
-    start_date = models.DateField()
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"))
 
-    # In Finnish: No translation
-    end_date = models.DateField()
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"))
 
     # In Finnish: Laskentak.
-    calculation_factor = models.DecimalField(verbose_name=_("Rent"), max_digits=10, decimal_places=2)
+    factor = models.DecimalField(verbose_name=_("Factor"), max_digits=10, decimal_places=2)
 
 
-class RentDiscountType(NameModel):
-    pass
-
-
-class RentDiscountAmountType(NameModel):
-    pass
-
-
-class RentDiscountRule(NameModel):
-    pass
-
-
-class RentDiscount(models.Model):
+class RentAdjustment(TimeStampedSafeDeleteModel):
     """
     In Finnish: Alennukset ja korotukset
     """
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='rent_adjustments', on_delete=models.CASCADE)
+
     # In Finnish: Tyyppi
-    discount_type = models.ForeignKey(RentDiscountType, verbose_name=_("Discount type"), on_delete=models.PROTECT)
+    type = EnumField(RentAdjustmentType, verbose_name=_("Type"), max_length=30)
 
     # In Finnish: Käyttötarkoitus
-    purpose = models.ForeignKey(RentPurpose, verbose_name=_("Usage purpose"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
 
     # In Finnish: Alkupvm
-    start_date = models.DateField(verbose_name=_("Start date"), null=True)
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
     # In Finnish: Loppupvm
-    end_date = models.DateField(verbose_name=_("End date"), null=True)
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
     # In Finnish: Kokonaismäärä
-    amount = models.PositiveIntegerField(verbose_name=_("Discount amount"), null=True, blank=True)
+    full_amount = models.DecimalField(verbose_name=_("Full amount"), null=True, blank=True, max_digits=10,
+                                      decimal_places=2)
 
-    # In Finnish: No translation
-    amount_type = models.ForeignKey(RentDiscountAmountType, verbose_name=_("Discount type"), on_delete=models.PROTECT)
+    # In Finnish: Määrän tyyppi
+    amount_type = EnumField(RentAdjustmentAmountType, verbose_name=_("Amount type"), max_length=30)
 
-    # In Finnish: Jäljellä (€)
-    amount_left = models.PositiveIntegerField(verbose_name=_("Discount amount"), null=True, blank=True)
+    # In Finnish: Jäljellä
+    amount_left = models.DecimalField(verbose_name=_("Amount left"), null=True, blank=True, max_digits=10,
+                                      decimal_places=2)
 
     # In Finnish: Päätös
-    rule = models.ForeignKey(RentDiscountRule, verbose_name=_("Discount rule"), on_delete=models.PROTECT)
+    decision = models.ForeignKey(Decision, verbose_name=_("Decision"), null=True, blank=True, on_delete=models.PROTECT)
+
+    # In Finnish: Kommentti
+    note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
 
-class RentChargedRent(models.Model):
+class PayableRent(models.Model):
     """
     In Finnish: Perittävä vuokra
     """
-    # In Finnish: Perittävä vuokra (€)
-    rent = models.DecimalField(verbose_name=_("Rent"), max_digits=10, decimal_places=2)
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='payable_rents', on_delete=models.CASCADE)
 
-    # In Finnish: Voimassaoloaika
-    start_date = models.DateField(verbose_name=_("Start date"), null=True)
+    # In Finnish: Perittävä vuokra
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
-    # In Finnish: No translation
-    end_date = models.DateField(verbose_name=_("End date"), null=True)
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
+
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
     # In Finnish: Nousu %
-    difference = models.DecimalField(verbose_name=_("Difference"), max_digits=5, decimal_places=2)
+    difference_percent = models.DecimalField(verbose_name=_("Difference percent"), max_digits=10, decimal_places=2)
 
     # In Finnish: Kalenterivuosivuokra
     calendar_year_rent = models.DecimalField(verbose_name=_("Calendar year rent"), max_digits=10, decimal_places=2)
 
 
-class RentCriteria(models.Model):
+class LeaseBasisOfRent(models.Model):
     """
     In Finnish: Vuokranperusteet
     """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='basis_of_rents',
+                              on_delete=models.PROTECT)
+
     # In Finnish: Käyttötarkoitus
-    purpose = models.ForeignKey(RentPurpose, verbose_name=_("Usage purpose"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
 
     # In Finnish: K-m2
-    km2 = models.DecimalField(verbose_name=_("km2"), max_digits=10, decimal_places=2)
+    floor_m2 = models.DecimalField(verbose_name=_("Floor m2"), null=True, blank=True, max_digits=10, decimal_places=2)
 
     # In Finnish: Indeksi
-    index = models.DecimalField(verbose_name=_("Index"), max_digits=10, decimal_places=2)
+    index = models.PositiveIntegerField(verbose_name=_("Index"), null=True, blank=True)
 
     # In Finnish: € / k-m2 (ind 100)
-    ekm2ind100 = models.DecimalField(verbose_name=_("emk2ind100"), max_digits=10, decimal_places=2)
+    amount_per_floor_m2_index_100 = models.DecimalField(verbose_name=_("Amount per floor m^2 (index 100)"), null=True,
+                                                        blank=True, max_digits=10, decimal_places=2)
 
     # In Finnish: € / k-m2 (ind)
-    ekm2ind = models.DecimalField(verbose_name=_("emk2ind"), max_digits=10, decimal_places=2)
+    amount_per_floor_m2_index = models.DecimalField(verbose_name=_("Amount per floor m^2 (index)"), null=True,
+                                                    blank=True, max_digits=10, decimal_places=2)
 
     # In Finnish: Prosenttia
-    percentage = models.DecimalField(verbose_name=_("Percentage"), max_digits=10, decimal_places=2)
+    percent = models.DecimalField(verbose_name=_("Percent"), null=True, blank=True, max_digits=10,
+                                  decimal_places=2)
 
     # In Finnish: Perusvuosivuokra €/v (ind 100)
-    basic_rent = models.DecimalField(verbose_name=_("Basic rent"), max_digits=10, decimal_places=2)
+    year_rent_index_100 = models.DecimalField(verbose_name=_("Year rent (index 100)"), null=True, blank=True,
+                                              max_digits=10, decimal_places=2)
 
     # In Finnish: Perusvuosivuokra €/v (ind)
-    starting_rent = models.DecimalField(verbose_name=_("Starting rent"), max_digits=10, decimal_places=2)
+    year_rent_index = models.DecimalField(verbose_name=_("Year rent (index)"), null=True, blank=True, max_digits=10,
+                                          decimal_places=2)
 
 
-class Rent(models.Model):
-    """Rent is paid by tenants for a lease.
-
-    In Finnish: Vuokra
-    """
-    # In Finnish: Vuokran perustiedot
-    basic_info = models.ForeignKey(RentBasicInfo, verbose_name=_("Rent"), on_delete=models.PROTECT)
-
-    # In Finnish: Sopimusvuokra
-    contract_rent = models.ForeignKey(ContractRent, verbose_name=_("Contract rent"), on_delete=models.PROTECT)
-
-    # In Finnish: Indeksitarkistettu vuokra
-    index_adjusted_rent = models.ForeignKey(IndexAdjustedRent, verbose_name=_("Index checked rent"),
-                                            on_delete=models.PROTECT, related_name="parent")
-
-    # In Finnish: Alennukset ja korotukset
-    rent_discount = models.ForeignKey(RentDiscount, verbose_name=_("Adjustment"), on_delete=models.PROTECT)
-
-    # In Finnish: Perittävä vuokra
-    charged_rents = models.ForeignKey(RentChargedRent, verbose_name=_("Rent"), on_delete=models.PROTECT,
-                                      related_name="parent")
-
-    # In Finnish: Vuokran perusteet
-    criterias = models.ForeignKey(RentCriteria, verbose_name=_("Rent"), on_delete=models.PROTECT)
+auditlog.register(Rent)
+auditlog.register(RentDueDate)
+auditlog.register(FixedInitialYearRent)
+auditlog.register(ContractRent)
+auditlog.register(RentAdjustment)
+auditlog.register(LeaseBasisOfRent)

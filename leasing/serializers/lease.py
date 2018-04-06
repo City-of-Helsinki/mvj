@@ -9,6 +9,7 @@ from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
 from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
+from .rent import LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
@@ -94,6 +95,7 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
+    rents = RentSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
@@ -110,6 +112,8 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     contracts = ContractCreateUpdateSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionCreateUpdateNestedSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
+    rents = RentCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease

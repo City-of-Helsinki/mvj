@@ -1,10 +1,11 @@
 from django.contrib.gis import admin
 
 from leasing.models import (
-    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractType, Decision, DecisionMaker,
-    DecisionType, District, Financing, Hitas, IntendedUse, Lease, LeaseArea, LeaseIdentifier, LeaseStateLog, LeaseType,
-    Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, Regulation,
-    RelatedLease, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision,
+    DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, IntendedUse, Lease, LeaseArea,
+    LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
+    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, Regulation, RelatedLease, Rent, RentAdjustment,
+    RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -32,8 +33,13 @@ class TenantAdmin(admin.ModelAdmin):
     inlines = [TenantContactInline]
 
 
+class LeaseBasisOfRentInline(admin.TabularInline):
+    model = LeaseBasisOfRent
+    extra = 0
+
+
 class LeaseAdmin(admin.ModelAdmin):
-    pass
+    inlines = [LeaseBasisOfRentInline]
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -76,6 +82,31 @@ class LeaseTypeAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
 
+class RentDueDateInline(admin.TabularInline):
+    model = RentDueDate
+    extra = 0
+
+
+class FixedInitialYearRentInline(admin.TabularInline):
+    model = FixedInitialYearRent
+    extra = 0
+
+
+class ContractRentInline(admin.TabularInline):
+    model = ContractRent
+    extra = 0
+
+
+class RentAdjustmentInline(admin.TabularInline):
+    model = RentAdjustment
+    extra = 0
+
+
+class RentAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'type')
+    inlines = [RentDueDateInline, FixedInitialYearRentInline, ContractRentInline, RentAdjustmentInline]
+
+
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(District, DistrictAdmin)
@@ -96,6 +127,8 @@ admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(RelatedLease)
+admin.site.register(Rent, RentAdmin)
+admin.site.register(RentIntendedUse, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
 admin.site.register(Tenant, TenantAdmin)

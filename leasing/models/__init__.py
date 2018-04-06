@@ -8,7 +8,9 @@ from .land_area import ConstructabilityDescription, LeaseArea, PlanUnit, PlanUni
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, RelatedLease, StatisticalUse, SupportiveHousing)
-# from .rent import Rent
+from .rent import (
+    ContractRent, FixedInitialYearRent, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent, RentAdjustment,
+    RentDueDate, RentIntendedUse)
 from .tenant import Tenant, TenantContact
 
 __all__ = [
@@ -20,17 +22,21 @@ __all__ = [
     'Contact',
     'Contract',
     'ContractChange',
+    'ContractRent',
     'ContractType',
     'Decision',
     'DecisionMaker',
     'DecisionType',
     'District',
     'Financing',
+    'FixedInitialYearRent',
     'Hitas',
+    'IndexAdjustedRent',
     'Inspection',
     'IntendedUse',
     'Lease',
     'LeaseArea',
+    'LeaseBasisOfRent',
     'LeaseIdentifier',
     'LeaseStateLog',
     'LeaseType',
@@ -38,12 +44,17 @@ __all__ = [
     'MortgageDocument',
     'Municipality',
     'NoticePeriod',
+    'PayableRent',
     'PlanUnit',
     'PlanUnitState',
     'PlanUnitType',
     'Plot',
     'Regulation',
     'RelatedLease',
+    'Rent',
+    'RentAdjustment',
+    'RentDueDate',
+    'RentIntendedUse',
     'StatisticalUse',
     'SupportiveHousing',
     'Tenant',
