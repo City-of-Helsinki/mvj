@@ -25,7 +25,7 @@ class ContractChangeSerializer(serializers.ModelSerializer):
 class ContractChangeCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer)
+                                                  related_serializer=DecisionSerializer, required=False)
 
     class Meta:
         model = ContractChange
@@ -57,7 +57,8 @@ class ContractCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSeriali
                                               related_serializer=ContractTypeSerializer)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision,
                                                   queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer)
+                                                  related_serializer=DecisionSerializer,
+                                                  required=False)
     mortgage_documents = MortgageDocumentSerializer(many=True, required=False, allow_null=True)
     contract_changes = ContractChangeCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
