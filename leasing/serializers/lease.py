@@ -96,6 +96,7 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentSerializer(many=True, required=False, allow_null=True)
+    basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
