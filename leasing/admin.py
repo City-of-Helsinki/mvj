@@ -1,11 +1,12 @@
 from django.contrib.gis import admin
 
 from leasing.models import (
-    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision,
-    DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, IntendedUse, Lease, LeaseArea,
-    LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
-    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, Regulation, RelatedLease, Rent, RentAdjustment,
-    RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment,
+    Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
+    DecisionType, District, Financing, FixedInitialYearRent, Hitas, IntendedUse, Lease, LeaseArea, LeaseBasisOfRent,
+    LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit,
+    PlanUnitState, PlanUnitType, Plot, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse,
+    StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -107,6 +108,26 @@ class RentAdmin(admin.ModelAdmin):
     inlines = [RentDueDateInline, FixedInitialYearRentInline, ContractRentInline, RentAdjustmentInline]
 
 
+class BasisOfRentPropertyIdentifierInline(admin.TabularInline):
+    model = BasisOfRentPropertyIdentifier
+    extra = 0
+
+
+class BasisOfRentDecisionInline(admin.TabularInline):
+    model = BasisOfRentDecision
+    extra = 0
+
+
+class BasisOfRentRateInline(admin.TabularInline):
+    model = BasisOfRentRate
+    extra = 0
+
+
+class BasisOfRentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'plot_type', 'management', 'financing')
+    inlines = [BasisOfRentPropertyIdentifierInline, BasisOfRentDecisionInline, BasisOfRentRateInline]
+
+
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(District, DistrictAdmin)
@@ -139,3 +160,5 @@ admin.site.register(Decision, DecisionAdmin)
 admin.site.register(DecisionType, NameAdmin)
 admin.site.register(DecisionMaker, NameAdmin)
 admin.site.register(ConditionType, NameAdmin)
+admin.site.register(BasisOfRent, BasisOfRentAdmin)
+admin.site.register(BasisOfRentPlotType, NameAdmin)

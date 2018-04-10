@@ -6,6 +6,7 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from leasing.views import ktj_proxy
+from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
 from leasing.viewsets.decision import DecisionViewSet
@@ -16,6 +17,7 @@ from leasing.viewsets.lease import (
 from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
+router.register(r'basis_of_rent', BasisOfRentViewSet)
 router.register(r'comment', CommentViewSet)
 router.register(r'comment_topic', CommentTopicViewSet)
 router.register(r'contact', ContactViewSet)

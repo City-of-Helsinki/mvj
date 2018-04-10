@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import PeriodType
-from leasing.models import Financing, IntendedUse, Management
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
@@ -33,11 +32,11 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
                                                 max_length=255)
 
     # In Finnish: Hallintamuoto
-    management = models.ForeignKey(Management, verbose_name=_("Form of management"), null=True, blank=True,
+    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), null=True, blank=True,
                                    on_delete=models.PROTECT)
 
     # In Finnish: Rahoitusmuoto
-    financing = models.ForeignKey(Financing, verbose_name=_("Form of financing"), null=True, blank=True,
+    financing = models.ForeignKey('leasing.Financing', verbose_name=_("Form of financing"), null=True, blank=True,
                                   on_delete=models.PROTECT)
 
     # In Finnish: Vuokraoikeus päättyy
@@ -50,7 +49,7 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
 
-class RentRate(TimeStampedSafeDeleteModel):
+class BasisOfRentRate(TimeStampedSafeDeleteModel):
     """
     In Finnish: Hinta
     """
@@ -58,7 +57,7 @@ class RentRate(TimeStampedSafeDeleteModel):
                                       on_delete=models.CASCADE)
 
     # In Finnish: Pääkäyttötarkoitus
-    intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
+    intended_use = models.ForeignKey('leasing.RentIntendedUse', verbose_name=_("Intended use"), null=True, blank=True,
                                      on_delete=models.PROTECT)
 
     # In Finnish: Euroa
@@ -68,7 +67,7 @@ class RentRate(TimeStampedSafeDeleteModel):
     period = EnumField(PeriodType, verbose_name=_("Period"), max_length=20)
 
 
-class PropertyIdentifier(models.Model):
+class BasisOfRentPropertyIdentifier(models.Model):
     """
     In Finnish: Kiinteistötunnus
     """

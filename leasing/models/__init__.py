@@ -1,4 +1,5 @@
-# from .basis_of_rent import BasisOfRent, BasisOfRentPlotType
+from .basis_of_rent import (
+    BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate)
 from .comment import Comment, CommentTopic
 from .contact import Contact
 from .contract import Contract, ContractChange, ContractType, MortgageDocument
@@ -14,6 +15,11 @@ from .rent import (
 from .tenant import Tenant, TenantContact
 
 __all__ = [
+    'BasisOfRent',
+    'BasisOfRentDecision',
+    'BasisOfRentPlotType',
+    'BasisOfRentPropertyIdentifier',
+    'BasisOfRentRate',
     'Comment',
     'CommentTopic',
     'Condition',
