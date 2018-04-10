@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from leasing.filters import LeaseFilter
+from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     StatisticalUse, SupportiveHousing)
@@ -14,6 +14,7 @@ from leasing.viewsets.utils import AuditLogMixin
 class DistrictViewSet(viewsets.ModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
+    filter_class = DistrictFilter
 
 
 class FinancingViewSet(viewsets.ModelViewSet):
