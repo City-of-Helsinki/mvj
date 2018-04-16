@@ -268,3 +268,32 @@ class RentAdjustmentAmountType(Enum):
         PERCENT_TOTAL = _('% total')
         AMOUNT_PER_YEAR = _('€ per year')
         AMOUNT_TOTAL = _('€ total')
+
+
+class InvoiceDeliveryMethod(Enum):
+    MAIL = 'mail'
+    ELECTRONIC = 'electronic'
+
+    class Labels:
+        MAIL = _('Mail')
+        ELECTRONIC = _('Electronic')
+
+
+class InvoiceStatus(Enum):
+    OPEN = 'open'
+    PAID = 'paid'
+    REFUNDED = 'refunded'
+
+    class Labels:
+        OPEN = _('Open')
+        PAID = _('Paid')
+        REFUNDED = _('Refunded')
+
+
+class InvoiceType(Enum):
+    CHARGE = 'charge'
+    CREDIT_NOTE = 'credit_note'
+
+    class Labels:
+        CHARGE = _('Charge')
+        CREDIT_NOTE = _('Credit note')

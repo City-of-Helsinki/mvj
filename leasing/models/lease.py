@@ -227,6 +227,12 @@ class Lease(TimeStampedSafeDeleteModel):
     related_leases = models.ManyToManyField('self', through='leasing.RelatedLease', symmetrical=False,
                                             related_name='related_to')
 
+    # In Finnish: Vuokratiedot kunnossa
+    is_rent_info_complete = models.BooleanField(verbose_name=_("Rent info complete?"), default=False)
+
+    # In Finnish: Laskutus käynnissä
+    is_invoicing_enabled = models.BooleanField(verbose_name=_("Invoicing enabled?"), default=False)
+
     def __str__(self):
         return self.get_identifier_string()
 
