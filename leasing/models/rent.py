@@ -60,13 +60,17 @@ class Rent(TimeStampedSafeDeleteModel):
     # In Finnish: Tasaus loppupvm
     equalization_end_date = models.DateField(verbose_name=_("Equalization end date"), null=True, blank=True)
 
-    # In Finnish: Kertakaikkinen vuokra and Kiinteä vuokra
+    # In Finnish: Määrä (vain kun tyyppi on kertakaikkinen vuokra)
     amount = models.DecimalField(verbose_name=_("Amount"), null=True, blank=True, max_digits=10, decimal_places=2)
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
-    is_active = models.BooleanField(verbose_name=_("Active?"), default=True)
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
+
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
@@ -243,6 +247,30 @@ class LeaseBasisOfRent(models.Model):
     # In Finnish: Perusvuosivuokra €/v (ind)
     year_rent_index = models.DecimalField(verbose_name=_("Year rent (index)"), null=True, blank=True, max_digits=10,
                                           decimal_places=2)
+
+
+class Index(models.Model):
+    """
+    In Finnish: Indeksi
+    """
+    # In Finnish: Pisteluku
+    number = models.PositiveIntegerField(verbose_name=_("Number"))
+
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
+    month = models.PositiveSmallIntegerField(verbose_name=_("Month"), null=True, blank=True,
+                                             validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+    class Meta:
+        verbose_name = _("Index")
+        verbose_name_plural = _("Indexes")
+        indexes = [
+            models.Index(fields=["year", "month"]),
+        ]
+        unique_together = ("year", "month")
+        ordering = ("year", "month")
+
+    def __str__(self):
+        return "{} {} {}".format(self.year, self.month, self.number)
 
 
 auditlog.register(Rent)

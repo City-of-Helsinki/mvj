@@ -1,0 +1,310 @@
+[
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 1,
+    "fields": {
+      "day": "2018-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 2,
+    "fields": {
+      "day": "2018-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 3,
+    "fields": {
+      "day": "2018-03-30"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 4,
+    "fields": {
+      "day": "2018-04-02"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 5,
+    "fields": {
+      "day": "2018-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 6,
+    "fields": {
+      "day": "2018-05-10"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 7,
+    "fields": {
+      "day": "2018-06-22"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 8,
+    "fields": {
+      "day": "2018-12-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 9,
+    "fields": {
+      "day": "2018-12-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 10,
+    "fields": {
+      "day": "2018-12-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 11,
+    "fields": {
+      "day": "2018-12-26"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 12,
+    "fields": {
+      "day": "2019-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 13,
+    "fields": {
+      "day": "2019-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 14,
+    "fields": {
+      "day": "2019-04-19"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 15,
+    "fields": {
+      "day": "2019-04-22"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 16,
+    "fields": {
+      "day": "2019-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 17,
+    "fields": {
+      "day": "2019-05-30"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 18,
+    "fields": {
+      "day": "2019-06-21"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 19,
+    "fields": {
+      "day": "2019-12-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 20,
+    "fields": {
+      "day": "2019-12-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 21,
+    "fields": {
+      "day": "2019-12-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 22,
+    "fields": {
+      "day": "2019-12-26"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 23,
+    "fields": {
+      "day": "2020-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 24,
+    "fields": {
+      "day": "2020-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 25,
+    "fields": {
+      "day": "2020-04-10"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 26,
+    "fields": {
+      "day": "2020-04-13"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 27,
+    "fields": {
+      "day": "2020-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 28,
+    "fields": {
+      "day": "2020-05-21"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 29,
+    "fields": {
+      "day": "2020-06-19"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 30,
+    "fields": {
+      "day": "2020-12-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 31,
+    "fields": {
+      "day": "2020-12-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 32,
+    "fields": {
+      "day": "2020-12-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 33,
+    "fields": {
+      "day": "2020-12-26"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 34,
+    "fields": {
+      "day": "2021-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 35,
+    "fields": {
+      "day": "2021-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 36,
+    "fields": {
+      "day": "2021-04-02"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 37,
+    "fields": {
+      "day": "2021-04-05"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 38,
+    "fields": {
+      "day": "2021-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 39,
+    "fields": {
+      "day": "2021-05-13"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 40,
+    "fields": {
+      "day": "2021-06-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 41,
+    "fields": {
+      "day": "2021-12-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 42,
+    "fields": {
+      "day": "2021-12-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 43,
+    "fields": {
+      "day": "2021-12-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 44,
+    "fields": {
+      "day": "2021-12-26"
+    }
+  }
+]

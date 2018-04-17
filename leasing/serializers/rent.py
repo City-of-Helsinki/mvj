@@ -61,7 +61,7 @@ class PayableRentSerializer(serializers.ModelSerializer):
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer, required=False)
+                                                  related_serializer=DecisionSerializer)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
                                                       related_serializer=RentIntendedUseSerializer)
@@ -85,8 +85,8 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
         model = Rent
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
-                  'equalization_end_date', 'amount', 'note', 'is_active', 'due_dates', 'fixed_initial_year_rents',
-                  'contract_rents', 'index_adjusted_rents', 'rent_adjustments', 'payable_rents')
+                  'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date')
 
 
 class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -102,8 +102,8 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
         model = Rent
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
-                  'equalization_end_date', 'amount', 'note', 'is_active', 'due_dates', 'fixed_initial_year_rents',
-                  'contract_rents', 'index_adjusted_rents', 'rent_adjustments', 'payable_rents')
+                  'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date')
 
 
 class LeaseBasisOfRentSerializer(serializers.ModelSerializer):

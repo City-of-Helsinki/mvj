@@ -1,12 +1,12 @@
 from django.contrib.gis import admin
 
 from leasing.models import (
-    BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment,
-    Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
-    DecisionType, District, Financing, FixedInitialYearRent, Hitas, IntendedUse, Lease, LeaseArea, LeaseBasisOfRent,
-    LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit,
-    PlanUnitState, PlanUnitType, Plot, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse,
-    StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate,
+    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision,
+    DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, IntendedUse, Invoice, Lease,
+    LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
+    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
+    RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -128,12 +128,19 @@ class BasisOfRentAdmin(admin.ModelAdmin):
     inlines = [BasisOfRentPropertyIdentifierInline, BasisOfRentDecisionInline, BasisOfRentRateInline]
 
 
+class IndexAdmin(admin.ModelAdmin):
+    list_display = ('year', 'month', 'number')
+
+
+admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
+admin.site.register(Index, IndexAdmin)
 admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(Invoice)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea)
 admin.site.register(LeaseIdentifier)
@@ -146,6 +153,7 @@ admin.site.register(Plot)
 admin.site.register(PlanUnit)
 admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
+admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(RelatedLease)
 admin.site.register(Rent, RentAdmin)
