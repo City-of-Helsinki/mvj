@@ -10,6 +10,7 @@ from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
 from leasing.viewsets.decision import DecisionViewSet
+from leasing.viewsets.invoice import InvoiceViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, StatisticalUseViewSet,
@@ -25,6 +26,7 @@ router.register(r'decision', DecisionViewSet)
 router.register(r'district', DistrictViewSet)
 router.register(r'financing', FinancingViewSet)
 router.register(r'hitas', HitasViewSet)
+router.register(r'invoice', InvoiceViewSet)
 router.register(r'intended_use', IntendedUseViewSet)
 router.register(r'lease', LeaseViewSet)
 router.register(r'lease_type', LeaseTypeViewSet)
