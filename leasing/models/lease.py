@@ -1,5 +1,5 @@
 from auditlog.registry import auditlog
-from django.db import models, transaction
+from django.db import connection, models, transaction
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -249,6 +249,11 @@ class Lease(TimeStampedSafeDeleteModel):
 
         if not self.type or not self.municipality or not self.district:
             return
+
+        # lock LeaseIdentifier table to prevent a (theoretically) possible race condition
+        # when increasing the sequence
+        with connection.cursor() as cursor:
+            cursor.execute('LOCK TABLE %s' % self._meta.db_table)
 
         max_sequence = LeaseIdentifier.objects.filter(
             type=self.type,
