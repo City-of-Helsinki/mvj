@@ -55,7 +55,7 @@ class PayableRentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PayableRent
-        fields = ('id', 'amount', 'start_date', 'difference_percent', 'calendar_year_rent')
+        fields = ('id', 'amount', 'start_date', 'end_date', 'difference_percent', 'calendar_year_rent')
 
 
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
