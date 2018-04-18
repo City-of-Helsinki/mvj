@@ -1,11 +1,18 @@
+from datetime import date
+from decimal import Decimal
+
 from auditlog.registry import auditlog
+from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import (
     DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType)
+from leasing.models.utils import (
+    calculate_index_adjusted_value, get_date_range_amount_from_monthly_amount, get_range_overlap)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -72,6 +79,74 @@ class Rent(TimeStampedSafeDeleteModel):
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
+    def get_amount_for_year(self, year):
+        date_range_start = date(year, 1, 1)
+        date_range_end = date(year, 12, 31)
+        return self.get_amount_for_date_range(date_range_start, date_range_end)
+
+    def get_amount_for_month(self, year, month):
+        date_range_start = date(year, month, 1)
+        date_range_end = date(year, month, 1) + relativedelta(day=31)
+        return self.get_amount_for_date_range(date_range_start, date_range_end)
+
+    def get_amount_for_date_range(self, date_range_start, date_range_end):
+        assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
+
+        if self.type == RentType.INDEX and date_range_start.year != date_range_end.year:
+            raise NotImplementedError('Cannot calculate index adjusted rent that is spanning multiple years.')
+
+        range_filtering = Q(
+            Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+            Q(Q(start_date=None) | Q(start_date__lte=date_range_end)))
+
+        fixed_initial_year_rents = self.fixed_initial_year_rents.filter(range_filtering)
+        contract_rents = self.contract_rents.filter(range_filtering)
+        rent_adjustments = self.rent_adjustments.filter(range_filtering)
+
+        total = Decimal('0.00')
+
+        for fixed_initial_year_rent in fixed_initial_year_rents:
+            overlap = get_range_overlap(date_range_start, date_range_end, *fixed_initial_year_rent.date_range)
+            rent_amount = fixed_initial_year_rent.get_amount_for_date_range(*overlap)
+            total += rent_amount
+
+        for contract_rent in contract_rents:
+            overlap = get_range_overlap(date_range_start, date_range_end, *contract_rent.date_range)
+
+            if not overlap:
+                continue
+
+            if self.type == RentType.FIXED:
+                rent_amount = contract_rent.get_amount_for_date_range(*overlap)
+            elif self.type == RentType.INDEX:
+                original_rent_amount = contract_rent.get_amount_for_date_range(*overlap)
+                rent_amount = self.get_index_adjusted_amount(date_range_start.year, original_rent_amount)
+            else:
+                raise NotImplementedError('Cannot calculate rent amount for rent type {}.'.format(self.type))
+
+            adjust_amount = 0
+
+            for rent_adjustment in rent_adjustments:
+                if rent_adjustment.intended_use != contract_rent.intended_use:
+                    continue
+
+                overlap = get_range_overlap(date_range_start, date_range_end, *rent_adjustment.date_range)
+
+                if not overlap:
+                    continue
+
+                adjust_amount += rent_adjustment.get_amount_for_date_range(rent_amount, *overlap)
+
+            rent_amount = max(Decimal(0), rent_amount + adjust_amount)
+            total += rent_amount
+
+        return total
+
+    @staticmethod
+    def get_index_adjusted_amount(year, original_rent, index_type=IndexType.TYPE_7):
+        index = Index.objects.get(year=year-1, month=None)
+        return calculate_index_adjusted_value(original_rent, index, index_type)
+
 
 class RentDueDate(TimeStampedSafeDeleteModel):
     """
@@ -97,6 +172,14 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    @property
+    def date_range(self):
+        return self.start_date, self.end_date
+
+    def get_amount_for_date_range(self, date_range_start, date_range_end):
+        # TODO Implement this
+        return Decimal('0.00')
 
 
 class ContractRent(TimeStampedSafeDeleteModel):
@@ -129,6 +212,32 @@ class ContractRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    @property
+    def date_range(self):
+        return self.start_date, self.end_date
+
+    def get_monthly_base_amount(self):
+        if self.period == PeriodType.PER_MONTH:
+            return self.base_amount
+        elif self.period == PeriodType.PER_YEAR:
+            return self.base_amount / 12
+        else:
+            raise NotImplementedError('Cannot calculate monthly rent for PeriodType {}'.format(self.period))
+
+    def get_amount_for_date_range(self, date_range_start, date_range_end):
+        if self.start_date:
+            date_range_start = max(self.start_date, date_range_start)
+        if self.end_date:
+            date_range_end = min(self.end_date, date_range_end)
+
+        if date_range_start > date_range_end:
+            return Decimal('0.00')
+
+        monthly_amount = self.get_monthly_base_amount()
+        date_range_amount = get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end)
+
+        return date_range_amount
 
 
 class IndexAdjustedRent(models.Model):
@@ -188,6 +297,36 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    @property
+    def date_range(self):
+        return self.start_date, self.end_date
+
+    def get_amount_for_date_range(self, rent_amount, date_range_start, date_range_end):
+        if self.start_date:
+            date_range_start = max(self.start_date, date_range_start)
+        if self.end_date:
+            date_range_end = min(self.end_date, date_range_end)
+
+        if date_range_start > date_range_end:
+            return Decimal('0.00')
+
+        if self.amount_type == RentAdjustmentAmountType.PERCENT_PER_YEAR:
+            adjustment = self.full_amount / 100 * rent_amount
+        elif self.amount_type == RentAdjustmentAmountType.AMOUNT_PER_YEAR:
+            adjustment = get_date_range_amount_from_monthly_amount(self.full_amount / 12, date_range_start,
+                                                                   date_range_end)
+        else:
+            raise NotImplementedError(
+                'Cannot get adjust amount for RentAdjustmentAmountType {}'.format(self.amount_type))
+
+        if self.type == RentAdjustmentType.INCREASE:
+            return adjustment
+        elif self.type == RentAdjustmentType.DISCOUNT:
+            return -adjustment
+        else:
+            raise NotImplementedError(
+                'Cannot get adjust amount for RentAdjustmentType {}'.format(self.amount_type))
 
 
 class PayableRent(models.Model):
