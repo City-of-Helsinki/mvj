@@ -61,7 +61,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     postpone_date = models.DateField(verbose_name=_("Postpone date"), null=True, blank=True)
 
     # In Finnish: Laskun pääoma
-    rent_amount = models.DecimalField(verbose_name=_("Rent amount"), max_digits=10, decimal_places=2)
+    total_amount = models.DecimalField(verbose_name=_("Total amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Laskun osuuden jaettava
     share_numerator = models.PositiveIntegerField(verbose_name=_("Share numerator"))

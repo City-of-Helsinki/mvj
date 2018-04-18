@@ -3,63 +3,72 @@
     "model": "leasing.Municipality",
     "pk": 1,
     "fields": {
-      "name": "Helsinki"
+      "name": "Helsinki",
+      "identifier": "1"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 2,
     "fields": {
-      "name": "Espoo"
+      "name": "Espoo",
+      "identifier": "2"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 3,
     "fields": {
-      "name": "Inkoo"
+      "name": "Inkoo",
+      "identifier": "3"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 4,
     "fields": {
-      "name": "Kirkkonummi"
+      "name": "Kirkkonummi",
+      "identifier": "4"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 5,
     "fields": {
-      "name": "Vihti"
+      "name": "Vihti",
+      "identifier": "5"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 6,
     "fields": {
-      "name": "Vantaa"
+      "name": "Vantaa",
+      "identifier": "6"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 7,
     "fields": {
-      "name": "Sipoo"
+      "name": "Sipoo",
+      "identifier": "7"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 8,
     "fields": {
-      "name": "Hanko"
+      "name": "Hanko",
+      "identifier": "8"
     }
   },
   {
     "model": "leasing.Municipality",
     "pk": 9,
     "fields": {
-      "name": "Lohja"
+      "name": "Lohja",
+      "identifier": "9"
     }
   }
 ]

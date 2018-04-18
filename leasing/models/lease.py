@@ -13,16 +13,17 @@ class LeaseType(NameModel):
     """
     In Finnish: Laji
     """
-    id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.id)
+        return '{} ({})'.format(self.name, self.identifier)
 
 
 class Municipality(NameModel):
     """
     In Finnish: Kaupunki
     """
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
 
     class Meta:
         verbose_name = 'Municipality'
@@ -36,7 +37,7 @@ class District(NameModel):
     """
     municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), related_name='districts',
                                      on_delete=models.PROTECT)
-    identifier = models.IntegerField(verbose_name=_('Identifier within the municipality'))
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
 
     class Meta:
         unique_together = ('municipality', 'identifier')
@@ -144,7 +145,8 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
         for a residence (A1) in Helsinki (1), Vallila (22), and sequence
         number 1 would be A1122-1.
         """
-        return '{}{}{:02}-{}'.format(self.type.id, self.municipality.id, self.district.identifier, self.sequence)
+        return '{}{}{:02}-{}'.format(self.type.identifier, self.municipality.identifier, int(self.district.identifier),
+                                     self.sequence)
 
 
 class Lease(TimeStampedSafeDeleteModel):
@@ -240,7 +242,8 @@ class Lease(TimeStampedSafeDeleteModel):
         if self.identifier:
             return str(self.identifier)
         else:
-            return '{}{}{:02}-'.format(self.type.id, self.municipality.id, self.district.identifier)
+            return '{}{}{:02}-'.format(
+                self.type.identifier, self.municipality.identifier, int(self.district.identifier))
 
     @transaction.atomic
     def create_identifier(self):

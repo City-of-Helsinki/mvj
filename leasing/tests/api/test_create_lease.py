@@ -21,7 +21,7 @@ def test_create_lease(django_db_setup, admin_client, contact_factory):
         "transferable": True,
         "regulated": False,
         "notice_note": "Notice note...",
-        "type": "A1",
+        "type": 1,
         "municipality": 1,
         "district": 31,
         "intended_use": 1,
