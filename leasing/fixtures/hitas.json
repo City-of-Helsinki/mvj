@@ -1,77 +1,77 @@
 [
   {
     "model": "leasing.Hitas",
-    "pk": "A",
+    "pk": 1,
     "fields": {
       "name": "Puolihitas"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "0",
+    "pk": 2,
     "fields": {
       "name": "Ei Hitasta"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "1",
+    "pk": 3,
     "fields": {
       "name": "Hitas I"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "2",
+    "pk": 4,
     "fields": {
       "name": "Hitas II"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "3",
+    "pk": 5,
     "fields": {
       "name": "Laatusääntely"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "4",
+    "pk": 6,
     "fields": {
       "name": "Ei laatusääntelyä"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "5",
+    "pk": 7,
     "fields": {
       "name": "Hitas I tai laatusä."
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "6",
+    "pk": 8,
     "fields": {
       "name": "Ei tietoa"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "7",
+    "pk": 9,
     "fields": {
       "name": "Hitas II (loikkari)"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "8",
+    "pk": 10,
     "fields": {
       "name": "Hitas (vapautettu)"
     }
   },
   {
     "model": "leasing.Hitas",
-    "pk": "9",
+    "pk": 11,
     "fields": {
       "name": "Hintakontrolloitu"
     }

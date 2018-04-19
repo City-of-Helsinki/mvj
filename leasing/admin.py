@@ -10,8 +10,8 @@ from leasing.models import (
 
 
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'is_business', 'is_lessor')
-    search_fields = ['first_name', 'last_name', 'business_name']
+    list_display = ('__str__', 'type', 'is_lessor')
+    search_fields = ['first_name', 'last_name', 'name']
 
 
 class MunicipalityAdmin(admin.ModelAdmin):

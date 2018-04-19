@@ -2,6 +2,9 @@ from auditlog.registry import auditlog
 from django.conf.global_settings import LANGUAGES
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
+
+from leasing.enums import ContactType
 
 from .mixins import TimeStampedSafeDeleteModel
 
@@ -10,17 +13,15 @@ class Contact(TimeStampedSafeDeleteModel):
     """
     In Finnish: Yhteystieto
     """
+    type = EnumField(ContactType, verbose_name=_("Type"), max_length=30)
+
     # In Finnish: Etunimi
     first_name = models.CharField(verbose_name=_("First name"), null=True, blank=True, max_length=255)
 
     # In Finnish: Sukunimi
     last_name = models.CharField(verbose_name=_("Last name"), null=True, blank=True, max_length=255)
 
-    # In Finnis: Yritys
-    is_business = models.BooleanField(verbose_name=_("Is a business"), default=False)
-
-    # In Finnish: Yrityksen nimi
-    business_name = models.CharField(verbose_name=_("Business name"), null=True, blank=True, max_length=255)
+    name = models.CharField(verbose_name=_("Name"), null=True, blank=True, max_length=255)
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(verbose_name=_("Business ID"), null=True, blank=True, max_length=255)
@@ -67,10 +68,17 @@ class Contact(TimeStampedSafeDeleteModel):
     is_lessor = models.BooleanField(verbose_name=_("Is a lessor"), default=False)
 
     def __str__(self):
-        if self.is_business:
-            return self.business_name
-        else:
-            return ' '.join([self.first_name, self.last_name])
+        person_name = ' '.join([n for n in [self.first_name, self.last_name] if n]).strip()
+
+        if self.type == ContactType.PERSON:
+            return person_name
+
+        name = '{} ({})'.format(self.name, self.type)
+
+        if person_name:
+            name = '{} {}'.format(name, person_name)
+
+        return name
 
 
 auditlog.register(Contact)
