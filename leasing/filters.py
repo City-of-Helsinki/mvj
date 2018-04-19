@@ -12,9 +12,8 @@ class CommentFilter(FilterSet):
 class ContactFilter(FilterSet):
     class Meta:
         model = Contact
-        fields = ['first_name', 'last_name', 'is_business', 'business_name', 'business_id',
-                  'national_identification_number', 'customer_number', 'sap_customer_number', 'partner_code',
-                  'is_lessor']
+        fields = ['type', 'first_name', 'last_name', 'name', 'business_id', 'national_identification_number',
+                  'customer_number', 'sap_customer_number', 'partner_code', 'is_lessor']
 
 
 class DecisionFilter(FilterSet):
@@ -32,7 +31,7 @@ class DistrictFilter(FilterSet):
 class InvoiceFilter(FilterSet):
     class Meta:
         model = Invoice
-        fields = ['lease', 'status', 'type']
+        fields = ['lease', 'state', 'type']
 
 
 class LeaseFilter(FilterSet):

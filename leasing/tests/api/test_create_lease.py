@@ -5,14 +5,17 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
 
+from leasing.enums import ContactType
 from leasing.models import Lease
 
 
 @pytest.mark.django_db
 def test_create_lease(django_db_setup, admin_client, contact_factory):
-    test_contacts = [contact_factory(first_name="First name", last_name="Last name", is_lessor=True)]
+    test_contacts = [contact_factory(first_name="First name", last_name="Last name", is_lessor=True,
+                                     type=ContactType.PERSON)]
     for i in range(3):
-        test_contacts.append(contact_factory(first_name="First name " + str(i), last_name="Last name " + str(i)))
+        test_contacts.append(contact_factory(first_name="First name " + str(i), last_name="Last name " + str(i),
+                                             type=ContactType.PERSON))
 
     data = {
         "state": "lease",
@@ -27,10 +30,10 @@ def test_create_lease(django_db_setup, admin_client, contact_factory):
         "intended_use": 1,
         "supportive_housing": 5,
         "statistical_use": 1,
-        "financing": "A",
-        "management": "1",
+        "financing": 1,
+        "management": 1,
         "regulation": 1,
-        "hitas": "0",
+        "hitas": 1,
         "notice_period": 1,
         "lessor": test_contacts[0].id,
         "tenants": [

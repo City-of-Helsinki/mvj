@@ -66,7 +66,6 @@ class Financing(NameModel):
     """
     In Finnish: Rahoitusmuoto
     """
-    id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
         verbose_name = 'Form of financing'
@@ -78,7 +77,6 @@ class Management(NameModel):
     """
     In Finnish: Hallintamuoto
     """
-    id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
         verbose_name = 'Form of management'
@@ -101,7 +99,6 @@ class Hitas(NameModel):
     """
     In Finnish: Hitas
     """
-    id = models.CharField(verbose_name=_("Identifier"), max_length=255, primary_key=True)
 
     class Meta:
         verbose_name = 'Hitas'

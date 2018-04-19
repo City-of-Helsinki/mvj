@@ -279,7 +279,7 @@ class InvoiceDeliveryMethod(Enum):
         ELECTRONIC = _('Electronic')
 
 
-class InvoiceStatus(Enum):
+class InvoiceState(Enum):
     OPEN = 'open'
     PAID = 'paid'
     REFUNDED = 'refunded'
@@ -297,3 +297,18 @@ class InvoiceType(Enum):
     class Labels:
         CHARGE = _('Charge')
         CREDIT_NOTE = _('Credit note')
+
+
+class ContactType(Enum):
+    PERSON = 'person'
+    BUSINESS = 'business'
+    UNIT = 'unit'
+    ASSOCIATION = 'association'
+    OTHER = 'other'
+
+    class Labels:
+        PERSON = _('Person')
+        BUSINESS = _('Business')
+        UNIT = _('Unit')
+        ASSOCIATION = _('Association')
+        OTHER = _('Other')

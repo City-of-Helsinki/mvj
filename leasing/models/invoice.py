@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import InvoiceDeliveryMethod, InvoiceStatus, InvoiceType
+from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 
@@ -49,7 +49,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), on_delete=models.PROTECT)
 
     # In Finnish: Laskun tila
-    status = EnumField(InvoiceStatus, verbose_name=_("Status"))
+    state = EnumField(InvoiceState, verbose_name=_("State"), max_length=30)
 
     # In Finnish: Laskutuskauden alkupvm
     billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"))
@@ -95,10 +95,11 @@ class Invoice(TimeStampedSafeDeleteModel):
                                                          blank=True)
 
     # In Finnish: E vai paperilasku
-    delivery_method = EnumField(InvoiceDeliveryMethod, verbose_name=_("Delivery method"), null=True, blank=True)
+    delivery_method = EnumField(InvoiceDeliveryMethod, verbose_name=_("Delivery method"), max_length=30, null=True,
+                                blank=True)
 
     # In Finnish: Laskun tyyppi
-    type = EnumField(InvoiceType, verbose_name=_("Type"))
+    type = EnumField(InvoiceType, verbose_name=_("Type"), max_length=30)
 
     # In Finnish: Tiedote
     notes = models.TextField(verbose_name=_("Notes"), blank=True)

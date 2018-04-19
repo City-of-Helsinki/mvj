@@ -8,7 +8,7 @@ from django.core.management import call_command
 from django.utils import timezone
 from pytest_factoryboy import register
 
-from leasing.enums import TenantContactType
+from leasing.enums import ContactType, TenantContactType
 from leasing.models import Contact, District, Lease, LeaseType, Municipality, NoticePeriod, Tenant, TenantContact
 
 
@@ -94,9 +94,11 @@ def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_conta
         notice_period_id=1,
     )
 
-    contacts = [contact_factory(first_name="Lessor First name", last_name="Lessor Last name", is_lessor=True)]
+    contacts = [contact_factory(first_name="Lessor First name", last_name="Lessor Last name", is_lessor=True,
+                                type=ContactType.PERSON)]
     for i in range(3):
-        contacts.append(contact_factory(first_name="First name " + str(i), last_name="Last name " + str(i)))
+        contacts.append(contact_factory(first_name="First name " + str(i), last_name="Last name " + str(i),
+                                        type=ContactType.PERSON))
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
     tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
