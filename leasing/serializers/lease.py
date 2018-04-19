@@ -81,6 +81,10 @@ class SupportiveHousingSerializer(NameModelSerializer):
 
 
 class LeaseIdentifierSerializer(serializers.ModelSerializer):
+    type = LeaseTypeSerializer()
+    municipality = MunicipalitySerializer()
+    district = DistrictSerializer()
+
     class Meta:
         model = LeaseIdentifier
         fields = ('type', 'municipality', 'district', 'sequence')
@@ -88,6 +92,9 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
 
 class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
+    type = LeaseTypeSerializer()
+    municipality = MunicipalitySerializer()
+    district = DistrictSerializer()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     lease_areas = LeaseAreaSerializer(many=True, required=False, allow_null=True)
