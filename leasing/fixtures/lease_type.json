@@ -1,282 +1,322 @@
 [
   {
     "model": "leasing.LeaseType",
-    "pk": "A1",
+    "pk": 1,
     "fields": {
-      "name": "Asuntotontit"
+      "name": "Asuntotontit",
+      "identifier": "A1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "A2",
+    "pk": 2,
     "fields": {
-      "name": "Opiskelija-asuntotontit"
+      "name": "Opiskelija-asuntotontit",
+      "identifier": "A2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "A3",
+    "pk": 3,
     "fields": {
-      "name": "Vanhusten asunto- ja vanhainkotitontit"
+      "name": "Vanhusten asunto- ja vanhainkotitontit",
+      "identifier": "A3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "A4",
+    "pk": 4,
     "fields": {
-      "name": "Asuntotontteihin liittyvä pysäköintit."
+      "name": "Asuntotontteihin liittyvä pysäköintit.",
+      "identifier": "A4"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "S0",
+    "pk": 5,
     "fields": {
-      "name": "Sekalaiset vuokraukset"
+      "name": "Sekalaiset vuokraukset",
+      "identifier": "S0"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "T1",
+    "pk": 6,
     "fields": {
-      "name": "Teollisuus- ja varastotontit"
+      "name": "Teollisuus- ja varastotontit",
+      "identifier": "T1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "O1",
+    "pk": 7,
     "fields": {
-      "name": "Käyttöoikeudet"
+      "name": "Käyttöoikeudet",
+      "identifier": "O1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "T2",
+    "pk": 8,
     "fields": {
-      "name": "Teollis./varastot. liittyv. pysäköintit."
+      "name": "Teollis./varastot. liittyv. pysäköintit.",
+      "identifier": "T2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "H1",
+    "pk": 9,
     "fields": {
-      "name": "Huoltoasema"
+      "name": "Huoltoasema",
+      "identifier": "H1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "H2",
+    "pk": 10,
     "fields": {
-      "name": "Jakeluasema"
+      "name": "Jakeluasema",
+      "identifier": "H2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "L1",
+    "pk": 11,
     "fields": {
-      "name": "Liike- ja toimistotontit"
+      "name": "Liike- ja toimistotontit",
+      "identifier": "L1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "L2",
+    "pk": 12,
     "fields": {
-      "name": "Yleisen rakennuksen tontit"
+      "name": "Yleisen rakennuksen tontit",
+      "identifier": "L2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "L3",
+    "pk": 13,
     "fields": {
-      "name": "Liike/Yleistenr. tonttien pysäköintit."
+      "name": "Liike/Yleistenr. tonttien pysäköintit.",
+      "identifier": "L3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "O2",
+    "pk": 14,
     "fields": {
-      "name": "Laiturinpito ja poijuluvat"
+      "name": "Laiturinpito ja poijuluvat",
+      "identifier": "O2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "O3",
+    "pk": 15,
     "fields": {
-      "name": "Kokoontumisluvat"
+      "name": "Kokoontumisluvat",
+      "identifier": "O3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "O4",
+    "pk": 16,
     "fields": {
-      "name": "Muut luvat"
+      "name": "Muut luvat",
+      "identifier": "O4"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "K0",
+    "pk": 17,
     "fields": {
-      "name": "Kaupungin sisäiset (tilapäiset vuokr.)"
+      "name": "Kaupungin sisäiset (tilapäiset vuokr.)",
+      "identifier": "K0"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V5",
+    "pk": 18,
     "fields": {
-      "name": "Helsingin Satama"
+      "name": "Helsingin Satama",
+      "identifier": "V5"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V2",
+    "pk": 19,
     "fields": {
-      "name": "Helsingin Energia"
+      "name": "Helsingin Energia",
+      "identifier": "V2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V6",
+    "pk": 20,
     "fields": {
-      "name": "Helsingin Vesi"
+      "name": "Helsingin Vesi",
+      "identifier": "V6"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V4",
+    "pk": 21,
     "fields": {
-      "name": "Liikennelaitos"
+      "name": "Liikennelaitos",
+      "identifier": "V4"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V1",
+    "pk": 22,
     "fields": {
-      "name": "Elintarviketukkukaupan keskus"
+      "name": "Elintarviketukkukaupan keskus",
+      "identifier": "V1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "V3",
+    "pk": 23,
     "fields": {
-      "name": "Keskuspesula"
+      "name": "Keskuspesula",
+      "identifier": "V3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y3",
+    "pk": 24,
     "fields": {
-      "name": "Liikuntavirasto"
+      "name": "Liikuntavirasto",
+      "identifier": "Y3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y5",
+    "pk": 25,
     "fields": {
-      "name": "Rakennusvirasto"
+      "name": "Rakennusvirasto",
+      "identifier": "Y5"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y6",
+    "pk": 26,
     "fields": {
-      "name": "Sosiaalivirasto"
+      "name": "Sosiaalivirasto",
+      "identifier": "Y6"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y7",
+    "pk": 27,
     "fields": {
-      "name": "Terveysvirasto"
+      "name": "Terveysvirasto",
+      "identifier": "Y7"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y2",
+    "pk": 28,
     "fields": {
-      "name": "Opetusvirasto"
+      "name": "Opetusvirasto",
+      "identifier": "Y2"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y4",
+    "pk": 29,
     "fields": {
-      "name": "Pelastuslaitos"
+      "name": "Pelastuslaitos",
+      "identifier": "Y4"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y1",
+    "pk": 30,
     "fields": {
-      "name": "Korkeasaari"
+      "name": "Korkeasaari",
+      "identifier": "Y1"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y8",
+    "pk": 31,
     "fields": {
-      "name": "Nuorisoasiainkeskus"
+      "name": "Nuorisoasiainkeskus",
+      "identifier": "Y8"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "TY",
+    "pk": 32,
     "fields": {
-      "name": "TYHJÄ TONTTI"
+      "name": "TYHJÄ TONTTI",
+      "identifier": "TY"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "MA",
+    "pk": 33,
     "fields": {
-      "name": "Maapoliittinen sopimus"
+      "name": "Maapoliittinen sopimus",
+      "identifier": "MA"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y9",
+    "pk": 34,
     "fields": {
-      "name": "Kiinteistövirasto tilakeskus"
+      "name": "Kiinteistövirasto tilakeskus",
+      "identifier": "Y9"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "MY",
+    "pk": 35,
     "fields": {
-      "name": "Myynti/maksamaton kauppahinta"
+      "name": "Myynti/maksamaton kauppahinta",
+      "identifier": "MY"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "R0",
+    "pk": 36,
     "fields": {
-      "name": "SIIRTOLAPUUTARHA ei käytössä"
+      "name": "SIIRTOLAPUUTARHA ei käytössä",
+      "identifier": "R0"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "VS",
+    "pk": 37,
     "fields": {
-      "name": "Väestönsuojakorvaukset"
+      "name": "Väestönsuojakorvaukset",
+      "identifier": "VS"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "Y0",
+    "pk": 38,
     "fields": {
-      "name": "Varhaiskasvatusvirasto"
+      "name": "Varhaiskasvatusvirasto",
+      "identifier": "Y0"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "T3",
+    "pk": 39,
     "fields": {
-      "name": "Teollisuus- ja varatotontit (alv:set)"
+      "name": "Teollisuus- ja varatotontit (alv:set)",
+      "identifier": "T3"
     }
   },
   {
     "model": "leasing.LeaseType",
-    "pk": "S1",
+    "pk": 40,
     "fields": {
-      "name": "Liikuntaviraston ulosvuokraus"
+      "name": "Liikuntaviraston ulosvuokraus",
+      "identifier": "S1"
     }
   }
 ]

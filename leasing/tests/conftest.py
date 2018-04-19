@@ -88,7 +88,7 @@ class NoticePeriodFactory(factory.DjangoModelFactory):
 @pytest.fixture
 def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_contact_factory):
     lease = lease_factory(
-        type_id="A2",
+        type_id=1,
         municipality_id=1,
         district_id=1,
         notice_period_id=1,
