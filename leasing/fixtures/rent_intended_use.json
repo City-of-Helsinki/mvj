@@ -3,91 +3,112 @@
     "model": "leasing.RentIntendedUse",
     "pk": 1,
     "fields": {
-      "name": "Asuminen / yleinen"
+      "name": "Asunto"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 2,
     "fields": {
-      "name": "Vapaarahoitteisia omistusasuntoja"
+      "name": "Liike"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 3,
     "fields": {
-      "name": "Aravaomistusasuntoja"
+      "name": "Teollisuus/varasto"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 4,
     "fields": {
-      "name": "Vapaarahoitteisia vuokra-asuntoja"
+      "name": "Toimisto teoll.tont."
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 5,
     "fields": {
-      "name": "Aravavuokrataloja"
+      "name": "Päiväkoti"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 6,
     "fields": {
-      "name": "Peruskorjattuja arava-vuokrataloja"
+      "name": "Yleinen"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 7,
     "fields": {
-      "name": "Omakotitalo"
+      "name": "Muu"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 8,
     "fields": {
-      "name": "Paritalo"
+      "name": "Erittelemätön"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 9,
     "fields": {
-      "name": "Sekatalo"
+      "name": "Pysäköinti (tasot)"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 10,
     "fields": {
-      "name": "Asumisoikeusasuntoja"
+      "name": "Pysäköinti"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 11,
     "fields": {
-      "name": "Opiskelija-asuntoja"
+      "name": "Jakelulaite tontilla"
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 12,
     "fields": {
-      "name": "Vanhusten asuntoja"
+      "name": "Asunto, lisärakent."
     }
   },
   {
     "model": "leasing.RentIntendedUse",
     "pk": 13,
     "fields": {
-      "name": "Palvelutalo / hoitokoti"
+      "name": "Asunto 2"
+    }
+  },
+  {
+    "model": "leasing.RentIntendedUse",
+    "pk": 14,
+    "fields": {
+      "name": "Muu 2"
+    }
+  },
+  {
+    "model": "leasing.RentIntendedUse",
+    "pk": 15,
+    "fields": {
+      "name": "Pysäköinti 2"
+    }
+  },
+  {
+    "model": "leasing.RentIntendedUse",
+    "pk": 24,
+    "fields": {
+      "name": "ALV"
     }
   }
 ]
