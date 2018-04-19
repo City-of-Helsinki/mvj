@@ -1,9 +1,0 @@
-[
-  {
-    "model": "leasing.RentDiscountRule",
-    "pk": 1,
-    "fields": {
-      "name": "ALK, 36, 14.07.2017"
-    }
-  }
-]
