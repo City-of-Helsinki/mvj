@@ -1,0 +1,18 @@
+[
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 1,
+    "fields": {
+      "name": "Vuokra",
+      "sap_code": "10000454"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 2,
+    "fields": {
+      "name": "Korko",
+      "sap_code": "00000000"
+    }
+  }
+]
