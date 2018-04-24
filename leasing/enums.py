@@ -22,6 +22,7 @@ class LeaseState(Enum):
     """
     LEASE = 'lease'
     RESERVATION = 'reservation'
+    RESERVE = 'reserve'
     PERMISSION = 'permission'
     TRANSFERRED = 'transferred'
     APPLICATION = 'application'
@@ -30,6 +31,7 @@ class LeaseState(Enum):
     class Labels:
         LEASE = _('Lease')
         RESERVATION = _('Reservation')
+        RESERVE = _('Reserve')
         PERMISSION = _('Permission')
         TRANSFERRED = _('Transferred')
         APPLICATION = _('Application')

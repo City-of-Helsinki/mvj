@@ -7,6 +7,7 @@ from enumfields import EnumField
 from leasing.enums import Classification, LeaseRelationType, LeaseState, NoticePeriodType
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
+from users.models import User
 
 
 class LeaseType(NameModel):
@@ -14,9 +15,9 @@ class LeaseType(NameModel):
     In Finnish: Laji
     """
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
-
-    def __str__(self):
-        return '{} ({})'.format(self.name, self.identifier)
+    sap_material_code = models.CharField(verbose_name=_("SAP material code"), null=True, blank=True, max_length=255)
+    sap_order_item_number = models.CharField(verbose_name=_("SAP order item number"), null=True, blank=True,
+                                             max_length=255)
 
 
 class Municipality(NameModel):
@@ -231,6 +232,18 @@ class Lease(TimeStampedSafeDeleteModel):
 
     # In Finnish: Laskutus käynnissä
     is_invoicing_enabled = models.BooleanField(verbose_name=_("Invoicing enabled?"), default=False)
+
+    # In Finnish: Diaarinumero
+    reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Kommentti
+    note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    # In Finnish: Valmistelija
+    preparer = models.ForeignKey(User, verbose_name=_("Preparer"), null=True, blank=True, on_delete=models.PROTECT)
+
+    # In Finnish: Onko ALV:n alainen
+    is_subject_to_vat = models.BooleanField(verbose_name=_("Is subject to VAT?"), default=False)
 
     def __str__(self):
         return self.get_identifier_string()
