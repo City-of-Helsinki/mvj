@@ -1,3 +1,5 @@
+from django.db.models import DurationField
+from django.db.models.functions import Cast
 from rest_framework import viewsets
 
 from leasing.filters import DistrictFilter, LeaseFilter
@@ -48,7 +50,8 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
 
 
 class NoticePeriodViewSet(viewsets.ModelViewSet):
-    queryset = NoticePeriod.objects.all()
+    queryset = NoticePeriod.objects.all().annotate(duration_as_interval=Cast('duration', DurationField())).order_by(
+        'duration_as_interval')
     serializer_class = NoticePeriodSerializer
 
 
