@@ -13,14 +13,16 @@ class ReceivableType(models.Model):
     In Finnish: Saamislaji
     """
     name = models.CharField(verbose_name=_("Name"), max_length=255)
-    sap_code = models.CharField(verbose_name=_("SAP code"), max_length=255)
+    sap_material_code = models.CharField(verbose_name=_("SAP material code"), null=True, blank=True, max_length=255)
+    sap_order_item_number = models.CharField(verbose_name=_("SAP order item number"), null=True, blank=True,
+                                             max_length=255)
 
     class Meta:
         verbose_name = _("Receivable type")
         verbose_name_plural = _("Receivable types")
 
     def __str__(self):
-        return "{} {}".format(self.name, self.sap_code)
+        return self.name
 
 
 class Invoice(TimeStampedSafeDeleteModel):
