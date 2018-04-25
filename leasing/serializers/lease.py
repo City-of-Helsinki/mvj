@@ -1,6 +1,9 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from users.models import User
+from users.serializers import UserSerializer
+
 from ..models import (
     Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, StatisticalUse, SupportiveHousing)
@@ -122,6 +125,8 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentCreateUpdateSerializer(many=True, required=False, allow_null=True)
     basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
+    preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
+                                                  related_serializer=UserSerializer, required=False, allow_null=True)
 
     class Meta:
         model = Lease

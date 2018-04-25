@@ -80,5 +80,8 @@ class Contact(TimeStampedSafeDeleteModel):
 
         return name
 
+    class Meta:
+        ordering = ['type', 'name', 'last_name', 'first_name']
+
 
 auditlog.register(Contact)
