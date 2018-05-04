@@ -167,6 +167,10 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
     # In Finnish: Vuokra
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
+    # In Finnish: Käyttötarkoitus
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
+                                     on_delete=models.PROTECT)
+
     # In Finnish: Alkupvm
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 

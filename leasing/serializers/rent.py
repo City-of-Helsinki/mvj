@@ -24,10 +24,13 @@ class RentDueDateSerializer(serializers.ModelSerializer):
 
 class FixedInitialYearRentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
+                                                      queryset=RentIntendedUse.objects.all(),
+                                                      related_serializer=RentIntendedUseSerializer)
 
     class Meta:
         model = FixedInitialYearRent
-        fields = ('id', 'amount', 'start_date', 'end_date')
+        fields = ('id', 'amount', 'intended_use', 'start_date', 'end_date')
 
 
 class ContractRentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
