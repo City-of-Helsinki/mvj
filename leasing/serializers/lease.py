@@ -41,7 +41,7 @@ class IntendedUseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LeaseTypeSerializer(serializers.ModelSerializer):
+class LeaseTypeSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LeaseType
         fields = '__all__'

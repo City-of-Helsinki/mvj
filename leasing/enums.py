@@ -250,6 +250,15 @@ class DueDatesType(Enum):
         FIXED = _('Fixed')
 
 
+class DueDatesPosition(Enum):
+    START_OF_MONTH = 'start_of_month'
+    MIDDLE_OF_MONTH = 'middle_of_month'
+
+    class Labels:
+        START_OF_MONTH = _('Start of month')
+        MIDDLE_OF_MONTH = _('Middle of month')
+
+
 class RentAdjustmentType(Enum):
     DISCOUNT = 'discount'
     INCREASE = 'increase'

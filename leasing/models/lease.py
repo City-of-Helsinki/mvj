@@ -4,7 +4,7 @@ from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import Classification, LeaseRelationType, LeaseState, NoticePeriodType
+from leasing.enums import Classification, DueDatesPosition, LeaseRelationType, LeaseState, NoticePeriodType
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 from users.models import User
@@ -18,6 +18,8 @@ class LeaseType(NameModel):
     sap_material_code = models.CharField(verbose_name=_("SAP material code"), null=True, blank=True, max_length=255)
     sap_order_item_number = models.CharField(verbose_name=_("SAP order item number"), null=True, blank=True,
                                              max_length=255)
+    due_dates_position = EnumField(DueDatesPosition, verbose_name=_("Due dates position"),
+                                   default=DueDatesPosition.START_OF_MONTH, max_length=30)
 
 
 class Municipality(NameModel):
