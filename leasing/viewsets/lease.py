@@ -71,9 +71,13 @@ class SupportiveHousingViewSet(viewsets.ModelViewSet):
 
 
 class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
-    queryset = Lease.objects.all().select_related('type', 'municipality', 'district', 'identifier', 'lessor',
-                                                  'intended_use', 'supportive_housing', 'statistical_use', 'financing',
-                                                  'management', 'regulation', 'hitas', 'notice_period')
+    queryset = Lease.objects.all().select_related(
+        'type', 'municipality', 'district', 'identifier', 'identifier__type', 'identifier__municipality',
+        'identifier__district', 'lessor', 'intended_use', 'supportive_housing', 'statistical_use', 'financing',
+        'management', 'regulation', 'hitas', 'notice_period', 'preparer'
+    ).prefetch_related(
+        'related_leases', 'tenants', 'lease_areas', 'contracts', 'decisions', 'inspections', 'rents'
+    )
     serializer_class = LeaseSerializer
     filter_class = LeaseFilter
 
