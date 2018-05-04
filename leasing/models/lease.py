@@ -291,6 +291,13 @@ class Lease(TimeStampedSafeDeleteModel):
 
         super().save(*args, **kwargs)
 
+    def get_due_dates_for_period(self, start_date, end_date):
+        due_dates = {}
+        for rent in self.rents.all():
+            due_dates.update(rent.get_due_dates_for_period(start_date, end_date))
+
+        return due_dates
+
 
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)

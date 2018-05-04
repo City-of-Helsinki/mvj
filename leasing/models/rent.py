@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import date
 from decimal import Decimal
 
@@ -10,12 +11,39 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import (
-    DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType)
+    DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
+    RentType)
 from leasing.models.utils import (
-    calculate_index_adjusted_value, get_date_range_amount_from_monthly_amount, get_range_overlap)
+    calculate_index_adjusted_value, fix_amount_for_overlap, get_billing_periods_for_year,
+    get_date_range_amount_from_monthly_amount, get_range_overlap_and_remainder)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
+
+
+class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
+    pass
+
+
+first_day_of_every_month = []
+
+for i in range(1, 13):
+    first_day_of_every_month.append(DayMonth(day=1, month=i))
+
+FIXED_DUE_DATES = {
+    DueDatesPosition.START_OF_MONTH: {
+        1: [DayMonth(day=2, month=1)],
+        2: [DayMonth(day=2, month=1), DayMonth(day=1, month=7)],
+        4: [DayMonth(day=2, month=1), DayMonth(day=1, month=4), DayMonth(day=1, month=7), DayMonth(day=1, month=10)],
+        12: first_day_of_every_month,
+    },
+    DueDatesPosition.MIDDLE_OF_MONTH: {
+        1: [DayMonth(day=30, month=6)],
+        2: [DayMonth(day=15, month=3), DayMonth(day=30, month=9)],
+        4: [DayMonth(day=1, month=3), DayMonth(day=15, month=4), DayMonth(day=15, month=7), DayMonth(day=15, month=10)],
+        12: first_day_of_every_month,
+    }
+}
 
 
 class RentIntendedUse(NameModel):
@@ -104,41 +132,76 @@ class Rent(TimeStampedSafeDeleteModel):
         rent_adjustments = self.rent_adjustments.filter(range_filtering)
 
         total = Decimal('0.00')
+        fixed_applied = False
+        remaining_ranges = []
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
-            overlap = get_range_overlap(date_range_start, date_range_end, *fixed_initial_year_rent.date_range)
-            rent_amount = fixed_initial_year_rent.get_amount_for_date_range(*overlap)
-            total += rent_amount
+            (fixed_overlap, fixed_remainders) = get_range_overlap_and_remainder(
+                date_range_start, date_range_end, *fixed_initial_year_rent.date_range)
 
-        for contract_rent in contract_rents:
-            overlap = get_range_overlap(date_range_start, date_range_end, *contract_rent.date_range)
-
-            if not overlap:
+            if not fixed_overlap:
                 continue
 
-            if self.type == RentType.FIXED:
-                rent_amount = contract_rent.get_amount_for_date_range(*overlap)
-            elif self.type == RentType.INDEX:
-                original_rent_amount = contract_rent.get_amount_for_date_range(*overlap)
-                rent_amount = self.get_index_adjusted_amount(date_range_start.year, original_rent_amount)
-            else:
-                raise NotImplementedError('Cannot calculate rent amount for rent type {}.'.format(self.type))
+            if fixed_remainders:
+                remaining_ranges.extend(fixed_remainders)
 
-            adjust_amount = 0
+            fixed_applied = True
+
+            fixed_amount = fixed_initial_year_rent.get_amount_for_date_range(*fixed_overlap)
 
             for rent_adjustment in rent_adjustments:
-                if rent_adjustment.intended_use != contract_rent.intended_use:
+                if fixed_initial_year_rent.intended_use and \
+                        rent_adjustment.intended_use != fixed_initial_year_rent.intended_use:
                     continue
 
-                overlap = get_range_overlap(date_range_start, date_range_end, *rent_adjustment.date_range)
+                (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
+                    fixed_overlap[0], fixed_overlap[1], *rent_adjustment.date_range)
 
-                if not overlap:
+                if not adjustment_overlap:
                     continue
 
-                adjust_amount += rent_adjustment.get_amount_for_date_range(rent_amount, *overlap)
+                tmp_amount = fix_amount_for_overlap(fixed_amount, adjustment_overlap, adjustment_remainders)
+                fixed_amount += rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
 
-            rent_amount = max(Decimal(0), rent_amount + adjust_amount)
-            total += rent_amount
+            total += fixed_amount
+
+        if fixed_applied:
+            if not remaining_ranges:
+                return total
+            else:
+                date_ranges = remaining_ranges
+        else:
+            date_ranges = [(date_range_start, date_range_end)]
+
+        for (range_start, range_end) in date_ranges:
+            for contract_rent in contract_rents:
+                (contract_overlap, _) = get_range_overlap_and_remainder(
+                    range_start, range_end, *contract_rent.date_range)
+
+                if not contract_overlap:
+                    continue
+
+                if self.type == RentType.FIXED:
+                    contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                elif self.type == RentType.INDEX:
+                    original_rent_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                    contract_amount = self.get_index_adjusted_amount(contract_overlap[0].year,
+                                                                     original_rent_amount)
+
+                for rent_adjustment in rent_adjustments:
+                    if rent_adjustment.intended_use != contract_rent.intended_use:
+                        continue
+
+                    (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
+                        range_start, range_end, *rent_adjustment.date_range)
+
+                    if not adjustment_overlap:
+                        continue
+
+                    tmp_amount = fix_amount_for_overlap(contract_amount, adjustment_overlap, adjustment_remainders)
+                    contract_amount += rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+
+                total += contract_amount
 
         return total
 
@@ -146,6 +209,42 @@ class Rent(TimeStampedSafeDeleteModel):
     def get_index_adjusted_amount(year, original_rent, index_type=IndexType.TYPE_7):
         index = Index.objects.get(year=year-1, month=None)
         return calculate_index_adjusted_value(original_rent, index, index_type)
+
+    def get_custom_due_dates_as_daymonths(self):
+        if self.due_dates_type != DueDatesType.CUSTOM:
+            return set()
+
+        return [dd.as_daymonth() for dd in self.due_dates.all().order_by('month', 'day')]
+
+    def get_due_dates_for_period(self, start_date, end_date):
+        if (self.end_date and start_date > self.end_date) or (self.start_date and end_date < self.start_date):
+            return []
+
+        rent_due_dates = []
+        if self.due_dates_type == DueDatesType.FIXED:
+            # TODO: handle unknown due date count
+            if self.due_dates_per_year in (1, 2, 4, 12):
+                rent_due_dates = FIXED_DUE_DATES[self.lease.type.due_dates_position][self.due_dates_per_year]
+        elif self.due_dates_type == DueDatesType.CUSTOM:
+            rent_due_dates = self.get_custom_due_dates_as_daymonths()
+
+        period_years = {start_date.year, end_date.year}
+        due_dates = []
+        for rent_due_date in rent_due_dates:
+            for year in period_years:
+                tmp_date = date(year=year, month=rent_due_date.month, day=rent_due_date.day)
+                if tmp_date >= start_date and tmp_date <= end_date:
+                    due_dates.append(tmp_date)
+
+        return due_dates
+
+    def get_billing_period_from_due_date(self, due_date):
+        due_dates_per_year = self.get_due_dates_for_period(date(year=due_date.year, month=1, day=1),
+                                                           date(year=due_date.year, month=12, day=31))
+
+        due_date_index = due_dates_per_year.index(due_date)
+        # TODO: error checks
+        return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[due_date_index]
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
@@ -155,6 +254,9 @@ class RentDueDate(TimeStampedSafeDeleteModel):
     rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name="due_dates", on_delete=models.CASCADE)
     day = models.IntegerField(verbose_name=_("Day"), validators=[MinValueValidator(1), MaxValueValidator(31)])
     month = models.IntegerField(verbose_name=_("Month"), validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+    def as_daymonth(self):
+        return DayMonth(day=self.day, month=self.month)
 
 
 class FixedInitialYearRent(TimeStampedSafeDeleteModel):
@@ -182,8 +284,19 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
         return self.start_date, self.end_date
 
     def get_amount_for_date_range(self, date_range_start, date_range_end):
-        # TODO Implement this
-        return Decimal('0.00')
+        if self.start_date:
+            date_range_start = max(self.start_date, date_range_start)
+        if self.end_date:
+            date_range_end = min(self.end_date, date_range_end)
+
+        if date_range_start > date_range_end:
+            return False
+
+        monthly_amount = self.amount / 12
+        date_range_amount = get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end,
+                                                                      real_month_lengths=False)
+
+        return date_range_amount
 
 
 class ContractRent(TimeStampedSafeDeleteModel):

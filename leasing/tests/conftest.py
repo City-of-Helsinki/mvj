@@ -8,8 +8,8 @@ from django.core.management import call_command
 from django.utils import timezone
 from pytest_factoryboy import register
 
-from leasing.enums import ContactType, TenantContactType
-from leasing.models import Contact, District, Lease, LeaseType, Municipality, NoticePeriod, Tenant, TenantContact
+from leasing.enums import ContactType, IndexType, RentCycle, RentType, TenantContactType
+from leasing.models import Contact, District, Lease, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact
 
 
 @pytest.fixture()
@@ -83,6 +83,16 @@ class DistrictFactory(factory.DjangoModelFactory):
 class NoticePeriodFactory(factory.DjangoModelFactory):
     class Meta:
         model = NoticePeriod
+
+
+@register
+class RentFactory(factory.DjangoModelFactory):
+    type = RentType.INDEX
+    cycle = RentCycle.JANUARY_TO_DECEMBER
+    index_type = IndexType.TYPE_7
+
+    class Meta:
+        model = Rent
 
 
 @pytest.fixture

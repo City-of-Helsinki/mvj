@@ -63,6 +63,26 @@ def get_range_overlap(start1, end1, start2, end2):
     return max_start, min_end if max_start < min_end else None
 
 
+def get_range_overlap_and_remainder(start1, end1, start2, end2):
+    if start2 and end2 and ((start1 > start2 and start1 > end2) or end1 < start2):
+        return [None, []]
+
+    min_end = min(end1, end2) if end1 and end2 else end1 or end2
+    max_start = max(start1, start2) if start1 and start2 else start1 or start2
+
+    remainder = []
+    if max_start == start1 and min_end == end1:
+        remainder = []
+    elif max_start > start1 and min_end < end1:
+        remainder = [(start1, start2 - relativedelta(days=1)), (end2 + relativedelta(days=1), end1)]
+    elif max_start == start1 and min_end <= end1:
+        remainder = [(end2 + relativedelta(days=1), end1)]
+    elif max_start == start2 and min_end >= end1:
+        remainder = [(start1, start2 - relativedelta(days=1))]
+
+    return [(max_start, min_end), remainder]
+
+
 def get_last_date_of_month(year, month):
     return date(year=year, month=month, day=1) + relativedelta(day=31)
 
@@ -77,7 +97,8 @@ def get_spanned_months(start_date, end_date):
     return months
 
 
-def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end):
+def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end,
+                                              real_month_lengths=True):
     total = 0
 
     spanned_months = get_spanned_months(date_range_start, date_range_end)
@@ -85,10 +106,49 @@ def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, 
 
     start_month_last_day = get_last_date_of_month(date_range_start.year, date_range_start.month)
     start_missing_days = date_range_start.day - 1
-    total -= Decimal(start_missing_days) / Decimal(start_month_last_day.day) * monthly_amount
+
+    if not real_month_lengths and start_missing_days in (14, 15, 16):
+        start_missing_days = 15
+    divisor = Decimal(start_month_last_day.day) if real_month_lengths else Decimal(30)
+    total -= Decimal(start_missing_days) / divisor * monthly_amount
 
     end_month_last_day = get_last_date_of_month(date_range_end.year, date_range_end.month)
     end_missing_days = end_month_last_day.day - date_range_end.day
-    total -= Decimal(end_missing_days) / Decimal(end_month_last_day.day) * monthly_amount
+
+    if not real_month_lengths and end_missing_days in (14, 15, 16):
+        end_missing_days = 15
+    divisor = Decimal(end_month_last_day.day) if real_month_lengths else Decimal(30)
+    total -= Decimal(end_missing_days) / divisor * monthly_amount
 
     return total
+
+
+def fix_amount_for_overlap(amount, overlap, remainders):
+    if not remainders:
+        return amount
+
+    overlap_days = (overlap[1] - overlap[0]).days
+    overlap_months = Decimal(round(overlap_days / 30, 1))
+
+    remainder_days = 0
+    for remainder in remainders:
+        remainder_days += (remainder[1] - remainder[0]).days
+
+    remainder_months = Decimal(round(remainder_days / 30, 1))
+
+    return amount / (overlap_months + remainder_months) * overlap_months
+
+
+def get_billing_periods_for_year(year, periods_per_year):
+    if periods_per_year < 1 or 12 % periods_per_year != 0 or periods_per_year > 12:
+        return []
+
+    period_length = 12 // periods_per_year
+    periods = []
+    start = date(year=year, month=1, day=1)
+    for i in range(periods_per_year):
+        end = start + relativedelta(months=period_length) - relativedelta(days=1)
+        periods.append((start, end))
+        start = end + relativedelta(days=1)
+
+    return periods
