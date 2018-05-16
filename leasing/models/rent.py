@@ -1,5 +1,5 @@
+import datetime
 from collections import namedtuple
-from datetime import date
 from decimal import Decimal
 
 from auditlog.registry import auditlog
@@ -22,7 +22,20 @@ from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
-    pass
+    @classmethod
+    def from_date(cls, date_instance):
+        if not isinstance(date_instance, datetime.date):
+            raise ValueError('date_instance should be an instance of datetime.date')
+
+        return cls(day=date_instance.day, month=date_instance.month)
+
+    @classmethod
+    def from_datetime(cls, datetime_instance):
+        if not isinstance(datetime_instance, datetime.datetime):
+            raise ValueError('datetime_instance should be an instance of datetime.datetime')
+
+        return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
+                                           month=datetime_instance.month))
 
 
 first_day_of_every_month = []
@@ -108,13 +121,13 @@ class Rent(TimeStampedSafeDeleteModel):
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
     def get_amount_for_year(self, year):
-        date_range_start = date(year, 1, 1)
-        date_range_end = date(year, 12, 31)
+        date_range_start = datetime.date(year, 1, 1)
+        date_range_end = datetime.date(year, 12, 31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
     def get_amount_for_month(self, year, month):
-        date_range_start = date(year, month, 1)
-        date_range_end = date(year, month, 1) + relativedelta(day=31)
+        date_range_start = datetime.date(year, month, 1)
+        date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
     def get_amount_for_date_range(self, date_range_start, date_range_end):
@@ -232,19 +245,23 @@ class Rent(TimeStampedSafeDeleteModel):
         due_dates = []
         for rent_due_date in rent_due_dates:
             for year in period_years:
-                tmp_date = date(year=year, month=rent_due_date.month, day=rent_due_date.day)
+                tmp_date = datetime.date(year=year, month=rent_due_date.month, day=rent_due_date.day)
                 if tmp_date >= start_date and tmp_date <= end_date:
                     due_dates.append(tmp_date)
 
         return due_dates
 
     def get_billing_period_from_due_date(self, due_date):
-        due_dates_per_year = self.get_due_dates_for_period(date(year=due_date.year, month=1, day=1),
-                                                           date(year=due_date.year, month=12, day=31))
+        due_dates_per_year = self.get_due_dates_for_period(datetime.date(year=due_date.year, month=1, day=1),
+                                                           datetime.date(year=due_date.year, month=12, day=31))
 
-        due_date_index = due_dates_per_year.index(due_date)
-        # TODO: error checks
-        return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[due_date_index]
+        try:
+            due_date_index = due_dates_per_year.index(due_date)
+
+            return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[due_date_index]
+        except (ValueError, IndexError):
+            # TODO: better error handling
+            return None
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
