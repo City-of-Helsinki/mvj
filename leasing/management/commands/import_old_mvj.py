@@ -1,15 +1,17 @@
 import datetime
 from decimal import Decimal
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
 import cx_Oracle
 from leasing.enums import (
-    ContactType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType, PeriodType, RentAdjustmentAmountType,
-    RentAdjustmentType, RentCycle, RentType)
+    ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType,
+    PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType, TenantContactType)
 from leasing.models import (
     Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, Invoice, Lease, LeaseIdentifier,
-    LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse)
+    LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+from leasing.models.rent import FIXED_DUE_DATES, DayMonth, RentDueDate
 
 
 def expand_lease_identifier(id):
@@ -108,9 +110,42 @@ IRTISANOMISAIKA_MAP = {
     '16': 5,  # 14 vuorok. irtisanomisaika
 }
 
+asiakas_cache = {}
 
 class Command(BaseCommand):
     help = 'Import data from the old MVJ'
+
+    def get_or_create_contact(self, data, unknown_contact):
+        if data['ASIAKAS']:
+            if data['ASIAKAS'] in asiakas_cache:
+                return asiakas_cache[data['ASIAKAS']]
+
+            contact_type = ASIAKASTYYPPI_MAP[data['ASIAKASTYYPPI']]
+            name = None
+            first_name = None
+            last_name = None
+
+            if contact_type == ContactType.PERSON:
+                last_name = data['NIMI'].split(' ', 1)[0]
+                try:
+                    first_name = data['NIMI'].split(' ', 1)[1]
+                except IndexError:
+                    pass
+            else:
+                name = data['NIMI']
+
+            (contact, contact_created) = Contact.objects.get_or_create(type=contact_type, first_name=first_name,
+                                                                       last_name=last_name, name=name,
+                                                                       address=data['OSOITE'],
+                                                                       postal_code=data['POSTINO'],
+                                                                       business_id=data['LYTUNNUS'])
+        else:
+            self.stdout.write('ASIAKAS #{} missing.')
+            contact = unknown_contact
+
+        asiakas_cache[data['ASIAKAS']] = contact
+
+        return contact
 
     def handle(self, *args, **options):
         (unknown_contact, unknown_contact_created) = Contact.objects.get_or_create(
@@ -142,7 +177,12 @@ class Command(BaseCommand):
             'S0120-219',
             'A4123-35',
             'K0136-23',
+            # 'S0135-55',  # Liian uusi
+            'T1155-1',
         ]
+
+        # lease_ids = ['A1149-382']
+        # lease_ids = ['A4123-35']
 
         # LEASE_TYPE_MAP = {lt.identifier: lt.id for lt in LeaseType.objects.all()}
 
@@ -192,6 +232,64 @@ class Command(BaseCommand):
                 lease.notice_note = lease_row['IRTISAN_KOMM']
                 lease.save()
 
+                self.stdout.write("Vuokralaiset:")
+                query = """
+                    SELECT ar.*, a.*
+                    FROM ASROOLI ar
+                    LEFT JOIN ASIAKAS a ON ar.ASIAKAS = a.ASIAKAS
+                    WHERE 1 = 1
+                    """ + expanded_id_to_query_alku(id_parts)
+
+                cursor.execute(query)
+                asrooli_rows = rows_to_dict_list(cursor)
+
+                for role_row in [row for row in asrooli_rows if row['ROOLI'] == 'V']:
+                    print(" ASIAKAS V #{}".format(role_row['ASIAKAS']))
+                    contact = self.get_or_create_contact(role_row, unknown_contact)
+                    print('  Contact {}'.format(contact))
+
+                    try:
+                        tenant = lease.tenants.get(tenantcontact__contact=contact,
+                                                   tenantcontact__type=TenantContactType.TENANT,
+                                                   tenantcontact__start_date=role_row['ALKAEN'],
+                                                   tenantcontact__end_date=role_row['SAAKKA'])
+                        print("  EXISTING TENANT")
+                    except ObjectDoesNotExist:
+                        print("  TENANT DOES NOT EXIST")
+                        tenant = Tenant.objects.create(
+                            lease=lease,
+                            share_numerator=role_row['HALLINTAOSUUS_O'],
+                            share_denominator=role_row['HALLINTAOSUUS_N']
+                        )
+
+                    (tenantcontact, tenantcontact_created) = TenantContact.objects.get_or_create(
+                        type=TenantContactType.TENANT,
+                        tenant=tenant,
+                        contact=contact,
+                        start_date=role_row['ALKAEN'],
+                        end_date=role_row['SAAKKA']
+                    )
+
+                for role_row in [row for row in asrooli_rows if row['ROOLI'] in ('L', 'Y')]:
+                    print(" ASIAKAS {} #{}".format(role_row['ROOLI'], role_row['ASIAKAS']))
+                    contact = self.get_or_create_contact(role_row, unknown_contact)
+                    print('  Contact {}'.format(contact))
+
+                    this_tenant = None
+                    for lease_tenant in lease.tenants.all():
+                        for lease_tenantcontact in lease_tenant.tenantcontact_set.all():
+                            if lease_tenantcontact.contact == asiakas_cache[role_row['LIITTYY_ASIAKAS']]:
+                                this_tenant = lease_tenant
+
+                    if this_tenant:
+                        (tenantcontact, tenantcontact_created) = TenantContact.objects.get_or_create(
+                            type=TenantContactType.BILLING if role_row['ROOLI'] == 'L' else TenantContactType.CONTACT,
+                            tenant=this_tenant,
+                            contact=contact,
+                            start_date=role_row['ALKAEN'],
+                            end_date=role_row['SAAKKA']
+                        )
+
                 query = """
                     SELECT sv.*, kt.NIMI as kt_nimi
                     FROM SOPIMUSVUOKRA sv
@@ -222,6 +320,61 @@ class Command(BaseCommand):
                 rent.equalization_start_date = lease_row['TASAUS_ALKUPVM']
                 rent.equalization_end_date = lease_row['TASAUS_LOPPUPVM']
                 rent.save()
+
+                # Due dates
+                self.stdout.write("Epäpäivät:")
+                if lease_row['LASKUJEN_LKM_VUODESSA']:
+                    rent.due_dates_type = DueDatesType.FIXED
+                    rent.due_dates_per_year = 12
+                    rent.save()
+                    print(" DUE DATES FIXED {} per year".format(rent.due_dates_per_year))
+                else:
+                    query = """
+                        SELECT *
+                        FROM VUOKRAUKSEN_ERAPAIVA
+                        WHERE 1 = 1
+                        """ + expanded_id_to_query_alku(id_parts)
+
+                    cursor.execute(query)
+                    vuokrauksen_erapaiva_rows = rows_to_dict_list(cursor)
+
+                    due_dates_match_found = False
+                    due_dates = set()
+                    for due_date_row in vuokrauksen_erapaiva_rows:
+                        due_dates.add(DayMonth.from_datetime(due_date_row['ERAPVM']))
+
+                    if due_dates:
+                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[DueDatesPosition.START_OF_MONTH].items():
+                            if due_dates == set(due_dates_set):
+                                rent.due_dates_type = DueDatesType.FIXED
+                                rent.due_dates_per_year = due_dates_per_year
+                                due_dates_match_found = True
+                                if lease.type.due_dates_position != DueDatesPosition.MIDDLE_OF_MONTH:
+                                    print(" WARNING! Wrong due dates type")
+                                break
+
+                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[DueDatesPosition.MIDDLE_OF_MONTH].items():
+                            if due_dates == set(due_dates_set):
+                                rent.due_dates_type = DueDatesType.FIXED
+                                rent.due_dates_per_year = due_dates_per_year
+                                due_dates_match_found = True
+                                if lease.type.due_dates_position != DueDatesPosition.MIDDLE_OF_MONTH:
+                                    print(" WARNING! Wrong due dates type")
+                                break
+
+                        if not due_dates_match_found:
+                            print(" DUE DATES MATCH NOT FOUND. Adding custom dates:")
+                            print(" ", due_dates)
+                            rent.due_dates_type = DueDatesType.CUSTOM
+                            rent.due_dates.set([])
+                            for due_date in due_dates:
+                                RentDueDate.objects.create(rent=rent, day=due_date.day, month=due_date.month)
+                        else:
+                            print(" DUE DATES FOUND. {} per year".format(rent.due_dates_per_year))
+
+                        rent.save()
+                    else:
+                        print(' NO DUE DATES IN "VUOKRAUKSEN_ERAPAIVA"')
 
                 if lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA'] and lease_row['KIINTEA_ALKUVUOSIVUOKRAN_LOPPU']:
                     (initial_rent, initial_rent_created) = FixedInitialYearRent.objects.get_or_create(
@@ -259,7 +412,7 @@ class Command(BaseCommand):
                         }
                     )
 
-                self.stdout.write("Tarkistettu vuokra")
+                self.stdout.write("Tarkistettu vuokra:")
 
                 query = """
                     SELECT *
