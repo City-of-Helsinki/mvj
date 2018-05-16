@@ -78,9 +78,19 @@ def test_get_due_dates_for_period_fixed_middle(lease_test_data, rent_factory, du
 @pytest.mark.django_db
 @pytest.mark.parametrize("due_dates_per_year, due_date, expected", [
     (
+        0,
+        date(year=2017, month=6, day=30),
+        None
+    ),
+    (
         1,
         date(year=2017, month=6, day=30),
         (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31))
+    ),
+    (
+        1,
+        date(year=2017, month=1, day=1),
+        None
     ),
     (
         2,
@@ -91,7 +101,47 @@ def test_get_due_dates_for_period_fixed_middle(lease_test_data, rent_factory, du
         2,
         date(year=2017, month=9, day=30),
         (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31))
-    )
+    ),
+    (
+        4,
+        date(year=2017, month=3, day=1),
+        (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31))
+    ),
+    (
+        4,
+        date(year=2017, month=4, day=15),
+        (date(year=2017, month=4, day=1), date(year=2017, month=6, day=30))
+    ),
+    (
+        4,
+        date(year=2017, month=1, day=1),
+        None
+    ),
+    (
+        12,
+        date(year=2017, month=1, day=1),
+        (date(year=2017, month=1, day=1), date(year=2017, month=1, day=31))
+    ),
+    (
+        12,
+        date(year=2017, month=2, day=1),
+        (date(year=2017, month=2, day=1), date(year=2017, month=2, day=28))
+    ),
+    (
+        12,
+        date(year=2017, month=6, day=1),
+        (date(year=2017, month=6, day=1), date(year=2017, month=6, day=30))
+    ),
+    (
+        12,
+        date(year=2017, month=12, day=1),
+        (date(year=2017, month=12, day=1), date(year=2017, month=12, day=31))
+    ),
+    (
+        12,
+        date(year=2017, month=1, day=10),
+        None
+    ),
 ])
 def test_get_billing_period_from_due_date(lease_test_data, rent_factory, due_dates_per_year, due_date,
                                           expected):

@@ -41,7 +41,7 @@
     "fields": {
       "name": "Sekalaiset vuokraukset",
       "identifier": "S0",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "middle_of_month"
     }
   },
   {

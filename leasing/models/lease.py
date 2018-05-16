@@ -292,9 +292,10 @@ class Lease(TimeStampedSafeDeleteModel):
         super().save(*args, **kwargs)
 
     def get_due_dates_for_period(self, start_date, end_date):
-        due_dates = {}
+        due_dates = []
+        # TODO: filter by start and end dates
         for rent in self.rents.all():
-            due_dates.update(rent.get_due_dates_for_period(start_date, end_date))
+            due_dates.extend(rent.get_due_dates_for_period(start_date, end_date))
 
         return due_dates
 
