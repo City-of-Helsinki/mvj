@@ -2,7 +2,9 @@ from datetime import date
 
 import pytest
 
-from leasing.models.utils import get_billing_periods_for_year, get_range_overlap_and_remainder
+from leasing.models.utils import (
+    combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_range_overlap_and_remainder,
+    subtract_range_from_range, subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -145,3 +147,221 @@ def test_get_overlap(s1, e1, s2, e2, expected):
 ])
 def test_get_billing_periods(year, periods_per_year, expected):
     assert get_billing_periods_for_year(year, periods_per_year) == expected
+
+
+@pytest.mark.parametrize("amount, overlap, remainder, expected", [
+    (
+        1200,
+        (date(2017, 7, 1), date(2017, 12, 31)),
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+        600
+    ),
+])
+def test_fix_amount_for_overlap(amount, overlap, remainder, expected):
+    assert fix_amount_for_overlap(amount, overlap, remainder) == expected
+
+
+@pytest.mark.parametrize("range1, subtract_range, expected", [
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2017, 1, 1), date(2017, 6, 30)),
+        [(date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2016, 1, 1), date(2017, 6, 30)),
+        [(date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2017, 4, 1), date(2017, 6, 30)),
+        [(date(2017, 1, 1), date(2017, 3, 31)), (date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2017, 7, 1), date(2017, 12, 31)),
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2017, 7, 1), date(2018, 12, 31)),
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+    ),
+    # Full
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        [],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2016, 1, 1), date(2018, 1, 1)),
+        [],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2016, 5, 5), date(2018, 4, 3)),
+        [],
+    ),
+    # No overlap
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2016, 1, 1), date(2016, 12, 31)),
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    (
+        (date(2017, 1, 1), date(2017, 12, 31)),
+        (date(2018, 1, 1), date(2018, 12, 31)),
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+])
+def test_subtract_range_from_range(range1, subtract_range, expected):
+    assert subtract_range_from_range(range1, subtract_range) == expected
+
+
+@pytest.mark.parametrize("ranges, subtract_ranges, expected", [
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+        [(date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2016, 1, 1), date(2017, 6, 30))],
+        [(date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 4, 1), date(2017, 6, 30))],
+        [(date(2017, 1, 1), date(2017, 3, 31)), (date(2017, 7, 1), date(2017, 12, 31))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 7, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 7, 1), date(2018, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 6, 30))],
+    ),
+    # Full
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2016, 1, 1), date(2018, 1, 1))],
+        [],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2016, 5, 5), date(2018, 4, 3))],
+        [],
+    ),
+    # No overlap
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2016, 1, 1), date(2016, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2018, 1, 1), date(2018, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    # Multiple ranges
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31)), (date(2017, 7, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 6, 30)), (date(2017, 7, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 6, 30)), (date(2017, 7, 1), date(2017, 12, 31))],
+        [(date(2017, 4, 1), date(2017, 9, 30))],
+        [(date(2017, 1, 1), date(2017, 3, 31)), (date(2017, 10, 1), date(2017, 12, 31))],
+    ),
+    # Multiple subtract_ranges
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [(date(2017, 1, 1), date(2017, 3, 31)), (date(2017, 11, 1), date(2017, 12, 31))],
+        [(date(2017, 4, 1), date(2017, 10, 31))],
+    ),
+    (
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+        [
+            (date(2017, 3, 1), date(2017, 3, 31)),
+            (date(2017, 6, 1), date(2017, 6, 30)),
+            (date(2017, 12, 1), date(2017, 12, 31))],
+        [
+            (date(2017, 1, 1), date(2017, 2, 28)),
+            (date(2017, 4, 1), date(2017, 5, 31)),
+            (date(2017, 7, 1), date(2017, 11, 30)),
+        ],
+    ),
+])
+def test_subtract_ranges_from_ranges(ranges, subtract_ranges, expected):
+    assert subtract_ranges_from_ranges(ranges, subtract_ranges) == expected
+
+
+@pytest.mark.parametrize("ranges, expected", [
+    (
+        [
+            (date(2017, 1, 1), date(2017, 6, 30)),
+            (date(2017, 7, 1), date(2017, 12, 31)),
+        ],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    (
+        [
+            (date(2017, 1, 1), date(2017, 4, 30)),
+            (date(2017, 3, 1), date(2017, 8, 1)),
+            (date(2017, 7, 1), date(2017, 12, 31)),
+        ],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    (
+        [
+            (date(2017, 1, 1), date(2017, 4, 30)),
+            (date(2017, 5, 1), date(2017, 6, 30)),
+            (date(2017, 8, 1), date(2017, 12, 31)),
+        ],
+        [
+            (date(2017, 1, 1), date(2017, 6, 30)),
+            (date(2017, 8, 1), date(2017, 12, 31)),
+        ],
+    ),
+    (
+        [
+            (date(2017, 1, 1), date(2017, 12, 31)),
+            (date(2017, 1, 1), date(2017, 12, 31)),
+        ],
+        [(date(2017, 1, 1), date(2017, 12, 31))],
+    ),
+    (
+        [
+            (date(2017, 7, 1), date(2017, 12, 31)),
+            (date(2017, 1, 1), date(2017, 4, 30)),
+        ],
+        [
+            (date(2017, 1, 1), date(2017, 4, 30)),
+            (date(2017, 7, 1), date(2017, 12, 31)),
+        ],
+    ),
+    (
+        [
+            (date(2017, 1, 1), date(2017, 6, 30)),
+            (date(2017, 4, 1), date(2017, 8, 31)),
+        ],
+        [(date(2017, 1, 1), date(2017, 8, 31))],
+    ),
+])
+def test_combine_ranges(ranges, expected):
+    assert combine_ranges(ranges) == expected
