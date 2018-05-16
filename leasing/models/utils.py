@@ -127,20 +127,34 @@ def fix_amount_for_overlap(amount, overlap, remainders):
     if not remainders:
         return amount
 
-    overlap_days = (overlap[1] - overlap[0]).days
-    overlap_months = Decimal(round(overlap_days / 30, 1))
+    overlap_delta = relativedelta(overlap[1] + relativedelta(days=1), overlap[0])
+    overlap_months = overlap_delta.months
 
-    remainder_days = 0
+    if overlap_delta.days:
+        # Round to a half month
+        if overlap_delta.days in (14, 15, 16):
+            overlap_months += Decimal(0.5)
+        else:
+            overlap_months += Decimal(overlap_delta.days / 30)
+
+    remainder_months = 0
     for remainder in remainders:
-        remainder_days += (remainder[1] - remainder[0]).days
+        remainder_delta = relativedelta(remainder[1] + relativedelta(days=1), remainder[0])
+        remainder_months += remainder_delta.months
 
-    remainder_months = Decimal(round(remainder_days / 30, 1))
+        if remainder_delta.days:
+            # Round to a half month
+            if remainder_delta.days in (14, 15, 16):
+                remainder_months += Decimal(0.5)
+            else:
+                remainder_months += Decimal(remainder_delta.days / 30)
 
     return amount / (overlap_months + remainder_months) * overlap_months
 
 
 def get_billing_periods_for_year(year, periods_per_year):
     if periods_per_year < 1 or 12 % periods_per_year != 0 or periods_per_year > 12:
+        # TODO: raise exception or log an error
         return []
 
     period_length = 12 // periods_per_year
@@ -152,3 +166,69 @@ def get_billing_periods_for_year(year, periods_per_year):
         start = end + relativedelta(days=1)
 
     return periods
+
+
+def combine_ranges(ranges):
+    sorted_ranges = sorted(ranges)
+
+    result = []
+
+    new_range_start = None
+    new_range_end = None
+
+    for (range_start, range_end) in sorted_ranges:
+        if new_range_start is None:
+            new_range_start = range_start
+            new_range_end = range_end
+        elif new_range_end >= range_start or (range_start - new_range_end).days == 1:
+            new_range_end = max(range_end, new_range_end)
+        else:
+            result.append((new_range_start, new_range_end))
+            new_range_start = range_start
+            new_range_end = range_end
+
+    result.append((new_range_start, new_range_end))
+
+    return result
+
+
+def subtract_range_from_range(the_range, subtract_range):
+    # TODO: check argument validity
+    (range1_start, range1_end) = the_range
+    (range2_start, range2_end) = subtract_range
+
+    if range2_start > range1_end or range1_start > range2_end:
+        return [(range1_start, range1_end)]
+
+    result = []
+
+    if range2_start > range1_start:
+        result.append((range1_start, range2_start - relativedelta(days=1)))
+
+    if range2_end < range1_end:
+        result.append((range2_end + relativedelta(days=1), range1_end))
+
+    return result
+
+
+def subtract_ranges_from_ranges(ranges, subtract_ranges):
+    # TODO: check argument validity
+    combined_ranges = combine_ranges(ranges)
+    combined_subtract_ranges = combine_ranges(subtract_ranges)
+
+    i = 0
+    while i < len(combined_ranges):
+        for subtract_range in combined_subtract_ranges:
+            result = subtract_range_from_range(combined_ranges[i], subtract_range)
+
+            if not result:
+                del combined_ranges[i]
+                i -= 1
+                break
+            else:
+                combined_ranges[i] = result[0]
+                if len(result) > 1:
+                    combined_ranges.insert(i + 1, result[1])
+        i += 1
+
+    return combined_ranges
