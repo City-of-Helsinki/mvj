@@ -7,6 +7,7 @@ from leasing.models import (
     LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
     NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+from leasing.models.invoice import InvoiceRow
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -132,6 +133,23 @@ class IndexAdmin(admin.ModelAdmin):
     list_display = ('year', 'month', 'number')
 
 
+class InvoiceRowInline(admin.TabularInline):
+    model = InvoiceRow
+    extra = 0
+
+
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'due_date', 'billing_period_start_date', 'billing_period_end_date', 'total_amount')
+    inlines = [InvoiceRowInline]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
+
 admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
@@ -140,7 +158,7 @@ admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
 admin.site.register(Index, IndexAdmin)
 admin.site.register(IntendedUse, NameAdmin)
-admin.site.register(Invoice)
+admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea)
 admin.site.register(LeaseIdentifier)

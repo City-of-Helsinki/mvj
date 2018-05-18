@@ -1,6 +1,6 @@
 import datetime
 from decimal import Decimal
-from pprint import pprint
+# from pprint import pprint
 
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
@@ -8,7 +8,9 @@ from django.db.models import Q
 
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Invoice, Lease, ReceivableType
-from leasing.models.utils import fix_amount_for_overlap, get_range_overlap_and_remainder, subtract_ranges_from_ranges
+from leasing.models.invoice import InvoiceRow
+from leasing.models.utils import (
+    combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, subtract_ranges_from_ranges)
 
 
 class Command(BaseCommand):
@@ -17,7 +19,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         today = datetime.date.today()
         # today = today.replace(year=2018, month=3, day=1)
-        today = today.replace(year=2016, month=12, day=1)
+        today = today.replace(year=2016, month=12, day=1)  # Y11...
+        # today = today.replace(year=2017, month=9, day=1)  # A1134-430
         # today = today.replace(month=3, day=1)
 
         # TODO: Make configurable
@@ -41,8 +44,10 @@ class Command(BaseCommand):
         )
 
         for lease in leases:
-            if lease.id != 19:
-                continue
+            # if lease.id != 19:  # Y1111-1
+            #     continue
+            # if lease.id != 10:  # A1134-430
+            #     continue
 
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
             lease_due_dates = lease.get_due_dates_for_period(start_of_next_month, end_of_next_month)
@@ -86,7 +91,8 @@ class Command(BaseCommand):
                     tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(billing_period[0], billing_period[1])
                     for tenant_tenantcontact in tenant_tenantcontacts:
                         self.stdout.write('   Tenant contact: {} dates: {} - {}'.format(
-                            tenant_tenantcontact.contact, tenant_tenantcontact.start_date, tenant_tenantcontact.end_date))
+                            tenant_tenantcontact.contact, tenant_tenantcontact.start_date, tenant_tenantcontact.end_date
+                        ))
 
                     billing_tenantcontacts = tenant.get_billing_tenantcontacts(billing_period[0], billing_period[1])
                     if not billing_tenantcontacts:
@@ -138,40 +144,87 @@ class Command(BaseCommand):
                             }
                         shares[tenant_tenantcontacts[0].contact][tenant].extend(leftover_ranges)
 
-                pprint(shares)
+                # pprint(shares)
 
                 self.stdout.write('')
 
                 for contact, share in shares.items():
+                    self.stdout.write('  Shares for contact {}'.format(contact))
+
+                    billable_amount = Decimal(0)
+                    contact_ranges = []
+                    invoice_row_data = []
+
                     for tenant, overlaps in share.items():
+                        self.stdout.write('   Tenant #{}'.format(tenant.id))
+
                         overlap_amount = Decimal(0)
                         for overlap in overlaps:
                             overlap_amount += fix_amount_for_overlap(
                                 rent_amount, overlap, subtract_ranges_from_ranges([billing_period], [overlap]))
 
-                        share_amount = round(overlap_amount * Decimal(
-                            tenant.share_numerator / tenant.share_denominator), 2)
+                            share_amount = round(overlap_amount * Decimal(
+                                tenant.share_numerator / tenant.share_denominator), 2)
 
-                        self.stdout.write('  Share for contact {} {} ({})'.format(contact, share_amount, tenant))
-                        self.stdout.write('  Creating an invoice')
+                            billable_amount += share_amount
 
-                        # TODO: Check if invoice already created
+                            self.stdout.write('   Period {} - {} = {:.2f} / {:.2f}'.format(
+                                overlap[0], overlap[1], share_amount, overlap_amount))
+
+                            contact_ranges.append(overlap)
+                            invoice_row_data.append({
+                                'tenant': tenant,
+                                'receivable_type': receivable_type_rent,
+                                'billing_period_start_date': overlap[0],
+                                'billing_period_end_date': overlap[1],
+                                'amount': share_amount,
+                            })
+
+                    combined_contact_ranges = combine_ranges(contact_ranges)
+
+                    total_contact_period_amount = Decimal(0)
+                    for combined_contact_range in combined_contact_ranges:
+                        total_contact_period_amount += fix_amount_for_overlap(
+                            rent_amount, combined_contact_range, subtract_ranges_from_ranges(
+                                [billing_period], [combined_contact_range]))
+
+                    self.stdout.write('  Total: {:.2f} / {:.2f}'.format(billable_amount, total_contact_period_amount))
+
+                    try:
+                        invoice = Invoice.objects.get(
+                            type=InvoiceType.CHARGE,
+                            lease=lease,
+                            recipient=contact,
+                            due_date=lease_due_date,
+                            billing_period_start_date=billing_period[0],
+                            billing_period_end_date=billing_period[1],
+                            total_amount=round(total_contact_period_amount, 2),
+                            generated=True,
+                        )
+                        self.stdout.write('  Invoice already exists. Invoice #{}'.format(invoice.id))
+                    except Invoice.DoesNotExist as e:
                         invoice = Invoice.objects.create(
                             type=InvoiceType.CHARGE,
                             lease=lease,
                             recipient=contact,
                             due_date=lease_due_date,
                             invoicing_date=today,
-                            receivable_type=receivable_type_rent,
                             state=InvoiceState.OPEN,
                             billing_period_start_date=billing_period[0],
                             billing_period_end_date=billing_period[1],
-                            total_amount=rent_amount,
-                            share_numerator=tenant.share_numerator,
-                            share_denominator=tenant.share_denominator,
-                            billed_amount=share_amount,
-                            outstanding_amount=share_amount,
+                            total_amount=round(total_contact_period_amount, 2),
+                            billed_amount=billable_amount,
+                            outstanding_amount=billable_amount,
                             paid_amount=None,
+                            generated=True,
                         )
+
+                        for invoice_row_datum in invoice_row_data:
+                            invoice_row_datum['invoice'] = invoice
+                            InvoiceRow.objects.create(**invoice_row_datum)
+
+                        self.stdout.write('  Invoice created. Invoice #{}'.format(invoice.id))
+                    except Invoice.MultipleObjectsReturned:
+                        self.stdout.write('  Warning! Multiple invoices already exist. Not creating a new invoice.')
 
                 self.stdout.write('')

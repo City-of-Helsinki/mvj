@@ -47,9 +47,6 @@ class Invoice(TimeStampedSafeDeleteModel):
     # In Finnish: Laskutuspvm
     invoicing_date = models.DateField(verbose_name=_("Invoicing date"), null=True, blank=True)
 
-    # In Finnish: Saamislaji
-    receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), on_delete=models.PROTECT)
-
     # In Finnish: Laskun tila
     state = EnumField(InvoiceState, verbose_name=_("State"), max_length=30)
 
@@ -64,12 +61,6 @@ class Invoice(TimeStampedSafeDeleteModel):
 
     # In Finnish: Laskun pääoma
     total_amount = models.DecimalField(verbose_name=_("Total amount"), max_digits=10, decimal_places=2)
-
-    # In Finnish: Laskun osuuden jaettava
-    share_numerator = models.PositiveIntegerField(verbose_name=_("Share numerator"))
-
-    # In Finnish: Laskun osuuden jakaja
-    share_denominator = models.PositiveIntegerField(verbose_name=_("Share denominator"))
 
     # In Finnish: Laskutettu määrä
     billed_amount = models.DecimalField(verbose_name=_("Billed amount"), max_digits=10, decimal_places=2)
@@ -106,12 +97,44 @@ class Invoice(TimeStampedSafeDeleteModel):
     # In Finnish: Tiedote
     notes = models.TextField(verbose_name=_("Notes"), blank=True)
 
+    generated = models.BooleanField(verbose_name=_("Is automatically generated?"), default=False)
+
+    # In Finnish: Selite
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
     def __str__(self):
         return str(self.pk)
+
+
+class InvoiceRow(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Rivi laskulla
+    """
+    invoice = models.ForeignKey(Invoice, verbose_name=_("Invoice"), related_name='rows',
+                                on_delete=models.CASCADE)
+
+    # In Finnish: Vuokralainen
+    tenant = models.ForeignKey('leasing.Tenant', verbose_name=_("Tenant"), null=True, blank=True,
+                               on_delete=models.PROTECT)
+
+    # In Finnish: Saamislaji
+    receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), on_delete=models.PROTECT)
+
+    # In Finnish: Laskutuskauden alkupvm
+    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"))
+
+    # In Finnish: Laskutuskauden loppupvm
+    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"))
+
+    # In Finnish: Selite
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    # In Finnish: Laskutettu määrä
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
 
 class BankHoliday(models.Model):

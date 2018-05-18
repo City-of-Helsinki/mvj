@@ -11,6 +11,7 @@ from leasing.enums import (
 from leasing.models import (
     Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, Invoice, Lease, LeaseIdentifier,
     LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+from leasing.models.invoice import InvoiceRow
 from leasing.models.rent import FIXED_DUE_DATES, DayMonth, RentDueDate
 
 
@@ -179,6 +180,7 @@ class Command(BaseCommand):
             'K0136-23',
             # 'S0135-55',  # Liian uusi
             'T1155-1',
+            'A1110-223',
         ]
 
         # lease_ids = ['A1149-382']
@@ -194,6 +196,8 @@ class Command(BaseCommand):
             id_parts = expand_lease_identifier(lease_id)
 
             # self.stdout.write(expanded_id_to_query(id_parts))
+
+            asiakas_num_to_tenant = {}
 
             query = """
                 SELECT *
@@ -253,9 +257,9 @@ class Command(BaseCommand):
                                                    tenantcontact__type=TenantContactType.TENANT,
                                                    tenantcontact__start_date=role_row['ALKAEN'],
                                                    tenantcontact__end_date=role_row['SAAKKA'])
-                        print("  EXISTING TENANT")
+                        print("  USING EXISTING TENANT")
                     except ObjectDoesNotExist:
-                        print("  TENANT DOES NOT EXIST")
+                        print("  TENANT DOES NOT EXIST. Creating.")
                         tenant = Tenant.objects.create(
                             lease=lease,
                             share_numerator=role_row['HALLINTAOSUUS_O'],
@@ -269,6 +273,8 @@ class Command(BaseCommand):
                         start_date=role_row['ALKAEN'],
                         end_date=role_row['SAAKKA']
                     )
+
+                    asiakas_num_to_tenant[role_row['ASIAKAS']] = tenant
 
                 for role_row in [row for row in asrooli_rows if row['ROOLI'] in ('L', 'Y')]:
                     print(" ASIAKAS {} #{}".format(role_row['ROOLI'], role_row['ASIAKAS']))
@@ -289,6 +295,8 @@ class Command(BaseCommand):
                             start_date=role_row['ALKAEN'],
                             end_date=role_row['SAAKKA']
                         )
+
+                        asiakas_num_to_tenant[role_row['ASIAKAS']] = this_tenant
 
                 query = """
                     SELECT sv.*, kt.NIMI as kt_nimi
@@ -596,15 +604,12 @@ class Command(BaseCommand):
                         lease=lease,
                         recipient=contact,
                         due_date=invoice_row['ERAPVM'],
-                        receivable_type_id=receivable_type_id,
                         state=invoice_state,
                         billing_period_start_date=period_start_date,
                         billing_period_end_date=period_end_date,
                         invoicing_date=invoice_row['LASKUTUSPVM'],
                         postpone_date=invoice_row['LYKKAYSPVM'],
                         total_amount=invoice_row['LASKUN_PAAOMA'],
-                        share_numerator=share_decimal.as_integer_ratio()[0],
-                        share_denominator=share_decimal.as_integer_ratio()[1],
                         billed_amount=invoice_row['LASKUTETTU_MAARA'],
                         paid_amount=invoice_row['LASKUTETTU_MAARA'] - invoice_row['MAKSAMATON_MAARA'],  # TODO
                         paid_date=None,  # TODO
@@ -615,6 +620,17 @@ class Command(BaseCommand):
                         delivery_method=InvoiceDeliveryMethod.MAIL,
                         type=invoice_type,
                         notes='',  # TODO
+                        generated=True,  # TODO
+                    )
+
+                    (invoice_row, invoice_row_created) = InvoiceRow.objects.get_or_create(
+                        invoice=invoice,
+                        tenant=asiakas_num_to_tenant[invoice_row['ASIAKAS']] if invoice_row['ASIAKAS'] in
+                                                                                asiakas_num_to_tenant else None,
+                        receivable_type_id=receivable_type_id,
+                        billing_period_start_date=period_start_date,
+                        billing_period_end_date=period_end_date,
+                        amount=invoice_row['LASKUN_OSUUS']
                     )
 
                     if period_end_date.year != period_start_date.year:
