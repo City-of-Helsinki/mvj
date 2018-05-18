@@ -270,13 +270,11 @@ class RentAdjustmentType(Enum):
 
 class RentAdjustmentAmountType(Enum):
     PERCENT_PER_YEAR = 'percent_per_year'
-    PERCENT_TOTAL = 'percent_total'
     AMOUNT_PER_YEAR = 'amount_per_year'
     AMOUNT_TOTAL = 'amount_total'
 
     class Labels:
         PERCENT_PER_YEAR = _('% per year')
-        PERCENT_TOTAL = _('% total')
         AMOUNT_PER_YEAR = _('€ per year')
         AMOUNT_TOTAL = _('€ total')
 
