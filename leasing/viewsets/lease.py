@@ -1,11 +1,18 @@
+import datetime
+
+from dateutil import parser
 from django.db.models import DurationField
 from django.db.models.functions import Cast
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
 
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     StatisticalUse, SupportiveHousing)
+from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
     LeaseSerializer, LeaseTypeSerializer, ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer,
@@ -86,3 +93,51 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
             return LeaseCreateUpdateSerializer
 
         return LeaseSerializer
+
+    @action(methods=['get'], detail=True)
+    def rent_for_period(self, request, pk=None):
+        lease = self.get_object()
+
+        if 'start_date' not in request.query_params or 'end_date' not in request.query_params:
+            raise APIException('Both start_date and end_data parameters are mandatory')
+
+        start_date = parser.parse(request.query_params['start_date']).date()
+        end_date = parser.parse(request.query_params['end_date']).date()
+
+        result = {
+            'start_date': start_date,
+            'end_date': end_date,
+            'rents': [],
+        }
+
+        for rent in lease.rents.all():
+            rent_amount = rent.get_amount_for_date_range(start_date, end_date)
+            result['rents'].append({
+                'id': rent.id,
+                'start_date': rent.start_date,
+                'end_date': rent.end_date,
+                'amount': rent_amount,
+            })
+
+        return Response(result)
+
+    @action(methods=['get'], detail=True)
+    def billing_periods(self, request, pk=None):
+        lease = self.get_object()
+
+        if 'year' in request.query_params:
+            year = int(request.query_params['year'])
+        else:
+            year = datetime.date.today().year
+
+        start_date = datetime.date(year=year, month=1, day=1)
+        end_date = datetime.date(year=year, month=12, day=31)
+
+        billing_periods = []
+        for rent in lease.rents.all():
+            due_dates_per_year = rent.get_due_dates_for_period(start_date, end_date)
+            billing_periods.extend(get_billing_periods_for_year(year, len(due_dates_per_year)))
+
+        return Response({
+            'billing_periods': billing_periods
+        })
