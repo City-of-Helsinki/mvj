@@ -1,3 +1,5 @@
+import datetime
+from collections import namedtuple
 from datetime import date
 from decimal import Decimal
 
@@ -232,3 +234,20 @@ def subtract_ranges_from_ranges(ranges, subtract_ranges):
         i += 1
 
     return combined_ranges
+
+
+class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
+    @classmethod
+    def from_date(cls, date_instance):
+        if not isinstance(date_instance, datetime.date):
+            raise ValueError('date_instance should be an instance of datetime.date')
+
+        return cls(day=date_instance.day, month=date_instance.month)
+
+    @classmethod
+    def from_datetime(cls, datetime_instance):
+        if not isinstance(datetime_instance, datetime.datetime):
+            raise ValueError('datetime_instance should be an instance of datetime.datetime')
+
+        return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
+                                           month=datetime_instance.month))

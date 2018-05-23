@@ -12,7 +12,8 @@ from leasing.models import (
     Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, Invoice, Lease, LeaseIdentifier,
     LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
-from leasing.models.rent import FIXED_DUE_DATES, DayMonth, RentDueDate
+from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
+from leasing.models.utils import DayMonth
 
 
 def expand_lease_identifier(id):
@@ -352,7 +353,8 @@ class Command(BaseCommand):
                         due_dates.add(DayMonth.from_datetime(due_date_row['ERAPVM']))
 
                     if due_dates:
-                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[DueDatesPosition.START_OF_MONTH].items():
+                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[
+                                DueDatesPosition.START_OF_MONTH].items():
                             if due_dates == set(due_dates_set):
                                 rent.due_dates_type = DueDatesType.FIXED
                                 rent.due_dates_per_year = due_dates_per_year
@@ -361,7 +363,8 @@ class Command(BaseCommand):
                                     print(" WARNING! Wrong due dates type")
                                 break
 
-                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[DueDatesPosition.MIDDLE_OF_MONTH].items():
+                        for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[
+                                DueDatesPosition.MIDDLE_OF_MONTH].items():
                             if due_dates == set(due_dates_set):
                                 rent.due_dates_type = DueDatesType.FIXED
                                 rent.due_dates_per_year = due_dates_per_year
@@ -587,11 +590,6 @@ class Command(BaseCommand):
                     invoice_state = LASKUN_TILA_MAP[invoice_row['LASKUN_TILA']]
                     invoice_type = LASKUTYYPPI_MAP[invoice_row['LASKUTYYPPI']]
 
-                    if invoice_row['LASKUN_PAAOMA'] > 0:
-                        share_decimal = Decimal(invoice_row['LASKUN_OSUUS'] / invoice_row['LASKUN_PAAOMA'])
-                    else:
-                        share_decimal = Decimal(0)
-
                     period_start_date = invoice_row['LASKUTUSKAUSI_ALKAA'] if invoice_row[
                         'LASKUTUSKAUSI_ALKAA'] else lease.start_date
                     period_end_date = invoice_row['LASKUTUSKAUSI_PAATTYY'] if invoice_row[
@@ -625,8 +623,8 @@ class Command(BaseCommand):
 
                     (invoice_row, invoice_row_created) = InvoiceRow.objects.get_or_create(
                         invoice=invoice,
-                        tenant=asiakas_num_to_tenant[invoice_row['ASIAKAS']] if invoice_row['ASIAKAS'] in
-                                                                                asiakas_num_to_tenant else None,
+                        tenant=asiakas_num_to_tenant[
+                            invoice_row['ASIAKAS']] if invoice_row['ASIAKAS'] in asiakas_num_to_tenant else None,
                         receivable_type_id=receivable_type_id,
                         billing_period_start_date=period_start_date,
                         billing_period_end_date=period_end_date,

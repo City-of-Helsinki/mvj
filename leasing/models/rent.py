@@ -1,5 +1,4 @@
 import datetime
-from collections import namedtuple
 from decimal import Decimal
 
 from auditlog.registry import auditlog
@@ -14,29 +13,11 @@ from leasing.enums import (
     DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
     RentType)
 from leasing.models.utils import (
-    calculate_index_adjusted_value, fix_amount_for_overlap, get_billing_periods_for_year,
+    DayMonth, Explanation, calculate_index_adjusted_value, fix_amount_for_overlap, get_billing_periods_for_year,
     get_date_range_amount_from_monthly_amount, get_range_overlap_and_remainder)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
-
-
-class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
-    @classmethod
-    def from_date(cls, date_instance):
-        if not isinstance(date_instance, datetime.date):
-            raise ValueError('date_instance should be an instance of datetime.date')
-
-        return cls(day=date_instance.day, month=date_instance.month)
-
-    @classmethod
-    def from_datetime(cls, datetime_instance):
-        if not isinstance(datetime_instance, datetime.datetime):
-            raise ValueError('datetime_instance should be an instance of datetime.datetime')
-
-        return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
-                                           month=datetime_instance.month))
-
 
 first_day_of_every_month = []
 
