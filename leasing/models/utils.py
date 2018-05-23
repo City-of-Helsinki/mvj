@@ -251,3 +251,37 @@ class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
 
         return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
                                            month=datetime_instance.month))
+
+
+class ExplanationItem():
+    def __init__(self, subject=None, date_ranges=None, amount=None):
+        self.subject = subject
+        self.sub_items = []
+        self.date_ranges = date_ranges
+        self.amount = amount
+
+    def __str__(self):
+        return '{} {} {} {}'.format(
+            self.subject,
+            self.date_ranges,
+            self.amount,
+            '\nSub items:\n  ' + '\n  '.join([str(item) for item in self.sub_items]) if self.sub_items else ''
+        )
+
+
+class Explanation:
+    def __init__(self):
+        self.items = []
+
+    def add(self, subject=None, date_ranges=None, amount=None, related_item=None):
+        explanation_item = ExplanationItem(subject=subject, date_ranges=date_ranges, amount=amount)
+
+        if not related_item or related_item not in self.items:
+            self.items.append(explanation_item)
+        else:
+            self.items[self.items.index(related_item)].sub_items.append(explanation_item)
+
+        return explanation_item
+
+    def __str__(self):
+        return '\n'.join([str(item) for item in self.items])

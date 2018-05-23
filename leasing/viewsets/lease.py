@@ -13,6 +13,7 @@ from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     StatisticalUse, SupportiveHousing)
 from leasing.models.utils import get_billing_periods_for_year
+from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
     LeaseSerializer, LeaseTypeSerializer, ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer,
@@ -111,12 +112,16 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
         }
 
         for rent in lease.rents.all():
-            rent_amount = rent.get_amount_for_date_range(start_date, end_date)
+            (rent_amount, explanation) = rent.get_amount_for_date_range(start_date, end_date, explain=True)
+
+            explanation_serializer = ExplanationSerializer(explanation)
+
             result['rents'].append({
                 'id': rent.id,
                 'start_date': rent.start_date,
                 'end_date': rent.end_date,
                 'amount': rent_amount,
+                'explanation': explanation_serializer.data,
             })
 
         return Response(result)

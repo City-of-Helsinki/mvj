@@ -111,11 +111,13 @@ class Rent(TimeStampedSafeDeleteModel):
         date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
-    def get_amount_for_date_range(self, date_range_start, date_range_end):
+    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False):
         assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
 
         if self.type == RentType.INDEX and date_range_start.year != date_range_end.year:
             raise NotImplementedError('Cannot calculate index adjusted rent that is spanning multiple years.')
+
+        explanation = Explanation()
 
         range_filtering = Q(
             Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
@@ -143,6 +145,9 @@ class Rent(TimeStampedSafeDeleteModel):
 
             fixed_amount = fixed_initial_year_rent.get_amount_for_date_range(*fixed_overlap)
 
+            fixed_explanation_item = explanation.add(
+                subject=fixed_initial_year_rent, date_ranges=[fixed_overlap], amount=fixed_amount)
+
             for rent_adjustment in rent_adjustments:
                 if fixed_initial_year_rent.intended_use and \
                         rent_adjustment.intended_use != fixed_initial_year_rent.intended_use:
@@ -155,7 +160,11 @@ class Rent(TimeStampedSafeDeleteModel):
                     continue
 
                 tmp_amount = fix_amount_for_overlap(fixed_amount, adjustment_overlap, adjustment_remainders)
-                fixed_amount += rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                adjustment_amount = rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                fixed_amount += adjustment_amount
+
+                explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
+                                related_item=fixed_explanation_item)
 
             total += fixed_amount
 
@@ -177,10 +186,24 @@ class Rent(TimeStampedSafeDeleteModel):
 
                 if self.type == RentType.FIXED:
                     contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                    contract_rent_explanation_item = explanation.add(
+                        subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
                 elif self.type == RentType.INDEX:
                     original_rent_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
-                    contract_amount = self.get_index_adjusted_amount(contract_overlap[0].year,
-                                                                     original_rent_amount)
+
+                    index = Index.objects.get_latest_for_date(contract_overlap[0])
+                    contract_amount = calculate_index_adjusted_value(original_rent_amount, index, self.index_type)
+
+                    contract_rent_explanation_item = explanation.add(
+                        subject=contract_rent, date_ranges=[contract_overlap], amount=original_rent_amount)
+
+                    explanation.add(subject=index, date_ranges=[contract_overlap], amount=contract_amount,
+                                    related_item=contract_rent_explanation_item)
+                elif self.type in (RentType.FREE, RentType.MANUAL):
+                    # TODO: MANUAL rent type
+                    continue
+                else:
+                    raise NotImplementedError('RentType {} not implemented'.format(self.type))
 
                 for rent_adjustment in rent_adjustments:
                     if rent_adjustment.intended_use != contract_rent.intended_use:
@@ -193,16 +216,20 @@ class Rent(TimeStampedSafeDeleteModel):
                         continue
 
                     tmp_amount = fix_amount_for_overlap(contract_amount, adjustment_overlap, adjustment_remainders)
-                    contract_amount += rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                    adjustment_amount = rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                    contract_amount += adjustment_amount
+
+                    explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
+                                    related_item=contract_rent_explanation_item)
 
                 total += contract_amount
 
-        return total
+        explanation.add(subject=self, date_ranges=[(date_range_start, date_range_end)], amount=total)
 
-    @staticmethod
-    def get_index_adjusted_amount(year, original_rent, index_type=IndexType.TYPE_7):
-        index = Index.objects.get(year=year-1, month=None)
-        return calculate_index_adjusted_value(original_rent, index, index_type)
+        if explain:
+            return total, explanation
+        else:
+            return total
 
     def get_custom_due_dates_as_daymonths(self):
         if self.due_dates_type != DueDatesType.CUSTOM:
@@ -431,6 +458,16 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
         elif self.amount_type == RentAdjustmentAmountType.AMOUNT_PER_YEAR:
             adjustment = get_date_range_amount_from_monthly_amount(self.full_amount / 12, date_range_start,
                                                                    date_range_end)
+        elif self.amount_type == RentAdjustmentAmountType.AMOUNT_TOTAL:
+            adjustment_left = self.amount_left
+
+            if self.amount_left is None:
+                adjustment_left = self.full_amount
+
+            adjustment = min(adjustment_left, rent_amount)
+            self.amount_left = max(0, adjustment_left - adjustment)
+            # TODO: This is for demonstration only! The new amount_left should be saved only when the invoice is created
+            self.save()
         else:
             raise NotImplementedError(
                 'Cannot get adjust amount for RentAdjustmentAmountType {}'.format(self.amount_type))
@@ -503,6 +540,22 @@ class LeaseBasisOfRent(models.Model):
                                           decimal_places=2)
 
 
+class IndexManager(models.Manager):
+    def get_latest_for_date(self, the_date=None):
+        """Returns the previous years average index or the latest monthly index related to the date"""
+        if the_date is None:
+            the_date = datetime.date.today()
+
+        try:
+            return self.get_queryset().get(year=the_date.year - 1, month__isnull=True)
+        except Index.DoesNotExist:
+            pass
+
+        return self.get_queryset().filter(
+            Q(year=the_date.year, month__lte=the_date.month) | Q(year__lt=the_date.year)
+        ).order_by('-year', '-month').first()
+
+
 class Index(models.Model):
     """
     In Finnish: Indeksi
@@ -513,6 +566,8 @@ class Index(models.Model):
     year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
     month = models.PositiveSmallIntegerField(verbose_name=_("Month"), null=True, blank=True,
                                              validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+    objects = IndexManager()
 
     class Meta:
         verbose_name = _("Index")

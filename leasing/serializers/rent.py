@@ -1,6 +1,8 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from leasing.models import Index
+
 from ..models import (
     ContractRent, Decision, FixedInitialYearRent, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse)
@@ -92,6 +94,16 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
                   'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date')
 
 
+class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Rent
+        fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
+                  'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
+                  'equalization_end_date', 'amount', 'note', 'start_date', 'end_date')
+
+
 class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     due_dates = RentDueDateSerializer(many=True, required=False, allow_null=True)
@@ -119,3 +131,9 @@ class LeaseBasisOfRentSerializer(serializers.ModelSerializer):
         model = LeaseBasisOfRent
         fields = ('id', 'intended_use', 'floor_m2', 'index', 'amount_per_floor_m2_index_100',
                   'amount_per_floor_m2_index', 'percent', 'year_rent_index_100', 'year_rent_index')
+
+
+class IndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Index
+        fields = '__all__'
