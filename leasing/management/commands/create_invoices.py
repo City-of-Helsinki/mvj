@@ -57,19 +57,17 @@ class Command(BaseCommand):
 
             self.stdout.write(' Due dates {}'.format(', '.join([dd.strftime('%Y-%m-%d') for dd in lease_due_dates])))
 
-            range_filter = Q()
-            for lease_due_date in lease_due_dates:
-                range_filter |= Q(
-                    Q(Q(end_date=None) | Q(end_date__gte=lease_due_date)) &
-                    Q(Q(start_date=None) | Q(start_date__lte=lease_due_date))
-                )
-
             for lease_due_date in lease_due_dates:
                 rent_amount = Decimal(0)
                 self.stdout.write(' Due date {}'.format(lease_due_date))
 
+                rent_range_filter = Q(
+                    (Q(end_date=None) | Q(end_date__gte=lease_due_date)) &
+                    (Q(start_date=None) | Q(start_date__lte=lease_due_date))
+                )
+
                 # TODO: multiple rents and billing periods
-                for rent in lease.rents.filter(range_filter):
+                for rent in lease.rents.filter(rent_range_filter):
                     self.stdout.write('  Rent #{}'.format(rent.id))
                     billing_period = rent.get_billing_period_from_due_date(lease_due_date)
                     self.stdout.write('   Billing period {} - {}'.format(
@@ -78,13 +76,13 @@ class Command(BaseCommand):
 
                 self.stdout.write('  Rent amount {}'.format(round(rent_amount, 2)))
 
-                range_filter = Q(
+                tenant_range_filter = Q(
                     Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period[0])) &
                     Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period[1]))
                 )
 
                 shares = {}
-                for tenant in lease.tenants.filter(range_filter).distinct():
+                for tenant in lease.tenants.filter(tenant_range_filter).distinct():
                     self.stdout.write('  Tenant #{} share {}/{}'.format(
                         tenant.id, tenant.share_numerator, tenant.share_denominator))
 
