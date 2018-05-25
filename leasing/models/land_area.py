@@ -132,6 +132,8 @@ class Plot(Land):
     type = EnumField(PlotType, verbose_name=_("Type"), max_length=30)
     # In Finnish: Rekisteröintipäivä
     registration_date = models.DateField(verbose_name=_("Registration date"), null=True, blank=True)
+    # In Finnish: Kumoamispäivä
+    repeal_date = models.DateField(verbose_name=_("Repeal date"), null=True, blank=True)
     lease_area = models.ForeignKey(LeaseArea, related_name='plots', on_delete=models.CASCADE)
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
@@ -143,9 +145,21 @@ class PlanUnitType(NameModel):
     """
 
 
+class PlotDivisionState(NameModel):
+    """
+    In Finnish: Tonttijaon vaihe
+    """
+
+
 class PlanUnitState(NameModel):
     """
     In Finnish: Kaavayksikön olotila
+    """
+
+
+class PlanUnitIntendedUse(NameModel):
+    """
+    In Finnish: Kaavayksikön käyttötarkoitus
     """
 
 
@@ -166,22 +180,40 @@ class PlanUnit(Land):
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
 
     # In Finnish: Tonttijaon tunnus
-    plot_division_identifier = models.CharField(verbose_name=_("Plot division identifier"), max_length=255)
+    plot_division_identifier = models.CharField(verbose_name=_("Plot division identifier"), max_length=255, null=True,
+                                                blank=True)
 
     # In Finnish: Tonttijaon hyväksymispvm
-    plot_division_date_of_approval = models.DateField(verbose_name=_("Plot division date of approval"))
+    plot_division_date_of_approval = models.DateField(verbose_name=_("Plot division date of approval"), null=True,
+                                                      blank=True)
+
+    # In Finnish: Tonttijaon olotila
+    plot_division_state = models.ForeignKey(PlotDivisionState, verbose_name=_("Plot division state"), null=True,
+                                            blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Asemakaava
-    detailed_plan_identifier = models.CharField(verbose_name=_("Detailed plan identifier"), max_length=255)
+    detailed_plan_identifier = models.CharField(verbose_name=_("Detailed plan identifier"), max_length=255, null=True,
+                                                blank=True)
 
-    # In Finnish: Asemakaavan vahvistumispvm
-    detailed_plan_date_of_approval = models.DateField(verbose_name=_("Detailed plan date of approval"))
+    # In Finnish: Asemakaavan viimeisin käsittelypvm
+    detailed_plan_latest_processing_date = models.DateField(verbose_name=_("Detailed plan latest processing date"),
+                                                            null=True, blank=True)
+
+    # In Finnish: Asemakaavan viimeisin käsittelypvm selite
+    detailed_plan_latest_processing_date_note = models.TextField(verbose_name=_("Note for latest processing date"),
+                                                                 null=True, blank=True)
 
     # In Finnish: Kaavayksikön laji
-    plan_unit_type = models.ForeignKey(PlanUnitType, verbose_name=_("Plan unit type"), on_delete=models.PROTECT)
+    plan_unit_type = models.ForeignKey(PlanUnitType, verbose_name=_("Plan unit type"), null=True, blank=True,
+                                       on_delete=models.PROTECT)
 
     # In Finnish: Kaavayksikön olotila
-    plan_unit_state = models.ForeignKey(PlanUnitState, verbose_name=_("Plan unit state"), on_delete=models.PROTECT)
+    plan_unit_state = models.ForeignKey(PlanUnitState, verbose_name=_("Plan unit state"), null=True, blank=True,
+                                        on_delete=models.PROTECT)
+
+    # In Finnish: Kaavayksikön käyttötarkoitus
+    plan_unit_intended_use = models.ForeignKey(PlanUnitIntendedUse, verbose_name=_("Plan unit intended use"), null=True,
+                                               blank=True, on_delete=models.PROTECT)
 
 
 auditlog.register(LeaseArea)

@@ -2,11 +2,12 @@ from django.contrib.gis import admin
 
 from leasing.models import (
     BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate,
-    Comment, Condition, ConditionType, Contact, Contract, ContractChange, ContractRent, ContractType, Decision,
-    DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, IntendedUse, Invoice, Lease,
-    LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
-    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
-    RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    Comment, Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent,
+    ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index,
+    IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management,
+    MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
+    Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
+    Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
 
 
@@ -35,13 +36,19 @@ class TenantAdmin(admin.ModelAdmin):
     inlines = [TenantContactInline]
 
 
+class RelatedLeaseInline(admin.TabularInline):
+    model = RelatedLease
+    fk_name = 'from_lease'
+    extra = 0
+
+
 class LeaseBasisOfRentInline(admin.TabularInline):
     model = LeaseBasisOfRent
     extra = 0
 
 
 class LeaseAdmin(admin.ModelAdmin):
-    inlines = [LeaseBasisOfRentInline]
+    inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -150,6 +157,25 @@ class InvoiceAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
+class ConstructabilityDescriptionInline(admin.TabularInline):
+    model = ConstructabilityDescription
+    extra = 0
+
+
+class PlotInline(admin.StackedInline):
+    model = Plot
+    extra = 0
+
+
+class PlanUnitInline(admin.StackedInline):
+    model = PlanUnit
+    extra = 0
+
+
+class LeaseAreaAdmin(admin.ModelAdmin):
+    inlines = [ConstructabilityDescriptionInline, PlotInline, PlanUnitInline]
+
+
 admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
@@ -160,7 +186,7 @@ admin.site.register(Index, IndexAdmin)
 admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lease, LeaseAdmin)
-admin.site.register(LeaseArea)
+admin.site.register(LeaseArea, LeaseAreaAdmin)
 admin.site.register(LeaseIdentifier)
 admin.site.register(LeaseStateLog)
 admin.site.register(LeaseType, LeaseTypeAdmin)
@@ -173,7 +199,6 @@ admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
 admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
-admin.site.register(RelatedLease)
 admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)

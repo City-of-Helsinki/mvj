@@ -1,0 +1,6456 @@
+[
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 1,
+    "fields": {
+      "name": "Asuntorakennusten korttelialue (A)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 2,
+    "fields": {
+      "name": "Asunto- tai liikerakennusten korttelialue (A)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 3,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 4,
+    "fields": {
+      "name": "Asuntotontti (A)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 5,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (AA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 6,
+    "fields": {
+      "name": "Asuntolarakennusten korttelialue (AA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 7,
+    "fields": {
+      "name": "Asuinrakennusten ja asumista palvelevien toimintojen korttelialue. (AAH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 8,
+    "fields": {
+      "name": "Asunto- ja liikerakennusten korttelialue (AAL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 9,
+    "fields": {
+      "name": "Rakennustaiteellisesti tai kulttuurihistoriallisesti arvokas korttelialue. (AARK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 10,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti ja kaupunkikuvallisesti arvokkaiden asuinrakennusten korttelalue, jolla olevia rakennuksia ei saa purkaa (AARK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 11,
+    "fields": {
+      "name": "Asuinrakennusten ja yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten korttelialue. (AET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 12,
+    "fields": {
+      "name": "Asumista palveleva yhteiskäyttöinen korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 13,
+    "fields": {
+      "name": "Asumista palvelevien kerhorakennusten korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 14,
+    "fields": {
+      "name": "Huoltorakennusten korttelialue, jolla saa olla asuntoja vain kiinteistön hoitohenkilökunnalle. (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 15,
+    "fields": {
+      "name": "Asumispalveluun varattu korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 16,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 17,
+    "fields": {
+      "name": "Huoltorakennusten korttelialue, jolle saa rakentaa venesuoja-, autovaja- ja saunarakennuksia (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 18,
+    "fields": {
+      "name": "Huoltorakennusten korttelialue, jolla saa olla sitä ympäröiviä asuntotontteja varten tarpeellisia myymälä- ja huoltoakennuksia sekä autojen pysäköimispaikkoja. (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 19,
+    "fields": {
+      "name": "Huoltorakennusten korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 20,
+    "fields": {
+      "name": "Autohallirakennusten korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 21,
+    "fields": {
+      "name": "Asuinkerrostalojen leikki-ja ulko-oleskelutilojen korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 22,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten ja yhteistilojen korttelialue (AH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 23,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten ja liikerakennusten korttelialue. (AHL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 24,
+    "fields": {
+      "name": "Asumista palvelevien sosiaali- ja huoltorakennusten ja liikerakennusten korttelialue. (AHL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 25,
+    "fields": {
+      "name": "Asumispalveluun ja pysäköintiin varattu korttelialue. (AHP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 26,
+    "fields": {
+      "name": "Asumista palveleva yhteiskäyttöinen korttelialue, jolla on suojelumääräys (AH/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 27,
+    "fields": {
+      "name": "Asumista palveleva yhteiskäyttöinen korttelialue. Olemassa oleva rakennus ja piha-alue säilytetään osana historiallista entistä sairaalapuiston aluetta. (AH/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 28,
+    "fields": {
+      "name": "Asumispalvelujen korttelialue, joka on varattu yhteiseksi leikkialueeksi tonteille 23001/1 ja 905/5. (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 29,
+    "fields": {
+      "name": "Asuntolaivoja palveleva yhteiskäyttöinen korttelialue. (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 30,
+    "fields": {
+      "name": "A-1 korttelialuetta palvelevien rakennusten korttelialue (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 31,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten korttelialue (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 32,
+    "fields": {
+      "name": "Asumista palveleva yhteiskäyttöinen korttelialue, joka toimii luonnonsuojelualueen suojavyöhykkeenä (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 33,
+    "fields": {
+      "name": "Asumista palveleva yhteiskäyttöinen korttelialue. (AH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 34,
+    "fields": {
+      "name": "Asuntolaivoja ja/tai kelluvia asuntoja palveleva yhteiskäyttöinen korttelialue. (AH-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 35,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten korttelialue (AH-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 36,
+    "fields": {
+      "name": "Asumista palvelevien huoltorakennusten korttelialue (AH-33)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 37,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 38,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 39,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 40,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue (poikkeamispäätöksellä) (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 41,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue, johon tulee sijoittaa liike-, toimisto- tai näihin verrattavia tiloja (AKe)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 42,
+    "fields": {
+      "name": "Asuinkerrotalojen korttelialue, jolla saa olla palvelu-, liike- ja niihin verrattavia huoneistoja (AKe)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 43,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue, jossa saa olla liike-, toimisto-, sosiaalisia palvelu- tai näihin verrattavia tiloja (AKe)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 44,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue (AKL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 45,
+    "fields": {
+      "name": "Asuin-, liike-, työpaikka- ja julkisten palvetilojen korttelialue. (AKL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 46,
+    "fields": {
+      "name": "Asuin- ja hotellirakennusten sekä muiden matkailua palvelevien majoitusrakennusten korttelialue (AKLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 47,
+    "fields": {
+      "name": "Kerros- tai rivitalojen korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 48,
+    "fields": {
+      "name": "Asuinkerrostalojen, rivitalojen tai muiden kytkettyjen pientalojen korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 49,
+    "fields": {
+      "name": "Asuntokerrostalojen ja rivitalojen korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 50,
+    "fields": {
+      "name": "Asuntokerrostalojen tai rivitalojen korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 51,
+    "fields": {
+      "name": "Asuntokerrostalojen sekä rivitalojen ja muiden kytkettyjen rakennusten korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 52,
+    "fields": {
+      "name": "Asuinkerrostalojen sekä rivitalojen ja muiden kytkettyjen asuinrakennusten korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 53,
+    "fields": {
+      "name": "Asuinkerrostalojen tai rivitalojen korttelialue (AKR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 54,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, jolla ympäristön erityispiirteet säilytetään (AK/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 55,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, joka on rakennustaiteelisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään Kisakylän aluekokonaisuuden osana. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 56,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 57,
+    "fields": {
+      "name": "Asuinkerrostalojen alue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään Olympiakylän aluekokonaisuuden osana. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 58,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 59,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, joka on kulttuurihistoriallisesti ja maisemakuvallisesti arvokas ja jolla ympäristö säilytetään. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 60,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, joka on kaupunkikuvallisesti, rakennustaiteellisesti ja kulttuurihistoriallisesti arvokas (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 61,
+    "fields": {
+      "name": "Asuinkerrostalojen korttealue, joka on rakennustaiteellisesti ja kulttuurihistoriallisesti arvokas (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 62,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue. Olemassa oleva rakennus ja piha-alueen ominaispiirteet säilytetään arvokkaana osana historiallista entristä sairaalapuiston aluetta. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 63,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, joka on rakennustaiteellisesti, historiallisesti ja kaupunkikuvallisesti huomattavan arvokas ja jolla ympäristö säilytetään. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 64,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, jolla ympäristö säilytetään (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 65,
+    "fields": {
+      "name": "Asuinkerrostalojen korttealue, joka on kulttuurihistoriallisesti arvokas. (AK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 66,
+    "fields": {
+      "name": "Erityisasumisen korttelialue, joka on tarkoitettu etupäässä nuorten asuntoja varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 67,
+    "fields": {
+      "name": "Vanhusten asuntotarkoituksiin varattu korttelialue (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 68,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinkerrostalojen korttelialue ensisijaisesti vanhusten asuntoja varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 69,
+    "fields": {
+      "name": "Asuntolatyyppisten kerrostalojen korttelialue (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 70,
+    "fields": {
+      "name": "Asuntokerrostalojen ja asuntoloiden korttelialue (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 71,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue, jolle asuntojen lisäksi on sijoitettava lasten päivähoitolaitos (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 72,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinkerrostalojen korttelialue. (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 73,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue ensisijaisesti vanhusten asuntoja varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 74,
+    "fields": {
+      "name": "Erityisasumisen ja palvelujen korttelialue. (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 75,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinkerrostalojen korttelialue ensisijaisesti vanhusten asuntoja ja palvelukeskusta varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 76,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinkerrostalojen korttelialue vanhusten asuntoja varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 77,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinkerrostalojen korttelialue (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 78,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue, jolle saa rakentaa asuntolatyyppisen kerrostalon (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 79,
+    "fields": {
+      "name": "Erityisasumisen korttelialue (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 80,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue vanhusten asuntoja varten (AKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 81,
+    "fields": {
+      "name": "Korttelialue asuntolaa varten (AKs)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 82,
+    "fields": {
+      "name": "Erityisasumisen ja urheilutoimintaa palvelevien rakennusten korttelialue (AKS/YU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 83,
+    "fields": {
+      "name": "Erityisasumisen korttelialue (AKS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 84,
+    "fields": {
+      "name": "Asuinkerrostalojen ja asuntolatyyppisten asuinkerrostalojen korttelialue. (AKS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 85,
+    "fields": {
+      "name": "Asuinkerrostalojen, erityisasumisen, liike- ja hotellirakennusten korttelialue (AKS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 86,
+    "fields": {
+      "name": "Asuinkerrostalojen ja julkisten lähipalvelurakennusten korttelialue (AKY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 87,
+    "fields": {
+      "name": "Asuin-, liike- ja julkisten palvelutilojen korttelialue (AKYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 88,
+    "fields": {
+      "name": "Asuin-, liike- ja julkisten palvelutilojen korttelialue, jolla ympäristö säilytetään (AKYS/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 89,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, johon saa sijoittaa ensisijaisesti senioriasuntoja ja/tai vanhusten palveluasuntoja sekä palveluasuntoihin liittyviä palvelutiloja (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 90,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, johon saa sijoittaa myös liike- ja toimistotiloja (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 91,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, jonne on rakennettava terassitaloja. (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 92,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue. (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 93,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 94,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue opiskelija-asuntoja varten (AK-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 95,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, joka on asemakaavahistoriallisesti, rakennustaiteellisesti ja puutarhakulttuurin kannalta arvokas kulttuurihistoriallinen kokonaisuus (AK-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 96,
+    "fields": {
+      "name": "Asuikerrostalojen korttelialue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään. (AK-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 97,
+    "fields": {
+      "name": "Asuinkerrostalojen korttelialue, johon saa sijoittaa myös liiketiloja (AK-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 98,
+    "fields": {
+      "name": "Asunto- ja liiketontti (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 99,
+    "fields": {
+      "name": "Asuin- ja liikerakennusten korttelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 100,
+    "fields": {
+      "name": "Asuin- ja liikerakennusten korttelialue, jolle saa sijoittaa vähittäiskaupan suuryksikön (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 101,
+    "fields": {
+      "name": "Asunto-, toimisto- ja liikerakennusten korttelialue (poikkeamispäätöksellä) (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 102,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue, jolle saa sijoitaa rakennuksen ensimmäiseen ja toiseen kerrokseen kirjaston, musiikkiopiston tai muita vastaavia julkisia palveluja (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 103,
+    "fields": {
+      "name": "Asuin- ja toimistorakennusten korttelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 104,
+    "fields": {
+      "name": "Liikerakennusten korttelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 105,
+    "fields": {
+      "name": "Liikerakennusten kortelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 106,
+    "fields": {
+      "name": "Asuin-, liike-, toimisto- ja julkisten palvelutilarakennusten korttelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 107,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue. (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 108,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 109,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saadaan liike- ja palvelurakennusten lisäksi rakentaa kirjasto- ja nuorisotiloja (AL 1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 110,
+    "fields": {
+      "name": "Asuin-, liike- ja asumista palvelevien huoltorakennusten korttelialue (ALH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 111,
+    "fields": {
+      "name": "Majoitus- ja ravitsemusliikkeen korttelialue (ALH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 112,
+    "fields": {
+      "name": "Yhdistettyjen liike- ja asuntokerrostalojen korttelialue (ALK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 113,
+    "fields": {
+      "name": "Yhdistettyjen liikerakennusten ja moottoriajoneuvojen huoltoasemien korttelialue (ALM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 114,
+    "fields": {
+      "name": "Yhdistettyjen liike- ja asuinrakennusten korttelialue (ALO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 115,
+    "fields": {
+      "name": "Asuntorakennusten korttelialue, jolle saa rakentaa yhden rakennuksen, jossa saa olla yksi asunto ja yksi myymälä. (ALO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 116,
+    "fields": {
+      "name": "Asuin-, liike-, toimisto- ja palvelurakennusten korttelialue (ALP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 117,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue joka on historiallisesti ja rakennustaiteellisesti huomattavan arvokas ja jolla rakennukset pihapiireineen ja ynpäristöineen säilytetään (AL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 118,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue, joka on kulttuurihistoriallisesti arvokas. (AL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 119,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue, jolla ympäristö säilytetään (AL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 120,
+    "fields": {
+      "name": "Asuin-, liike-, toimisto- ja sosiaalitointa palvelevien rakennusten korttelialue. (ALS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 121,
+    "fields": {
+      "name": "Asuin-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue. (ALT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 122,
+    "fields": {
+      "name": "Liike- ja teollisuusrakennusten korttelialue (ALT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 123,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue (ALT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 124,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten sekä yleistenrakennusten korttelialue (ALY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 125,
+    "fields": {
+      "name": "Asuin-, liike-, toimisto- ja sosiaalista toimintaa palvelevien rakennusten korttelialue. (ALY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 126,
+    "fields": {
+      "name": "Asuin-, liike- ja yleisten rakennusten korttelialue (ALY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 127,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten ja julkisten lähipalvelurakennusten korttelialue (ALY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 128,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa rakentaa nuorisotiloja (ALY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 129,
+    "fields": {
+      "name": "Asuin-, liike- ja julkisten lähipalvelurakennusten korttelialue, jolla ympäristö säilytetään. (ALY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 130,
+    "fields": {
+      "name": "Asuin-, liike- ja toimisto- sekä julkisten lähipalvelurakennusten korttelialue, jonka kulttuurihistoriallinen ja maisemallinen arvo tulee säilyttää. (ALY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 131,
+    "fields": {
+      "name": "Liikerakennusten ja sosiaalista toimintaa palvelevien rakennusten korttelialue (ALYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 132,
+    "fields": {
+      "name": "Asuin-, liike- ja toimitilarakentamisen korttelialue (AL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 133,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue (AL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 134,
+    "fields": {
+      "name": "Asunto-ja liikerakennusten korttelialue (AL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 135,
+    "fields": {
+      "name": "Asuin- ja liikerakennusten korttelialue (AL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 136,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue. (AL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 137,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue (AL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 138,
+    "fields": {
+      "name": "Asuin- ja toimistorakennusten korttelialue (AL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 139,
+    "fields": {
+      "name": "Asuin-, liike- ja toimistorakennusten korttelialue. (AL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 140,
+    "fields": {
+      "name": "Moottoriajoneuvojen huoltoasemien korttelialue (AM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 141,
+    "fields": {
+      "name": "Asunto- ja myymälätontti (AM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 142,
+    "fields": {
+      "name": "Moottoriajoneuvojen huoltoasemien korttelialue, jolle saa rakentaa vain polttoaineiden jakeluaseman (AMJ)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 143,
+    "fields": {
+      "name": "Moottoriajoneuvojen huoltoaseman ja liikerakennuksen korttelialue (AML)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 144,
+    "fields": {
+      "name": "Nuorisoasuntolan korttelialue (ANA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 145,
+    "fields": {
+      "name": "Omakotirakennusten korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 146,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolle saa sijoittaa myös ympäristöhäiriötä tuottamatonta työtilaa (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 147,
+    "fields": {
+      "name": "Asuntorakennusten korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 148,
+    "fields": {
+      "name": "Omakoti/paritalojen korttelialue (poikkeamispäätöksellä) (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 149,
+    "fields": {
+      "name": "Erillisten enintään kaksiasuntoisten pientalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 150,
+    "fields": {
+      "name": "Erillisten enintään kaksiasuntoisten pientalojen korttelalue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 151,
+    "fields": {
+      "name": "Omakoti- ja rivitalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 152,
+    "fields": {
+      "name": "Erillisten, enintään kaksiasuntoisten pientalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 153,
+    "fields": {
+      "name": "Erillisten pientalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 154,
+    "fields": {
+      "name": "Enintään kaksiasuntoisten pientalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 155,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (poikkeamispäätöksellä) (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 156,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 157,
+    "fields": {
+      "name": "Erillispientalojen ja asumista palvelevien yhteiskäyttöisten rakennusten alue (AOH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 158,
+    "fields": {
+      "name": "Yhdistetty omakoti- ja liikerakennusten korttelialue (AOL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 159,
+    "fields": {
+      "name": "Yhdistettyjen enintään kaksiasuntoisten pientalojen ja liikerakennusten korttelialue (AOL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 160,
+    "fields": {
+      "name": "Yhdistettyjen erilispientlojen ja toimistorakennusten korttelialue (AOL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 161,
+    "fields": {
+      "name": "Enintään kaksiasuntoisten pientalojen ja liikerakennusten korttelialue (AOL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 162,
+    "fields": {
+      "name": "Yhdistettyjen liike- ja asuntorakennusten korttelialue (AOL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 163,
+    "fields": {
+      "name": "Erillisten tai kytkettyjen pientalojen korttelialue (AOR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 164,
+    "fields": {
+      "name": "Omakotitalojen, rivitalojen ja muiden kytkettyjen pientalojen korttelialue (AOR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 165,
+    "fields": {
+      "name": "Korttelialue, jossa kullekin tontille saa rakentaa yhtenäisesti suunniteltuja omakotitaloja ja kytkettyjä pientaloja (AOR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 166,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolla on maisemallisia ja kulttuurihistoriallisia arvoja (AO/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 167,
+    "fields": {
+      "name": "Yksiasuntoisten erillispientalojen korttelialue, jolla ympäristön erityispiirteet säilytetään (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 168,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolla ympäristö säilytetään (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 169,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään. (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 170,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolla ympäristön erikoispiirteet säilytetään (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 171,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jonka kulttuurihistoriallinen ja maisemallinen arvo tulee säilyttää. (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 172,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, joka on kulttuurihistoriallisesti ja maisemakulttuurin kannalta arvokas ja jolla katumiljöö säilytetään Veräjämäen huvilayhdyskunnan aluekokonaisuuden osana. (AO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 173,
+    "fields": {
+      "name": "Omakotirakennusten ja muiden enintään kahden perheen talojen korttelialue. (AOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 174,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (AO-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 175,
+    "fields": {
+      "name": "Erillispientalojen ja virkistyspalvelujen korttelialue, jolla on kulttuurihistoriallisia ja maisemallisia arvoja. (AO-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 176,
+    "fields": {
+      "name": "Erillispientalojen korttelialue, jolla ympäristön erikoispiirteet säilytetään (AO1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 177,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (AO-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 178,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (AO-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 179,
+    "fields": {
+      "name": "Erillispientalojen korttelialue (AO-33)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 180,
+    "fields": {
+      "name": "Rivitalojen, kytkettyjen pientalojen ja erillisten pientalojen korttelialue (AP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 181,
+    "fields": {
+      "name": "Asuinpientalojen korttelialue (AP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 182,
+    "fields": {
+      "name": "Autopaikkojen korttelialue (AP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 183,
+    "fields": {
+      "name": "Pysäköintiin ja asumispalveluun varattu korttelialue (APH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 184,
+    "fields": {
+      "name": "Asuinpientalojen ja liikerakennusten korttelialue (APL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 185,
+    "fields": {
+      "name": "Asuinpientalojen korttelialue, jolla ympäristö säilytetään (AP/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 186,
+    "fields": {
+      "name": "Asuinpientalojen korttelialue (AP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 187,
+    "fields": {
+      "name": "Autopaikoitustalon korttelialue (APT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 188,
+    "fields": {
+      "name": "Yksityiseen ja yleiseen pysäköintiin tarkoitettujen autopaikkojen korttelialue (APY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 189,
+    "fields": {
+      "name": "Asuinpientalojenkorttelialue (AP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 190,
+    "fields": {
+      "name": "Yhden tai kahden asunnon pientalojen korttelialue (AP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 191,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen asuinrakennusten korttelialue (AR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 192,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen rakennusten korttelialue (AR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 193,
+    "fields": {
+      "name": "Asuinpientalojen ja asuinkerrostalojen korttelialue (AR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 194,
+    "fields": {
+      "name": "Asuntokerrostalojen sekä rivitalojen ja muiden kytkettyjen rakennusten korttelialue (ARK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 195,
+    "fields": {
+      "name": "Asunto- ja myymälätontti (ARL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 196,
+    "fields": {
+      "name": "Rivitalojen ja omakotirakennusten korttelialue (ARO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 197,
+    "fields": {
+      "name": "Rivitalojen korttelialue, jolla ympäristö säilytetään (AR/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 198,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen asuinrakennusten korttelialue, joka on kaupunkikuvallisesti , rakennustaiteellisesti ja kulttuurihistoriallisesti arvokas (AR/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 199,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen asuinrakennusten korttelialue, jolla ympäristö säilytetään (AR/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 200,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen rakennusten korttelialue, jolla rakennukset sekä katu- ja pihamiljöö säilytetään (AR/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 201,
+    "fields": {
+      "name": "Rivitalomaisten asuntolarakennusten korttelialue (ARS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 202,
+    "fields": {
+      "name": "Rivitalojen ja muiden kytkettyjen rakennusten korttelialue, joka on asemakaavahistoriallisesti, rakennustaiteellisesti ja puutarhakulttuurin kannalta arvokas kulttuurihistoriallinen kokonaisuus (AR-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 203,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolla ympäristö säilytetään (A/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 204,
+    "fields": {
+      "name": "Paikallishistoriallisesti ja kaupunkikuvallisesti arvokas asuinrakennusten korttelialue, jolla ympäristö säilytetään (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 205,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, joka on kulttuurihistoriallisesti ja rakennustaiteellisesti arvokas,  ja jolla rakennukset pihapiireineen ja ympäristöineen säilytetään (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 206,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti ja maisemallisesti arvokas asuinrakennusten korttelialue (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 207,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolla ympäristö säilytetään (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 208,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolla sijaitsee paikallishistoriallisesti arvokas rakennus. (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 209,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään. (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 210,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti ja puutarhataiteellisesti merkittävä asuinrakennusten korttelialue. (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 211,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 212,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolla ympäristö säilytetään aluekokonaisuuden osana. (A/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 213,
+    "fields": {
+      "name": "Asuntolaralennusten korttelialue (poikkeamispäätöksellä) (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 214,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue, jolle saa rakentaa lastentarhan (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 215,
+    "fields": {
+      "name": "Erityisasumisen korttelialue (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 216,
+    "fields": {
+      "name": "Päiväkodin korttelialue (poikkeamispäätöksellä) (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 217,
+    "fields": {
+      "name": "Asuntolarakennusten korttelialue (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 218,
+    "fields": {
+      "name": "Asuntolatyyppisten asuinrakennusten korttelialue (AS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 219,
+    "fields": {
+      "name": "Rakennustaiteellisesti , kaupunkikuvallisesti ja paikallishistoriallisesti arvokas asuinrakennusten korttelialue, jolla ympäristö säilytetään (A/s-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 220,
+    "fields": {
+      "name": "Lämpökeskuksen korttelialue, jolla saa olla lämittäjän asunto. (AT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 221,
+    "fields": {
+      "name": "Yhdistettyjen teollisuus- ja toimistorakennusten korttelialue (ATT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 222,
+    "fields": {
+      "name": "Asuinrakennusten ja muiden enintään kahden perheen talojen korttelialue (ATY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 223,
+    "fields": {
+      "name": "Asuin- ja työpaikkarakennusten korttelialue (ATY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 224,
+    "fields": {
+      "name": "Asuinrakennusten ja ympäristöhäiriötä aiheuttamattomien teollisuusrakennusten korttelialue (ATY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 225,
+    "fields": {
+      "name": "Asuin- ja kasvitarharakennusten korttelialue. (AV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 226,
+    "fields": {
+      "name": "Asuin- ja kasvitarharakennusten korttelialue (AV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 227,
+    "fields": {
+      "name": "Kasvitarharakennusten ja erillisten enintään kaksiasuntoisten pientalojen korttelialue (AVO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 228,
+    "fields": {
+      "name": "Opiskelija-asuntojen ja niihin liittyvien opiskelu- ja palvelutilojen korttelialue (AY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 229,
+    "fields": {
+      "name": "Asuinrakennusten ja yleisten rakennusten korttelialue (AY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 230,
+    "fields": {
+      "name": "Asuin- ja seurakunnallista toimintaa palvelevien rakennusten korttelialue. (AYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 231,
+    "fields": {
+      "name": "Asuin- ja/tai julkisten lähipalvelurakennusten korttelialue (AYL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 232,
+    "fields": {
+      "name": "Asuinrakennusten tai opetustoimintaa palvelevien rakennusten korttelialue, jolla ympäristö säilytetään. (AYO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 233,
+    "fields": {
+      "name": "Asuin- ja julkisten palvelurakennusten korttelialue (AYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 234,
+    "fields": {
+      "name": "Asuinrakennusten sekä sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue (AYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 235,
+    "fields": {
+      "name": "Vanhemman väestön hoiva-asuntojen korttelialue (AYS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 236,
+    "fields": {
+      "name": "Palvelut mahdollistava asuinrakennusten korttelialue, joka liittyy oleellisena osana kulttuurihistoriallisesti, puutarhataiteellisesti ja maisemallisesti arvokkaaseen puistokokonaisuuteen. (A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 237,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue, jolle saa sijoittaa myös toimisto- ja kokoontumistiloja (A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 238,
+    "fields": {
+      "name": "Asuin- ja ateljeerakennusten korttelialue (A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 239,
+    "fields": {
+      "name": "Kokoontumistilojen korttelialue (A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 240,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 241,
+    "fields": {
+      "name": "Asuin-, majoitus- ja kokoontumistilojen korttelialue (A-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 242,
+    "fields": {
+      "name": "Huvila-alue, jolla on suojelumääräys (A-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 243,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 244,
+    "fields": {
+      "name": "Asuinrakennusten ja sosiaalista toimintaa palvelevien rakennusten korttelialue. (A-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 245,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 246,
+    "fields": {
+      "name": "Asuin- ja käsityörakennusten korttelialue (A-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 247,
+    "fields": {
+      "name": "Asuinrakennusten korttelialue (A-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 248,
+    "fields": {
+      "name": "Asuin- ja käsityörakennusten korttelialue. (A-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 249,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue, jonne saa sijoittaa asumista. (C)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 250,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue (C)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 251,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue johon saa sijoittaa asumista. (C)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 252,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue liike-, toimisto- ja palvelurakentamista varten. (C-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 253,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue, jonne saa sijoittaa asumista. (C-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 254,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialua johon saa sijoittaa asumista. (C-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 255,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue liike-, toimisto- ja palvelurakentamista varten. (C-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 256,
+    "fields": {
+      "name": "Keskustatoimintojen korttelialue, jonne saa sijoittaa asumista. (C-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 257,
+    "fields": {
+      "name": "Erityisalue. Alueelle saa rakentaa väestönsuojien huoltoa palvelevia rakennuksia. (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 258,
+    "fields": {
+      "name": "Erityisalue pelastuspalvelun harjoitusalueeksi (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 259,
+    "fields": {
+      "name": "Kaasupaineensäätäjäalue (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 260,
+    "fields": {
+      "name": "Erityisalue (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 261,
+    "fields": {
+      "name": "Erityisalue. Aluetta saa käyttää veneiden talvisäilytykseen (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 262,
+    "fields": {
+      "name": "Liikennekoulutusta ja moottoriharrastustoimintaa palveleva alue (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 263,
+    "fields": {
+      "name": "Erityisalue, jolle saa rakentaa ulkoilmakatsomon ja -näyttämön (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 264,
+    "fields": {
+      "name": "Erityisalue virkistystä ja maanviljelystä varten (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 265,
+    "fields": {
+      "name": "Erityisalue. Alue on varattu metron huoltotunnelin ajoyhteyttä varten (E)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 266,
+    "fields": {
+      "name": "Alue liikennemeluestettä varten (EE)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 267,
+    "fields": {
+      "name": "Hautausmaa-alue (EH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 268,
+    "fields": {
+      "name": "Historiallinen linnoitusalue (EH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 269,
+    "fields": {
+      "name": "Huvipuistoalue (EH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 270,
+    "fields": {
+      "name": "Käyttövedenottopaikka (EK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 271,
+    "fields": {
+      "name": "Liikennekoulutusta ja moottoriharrastustoimintaa palveleva alue (EL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 272,
+    "fields": {
+      "name": "Maisemanhoitoalue, jolle saa sijoittaa täyttömäen (EM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 273,
+    "fields": {
+      "name": "Maisemanhoitoalue (EM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 274,
+    "fields": {
+      "name": "Muinaismuistoalue (EM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 275,
+    "fields": {
+      "name": "Erityisalue multasekoittamoa varten (EM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 276,
+    "fields": {
+      "name": "Energiahuollon alue (EN)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 277,
+    "fields": {
+      "name": "Erityisalue maanviljelystä ja virkistystä varten (E/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 278,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten korttelialue (ET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 279,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten alue (ET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 280,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten alue (ET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 281,
+    "fields": {
+      "name": "Yhdyskuntateknisen huollon alue (ET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 282,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien laitosten alue, jolle saa sijoittaa maanalaisen pumppaamon (ET-ma)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 283,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten alue, jolle saa sijoittaa maanalaisen pumppaamon (ET-ma)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 284,
+    "fields": {
+      "name": "Erityisalue. Alueelle saadaan rakentaa virkistystoimintaan liittyviä varastorakennuksia, sosiaalitiloja sekä enintään kaksi asuntoa henkilökunnalle (ETV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 285,
+    "fields": {
+      "name": "Yhdyskuntateknistähuoltoa palvelevien rakennusten ja laitosten alue , jolle saa sijoittaa saaren vesihuoltoa palvelevia rakenteita (ET-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 286,
+    "fields": {
+      "name": "Yhdyskuntateknisen huollon alue (ET-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 287,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten korttelialue pelastusasemaa varten (ET-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 288,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten alue, jolle saa sijoittaa maakaasuputkiston paineenvähennys- ja venttiiliaseman (ET-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 289,
+    "fields": {
+      "name": "Yhdyskuntateknisen huollon alue (ET-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 290,
+    "fields": {
+      "name": "Yhdyskuntateknistä huoltoa palvelevien rakennusten ja laitosten alue, jolle saa sijoittaa muuntamon (ET-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 291,
+    "fields": {
+      "name": "Suojaviheralue (EV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 292,
+    "fields": {
+      "name": "Erityisalue maanviljelystä varten (EV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 293,
+    "fields": {
+      "name": "Suojaviheralue, jolla ympäristö ja rakennukset säilytettävä ja hoidettava Tuomarinkylän kartanon osana. (EV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 294,
+    "fields": {
+      "name": "Suojaviheralue (EV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 295,
+    "fields": {
+      "name": "Suojaviheralue, jolle tulee rakentaa melueste (EV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 296,
+    "fields": {
+      "name": "Suojaviheralue (EV-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 297,
+    "fields": {
+      "name": "Erityisalue (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 298,
+    "fields": {
+      "name": "Erityisalue lumenvastaanottopaikkaa varten (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 299,
+    "fields": {
+      "name": "Pohjavedenottamo (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 300,
+    "fields": {
+      "name": "Erityisalue golfkenttää varten (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 301,
+    "fields": {
+      "name": "Erityisalue multasekoittamoa varten (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 302,
+    "fields": {
+      "name": "Erityisalue, joka on tarkoitettu opetus- ja tutkimustoimintaa palvelevaa koeviljelyä varten (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 303,
+    "fields": {
+      "name": "Erityisalue, jolle saa sijoittaa täyttömäen (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 304,
+    "fields": {
+      "name": "Erityisalue pilantumattomien maa-aineisten kierrätystoimintaa varten (E-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 305,
+    "fields": {
+      "name": "Erityisalue, jolle saa rakentaa kanavan (E-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 306,
+    "fields": {
+      "name": "Hautausmaa-alue (H)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 307,
+    "fields": {
+      "name": "Liike-ja toimistorakennusten korttelialue (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 308,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue (poikkeamispäätöksellä) (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 309,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue. (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 310,
+    "fields": {
+      "name": "Liike- ja toimitilarakennusten korttelialue (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 311,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 312,
+    "fields": {
+      "name": "Toimisto-ja liikerakennusten korttelialue (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 313,
+    "fields": {
+      "name": "Liikerakennusten kortelialue (K)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 314,
+    "fields": {
+      "name": "Liike-, toimisto-, metroasema- ja asuinrakennusten korttelialue. (KA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 315,
+    "fields": {
+      "name": "Liike-, toimisto- ja asuinrakennusten korttelialue (KA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 316,
+    "fields": {
+      "name": "Liikerakennusten tai yhdyskuntateknistä huoltoa palvelevien rakennusten korttelialue (KET)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 317,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue (poikkeamispäätöksellä) (KH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 318,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue. (KH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 319,
+    "fields": {
+      "name": "Liike-, toimisto-, hotelli- ja yhdistystoimintaa palvelevien rakennusten korttelialue (KHY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 320,
+    "fields": {
+      "name": "Liikerakennusten korttelialue. (KL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 321,
+    "fields": {
+      "name": "Liikerakennusten korttelialue (KL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 322,
+    "fields": {
+      "name": "Liike-, asuin- ja palvelurakennusten korttelialue (KLAP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 323,
+    "fields": {
+      "name": "Hotelli-, liike- ja toimistorakennusten korttelialue. (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 324,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 325,
+    "fields": {
+      "name": "Hotelli- ja liikerakennusten korttelialue (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 326,
+    "fields": {
+      "name": "Liike-, toimisto- ja huoltoasemarakennusten korttelialue (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 327,
+    "fields": {
+      "name": "Hotellirakennusten ja muiden matkailua palvelevien majoitusrakennusten korttelialue (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 328,
+    "fields": {
+      "name": "Hotelli- ja liikerakennusten korttelialue. (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 329,
+    "fields": {
+      "name": "Liike- ja hotellirakennusten korttelialue (KLH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 330,
+    "fields": {
+      "name": "Kylpylähotellin korttelialue (KLH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 331,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolla rakennusten kattotasolle saa sijoittaa yleisen pysäköintialueen (KLP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 332,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolla ympäristö säilytetään (KL/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 333,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolla rakennukset ympäristöineen säilytetään Olympiakylän aluekokonaisuuden osana. (KL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 334,
+    "fields": {
+      "name": "Liike- ja teollisuusrakennusten korttelialue (KLT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 335,
+    "fields": {
+      "name": "Liike- ja liikuntatilojen korttelialue (poikkeamispäätöksellä) (KLU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 336,
+    "fields": {
+      "name": "Liike-, toimisto- ja palvelurakennusten korttelialue (KLY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 337,
+    "fields": {
+      "name": "Liike- ja palvelurakennusten korttelialue (KLY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 338,
+    "fields": {
+      "name": "Liike- ja julkisten rakennusten korttelialue (KLY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 339,
+    "fields": {
+      "name": "Liikerakennusten korttelialue. Alueelle saa rakentaa vain kasvihuonerakennuksia ja kasvien myyntiä palvelevia tiloja. (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 340,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa rakentaa puutarhamyymälän (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 341,
+    "fields": {
+      "name": "Hotelli- ja toimitilarakennusten korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 342,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa rakentaa myös bensiininjakeluaseman (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 343,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 344,
+    "fields": {
+      "name": "Hotelli- ja kylpylärakennusten korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 345,
+    "fields": {
+      "name": "Liikerakennusten korttelialue liikennemyymälää varten (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 346,
+    "fields": {
+      "name": "Majoitusrakennusten korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 347,
+    "fields": {
+      "name": "Toimitilarakentamisen korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 348,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa rakentaa kasvihuonerakennuksia sekä tähän tarkoitukseen liittyviä myymälä-, toimisto- ja näyttelytiloja. (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 349,
+    "fields": {
+      "name": "Liikerakennusten korttelialue (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 350,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa rakentaa puutarhamyymälän. (KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 351,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue, jossa on teollisuushistoriallisesti ja rakennustaiteellisesti arvokas suojeltava rakennus. (KL-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 352,
+    "fields": {
+      "name": "Matkailua palvelevien liikerakennusten korttelialue (KL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 353,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolle saa sijoittaa vähittäiskaupan suuryksikön (KM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 354,
+    "fields": {
+      "name": "Liikerakennusten korttelialue, jolla ympäristö säilytetään (KM/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 355,
+    "fields": {
+      "name": "Liikerakennusten ja julkisten lähipalvelurakennusten korttelialue. (KMY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 356,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue, jolle saa sijoittaa vähittäiskaupan suuryksikön (KM-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 357,
+    "fields": {
+      "name": "Liikerakennusten korttelialue (KM-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 358,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue (K/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 359,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue (poikkeamispäätöksellä) (KT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 360,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue (KT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 361,
+    "fields": {
+      "name": "Toimisto- ja kulttuuripalvelujen korttelialue (poikkeamispäätöksellä) (KT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 362,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä asuinkerrostalojen korttelialue. (KTA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 363,
+    "fields": {
+      "name": "Toimistorakennusten ja asuinrakennusten korttelialue (KTA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 364,
+    "fields": {
+      "name": "Hotelli- ja toimistorakennusten korttelialue (KTH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 365,
+    "fields": {
+      "name": "Toimistorakennusten ja pysäköintitilojen korttelialue (KTLPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 366,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue, jolla ympäristö säilytetään (KT/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 367,
+    "fields": {
+      "name": "Satamatoimintaan liittyvien toimistorakennusten korttelialue (KTS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 368,
+    "fields": {
+      "name": "Yhdistettyjen teollisuus- ja toimistorakennusten korttelialue (KTT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 369,
+    "fields": {
+      "name": "Toimistorakennusten ja yleisten rakennusten korttelialue, jolle saa sijoittaa myös muita ympäristövaikutuksiltaan pääkäyttötarkoitukseen verrattavia tiloja (KT/Y)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 370,
+    "fields": {
+      "name": "Toimistorakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 371,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 372,
+    "fields": {
+      "name": "Liike-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 373,
+    "fields": {
+      "name": "Toimistorakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten kortelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 374,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 375,
+    "fields": {
+      "name": "Liike-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 376,
+    "fields": {
+      "name": "Toimistorakennusten tai ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (KTY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 377,
+    "fields": {
+      "name": "Liike- ja toimitilarakennusten sekä asuinkerrostalojen korttelialue, jossa on teollisuushistoriallisesti ja rakennustaiteellisesti arvokkaita suojeltavia rakennuksia (KTYA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 378,
+    "fields": {
+      "name": "Toimistorakennusten ja julkisten lähipalvelurakennusten korttelialue (KTYL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 379,
+    "fields": {
+      "name": "Toimistorakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (KTYLPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 380,
+    "fields": {
+      "name": "Liike-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien tuotantorakennusten sekä opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (KTYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 381,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue (KTYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 382,
+    "fields": {
+      "name": "Toimistorakennusten ja opetustoimintaa palvelevien rakennusten korttelialue (KTYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 383,
+    "fields": {
+      "name": "Toimistotilojen, ympäristöhäiriöitä aiheuttamattomien tuotantotilojen sekä opetus-, tutkimus-, harrastus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (KTYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 384,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue, jolla ympäristö säilytetään (KTY/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 385,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue, jossa on teollisuushistoriallisesti ja rakennustaiteellisesti arvokas suojeltava rakennus. (KTY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 386,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue, jossa on teollisuushistoriallisesti ja rakennustaiteellisesti arvokkaita suojeltavia rakennuksia ja jolla ympäristö säilytetään (KTY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 387,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään Kisakylän aluekokonaisuuden osana. (KTY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 388,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue, jolla ympäristö säilytetään. (KTY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 389,
+    "fields": {
+      "name": "Liike-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien tuotantorakennusten, vapaa-aikaa ja liikuntaa palvelevien rakennusten sekä opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (KTYU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 390,
+    "fields": {
+      "name": "Liike-, toimisto- ja ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (KTYV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 391,
+    "fields": {
+      "name": "Toimistorakennusten, yleisten rakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (KTY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 392,
+    "fields": {
+      "name": "Toimistorakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (KTY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 393,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue (KTY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 394,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (KTY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 395,
+    "fields": {
+      "name": "Toimistorakennusten ja ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue, jolle saa sijoittaa myös julkisia palveluja (KTY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 396,
+    "fields": {
+      "name": "Toimitilarakennusten korttelialue (KTY-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 397,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue. Alueelle saadaan sijoittaa myös ympäristövaikutuksiltaan pääkäyttötarkoitukseen verrattavia työtiloja. (KT-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 398,
+    "fields": {
+      "name": "Toimistorakennusten korttelialue (KT-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 399,
+    "fields": {
+      "name": "Yleisten rakennusten sekä liike- ja toimistorakennusten korttelialue (KY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 400,
+    "fields": {
+      "name": "Yhdistetty liike- ja yleisten rakennusten korttelialue (KY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 401,
+    "fields": {
+      "name": "Liike-, toimisto- ja julkisten rakennusten korttelialue (KY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 402,
+    "fields": {
+      "name": "Liike-ja julkisten rakennusten korttelialue (KY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 403,
+    "fields": {
+      "name": "Liike-, toimisto- ja toimitilarakennusten korttelialue (KY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 404,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä opetus-, tutkimus- ja näihin verrattavaatoimintaa palvelevien rakennusten korttelialue (KYOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 405,
+    "fields": {
+      "name": "Toimitilarakennusten sekä opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (KYOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 406,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä opetus- ja tutkimustoimintaa palvelevien rakennusten korttelialue (KYOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 407,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten sekä sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelaialue (KYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 408,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue (KYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 409,
+    "fields": {
+      "name": "Liike-ja toimistorakennusten sekä sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue (KYS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 410,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten, yleisten rakennusten, ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten sekä asuinrakennusten korttelialue (poikkeamispäätöksellä) (KYT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 411,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue (K-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 412,
+    "fields": {
+      "name": "Liike- ja toimistorakennusten korttelialue. (K-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 413,
+    "fields": {
+      "name": "Liike-, toimisto- ja julkisten lähipalvelurakennusten korttelialue (K-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 414,
+    "fields": {
+      "name": "Liike-, toimisto- ja autopaikkarakennusten korttelialue (K-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 415,
+    "fields": {
+      "name": "Hotellirakennusten korttelialue. (K-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 416,
+    "fields": {
+      "name": "Toimisto- liike-, ravintola- ja hotellirakennusten korttelialue (K-4)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 417,
+    "fields": {
+      "name": "Liiketontti (L)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 418,
+    "fields": {
+      "name": "Liikennealue (L)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 419,
+    "fields": {
+      "name": "Linja-autoasema (LA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 420,
+    "fields": {
+      "name": "Linja-autoaseman korttelialue (LA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 421,
+    "fields": {
+      "name": "Huoltoaseman korttelialue (LH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 422,
+    "fields": {
+      "name": "Huoltoasemarakennusten korttelialue (LH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 423,
+    "fields": {
+      "name": "Huoltoaseman, polttoaineenjakeluaseman, palvelurakennuksen tai joukkoliikennepalvelurakennuksen korttelialue. (LHA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 424,
+    "fields": {
+      "name": "Linja-autoaseman korttelialue (LHA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 425,
+    "fields": {
+      "name": "Henkilöliikenneterminaalin korttelialue (LHA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 426,
+    "fields": {
+      "name": "Kaukoliikenteen linja-autoaseman sisäänkäyntirakennuksen korttelialue (LHA-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 427,
+    "fields": {
+      "name": "Huoltoaseman korttelialue (LHK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 428,
+    "fields": {
+      "name": "Lentokenttäalue (LL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 429,
+    "fields": {
+      "name": "Kuormaus- ja purkauspaikka (LLP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 430,
+    "fields": {
+      "name": "Pysäköintialue (LP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 431,
+    "fields": {
+      "name": "Pysäköimisalue (LP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 432,
+    "fields": {
+      "name": "Yleinen pysäköintialue (LP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 433,
+    "fields": {
+      "name": "Autopaikkojen korttelialue (LPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 434,
+    "fields": {
+      "name": "Pysäköintilaitoksen korttelialue (LPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 435,
+    "fields": {
+      "name": "Autopaikkojen korttelialue, jolle tulee sijoittaa myymälä- ja liiketiloja katutasoon. (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 436,
+    "fields": {
+      "name": "Autopaikkojen korttelialue kuorma-autojen pysäköintiä varten (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 437,
+    "fields": {
+      "name": "Autopaikkojen korttelialue, jolle saa rakentaa pysäköintitalon (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 438,
+    "fields": {
+      "name": "Asuntotonttien autopaikkojen korttelialue (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 439,
+    "fields": {
+      "name": "Autopaikkojen korttelialue. Alueelle saa rakentaa pysäköintiltalon (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 440,
+    "fields": {
+      "name": "Autopaikkojen korttelialue (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 441,
+    "fields": {
+      "name": "Autopaikkojen korttelialue. Alueelle saa rakentaa pysäköintilaitoksen (LPA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 442,
+    "fields": {
+      "name": "2-tasoinen autopaikkojen korttelialue (LPA-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 443,
+    "fields": {
+      "name": "Toimistotonttien autopaikkojen korttelialue (LPA-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 444,
+    "fields": {
+      "name": "Pysäköimis- ja lastausalue (LPL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 445,
+    "fields": {
+      "name": "Postiliikenne- sekä moottoriajoneuvojen huolto- ja korjaamoalue (LPM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 446,
+    "fields": {
+      "name": "Pysäköintialue torikauppiaita varten, jolla myös muu pysäköinti sekä joukkoliikenne on sallittu (LP-t)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 447,
+    "fields": {
+      "name": "Autopaikkojen ja palloiluhallin korttelialue (LPU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 448,
+    "fields": {
+      "name": "Yleisten pysäköintilaitosten korttelialue (LPY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 449,
+    "fields": {
+      "name": "Yksityiseen ja yleiseen pysäköintiin tarkoitettujen autopaikkojen korttelialue (LPY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 450,
+    "fields": {
+      "name": "Yleisten pysäköintilaitosten korttelialue. Alueelle saa rakentaa myös moottoriajoneuvojen huoltoa palvelevia rakennuksia (LPY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 451,
+    "fields": {
+      "name": "Yleinen pysäköintialue (LP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 452,
+    "fields": {
+      "name": "Yleinen pysäköintialue, joka on varattava talvikaudella veneiden säilytykseen (LP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 453,
+    "fields": {
+      "name": "Rautatiealue (metrorataa varten) (LR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 454,
+    "fields": {
+      "name": "Raideliikennealue (metrorataa varten) (LR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 455,
+    "fields": {
+      "name": "Rautatiealue (LR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 456,
+    "fields": {
+      "name": "Rautatieasema-, toimisto- ja liikerakennusten korttelialue (LRK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 457,
+    "fields": {
+      "name": "Rautatiealue (LRM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 458,
+    "fields": {
+      "name": "Rautatiealue metrorataa varten (LR-me)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 459,
+    "fields": {
+      "name": "Rautatie alue metroasemaa varten. (LR-mea)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 460,
+    "fields": {
+      "name": "Rautatiealue teollisuusraidettta ja ratapihaa varten (LRT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 461,
+    "fields": {
+      "name": "Rautatiealue, jonka päälle saa rakentaa rajoittuvaan kortteliin tai muuhun alueeseen kuuluvan ulokkeen. (LR/u)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 462,
+    "fields": {
+      "name": "Raitiovaunuhallien korttelialue (LRV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 463,
+    "fields": {
+      "name": "Satama-alue (LS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 464,
+    "fields": {
+      "name": "Satama-alue telakka-allasta varten (LS-a)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 465,
+    "fields": {
+      "name": "Satama-alue kunnan tarpeisiin (LS-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 466,
+    "fields": {
+      "name": "Satama-alue valtion tarpeisiin (LS-v)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 467,
+    "fields": {
+      "name": "Sataman korttelialue (LS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 468,
+    "fields": {
+      "name": "Maantien alue (LT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 469,
+    "fields": {
+      "name": "Kauttakulku ja sisääntulotie (LT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 470,
+    "fields": {
+      "name": "Yleisen tien alue (LT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 471,
+    "fields": {
+      "name": "Maaliikennekeskusalue (LTV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 472,
+    "fields": {
+      "name": "Venesatamatoimintaa palvelevien rakennusten korttelialue (LV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 473,
+    "fields": {
+      "name": "Venevalkama-alue (LV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 474,
+    "fields": {
+      "name": "Venesatama (LV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 475,
+    "fields": {
+      "name": "Venevalkama (LV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 476,
+    "fields": {
+      "name": "Kalasatama (LVK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 477,
+    "fields": {
+      "name": "Venesatama, jolla ympäristö säilytetään (LV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 478,
+    "fields": {
+      "name": "Venesatama- ja urheilu- ja virkistyspalvelujen alue (LVU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 479,
+    "fields": {
+      "name": "Venesatama (LVV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 480,
+    "fields": {
+      "name": "Venesatama. Aluetta saa käyttää ainoastaan vierasvenesatamana. (LV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 481,
+    "fields": {
+      "name": "Venevalkama (LV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 482,
+    "fields": {
+      "name": "Vesiliikenteen alue (LV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 483,
+    "fields": {
+      "name": "Venesatama-alue (LV-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 484,
+    "fields": {
+      "name": "Venevalkama-alue (LV-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 485,
+    "fields": {
+      "name": "Venesatama-alue (LV-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 486,
+    "fields": {
+      "name": "Yleinen tie vierialueineen (LYT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 487,
+    "fields": {
+      "name": "Maa- ja metsätalousalue (M)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 488,
+    "fields": {
+      "name": "Maisemallisesti arvokas peltoalue (MA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 489,
+    "fields": {
+      "name": "Maisemallisesti arvokas pelto- tai niittyalue (MA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 490,
+    "fields": {
+      "name": "Kulttuurimaiseman kannalta arvokas pelto-, laidun- tai niittyalue, joka tulee säilyttää avoimena. (MA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 491,
+    "fields": {
+      "name": "Maisemallisesti ja historiallisesti arvokas pelto- tai niittyalue, joka tulee säilyttää avoimena viljelyskäytössä. (MA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 492,
+    "fields": {
+      "name": "Maisemallisesti ja kulttuurihistoriallisesti arvokas tilakokonaisuus (MA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 493,
+    "fields": {
+      "name": "Maisemallisesti arvokas pelto- tai niittyalue (MA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 494,
+    "fields": {
+      "name": "Maisemallisesti arvokas luhta-alue (MA-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 495,
+    "fields": {
+      "name": "Kasvitarha-alue (MK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 496,
+    "fields": {
+      "name": "Ryhmäpuutarha-alue (MR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 497,
+    "fields": {
+      "name": "Maatalousalue (MT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 498,
+    "fields": {
+      "name": "Maa- ja metsätalousalue, jolla on erityisiä ympäristöarvoja (MY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 499,
+    "fields": {
+      "name": "Maa- ja metsätalousalue, jolla on maisemallista arvoa. (MY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 500,
+    "fields": {
+      "name": "Metsätalousalue tai metsätalousalueeseen liittyvä arvokas avokallioalue, jolla on erityisiä ympäristöarvoja. (MY-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 501,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue (P)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 502,
+    "fields": {
+      "name": "Puistoalue (P)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 503,
+    "fields": {
+      "name": "Palvelu- ja asuinrakennusten korttelialue (PA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 504,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue, jolla ympäristö säilytetään (PA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 505,
+    "fields": {
+      "name": "Palvelu- ja asuinrakennusten korttelialue, joka on arvokas historiallinen sotilaallinen ympäristökokonaisuus (PA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 506,
+    "fields": {
+      "name": "Historiallinen puisto (PH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 507,
+    "fields": {
+      "name": "Istutettava puistoalue (PI)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 508,
+    "fields": {
+      "name": "Palvelu-, liike- ja toimitilarakennusten korttelialue. (PK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 509,
+    "fields": {
+      "name": "Teollisuushistoriallisesti ja rakennustaiteelisesti arvokas palvelu-, liike- ja toimitilarakennusten korttelialue (PK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 510,
+    "fields": {
+      "name": "Lähipalvelurakennusten korttelialue (PL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 511,
+    "fields": {
+      "name": "Luonnonmukaisena säilytettävä puistoalue (PL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 512,
+    "fields": {
+      "name": "Luonnontilainen puistoalue (PL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 513,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue (P/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 514,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus. (P/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 515,
+    "fields": {
+      "name": "Palvelurakennusten korttelialue, jolla ympäristö säilytetään. (P/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 516,
+    "fields": {
+      "name": "Puistoalue, jossa on oltava suojaistutuksia ajoneuvoliikenteen melua vastaan (PS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 517,
+    "fields": {
+      "name": "Teollisuushistoriallisesti ja rakennustaiteellisesti arvokas kulttuuri- ja viihderakennusten korttelialue. (PYV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 518,
+    "fields": {
+      "name": "Puistoalue (P1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 519,
+    "fields": {
+      "name": "Retkeily- ja loma-alue (R)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 520,
+    "fields": {
+      "name": "Loma-asuntojen korttelialue (RA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 521,
+    "fields": {
+      "name": "Loma-asumista palveleva yhteiskäyttöinen korttelialue. (RAH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 522,
+    "fields": {
+      "name": "Loma-asumista palveleva yhteiskäyttöinen korttelialue, jolle saa rakentaa saunan (RAH-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 523,
+    "fields": {
+      "name": "Loma-asuntojen tai matkailua palvelevien rakennusten korttelialue. (RA/RM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 524,
+    "fields": {
+      "name": "Loma-asuntojen korttelialue, joka on kulttuurihistoriallisesti, rakennustaiteellisesti, sotahistoriallisesti ja/tai maisemakulttuurin kannalta arvokas. (RA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 525,
+    "fields": {
+      "name": "Loma-asuntojen korttelialue, jolla on kulttuurihistoriallisia ja maisemallisia arvoja (RA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 526,
+    "fields": {
+      "name": "Loma-asuntojen korttelialue, maisemallisesti arvokas huvilaympäristö, joka tulee säilyttää (RA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 527,
+    "fields": {
+      "name": "Loma-asuntojen korttelialue (RA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 528,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue. (RM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 529,
+    "fields": {
+      "name": "Yhteisrantainen loma-asunto-, matkailu- ja toimintakeskusten alue (RM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 530,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue, joka on kulttuurihistoriallisesti, rakennustaiteellisesti, sotahistoriallisesti ja/tai maisemakulttuurin kannalta arvokas. (RM/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 531,
+    "fields": {
+      "name": "Loma-asumista, retkeilyä ja matkailua palvelevien rakennusten korttelialue (RM-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 532,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 533,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 534,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 535,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-4)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 536,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-5)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 537,
+    "fields": {
+      "name": "Matkailua palvelevien rakennusten korttelialue (RM-6)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 538,
+    "fields": {
+      "name": "Palstaviljelyalue (RP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 539,
+    "fields": {
+      "name": "Ryhmäpuutarha- ja palstaviljelyalue (RP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 540,
+    "fields": {
+      "name": "Siirtolapuutarha-alue (RP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 541,
+    "fields": {
+      "name": "Palstaviljelyalue (RP-p)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 542,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti ja maisemakulttuurin kannalta arvokas siirtolapuutarha-alue,jolla ympäristö säilytetään (RP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 543,
+    "fields": {
+      "name": "Siirtolapuutarha-alue, jolla ympäristö säilytetään (RP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 544,
+    "fields": {
+      "name": "Palstaviljelyalue (RP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 545,
+    "fields": {
+      "name": "Loma- ja matkailualue (RT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 546,
+    "fields": {
+      "name": "Yleiseen ulkoilukäyttöön varattu retkeilyalue (RU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 547,
+    "fields": {
+      "name": "Yleiseen ulkoilukäyttöön varattava retkeilyalue (RU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 548,
+    "fields": {
+      "name": "Loma-alue, jolle saa rakentaa virkistyspalvelurakennuksia yleiseen tai yhteisön käyttöön (RV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 549,
+    "fields": {
+      "name": "Yhteisötoimintaa palvelevien rakennusten korttelialue. (RY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 550,
+    "fields": {
+      "name": "Yhteisötoimintaa palvelevien rakennusten korttelialue, joka on kulttuurihistoriallisesti, rakennustaiteellisesti ja maisemakulttuurin kannalta arvokas. (RY-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 551,
+    "fields": {
+      "name": "Kesämajojen korttelialue (R-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 552,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti merkittävä kesämaja-alue (R-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 553,
+    "fields": {
+      "name": "Loma- ja virkistyspalvelujen korttelialue (R-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 554,
+    "fields": {
+      "name": "Lomakäyttöön tarkoitettu alue, jolla on suojelumäräys (R-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 555,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti arvokas kesämajojen korttelialue. (R-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 556,
+    "fields": {
+      "name": "Loma- ja virkistyspalvelujen korttelialue (R-2/sk)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 557,
+    "fields": {
+      "name": "Suojelualue (S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 558,
+    "fields": {
+      "name": "Luonnonsuojelualue (SL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 559,
+    "fields": {
+      "name": "Luonnon- ja maisemansuojelualue (SL-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 560,
+    "fields": {
+      "name": "Luonnon- ja maisemansuojelualue, joka on varattu kunnan tarpeisiin (SL/k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 561,
+    "fields": {
+      "name": "Luonnonsuojelualue ja Natura 2000-verkostoon kuuluva alue (SL-nat)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 562,
+    "fields": {
+      "name": "Luonnonsuojelualue (SL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 563,
+    "fields": {
+      "name": "Luonnonsuojelulain perusteella suojeltavaksi tarkoitettu alue (SL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 564,
+    "fields": {
+      "name": "Luonnonsuojelulain mukainen suojeltu luontotyyppi (SL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 565,
+    "fields": {
+      "name": "Luonnonsuojelulain perusteella suojeltavaksi tarkoitettu alue, jolla on erityinen virkistyskäyttömerkitys (SL-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 566,
+    "fields": {
+      "name": "Muinaismuistoalue (SM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 567,
+    "fields": {
+      "name": "Kulttuurihistoriallinen ympäristönsuojelualue (Sy)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 568,
+    "fields": {
+      "name": "Maisemansuojelualue (S-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 569,
+    "fields": {
+      "name": "Suojelualue, jolla sijaitsee luonnonsuojelulain 29 § mukainen luontotyyppi tai 47 § mukaisen lajin esiintymisalue. (S-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 570,
+    "fields": {
+      "name": "Maisemansuojelualue (S-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 571,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue (T)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 572,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue. Korttelialueelle saa sijoittaa tietojenkäsittelylaitoksen (T-ATK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 573,
+    "fields": {
+      "name": "Elintarviketeollisuuden ja tukkukaupan toimintaa palvelevien teollisuus- ja varastorakennusten korttelialue (TE)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 574,
+    "fields": {
+      "name": "Teollisuusrakennusten korttelialue (TK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 575,
+    "fields": {
+      "name": "Yhdistettyjen teollisuus-, varasto- ja liikerakennusten korttelialue (TK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 576,
+    "fields": {
+      "name": "Tehdaskortteli (TK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 577,
+    "fields": {
+      "name": "Kalasataman ja elintarviketeollisuuden toimintaa palvelevien teollisuus- ja varastorakennusten korttelialue (TKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 578,
+    "fields": {
+      "name": "Teollisuus-, varasto- ja toimistorakennusten korttelialue (TKT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 579,
+    "fields": {
+      "name": "Moottoriajoneuvojen korjaamon ja huoltoaseman korttelialue (TM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 580,
+    "fields": {
+      "name": "Pienteollisuusrakennusten korttelialue (TP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 581,
+    "fields": {
+      "name": "Yhdistettyjen pienteollisuus- ja asuntorakennusten korttelialue (TPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 582,
+    "fields": {
+      "name": "Yhdistettyjen pienteollisuus- ja omakotitalorakennusten korttelialue (TP/AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 583,
+    "fields": {
+      "name": "Yhdistettyjen pienteollisuus ja omakotirakennusten korttelialue (TP/AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 584,
+    "fields": {
+      "name": "Pesularakennusten korttelialue (TPE)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 585,
+    "fields": {
+      "name": "Pienteollisuus- ja liikerakennusten korttelialue (TPL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 586,
+    "fields": {
+      "name": "Pienteollisuus- ja varastorakennusten korttelialue (TPV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 587,
+    "fields": {
+      "name": "Satamatoimintaa palvelevien teollisuus- ja varastorakennusten korttelialue (TS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 588,
+    "fields": {
+      "name": "Satamatoimintaan liittyvien teollisuus- ja varastorakennusten korttelialue (TS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 589,
+    "fields": {
+      "name": "Teollisuuden sosiaalirakennusten korttelialue, johon saa sijoittaa asuntolahuoneita (TSOS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 590,
+    "fields": {
+      "name": "Sataman toimintaa palvelevien varastorakennusten korttelialue (TSV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 591,
+    "fields": {
+      "name": "Satamatoimintaa palvelevien yhdistettyjen varasto- ja huoltorakennusten korttelialue (TSVH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 592,
+    "fields": {
+      "name": "Teollisuusrakennusten korttelialue (TT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 593,
+    "fields": {
+      "name": "Teollisuusrakennusten ja -laitosten korttelialue (TT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 594,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue (TTV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 595,
+    "fields": {
+      "name": "Varastorakennusten korttelialue (TV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 596,
+    "fields": {
+      "name": "Teollisuus-, varasto- ja liikerakennusten korttelialue (TVL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 597,
+    "fields": {
+      "name": "Telakkakorttelialue (TVT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 598,
+    "fields": {
+      "name": "Teollisuusrakennusten korttelialue, jolla ympäristö asettaa toiminnan laadulle erityisiä vaatimuksia (TY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 599,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten korttelialue (TY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 600,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (TY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 601,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien yhdistettyjen pienteollisuus- ja asuntorakennusten korttelialue (TYA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 602,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien yhdistettyjen teollisuus- ja asuntorakennusten korttelialue (TYA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 603,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuusrakennusten sekä liike- ja toimistorakennusten korttelialue (TYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 604,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattoman teollisuus- ja varastorakennusten sekä toimistorakennusten korttelialue (TYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 605,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien yhdistettyjen teollisuus- ja liikerakennusten korttelialue (TYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 606,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten sekä yleisten pysäköintilaitosten korttelialue (TYLPY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 607,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten tai opetustoimintaa palvelevien rakennusten korttelialue (TYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 608,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien pienteollisuus- käsityö- ja autopaikkarakennusten korttelialue (TYP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 609,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten, yleisten rakennusten sekä toimistorakennusten korttelialue (TYYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 610,
+    "fields": {
+      "name": "Ympäristöhaittoja aiheuttamattoman teollisuus- ja varastorakennusten, yleisten rakennusten sekä toimistorakennusten korttelialue (TYYK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 611,
+    "fields": {
+      "name": "Ympäristöhäiriöitä aiheuttamattomien teollisuus- ja varastorakennusten korttelialue (TY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 612,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue (T-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 613,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue (T-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 614,
+    "fields": {
+      "name": "Teollisuus- ja varastorakennusten korttelialue (T-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 615,
+    "fields": {
+      "name": "Urheilualue (U)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 616,
+    "fields": {
+      "name": "Ampumarata (UA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 617,
+    "fields": {
+      "name": "Urheilukeskusalue, johon saa rakentaa urheilutoimintaa palvelevia rakennuksia ja laitteita (UK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 618,
+    "fields": {
+      "name": "Leikkikenttä (UL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 619,
+    "fields": {
+      "name": "Palloilukenttä (UP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 620,
+    "fields": {
+      "name": "Yleisurheilukenttä (UU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 621,
+    "fields": {
+      "name": "Uimaranta-alue (UV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 622,
+    "fields": {
+      "name": "Venelaituri- ja veneiden säilytysalue (UVL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 623,
+    "fields": {
+      "name": "Venesatama-alue (UVS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 624,
+    "fields": {
+      "name": "Venesatama- ja venehuoltoalue (UVS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 625,
+    "fields": {
+      "name": "Venesatama-alue (Uvs)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 626,
+    "fields": {
+      "name": "Urheilupuisto (UY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 627,
+    "fields": {
+      "name": "Venevajan, autotallin tai saunarakennuksen korttelialue (V)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 628,
+    "fields": {
+      "name": "Vesialue (W)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 629,
+    "fields": {
+      "name": "Vesialueella sijaitseva korttelialue, jolle saa sijoittaa kelluvia asuntoja ja niitä palvelevia laitureita, käyntisiltoja, venepaikkoja ja muita rakenteita, sekä kelluvan aallonmurtajan. (W/A-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 630,
+    "fields": {
+      "name": "Eläintarha-alue (VE)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 631,
+    "fields": {
+      "name": "Leikkikenttä (VK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 632,
+    "fields": {
+      "name": "Varastokortteli (VK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 633,
+    "fields": {
+      "name": "Kaasunpaineensäätäjäalue (VK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 634,
+    "fields": {
+      "name": "Leikkipuisto (VK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 635,
+    "fields": {
+      "name": "Vesialueella sijaitseva korttelialue. jolle saa sijoittaa toimisto- ja ravintolalaivoja (W/KL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 636,
+    "fields": {
+      "name": "Leikkipuisto, jonka alkuperäistä vaihetta edustavat osat tulee säilyttää (VK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 637,
+    "fields": {
+      "name": "Lähivirkistysalue (VL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 638,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti ja puutarhataiteellisesti merkittävä lähivirkistys- ja asuinalue. (VLA/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 639,
+    "fields": {
+      "name": "Lähivirkistysalue, joka on varattu kunnan tarpeisiin (VL/k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 640,
+    "fields": {
+      "name": "Lähivirkistysalue, jolla ympäristö säilytetään (VL/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 641,
+    "fields": {
+      "name": "Lähivirkistysalue, jolla ympäristöä tulee hoitaa alueen historiallisen linnoitusluonteen mukaisena (VL/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 642,
+    "fields": {
+      "name": "Lähivirkistysalue, jolla on maisemallisia ja geologisia arvoja (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 643,
+    "fields": {
+      "name": "Lähivirkistysalue, joka muodostaa avoimen kulttuurimaiseman reunan. (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 644,
+    "fields": {
+      "name": "Virkistysalue, joka liittyy kulttuurihistoriallisesti arvokkaaseen maisemapuistokokonaisuuteen (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 645,
+    "fields": {
+      "name": "Lähivirkistysalue, kulttuurihistoriallisesti, maisemallisesti ja geologisesti arvokas virkistysaluekokonaisuus. (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 646,
+    "fields": {
+      "name": "Lähivirkistysalue (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 647,
+    "fields": {
+      "name": "Lähivirkistysalue, joka on säilytettävä luonnonmukaisena metsänä (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 648,
+    "fields": {
+      "name": "Lähivirkistysalue, joka muodostaa kulttuurihistoriallisesti arvokkaan maisematilan reunan. (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 649,
+    "fields": {
+      "name": "Lähivirkistysalue, joka on asemakaavahistoriallisesti arvokas luonnonmukaisena hoidettava puistometsä (VL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 650,
+    "fields": {
+      "name": "Lähivirkistysalue, jolla on luonnonsuojelullista arvoa (VL-sl)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 651,
+    "fields": {
+      "name": "Virkistysalue, joka liittyy kulttuurihistoriallisesti arvokkaaseen maisemapuistokokonaisuuteen (VL/s-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 652,
+    "fields": {
+      "name": "Lähivirkistysalue, jolla luonnonympäristö ja alueella olevat sotahistoriaan liittyvät rakenteet tulee säilyttää. (VL/s-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 653,
+    "fields": {
+      "name": "Lähivirkistysalue, kansanpuisto (VL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 654,
+    "fields": {
+      "name": "Lähivirkistysalue (VL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 655,
+    "fields": {
+      "name": "Lähivirkistysalue, metsä (VL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 656,
+    "fields": {
+      "name": "Lähivirkistysalue, taajamametsä (VL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 657,
+    "fields": {
+      "name": "Muuntamoalue (VM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 658,
+    "fields": {
+      "name": "Muuntaja-alue (VM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 659,
+    "fields": {
+      "name": "Ampumarata-alue (VM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 660,
+    "fields": {
+      "name": "Muuntaja-alue metroa varten (VMM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 661,
+    "fields": {
+      "name": "Puistoalue (VP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 662,
+    "fields": {
+      "name": "Puisto (VP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 663,
+    "fields": {
+      "name": "Vesialueella sijaitseva palvelurakennusten korttelialue. (W/P)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 664,
+    "fields": {
+      "name": "Kasvitieteellisen puutarhan puistoalue (VPO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 665,
+    "fields": {
+      "name": "Suojeltava puisto (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 666,
+    "fields": {
+      "name": "Puistoalue, joka on osa histriallisesti ja puutarhakulttuurin kannalta arvokasta kartanoympäristöä. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 667,
+    "fields": {
+      "name": "Historialliseen sairaalakokonaisuuteen liittyvä puistoalue, joka on historiallisesti ja puutarhakulttuurin kannalta sekä maisemakuvallisesti ja kasvillisuudeltaan arvokas. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 668,
+    "fields": {
+      "name": "Kaupunkipuisto, joka on puistohistoriallisesti, kulttuurihistoriallisesti ja kaupunkikuvallisesti arvokas (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 669,
+    "fields": {
+      "name": "Puisto. Kulttuurihistoriallisesti arvokas kansanpuisto, jota tulee hoitaa siten, että alueen ja rakennuskannan kulttuurihistoriallinen arvo säilyy. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 670,
+    "fields": {
+      "name": "Puisto, jolla ympäristö säilytetään (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 671,
+    "fields": {
+      "name": "Puisto. Puutarhakulttuurin ja maiseman kannalta arvokas kartanopuisto. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 672,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti, puutarhataiteellisesti ja maisemakuvallisesti arvokas puisto (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 673,
+    "fields": {
+      "name": "Kulttuurihistoriallisesti, puutarhataiteellisesti ja maisemakuvallisesti arvokas puisto. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 674,
+    "fields": {
+      "name": "Kaupunkikuvan kannalta arvokas puisto (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 675,
+    "fields": {
+      "name": "Puisto, joka on kulttuurihistoriallisesti ja kaupunkikuvallisesti merkittävä osa Olympiakylän aluekokonaisuutta. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 676,
+    "fields": {
+      "name": "Puisto, jonka puusto on hoidettava ja uudistettava siten, että sen kaupunkikuvallinen merkitys säilyy. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 677,
+    "fields": {
+      "name": "Puisto, jolla ympäristö säilytetään ja hoidetaan kulttuurimaiseman osana. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 678,
+    "fields": {
+      "name": "Puistovyöhyke, joka tulee säilyttää puoliavoimena puistomaisena tilana. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 679,
+    "fields": {
+      "name": "Suojeltava puisto, joka on kaupunkikuvallisesti, kulttuurihistoriallisesti ja puutarhataiteen kannalta arvokas. (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 680,
+    "fields": {
+      "name": "Puistoalue, joka on kulttuurihistoriallisesti ja maisemallisesti merkittävä (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 681,
+    "fields": {
+      "name": "Puistoalue, jonka luontosuhteita ei puistorakentamisella saa muuttaa (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 682,
+    "fields": {
+      "name": "Asemakaavahistoriallisesti ja puutarhataiteellisesti arvokas puisto, jota tulee hoitaa siten, että sen ominaispiirteet säilyvät (VP/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 683,
+    "fields": {
+      "name": "Puisto (VP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 684,
+    "fields": {
+      "name": "Puisto, jolla puusto on säilytettävä (VP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 685,
+    "fields": {
+      "name": "Historiallisesti arvokas puistoalue (VP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 686,
+    "fields": {
+      "name": "Puisto, jonka kalliometsäluonne on säilytettävä (VP-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 687,
+    "fields": {
+      "name": "Puisto. Kulttuurihistoriallisesti arvokas museotoimintaa ja virkistystä palveleva puistoalue (VP-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 688,
+    "fields": {
+      "name": "Puisto, joka kulttuurihistoriallisesti ja puistohistoriallisesti arvokas. (VP-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 689,
+    "fields": {
+      "name": "Histoariallisesti arvokas puisto, jossa sijaitsee muinaismuistolain rauhoittama kaupunkiarkeologinen kiinteä muinaisjäänne (VP-1/sm)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 690,
+    "fields": {
+      "name": "Puisto, jolla oleva hyväkuntoinen puusto tulee säilyttää (VP-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 691,
+    "fields": {
+      "name": "Puisto, jolla on kaupunkikuvallisesti arvokas kuusiaita, joka on säilytettävä (VP-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 692,
+    "fields": {
+      "name": "Puisto, joka on uudistettava ja hoidettava siten, että sen kulttuurihistoriallinen ja kaupunkikuvallinen merkitys Väinölänpuiston kanssa muodostuvan puistoakselin päätteenä korostuu. (VP-2/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 693,
+    "fields": {
+      "name": "Puisto. Kulttuurihistoriallisesti arvokas museotoimintaa ja virkistystä palveleva puistoalue (VP-2/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 694,
+    "fields": {
+      "name": "Puisto, jolla on kaupunkikuvallisesti arvokas kuusiaita, joka on säilytettävä (VP-3)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 695,
+    "fields": {
+      "name": "Retkeily- ja ulkoilualue (VR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 696,
+    "fields": {
+      "name": "Retkeily- ja ulkoilualue, joka on maisemakulttuurin kannalta arvokas (VR/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 697,
+    "fields": {
+      "name": "Historiallisen sairaalakokonaisuuden maisemaan liittyvä vesialue. (W/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 698,
+    "fields": {
+      "name": "Virkistysalue (V/s-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 699,
+    "fields": {
+      "name": "Varastotontti (VT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 700,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelualue ratsastuskoulua varten (VU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 701,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelujen alue (VU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 702,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelualue (VU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 703,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelujen alue ratsastusta varten (VU-ra)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 704,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelualue, joka säilytetään avoimena tilana (VU/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 705,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelualue, jjolla ympäristö säilytetään (VU/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 706,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvalujen alue, joka on kultturihistoriallisesti ja maisemakuvallisesti arvokas. (VU/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 707,
+    "fields": {
+      "name": "Urheilu- ja virkistyspalvelujen alue ratsastuskeskusta varten, joka on osa historiallisesti arvokasta kartanoympäristöä. (VU-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 708,
+    "fields": {
+      "name": "Uimaranta-alue (VV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 709,
+    "fields": {
+      "name": "Vesialue (W-V)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 710,
+    "fields": {
+      "name": "Vesialue, joka on varattu valtion tarkoituksiin. (W-v)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 711,
+    "fields": {
+      "name": "Uimaranta-alue. Kulttuurihistoriallisesti arvokas uimalan alue. (VV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 712,
+    "fields": {
+      "name": "Uimaranta-alue, jolla on maisemallisia ja geologisia arvoja (VV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 713,
+    "fields": {
+      "name": "Virkistysalue (VY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 714,
+    "fields": {
+      "name": "Ulkoilu- ja virkistysalue (V-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 715,
+    "fields": {
+      "name": "Vesialue (W-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 716,
+    "fields": {
+      "name": "Virkistyspalvelujen alue, joka on tarkoitettu yleiseen tai yhteisöjen käyttöön (V-1/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 717,
+    "fields": {
+      "name": "Vesitorni (Y)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 718,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Sähkölaitoksen muuntoasemaa varten (Y)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 719,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue (Y)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 720,
+    "fields": {
+      "name": "Arkistorakennusten korttelialue (YA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 721,
+    "fields": {
+      "name": "Lähetystörakennusten korttelialue (YA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 722,
+    "fields": {
+      "name": "Korttelialue vanhusten asuntolaa varten (YA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 723,
+    "fields": {
+      "name": "Lähetystörakennusten korttelialue, jolle saa rakentaa vieraan valtion edustamisen kannalta tarpeellisia virka-asuntoja (YA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 724,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue, johon saa sijoittaa miesten yhteisasuntolan (YAS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 725,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue, jolle saa rakentaa vanhusten asuntolan (YAS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 726,
+    "fields": {
+      "name": "Valtion asuin-, edustus- ja hallintorakennusten korttelialue. (YE-V)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 727,
+    "fields": {
+      "name": "Lähetystörakennusten korttelialue (YH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 728,
+    "fields": {
+      "name": "Hallinto-ja virastorakennusten korttelialue (YH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 729,
+    "fields": {
+      "name": "Hallinto-, virasto-ja seurakunnallisten rakennusten korttelialue (YHK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 730,
+    "fields": {
+      "name": "Hallinto-ja virastorakennusten korttelialue, jolle saa rakentaa vieraan valtion edustamiseen tarkoitettuja rakennuksia, joissa saa olla tarpeellisia virka-auntoja (YHL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 731,
+    "fields": {
+      "name": "Hallinto-ja virastorakennusten korttelialue, jolle saa rakentaa vieraan valtion edustamiseen tarkoitettuja rakennuksia sekä tarpeellisia virka-asuntoja (YHL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 732,
+    "fields": {
+      "name": "Hallinto- ja virastorakennusten korttelialue, jolle saa rakentaa vieraan valtion edustamiseen tarkoitettuja rakennuksia sekä tarpeellisia virka-asuntoja (YHL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 733,
+    "fields": {
+      "name": "Hallinto-, virasto-ja opetustoimintaa palvelevien rakennusten korttelialue (YHO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 734,
+    "fields": {
+      "name": "Posti- ja lennätintoimintaa sekä siihen liittyvää opetustoimintaa palvelevan rakennuksen korttelialue (YHO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 735,
+    "fields": {
+      "name": "Lähetystörakennusten korttelialue, joka on kulttuurihistoriallisesti arvokas. (YH/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 736,
+    "fields": {
+      "name": "Hallinto-ja virastorakennusten korttelialue, jolla ympäristö säilytetään (YH/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 737,
+    "fields": {
+      "name": "Virasto-ja sosiaalista toimintaa palvelevien rakennusten korttelialue (YHS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 738,
+    "fields": {
+      "name": "Kunnallishallinnollisten sekä kunnallisteknisten rakennusten ja laitosten korttelialue (YHT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 739,
+    "fields": {
+      "name": "Hallinto- ja tutkimuslaitosrakennusten korttelialue (YHT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 740,
+    "fields": {
+      "name": "Valtion hallinto- ja edustusrakennusten korttelialue, jossa saa olla myös asuntoja (YHV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 741,
+    "fields": {
+      "name": "Valtion asuin-, edustus- ja hallintorakennusten korttelialue. (YH-v/s1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 742,
+    "fields": {
+      "name": "Valtion asuin-, edustus ja hallintorakennusten korttelialue. (YH-v/s2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 743,
+    "fields": {
+      "name": "Järjestötoimintaa palvelevien rakennusten korttelialue. (YJ)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 744,
+    "fields": {
+      "name": "Järjestötoimintaa palvelevien rakennusten korttelialue (YJ)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 745,
+    "fields": {
+      "name": "Järjestö-ja opetustoimintaa palvelevien rakennusten korttelialue (YJO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 746,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue. Indeksi osoittaa, että alue on varattu kaupungin tarpeisiin (Y-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 747,
+    "fields": {
+      "name": "Kirkkojen ja muiden seurakunnallisten rakennusten korttelialue. (YK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 748,
+    "fields": {
+      "name": "Kirkon tai muun seurakunnallisen rakennuksen korttelialue (YK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 749,
+    "fields": {
+      "name": "Kirkkojen ja muiden seurakunnallisten rakennusten korttelialue (YK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 750,
+    "fields": {
+      "name": "Kirkkojen ja muiden seurakunnallisten rakennusten sekä palveluasuntojen korttelialue. (YKA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 751,
+    "fields": {
+      "name": "Kirkollisten hallinto-ja virastorakennusten korttelialue (YKH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 752,
+    "fields": {
+      "name": "Kirkkojen ja muiden seurakunnallisten rakennusten korttelialue, jolla ympäristö säilytetään (YK/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 753,
+    "fields": {
+      "name": "Kirkkojen ja muiden seurakunnallisten rakennusten korttelialue, jolla ympäristö säilytetään (YK/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 754,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, joka on varattu seurakunnan käyttöön. (YKS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 755,
+    "fields": {
+      "name": "Kulttuurin tarpeita palvelevien rakennusten korttelialue (YKU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 756,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue (YL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 757,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue koulua ja lasten päiväkotia varten. (YL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 758,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten ja/tai asuinrakennusten korttelialue (YLA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 759,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue. Indeksi osoittaa, että alue on varattu kunnan tarpeisiin (YL-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 760,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten ja liikerakennusten korttelialue (YLK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 761,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue (YLK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 762,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue, jolla ympäristö säilytetään (YL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 763,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään Olympiakylän aluekokonaisuuden osana. (YL/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 764,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue. (YL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 765,
+    "fields": {
+      "name": "Julkisten lähipalvelurakennusten korttelialue lasten päiväkotia varten (YL-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 766,
+    "fields": {
+      "name": "Museoiden ja niihin verrattavien rakennusten korttelialue (YM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 767,
+    "fields": {
+      "name": "Museoiden ja niihin verrattavien rakennusten korttelialue, jossa saa olla kiinteistön hoidolle välttämättömiä asuntoja (YM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 768,
+    "fields": {
+      "name": "Museorakennusten korttelialue (YM)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 769,
+    "fields": {
+      "name": "Museo-, opetus- ja tutkimustoimintaa palvelevien rakennusten korttelialue (YMO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 770,
+    "fields": {
+      "name": "Museorakennusten korttelialue, jolla ympäristö säilytetään (YM/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 771,
+    "fields": {
+      "name": "Museo- ja näyttelyrakennusten korttelialue, joka osa historiallisesti ja maisemallisesti arvokasta kartanoympäristökokonaisuutta. (YM/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 772,
+    "fields": {
+      "name": "Museotoimintaa ja sosiaalista toimintaa palvelevien rakennusten korttelialue (YMS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 773,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue (poikkeamispäätöksellä) (YO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 774,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue (YO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 775,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue, jolle saa rakentaa sisäoppilaitoksen henkilökunta-asuntoineen (YOA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 776,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue (YOA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 777,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue (YOA-2)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 778,
+    "fields": {
+      "name": "Opetustoimintaa ja hallintoa palvelevien rakennusten korttelialue (YOH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 779,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue. Indeksi osoittaa, että alue on varattu kunnan tarpeisiin (YO-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 780,
+    "fields": {
+      "name": "Opintotarkoituksia palvelevien sekä liike- ja toimistorakennusten korttelialue (YOK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 781,
+    "fields": {
+      "name": "Opintotoimintaa palvelevien rakennusten korttelialue (YOK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 782,
+    "fields": {
+      "name": "Kirjaston korttelialue (YOK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 783,
+    "fields": {
+      "name": "Opetus- ja liiketoimintaa palvelevien rakennusten korttelialue (YOK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 784,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue, jolle saadaan sijoittaa myös harjoitteluravintola,-hotelli ja -myymälä (YOR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 785,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue, jolla ympäristö säilytetään (YO/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 786,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue, jolla ympäristö säilytetään (YO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 787,
+    "fields": {
+      "name": "Opetustoimintaa palvelevien rakennusten korttelialue, joka on rakennustaiteellisesti ja historiallisesti arvokas maisemallinen kokonaisuus, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään Olympiakylän aluekokonaisuuden osana. (YO/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 788,
+    "fields": {
+      "name": "Opetustoimintaa ja sosiaalitointa palvelevien rakennusten korttelialue (YOS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 789,
+    "fields": {
+      "name": "Opetus-ja sosiaalista toimintaa palvelevien rakennuusten korttelialue (YOS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 790,
+    "fields": {
+      "name": "Opetus- ja sosiaalista toimintaa palvelevien rakennusten korttelialue (YOS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 791,
+    "fields": {
+      "name": "Opetustoimintaa ja sosiaalitointa palvelevien rakennuusten korttelialue (YOS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 792,
+    "fields": {
+      "name": "Opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (YOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 793,
+    "fields": {
+      "name": "Opetus-, tutkimus-ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (YOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 794,
+    "fields": {
+      "name": "Hallinto-, opetus-, tutkimus-ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue (YOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 795,
+    "fields": {
+      "name": "Opetusta ja tutkimusta palvelevien rakennusten korttelialue (YOT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 796,
+    "fields": {
+      "name": "Opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue, jolla ympäristön ominaispiirteet säilytetään (YOT/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 797,
+    "fields": {
+      "name": "Opetus-, tutkimus- ja näihin verrattavaa toimintaa palvelevien rakennusten korttelialue, jonka rakennukset sekä puisto on suojeltu valtioneuvoston päätöksellä (asetus 480/85) (YOT/sv)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 798,
+    "fields": {
+      "name": "Opetus- ja urheilutoimintaa palvelevien rakennusten korttelialue (YOU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 799,
+    "fields": {
+      "name": "Opetus-, huvi-, kerho-ja viihdetoimintaa palvelevien rakennusten korttelialue (YOV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 800,
+    "fields": {
+      "name": "Opetus- ja kulttuuritoimintaa palvelevien rakennusten korttelialue (YOY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 801,
+    "fields": {
+      "name": "Paloaseman korttelialue. (YP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 802,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolle saa rakentaa paloaseman. (YPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 803,
+    "fields": {
+      "name": "Pelastusaseman korttelialue (YPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 804,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolle saa rakentaa vapaapalokunnan tiloja. (YPA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 805,
+    "fields": {
+      "name": "Radio- ja televisiotoiminnan korttelialue (YR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 806,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolla on kulttuurihistoriallisia ja maisemallisia arvoja (Y/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 807,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolla rakennukset pihapiireineen ja ympäristöineen säilytetään. (Y/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 808,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolla ympäristö säilytetään (Y/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 809,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue (YS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 810,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue. (YS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 811,
+    "fields": {
+      "name": "Sairaalarakennusten korttelialue (YS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 812,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue (YS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 813,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhoitoa palvelevien asuinrakennusten korttelialue (YSA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 814,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue, jolle saa sijoittaa vanhusten asunto- ja palvelukeskuksen (YSA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 815,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien asuinrakennusten korttelialue (YSA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 816,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien asuinrakennusten korttelialue (YSA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 817,
+    "fields": {
+      "name": "Sosiaalitointa ja kulttuuritoimintaa palvelevien rakennusten korttelialue, johon saa sijoittaa erityisasuntoja ja palvel (YSA-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 818,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue, jossa saa olla myös muita diakoniatoimintaan liittyviä tiloja. (YS-d)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 819,
+    "fields": {
+      "name": "Sosiaalihuoltoa palvelevien rakennusten korttelialue (YSH)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 820,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue. Alue on varattu kuntayhtymän (HUS) tarpeisiin (YS/k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 821,
+    "fields": {
+      "name": "Nuorisotilojen korttelialue (YSN)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 822,
+    "fields": {
+      "name": "Sosiaalitointa, terveydenhuoltoa ja opetustoimintaa palvelevien rakennusten korttelialue (YSO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 823,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue, jolla on valtakunnallisesti merkittäviä kulttuurihistoriallisia arvoja. (YS/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 824,
+    "fields": {
+      "name": "Sosiaali- ja terveydenhoitoa palvelevien rakennusten korttelialue, jolla ympäristö säilytetään (YS/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 825,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue, jolla ympäristö on säilytettävä. (YS/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 826,
+    "fields": {
+      "name": "Sairaalatoimintaa palvelevien rakennusten korttelialue (YSS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 827,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa sekä urheilutoimintaa palvelevien rakennusten korttelialue (YSU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 828,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue, jolle saa sijoittaa vanhusten asuntolan (YSV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 829,
+    "fields": {
+      "name": "Sosiaali-ja vapaa-ajantoimintoa palvelevien rakenusten korttelialue (YSV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 830,
+    "fields": {
+      "name": "Sosiaalista toimintaa palvelevien rakennusten korttelialue (YSV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 831,
+    "fields": {
+      "name": "Sosiaalitointa ja terveydenhuoltoa palvelevien rakennusten korttelialue. (YS-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 832,
+    "fields": {
+      "name": "Kunnallisteknillisten rakennusten ja laitosten korttelialue (YT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 833,
+    "fields": {
+      "name": "Paloasemarakennuksen korttelialue (YTP)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 834,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolle saa sijoittaa asuntoalueen huolto- ja sosiaalisia tiloja. (YTS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 835,
+    "fields": {
+      "name": "Puhelinkeskusrakennuksen korttelialue (YTT)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 836,
+    "fields": {
+      "name": "Tutkimustoimintaa palvelevien rakennusten korttelialue (YTU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 837,
+    "fields": {
+      "name": "Urheilutoimintaa palvelevien rakennusten korttelialue (YU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 838,
+    "fields": {
+      "name": "Urheilu- ja kulttuuritoimintaa palvelevien rakennusten korttelialue. (YU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 839,
+    "fields": {
+      "name": "Urheilu- ja kerhotoimintaa palvelevien rakennusten korttelialue (YU)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 840,
+    "fields": {
+      "name": "Urheilutoimintaa palvelevien rakennusten sekä asuinrakennusten korttelialue (YUA)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 841,
+    "fields": {
+      "name": "Urheilu- ja opetustoimintaa palvelevien rakennusten korttelialue. (YUO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 842,
+    "fields": {
+      "name": "Urheilu-, liikunta- ja kulttuuritoimintaa palvelevien rakennusten korttelialue, suojeltu rakennussuojelulain/rakennusperinnön suojelemisesta annetun lain nojalla. (YU/srs)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 843,
+    "fields": {
+      "name": "Urheilutoimintaa sekä huvi- ja viihdetarkoituksia palvelevien rakennusten korttelialue (YUV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 844,
+    "fields": {
+      "name": "Urheilutoimintaa ja viihdetarkoituksia palvelevien rakennusten korttelialue (YUV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 845,
+    "fields": {
+      "name": "Musiikin harjoitustilojen korttelialue (poikkeamispäätöksellä) (YV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 846,
+    "fields": {
+      "name": "Huvi-, kerho- ja viihdetoimintaa palvelevien rakennusten korttelialue (YV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 847,
+    "fields": {
+      "name": "Huvi- ja viihdetarkoituksia palvelevien rakennusten korttelialue (YV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 848,
+    "fields": {
+      "name": "Huvi -ja viihdetarkoituksia palvelevien rakennusten korttelialue (YV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 849,
+    "fields": {
+      "name": "Huvi -ja viihdetarkoituksia palvelevien rakennusten korttelialue (Yve)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 850,
+    "fields": {
+      "name": "Vankeinhoitoa palvelevien rakennusten korttelialue (YVK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 851,
+    "fields": {
+      "name": "Huvi,- viihde- ja opintotarkoituksia palvelevien rakennusten korttelialue (YVO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 852,
+    "fields": {
+      "name": "Huvi- ja viihdetarkoituksia palvelevien rakennusten korttelialue, jolla ympäristö säilytetään (YV/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 853,
+    "fields": {
+      "name": "Väestösuojien huoltoa palvelevien rakennusten korttelialue (YVS)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 854,
+    "fields": {
+      "name": "Yhdistys-ja viihdetoimintaa palvelevien rakennusten korttelialue (YVY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 855,
+    "fields": {
+      "name": "Kulttuuritoimintaa palvelevien rakennusten korttelialue (YY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 856,
+    "fields": {
+      "name": "Kultturitoimintaa palvelevien rakennusten korttelialue (YY)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 857,
+    "fields": {
+      "name": "Kulttuuritoimintaa palvelevien rakennusten ja asuinrakennusten korttelialue, jolla ympäristö säilytetään (YYA/S)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 858,
+    "fields": {
+      "name": "Yliopistollista opetus-ja tutkimustoimintaa palvelevien rakennusten korttelialue, johon saadaan sijoittaa asuntoja vain kiinteistön hoitohenkilökunnalle (YYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 859,
+    "fields": {
+      "name": "Kulttuuri- ja opetustoimintaa palvelevien rakennusten korttelialue (YYO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 860,
+    "fields": {
+      "name": "Teatteritoimintaa palvelevien rakennusten korttelialue, joka on kulttuurihistoriallisesti, rakennustaiteellisesti ja maisemakulttuurin kannalta arvokas. (YY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 861,
+    "fields": {
+      "name": "Kulttuuritoimintaa palvelevien rakennusten korttelialue, jolla ympäristö säilytetään (YY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 862,
+    "fields": {
+      "name": "Kulttuuritoimintaa palvelevien rakennusten korttelialue , jolla ympäristö säilytetään (YY/s)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 863,
+    "fields": {
+      "name": "Kulttuuritoimintaa palvelevien rakennusten korttelialue (YY/s-k)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 864,
+    "fields": {
+      "name": "Yhdistys-ja viihdetarkoituksia palvelevien rakennusten korttelialue (YYV)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 865,
+    "fields": {
+      "name": "Kulttuuri-ja yhdistystoimintaa palvelevien rakennusten korttelialue (YY-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 866,
+    "fields": {
+      "name": "Postitoimintojen korttelialue (Y-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 867,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue, jolle saa rakentaa talvipuutarhan sekä siihen liittyviä toimisto-,näyttely-,kokoontumis- ja opetustiloja sekä puutarha-alan myymälöitä (Y-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 868,
+    "fields": {
+      "name": "Yleisten rakennusten ja liikerakennusten korttelialue (Y-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 869,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue (Y-1)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 870,
+    "fields": {
+      "name": "Yleisten rakennusten kortelialue, jolla huvilaympäristön ominaispiirteet on säilytettävä (Y-1/sk)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 871,
+    "fields": {
+      "name": ""
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 872,
+    "fields": {
+      "name": "Pienteollisuustontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 873,
+    "fields": {
+      "name": "Liikennealue (Rautatiealue)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 874,
+    "fields": {
+      "name": "Urheilualue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 875,
+    "fields": {
+      "name": "Asunto- tai liiketontti (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 876,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Tonttia saadaan käyttää museorakennusta varten"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 877,
+    "fields": {
+      "name": "Autohuoltotontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 878,
+    "fields": {
+      "name": "Asuntotontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 879,
+    "fields": {
+      "name": "Asuntotontti (AO)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 880,
+    "fields": {
+      "name": "Autotallirakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 881,
+    "fields": {
+      "name": "Hautausmaa"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 882,
+    "fields": {
+      "name": "Teollisuusrakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 883,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Opetusrakennuksen tontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 884,
+    "fields": {
+      "name": "Asuntorakennusten korttelialue. Kerrostalotontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 885,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Korttelia on käytettävä urheilustadionia ja siihen liittyviä huonetiloja varten."
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 886,
+    "fields": {
+      "name": "Toimistotontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 887,
+    "fields": {
+      "name": "Krematorion tontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 888,
+    "fields": {
+      "name": "Asunto- tai liiketontti (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 889,
+    "fields": {
+      "name": "Puistoalue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 890,
+    "fields": {
+      "name": "Asuntotontti (AK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 891,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Koulutontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 892,
+    "fields": {
+      "name": "Asuntotontti. Rivitalojen korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 893,
+    "fields": {
+      "name": "Yleisten rakennusten tontti. Hallinto-ja virastorakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 894,
+    "fields": {
+      "name": "Satama-alue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 895,
+    "fields": {
+      "name": "Asuntotontti (AR)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 896,
+    "fields": {
+      "name": "Asuntotontti. Tontille saa rakentaa voimakeskusrakennuksen"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 897,
+    "fields": {
+      "name": "Varastorakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 898,
+    "fields": {
+      "name": "Koulupuutarha"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 899,
+    "fields": {
+      "name": "Katuaukio/Tori"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 900,
+    "fields": {
+      "name": "Vesialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 901,
+    "fields": {
+      "name": "Asunto- tai liiketontti (ALK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 902,
+    "fields": {
+      "name": "Liikerakennuksen tontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 903,
+    "fields": {
+      "name": "Asuntorakennusten korttelialue. Pientalojen tontti."
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 904,
+    "fields": {
+      "name": "Asuinrakennuksen korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 905,
+    "fields": {
+      "name": "Huoltorakennuksen tontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 906,
+    "fields": {
+      "name": "Autotalli- ja autohuoltorakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 907,
+    "fields": {
+      "name": "Yleisten rakennusten korttelialue. Sairaalatontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 908,
+    "fields": {
+      "name": "Siirtolapuutarha"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 909,
+    "fields": {
+      "name": "Asuntotontti (AL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 910,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti. Kansallisteatteri"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 911,
+    "fields": {
+      "name": "Katuaukio/tori"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 912,
+    "fields": {
+      "name": "Yleisten rakennusten tontti. Julkisten lähipalvelurakennusten korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 913,
+    "fields": {
+      "name": "Asunto- tai liiketontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 914,
+    "fields": {
+      "name": "Liikennealue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 915,
+    "fields": {
+      "name": "Teatterirakennus"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 916,
+    "fields": {
+      "name": "Korttelialue likaveden pumppuasemaa varten"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 917,
+    "fields": {
+      "name": "Asuntotontti (AKL)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 918,
+    "fields": {
+      "name": "Yleisen rakennuksen tontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 919,
+    "fields": {
+      "name": "Asuntokerrostalojen korttelialue"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 920,
+    "fields": {
+      "name": "Asunto- ja liiketontti"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 921,
+    "fields": {
+      "name": "Asuntotontti (ALK)"
+    }
+  },
+  {
+    "model": "leasing.PlanUnitIntendedUse",
+    "pk": 922,
+    "fields": {
+      "name": "Katualue"
+    }
+  }
+]

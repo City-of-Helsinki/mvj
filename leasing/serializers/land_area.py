@@ -2,6 +2,7 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from leasing.models import ConstructabilityDescription
+from leasing.models.land_area import PlanUnitIntendedUse
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -21,14 +22,22 @@ class PlanUnitStateSerializer(NameModelSerializer):
         fields = '__all__'
 
 
+class PlanUnitIntendedUseSerializer(NameModelSerializer):
+    class Meta:
+        model = PlanUnitIntendedUse
+        fields = '__all__'
+
+
 class PlanUnitSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = PlanUnit
         fields = ('id', 'identifier', 'area', 'section_area', 'address', 'postal_code', 'city', 'type',
-                  'in_contract', 'plot_division_identifier', 'plot_division_date_of_approval',
-                  'detailed_plan_identifier', 'detailed_plan_date_of_approval', 'plan_unit_type', 'plan_unit_state')
+                  'in_contract', 'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_state',
+                  'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
+                  'detailed_plan_latest_processing_date_note', 'plan_unit_type', 'plan_unit_state',
+                  'plan_unit_intended_use')
 
 
 class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -38,12 +47,17 @@ class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.Mod
     plan_unit_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState, queryset=PlanUnitState.objects.filter(),
         related_serializer=PlanUnitTypeSerializer)
+    plan_unit_intended_use = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlanUnitIntendedUse, queryset=PlanUnitIntendedUse.objects.filter(),
+        related_serializer=PlanUnitIntendedUseSerializer)
 
     class Meta:
         model = PlanUnit
         fields = ('id', 'identifier', 'area', 'section_area', 'address', 'postal_code', 'city', 'type',
-                  'in_contract', 'plot_division_identifier', 'plot_division_date_of_approval',
-                  'detailed_plan_identifier', 'detailed_plan_date_of_approval', 'plan_unit_type', 'plan_unit_state')
+                  'in_contract', 'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_state',
+                  'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
+                  'detailed_plan_latest_processing_date_note', 'plan_unit_type', 'plan_unit_state',
+                  'plan_unit_intended_use')
 
 
 class PlotSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -52,7 +66,7 @@ class PlotSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Plot
         fields = ('id', 'identifier', 'area', 'section_area', 'address', 'postal_code', 'city', 'type',
-                  'registration_date', 'in_contract')
+                  'registration_date', 'repeal_date', 'in_contract')
 
 
 class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
