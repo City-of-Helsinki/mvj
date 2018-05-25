@@ -1,6 +1,10 @@
 from django.utils.encoding import force_text
 from rest_framework.fields import DecimalField
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.relations import PrimaryKeyRelatedField
+
+from leasing.models import Lease, Contact
+from users.models import User
 
 
 class FieldsMetadata(SimpleMetadata):
@@ -25,6 +29,10 @@ class FieldsMetadata(SimpleMetadata):
             field_info['max_digits'] = field.max_digits
 
         if hasattr(field, 'choices'):
+            # TODO: Make configurable
+            if hasattr(field, 'queryset') and field.queryset.model in (User, Lease, Contact):
+                return field_info
+
             field_info['choices'] = [{
                 'value': choice_value,
                 'display_name': force_text(choice_name, strings_only=True)
