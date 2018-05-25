@@ -253,7 +253,7 @@ class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
                                            month=datetime_instance.month))
 
 
-class ExplanationItem():
+class ExplanationItem:
     def __init__(self, subject=None, date_ranges=None, amount=None):
         self.subject = subject
         self.sub_items = []
