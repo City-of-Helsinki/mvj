@@ -3,91 +3,1834 @@
     "model": "leasing.IntendedUse",
     "pk": 1,
     "fields": {
-      "name": "Asuminen / yleinen"
+      "name": "Aidan / aitauksen pito-oikeus"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 2,
     "fields": {
-      "name": " Vapaarahoitteisia omistusasuntoja"
+      "name": "Ajotieyhteys"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 3,
     "fields": {
-      "name": " Aravaomistusasuntoja"
+      "name": "Ajotunnelin pito-oikeus"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 4,
     "fields": {
-      "name": " Vapaarahoitteisia vuokra-asuntoja"
+      "name": "Aravaomistusasuntoja"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 5,
     "fields": {
-      "name": " Aravavuokrataloja"
+      "name": "Aravavuokrataloja"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 6,
     "fields": {
-      "name": " Peruskorjattuja arava-vuokrataloja"
+      "name": "Asuinrakennuksen pitäminen"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 7,
     "fields": {
-      "name": " Omakotitalo"
+      "name": "Asuminen / yleinen"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 8,
     "fields": {
-      "name": " Paritalo"
+      "name": "Asumisoikeusasuntoja"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 9,
     "fields": {
-      "name": " Sekatalo"
+      "name": "Asuntola/tukikoti"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 10,
     "fields": {
-      "name": " Asumisoikeusasuntoja"
+      "name": "Asuntotarkoituksiin"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 11,
     "fields": {
-      "name": " Opiskelija-asuntoja"
+      "name": "Autogrilli"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 12,
     "fields": {
-      "name": " Vanhusten asuntoja"
+      "name": "Autojen/asuntov. myynti ja varastointi"
     }
   },
   {
     "model": "leasing.IntendedUse",
     "pk": 13,
     "fields": {
-      "name": " Palvelutalo/hoitokoti"
+      "name": "Autokatsastus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 14,
+    "fields": {
+      "name": "Autokorjaamotoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 15,
+    "fields": {
+      "name": "Autoliike"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 16,
+    "fields": {
+      "name": "Autopesula"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 17,
+    "fields": {
+      "name": "Autotallin pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 18,
+    "fields": {
+      "name": "Betoniasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 19,
+    "fields": {
+      "name": "Egnahemshus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 20,
+    "fields": {
+      "name": "Energiahuolto"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 21,
+    "fields": {
+      "name": "Erkkerin / katoksen pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 22,
+    "fields": {
+      "name": "Esirakentaminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 23,
+    "fields": {
+      "name": "Hajoitus-/sadevesi- yms kaivon pito-oik."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 24,
+    "fields": {
+      "name": "Halli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 25,
+    "fields": {
+      "name": "Hautausmaa"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 26,
+    "fields": {
+      "name": "Hautausmaa (eläinten)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 27,
+    "fields": {
+      "name": "Hengelliset telttakokoukset"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 28,
+    "fields": {
+      "name": "Hiekkasiilo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 29,
+    "fields": {
+      "name": "Hiekkasiilo+ Vaihtolava"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 30,
+    "fields": {
+      "name": "Hotelli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 31,
+    "fields": {
+      "name": "Huoltoasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 32,
+    "fields": {
+      "name": "Huoltoasema/autohalli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 33,
+    "fields": {
+      "name": "Huoltoaseman lisäalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 34,
+    "fields": {
+      "name": "Huoltoasemat / jakelulaitteet / poltt."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 35,
+    "fields": {
+      "name": "Huoltorakennus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 36,
+    "fields": {
+      "name": "Huoltotie"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 37,
+    "fields": {
+      "name": "Huvilan pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 38,
+    "fields": {
+      "name": "Ilmoitustaulu/mainostaulu/pyloni"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 39,
+    "fields": {
+      "name": "Jakeluasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 40,
+    "fields": {
+      "name": "Jakeluasema (Diesel)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 41,
+    "fields": {
+      "name": "Jakeluaseman lisäalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 42,
+    "fields": {
+      "name": "Jalank.-/laite-/putki- yms tunnel. p-oik"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 43,
+    "fields": {
+      "name": "Jäte- tm astian/säiliön pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 44,
+    "fields": {
+      "name": "Jäteasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 45,
+    "fields": {
+      "name": "Kahvila/ravintola"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 46,
+    "fields": {
+      "name": "Kaluston/materiaalin säilytys"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 47,
+    "fields": {
+      "name": "Kanavaputkitus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 48,
+    "fields": {
+      "name": "Kartta- tms. telineen pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 49,
+    "fields": {
+      "name": "Katualue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 50,
+    "fields": {
+      "name": "Kaupunkikylpylä"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 51,
+    "fields": {
+      "name": "Kaupunkimetsät"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 52,
+    "fields": {
+      "name": "Kaupunkipientalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 53,
+    "fields": {
+      "name": "Kesämaja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 54,
+    "fields": {
+      "name": "Kilpailun järjestäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 55,
+    "fields": {
+      "name": "Kioski"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 56,
+    "fields": {
+      "name": "Kirjapaino"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 57,
+    "fields": {
+      "name": "Kirkko"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 58,
+    "fields": {
+      "name": "Koirien koulutusalue / -tilaisuus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 59,
+    "fields": {
+      "name": "Kokoontuminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 60,
+    "fields": {
+      "name": "Kokoustila"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 61,
+    "fields": {
+      "name": "Kontin pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 62,
+    "fields": {
+      "name": "Korkotukilainoitettu vuokratalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 63,
+    "fields": {
+      "name": "Koulurakennus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 64,
+    "fields": {
+      "name": "Krematorio"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 65,
+    "fields": {
+      "name": "Kulkuoikeus  tontin kautta tontille"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 66,
+    "fields": {
+      "name": "Kulkuyhteys"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 67,
+    "fields": {
+      "name": "Kulttuuritoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 68,
+    "fields": {
+      "name": "Kuntoutus- ja ryhmäkoti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 69,
+    "fields": {
+      "name": "Käymälä"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 70,
+    "fields": {
+      "name": "Käyttöoikeus alueeseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 71,
+    "fields": {
+      "name": "Laites./relekesk./jakok. yms. pito-oik."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 72,
+    "fields": {
+      "name": "Laiturialue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 73,
+    "fields": {
+      "name": "Lastauslaituri yms. rakenteet"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 74,
+    "fields": {
+      "name": "Liikenne-/muu koulutusalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 75,
+    "fields": {
+      "name": "Liikennealue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 76,
+    "fields": {
+      "name": "Liikenneasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 77,
+    "fields": {
+      "name": "Liikennekioskin pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 78,
+    "fields": {
+      "name": "Liiketarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 79,
+    "fields": {
+      "name": "Liikuntakäyttö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 80,
+    "fields": {
+      "name": "Lisäalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 81,
+    "fields": {
+      "name": "Lisäpiha"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 82,
+    "fields": {
+      "name": "Lumenkaatopaikka"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 83,
+    "fields": {
+      "name": "Lumensulatusasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 84,
+    "fields": {
+      "name": "Lupien hakeminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 85,
+    "fields": {
+      "name": "Lämpökeskus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 86,
+    "fields": {
+      "name": "Maa-ainesten varastointi"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 87,
+    "fields": {
+      "name": "Maakaasun tankkausasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 88,
+    "fields": {
+      "name": "Maamassojen varastointi"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 89,
+    "fields": {
+      "name": "Maanalainen jäteasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 90,
+    "fields": {
+      "name": "Maanalainen kulkuyhteys"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 91,
+    "fields": {
+      "name": "Maanalainen polttoainesäiliö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 92,
+    "fields": {
+      "name": "Maanalainen tila"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 93,
+    "fields": {
+      "name": "Maanalainen yhdystunneli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 94,
+    "fields": {
+      "name": "Maanalaisen tilan pito/käyttöoikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 95,
+    "fields": {
+      "name": "Maankäyttösopimus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 96,
+    "fields": {
+      "name": "Maanrakennustöiden tekeminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 97,
+    "fields": {
+      "name": "Majoitustoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 98,
+    "fields": {
+      "name": "Maksamaton kauppahinta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 99,
+    "fields": {
+      "name": "Masto (radio, GSM/NMT yms.)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 100,
+    "fields": {
+      "name": "Meriasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 101,
+    "fields": {
+      "name": "Metroasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 102,
+    "fields": {
+      "name": "Metsäalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 103,
+    "fields": {
+      "name": "Metsät ulkokunnissa (Espoo)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 104,
+    "fields": {
+      "name": "Metsät ulkokunnissa (Hanko)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 105,
+    "fields": {
+      "name": "Metsät ulkokunnissa (Sipoo)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 106,
+    "fields": {
+      "name": "Metsät ulkokunnissa (Vantaa)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 107,
+    "fields": {
+      "name": "Metsät ulkokunnissa (Vihti)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 108,
+    "fields": {
+      "name": "Metsät ulkunnissa (Kirkkonummi)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 109,
+    "fields": {
+      "name": "Monitoimi- / korttelitalo yms."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 110,
+    "fields": {
+      "name": "Murskaamoalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 111,
+    "fields": {
+      "name": "Museo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 112,
+    "fields": {
+      "name": "Muu yleinen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 113,
+    "fields": {
+      "name": "Myymälä"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 114,
+    "fields": {
+      "name": "Myynti- ja liiketoimintaa"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 115,
+    "fields": {
+      "name": "Omakotitalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 116,
+    "fields": {
+      "name": "Omistusasuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 117,
+    "fields": {
+      "name": "Opetustoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 118,
+    "fields": {
+      "name": "Opiskelija-asuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 119,
+    "fields": {
+      "name": "Ostoskeskus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 120,
+    "fields": {
+      "name": "Paineenmuuntoasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 121,
+    "fields": {
+      "name": "Paloasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 122,
+    "fields": {
+      "name": "Palvelutalo (liiketoimintaa)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 123,
+    "fields": {
+      "name": "Palvelutalo/hoitokoti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 124,
+    "fields": {
+      "name": "Paritalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 125,
+    "fields": {
+      "name": "Pelastustie"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 126,
+    "fields": {
+      "name": "Peruskorjattu omakotitalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 127,
+    "fields": {
+      "name": "Peruskorjattuja arava-vuokrataloja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 128,
+    "fields": {
+      "name": "Peruskorjattuja aravaomistustaloja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 129,
+    "fields": {
+      "name": "Peruskorjattuja vapaarah. omistustaloja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 130,
+    "fields": {
+      "name": "Peruskorjattuja vapaarah. vuokrataloja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 131,
+    "fields": {
+      "name": "Peruskorjattuja vuokrataloja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 132,
+    "fields": {
+      "name": "Pesula"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 133,
+    "fields": {
+      "name": "Pienoisgolf / golf"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 134,
+    "fields": {
+      "name": "Pienteollisuusrakennus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 135,
+    "fields": {
+      "name": "Poikkeamispäätöksen hakeminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 136,
+    "fields": {
+      "name": "Polttoaineen jakelulaite"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 137,
+    "fields": {
+      "name": "Puisto- ja viheralueet"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 138,
+    "fields": {
+      "name": "Puistoalueen kunnostaminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 139,
+    "fields": {
+      "name": "Pumppaamo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 140,
+    "fields": {
+      "name": "Putki-, laite-, kuljetussillan pito-oik."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 141,
+    "fields": {
+      "name": "Putkien pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 142,
+    "fields": {
+      "name": "Puutarha (Kaisaniemi)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 143,
+    "fields": {
+      "name": "Puutarha- / taimimyymälä)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 144,
+    "fields": {
+      "name": "Pysäköinti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 145,
+    "fields": {
+      "name": "Pysäköinti/asuntotontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 146,
+    "fields": {
+      "name": "Pysäköinti/kirkko, seurakuntatalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 147,
+    "fields": {
+      "name": "Pysäköinti/liiketontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 148,
+    "fields": {
+      "name": "Pysäköinti/opiskelija-asuntotontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 149,
+    "fields": {
+      "name": "Pysäköinti/teollisuustontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 150,
+    "fields": {
+      "name": "Pysäköinti/toimistotontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 151,
+    "fields": {
+      "name": "Pysäköinti/vanhainkoti tontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 152,
+    "fields": {
+      "name": "Pysäköinti/vanhusten asuntotontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 153,
+    "fields": {
+      "name": "Pysäköinti/yleisen rakennuksen tontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 154,
+    "fields": {
+      "name": "Pysäköintilaitos/maanalainen tila"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 155,
+    "fields": {
+      "name": "Pysäköintilaitos/rakennus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 156,
+    "fields": {
+      "name": "Pyörien, veneiden yms. laitt. vuokraus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 157,
+    "fields": {
+      "name": "Päivittäistavarakauppa"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 158,
+    "fields": {
+      "name": "Päiväkoti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 159,
+    "fields": {
+      "name": "Raiteenpito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 160,
+    "fields": {
+      "name": "Rakennuksen pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 161,
+    "fields": {
+      "name": "Rakennusjätteen lajittelu"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 162,
+    "fields": {
+      "name": "Rakennusl. hakem. (toimisto/liike/teoll)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 163,
+    "fields": {
+      "name": "Rakennusluvan hak. (huolto/jakeluasema)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 164,
+    "fields": {
+      "name": "Rakennusluvan hak. (yleinen rakennus)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 165,
+    "fields": {
+      "name": "Rakennusluvan hakeminen (asuminen)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 166,
+    "fields": {
+      "name": "Rakennusluvan hakeminen (liiketontti)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 167,
+    "fields": {
+      "name": "Rakennusluvan hakeminen (maanal. tila)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 168,
+    "fields": {
+      "name": "Rakennusluvan hakeminen (muu)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 169,
+    "fields": {
+      "name": "Rakennusluvan hakeminen (teollisuus)."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 170,
+    "fields": {
+      "name": "Rakennustöiden aloittaminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 171,
+    "fields": {
+      "name": "Rakenteiden sijoittaminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 172,
+    "fields": {
+      "name": "Rasitesopimuksen hyväksyminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 173,
+    "fields": {
+      "name": "Ravintolalaiva"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 174,
+    "fields": {
+      "name": "Romukauppa"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 175,
+    "fields": {
+      "name": "Ruoppaaminen/vesirakennustyö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 176,
+    "fields": {
+      "name": "Ryhmäkoti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 177,
+    "fields": {
+      "name": "SIIRTOLAVOJEN SÄILYTYS"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 178,
+    "fields": {
+      "name": "Saaret / luodot"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 179,
+    "fields": {
+      "name": "Sade-/hulevesien johtaminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 180,
+    "fields": {
+      "name": "Satamatoiminnot"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 181,
+    "fields": {
+      "name": "Sauna"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 182,
+    "fields": {
+      "name": "Sekalaiset"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 183,
+    "fields": {
+      "name": "Sekatalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 184,
+    "fields": {
+      "name": "Seurakuntatalo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 185,
+    "fields": {
+      "name": "Siirtolapuutarha"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 186,
+    "fields": {
+      "name": "Sirkus / tivoli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 187,
+    "fields": {
+      "name": "Sisäinen vuokraus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 188,
+    "fields": {
+      "name": "Sosiaalitoimi ja terveydenhuolto"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 189,
+    "fields": {
+      "name": "Suurtehohälytin"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 190,
+    "fields": {
+      "name": "Sähköasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 191,
+    "fields": {
+      "name": "Sähkömuuntamo"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 192,
+    "fields": {
+      "name": "Sähkön siirto"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 193,
+    "fields": {
+      "name": "Sähkönsyöttöasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 194,
+    "fields": {
+      "name": "Säiliö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 195,
+    "fields": {
+      "name": "Taide- tms teos"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 196,
+    "fields": {
+      "name": "Tapahtuma"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 197,
+    "fields": {
+      "name": "Tavaraterminaali"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 198,
+    "fields": {
+      "name": "Teatteri/Museo/Ooppera ym. taidelaitoks."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 199,
+    "fields": {
+      "name": "Tekninen huolto"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 200,
+    "fields": {
+      "name": "Telakkateollisuus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 201,
+    "fields": {
+      "name": "Tennis-, pallo-, yms. kenttäalue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 202,
+    "fields": {
+      "name": "Teollisuus- ja myymälätarkoituksiin"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 203,
+    "fields": {
+      "name": "Teollisuus- ja varastotarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 204,
+    "fields": {
+      "name": "Teollisuustarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 205,
+    "fields": {
+      "name": "Terassialue (ravintola)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 206,
+    "fields": {
+      "name": "Terminaali"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 207,
+    "fields": {
+      "name": "Tila asuinkiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 208,
+    "fields": {
+      "name": "Tila kokoontumiskiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 209,
+    "fields": {
+      "name": "Tila liikekiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 210,
+    "fields": {
+      "name": "Tila liikuntakiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 211,
+    "fields": {
+      "name": "Tila muu kiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 212,
+    "fields": {
+      "name": "Tila opetustoimen kiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 213,
+    "fields": {
+      "name": "Tila palo- ja pelastust kiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 214,
+    "fields": {
+      "name": "Tila pysäköinti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 215,
+    "fields": {
+      "name": "Tila sosiaalitoimen kiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 216,
+    "fields": {
+      "name": "Tila terveystoimen kiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 217,
+    "fields": {
+      "name": "Tila toimistokiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 218,
+    "fields": {
+      "name": "Tila tuotanto/teollisuuskiinteistö"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 219,
+    "fields": {
+      "name": "Tilapäinen sähkölinja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 220,
+    "fields": {
+      "name": "Toimistotarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 221,
+    "fields": {
+      "name": "Toimitalo (järjestön)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 222,
+    "fields": {
+      "name": "Toimitalo (yrityksen)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 223,
+    "fields": {
+      "name": "Tukiseinän/-muurin pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 224,
+    "fields": {
+      "name": "Tukkukauppa"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 225,
+    "fields": {
+      "name": "Työmaaparakkien pitäminen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 226,
+    "fields": {
+      "name": "Työmaaruokala"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 227,
+    "fields": {
+      "name": "Työmaataulu"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 228,
+    "fields": {
+      "name": "Työmaatie"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 229,
+    "fields": {
+      "name": "Työmaatukikohta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 230,
+    "fields": {
+      "name": "Työmaatukikohta ja työmaatie"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 231,
+    "fields": {
+      "name": "Työmaihin liittyviä"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 232,
+    "fields": {
+      "name": "Täyttö- / luiskan pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 233,
+    "fields": {
+      "name": "Ulkoilma-,/esittely-, ym. tilaisuus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 234,
+    "fields": {
+      "name": "Ulkoilualue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 235,
+    "fields": {
+      "name": "Urheilu- ja liikuntatarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 236,
+    "fields": {
+      "name": "Vaihtolava"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 237,
+    "fields": {
+      "name": "Vanhainkoti, sairaskoti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 238,
+    "fields": {
+      "name": "Vanhusten asuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 239,
+    "fields": {
+      "name": "Vapaarahoitt. työsuhdevuokra-asuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 240,
+    "fields": {
+      "name": "Vapaarahoitteisia omistusasuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 241,
+    "fields": {
+      "name": "Vapaarahoitteisia vuokra-asuntoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 242,
+    "fields": {
+      "name": "Varasto- / tukikohta-alue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 243,
+    "fields": {
+      "name": "Varastotarkoitukseen"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 244,
+    "fields": {
+      "name": "Varikko"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 245,
+    "fields": {
+      "name": "Veneiden talvitelakointi tms."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 246,
+    "fields": {
+      "name": "Venelaituri"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 247,
+    "fields": {
+      "name": "Veneliikenteen jakeluasema"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 248,
+    "fields": {
+      "name": "Veneliiketoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 249,
+    "fields": {
+      "name": "Venesatama, -laituri yms."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 250,
+    "fields": {
+      "name": "Venesatama, maa-alue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 251,
+    "fields": {
+      "name": "Venesatama, vesialue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 252,
+    "fields": {
+      "name": "Vesi-/viemäri-/öljy- ym.johtojen pito"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 253,
+    "fields": {
+      "name": "Vesialue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 254,
+    "fields": {
+      "name": "Vesihuolto"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 255,
+    "fields": {
+      "name": "Viljelyspalsta yms."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 256,
+    "fields": {
+      "name": "Virkistys ja liikunta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 257,
+    "fields": {
+      "name": "Virkistystoiminta"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 258,
+    "fields": {
+      "name": "Voimalaitos"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 259,
+    "fields": {
+      "name": "Väestönsuoja"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 260,
+    "fields": {
+      "name": "Yhteinen leikki- ja oleskelualue"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 261,
+    "fields": {
+      "name": "Yhteispiha"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 262,
+    "fields": {
+      "name": "toimisto / liike / teollisuus"
     }
   }
 ]
