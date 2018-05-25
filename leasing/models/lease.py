@@ -21,6 +21,9 @@ class LeaseType(NameModel):
     due_dates_position = EnumField(DueDatesPosition, verbose_name=_("Due dates position"),
                                    default=DueDatesPosition.START_OF_MONTH, max_length=30)
 
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.identifier)
+
 
 class Municipality(NameModel):
     """
@@ -32,6 +35,9 @@ class Municipality(NameModel):
         verbose_name = 'Municipality'
         verbose_name_plural = 'Municipalities'
         ordering = ['id']
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.identifier)
 
 
 class District(NameModel):
@@ -45,6 +51,9 @@ class District(NameModel):
     class Meta:
         unique_together = ('municipality', 'identifier')
         ordering = ('municipality__name', 'name')
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.identifier)
 
 
 class IntendedUse(NameModel):
