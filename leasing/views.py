@@ -1,6 +1,6 @@
 import requests
 from django.conf import settings
-from django.http import Http404, HttpResponseServerError, StreamingHttpResponse
+from django.http import Http404, HttpResponseServerError, StreamingHttpResponse, HttpResponse
 from requests.auth import HTTPBasicAuth
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -56,6 +56,9 @@ def ktj_proxy(request, base_type, print_type):
 
     r = requests.get(url, data=params, auth=HTTPBasicAuth(settings.KTJ_PRINT_USERNAME, settings.KTJ_PRINT_PASSWORD),
                      stream=True)
+
+    if r.status_code != 200:
+        return HttpResponse(status=r.status_code, content=r.content)
 
     return StreamingHttpResponse(status=r.status_code, reason=r.reason, content_type=r.headers['Content-Type'],
                                  streaming_content=r.raw)
