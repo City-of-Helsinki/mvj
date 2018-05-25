@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
 
@@ -11,9 +11,9 @@ class Classification(Enum):
     OFFICIAL = 'official'
 
     class Labels:
-        PUBLIC = _('Public')
-        CONFIDENTIAL = _('Confidential')
-        OFFICIAL = _('Official')
+        PUBLIC = pgettext_lazy('Classification', 'Public')
+        CONFIDENTIAL = pgettext_lazy('Classification', 'Confidential')
+        OFFICIAL = pgettext_lazy('Classification', 'Official')
 
 
 class LeaseState(Enum):
@@ -29,13 +29,13 @@ class LeaseState(Enum):
     FREE = 'free'
 
     class Labels:
-        LEASE = _('Lease')
-        RESERVATION = _('Reservation')
-        RESERVE = _('Reserve')
-        PERMISSION = _('Permission')
-        TRANSFERRED = _('Transferred')
-        APPLICATION = _('Application')
-        FREE = _('Free')
+        LEASE = pgettext_lazy('Lease state', 'Lease')
+        RESERVATION = pgettext_lazy('Lease state', 'Reservation')
+        RESERVE = pgettext_lazy('Lease state', 'Reserve')
+        PERMISSION = pgettext_lazy('Lease state', 'Permission')
+        TRANSFERRED = pgettext_lazy('Lease state', 'Transferred')
+        APPLICATION = pgettext_lazy('Lease state', 'Application')
+        FREE = pgettext_lazy('Lease state', 'Free')
 
 
 class LeaseRelationType(Enum):
@@ -45,7 +45,7 @@ class LeaseRelationType(Enum):
     TRANSFER = 'transfer'
 
     class Labels:
-        TRANSFER = _('Transfer')
+        TRANSFER = pgettext_lazy('Lease relation', 'Transfer')
 
 
 class NoticePeriodType(Enum):
@@ -57,9 +57,9 @@ class NoticePeriodType(Enum):
     OTHER = 'other'
 
     class Labels:
-        NO_PERIOD = _('No period')
-        TIME_PERIOD = _('Time period')
-        OTHER = _('Other')
+        NO_PERIOD = pgettext_lazy('Notice period', 'No period')
+        TIME_PERIOD = pgettext_lazy('Notice period', 'Time period')
+        OTHER = pgettext_lazy('Notice period', 'Other')
 
 
 class TenantContactType(Enum):
@@ -71,9 +71,9 @@ class TenantContactType(Enum):
     CONTACT = 'contact'
 
     class Labels:
-        TENANT = _("Tenant")
-        BILLING = _("Billing contact")
-        CONTACT = _("Contact")
+        TENANT = pgettext_lazy('Tenant contact type', 'Tenant')
+        BILLING = pgettext_lazy('Tenant contact type', 'Billing contact')
+        CONTACT = pgettext_lazy('Tenant contact type', 'Contact')
 
 
 class LocationType(Enum):
@@ -84,8 +84,8 @@ class LocationType(Enum):
     UNDERGROUND = 'underground'
 
     class Labels:
-        SURFACE = _('Surface')
-        UNDERGROUND = _('Underground')
+        SURFACE = pgettext_lazy('Location type', 'Surface')
+        UNDERGROUND = pgettext_lazy('Location type', 'Underground')
 
 
 class LeaseAreaType(Enum):
@@ -98,10 +98,10 @@ class LeaseAreaType(Enum):
     OTHER = 'other'
 
     class Labels:
-        PLAN_UNIT = _('Plan unit')
-        REAL_PROPERTY = _('Real property')
-        UNSEPARATED_PARCEL = _('Unseparated parcel')
-        OTHER = _('Other')
+        PLAN_UNIT = pgettext_lazy('Lease area type', 'Plan unit')
+        REAL_PROPERTY = pgettext_lazy('Lease area type', 'Real property')
+        UNSEPARATED_PARCEL = pgettext_lazy('Lease area type', 'Unseparated parcel')
+        OTHER = pgettext_lazy('Lease area type', 'Other')
 
 
 class PlotType(Enum):
@@ -112,8 +112,8 @@ class PlotType(Enum):
     UNSEPARATED_PARCEL = 'unseparated_parcel'
 
     class Labels:
-        REAL_PROPERTY = _('Real property')
-        UNSEPARATED_PARCEL = _('Unseparated parcel')
+        REAL_PROPERTY = pgettext_lazy('Plot type', 'Real property')
+        UNSEPARATED_PARCEL = pgettext_lazy('Plot type', 'Unseparated parcel')
 
 
 class PeriodType(Enum):
@@ -124,8 +124,8 @@ class PeriodType(Enum):
     PER_YEAR = 'per_year'
 
     class Labels:
-        PER_MONTH = _('/ month')
-        PER_YEAR = _('/ year')
+        PER_MONTH = pgettext_lazy('Period type', '/ month')
+        PER_YEAR = pgettext_lazy('Period type', '/ year')
 
 
 class ConstructabilityState(Enum):
@@ -137,9 +137,9 @@ class ConstructabilityState(Enum):
     COMPLETE = 'complete'
 
     class Labels:
-        UNVERIFIED = _('Unverified')
-        REQUIRES_MEASURES = _('Requires measures')
-        COMPLETE = _('Complete')
+        UNVERIFIED = pgettext_lazy('Constructability state', 'Unverified')
+        REQUIRES_MEASURES = pgettext_lazy('Constructability state', 'Requires measures')
+        COMPLETE = pgettext_lazy('Constructability state', 'Complete')
 
 
 class ConstructabilityType(Enum):
@@ -153,11 +153,11 @@ class ConstructabilityType(Enum):
     OTHER = 'other'
 
     class Labels:
-        PRECONSTRUCTION = _('Preconstruction')
-        DEMOLITION = _('Demolition')
-        POLLUTED_LAND = _('Polluted land')
-        REPORT = _('Report')
-        OTHER = _('Other')
+        PRECONSTRUCTION = pgettext_lazy('Constructability type', 'Preconstruction')
+        DEMOLITION = pgettext_lazy('Constructability type', 'Demolition')
+        POLLUTED_LAND = pgettext_lazy('Constructability type', 'Polluted land')
+        REPORT = pgettext_lazy('Constructability type', 'Report')
+        OTHER = pgettext_lazy('Constructability type', 'Other')
 
 
 class PollutedLandRentConditionState(Enum):
@@ -168,8 +168,8 @@ class PollutedLandRentConditionState(Enum):
     READY = 'ready'
 
     class Labels:
-        ASKED = _('Asked')
-        READY = _('Ready')
+        ASKED = pgettext_lazy('Polluted Land rent condition state', 'Asked')
+        READY = pgettext_lazy('Polluted Land rent condition state', 'Ready')
 
 
 class ConstructabilityReportInvestigationState(Enum):
@@ -181,9 +181,9 @@ class ConstructabilityReportInvestigationState(Enum):
     READY = 'ready'
 
     class Labels:
-        NO_NEED = _('No need')
-        ONGOING = _('Ongoing')
-        READY = _('Ready')
+        NO_NEED = pgettext_lazy('Constructability Report investigation state', 'No need')
+        ONGOING = pgettext_lazy('Constructability Report investigation state', 'Ongoing')
+        READY = pgettext_lazy('Constructability Report investigation state', 'Ready')
 
 
 class RentType(Enum):
@@ -197,11 +197,11 @@ class RentType(Enum):
     MANUAL = 'manual'
 
     class Labels:
-        INDEX = _('Index')
-        ONE_TIME = _('One time')
-        FIXED = _('Fixed')
-        FREE = _('Free')
-        MANUAL = _('Manual')
+        INDEX = pgettext_lazy('Rent type', 'Index')
+        ONE_TIME = pgettext_lazy('Rent type', 'One time')
+        FIXED = pgettext_lazy('Rent type', 'Fixed')
+        FREE = pgettext_lazy('Rent type', 'Free')
+        MANUAL = pgettext_lazy('Rent type', 'Manual')
 
 
 class RentCycle(Enum):
@@ -212,8 +212,8 @@ class RentCycle(Enum):
     APRIL_TO_MARCH = 'april_to_march'
 
     class Labels:
-        JANUARY_TO_DECEMBER = _('January to december')
-        APRIL_TO_MARCH = _('April to march')
+        JANUARY_TO_DECEMBER = pgettext_lazy('Rent cycle', 'January to december')
+        APRIL_TO_MARCH = pgettext_lazy('Rent cycle', 'April to march')
 
 
 class IndexType(Enum):
@@ -229,13 +229,13 @@ class IndexType(Enum):
     TYPE_7 = 'type_7'
 
     class Labels:
-        TYPE_1 = _('ind 50620 / 10/20%:n vaihtelut')
-        TYPE_2 = _('ind 4661 / 10/20%:n vaihtelut')
-        TYPE_3 = _('ind 418 / 10%:n vaihtelu')
-        TYPE_4 = _('ind 418 / 20%:n vaihtelu')
-        TYPE_5 = _('ind 392')
-        TYPE_6 = _('ind 100 (pyöristys)')
-        TYPE_7 = _('ind 100')
+        TYPE_1 = pgettext_lazy('Index type', 'ind 50620 / 10/20%:n vaihtelut')
+        TYPE_2 = pgettext_lazy('Index type', 'ind 4661 / 10/20%:n vaihtelut')
+        TYPE_3 = pgettext_lazy('Index type', 'ind 418 / 10%:n vaihtelu')
+        TYPE_4 = pgettext_lazy('Index type', 'ind 418 / 20%:n vaihtelu')
+        TYPE_5 = pgettext_lazy('Index type', 'ind 392')
+        TYPE_6 = pgettext_lazy('Index type', 'ind 100 (pyöristys)')
+        TYPE_7 = pgettext_lazy('Index type', 'ind 100')
 
 
 class DueDatesType(Enum):
@@ -246,8 +246,8 @@ class DueDatesType(Enum):
     FIXED = 'fixed'
 
     class Labels:
-        CUSTOM = _('Custom')
-        FIXED = _('Fixed')
+        CUSTOM = pgettext_lazy('Due dates type', 'Custom')
+        FIXED = pgettext_lazy('Due dates type', 'Fixed')
 
 
 class DueDatesPosition(Enum):
@@ -255,8 +255,8 @@ class DueDatesPosition(Enum):
     MIDDLE_OF_MONTH = 'middle_of_month'
 
     class Labels:
-        START_OF_MONTH = _('Start of month')
-        MIDDLE_OF_MONTH = _('Middle of month')
+        START_OF_MONTH = pgettext_lazy('Due dates position', 'Start of month')
+        MIDDLE_OF_MONTH = pgettext_lazy('Due dates position', 'Middle of month')
 
 
 class RentAdjustmentType(Enum):
@@ -264,8 +264,8 @@ class RentAdjustmentType(Enum):
     INCREASE = 'increase'
 
     class Labels:
-        DISCOUNT = _('Discount')
-        INCREASE = _('Increase')
+        DISCOUNT = pgettext_lazy('Rent adjustment type', 'Discount')
+        INCREASE = pgettext_lazy('Rent adjustment type', 'Increase')
 
 
 class RentAdjustmentAmountType(Enum):
@@ -274,9 +274,9 @@ class RentAdjustmentAmountType(Enum):
     AMOUNT_TOTAL = 'amount_total'
 
     class Labels:
-        PERCENT_PER_YEAR = _('% per year')
-        AMOUNT_PER_YEAR = _('€ per year')
-        AMOUNT_TOTAL = _('€ total')
+        PERCENT_PER_YEAR = pgettext_lazy('Rent Adjustment amount type', '% per year')
+        AMOUNT_PER_YEAR = pgettext_lazy('Rent Adjustment amount type', '€ per year')
+        AMOUNT_TOTAL = pgettext_lazy('Rent Adjustment amount type', '€ total')
 
 
 class InvoiceDeliveryMethod(Enum):
@@ -284,8 +284,8 @@ class InvoiceDeliveryMethod(Enum):
     ELECTRONIC = 'electronic'
 
     class Labels:
-        MAIL = _('Mail')
-        ELECTRONIC = _('Electronic')
+        MAIL = pgettext_lazy('Invoice delivery method', 'Mail')
+        ELECTRONIC = pgettext_lazy('Invoice delivery method', 'Electronic')
 
 
 class InvoiceState(Enum):
@@ -294,9 +294,9 @@ class InvoiceState(Enum):
     REFUNDED = 'refunded'
 
     class Labels:
-        OPEN = _('Open')
-        PAID = _('Paid')
-        REFUNDED = _('Refunded')
+        OPEN = pgettext_lazy('Invoice state', 'Open')
+        PAID = pgettext_lazy('Invoice state', 'Paid')
+        REFUNDED = pgettext_lazy('Invoice state', 'Refunded')
 
 
 class InvoiceType(Enum):
@@ -304,8 +304,8 @@ class InvoiceType(Enum):
     CREDIT_NOTE = 'credit_note'
 
     class Labels:
-        CHARGE = _('Charge')
-        CREDIT_NOTE = _('Credit note')
+        CHARGE = pgettext_lazy('Invoice type', 'Charge')
+        CREDIT_NOTE = pgettext_lazy('Invoice type', 'Credit note')
 
 
 class ContactType(Enum):
@@ -316,8 +316,8 @@ class ContactType(Enum):
     OTHER = 'other'
 
     class Labels:
-        PERSON = _('Person')
-        BUSINESS = _('Business')
-        UNIT = _('Unit')
-        ASSOCIATION = _('Association')
-        OTHER = _('Other')
+        PERSON = pgettext_lazy('Contact type', 'Person')
+        BUSINESS = pgettext_lazy('Contact type', 'Business')
+        UNIT = pgettext_lazy('Contact type', 'Unit')
+        ASSOCIATION = pgettext_lazy('Contact type', 'Association')
+        OTHER = pgettext_lazy('Contact type', 'Other')
