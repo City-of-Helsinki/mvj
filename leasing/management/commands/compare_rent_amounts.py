@@ -1,15 +1,16 @@
-import datetime
+# import datetime
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 
 from leasing.enums import InvoiceState, InvoiceType
-from leasing.models import Lease, PayableRent, ReceivableType
+from leasing.models import Lease  # , PayableRent, ReceivableType
 
 known_errors = {
     ('A1154-878', Decimal('19364.80')): 'known error in the old system',
     ('A1154-878', Decimal('11830.54')): 'known error in the old system',
 }
+
 
 class Command(BaseCommand):
     help = 'Import data from the old MVJ'

@@ -1,9 +1,8 @@
 from django.utils.encoding import force_text
 from rest_framework.fields import DecimalField
 from rest_framework.metadata import SimpleMetadata
-from rest_framework.relations import PrimaryKeyRelatedField
 
-from leasing.models import Lease, Contact
+from leasing.models import Contact, Lease
 from users.models import User
 
 

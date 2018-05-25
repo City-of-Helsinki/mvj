@@ -1,5 +1,4 @@
 import datetime
-from decimal import Decimal
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
@@ -114,6 +113,7 @@ IRTISANOMISAIKA_MAP = {
 
 asiakas_cache = {}
 
+
 class Command(BaseCommand):
     help = 'Import data from the old MVJ'
 
@@ -149,7 +149,7 @@ class Command(BaseCommand):
 
         return contact
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex
         (unknown_contact, unknown_contact_created) = Contact.objects.get_or_create(
             type=ContactType.OTHER,
             first_name='Unknown',
@@ -249,18 +249,18 @@ class Command(BaseCommand):
                 asrooli_rows = rows_to_dict_list(cursor)
 
                 for role_row in [row for row in asrooli_rows if row['ROOLI'] == 'V']:
-                    print(" ASIAKAS V #{}".format(role_row['ASIAKAS']))
+                    self.stdout.write(" ASIAKAS V #{}".format(role_row['ASIAKAS']))
                     contact = self.get_or_create_contact(role_row, unknown_contact)
-                    print('  Contact {}'.format(contact))
+                    self.stdout.write('  Contact {}'.format(contact))
 
                     try:
                         tenant = lease.tenants.get(tenantcontact__contact=contact,
                                                    tenantcontact__type=TenantContactType.TENANT,
                                                    tenantcontact__start_date=role_row['ALKAEN'],
                                                    tenantcontact__end_date=role_row['SAAKKA'])
-                        print("  USING EXISTING TENANT")
+                        self.stdout.write("  USING EXISTING TENANT")
                     except ObjectDoesNotExist:
-                        print("  TENANT DOES NOT EXIST. Creating.")
+                        self.stdout.write("  TENANT DOES NOT EXIST. Creating.")
                         tenant = Tenant.objects.create(
                             lease=lease,
                             share_numerator=role_row['HALLINTAOSUUS_O'],
@@ -278,9 +278,9 @@ class Command(BaseCommand):
                     asiakas_num_to_tenant[role_row['ASIAKAS']] = tenant
 
                 for role_row in [row for row in asrooli_rows if row['ROOLI'] in ('L', 'Y')]:
-                    print(" ASIAKAS {} #{}".format(role_row['ROOLI'], role_row['ASIAKAS']))
+                    self.stdout.write(" ASIAKAS {} #{}".format(role_row['ROOLI'], role_row['ASIAKAS']))
                     contact = self.get_or_create_contact(role_row, unknown_contact)
-                    print('  Contact {}'.format(contact))
+                    self.stdout.write('  Contact {}'.format(contact))
 
                     this_tenant = None
                     for lease_tenant in lease.tenants.all():
@@ -336,7 +336,7 @@ class Command(BaseCommand):
                     rent.due_dates_type = DueDatesType.FIXED
                     rent.due_dates_per_year = 12
                     rent.save()
-                    print(" DUE DATES FIXED {} per year".format(rent.due_dates_per_year))
+                    self.stdout.write(" DUE DATES FIXED {} per year".format(rent.due_dates_per_year))
                 else:
                     query = """
                         SELECT *
@@ -360,7 +360,7 @@ class Command(BaseCommand):
                                 rent.due_dates_per_year = due_dates_per_year
                                 due_dates_match_found = True
                                 if lease.type.due_dates_position != DueDatesPosition.MIDDLE_OF_MONTH:
-                                    print(" WARNING! Wrong due dates type")
+                                    self.stdout.write(" WARNING! Wrong due dates type")
                                 break
 
                         for due_dates_per_year, due_dates_set in FIXED_DUE_DATES[
@@ -370,22 +370,22 @@ class Command(BaseCommand):
                                 rent.due_dates_per_year = due_dates_per_year
                                 due_dates_match_found = True
                                 if lease.type.due_dates_position != DueDatesPosition.MIDDLE_OF_MONTH:
-                                    print(" WARNING! Wrong due dates type")
+                                    self.stdout.write(" WARNING! Wrong due dates type")
                                 break
 
                         if not due_dates_match_found:
-                            print(" DUE DATES MATCH NOT FOUND. Adding custom dates:")
-                            print(" ", due_dates)
+                            self.stdout.write(" DUE DATES MATCH NOT FOUND. Adding custom dates:")
+                            self.stdout.write(" ", due_dates)
                             rent.due_dates_type = DueDatesType.CUSTOM
                             rent.due_dates.set([])
                             for due_date in due_dates:
                                 RentDueDate.objects.create(rent=rent, day=due_date.day, month=due_date.month)
                         else:
-                            print(" DUE DATES FOUND. {} per year".format(rent.due_dates_per_year))
+                            self.stdout.write(" DUE DATES FOUND. {} per year".format(rent.due_dates_per_year))
 
                         rent.save()
                     else:
-                        print(' NO DUE DATES IN "VUOKRAUKSEN_ERAPAIVA"')
+                        self.stdout.write(' NO DUE DATES IN "VUOKRAUKSEN_ERAPAIVA"')
 
                 if lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA'] and lease_row['KIINTEA_ALKUVUOSIVUOKRAN_LOPPU']:
                     (initial_rent, initial_rent_created) = FixedInitialYearRent.objects.get_or_create(

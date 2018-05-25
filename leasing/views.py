@@ -1,6 +1,6 @@
 import requests
 from django.conf import settings
-from django.http import Http404, HttpResponseServerError, StreamingHttpResponse, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseServerError, StreamingHttpResponse
 from requests.auth import HTTPBasicAuth
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated

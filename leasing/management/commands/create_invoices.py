@@ -1,6 +1,5 @@
 import datetime
 from decimal import Decimal
-# from pprint import pprint
 
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
@@ -16,7 +15,7 @@ from leasing.models.utils import (
 class Command(BaseCommand):
     help = 'A Bogus Invoice creator'
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
         today = datetime.date.today()
         # today = today.replace(year=2018, month=3, day=1)
         today = today.replace(year=2016, month=12, day=1)  # Y11...
@@ -141,8 +140,6 @@ class Command(BaseCommand):
                                 tenant: [],
                             }
                         shares[tenant_tenantcontacts[0].contact][tenant].extend(leftover_ranges)
-
-                # pprint(shares)
 
                 self.stdout.write('')
 

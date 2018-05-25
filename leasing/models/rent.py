@@ -111,7 +111,7 @@ class Rent(TimeStampedSafeDeleteModel):
         date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
-    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False):
+    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False):  # noqa: C901 TODO
         assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
 
         if self.type == RentType.INDEX and date_range_start.year != date_range_end.year:
