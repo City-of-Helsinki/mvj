@@ -95,6 +95,12 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
 
         return LeaseSerializer
 
+    def create(self, request, *args, **kwargs):
+        if 'preparer' not in request.data:
+            request.data['preparer'] = request.user.id
+
+        return super().create(request, *args, **kwargs)
+
     @action(methods=['get'], detail=True)
     def rent_for_period(self, request, pk=None):
         lease = self.get_object()
