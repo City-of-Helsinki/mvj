@@ -2,7 +2,7 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from leasing.models import ConstructabilityDescription
-from leasing.models.land_area import PlanUnitIntendedUse
+from leasing.models.land_area import PlanUnitIntendedUse, PlotDivisionState
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -28,6 +28,12 @@ class PlanUnitIntendedUseSerializer(NameModelSerializer):
         fields = '__all__'
 
 
+class PlotDivisionStateSerializer(NameModelSerializer):
+    class Meta:
+        model = PlotDivisionState
+        fields = '__all__'
+
+
 class PlanUnitSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -46,10 +52,13 @@ class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.Mod
         instance_class=PlanUnitType, queryset=PlanUnitType.objects.filter(), related_serializer=PlanUnitTypeSerializer)
     plan_unit_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState, queryset=PlanUnitState.objects.filter(),
-        related_serializer=PlanUnitTypeSerializer)
+        related_serializer=PlanUnitStateSerializer)
     plan_unit_intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse, queryset=PlanUnitIntendedUse.objects.filter(),
         related_serializer=PlanUnitIntendedUseSerializer)
+    plot_division_state = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotDivisionState, queryset=PlotDivisionState.objects.filter(),
+        related_serializer=PlotDivisionStateSerializer)
 
     class Meta:
         model = PlanUnit
