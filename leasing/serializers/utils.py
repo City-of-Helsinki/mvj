@@ -70,7 +70,7 @@ def instance_replace_related(instance=None, related_name=None, serializer_class=
 
 
 def sync_new_items_to_manager(new_items, manager):
-    if not new_items or not hasattr(manager, 'add'):
+    if not hasattr(manager, 'add'):
         return
 
     existing_items = set(manager.all())
@@ -90,35 +90,38 @@ def instance_create_or_update_related(instance=None, related_name=None, serializ
     manager = getattr(instance, related_name)
     new_items = set()
 
-    for item in validated_data:
-        pk = item.pop('id', None)
+    try:
+        for item in validated_data:
+            pk = item.pop('id', None)
 
-        serializer_params = {
-            'data': item,
-            'context': context,
-        }
+            serializer_params = {
+                'data': item,
+                'context': context,
+            }
 
-        if pk:
+            if pk:
+                try:
+                    item_instance = serializer_class.Meta.model._default_manager.get(id=pk)
+                    serializer_params['instance'] = item_instance
+                except ObjectDoesNotExist:
+                    pass
+
+            serializer = serializer_class(**serializer_params)
+
             try:
-                item_instance = serializer_class.Meta.model._default_manager.get(id=pk)
-                serializer_params['instance'] = item_instance
-            except ObjectDoesNotExist:
-                pass
+                serializer.is_valid(raise_exception=True)
+            except ValidationError as e:
+                raise ValidationError({
+                    related_name: e.detail
+                })
 
-        serializer = serializer_class(**serializer_params)
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as e:
-            raise ValidationError({
-                related_name: e.detail
+            item_instance = serializer.save(**{
+                manager.field.name: instance
             })
 
-        item_instance = serializer.save(**{
-            manager.field.name: instance
-        })
-
-        new_items.add(item_instance)
+            new_items.add(item_instance)
+    except TypeError:
+        pass
 
     sync_new_items_to_manager(new_items, manager)
 
