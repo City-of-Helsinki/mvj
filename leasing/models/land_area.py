@@ -13,6 +13,20 @@ from users.models import User
 from .mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 
 
+class AbstractAddress(TimeStampedModel):
+    # In Finnish: Osoite
+    address = models.CharField(verbose_name=_("Address"), max_length=255)
+
+    # In Finnish: Postinumero
+    postal_code = models.CharField(verbose_name=_("Postal code"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Kaupunki
+    city = models.CharField(verbose_name=_("City"), null=True, blank=True, max_length=255)
+
+    class Meta:
+        abstract = True
+
+
 class Land(TimeStampedModel):
     """Land is an abstract class with common fields for leased land,
     real properties, unseparated parcels, and plan units.
@@ -27,15 +41,6 @@ class Land(TimeStampedModel):
 
     # In Finnish: Leikkausala
     section_area = models.PositiveIntegerField(verbose_name=_("Section area"))
-
-    # In Finnish: Osoite
-    address = models.CharField(verbose_name=_("Address"), max_length=255)
-
-    # In Finnish: Postinumero
-    postal_code = models.CharField(verbose_name=_("Postal code"), max_length=255)
-
-    # In Finnish: Kaupunki
-    city = models.CharField(verbose_name=_("City"), max_length=255)
 
     class Meta:
         abstract = True
@@ -110,6 +115,13 @@ class LeaseArea(Land, SafeDeleteModel):
     # In Finnish: Selvitysaste (Muut)
     other_state = EnumField(ConstructabilityState, verbose_name=_("Other state"), null=True, blank=True, max_length=30)
 
+    def __str__(self):
+        return 'LeaseArea {}'.format(self.type)
+
+
+class LeaseAreaAddress(AbstractAddress):
+    lease_area = models.ForeignKey(LeaseArea, related_name='addresses', on_delete=models.CASCADE)
+
 
 class ConstructabilityDescription(TimeStampedSafeDeleteModel):
     """
@@ -137,6 +149,10 @@ class Plot(Land):
     lease_area = models.ForeignKey(LeaseArea, related_name='plots', on_delete=models.CASCADE)
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
+
+
+class PlotAddress(AbstractAddress):
+    plot = models.ForeignKey(Plot, related_name='addresses', on_delete=models.CASCADE)
 
 
 class PlanUnitType(NameModel):
@@ -214,6 +230,10 @@ class PlanUnit(Land):
     # In Finnish: Kaavayksikön käyttötarkoitus
     plan_unit_intended_use = models.ForeignKey(PlanUnitIntendedUse, verbose_name=_("Plan unit intended use"), null=True,
                                                blank=True, on_delete=models.PROTECT)
+
+
+class PlanUnitAddress(AbstractAddress):
+    plan_unit = models.ForeignKey(PlanUnit, related_name='addresses', on_delete=models.CASCADE)
 
 
 auditlog.register(LeaseArea)

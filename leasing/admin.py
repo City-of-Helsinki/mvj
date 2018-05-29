@@ -1,4 +1,5 @@
 from django.contrib.gis import admin
+from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
     BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate,
@@ -9,6 +10,7 @@ from leasing.models import (
     Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
     Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
+from leasing.models.land_area import LeaseAreaAddress, PlanUnitAddress, PlotAddress
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -172,8 +174,44 @@ class PlanUnitInline(admin.StackedInline):
     extra = 0
 
 
+class LeaseAreaAddressInline(admin.TabularInline):
+    model = LeaseAreaAddress
+    extra = 0
+
+
 class LeaseAreaAdmin(admin.ModelAdmin):
-    inlines = [ConstructabilityDescriptionInline, PlotInline, PlanUnitInline]
+    list_display = ('lease', 'type')
+    inlines = [LeaseAreaAddressInline, ConstructabilityDescriptionInline, PlotInline, PlanUnitInline]
+
+
+class PlotAddressInline(admin.TabularInline):
+    model = PlotAddress
+    extra = 0
+
+
+class PlotAdmin(admin.ModelAdmin):
+    list_display = ('lease_area', 'type')
+    inlines = [PlotAddressInline]
+
+
+class PlanUnitAddressInline(admin.TabularInline):
+    model = PlanUnitAddress
+    extra = 0
+
+
+class PlanUnitAdmin(admin.ModelAdmin):
+    list_display = ('get_lease_identifier', 'lease_area', 'type')
+    inlines = [PlanUnitAddressInline]
+
+    def get_lease_identifier(self, obj):
+        return str(obj.lease_area.lease)
+
+    get_lease_identifier.short_description = _('Lease')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease_area', 'lease_area__lease')
 
 
 admin.site.register(BankHoliday)
@@ -193,8 +231,8 @@ admin.site.register(LeaseType, LeaseTypeAdmin)
 admin.site.register(Management, NameAdmin)
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(NoticePeriod)
-admin.site.register(Plot)
-admin.site.register(PlanUnit)
+admin.site.register(Plot, PlotAdmin)
+admin.site.register(PlanUnit, PlanUnitAdmin)
 admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
 admin.site.register(ReceivableType)
