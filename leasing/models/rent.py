@@ -170,7 +170,12 @@ class Rent(TimeStampedSafeDeleteModel):
 
         if fixed_applied:
             if not remaining_ranges:
-                return total
+                if explain:
+                    explanation.add(subject=self, date_ranges=[(date_range_start, date_range_end)], amount=total)
+
+                    return total, explanation
+                else:
+                    return total
             else:
                 date_ranges = remaining_ranges
         else:
