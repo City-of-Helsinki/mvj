@@ -6,10 +6,12 @@ import pytest
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from pytest_factoryboy import register
 
-from leasing.enums import ContactType, IndexType, RentCycle, RentType, TenantContactType
-from leasing.models import Contact, District, Lease, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact
+from leasing.enums import ContactType, IndexType, LeaseAreaType, LocationType, RentCycle, RentType, TenantContactType
+from leasing.models import (
+    Contact, District, Lease, LeaseArea, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact)
 
 
 @pytest.fixture()
@@ -95,8 +97,17 @@ class RentFactory(factory.DjangoModelFactory):
         model = Rent
 
 
+@register
+class LeaseAreaFactory(factory.DjangoModelFactory):
+    type = LeaseAreaType.REAL_PROPERTY
+    location = LocationType.SURFACE
+
+    class Meta:
+        model = LeaseArea
+
+
 @pytest.fixture
-def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_contact_factory):
+def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_contact_factory, lease_area_factory):
     lease = lease_factory(
         type_id=1,
         municipality_id=1,
@@ -125,6 +136,8 @@ def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_conta
     ]
 
     lease.tenants.set(tenants)
+
+    lease_area_factory(lease=lease, identifier=get_random_string(), area=1000, section_area=1000)
 
     return {
         'lease': lease,
