@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from dateutil import parser
 from django.db.models import DurationField
@@ -92,6 +93,28 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
     )
     serializer_class = LeaseSerializer
     filter_class = LeaseFilter
+
+    def get_queryset(self):
+        """Allow filtering leases by lease identifier
+
+        `identifier` query parameter can be used to find the Lease with the provided identifier.
+        example: .../lease/?identifier=S0120-219
+        """
+        queryset = super().get_queryset()
+
+        identifier = self.request.query_params.get('identifier', None)
+
+        if identifier is not None:
+            id_match = re.match(r'(?P<lease_type>\w\d)(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$',
+                                identifier)
+
+            if id_match:
+                queryset = queryset.filter(identifier__type__identifier=id_match.group('lease_type'),
+                                           identifier__municipality__identifier=id_match.group('municipality'),
+                                           identifier__district__identifier=id_match.group('district'),
+                                           identifier__sequence=id_match.group('sequence'))
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):
