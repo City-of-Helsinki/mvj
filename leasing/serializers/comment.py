@@ -16,7 +16,18 @@ class CommentTopicSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
-    user = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    user = UserSerializer(read_only=True)
+    topic = InstanceDictPrimaryKeyRelatedField(instance_class=CommentTopic, queryset=CommentTopic.objects.all(),
+                                               related_serializer=CommentTopicSerializer)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
+class CommentCreateUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     topic = InstanceDictPrimaryKeyRelatedField(instance_class=CommentTopic, queryset=CommentTopic.objects.all(),
                                                related_serializer=CommentTopicSerializer)
 
