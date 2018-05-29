@@ -84,7 +84,11 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
         'identifier__district', 'lessor', 'intended_use', 'supportive_housing', 'statistical_use', 'financing',
         'management', 'regulation', 'hitas', 'notice_period', 'preparer'
     ).prefetch_related(
-        'related_leases', 'tenants', 'lease_areas', 'contracts', 'decisions', 'inspections', 'rents'
+        'related_leases', 'tenants', 'tenants__tenantcontact_set', 'tenants__tenantcontact_set__contact',
+        'lease_areas', 'contracts', 'decisions', 'inspections', 'rents', 'rents__due_dates', 'rents__contract_rents',
+        'rents__contract_rents__intended_use', 'rents__rent_adjustments', 'rents__rent_adjustments__intended_use',
+        'rents__index_adjusted_rents', 'rents__payable_rents', 'rents__fixed_initial_year_rents',
+        'rents__fixed_initial_year_rents__intended_use', 'lease_areas__addresses', 'basis_of_rents'
     )
     serializer_class = LeaseSerializer
     filter_class = LeaseFilter
