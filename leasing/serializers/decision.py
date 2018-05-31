@@ -54,7 +54,7 @@ class DecisionSerializer(serializers.ModelSerializer):
 class DecisionCreateUpdateNestedSerializer(UpdateNestedMixin, serializers.ModelSerializer):
     """This is used when the decision is added or updated inside a lease
 
-    The lease is not included in this serializer, but set via the UpdateNestedMixin in LeaseSerializer.
+    The lease is not included in this serializer, but set via the UpdateNestedMixin in LeaseCreateUpdateSerializer.
     """
     id = serializers.IntegerField(required=False)
     type = InstanceDictPrimaryKeyRelatedField(instance_class=DecisionType, queryset=DecisionType.objects.filter(),
