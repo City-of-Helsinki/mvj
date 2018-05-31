@@ -43,9 +43,11 @@ class LeaseRelationType(Enum):
     In Finnish: Liittyvän vuokrauksen tyyppi
     """
     TRANSFER = 'transfer'
+    OTHER = 'other'
 
     class Labels:
         TRANSFER = pgettext_lazy('Lease relation', 'Transfer')
+        OTHER = pgettext_lazy('Lease relation', 'Other')
 
 
 class NoticePeriodType(Enum):
