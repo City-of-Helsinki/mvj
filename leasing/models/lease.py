@@ -318,7 +318,7 @@ class RelatedLease(TimeStampedSafeDeleteModel):
     from_lease = models.ForeignKey(Lease, verbose_name=_("From lease"), related_name='from_leases',
                                    on_delete=models.PROTECT)
     to_lease = models.ForeignKey(Lease, verbose_name=_("To lease"), related_name='to_leases', on_delete=models.PROTECT)
-    type = EnumField(LeaseRelationType, verbose_name=_("Lease relation type"), max_length=30)
+    type = EnumField(LeaseRelationType, verbose_name=_("Lease relation type"), null=True, blank=True, max_length=30)
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
