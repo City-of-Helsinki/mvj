@@ -1,6 +1,7 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from leasing.models import RelatedLease
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -93,7 +94,37 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
         fields = ('type', 'municipality', 'district', 'sequence')
 
 
-class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseSuccinctSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    type = LeaseTypeSerializer()
+    municipality = MunicipalitySerializer()
+    district = DistrictSerializer()
+    identifier = LeaseIdentifierSerializer(read_only=True)
+
+    class Meta:
+        model = Lease
+        fields = ('id', 'deleted', 'created_at', 'modified_at', 'type', 'municipality', 'district', 'identifier',
+                  'start_date', 'end_date', 'state', 'is_rent_info_complete', 'is_invoicing_enabled',
+                  'reference_number', 'note', 'preparer', 'is_subject_to_vat')
+
+
+class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    to_lease = LeaseSuccinctSerializer()
+
+    class Meta:
+        model = RelatedLease
+        fields = '__all__'
+
+
+class RelatedFromLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    from_lease = LeaseSuccinctSerializer()
+
+    class Meta:
+        model = RelatedLease
+        fields = '__all__'
+
+
+class LeaseSerializerBase(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     type = LeaseTypeSerializer()
     municipality = MunicipalitySerializer()
@@ -110,7 +141,48 @@ class LeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Lease
+        exclude = ('related_leases', )
+
+
+class LeaseListSerializer(LeaseSerializerBase):
+    basis_of_rents = None
+    contracts = None
+    decisions = None
+    inspections = None
+    rents = None
+    related_leases = None
+
+
+def get_related_lease_predecessors(to_lease_id):
+    result = set()
+    predecessors = RelatedLease.objects.filter(to_lease=to_lease_id).select_related('to_lease', 'from_lease')
+
+    if predecessors:
+        for predecessor in predecessors:
+            result.add(predecessor)
+            result.update(get_related_lease_predecessors(predecessor.from_lease_id))
+
+    return result
+
+
+class LeaseRetrieveSerializer(LeaseSerializerBase):
+    related_leases = serializers.SerializerMethodField()
+
+    def get_related_leases(self, obj):
+        # Immediate successors
+        related_to_leases = set(RelatedLease.objects.filter(from_lease=obj).select_related('to_lease', 'from_lease'))
+        # All predecessors
+        related_from_leases = get_related_lease_predecessors(obj.id)
+
+        return {
+            'related_to': RelatedToLeaseSerializer(related_to_leases, many=True).data,
+            'related_from': RelatedFromLeaseSerializer(related_from_leases, many=True).data,
+        }
+
+    class Meta:
+        model = Lease
         fields = '__all__'
+        exclude = None
 
 
 class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):

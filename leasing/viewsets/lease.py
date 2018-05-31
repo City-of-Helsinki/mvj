@@ -17,8 +17,9 @@ from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
-    LeaseSerializer, LeaseTypeSerializer, ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer,
-    RegulationSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
+    LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
+    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, StatisticalUseSerializer,
+    SupportiveHousingSerializer)
 from leasing.viewsets.utils import AuditLogMixin
 
 
@@ -80,18 +81,7 @@ class SupportiveHousingViewSet(viewsets.ModelViewSet):
 
 
 class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
-    queryset = Lease.objects.all().select_related(
-        'type', 'municipality', 'district', 'identifier', 'identifier__type', 'identifier__municipality',
-        'identifier__district', 'lessor', 'intended_use', 'supportive_housing', 'statistical_use', 'financing',
-        'management', 'regulation', 'hitas', 'notice_period', 'preparer'
-    ).prefetch_related(
-        'related_leases', 'tenants', 'tenants__tenantcontact_set', 'tenants__tenantcontact_set__contact',
-        'lease_areas', 'contracts', 'decisions', 'inspections', 'rents', 'rents__due_dates', 'rents__contract_rents',
-        'rents__contract_rents__intended_use', 'rents__rent_adjustments', 'rents__rent_adjustments__intended_use',
-        'rents__index_adjusted_rents', 'rents__payable_rents', 'rents__fixed_initial_year_rents',
-        'rents__fixed_initial_year_rents__intended_use', 'lease_areas__addresses', 'basis_of_rents'
-    )
-    serializer_class = LeaseSerializer
+    serializer_class = LeaseRetrieveSerializer
     filter_class = LeaseFilter
 
     def get_queryset(self):
@@ -100,9 +90,13 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
         `identifier` query parameter can be used to find the Lease with the provided identifier.
         example: .../lease/?identifier=S0120-219
         """
-        queryset = super().get_queryset()
+        identifier = self.request.query_params.get('identifier')
+        succinct = self.request.query_params.get('succinct')
 
-        identifier = self.request.query_params.get('identifier', None)
+        if succinct:
+            queryset = Lease.objects.succinct_select_related_and_prefetch_related()
+        else:
+            queryset = Lease.objects.full_select_related_and_prefetch_related()
 
         if identifier is not None:
             id_match = re.match(r'(?P<lease_type>\w\d)(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$',
@@ -120,7 +114,13 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):
             return LeaseCreateUpdateSerializer
 
-        return LeaseSerializer
+        if self.request.query_params.get('succinct'):
+            return LeaseSuccinctSerializer
+
+        if self.action == 'list':
+            return LeaseListSerializer
+
+        return LeaseRetrieveSerializer
 
     def create(self, request, *args, **kwargs):
         if 'preparer' not in request.data:
