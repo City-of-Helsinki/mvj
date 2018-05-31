@@ -158,6 +158,27 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
                                      self.sequence)
 
 
+class LeaseManager(models.Manager):
+    def full_select_related_and_prefetch_related(self):
+        return self.get_queryset().select_related(
+            'type', 'municipality', 'district', 'identifier', 'identifier__type', 'identifier__municipality',
+            'identifier__district', 'lessor', 'intended_use', 'supportive_housing', 'statistical_use', 'financing',
+            'management', 'regulation', 'hitas', 'notice_period', 'preparer'
+        ).prefetch_related(
+            'tenants', 'tenants__tenantcontact_set', 'tenants__tenantcontact_set__contact',
+            'lease_areas', 'contracts', 'decisions', 'inspections', 'rents', 'rents__due_dates',
+            'rents__contract_rents', 'rents__contract_rents__intended_use', 'rents__rent_adjustments',
+            'rents__rent_adjustments__intended_use', 'rents__index_adjusted_rents', 'rents__payable_rents',
+            'rents__fixed_initial_year_rents', 'rents__fixed_initial_year_rents__intended_use',
+            'lease_areas__addresses', 'basis_of_rents'
+        )
+
+    def succinct_select_related_and_prefetch_related(self):
+        return self.get_queryset().select_related(
+            'type', 'municipality', 'district', 'identifier', 'identifier__type',
+            'identifier__municipality', 'identifier__district', 'preparer').prefetch_related('related_leases')
+
+
 class Lease(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokraus
@@ -255,6 +276,8 @@ class Lease(TimeStampedSafeDeleteModel):
 
     # In Finnish: Onko ALV:n alainen
     is_subject_to_vat = models.BooleanField(verbose_name=_("Is subject to VAT?"), default=False)
+
+    objects = LeaseManager()
 
     def __str__(self):
         return self.get_identifier_string()
