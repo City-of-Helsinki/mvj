@@ -117,6 +117,12 @@ class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSeri
 
 
 class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    def validate(self, data):
+        if data['from_lease'] == data['to_lease']:
+            raise serializers.ValidationError("from_lease and to_lease cannot be the same Lease")
+
+        return data
+
     class Meta:
         model = RelatedLease
         fields = '__all__'
@@ -159,14 +165,26 @@ class LeaseListSerializer(LeaseSerializerBase):
     related_leases = None
 
 
-def get_related_lease_predecessors(to_lease_id):
+def get_related_lease_predecessors(to_lease_id, accumulator=None):
+    if accumulator is None:
+        accumulator = []
+
+    accumulator.append(to_lease_id)
+
     result = set()
     predecessors = RelatedLease.objects.filter(to_lease=to_lease_id).select_related('to_lease', 'from_lease')
 
     if predecessors:
         for predecessor in predecessors:
             result.add(predecessor)
-            result.update(get_related_lease_predecessors(predecessor.from_lease_id))
+
+            if predecessor.from_lease_id == predecessor.to_lease_id:
+                continue
+
+            if predecessor.from_lease_id in accumulator:
+                continue
+
+            result.update(get_related_lease_predecessors(predecessor.from_lease_id, accumulator))
 
     return result
 
