@@ -116,6 +116,12 @@ class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSeri
         fields = '__all__'
 
 
+class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = RelatedLease
+        fields = '__all__'
+
+
 class RelatedFromLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     from_lease = LeaseSuccinctSerializer()
 

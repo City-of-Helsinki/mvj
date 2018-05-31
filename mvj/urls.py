@@ -13,8 +13,8 @@ from leasing.viewsets.decision import DecisionViewSet
 from leasing.viewsets.invoice import InvoiceViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
-    ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, StatisticalUseViewSet,
-    SupportiveHousingViewSet)
+    ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
+    StatisticalUseViewSet, SupportiveHousingViewSet)
 from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
@@ -34,6 +34,7 @@ router.register(r'management', ManagementViewSet)
 router.register(r'municipality', MunicipalityViewSet)
 router.register(r'notice_period', NoticePeriodViewSet)
 router.register(r'regulation', RegulationViewSet)
+router.register(r'related_lease', RelatedLeaseViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
 router.register(r'supportive_housing', SupportiveHousingViewSet)
 router.register(r'user', UserViewSet)

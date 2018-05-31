@@ -12,14 +12,14 @@ from rest_framework.response import Response
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
-    StatisticalUse, SupportiveHousing)
+    RelatedLease, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
-    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, StatisticalUseSerializer,
-    SupportiveHousingSerializer)
+    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
+    StatisticalUseSerializer, SupportiveHousingSerializer)
 from leasing.viewsets.utils import AuditLogMixin
 
 
@@ -78,6 +78,11 @@ class StatisticalUseViewSet(viewsets.ModelViewSet):
 class SupportiveHousingViewSet(viewsets.ModelViewSet):
     queryset = SupportiveHousing.objects.all()
     serializer_class = SupportiveHousingSerializer
+
+
+class RelatedLeaseViewSet(viewsets.ModelViewSet):
+    queryset = RelatedLease.objects.all()
+    serializer_class = RelatedLeaseSerializer
 
 
 class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
