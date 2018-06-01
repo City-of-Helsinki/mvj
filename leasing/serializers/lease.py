@@ -189,19 +189,23 @@ def get_related_lease_predecessors(to_lease_id, accumulator=None):
     return result
 
 
+def get_related_leases(obj):
+    # Immediate successors
+    related_to_leases = set(RelatedLease.objects.filter(from_lease=obj).select_related('to_lease', 'from_lease'))
+    # All predecessors
+    related_from_leases = get_related_lease_predecessors(obj.id)
+
+    return {
+        'related_to': RelatedToLeaseSerializer(related_to_leases, many=True).data,
+        'related_from': RelatedFromLeaseSerializer(related_from_leases, many=True).data,
+    }
+
+
 class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
-        # Immediate successors
-        related_to_leases = set(RelatedLease.objects.filter(from_lease=obj).select_related('to_lease', 'from_lease'))
-        # All predecessors
-        related_from_leases = get_related_lease_predecessors(obj.id)
-
-        return {
-            'related_to': RelatedToLeaseSerializer(related_to_leases, many=True).data,
-            'related_from': RelatedFromLeaseSerializer(related_from_leases, many=True).data,
-        }
+        return get_related_leases(obj)
 
     class Meta:
         model = Lease
@@ -223,6 +227,10 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
     preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
                                                   related_serializer=UserSerializer, required=False, allow_null=True)
+    related_leases = serializers.SerializerMethodField()
+
+    def get_related_leases(self, obj):
+        return get_related_leases(obj)
 
     class Meta:
         model = Lease
