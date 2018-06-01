@@ -3,7 +3,6 @@ from pathlib import Path
 
 import factory
 import pytest
-from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -12,6 +11,7 @@ from pytest_factoryboy import register
 from leasing.enums import ContactType, IndexType, LeaseAreaType, LocationType, RentCycle, RentType, TenantContactType
 from leasing.models import (
     Contact, District, Lease, LeaseArea, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact)
+from users.models import User
 
 
 @pytest.fixture()
