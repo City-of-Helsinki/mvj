@@ -279,6 +279,11 @@ class Lease(TimeStampedSafeDeleteModel):
 
     objects = LeaseManager()
 
+    class Meta:
+        permissions = (
+            ("view_lease", _("Can view lease")),
+        )
+
     def __str__(self):
         return self.get_identifier_string()
 
