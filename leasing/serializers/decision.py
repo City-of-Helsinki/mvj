@@ -47,8 +47,8 @@ class DecisionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Decision
-        fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section', 'type', 'description',
-                  'conditions')
+        fields = ('id', 'lease', 'reference_number', 'decision_maker', 'decision_date', 'section', 'type',
+                  'description', 'conditions')
 
 
 class DecisionCreateUpdateNestedSerializer(UpdateNestedMixin, serializers.ModelSerializer):
