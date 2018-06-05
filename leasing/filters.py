@@ -1,9 +1,11 @@
-from django_filters.rest_framework import FilterSet
+from django_filters.rest_framework import FilterSet, filters
 
 from .models import Comment, Contact, Decision, District, Invoice, Lease
 
 
 class CommentFilter(FilterSet):
+    lease = filters.NumberFilter()
+
     class Meta:
         model = Comment
         fields = ['lease', 'user', 'topic']
@@ -17,6 +19,8 @@ class ContactFilter(FilterSet):
 
 
 class DecisionFilter(FilterSet):
+    lease = filters.NumberFilter()
+
     class Meta:
         model = Decision
         fields = ['lease', 'reference_number', 'decision_maker', 'decision_date', 'type']
@@ -29,6 +33,8 @@ class DistrictFilter(FilterSet):
 
 
 class InvoiceFilter(FilterSet):
+    lease = filters.NumberFilter()
+
     class Meta:
         model = Invoice
         fields = ['lease', 'state', 'type']
