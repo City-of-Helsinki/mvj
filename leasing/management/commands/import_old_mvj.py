@@ -6,11 +6,13 @@ from django.core.management.base import BaseCommand
 import cx_Oracle
 from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType,
-    PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType, TenantContactType)
+    LeaseAreaType, LeaseState, LocationType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
+    RentType, TenantContactType)
 from leasing.models import (
-    Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, Invoice, Lease, LeaseIdentifier,
-    LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+    Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea,
+    LeaseIdentifier, LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
+from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
 from leasing.models.utils import DayMonth
 
@@ -48,12 +50,22 @@ def rows_to_dict_list(cursor):
 
 
 VUOKRALAJI_MAP = {
-    None: None,
+    # TODO: Is MANUAL the correct default
+    None: RentType.MANUAL,
     '1': RentType.FIXED,
     '2': RentType.INDEX,
     '3': RentType.ONE_TIME,
     '4': RentType.FREE,
     '5': RentType.MANUAL,
+}
+
+TILA_MAP = {
+    'V': LeaseState.LEASE,
+    'H': LeaseState.APPLICATION,
+    'L': LeaseState.PERMISSION,
+    'R': LeaseState.RESERVATION,
+    'S': LeaseState.TRANSFERRED,
+    'T': LeaseState.FREE,
 }
 
 VUOKRAKAUSI_MAP = {
@@ -85,6 +97,7 @@ LASKUTYYPPI_MAP = {
 }
 
 ASIAKASTYYPPI_MAP = {
+    None: ContactType.OTHER,
     '0': ContactType.PERSON,
     '1': ContactType.BUSINESS,
     '2': ContactType.UNIT,
@@ -109,6 +122,61 @@ IRTISANOMISAIKA_MAP = {
     '14': 6,  # 30 päivän irtisanomisaika
     '15': 11,  # 9 kk:n irtisanomisaika
     '16': 5,  # 14 vuorok. irtisanomisaika
+}
+
+HITAS_MAP = {
+    '0': 2,  # Ei hitasta
+    '1': 3,  # Hitas I
+    '2': 4,  # Hitas II
+    '3': 5,  # Laatusääntely
+    '4': 6,  # Ei laatusääntelyä
+    '6': 8,  # Ei tietoa
+    '7': 9,  # Hitas II (Loikkari)
+    '8': 10,  # Hitas (vapautettu)
+    '9': 11,  # Hintakontrolloitu
+    'A': 1,  # Puolihitas
+}
+
+FINANCING_MAP = {
+    '0': 5,  # Ei tietoa
+    '1': 6,  # Aravalainoitettu
+    '2': 7,  # Vapaarahoitteinen
+    '3': 8,  # Peruskorjauslaina
+    '4': 9,  # Korkotuki
+    '5': 10,  # Arava tai korkotuki
+    '6': 11,  # Vapaarah. tai arava
+    '7': 12,  # Vap.rah. tai korkot.
+    '8': 13,  # Korkot./arava/vap.ra
+    '9': 14,  # Muu kuin AV ja p. KT
+    'A': 1,  # Korkotuki yht. pitkä
+    'B': 2,  # Korkotuki yht. lyhyt
+    'C': 3,  # Korkotuki osakk. om.
+    'D': 4,  # Muu
+}
+
+MANAGEMENT_MAP = {
+    '0': 6,  # Ei tieoa
+    '1': 7,  # Omistus
+    '2': 8,  # Vuokra
+    '3': 9,  # Asumisoikeus
+    '4': 10,  # Sekatalo
+    '5': 11,  # Vuokra tai asumisoik
+    '6': 12,  # Omistus tai vuokra
+    '7': 13,  # Omist./vuokra/as.oik
+    '8': 14,  # Osaomistus
+    '9': 15,  # Asumisoik./osaomist.
+    'A': 1,  # koe
+    'B': 2,  # koe 2
+    'C': 3,  # Asumisoikeus/omistus
+    'D': 4,  # Asumisoikeus/vuokra
+    'E': 5,  # Omistus ja vuokra
+}
+
+LEASE_AREA_TYPE_MAP = {
+    None: LeaseAreaType.OTHER,  # Unknown
+    '1': LeaseAreaType.PLAN_UNIT,  # Kaavatontti
+    '2': LeaseAreaType.REAL_PROPERTY,  # Kiinteistö
+    '3': LeaseAreaType.OTHER,  # Siirtolapuutarhapalsta
 }
 
 asiakas_cache = {}
@@ -186,14 +254,32 @@ class Command(BaseCommand):
 
         # lease_ids = ['A1149-382']
         # lease_ids = ['A4123-35']
+        # lease_ids = ['A1136-348']
+
+        query = """
+            SELECT ALKUOSA, JUOKSU
+            FROM VUOKRAUS
+            WHERE ALKUPVM >= TO_DATE('01/01/2016', 'DD/MM/YYYY')
+              AND ALKUPVM < TO_DATE('01/01/2017', 'DD/MM/YYYY')
+            ORDER BY ALKUPVM
+            """
+        cursor.execute(query)
+        lease_ids = ['{}-{}'.format(row[0], row[1]) for row in cursor]
+
+        lease_id_count = len(lease_ids)
+        self.stdout.write('{} lease ids'.format(lease_id_count))
 
         # LEASE_TYPE_MAP = {lt.identifier: lt.id for lt in LeaseType.objects.all()}
+        intended_use_map = {intended_use.name: intended_use.id for intended_use in IntendedUse.objects.all()}
 
+        count = 0
         for lease_id in lease_ids:
             if not lease_id:
                 continue
 
-            self.stdout.write(lease_id)
+            count += 1
+            self.stdout.write('{} ({}/{})'.format(lease_id, count, lease_id_count))
+
             id_parts = expand_lease_identifier(lease_id)
 
             # self.stdout.write(expanded_id_to_query(id_parts))
@@ -201,8 +287,9 @@ class Command(BaseCommand):
             asiakas_num_to_tenant = {}
 
             query = """
-                SELECT *
-                FROM VUOKRAUS
+                SELECT v.*, k.NIMI AS KTARK_NIMI
+                FROM VUOKRAUS v
+                LEFT JOIN KTARK_KOODI k ON v.KTARK_KOODI = k.KTARK_KOODI
                 WHERE 1 = 1
                 """ + expanded_id_to_query(id_parts)
 
@@ -229,12 +316,27 @@ class Command(BaseCommand):
                 else:
                     lease = Lease.objects.get(identifier=lease_identifier)
 
+                lease.state = TILA_MAP[lease_row['TILA']]
                 lease.start_date = lease_row['ALKUPVM'].date() if lease_row['ALKUPVM'] else None
                 lease.end_date = lease_row['LOPPUPVM'].date() if lease_row['LOPPUPVM'] else None
+                lease.intended_use_id = intended_use_map[lease_row['KTARK_NIMI']] if lease_row[
+                    'KTARK_NIMI'] in intended_use_map else None
                 lease.intended_use_note = lease_row['KTARK_TXT']
                 lease.notice_period_id = IRTISANOMISAIKA_MAP[lease_row['IRTISANOMISAIKA']] if lease_row[
                     'IRTISANOMISAIKA'] else None
                 lease.notice_note = lease_row['IRTISAN_KOMM']
+                lease.reference_number = lease_row['DIAARINO']
+                lease.hitas_id = HITAS_MAP[lease_row['HITAS']] if lease_row['HITAS'] else None
+                lease.financing_id = FINANCING_MAP[lease_row['RAHOITUSM']] if lease_row['RAHOITUSM'] else None
+                lease.management_id = MANAGEMENT_MAP[lease_row['HALLINTAM']] if lease_row['HALLINTAM'] else None
+
+                if lease_row['SIIRTO_OIKEUS'] == 'K':
+                    lease.transferable = True
+                elif lease_row['SIIRTO_OIKEUS'] == 'E':
+                    lease.transferable = False
+
+                lease.is_invoicing_enabled = True if lease_row['LASKUTUS'] == 'K' else False
+
                 lease.save()
 
                 self.stdout.write("Vuokralaiset:")
@@ -285,8 +387,12 @@ class Command(BaseCommand):
                     this_tenant = None
                     for lease_tenant in lease.tenants.all():
                         for lease_tenantcontact in lease_tenant.tenantcontact_set.all():
-                            if lease_tenantcontact.contact == asiakas_cache[role_row['LIITTYY_ASIAKAS']]:
-                                this_tenant = lease_tenant
+                            try:
+                                if lease_tenantcontact.contact == asiakas_cache[role_row['LIITTYY_ASIAKAS']]:
+                                    this_tenant = lease_tenant
+                            except KeyError:
+                                self.stdout.write('  LIITTYY_ASIAKAS {} not one of the tenants! Skipping.'.format(
+                                    role_row['LIITTYY_ASIAKAS']))
 
                     if this_tenant:
                         (tenantcontact, tenantcontact_created) = TenantContact.objects.get_or_create(
@@ -375,7 +481,7 @@ class Command(BaseCommand):
 
                         if not due_dates_match_found:
                             self.stdout.write(" DUE DATES MATCH NOT FOUND. Adding custom dates:")
-                            self.stdout.write(" ", due_dates)
+                            self.stdout.write(" {}".format(due_dates))
                             rent.due_dates_type = DueDatesType.CUSTOM
                             rent.due_dates.set([])
                             for due_date in due_dates:
@@ -387,6 +493,7 @@ class Command(BaseCommand):
                     else:
                         self.stdout.write(' NO DUE DATES IN "VUOKRAUKSEN_ERAPAIVA"')
 
+                initial_rent = None
                 if lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA'] and lease_row['KIINTEA_ALKUVUOSIVUOKRAN_LOPPU']:
                     (initial_rent, initial_rent_created) = FixedInitialYearRent.objects.get_or_create(
                         rent=rent,
@@ -422,6 +529,11 @@ class Command(BaseCommand):
                             'end_date': rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
                         }
                     )
+
+                    # TODO: No intended use for initial year rent in the old system
+                    if initial_rent and not initial_rent.intended_use_id:
+                        initial_rent.intended_use = contract_rent_intended_use
+                        initial_rent.save()
 
                 self.stdout.write("Tarkistettu vuokra:")
 
@@ -459,7 +571,7 @@ class Command(BaseCommand):
                     (payable_rent, payable_rent_created) = PayableRent.objects.get_or_create(
                         rent=rent,
                         amount=rent_row['PERITTAVAVUOKRA'],
-                        calendar_year_rent=rent_row['KALENTERIVUOSIVUOKRA'],
+                        calendar_year_rent=rent_row['KALENTERIVUOSIVUOKRA'] if rent_row['KALENTERIVUOSIVUOKRA'] else 0,
                         start_date=rent_row['ALKUPVM'].date() if rent_row['ALKUPVM'] else None,
                         end_date=rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
                         difference_percent=rent_row['NOUSUPROSENTTI'] if rent_row['NOUSUPROSENTTI'] else 0,
@@ -635,3 +747,38 @@ class Command(BaseCommand):
                         invoice.billing_period_end_date = datetime.date(
                             year=period_start_date.year, month=period_end_date.month, day=period_end_date.day)
                         invoice.save()
+
+                self.stdout.write('Vuokra-alue:')
+
+                query = """
+                    SELECT *
+                    FROM HALLINTA h
+                    LEFT JOIN VUOKRAKOHDE k ON k.KOHDE = h.KOHDE
+                    WHERE 1 = 1
+                    """ + expanded_id_to_query_alku(id_parts)
+
+                cursor.execute(query)
+                kohde_rows = rows_to_dict_list(cursor)
+
+                for lease_area_row in kohde_rows:
+                    identifier = '{}-{}-{}-{}'.format(lease_area_row['KUNTATUNNUS'], lease_area_row['KAUPOSATUNNUS'],
+                                                      lease_area_row['KORTTELI'], lease_area_row['TONTTI'])
+                    if lease_area_row['MVJ_PALSTA'] != '000':
+                        identifier += '-{}'.format(lease_area_row['MVJ_PALSTA'])
+
+                    (lease_area, lease_area_created) = LeaseArea.objects.get_or_create(
+                        lease=lease,
+                        type=LEASE_AREA_TYPE_MAP[lease_area_row['KIINTEISTOTYYPPI']],
+                        identifier=identifier,
+                        area=lease_area_row['PINTA_ALA_M2'] if lease_area_row['PINTA_ALA_M2'] else 0,
+                        section_area=lease_area_row['PINTA_ALA_M2'] if lease_area_row['PINTA_ALA_M2'] else 0,
+                        location=LocationType.SURFACE,
+                    )
+
+                    if lease_area_row['OSOITE']:
+                        (lease_area_address, lease_area_address_created) = LeaseAreaAddress.objects.get_or_create(
+                            lease_area=lease_area,
+                            address=lease_area_row['OSOITE'],
+                        )
+
+                self.stdout.write('*****\n\n')
