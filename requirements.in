@@ -11,5 +11,6 @@ djangorestframework
 djangorestframework-gis
 django-rest-swagger
 psycopg2-binary
+python-dateutil
 raven
 requests
