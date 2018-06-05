@@ -203,6 +203,7 @@ def get_related_leases(obj):
 
 class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
+    preparer = UserSerializer()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
