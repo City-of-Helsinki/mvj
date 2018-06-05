@@ -28,6 +28,24 @@ class DistrictAdmin(admin.ModelAdmin):
     search_fields = ['name', 'municipality__name', 'identifier']
 
 
+class TenantContactAdmin(admin.ModelAdmin):
+    list_display = ('get_lease_identifier', 'tenant', 'type', 'contact')
+    raw_id_fields = ('tenant', 'contact')
+
+    def get_lease_identifier(self, obj):
+        return str(obj.tenant.lease)
+
+    get_lease_identifier.short_description = _('Lease')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('tenant', 'contact', 'tenant__lease__type', 'tenant__lease__municipality',
+                                 'tenant__lease__district', 'tenant__lease__identifier',
+                                 'tenant__lease__identifier__type', 'tenant__lease__identifier__municipality',
+                                 'tenant__lease__identifier__district')
+
+
 class TenantContactInline(admin.TabularInline):
     model = TenantContact
     extra = 0
@@ -36,11 +54,20 @@ class TenantContactInline(admin.TabularInline):
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('lease', )
     inlines = [TenantContactInline]
+    raw_id_fields = ('lease',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
 
 
 class RelatedLeaseInline(admin.TabularInline):
     model = RelatedLease
     fk_name = 'from_lease'
+    raw_id_fields = ('from_lease', 'to_lease')
     extra = 0
 
 
@@ -49,12 +76,28 @@ class LeaseBasisOfRentInline(admin.TabularInline):
     extra = 0
 
 
+class LeaseIdentifierAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('type', 'municipality', 'district')
+
+
 class LeaseAdmin(admin.ModelAdmin):
     inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
+    raw_id_fields = ('identifier', )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('type', 'municipality', 'district', 'identifier',
+                                 'identifier__type', 'identifier__municipality',
+                                 'identifier__district')
 
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('lease', 'topic', 'user', 'created_at', 'modified_at')
+    raw_id_fields = ('lease', )
 
 
 class ContractChangeInline(admin.StackedInline):
@@ -70,6 +113,7 @@ class MortgageDocumentInline(admin.StackedInline):
 class ContractAdmin(admin.ModelAdmin):
     list_display = ('lease', 'type', 'contract_number')
     inlines = [ContractChangeInline, MortgageDocumentInline]
+    raw_id_fields = ('lease',)
 
 
 class ConditionInline(admin.StackedInline):
@@ -80,6 +124,7 @@ class ConditionInline(admin.StackedInline):
 class DecisionAdmin(admin.ModelAdmin):
     list_display = ('lease', 'reference_number', 'decision_maker', 'type')
     inlines = [ConditionInline]
+    raw_id_fields = ('lease',)
 
 
 class NameAdmin(admin.ModelAdmin):
@@ -116,6 +161,14 @@ class RentAdjustmentInline(admin.TabularInline):
 class RentAdmin(admin.ModelAdmin):
     list_display = ('lease', 'type')
     inlines = [RentDueDateInline, FixedInitialYearRentInline, ContractRentInline, RentAdjustmentInline]
+    raw_id_fields = ('lease',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
 
 
 class BasisOfRentPropertyIdentifierInline(admin.TabularInline):
@@ -145,11 +198,13 @@ class IndexAdmin(admin.ModelAdmin):
 class InvoiceRowInline(admin.TabularInline):
     model = InvoiceRow
     extra = 0
+    raw_id_fields = ('tenant',)
 
 
 class InvoiceAdmin(admin.ModelAdmin):
     list_display = ('lease', 'due_date', 'billing_period_start_date', 'billing_period_end_date', 'total_amount')
     inlines = [InvoiceRowInline]
+    raw_id_fields = ('lease',)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -182,6 +237,14 @@ class LeaseAreaAddressInline(admin.TabularInline):
 class LeaseAreaAdmin(admin.ModelAdmin):
     list_display = ('lease', 'type')
     inlines = [LeaseAreaAddressInline, ConstructabilityDescriptionInline, PlotInline, PlanUnitInline]
+    raw_id_fields = ('lease',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
 
 
 class PlotAddressInline(admin.TabularInline):
@@ -192,6 +255,20 @@ class PlotAddressInline(admin.TabularInline):
 class PlotAdmin(admin.ModelAdmin):
     list_display = ('lease_area', 'type')
     inlines = [PlotAddressInline]
+    raw_id_fields = ('lease_area',)
+
+
+class LeaseStateLogAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'state')
+    raw_id_fields = ('lease',)
+    readonly_fields = ('created_at', 'modified_at')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
 
 
 class PlanUnitAddressInline(admin.TabularInline):
@@ -202,6 +279,7 @@ class PlanUnitAddressInline(admin.TabularInline):
 class PlanUnitAdmin(admin.ModelAdmin):
     list_display = ('get_lease_identifier', 'lease_area', 'type')
     inlines = [PlanUnitAddressInline]
+    raw_id_fields = ('lease_area',)
 
     def get_lease_identifier(self, obj):
         return str(obj.lease_area.lease)
@@ -225,8 +303,8 @@ admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea, LeaseAreaAdmin)
-admin.site.register(LeaseIdentifier)
-admin.site.register(LeaseStateLog)
+admin.site.register(LeaseIdentifier, LeaseIdentifierAdmin)
+admin.site.register(LeaseStateLog, LeaseStateLogAdmin)
 admin.site.register(LeaseType, LeaseTypeAdmin)
 admin.site.register(Management, NameAdmin)
 admin.site.register(Municipality, MunicipalityAdmin)
@@ -242,7 +320,7 @@ admin.site.register(RentIntendedUse, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
 admin.site.register(Tenant, TenantAdmin)
-admin.site.register(TenantContact)
+admin.site.register(TenantContact, TenantContactAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(ContractType, NameAdmin)
 admin.site.register(Decision, DecisionAdmin)
