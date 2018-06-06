@@ -4,6 +4,7 @@ from rest_framework import serializers
 from leasing.enums import InvoiceState
 from leasing.models import Contact, Invoice
 from leasing.models.invoice import InvoiceRow
+from leasing.serializers.tenant import TenantSerializer
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 from .contact import ContactSerializer
@@ -11,6 +12,7 @@ from .contact import ContactSerializer
 
 class InvoiceRowSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
+    tenant = TenantSerializer()
 
     class Meta:
         model = InvoiceRow
