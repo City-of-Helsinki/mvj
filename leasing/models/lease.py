@@ -1,3 +1,5 @@
+import re
+
 from auditlog.registry import auditlog
 from django.db import connection, models, transaction
 from django.db.models import Max
@@ -177,6 +179,18 @@ class LeaseManager(models.Manager):
         return self.get_queryset().select_related(
             'type', 'municipality', 'district', 'identifier', 'identifier__type',
             'identifier__municipality', 'identifier__district', 'preparer').prefetch_related('related_leases')
+
+    def get_by_identifier(self, identifier):
+        id_match = re.match(r'(?P<lease_type>\w\d)(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$',
+                            identifier)
+
+        if not id_match:
+            raise RuntimeError('identifier "{}" doesn\'t match the identifier format'.format(identifier))
+
+        return self.get_queryset().get(identifier__type__identifier=id_match.group('lease_type'),
+                                       identifier__municipality__identifier=id_match.group('municipality'),
+                                       identifier__district__identifier=id_match.group('district'),
+                                       identifier__sequence=id_match.group('sequence'))
 
 
 class Lease(TimeStampedSafeDeleteModel):
