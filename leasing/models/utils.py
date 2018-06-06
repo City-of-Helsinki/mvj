@@ -20,8 +20,8 @@ def calculate_index_adjusted_value_type_5_7(value, index_value, base):
     return value / base * index_value
 
 
-def calculate_index_adjusted_value_type_6_v2(value, index_value):
-    return int_floor(value, 10) * index_value
+def calculate_index_adjusted_value_type_6_v2(value, index_value, base):
+    return int_floor(value, 10) / base * index_value
 
 
 def calculate_index_adjusted_value(value, index_value, index_type=IndexType.TYPE_7, precision=None, **extra):
@@ -49,7 +49,7 @@ def calculate_index_adjusted_value(value, index_value, index_type=IndexType.TYPE
         raise NotImplementedError('Cannot calculate index adjusted value for index type 6 version 1')
 
     elif index_type == IndexType.TYPE_6 and not extra:
-        return calculate_index_adjusted_value_type_6_v2(value, index_value)
+        return calculate_index_adjusted_value_type_6_v2(value, index_value, 100)
 
     elif index_type == IndexType.TYPE_7:
         return calculate_index_adjusted_value_type_5_7(value, index_value, 100)
