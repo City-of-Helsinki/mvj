@@ -187,10 +187,17 @@ class LeaseManager(models.Manager):
         if not id_match:
             raise RuntimeError('identifier "{}" doesn\'t match the identifier format'.format(identifier))
 
+        # TODO: Kludge
+        district = id_match.group('district')
+        if district == '00':
+            district = '0'
+        else:
+            district = district.lstrip('0')
+
         return self.get_queryset().get(identifier__type__identifier=id_match.group('lease_type'),
                                        identifier__municipality__identifier=id_match.group('municipality'),
-                                       identifier__district__identifier=id_match.group('district'),
-                                       identifier__sequence=id_match.group('sequence'))
+                                       identifier__district__identifier=district,
+                                       identifier__sequence=id_match.group('sequence').lstrip('0'))
 
 
 class Lease(TimeStampedSafeDeleteModel):
