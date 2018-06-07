@@ -6,11 +6,12 @@ from django.core.management.base import BaseCommand
 import cx_Oracle
 from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType,
-    LeaseAreaType, LeaseState, LocationType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
-    RentType, TenantContactType)
+    LeaseAreaType, LeaseRelationType, LeaseState, LocationType, PeriodType, RentAdjustmentAmountType,
+    RentAdjustmentType, RentCycle, RentType, TenantContactType)
 from leasing.models import (
     Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea,
-    LeaseIdentifier, LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+    LeaseIdentifier, LeaseType, Municipality, PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant,
+    TenantContact)
 from leasing.models.invoice import InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
@@ -255,6 +256,7 @@ class Command(BaseCommand):
         # lease_ids = ['A1149-382']
         # lease_ids = ['A4123-35']
         # lease_ids = ['A1136-348']
+        # lease_ids = ['A1141-774', 'A1141-9']  # LIITTYY
 
         query = """
             SELECT ALKUOSA, JUOKSU
@@ -271,6 +273,8 @@ class Command(BaseCommand):
 
         # LEASE_TYPE_MAP = {lt.identifier: lt.id for lt in LeaseType.objects.all()}
         intended_use_map = {intended_use.name: intended_use.id for intended_use in IntendedUse.objects.all()}
+
+        related_leases = []
 
         count = 0
         for lease_id in lease_ids:
@@ -329,6 +333,7 @@ class Command(BaseCommand):
                 lease.hitas_id = HITAS_MAP[lease_row['HITAS']] if lease_row['HITAS'] else None
                 lease.financing_id = FINANCING_MAP[lease_row['RAHOITUSM']] if lease_row['RAHOITUSM'] else None
                 lease.management_id = MANAGEMENT_MAP[lease_row['HALLINTAM']] if lease_row['HALLINTAM'] else None
+                lease.note = lease_row['SIIRTO_TXT']
 
                 if lease_row['SIIRTO_OIKEUS'] == 'K':
                     lease.transferable = True
@@ -338,6 +343,23 @@ class Command(BaseCommand):
                 lease.is_invoicing_enabled = True if lease_row['LASKUTUS'] == 'K' else False
 
                 lease.save()
+
+                self.stdout.write("Related to lease:")
+                if lease_row['LIITTYY_ALKUOSA'] != lease_row['ALKUOSA'] or \
+                        lease_row['LIITTYY_JUOKSU'] != lease_row['JUOKSU']:
+                    related_identifier = "{}-{}".format(lease_row['LIITTYY_ALKUOSA'], lease_row['LIITTYY_JUOKSU'])
+
+                    self.stdout.write(" {}".format(related_identifier))
+
+                    related_type = None
+                    if lease.state == LeaseState.TRANSFERRED:
+                        related_type = LeaseRelationType.TRANSFER
+
+                    related_leases.append({
+                        'from_lease': related_identifier,
+                        'to_lease': lease,
+                        'type': related_type,
+                    })
 
                 self.stdout.write("Vuokralaiset:")
                 query = """
@@ -527,6 +549,7 @@ class Command(BaseCommand):
                             'base_amount_period': contract_rent_period,
                             'start_date': rent_row['ALKUPVM'].date() if rent_row['ALKUPVM'] else None,
                             'end_date': rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
+                            'base_year_rent': rent_row['UUSI_PERUSVUOKRA'],
                         }
                     )
 
@@ -761,10 +784,12 @@ class Command(BaseCommand):
                 kohde_rows = rows_to_dict_list(cursor)
 
                 for lease_area_row in kohde_rows:
-                    identifier = '{}-{}-{}-{}'.format(lease_area_row['KUNTATUNNUS'], lease_area_row['KAUPOSATUNNUS'],
-                                                      lease_area_row['KORTTELI'], lease_area_row['TONTTI'])
+                    identifier = '{}-{}-{}-{}'.format(lease_area_row['KUNTATUNNUS'].lstrip('0'),
+                                                      lease_area_row['KAUPOSATUNNUS'].lstrip('0'),
+                                                      lease_area_row['KORTTELI'].lstrip('0'),
+                                                      lease_area_row['TONTTI'].lstrip('0'))
                     if lease_area_row['MVJ_PALSTA'] != '000':
-                        identifier += '-{}'.format(lease_area_row['MVJ_PALSTA'])
+                        identifier += '-P{}'.format(lease_area_row['MVJ_PALSTA'].lstrip('0'))
 
                     (lease_area, lease_area_created) = LeaseArea.objects.get_or_create(
                         lease=lease,
@@ -782,3 +807,19 @@ class Command(BaseCommand):
                         )
 
                 self.stdout.write('*****\n\n')
+
+        self.stdout.write('Updating related leases:')
+
+        for related_lease_data in related_leases:
+            self.stdout.write(' {} -> {}'.format(related_lease_data['from_lease'],
+                                                 related_lease_data['to_lease']))
+
+            try:
+                from_lease = Lease.objects.get_by_identifier(related_lease_data['from_lease'])
+                (related_lease, related_lease_created) = RelatedLease.objects.get_or_create(
+                    from_lease=from_lease,
+                    to_lease=related_lease_data['to_lease'],
+                    type=related_lease_data['type']
+                )
+            except Lease.DoesNotExist:
+                self.stdout.write('  Lease {} does not exist!'.format(related_lease_data['from_lease']))
