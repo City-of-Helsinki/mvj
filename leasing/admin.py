@@ -2,15 +2,19 @@ from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
-    BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate,
-    Comment, Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent,
-    ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index,
-    IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management,
-    MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
-    Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
-    Tenant, TenantContact)
+    AreaNote, BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier,
+    BasisOfRentRate, Comment, Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange,
+    ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas,
+    Index, IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType,
+    Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot,
+    ReceivableType, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse,
+    SupportiveHousing, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress, PlanUnitAddress, PlotAddress
+
+
+class AreaNoteAdmin(admin.OSMGeoAdmin):
+    pass
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -292,6 +296,7 @@ class PlanUnitAdmin(admin.ModelAdmin):
         return qs.select_related('lease_area', 'lease_area__lease')
 
 
+admin.site.register(AreaNote, AreaNoteAdmin)
 admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
