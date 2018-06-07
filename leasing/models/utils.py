@@ -1,7 +1,7 @@
 import datetime
 from collections import namedtuple
 from datetime import date
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
 
@@ -18,6 +18,27 @@ def calculate_index_adjusted_value_type_1_2_3_4(value, index_value, precision, b
 
 def calculate_index_adjusted_value_type_5_7(value, index_value, base):
     return value / base * index_value
+
+
+def calculate_index_adjusted_value_type_6(value, index_value, base, x_value, y_value):
+    if index_value <= x_value:
+        return calculate_index_adjusted_value_type_6_v2(value, index_value, base)
+
+    rounded_index = int_floor(index_value, 10)
+
+    # Decimal.quantize(Decimal('.01'), rounding=ROUND_HALF_UP) is used to round to two decimals.
+    # see https://docs.python.org/3/library/decimal.html
+    if rounded_index < y_value:
+        dividend = Decimal(x_value + (index_value - x_value) / 2).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+        return ratio * value
+    else:
+        dividend = Decimal(y_value - (y_value - x_value) / 2).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        new_base_rent = (ratio * value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+        return new_base_rent * Decimal(rounded_index / y_value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
 
 def calculate_index_adjusted_value_type_6_v2(value, index_value, base):
@@ -45,11 +66,12 @@ def calculate_index_adjusted_value(value, index_value, index_type=IndexType.TYPE
     elif index_type == IndexType.TYPE_5:
         return calculate_index_adjusted_value_type_5_7(value, index_value, 392)
 
-    elif index_type == IndexType.TYPE_6 and extra:
-        raise NotImplementedError('Cannot calculate index adjusted value for index type 6 version 1')
+    elif index_type == IndexType.TYPE_6:
+        if 'x_value' not in extra or not extra['x_value'] or 'y_value' not in extra or not extra['y_value']:
+            return calculate_index_adjusted_value_type_6_v2(value, index_value, 100)
 
-    elif index_type == IndexType.TYPE_6 and not extra:
-        return calculate_index_adjusted_value_type_6_v2(value, index_value, 100)
+        return calculate_index_adjusted_value_type_6(value, index_value, 100, x_value=extra['x_value'],
+                                                     y_value=extra['y_value'])
 
     elif index_type == IndexType.TYPE_7:
         return calculate_index_adjusted_value_type_5_7(value, index_value, 100)

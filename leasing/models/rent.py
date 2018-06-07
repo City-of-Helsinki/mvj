@@ -197,7 +197,8 @@ class Rent(TimeStampedSafeDeleteModel):
                     original_rent_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
 
                     index = Index.objects.get_latest_for_date(contract_overlap[0])
-                    contract_amount = calculate_index_adjusted_value(original_rent_amount, index, self.index_type)
+                    contract_amount = calculate_index_adjusted_value(
+                        original_rent_amount, index, self.index_type, x_value=self.x_value, y_value=self.y_value)
 
                     contract_rent_explanation_item = explanation.add(
                         subject=contract_rent, date_ranges=[contract_overlap], amount=original_rent_amount)
