@@ -1,0 +1,114 @@
+[
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 1,
+    "fields": {
+      "name": "A (asuinrakennus)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 2,
+    "fields": {
+      "name": "AK (kerrostalo)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 3,
+    "fields": {
+      "name": "AR (rivitalo)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 4,
+    "fields": {
+      "name": "AP (pientalo)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 5,
+    "fields": {
+      "name": "1 perh. omakotitalo"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 6,
+    "fields": {
+      "name": "Y (yleinen rakennus)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 7,
+    "fields": {
+      "name": "Pysäköinti"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 8,
+    "fields": {
+      "name": "Asuntola"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 9,
+    "fields": {
+      "name": "Toimisto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 10,
+    "fields": {
+      "name": "Liike"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 11,
+    "fields": {
+      "name": "Hotelli"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 12,
+    "fields": {
+      "name": "AH (asum.palv.huol.)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 13,
+    "fields": {
+      "name": "LH (huolto/jak.ase.)"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 14,
+    "fields": {
+      "name": "Teollisuus"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 15,
+    "fields": {
+      "name": "Varasto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentPlotType",
+    "pk": 16,
+    "fields": {
+      "name": "Muu"
+    }
+  }
+]

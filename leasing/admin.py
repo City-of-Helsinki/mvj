@@ -2,13 +2,13 @@ from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
-    AreaNote, BankHoliday, BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier,
-    BasisOfRentRate, Comment, Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange,
-    ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas,
-    Index, IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType,
-    Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot,
-    ReceivableType, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse,
-    SupportiveHousing, Tenant, TenantContact)
+    AreaNote, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
+    BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment, Condition, ConditionType, ConstructabilityDescription,
+    Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District,
+    Financing, FixedInitialYearRent, Hitas, Index, IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent,
+    LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit,
+    PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate,
+    RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress, PlanUnitAddress, PlotAddress
 
@@ -334,3 +334,4 @@ admin.site.register(DecisionMaker, NameAdmin)
 admin.site.register(ConditionType, NameAdmin)
 admin.site.register(BasisOfRent, BasisOfRentAdmin)
 admin.site.register(BasisOfRentPlotType, NameAdmin)
+admin.site.register(BasisOfRentBuildPermissionType, NameAdmin)

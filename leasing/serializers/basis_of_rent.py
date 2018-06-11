@@ -2,9 +2,8 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from ..models import (
-    BasisOfRent, BasisOfRentDecision, BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate,
-    RentIntendedUse)
-from .rent import RentIntendedUseSerializer
+    BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
+    BasisOfRentPropertyIdentifier, BasisOfRentRate)
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
@@ -14,12 +13,18 @@ class BasisOfRentPlotTypeSerializer(NameModelSerializer):
         fields = '__all__'
 
 
+class BasisOfRentBuildPermissionTypeSerializer(NameModelSerializer):
+    class Meta:
+        model = BasisOfRentBuildPermissionType
+        fields = '__all__'
+
+
 class BasisOfRentDecisionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = BasisOfRentDecision
-        fields = ('id', 'identifier')
+        fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section')
 
 
 class BasisOfRentPropertyIdentifierSerializer(serializers.ModelSerializer):
@@ -32,16 +37,17 @@ class BasisOfRentPropertyIdentifierSerializer(serializers.ModelSerializer):
 
 class BasisOfRentRateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
-                                                      queryset=RentIntendedUse.objects.all(),
-                                                      related_serializer=RentIntendedUseSerializer)
+    build_permission_type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=BasisOfRentBuildPermissionType, queryset=BasisOfRentBuildPermissionType.objects.all(),
+        related_serializer=BasisOfRentBuildPermissionTypeSerializer)
 
     class Meta:
         model = BasisOfRentRate
-        fields = ('id', 'intended_use', 'amount', 'period')
+        fields = ('id', 'build_permission_type', 'amount', 'area_unit')
 
 
 class BasisOfRentSerializer(serializers.ModelSerializer):
+    plot_type = BasisOfRentPlotTypeSerializer()
     rent_rates = BasisOfRentRateSerializer(many=True, required=False, allow_null=True)
     property_identifiers = BasisOfRentPropertyIdentifierSerializer(many=True, required=False, allow_null=True)
     decisions = BasisOfRentDecisionSerializer(many=True, required=False, allow_null=True)

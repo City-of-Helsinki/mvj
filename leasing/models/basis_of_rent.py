@@ -1,9 +1,11 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import PeriodType
+from leasing.enums import AreaUnit
+from leasing.models.decision import DecisionMaker
+from leasing.models.rent import Index
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
@@ -11,6 +13,12 @@ from .mixins import NameModel, TimeStampedSafeDeleteModel
 class BasisOfRentPlotType(NameModel):
     """
     In Finnish: Tonttityyppi
+    """
+
+
+class BasisOfRentBuildPermissionType(NameModel):
+    """
+    In Finnish: Rakennusoikeustyyppi
     """
 
 
@@ -43,7 +51,7 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     lease_rights_end_date = models.DateField(verbose_name=_("Lease rights end date"), null=True, blank=True)
 
     # In Finnish: Indeksi
-    index = models.PositiveIntegerField(verbose_name=_("Index"))
+    index = models.ForeignKey(Index, verbose_name=_("Index"), null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
@@ -56,15 +64,15 @@ class BasisOfRentRate(TimeStampedSafeDeleteModel):
     basis_of_rent = models.ForeignKey(BasisOfRent, verbose_name=_("Basis of rent"), related_name='rent_rates',
                                       on_delete=models.CASCADE)
 
-    # In Finnish: Pääkäyttötarkoitus
-    intended_use = models.ForeignKey('leasing.RentIntendedUse', verbose_name=_("Intended use"), null=True, blank=True,
-                                     on_delete=models.PROTECT)
+    # In Finnish: Rakennusoikeustyyppi
+    build_permission_type = models.ForeignKey(BasisOfRentBuildPermissionType, verbose_name=_("Build permission type"),
+                                              null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Euroa
     amount = models.DecimalField(verbose_name=_("Amount"), decimal_places=2, max_digits=12)
 
     # In Finnish: Yksikkö
-    period = EnumField(PeriodType, verbose_name=_("Period"), max_length=20)
+    area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
 
 
 class BasisOfRentPropertyIdentifier(models.Model):
@@ -81,7 +89,20 @@ class BasisOfRentDecision(models.Model):
     In Finnish: Päätös
     """
     basis_of_rent = models.ForeignKey(BasisOfRent, related_name='decisions', on_delete=models.CASCADE)
-    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
+
+    # In Finnish: Diaarinumero
+    reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Päättäjä
+    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"),
+                                       related_name="basis_of_rent_decisions", null=True, blank=True,
+                                       on_delete=models.PROTECT)
+
+    # In Finnish: Päätöspäivämäärä
+    decision_date = models.DateField(verbose_name=_("Decision date"), null=True, blank=True)
+
+    # In Finnish: Pykälä
+    section = models.CharField(verbose_name=_("Section"), null=True, blank=True, max_length=255)
 
 
 auditlog.register(BasisOfRent)
