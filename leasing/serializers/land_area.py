@@ -96,7 +96,7 @@ class PlotSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.
 
 class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = ConstructabilityDescription
@@ -105,7 +105,7 @@ class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializ
 
 class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    user = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     modified_at = serializers.ReadOnlyField()
 
     class Meta:
