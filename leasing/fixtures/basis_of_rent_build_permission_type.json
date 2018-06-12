@@ -1,0 +1,107 @@
+[
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 1,
+    "fields": {
+      "name": "Asunto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 2,
+    "fields": {
+      "name": "Asunto, 2 peruste"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 3,
+    "fields": {
+      "name": "Asunto, 3 peruste"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 4,
+    "fields": {
+      "name": "Erittelemätön"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 5,
+    "fields": {
+      "name": "Liike"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 6,
+    "fields": {
+      "name": "Liike/toimisto/teoll"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 7,
+    "fields": {
+      "name": "Muu"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 8,
+    "fields": {
+      "name": "Pys. I-taso"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 9,
+    "fields": {
+      "name": "Pys. muut tasot"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 10,
+    "fields": {
+      "name": "Pysäköinti"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 11,
+    "fields": {
+      "name": "Päiväkoti"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 12,
+    "fields": {
+      "name": "Teoll./toimisto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 13,
+    "fields": {
+      "name": "Teoll./varasto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 14,
+    "fields": {
+      "name": "Toimisto"
+    }
+  },
+  {
+    "model": "leasing.BasisOfRentBuildPermissionType",
+    "pk": 15,
+    "fields": {
+      "name": "Yleinen"
+    }
+  }
+]

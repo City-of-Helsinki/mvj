@@ -1,20 +1,21 @@
 import datetime
+import re
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
 import cx_Oracle
 from leasing.enums import (
-    ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType,
+    AreaUnit, ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, InvoiceState, InvoiceType,
     LeaseAreaType, LeaseRelationType, LeaseState, LocationType, PeriodType, RentAdjustmentAmountType,
     RentAdjustmentType, RentCycle, RentType, TenantContactType)
 from leasing.models import (
-    Contact, ContractRent, District, FixedInitialYearRent, IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea,
-    LeaseIdentifier, LeaseType, Municipality, PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant,
-    TenantContact)
+    BasisOfRent, BasisOfRentDecision, BasisOfRentPropertyIdentifier, BasisOfRentRate, Contact, ContractRent, District,
+    FixedInitialYearRent, IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType,
+    Municipality, PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
-from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
+from leasing.models.rent import FIXED_DUE_DATES, Index, RentDueDate
 from leasing.models.utils import DayMonth
 
 
@@ -48,6 +49,28 @@ AND JUOKSU = {JUOKSU}
 def rows_to_dict_list(cursor):
     columns = [i[0] for i in cursor.description]
     return [dict(zip(columns, row)) for row in cursor]
+
+
+def get_real_property_identifier(data):
+    identifier_parts = [
+        data['KUNTATUNNUS'],
+        data['KAUPOSATUNNUS'],
+        data['KORTTELI'],
+        data['TONTTI'],
+    ]
+
+    for i, identifier_part in enumerate(identifier_parts):
+        if re.fullmatch(r'0*', identifier_part):
+            identifier_parts[i] = '0'
+        else:
+            identifier_parts[i] = identifier_part.lstrip('0')
+
+    identifier = '-'.join(identifier_parts)
+
+    if data['MVJ_PALSTA'] != '000':
+        identifier += '-P{}'.format(data['MVJ_PALSTA'].lstrip('0'))
+
+    return identifier
 
 
 VUOKRALAJI_MAP = {
@@ -180,7 +203,154 @@ LEASE_AREA_TYPE_MAP = {
     '3': LeaseAreaType.OTHER,  # Siirtolapuutarhapalsta
 }
 
+BASIS_OF_RENT_PLOT_TYPE_MAP = {
+    "01": 1,
+    "02": 2,
+    "03": 3,
+    "04": 4,
+    "05": 5,
+    "06": 6,
+    "07": 7,
+    "08": 8,
+    "10": 9,
+    "11": 10,
+    "12": 11,
+    "13": 12,
+    "14": 13,
+    "20": 14,
+    "21": 15,
+    "30": 16,
+}
+
+BASIS_OF_RENT_BUILD_PERMISSION_MAP = {
+    # key: RAKENNUSOIKEUSTYYPPI, ERITTELY
+    ('1', '1'): 1,
+    ('1', '2'): 2,
+    ('1', '3'): 3,
+    ('8', '1'): 4,
+    ('2', '1'): 5,
+    ('02', '2'): 6,
+    ('7', '1'): 7,
+    ('07', '2'): 7,
+    ('9', '1'): 8,
+    ('9', '2'): 9,
+    ('10', '1'): 10,
+    ('5', '1'): 11,
+    ('4', '1'): 12,
+    ('3', '1'): 13,
+    ('11', '2'): 14,
+    ('6', '1'): 15,
+}
+
+BASIS_OF_RENT_RATE_AREA_UNIT_MAP = {
+    None: None,
+    "m2": AreaUnit.SQUARE_METRE,
+    "hm2": AreaUnit.APARTMENT_SQUARE_METRE,
+    "km2": AreaUnit.FLOOR_SQUARE_METRE,
+    "kem2": AreaUnit.FLOOR_SQUARE_METRE,
+    "k-m2": AreaUnit.FLOOR_SQUARE_METRE,
+}
+
+DECISION_MAKER_MAP = {
+    None: None,
+    'ELPTL2': None,  # TODO
+    'KLK': 55,  # Kiinteistölautakunta
+    'KYLK': 66,  # Kaupunkiympäristölautakunta
+    'KHS': 48,  # Kaupunginhallitus
+    'KVSTO': 65,  # Kaupunginvaltuusto
+}
+
 asiakas_cache = {}
+
+
+def import_basis_of_rents(cursor):
+    query = """
+        SELECT *
+        FROM PERUSTE
+        WHERE PERUSTE in (5562, 4892, 5586)
+        """
+
+    cursor.execute(query)
+
+    peruste_rows = rows_to_dict_list(cursor)
+
+    for basis_of_rent_row in peruste_rows:
+        index = None
+        if basis_of_rent_row['KK'] and basis_of_rent_row['VUOSI']:
+            index = Index.objects.get(month=basis_of_rent_row['KK'], year=basis_of_rent_row['VUOSI'])
+
+        notes = []
+        if basis_of_rent_row['PERUSTETXT']:
+            notes.append(basis_of_rent_row['PERUSTETXT'].strip())
+
+        if basis_of_rent_row['ALENNUSTXT']:
+            notes.append(basis_of_rent_row['ALENNUSTXT'].strip())
+
+        (basis_of_rent, created) = BasisOfRent.objects.get_or_create(
+            plot_type_id=BASIS_OF_RENT_PLOT_TYPE_MAP[basis_of_rent_row['TONTTITYYPPI']],
+            start_date=basis_of_rent_row['ALKUPVM'].date() if basis_of_rent_row['ALKUPVM'] else None,
+            end_date=basis_of_rent_row['LOPPUPVM'].date() if basis_of_rent_row['LOPPUPVM'] else None,
+            detailed_plan_identifier=basis_of_rent_row['KAAVANO'],
+            financing_id=FINANCING_MAP[basis_of_rent_row['RAHOITUSMUOTO']] if basis_of_rent_row[
+                'RAHOITUSMUOTO'] else None,
+            management_id=MANAGEMENT_MAP[basis_of_rent_row['HALLINTAMUOTO']] if basis_of_rent_row[
+                'HALLINTAMUOTO'] else None,
+            lease_rights_end_date=basis_of_rent_row['VUOKRAUSOIKEUSPVM'].date() if basis_of_rent_row[
+                'VUOKRAUSOIKEUSPVM'] else None,
+            index=index,
+            note='\n\n'.join(notes) if notes else None,
+        )
+
+        property_identifier = get_real_property_identifier(basis_of_rent_row)
+
+        (basis_of_rent_property_identifier, created) = BasisOfRentPropertyIdentifier.objects.get_or_create(
+            basis_of_rent=basis_of_rent, identifier=property_identifier)
+
+        decision_column_prefixes = ['KLK', 'MUU']
+
+        for decision_column_prefix in decision_column_prefixes:
+            decision_maker_string = basis_of_rent_row['{}_PAATTAJA'.format(decision_column_prefix)]
+            decision_datetime = basis_of_rent_row['{}_PAATOSPVM'.format(decision_column_prefix)]
+            decision_section_string = basis_of_rent_row['{}_PYKALA'.format(decision_column_prefix)]
+
+            if not decision_maker_string or not decision_datetime:
+                continue
+
+            (basis_of_rent_decision, created) = BasisOfRentDecision.objects.get_or_create(
+                basis_of_rent=basis_of_rent,
+                reference_number=None,  # TODO
+                decision_maker_id=DECISION_MAKER_MAP[decision_maker_string] if decision_maker_string else None,
+                decision_date=decision_datetime.date() if decision_datetime else None,
+                section=decision_section_string if decision_section_string else None,
+            )
+
+        query = """
+            SELECT *
+            FROM PERUSTE_HINNAT
+            WHERE PERUSTE = {}
+            """.format(basis_of_rent_row['PERUSTE'])
+
+        cursor.execute(query)
+
+        hinta_rows = rows_to_dict_list(cursor)
+
+        for rate_row in hinta_rows:
+            build_permission_type = BASIS_OF_RENT_BUILD_PERMISSION_MAP[
+                (rate_row['RAKENNUSOIKEUSTYYPPI'], rate_row['ERITTELY'])
+            ]
+            amount = rate_row['MUU_HINTA_ARVIO']
+            area_unit = BASIS_OF_RENT_RATE_AREA_UNIT_MAP[rate_row['MUU_HINTA_YKS']]
+
+            if not amount:
+                amount = rate_row['KLK_HINTA_ARVIO']
+                area_unit = BASIS_OF_RENT_RATE_AREA_UNIT_MAP[rate_row['KLK_HINTA_YKS']]
+
+            (basis_of_rent_rate, created) = BasisOfRentRate.objects.get_or_create(
+                basis_of_rent=basis_of_rent,
+                build_permission_type_id=build_permission_type,
+                amount=amount,
+                area_unit=area_unit,
+            )
 
 
 class Command(BaseCommand):
@@ -230,6 +400,10 @@ class Command(BaseCommand):
 
         cursor = connection.cursor()
 
+        import_basis_of_rents(cursor)
+
+        return
+
         lease_ids = [
             'S0159-5',  # kiinteä vuosivuokra.
             'S0154-529',  # kiinteä kuukausivuokra.
@@ -253,11 +427,6 @@ class Command(BaseCommand):
             'A1110-223',
         ]
 
-        # lease_ids = ['A1149-382']
-        # lease_ids = ['A4123-35']
-        # lease_ids = ['A1136-348']
-        # lease_ids = ['A1141-774', 'A1141-9']  # LIITTYY
-
         query = """
             SELECT ALKUOSA, JUOKSU
             FROM VUOKRAUS
@@ -267,6 +436,12 @@ class Command(BaseCommand):
             """
         cursor.execute(query)
         lease_ids = ['{}-{}'.format(row[0], row[1]) for row in cursor]
+
+        # lease_ids = ['A1149-382']
+        # lease_ids = ['A4123-35']
+        # lease_ids = ['A1136-348']
+        # lease_ids = ['A1141-774', 'A1141-9']  # LIITTYY
+        lease_ids = ['S0110-261']
 
         lease_id_count = len(lease_ids)
         self.stdout.write('{} lease ids'.format(lease_id_count))
@@ -784,12 +959,7 @@ class Command(BaseCommand):
                 kohde_rows = rows_to_dict_list(cursor)
 
                 for lease_area_row in kohde_rows:
-                    identifier = '{}-{}-{}-{}'.format(lease_area_row['KUNTATUNNUS'].lstrip('0'),
-                                                      lease_area_row['KAUPOSATUNNUS'].lstrip('0'),
-                                                      lease_area_row['KORTTELI'].lstrip('0'),
-                                                      lease_area_row['TONTTI'].lstrip('0'))
-                    if lease_area_row['MVJ_PALSTA'] != '000':
-                        identifier += '-P{}'.format(lease_area_row['MVJ_PALSTA'].lstrip('0'))
+                    identifier = get_real_property_identifier(lease_area_row)
 
                     (lease_area, lease_area_created) = LeaseArea.objects.get_or_create(
                         lease=lease,

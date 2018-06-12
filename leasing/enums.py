@@ -120,7 +120,7 @@ class PlotType(Enum):
 
 class PeriodType(Enum):
     """
-    In Finnish: Yksikkö
+    In Finnish: Yksikkö (aika)
     """
     PER_MONTH = 'per_month'
     PER_YEAR = 'per_year'
@@ -128,6 +128,23 @@ class PeriodType(Enum):
     class Labels:
         PER_MONTH = pgettext_lazy('Period type', '/ month')
         PER_YEAR = pgettext_lazy('Period type', '/ year')
+
+
+class AreaUnit(Enum):
+    """
+    In Finnish: Yksikkö (alue)
+    """
+    # In Finnish: Neliömetri
+    SQUARE_METRE = 'm2'
+    # In Finnish: Kerrosneliömetri
+    FLOOR_SQUARE_METRE = 'kem2'
+    # In Finnish: Huoneistoneliömetri
+    APARTMENT_SQUARE_METRE = 'hm2'
+
+    class Labels:
+        SQUARE_METRE = pgettext_lazy('Area unit', 'm^2')
+        FLOOR_SQUARE_METRE = pgettext_lazy('Area unit', 'Floor area m^2')
+        APARTMENT_SQUARE_METRE = pgettext_lazy('Area unit', 'Apartment area m^2')
 
 
 class ConstructabilityState(Enum):
