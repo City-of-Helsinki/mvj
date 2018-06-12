@@ -10,7 +10,7 @@ class BasisOfRentViewSet(AuditLogMixin, viewsets.ModelViewSet):
     serializer_class = BasisOfRentSerializer
 
     def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
+        if self.action in ('create', 'update', 'partial_update', 'metadata'):
             return BasisOfRentCreateUpdateSerializer
 
         return BasisOfRentSerializer

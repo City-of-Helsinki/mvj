@@ -64,6 +64,9 @@ class BasisOfRentSerializer(serializers.ModelSerializer):
 
 
 class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSerializer):
+    plot_type = InstanceDictPrimaryKeyRelatedField(instance_class=BasisOfRentPlotType,
+                                                   queryset=BasisOfRentPlotType.objects.all(),
+                                                   related_serializer=BasisOfRentPlotTypeSerializer)
     rent_rates = BasisOfRentRateSerializer(many=True, required=False, allow_null=True)
     property_identifiers = BasisOfRentPropertyIdentifierSerializer(many=True, required=False, allow_null=True)
     decisions = BasisOfRentDecisionSerializer(many=True, required=False, allow_null=True)
