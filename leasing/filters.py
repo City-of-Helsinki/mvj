@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, filters
 
-from .models import Comment, Contact, Decision, District, Invoice, Lease
+from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
 
 
 class CommentFilter(FilterSet):
@@ -30,6 +30,12 @@ class DistrictFilter(FilterSet):
     class Meta:
         model = District
         fields = ['municipality', 'identifier']
+
+
+class IndexFilter(FilterSet):
+    class Meta:
+        model = Index
+        fields = ['year', 'month']
 
 
 class InvoiceFilter(FilterSet):
