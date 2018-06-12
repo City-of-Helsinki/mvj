@@ -3,7 +3,8 @@ from rest_framework import serializers
 
 from ..models import (
     BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
-    BasisOfRentPropertyIdentifier, BasisOfRentRate)
+    BasisOfRentPropertyIdentifier, BasisOfRentRate, DecisionMaker)
+from .decision import DecisionMakerSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
@@ -21,6 +22,9 @@ class BasisOfRentBuildPermissionTypeSerializer(NameModelSerializer):
 
 class BasisOfRentDecisionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    decision_maker = InstanceDictPrimaryKeyRelatedField(
+        instance_class=DecisionMaker, queryset=DecisionMaker.objects.filter(),
+        related_serializer=DecisionMakerSerializer, required=False, allow_null=True)
 
     class Meta:
         model = BasisOfRentDecision
