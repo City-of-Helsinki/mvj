@@ -54,7 +54,7 @@ def ktj_proxy(request, base_type, print_type):
         if param not in allowed_params:
             del params[param]
 
-    r = requests.get(url, data=params, auth=HTTPBasicAuth(settings.KTJ_PRINT_USERNAME, settings.KTJ_PRINT_PASSWORD),
+    r = requests.get(url, params=params, auth=HTTPBasicAuth(settings.KTJ_PRINT_USERNAME, settings.KTJ_PRINT_PASSWORD),
                      stream=True)
 
     if r.status_code != 200:
