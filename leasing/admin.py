@@ -194,6 +194,12 @@ class BasisOfRentAdmin(admin.ModelAdmin):
     list_display = ('id', 'plot_type', 'management', 'financing')
     inlines = [BasisOfRentPropertyIdentifierInline, BasisOfRentDecisionInline, BasisOfRentRateInline]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('plot_type', 'management', 'financing', 'index').prefetch_related(
+            'rent_rates', 'property_identifiers', 'decisions', 'decisions__decision_maker')
+
 
 class IndexAdmin(admin.ModelAdmin):
     list_display = ('year', 'month', 'number')
