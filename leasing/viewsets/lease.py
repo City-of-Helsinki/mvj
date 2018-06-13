@@ -104,16 +104,16 @@ class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
 
         if identifier is not None:
             if len(identifier) < 3:
-                queryset = queryset.filter(identifier__type__identifier__startswith=identifier)
+                queryset = queryset.filter(identifier__type__identifier__istartswith=identifier)
             elif len(identifier) == 3:
-                queryset = queryset.filter(identifier__type__identifier=identifier[:2],
+                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
                                            identifier__municipality__identifier=identifier[2:3])
             elif len(identifier) < 7:
-                queryset = queryset.filter(identifier__type__identifier=identifier[:2],
+                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
                                            identifier__municipality__identifier=identifier[2:3],
                                            identifier__district__identifier__startswith=identifier[3:5])
             else:
-                queryset = queryset.filter(identifier__type__identifier=identifier[:2],
+                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
                                            identifier__municipality__identifier=identifier[2:3],
                                            identifier__district__identifier=identifier[3:5],
                                            identifier__sequence__startswith=identifier[6:])
