@@ -1,12 +1,11 @@
-from rest_framework import viewsets
-
 from leasing.filters import DecisionFilter
 from leasing.models import Decision
 from leasing.serializers.decision import DecisionCreateUpdateSerializer, DecisionSerializer
-from leasing.viewsets.utils import AuditLogMixin
+
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class DecisionViewSet(AuditLogMixin, viewsets.ModelViewSet):
+class DecisionViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
     filter_class = DecisionFilter

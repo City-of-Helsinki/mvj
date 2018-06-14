@@ -3,7 +3,6 @@ import datetime
 from dateutil import parser
 from django.db.models import DurationField
 from django.db.models.functions import Cast
-from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -19,72 +18,73 @@ from leasing.serializers.lease import (
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
     MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
     StatisticalUseSerializer, SupportiveHousingSerializer)
-from leasing.viewsets.utils import AuditLogMixin
+
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class DistrictViewSet(viewsets.ModelViewSet):
+class DistrictViewSet(AtomicTransactionModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filter_class = DistrictFilter
 
 
-class FinancingViewSet(viewsets.ModelViewSet):
+class FinancingViewSet(AtomicTransactionModelViewSet):
     queryset = Financing.objects.all()
     serializer_class = FinancingSerializer
 
 
-class HitasViewSet(viewsets.ModelViewSet):
+class HitasViewSet(AtomicTransactionModelViewSet):
     queryset = Hitas.objects.all()
     serializer_class = HitasSerializer
 
 
-class IntendedUseViewSet(viewsets.ModelViewSet):
+class IntendedUseViewSet(AtomicTransactionModelViewSet):
     queryset = IntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
 
 
-class LeaseTypeViewSet(viewsets.ModelViewSet):
+class LeaseTypeViewSet(AtomicTransactionModelViewSet):
     queryset = LeaseType.objects.all()
     serializer_class = LeaseTypeSerializer
 
 
-class ManagementViewSet(viewsets.ModelViewSet):
+class ManagementViewSet(AtomicTransactionModelViewSet):
     queryset = Management.objects.all()
     serializer_class = ManagementSerializer
 
 
-class MunicipalityViewSet(viewsets.ModelViewSet):
+class MunicipalityViewSet(AtomicTransactionModelViewSet):
     queryset = Municipality.objects.all()
     serializer_class = MunicipalitySerializer
 
 
-class NoticePeriodViewSet(viewsets.ModelViewSet):
+class NoticePeriodViewSet(AtomicTransactionModelViewSet):
     queryset = NoticePeriod.objects.all().annotate(duration_as_interval=Cast('duration', DurationField())).order_by(
         'duration_as_interval')
     serializer_class = NoticePeriodSerializer
 
 
-class RegulationViewSet(viewsets.ModelViewSet):
+class RegulationViewSet(AtomicTransactionModelViewSet):
     queryset = Regulation.objects.all()
     serializer_class = RegulationSerializer
 
 
-class StatisticalUseViewSet(viewsets.ModelViewSet):
+class StatisticalUseViewSet(AtomicTransactionModelViewSet):
     queryset = StatisticalUse.objects.all()
     serializer_class = StatisticalUseSerializer
 
 
-class SupportiveHousingViewSet(viewsets.ModelViewSet):
+class SupportiveHousingViewSet(AtomicTransactionModelViewSet):
     queryset = SupportiveHousing.objects.all()
     serializer_class = SupportiveHousingSerializer
 
 
-class RelatedLeaseViewSet(viewsets.ModelViewSet):
+class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
     queryset = RelatedLease.objects.all()
     serializer_class = RelatedLeaseSerializer
 
 
-class LeaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
+class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
     filter_class = LeaseFilter
 

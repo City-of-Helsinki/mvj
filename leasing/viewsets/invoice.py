@@ -1,11 +1,11 @@
-from rest_framework import viewsets
-
 from leasing.filters import InvoiceFilter
 from leasing.models import Invoice
 from leasing.serializers.invoice import InvoiceCreateSerializer, InvoiceSerializer, InvoiceUpdateSerializer
 
+from .utils import AtomicTransactionModelViewSet
 
-class InvoiceViewSet(viewsets.ModelViewSet):
+
+class InvoiceViewSet(AtomicTransactionModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filter_class = InvoiceFilter

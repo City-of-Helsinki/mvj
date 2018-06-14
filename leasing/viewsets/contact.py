@@ -1,13 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters
 
 from leasing.filters import ContactFilter
 from leasing.models import Contact
 from leasing.serializers.contact import ContactSerializer
-from leasing.viewsets.utils import AuditLogMixin
+
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class ContactViewSet(AuditLogMixin, viewsets.ModelViewSet):
+class ContactViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     filter_class = ContactFilter

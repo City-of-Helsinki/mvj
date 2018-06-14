@@ -1,11 +1,10 @@
-from rest_framework import viewsets
-
 from leasing.models import AreaNote
 from leasing.serializers.area_note import AreaNoteCreateUpdateSerializer, AreaNoteSerializer
-from leasing.viewsets.utils import AuditLogMixin
+
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class AreaNoteViewSet(AuditLogMixin, viewsets.ModelViewSet):
+class AreaNoteViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = AreaNote.objects.all()
     serializer_class = AreaNoteSerializer
 

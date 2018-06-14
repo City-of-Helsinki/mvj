@@ -1,11 +1,10 @@
-from rest_framework import viewsets
-
 from leasing.models import BasisOfRent
 from leasing.serializers.basis_of_rent import BasisOfRentCreateUpdateSerializer, BasisOfRentSerializer
-from leasing.viewsets.utils import AuditLogMixin
+
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class BasisOfRentViewSet(AuditLogMixin, viewsets.ModelViewSet):
+class BasisOfRentViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = BasisOfRent.objects.all()
     serializer_class = BasisOfRentSerializer
 
