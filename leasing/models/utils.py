@@ -5,7 +5,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
 
-from leasing.enums import IndexType
+from leasing.enums import IndexType, PeriodType
 
 
 def int_floor(value, precision):
@@ -256,6 +256,15 @@ def subtract_ranges_from_ranges(ranges, subtract_ranges):
         i += 1
 
     return combined_ranges
+
+
+def get_monthly_amount_by_period_type(amount, period_type):
+    if period_type == PeriodType.PER_MONTH:
+        return amount
+    elif period_type == PeriodType.PER_YEAR:
+        return amount / 12
+    else:
+        raise NotImplementedError('Cannot calculate monthly amount for PeriodType {}'.format(period_type))
 
 
 class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):

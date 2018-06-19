@@ -15,7 +15,7 @@ from leasing.enums import (
     RentType)
 from leasing.models.utils import (
     DayMonth, Explanation, calculate_index_adjusted_value, fix_amount_for_overlap, get_billing_periods_for_year,
-    get_date_range_amount_from_monthly_amount, get_range_overlap_and_remainder)
+    get_date_range_amount_from_monthly_amount, get_monthly_amount_by_period_type, get_range_overlap_and_remainder)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -198,7 +198,7 @@ class Rent(TimeStampedSafeDeleteModel):
                     contract_rent_explanation_item = explanation.add(
                         subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
                 elif self.type == RentType.INDEX:
-                    original_rent_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                    original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
                     index = Index.objects.get_latest_for_date(contract_overlap[0])
                     contract_amount = calculate_index_adjusted_value(
@@ -362,10 +362,12 @@ class ContractRent(TimeStampedSafeDeleteModel):
     intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
 
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
-    base_amount = models.DecimalField(verbose_name=_("Base amount"), max_digits=10, decimal_places=2)
+    base_amount = models.DecimalField(verbose_name=_("Base amount"), null=True, blank=True, max_digits=10,
+                                      decimal_places=2)
 
     # In Finnish: Yksikkö
-    base_amount_period = EnumField(PeriodType, verbose_name=_("Base amount period"), max_length=30)
+    base_amount_period = EnumField(PeriodType, verbose_name=_("Base amount period"), null=True, blank=True,
+                                   max_length=30)
 
     # In Finnish: Uusi perusvuosi vuokra
     base_year_rent = models.DecimalField(verbose_name=_("Base year rent"), null=True, blank=True, max_digits=10,
@@ -385,15 +387,13 @@ class ContractRent(TimeStampedSafeDeleteModel):
     def date_range(self):
         return self.start_date, self.end_date
 
-    def get_monthly_base_amount(self):
-        if self.period == PeriodType.PER_MONTH:
-            return self.base_amount
-        elif self.period == PeriodType.PER_YEAR:
-            return self.base_amount / 12
-        else:
-            raise NotImplementedError('Cannot calculate monthly rent for PeriodType {}'.format(self.period))
+    def _get_amount_for_date_range(self, date_range_start, date_range_end, amount_type):
+        """
+        :param amount_type: "amount" or "base_amount"
+        :type amount_type: str
+        """
+        assert amount_type in ["amount", "base_amount"]
 
-    def get_amount_for_date_range(self, date_range_start, date_range_end):
         if self.start_date:
             date_range_start = max(self.start_date, date_range_start)
         if self.end_date:
@@ -402,10 +402,20 @@ class ContractRent(TimeStampedSafeDeleteModel):
         if date_range_start > date_range_end:
             return Decimal('0.00')
 
-        monthly_amount = self.get_monthly_base_amount()
+        if amount_type == "amount":
+            monthly_amount = get_monthly_amount_by_period_type(self.amount, self.period)
+        else:
+            monthly_amount = get_monthly_amount_by_period_type(self.base_amount, self.base_amount_period)
+
         date_range_amount = get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end)
 
         return date_range_amount
+
+    def get_amount_for_date_range(self, date_range_start, date_range_end):
+        return self._get_amount_for_date_range(date_range_start, date_range_end, "amount")
+
+    def get_base_amount_for_date_range(self, date_range_start, date_range_end):
+        return self._get_amount_for_date_range(date_range_start, date_range_end, "base_amount")
 
 
 class IndexAdjustedRent(models.Model):
