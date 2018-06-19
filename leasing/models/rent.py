@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -44,6 +45,9 @@ class RentIntendedUse(NameModel):
     """
     In Finnish: Käyttötarkoitus
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Rent intended use")
+        verbose_name_plural = pgettext_lazy("Model name", "Rent intended uses")
 
 
 class Rent(TimeStampedSafeDeleteModel):
@@ -277,6 +281,10 @@ class Rent(TimeStampedSafeDeleteModel):
             # TODO: better error handling
             return None
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Rents")
+
 
 class RentDueDate(TimeStampedSafeDeleteModel):
     """
@@ -285,6 +293,10 @@ class RentDueDate(TimeStampedSafeDeleteModel):
     rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name="due_dates", on_delete=models.CASCADE)
     day = models.IntegerField(verbose_name=_("Day"), validators=[MinValueValidator(1), MaxValueValidator(31)])
     month = models.IntegerField(verbose_name=_("Month"), validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Rent due date")
+        verbose_name_plural = pgettext_lazy("Model name", "Rent due dates")
 
     def as_daymonth(self):
         return DayMonth(day=self.day, month=self.month)
@@ -309,6 +321,10 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Fixed initial year rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Fixed initial year rents")
 
     @property
     def date_range(self):
@@ -361,6 +377,10 @@ class ContractRent(TimeStampedSafeDeleteModel):
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Contract rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Contract rents")
+
     @property
     def date_range(self):
         return self.start_date, self.end_date
@@ -410,6 +430,10 @@ class IndexAdjustedRent(models.Model):
     # In Finnish: Laskentak.
     factor = models.DecimalField(verbose_name=_("Factor"), max_digits=10, decimal_places=2)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Index adjusted rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Index adjusted rents")
+
 
 class RentAdjustment(TimeStampedSafeDeleteModel):
     """
@@ -445,6 +469,10 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Rent adjustment")
+        verbose_name_plural = pgettext_lazy("Model name", "Rent adjustments")
 
     @property
     def date_range(self):
@@ -508,6 +536,10 @@ class PayableRent(models.Model):
     # In Finnish: Kalenterivuosivuokra
     calendar_year_rent = models.DecimalField(verbose_name=_("Calendar year rent"), max_digits=10, decimal_places=2)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Payable rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Payable rents")
+
 
 class LeaseBasisOfRent(models.Model):
     """
@@ -545,6 +577,10 @@ class LeaseBasisOfRent(models.Model):
     year_rent_index = models.DecimalField(verbose_name=_("Year rent (index)"), null=True, blank=True, max_digits=10,
                                           decimal_places=2)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease basis of rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease basis of rents")
+
 
 class IndexManager(models.Manager):
     def get_latest_for_date(self, the_date=None):
@@ -576,8 +612,8 @@ class Index(models.Model):
     objects = IndexManager()
 
     class Meta:
-        verbose_name = _("Index")
-        verbose_name_plural = _("Indexes")
+        verbose_name = pgettext_lazy("Model name", "Index")
+        verbose_name_plural = pgettext_lazy("Model name", "Indexes")
         indexes = [
             models.Index(fields=["year", "month"]),
         ]

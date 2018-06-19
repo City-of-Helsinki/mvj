@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -14,12 +15,18 @@ class BasisOfRentPlotType(NameModel):
     """
     In Finnish: Tonttityyppi
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Basis of rent plot type")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent plot types")
 
 
 class BasisOfRentBuildPermissionType(NameModel):
     """
     In Finnish: Rakennusoikeustyyppi
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Basis of rent build permission type")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent build permission types")
 
 
 class BasisOfRent(TimeStampedSafeDeleteModel):
@@ -56,6 +63,10 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Basis of rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rents")
+
 
 class BasisOfRentRate(TimeStampedSafeDeleteModel):
     """
@@ -74,6 +85,10 @@ class BasisOfRentRate(TimeStampedSafeDeleteModel):
     # In Finnish: Yksikkö
     area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Basis of rent rate")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent rates")
+
 
 class BasisOfRentPropertyIdentifier(models.Model):
     """
@@ -82,6 +97,10 @@ class BasisOfRentPropertyIdentifier(models.Model):
     basis_of_rent = models.ForeignKey(BasisOfRent, verbose_name=_("Basis of rent"), related_name='property_identifiers',
                                       on_delete=models.CASCADE)
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Basis of rent property identifier")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent property identifiers")
 
 
 class BasisOfRentDecision(models.Model):
@@ -103,6 +122,10 @@ class BasisOfRentDecision(models.Model):
 
     # In Finnish: Pykälä
     section = models.CharField(verbose_name=_("Section"), null=True, blank=True, max_length=255)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Basis of rent decision")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent decisions")
 
 
 auditlog.register(BasisOfRent)

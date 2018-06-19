@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from users.models import User
@@ -11,6 +12,9 @@ class CommentTopic(NameModel):
     """
     In Finnish: Aihe
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Comment topic")
+        verbose_name_plural = pgettext_lazy("Model name", "Comment topics")
 
 
 class Comment(TimeStampedSafeDeleteModel):
@@ -28,6 +32,8 @@ class Comment(TimeStampedSafeDeleteModel):
     text = models.TextField(verbose_name=_("Text"), null=True, blank=True)
 
     class Meta:
+        verbose_name = pgettext_lazy("Model name", "Comment")
+        verbose_name_plural = pgettext_lazy("Model name", "Comments")
         ordering = ('-created_at', )
 
 

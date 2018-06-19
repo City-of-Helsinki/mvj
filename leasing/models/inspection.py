@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -21,6 +22,10 @@ class Inspection(models.Model):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Inspection")
+        verbose_name_plural = pgettext_lazy("Model name", "Inspections")
 
 
 auditlog.register(Inspection)

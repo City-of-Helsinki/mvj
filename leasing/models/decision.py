@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -9,12 +10,18 @@ class DecisionMaker(NameModel):
     """
     In Finnish: Päättäjä
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Decision maker")
+        verbose_name_plural = pgettext_lazy("Model name", "Decision makers")
 
 
 class DecisionType(NameModel):
     """
     In Finnish: Päätöksen tyyppi
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Decision type")
+        verbose_name_plural = pgettext_lazy("Model name", "Decision types")
 
 
 class Decision(TimeStampedSafeDeleteModel):
@@ -44,11 +51,18 @@ class Decision(TimeStampedSafeDeleteModel):
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Decision")
+        verbose_name_plural = pgettext_lazy("Model name", "Decisions")
+
 
 class ConditionType(NameModel):
     """
     In Finnish: Ehtotyyppi
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Condition type")
+        verbose_name_plural = pgettext_lazy("Model name", "Condition types")
 
 
 class Condition(TimeStampedSafeDeleteModel):
@@ -71,6 +85,10 @@ class Condition(TimeStampedSafeDeleteModel):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Condition")
+        verbose_name_plural = pgettext_lazy("Model name", "Conditions")
 
 
 auditlog.register(Decision)

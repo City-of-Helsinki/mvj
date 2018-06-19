@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -18,8 +19,8 @@ class ReceivableType(models.Model):
                                              max_length=255)
 
     class Meta:
-        verbose_name = _("Receivable type")
-        verbose_name_plural = _("Receivable types")
+        verbose_name = pgettext_lazy("Model name", "Receivable type")
+        verbose_name_plural = pgettext_lazy("Model name", "Receivable types")
 
     def __str__(self):
         return self.name
@@ -103,8 +104,8 @@ class Invoice(TimeStampedSafeDeleteModel):
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Invoice")
-        verbose_name_plural = _("Invoices")
+        verbose_name = pgettext_lazy("Model name", "Invoice")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoices")
 
     def __str__(self):
         return str(self.pk)
@@ -136,13 +137,17 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
     # In Finnish: Laskutettu määrä
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice row")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
+
 
 class BankHoliday(models.Model):
     day = models.DateField(verbose_name=_("Day"), unique=True, db_index=True)
 
     class Meta:
-        verbose_name = _("Bank holiday")
-        verbose_name_plural = _("Bank holidays")
+        verbose_name = pgettext_lazy("Model name", "Bank holiday")
+        verbose_name_plural = pgettext_lazy("Model name", "Bank holidays")
         ordering = ("day",)
 
     def __str__(self):
@@ -150,3 +155,4 @@ class BankHoliday(models.Model):
 
 
 auditlog.register(Invoice)
+auditlog.register(InvoiceRow)

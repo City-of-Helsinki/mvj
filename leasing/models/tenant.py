@@ -1,6 +1,7 @@
 from auditlog.registry import auditlog
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -50,6 +51,10 @@ class Tenant(TimeStampedSafeDeleteModel):
         else:
             return self.get_tenant_tenantcontacts(start_date, end_date)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Tenant")
+        verbose_name_plural = pgettext_lazy("Model name", "Tenants")
+
 
 class TenantContact(TimeStampedSafeDeleteModel):
     type = EnumField(TenantContactType, max_length=255)
@@ -61,6 +66,10 @@ class TenantContact(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Tenant contact")
+        verbose_name_plural = pgettext_lazy("Model name", "Tenant contacts")
 
     @property
     def date_range(self):

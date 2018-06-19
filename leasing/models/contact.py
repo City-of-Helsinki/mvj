@@ -1,6 +1,7 @@
 from auditlog.registry import auditlog
 from django.conf.global_settings import LANGUAGES
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -81,6 +82,8 @@ class Contact(TimeStampedSafeDeleteModel):
         return name
 
     class Meta:
+        verbose_name = pgettext_lazy("Model name", "Contact")
+        verbose_name_plural = pgettext_lazy("Model name", "Contacts")
         ordering = ['type', 'name', 'last_name', 'first_name']
 
 

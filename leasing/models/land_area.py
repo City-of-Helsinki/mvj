@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from safedelete.models import SafeDeleteModel
@@ -118,9 +119,17 @@ class LeaseArea(Land, SafeDeleteModel):
     def __str__(self):
         return 'LeaseArea {}'.format(self.type)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease area")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease areas")
+
 
 class LeaseAreaAddress(AbstractAddress):
     lease_area = models.ForeignKey(LeaseArea, related_name='addresses', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease area address")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease area addresses")
 
 
 class ConstructabilityDescription(TimeStampedSafeDeleteModel):
@@ -134,6 +143,10 @@ class ConstructabilityDescription(TimeStampedSafeDeleteModel):
     # In Finnish: AHJO diaarinumero
     ahjo_reference_number = models.CharField(verbose_name=_("AHJO reference number"), null=True, blank=True,
                                              max_length=255)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Constructability description")
+        verbose_name_plural = pgettext_lazy("Model name", "Constructability descriptions")
 
 
 class Plot(Land):
@@ -150,33 +163,53 @@ class Plot(Land):
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Plot")
+        verbose_name_plural = pgettext_lazy("Model name", "Plots")
+
 
 class PlotAddress(AbstractAddress):
     plot = models.ForeignKey(Plot, related_name='addresses', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Plot address")
+        verbose_name_plural = pgettext_lazy("Model name", "Plot addresses")
 
 
 class PlanUnitType(NameModel):
     """
     In Finnish: Kaavayksikön laji
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Plan unit type")
+        verbose_name_plural = pgettext_lazy("Model name", "Plan unit types")
 
 
 class PlotDivisionState(NameModel):
     """
     In Finnish: Tonttijaon vaihe
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Plot divisions state")
+        verbose_name_plural = pgettext_lazy("Model name", "Plot division states")
 
 
 class PlanUnitState(NameModel):
     """
     In Finnish: Kaavayksikön olotila
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Plan unit state")
+        verbose_name_plural = pgettext_lazy("Model name", "Plan unit states")
 
 
 class PlanUnitIntendedUse(NameModel):
     """
     In Finnish: Kaavayksikön käyttötarkoitus
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Plan unit intended use")
+        verbose_name_plural = pgettext_lazy("Model name", "Plan unit intended uses")
 
 
 class PlanUnit(Land):
@@ -231,9 +264,17 @@ class PlanUnit(Land):
     plan_unit_intended_use = models.ForeignKey(PlanUnitIntendedUse, verbose_name=_("Plan unit intended use"), null=True,
                                                blank=True, on_delete=models.PROTECT)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Plan unit")
+        verbose_name_plural = pgettext_lazy("Model name", "Plan units")
+
 
 class PlanUnitAddress(AbstractAddress):
     plan_unit = models.ForeignKey(PlanUnit, related_name='addresses', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Plan unit address")
+        verbose_name_plural = pgettext_lazy("Model name", "Plan unit addresses")
 
 
 auditlog.register(LeaseArea)

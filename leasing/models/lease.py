@@ -3,6 +3,7 @@ import re
 from auditlog.registry import auditlog
 from django.db import connection, models, transaction
 from django.db.models import Max
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -23,6 +24,10 @@ class LeaseType(NameModel):
     due_dates_position = EnumField(DueDatesPosition, verbose_name=_("Due dates position"),
                                    default=DueDatesPosition.START_OF_MONTH, max_length=30)
 
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Lease type")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease types")
+
     def __str__(self):
         return '{} ({})'.format(self.name, self.identifier)
 
@@ -34,8 +39,8 @@ class Municipality(NameModel):
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
 
     class Meta:
-        verbose_name = 'Municipality'
-        verbose_name_plural = 'Municipalities'
+        verbose_name = pgettext_lazy("Model name", "Municipality")
+        verbose_name_plural = pgettext_lazy("Model name", "Municipalities")
         ordering = ['id']
 
     def __str__(self):
@@ -51,6 +56,8 @@ class District(NameModel):
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
 
     class Meta:
+        verbose_name = pgettext_lazy("Model name", "District")
+        verbose_name_plural = pgettext_lazy("Model name", "Districts")
         unique_together = ('municipality', 'identifier')
         ordering = ('municipality__name', 'name')
 
@@ -62,62 +69,63 @@ class IntendedUse(NameModel):
     """
     In Finnish: Käyttötarkoitus
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Intended use")
+        verbose_name_plural = pgettext_lazy("Model name", "Intended uses")
 
 
 class StatisticalUse(NameModel):
     """
     In Finnish: Tilastollinen pääkäyttötarkoitus
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Statistical use")
+        verbose_name_plural = pgettext_lazy("Model name", "Statistical uses")
 
 
 class SupportiveHousing(NameModel):
     """
     In Finnish: Erityisasunnot
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Supportive housing")
+        verbose_name_plural = pgettext_lazy("Model name", "Supportive housings")
 
 
 class Financing(NameModel):
     """
     In Finnish: Rahoitusmuoto
     """
-
-    class Meta:
-        verbose_name = 'Form of financing'
-        verbose_name_plural = 'Forms of financing'
-        ordering = ['name']
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Form of financing")
+        verbose_name_plural = pgettext_lazy("Model name", "Forms of financing")
 
 
 class Management(NameModel):
     """
     In Finnish: Hallintamuoto
     """
-
-    class Meta:
-        verbose_name = 'Form of management'
-        verbose_name_plural = 'Forms of management'
-        ordering = ['name']
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Form of management")
+        verbose_name_plural = pgettext_lazy("Model name", "Forms of management")
 
 
 class Regulation(NameModel):
     """
     In Finnish: Sääntelymuoto
     """
-
-    class Meta:
-        verbose_name = 'Form of regulation'
-        verbose_name_plural = 'Forms of regulation'
-        ordering = ['name']
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Form of regulation")
+        verbose_name_plural = pgettext_lazy("Model name", "Forms of regulation")
 
 
 class Hitas(NameModel):
     """
     In Finnish: Hitas
     """
-
-    class Meta:
-        verbose_name = 'Hitas'
-        verbose_name_plural = 'Hitas'
-        ordering = ['name']
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Hitas")
+        verbose_name_plural = pgettext_lazy("Model name", "Hitas")
 
 
 class NoticePeriod(NameModel):
@@ -127,6 +135,10 @@ class NoticePeriod(NameModel):
     type = EnumField(NoticePeriodType, verbose_name=_("Period type"), max_length=30)
     duration = models.CharField(verbose_name=_("Duration"), null=True, blank=True, max_length=255,
                                 help_text=_("In ISO 8601 Duration format"))
+
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Notice period")
+        verbose_name_plural = pgettext_lazy("Model name", "Notice periods")
 
 
 class LeaseIdentifier(TimeStampedSafeDeleteModel):
@@ -146,6 +158,8 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
     sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"))
 
     class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease identifier")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease identifiers")
         unique_together = ('type', 'municipality', 'district', 'sequence')
 
     def __str__(self):
@@ -301,6 +315,8 @@ class Lease(TimeStampedSafeDeleteModel):
     objects = LeaseManager()
 
     class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease")
+        verbose_name_plural = pgettext_lazy("Model name", "Leases")
         permissions = (
             ("view_lease", _("Can view lease")),
         )
@@ -362,6 +378,10 @@ class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
     state = EnumField(LeaseState, verbose_name=_("State"), max_length=30)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease state log")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease state logs")
+
 
 class RelatedLease(TimeStampedSafeDeleteModel):
     from_lease = models.ForeignKey(Lease, verbose_name=_("From lease"), related_name='from_leases',
@@ -370,6 +390,10 @@ class RelatedLease(TimeStampedSafeDeleteModel):
     type = EnumField(LeaseRelationType, verbose_name=_("Lease relation type"), null=True, blank=True, max_length=30)
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Related lease")
+        verbose_name_plural = pgettext_lazy("Model name", "Related leases")
 
 
 auditlog.register(Lease)

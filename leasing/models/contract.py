@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -9,6 +10,9 @@ class ContractType(NameModel):
     """
     In Finnish: Sopimuksen tyyppi
     """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Basis of rent plot types")
+        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent plot types")
 
 
 class Contract(TimeStampedSafeDeleteModel):
@@ -56,6 +60,10 @@ class Contract(TimeStampedSafeDeleteModel):
     institution_identifier = models.CharField(verbose_name=_("Institution identifier"), null=True, blank=True,
                                               max_length=255)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Contract")
+        verbose_name_plural = pgettext_lazy("Model name", "Contracts")
+
 
 class MortgageDocument(models.Model):
     """
@@ -72,6 +80,10 @@ class MortgageDocument(models.Model):
 
     # In Finnish: Panttikirjan kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Mortgage document")
+        verbose_name_plural = pgettext_lazy("Model name", "Mortgage documents")
 
 
 class ContractChange(models.Model):
@@ -102,6 +114,10 @@ class ContractChange(models.Model):
     # In Finnish: Päätös
     decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
                                  on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Contract change")
+        verbose_name_plural = pgettext_lazy("Model name", "Contract changes")
 
 
 auditlog.register(Contract)
