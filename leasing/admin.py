@@ -3,14 +3,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
     AreaNote, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
-    BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment, Condition, ConditionType, ConstructabilityDescription,
-    Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District,
-    Financing, FixedInitialYearRent, Hitas, Index, IntendedUse, Invoice, Lease, LeaseArea, LeaseBasisOfRent,
-    LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality, NoticePeriod, PlanUnit,
-    PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate,
-    RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment, CommentTopic, Condition, ConditionType,
+    ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
+    DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, Invoice, Lease,
+    LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
+    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
+    RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 from leasing.models.invoice import InvoiceRow
-from leasing.models.land_area import LeaseAreaAddress, PlanUnitAddress, PlotAddress
+from leasing.models.land_area import (
+    LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
 
 
 class AreaNoteAdmin(admin.OSMGeoAdmin):
@@ -119,6 +120,13 @@ class ContractAdmin(admin.ModelAdmin):
     inlines = [ContractChangeInline, MortgageDocumentInline]
     raw_id_fields = ('lease',)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('type', 'lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
 
 class ConditionInline(admin.StackedInline):
     model = Condition
@@ -129,6 +137,25 @@ class DecisionAdmin(admin.ModelAdmin):
     list_display = ('lease', 'reference_number', 'decision_maker', 'type')
     inlines = [ConditionInline]
     raw_id_fields = ('lease',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('decision_maker', 'type', 'lease__type', 'lease__municipality', 'lease__district',
+                                 'lease__identifier', 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
+
+class InspectionAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'inspector', 'supervision_date', 'supervised_date')
+    raw_id_fields = ('lease',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
 
 
 class NameAdmin(admin.ModelAdmin):
@@ -306,11 +333,13 @@ admin.site.register(AreaNote, AreaNoteAdmin)
 admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(CommentTopic, NameAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
 admin.site.register(Index, IndexAdmin)
 admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea, LeaseAreaAdmin)
@@ -323,7 +352,9 @@ admin.site.register(NoticePeriod)
 admin.site.register(Plot, PlotAdmin)
 admin.site.register(PlanUnit, PlanUnitAdmin)
 admin.site.register(PlanUnitState, NameAdmin)
+admin.site.register(PlanUnitIntendedUse, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
+admin.site.register(PlotDivisionState, NameAdmin)
 admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
