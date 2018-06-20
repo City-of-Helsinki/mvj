@@ -1,5 +1,6 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.serializers import ListSerializer
 
 from leasing.models import Index
 
@@ -7,7 +8,7 @@ from ..models import (
     ContractRent, Decision, FixedInitialYearRent, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse)
 from .decision import DecisionSerializer
-from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
+from .utils import DayMonthField, InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
 class RentIntendedUseSerializer(NameModelSerializer):
@@ -85,13 +86,16 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     index_adjusted_rents = IndexAdjustedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
     rent_adjustments = RentAdjustmentSerializer(many=True, required=False, allow_null=True)
     payable_rents = PayableRentSerializer(many=True, required=False, allow_null=True, read_only=True)
+    yearly_due_dates = ListSerializer(child=DayMonthField(read_only=True), source='get_due_dates_as_daymonths',
+                                      read_only=True)
 
     class Meta:
         model = Rent
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
-                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date')
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
+                  'yearly_due_dates')
 
 
 class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):

@@ -247,17 +247,22 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return [dd.as_daymonth() for dd in self.due_dates.all().order_by('month', 'day')]
 
+    def get_due_dates_as_daymonths(self):
+        due_dates = []
+        if self.due_dates_type == DueDatesType.FIXED:
+            # TODO: handle unknown due date count
+            if self.due_dates_per_year in (1, 2, 4, 12):
+                due_dates = FIXED_DUE_DATES[self.lease.type.due_dates_position][self.due_dates_per_year]
+        elif self.due_dates_type == DueDatesType.CUSTOM:
+            due_dates = self.get_custom_due_dates_as_daymonths()
+
+        return due_dates
+
     def get_due_dates_for_period(self, start_date, end_date):
         if (self.end_date and start_date > self.end_date) or (self.start_date and end_date < self.start_date):
             return []
 
-        rent_due_dates = []
-        if self.due_dates_type == DueDatesType.FIXED:
-            # TODO: handle unknown due date count
-            if self.due_dates_per_year in (1, 2, 4, 12):
-                rent_due_dates = FIXED_DUE_DATES[self.lease.type.due_dates_position][self.due_dates_per_year]
-        elif self.due_dates_type == DueDatesType.CUSTOM:
-            rent_due_dates = self.get_custom_due_dates_as_daymonths()
+        rent_due_dates = self.get_due_dates_as_daymonths()
 
         period_years = {start_date.year, end_date.year}
         due_dates = []

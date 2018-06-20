@@ -1,5 +1,5 @@
 import datetime
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -282,6 +282,9 @@ class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
 
         return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
                                            month=datetime_instance.month))
+
+    def asdict(self):
+        return OrderedDict(zip(self._fields, self))
 
 
 class ExplanationItem:

@@ -173,3 +173,11 @@ class UpdateNestedMixin:
 class NameModelSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(read_only=True)
+
+
+class DayMonthField(serializers.Field):
+    def to_internal_value(self, data):
+        pass
+
+    def to_representation(self, instance):
+        return instance.asdict()
