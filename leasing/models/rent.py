@@ -14,7 +14,7 @@ from leasing.enums import (
     DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
     RentType)
 from leasing.models.utils import (
-    DayMonth, Explanation, calculate_index_adjusted_value, fix_amount_for_overlap, get_billing_periods_for_year,
+    DayMonth, Explanation, IndexCalculation, fix_amount_for_overlap, get_billing_periods_for_year,
     get_date_range_amount_from_monthly_amount, get_monthly_amount_by_period_type, get_range_overlap_and_remainder)
 
 from .decision import Decision
@@ -201,14 +201,23 @@ class Rent(TimeStampedSafeDeleteModel):
                     original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
                     index = Index.objects.get_latest_for_date(contract_overlap[0])
-                    contract_amount = calculate_index_adjusted_value(
-                        original_rent_amount, index, self.index_type, x_value=self.x_value, y_value=self.y_value)
+
+                    index_calculation = IndexCalculation(amount=original_rent_amount, index=index,
+                                                         index_type=self.index_type, precision=self.index_rounding,
+                                                         x_value=self.x_value, y_value=self.y_value)
+
+                    contract_amount = index_calculation.calculate()
 
                     contract_rent_explanation_item = explanation.add(
                         subject=contract_rent, date_ranges=[contract_overlap], amount=original_rent_amount)
 
-                    explanation.add(subject=index, date_ranges=[contract_overlap], amount=contract_amount,
-                                    related_item=contract_rent_explanation_item)
+                    index_explanation_item = explanation.add(subject=index, date_ranges=[contract_overlap],
+                                                             amount=contract_amount,
+                                                             related_item=contract_rent_explanation_item)
+
+                    for item in index_calculation.explanation_items:
+                        explanation.add_item(item, related_item=index_explanation_item)
+
                 elif self.type in (RentType.FREE, RentType.MANUAL):
                     # TODO: MANUAL rent type
                     continue

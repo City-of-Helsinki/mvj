@@ -4,6 +4,7 @@ from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
+from django.utils.translation import ugettext_lazy as _
 
 from leasing.enums import IndexType, PeriodType
 
@@ -12,74 +13,112 @@ def int_floor(value, precision):
     return value // precision * precision
 
 
-def calculate_index_adjusted_value_type_1_2_3_4(value, index_value, precision, base):
-    return int_floor(value, precision) / base * index_value
+class IndexCalculation:
+    def __init__(self, amount=None, index=None, index_type=None, precision=None, x_value=None, y_value=None):
+        self.explanation_items = []
+        self.amount = amount
+        self.index = index
+        self.index_type = index_type
+        self.precision = precision
+        self.x_value = x_value
+        self.y_value = y_value
 
+    def _add_ratio_explanation(self, ratio):
+        ratio_explanation_item = ExplanationItem(subject={
+            "subject_type": "ratio",
+            "description": _("Ratio {ratio}").format(ratio=ratio),
+        })
+        self.explanation_items.append(ratio_explanation_item)
 
-def calculate_index_adjusted_value_type_5_7(value, index_value, base):
-    ratio = Decimal(index_value / base).quantize(Decimal('.01'))
+    def calculate_type_1_2_3_4(self, index_value, precision, base):
+        ratio = Decimal(int_floor(index_value, precision) / base).quantize(Decimal('.01'))
 
-    return ratio * value
+        self._add_ratio_explanation(ratio)
 
+        return ratio * self.amount
 
-def calculate_index_adjusted_value_type_6(value, index_value, base, x_value, y_value):
-    if index_value <= x_value:
-        return calculate_index_adjusted_value_type_6_v2(value, index_value, base)
+    def calculate_type_5_7(self, index_value, base):
+        ratio = Decimal(index_value / base).quantize(Decimal('.01'))
 
-    rounded_index = int_floor(index_value, 10)
+        self._add_ratio_explanation(ratio)
 
-    # Decimal.quantize(Decimal('.01'), rounding=ROUND_HALF_UP) is used to round to two decimals.
-    # see https://docs.python.org/3/library/decimal.html
-    if rounded_index < y_value:
-        dividend = Decimal(x_value + (index_value - x_value) / 2).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-        ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        return ratio * self.amount
 
-        return ratio * value
-    else:
-        dividend = Decimal(y_value - (y_value - x_value) / 2).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-        ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-        new_base_rent = (ratio * value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+    def calculate_type_6(self, index_value, base):
+        if index_value <= self.x_value:
+            return self.calculate_type_6_v2(index_value, base)
 
-        return new_base_rent * Decimal(rounded_index / y_value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        rounded_index = int_floor(index_value, 10)
 
+        # Decimal.quantize(Decimal('.01'), rounding=ROUND_HALF_UP) is used to round to two decimals.
+        # see https://docs.python.org/3/library/decimal.html
+        if rounded_index < self.y_value:
+            dividend = Decimal(self.x_value + (index_value - self.x_value) / 2).quantize(Decimal('.01'),
+                                                                                         rounding=ROUND_HALF_UP)
+            ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
-def calculate_index_adjusted_value_type_6_v2(value, index_value, base):
-    return int_floor(value, 10) / base * index_value
+            self._add_ratio_explanation(ratio)
 
+            return ratio * self.amount
+        else:
+            dividend = Decimal(self.y_value - (self.y_value - self.x_value) / 2).quantize(Decimal('.01'),
+                                                                                          rounding=ROUND_HALF_UP)
+            ratio = (dividend / 100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
-def calculate_index_adjusted_value(value, index_value, index_type=IndexType.TYPE_7, precision=None, **extra):
-    if index_value.__class__ and index_value.__class__.__name__ == 'Index':
-        index_value = index_value.number
+            self._add_ratio_explanation(ratio)
 
-    if index_type == IndexType.TYPE_1:
-        assert precision
-        return calculate_index_adjusted_value_type_1_2_3_4(value, index_value, precision, 50620)
+            new_base_rent = (ratio * self.amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
-    elif index_type == IndexType.TYPE_2:
-        assert precision
-        return calculate_index_adjusted_value_type_1_2_3_4(value, index_value, precision, 4661)
+            new_base_rent_explanation_item = ExplanationItem(subject={
+                "subject_type": "new_base_rent",
+                "description": _("New base rent"),
+            }, amount=new_base_rent)
+            self.explanation_items.append(new_base_rent_explanation_item)
 
-    elif index_type == IndexType.TYPE_3:
-        return calculate_index_adjusted_value_type_1_2_3_4(value, index_value, 10, 418)
+            return new_base_rent * Decimal(rounded_index / self.y_value).quantize(Decimal('.01'),
+                                                                                  rounding=ROUND_HALF_UP)
 
-    elif index_type == IndexType.TYPE_4:
-        return calculate_index_adjusted_value_type_1_2_3_4(value, index_value, 20, 418)
+    def calculate_type_6_v2(self, index_value, base):
+        ratio = Decimal(int_floor(index_value, 10) / base).quantize(Decimal('.01'))
 
-    elif index_type == IndexType.TYPE_5:
-        return calculate_index_adjusted_value_type_5_7(value, index_value, 392)
+        self._add_ratio_explanation(ratio)
 
-    elif index_type == IndexType.TYPE_6:
-        if 'x_value' not in extra or not extra['x_value'] or 'y_value' not in extra or not extra['y_value']:
-            return calculate_index_adjusted_value_type_6_v2(value, index_value, 100)
+        return ratio * self.amount
 
-        return calculate_index_adjusted_value_type_6(value, index_value, 100, x_value=extra['x_value'],
-                                                     y_value=extra['y_value'])
+    def calculate(self):
+        if self.index.__class__ and self.index.__class__.__name__ == 'Index':
+            index_value = self.index.number
+        else:
+            index_value = self.index
 
-    elif index_type == IndexType.TYPE_7:
-        return calculate_index_adjusted_value_type_5_7(value, index_value, 100)
+        if self.index_type == IndexType.TYPE_1:
+            assert self.precision
+            return self.calculate_type_1_2_3_4(index_value, self.precision, 50620)
 
-    else:
-        raise NotImplementedError('Cannot calculate index adjusted value for index type {}'.format(index_type))
+        elif self.index_type == IndexType.TYPE_2:
+            assert self.precision
+            return self.calculate_type_1_2_3_4(index_value, self.precision, 4661)
+
+        elif self.index_type == IndexType.TYPE_3:
+            return self.calculate_type_1_2_3_4(index_value, 10, 418)
+
+        elif self.index_type == IndexType.TYPE_4:
+            return self.calculate_type_1_2_3_4(index_value, 20, 418)
+
+        elif self.index_type == IndexType.TYPE_5:
+            return self.calculate_type_5_7(index_value, 392)
+
+        elif self.index_type == IndexType.TYPE_6:
+            if not self.x_value or not self.y_value:
+                return self.calculate_type_6_v2(index_value, 100)
+
+            return self.calculate_type_6(index_value, 100)
+
+        elif self.index_type == IndexType.TYPE_7:
+            return self.calculate_type_5_7(index_value, 100)
+
+        else:
+            raise NotImplementedError('Cannot calculate index adjusted value for index type {}'.format(self.index_type))
 
 
 def get_range_overlap(start1, end1, start2, end2):
@@ -309,15 +348,18 @@ class Explanation:
     def __init__(self):
         self.items = []
 
+    def add_item(self, explanation_item, related_item=None):
+        if related_item:
+            related_item.sub_items.append(explanation_item)
+        else:
+            self.items.append(explanation_item)
+
+        return explanation_item
+
     def add(self, subject=None, date_ranges=None, amount=None, related_item=None):
         explanation_item = ExplanationItem(subject=subject, date_ranges=date_ranges, amount=amount)
 
-        if not related_item or related_item not in self.items:
-            self.items.append(explanation_item)
-        else:
-            self.items[self.items.index(related_item)].sub_items.append(explanation_item)
-
-        return explanation_item
+        return self.add_item(explanation_item, related_item=related_item)
 
     def __str__(self):
         return '\n'.join([str(item) for item in self.items])
