@@ -17,7 +17,9 @@ def calculate_index_adjusted_value_type_1_2_3_4(value, index_value, precision, b
 
 
 def calculate_index_adjusted_value_type_5_7(value, index_value, base):
-    return value / base * index_value
+    ratio = Decimal(index_value / base).quantize(Decimal('.01'))
+
+    return ratio * value
 
 
 def calculate_index_adjusted_value_type_6(value, index_value, base, x_value, y_value):
