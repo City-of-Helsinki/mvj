@@ -109,9 +109,18 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
                 queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
                                            identifier__municipality__identifier=identifier[2:3])
             elif len(identifier) < 7:
-                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
-                                           identifier__municipality__identifier=identifier[2:3],
-                                           identifier__district__identifier__startswith=identifier[3:5])
+                district_identifier = identifier[3:5]
+                if district_identifier == '0':
+                    queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
+                                               identifier__municipality__identifier=identifier[2:3],
+                                               identifier__district__identifier__in=range(0, 10))
+                else:
+                    if district_identifier != '00':
+                        district_identifier = district_identifier.lstrip('0')
+
+                    queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
+                                               identifier__municipality__identifier=identifier[2:3],
+                                               identifier__district__identifier__startswith=district_identifier)
             else:
                 queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
                                            identifier__municipality__identifier=identifier[2:3],
