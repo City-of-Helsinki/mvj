@@ -1,4 +1,5 @@
 from django.utils.encoding import force_text
+from enumfields.drf import EnumField
 from rest_framework.fields import DecimalField
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -28,7 +29,7 @@ class FieldsMetadata(SimpleMetadata):
             field_info['decimal_places'] = field.decimal_places
             field_info['max_digits'] = field.max_digits
 
-        if isinstance(field, PrimaryKeyRelatedField):
+        if isinstance(field, PrimaryKeyRelatedField) or isinstance(field, EnumField):
             # TODO: Make configurable
             if hasattr(field, 'queryset') and field.queryset.model in (User, Lease, Contact):
                 return field_info
