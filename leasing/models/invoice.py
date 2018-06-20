@@ -40,7 +40,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     sent_to_sap_at = models.DateTimeField(verbose_name=_("Sent to SAP at"), null=True, blank=True)
 
     # In Finnish: SAP numero
-    sap_id = models.CharField(verbose_name=_("SAP ID"), max_length=255, blank=True)
+    sap_id = models.CharField(verbose_name=_("SAP ID"), max_length=255, null=True, blank=True)
 
     # In Finnish: Eräpäivä
     due_date = models.DateField(verbose_name=_("Due date"))
@@ -52,10 +52,10 @@ class Invoice(TimeStampedSafeDeleteModel):
     state = EnumField(InvoiceState, verbose_name=_("State"), max_length=30)
 
     # In Finnish: Laskutuskauden alkupvm
-    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"))
+    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
 
     # In Finnish: Laskutuskauden loppupvm
-    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"))
+    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"), null=True, blank=True)
 
     # In Finnish: Lykkäyspvm
     postpone_date = models.DateField(verbose_name=_("Postpone date"), null=True, blank=True)
@@ -126,10 +126,10 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
     receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), on_delete=models.PROTECT)
 
     # In Finnish: Laskutuskauden alkupvm
-    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"))
+    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
 
     # In Finnish: Laskutuskauden loppupvm
-    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"))
+    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"), null=True, blank=True)
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
