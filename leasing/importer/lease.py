@@ -10,7 +10,7 @@ from leasing.models import (
     Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent, IndexAdjustedRent,
     IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, MortgageDocument, Municipality, PayableRent,
     RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
-from leasing.models.invoice import InvoiceRow
+from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
 from leasing.models.utils import DayMonth
@@ -33,6 +33,8 @@ class LeaseImporter(BaseImporter):
         self.stdout = stdout
         self.related_leases = []
         self.lease_ids = None
+        self.invoice_numbers = {}
+        self.credit_notes = []
 
     @classmethod
     def add_arguments(cls, parser):
@@ -52,7 +54,12 @@ class LeaseImporter(BaseImporter):
 
                 self.lease_ids.append(lease_id)
 
-    def execute(self):  # noqa: C901 'Command.handle' is too complex
+    def execute(self):
+        self.import_leases()
+        self.update_related_leases()
+        self.update_credit_notes()
+
+    def import_leases(self):  # noqa: C901 'Command.handle' is too complex
         cursor = self.cursor
 
         if self.lease_ids is None:
@@ -223,16 +230,6 @@ class LeaseImporter(BaseImporter):
 
                         asiakas_num_to_tenant[role_row['ASIAKAS']] = this_tenant
 
-                query = """
-                    SELECT sv.*, kt.NIMI as kt_nimi
-                    FROM SOPIMUSVUOKRA sv
-                    LEFT JOIN KAYTTOTARKOITUS kt ON sv.KAYTTOTARKOITUS = kt.KAYTTOTARKOITUS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
-
-                cursor.execute(query)
-                sopimusvuokra_rows = rows_to_dict_list(cursor)
-
                 self.stdout.write("Vuokra:")
                 rent_type = VUOKRALAJI_MAP[lease_row['VUOKRALAJI']]
                 rent_cycle = VUOKRAKAUSI_MAP[lease_row['VUOKRAKAUSI']]
@@ -320,6 +317,17 @@ class LeaseImporter(BaseImporter):
                         end_date=lease_row['KIINTEA_ALKUVUOSIVUOKRAN_LOPPU'])
 
                 self.stdout.write("Sopimusvuokrat:")
+
+                query = """
+                    SELECT sv.*, kt.NIMI as kt_nimi
+                    FROM SOPIMUSVUOKRA sv
+                    LEFT JOIN KAYTTOTARKOITUS kt ON sv.KAYTTOTARKOITUS = kt.KAYTTOTARKOITUS
+                    WHERE 1 = 1
+                    """ + expanded_id_to_query_alku(id_parts)
+
+                cursor.execute(query)
+                sopimusvuokra_rows = rows_to_dict_list(cursor)
+
                 for rent_row in sopimusvuokra_rows:
                     contract_rent_amount = None
                     contract_rent_period = None
@@ -339,13 +347,13 @@ class LeaseImporter(BaseImporter):
 
                     (contract_rent, contract_rent_created) = ContractRent.objects.get_or_create(
                         rent=rent, period=contract_rent_period, intended_use=contract_rent_intended_use,
+                        start_date=rent_row['ALKUPVM'].date() if rent_row['ALKUPVM'] else None,
+                        end_date=rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
+                        base_year_rent=rent_row['UUSI_PERUSVUOKRA'],
                         defaults={
                             'amount': contract_rent_amount,
                             'base_amount': rent_row['PERUSVUOKRA'] if rent_row['PERUSVUOKRA'] else contract_rent_amount,
                             'base_amount_period': contract_rent_period,
-                            'start_date': rent_row['ALKUPVM'].date() if rent_row['ALKUPVM'] else None,
-                            'end_date': rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
-                            'base_year_rent': rent_row['UUSI_PERUSVUOKRA'],
                         }
                     )
 
@@ -477,8 +485,9 @@ class LeaseImporter(BaseImporter):
                 self.stdout.write("Lasku:")
 
                 query = """
-                    SELECT l.*, a.*, l.ASIAKAS AS LASKU_ASIAKAS
+                    SELECT l.*, a.*, l.ASIAKAS AS LASKU_ASIAKAS, hl.lasku AS CREDITED_INVOICE
                     FROM R_LASKU l
+                    LEFT JOIN R_LASKU_HYVITYSLASKU hl ON hl.HYVITYSLASKU = l.LASKU
                     LEFT JOIN ASIAKAS a ON l.ASIAKAS = a.ASIAKAS
                     WHERE 1 = 1
                     """ + expanded_id_to_query(id_parts)
@@ -521,9 +530,9 @@ class LeaseImporter(BaseImporter):
                     invoice_state = LASKUN_TILA_MAP[invoice_row['LASKUN_TILA']]
                     invoice_type = LASKUTYYPPI_MAP[invoice_row['LASKUTYYPPI']]
 
-                    period_start_date = invoice_row['LASKUTUSKAUSI_ALKAA'] if invoice_row[
+                    period_start_date = invoice_row['LASKUTUSKAUSI_ALKAA'].date() if invoice_row[
                         'LASKUTUSKAUSI_ALKAA'] else lease.start_date
-                    period_end_date = invoice_row['LASKUTUSKAUSI_PAATTYY'] if invoice_row[
+                    period_end_date = invoice_row['LASKUTUSKAUSI_PAATTYY'].date() if invoice_row[
                         'LASKUTUSKAUSI_PAATTYY'] else lease.end_date
 
                     if not period_end_date:
@@ -531,6 +540,7 @@ class LeaseImporter(BaseImporter):
 
                     (invoice, invoice_created) = Invoice.objects.get_or_create(
                         lease=lease,
+                        number=invoice_row['LASKU'],
                         recipient=contact,
                         due_date=invoice_row['ERAPVM'],
                         state=invoice_state,
@@ -540,8 +550,6 @@ class LeaseImporter(BaseImporter):
                         postpone_date=invoice_row['LYKKAYSPVM'],
                         total_amount=invoice_row['LASKUN_PAAOMA'],
                         billed_amount=invoice_row['LASKUTETTU_MAARA'],
-                        paid_amount=invoice_row['LASKUTETTU_MAARA'] - invoice_row['MAKSAMATON_MAARA'],  # TODO
-                        paid_date=None,  # TODO
                         outstanding_amount=invoice_row['MAKSAMATON_MAARA'],
                         payment_notification_date=invoice_row['MAKSUKEHOITUSPVM1'],
                         collection_charge=invoice_row['PERINTAKULU1'],
@@ -552,7 +560,7 @@ class LeaseImporter(BaseImporter):
                         generated=True,  # TODO
                     )
 
-                    (invoice_row, invoice_row_created) = InvoiceRow.objects.get_or_create(
+                    (invoice_row_instance, invoice_row_created) = InvoiceRow.objects.get_or_create(
                         invoice=invoice,
                         tenant=asiakas_num_to_tenant[
                             invoice_row['ASIAKAS']] if invoice_row['ASIAKAS'] in asiakas_num_to_tenant else None,
@@ -562,10 +570,37 @@ class LeaseImporter(BaseImporter):
                         amount=invoice_row['LASKUN_OSUUS']
                     )
 
-                    if period_end_date.year != period_start_date.year:
-                        invoice.billing_period_end_date = datetime.date(
-                            year=period_start_date.year, month=period_end_date.month, day=period_end_date.day)
-                        invoice.save()
+                    self.invoice_numbers[invoice_row['LASKU']] = invoice.id
+                    if invoice_row['CREDITED_INVOICE']:
+                        credit_note_datum = {
+                            "credit_note": invoice,
+                            "credited_invoice_number": invoice_row['CREDITED_INVOICE'],
+                            "credited_invoice_id": self.invoice_numbers[invoice_row['CREDITED_INVOICE']] if invoice_row[
+                                'CREDITED_INVOICE'] in self.invoice_numbers else None,
+                        }
+
+                        self.credit_notes.append(credit_note_datum)
+
+                    # if period_end_date.year != period_start_date.year:
+                    #     invoice.billing_period_end_date = datetime.date(
+                    #         year=period_start_date.year, month=period_end_date.month, day=period_end_date.day)
+                    #     invoice.save()
+
+                    query = """
+                        SELECT *
+                        FROM R_MAKSU
+                        WHERE LASKU = {}
+                        """.format(invoice_row['LASKU'])
+
+                    cursor.execute(query)
+                    maksu_rows = rows_to_dict_list(cursor)
+
+                    for payment_row in maksu_rows:
+                        (invoice_payment, invoice_payment_created) = InvoicePayment.objects.get_or_create(
+                            invoice=invoice,
+                            paid_amount=payment_row['MAARA'],
+                            paid_date=payment_row['MAKSUPVM'].date() if payment_row['MAKSUPVM'] else None,
+                        )
 
                 self.stdout.write('Vuokra-alue:')
 
@@ -716,3 +751,22 @@ class LeaseImporter(BaseImporter):
                 )
             except Lease.DoesNotExist:
                 self.stdout.write('  Lease {} does not exist!'.format(related_lease_data['from_lease']))
+
+    def update_credit_notes(self):
+        self.stdout.write('Updating credit notes:')
+        for credit_note_datum in self.credit_notes:
+            credit_note = credit_note_datum['credit_note']
+            if credit_note_datum['credited_invoice_id']:
+                credit_note.credited_invoice_id = credit_note_datum['credited_invoice_id']
+                credit_note.save()
+            else:
+                try:
+                    credited_invoice = Invoice.objects.get(number=credit_note_datum['credited_invoice_number'])
+                    credit_note.credited_invoice_id = credited_invoice.id
+                    credit_note.save()
+                except Invoice.DoesNotExist:
+                    self.stdout.write("Credited invoice number #{} does not exist".format(
+                        credit_note_datum['credited_invoice_number']))
+                except Invoice.MultipleObjectsReturned:
+                    self.stdout.write("Multiple invoices returned fot Credited invoice number #{}!".format(
+                        credit_note_datum['credited_invoice_number']))

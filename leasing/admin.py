@@ -9,7 +9,7 @@ from leasing.models import (
     LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
     NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
-from leasing.models.invoice import InvoiceRow
+from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import (
     LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
 
@@ -232,6 +232,11 @@ class IndexAdmin(admin.ModelAdmin):
     list_display = ('year', 'month', 'number')
 
 
+class InvoicePaymentInline(admin.TabularInline):
+    model = InvoicePayment
+    extra = 0
+
+
 class InvoiceRowInline(admin.TabularInline):
     model = InvoiceRow
     extra = 0
@@ -240,8 +245,20 @@ class InvoiceRowInline(admin.TabularInline):
 
 class InvoiceAdmin(admin.ModelAdmin):
     list_display = ('lease', 'due_date', 'billing_period_start_date', 'billing_period_end_date', 'total_amount')
-    inlines = [InvoiceRowInline]
-    raw_id_fields = ('lease',)
+    inlines = [InvoiceRowInline, InvoicePaymentInline]
+    raw_id_fields = ('lease', 'invoiceset', 'credited_invoice')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
+
+class InvoiceSetAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'billing_period_start_date', 'billing_period_end_date')
+    raw_id_fields = ('lease', )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -341,6 +358,7 @@ admin.site.register(Index, IndexAdmin)
 admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(InvoiceSet, InvoiceSetAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea, LeaseAreaAdmin)
 admin.site.register(LeaseIdentifier, LeaseIdentifierAdmin)

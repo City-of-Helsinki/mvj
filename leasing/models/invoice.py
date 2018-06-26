@@ -26,12 +26,32 @@ class ReceivableType(models.Model):
         return self.name
 
 
+class InvoiceSet(models.Model):
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='invoicesets',
+                              on_delete=models.PROTECT)
+    # In Finnish: Laskutuskauden alkupvm
+    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
+
+    # In Finnish: Laskutuskauden loppupvm
+    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice set")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice set")
+
+
 class Invoice(TimeStampedSafeDeleteModel):
     """
     In Finnish: Lasku
     """
     lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='invoices',
                               on_delete=models.PROTECT)
+
+    invoiceset = models.ForeignKey(InvoiceSet, verbose_name=_("Invoice set"), related_name='invoices', null=True,
+                                   blank=True, on_delete=models.PROTECT)
+
+    # In Finnish: Laskun numero
+    number = models.PositiveIntegerField(verbose_name=_("Number"), unique=True, null=True, blank=True)
 
     # In Finnish: Laskunsaaja
     recipient = models.ForeignKey(Contact, verbose_name=_("Recipient"), on_delete=models.PROTECT)
@@ -66,13 +86,6 @@ class Invoice(TimeStampedSafeDeleteModel):
     # In Finnish: Laskutettu määrä
     billed_amount = models.DecimalField(verbose_name=_("Billed amount"), max_digits=10, decimal_places=2)
 
-    # In Finnish: Maksettu määrä
-    paid_amount = models.DecimalField(verbose_name=_("Paid amount"), null=True, blank=True, max_digits=10,
-                                      decimal_places=2)
-
-    # In Finnish Maksettu pvm
-    paid_date = models.DateField(verbose_name=_("Paid date"), null=True, blank=True)
-
     # In Finnish: Maksamaton määrä
     outstanding_amount = models.DecimalField(verbose_name=_("Outstanding amount"), null=True, blank=True, max_digits=10,
                                              decimal_places=2)
@@ -102,6 +115,10 @@ class Invoice(TimeStampedSafeDeleteModel):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    # In Finnish: Hyvitetty lasku
+    credited_invoice = models.ForeignKey('self', verbose_name=_("Credited invoice"), related_name='credited_invoices',
+                                         null=True, blank=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice")
@@ -140,6 +157,25 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice row")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
+        base_manager_name = 'objects'
+
+
+class InvoicePayment(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Maksusuoritus
+    """
+    invoice = models.ForeignKey(Invoice, verbose_name=_("Invoice"), related_name='payments',
+                                on_delete=models.CASCADE)
+
+    # In Finnish: Maksettu määrä
+    paid_amount = models.DecimalField(verbose_name=_("Paid amount"), max_digits=10, decimal_places=2)
+
+    # In Finnish Maksettu pvm
+    paid_date = models.DateField(verbose_name=_("Paid date"))
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice payment")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice payments")
 
 
 class BankHoliday(models.Model):
@@ -156,3 +192,4 @@ class BankHoliday(models.Model):
 
 auditlog.register(Invoice)
 auditlog.register(InvoiceRow)
+auditlog.register(InvoicePayment)

@@ -3,11 +3,13 @@ from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from django.db.models import Q
+from sequences import get_next_value
 
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Invoice, Lease, ReceivableType
-from leasing.models.invoice import InvoiceRow
+from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.models.utils import (
     combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, subtract_ranges_from_ranges)
 
@@ -18,9 +20,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
         today = datetime.date.today()
         # today = today.replace(year=2018, month=3, day=1)
-        today = today.replace(year=2016, month=12, day=1)  # Y11...
+        # today = today.replace(year=2016, month=12, day=1)  # Y11...
         # today = today.replace(year=2017, month=9, day=1)  # A1134-430
         # today = today.replace(month=3, day=1)
+        today = today.replace(day=1)
 
         # TODO: Make configurable
         receivable_type_rent = ReceivableType.objects.get(pk=1)
@@ -143,6 +146,22 @@ class Command(BaseCommand):
 
                 self.stdout.write('')
 
+                invoiceset = None
+                if len(shares.items()) > 1:
+                    try:
+                        invoiceset = InvoiceSet.objects.get(
+                            lease=lease,
+                            billing_period_start_date=billing_period[0],
+                            billing_period_end_date=billing_period[1],
+                        )
+                        self.stdout.write('  Invoiceset already exists.')
+                    except InvoiceSet.DoesNotExist as e:
+                        invoiceset = InvoiceSet.objects.create(
+                            lease=lease,
+                            billing_period_start_date=billing_period[0],
+                            billing_period_end_date=billing_period[1],
+                        )
+
                 for contact, share in shares.items():
                     self.stdout.write('  Shares for contact {}'.format(contact))
 
@@ -195,30 +214,35 @@ class Command(BaseCommand):
                             billing_period_end_date=billing_period[1],
                             total_amount=round(total_contact_period_amount, 2),
                             generated=True,
+                            invoiceset=invoiceset,
                         )
-                        self.stdout.write('  Invoice already exists. Invoice #{}'.format(invoice.id))
+                        self.stdout.write('  Invoice already exists. Invoice id {}. Number {}'.format(
+                            invoice.id, invoice.number))
                     except Invoice.DoesNotExist as e:
-                        invoice = Invoice.objects.create(
-                            type=InvoiceType.CHARGE,
-                            lease=lease,
-                            recipient=contact,
-                            due_date=lease_due_date,
-                            invoicing_date=today,
-                            state=InvoiceState.OPEN,
-                            billing_period_start_date=billing_period[0],
-                            billing_period_end_date=billing_period[1],
-                            total_amount=round(total_contact_period_amount, 2),
-                            billed_amount=billable_amount,
-                            outstanding_amount=billable_amount,
-                            paid_amount=None,
-                            generated=True,
-                        )
+                        with transaction.atomic():
+                            invoice = Invoice.objects.create(
+                                type=InvoiceType.CHARGE,
+                                lease=lease,
+                                number=get_next_value('invoice_numbers', initial_value=1000000),
+                                recipient=contact,
+                                due_date=lease_due_date,
+                                invoicing_date=today,
+                                state=InvoiceState.OPEN,
+                                billing_period_start_date=billing_period[0],
+                                billing_period_end_date=billing_period[1],
+                                total_amount=round(total_contact_period_amount, 2),
+                                billed_amount=billable_amount,
+                                outstanding_amount=billable_amount,
+                                generated=True,
+                                invoiceset=invoiceset,
+                            )
 
-                        for invoice_row_datum in invoice_row_data:
-                            invoice_row_datum['invoice'] = invoice
-                            InvoiceRow.objects.create(**invoice_row_datum)
+                            for invoice_row_datum in invoice_row_data:
+                                invoice_row_datum['invoice'] = invoice
+                                InvoiceRow.objects.create(**invoice_row_datum)
 
-                        self.stdout.write('  Invoice created. Invoice #{}'.format(invoice.id))
+                        self.stdout.write('  Invoice created. Invoice id {}. Number {}'.format(
+                            invoice.id, invoice.number))
                     except Invoice.MultipleObjectsReturned:
                         self.stdout.write('  Warning! Multiple invoices already exist. Not creating a new invoice.')
 

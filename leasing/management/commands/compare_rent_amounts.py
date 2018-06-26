@@ -46,8 +46,8 @@ class Command(BaseCommand):
             #             ' matches' if payable_rent.amount == calculated_amount else ' MISMATCH'
             #         ))
 
-            for invoice in lease.invoices.filter(type=InvoiceType.CHARGE, receivable_type_id=1,
-                                                 state=InvoiceState.PAID).order_by('billing_period_start_date'):
+            for invoice in lease.invoices.filter(type=InvoiceType.CHARGE, state=InvoiceState.PAID).order_by(
+                    'billing_period_start_date'):
                 calculated_amount = round(
                     rent.get_amount_for_date_range(invoice.billing_period_start_date, invoice.billing_period_end_date),
                     2)

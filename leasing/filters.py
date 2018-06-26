@@ -1,5 +1,7 @@
 from django_filters.rest_framework import FilterSet, filters
 
+from leasing.models.invoice import InvoiceSet
+
 from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
 
 
@@ -44,6 +46,14 @@ class InvoiceFilter(FilterSet):
     class Meta:
         model = Invoice
         fields = ['lease', 'state', 'type']
+
+
+class InvoiceSetFilter(FilterSet):
+    lease = filters.NumberFilter()
+
+    class Meta:
+        model = InvoiceSet
+        fields = ['lease']
 
 
 class LeaseFilter(FilterSet):
