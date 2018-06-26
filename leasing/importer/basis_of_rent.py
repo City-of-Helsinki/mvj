@@ -18,7 +18,7 @@ class BasisOfRentImporter(BaseImporter):
     def add_arguments(cls, parser):
         pass
 
-    def read_options(self):
+    def read_options(self, options):
         pass
 
     def execute(self):  # noqa: C901 'Command.handle' is too complex
