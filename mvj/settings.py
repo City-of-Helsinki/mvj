@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'auditlog',
     'safedelete',
+    'sequences',
 
     'users',
     'leasing',
