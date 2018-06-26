@@ -66,6 +66,17 @@ class PayableRentSerializer(serializers.ModelSerializer):
 
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    decision = DecisionSerializer()
+    intended_use = RentIntendedUseSerializer()
+
+    class Meta:
+        model = RentAdjustment
+        fields = ('id', 'type', 'intended_use', 'start_date', 'end_date', 'full_amount', 'amount_type', 'amount_left',
+                  'decision', 'note')
+
+
+class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
                                                   related_serializer=DecisionSerializer)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
@@ -114,7 +125,7 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
     fixed_initial_year_rents = FixedInitialYearRentSerializer(many=True, required=False, allow_null=True)
     contract_rents = ContractRentSerializer(many=True, required=False, allow_null=True)
     index_adjusted_rents = IndexAdjustedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
-    rent_adjustments = RentAdjustmentSerializer(many=True, required=False, allow_null=True)
+    rent_adjustments = RentAdjustmentCreateUpdateSerializer(many=True, required=False, allow_null=True)
     payable_rents = PayableRentSerializer(many=True, required=False, allow_null=True, read_only=True)
 
     class Meta:
@@ -126,6 +137,16 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
 
 
 class LeaseBasisOfRentSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    intended_use = RentIntendedUseSerializer()
+
+    class Meta:
+        model = LeaseBasisOfRent
+        fields = ('id', 'intended_use', 'floor_m2', 'index', 'amount_per_floor_m2_index_100',
+                  'amount_per_floor_m2_index', 'percent', 'year_rent_index_100', 'year_rent_index')
+
+
+class LeaseBasisOfRentCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),

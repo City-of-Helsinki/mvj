@@ -17,8 +17,7 @@ class CommentTopicSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     user = UserSerializer(read_only=True)
-    topic = InstanceDictPrimaryKeyRelatedField(instance_class=CommentTopic, queryset=CommentTopic.objects.all(),
-                                               related_serializer=CommentTopicSerializer)
+    topic = CommentTopicSerializer()
 
     class Meta:
         model = Comment

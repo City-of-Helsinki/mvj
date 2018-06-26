@@ -13,7 +13,8 @@ from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
 from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
-from .rent import LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer
+from .rent import (
+    LeaseBasisOfRentCreateUpdateSerializer, LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer)
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
@@ -225,7 +226,7 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     decisions = DecisionCreateUpdateNestedSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
+    basis_of_rents = LeaseBasisOfRentCreateUpdateSerializer(many=True, required=False, allow_null=True)
     preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
                                                   related_serializer=UserSerializer, required=False, allow_null=True)
     related_leases = serializers.SerializerMethodField()

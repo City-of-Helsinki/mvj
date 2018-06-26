@@ -8,6 +8,15 @@ from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 class TenantContactSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    contact = ContactSerializer()
+
+    class Meta:
+        model = TenantContact
+        fields = ('id', 'type', 'contact', 'start_date', 'end_date')
+
+
+class TenantContactCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
                                                  related_serializer=ContactSerializer)
 
@@ -27,7 +36,7 @@ class TenantSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
 class TenantCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    tenantcontact_set = TenantContactSerializer(many=True, required=False, allow_null=True)
+    tenantcontact_set = TenantContactCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Tenant

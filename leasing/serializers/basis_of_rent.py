@@ -22,6 +22,15 @@ class BasisOfRentBuildPermissionTypeSerializer(NameModelSerializer):
 
 class BasisOfRentDecisionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    decision_maker = DecisionMakerSerializer()
+
+    class Meta:
+        model = BasisOfRentDecision
+        fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section')
+
+
+class BasisOfRentDecisionCreateUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     decision_maker = InstanceDictPrimaryKeyRelatedField(
         instance_class=DecisionMaker, queryset=DecisionMaker.objects.filter(),
         related_serializer=DecisionMakerSerializer, required=False, allow_null=True)
@@ -40,6 +49,15 @@ class BasisOfRentPropertyIdentifierSerializer(serializers.ModelSerializer):
 
 
 class BasisOfRentRateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    build_permission_type = BasisOfRentBuildPermissionTypeSerializer()
+
+    class Meta:
+        model = BasisOfRentRate
+        fields = ('id', 'build_permission_type', 'amount', 'area_unit')
+
+
+class BasisOfRentRateCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     build_permission_type = InstanceDictPrimaryKeyRelatedField(
         instance_class=BasisOfRentBuildPermissionType, queryset=BasisOfRentBuildPermissionType.objects.all(),
@@ -67,9 +85,9 @@ class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSeri
     plot_type = InstanceDictPrimaryKeyRelatedField(instance_class=BasisOfRentPlotType,
                                                    queryset=BasisOfRentPlotType.objects.all(),
                                                    related_serializer=BasisOfRentPlotTypeSerializer)
-    rent_rates = BasisOfRentRateSerializer(many=True, required=False, allow_null=True)
+    rent_rates = BasisOfRentRateCreateUpdateSerializer(many=True, required=False, allow_null=True)
     property_identifiers = BasisOfRentPropertyIdentifierSerializer(many=True, required=False, allow_null=True)
-    decisions = BasisOfRentDecisionSerializer(many=True, required=False, allow_null=True)
+    decisions = BasisOfRentDecisionCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = BasisOfRent
