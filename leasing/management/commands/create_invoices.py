@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from sequences import get_next_value
 
-from leasing.enums import InvoiceState, InvoiceType
+from leasing.enums import InvoiceState, InvoiceType, RentType
 from leasing.models import Invoice, Lease, ReceivableType
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.models.utils import (
@@ -50,6 +50,10 @@ class Command(BaseCommand):
             #     continue
             # if lease.id != 10:  # A1134-430
             #     continue
+            # if lease.id != 591:  # S0113-124
+            #     continue
+            # if lease.id != 127:  # A1128-1253
+            #     continue
 
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
             lease_due_dates = lease.get_due_dates_for_period(start_of_next_month, end_of_next_month)
@@ -74,9 +78,19 @@ class Command(BaseCommand):
                     billing_period = rent.get_billing_period_from_due_date(lease_due_date)
                     self.stdout.write('   Billing period {} - {}'.format(
                         billing_period[0].strftime('%Y-%m-%d'), billing_period[1].strftime('%Y-%m-%d')))
+
+                    if rent.type == RentType.INDEX and not rent.index_type:
+                        self.stdout.write('  Rent is type index but index_type not set! Skipping.')
+                        continue
+
                     rent_amount += rent.get_amount_for_date_range(*billing_period)
 
-                self.stdout.write('  Rent amount {}'.format(round(rent_amount, 2)))
+                self.stdout.write('  Rent amount {}'.format(Decimal(rent_amount).quantize(
+                    Decimal('.01'), rounding=ROUND_HALF_UP)))
+
+                if rent_amount == 0:
+                    self.stdout.write('  Not creating invoices for rent amount 0.\n')
+                    continue
 
                 tenant_range_filter = Q(
                     Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period[0])) &
@@ -177,8 +191,11 @@ class Command(BaseCommand):
                             overlap_amount += fix_amount_for_overlap(
                                 rent_amount, overlap, subtract_ranges_from_ranges([billing_period], [overlap]))
 
-                            share_amount = round(overlap_amount * Decimal(
-                                tenant.share_numerator / tenant.share_denominator), 2)
+                            # share_amount = round(overlap_amount * Decimal(
+                            #     tenant.share_numerator / tenant.share_denominator), 2)
+                            share_amount = Decimal(
+                                overlap_amount * Decimal(tenant.share_numerator / tenant.share_denominator)
+                            ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
                             billable_amount += share_amount
 
@@ -204,6 +221,9 @@ class Command(BaseCommand):
 
                     self.stdout.write('  Total: {:.2f} / {:.2f}'.format(billable_amount, total_contact_period_amount))
 
+                    total_contact_period_amount = Decimal(total_contact_period_amount).quantize(Decimal('.01'),
+                                                                                                rounding=ROUND_HALF_UP)
+
                     try:
                         invoice = Invoice.objects.get(
                             type=InvoiceType.CHARGE,
@@ -212,7 +232,7 @@ class Command(BaseCommand):
                             due_date=lease_due_date,
                             billing_period_start_date=billing_period[0],
                             billing_period_end_date=billing_period[1],
-                            total_amount=round(total_contact_period_amount, 2),
+                            total_amount=total_contact_period_amount,
                             generated=True,
                             invoiceset=invoiceset,
                         )
@@ -230,7 +250,7 @@ class Command(BaseCommand):
                                 state=InvoiceState.OPEN,
                                 billing_period_start_date=billing_period[0],
                                 billing_period_end_date=billing_period[1],
-                                total_amount=round(total_contact_period_amount, 2),
+                                total_amount=total_contact_period_amount,
                                 billed_amount=billable_amount,
                                 outstanding_amount=billable_amount,
                                 generated=True,
