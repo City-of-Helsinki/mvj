@@ -8,9 +8,12 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from pytest_factoryboy import register
 
-from leasing.enums import ContactType, IndexType, LeaseAreaType, LocationType, RentCycle, RentType, TenantContactType
+from leasing.enums import (
+    ContactType, IndexType, InvoiceState, InvoiceType, LeaseAreaType, LocationType, RentCycle, RentType,
+    TenantContactType)
 from leasing.models import (
-    Contact, District, Lease, LeaseArea, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact)
+    Contact, District, Invoice, Lease, LeaseArea, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact)
+from leasing.models.invoice import InvoiceRow, InvoiceSet
 from users.models import User
 
 
@@ -104,6 +107,28 @@ class LeaseAreaFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = LeaseArea
+
+
+@register
+class InvoiceFactory(factory.DjangoModelFactory):
+    state = InvoiceState.OPEN
+    due_date = timezone.now().date()
+    type = InvoiceType.CHARGE
+
+    class Meta:
+        model = Invoice
+
+
+@register
+class InvoiceRowFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = InvoiceRow
+
+
+@register
+class InvoiceSetFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = InvoiceSet
 
 
 @pytest.fixture
