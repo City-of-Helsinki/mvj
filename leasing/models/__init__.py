@@ -6,6 +6,9 @@ from .comment import Comment, CommentTopic
 from .contact import Contact
 from .contract import Contract, ContractChange, ContractType, MortgageDocument
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
+from .infill_development_compensation import (
+    InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
+    InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from .inspection import Inspection
 from .invoice import BankHoliday, Invoice, ReceivableType
 from .land_area import ConstructabilityDescription, LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
@@ -45,6 +48,11 @@ __all__ = [
     'Hitas',
     'Index',
     'IndexAdjustedRent',
+    'InfillDevelopmentCompensation',
+    'InfillDevelopmentCompensationLease',
+    'InfillDevelopmentCompensationDecision',
+    'InfillDevelopmentCompensationIntendedUse',
+    'InfillDevelopmentCompensationAttachment',
     'Inspection',
     'IntendedUse',
     'Invoice',

@@ -9,6 +9,9 @@ from leasing.models import (
     LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
     NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+from leasing.models.infill_development_compensation import (
+    InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
+    InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import (
     LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
@@ -232,6 +235,39 @@ class IndexAdmin(admin.ModelAdmin):
     list_display = ('year', 'month', 'number')
 
 
+class InfillDevelopmentCompensationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'reference_number', 'state')
+
+
+class InfillDevelopmentCompensationDecisionInline(admin.StackedInline):
+    model = InfillDevelopmentCompensationDecision
+    extra = 0
+
+
+class InfillDevelopmentCompensationIntendedUseInline(admin.StackedInline):
+    model = InfillDevelopmentCompensationIntendedUse
+    extra = 0
+
+
+class InfillDevelopmentCompensationAttachmentInline(admin.StackedInline):
+    model = InfillDevelopmentCompensationAttachment
+    extra = 0
+
+
+class InfillDevelopmentCompensationLeaseAdmin(admin.ModelAdmin):
+    raw_id_fields = ('lease', )
+    inlines = [InfillDevelopmentCompensationDecisionInline, InfillDevelopmentCompensationIntendedUseInline,
+               InfillDevelopmentCompensationAttachmentInline]
+    list_display = ('infill_development_compensation', 'lease')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
+
 class InvoicePaymentInline(admin.TabularInline):
     model = InvoicePayment
     extra = 0
@@ -355,6 +391,8 @@ admin.site.register(District, DistrictAdmin)
 admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
 admin.site.register(Index, IndexAdmin)
+admin.site.register(InfillDevelopmentCompensation, InfillDevelopmentCompensationAdmin)
+admin.site.register(InfillDevelopmentCompensationLease, InfillDevelopmentCompensationLeaseAdmin)
 admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)

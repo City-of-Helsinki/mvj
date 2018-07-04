@@ -1,6 +1,5 @@
 [![Build status](https://travis-ci.org/City-of-Helsinki/mvj.svg?branch=master)](https://travis-ci.org/City-of-Helsinki/mvj)
 [![codecov](https://codecov.io/gh/City-of-Helsinki/mvj/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/mvj)
-[![Requirements](https://requires.io/github/City-of-Helsinki/mvj/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/mvj/requirements/?branch=master)
 
 # mvj
 City of Helsinki ground rent system
@@ -78,6 +77,11 @@ the settings file.
 
 Alternatively you can create a `local_settings.py` which is executed at the end of the `mvj/settings.py` in the
 same context so that the variables defined in the settings are available.
+
+#### Notice!
+
+The "idc_attachments"-folder under the media root must be excluded when serving media files. The files are
+protected by permission checks on a different URL.
 
 ### Running development environment
 

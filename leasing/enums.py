@@ -340,3 +340,17 @@ class ContactType(Enum):
         UNIT = pgettext_lazy('Contact type', 'Unit')
         ASSOCIATION = pgettext_lazy('Contact type', 'Association')
         OTHER = pgettext_lazy('Contact type', 'Other')
+
+
+class InfillDevelopmentCompensationState(Enum):
+    """
+    In Finnish: Täydennysrakentamiskorvauksen neuvotteluvaihe
+    """
+    ONGOING = 'ongoing'
+    NEGOTIATING = 'negotiating'
+    DECISION = 'decision'
+
+    class Labels:
+        ONGOING = pgettext_lazy('Infill development compensation', 'Ongoing')
+        NEGOTIATING = pgettext_lazy('Infill development compensation', 'Negotiating')
+        DECISION = pgettext_lazy('Infill development compensation', 'Decision')

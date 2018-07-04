@@ -11,6 +11,8 @@ from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
 from leasing.viewsets.decision import DecisionViewSet
+from leasing.viewsets.infill_development_compensation import (
+    InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
 from leasing.viewsets.invoice import InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
@@ -30,6 +32,8 @@ router.register(r'district', DistrictViewSet)
 router.register(r'financing', FinancingViewSet)
 router.register(r'hitas', HitasViewSet)
 router.register(r'index', IndexViewSet)
+router.register(r'infill_development_compensation', InfillDevelopmentCompensationViewSet)
+router.register(r'infill_development_compensation_attachment', InfillDevelopmentCompensationAttachmentViewSet)
 router.register(r'invoice', InvoiceViewSet)
 router.register(r'invoice_row', InvoiceRowViewSet)
 router.register(r'invoice_set', InvoiceSetViewSet)
