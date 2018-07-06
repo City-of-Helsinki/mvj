@@ -1,3 +1,5 @@
+import os
+
 from django.urls import reverse
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -58,6 +60,11 @@ class InfillDevelopmentCompensationAttachmentSerializer(serializers.ModelSeriali
     id = serializers.IntegerField(required=False)
     uploader = UserSerializer()
     file = serializers.SerializerMethodField('get_attachment_url')
+    filename = serializers.SerializerMethodField('get_attachment_filename')
+
+    class Meta:
+        model = InfillDevelopmentCompensationAttachment
+        fields = ('id', 'file', 'filename', 'uploader', 'uploaded_at', 'infill_development_compensation_lease')
 
     def get_attachment_url(self, obj):
         if not obj or not obj.file:
@@ -71,9 +78,8 @@ class InfillDevelopmentCompensationAttachmentSerializer(serializers.ModelSeriali
 
         return url
 
-    class Meta:
-        model = InfillDevelopmentCompensationAttachment
-        fields = ('id', 'file', 'uploader', 'uploaded_at', 'infill_development_compensation_lease')
+    def get_attachment_filename(self, obj):
+        return os.path.basename(obj.file.name)
 
 
 class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(serializers.ModelSerializer):
