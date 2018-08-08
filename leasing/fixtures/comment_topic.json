@@ -1,0 +1,9 @@
+[
+  {
+    "model": "leasing.commenttopic",
+    "pk": 1,
+    "fields": {
+      "name": "Yleinen"
+    }
+  }
+]
