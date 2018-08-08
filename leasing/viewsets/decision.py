@@ -8,7 +8,7 @@ from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 class DecisionViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
-    filter_class = DecisionFilter
+    filterset_class = DecisionFilter
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):

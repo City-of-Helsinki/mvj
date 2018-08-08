@@ -9,7 +9,7 @@ from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 class CommentViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = Comment.objects.all().select_related('lease', 'user', 'topic')
     serializer_class = CommentSerializer
-    filter_class = CommentFilter
+    filterset_class = CommentFilter
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):

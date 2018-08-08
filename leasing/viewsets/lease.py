@@ -25,7 +25,7 @@ from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 class DistrictViewSet(AtomicTransactionModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
-    filter_class = DistrictFilter
+    filterset_class = DistrictFilter
 
 
 class FinancingViewSet(AtomicTransactionModelViewSet):
@@ -86,7 +86,7 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
 
 class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
-    filter_class = LeaseFilter
+    filterset_class = LeaseFilter
 
     def get_queryset(self):
         """Allow filtering leases by lease identifier

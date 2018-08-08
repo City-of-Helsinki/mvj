@@ -8,4 +8,4 @@ from leasing.serializers.rent import IndexSerializer
 class IndexViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Index.objects.all()
     serializer_class = IndexSerializer
-    filter_class = IndexFilter
+    filterset_class = IndexFilter

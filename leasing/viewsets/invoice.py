@@ -40,7 +40,7 @@ def get_amount_and_receivable_type(data):
 class InvoiceViewSet(AtomicTransactionModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
-    filter_class = InvoiceFilter
+    filterset_class = InvoiceFilter
 
     def get_queryset(self):
         queryset = Invoice.objects.select_related('recipient').prefetch_related(
@@ -81,7 +81,7 @@ class InvoiceViewSet(AtomicTransactionModelViewSet):
 class InvoiceRowViewSet(ReadOnlyModelViewSet):
     queryset = InvoiceRow.objects.all()
     serializer_class = InvoiceRowSerializer
-    filter_class = InvoiceRowFilter
+    filterset_class = InvoiceRowFilter
 
     @action(methods=['post'], detail=True)
     def credit(self, request, pk=None):
@@ -106,7 +106,7 @@ class InvoiceRowViewSet(ReadOnlyModelViewSet):
 class InvoiceSetViewSet(ReadOnlyModelViewSet):
     queryset = InvoiceSet.objects.all()
     serializer_class = InvoiceSetSerializer
-    filter_class = InvoiceSetFilter
+    filterset_class = InvoiceSetFilter
 
     @action(methods=['post'], detail=True)
     def credit(self, request, pk=None):
