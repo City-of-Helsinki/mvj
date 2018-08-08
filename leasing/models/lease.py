@@ -317,9 +317,6 @@ class Lease(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease")
         verbose_name_plural = pgettext_lazy("Model name", "Leases")
-        permissions = (
-            ("view_lease", _("Can view lease")),
-        )
 
     def __str__(self):
         return self.get_identifier_string()
