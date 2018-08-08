@@ -17,7 +17,14 @@ from leasing.models.land_area import (
     LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
 
 
-class AreaNoteAdmin(admin.OSMGeoAdmin):
+class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
+    # Position 24.945, 60.192 (SRID 4326) transformed to SRID 900913
+    default_lon = 2776864.697838209
+    default_lat = 8442609.191245062
+    default_zoom = 11
+
+
+class AreaNoteAdmin(CenterOnHelsinkiOSMGeoAdmin):
     pass
 
 
