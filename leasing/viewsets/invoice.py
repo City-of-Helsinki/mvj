@@ -14,9 +14,10 @@ from leasing.serializers.invoice import (
 from .utils import AtomicTransactionModelViewSet
 
 
-def get_amount_and_receivable_type(data):
+def get_values_from_credit_request(data):
     amount = data.get('amount')
     receivable_type_id = data.get('receivable_type')
+    notes = data.get('notes')
     receivable_type = None
 
     if amount and not receivable_type_id:
@@ -34,7 +35,7 @@ def get_amount_and_receivable_type(data):
         except ReceivableType.DoesNotExist:
             raise APIException('Receivable_type "{}" not found'.format(receivable_type_id))
 
-    return amount, receivable_type
+    return amount, receivable_type, notes
 
 
 class InvoiceViewSet(AtomicTransactionModelViewSet):
@@ -62,10 +63,10 @@ class InvoiceViewSet(AtomicTransactionModelViewSet):
     def credit(self, request, pk=None):
         invoice = self.get_object()
 
-        amount, receivable_type = get_amount_and_receivable_type(request.data)
+        amount, receivable_type, notes = get_values_from_credit_request(request.data)
 
         try:
-            credit_invoice = invoice.create_credit_invoice(amount=amount, receivable_type=receivable_type)
+            credit_invoice = invoice.create_credit_invoice(amount=amount, receivable_type=receivable_type, notes=notes)
         except RuntimeError as e:
             raise APIException(e)
 
@@ -112,14 +113,14 @@ class InvoiceSetViewSet(ReadOnlyModelViewSet):
     def credit(self, request, pk=None):
         invoiceset = self.get_object()
 
-        amount, receivable_type = get_amount_and_receivable_type(request.data)
+        amount, receivable_type, notes = get_values_from_credit_request(request.data)
 
         try:
             if amount and receivable_type:
                 credit_invoiceset = invoiceset.create_credit_invoiceset_for_amount(
-                    amount=amount, receivable_type=receivable_type)
+                    amount=amount, receivable_type=receivable_type, notes=notes)
             else:
-                credit_invoiceset = invoiceset.create_credit_invoiceset(receivable_type=receivable_type)
+                credit_invoiceset = invoiceset.create_credit_invoiceset(receivable_type=receivable_type, notes=notes)
         except RuntimeError as e:
             raise APIException(e)
 

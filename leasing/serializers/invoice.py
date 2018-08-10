@@ -1,7 +1,9 @@
-from enumfields.drf import EnumSupportSerializerMixin
+from decimal import Decimal
+
+from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
-from leasing.enums import InvoiceState
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, Invoice, Tenant
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
 from leasing.serializers.tenant import TenantSerializer
@@ -71,9 +73,30 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
                                                    related_serializer=ContactSerializer)
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    # Make total_amount, billed_amount, and type not requided in serializer and set them in create() if needed
+    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    billed_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    type = EnumField(enum=InvoiceType, required=False)
 
     def create(self, validated_data):
         validated_data['state'] = InvoiceState.OPEN
+
+        if not validated_data.get('total_amount'):
+            total_amount = Decimal(0)
+            for row in validated_data.get('rows', []):
+                total_amount += row.get('amount', Decimal(0))
+
+            validated_data['total_amount'] = total_amount
+
+        if not validated_data.get('billed_amount'):
+            billed_amount = Decimal(0)
+            for row in validated_data.get('rows', []):
+                billed_amount += row.get('amount', Decimal(0))
+
+            validated_data['billed_amount'] = billed_amount
+
+        if not validated_data.get('type'):
+            validated_data['type'] = InvoiceType.CHARGE
 
         return super().create(validated_data)
 
@@ -99,4 +122,4 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
 class InvoiceSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceSet
-        fields = ('id', 'lease', 'billing_period_start_date', 'billing_period_end_date', 'invoices',)
+        fields = ('id', 'lease', 'billing_period_start_date', 'billing_period_end_date', 'invoices')

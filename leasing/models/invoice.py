@@ -44,7 +44,7 @@ class InvoiceSet(models.Model):
         verbose_name = pgettext_lazy("Model name", "Invoice set")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice set")
 
-    def create_credit_invoiceset(self, receivable_type=None):
+    def create_credit_invoiceset(self, receivable_type=None, notes=''):
         all_invoices = self.invoices.filter(type=InvoiceType.CHARGE)
 
         if not all_invoices:
@@ -58,13 +58,13 @@ class InvoiceSet(models.Model):
         )
 
         for invoice in all_invoices:
-            credit_invoice = invoice.create_credit_invoice(receivable_type=receivable_type)
+            credit_invoice = invoice.create_credit_invoice(receivable_type=receivable_type, notes=notes)
             if credit_invoice:
                 credit_invoiceset.invoices.add(credit_invoice)
 
         return credit_invoiceset
 
-    def create_credit_invoiceset_for_amount(self, amount=None, receivable_type=None):
+    def create_credit_invoiceset_for_amount(self, amount=None, receivable_type=None, notes=''):
         if amount and not receivable_type:
             raise RuntimeError('receivable_type is required if amount is provided.')
 
@@ -115,7 +115,7 @@ class InvoiceSet(models.Model):
             invoice_credit_amount = Decimal(amount * Decimal(fraction.numerator / fraction.denominator)).quantize(
                 Decimal('.01'), rounding=ROUND_HALF_UP)
             credit_invoice = invoice.create_credit_invoice(amount=invoice_credit_amount,
-                                                           receivable_type=receivable_type)
+                                                           receivable_type=receivable_type, notes=notes)
             credit_invoiceset.invoices.add(credit_invoice)
 
         return credit_invoiceset
@@ -208,7 +208,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     def __str__(self):
         return str(self.pk)
 
-    def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None):
+    def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None, notes=''):
         """Create a credit note for this invoice"""
         if self.type != InvoiceType.CHARGE:
             raise RuntimeError(
@@ -247,6 +247,7 @@ class Invoice(TimeStampedSafeDeleteModel):
             billing_period_start_date=self.billing_period_start_date,
             billing_period_end_date=self.billing_period_end_date,
             credited_invoice=self,
+            notes=notes,
         )
 
         for invoice_row in row_queryset:
