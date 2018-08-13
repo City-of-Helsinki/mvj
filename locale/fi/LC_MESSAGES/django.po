@@ -119,12 +119,12 @@ msgstr "Yhteyshenkilö"
 #: leasing/enums.py:89
 msgctxt "Location type"
 msgid "Surface"
-msgstr "Maanpäällinen"
+msgstr "Yläpuolella"
 
 #: leasing/enums.py:90
 msgctxt "Location type"
 msgid "Underground"
-msgstr "Maanalainen"
+msgstr "Alapuolella"
 
 #: leasing/enums.py:103
 msgctxt "Lease area type"
