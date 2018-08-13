@@ -13,6 +13,7 @@ from leasing.models import (
     RelatedLease, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.explanation import ExplanationSerializer
+from leasing.serializers.invoice import CreateChargeSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
@@ -198,3 +199,14 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         return Response({
             'billing_periods': billing_periods
         })
+
+    @action(methods=['post'], detail=True)
+    def create_charge(self, request, pk=None):
+        lease = self.get_object()
+        request.data['lease'] = lease
+
+        serializer = CreateChargeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=201)

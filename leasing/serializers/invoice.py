@@ -1,11 +1,14 @@
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
+from django.utils import timezone
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from leasing.enums import InvoiceState, InvoiceType
-from leasing.models import Contact, Invoice, Tenant
+from leasing.models import Contact, Invoice, Lease, Tenant
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
+from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
+from leasing.serializers.lease import LeaseSuccinctSerializer
 from leasing.serializers.tenant import TenantSerializer
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
@@ -123,3 +126,97 @@ class InvoiceSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceSet
         fields = ('id', 'lease', 'billing_period_start_date', 'billing_period_end_date', 'invoices')
+
+
+class CreateChargeInvoiceRowSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    receivable_type = InstanceDictPrimaryKeyRelatedField(instance_class=ReceivableType,
+                                                         queryset=ReceivableType.objects.all(),
+                                                         related_serializer=ReceivableTypeSerializer)
+
+
+class CreateChargeSerializer(serializers.Serializer):
+    lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all(),
+                                               related_serializer=LeaseSuccinctSerializer)
+    due_date = serializers.DateField()
+    billing_period_start_date = serializers.DateField(required=False)
+    billing_period_end_date = serializers.DateField(required=False)
+    rows = serializers.ListSerializer(child=CreateChargeInvoiceRowSerializer(), required=True)
+    notes = serializers.CharField(required=False)
+
+    def to_representation(self, instance):
+        if isinstance(instance, InvoiceSet):
+            return InvoiceSetSerializer().to_representation(instance=instance)
+        elif isinstance(instance, Invoice):
+            return InvoiceSerializer().to_representation(instance=instance)
+
+    def create(self, validated_data):
+        today = timezone.now().date()
+        lease = validated_data.get('lease')
+        # TODO: validate billing period
+        billing_period_start_date = validated_data.get('billing_period_start_date', today)
+        billing_period_end_date = validated_data.get('billing_period_end_date', today)
+        billing_period = (billing_period_start_date, billing_period_end_date)
+
+        total_amount = sum([row.get('amount') for row in validated_data.get('rows', [])])
+
+        # TODO: Handle possible exception
+        shares = lease.get_tenant_shares_for_period(billing_period_start_date, billing_period_end_date)
+
+        invoice = None
+        invoiceset = None
+
+        if len(shares.items()) > 1:
+            invoiceset = InvoiceSet.objects.create(lease=lease, billing_period_start_date=billing_period_start_date,
+                                                   billing_period_end_date=billing_period_end_date)
+
+        # TODO: check for periods without 1/1 shares
+        for contact, share in shares.items():
+            invoice_row_data = []
+            billable_amount = Decimal(0)
+
+            for tenant, overlaps in share.items():
+                for row in validated_data.get('rows', []):
+                    overlap_amount = Decimal(0)
+                    for overlap in overlaps:
+                        overlap_amount += fix_amount_for_overlap(
+                            row.get('amount', Decimal(0)), overlap, subtract_ranges_from_ranges([billing_period],
+                                                                                                [overlap]))
+
+                        share_amount = Decimal(
+                            overlap_amount * Decimal(tenant.share_numerator / tenant.share_denominator)
+                        ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+                        billable_amount += share_amount
+
+                        invoice_row_data.append({
+                            'tenant': tenant,
+                            'receivable_type': row.get('receivable_type'),
+                            'billing_period_start_date': overlap[0],
+                            'billing_period_end_date': overlap[1],
+                            'amount': share_amount,
+                        })
+
+            invoice = Invoice.objects.create(
+                type=InvoiceType.CHARGE,
+                lease=lease,
+                recipient=contact,
+                due_date=validated_data.get('due_date'),
+                invoicing_date=today,
+                state=InvoiceState.OPEN,
+                billing_period_start_date=billing_period_start_date,
+                billing_period_end_date=billing_period_end_date,
+                total_amount=total_amount,
+                billed_amount=billable_amount,
+                outstanding_amount=billable_amount,
+                invoiceset=invoiceset,
+            )
+
+            for invoice_row_datum in invoice_row_data:
+                invoice_row_datum['invoice'] = invoice
+                InvoiceRow.objects.create(**invoice_row_datum)
+
+        if invoiceset:
+            return invoiceset
+        else:
+            return invoice
