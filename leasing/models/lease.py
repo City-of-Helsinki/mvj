@@ -2,7 +2,7 @@ import re
 
 from auditlog.registry import auditlog
 from django.db import connection, models, transaction
-from django.db.models import Max
+from django.db.models import Max, Q
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -10,6 +10,7 @@ from enumfields import EnumField
 from leasing.enums import Classification, DueDatesPosition, LeaseRelationType, LeaseState, NoticePeriodType
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
+from leasing.models.utils import get_range_overlap_and_remainder
 from users.models import User
 
 
@@ -369,6 +370,49 @@ class Lease(TimeStampedSafeDeleteModel):
             due_dates.update(rent.get_due_dates_for_period(start_date, end_date))
 
         return due_dates
+
+    def get_tenant_shares_for_period(self, billing_period_start_date, billing_period_end_date):
+        tenant_range_filter = Q(
+            Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period_start_date)) &
+            Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period_end_date)) &
+            Q(tenantcontact__deleted__isnull=True)
+        )
+
+        shares = {}
+        for tenant in self.tenants.filter(tenant_range_filter).distinct():
+            tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(billing_period_start_date, billing_period_end_date)
+            billing_tenantcontacts = tenant.get_billing_tenantcontacts(billing_period_start_date,
+                                                                       billing_period_end_date)
+            if not billing_tenantcontacts:
+                raise Exception('No billing contacts')
+
+            (tenant_overlap, tenant_remainders) = get_range_overlap_and_remainder(
+                billing_period_start_date, billing_period_end_date, *tenant_tenantcontacts[0].date_range)
+
+            if not tenant_overlap:
+                raise Exception('No overlap with this billing period. Error?')
+
+            for billing_tenantcontact in billing_tenantcontacts:
+                (billing_overlap, billing_remainders) = get_range_overlap_and_remainder(
+                    tenant_overlap[0], tenant_overlap[1], *billing_tenantcontact.date_range)
+
+                if not billing_overlap:
+                    continue
+
+                if billing_tenantcontact.contact not in shares:
+                    shares[billing_tenantcontact.contact] = {}
+
+                if tenant not in shares[billing_tenantcontact.contact]:
+                    shares[billing_tenantcontact.contact][tenant] = []
+
+                shares[billing_tenantcontact.contact][tenant].append(billing_overlap)
+
+            ranges_for_billing_contacts = []
+            for billing_contact, tenant_overlaps in shares.items():
+                if tenant in tenant_overlaps:
+                    ranges_for_billing_contacts.extend(tenant_overlaps[tenant])
+
+        return shares
 
 
 class LeaseStateLog(TimeStampedModel):
