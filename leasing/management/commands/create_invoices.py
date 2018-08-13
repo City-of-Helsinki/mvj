@@ -94,7 +94,8 @@ class Command(BaseCommand):
 
                 tenant_range_filter = Q(
                     Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period[0])) &
-                    Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period[1]))
+                    Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period[1])) &
+                    Q(tenantcontact__deleted__isnull=True)
                 )
 
                 shares = {}
