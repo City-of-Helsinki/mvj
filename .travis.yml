@@ -16,9 +16,9 @@ env:
     - LEGACY_SERVICES=''
 
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 
 addons:
   postgresql: '9.4'
