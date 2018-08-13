@@ -210,7 +210,7 @@ class CreateChargeSerializer(serializers.Serializer):
                 billed_amount=billable_amount,
                 outstanding_amount=billable_amount,
                 invoiceset=invoiceset,
-                notes=validated_data.get('notes'),
+                notes=validated_data.get('notes', ''),
             )
 
             for invoice_row_datum in invoice_row_data:
