@@ -150,10 +150,20 @@ class CreateChargeSerializer(serializers.Serializer):
         elif isinstance(instance, Invoice):
             return InvoiceSerializer().to_representation(instance=instance)
 
+    def validate(self, data):
+        if (data.get('billing_period_start_date') and not data.get('billing_period_end_date')) or (
+                not data.get('billing_period_start_date') and data.get('billing_period_end_date')):
+            raise serializers.ValidationError("Both Billing period start and end are "
+                                              "required if one of them is provided")
+
+        if data.get('billing_period_start_date') > data.get('billing_period_end_date'):
+            raise serializers.ValidationError("Billing period end must be the same or after the start")
+
+        return data
+
     def create(self, validated_data):
         today = timezone.now().date()
         lease = validated_data.get('lease')
-        # TODO: validate billing period
         billing_period_start_date = validated_data.get('billing_period_start_date', today)
         billing_period_end_date = validated_data.get('billing_period_end_date', today)
         billing_period = (billing_period_start_date, billing_period_end_date)
