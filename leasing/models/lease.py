@@ -383,8 +383,10 @@ class Lease(TimeStampedSafeDeleteModel):
             tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(billing_period_start_date, billing_period_end_date)
             billing_tenantcontacts = tenant.get_billing_tenantcontacts(billing_period_start_date,
                                                                        billing_period_end_date)
-            if not billing_tenantcontacts:
-                raise Exception('No billing contacts')
+
+            if not tenant_tenantcontacts or not billing_tenantcontacts:
+                raise Exception('No suitable contacts in the period {} - {}'.format(billing_period_start_date,
+                                                                                    billing_period_end_date))
 
             (tenant_overlap, tenant_remainders) = get_range_overlap_and_remainder(
                 billing_period_start_date, billing_period_end_date, *tenant_tenantcontacts[0].date_range)
