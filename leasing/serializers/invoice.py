@@ -1,6 +1,7 @@
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
@@ -153,11 +154,11 @@ class CreateChargeSerializer(serializers.Serializer):
     def validate(self, data):
         if (data.get('billing_period_start_date') and not data.get('billing_period_end_date')) or (
                 not data.get('billing_period_start_date') and data.get('billing_period_end_date')):
-            raise serializers.ValidationError("Both Billing period start and end are "
-                                              "required if one of them is provided")
+            raise serializers.ValidationError(_("Both Billing period start and end are "
+                                                "required if one of them is provided"))
 
         if data.get('billing_period_start_date') > data.get('billing_period_end_date'):
-            raise serializers.ValidationError("Billing period end must be the same or after the start")
+            raise serializers.ValidationError(_("Billing period end must be the same or after the start"))
 
         return data
 

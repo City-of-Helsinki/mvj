@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
@@ -120,7 +121,7 @@ class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSeri
 class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     def validate(self, data):
         if data['from_lease'] == data['to_lease']:
-            raise serializers.ValidationError("from_lease and to_lease cannot be the same Lease")
+            raise serializers.ValidationError(_("from_lease and to_lease cannot be the same Lease"))
 
         return data
 
