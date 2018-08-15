@@ -365,11 +365,16 @@ class Lease(TimeStampedSafeDeleteModel):
 
     def get_due_dates_for_period(self, start_date, end_date):
         due_dates = set()
-        # TODO: filter by start and end dates
-        for rent in self.rents.all():
+
+        range_filtering = Q(
+            Q(Q(end_date=None) | Q(end_date__gte=start_date)) &
+            Q(Q(start_date=None) | Q(start_date__lte=end_date))
+        )
+
+        for rent in self.rents.filter(range_filtering):
             due_dates.update(rent.get_due_dates_for_period(start_date, end_date))
 
-        return due_dates
+        return sorted(due_dates)
 
     def get_tenant_shares_for_period(self, billing_period_start_date, billing_period_end_date):
         tenant_range_filter = Q(
