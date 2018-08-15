@@ -299,6 +299,47 @@ def subtract_ranges_from_ranges(ranges, subtract_ranges):
     return combined_ranges
 
 
+def split_date_range(date_range, count):
+    # TODO: Split by full months or weeks if possible
+    assert len(date_range) == 2
+    assert isinstance(date_range[0], datetime.date)
+    assert isinstance(date_range[1], datetime.date)
+    assert date_range[0] < date_range[1]
+
+    if count == 0:
+        return []
+
+    if count == 1:
+        return [date_range]
+
+    start_date = date_range[0]
+    end_date = date_range[1]
+
+    days_between = (end_date - start_date).days
+    # TODO: error if can't split as many times as requested?
+    if days_between < count:
+        raise RuntimeError("Can't split date range {} - {} ({} days) into {} parts".format(
+            start_date, end_date, days_between, count))
+
+    days_per_period = days_between // count
+
+    result = []
+    current_start = start_date
+    while current_start < end_date:
+        split_end = current_start + relativedelta(days=days_per_period)
+
+        if split_end > end_date:
+            split_end = end_date
+
+        result.append((current_start, split_end))
+        current_start = split_end + relativedelta(days=1)
+
+        if current_start == end_date:
+            result[-1] = (result[-1][0], end_date)
+
+    return result
+
+
 def get_monthly_amount_by_period_type(amount, period_type):
     if period_type == PeriodType.PER_MONTH:
         return amount

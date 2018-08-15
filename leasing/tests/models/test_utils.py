@@ -4,7 +4,7 @@ import pytest
 
 from leasing.models.utils import (
     combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_range_overlap_and_remainder,
-    subtract_range_from_range, subtract_ranges_from_ranges)
+    split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -365,3 +365,73 @@ def test_subtract_ranges_from_ranges(ranges, subtract_ranges, expected):
 ])
 def test_combine_ranges(ranges, expected):
     assert combine_ranges(ranges) == expected
+
+
+@pytest.mark.parametrize("date_range, count, expected", [
+    (
+        (date(2018, 1, 1), date(2018, 2, 1)),
+        0,
+        [],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 2, 1)),
+        1,
+        [(date(2018, 1, 1), date(2018, 2, 1))],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 12, 31)),
+        1,
+        [(date(2018, 1, 1), date(2018, 12, 31))],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 6, 30)),
+        2,
+        [(date(2018, 1, 1), date(2018, 4, 1)), (date(2018, 4, 2), date(2018, 6, 30))],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 6, 30)),
+        3,
+        [
+            (date(2018, 1, 1), date(2018, 3, 2)),
+            (date(2018, 3, 3), date(2018, 5, 2)),
+            (date(2018, 5, 3), date(2018, 6, 30))
+        ],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 1, 5)),
+        2,
+        [
+            (date(2018, 1, 1), date(2018, 1, 3)),
+            (date(2018, 1, 4), date(2018, 1, 5)),
+        ],
+    ),
+    # split_date_range doesn't guarantee the count of splits. at least for now.
+    (
+        (date(2018, 1, 1), date(2018, 1, 5)),
+        3,
+        [
+            (date(2018, 1, 1), date(2018, 1, 2)),
+            (date(2018, 1, 3), date(2018, 1, 5)),
+        ],
+    ),
+    (
+        (date(2018, 1, 1), date(2018, 1, 5)),
+        4,
+        [
+            (date(2018, 1, 1), date(2018, 1, 2)),
+            (date(2018, 1, 3), date(2018, 1, 5)),
+        ],
+    ),
+])
+def test_split_date_range(date_range, count, expected):
+    assert split_date_range(date_range, count) == expected
+
+
+def test_split_date_range_too_big_count():
+    date_range = (date(2018, 1, 1), date(2018, 1, 5))
+    count = 6
+
+    with pytest.raises(RuntimeError) as e:
+        split_date_range(date_range, count)
+
+    assert str(e.value) == "Can't split date range 2018-01-01 - 2018-01-05 (4 days) into 6 parts"
