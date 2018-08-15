@@ -1,7 +1,9 @@
+from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 from rest_framework.serializers import ListSerializer
 
+from leasing.enums import DueDatesType
 from leasing.models import Index
 
 from ..models import (
@@ -106,7 +108,8 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
                   'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
-                  'yearly_due_dates')
+                  'yearly_due_dates', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day',
+                  'seasonal_end_month')
 
 
 class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -116,7 +119,8 @@ class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         model = Rent
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
-                  'equalization_end_date', 'amount', 'note', 'start_date', 'end_date')
+                  'equalization_end_date', 'amount', 'note', 'start_date', 'end_date', 'seasonal_start_day',
+                  'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month')
 
 
 class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -133,7 +137,20 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
-                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date')
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
+                  'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month')
+
+    def validate(self, data):
+        seasonal_values = [data.get('seasonal_start_day'), data.get('seasonal_start_month'),
+                           data.get('seasonal_end_day'), data.get('seasonal_end_month')]
+
+        if not all(v is None for v in seasonal_values) and any(v is None for v in seasonal_values):
+            raise serializers.ValidationError(_("All seasonal values are required if one is set"))
+
+        if all(seasonal_values) and data.get('due_dates_type') != DueDatesType.CUSTOM:
+            raise serializers.ValidationError(_("Due dates type must be custom if seasonal dates are set"))
+
+        return data
 
 
 class LeaseBasisOfRentSerializer(serializers.ModelSerializer):

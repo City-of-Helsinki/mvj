@@ -15,7 +15,8 @@ from leasing.enums import (
     RentType)
 from leasing.models.utils import (
     DayMonth, Explanation, IndexCalculation, fix_amount_for_overlap, get_billing_periods_for_year,
-    get_date_range_amount_from_monthly_amount, get_monthly_amount_by_period_type, get_range_overlap_and_remainder)
+    get_date_range_amount_from_monthly_amount, get_monthly_amount_by_period_type, get_range_overlap_and_remainder,
+    split_date_range)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -105,6 +106,24 @@ class Rent(TimeStampedSafeDeleteModel):
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
+    # In Finnish: Kausilaskutus
+    seasonal_start_day = models.PositiveIntegerField(verbose_name=_("Seasonal start day"), null=True, blank=True,
+                                                     validators=[MinValueValidator(1), MaxValueValidator(31)])
+    seasonal_start_month = models.PositiveIntegerField(verbose_name=_("Seasonal start month"), null=True, blank=True,
+                                                       validators=[MinValueValidator(1), MaxValueValidator(12)])
+    seasonal_end_day = models.PositiveIntegerField(verbose_name=_("Seasonal end day"), null=True, blank=True,
+                                                   validators=[MinValueValidator(1), MaxValueValidator(31)])
+    seasonal_end_month = models.PositiveIntegerField(verbose_name=_("Seasonal end month"), null=True, blank=True,
+                                                     validators=[MinValueValidator(1), MaxValueValidator(12)])
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Rents")
+
+    def is_seasonal(self):
+        return (self.seasonal_start_day and self.seasonal_start_month and
+                self.seasonal_end_day and self.seasonal_end_month)
+
     def get_amount_for_year(self, year):
         date_range_start = datetime.date(year, 1, 1)
         date_range_end = datetime.date(year, 12, 31)
@@ -134,6 +153,18 @@ class Rent(TimeStampedSafeDeleteModel):
         total = Decimal('0.00')
         fixed_applied = False
         remaining_ranges = []
+
+        if self.is_seasonal():
+            seasonal_period_start = datetime.date(year=date_range_start.year, month=self.seasonal_start_month,
+                                                  day=self.seasonal_start_day)
+            seasonal_period_end = datetime.date(year=date_range_start.year, month=self.seasonal_end_month,
+                                                day=self.seasonal_end_day)
+
+            if date_range_start < seasonal_period_start and date_range_start < seasonal_period_end:
+                date_range_start = seasonal_period_start
+
+            if date_range_end > seasonal_period_end and date_range_end > seasonal_period_start:
+                date_range_end = seasonal_period_end
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
             (fixed_overlap, fixed_remainders) = get_range_overlap_and_remainder(
@@ -284,20 +315,44 @@ class Rent(TimeStampedSafeDeleteModel):
         return due_dates
 
     def get_billing_period_from_due_date(self, due_date):
-        due_dates_per_year = self.get_due_dates_for_period(datetime.date(year=due_date.year, month=1, day=1),
-                                                           datetime.date(year=due_date.year, month=12, day=31))
-
-        try:
-            due_date_index = due_dates_per_year.index(due_date)
-
-            return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[due_date_index]
-        except (ValueError, IndexError):
-            # TODO: better error handling
+        if not due_date:
             return None
 
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Rent")
-        verbose_name_plural = pgettext_lazy("Model name", "Rents")
+        # Non-seasonal rent
+        if not self.is_seasonal():
+            due_dates_per_year = self.get_due_dates_for_period(datetime.date(year=due_date.year, month=1, day=1),
+                                                               datetime.date(year=due_date.year, month=12, day=31))
+
+            try:
+                due_date_index = due_dates_per_year.index(due_date)
+
+                return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[due_date_index]
+            except (ValueError, IndexError):
+                # TODO: better error handling
+                return None
+
+        # Seasonal rent
+        seasonal_period_start = datetime.date(year=due_date.year, month=self.seasonal_start_month,
+                                              day=self.seasonal_start_day)
+        seasonal_period_end = datetime.date(year=due_date.year, month=self.seasonal_end_month,
+                                            day=self.seasonal_end_day)
+
+        if seasonal_period_start > due_date or seasonal_period_end < due_date:
+            return None
+
+        due_dates_in_period = self.get_due_dates_for_period(seasonal_period_start, seasonal_period_end)
+        if not due_dates_in_period:
+            return None
+        elif len(due_dates_in_period) == 1 and due_dates_in_period[0] == due_date:
+            return seasonal_period_start, seasonal_period_end
+        else:
+            try:
+                due_date_index = due_dates_in_period.index(due_date)
+            except ValueError:
+                return None
+
+            return split_date_range((seasonal_period_start, seasonal_period_end), len(due_dates_in_period))[
+                due_date_index]
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
