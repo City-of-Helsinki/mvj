@@ -165,6 +165,12 @@ class Rent(TimeStampedSafeDeleteModel):
 
             if date_range_end > seasonal_period_end and date_range_end > seasonal_period_start:
                 date_range_end = seasonal_period_end
+        else:
+            if (self.start_date and date_range_start < self.start_date) and (not self.end_date or date_range_start < self.end_date):
+                date_range_start = self.start_date
+
+            if (self.end_date and date_range_end > self.end_date) and (self.start_date and date_range_end > self.start_date):
+                date_range_end = self.end_date
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
             (fixed_overlap, fixed_remainders) = get_range_overlap_and_remainder(
