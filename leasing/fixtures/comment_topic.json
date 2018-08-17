@@ -5,5 +5,26 @@
     "fields": {
       "name": "Yleinen"
     }
+  },
+  {
+    "model": "leasing.commenttopic",
+    "pk": 2,
+    "fields": {
+      "name": "Laskutus ja perintä"
+    }
+  },
+  {
+    "model": "leasing.commenttopic",
+    "pk": 3,
+    "fields": {
+      "name": "Yhteydenpito"
+    }
+  },
+  {
+    "model": "leasing.commenttopic",
+    "pk": 4,
+    "fields": {
+      "name": "Sopimusehdot"
+    }
   }
 ]
