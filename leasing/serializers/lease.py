@@ -1,3 +1,5 @@
+from django.db.models import DurationField
+from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -231,6 +233,9 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
                                                   related_serializer=UserSerializer, required=False, allow_null=True)
     related_leases = serializers.SerializerMethodField()
+    notice_period = serializers.PrimaryKeyRelatedField(
+        required=False, queryset=NoticePeriod.objects.all().annotate(
+            duration_as_interval=Cast('duration', DurationField())).order_by('duration_as_interval'))
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
