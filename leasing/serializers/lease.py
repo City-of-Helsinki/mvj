@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
-from leasing.models import RelatedLease
+from leasing.models import InfillDevelopmentCompensation, RelatedLease
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -208,9 +208,16 @@ def get_related_leases(obj):
 class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
     preparer = UserSerializer()
+    infill_development_compensations = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
+
+    def get_infill_development_compensations(self, obj):
+        infill_development_compensations = InfillDevelopmentCompensation.objects.filter(
+            infill_development_compensation_leases__lease__id=obj.id)
+
+        return [{'id': idc.id, 'name': idc.name} for idc in infill_development_compensations]
 
     class Meta:
         model = Lease
