@@ -223,6 +223,10 @@ class Rent(TimeStampedSafeDeleteModel):
             date_ranges = [(date_range_start, date_range_end)]
 
         for (range_start, range_end) in date_ranges:
+            if self.type == RentType.ONE_TIME:
+                total += self.amount
+                continue
+
             for contract_rent in contract_rents:
                 (contract_overlap, _) = get_range_overlap_and_remainder(
                     range_start, range_end, *contract_rent.date_range)
