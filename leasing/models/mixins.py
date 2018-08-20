@@ -25,3 +25,16 @@ class NameModel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ArchivableModel(models.Model):
+    # In Finnish: Arkistoitu
+    archived_at = models.DateTimeField(verbose_name=_("Time archived"), null=True, blank=True)
+    # In Finnish: Huomautus (arkistointi)
+    archived_note = models.TextField(verbose_name=_("Archived note"), null=True, blank=True)
+
+    def is_archived(self):
+        return bool(self.archived_at)
+
+    class Meta:
+        abstract = True

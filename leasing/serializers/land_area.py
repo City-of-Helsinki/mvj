@@ -1,9 +1,10 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
-from leasing.models import ConstructabilityDescription
+from leasing.models import ConstructabilityDescription, Decision
 from leasing.models.land_area import (
     LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
+from leasing.serializers.decision import DecisionSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -135,7 +136,8 @@ class LeaseAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerialize
                   'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
                   'constructability_report_state', 'constructability_report_investigation_state',
                   'constructability_report_signing_date', 'constructability_report_signer',
-                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions')
+                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions',
+                  'archived_at', 'archived_note', 'archived_decision')
 
 
 class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer):
@@ -149,6 +151,9 @@ class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMi
                                                                allow_null=True)
     constructability_descriptions = ConstructabilityDescriptionCreateUpdateSerializer(many=True, required=False,
                                                                                       allow_null=True)
+    archived_decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
+                                                           related_serializer=DecisionSerializer, required=False,
+                                                           allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -158,4 +163,5 @@ class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMi
                   'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
                   'constructability_report_state', 'constructability_report_investigation_state',
                   'constructability_report_signing_date', 'constructability_report_signer',
-                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions')
+                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions',
+                  'archived_at', 'archived_note', 'archived_decision')

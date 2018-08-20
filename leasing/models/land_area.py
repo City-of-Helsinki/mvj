@@ -11,7 +11,7 @@ from leasing.enums import (
 from leasing.models.lease import Lease
 from users.models import User
 
-from .mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
+from .mixins import ArchivableModel, NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 
 
 class AbstractAddress(TimeStampedModel):
@@ -47,7 +47,7 @@ class Land(TimeStampedModel):
         abstract = True
 
 
-class LeaseArea(Land, SafeDeleteModel):
+class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     """
     In Finnish: Vuokra-alue
     """
@@ -115,6 +115,10 @@ class LeaseArea(Land, SafeDeleteModel):
 
     # In Finnish: Selvitysaste (Muut)
     other_state = EnumField(ConstructabilityState, verbose_name=_("Other state"), null=True, blank=True, max_length=30)
+
+    # In Finnish: Päätös (arkistointi)
+    archived_decision = models.ForeignKey('leasing.Decision', verbose_name=_("Archive decision"), null=True,
+                                          blank=True, on_delete=models.PROTECT)
 
     def __str__(self):
         return 'LeaseArea {}'.format(self.type)
