@@ -11,6 +11,7 @@ django-sequences
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
+docxtpl
 psycopg2-binary
 python-dateutil
 raven
