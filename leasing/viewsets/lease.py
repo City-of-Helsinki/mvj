@@ -1,8 +1,15 @@
 import datetime
+import io
+from decimal import Decimal
+from itertools import groupby
+from pathlib import Path
 
 from dateutil import parser
+from django.apps import apps
 from django.db.models import DurationField
 from django.db.models.functions import Cast
+from django.http import HttpResponse
+from docxtpl import DocxTemplate
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -210,3 +217,144 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=201)
+
+    @action(methods=['post'], detail=True)
+    def create_collection_letter(self, request, pk=None):
+        lease = self.get_object()
+        today = datetime.date.today()
+
+        # TODO: remove
+        if 'tenant_ids' not in request.data:
+            request.data['tenant_ids'] = [request.data['tenant_id']]
+
+        data_keys = {'type', 'collection_charge', 'tenant_ids', 'invoice_ids'}
+        if data_keys.difference(set(request.data.keys())):
+            raise APIException('All values are mandatory ({})'.format(', '.join(data_keys)))
+
+        type_to_filename = {
+            'oikeudenkäyntiuhka': 'oikeudenkayntiuhka.docx',
+            'irtisanomis- ja oikeudenkäyntiuhka': 'irtisanomis_ja_oikeudenkayntiuhka.docx',
+            'purku-uhka': 'purku_uhka.docx',
+        }
+
+        letter_type = request.data.get('type')
+        tenants = lease.tenants.filter(id__in=request.data.get('tenant_ids'))
+        contacts = []
+        for tenant in tenants:
+            tenant_contact = tenant.get_billing_tenantcontacts(today, today).first()
+            contacts.append(tenant_contact.contact)
+
+        invoice_ids = request.data.get('invoice_ids')
+        collection_charge = Decimal(request.data.get('collection_charge'))
+
+        if letter_type not in type_to_filename.keys():
+            raise APIException('Unknown type "{}"'.format(letter_type))
+
+        resource_path = Path(apps.get_app_config('leasing').path) / 'resources'
+        template_filename = resource_path / type_to_filename[letter_type]
+
+        billing_addresses = ''
+        for contact in contacts:
+            billing_address = '<w:br/>'.join([
+                str(contact),
+                contact.address,
+                '{} {}'.format(contact.postal_code, contact.city if contact.city else ''),
+            ])
+            billing_addresses += billing_address + '<w:br/>'
+
+        invoices = lease.invoices.filter(id__in=invoice_ids)
+        debt = Decimal(0)
+        debt_strings = []
+        interest_strings = []
+        interest_total = Decimal(0)
+        interest_rates = []
+        interest_rate_strings = []
+
+        for invoice in invoices:
+            penalty_interest_data = invoice.calculate_penalty_interest()
+            if not penalty_interest_data['total_interest_amount']:
+                continue
+
+            interest_strings.append('Korko laskulle, jonka eräpäivä on ollut {}, on {} euroa'.format(
+                invoice.due_date.strftime('%d.%m.%Y'),
+                penalty_interest_data['total_interest_amount']
+            ))
+            interest_total += penalty_interest_data['total_interest_amount']
+
+            invoice_debt_amount = invoice.outstanding_amount
+            debt += invoice_debt_amount
+
+            debt_strings.append('{}, {} euroa (ajalta {} - {})'.format(
+                invoice.due_date.strftime('%d.%m.%Y'),
+                invoice_debt_amount,
+                invoice.billing_period_start_date.strftime('%d.%m.%Y'),
+                invoice.billing_period_end_date.strftime('%d.%m.%Y')
+            ))
+
+            for interest_period in penalty_interest_data['interest_periods']:
+                interest_rate_tuple = (interest_period['start_date'], interest_period['end_date'],
+                                       interest_period['penalty_rate'])
+
+                if interest_rate_tuple not in interest_rates:
+                    interest_rates.append(interest_rate_tuple)
+
+        if len(interest_rates) > 1:
+            interest_rates = sorted(interest_rates, key=lambda x: x[0])
+
+            # Squash adjacent equal penalty interest rates
+            squashed_interest_rates = []
+            for k, g in groupby(interest_rates, key=lambda x: x[2]):
+                rate_group = list(g)
+                if len(rate_group) == 1:
+                    squashed_interest_rates.append(rate_group[0])
+                else:
+                    squashed_interest_rates.append((rate_group[0][0], rate_group[-1][1], rate_group[0][2]))
+
+            for i, interest_rate in enumerate(squashed_interest_rates):
+                if i == len(squashed_interest_rates) - 1:
+                    # TODO: Might not be strictly accurate
+                    interest_rate_strings.append(
+                        'Viivästyskoron suuruus {} alkaen on {} %'.format(interest_rate[0].strftime('%d.%m.%Y'),
+                                                                          interest_rate[2]))
+                else:
+                    interest_rate_strings.append('Viivästyskoron suuruus ajalla {} - {} on {} %'.format(
+                        interest_rate[0].strftime('%d.%m.%Y'), interest_rate[1].strftime('%d.%m.%Y'),
+                        interest_rate[2]))
+        else:
+            interest_rate_strings.append('viivästyskoron suuruus on {} %'.format(interest_rates[0][2]))
+
+        collection_charge_total = len(invoices) * collection_charge
+
+        grand_total = debt + interest_total + collection_charge_total
+
+        template_data = {
+            'billing_address': billing_addresses,
+            'lease_identifier': str(lease.identifier),
+            'current_date': today.strftime('%d.%m.%Y'),
+            'debts': '<w:br/>'.join(debt_strings),
+            'total_debt': debt,
+            'interest_rates': '<w:br/>'.join(interest_rate_strings),
+            'interests': '<w:br/>'.join(interest_strings),
+            'interest_total': interest_total,
+            'grand_total': grand_total,
+            'collection_charge': collection_charge,
+            'collection_charge_total': collection_charge_total,
+            'invoice_count': len(invoices),
+        }
+
+        doc = DocxTemplate(str(template_filename))
+        doc.render(template_data)
+        output = io.BytesIO()
+        doc.save(output)
+
+        if output.getvalue():
+            response = HttpResponse(
+                output.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+            response['Content-Disposition'] = 'attachment; filename={}_{}'.format(str(lease.identifier),
+                                                                                  type_to_filename[letter_type])
+
+            return response
+        else:
+            raise APIException('Document error')
