@@ -1,19 +1,16 @@
-import os
-
-from django.urls import reverse
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from leasing.models import DecisionMaker, IntendedUse, Lease
-from leasing.serializers.decision import DecisionMakerSerializer
-from leasing.serializers.lease import IntendedUseSerializer, LeaseSuccinctSerializer
-from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 from users.models import User
 from users.serializers import UserSerializer
 
 from ..models import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
+from .decision import DecisionMakerSerializer
+from .lease import IntendedUseSerializer, LeaseSuccinctSerializer
+from .utils import FileSerializerMixin, InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
 class InfillDevelopmentCompensationDecisionSerializer(serializers.ModelSerializer):
@@ -56,30 +53,16 @@ class InfillDevelopmentCompensationIntendedUseCreateUpdateSerializer(serializers
         fields = ('id', 'intended_use', 'floor_m2', 'amount_per_floor_m2')
 
 
-class InfillDevelopmentCompensationAttachmentSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationAttachmentSerializer(FileSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = UserSerializer()
-    file = serializers.SerializerMethodField('get_attachment_url')
-    filename = serializers.SerializerMethodField('get_attachment_filename')
+    file = serializers.SerializerMethodField('get_file_url')
+    filename = serializers.SerializerMethodField('get_file_filename')
 
     class Meta:
         model = InfillDevelopmentCompensationAttachment
         fields = ('id', 'file', 'filename', 'uploader', 'uploaded_at', 'infill_development_compensation_lease')
-
-    def get_attachment_url(self, obj):
-        if not obj or not obj.file:
-            return None
-
-        url = reverse('infilldevelopmentcompensationattachment-download', args=[obj.id])
-
-        request = self.context.get('request', None)
-        if request is not None:
-            return request.build_absolute_uri(url)
-
-        return url
-
-    def get_attachment_filename(self, obj):
-        return os.path.basename(obj.file.name)
+        download_url_name = 'infilldevelopmentcompensationattachment-download'
 
 
 class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(serializers.ModelSerializer):
