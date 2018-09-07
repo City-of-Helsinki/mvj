@@ -5,6 +5,8 @@ from .basis_of_rent import (
 from .comment import Comment, CommentTopic
 from .contact import Contact
 from .contract import Contract, ContractChange, ContractType, MortgageDocument
+from .debt_collection import (
+    CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote, InterestRate)
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
 from .infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
@@ -29,6 +31,10 @@ __all__ = [
     'BasisOfRentPropertyIdentifier',
     'BasisOfRentRate',
     'BankHoliday',
+    'CollectionCourtDecision',
+    'CollectionLetter',
+    'CollectionLetterTemplate',
+    'CollectionNote',
     'Comment',
     'CommentTopic',
     'Condition',
@@ -55,6 +61,7 @@ __all__ = [
     'InfillDevelopmentCompensationAttachment',
     'Inspection',
     'IntendedUse',
+    'InterestRate',
     'Invoice',
     'Lease',
     'LeaseArea',
