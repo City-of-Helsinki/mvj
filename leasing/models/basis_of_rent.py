@@ -63,6 +63,9 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
+    # In Finnish: Alue
+    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Basis of rent")
         verbose_name_plural = pgettext_lazy("Model name", "Basis of rents")
@@ -97,6 +100,9 @@ class BasisOfRentPropertyIdentifier(models.Model):
     basis_of_rent = models.ForeignKey(BasisOfRent, verbose_name=_("Basis of rent"), related_name='property_identifiers',
                                       on_delete=models.CASCADE)
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
+
+    # In Finnish: Alue
+    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Basis of rent property identifier")

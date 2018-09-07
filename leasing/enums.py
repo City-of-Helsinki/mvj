@@ -354,3 +354,29 @@ class InfillDevelopmentCompensationState(Enum):
         ONGOING = pgettext_lazy('Infill development compensation', 'Ongoing')
         NEGOTIATING = pgettext_lazy('Infill development compensation', 'Negotiating')
         DECISION = pgettext_lazy('Infill development compensation', 'Decision')
+
+
+class AreaType(Enum):
+    """
+    In Finnish: Alueen tyyppi
+    """
+    LEASE_AREA = 'lease_area'  # Vuokra-alue
+    PLAN_UNIT = 'plan_unit'  # Kaavayksikkö
+    REAL_PROPERTY = 'real_property'  # Kiinteistö
+    UNSEPARATED_PARCEL = 'unseparated_parcel'  # Määräala
+    PLOT_DIVISION = 'plot_division'  # Tonttijako
+    BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperuste
+    INFILL_DEVELOPMENT_COMPENSATION = 'infill_development_compensation'  # Täydennysrakentamiskorvaus
+    LAND_USE_AGREEMENT = 'land_use_agreement'  # Maankäyttösopimus
+    OTHER = 'other'
+
+    class Labels:
+        LEASE_AREA = pgettext_lazy('Area type', 'Lease area')
+        PLAN_UNIT = pgettext_lazy('Area type', 'Plan unit')
+        REAL_PROPERTY = pgettext_lazy('Area type', 'Real property')
+        UNSEPARATED_PARCEL = pgettext_lazy('Area type', 'Unseparated parcel')
+        PLOT_DIVISION = pgettext_lazy('Area type', 'Plot division')
+        BASIS_OF_RENT = pgettext_lazy('Area type', 'Basis of rent')
+        INFILL_DEVELOPMENT_COMPENSATION = pgettext_lazy('Area type', 'Infill development compensation')
+        LAND_USE_AGREEMENT = pgettext_lazy('Area type', 'Land use agreement')
+        OTHER = pgettext_lazy('Area type', 'Other')

@@ -1,5 +1,5 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -41,6 +41,9 @@ class InfillDevelopmentCompensation(TimeStampedSafeDeleteModel):
 
     leases = models.ManyToManyField('leasing.Lease', through='leasing.InfillDevelopmentCompensationLease',
                                     related_name='leases')
+
+    # In Finnish: Alue
+    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation")

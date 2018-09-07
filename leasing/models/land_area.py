@@ -1,5 +1,5 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -42,6 +42,9 @@ class Land(TimeStampedModel):
 
     # In Finnish: Leikkausala
     section_area = models.PositiveIntegerField(verbose_name=_("Section area"))
+
+    # In Finnish: Alue
+    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
     class Meta:
         abstract = True

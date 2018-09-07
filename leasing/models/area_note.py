@@ -13,7 +13,9 @@ class AreaNote(TimeStampedSafeDeleteModel):
     In Finnish: Muistettava ehto
     """
     # In Finnish: Alue
+    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
     geometry = models.MultiPolygonField(srid=4326, null=True, blank=True)
+
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
     user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.PROTECT)
