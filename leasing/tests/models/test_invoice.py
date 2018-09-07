@@ -955,3 +955,33 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(django_db_se
 
     credit_note_row3 = credit_note2.rows.last()
     assert credit_note_row3.amount == pytest.approx(Decimal(66.66))
+
+
+@pytest.mark.django_db
+def test_calculate_penalty_amount(django_db_setup, lease_factory, contact_factory, invoice_factory):
+    calculation_date = datetime.date(year=2018, month=9, day=6)
+
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=5, notice_period_id=1)
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    billing_period_start_date = datetime.date(year=2017, month=1, day=1)
+    billing_period_end_date = datetime.date(year=2017, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(500),
+        billed_amount=Decimal(500),
+        outstanding_amount=Decimal(100),
+        due_date=datetime.date(year=2017, month=1, day=1),
+        recipient=contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date
+    )
+
+    penalty_interest_data = invoice.calculate_penalty_interest(calculation_date=calculation_date)
+
+    assert penalty_interest_data['interest_start_date'] == datetime.date(year=2017, month=1, day=2)
+    assert penalty_interest_data['interest_end_date'] == calculation_date
+    assert penalty_interest_data['total_interest_amount'].compare(Decimal('11.76')) == 0
+    assert len(penalty_interest_data['interest_periods']) == 4
