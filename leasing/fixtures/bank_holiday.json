@@ -306,5 +306,180 @@
     "fields": {
       "day": "2021-12-26"
     }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 45,
+    "fields": {
+      "day": "2017-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 46,
+    "fields": {
+      "day": "2017-04-14"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 47,
+    "fields": {
+      "day": "2017-04-17"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 48,
+    "fields": {
+      "day": "2017-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 49,
+    "fields": {
+      "day": "2017-05-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 50,
+    "fields": {
+      "day": "2017-06-23"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 51,
+    "fields": {
+      "day": "2017-12-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 52,
+    "fields": {
+      "day": "2017-12-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 53,
+    "fields": {
+      "day": "2017-12-26"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 54,
+    "fields": {
+      "day": "2016-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 55,
+    "fields": {
+      "day": "2016-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 56,
+    "fields": {
+      "day": "2016-03-25"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 57,
+    "fields": {
+      "day": "2016-03-28"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 58,
+    "fields": {
+      "day": "2016-05-05"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 59,
+    "fields": {
+      "day": "2016-06-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 60,
+    "fields": {
+      "day": "2016-12-26"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 61,
+    "fields": {
+      "day": "2015-01-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 62,
+    "fields": {
+      "day": "2015-01-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 63,
+    "fields": {
+      "day": "2015-04-03"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 64,
+    "fields": {
+      "day": "2015-04-06"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 65,
+    "fields": {
+      "day": "2015-05-01"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 66,
+    "fields": {
+      "day": "2015-05-14"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 67,
+    "fields": {
+      "day": "2015-06-19"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 68,
+    "fields": {
+      "day": "2015-12-24"
+    }
+  },
+  {
+    "model": "leasing.BankHoliday",
+    "pk": 69,
+    "fields": {
+      "day": "2015-12-25"
+    }
   }
 ]

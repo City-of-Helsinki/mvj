@@ -1,8 +1,33 @@
 from django_filters.rest_framework import FilterSet, filters
 
+from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionNote
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 
 from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
+
+
+class CollectionCourtDecisionFilter(FilterSet):
+    lease = filters.NumberFilter()
+
+    class Meta:
+        model = CollectionCourtDecision
+        fields = ['lease']
+
+
+class CollectionLetterFilter(FilterSet):
+    lease = filters.NumberFilter()
+
+    class Meta:
+        model = CollectionLetter
+        fields = ['lease']
+
+
+class CollectionNoteFilter(FilterSet):
+    lease = filters.NumberFilter()
+
+    class Meta:
+        model = CollectionNote
+        fields = ['lease', 'user']
 
 
 class CommentFilter(FilterSet):

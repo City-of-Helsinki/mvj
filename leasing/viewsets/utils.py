@@ -1,8 +1,13 @@
 import json
+import os
 
 from auditlog.middleware import AuditlogMiddleware
+from django.conf import settings
+from django.core.files import File
 from django.db import transaction
+from django.http import HttpResponse
 from rest_framework import parsers, viewsets
+from rest_framework.decorators import action
 
 
 class AuditLogMixin:
@@ -39,3 +44,19 @@ class MultiPartJsonParser(parsers.MultiPartParser):
             files[key] = result.files.get(key)
 
         return parsers.DataAndFiles(data, files)
+
+
+class DownloadMixin:
+    @action(methods=['get'], detail=True)
+    def download(self, request, pk=None):
+        obj = self.get_object()
+
+        filename = '/'.join([settings.MEDIA_ROOT, obj.file.name])
+        base_filename = os.path.basename(obj.file.name)
+
+        with open(filename, 'rb') as fp:
+            # TODO: detect file MIME type
+            response = HttpResponse(File(fp), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(base_filename)
+
+            return response

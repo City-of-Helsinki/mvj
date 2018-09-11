@@ -1,10 +1,12 @@
+import inspect
 from datetime import date
 
 import pytest
 
 from leasing.models.utils import (
-    combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_range_overlap_and_remainder,
-    split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
+    combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_next_business_day,
+    get_range_overlap_and_remainder, is_business_day, split_date_range, subtract_range_from_range,
+    subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -435,3 +437,59 @@ def test_split_date_range_too_big_count():
         split_date_range(date_range, count)
 
     assert str(e.value) == "Can't split date range 2018-01-01 - 2018-01-05 (4 days) into 6 parts"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("the_day, expected", [
+    (None, ValueError),
+    ('', ValueError),
+    (date, ValueError),
+    (date(2015, 1, 1), False),
+    (date(2015, 1, 6), False),
+    (date(2016, 1, 1), False),
+    (date(2016, 1, 6), False),
+    (date(2017, 1, 1), False),
+    (date(2017, 1, 2), True),
+    (date(2017, 12, 25), False),
+    (date(2018, 12, 25), False),
+    (date(2019, 12, 5), True),
+    (date(2019, 12, 6), False),
+    (date(2020, 1, 1), False),
+    (date(2020, 1, 6), False),
+    (date(2020, 1, 7), True),
+    (date(2021, 4, 2), False),
+    (date(2021, 6, 30), True),
+])
+def test_is_business_day(the_day, expected):
+    if inspect.isclass(expected) and issubclass(expected, Exception):
+        with pytest.raises(expected):
+            is_business_day(the_day)
+    else:
+        assert is_business_day(the_day) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("the_day, expected", [
+    (None, ValueError),
+    ('', ValueError),
+    (date, ValueError),
+    (date(2015, 1, 5), date(2015, 1, 7)),
+    (date(2016, 1, 5), date(2016, 1, 7)),
+    (date(2017, 1, 1), date(2017, 1, 2)),
+    (date(2017, 1, 2), date(2017, 1, 3)),
+    (date(2017, 12, 25), date(2017, 12, 27)),
+    (date(2018, 12, 25), date(2018, 12, 27)),
+    (date(2019, 12, 5), date(2019, 12, 9)),
+    (date(2019, 12, 6), date(2019, 12, 9)),
+    (date(2020, 1, 1), date(2020, 1, 2)),
+    (date(2020, 1, 5), date(2020, 1, 7)),
+    (date(2020, 1, 7), date(2020, 1, 8)),
+    (date(2021, 4, 2), date(2021, 4, 6)),
+    (date(2021, 6, 30), date(2021, 7, 1)),
+])
+def test_get_next_business_day(the_day, expected):
+    if inspect.isclass(expected) and issubclass(expected, Exception):
+        with pytest.raises(expected):
+            get_next_business_day(the_day)
+    else:
+        assert get_next_business_day(the_day) == expected

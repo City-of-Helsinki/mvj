@@ -349,6 +349,35 @@ def get_monthly_amount_by_period_type(amount, period_type):
         raise NotImplementedError('Cannot calculate monthly amount for PeriodType {}'.format(period_type))
 
 
+def is_business_day(the_date):
+    if not the_date or not isinstance(the_date, datetime.date):
+        raise ValueError('the_date must be an instance of datetime.date')
+
+    if the_date.weekday() > 4:
+        return False
+
+    from leasing.models import BankHoliday
+
+    try:
+        BankHoliday.objects.get(day=the_date)
+
+        return False
+    except BankHoliday.DoesNotExist:
+        return True
+
+
+def get_next_business_day(the_date):
+    if not the_date or not isinstance(the_date, datetime.date):
+        raise ValueError('the_date must be an instance of datetime.date')
+
+    next_day = the_date + relativedelta(days=1)
+
+    while not is_business_day(next_day):
+        next_day += relativedelta(days=1)
+
+    return next_day
+
+
 class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
     @classmethod
     def from_date(cls, date_instance):

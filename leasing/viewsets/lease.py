@@ -1,8 +1,13 @@
 import datetime
+import os
+from decimal import Decimal
+from itertools import groupby
 
 from dateutil import parser
 from django.db.models import DurationField
 from django.db.models.functions import Cast
+from django.http import HttpResponse
+from django.utils.translation import ugettext_lazy as _
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -12,6 +17,7 @@ from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     RelatedLease, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import get_billing_periods_for_year
+from leasing.serializers.debt_collection import CreateCollectionLetterDocumentSerializer
 from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.invoice import CreateChargeSerializer
 from leasing.serializers.lease import (
@@ -83,6 +89,37 @@ class SupportiveHousingViewSet(AtomicTransactionModelViewSet):
 class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
     queryset = RelatedLease.objects.all()
     serializer_class = RelatedLeaseSerializer
+
+
+def interest_rates_to_strings(interest_rates):
+    if len(interest_rates) == 1:
+        return [_('the penalty interest rate is {interest_percent} %').format(interest_percent=interest_rates[0][2])]
+
+    result = []
+    sorted_interest_rates = sorted(interest_rates, key=lambda x: x[0])
+
+    # Squash adjacent equal penalty interest rates
+    squashed_interest_rates = []
+    for k, g in groupby(sorted_interest_rates, key=lambda x: x[2]):
+        rate_group = list(g)
+        if len(rate_group) == 1:
+            squashed_interest_rates.append(rate_group[0])
+        else:
+            squashed_interest_rates.append((rate_group[0][0], rate_group[-1][1], rate_group[0][2]))
+
+    for i, interest_rate in enumerate(squashed_interest_rates):
+        if i == len(squashed_interest_rates) - 1:
+            # TODO: Might not be strictly accurate
+            result.append(
+                _('The penalty interest rate starting on {start_date} is {interest_percent} %').format(
+                    start_date=interest_rate[0].strftime('%d.%m.%Y'), interest_percent=interest_rate[2]))
+        else:
+            result.append(
+                _('The penalty interest rate between {start_date} and {end_date} is {interest_percent} %').format(
+                    start_date=interest_rate[0].strftime('%d.%m.%Y'),
+                    end_date=interest_rate[1].strftime('%d.%m.%Y'), interest_percent=interest_rate[2]))
+
+    return result
 
 
 class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
@@ -210,3 +247,89 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=201)
+
+    @action(methods=['post'], detail=True)
+    def create_collection_letter(self, request, pk=None):
+        lease = self.get_object()
+        today = datetime.date.today()
+
+        request.data['lease'] = lease
+        serializer = CreateCollectionLetterDocumentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        collection_charge = Decimal(serializer.validated_data['collection_charge'])
+        invoices = serializer.validated_data['invoices']
+        debt = Decimal(0)
+        debt_strings = []
+        interest_strings = []
+        interest_total = Decimal(0)
+        interest_rates = set()
+        billing_addresses = []
+
+        for tenant in serializer.validated_data['tenants']:
+            billing_tenantcontact = tenant.get_billing_tenantcontacts(today, today).first()
+            billing_addresses.append('<w:br/>'.join([
+                str(billing_tenantcontact.contact), billing_tenantcontact.contact.address,
+                '{} {}'.format(billing_tenantcontact.contact.postal_code,
+                               billing_tenantcontact.contact.city if billing_tenantcontact.contact.city else '')
+            ]))
+
+        for invoice in invoices:
+            penalty_interest_data = invoice.calculate_penalty_interest()
+            if not penalty_interest_data['total_interest_amount']:
+                continue
+
+            interest_strings.append(
+                _('Penalty interest for the invoice with the due date of {due_date} is {interest_amount} euroa').format(
+                    due_date=invoice.due_date.strftime('%d.%m.%Y'),
+                    interest_amount=penalty_interest_data['total_interest_amount']
+                ))
+            interest_total += penalty_interest_data['total_interest_amount']
+
+            invoice_debt_amount = invoice.outstanding_amount
+            debt += invoice_debt_amount
+
+            debt_strings.append(_('{due_date}, {debt_amount} euro (between {start_date} and {end_date})').format(
+                due_date=invoice.due_date.strftime('%d.%m.%Y'),
+                debt_amount=invoice_debt_amount,
+                start_date=invoice.billing_period_start_date.strftime('%d.%m.%Y'),
+                end_date=invoice.billing_period_end_date.strftime('%d.%m.%Y')
+            ))
+
+            for interest_period in penalty_interest_data['interest_periods']:
+                interest_rate_tuple = (interest_period['start_date'], interest_period['end_date'],
+                                       interest_period['penalty_rate'])
+
+                interest_rates.add(interest_rate_tuple)
+
+        collection_charge_total = len(invoices) * collection_charge
+        grand_total = debt + interest_total + collection_charge_total
+
+        template_data = {
+            'lease_details': '<w:br/>'.join(lease.get_lease_info_text(tenants=serializer.validated_data['tenants'])),
+            'billing_address': '<w:br/><w:br/>'.join(billing_addresses),
+            'lease_identifier': str(lease.identifier),
+            'current_date': today.strftime('%d.%m.%Y'),
+            'debts': '<w:br/>'.join(debt_strings),
+            'total_debt': debt,
+            'interest_rates': '<w:br/>'.join(interest_rates_to_strings(interest_rates)),
+            'interests': '<w:br/>'.join(interest_strings),
+            'interest_total': interest_total,
+            'grand_total': grand_total,
+            'collection_charge': collection_charge,
+            'collection_charge_total': collection_charge_total,
+            'invoice_count': len(invoices),
+        }
+
+        doc = serializer.validated_data['template'].render_document(template_data)
+
+        if not doc:
+            raise APIException(_('Error creating the document from the template'))
+
+        response = HttpResponse(
+            doc, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+        response['Content-Disposition'] = 'attachment; filename={}_{}'.format(
+            str(lease.identifier), os.path.basename(serializer.validated_data['template'].file.name))
+
+        return response

@@ -71,7 +71,7 @@ def test_download_attachment(django_db_setup, admin_client, client, lease_test_d
     attachment = idcl.attachments.first()
     attachment_serializer = InfillDevelopmentCompensationAttachmentSerializer(attachment)
 
-    url = attachment_serializer.get_attachment_url(attachment)
+    url = attachment_serializer.get_file_url(attachment)
 
     # anonymous shouldn't have the permission to download the file
     response = client.get(url)
