@@ -11,8 +11,8 @@ class ContractType(NameModel):
     In Finnish: Sopimuksen tyyppi
     """
     class Meta(NameModel.Meta):
-        verbose_name = pgettext_lazy("Model name", "Basis of rent plot types")
-        verbose_name_plural = pgettext_lazy("Model name", "Basis of rent plot types")
+        verbose_name = pgettext_lazy("Model name", "Contract type")
+        verbose_name_plural = pgettext_lazy("Model name", "Contract types")
 
 
 class Contract(TimeStampedSafeDeleteModel):
