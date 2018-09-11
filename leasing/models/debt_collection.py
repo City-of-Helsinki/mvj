@@ -1,7 +1,10 @@
+import io
+
 from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from docxtpl import DocxTemplate
 
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
@@ -49,6 +52,14 @@ class CollectionLetterTemplate(TimeStampedSafeDeleteModel):
     def __str__(self):
         return self.name
 
+    def render_document(self, data):
+        doc = DocxTemplate(self.file.path)
+        doc.render(data)
+        output = io.BytesIO()
+        doc.save(output)
+
+        return output.getvalue()
+
 
 class CollectionNote(TimeStampedSafeDeleteModel):
     """
@@ -65,9 +76,6 @@ class CollectionNote(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Collection letter note")
         verbose_name_plural = pgettext_lazy("Model name", "Collection letter notes")
         ordering = ['-created_at']
-
-    def __str__(self):
-        return self.id
 
 
 def get_collection_court_decision_file_upload_to(instance, filename):

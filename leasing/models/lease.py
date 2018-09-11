@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from auditlog.registry import auditlog
@@ -187,7 +188,8 @@ class LeaseManager(models.Manager):
             'rents__contract_rents', 'rents__contract_rents__intended_use', 'rents__rent_adjustments',
             'rents__rent_adjustments__intended_use', 'rents__index_adjusted_rents', 'rents__payable_rents',
             'rents__fixed_initial_year_rents', 'rents__fixed_initial_year_rents__intended_use',
-            'lease_areas__addresses', 'basis_of_rents'
+            'lease_areas__addresses', 'basis_of_rents', 'collection_letters', 'collection_notes',
+            'collection_court_decisions'
         )
 
     def succinct_select_related_and_prefetch_related(self):

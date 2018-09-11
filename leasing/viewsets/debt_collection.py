@@ -1,7 +1,8 @@
 from leasing.filters import CollectionCourtDecisionFilter, CollectionLetterFilter, CollectionNoteFilter
 from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote
 from leasing.serializers.debt_collection import (
-    CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionLetterTemplateSerializer,
+    CollectionCourtDecisionCreateUpdateSerializer, CollectionCourtDecisionSerializer,
+    CollectionLetterCreateUpdateSerializer, CollectionLetterSerializer, CollectionLetterTemplateSerializer,
     CollectionNoteCreateUpdateSerializer, CollectionNoteSerializer)
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin, DownloadMixin, MultiPartJsonParser
 
@@ -14,7 +15,7 @@ class CollectionCourtDecisionViewSet(DownloadMixin, AuditLogMixin, AtomicTransac
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):
-            return CollectionCourtDecisionSerializer
+            return CollectionCourtDecisionCreateUpdateSerializer
 
         return CollectionCourtDecisionSerializer
 
@@ -27,7 +28,7 @@ class CollectionLetterViewSet(DownloadMixin, AuditLogMixin, AtomicTransactionMod
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):
-            return CollectionLetterSerializer
+            return CollectionLetterCreateUpdateSerializer
 
         return CollectionLetterSerializer
 
