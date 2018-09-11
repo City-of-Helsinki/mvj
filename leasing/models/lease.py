@@ -421,6 +421,38 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return shares
 
+    def get_lease_info_text(self, tenants=None):
+        today = datetime.date.today()
+        result = []
+
+        if tenants is None:
+            tenants = self.tenants.all()
+
+        tenant_names = []
+        for tenant in tenants:
+            for tenant_tenantcontact in tenant.get_tenant_tenantcontacts(today, today):
+                tenant_names.append(tenant_tenantcontact.contact.get_name_and_identifier())
+
+        result.extend(tenant_names)
+
+        area_names = []
+        for lease_area in self.lease_areas.all():
+            area_names.append(_('{area_identifier}, {area_addresses}, {area_m2}m2').format(
+                area_identifier=lease_area.identifier,
+                area_addresses=', '.join([la.address for la in lease_area.addresses.all()]),
+                area_m2=lease_area.area
+            ))
+
+        result.extend(area_names)
+
+        contract_numbers = []
+        for contract in self.contracts.filter(contract_number__isnull=False).exclude(contract_number=''):
+            contract_numbers.append(_('Contract #{contract_number}').format(contract_number=contract.contract_number))
+
+        result.extend(contract_numbers)
+
+        return result
+
 
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
