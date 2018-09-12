@@ -169,6 +169,22 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'metadata'):
+            # TODO: Kludge
+            # Can be replaced with a custom function when DRF 3.9 is released. e.g.
+            #
+            #    @create_charge.mapping.options
+            #    def create_charge_options(self, request, *args, **kwargs):
+            #         data = CreateChargeSerializer().determine_metadata(request, self)
+            #         return Response(data, status=status.HTTP_200_OK)
+            #
+            # See: http://www.django-rest-framework.org/api-guide/viewsets/#routing-additional-http-methods-for-extra-actions  # noqa
+            if self.action == 'metadata':
+                if self.request._request.resolver_match.view_name == 'lease-create-charge':
+                    return CreateChargeSerializer
+
+                if self.request._request.resolver_match.view_name == 'lease-create-collection-letter':
+                    return CreateCollectionLetterDocumentSerializer
+
             return LeaseCreateUpdateSerializer
 
         if self.request.query_params.get('succinct'):
