@@ -295,6 +295,7 @@ class Invoice(TimeStampedSafeDeleteModel):
         penalty_interest_data = {
             'interest_start_date': None,
             'interest_end_date': None,
+            'outstanding_amount': self.outstanding_amount,
             'total_interest_amount': Decimal(0),
             'interest_periods': [],
         }
