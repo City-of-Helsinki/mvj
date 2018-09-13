@@ -92,11 +92,12 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
 
 
 def interest_rates_to_strings(interest_rates):
-    if len(interest_rates) == 1:
-        return [_('the penalty interest rate is {interest_percent} %').format(interest_percent=interest_rates[0][2])]
-
     result = []
     sorted_interest_rates = sorted(interest_rates, key=lambda x: x[0])
+
+    if len(sorted_interest_rates) == 1:
+        return [_('the penalty interest rate is {interest_percent} %').format(
+            interest_percent=sorted_interest_rates[0][2])]
 
     # Squash adjacent equal penalty interest rates
     squashed_interest_rates = []
@@ -284,6 +285,10 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
 
         for tenant in serializer.validated_data['tenants']:
             billing_tenantcontact = tenant.get_billing_tenantcontacts(today, today).first()
+
+            if not billing_tenantcontact.contact:
+                raise APIException(_('Billing info does not have a contact address'))
+
             billing_addresses.append('<w:br/>'.join([
                 str(billing_tenantcontact.contact), billing_tenantcontact.contact.address,
                 '{} {}'.format(billing_tenantcontact.contact.postal_code,
