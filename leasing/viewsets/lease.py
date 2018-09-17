@@ -4,6 +4,8 @@ from decimal import Decimal
 from itertools import groupby
 
 from dateutil import parser
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import MONTHLY, rrule
 from django.db.models import DurationField
 from django.db.models.functions import Cast
 from django.http import HttpResponse
@@ -12,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from leasing.calculation.rent import RentCalculation
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
@@ -19,7 +22,7 @@ from leasing.models import (
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.debt_collection import CreateCollectionLetterDocumentSerializer
 from leasing.serializers.explanation import ExplanationSerializer
-from leasing.serializers.invoice import CreateChargeSerializer
+from leasing.serializers.invoice import CreateChargeSerializer, InvoiceSerializerWithExplanations
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
@@ -286,8 +289,8 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         for tenant in serializer.validated_data['tenants']:
             billing_tenantcontact = tenant.get_billing_tenantcontacts(today, today).first()
 
-            if not billing_tenantcontact.contact:
-                raise APIException(_('Billing info does not have a contact address'))
+            if not billing_tenantcontact or not billing_tenantcontact.contact:
+                raise APIException(_('No billing info or billing info does not have a contact address'))
 
             billing_addresses.append('<w:br/>'.join([
                 str(billing_tenantcontact.contact), billing_tenantcontact.contact.address,
@@ -354,3 +357,32 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
             str(lease.identifier), os.path.basename(serializer.validated_data['template'].file.name))
 
         return response
+
+    @action(methods=['get'], detail=True)
+    def preview_invoices_for_year(self, request, pk=None):
+        lease = self.get_object()
+
+        if 'year' in request.query_params:
+            year = int(request.query_params['year'])
+        else:
+            year = datetime.date.today().year
+
+        first_day_of_year = datetime.date(year=year, month=1, day=1)
+        first_day_of_every_month = [dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)]
+
+        result = []
+
+        for first_day in first_day_of_every_month:
+            last_day = first_day + relativedelta(day=31)
+
+            rent_calculation = RentCalculation(lease=lease, start_date=first_day, end_date=last_day)
+
+            for period_invoice_data in rent_calculation.calculate_invoices():
+                period_invoices = []
+                for invoice_data in period_invoice_data:
+                    invoice_serializer = InvoiceSerializerWithExplanations(invoice_data)
+                    period_invoices.append(invoice_serializer.data)
+
+                result.append(period_invoices)
+
+        return Response(result)

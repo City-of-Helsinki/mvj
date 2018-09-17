@@ -9,6 +9,7 @@ from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, Invoice, Lease, Tenant
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
 from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
+from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.lease import LeaseSuccinctSerializer
 from leasing.serializers.tenant import TenantSerializer
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
@@ -65,6 +66,17 @@ class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer)
     recipient = ContactSerializer()
     rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
     payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
+
+    class Meta:
+        model = Invoice
+        exclude = ('deleted',)
+
+
+class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    recipient = ContactSerializer()
+    rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
+    payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
+    explanations = serializers.ListField(child=ExplanationSerializer(read_only=True))
 
     class Meta:
         model = Invoice
