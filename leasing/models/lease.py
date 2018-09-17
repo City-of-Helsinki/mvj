@@ -450,6 +450,14 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return result
 
+    def get_active_rents_on_date(self, the_date):
+        rent_range_filter = Q(
+            (Q(end_date=None) | Q(end_date__gte=the_date)) &
+            (Q(start_date=None) | Q(start_date__lte=the_date))
+        )
+
+        return self.rents.filter(rent_range_filter)
+
 
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
