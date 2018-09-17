@@ -416,11 +416,6 @@ class Lease(TimeStampedSafeDeleteModel):
 
                 shares[billing_tenantcontact.contact][tenant].append(billing_overlap)
 
-            ranges_for_billing_contacts = []
-            for billing_contact, tenant_overlaps in shares.items():
-                if tenant in tenant_overlaps:
-                    ranges_for_billing_contacts.extend(tenant_overlaps[tenant])
-
         return shares
 
     def get_lease_info_text(self, tenants=None):
