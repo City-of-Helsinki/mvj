@@ -3,7 +3,7 @@ from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentCreateUpdateSerializer, InfillDevelopmentCompensationAttachmentSerializer,
     InfillDevelopmentCompensationCreateUpdateSerializer, InfillDevelopmentCompensationSerializer)
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin, DownloadMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, MultiPartJsonParser
 
 
 class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
@@ -32,7 +32,7 @@ class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModel
         return InfillDevelopmentCompensationSerializer
 
 
-class InfillDevelopmentCompensationAttachmentViewSet(DownloadMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class InfillDevelopmentCompensationAttachmentViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = InfillDevelopmentCompensationAttachment.objects.all()
     serializer_class = InfillDevelopmentCompensationAttachmentSerializer
     parser_classes = (MultiPartJsonParser, )

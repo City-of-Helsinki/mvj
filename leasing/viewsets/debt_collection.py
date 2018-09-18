@@ -4,10 +4,10 @@ from leasing.serializers.debt_collection import (
     CollectionCourtDecisionCreateUpdateSerializer, CollectionCourtDecisionSerializer,
     CollectionLetterCreateUpdateSerializer, CollectionLetterSerializer, CollectionLetterTemplateSerializer,
     CollectionNoteCreateUpdateSerializer, CollectionNoteSerializer)
-from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin, DownloadMixin, MultiPartJsonParser
+from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, MultiPartJsonParser
 
 
-class CollectionCourtDecisionViewSet(DownloadMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionCourtDecisionViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = CollectionCourtDecision.objects.all()
     serializer_class = CollectionCourtDecisionSerializer
     parser_classes = (MultiPartJsonParser,)
@@ -20,7 +20,7 @@ class CollectionCourtDecisionViewSet(DownloadMixin, AuditLogMixin, AtomicTransac
         return CollectionCourtDecisionSerializer
 
 
-class CollectionLetterViewSet(DownloadMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionLetterViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = CollectionLetter.objects.all()
     serializer_class = CollectionLetterSerializer
     parser_classes = (MultiPartJsonParser,)
