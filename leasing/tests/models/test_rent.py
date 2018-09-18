@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 
 from leasing.enums import DueDatesType
-from leasing.models import RentDueDate
+from leasing.models import Index, RentDueDate
 
 
 @pytest.mark.django_db
@@ -295,3 +295,20 @@ def test_get_billing_period_from_due_date_seasonal_two_rents(lease_test_data, re
     rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, day=1, month=7))
 
     assert rent2.get_billing_period_from_due_date(due_date) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("the_date, expected", [
+    (None, 1927),  # the latest index in the fixtures
+    (date(year=1000, month=1, day=1), None),
+    (date(year=2016, month=12, day=1), 1906),
+    (date(year=2017, month=1, day=1), 1913),
+])
+def test_index_get_latest_for_date(the_date, expected):
+    index = Index.objects.get_latest_for_date(the_date)
+
+    if expected is None:
+        assert index is None
+    else:
+        assert index.month is None
+        assert index.number == expected
