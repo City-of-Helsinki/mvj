@@ -212,8 +212,14 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         if 'start_date' not in request.query_params or 'end_date' not in request.query_params:
             raise APIException('Both start_date and end_data parameters are mandatory')
 
-        start_date = parser.parse(request.query_params['start_date']).date()
-        end_date = parser.parse(request.query_params['end_date']).date()
+        try:
+            start_date = parser.parse(request.query_params['start_date']).date()
+            end_date = parser.parse(request.query_params['end_date']).date()
+        except ValueError:
+            raise APIException(_('Start date or end date is invalid'))
+
+        if start_date > end_date:
+            raise APIException(_('Start date cannot be after end date'))
 
         result = {
             'start_date': start_date,
@@ -241,12 +247,18 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         lease = self.get_object()
 
         if 'year' in request.query_params:
-            year = int(request.query_params['year'])
+            try:
+                year = int(request.query_params['year'])
+            except ValueError:
+                raise APIException(_('Year parameter is not valid'))
         else:
             year = datetime.date.today().year
 
-        start_date = datetime.date(year=year, month=1, day=1)
-        end_date = datetime.date(year=year, month=12, day=31)
+        try:
+            start_date = datetime.date(year=year, month=1, day=1)
+            end_date = datetime.date(year=year, month=12, day=31)
+        except ValueError as e:
+            raise APIException(e)
 
         billing_periods = []
         for rent in lease.rents.all():
@@ -363,11 +375,18 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         lease = self.get_object()
 
         if 'year' in request.query_params:
-            year = int(request.query_params['year'])
+            try:
+                year = int(request.query_params['year'])
+            except ValueError:
+                raise APIException(_('Year parameter is not valid'))
         else:
             year = datetime.date.today().year
 
-        first_day_of_year = datetime.date(year=year, month=1, day=1)
+        try:
+            first_day_of_year = datetime.date(year=year, month=1, day=1)
+        except ValueError as e:
+            raise APIException(e)
+
         first_day_of_every_month = [dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)]
 
         result = []
