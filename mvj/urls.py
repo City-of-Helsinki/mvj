@@ -10,6 +10,8 @@ from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
+from leasing.viewsets.debt_collection import (
+    CollectionCourtDecisionViewSet, CollectionLetterTemplateViewSet, CollectionLetterViewSet, CollectionNoteViewSet)
 from leasing.viewsets.decision import DecisionViewSet
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
@@ -24,6 +26,10 @@ from users.viewsets import UserViewSet
 router = routers.DefaultRouter()
 router.register(r'area_note', AreaNoteViewSet)
 router.register(r'basis_of_rent', BasisOfRentViewSet)
+router.register(r'collection_court_decision', CollectionCourtDecisionViewSet)
+router.register(r'collection_letter', CollectionLetterViewSet)
+router.register(r'collection_letter_template', CollectionLetterTemplateViewSet)
+router.register(r'collection_note', CollectionNoteViewSet)
 router.register(r'comment', CommentViewSet)
 router.register(r'comment_topic', CommentTopicViewSet)
 router.register(r'contact', ContactViewSet)

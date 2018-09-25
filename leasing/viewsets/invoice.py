@@ -1,5 +1,7 @@
+import datetime
 from decimal import Decimal
 
+from dateutil import parser
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -77,6 +79,16 @@ class InvoiceViewSet(AtomicTransactionModelViewSet):
         }
 
         return Response(result)
+
+    @action(methods=['get'], detail=True)
+    def calculate_penalty_interest(self, request, pk=None):
+        invoice = self.get_object()
+
+        end_date = datetime.date.today()
+        if request.query_params.get('end_date'):
+            end_date = parser.parse(request.query_params['end_date']).date()
+
+        return Response(invoice.calculate_penalty_interest(calculation_date=end_date))
 
 
 class InvoiceRowViewSet(ReadOnlyModelViewSet):

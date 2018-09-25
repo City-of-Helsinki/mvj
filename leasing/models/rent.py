@@ -10,13 +10,14 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from leasing.calculation.explanation import Explanation
+from leasing.calculation.index import IndexCalculation
 from leasing.enums import (
     DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
     RentType)
 from leasing.models.utils import (
-    DayMonth, Explanation, IndexCalculation, fix_amount_for_overlap, get_billing_periods_for_year,
-    get_date_range_amount_from_monthly_amount, get_monthly_amount_by_period_type, get_range_overlap_and_remainder,
-    split_date_range)
+    DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
+    get_monthly_amount_by_period_type, get_range_overlap_and_remainder, split_date_range)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -675,18 +676,11 @@ class LeaseBasisOfRent(models.Model):
 
 class IndexManager(models.Manager):
     def get_latest_for_date(self, the_date=None):
-        """Returns the previous years average index or the latest monthly index related to the date"""
+        """Returns the latest year average index"""
         if the_date is None:
             the_date = datetime.date.today()
 
-        try:
-            return self.get_queryset().get(year=the_date.year - 1, month__isnull=True)
-        except Index.DoesNotExist:
-            pass
-
-        return self.get_queryset().filter(
-            Q(year=the_date.year, month__lte=the_date.month) | Q(year__lt=the_date.year)
-        ).order_by('-year', '-month').first()
+        return self.get_queryset().filter(year__lte=the_date.year - 1, month__isnull=True).order_by('-year').first()
 
 
 class Index(models.Model):

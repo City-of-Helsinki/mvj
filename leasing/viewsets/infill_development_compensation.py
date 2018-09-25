@@ -1,16 +1,9 @@
-import os
-
-from django.conf import settings
-from django.core.files import File
-from django.http import HttpResponse
-from rest_framework.decorators import action
-
 from leasing.models import InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment
 from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentCreateUpdateSerializer, InfillDevelopmentCompensationAttachmentSerializer,
     InfillDevelopmentCompensationCreateUpdateSerializer, InfillDevelopmentCompensationSerializer)
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, MultiPartJsonParser
 
 
 class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
@@ -39,7 +32,7 @@ class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModel
         return InfillDevelopmentCompensationSerializer
 
 
-class InfillDevelopmentCompensationAttachmentViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class InfillDevelopmentCompensationAttachmentViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
     queryset = InfillDevelopmentCompensationAttachment.objects.all()
     serializer_class = InfillDevelopmentCompensationAttachmentSerializer
     parser_classes = (MultiPartJsonParser, )
@@ -49,16 +42,3 @@ class InfillDevelopmentCompensationAttachmentViewSet(AuditLogMixin, AtomicTransa
             return InfillDevelopmentCompensationAttachmentCreateUpdateSerializer
 
         return InfillDevelopmentCompensationAttachmentSerializer
-
-    @action(methods=['get'], detail=True)
-    def download(self, request, pk=None):
-        attachment = self.get_object()
-
-        filename = '/'.join([settings.MEDIA_ROOT, attachment.file.name])
-        base_filename = os.path.basename(attachment.file.name)
-
-        with open(filename, 'rb') as fp:
-            response = HttpResponse(File(fp), content_type='application/octet-stream')
-            response['Content-Disposition'] = 'attachment; filename="{}"'.format(base_filename)
-
-            return response

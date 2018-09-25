@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-04 17:15+0300\n"
+"POT-Creation-Date: 2018-09-11 16:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -16,12 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: leasing/admin.py:46 leasing/admin.py:377 leasing/models/comment.py:24
-#: leasing/models/contract.py:22 leasing/models/decision.py:31
+#: leasing/admin.py:54 leasing/admin.py:413 leasing/models/comment.py:24
+#: leasing/models/contract.py:22 leasing/models/debt_collection.py:21
+#: leasing/models/debt_collection.py:68 leasing/models/debt_collection.py:89
+#: leasing/models/decision.py:31
 #: leasing/models/infill_development_compensation.py:61
-#: leasing/models/inspection.py:11 leasing/models/invoice.py:35
-#: leasing/models/invoice.py:128 leasing/models/lease.py:378
-#: leasing/models/rent.py:57 leasing/models/rent.py:572
+#: leasing/models/inspection.py:11 leasing/models/invoice.py:37
+#: leasing/models/invoice.py:130 leasing/models/lease.py:460
+#: leasing/models/rent.py:58 leasing/models/rent.py:639
 #: leasing/models/tenant.py:17
 msgid "Lease"
 msgstr "Vuokraus"
@@ -437,17 +439,18 @@ msgid "Decision"
 msgstr "Päätös"
 
 #: leasing/models/area_note.py:18 leasing/models/basis_of_rent.py:64
-#: leasing/models/contract.py:82
+#: leasing/models/contract.py:82 leasing/models/debt_collection.py:71
 #: leasing/models/infill_development_compensation.py:40
 #: leasing/models/infill_development_compensation.py:65
-#: leasing/models/lease.py:307 leasing/models/rent.py:100
-#: leasing/models/rent.py:495
+#: leasing/models/lease.py:310 leasing/models/rent.py:101
+#: leasing/models/rent.py:562
 msgid "Note"
 msgstr "Kommentti"
 
 #: leasing/models/area_note.py:19 leasing/models/comment.py:27
+#: leasing/models/debt_collection.py:73
 #: leasing/models/infill_development_compensation.py:30
-#: leasing/models/land_area.py:84 leasing/models/land_area.py:141
+#: leasing/models/land_area.py:84 leasing/models/land_area.py:145
 msgid "User"
 msgstr "Käyttäjä"
 
@@ -466,8 +469,7 @@ msgctxt "Model name"
 msgid "Basis of rent plot type"
 msgstr "Tonttityyppi"
 
-#: leasing/models/basis_of_rent.py:20 leasing/models/contract.py:14
-#: leasing/models/contract.py:15
+#: leasing/models/basis_of_rent.py:20
 msgctxt "Model name"
 msgid "Basis of rent plot types"
 msgstr "Tonttityypit"
@@ -486,33 +488,35 @@ msgstr "Rakennusoikeustyypit"
 msgid "Plot type"
 msgstr "Tonttityyppi"
 
-#: leasing/models/basis_of_rent.py:40 leasing/models/lease.py:237
-#: leasing/models/lease.py:391 leasing/models/rent.py:103
-#: leasing/models/rent.py:334 leasing/models/rent.py:391
-#: leasing/models/rent.py:449 leasing/models/rent.py:475
-#: leasing/models/rent.py:552 leasing/models/tenant.py:65
+#: leasing/models/basis_of_rent.py:40 leasing/models/debt_collection.py:112
+#: leasing/models/lease.py:240 leasing/models/lease.py:473
+#: leasing/models/rent.py:104 leasing/models/rent.py:401
+#: leasing/models/rent.py:458 leasing/models/rent.py:516
+#: leasing/models/rent.py:542 leasing/models/rent.py:619
+#: leasing/models/tenant.py:65
 msgid "Start date"
 msgstr "Alkupvm"
 
-#: leasing/models/basis_of_rent.py:43 leasing/models/lease.py:240
-#: leasing/models/lease.py:392 leasing/models/rent.py:106
-#: leasing/models/rent.py:337 leasing/models/rent.py:394
-#: leasing/models/rent.py:452 leasing/models/rent.py:478
-#: leasing/models/rent.py:555 leasing/models/tenant.py:68
+#: leasing/models/basis_of_rent.py:43 leasing/models/debt_collection.py:113
+#: leasing/models/lease.py:243 leasing/models/lease.py:474
+#: leasing/models/rent.py:107 leasing/models/rent.py:404
+#: leasing/models/rent.py:461 leasing/models/rent.py:519
+#: leasing/models/rent.py:545 leasing/models/rent.py:622
+#: leasing/models/tenant.py:68
 msgid "End date"
 msgstr "Loppupvm"
 
 #: leasing/models/basis_of_rent.py:46
 #: leasing/models/infill_development_compensation.py:26
-#: leasing/models/land_area.py:244
+#: leasing/models/land_area.py:248
 msgid "Detailed plan identifier"
 msgstr "Asemakaava"
 
-#: leasing/models/basis_of_rent.py:50 leasing/models/lease.py:281
+#: leasing/models/basis_of_rent.py:50 leasing/models/lease.py:284
 msgid "Form of management"
 msgstr "Hallintamuoto"
 
-#: leasing/models/basis_of_rent.py:54 leasing/models/lease.py:277
+#: leasing/models/basis_of_rent.py:54 leasing/models/lease.py:280
 msgid "Form of financing"
 msgstr "Rahoitusmuoto"
 
@@ -520,7 +524,7 @@ msgstr "Rahoitusmuoto"
 msgid "Lease rights end date"
 msgstr "Vuokraoikeus päättyy"
 
-#: leasing/models/basis_of_rent.py:61 leasing/models/rent.py:582
+#: leasing/models/basis_of_rent.py:61 leasing/models/rent.py:649
 msgid "Index"
 msgstr "Indeksi"
 
@@ -542,10 +546,10 @@ msgstr "Vuokranperuste"
 msgid "Build permission type"
 msgstr "Rakennusoikeustyyppi"
 
-#: leasing/models/basis_of_rent.py:83 leasing/models/invoice.py:314
-#: leasing/models/rent.py:97 leasing/models/rent.py:327
-#: leasing/models/rent.py:370 leasing/models/rent.py:443
-#: leasing/models/rent.py:549
+#: leasing/models/basis_of_rent.py:83 leasing/models/invoice.py:373
+#: leasing/models/rent.py:98 leasing/models/rent.py:394
+#: leasing/models/rent.py:437 leasing/models/rent.py:510
+#: leasing/models/rent.py:616
 msgid "Amount"
 msgstr "Määrä"
 
@@ -564,8 +568,8 @@ msgid "Basis of rent rates"
 msgstr "Vuokrausperusteen hinnat"
 
 #: leasing/models/basis_of_rent.py:99 leasing/models/land_area.py:38
-#: leasing/models/lease.py:20 leasing/models/lease.py:39
-#: leasing/models/lease.py:56
+#: leasing/models/lease.py:22 leasing/models/lease.py:41
+#: leasing/models/lease.py:58
 msgid "Identifier"
 msgstr "Tunnus"
 
@@ -582,7 +586,7 @@ msgstr "Vuokrausperusteen Kiinteistötunnukset"
 #: leasing/models/basis_of_rent.py:113 leasing/models/decision.py:35
 #: leasing/models/infill_development_compensation.py:23
 #: leasing/models/infill_development_compensation.py:110
-#: leasing/models/lease.py:304
+#: leasing/models/lease.py:307
 msgid "Reference number"
 msgstr "Diaarinumero"
 
@@ -625,7 +629,7 @@ msgstr "Kommentin aiheet"
 msgid "Topic"
 msgstr "Aihe"
 
-#: leasing/models/comment.py:32 leasing/models/land_area.py:142
+#: leasing/models/comment.py:32 leasing/models/land_area.py:146
 msgid "Text"
 msgstr "Teksti"
 
@@ -640,10 +644,10 @@ msgid "Comments"
 msgstr "Kommentit"
 
 #: leasing/models/contact.py:17 leasing/models/decision.py:48
-#: leasing/models/decision.py:77 leasing/models/invoice.py:190
-#: leasing/models/land_area.py:55 leasing/models/land_area.py:140
-#: leasing/models/land_area.py:157 leasing/models/land_area.py:226
-#: leasing/models/rent.py:61 leasing/models/rent.py:469
+#: leasing/models/decision.py:77 leasing/models/invoice.py:192
+#: leasing/models/land_area.py:55 leasing/models/land_area.py:144
+#: leasing/models/land_area.py:161 leasing/models/land_area.py:230
+#: leasing/models/rent.py:62 leasing/models/rent.py:536
 msgid "Type"
 msgstr "Tyyppi"
 
@@ -655,9 +659,9 @@ msgstr "Etunimi"
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: leasing/models/contact.py:25
+#: leasing/models/contact.py:25 leasing/models/debt_collection.py:44
 #: leasing/models/infill_development_compensation.py:20
-#: leasing/models/invoice.py:21 leasing/models/mixins.py:20
+#: leasing/models/invoice.py:23 leasing/models/mixins.py:20
 msgid "Name"
 msgstr "Nimi"
 
@@ -717,15 +721,35 @@ msgstr "Kumppanitunnus"
 msgid "Is a lessor"
 msgstr "Onko vuokranantaja"
 
-#: leasing/models/contact.py:85
+#: leasing/models/contact.py:72
 msgctxt "Model name"
 msgid "Contact"
 msgstr "Yhteystieto"
 
-#: leasing/models/contact.py:86
+#: leasing/models/contact.py:73
 msgctxt "Model name"
 msgid "Contacts"
 msgstr "Yhteystiedot"
+
+#: leasing/models/contact.py:94
+#, python-brace-format
+msgid "{name} (National Identification Number {id})"
+msgstr "{name} (Henkilötunnus {id})"
+
+#: leasing/models/contact.py:101
+#, python-brace-format
+msgid "{name} (Business ID {id})"
+msgstr "{name} (Y-tunnus {id})"
+
+#: leasing/models/contract.py:14
+msgctxt "Model name"
+msgid "Contract type"
+msgstr "Sopimuksen tyyppi"
+
+#: leasing/models/contract.py:15
+msgctxt "Model name"
+msgid "Contract types"
+msgstr "Sopimuksen tyypit"
 
 #: leasing/models/contract.py:26
 msgid "Contract type"
@@ -748,7 +772,7 @@ msgid "Is readjustment decision"
 msgstr "Järjestelypäätös"
 
 #: leasing/models/contract.py:41 leasing/models/contract.py:115
-#: leasing/models/decision.py:73 leasing/models/rent.py:492
+#: leasing/models/decision.py:73 leasing/models/rent.py:559
 msgid "Decision"
 msgstr "Päätös"
 
@@ -790,8 +814,8 @@ msgstr "Sopimukset"
 msgid "Contract"
 msgstr "Sopimus"
 
-#: leasing/models/contract.py:76 leasing/models/invoice.py:135
-#: leasing/models/rent.py:630
+#: leasing/models/contract.py:76 leasing/models/invoice.py:137
+#: leasing/models/rent.py:697
 msgid "Number"
 msgstr "Numero"
 
@@ -827,7 +851,7 @@ msgstr "3. kutsu lähetetty"
 
 #: leasing/models/contract.py:112 leasing/models/decision.py:52
 #: leasing/models/decision.py:87 leasing/models/inspection.py:24
-#: leasing/models/invoice.py:198 leasing/models/invoice.py:311
+#: leasing/models/invoice.py:200 leasing/models/invoice.py:370
 msgid "Description"
 msgstr "Selite"
 
@@ -840,6 +864,79 @@ msgstr "Sopimusmuutos"
 msgctxt "Model name"
 msgid "Contract changes"
 msgstr "Sopimusmuutokset"
+
+#: leasing/models/debt_collection.py:25 leasing/models/debt_collection.py:45
+#: leasing/models/debt_collection.py:93
+msgid "File"
+msgstr "Tiedosto"
+
+#: leasing/models/debt_collection.py:29 leasing/models/debt_collection.py:97
+#: leasing/models/infill_development_compensation.py:167
+msgid "Uploader"
+msgstr "Lataaja"
+
+#: leasing/models/debt_collection.py:32 leasing/models/debt_collection.py:100
+#: leasing/models/infill_development_compensation.py:170
+msgid "Time uploaded"
+msgstr "Latauspäivämäärä"
+
+#: leasing/models/debt_collection.py:35
+msgctxt "Model name"
+msgid "Collection letter"
+msgstr "Perintäkirje"
+
+#: leasing/models/debt_collection.py:36
+msgctxt "Model name"
+msgid "Collection letters"
+msgstr "Perintäkirjeet"
+
+#: leasing/models/debt_collection.py:48
+msgctxt "Model name"
+msgid "Collection letter template"
+msgstr "Perintäkirjepohja"
+
+#: leasing/models/debt_collection.py:49
+msgctxt "Model name"
+msgid "Collection letter templates"
+msgstr "Perintäkirjepohjat"
+
+#: leasing/models/debt_collection.py:76
+msgctxt "Model name"
+msgid "Collection letter note"
+msgstr "Perintähuomautus"
+
+#: leasing/models/debt_collection.py:77
+msgctxt "Model name"
+msgid "Collection letter notes"
+msgstr "Perintähuomautukset"
+
+#: leasing/models/debt_collection.py:103
+msgctxt "Model name"
+msgid "Collection court decision"
+msgstr "Käräjäoikeuden päätös"
+
+#: leasing/models/debt_collection.py:104
+msgctxt "Model name"
+msgid "Collection court decisions"
+msgstr "Käräjäoikeuden päätökset"
+
+#: leasing/models/debt_collection.py:115
+msgid "Reference rate"
+msgstr "Viitekorko"
+
+#: leasing/models/debt_collection.py:117
+msgid "Penalty rate"
+msgstr "Viivästyskorko"
+
+#: leasing/models/debt_collection.py:120
+msgctxt "Model name"
+msgid "Interest rate"
+msgstr "Korko"
+
+#: leasing/models/debt_collection.py:121
+msgctxt "Model name"
+msgid "Interest rates"
+msgstr "Korot"
 
 #: leasing/models/decision.py:14
 msgctxt "Model name"
@@ -900,8 +997,8 @@ msgid "Conditions"
 msgstr "Ehdot"
 
 #: leasing/models/infill_development_compensation.py:34
-#: leasing/models/invoice.py:153 leasing/models/lease.py:243
-#: leasing/models/lease.py:379
+#: leasing/models/invoice.py:155 leasing/models/lease.py:246
+#: leasing/models/lease.py:461
 msgid "State"
 msgstr "Tila"
 
@@ -944,7 +1041,7 @@ msgid "Discount in rent"
 msgstr "Vuokranalennus"
 
 #: leasing/models/infill_development_compensation.py:88
-#: leasing/models/rent.py:632
+#: leasing/models/rent.py:699
 msgid "Year"
 msgstr "Vuosi"
 
@@ -953,7 +1050,7 @@ msgid "Sent to SAP date"
 msgstr "Maksu lähetetty SAP"
 
 #: leasing/models/infill_development_compensation.py:94
-#: leasing/models/invoice.py:332
+#: leasing/models/invoice.py:391
 msgid "Paid date"
 msgstr "Maksettu pvm"
 
@@ -984,14 +1081,14 @@ msgid "Infill development compensation decisions"
 msgstr "Täydennysrakentamiskorvauspäätökset"
 
 #: leasing/models/infill_development_compensation.py:136
-#: leasing/models/lease.py:265 leasing/models/rent.py:330
-#: leasing/models/rent.py:376 leasing/models/rent.py:446
-#: leasing/models/rent.py:472 leasing/models/rent.py:576
+#: leasing/models/lease.py:268 leasing/models/rent.py:397
+#: leasing/models/rent.py:443 leasing/models/rent.py:513
+#: leasing/models/rent.py:539 leasing/models/rent.py:643
 msgid "Intended use"
 msgstr "Käyttötarkoitus"
 
 #: leasing/models/infill_development_compensation.py:140
-#: leasing/models/rent.py:579
+#: leasing/models/rent.py:646
 msgid "Floor m2"
 msgstr "K-m2"
 
@@ -1008,14 +1105,6 @@ msgstr "Täydennysrakentamiskorvauskäyttötarkoitus"
 msgctxt "Model name"
 msgid "Infill development compensation intended uses"
 msgstr "Täydennysrakentamiskorvauskäyttötarkoitukset"
-
-#: leasing/models/infill_development_compensation.py:167
-msgid "Uploader"
-msgstr "Lataaja"
-
-#: leasing/models/infill_development_compensation.py:170
-msgid "Time uploaded"
-msgstr "Latauspäivämäärä"
 
 #: leasing/models/infill_development_compensation.py:173
 msgctxt "Model name"
@@ -1041,163 +1130,163 @@ msgctxt "Model name"
 msgid "Inspections"
 msgstr "Tarkastukset"
 
-#: leasing/models/invoice.py:22 leasing/models/lease.py:21
+#: leasing/models/invoice.py:24 leasing/models/lease.py:23
 msgid "SAP material code"
 msgstr "SAP materiaalinumero"
 
-#: leasing/models/invoice.py:23 leasing/models/lease.py:22
+#: leasing/models/invoice.py:25 leasing/models/lease.py:24
 msgid "SAP order item number"
 msgstr "SAP tilausnumero"
 
-#: leasing/models/invoice.py:27
+#: leasing/models/invoice.py:29
 msgctxt "Model name"
 msgid "Receivable type"
 msgstr "Saamislaji"
 
-#: leasing/models/invoice.py:28
+#: leasing/models/invoice.py:30
 msgctxt "Model name"
 msgid "Receivable types"
 msgstr "Saamislajit"
 
-#: leasing/models/invoice.py:38 leasing/models/invoice.py:156
-#: leasing/models/invoice.py:305
+#: leasing/models/invoice.py:40 leasing/models/invoice.py:158
+#: leasing/models/invoice.py:364
 msgid "Billing period start date"
 msgstr "Laskutuskauden alkupvm"
 
-#: leasing/models/invoice.py:41 leasing/models/invoice.py:159
-#: leasing/models/invoice.py:308
+#: leasing/models/invoice.py:43 leasing/models/invoice.py:161
+#: leasing/models/invoice.py:367
 msgid "Billing period end date"
 msgstr "Laskutuskauden loppupvm"
 
-#: leasing/models/invoice.py:44 leasing/models/invoice.py:45
+#: leasing/models/invoice.py:46 leasing/models/invoice.py:47
 msgctxt "Model name"
 msgid "Invoice set"
 msgstr "Laskuryhmä"
 
-#: leasing/models/invoice.py:131
+#: leasing/models/invoice.py:133
 msgid "Invoice set"
 msgstr "Laskuryhmät"
 
-#: leasing/models/invoice.py:138
+#: leasing/models/invoice.py:140
 msgid "Recipient"
 msgstr "Laskunsaaja"
 
-#: leasing/models/invoice.py:141
+#: leasing/models/invoice.py:143
 msgid "Sent to SAP at"
 msgstr "Lähetetty SAP:iin"
 
-#: leasing/models/invoice.py:144
+#: leasing/models/invoice.py:146
 msgid "SAP ID"
 msgstr "SAP-numero"
 
-#: leasing/models/invoice.py:147
+#: leasing/models/invoice.py:149
 msgid "Due date"
 msgstr "Eräpäivä"
 
-#: leasing/models/invoice.py:150
+#: leasing/models/invoice.py:152
 msgid "Invoicing date"
 msgstr "Laskutuspvm"
 
-#: leasing/models/invoice.py:162
+#: leasing/models/invoice.py:164
 msgid "Postpone date"
 msgstr "Lykkäyspvm"
 
-#: leasing/models/invoice.py:165
+#: leasing/models/invoice.py:167
 msgid "Total amount"
 msgstr "Pääoma"
 
-#: leasing/models/invoice.py:168
+#: leasing/models/invoice.py:170
 msgid "Billed amount"
 msgstr "Laskutettu määrä"
 
-#: leasing/models/invoice.py:171
+#: leasing/models/invoice.py:173
 msgid "Outstanding amount"
 msgstr "Maksamaton määrä"
 
-#: leasing/models/invoice.py:175
+#: leasing/models/invoice.py:177
 msgid "Payment notification date"
 msgstr "Maksukehotuspvm"
 
-#: leasing/models/invoice.py:178
+#: leasing/models/invoice.py:180
 msgid "Collection charge"
 msgstr "Perintäkulu"
 
-#: leasing/models/invoice.py:182
+#: leasing/models/invoice.py:184
 msgid "Payment notification catalog date"
 msgstr "Maksukehotus luettelo"
 
-#: leasing/models/invoice.py:186
+#: leasing/models/invoice.py:188
 msgid "Delivery method"
 msgstr "E vai paperilasku"
 
-#: leasing/models/invoice.py:193
+#: leasing/models/invoice.py:195
 msgid "Notes"
 msgstr "Tiedote"
 
-#: leasing/models/invoice.py:195
+#: leasing/models/invoice.py:197
 msgid "Is automatically generated?"
 msgstr "Automaattisesti luotu?"
 
-#: leasing/models/invoice.py:201
+#: leasing/models/invoice.py:203
 msgid "Credited invoice"
 msgstr "Hyvitetty lasku"
 
-#: leasing/models/invoice.py:205
+#: leasing/models/invoice.py:207
 msgctxt "Model name"
 msgid "Invoice"
 msgstr "Lasku"
 
-#: leasing/models/invoice.py:206
+#: leasing/models/invoice.py:208
 msgctxt "Model name"
 msgid "Invoices"
 msgstr "Laskut"
 
-#: leasing/models/invoice.py:294 leasing/models/invoice.py:325
+#: leasing/models/invoice.py:353 leasing/models/invoice.py:384
 msgid "Invoice"
 msgstr "Lasku"
 
-#: leasing/models/invoice.py:298 leasing/models/tenant.py:61
+#: leasing/models/invoice.py:357 leasing/models/tenant.py:61
 msgid "Tenant"
 msgstr "Vuokralainen"
 
-#: leasing/models/invoice.py:302
+#: leasing/models/invoice.py:361
 msgid "Receivable type"
 msgstr "Saamislaji"
 
-#: leasing/models/invoice.py:317
+#: leasing/models/invoice.py:376
 msgctxt "Model name"
 msgid "Invoice row"
 msgstr "Laskun rivi"
 
-#: leasing/models/invoice.py:318
+#: leasing/models/invoice.py:377
 msgctxt "Model name"
 msgid "Invoice rows"
 msgstr "Laskun rivit"
 
-#: leasing/models/invoice.py:329
+#: leasing/models/invoice.py:388
 msgid "Paid amount"
 msgstr "Maksettu määrä"
 
-#: leasing/models/invoice.py:335
+#: leasing/models/invoice.py:394
 msgctxt "Model name"
 msgid "Invoice payment"
 msgstr "Maksusuoritus"
 
-#: leasing/models/invoice.py:336
+#: leasing/models/invoice.py:395
 msgctxt "Model name"
 msgid "Invoice payments"
 msgstr "Maksusuoritukset"
 
-#: leasing/models/invoice.py:340 leasing/models/rent.py:308
+#: leasing/models/invoice.py:399 leasing/models/rent.py:375
 msgid "Day"
 msgstr "Päivä"
 
-#: leasing/models/invoice.py:343
+#: leasing/models/invoice.py:402
 msgctxt "Model name"
 msgid "Bank holiday"
 msgstr "Yleinen vapaapäivä"
 
-#: leasing/models/invoice.py:344
+#: leasing/models/invoice.py:403
 msgctxt "Model name"
 msgid "Bank holidays"
 msgstr "Yleiset vapaapäivät"
@@ -1266,418 +1355,428 @@ msgstr "Geoteknisen palvelun tiedosto"
 msgid "Other state"
 msgstr "Selvitysaste (Muut)"
 
-#: leasing/models/land_area.py:123
+#: leasing/models/land_area.py:120
+msgid "Archive decision"
+msgstr "Arkistointipäätös"
+
+#: leasing/models/land_area.py:127
 msgctxt "Model name"
 msgid "Lease area"
 msgstr "Vuokra-alue"
 
-#: leasing/models/land_area.py:124
+#: leasing/models/land_area.py:128
 msgctxt "Model name"
 msgid "Lease areas"
 msgstr "Vuokra-alueet"
 
-#: leasing/models/land_area.py:131
+#: leasing/models/land_area.py:135
 msgctxt "Model name"
 msgid "Lease area address"
 msgstr "Vuokra-alueen osoite"
 
-#: leasing/models/land_area.py:132
+#: leasing/models/land_area.py:136
 msgctxt "Model name"
 msgid "Lease area addresses"
 msgstr "Vuokra-alueen osoitteet"
 
-#: leasing/models/land_area.py:144
+#: leasing/models/land_area.py:148
 msgid "AHJO reference number"
 msgstr "AHJO diaarinumero"
 
-#: leasing/models/land_area.py:148
+#: leasing/models/land_area.py:152
 msgctxt "Model name"
 msgid "Constructability description"
 msgstr "Rakentamiskelpoisuus-selitys"
 
-#: leasing/models/land_area.py:149
+#: leasing/models/land_area.py:153
 msgctxt "Model name"
 msgid "Constructability descriptions"
 msgstr "Rakentamiskelpoisuus-selitykset"
 
-#: leasing/models/land_area.py:159
+#: leasing/models/land_area.py:163
 msgid "Registration date"
 msgstr "Rekisteröintipäivä"
 
-#: leasing/models/land_area.py:161
+#: leasing/models/land_area.py:165
 msgid "Repeal date"
 msgstr "Kumoamispvm"
 
-#: leasing/models/land_area.py:164 leasing/models/land_area.py:229
+#: leasing/models/land_area.py:168 leasing/models/land_area.py:233
 msgid "At time of contract"
 msgstr "Sopimushetkellä"
 
-#: leasing/models/land_area.py:167
+#: leasing/models/land_area.py:171
 msgctxt "Model name"
 msgid "Plot"
 msgstr "Tontti"
 
-#: leasing/models/land_area.py:168
+#: leasing/models/land_area.py:172
 msgctxt "Model name"
 msgid "Plots"
 msgstr "Tontit"
 
-#: leasing/models/land_area.py:175
+#: leasing/models/land_area.py:179
 msgctxt "Model name"
 msgid "Plot address"
 msgstr "Tontin osoite"
 
-#: leasing/models/land_area.py:176
+#: leasing/models/land_area.py:180
 msgctxt "Model name"
 msgid "Plot addresses"
 msgstr "Tontin osoitteet"
 
-#: leasing/models/land_area.py:184
+#: leasing/models/land_area.py:188
 msgctxt "Model name"
 msgid "Plan unit type"
 msgstr "Kaavayksikön laji"
 
-#: leasing/models/land_area.py:185
+#: leasing/models/land_area.py:189
 msgctxt "Model name"
 msgid "Plan unit types"
 msgstr "Kaavayksikön lajit"
 
-#: leasing/models/land_area.py:193
+#: leasing/models/land_area.py:197
 msgctxt "Model name"
 msgid "Plot divisions state"
 msgstr "Tonttijaon vaihe"
 
-#: leasing/models/land_area.py:194
+#: leasing/models/land_area.py:198
 msgctxt "Model name"
 msgid "Plot division states"
 msgstr "Tonttijaon vaiheet"
 
-#: leasing/models/land_area.py:202
+#: leasing/models/land_area.py:206
 msgctxt "Model name"
 msgid "Plan unit state"
 msgstr "Kaavayksikön olotila"
 
-#: leasing/models/land_area.py:203
+#: leasing/models/land_area.py:207
 msgctxt "Model name"
 msgid "Plan unit states"
 msgstr "Kaavayksikön olotilat"
 
-#: leasing/models/land_area.py:211
+#: leasing/models/land_area.py:215
 msgctxt "Model name"
 msgid "Plan unit intended use"
 msgstr "Kaavayksikön käyttötarkoitus"
 
-#: leasing/models/land_area.py:212
+#: leasing/models/land_area.py:216
 msgctxt "Model name"
 msgid "Plan unit intended uses"
 msgstr "Kaavayksikön käyttötarkoitukset"
 
-#: leasing/models/land_area.py:232
+#: leasing/models/land_area.py:236
 msgid "Plot division identifier"
 msgstr "Tonttijaon tunnus"
 
-#: leasing/models/land_area.py:236
+#: leasing/models/land_area.py:240
 msgid "Plot division date of approval"
 msgstr "Tonttijaon hyväksymispvm"
 
-#: leasing/models/land_area.py:240
+#: leasing/models/land_area.py:244
 msgid "Plot division state"
 msgstr "Tonttijaon olotila"
 
-#: leasing/models/land_area.py:248
+#: leasing/models/land_area.py:252
 msgid "Detailed plan latest processing date"
 msgstr "Asemakaavan viimeisin käsittelypvm"
 
-#: leasing/models/land_area.py:252
+#: leasing/models/land_area.py:256
 msgid "Note for latest processing date"
 msgstr "Asemakaavan viimeisin käsittelypvm. selite"
 
-#: leasing/models/land_area.py:256
+#: leasing/models/land_area.py:260
 msgid "Plan unit type"
 msgstr "Kaavayksikön laji"
 
-#: leasing/models/land_area.py:260
+#: leasing/models/land_area.py:264
 msgid "Plan unit state"
 msgstr "Kaavayksikön olotila"
 
-#: leasing/models/land_area.py:264
+#: leasing/models/land_area.py:268
 msgid "Plan unit intended use"
 msgstr "Kaavayksikön käyttötarkoitus"
 
-#: leasing/models/land_area.py:268
+#: leasing/models/land_area.py:272
 msgctxt "Model name"
 msgid "Plan unit"
 msgstr "Kaavayksikkö"
 
-#: leasing/models/land_area.py:269
+#: leasing/models/land_area.py:273
 msgctxt "Model name"
 msgid "Plan units"
 msgstr "Kaavayksiköt"
 
-#: leasing/models/land_area.py:276
+#: leasing/models/land_area.py:280
 msgctxt "Model name"
 msgid "Plan unit address"
 msgstr "Kaavayksikön osoite"
 
-#: leasing/models/land_area.py:277
+#: leasing/models/land_area.py:281
 msgctxt "Model name"
 msgid "Plan unit addresses"
 msgstr "Kaavayksikön osoitteet"
 
-#: leasing/models/lease.py:24
+#: leasing/models/lease.py:26
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
 
-#: leasing/models/lease.py:28
+#: leasing/models/lease.py:30
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Laji"
 
-#: leasing/models/lease.py:29
+#: leasing/models/lease.py:31
 msgctxt "Model name"
 msgid "Lease types"
 msgstr "Lajit"
 
-#: leasing/models/lease.py:42
+#: leasing/models/lease.py:44
 msgctxt "Model name"
 msgid "Municipality"
 msgstr "Kaupunki"
 
-#: leasing/models/lease.py:43
+#: leasing/models/lease.py:45
 msgctxt "Model name"
 msgid "Municipalities"
 msgstr "Kaupunki"
 
-#: leasing/models/lease.py:54 leasing/models/lease.py:152
-#: leasing/models/lease.py:226
+#: leasing/models/lease.py:56 leasing/models/lease.py:154
+#: leasing/models/lease.py:229
 msgid "Municipality"
 msgstr "Kaupunki"
 
-#: leasing/models/lease.py:59
+#: leasing/models/lease.py:61
 msgctxt "Model name"
 msgid "District"
 msgstr "Kaupunginosa"
 
-#: leasing/models/lease.py:60
+#: leasing/models/lease.py:62
 msgctxt "Model name"
 msgid "Districts"
 msgstr "Kaupunginosat"
 
-#: leasing/models/lease.py:73
+#: leasing/models/lease.py:75
 msgctxt "Model name"
 msgid "Intended use"
 msgstr "Käyttötarkoitus"
 
-#: leasing/models/lease.py:74
+#: leasing/models/lease.py:76
 msgctxt "Model name"
 msgid "Intended uses"
 msgstr "Käyttötarkoitukset"
 
-#: leasing/models/lease.py:82
+#: leasing/models/lease.py:84
 msgctxt "Model name"
 msgid "Statistical use"
 msgstr "Tilastollinen pääkäyttötarkoitus"
 
-#: leasing/models/lease.py:83
+#: leasing/models/lease.py:85
 msgctxt "Model name"
 msgid "Statistical uses"
 msgstr "Tilastolliset pääkäyttötarkoitukset"
 
-#: leasing/models/lease.py:91
+#: leasing/models/lease.py:93
 msgctxt "Model name"
 msgid "Supportive housing"
 msgstr "Erityisasunto"
 
-#: leasing/models/lease.py:92
+#: leasing/models/lease.py:94
 msgctxt "Model name"
 msgid "Supportive housings"
 msgstr "Erityisasunnot"
 
-#: leasing/models/lease.py:100
+#: leasing/models/lease.py:102
 msgctxt "Model name"
 msgid "Form of financing"
 msgstr "Rahoitusmuoto"
 
-#: leasing/models/lease.py:101
+#: leasing/models/lease.py:103
 msgctxt "Model name"
 msgid "Forms of financing"
 msgstr "Rahoitusmuodot"
 
-#: leasing/models/lease.py:109
+#: leasing/models/lease.py:111
 msgctxt "Model name"
 msgid "Form of management"
 msgstr "Hallintamuoto"
 
-#: leasing/models/lease.py:110
+#: leasing/models/lease.py:112
 msgctxt "Model name"
 msgid "Forms of management"
 msgstr "Hallintamuodot"
 
-#: leasing/models/lease.py:118
+#: leasing/models/lease.py:120
 msgctxt "Model name"
 msgid "Form of regulation"
 msgstr "Sääntelymuoto"
 
-#: leasing/models/lease.py:119
+#: leasing/models/lease.py:121
 msgctxt "Model name"
 msgid "Forms of regulation"
 msgstr "Sääntelymuodot"
 
-#: leasing/models/lease.py:127 leasing/models/lease.py:128
+#: leasing/models/lease.py:129 leasing/models/lease.py:130
 msgctxt "Model name"
 msgid "Hitas"
 msgstr "Hitas"
 
-#: leasing/models/lease.py:135
+#: leasing/models/lease.py:137
 msgid "Period type"
 msgstr "Irtisanomisajan tyyppi"
 
-#: leasing/models/lease.py:136
+#: leasing/models/lease.py:138
 msgid "Duration"
 msgstr "Kesto"
 
-#: leasing/models/lease.py:137
+#: leasing/models/lease.py:139
 msgid "In ISO 8601 Duration format"
 msgstr "ISO 8601 Duration-muodossa"
 
-#: leasing/models/lease.py:140
+#: leasing/models/lease.py:142
 msgctxt "Model name"
 msgid "Notice period"
 msgstr "Irtisanomisaika"
 
-#: leasing/models/lease.py:141
+#: leasing/models/lease.py:143
 msgctxt "Model name"
 msgid "Notice periods"
 msgstr "Irtisanomisajat"
 
-#: leasing/models/lease.py:149 leasing/models/lease.py:223
+#: leasing/models/lease.py:151 leasing/models/lease.py:226
 msgid "Lease type"
 msgstr "Laji"
 
-#: leasing/models/lease.py:155 leasing/models/lease.py:229
+#: leasing/models/lease.py:157 leasing/models/lease.py:232
 msgid "District"
 msgstr "Kaupunginosa"
 
-#: leasing/models/lease.py:158
+#: leasing/models/lease.py:160
 msgid "Sequence number"
 msgstr "Juokseva numero"
 
-#: leasing/models/lease.py:161
+#: leasing/models/lease.py:163
 msgctxt "Model name"
 msgid "Lease identifier"
 msgstr "Vuokratunnus"
 
-#: leasing/models/lease.py:162
+#: leasing/models/lease.py:164
 msgctxt "Model name"
 msgid "Lease identifiers"
 msgstr "Vuokratunnukset"
 
-#: leasing/models/lease.py:232
+#: leasing/models/lease.py:235
 msgid "Lease identifier"
 msgstr "Vuokratunnus"
 
-#: leasing/models/lease.py:246
+#: leasing/models/lease.py:249
 msgid "Classification"
 msgstr "Julkisuusluokka"
 
-#: leasing/models/lease.py:249
+#: leasing/models/lease.py:252
 msgid "Intended use note"
 msgstr "Käyttötarkoituksen selite"
 
-#: leasing/models/lease.py:252
+#: leasing/models/lease.py:255
 msgid "Transferable"
 msgstr "Siirto-oikeus"
 
-#: leasing/models/lease.py:255
+#: leasing/models/lease.py:258
 msgid "Regulated"
 msgstr "Säännelty"
 
-#: leasing/models/lease.py:258
+#: leasing/models/lease.py:261
 msgid "Notice note"
 msgstr "Irtisanomisilmoituksen selite"
 
-#: leasing/models/lease.py:262
+#: leasing/models/lease.py:265
 msgid "Lessor"
 msgstr "Vuokranantaja"
 
-#: leasing/models/lease.py:269
+#: leasing/models/lease.py:272
 msgid "Supportive housing"
 msgstr "Erityisasunnot"
 
-#: leasing/models/lease.py:273
+#: leasing/models/lease.py:276
 msgid "Statistical use"
 msgstr "Tilastollinen pääkäyttötarkoitus"
 
-#: leasing/models/lease.py:285
+#: leasing/models/lease.py:288
 msgid "Form of regulation"
 msgstr "Sääntelymuoto"
 
-#: leasing/models/lease.py:288
+#: leasing/models/lease.py:291
 msgid "Hitas"
 msgstr "Hitas"
 
-#: leasing/models/lease.py:291
+#: leasing/models/lease.py:294
 msgid "Notice period"
 msgstr "Irtisanomisaika"
 
-#: leasing/models/lease.py:298
+#: leasing/models/lease.py:301
 msgid "Rent info complete?"
 msgstr "Vuokratiedot kunnossa?"
 
-#: leasing/models/lease.py:301
+#: leasing/models/lease.py:304
 msgid "Invoicing enabled?"
 msgstr "Laskutus käynnissä?"
 
-#: leasing/models/lease.py:310
+#: leasing/models/lease.py:313
 msgid "Preparer"
 msgstr "Valmistelija"
 
-#: leasing/models/lease.py:313
+#: leasing/models/lease.py:316
 msgid "Is subject to VAT?"
 msgstr "Onko ALV:n alainen"
 
-#: leasing/models/lease.py:318
+#: leasing/models/lease.py:321
 msgctxt "Model name"
 msgid "Lease"
 msgstr "Vuokraus"
 
-#: leasing/models/lease.py:319
+#: leasing/models/lease.py:322
 msgctxt "Model name"
 msgid "Leases"
 msgstr "Vuokraukset"
 
-#: leasing/models/lease.py:321
-msgid "Can view lease"
-msgstr ""
+#: leasing/models/lease.py:442
+#, python-brace-format
+msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
+msgstr "{area_identifier}, {area_addresses}, {area_m2}m2"
 
-#: leasing/models/lease.py:382
+#: leasing/models/lease.py:452
+#, python-brace-format
+msgid "Contract #{contract_number}"
+msgstr "Sopimus #{contract_number}"
+
+#: leasing/models/lease.py:464
 msgctxt "Model name"
 msgid "Lease state log"
 msgstr "Vuokrauksen tilamuutosloki"
 
-#: leasing/models/lease.py:383
+#: leasing/models/lease.py:465
 msgctxt "Model name"
 msgid "Lease state logs"
 msgstr "Vuokrauksen tilamuutoslokit"
 
-#: leasing/models/lease.py:387
+#: leasing/models/lease.py:469
 msgid "From lease"
 msgstr "Vuokrauksesta"
 
-#: leasing/models/lease.py:389
+#: leasing/models/lease.py:471
 msgid "To lease"
 msgstr "Vuokraukseen"
 
-#: leasing/models/lease.py:390
+#: leasing/models/lease.py:472
 msgid "Lease relation type"
 msgstr "Suhdetyyppi"
 
-#: leasing/models/lease.py:395
+#: leasing/models/lease.py:477
 msgctxt "Model name"
 msgid "Related lease"
 msgstr "Liittyvä vuokraus"
 
-#: leasing/models/lease.py:396
+#: leasing/models/lease.py:478
 msgctxt "Model name"
 msgid "Related leases"
 msgstr "Liittyvät vuokraukset"
@@ -1690,216 +1789,240 @@ msgstr "Luotu"
 msgid "Time modified"
 msgstr "Muokattu"
 
-#: leasing/models/rent.py:49
+#: leasing/models/mixins.py:32
+msgid "Time archived"
+msgstr "Arkistointiaika"
+
+#: leasing/models/mixins.py:34
+msgid "Archived note"
+msgstr "Arkistointihuomautus"
+
+#: leasing/models/rent.py:50
 msgctxt "Model name"
 msgid "Rent intended use"
 msgstr "Vuokran käyttötarkoitus"
 
-#: leasing/models/rent.py:50
+#: leasing/models/rent.py:51
 msgctxt "Model name"
 msgid "Rent intended uses"
 msgstr "Vuokran käyttötarkoitus"
 
-#: leasing/models/rent.py:64
+#: leasing/models/rent.py:65
 msgid "Cycle"
 msgstr "Vuokrakausi"
 
-#: leasing/models/rent.py:67
+#: leasing/models/rent.py:68
 msgid "Index type"
 msgstr "Indeksin tunnusnumero"
 
-#: leasing/models/rent.py:70
+#: leasing/models/rent.py:71
 msgid "Due dates type"
 msgstr "Laskutusjako"
 
-#: leasing/models/rent.py:73
+#: leasing/models/rent.py:74
 msgid "Due dates per year"
 msgstr "Laskut kpl / vuosi"
 
-#: leasing/models/rent.py:76
+#: leasing/models/rent.py:77
 msgid "Elementary index"
 msgstr "Perusindeksi"
 
-#: leasing/models/rent.py:79
+#: leasing/models/rent.py:80
 msgid "Index rounding"
 msgstr "Pyöristys"
 
-#: leasing/models/rent.py:82
+#: leasing/models/rent.py:83
 msgid "X value"
 msgstr "X-luku"
 
-#: leasing/models/rent.py:85
+#: leasing/models/rent.py:86
 msgid "Y value"
 msgstr "Y-luku"
 
-#: leasing/models/rent.py:88
+#: leasing/models/rent.py:89
 msgid "Y value start"
 msgstr "Y-alkaen"
 
-#: leasing/models/rent.py:91
+#: leasing/models/rent.py:92
 msgid "Equalization start date"
 msgstr "Tasaus alkupvm"
 
-#: leasing/models/rent.py:94
+#: leasing/models/rent.py:95
 msgid "Equalization end date"
 msgstr "Tasaus loppupvm"
 
-#: leasing/models/rent.py:299
+#: leasing/models/rent.py:110
+msgid "Seasonal start day"
+msgstr "Kauden alkupäivä"
+
+#: leasing/models/rent.py:112
+msgid "Seasonal start month"
+msgstr "Kauden alkukuukausi"
+
+#: leasing/models/rent.py:114
+msgid "Seasonal end day"
+msgstr "Kauden loppupäivä"
+
+#: leasing/models/rent.py:116
+msgid "Seasonal end month"
+msgstr "Kauden loppukuukausi"
+
+#: leasing/models/rent.py:120
 msgctxt "Model name"
 msgid "Rent"
 msgstr "Vuokra"
 
-#: leasing/models/rent.py:300
+#: leasing/models/rent.py:121
 msgctxt "Model name"
 msgid "Rents"
 msgstr "Vuokrat"
 
-#: leasing/models/rent.py:307 leasing/models/rent.py:323
-#: leasing/models/rent.py:367 leasing/models/rent.py:439
-#: leasing/models/rent.py:466 leasing/models/rent.py:546
+#: leasing/models/rent.py:374 leasing/models/rent.py:390
+#: leasing/models/rent.py:434 leasing/models/rent.py:506
+#: leasing/models/rent.py:533 leasing/models/rent.py:613
 msgid "Rent"
 msgstr "Vuokra"
 
-#: leasing/models/rent.py:309 leasing/models/rent.py:633
+#: leasing/models/rent.py:376 leasing/models/rent.py:700
 msgid "Month"
 msgstr "Kuukausi"
 
-#: leasing/models/rent.py:312
+#: leasing/models/rent.py:379
 msgctxt "Model name"
 msgid "Rent due date"
 msgstr "Eräpäivä"
 
-#: leasing/models/rent.py:313
+#: leasing/models/rent.py:380
 msgctxt "Model name"
 msgid "Rent due dates"
 msgstr "Eräpäivät"
 
-#: leasing/models/rent.py:340
+#: leasing/models/rent.py:407
 msgctxt "Model name"
 msgid "Fixed initial year rent"
 msgstr "Kiinteä alkuvuosivuokra"
 
-#: leasing/models/rent.py:341
+#: leasing/models/rent.py:408
 msgctxt "Model name"
 msgid "Fixed initial year rents"
 msgstr "Kiinteät alkuvuosivuokrat"
 
-#: leasing/models/rent.py:373
+#: leasing/models/rent.py:440
 msgid "Period"
 msgstr "Yksikkö"
 
-#: leasing/models/rent.py:379
+#: leasing/models/rent.py:446
 msgid "Base amount"
 msgstr "Vuokranlaskennan perusteena oleva vuokra"
 
-#: leasing/models/rent.py:383
+#: leasing/models/rent.py:450
 msgid "Base amount period"
 msgstr "Yksikkö"
 
-#: leasing/models/rent.py:387
+#: leasing/models/rent.py:454
 msgid "Base year rent"
 msgstr "Uusi perusvuosi vuokra"
 
-#: leasing/models/rent.py:397
+#: leasing/models/rent.py:464
 msgctxt "Model name"
 msgid "Contract rent"
 msgstr "Sopimusvuokra"
 
-#: leasing/models/rent.py:398
+#: leasing/models/rent.py:465
 msgctxt "Model name"
 msgid "Contract rents"
 msgstr "Sopimusvuokrat"
 
-#: leasing/models/rent.py:455
+#: leasing/models/rent.py:522
 msgid "Factor"
 msgstr "Laskentakerroin"
 
-#: leasing/models/rent.py:458
+#: leasing/models/rent.py:525
 msgctxt "Model name"
 msgid "Index adjusted rent"
 msgstr "Indeksitarkistettu vuokra"
 
-#: leasing/models/rent.py:459
+#: leasing/models/rent.py:526
 msgctxt "Model name"
 msgid "Index adjusted rents"
 msgstr "Indeksitarkistetut vuokrat"
 
-#: leasing/models/rent.py:481
+#: leasing/models/rent.py:548
 msgid "Full amount"
 msgstr "Kokonaismäärä"
 
-#: leasing/models/rent.py:485
+#: leasing/models/rent.py:552
 msgid "Amount type"
 msgstr "Määrän tyyppi"
 
-#: leasing/models/rent.py:488
+#: leasing/models/rent.py:555
 msgid "Amount left"
 msgstr "Jäljellä"
 
-#: leasing/models/rent.py:498
+#: leasing/models/rent.py:565
 msgctxt "Model name"
 msgid "Rent adjustment"
 msgstr "Alennus/Korotus"
 
-#: leasing/models/rent.py:499
+#: leasing/models/rent.py:566
 msgctxt "Model name"
 msgid "Rent adjustments"
 msgstr "Alennukset/Korotukset"
 
-#: leasing/models/rent.py:558
+#: leasing/models/rent.py:625
 msgid "Difference percent"
 msgstr "Nousu %"
 
-#: leasing/models/rent.py:561
+#: leasing/models/rent.py:628
 msgid "Calendar year rent"
 msgstr "Kalenterivuosivuokra"
 
-#: leasing/models/rent.py:564
+#: leasing/models/rent.py:631
 msgctxt "Model name"
 msgid "Payable rent"
 msgstr "Perittävä vuokra"
 
-#: leasing/models/rent.py:565
+#: leasing/models/rent.py:632
 msgctxt "Model name"
 msgid "Payable rents"
 msgstr "Perittävät vuokrat"
 
-#: leasing/models/rent.py:585
+#: leasing/models/rent.py:652
 msgid "Amount per floor m^2 (index 100)"
 msgstr "€ / k-m2 (ind 100)"
 
-#: leasing/models/rent.py:589
+#: leasing/models/rent.py:656
 msgid "Amount per floor m^2 (index)"
 msgstr "€ / k-m2 (ind)"
 
-#: leasing/models/rent.py:593
+#: leasing/models/rent.py:660
 msgid "Percent"
 msgstr "Prosenttia"
 
-#: leasing/models/rent.py:597
+#: leasing/models/rent.py:664
 msgid "Year rent (index 100)"
 msgstr "Perusvuosivuokra €/v (ind 100)"
 
-#: leasing/models/rent.py:601
+#: leasing/models/rent.py:668
 msgid "Year rent (index)"
 msgstr "Perusvuosivuokra €/v (ind)"
 
-#: leasing/models/rent.py:605
+#: leasing/models/rent.py:672
 msgctxt "Model name"
 msgid "Lease basis of rent"
 msgstr "Vuokranperuste"
 
-#: leasing/models/rent.py:606
+#: leasing/models/rent.py:673
 msgctxt "Model name"
 msgid "Lease basis of rents"
 msgstr "Vuokranperusteet"
 
-#: leasing/models/rent.py:639
+#: leasing/models/rent.py:706
 msgctxt "Model name"
 msgid "Index"
 msgstr "Indeksi"
 
-#: leasing/models/rent.py:640
+#: leasing/models/rent.py:707
 msgctxt "Model name"
 msgid "Indexes"
 msgstr "Indeksit"
@@ -1948,3 +2071,62 @@ msgstr "Laskentakerroin {ratio}"
 #: leasing/models/utils.py:74
 msgid "New base rent"
 msgstr "Uusi perusvuokra"
+
+#: leasing/serializers/invoice.py:157
+msgid ""
+"Both Billing period start and end are required if one of them is provided"
+msgstr ""
+
+#: leasing/serializers/invoice.py:161
+msgid "Billing period end must be the same or after the start"
+msgstr ""
+
+#: leasing/serializers/lease.py:128
+msgid "from_lease and to_lease cannot be the same Lease"
+msgstr ""
+
+#: leasing/serializers/rent.py:148
+msgid "All seasonal values are required if one is set"
+msgstr ""
+
+#: leasing/serializers/rent.py:151
+msgid "Due dates type must be custom if seasonal dates are set"
+msgstr ""
+
+#: leasing/viewsets/lease.py:96
+#, python-brace-format
+msgid "the penalty interest rate is {interest_percent} %"
+msgstr "viivästyskoron suuruus on {interest_percent} %"
+
+#: leasing/viewsets/lease.py:114
+#, python-brace-format
+msgid ""
+"The penalty interest rate starting on {start_date} is {interest_percent} %"
+msgstr "Viivästyskoron suuruus {start_date} alkaen on {interest_percent} %"
+
+#: leasing/viewsets/lease.py:118
+#, python-brace-format
+msgid ""
+"The penalty interest rate between {start_date} and {end_date} is "
+"{interest_percent} %"
+msgstr ""
+"Viivästyskoron suuruus ajalla {start_date} - {end_date} on "
+"{interest_percent} %"
+
+#: leasing/viewsets/lease.py:283
+#, python-brace-format
+msgid ""
+"Penalty interest for the invoice with the due date of {due_date} is "
+"{interest_amount} euroa"
+msgstr ""
+"Korko laskulle, jonka eräpäivä on ollut {due_date}, on {interest_amount} "
+"euroa"
+
+#: leasing/viewsets/lease.py:292
+#, python-brace-format
+msgid "{due_date}, {debt_amount} euro (between {start_date} and {end_date})"
+msgstr "{due_date}, {debt_amount} euroa (ajalta {start_date} - {end_date})"
+
+#: leasing/viewsets/lease.py:327
+msgid "Error creating the document from the template"
+msgstr "Virhe luotaessa dokumenttia asiakirjapohjan avulla"

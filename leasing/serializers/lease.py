@@ -5,6 +5,8 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from leasing.models import InfillDevelopmentCompensation, RelatedLease
+from leasing.serializers.debt_collection import (
+    CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -154,6 +156,9 @@ class LeaseSerializerBase(EnumSupportSerializerMixin, serializers.ModelSerialize
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentSerializer(many=True, required=False, allow_null=True)
     basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
+    collection_court_decisions = CollectionCourtDecisionSerializer(many=True, required=False, allow_null=True)
+    collection_letters = CollectionLetterSerializer(many=True, required=False, allow_null=True)
+    collection_notes = CollectionNoteSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease

@@ -68,6 +68,11 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Onko vuokranantaja
     is_lessor = models.BooleanField(verbose_name=_("Is a lessor"), default=False)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Contact")
+        verbose_name_plural = pgettext_lazy("Model name", "Contacts")
+        ordering = ['type', 'name', 'last_name', 'first_name']
+
     def __str__(self):
         person_name = ' '.join([n for n in [self.first_name, self.last_name] if n]).strip()
 
@@ -81,10 +86,22 @@ class Contact(TimeStampedSafeDeleteModel):
 
         return name
 
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Contact")
-        verbose_name_plural = pgettext_lazy("Model name", "Contacts")
-        ordering = ['type', 'name', 'last_name', 'first_name']
+    def get_name_and_identifier(self):
+        if self.type == ContactType.PERSON:
+            name = ' '.join([n for n in [self.first_name, self.last_name] if n]).strip()
+
+            if self.national_identification_number:
+                return _('{name} (National Identification Number {id})').format(
+                    name=name, id=self.national_identification_number)
+            else:
+                return name
+        else:
+            name = self.name
+            if self.business_id:
+                return _('{name} (Business ID {id})').format(
+                    name=name, id=self.business_id)
+            else:
+                return name
 
 
 auditlog.register(Contact)

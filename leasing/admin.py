@@ -3,10 +3,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
     AreaNote, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
-    BasisOfRentPropertyIdentifier, BasisOfRentRate, Comment, CommentTopic, Condition, ConditionType,
-    ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
-    DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, Invoice, Lease,
-    LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
+    BasisOfRentPropertyIdentifier, BasisOfRentRate, CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate,
+    CollectionNote, Comment, CommentTopic, Condition, ConditionType, ConstructabilityDescription, Contact, Contract,
+    ContractChange, ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District, Financing,
+    FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea,
+    LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
     NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
     RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
 from leasing.models.infill_development_compensation import (
@@ -108,6 +109,29 @@ class LeaseAdmin(admin.ModelAdmin):
         return qs.select_related('type', 'municipality', 'district', 'identifier',
                                  'identifier__type', 'identifier__municipality',
                                  'identifier__district')
+
+
+class CollectionCourtDecisionAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'file', 'uploaded_at', 'uploader')
+    raw_id_fields = ('lease',)
+    ordering = ('-uploaded_at',)
+
+
+class CollectionLetterAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'file', 'uploaded_at', 'uploader')
+    raw_id_fields = ('lease',)
+    ordering = ('-uploaded_at',)
+
+
+class CollectionNoteAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'created_at', 'note', 'user')
+    raw_id_fields = ('lease',)
+    ordering = ('-created_at',)
+
+
+class CollectionLetterTemplateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'modified_at')
+    ordering = ('name',)
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -275,6 +299,11 @@ class InfillDevelopmentCompensationLeaseAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
+class InterestRateAdmin(admin.ModelAdmin):
+    list_display = ('start_date', 'end_date', 'reference_rate', 'penalty_rate')
+    ordering = ('-start_date', '-end_date')
+
+
 class InvoicePaymentInline(admin.TabularInline):
     model = InvoicePayment
     extra = 0
@@ -394,6 +423,10 @@ admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentTopic, NameAdmin)
+admin.site.register(CollectionCourtDecision, CollectionCourtDecisionAdmin)
+admin.site.register(CollectionLetter, CollectionLetterAdmin)
+admin.site.register(CollectionLetterTemplate, CollectionLetterTemplateAdmin)
+admin.site.register(CollectionNote, CollectionNoteAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Financing, NameAdmin)
 admin.site.register(Hitas, NameAdmin)
@@ -401,6 +434,7 @@ admin.site.register(Index, IndexAdmin)
 admin.site.register(InfillDevelopmentCompensation, InfillDevelopmentCompensationAdmin)
 admin.site.register(InfillDevelopmentCompensationLease, InfillDevelopmentCompensationLeaseAdmin)
 admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(InterestRate, InterestRateAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(InvoiceSet, InvoiceSetAdmin)

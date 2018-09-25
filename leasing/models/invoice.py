@@ -1,3 +1,4 @@
+import calendar
 from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
 
@@ -12,6 +13,7 @@ from enumfields import EnumField
 from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
+from leasing.models.utils import get_next_business_day, get_range_overlap
 
 
 class ReceivableType(models.Model):
@@ -286,6 +288,63 @@ class Invoice(TimeStampedSafeDeleteModel):
             fraction += Fraction(row.tenant.share_numerator, row.tenant.share_denominator)
 
         return fraction
+
+    def calculate_penalty_interest(self, calculation_date=None):
+        from .debt_collection import InterestRate
+
+        penalty_interest_data = {
+            'interest_start_date': None,
+            'interest_end_date': None,
+            'outstanding_amount': self.outstanding_amount,
+            'total_interest_amount': Decimal(0),
+            'interest_periods': [],
+        }
+        if not calculation_date:
+            calculation_date = timezone.now().date()
+
+        if not self.outstanding_amount:
+            return penalty_interest_data
+
+        interest_start_date = get_next_business_day(self.due_date)
+        interest_end_date = calculation_date
+
+        penalty_interest_data['interest_start_date'] = interest_start_date
+        penalty_interest_data['interest_end_date'] = interest_end_date
+
+        years = range(interest_start_date.year, interest_end_date.year + 1)
+
+        total_interest_amount = Decimal(0)
+
+        for interest_rate in InterestRate.objects.filter(start_date__year__in=years).order_by('start_date'):
+            overlap = get_range_overlap(interest_rate.start_date, interest_rate.end_date,
+                                        interest_start_date, interest_end_date)
+            if not overlap or not overlap[0] or not overlap[1]:
+                continue
+
+            days_between = (overlap[1] - overlap[0]).days + 1  # Inclusive
+
+            # TODO: which divisor to use
+            # divisor = 360
+            if calendar.isleap(interest_rate.start_date.year):
+                divisor = 366
+            else:
+                divisor = 365
+
+            interest_amount = self.outstanding_amount * (interest_rate.penalty_rate / 100) / divisor * days_between
+
+            penalty_interest_data['interest_periods'].append({
+                'start_date': overlap[0],
+                'end_date': overlap[1],
+                'penalty_rate': interest_rate.penalty_rate,
+                'interest_amount': interest_amount,
+            })
+
+            total_interest_amount += interest_amount
+
+        penalty_interest_data['total_interest_amount'] = total_interest_amount.quantize(Decimal('.01'),
+                                                                                        rounding=ROUND_HALF_UP)
+
+        return penalty_interest_data
 
 
 class InvoiceRow(TimeStampedSafeDeleteModel):

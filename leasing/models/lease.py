@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from auditlog.registry import auditlog
@@ -187,7 +188,8 @@ class LeaseManager(models.Manager):
             'rents__contract_rents', 'rents__contract_rents__intended_use', 'rents__rent_adjustments',
             'rents__rent_adjustments__intended_use', 'rents__index_adjusted_rents', 'rents__payable_rents',
             'rents__fixed_initial_year_rents', 'rents__fixed_initial_year_rents__intended_use',
-            'lease_areas__addresses', 'basis_of_rents'
+            'lease_areas__addresses', 'basis_of_rents', 'collection_letters', 'collection_notes',
+            'collection_court_decisions'
         )
 
     def succinct_select_related_and_prefetch_related(self):
@@ -414,12 +416,47 @@ class Lease(TimeStampedSafeDeleteModel):
 
                 shares[billing_tenantcontact.contact][tenant].append(billing_overlap)
 
-            ranges_for_billing_contacts = []
-            for billing_contact, tenant_overlaps in shares.items():
-                if tenant in tenant_overlaps:
-                    ranges_for_billing_contacts.extend(tenant_overlaps[tenant])
-
         return shares
+
+    def get_lease_info_text(self, tenants=None):
+        today = datetime.date.today()
+        result = []
+
+        if tenants is None:
+            tenants = self.tenants.all()
+
+        tenant_names = []
+        for tenant in tenants:
+            for tenant_tenantcontact in tenant.get_tenant_tenantcontacts(today, today):
+                tenant_names.append(tenant_tenantcontact.contact.get_name_and_identifier())
+
+        result.extend(tenant_names)
+
+        area_names = []
+        for lease_area in self.lease_areas.all():
+            area_names.append(_('{area_identifier}, {area_addresses}, {area_m2}m2').format(
+                area_identifier=lease_area.identifier,
+                area_addresses=', '.join([la.address for la in lease_area.addresses.all()]),
+                area_m2=lease_area.area
+            ))
+
+        result.extend(area_names)
+
+        contract_numbers = []
+        for contract in self.contracts.filter(contract_number__isnull=False).exclude(contract_number=''):
+            contract_numbers.append(_('Contract #{contract_number}').format(contract_number=contract.contract_number))
+
+        result.extend(contract_numbers)
+
+        return result
+
+    def get_active_rents_on_date(self, the_date):
+        rent_range_filter = Q(
+            (Q(end_date=None) | Q(end_date__gte=the_date)) &
+            (Q(start_date=None) | Q(start_date__lte=the_date))
+        )
+
+        return self.rents.filter(rent_range_filter)
 
 
 class LeaseStateLog(TimeStampedModel):
