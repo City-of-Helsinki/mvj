@@ -41,10 +41,10 @@ class Land(TimeStampedModel):
     area = models.PositiveIntegerField(verbose_name=_("Area in square meters"))
 
     # In Finnish: Leikkausala
-    section_area = models.PositiveIntegerField(verbose_name=_("Section area"))
+    section_area = models.PositiveIntegerField(verbose_name=_("Section area"), null=True, blank=True)
 
     # In Finnish: Alue
-    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
+    geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -175,14 +175,6 @@ class Plot(Land):
         verbose_name_plural = pgettext_lazy("Model name", "Plots")
 
 
-class PlotAddress(AbstractAddress):
-    plot = models.ForeignKey(Plot, related_name='addresses', on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Plot address")
-        verbose_name_plural = pgettext_lazy("Model name", "Plot addresses")
-
-
 class PlanUnitType(NameModel):
     """
     In Finnish: Kaavayksikön laji
@@ -230,7 +222,6 @@ class PlanUnit(Land):
 
     In Finnish: Kaavayksikkö
     """
-    type = EnumField(PlotType, verbose_name=_("Type"), max_length=30)
     lease_area = models.ForeignKey(LeaseArea, related_name='plan_units', on_delete=models.CASCADE)
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
@@ -274,14 +265,6 @@ class PlanUnit(Land):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
-
-
-class PlanUnitAddress(AbstractAddress):
-    plan_unit = models.ForeignKey(PlanUnit, related_name='addresses', on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Plan unit address")
-        verbose_name_plural = pgettext_lazy("Model name", "Plan unit addresses")
 
 
 auditlog.register(LeaseArea)

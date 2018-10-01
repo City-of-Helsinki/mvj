@@ -45,7 +45,7 @@ class BasisOfRentPropertyIdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BasisOfRentPropertyIdentifier
-        fields = ('id', 'identifier')
+        fields = ('id', 'identifier', 'geometry')
 
 
 class BasisOfRentRateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -78,7 +78,7 @@ class BasisOfRentSerializer(serializers.ModelSerializer):
         model = BasisOfRent
         fields = ('id', 'plot_type', 'start_date', 'end_date', 'detailed_plan_identifier', 'management', 'financing',
                   'lease_rights_end_date', 'index', 'note', 'created_at', 'modified_at', 'rent_rates',
-                  'property_identifiers', 'decisions')
+                  'property_identifiers', 'decisions', 'geometry')
 
 
 class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSerializer):
@@ -93,4 +93,4 @@ class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSeri
         model = BasisOfRent
         fields = ('id', 'plot_type', 'start_date', 'end_date', 'detailed_plan_identifier', 'management', 'financing',
                   'lease_rights_end_date', 'index', 'note', 'created_at', 'modified_at', 'rent_rates',
-                  'property_identifiers', 'decisions')
+                  'property_identifiers', 'decisions', 'geometry')

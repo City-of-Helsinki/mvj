@@ -113,7 +113,7 @@ class InfillDevelopmentCompensationSerializer(EnumSupportSerializerMixin, serial
     class Meta:
         model = InfillDevelopmentCompensation
         fields = ('id', 'name', 'reference_number', 'detailed_plan_identifier', 'user', 'state',
-                  'lease_contract_change_date', 'note', 'infill_development_compensation_leases')
+                  'lease_contract_change_date', 'note', 'infill_development_compensation_leases', 'geometry')
 
 
 class InfillDevelopmentCompensationCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
@@ -127,4 +127,4 @@ class InfillDevelopmentCompensationCreateUpdateSerializer(UpdateNestedMixin, Enu
     class Meta:
         model = InfillDevelopmentCompensation
         fields = ('id', 'name', 'reference_number', 'detailed_plan_identifier', 'user', 'state',
-                  'lease_contract_change_date', 'note', 'infill_development_compensation_leases')
+                  'lease_contract_change_date', 'note', 'infill_development_compensation_leases', 'geometry')

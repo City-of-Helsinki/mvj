@@ -43,7 +43,7 @@ class InfillDevelopmentCompensation(TimeStampedSafeDeleteModel):
                                     related_name='leases')
 
     # In Finnish: Alue
-    # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
+    geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation")

@@ -1,5 +1,6 @@
 from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
+from enumfields.admin import EnumFieldListFilter
 
 from leasing.models import (
     Area, AreaNote, AreaSource, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision,
@@ -15,8 +16,7 @@ from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet
-from leasing.models.land_area import (
-    LeaseAreaAddress, PlanUnitAddress, PlanUnitIntendedUse, PlotAddress, PlotDivisionState)
+from leasing.models.land_area import LeaseAreaAddress, PlanUnitIntendedUse, PlotDivisionState
 
 
 class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
@@ -390,14 +390,8 @@ class LeaseAreaAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class PlotAddressInline(admin.TabularInline):
-    model = PlotAddress
-    extra = 0
-
-
 class PlotAdmin(admin.ModelAdmin):
     list_display = ('lease_area', 'type')
-    inlines = [PlotAddressInline]
     raw_id_fields = ('lease_area',)
 
 
@@ -414,14 +408,8 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class PlanUnitAddressInline(admin.TabularInline):
-    model = PlanUnitAddress
-    extra = 0
-
-
 class PlanUnitAdmin(admin.ModelAdmin):
-    list_display = ('get_lease_identifier', 'lease_area', 'type')
-    inlines = [PlanUnitAddressInline]
+    list_display = ('get_lease_identifier', 'lease_area')
     raw_id_fields = ('lease_area',)
 
     def get_lease_identifier(self, obj):
