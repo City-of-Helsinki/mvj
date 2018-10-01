@@ -17,7 +17,7 @@ from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
-from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaSerializer
+from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaListSerializer, LeaseAreaSerializer
 from .rent import (
     LeaseBasisOfRentCreateUpdateSerializer, LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer)
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
@@ -172,6 +172,10 @@ class LeaseListSerializer(LeaseSerializerBase):
     inspections = None
     rents = None
     related_leases = None
+    lease_areas = LeaseAreaListSerializer(many=True, required=False, allow_null=True)
+    collection_court_decisions = None
+    collection_letters = None
+    collection_notes = None
 
 
 def get_related_lease_predecessors(to_lease_id, accumulator=None):
