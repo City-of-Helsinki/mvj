@@ -172,3 +172,6 @@ LASKE_VALUES = {
     'SalesOffice': '8060',
     'PMNTTERM': 'Z100',
 }
+
+# See: https://github.com/jjkester/django-auditlog/pull/81
+USE_NATIVE_JSONFIELD = True
