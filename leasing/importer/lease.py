@@ -3,6 +3,7 @@ import re
 
 from django.core.exceptions import ObjectDoesNotExist
 
+import cx_Oracle
 from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseRelationType, LeaseState,
     LocationType, PeriodType, RentAdjustmentAmountType, TenantContactType)
@@ -28,8 +29,11 @@ from .utils import (
 class LeaseImporter(BaseImporter):
     type_name = 'lease'
 
-    def __init__(self, cursor=None, stdout=None):
-        self.cursor = cursor
+    def __init__(self, stdout=None):
+        connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
+                                       nencoding="UTF-8")
+
+        self.cursor = connection.cursor()
         self.stdout = stdout
         self.related_leases = []
         self.lease_ids = None
