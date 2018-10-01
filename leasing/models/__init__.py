@@ -1,3 +1,4 @@
+from .area import Area, AreaSource
 from .area_note import AreaNote
 from .basis_of_rent import (
     BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
@@ -23,6 +24,8 @@ from .rent import (
 from .tenant import Tenant, TenantContact
 
 __all__ = [
+    'Area',
+    'AreaSource',
     'AreaNote',
     'BasisOfRent',
     'BasisOfRentBuildPermissionType',

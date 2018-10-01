@@ -7,7 +7,7 @@ chardet==3.0.4            # via requests
 coreapi==2.3.3            # via django-rest-swagger, openapi-codec
 coreschema==0.0.4         # via coreapi
 django==2.1.1
-django-auditlog==0.4.5
+git+https://github.com/florencioq/django-auditlog.git#egg=django-auditlog==0.4.5
 django-cors-headers==2.4.0
 django-crispy-forms==1.7.2
 django-enumfields==0.10.1
@@ -15,6 +15,7 @@ django-environ==0.4.5
 django-filter==2.0.0
 django-helusers==0.4.2
 django-jsonfield==1.0.1   # via django-auditlog
+django-jsonfield-compat==0.4.4
 django-rest-swagger==2.2.0
 django-safedelete==0.5.1
 django-sequences==2.2
@@ -34,7 +35,7 @@ pycryptodomex==3.6.6      # via pyjwkest
 pyjwkest==1.4.0           # via drf-oidc-auth
 python-dateutil==2.6.0
 python-docx==0.8.7        # via docxtpl
-pytz==2018.5              # via Django
+pytz==2018.5              # via django
 raven==6.9.0
 requests==2.19.1
 simplejson==3.16.0        # via django-rest-swagger

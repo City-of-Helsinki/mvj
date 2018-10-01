@@ -368,6 +368,7 @@ class AreaType(Enum):
     BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperuste
     INFILL_DEVELOPMENT_COMPENSATION = 'infill_development_compensation'  # Täydennysrakentamiskorvaus
     LAND_USE_AGREEMENT = 'land_use_agreement'  # Maankäyttösopimus
+    DETAILED_PLAN = 'detailed_plan'
     OTHER = 'other'
 
     class Labels:
@@ -379,4 +380,5 @@ class AreaType(Enum):
         BASIS_OF_RENT = pgettext_lazy('Area type', 'Basis of rent')
         INFILL_DEVELOPMENT_COMPENSATION = pgettext_lazy('Area type', 'Infill development compensation')
         LAND_USE_AGREEMENT = pgettext_lazy('Area type', 'Land use agreement')
+        DETAILED_PLAN = pgettext_lazy('Area type', 'Detailed plan')
         OTHER = pgettext_lazy('Area type', 'Other')

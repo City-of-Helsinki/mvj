@@ -2,14 +2,15 @@ from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import (
-    AreaNote, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
-    BasisOfRentPropertyIdentifier, BasisOfRentRate, CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate,
-    CollectionNote, Comment, CommentTopic, Condition, ConditionType, ConstructabilityDescription, Contact, Contract,
-    ContractChange, ContractRent, ContractType, Decision, DecisionMaker, DecisionType, District, Financing,
-    FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea,
-    LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management, MortgageDocument, Municipality,
-    NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType, Regulation, RelatedLease, Rent,
-    RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing, Tenant, TenantContact)
+    Area, AreaNote, AreaSource, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision,
+    BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, CollectionCourtDecision, CollectionLetter,
+    CollectionLetterTemplate, CollectionNote, Comment, CommentTopic, Condition, ConditionType,
+    ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
+    DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, InterestRate,
+    Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management,
+    MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
+    Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
+    Tenant, TenantContact)
 from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
@@ -27,6 +28,22 @@ class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
 
 class AreaNoteAdmin(CenterOnHelsinkiOSMGeoAdmin):
     pass
+
+
+class AreaAdmin(CenterOnHelsinkiOSMGeoAdmin):
+    list_display = ('identifier', 'type', 'source')
+    list_filter = (('type', EnumFieldListFilter), 'source')
+    search_fields = ['identifier']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('source')
+
+
+class AreaSourceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'identifier')
+    search_fields = ['name', 'identifier']
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -418,6 +435,8 @@ class PlanUnitAdmin(admin.ModelAdmin):
         return qs.select_related('lease_area', 'lease_area__lease')
 
 
+admin.site.register(Area, AreaAdmin)
+admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
 admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)

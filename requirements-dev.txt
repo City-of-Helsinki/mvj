@@ -42,13 +42,13 @@ pytest==3.8.0
 pytest-cov==2.6.0
 pytest-django==3.4.2
 pytest-factoryboy==2.0.1
-python-dateutil==2.6.0    # via Faker
+python-dateutil==2.6.0    # via faker
 pytz==2018.5              # via django
 simplegeneric==0.8.1      # via ipython
-six==1.11.0               # via Faker, django-extensions, flake8-print, more-itertools, pip-tools, prompt-toolkit, pydocstyle, pytest, python-dateutil, traitlets
+six==1.11.0               # via django-extensions, faker, flake8-print, more-itertools, pip-tools, prompt-toolkit, pydocstyle, pytest, python-dateutil, traitlets
 snowballstemmer==1.2.1    # via pydocstyle
 sqlparse==0.2.4           # via django-debug-toolbar
-text-unidecode==1.2       # via Faker
+text-unidecode==1.2       # via faker
 traitlets==4.3.2          # via ipython
 wcwidth==0.1.7            # via prompt-toolkit
 werkzeug==0.14.1
