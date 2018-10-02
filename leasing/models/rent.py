@@ -87,7 +87,7 @@ class Rent(TimeStampedSafeDeleteModel):
     y_value = models.PositiveIntegerField(verbose_name=_("Y value"), null=True, blank=True)
 
     # In Finnish: Y-alkaen
-    y_value_start = models.PositiveIntegerField(verbose_name=_("Y value start"), null=True, blank=True)
+    y_value_start = models.DateField(verbose_name=_("Y value start date"), null=True, blank=True)
 
     # In Finnish: Tasaus alkupvm
     equalization_start_date = models.DateField(verbose_name=_("Equalization start date"), null=True, blank=True)
