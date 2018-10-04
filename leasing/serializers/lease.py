@@ -250,7 +250,7 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
                                                   related_serializer=UserSerializer, required=False, allow_null=True)
     related_leases = serializers.SerializerMethodField()
     notice_period = serializers.PrimaryKeyRelatedField(
-        required=False, queryset=NoticePeriod.objects.all().annotate(
+        required=False, allow_null=True, queryset=NoticePeriod.objects.all().annotate(
             duration_as_interval=Cast('duration', DurationField())).order_by('duration_as_interval'))
 
     def get_related_leases(self, obj):
