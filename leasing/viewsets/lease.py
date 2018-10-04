@@ -17,8 +17,8 @@ from rest_framework.response import Response
 from leasing.calculation.rent import RentCalculation
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
-    District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
-    RelatedLease, StatisticalUse, SupportiveHousing)
+    District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, PlanUnit, Plot,
+    Regulation, RelatedLease, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.serializers.debt_collection import CreateCollectionLetterDocumentSerializer
 from leasing.serializers.explanation import ExplanationSerializer
@@ -405,3 +405,38 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
                 result.append(period_invoices)
 
         return Response(result)
+
+    @action(methods=['post'], detail=True)
+    def copy_areas_to_contract(self, request, pk=None):
+        lease = self.get_object()
+
+        item_types = [
+            {
+                'class': Plot,
+                'manager_name': 'plots',
+            },
+            {
+                'class': PlanUnit,
+                'manager_name': 'plan_units',
+            }
+        ]
+
+        for lease_area in lease.lease_areas.all():
+            for item_type in item_types:
+                for item in getattr(lease_area, item_type['manager_name']).filter(in_contract=False):
+                    match_data = {
+                        'lease_area': lease_area,
+                        'identifier': item.identifier,
+                        'in_contract': True,
+                    }
+
+                    defaults = {}
+                    for field in item_type['class']._meta.get_fields():
+                        if field.name in ['id', 'lease_area', 'created_at', 'modified_at', 'in_contract']:
+                            continue
+                        defaults[field.name] = getattr(item, field.name)
+
+                    (new_item, new_item_created) = item_type['class'].objects.update_or_create(
+                        defaults=defaults, **match_data)
+
+        return Response({'success': True})
