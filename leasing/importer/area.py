@@ -72,7 +72,8 @@ class AreaImporter(BaseImporter):
                 'metadata_columns': ['kaavatunnus', 'tyyppi', 'luokka', 'pintaala', 'hyvaksymispvm',
                                      'lainvoimaisuuspvm', 'voimaantulopvm', 'vahvistamispvm'],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM kaava.kaavahakemisto_alueet AS a
                 WHERE kaavatunnus IS NOT NULL
                 ''',
@@ -85,7 +86,8 @@ class AreaImporter(BaseImporter):
                 'identifier_field_name': 'vuokraustunnus',
                 'metadata_columns': ['kiinteistotunnus', 'vuokraustunnus', 'pinta_ala_sopimuksessa', 'osoite'],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM tonttiosasto.to_vuokrausalueet_julkinen AS a
                 WHERE vuokraustunnus IS NOT NULL
                 ''',
@@ -102,7 +104,8 @@ class AreaImporter(BaseImporter):
                     'olotila_tunnus', 'olotila_selite'
                 ],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM kiinteisto.kiinteisto_alue_alueet AS a
                 WHERE kiinteistotunnus IS NOT NULL
                 ''',
@@ -119,7 +122,8 @@ class AreaImporter(BaseImporter):
                     'olotila_tunnus', 'olotila_selite'
                 ],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM kiinteisto.maaraala_alue_alueet AS a
                 WHERE maaraalatunnus IS NOT NULL
                 ''',
@@ -134,7 +138,8 @@ class AreaImporter(BaseImporter):
                     'kaavayksikkotunnus', 'kaavatunnus', 'tyyppi', 'luokka', 'kayttotarkoitus', 'pintaala',
                 ],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM kaava.kaavayksikot_alueet AS a
                 WHERE kaavayksikkotunnus IS NOT NULL
                 ''',
@@ -150,7 +155,8 @@ class AreaImporter(BaseImporter):
                     'vaihe_selite',
                 ],
                 'query': '''
-                SELECT *, ST_AsText(ST_Transform(ST_CurveToLine(a.geom), 4326)) AS geom_text
+                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                    AS geom_text
                 FROM kaava.tonttijako_alueet AS a
                 WHERE tonttijakotunnus IS NOT NULL
                 ''',
