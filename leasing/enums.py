@@ -368,7 +368,7 @@ class AreaType(Enum):
     BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperuste
     INFILL_DEVELOPMENT_COMPENSATION = 'infill_development_compensation'  # Täydennysrakentamiskorvaus
     LAND_USE_AGREEMENT = 'land_use_agreement'  # Maankäyttösopimus
-    DETAILED_PLAN = 'detailed_plan'
+    DETAILED_PLAN = 'detailed_plan'  # Kaava
     OTHER = 'other'
 
     class Labels:
