@@ -1,18 +1,39 @@
 import re
 
+from django.contrib.gis.geos import GEOSException
 from django.core.management.base import BaseCommand
+from django.db import InternalError
 
 from leasing.enums import AreaType, PlotType
 from leasing.models import Area, Lease
 from leasing.models.land_area import PlanUnit, PlanUnitIntendedUse, PlanUnitState, PlanUnitType, Plot, PlotDivisionState
 
+CODE_MAP = {
+    'E': 9908,
+    'G': 9902,
+    'K': 9901,
+    'L': 9906,
+    'P': 9903,
+    'R': 9905,
+    'T': 9902,
+    'U': 9904,
+    'V': 9909,
+    'W': 9909,
+    'VE': 9909,
+}
+
 
 def normalize_identifier(identifier):
     identifier = identifier.strip()
-    match = re.match(r'(\d+)-(\d+)-(\d+)(?:VE|L|P)?-(\d+)-P?(\d+)', identifier)
+    match = re.match(r'(\d+)-(\d+)-(\d+)([A-Za-z]+)?-(\d+)-P?(\d+)', identifier)
 
     if match:
-        return '{:03d}{:03d}{:04d}{:04d}{:03d}'.format(*[int(i) for i in match.groups()])
+        groups = list(match.groups())
+        code = groups.pop(3)
+        if code in CODE_MAP.keys():
+            groups[2] = CODE_MAP[code]
+
+        return '{:03d}{:03d}{:04d}{:04d}{:03d}'.format(*[int(i) for i in groups])
 
     match = re.match(r'(\d+)-(\d+)-(\d+)-(\d+)', identifier)
     if match:
@@ -32,7 +53,7 @@ def denormalize_identifier(identifier):
 class Command(BaseCommand):
     help = 'Attach areas'
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
         leases = Lease.objects.all()
 
         for lease in leases:
@@ -52,20 +73,36 @@ class Command(BaseCommand):
                 lease_areas[area_identifier].save()
                 self.stdout.write(' Lease area FOUND. SAVED.')
 
-                other_areas = Area.objects.filter(geometry__intersects=area.geometry).exclude(
-                    type__in=[AreaType.LEASE_AREA, AreaType.PLOT_DIVISION])
+                try:
+                    other_areas = Area.objects.filter(geometry__intersects=area.geometry).exclude(
+                        type__in=[AreaType.LEASE_AREA, AreaType.PLOT_DIVISION]).exclude(geometry__touches=area.geometry)
+                except InternalError as e:
+                    self.stdout.write(str(e))
+                    continue
 
                 for other_area in other_areas:
                     self.stdout.write('  #{} {} {}'.format(other_area.id, other_area.identifier, other_area.type))
 
-                    if other_area.type == AreaType.REAL_PROPERTY or other_area.type == AreaType.UNSEPARATED_PARCEL:
+                    try:
                         intersection = other_area.geometry & lease_areas[area_identifier].geometry
                         intersection.transform(3879)
+                    except GEOSException as e:
+                        self.stdout.write(str(e))
+                        continue
 
+                    self.stdout.write('   intersection area {} m^2'.format(intersection.area))
+
+                    # Discard too small intersecting areas
+                    if intersection.area < 1:
+                        self.stdout.write('   DISCARD')
+                        continue
+
+                    if other_area.type == AreaType.REAL_PROPERTY or other_area.type == AreaType.UNSEPARATED_PARCEL:
                         match_data = {
                             'lease_area': lease_areas[area_identifier],
                             'type': PlotType[other_area.type.value.upper()],
                             'identifier': denormalize_identifier(other_area.identifier),
+                            'in_contract': False,
                         }
                         rest_data = {
                             'area': float(other_area.metadata.get('area')),
@@ -86,19 +123,16 @@ class Command(BaseCommand):
                                             other_area.geometry)}).order_by('-interarea').first()
 
                         if plot_area and plot_area.interarea > 0:
-                            intersection = other_area.geometry & lease_areas[area_identifier].geometry
-                            intersection.transform(3879)
-
                             (plot_division_state, created) = PlotDivisionState.objects.get_or_create(
                                 name=plot_area.metadata.get('state_name'))
 
-                            try:
-                                detailed_plan_area = Area.objects.filter(
-                                    type=AreaType.DETAILED_PLAN,
-                                    identifier=other_area.metadata.get('detailed_plan_identifier')).first()
+                            detailed_plan_area = Area.objects.filter(
+                                type=AreaType.DETAILED_PLAN,
+                                identifier=other_area.metadata.get('detailed_plan_identifier')).first()
+                            if detailed_plan_area:
                                 detailed_plan_identifier = detailed_plan_area.identifier
                                 detailed_plan_latest_processing_date = None
-                            except Area.DoesNotExist:
+                            else:
                                 detailed_plan_identifier = None
                                 detailed_plan_latest_processing_date = None
 
@@ -112,6 +146,7 @@ class Command(BaseCommand):
                             match_data = {
                                 'lease_area': lease_areas[area_identifier],
                                 'identifier': denormalize_identifier(other_area.identifier),
+                                'in_contract': False,
                             }
                             rest_data = {
                                 'area': float(other_area.metadata.get('area')),
