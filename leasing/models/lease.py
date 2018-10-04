@@ -450,10 +450,10 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return result
 
-    def get_active_rents_on_date(self, the_date):
+    def get_active_rents_on_period(self, date_range_start, date_range_end):
         rent_range_filter = Q(
-            (Q(end_date=None) | Q(end_date__gte=the_date)) &
-            (Q(start_date=None) | Q(start_date__lte=the_date))
+            Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+            Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
         )
 
         return self.rents.filter(rent_range_filter)

@@ -20,7 +20,7 @@ class RentCalculation:
         amounts_for_billing_periods = {}
 
         for lease_due_date in lease_due_dates:
-            for rent in self.lease.get_active_rents_on_date(lease_due_date):
+            for rent in self.lease.get_active_rents_on_period(start_date, end_date):
                 billing_period = rent.get_billing_period_from_due_date(lease_due_date)
 
                 if not billing_period:
