@@ -11,7 +11,7 @@ from enumfields import EnumField
 from leasing.enums import Classification, DueDatesPosition, LeaseRelationType, LeaseState, NoticePeriodType
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
-from leasing.models.utils import get_range_overlap_and_remainder
+from leasing.models.utils import get_range_overlap_and_remainder, subtract_ranges_from_ranges
 from users.models import User
 
 
@@ -378,7 +378,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return sorted(due_dates)
 
-    def get_tenant_shares_for_period(self, billing_period_start_date, billing_period_end_date):
+    def get_tenant_shares_for_period(self, billing_period_start_date, billing_period_end_date):  # noqa C901 TODO
         tenant_range_filter = Q(
             Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period_start_date)) &
             Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period_end_date)) &
@@ -415,6 +415,21 @@ class Lease(TimeStampedSafeDeleteModel):
                     shares[billing_tenantcontact.contact][tenant] = []
 
                 shares[billing_tenantcontact.contact][tenant].append(billing_overlap)
+
+            ranges_for_billing_contacts = []
+            for billing_contact, tenant_overlaps in shares.items():
+                if tenant in tenant_overlaps:
+                    ranges_for_billing_contacts.extend(tenant_overlaps[tenant])
+
+            leftover_ranges = subtract_ranges_from_ranges([tenant_overlap], ranges_for_billing_contacts)
+
+            if leftover_ranges:
+                # TODO: Which tenantcontact to use when multiple tenantcontacts
+                if tenant_tenantcontacts[0].contact not in shares:
+                    shares[tenant_tenantcontacts[0].contact] = {
+                        tenant: [],
+                    }
+                shares[tenant_tenantcontacts[0].contact][tenant].extend(leftover_ranges)
 
         return shares
 
