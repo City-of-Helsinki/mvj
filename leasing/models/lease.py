@@ -1,8 +1,10 @@
 import datetime
 import re
 from decimal import ROUND_HALF_UP, Decimal
+from itertools import chain, groupby
 
 from auditlog.registry import auditlog
+from dateutil.relativedelta import relativedelta
 from django.db import connection, models, transaction
 from django.db.models import Max, Q
 from django.utils.translation import pgettext_lazy
@@ -591,6 +593,135 @@ class Lease(TimeStampedSafeDeleteModel):
             invoice_data.append(billing_period_invoices)
 
         return invoice_data
+
+    def generate_first_invoices(self, end_date=None):  # noqa C901 TODO
+        from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
+        today = datetime.date.today()
+
+        if not self.start_date:
+            # TODO: Emit error
+            return []
+
+        if not end_date:
+            end_date = today if not self.end_date or self.end_date >= today else self.end_date
+
+        years = range(self.start_date.year, end_date.year + 1)
+
+        lease_due_dates = self.get_due_dates_for_period(datetime.date(year=min(years), month=1, day=1),
+                                                        datetime.date(year=max(years), month=12, day=31))
+
+        amounts_for_billing_periods = {}
+        # Calculate amounts for all the billing periods that have
+        # occurred before the next possible invoicing day.
+        # TODO: merge with lease.determine_payable_rents_and_periods
+        for due_date in lease_due_dates:
+            due_date_invoicing_date = due_date - relativedelta(months=1, day=1)
+
+            # Don't include due dates that have an upcoming invoicing date
+            if due_date_invoicing_date > end_date:
+                continue
+
+            for rent in self.get_active_rents_on_period(self.start_date, end_date):
+                billing_period = rent.get_billing_period_from_due_date(due_date)
+
+                if not billing_period:
+                    continue
+
+                # Ignore periods that occur before the lease start date or after the lease end date
+                if ((self.start_date and billing_period[1] < self.start_date) or
+                        (self.end_date and billing_period[0] > self.end_date)):
+                    continue
+
+                # Adjust billing period start to the lease start date if needed
+                if billing_period[0] < self.start_date:
+                    billing_period = (self.start_date, billing_period[1])
+
+                # Adjust billing period end to the lease end date if needed
+                if self.end_date and billing_period[1] > self.end_date:
+                    billing_period = (billing_period[0], self.end_date)
+
+                if billing_period not in amounts_for_billing_periods:
+                    amounts_for_billing_periods[billing_period] = {
+                        'due_date': due_date,
+                        'amount': Decimal(0),
+                        'explanations': [],
+                    }
+
+                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True)
+
+                amounts_for_billing_periods[billing_period]['amount'] += this_amount
+                amounts_for_billing_periods[billing_period]['explanations'].append(explanation)
+
+        invoice_data = self.calculate_invoices(amounts_for_billing_periods)
+
+        # Flatten and sort the data
+        invoice_data = sorted(chain(*invoice_data), key=lambda x: x.get('recipient').id)
+
+        # Calculate total and determine the longest billing period
+        total_total_amount = Decimal(0)
+        recipients = set()
+        billing_period_start_date = datetime.date(year=2500, day=1, month=1)
+        billing_period_end_date = datetime.date(year=2000, day=1, month=1)
+        for invoice_datum in invoice_data:
+            total_total_amount += invoice_datum['billed_amount']
+            recipients.add(invoice_datum['recipient'])
+            billing_period_start_date = min(invoice_datum['billing_period_start_date'], billing_period_start_date)
+            billing_period_end_date = max(invoice_datum['billing_period_end_date'], billing_period_end_date)
+
+        new_due_date = today + relativedelta(days=17)  # a bit over two weeks
+
+        invoiceset = None
+        if len(recipients) > 1:
+            try:
+                invoiceset = InvoiceSet.objects.get(lease=self, billing_period_start_date=billing_period_start_date,
+                                                    billing_period_end_date=billing_period_end_date)
+            except InvoiceSet.DoesNotExist as e:
+                invoiceset = InvoiceSet.objects.create(lease=self, billing_period_start_date=billing_period_start_date,
+                                                       billing_period_end_date=billing_period_end_date)
+
+        # Group by recipient and generate merged invoices
+        invoices = []
+        for recipient, recipient_invoice_data in groupby(invoice_data, key=lambda x: x.get('recipient')):
+            total_billed_amount = Decimal(0)
+            billing_period_start_date = datetime.date(year=2500, day=1, month=1)
+            billing_period_end_date = datetime.date(year=2000, day=1, month=1)
+            rows = []
+
+            for recipient_invoice_datum in recipient_invoice_data:
+                billing_period_start_date = min(recipient_invoice_datum['billing_period_start_date'],
+                                                billing_period_start_date)
+                billing_period_end_date = max(recipient_invoice_datum['billing_period_end_date'],
+                                              billing_period_end_date)
+                total_billed_amount += recipient_invoice_datum['billed_amount']
+                rows.extend(recipient_invoice_datum['rows'])
+
+            invoice_data = {
+                'lease': self,
+                'invoicing_date': today,
+                'billing_period_start_date': billing_period_start_date,
+                'billing_period_end_date': billing_period_end_date,
+                'billed_amount': total_billed_amount,
+                'total_amount': total_total_amount,
+                'state': InvoiceState.OPEN,
+                'type': InvoiceType.CHARGE,
+                'due_date': new_due_date,
+                'recipient': recipient,
+                'invoiceset': invoiceset,
+                'generated': True,
+            }
+
+            try:
+                invoice = Invoice.objects.get(**invoice_data)
+            except Invoice.DoesNotExist as e:
+                invoice = Invoice.objects.create(**invoice_data)
+
+                for row in rows:
+                    row['invoice'] = invoice
+                    InvoiceRow.objects.create(**row)
+
+            invoices.append(invoice)
+
+        return invoices
 
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
