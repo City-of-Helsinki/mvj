@@ -1,5 +1,6 @@
 import datetime
 import re
+from decimal import ROUND_HALF_UP, Decimal
 
 from auditlog.registry import auditlog
 from django.db import connection, models, transaction
@@ -8,10 +9,12 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
-from leasing.enums import Classification, DueDatesPosition, LeaseRelationType, LeaseState, NoticePeriodType
+from leasing.enums import (
+    Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType)
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
-from leasing.models.utils import get_range_overlap_and_remainder, subtract_ranges_from_ranges
+from leasing.models.utils import (
+    combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, subtract_ranges_from_ranges)
 from users.models import User
 
 
@@ -473,6 +476,121 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return self.rents.filter(rent_range_filter)
 
+    def determine_payable_rents_and_periods(self, start_date, end_date):
+        lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
+
+        if not lease_due_dates:
+            # TODO
+            return {}
+
+        amounts_for_billing_periods = {}
+
+        for lease_due_date in lease_due_dates:
+            for rent in self.get_active_rents_on_period(start_date, end_date):
+                billing_period = rent.get_billing_period_from_due_date(lease_due_date)
+
+                if not billing_period:
+                    continue
+
+                # Ignore periods that occur before the lease start date or after the lease end date
+                if ((self.start_date and billing_period[1] < self.start_date) or
+                        (self.end_date and billing_period[0] > self.end_date)):
+                    continue
+
+                # Adjust billing period start to the lease start date if needed
+                if self.start_date and billing_period[0] < self.start_date:
+                    billing_period = (self.start_date, billing_period[1])
+
+                # Adjust billing period end to the lease end date if needed
+                if self.end_date and billing_period[1] > self.end_date:
+                    billing_period = (billing_period[0], self.end_date)
+
+                if billing_period not in amounts_for_billing_periods:
+                    amounts_for_billing_periods[billing_period] = {
+                        'due_date': lease_due_date,
+                        'amount': Decimal(0),
+                        'explanations': [],
+                    }
+
+                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True)
+
+                amounts_for_billing_periods[billing_period]['amount'] += this_amount
+                amounts_for_billing_periods[billing_period]['explanations'].append(explanation)
+
+        return amounts_for_billing_periods
+
+    def calculate_invoices(self, period_rents):
+        from leasing.models import ReceivableType
+
+        # TODO: Make configurable
+        receivable_type_rent = ReceivableType.objects.get(pk=1)
+
+        # rents = self.determine_payable_rents_and_periods(self.start_date, self.end_date)
+
+        invoice_data = []
+
+        for billing_period, period_rent in period_rents.items():
+            billing_period_invoices = []
+            rent_amount = period_rent['amount']
+
+            shares = self.get_tenant_shares_for_period(*billing_period)
+
+            for contact, share in shares.items():
+                billable_amount = Decimal(0)
+                contact_ranges = []
+                invoice_row_data = []
+
+                for tenant, overlaps in share.items():
+                    overlap_amount = Decimal(0)
+                    for overlap in overlaps:
+                        overlap_amount += fix_amount_for_overlap(
+                            rent_amount, overlap, subtract_ranges_from_ranges([billing_period], [overlap]))
+
+                        share_amount = Decimal(
+                            overlap_amount * Decimal(tenant.share_numerator / tenant.share_denominator)
+                        ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+                        billable_amount += share_amount
+
+                        contact_ranges.append(overlap)
+                        invoice_row_data.append({
+                            'tenant': tenant,
+                            'receivable_type': receivable_type_rent,
+                            'billing_period_start_date': overlap[0],
+                            'billing_period_end_date': overlap[1],
+                            'amount': share_amount,
+                        })
+
+                combined_contact_ranges = combine_ranges(contact_ranges)
+
+                total_contact_period_amount = Decimal(0)
+                for combined_contact_range in combined_contact_ranges:
+                    total_contact_period_amount += fix_amount_for_overlap(
+                        rent_amount, combined_contact_range, subtract_ranges_from_ranges(
+                            [billing_period], [combined_contact_range]))
+
+                total_contact_period_amount = Decimal(total_contact_period_amount).quantize(Decimal('.01'),
+                                                                                            rounding=ROUND_HALF_UP)
+
+                invoice_datum = {
+                    'type': InvoiceType.CHARGE,
+                    'lease': self,
+                    'recipient': contact,
+                    'due_date': period_rent['due_date'],
+                    'billing_period_start_date': billing_period[0],
+                    'billing_period_end_date': billing_period[1],
+                    'total_amount': total_contact_period_amount,
+                    'billed_amount': billable_amount,
+                    'rows': invoice_row_data,
+                    'explanations': period_rent['explanations'],
+                    'state': InvoiceState.OPEN,
+                }
+
+                billing_period_invoices.append(invoice_datum)
+
+            invoice_data.append(billing_period_invoices)
+
+        return invoice_data
 
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)

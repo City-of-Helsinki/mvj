@@ -6,7 +6,6 @@ from django.db import transaction
 from django.db.models import Q
 from sequences import get_next_value
 
-from leasing.calculation.rent import RentCalculation
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 
@@ -51,9 +50,9 @@ class Command(BaseCommand):
 
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
 
-            rent_calculation = RentCalculation(lease=lease, start_date=start_of_next_month, end_date=end_of_next_month)
+            period_rents = lease.determine_payable_rents_and_periods(start_of_next_month, end_of_next_month)
 
-            for period_invoice_data in rent_calculation.calculate_invoices():
+            for period_invoice_data in lease.calculate_invoices(period_rents):
                 invoiceset = None
                 if len(period_invoice_data) > 1:
                     billing_period_start_date = period_invoice_data[0].get('billing_period_start_date')

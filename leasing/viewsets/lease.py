@@ -14,7 +14,6 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from leasing.calculation.rent import RentCalculation
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, PlanUnit, Plot,
@@ -394,9 +393,9 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         for first_day in first_day_of_every_month:
             last_day = first_day + relativedelta(day=31)
 
-            rent_calculation = RentCalculation(lease=lease, start_date=first_day, end_date=last_day)
+            rents = lease.determine_payable_rents_and_periods(first_day, last_day)
 
-            for period_invoice_data in rent_calculation.calculate_invoices():
+            for period_invoice_data in lease.calculate_invoices(rents):
                 period_invoices = []
                 for invoice_data in period_invoice_data:
                     invoice_serializer = InvoiceSerializerWithExplanations(invoice_data)
