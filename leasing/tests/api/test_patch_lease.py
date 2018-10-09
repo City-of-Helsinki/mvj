@@ -112,3 +112,47 @@ def test_lease_area_addresses(django_db_setup, admin_client, lease_test_data, as
 
     assert lease.lease_areas.count() == 1
     assert lease.lease_areas.first().addresses.count() == 0
+
+
+@pytest.mark.django_db
+def test_patch_lease_is_invoicing_enabled_not_possible(django_db_setup, admin_client, lease_test_data):
+    lease = lease_test_data['lease']
+
+    assert lease.is_invoicing_enabled is False
+
+    data = {
+        "is_invoicing_enabled": True,
+    }
+
+    url = reverse('lease-detail', kwargs={
+        'pk': lease.id
+    })
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+
+    lease = Lease.objects.get(pk=response.data['id'])
+
+    assert lease.is_invoicing_enabled is False
+
+
+@pytest.mark.django_db
+def test_patch_lease_is_rent_info_complete_not_possible(django_db_setup, admin_client, lease_test_data):
+    lease = lease_test_data['lease']
+
+    assert lease.is_rent_info_complete is False
+
+    data = {
+        "is_rent_info_complete": True,
+    }
+
+    url = reverse('lease-detail', kwargs={
+        'pk': lease.id
+    })
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+
+    lease = Lease.objects.get(pk=response.data['id'])
+
+    assert lease.is_rent_info_complete is False

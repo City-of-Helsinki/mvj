@@ -723,6 +723,29 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return invoices
 
+    def set_is_invoicing_enabled(self, state):
+        if self.is_invoicing_enabled is state:
+            return
+
+        if state is True:
+            # TODO: Check that rents, tenants, etc. are in order
+            self.is_invoicing_enabled = True
+            self.save()
+
+            self.generate_first_invoices()
+        else:
+            self.is_invoicing_enabled = False
+            self.save()
+
+    def set_is_rent_info_complete(self, state):
+        if self.is_rent_info_complete is state:
+            return
+
+        # TODO: Notify billing
+        self.is_rent_info_complete = state
+        self.save()
+
+
 class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
     state = EnumField(LeaseState, verbose_name=_("State"), max_length=30)

@@ -259,3 +259,4 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
     class Meta:
         model = Lease
         fields = '__all__'
+        read_only_fields = ('is_invoicing_enabled', 'is_rent_info_complete')
