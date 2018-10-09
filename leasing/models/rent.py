@@ -317,12 +317,11 @@ class Rent(TimeStampedSafeDeleteModel):
 
         rent_due_dates = self.get_due_dates_as_daymonths()
 
-        period_years = {start_date.year, end_date.year}
         due_dates = []
         for rent_due_date in rent_due_dates:
-            for year in period_years:
+            for year in range(start_date.year, end_date.year + 1):
                 tmp_date = datetime.date(year=year, month=rent_due_date.month, day=rent_due_date.day)
-                if tmp_date >= start_date and tmp_date <= end_date:
+                if start_date <= tmp_date <= end_date:
                     due_dates.append(tmp_date)
 
         return due_dates
