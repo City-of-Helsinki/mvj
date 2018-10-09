@@ -439,3 +439,31 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
                         defaults=defaults, **match_data)
 
         return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def set_invoicing_state(self, request, pk=None):
+        lease = self.get_object()
+
+        if 'invoicing_enabled' not in request.data:
+            raise APIException('"invoicing_enabled" key is required')
+
+        if request.data['invoicing_enabled'] is not True and request.data['invoicing_enabled'] is not False:
+            raise APIException('"invoicing_enabled" value has to be true or false')
+
+        lease.set_is_invoicing_enabled(request.data['invoicing_enabled'])
+
+        return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def set_rent_info_completion_state(self, request, pk=None):
+        lease = self.get_object()
+
+        if 'rent_info_complete' not in request.data:
+            raise APIException('"rent_info_complete" key is required')
+
+        if request.data['rent_info_complete'] is not True and request.data['rent_info_complete'] is not False:
+            raise APIException('"rent_info_complete" value has to be true or false')
+
+        lease.set_is_rent_info_complete(request.data['rent_info_complete'])
+
+        return Response({'success': True})
