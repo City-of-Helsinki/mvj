@@ -55,6 +55,9 @@ class Tenant(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Tenant")
         verbose_name_plural = pgettext_lazy("Model name", "Tenants")
 
+    def __str__(self):
+        return 'Tenant id: {} share: {}/{}'.format(self.id, self.share_numerator, self.share_denominator)
+
 
 class TenantContact(TimeStampedSafeDeleteModel):
     type = EnumField(TenantContactType, max_length=255)
@@ -70,6 +73,10 @@ class TenantContact(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Tenant contact")
         verbose_name_plural = pgettext_lazy("Model name", "Tenant contacts")
+
+    def __str__(self):
+        return 'TenantContact id: {} contact: {} period: {} - {}'.format(self.id, self.contact, self.start_date,
+                                                                         self.end_date)
 
     @property
     def date_range(self):
