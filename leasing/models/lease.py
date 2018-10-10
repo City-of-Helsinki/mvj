@@ -607,6 +607,9 @@ class Lease(TimeStampedSafeDeleteModel):
 
         years = range(self.start_date.year, end_date.year + 1)
 
+        if not years:
+            return []
+
         lease_due_dates = self.get_due_dates_for_period(datetime.date(year=min(years), month=1, day=1),
                                                         datetime.date(year=max(years), month=12, day=31))
 
