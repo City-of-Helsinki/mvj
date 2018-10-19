@@ -231,7 +231,7 @@ def test_create_credit_invoice_one_row_full(django_db_setup, lease_factory, cont
     assert credit_note_row.amount == pytest.approx(Decimal(70))
     assert credit_note_row.receivable_type == receivable_type2
 
-    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.OPEN
+    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.PARTIALLY_REFUNDED
 
 
 @pytest.mark.django_db
@@ -293,7 +293,7 @@ def test_create_credit_invoice_one_row_partly(django_db_setup, lease_factory, co
     assert credit_note_row.amount == pytest.approx(Decimal(20))
     assert credit_note_row.receivable_type == receivable_type2
 
-    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.OPEN
+    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.PARTIALLY_REFUNDED
 
 
 @pytest.mark.django_db
@@ -355,7 +355,7 @@ def test_create_credit_invoice_full_one_receivable_type(django_db_setup, lease_f
     assert credit_note_row.amount == pytest.approx(Decimal(70))
     assert credit_note_row.receivable_type == receivable_type2
 
-    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.OPEN
+    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.PARTIALLY_REFUNDED
 
 
 @pytest.mark.django_db

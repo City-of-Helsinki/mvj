@@ -271,10 +271,13 @@ class Invoice(TimeStampedSafeDeleteModel):
                 amount=invoice_row_amount,
             )
 
-        # TODO: check if fully refunded when refunding a receivable_type
+        # TODO: check if fully refunded when refunding a receivable_type or when refunding multiple times
         if not row_ids and not amount and not receivable_type:
             # TODO: Set only when credit note sent to SAP?
             self.state = InvoiceState.REFUNDED
+        else:
+            self.state = InvoiceState.PARTIALLY_REFUNDED
+
             self.save()
 
         return credit_note
