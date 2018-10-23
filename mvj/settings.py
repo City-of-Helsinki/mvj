@@ -175,3 +175,5 @@ LASKE_VALUES = {
 
 # See: https://github.com/jjkester/django-auditlog/pull/81
 USE_NATIVE_JSONFIELD = True
+
+MVJ_DUE_DATE_OFFSET_DAYS = 17

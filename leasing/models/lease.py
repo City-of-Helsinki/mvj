@@ -5,6 +5,7 @@ from itertools import chain, groupby
 
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.db import connection, models, transaction
 from django.db.models import Max, Q
 from django.utils.translation import pgettext_lazy
@@ -671,7 +672,7 @@ class Lease(TimeStampedSafeDeleteModel):
             billing_period_start_date = min(invoice_datum['billing_period_start_date'], billing_period_start_date)
             billing_period_end_date = max(invoice_datum['billing_period_end_date'], billing_period_end_date)
 
-        new_due_date = today + relativedelta(days=17)  # a bit over two weeks
+        new_due_date = today + relativedelta(days=settings.MVJ_DUE_DATE_OFFSET_DAYS)
 
         invoiceset = None
         if len(recipients) > 1:
