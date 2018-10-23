@@ -985,3 +985,63 @@ def test_calculate_penalty_amount(django_db_setup, lease_factory, contact_factor
     assert penalty_interest_data['interest_end_date'] == calculation_date
     assert penalty_interest_data['total_interest_amount'].compare(Decimal('11.76')) == 0
     assert len(penalty_interest_data['interest_periods']) == 4
+
+
+@pytest.mark.django_db
+def test_is_same_recipient_and_tenants(django_db_setup, invoices_test_data):
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2'])
+
+
+@pytest.mark.django_db
+def test_is_same_recipient_and_tenants_dict(django_db_setup, invoices_test_data):
+    invoice_keys = [
+        'type', 'lease', 'recipient', 'due_date', 'billing_period_start_date', 'billing_period_end_date',
+        'total_amount', 'billed_amount', 'state'
+    ]
+    invoice2_dict = {}
+    for key in invoice_keys:
+        invoice2_dict[key] = getattr(invoices_test_data['invoice2'], key)
+
+    invoice2_dict['rows'] = []
+    invoice_row_keys = ['tenant', 'receivable_type', 'billing_period_start_date', 'billing_period_end_date', 'amount']
+    for row in invoices_test_data['invoice2'].rows.all():
+        invoice_row_dict = {}
+        for key in invoice_row_keys:
+            invoice_row_dict[key] = getattr(row, key)
+
+        invoice2_dict['rows'].append(invoice_row_dict)
+
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoice2_dict)
+
+
+@pytest.mark.django_db
+def test_is_same_recipient_and_tenants2(django_db_setup, invoices_test_data):
+    invoice_row = invoices_test_data['invoice2'].rows.first()
+    invoice_row.tenant = invoices_test_data['tenant2']
+    invoice_row.save()
+
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2']) is False
+
+
+@pytest.mark.django_db
+def test_is_same_recipient_and_tenants3(django_db_setup, invoices_test_data, contact_factory):
+    contact3 = contact_factory(first_name="First name 3", last_name="Last name 3", type=ContactType.PERSON)
+
+    invoice1 = invoices_test_data['invoice1']
+    invoice1.recipient = contact3
+    invoice1.save()
+
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2']) is False
+
+
+@pytest.mark.django_db
+def test_is_same_recipient_and_tenants4(django_db_setup, invoices_test_data, contact_factory):
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2'])
+
+    invoices_test_data['invoice1'].rows.all().delete()
+
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2']) is False
+
+    invoices_test_data['invoice2'].rows.all().delete()
+
+    assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2'])

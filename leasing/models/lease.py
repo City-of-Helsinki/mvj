@@ -479,6 +479,18 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return self.rents.filter(rent_range_filter)
 
+    def get_rent_amount_and_explations_for_period(self, start_date, end_date):
+        amount = Decimal(0)
+        explanations = []
+
+        for rent in self.get_active_rents_on_period(start_date, end_date):
+            (this_amount, explanation) = rent.get_amount_for_date_range(start_date, end_date, explain=True)
+
+            amount += this_amount
+            explanations.append(explanation)
+
+        return amount, explanations
+
     def determine_payable_rents_and_periods(self, start_date, end_date):
         lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
 

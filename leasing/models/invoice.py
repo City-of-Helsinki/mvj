@@ -1,4 +1,5 @@
 import calendar
+from collections import Counter
 from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
 
@@ -278,7 +279,7 @@ class Invoice(TimeStampedSafeDeleteModel):
         else:
             self.state = InvoiceState.PARTIALLY_REFUNDED
 
-            self.save()
+        self.save()
 
         return credit_note
 
@@ -348,6 +349,49 @@ class Invoice(TimeStampedSafeDeleteModel):
                                                                                         rounding=ROUND_HALF_UP)
 
         return penalty_interest_data
+
+    def is_same_recipient_and_tenants(self, invoice):
+        """Checks that the self and dict of invoice data have the same recipients,
+        same number of rows and the same tenants on the rows."""
+        assert isinstance(invoice, Invoice) or isinstance(invoice, dict)
+
+        if isinstance(invoice, Invoice):
+            invoice_as_dict = {
+                'lease': invoice.lease,
+                'recipient': invoice.recipient,
+                'rows': [],
+            }
+
+            for row in invoice.rows.all():
+                invoice_as_dict['rows'].append({
+                    'tenant': row.tenant,
+                })
+
+            invoice = invoice_as_dict
+
+        if self.lease != invoice['lease']:
+            return False
+
+        if self.recipient != invoice['recipient']:
+            return False
+
+        self_rows = self.rows.all()
+        invoice_rows = invoice['rows']
+
+        if self_rows.count() == 0 and len(invoice_rows) == 0:
+            return True
+
+        if self_rows.count() != len(invoice_rows):
+            return False
+
+        self_tenants = [row.tenant for row in self_rows]
+        invoice_tenants = [row['tenant'] for row in invoice_rows]
+
+        # TODO: check for tenantcontact?
+        if Counter(self_tenants) == Counter(invoice_tenants):
+            return True
+
+        return False
 
 
 class InvoiceRow(TimeStampedSafeDeleteModel):
