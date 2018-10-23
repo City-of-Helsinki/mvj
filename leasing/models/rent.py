@@ -225,6 +225,12 @@ class Rent(TimeStampedSafeDeleteModel):
         else:
             date_ranges = [(date_range_start, date_range_end)]
 
+        # We may need to calculate multiple separate ranges if cycle
+        # is APRIL_TO_MARCH and the rent type is index because the
+        # index number could be different in the start of the year
+        if self.cycle == RentCycle.APRIL_TO_MARCH and self.type == RentType.INDEX:
+            date_ranges = self.split_ranges_by_cycle(date_ranges)
+
         for (range_start, range_end) in date_ranges:
             if self.type == RentType.ONE_TIME:
                 total += self.amount
@@ -244,7 +250,7 @@ class Rent(TimeStampedSafeDeleteModel):
                 elif self.type == RentType.INDEX:
                     original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
-                    index = Index.objects.get_latest_for_date(contract_overlap[0])
+                    index = self.get_index_for_date(contract_overlap[0])
 
                     index_calculation = IndexCalculation(amount=original_rent_amount, index=index,
                                                          index_type=self.index_type, precision=self.index_rounding,
@@ -365,6 +371,41 @@ class Rent(TimeStampedSafeDeleteModel):
 
             return split_date_range((seasonal_period_start, seasonal_period_end), len(due_dates_in_period))[
                 due_date_index]
+
+    def split_range_by_cycle(self, date_range_start, date_range_end):
+        if not self.cycle or self.cycle != RentCycle.APRIL_TO_MARCH:
+            return [(date_range_start, date_range_end)]
+
+        if date_range_start.year != date_range_end.year:
+            raise NotImplementedError('Cannot split range that is spanning a year boundary')
+
+        cycle_change_date = datetime.date(year=date_range_start.year, month=4, day=1)
+        if date_range_start < cycle_change_date < date_range_end:
+            return [
+                (date_range_start, cycle_change_date - relativedelta(days=1)),
+                (cycle_change_date, date_range_end)
+            ]
+        else:
+            return [(date_range_start, date_range_end)]
+
+    def split_ranges_by_cycle(self, ranges):
+        if not self.cycle or self.cycle != RentCycle.APRIL_TO_MARCH:
+            return ranges
+
+        new_ranges = []
+        for one_range in ranges:
+            new_ranges.extend(self.split_range_by_cycle(*one_range))
+
+        return new_ranges
+
+    def get_index_for_date(self, the_date):
+        first_quarter_start = datetime.date(year=the_date.year, month=1, day=1)
+        first_quarter_end = datetime.date(year=the_date.year, month=3, day=31)
+
+        if self.cycle == RentCycle.APRIL_TO_MARCH and (first_quarter_start <= the_date <= first_quarter_end):
+            return Index.objects.get_latest_for_year(the_date.year - 1)
+
+        return Index.objects.get_latest_for_date(the_date)
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
@@ -680,6 +721,13 @@ class IndexManager(models.Manager):
             the_date = datetime.date.today()
 
         return self.get_queryset().filter(year__lte=the_date.year - 1, month__isnull=True).order_by('-year').first()
+
+    def get_latest_for_year(self, year=None):
+        """Returns the latest year average index for year"""
+        if year is None:
+            year = datetime.date.today().year
+
+        return self.get_queryset().filter(year__lte=year - 1, month__isnull=True).order_by('-year').first()
 
 
 class Index(models.Model):
