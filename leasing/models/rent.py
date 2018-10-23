@@ -285,7 +285,7 @@ class Rent(TimeStampedSafeDeleteModel):
                     explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
                                     related_item=contract_rent_explanation_item)
 
-                total += contract_amount
+                total += max(Decimal(0), contract_amount)
 
         explanation.add(subject=self, date_ranges=[(date_range_start, date_range_end)], amount=total)
 
