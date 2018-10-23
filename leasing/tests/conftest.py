@@ -1,4 +1,6 @@
+import datetime
 import unittest
+from decimal import Decimal
 from pathlib import Path
 
 import factory
@@ -9,11 +11,12 @@ from django.utils.crypto import get_random_string
 from pytest_factoryboy import register
 
 from leasing.enums import (
-    ContactType, IndexType, InvoiceState, InvoiceType, LeaseAreaType, LocationType, RentCycle, RentType,
-    TenantContactType)
+    ContactType, IndexType, InvoiceState, InvoiceType, LeaseAreaType, LocationType, RentAdjustmentType, RentCycle,
+    RentType, TenantContactType)
 from leasing.models import (
-    Contact, District, Invoice, Lease, LeaseArea, LeaseType, Municipality, NoticePeriod, Rent, Tenant, TenantContact)
-from leasing.models.invoice import InvoiceRow, InvoiceSet
+    Contact, ContractRent, District, FixedInitialYearRent, Invoice, Lease, LeaseArea, LeaseType, Municipality,
+    NoticePeriod, Rent, RentAdjustment, Tenant, TenantContact)
+from leasing.models.invoice import InvoiceRow, InvoiceSet, ReceivableType
 from users.models import User
 
 
@@ -101,6 +104,26 @@ class RentFactory(factory.DjangoModelFactory):
 
 
 @register
+class ContractRentFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ContractRent
+
+
+@register
+class RentAdjustmentFactory(factory.DjangoModelFactory):
+    type = RentAdjustmentType.DISCOUNT
+
+    class Meta:
+        model = RentAdjustment
+
+
+@register
+class FixedInitialYearRentFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = FixedInitialYearRent
+
+
+@register
 class LeaseAreaFactory(factory.DjangoModelFactory):
     type = LeaseAreaType.REAL_PROPERTY
     location = LocationType.SURFACE
@@ -168,4 +191,71 @@ def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_conta
         'lease': lease,
         'tenants': tenants,
         'tenantcontacts': tenantcontacts,
+    }
+
+
+@pytest.fixture
+def invoices_test_data(lease_factory, contact_factory, tenant_factory, invoice_factory, invoice_row_factory):
+    receivable_type = ReceivableType.objects.get(pk=1)
+
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=5, notice_period_id=1)
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
+    tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
+
+    contact1 = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
+
+    billing_period_start_date = datetime.date(year=2018, month=1, day=1)
+    billing_period_end_date = datetime.date(year=2018, month=12, day=31)
+
+    # Same recipients and tenants
+    invoice1 = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(500),
+        billed_amount=Decimal(500),
+        outstanding_amount=Decimal(500),
+        due_date=datetime.date(year=2018, month=10, day=15),
+        recipient=contact1,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date
+    )
+
+    invoice_row_factory(
+        invoice=invoice1,
+        tenant=tenant1,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal(500),
+    )
+
+    invoice2 = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(100),
+        billed_amount=Decimal(100),
+        outstanding_amount=Decimal(100),
+        due_date=datetime.date(year=2018, month=10, day=1),
+        recipient=contact1,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date
+    )
+
+    invoice_row_factory(
+        invoice=invoice2,
+        tenant=tenant1,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal(100),
+    )
+
+    return {
+        'lease': lease,
+        'tenant1': tenant1,
+        'tenant2': tenant2,
+        'contact1': contact1,
+        'contact2': contact2,
+        'invoice1': invoice1,
+        'invoice2': invoice2,
     }
