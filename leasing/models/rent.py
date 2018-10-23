@@ -273,7 +273,7 @@ class Rent(TimeStampedSafeDeleteModel):
                         continue
 
                     (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
-                        range_start, range_end, *rent_adjustment.date_range)
+                        contract_overlap[0], contract_overlap[1], *rent_adjustment.date_range)
 
                     if not adjustment_overlap:
                         continue
