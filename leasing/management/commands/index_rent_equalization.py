@@ -101,7 +101,7 @@ class Command(BaseCommand):
                             invoice = Invoice.objects.get(**invoice_data)
                             self.stdout.write(
                                 '  Invoice already exists. Invoice id {}. Number {}'.format(invoice.id, invoice.number))
-                        except Invoice.DoesNotExist as e:
+                        except Invoice.DoesNotExist:
                             with transaction.atomic():
                                 # invoice_data['number'] = get_next_value('invoice_numbers', initial_value=1000000)
                                 invoice_data['invoicing_date'] = today

@@ -691,7 +691,7 @@ class Lease(TimeStampedSafeDeleteModel):
             try:
                 invoiceset = InvoiceSet.objects.get(lease=self, billing_period_start_date=billing_period_start_date,
                                                     billing_period_end_date=billing_period_end_date)
-            except InvoiceSet.DoesNotExist as e:
+            except InvoiceSet.DoesNotExist:
                 invoiceset = InvoiceSet.objects.create(lease=self, billing_period_start_date=billing_period_start_date,
                                                        billing_period_end_date=billing_period_end_date)
 
@@ -728,7 +728,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
             try:
                 invoice = Invoice.objects.get(**invoice_data)
-            except Invoice.DoesNotExist as e:
+            except Invoice.DoesNotExist:
                 invoice = Invoice.objects.create(**invoice_data)
 
                 for row in rows:
