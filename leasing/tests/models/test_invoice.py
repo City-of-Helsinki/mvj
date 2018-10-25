@@ -52,6 +52,7 @@ def test_create_credit_invoice_full(django_db_setup, lease_factory, contact_fact
     assert credit_note.rows.all().count() == 1
     assert credit_note.billing_period_start_date == billing_period_start_date
     assert credit_note.billing_period_end_date == billing_period_end_date
+    assert credit_note.billed_amount == Decimal(0)
 
     credit_note_row = credit_note.rows.first()
 
@@ -158,6 +159,7 @@ def test_create_credit_invoice_full_two_rows(django_db_setup, lease_factory, con
     assert credit_note.rows.all().count() == 2
     assert credit_note.billing_period_start_date == billing_period_start_date
     assert credit_note.billing_period_end_date == billing_period_end_date
+    assert credit_note.billed_amount == Decimal(0)
 
     credit_note_row = credit_note.rows.filter(receivable_type=receivable_type).first()
 
@@ -225,6 +227,7 @@ def test_create_credit_invoice_one_row_full(django_db_setup, lease_factory, cont
     assert credit_note.rows.all().count() == 1
     assert credit_note.billing_period_start_date == billing_period_start_date
     assert credit_note.billing_period_end_date == billing_period_end_date
+    assert credit_note.billed_amount == Decimal(0)
 
     credit_note_row = credit_note.rows.first()
 
@@ -287,6 +290,7 @@ def test_create_credit_invoice_one_row_partly(django_db_setup, lease_factory, co
     assert credit_note.rows.all().count() == 1
     assert credit_note.billing_period_start_date == billing_period_start_date
     assert credit_note.billing_period_end_date == billing_period_end_date
+    assert credit_note.billed_amount == Decimal(0)
 
     credit_note_row = credit_note.rows.first()
 
@@ -349,6 +353,7 @@ def test_create_credit_invoice_full_one_receivable_type(django_db_setup, lease_f
     assert credit_note.rows.all().count() == 1
     assert credit_note.billing_period_start_date == billing_period_start_date
     assert credit_note.billing_period_end_date == billing_period_end_date
+    assert credit_note.billed_amount == Decimal(0)
 
     credit_note_row = credit_note.rows.first()
 
@@ -537,6 +542,7 @@ def test_create_credit_invoiceset_full(django_db_setup, lease_factory, contact_f
     assert credit_note1.rows.count() == 2
     assert credit_note1.billing_period_start_date == billing_period_start_date
     assert credit_note1.billing_period_end_date == billing_period_end_date
+    assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row1.amount == pytest.approx(Decimal(123.45))
@@ -552,6 +558,7 @@ def test_create_credit_invoiceset_full(django_db_setup, lease_factory, contact_f
     assert credit_note2.rows.count() == 2
     assert credit_note2.billing_period_start_date == billing_period_start_date
     assert credit_note2.billing_period_end_date == billing_period_end_date
+    assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row3 = credit_note2.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row3.amount == pytest.approx(Decimal(150))
@@ -665,6 +672,7 @@ def test_create_credit_invoiceset_receivable_type(django_db_setup, lease_factory
     assert credit_note1.rows.count() == 1
     assert credit_note1.billing_period_start_date == billing_period_start_date
     assert credit_note1.billing_period_end_date == billing_period_end_date
+    assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row1.amount == pytest.approx(Decimal(100))
@@ -677,6 +685,7 @@ def test_create_credit_invoiceset_receivable_type(django_db_setup, lease_factory
     assert credit_note2.rows.count() == 1
     assert credit_note2.billing_period_start_date == billing_period_start_date
     assert credit_note2.billing_period_end_date == billing_period_end_date
+    assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row2.amount == pytest.approx(Decimal(150))
@@ -803,6 +812,7 @@ def test_create_credit_invoiceset_receivable_type_partly(django_db_setup, lease_
     assert credit_note1.rows.count() == 1
     assert credit_note1.billing_period_start_date == billing_period_start_date
     assert credit_note1.billing_period_end_date == billing_period_end_date
+    assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row1.amount == pytest.approx(Decimal(100))
@@ -817,6 +827,7 @@ def test_create_credit_invoiceset_receivable_type_partly(django_db_setup, lease_
     assert credit_note2.rows.filter(tenant=tenant3).count() == 1
     assert credit_note2.billing_period_start_date == billing_period_start_date
     assert credit_note2.billing_period_end_date == billing_period_end_date
+    assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.filter(tenant=tenant2).first()
     assert credit_note_row2.amount == pytest.approx(Decimal(33.33))
@@ -936,6 +947,7 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(django_db_se
     assert credit_note1.rows.count() == 1
     assert credit_note1.billing_period_start_date == billing_period_start_date
     assert credit_note1.billing_period_end_date == billing_period_end_date
+    assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
     assert credit_note_row1.amount == pytest.approx(Decimal(66.67))
@@ -949,6 +961,7 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(django_db_se
     assert credit_note2.rows.filter(receivable_type=receivable_type).count() == 2
     assert credit_note2.billing_period_start_date == billing_period_start_date
     assert credit_note2.billing_period_end_date == billing_period_end_date
+    assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.first()
     assert credit_note_row2.amount == pytest.approx(Decimal(66.66))

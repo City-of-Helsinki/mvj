@@ -165,6 +165,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     postpone_date = models.DateField(verbose_name=_("Postpone date"), null=True, blank=True)
 
     # In Finnish: Laskun pääoma
+    # TODO: Remove column and calculate total on-the-fly
     total_amount = models.DecimalField(verbose_name=_("Total amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Laskutettu määrä
@@ -211,6 +212,46 @@ class Invoice(TimeStampedSafeDeleteModel):
     def __str__(self):
         return str(self.pk)
 
+    def delete(self, force_policy=None, **kwargs):
+        super().delete(force_policy=force_policy, **kwargs)
+
+        if self.invoiceset:
+            other_invoice = self.invoiceset.invoices.filter(
+                type=self.type, deleted__isnull=True).exclude(id=self.id).first()
+            if other_invoice:
+                other_invoice.update_amounts()
+
+    def update_amounts(self):
+        rows_sum = self.rows.aggregate(sum=Sum('amount'))['sum']
+
+        self.billed_amount = rows_sum
+
+        if not self.invoiceset:
+            self.total_amount = rows_sum
+        else:
+            # Sum amounts from all of the rows in the same type of invoices in this invoiceset
+            invoiceset_rows_sum = InvoiceRow.objects.filter(
+                invoice__invoiceset=self.invoiceset, invoice__type=self.type, invoice__deleted__isnull=True,
+                deleted__isnull=True).aggregate(sum=Sum('amount'))['sum']
+            if not invoiceset_rows_sum:
+                invoiceset_rows_sum = Decimal(0)
+
+            # Update sum to all of the same type invoices in this invoiceset
+            self.invoiceset.invoices.filter(type=self.type, deleted__isnull=True).exclude(id=self.id).update(
+                total_amount=invoiceset_rows_sum)
+
+            # Need to set self total_amount separately because the
+            # total_amount is not automatically refreshed from the
+            # database
+            self.total_amount = invoiceset_rows_sum
+
+        payments_total = self.payments.aggregate(sum=Sum('paid_amount'))['sum']
+        if not payments_total:
+            payments_total = Decimal(0)
+
+        self.outstanding_amount = max(Decimal(0), self.billed_amount - payments_total)
+        self.save()
+
     def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None, notes=''):
         """Create a credit note for this invoice"""
         if self.type != InvoiceType.CHARGE:
@@ -245,13 +286,15 @@ class Invoice(TimeStampedSafeDeleteModel):
             due_date=self.due_date,
             invoicing_date=today,
             state=InvoiceState.OPEN,
-            total_amount=self.total_amount,
-            billed_amount=self.billed_amount,
+            total_amount=Decimal(0),
+            billed_amount=Decimal(0),
             billing_period_start_date=self.billing_period_start_date,
             billing_period_end_date=self.billing_period_end_date,
             credited_invoice=self,
             notes=notes,
         )
+
+        total_credited_amount = Decimal(0)
 
         for invoice_row in row_queryset:
             if amount and has_tenants:
@@ -259,9 +302,11 @@ class Invoice(TimeStampedSafeDeleteModel):
                     amount * Decimal(invoice_row.tenant.share_numerator / new_denominator)).quantize(
                         Decimal('.01'), rounding=ROUND_HALF_UP)
             elif amount:
-                invoice_row_amount = amount / row_count
+                invoice_row_amount = Decimal(amount) / row_count
             else:
                 invoice_row_amount = invoice_row.amount
+
+            total_credited_amount += invoice_row_amount
 
             InvoiceRow.objects.create(
                 invoice=credit_note,
@@ -271,6 +316,9 @@ class Invoice(TimeStampedSafeDeleteModel):
                 billing_period_end_date=invoice_row.billing_period_end_date,
                 amount=invoice_row_amount,
             )
+
+        credit_note.total_amount = total_credited_amount
+        credit_note.save()
 
         # TODO: check if fully refunded when refunding a receivable_type or when refunding multiple times
         if not row_ids and not amount and not receivable_type:

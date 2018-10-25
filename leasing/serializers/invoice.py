@@ -136,6 +136,12 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.update_amounts()
+
+        return instance
+
     class Meta:
         model = Invoice
         exclude = ('deleted',)
