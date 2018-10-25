@@ -62,10 +62,17 @@ class InvoiceRowCreateUpdateSerializer(serializers.ModelSerializer):
                   'description', 'amount')
 
 
+class CreditInvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = ('id', 'number', 'due_date', 'total_amount')
+
+
 class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     recipient = ContactSerializer()
     rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
     payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
+    credit_invoices = CreditInvoiceSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Invoice

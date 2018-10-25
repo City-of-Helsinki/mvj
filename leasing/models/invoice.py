@@ -201,7 +201,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
     # In Finnish: Hyvitetty lasku
-    credited_invoice = models.ForeignKey('self', verbose_name=_("Credited invoice"), related_name='credited_invoices',
+    credited_invoice = models.ForeignKey('self', verbose_name=_("Credited invoice"), related_name='credit_invoices',
                                          null=True, blank=True, on_delete=models.PROTECT)
 
     class Meta:
