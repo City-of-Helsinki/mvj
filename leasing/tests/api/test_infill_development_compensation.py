@@ -88,5 +88,5 @@ def test_download_attachment(django_db_setup, admin_client, client, lease_test_d
     # admin client should have the permission to download the file
     response = admin_client.get(url)
     assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
-    assert response.get('Content-Disposition') == 'attachment; filename="dummy_file.zip"'
+    assert response.get('Content-Disposition').startswith('attachment; filename="dummy_file')
     assert response.content == b'dummy data'
