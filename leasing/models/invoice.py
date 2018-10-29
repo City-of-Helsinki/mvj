@@ -252,7 +252,7 @@ class Invoice(TimeStampedSafeDeleteModel):
         self.outstanding_amount = max(Decimal(0), self.billed_amount - payments_total)
         self.save()
 
-    def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None, notes=''):
+    def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None, notes=''):  # noqa C901 TODO
         """Create a credit note for this invoice"""
         if self.type != InvoiceType.CHARGE:
             raise RuntimeError(
@@ -320,14 +320,17 @@ class Invoice(TimeStampedSafeDeleteModel):
         credit_note.total_amount = total_credited_amount
         credit_note.save()
 
-        # TODO: check if fully refunded when refunding a receivable_type or when refunding multiple times
-        if not row_ids and not amount and not receivable_type:
-            # TODO: Set only when credit note sent to SAP?
-            self.state = InvoiceState.REFUNDED
-        else:
-            self.state = InvoiceState.PARTIALLY_REFUNDED
+        total_credited_amount = InvoiceRow.objects.filter(
+            invoice__in=self.credit_invoices.all(), invoice__type=InvoiceType.CREDIT_NOTE,
+            invoice__deleted__isnull=True, deleted__isnull=True).aggregate(sum=Sum('amount'))['sum']
 
-        self.save()
+        if total_credited_amount > Decimal(0):
+            if total_credited_amount.compare(self.billed_amount) > Decimal(-1):
+                self.state = InvoiceState.REFUNDED
+            else:
+                self.state = InvoiceState.PARTIALLY_REFUNDED
+
+            self.save()
 
         return credit_note
 

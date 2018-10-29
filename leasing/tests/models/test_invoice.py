@@ -25,8 +25,8 @@ def test_create_credit_invoice_full(django_db_setup, lease_factory, contact_fact
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(123.45),
-        billed_amount=Decimal(123.45),
+        total_amount=Decimal('123.45'),
+        billed_amount=Decimal('123.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -39,7 +39,7 @@ def test_create_credit_invoice_full(django_db_setup, lease_factory, contact_fact
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice.create_credit_invoice()
@@ -56,7 +56,7 @@ def test_create_credit_invoice_full(django_db_setup, lease_factory, contact_fact
 
     credit_note_row = credit_note.rows.first()
 
-    assert credit_note_row.amount == pytest.approx(Decimal(123.45))
+    assert credit_note_row.amount == pytest.approx(Decimal('123.45'))
     assert credit_note_row.receivable_type == receivable_type
 
     assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.REFUNDED
@@ -80,8 +80,8 @@ def test_create_credit_invoice_fails(django_db_setup, lease_factory, contact_fac
     invoice = invoice_factory(
         type=InvoiceType.CREDIT_NOTE,
         lease=lease,
-        total_amount=Decimal(123.45),
-        billed_amount=Decimal(123.45),
+        total_amount=Decimal('123.45'),
+        billed_amount=Decimal('123.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -94,7 +94,7 @@ def test_create_credit_invoice_fails(django_db_setup, lease_factory, contact_fac
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     with pytest.raises(RuntimeError) as e:
@@ -123,8 +123,8 @@ def test_create_credit_invoice_full_two_rows(django_db_setup, lease_factory, con
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('193.45'),
+        billed_amount=Decimal('193.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -138,7 +138,7 @@ def test_create_credit_invoice_full_two_rows(django_db_setup, lease_factory, con
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row_factory(
@@ -163,7 +163,7 @@ def test_create_credit_invoice_full_two_rows(django_db_setup, lease_factory, con
 
     credit_note_row = credit_note.rows.filter(receivable_type=receivable_type).first()
 
-    assert credit_note_row.amount == pytest.approx(Decimal(123.45))
+    assert credit_note_row.amount == pytest.approx(Decimal('123.45'))
     assert credit_note_row.receivable_type == receivable_type
 
     credit_note_row2 = credit_note.rows.filter(receivable_type=receivable_type2).first()
@@ -191,8 +191,8 @@ def test_create_credit_invoice_one_row_full(django_db_setup, lease_factory, cont
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('213.45'),
+        billed_amount=Decimal('213.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -206,7 +206,7 @@ def test_create_credit_invoice_one_row_full(django_db_setup, lease_factory, cont
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row2 = invoice_row_factory(
@@ -254,8 +254,8 @@ def test_create_credit_invoice_one_row_partly(django_db_setup, lease_factory, co
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('213.45'),
+        billed_amount=Decimal('213.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -269,7 +269,7 @@ def test_create_credit_invoice_one_row_partly(django_db_setup, lease_factory, co
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row2 = invoice_row_factory(
@@ -317,8 +317,8 @@ def test_create_credit_invoice_full_one_receivable_type(django_db_setup, lease_f
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('213.45'),
+        billed_amount=Decimal('213.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -332,7 +332,7 @@ def test_create_credit_invoice_full_one_receivable_type(django_db_setup, lease_f
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row_factory(
@@ -387,8 +387,8 @@ def test_create_credit_invoiceset_fails(django_db_setup, lease_factory, contact_
     invoice = invoice_factory(
         type=InvoiceType.CREDIT_NOTE,
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('213.45'),
+        billed_amount=Decimal('213.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -403,7 +403,7 @@ def test_create_credit_invoiceset_fails(django_db_setup, lease_factory, contact_
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row_factory(
@@ -472,8 +472,8 @@ def test_create_credit_invoiceset_full(django_db_setup, lease_factory, contact_f
 
     invoice = invoice_factory(
         lease=lease,
-        total_amount=Decimal(213.45),
-        billed_amount=Decimal(213.45),
+        total_amount=Decimal('193.45'),
+        billed_amount=Decimal('193.45'),
         recipient=contact,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
@@ -488,7 +488,7 @@ def test_create_credit_invoiceset_full(django_db_setup, lease_factory, contact_f
         receivable_type=receivable_type,
         billing_period_start_date=billing_period_start_date,
         billing_period_end_date=billing_period_end_date,
-        amount=Decimal(123.45),
+        amount=Decimal('123.45'),
     )
 
     invoice_row_factory(
@@ -545,7 +545,7 @@ def test_create_credit_invoiceset_full(django_db_setup, lease_factory, contact_f
     assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
-    assert credit_note_row1.amount == pytest.approx(Decimal(123.45))
+    assert credit_note_row1.amount == pytest.approx(Decimal('123.45'))
 
     credit_note_row2 = credit_note1.rows.filter(receivable_type=receivable_type2).first()
     assert credit_note_row2.amount == pytest.approx(Decimal(70))
@@ -830,10 +830,10 @@ def test_create_credit_invoiceset_receivable_type_partly(django_db_setup, lease_
     assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.filter(tenant=tenant2).first()
-    assert credit_note_row2.amount == pytest.approx(Decimal(33.33))
+    assert credit_note_row2.amount == pytest.approx(Decimal('33.33'))
 
     credit_note_row3 = credit_note2.rows.filter(tenant=tenant3).first()
-    assert credit_note_row3.amount == pytest.approx(Decimal(66.67))
+    assert credit_note_row3.amount == pytest.approx(Decimal('66.67'))
 
 
 @pytest.mark.django_db
@@ -950,7 +950,7 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(django_db_se
     assert credit_note1.billed_amount == Decimal(0)
 
     credit_note_row1 = credit_note1.rows.filter(receivable_type=receivable_type).first()
-    assert credit_note_row1.amount == pytest.approx(Decimal(66.67))
+    assert credit_note_row1.amount == pytest.approx(Decimal('66.67'))
 
     credit_note2 = Invoice.objects.get(credited_invoice=invoice2)
 
@@ -964,10 +964,49 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(django_db_se
     assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.first()
-    assert credit_note_row2.amount == pytest.approx(Decimal(66.66))
+    assert credit_note_row2.amount == pytest.approx(Decimal('66.66'))
 
     credit_note_row3 = credit_note2.rows.last()
-    assert credit_note_row3.amount == pytest.approx(Decimal(66.66))
+    assert credit_note_row3.amount == pytest.approx(Decimal('66.66'))
+
+
+@pytest.mark.django_db
+def test_create_credit_invoice_refunded_in_parts(django_db_setup, lease_factory, contact_factory, invoice_factory,
+                                                 invoice_row_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=5, notice_period_id=1, )
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    billing_period_start_date = datetime.date(year=2017, month=7, day=1)
+    billing_period_end_date = datetime.date(year=2017, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        recipient=contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+
+    receivable_type = ReceivableType.objects.get(pk=1)
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal(200),
+    )
+
+    invoice.create_credit_invoice(amount=100)
+    invoice.create_credit_invoice(amount=100)
+
+    credit_notes = Invoice.objects.filter(credited_invoice=invoice)
+
+    assert credit_notes.count() == 2
+
+    assert Invoice.objects.get(pk=invoice.id).state == InvoiceState.REFUNDED
 
 
 @pytest.mark.django_db
