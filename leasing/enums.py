@@ -311,13 +311,11 @@ class InvoiceState(Enum):
     OPEN = 'open'
     PAID = 'paid'
     REFUNDED = 'refunded'
-    PARTIALLY_REFUNDED = 'partially_refunded'
 
     class Labels:
         OPEN = pgettext_lazy('Invoice state', 'Open')
         PAID = pgettext_lazy('Invoice state', 'Paid')
         REFUNDED = pgettext_lazy('Invoice state', 'Refunded')
-        PARTIALLY_REFUNDED = pgettext_lazy('Invoice state', 'Partially refunded')
 
 
 class InvoiceType(Enum):

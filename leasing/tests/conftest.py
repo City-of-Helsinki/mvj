@@ -16,7 +16,7 @@ from leasing.enums import (
 from leasing.models import (
     Contact, ContractRent, District, FixedInitialYearRent, Invoice, Lease, LeaseArea, LeaseType, Municipality,
     NoticePeriod, Rent, RentAdjustment, Tenant, TenantContact)
-from leasing.models.invoice import InvoiceRow, InvoiceSet, ReceivableType
+from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
 from users.models import User
 
 
@@ -152,6 +152,12 @@ class InvoiceRowFactory(factory.DjangoModelFactory):
 class InvoiceSetFactory(factory.DjangoModelFactory):
     class Meta:
         model = InvoiceSet
+
+
+@register
+class InvoicePaymentFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = InvoicePayment
 
 
 @pytest.fixture

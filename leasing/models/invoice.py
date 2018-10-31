@@ -249,7 +249,17 @@ class Invoice(TimeStampedSafeDeleteModel):
         if not payments_total:
             payments_total = Decimal(0)
 
-        self.outstanding_amount = max(Decimal(0), self.billed_amount - payments_total)
+        total_credited_amount = self.credit_invoices.aggregate(sum=Sum('rows__amount'))['sum']
+        if not total_credited_amount:
+            total_credited_amount = Decimal(0)
+
+        self.outstanding_amount = max(Decimal(0), self.billed_amount - payments_total - total_credited_amount)
+
+        if total_credited_amount.compare(self.billed_amount) != Decimal(-1):
+            self.state = InvoiceState.REFUNDED
+        elif self.type == InvoiceType.CHARGE and self.outstanding_amount == Decimal(0):
+            self.state = InvoiceState.PAID
+
         self.save()
 
     def create_credit_invoice(self, row_ids=None, amount=None, receivable_type=None, notes=''):  # noqa C901 TODO
@@ -270,6 +280,12 @@ class Invoice(TimeStampedSafeDeleteModel):
 
         if not row_count:
             raise RuntimeError('No rows to credit')
+
+        if amount:
+            total_row_amount = row_queryset.aggregate(sum=Sum('amount'))['sum']
+
+            if total_row_amount.compare(amount) == Decimal(-1):
+                raise RuntimeError('Cannot credit more than invoice row amount')
 
         has_tenants = row_queryset.filter(tenant__isnull=False).count() == row_count
 
@@ -320,17 +336,7 @@ class Invoice(TimeStampedSafeDeleteModel):
         credit_note.total_amount = total_credited_amount
         credit_note.save()
 
-        total_credited_amount = InvoiceRow.objects.filter(
-            invoice__in=self.credit_invoices.all(), invoice__type=InvoiceType.CREDIT_NOTE,
-            invoice__deleted__isnull=True, deleted__isnull=True).aggregate(sum=Sum('amount'))['sum']
-
-        if total_credited_amount > Decimal(0):
-            if total_credited_amount.compare(self.billed_amount) > Decimal(-1):
-                self.state = InvoiceState.REFUNDED
-            else:
-                self.state = InvoiceState.PARTIALLY_REFUNDED
-
-            self.save()
+        self.update_amounts()
 
         return credit_note
 
