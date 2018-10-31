@@ -21,6 +21,7 @@ from leasing.viewsets.lease import (
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
     StatisticalUseViewSet, SupportiveHousingViewSet)
 from leasing.viewsets.rent import IndexViewSet
+from leasing.viewsets.vat import VatViewSet
 from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
@@ -54,6 +55,7 @@ router.register(r'related_lease', RelatedLeaseViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
 router.register(r'supportive_housing', SupportiveHousingViewSet)
 router.register(r'user', UserViewSet)
+router.register(r'vat', VatViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),

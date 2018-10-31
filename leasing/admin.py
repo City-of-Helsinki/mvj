@@ -11,7 +11,7 @@ from leasing.models import (
     Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management,
     MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
     Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
-    Tenant, TenantContact)
+    Tenant, TenantContact, Vat)
 from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
@@ -423,6 +423,10 @@ class PlanUnitAdmin(admin.ModelAdmin):
         return qs.select_related('lease_area', 'lease_area__lease')
 
 
+class VatAdmin(admin.ModelAdmin):
+    list_display = ('percent', 'start_date', 'end_date')
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -476,3 +480,4 @@ admin.site.register(ConditionType, NameAdmin)
 admin.site.register(BasisOfRent, BasisOfRentAdmin)
 admin.site.register(BasisOfRentPlotType, NameAdmin)
 admin.site.register(BasisOfRentBuildPermissionType, NameAdmin)
+admin.site.register(Vat, VatAdmin)
