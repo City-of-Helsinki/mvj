@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from leasing.enums import InvoiceState, InvoiceType
+from leasing.enums import InvoiceType
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow
 
@@ -116,8 +116,7 @@ class Command(BaseCommand):
                                     InvoiceRow.objects.create(**invoice_row_datum)
 
                                 if invoice_data['type'] == InvoiceType.CREDIT_NOTE:
-                                    original_invoice.state = InvoiceState.PARTIALLY_REFUNDED
-                                    original_invoice.save()
+                                    original_invoice.update_amounts()
 
                             self.stdout.write(
                                 '  Invoice created. Invoice id {}. Number {}'.format(invoice.id, invoice.number))
