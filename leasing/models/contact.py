@@ -68,6 +68,9 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Onko vuokranantaja
     is_lessor = models.BooleanField(verbose_name=_("Is a lessor"), default=False)
 
+    # In Finnish: SAP myyntitoimisto
+    sap_sales_office = models.CharField(verbose_name=_("SAP sales office"), null=True, blank=True, max_length=255)
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contact")
         verbose_name_plural = pgettext_lazy("Model name", "Contacts")

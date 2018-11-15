@@ -150,6 +150,10 @@ class Invoice(TimeStampedSafeDeleteModel):
     # In Finnish: Eräpäivä
     due_date = models.DateField(verbose_name=_("Due date"))
 
+    # In Finnish: Eräpäivä (siirretty)
+    # Used in Laske export ValueDate calculation if due_date is on a banking holiday
+    adjusted_due_date = models.DateField(verbose_name=_("Adjusted due date"), null=True, blank=True)
+
     # In Finnish: Laskutuspvm
     invoicing_date = models.DateField(verbose_name=_("Invoicing date"), null=True, blank=True)
 

@@ -126,7 +126,7 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
     class Meta:
         model = Invoice
         exclude = ('deleted',)
-        read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state')
+        read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date')
 
 
 class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -145,7 +145,7 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
     class Meta:
         model = Invoice
         exclude = ('deleted',)
-        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state')
+        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date')
 
 
 class InvoiceSetSerializer(serializers.ModelSerializer):
