@@ -265,6 +265,16 @@ def get_next_business_day(the_date):
     return next_day
 
 
+def is_date_on_first_quarter(the_date):
+    if not the_date or not isinstance(the_date, datetime.date):
+        raise ValueError('the_date must be an instance of datetime.date')
+
+    first_quarter_start = datetime.date(year=the_date.year, month=1, day=1)
+    first_quarter_end = datetime.date(year=the_date.year, month=3, day=31)
+
+    return first_quarter_start <= the_date <= first_quarter_end
+
+
 class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
     @classmethod
     def from_date(cls, date_instance):

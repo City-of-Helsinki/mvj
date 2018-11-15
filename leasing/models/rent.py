@@ -17,7 +17,7 @@ from leasing.enums import (
     RentType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
-    get_monthly_amount_by_period_type, get_range_overlap_and_remainder, split_date_range)
+    get_monthly_amount_by_period_type, get_range_overlap_and_remainder, is_date_on_first_quarter, split_date_range)
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -237,7 +237,7 @@ class Rent(TimeStampedSafeDeleteModel):
                 continue
 
             for contract_rent in contract_rents:
-                (contract_overlap, _) = get_range_overlap_and_remainder(
+                (contract_overlap, _remainder) = get_range_overlap_and_remainder(
                     range_start, range_end, *contract_rent.date_range)
 
                 if not contract_overlap:
@@ -399,10 +399,7 @@ class Rent(TimeStampedSafeDeleteModel):
         return new_ranges
 
     def get_index_for_date(self, the_date):
-        first_quarter_start = datetime.date(year=the_date.year, month=1, day=1)
-        first_quarter_end = datetime.date(year=the_date.year, month=3, day=31)
-
-        if self.cycle == RentCycle.APRIL_TO_MARCH and (first_quarter_start <= the_date <= first_quarter_end):
+        if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(the_date):
             return Index.objects.get_latest_for_year(the_date.year - 1)
 
         return Index.objects.get_latest_for_date(the_date)

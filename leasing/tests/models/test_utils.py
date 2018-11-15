@@ -5,8 +5,8 @@ import pytest
 
 from leasing.models.utils import (
     combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_next_business_day,
-    get_range_overlap_and_remainder, is_business_day, split_date_range, subtract_range_from_range,
-    subtract_ranges_from_ranges)
+    get_range_overlap_and_remainder, is_business_day, is_date_on_first_quarter, split_date_range,
+    subtract_range_from_range, subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -493,3 +493,23 @@ def test_get_next_business_day(the_day, expected):
             get_next_business_day(the_day)
     else:
         assert get_next_business_day(the_day) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("the_day, expected", [
+    (None, ValueError),
+    ('', ValueError),
+    (date, ValueError),
+    (date(2015, 1, 1), True),
+    (date(2015, 1, 5), True),
+    (date(2017, 12, 25), False),
+    (date(2018, 12, 31), False),
+    (date(2020, 3, 31), True),
+    (date(2020, 4, 1), False),
+])
+def test_is_date_on_first_quarter(the_day, expected):
+    if inspect.isclass(expected) and issubclass(expected, Exception):
+        with pytest.raises(expected):
+            is_date_on_first_quarter(the_day)
+    else:
+        assert is_date_on_first_quarter(the_day) == expected
