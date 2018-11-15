@@ -491,6 +491,14 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amount, explanations
 
+    def get_rent_amount_for_year(self, year):
+        first_day_of_year = datetime.date(year=year, month=1, day=1)
+        last_day_of_year = datetime.date(year=year, month=12, day=31)
+
+        (year_rent, explanations) = self.get_rent_amount_and_explations_for_period(first_day_of_year, last_day_of_year)
+
+        return year_rent
+
     def determine_payable_rents_and_periods(self, start_date, end_date):
         lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
 
