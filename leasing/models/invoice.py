@@ -4,12 +4,13 @@ from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
 
 from auditlog.registry import auditlog
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from sequences import get_next_value
 
 from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
@@ -449,6 +450,16 @@ class Invoice(TimeStampedSafeDeleteModel):
             return True
 
         return False
+
+    def generate_number(self):
+        if self.number:
+            return self.number
+
+        with transaction.atomic():
+            self.number = get_next_value('invoice_numbers', initial_value=1000000)
+            self.save()
+
+        return self.number
 
 
 class InvoiceRow(TimeStampedSafeDeleteModel):

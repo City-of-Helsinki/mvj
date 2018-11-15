@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import Q
-from sequences import get_next_value
 
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceRow, InvoiceSet
@@ -15,10 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
         today = datetime.date.today()
-        # today = today.replace(year=2018, month=3, day=1)
-        # today = today.replace(year=2016, month=12, day=1)  # Y11...
-        # today = today.replace(year=2017, month=9, day=1)  # A1134-430
-        # today = today.replace(month=3, day=1)
         # today = today.replace(day=1)
 
         if today.day != 1:
@@ -39,15 +34,6 @@ class Command(BaseCommand):
         )
 
         for lease in leases:
-            # if lease.id != 19:  # Y1111-1
-            #     continue
-            # if lease.id != 10:  # A1134-430
-            #     continue
-            # if lease.id != 591:  # S0113-124
-            #     continue
-            # if lease.id != 127:  # A1128-1253
-            #     continue
-
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
 
             period_rents = lease.determine_payable_rents_and_periods(start_of_next_month, end_of_next_month)
@@ -81,7 +67,6 @@ class Command(BaseCommand):
                                                                                                       invoice.number))
                     except Invoice.DoesNotExist:
                         with transaction.atomic():
-                            invoice_data['number'] = get_next_value('invoice_numbers', initial_value=1000000)
                             invoice_data['invoicing_date'] = today
                             invoice_data['outstanding_amount'] = invoice_data['billed_amount']
 
@@ -90,6 +75,8 @@ class Command(BaseCommand):
                             for invoice_row_datum in invoice_row_data:
                                 invoice_row_datum['invoice'] = invoice
                                 InvoiceRow.objects.create(**invoice_row_datum)
+
+                        invoice.generate_number()
 
                         self.stdout.write('  Invoice created. Invoice id {}. Number {}'.format(
                             invoice.id, invoice.number))
