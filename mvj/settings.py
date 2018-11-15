@@ -88,6 +88,7 @@ INSTALLED_APPS = [
 
     'users',
     'leasing',
+    'laske_export',
 ]
 if RAVEN_CONFIG['dsn']:
     INSTALLED_APPS += ['raven.contrib.django.raven_compat']
@@ -157,23 +158,34 @@ KTJ_PRINT_ROOT_URL = env.str('KTJ_PRINT_ROOT_URL')
 KTJ_PRINT_USERNAME = env.str('KTJ_PRINT_USERNAME')
 KTJ_PRINT_PASSWORD = env.str('KTJ_PRINT_PASSWORD')
 
-local_settings = project_root('local_settings.py')
-if os.path.exists(local_settings):
-    with open(local_settings) as fp:
-        code = compile(fp.read(), local_settings, 'exec')
-    exec(code, globals(), locals())
-
 LASKE_VALUES = {
-    'SenderId': 'ID175',
-    'OrderType': 'ZTY1',
-    'SalesOrg': '8000',
-    'DistributionChannel': '10',
-    'Division': '10',
-    'SalesOffice': '8060',
-    'PMNTTERM': 'Z100',
+    'sender_id': 'ID340',
+    'sales_org': '2800',
+    'distribution_channel': '10',
+    'division': '10',
+    'pmntterm': 'Z100',
 }
+
+LASKE_EXPORT_ROOT = project_root('laske_export_files')
+
+LASKE_DUE_DATE_OFFSET_DAYS = 17
+
+LASKE_SERVER_HOST = 'localhost'
+LASKE_SERVER_PORT = 22
+LASKE_SERVER_USERNAME = ''
+LASKE_SERVER_PASSWORD = ''
+LASKE_SERVER_DIRECTORY = './'
+LASKE_SERVER_KEY_TYPE = ''
+LASKE_SERVER_KEY = b''
+
 
 # See: https://github.com/jjkester/django-auditlog/pull/81
 USE_NATIVE_JSONFIELD = True
 
 MVJ_DUE_DATE_OFFSET_DAYS = 17
+
+local_settings = project_root('local_settings.py')
+if os.path.exists(local_settings):
+    with open(local_settings) as fp:
+        code = compile(fp.read(), local_settings, 'exec')
+    exec(code, globals(), locals())
