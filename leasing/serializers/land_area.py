@@ -131,7 +131,8 @@ class LeaseAreaListSerializer(LeaseAreaSerializer):
 
     class Meta:
         model = LeaseArea
-        fields = ('id', 'identifier', 'area', 'section_area', 'addresses', 'type', 'location')
+        fields = ('id', 'identifier', 'area', 'section_area', 'addresses', 'type', 'location', 'archived_at',
+                  'archived_note')
 
 
 class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer):
