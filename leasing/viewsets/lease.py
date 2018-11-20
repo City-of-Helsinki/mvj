@@ -175,19 +175,20 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
         search_form = LeaseSearchForm(self.request.query_params)
 
         if search_form.is_valid():
-            if search_form.cleaned_data.get('tenant'):
+            if search_form.cleaned_data.get('tenant_name'):
+                tenant_name = search_form.cleaned_data.get('tenant_name')
                 queryset = queryset.filter(
-                    Q(tenants__tenantcontact__contact__name__icontains=search_form.cleaned_data.get('tenant')) |
-                    Q(tenants__tenantcontact__contact__first_name__icontains=search_form.cleaned_data.get('tenant')) |
-                    Q(tenants__tenantcontact__contact__last_name__icontains=search_form.cleaned_data.get('tenant'))
+                    Q(tenants__tenantcontact__contact__name__icontains=tenant_name) |
+                    Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name) |
+                    Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name)
                 )
 
                 # Limit further only if searching by tenants
-                if search_form.cleaned_data.get('tenant_role'):
-                    tenant_roles = [r.strip() for r in search_form.cleaned_data.get('tenant_role').split(',')]
+                if search_form.cleaned_data.get('tenantcontact_type'):
+                    tenant_roles = [r.strip() for r in search_form.cleaned_data.get('tenantcontact_type').split(',')]
                     queryset = queryset.filter(tenants__tenantcontact__type__in=tenant_roles)
 
-                if search_form.cleaned_data.get('only_past_tentants'):
+                if search_form.cleaned_data.get('only_past_tenants'):
                     queryset = queryset.filter(tenants__tenantcontact__end_date__lte=datetime.date.today())
 
             if search_form.cleaned_data.get('sequence'):
@@ -205,13 +206,13 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
             if search_form.cleaned_data.get('lease_end_date_end'):
                 queryset = queryset.filter(end_date__lte=search_form.cleaned_data.get('lease_end_date_end'))
 
-            if search_form.cleaned_data.get('ongoing'):
+            if search_form.cleaned_data.get('only_active_leases'):
                 queryset = queryset.filter(
                     (Q(start_date__isnull=True) | Q(start_date__lte=datetime.date.today())) &
                     (Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today()))
                 )
 
-            if search_form.cleaned_data.get('expired'):
+            if search_form.cleaned_data.get('only_expired_leases'):
                 queryset = queryset.filter(end_date__lte=datetime.date.today())
 
             if search_form.cleaned_data.get('property_identifier'):
@@ -222,8 +223,8 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
                 queryset = queryset.filter(
                     lease_areas__addresses__address__icontains=search_form.cleaned_data.get('address'))
 
-            if search_form.cleaned_data.get('state'):
-                states = [s.strip() for s in search_form.cleaned_data.get('state').split(',')]
+            if search_form.cleaned_data.get('lease_state'):
+                states = [s.strip() for s in search_form.cleaned_data.get('lease_state').split(',')]
                 queryset = queryset.filter(state__in=states)
 
         return queryset.distinct()
