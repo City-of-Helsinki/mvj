@@ -185,8 +185,8 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
 
                 # Limit further only if searching by tenants
                 if search_form.cleaned_data.get('tenantcontact_type'):
-                    tenant_roles = [r.strip() for r in search_form.cleaned_data.get('tenantcontact_type').split(',')]
-                    queryset = queryset.filter(tenants__tenantcontact__type__in=tenant_roles)
+                    queryset = queryset.filter(tenants__tenantcontact__type__in=search_form.cleaned_data.get(
+                        'tenantcontact_type'))
 
                 if search_form.cleaned_data.get('only_past_tenants'):
                     queryset = queryset.filter(tenants__tenantcontact__end_date__lte=datetime.date.today())
@@ -224,8 +224,7 @@ class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
                     lease_areas__addresses__address__icontains=search_form.cleaned_data.get('address'))
 
             if search_form.cleaned_data.get('lease_state'):
-                states = [s.strip() for s in search_form.cleaned_data.get('lease_state').split(',')]
-                queryset = queryset.filter(state__in=states)
+                queryset = queryset.filter(state__in=search_form.cleaned_data.get('lease_state'))
 
         return queryset.distinct()
 
