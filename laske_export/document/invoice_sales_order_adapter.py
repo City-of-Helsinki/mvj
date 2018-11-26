@@ -41,25 +41,33 @@ class InvoiceSalesOrderAdapter:
             index_date = '1.4.'
 
         bill_texts = []
-        bill_texts.append('Vuokraustunnus: {lease_identifier}'.format(
-            lease_identifier=self.invoice.lease.get_identifier_string()))
+        row1 = 'Vuokraustunnus: {lease_identifier}  '.format(
+            lease_identifier=self.invoice.lease.get_identifier_string())
+
         if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
-            bill_texts.append('Vuokra ajalta: {billing_period_start_date}-{billing_period_end_date}'.format(
+            row1 += 'Vuokra ajalta: {billing_period_start_date}-{billing_period_end_date}  '.format(
                 billing_period_start_date=self.invoice.billing_period_start_date.strftime('%d.%m.%Y'),
-                billing_period_end_date=self.invoice.billing_period_end_date.strftime('%d.%m.%Y')))
-        bill_texts.append('Sopimuksen päättymispvm: {lease_end_date}'.format(
-            lease_end_date=self.invoice.lease.end_date.strftime('%d.%m.%Y') if self.invoice.lease.end_date else '-'))
+                billing_period_end_date=self.invoice.billing_period_end_date.strftime('%d.%m.%Y'))
+        bill_texts.append(row1)
+
+        row2 = 'Päättymispvm: {lease_end_date}  '.format(
+            lease_end_date=self.invoice.lease.end_date.strftime('%d.%m.%Y') if self.invoice.lease.end_date else '-')
+
         if self.invoice.lease.intended_use:
-            bill_texts.append('Käyttötarkoitus: {lease_intended_use}'.format(
-                lease_intended_use=str(self.invoice.lease.intended_use)))
-        bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}'.format(
+            row2 += 'Käyttötarkoitus: {lease_intended_use}  '.format(
+                lease_intended_use=self.invoice.lease.intended_use.name[:25])
+        bill_texts.append(row2)
+
+        bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  '.format(
             index_date=index_date,
             year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))
-        bill_texts.append('Kiinteistötunnus: {real_property_identifier}'.format(
-            real_property_identifier=real_property_identifier))
-        bill_texts.append('Vuokrakohteen osoite: {address}'.format(address=address))
+        bill_texts.append('Vuokrakohde: {real_property_identifier}, {address}  '.format(
+            real_property_identifier=real_property_identifier, address=address))
 
-        return '\n  '.join(bill_texts)
+        if self.invoice.notes:
+            bill_texts.append(self.invoice.notes)
+
+        return '\n'.join(bill_texts)
 
     def get_first_tenant(self):
         for invoice_row in self.invoice.rows.all():
@@ -91,7 +99,7 @@ class InvoiceSalesOrderAdapter:
     def get_po_number(self):
         tenant = self.get_first_tenant()
         if tenant and tenant.reference:
-            return tenant.reference
+            return tenant.reference[:35]
 
     def set_dates(self):
         billing_date = self.invoice.due_date.replace(day=1)
@@ -124,6 +132,20 @@ class InvoiceSalesOrderAdapter:
 
             line_item.quantity = '1,00'
             line_item.net_price = '{:.2f}'.format(invoice_row.amount).replace('.', ',')
+
+            if invoice_row.billing_period_start_date and invoice_row.billing_period_end_date:
+                line_item.line_text_l1 = '{}-{}'.format(
+                    invoice_row.billing_period_start_date.strftime('%d.%m.%Y'),
+                    invoice_row.billing_period_end_date.strftime('%d.%m.%Y'),
+                )
+
+            if invoice_row.tenant:
+                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
+                    invoice_row.billing_period_start_date,
+                    invoice_row.billing_period_start_date).first()
+
+                if tenant_contact and tenant_contact.contact:
+                    line_item.line_text_l2 = tenant_contact.contact.get_name()
 
             line_items.append(line_item)
 
