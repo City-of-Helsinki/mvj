@@ -117,6 +117,18 @@ class Rent(TimeStampedSafeDeleteModel):
     seasonal_end_month = models.PositiveIntegerField(verbose_name=_("Seasonal end month"), null=True, blank=True,
                                                      validators=[MinValueValidator(1), MaxValueValidator(12)])
 
+    # These ratios are used if the rent type is MANUAL
+    # manual_ratio is used for the whole year if the RentCycle is
+    # JANUARY_TO_DECEMBER. If the Rent Cycle is APRIL_TO_MARCH, this is used for 1.4. - 31.12.
+    # In Finnish: Kerroin (Käsinlaskenta)
+    manual_ratio = models.DecimalField(verbose_name=_("Manual ratio"), null=True, blank=True, max_digits=10,
+                                       decimal_places=2)
+
+    # If the Rent Cycle is APRIL_TO_MARCH, manual_ratio_previous is used for 1.1. - 31.3.
+    # In Finnish: Aiempi kerroin (Käsinlaskenta)
+    manual_ratio_previous = models.DecimalField(verbose_name=_("Manual ratio (previous)"), null=True, blank=True,
+                                                max_digits=10, decimal_places=2)
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Rent")
         verbose_name_plural = pgettext_lazy("Model name", "Rents")
@@ -226,9 +238,11 @@ class Rent(TimeStampedSafeDeleteModel):
             date_ranges = [(date_range_start, date_range_end)]
 
         # We may need to calculate multiple separate ranges if cycle
-        # is APRIL_TO_MARCH and the rent type is index because the
-        # index number could be different in the start of the year
-        if self.cycle == RentCycle.APRIL_TO_MARCH and self.type == RentType.INDEX:
+        # is APRIL_TO_MARCH and the rent type is index or manual.
+        # The index number could be different in the start of the year
+        # or in the manual rent case the start of the year could have
+        # a different ratio.
+        if self.cycle == RentCycle.APRIL_TO_MARCH and self.type in [RentType.INDEX, RentType.MANUAL]:
             date_ranges = self.split_ranges_by_cycle(date_ranges)
 
         for (range_start, range_end) in date_ranges:
@@ -247,6 +261,23 @@ class Rent(TimeStampedSafeDeleteModel):
                     contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
                     contract_rent_explanation_item = explanation.add(
                         subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
+                elif self.type == RentType.MANUAL:
+                    contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                    explanation.add(subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
+
+                    manual_ratio = self.manual_ratio
+
+                    if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(contract_overlap[0]):
+                        manual_ratio = self.manual_ratio_previous
+
+                    contract_amount *= manual_ratio
+
+                    contract_rent_explanation_item = explanation.add(
+                        subject={
+                            "subject_type": "ratio",
+                            "description": _("Manual ratio {ratio}").format(
+                                ratio=manual_ratio),
+                        }, date_ranges=[contract_overlap], amount=contract_amount)
                 elif self.type == RentType.INDEX:
                     original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
@@ -268,8 +299,7 @@ class Rent(TimeStampedSafeDeleteModel):
                     for item in index_calculation.explanation_items:
                         explanation.add_item(item, related_item=index_explanation_item)
 
-                elif self.type in (RentType.FREE, RentType.MANUAL):
-                    # TODO: MANUAL rent type
+                elif self.type == RentType.FREE:
                     continue
                 else:
                     raise NotImplementedError('RentType {} not implemented'.format(self.type))

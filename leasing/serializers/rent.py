@@ -109,7 +109,7 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
                   'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
                   'yearly_due_dates', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day',
-                  'seasonal_end_month')
+                  'seasonal_end_month', 'manual_ratio', 'manual_ratio_previous')
 
 
 class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -120,7 +120,8 @@ class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'start_date', 'end_date', 'seasonal_start_day',
-                  'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month')
+                  'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month', 'manual_ratio',
+                  'manual_ratio_previous')
 
 
 class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -138,7 +139,8 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
                   'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
-                  'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month')
+                  'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month',
+                  'manual_ratio', 'manual_ratio_previous')
 
     def validate(self, data):
         seasonal_values = [data.get('seasonal_start_day'), data.get('seasonal_start_month'),
