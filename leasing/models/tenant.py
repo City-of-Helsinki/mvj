@@ -24,7 +24,7 @@ class Tenant(TimeStampedSafeDeleteModel):
     share_denominator = models.PositiveIntegerField(verbose_name=_("Denominator"))
 
     # In Finnish: Viite
-    reference = models.CharField(verbose_name=_("Reference"), null=True, blank=True, max_length=255)
+    reference = models.CharField(verbose_name=_("Reference"), null=True, blank=True, max_length=35)
 
     contacts = models.ManyToManyField(Contact, through='leasing.TenantContact', related_name='tenants')
 
