@@ -7,7 +7,7 @@
       "identifier": "A1",
       "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813101001"
     }
   },
   {
@@ -18,7 +18,7 @@
       "identifier": "A2",
       "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813101001"
     }
   },
   {
@@ -29,7 +29,7 @@
       "identifier": "A3",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813101001"
     }
   },
   {
@@ -40,7 +40,7 @@
       "identifier": "A4",
       "due_dates_position": "middle_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813101002"
     }
   },
   {
@@ -51,7 +51,7 @@
       "identifier": "S0",
       "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102007"
     }
   },
   {
@@ -62,7 +62,7 @@
       "identifier": "T1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002006",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102001"
     }
   },
   {
@@ -73,7 +73,7 @@
       "identifier": "O1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102006"
     }
   },
   {
@@ -84,7 +84,7 @@
       "identifier": "T2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102002"
     }
   },
   {
@@ -95,7 +95,7 @@
       "identifier": "H1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002008",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102003"
     }
   },
   {
@@ -106,7 +106,7 @@
       "identifier": "H2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002008",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102003"
     }
   },
   {
@@ -117,7 +117,7 @@
       "identifier": "L1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002005",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102004"
     }
   },
   {
@@ -128,7 +128,7 @@
       "identifier": "L2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002005",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102004"
     }
   },
   {
@@ -139,7 +139,7 @@
       "identifier": "L3",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102005"
     }
   },
   {
@@ -150,7 +150,7 @@
       "identifier": "O2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102006"
     }
   },
   {
@@ -161,7 +161,7 @@
       "identifier": "O3",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102006"
     }
   },
   {
@@ -172,7 +172,7 @@
       "identifier": "O4",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813102006"
     }
   },
   {
@@ -183,7 +183,7 @@
       "identifier": "K0",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100001"
     }
   },
   {
@@ -194,7 +194,7 @@
       "identifier": "V5",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100002"
     }
   },
   {
@@ -205,7 +205,7 @@
       "identifier": "V2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100002"
     }
   },
   {
@@ -227,7 +227,7 @@
       "identifier": "V4",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100002"
     }
   },
   {
@@ -238,7 +238,7 @@
       "identifier": "V1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100002"
     }
   },
   {
@@ -249,7 +249,7 @@
       "identifier": "V3",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100002"
     }
   },
   {
@@ -260,7 +260,7 @@
       "identifier": "Y3",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -271,7 +271,7 @@
       "identifier": "Y5",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -282,7 +282,7 @@
       "identifier": "Y6",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -293,7 +293,7 @@
       "identifier": "Y7",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -304,7 +304,7 @@
       "identifier": "Y2",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -315,7 +315,7 @@
       "identifier": "Y4",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -326,7 +326,7 @@
       "identifier": "Y1",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -337,7 +337,7 @@
       "identifier": "Y8",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -369,7 +369,7 @@
       "name": "Kiinteistövirasto tilakeskus",
       "identifier": "Y9",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
@@ -413,7 +413,7 @@
       "identifier": "Y0",
       "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813100003"
     }
   },
   {
