@@ -13,11 +13,12 @@ from enumfields import EnumField
 from leasing.calculation.explanation import Explanation
 from leasing.calculation.index import IndexCalculation
 from leasing.enums import (
-    DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle,
-    RentType)
+    AreaUnit, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType,
+    RentCycle, RentType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
     get_monthly_amount_by_period_type, get_range_overlap_and_remainder, is_date_on_first_quarter, split_date_range)
+from users.models import User
 
 from .decision import Decision
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -700,47 +701,6 @@ class PayableRent(models.Model):
         verbose_name_plural = pgettext_lazy("Model name", "Payable rents")
 
 
-class LeaseBasisOfRent(models.Model):
-    """
-    In Finnish: Vuokranperusteet
-    """
-    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='basis_of_rents',
-                              on_delete=models.PROTECT)
-
-    # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
-
-    # In Finnish: K-m2
-    floor_m2 = models.DecimalField(verbose_name=_("Floor m2"), null=True, blank=True, max_digits=10, decimal_places=2)
-
-    # In Finnish: Indeksi
-    index = models.PositiveIntegerField(verbose_name=_("Index"), null=True, blank=True)
-
-    # In Finnish: € / k-m2 (ind 100)
-    amount_per_floor_m2_index_100 = models.DecimalField(verbose_name=_("Amount per floor m^2 (index 100)"), null=True,
-                                                        blank=True, max_digits=10, decimal_places=2)
-
-    # In Finnish: € / k-m2 (ind)
-    amount_per_floor_m2_index = models.DecimalField(verbose_name=_("Amount per floor m^2 (index)"), null=True,
-                                                    blank=True, max_digits=10, decimal_places=2)
-
-    # In Finnish: Prosenttia
-    percent = models.DecimalField(verbose_name=_("Percent"), null=True, blank=True, max_digits=10,
-                                  decimal_places=2)
-
-    # In Finnish: Perusvuosivuokra €/v (ind 100)
-    year_rent_index_100 = models.DecimalField(verbose_name=_("Year rent (index 100)"), null=True, blank=True,
-                                              max_digits=10, decimal_places=2)
-
-    # In Finnish: Perusvuosivuokra €/v (ind)
-    year_rent_index = models.DecimalField(verbose_name=_("Year rent (index)"), null=True, blank=True, max_digits=10,
-                                          decimal_places=2)
-
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Lease basis of rent")
-        verbose_name_plural = pgettext_lazy("Model name", "Lease basis of rents")
-
-
 class IndexManager(models.Manager):
     def get_latest_for_date(self, the_date=None):
         """Returns the latest year average index"""
@@ -780,7 +740,60 @@ class Index(models.Model):
         ordering = ("year", "month")
 
     def __str__(self):
-        return "{} {} {}".format(self.year, self.month, self.number)
+        return _("Index {}{}={}").format(
+            self.year,
+            ":{}".format(self.month) if self.month else "",
+            self.number)
+
+
+class LeaseBasisOfRent(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Vuokranperusteet
+    """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='basis_of_rents',
+                              on_delete=models.PROTECT)
+
+    # In Finnish: Käyttötarkoitus
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
+
+    # In Finnish: Pinta-ala
+    area = models.DecimalField(verbose_name=_("Area amount"), decimal_places=2, max_digits=12)
+
+    # In Finnish: Yksikkö
+    area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
+
+    # In Finnish: Yksikköhinta (ind 100)
+    amount_per_area = models.DecimalField(verbose_name=_("Amount per area (index 100)"), null=True, blank=True,
+                                          max_digits=10, decimal_places=2)
+
+    # In Finnish: Indeksi
+    index = models.ForeignKey(Index, verbose_name=_("Index"), null=True, blank=True, on_delete=models.PROTECT)
+
+    # In Finnish: Tuottoprosentti
+    profit_margin_percentage = models.DecimalField(verbose_name=_("Profit margin percentage"), null=True, blank=True,
+                                                   max_digits=10, decimal_places=2)
+
+    # In Finnish: Alennusprosentti
+    discount_percentage = models.DecimalField(verbose_name=_("Discount percentage"), null=True, blank=True,
+                                              max_digits=10, decimal_places=2)
+
+    # In Finnish: Piirustukset tarkastettu (Päivämäärä)
+    plans_inspected_at = models.DateTimeField(verbose_name=_("Plans inspected at"), null=True, blank=True)
+
+    # In Finnish: Piirustukset tarkastettu (Käyttäjä)
+    plans_inspected_by = models.ForeignKey(User, verbose_name=_("Plans inspected by"), null=True, blank=True,
+                                           related_name='basis_of_rents_plans_inspected', on_delete=models.PROTECT)
+
+    # In Finnish: Lukittu (Päivämäärä)
+    locked_at = models.DateTimeField(verbose_name=_("Locked at"), null=True, blank=True)
+
+    # In Finnish: Lukittu (Käyttäjä)
+    locked_by = models.ForeignKey(User, verbose_name=_("Locked by"), null=True, blank=True,
+                                  related_name='basis_of_rents_locked', on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease basis of rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease basis of rents")
 
 
 auditlog.register(Rent)

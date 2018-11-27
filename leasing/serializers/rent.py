@@ -1,10 +1,12 @@
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from leasing.enums import DueDatesType
 from leasing.models import Index
+from users.serializers import UserSerializer
 
 from ..models import (
     ContractRent, Decision, FixedInitialYearRent, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent,
@@ -155,29 +157,68 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
         return data
 
 
-class LeaseBasisOfRentSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
-    intended_use = RentIntendedUseSerializer()
-
-    class Meta:
-        model = LeaseBasisOfRent
-        fields = ('id', 'intended_use', 'floor_m2', 'index', 'amount_per_floor_m2_index_100',
-                  'amount_per_floor_m2_index', 'percent', 'year_rent_index_100', 'year_rent_index')
-
-
-class LeaseBasisOfRentCreateUpdateSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
-    intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
-                                                      queryset=RentIntendedUse.objects.all(),
-                                                      related_serializer=RentIntendedUseSerializer)
-
-    class Meta:
-        model = LeaseBasisOfRent
-        fields = ('id', 'intended_use', 'floor_m2', 'index', 'amount_per_floor_m2_index_100',
-                  'amount_per_floor_m2_index', 'percent', 'year_rent_index_100', 'year_rent_index')
-
-
 class IndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = Index
         fields = '__all__'
+
+
+class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    intended_use = RentIntendedUseSerializer()
+    index = IndexSerializer()
+    plans_inspected_by = UserSerializer(read_only=True)
+    locked_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = LeaseBasisOfRent
+        fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
+                  'discount_percentage', 'plans_inspected_at', 'plans_inspected_by', 'locked_at', 'locked_by')
+
+
+class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
+                                                      queryset=RentIntendedUse.objects.all(),
+                                                      related_serializer=RentIntendedUseSerializer)
+    index = InstanceDictPrimaryKeyRelatedField(instance_class=Index,
+                                               queryset=Index.objects.all(),
+                                               related_serializer=IndexSerializer)
+
+    class Meta:
+        model = LeaseBasisOfRent
+        fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
+                  'discount_percentage', 'plans_inspected_at', 'locked_at')
+
+    def validate(self, data):
+        if data.get('id'):
+            try:
+                instance = LeaseBasisOfRent.objects.get(pk=data['id'])
+            except LeaseBasisOfRent.DoesNotExist:
+                raise ValidationError(_("Basis of rent item id {} not found").format(data['id']))
+
+            # Only "locked_at" field can be edited on locked items
+            if instance.locked_at:
+                if set(data.keys()) != {'id', 'locked_at'}:
+                    raise ValidationError(_("Can't edit locked basis of rent item"))
+
+                #TODO: Who can unlock?
+
+                # Set all required fields to their current value to pass validation
+                data['intended_use'] = instance.intended_use
+                data['area'] = instance.area
+                data['index'] = instance.index
+
+        if 'locked_at' in data:
+            if data['locked_at']:
+                data['locked_by'] = self.context['request'].user
+            else:
+                data['locked_by'] = None
+
+        if 'plans_inspected_at' in data:
+            if data['plans_inspected_at']:
+                data['plans_inspected_by'] = self.context['request'].user
+            else:
+                data['plans_inspected_by'] = None
+
+        return data
