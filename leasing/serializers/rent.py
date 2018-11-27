@@ -202,7 +202,7 @@ class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, seriali
                 if set(data.keys()) != {'id', 'locked_at'}:
                     raise ValidationError(_("Can't edit locked basis of rent item"))
 
-                #TODO: Who can unlock?
+                # TODO: Who can unlock?
 
                 # Set all required fields to their current value to pass validation
                 data['intended_use'] = instance.intended_use
