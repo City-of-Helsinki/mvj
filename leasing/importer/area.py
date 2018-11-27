@@ -9,6 +9,7 @@ from .base import BaseImporter
 METADATA_COLUMN_NAME_MAP = {
     'kiinteistotunnus': 'property_identifier',
     'vuokraustunnus': 'lease_identifier',
+    'vuokratunnus': 'lease_identifier',
     'maaraalatunnus': 'unseparated_parcel_identifier',
     'pinta_ala_sopimuksessa': 'area',
     'pintaala': 'area',
@@ -40,6 +41,123 @@ METADATA_COLUMN_NAME_MAP = {
     'vaihe_selite': 'state_name',
     'lainvoimaisuuspvm': 'final_date',
     'vahvistamispvm': 'ratify_date',
+    'sopimusnumero': 'contract_number',
+    'olotila': 'state_name',
+}
+
+
+AREA_IMPORT_TYPES = {
+    # Kaava
+    'detailed_plan': {
+        'source_name': 'Kaava: Kaavahakemisto',
+        'source_identifier': 'kaava.kaavahakemisto_alueet',
+        'area_type': AreaType.DETAILED_PLAN,
+        'identifier_field_name': 'kaavatunnus',
+        'metadata_columns': ['kaavatunnus', 'tyyppi', 'luokka', 'pintaala', 'hyvaksymispvm',
+                             'lainvoimaisuuspvm', 'voimaantulopvm', 'vahvistamispvm'],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM kaava.kaavahakemisto_alueet AS a
+        WHERE kaavatunnus IS NOT NULL
+        ''',
+    },
+    # Vuokra-alueet
+    'lease_area': {
+        'source_name': 'Tonttiosasto: vuokrausalue_paa',
+        'source_identifier': 'tonttiosasto.vuokrausalue_paa',
+        'area_type': AreaType.LEASE_AREA,
+        'identifier_field_name': 'vuokratunnus',
+        'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila'],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM tonttiosasto.vuokrausalue_paa AS a
+        WHERE vuokratunnus IS NOT NULL
+        ''',
+    },
+    # 'lease_area': {
+    #     'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
+    #     'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',
+    #     'area_type': AreaType.LEASE_AREA,
+    #     'identifier_field_name': 'vuokraustunnus',
+    #     'metadata_columns': ['kiinteistotunnus', 'vuokraustunnus', 'pinta_ala_sopimuksessa', 'osoite'],
+    #     'query': '''
+    #     SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+    #         AS geom_text
+    #     FROM tonttiosasto.to_vuokrausalueet_julkinen AS a
+    #     WHERE vuokraustunnus IS NOT NULL
+    #     ''',
+    # },
+    # Kiinteistöt
+    'real_property': {
+        'source_name': 'Kiinteistö: Kiinteistöalue',
+        'source_identifier': 'kiinteisto.kiinteisto_alue_alueet',
+        'area_type': AreaType.REAL_PROPERTY,
+        'identifier_field_name': 'kiinteistotunnus',
+        'metadata_columns': [
+            'kiinteistotunnus', 'pintaala', 'rekisterointipvm', 'kumoamispvm',
+            'rekisterilaji_tunnus', 'rekisterilaji_selite', 'kayttotark_tunnus', 'kayttotark_selite',
+            'olotila_tunnus', 'olotila_selite'
+        ],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM kiinteisto.kiinteisto_alue_alueet AS a
+        WHERE kiinteistotunnus IS NOT NULL
+        ''',
+    },
+    # Määräalat
+    'unseparated_parcel': {
+        'source_name': 'Kiinteistö: Määräala',
+        'source_identifier': 'kiinteisto.maaraala_alue_alueet',
+        'area_type': AreaType.UNSEPARATED_PARCEL,
+        'identifier_field_name': 'maaraalatunnus',
+        'metadata_columns': [
+            'maaraalatunnus', 'pintaala', 'rekisterointipvm', 'saantopvm',
+            'laatu_tunnus', 'laatu_selite', 'tyyppi_tunnus', 'tyyppi_selite',
+            'olotila_tunnus', 'olotila_selite'
+        ],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM kiinteisto.maaraala_alue_alueet AS a
+        WHERE maaraalatunnus IS NOT NULL
+        ''',
+    },
+    # Kaavayksiköt
+    'plan_unit': {
+        'source_name': 'Kaava: Kaavayksiköt',
+        'source_identifier': 'kaava.kaavayksikot_alueet',
+        'area_type': AreaType.PLAN_UNIT,
+        'identifier_field_name': 'kaavayksikkotunnus',
+        'metadata_columns': [
+            'kaavayksikkotunnus', 'kaavatunnus', 'tyyppi', 'luokka', 'kayttotarkoitus', 'pintaala',
+        ],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM kaava.kaavayksikot_alueet AS a
+        WHERE kaavayksikkotunnus IS NOT NULL
+        ''',
+    },
+    # Tonttijaot
+    'plot_division': {
+        'source_name': 'Kaava: Tonttijako',
+        'source_identifier': 'kaava.tonttijako_alueet',
+        'area_type': AreaType.PLOT_DIVISION,
+        'identifier_field_name': 'tonttijakotunnus',
+        'metadata_columns': [
+            'tonttijakotunnus', 'hyvaksymispvm', 'voimaantulopvm', 'laji_tunnus', 'laji_selite', 'vaihe_tunnus',
+            'vaihe_selite',
+        ],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM kaava.tonttijako_alueet AS a
+        WHERE tonttijakotunnus IS NOT NULL
+        ''',
+    },
 }
 
 
@@ -51,119 +169,31 @@ class AreaImporter(BaseImporter):
                                 cursor_factory=psycopg2.extras.NamedTupleCursor)
         self.cursor = conn.cursor()
         self.stdout = stdout
+        self.area_types = None
 
     @classmethod
     def add_arguments(cls, parser):
-        pass
+        parser.add_argument('--area-types', dest='area_types', type=str, required=False,
+                            help='comma separated list of area types to import (default: all)')
 
     def read_options(self, options):
-        pass
+        if options['area_types']:
+            self.area_types = []
+            for area_type in options['area_types'].split(','):
+                if area_type not in AREA_IMPORT_TYPES.keys():
+                    raise RuntimeError('Area import type "{}" doesn\'t exist'.format(area_type))
+
+                self.area_types.append(area_type)
 
     def execute(self):
         cursor = self.cursor
 
-        area_imports = [
-            # Kaava
-            {
-                'source_name': 'Kaava: Kaavahakemisto',
-                'source_identifier': 'kaava.kaavahakemisto_alueet',
-                'area_type': AreaType.DETAILED_PLAN,
-                'identifier_field_name': 'kaavatunnus',
-                'metadata_columns': ['kaavatunnus', 'tyyppi', 'luokka', 'pintaala', 'hyvaksymispvm',
-                                     'lainvoimaisuuspvm', 'voimaantulopvm', 'vahvistamispvm'],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM kaava.kaavahakemisto_alueet AS a
-                WHERE kaavatunnus IS NOT NULL
-                ''',
-            },
-            # Vuokra-alueet
-            {
-                'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
-                'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',
-                'area_type': AreaType.LEASE_AREA,
-                'identifier_field_name': 'vuokraustunnus',
-                'metadata_columns': ['kiinteistotunnus', 'vuokraustunnus', 'pinta_ala_sopimuksessa', 'osoite'],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM tonttiosasto.to_vuokrausalueet_julkinen AS a
-                WHERE vuokraustunnus IS NOT NULL
-                ''',
-            },
-            # Kiinteistöt
-            {
-                'source_name': 'Kiinteistö: Kiinteistöalue',
-                'source_identifier': 'kiinteisto.kiinteisto_alue_alueet',
-                'area_type': AreaType.REAL_PROPERTY,
-                'identifier_field_name': 'kiinteistotunnus',
-                'metadata_columns': [
-                    'kiinteistotunnus', 'pintaala', 'rekisterointipvm', 'kumoamispvm',
-                    'rekisterilaji_tunnus', 'rekisterilaji_selite', 'kayttotark_tunnus', 'kayttotark_selite',
-                    'olotila_tunnus', 'olotila_selite'
-                ],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM kiinteisto.kiinteisto_alue_alueet AS a
-                WHERE kiinteistotunnus IS NOT NULL
-                ''',
-            },
-            # Määräalat
-            {
-                'source_name': 'Kiinteistö: Määräala',
-                'source_identifier': 'kiinteisto.maaraala_alue_alueet',
-                'area_type': AreaType.UNSEPARATED_PARCEL,
-                'identifier_field_name': 'maaraalatunnus',
-                'metadata_columns': [
-                    'maaraalatunnus', 'pintaala', 'rekisterointipvm', 'saantopvm',
-                    'laatu_tunnus', 'laatu_selite', 'tyyppi_tunnus', 'tyyppi_selite',
-                    'olotila_tunnus', 'olotila_selite'
-                ],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM kiinteisto.maaraala_alue_alueet AS a
-                WHERE maaraalatunnus IS NOT NULL
-                ''',
-            },
-            # Kaavayksiköt
-            {
-                'source_name': 'Kaava: Kaavayksiköt',
-                'source_identifier': 'kaava.kaavayksikot_alueet',
-                'area_type': AreaType.PLAN_UNIT,
-                'identifier_field_name': 'kaavayksikkotunnus',
-                'metadata_columns': [
-                    'kaavayksikkotunnus', 'kaavatunnus', 'tyyppi', 'luokka', 'kayttotarkoitus', 'pintaala',
-                ],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM kaava.kaavayksikot_alueet AS a
-                WHERE kaavayksikkotunnus IS NOT NULL
-                ''',
-            },
-            # Tonttijaot
-            {
-                'source_name': 'Kaava: Tonttijako',
-                'source_identifier': 'kaava.tonttijako_alueet',
-                'area_type': AreaType.PLOT_DIVISION,
-                'identifier_field_name': 'tonttijakotunnus',
-                'metadata_columns': [
-                    'tonttijakotunnus', 'hyvaksymispvm', 'voimaantulopvm', 'laji_tunnus', 'laji_selite', 'vaihe_tunnus',
-                    'vaihe_selite',
-                ],
-                'query': '''
-                SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-                    AS geom_text
-                FROM kaava.tonttijako_alueet AS a
-                WHERE tonttijakotunnus IS NOT NULL
-                ''',
-            },
-        ]
+        if not self.area_types:
+            self.area_types = AREA_IMPORT_TYPES.keys()
 
-        for area_import in area_imports:
+        for area_import_type in self.area_types:
+            area_import = AREA_IMPORT_TYPES[area_import_type]
+
             self.stdout.write(area_import['source_name'])
             (source, source_created) = AreaSource.objects.get_or_create(identifier=area_import['source_identifier'],
                                                                         defaults={'name': area_import['source_name']})
