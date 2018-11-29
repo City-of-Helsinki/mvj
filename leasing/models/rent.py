@@ -21,7 +21,7 @@ from leasing.models.utils import (
 from users.models import User
 
 from .decision import Decision
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from .mixins import ArchivableModel, NameModel, TimeStampedSafeDeleteModel
 
 first_day_of_every_month = []
 
@@ -746,7 +746,7 @@ class Index(models.Model):
             self.number)
 
 
-class LeaseBasisOfRent(TimeStampedSafeDeleteModel):
+class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokranperusteet
     """

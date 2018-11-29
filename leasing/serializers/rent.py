@@ -173,7 +173,8 @@ class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, serializers.ModelSe
     class Meta:
         model = LeaseBasisOfRent
         fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
-                  'discount_percentage', 'plans_inspected_at', 'plans_inspected_by', 'locked_at', 'locked_by')
+                  'discount_percentage', 'plans_inspected_at', 'plans_inspected_by', 'locked_at', 'locked_by',
+                  'archived_at', 'archived_note')
 
 
 class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -188,7 +189,7 @@ class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, seriali
     class Meta:
         model = LeaseBasisOfRent
         fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
-                  'discount_percentage', 'plans_inspected_at', 'locked_at')
+                  'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note')
 
     def validate(self, data):
         if data.get('id'):
