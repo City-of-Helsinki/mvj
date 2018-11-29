@@ -50,19 +50,26 @@ class Party(FieldGroup):
         self.sap_customer_id = contact.sap_customer_number
         if contact.type == ContactType.PERSON:
             self.customer_id = contact.national_identification_number
+            self.info_customer_id = contact.national_identification_number
         else:
             self.customer_yid = contact.business_id
+            self.info_customer_yid = contact.business_id
 
         name = contact.get_name()[:140]  # PriorityName1-4 max length = 4 * 35 chars
 
         if len(name) <= 35:
             self.priority_name1 = name
+            self.info_name1 = name
         else:
             n = 1
             for i in range(0, len(name), 35):
                 setattr(self, 'priority_name{}'.format(n), name[i:i + 35])
+                setattr(self, 'info_name{}'.format(n), name[i:i + 35])
                 n += 1
 
+        self.priority_address1 = contact.address
+        self.priority_city = contact.city
+        self.priority_postalcode = contact.postal_code
         self.info_address1 = contact.address
         self.info_city = contact.city
         self.info_postalcode = contact.postal_code
