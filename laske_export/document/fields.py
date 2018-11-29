@@ -130,7 +130,7 @@ class FieldGroup:
     def to_xml_string(self, encoding='utf-8'):
         root = self.to_etree()
 
-        return etree.tostring(root, encoding=encoding, pretty_print=True)
+        return etree.tostring(root, encoding=encoding, xml_declaration=True, pretty_print=True)
 
     def __str__(self):
         return self.to_xml_string()
