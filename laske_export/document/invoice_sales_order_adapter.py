@@ -120,7 +120,9 @@ class InvoiceSalesOrderAdapter:
 
     def get_line_items(self):
         line_items = []
-        for invoice_row in self.invoice.rows.all():
+
+        invoice_rows = self.invoice.rows.all()
+        for i, invoice_row in enumerate(invoice_rows):
             line_item = LineItem()
 
             if invoice_row.receivable_type == self.receivable_type_rent:
@@ -133,11 +135,17 @@ class InvoiceSalesOrderAdapter:
             line_item.quantity = '1,00'
             line_item.net_price = '{:.2f}'.format(invoice_row.amount).replace('.', ',')
 
+            line1_strings = ['{}'.format(invoice_row.receivable_type.name)]
+
             if invoice_row.billing_period_start_date and invoice_row.billing_period_end_date:
-                line_item.line_text_l1 = '{}-{}'.format(
+                line1_strings.append('{} - {}'.format(
                     invoice_row.billing_period_start_date.strftime('%d.%m.%Y'),
                     invoice_row.billing_period_end_date.strftime('%d.%m.%Y'),
-                )
+                ))
+
+            line1_strings.append(' ')
+
+            line_item.line_text_l1 = ' '.join(line1_strings)[:70]
 
             if invoice_row.tenant:
                 tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
@@ -145,7 +153,12 @@ class InvoiceSalesOrderAdapter:
                     invoice_row.billing_period_start_date).first()
 
                 if tenant_contact and tenant_contact.contact:
-                    line_item.line_text_l2 = tenant_contact.contact.get_name()
+                    line_item.line_text_l2 = '{}  '.format(tenant_contact.contact.get_name()[:68])
+
+            if i == len(invoice_rows) - 1:
+                line_item.line_text_l4 = '   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä.'
+                line_item.line_text_l5 = ' Eräpäivän jälkeen peritään korkolain mukainen viivästyskorko ja'
+                line_item.line_text_l6 = ' mahdollisista perimistoimenpiteistä perimispalkkio.'
 
             line_items.append(line_item)
 
@@ -165,8 +178,8 @@ class InvoiceSalesOrderAdapter:
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
             return self.invoice.lease.lessor.sap_sales_office
 
-        # TODO: Which value to use?
-        return None
+        # TODO: Remove
+        return '2826'
 
     def set_values(self):
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
