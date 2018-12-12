@@ -21,6 +21,28 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
         serializer = view.get_serializer()
         metadata["fields"] = self.get_serializer_info(serializer)
 
+        # TODO: experiment
+        if hasattr(serializer, 'Meta') and serializer.Meta.model:
+            methods = {
+                'GET': False,
+                'OPTIONS': False,
+                'HEAD': False,
+                'POST': False,
+                'PUT': False,
+                'PATCH': False,
+                'DELETE': False,
+            }
+
+            for permission in view.get_permissions():
+                if not hasattr(permission, 'get_required_permissions'):
+                    continue
+
+                for method in methods.keys():
+                    perms = permission.get_required_permissions(method, serializer.Meta.model)
+                    methods[method] = request.user.has_perms(perms)
+
+            metadata['methods'] = methods
+
         return metadata
 
     def get_field_info(self, field):
