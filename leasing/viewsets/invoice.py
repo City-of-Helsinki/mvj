@@ -7,6 +7,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import InvoiceFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow, InvoiceSet, ReceivableType
@@ -40,7 +41,7 @@ def get_values_from_credit_request(data):
     return amount, receivable_type, notes
 
 
-class InvoiceViewSet(AtomicTransactionModelViewSet):
+class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filterset_class = InvoiceFilter
@@ -91,7 +92,7 @@ class InvoiceViewSet(AtomicTransactionModelViewSet):
         return Response(invoice.calculate_penalty_interest(calculation_date=end_date))
 
 
-class InvoiceRowViewSet(ReadOnlyModelViewSet):
+class InvoiceRowViewSet(FieldPermissionsViewsetMixin, ReadOnlyModelViewSet):
     queryset = InvoiceRow.objects.all()
     serializer_class = InvoiceRowSerializer
     filterset_class = InvoiceRowFilter

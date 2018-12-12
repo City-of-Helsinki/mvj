@@ -4,6 +4,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from field_permissions.registry import field_permissions
 from leasing.enums import AreaUnit
 from leasing.models.decision import DecisionMaker
 from leasing.models.rent import Index
@@ -135,3 +136,7 @@ class BasisOfRentDecision(models.Model):
 
 
 auditlog.register(BasisOfRent)
+
+field_permissions.register(BasisOfRent)
+field_permissions.register(BasisOfRentRate, exclude_fields=['basis_of_rent'])
+field_permissions.register(BasisOfRentDecision, exclude_fields=['basis_of_rent'])

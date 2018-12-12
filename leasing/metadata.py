@@ -4,11 +4,12 @@ from rest_framework.fields import DecimalField
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.relations import PrimaryKeyRelatedField
 
+from field_permissions.metadata import FieldPermissionsMetadataMixin
 from leasing.models import Contact, Decision, Lease
 from users.models import User
 
 
-class FieldsMetadata(SimpleMetadata):
+class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
     """Returns metadata for all the fields and the possible choices in the
     serializer even when the fields are read only.
 

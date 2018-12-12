@@ -1,10 +1,11 @@
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import BasisOfRent
 from leasing.serializers.basis_of_rent import BasisOfRentCreateUpdateSerializer, BasisOfRentSerializer
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class BasisOfRentViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class BasisOfRentViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = BasisOfRent.objects.all()
     serializer_class = BasisOfRentSerializer
 

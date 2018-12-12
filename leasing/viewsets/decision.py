@@ -1,3 +1,4 @@
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DecisionFilter
 from leasing.models import Decision
 from leasing.serializers.decision import DecisionCreateUpdateSerializer, DecisionSerializer
@@ -5,7 +6,7 @@ from leasing.serializers.decision import DecisionCreateUpdateSerializer, Decisio
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class DecisionViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class DecisionViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
     filterset_class = DecisionFilter

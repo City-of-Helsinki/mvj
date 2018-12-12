@@ -1,3 +1,4 @@
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import CollectionCourtDecisionFilter, CollectionLetterFilter, CollectionNoteFilter
 from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote
 from leasing.serializers.debt_collection import (
@@ -7,7 +8,8 @@ from leasing.serializers.debt_collection import (
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, MultiPartJsonParser
 
 
-class CollectionCourtDecisionViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionCourtDecisionViewSet(FileMixin, AuditLogMixin, FieldPermissionsViewsetMixin,
+                                     AtomicTransactionModelViewSet):
     queryset = CollectionCourtDecision.objects.all()
     serializer_class = CollectionCourtDecisionSerializer
     parser_classes = (MultiPartJsonParser,)
@@ -20,7 +22,7 @@ class CollectionCourtDecisionViewSet(FileMixin, AuditLogMixin, AtomicTransaction
         return CollectionCourtDecisionSerializer
 
 
-class CollectionLetterViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionLetterViewSet(FileMixin, AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = CollectionLetter.objects.all()
     serializer_class = CollectionLetterSerializer
     parser_classes = (MultiPartJsonParser,)
@@ -38,7 +40,7 @@ class CollectionLetterTemplateViewSet(AuditLogMixin, AtomicTransactionModelViewS
     serializer_class = CollectionLetterTemplateSerializer
 
 
-class CollectionNoteViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionNoteViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = CollectionNote.objects.all().select_related('user')
     serializer_class = CollectionNoteSerializer
     filterset_class = CollectionNoteFilter

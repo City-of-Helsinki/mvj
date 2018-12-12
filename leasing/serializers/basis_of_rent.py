@@ -1,6 +1,8 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
+
 from ..models import (
     BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision, BasisOfRentPlotType,
     BasisOfRentPropertyIdentifier, BasisOfRentRate, DecisionMaker)
@@ -20,7 +22,7 @@ class BasisOfRentBuildPermissionTypeSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class BasisOfRentDecisionSerializer(serializers.ModelSerializer):
+class BasisOfRentDecisionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision_maker = DecisionMakerSerializer()
 
@@ -29,7 +31,7 @@ class BasisOfRentDecisionSerializer(serializers.ModelSerializer):
         fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section')
 
 
-class BasisOfRentDecisionCreateUpdateSerializer(serializers.ModelSerializer):
+class BasisOfRentDecisionCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision_maker = InstanceDictPrimaryKeyRelatedField(
         instance_class=DecisionMaker, queryset=DecisionMaker.objects.filter(),
@@ -48,7 +50,8 @@ class BasisOfRentPropertyIdentifierSerializer(serializers.ModelSerializer):
         fields = ('id', 'identifier', 'geometry')
 
 
-class BasisOfRentRateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class BasisOfRentRateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     build_permission_type = BasisOfRentBuildPermissionTypeSerializer()
 
@@ -57,7 +60,8 @@ class BasisOfRentRateSerializer(EnumSupportSerializerMixin, serializers.ModelSer
         fields = ('id', 'build_permission_type', 'amount', 'area_unit')
 
 
-class BasisOfRentRateCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class BasisOfRentRateCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                            serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     build_permission_type = InstanceDictPrimaryKeyRelatedField(
         instance_class=BasisOfRentBuildPermissionType, queryset=BasisOfRentBuildPermissionType.objects.all(),
@@ -68,7 +72,7 @@ class BasisOfRentRateCreateUpdateSerializer(EnumSupportSerializerMixin, serializ
         fields = ('id', 'build_permission_type', 'amount', 'area_unit')
 
 
-class BasisOfRentSerializer(serializers.ModelSerializer):
+class BasisOfRentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     plot_type = BasisOfRentPlotTypeSerializer()
     rent_rates = BasisOfRentRateSerializer(many=True, required=False, allow_null=True)
     property_identifiers = BasisOfRentPropertyIdentifierSerializer(many=True, required=False, allow_null=True)
@@ -81,7 +85,8 @@ class BasisOfRentSerializer(serializers.ModelSerializer):
                   'property_identifiers', 'decisions', 'geometry')
 
 
-class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSerializer):
+class BasisOfRentCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializerMixin,
+                                        serializers.ModelSerializer):
     plot_type = InstanceDictPrimaryKeyRelatedField(instance_class=BasisOfRentPlotType,
                                                    queryset=BasisOfRentPlotType.objects.all(),
                                                    related_serializer=BasisOfRentPlotTypeSerializer)

@@ -14,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.forms import LeaseSearchForm
 from leasing.models import (
@@ -126,7 +127,7 @@ def interest_rates_to_strings(interest_rates):
     return result
 
 
-class LeaseViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
     filterset_class = LeaseFilter
 

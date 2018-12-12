@@ -5,6 +5,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from field_permissions.registry import field_permissions
 from leasing.enums import ContactType
 
 from .mixins import TimeStampedSafeDeleteModel
@@ -114,3 +115,5 @@ class Contact(TimeStampedSafeDeleteModel):
 
 
 auditlog.register(Contact)
+
+field_permissions.register(Contact, exclude_fields=['lease', 'invoice', 'tenants', 'tenantcontact'])

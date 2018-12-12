@@ -2,6 +2,7 @@ from django.contrib.gis import admin
 from django.utils.translation import ugettext_lazy as _
 from enumfields.admin import EnumFieldListFilter
 
+from field_permissions.admin import FieldPermissionsAdminMixin
 from leasing.models import (
     Area, AreaNote, AreaSource, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision,
     BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, CollectionCourtDecision, CollectionLetter,
@@ -26,7 +27,11 @@ class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
     default_zoom = 11
 
 
-class AreaNoteAdmin(CenterOnHelsinkiOSMGeoAdmin):
+class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiOSMGeoAdmin):
+    pass
+
+
+class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
 
 
@@ -46,7 +51,7 @@ class AreaSourceAdmin(admin.ModelAdmin):
     search_fields = ['name', 'identifier']
 
 
-class ContactAdmin(admin.ModelAdmin):
+class ContactAdmin(FieldPermissionsModelAdmin):
     list_display = ('__str__', 'type', 'is_lessor')
     search_fields = ['first_name', 'last_name', 'name']
 
@@ -61,7 +66,7 @@ class DistrictAdmin(admin.ModelAdmin):
     search_fields = ['name', 'municipality__name', 'identifier']
 
 
-class TenantContactAdmin(admin.ModelAdmin):
+class TenantContactAdmin(FieldPermissionsModelAdmin):
     list_display = ('get_lease_identifier', 'tenant', 'type', 'contact')
     raw_id_fields = ('tenant', 'contact')
 
@@ -79,12 +84,12 @@ class TenantContactAdmin(admin.ModelAdmin):
                                  'tenant__lease__identifier__district')
 
 
-class TenantContactInline(admin.TabularInline):
+class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = TenantContact
     extra = 0
 
 
-class TenantAdmin(admin.ModelAdmin):
+class TenantAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', )
     inlines = [TenantContactInline]
     raw_id_fields = ('lease',)
@@ -97,26 +102,26 @@ class TenantAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class RelatedLeaseInline(admin.TabularInline):
+class RelatedLeaseInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = RelatedLease
     fk_name = 'from_lease'
     raw_id_fields = ('from_lease', 'to_lease')
     extra = 0
 
 
-class LeaseBasisOfRentInline(admin.TabularInline):
+class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = LeaseBasisOfRent
     extra = 0
 
 
-class LeaseIdentifierAdmin(admin.ModelAdmin):
+class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
         return qs.select_related('type', 'municipality', 'district')
 
 
-class LeaseAdmin(admin.ModelAdmin):
+class LeaseAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
     raw_id_fields = ('identifier', )
 
@@ -128,19 +133,19 @@ class LeaseAdmin(admin.ModelAdmin):
                                  'identifier__district')
 
 
-class CollectionCourtDecisionAdmin(admin.ModelAdmin):
+class CollectionCourtDecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'file', 'uploaded_at', 'uploader')
     raw_id_fields = ('lease',)
     ordering = ('-uploaded_at',)
 
 
-class CollectionLetterAdmin(admin.ModelAdmin):
+class CollectionLetterAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'file', 'uploaded_at', 'uploader')
     raw_id_fields = ('lease',)
     ordering = ('-uploaded_at',)
 
 
-class CollectionNoteAdmin(admin.ModelAdmin):
+class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'created_at', 'note', 'user')
     raw_id_fields = ('lease',)
     ordering = ('-created_at',)
@@ -151,22 +156,22 @@ class CollectionLetterTemplateAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'topic', 'user', 'created_at', 'modified_at')
     raw_id_fields = ('lease', )
 
 
-class ContractChangeInline(admin.StackedInline):
+class ContractChangeInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = ContractChange
     extra = 0
 
 
-class MortgageDocumentInline(admin.StackedInline):
+class MortgageDocumentInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = MortgageDocument
     extra = 0
 
 
-class ContractAdmin(admin.ModelAdmin):
+class ContractAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'type', 'contract_number')
     inlines = [ContractChangeInline, MortgageDocumentInline]
     raw_id_fields = ('lease',)
@@ -179,12 +184,12 @@ class ContractAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class ConditionInline(admin.StackedInline):
+class ConditionInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = Condition
     extra = 0
 
 
-class DecisionAdmin(admin.ModelAdmin):
+class DecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'reference_number', 'decision_maker', 'type')
     inlines = [ConditionInline]
     raw_id_fields = ('lease',)
@@ -197,7 +202,7 @@ class DecisionAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class InspectionAdmin(admin.ModelAdmin):
+class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'inspector', 'supervision_date', 'supervised_date')
     raw_id_fields = ('lease',)
 
@@ -209,7 +214,7 @@ class InspectionAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class NameAdmin(admin.ModelAdmin):
+class NameAdmin(FieldPermissionsModelAdmin):
     list_display = ('name', )
     search_fields = ['name']
 
@@ -220,27 +225,27 @@ class LeaseTypeAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
 
-class RentDueDateInline(admin.TabularInline):
+class RentDueDateInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = RentDueDate
     extra = 0
 
 
-class FixedInitialYearRentInline(admin.TabularInline):
+class FixedInitialYearRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = FixedInitialYearRent
     extra = 0
 
 
-class ContractRentInline(admin.TabularInline):
+class ContractRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = ContractRent
     extra = 0
 
 
-class RentAdjustmentInline(admin.TabularInline):
+class RentAdjustmentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = RentAdjustment
     extra = 0
 
 
-class RentAdmin(admin.ModelAdmin):
+class RentAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'type')
     inlines = [RentDueDateInline, FixedInitialYearRentInline, ContractRentInline, RentAdjustmentInline]
     raw_id_fields = ('lease',)
@@ -253,22 +258,22 @@ class RentAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class BasisOfRentPropertyIdentifierInline(admin.TabularInline):
+class BasisOfRentPropertyIdentifierInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = BasisOfRentPropertyIdentifier
     extra = 0
 
 
-class BasisOfRentDecisionInline(admin.TabularInline):
+class BasisOfRentDecisionInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = BasisOfRentDecision
     extra = 0
 
 
-class BasisOfRentRateInline(admin.TabularInline):
+class BasisOfRentRateInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = BasisOfRentRate
     extra = 0
 
 
-class BasisOfRentAdmin(admin.ModelAdmin):
+class BasisOfRentAdmin(FieldPermissionsModelAdmin):
     list_display = ('id', 'plot_type', 'management', 'financing')
     inlines = [BasisOfRentPropertyIdentifierInline, BasisOfRentDecisionInline, BasisOfRentRateInline]
 
@@ -283,26 +288,26 @@ class IndexAdmin(admin.ModelAdmin):
     list_display = ('year', 'month', 'number')
 
 
-class InfillDevelopmentCompensationAdmin(admin.ModelAdmin):
+class InfillDevelopmentCompensationAdmin(FieldPermissionsModelAdmin):
     list_display = ('name', 'reference_number', 'state')
 
 
-class InfillDevelopmentCompensationDecisionInline(admin.StackedInline):
+class InfillDevelopmentCompensationDecisionInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = InfillDevelopmentCompensationDecision
     extra = 0
 
 
-class InfillDevelopmentCompensationIntendedUseInline(admin.StackedInline):
+class InfillDevelopmentCompensationIntendedUseInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = InfillDevelopmentCompensationIntendedUse
     extra = 0
 
 
-class InfillDevelopmentCompensationAttachmentInline(admin.StackedInline):
+class InfillDevelopmentCompensationAttachmentInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = InfillDevelopmentCompensationAttachment
     extra = 0
 
 
-class InfillDevelopmentCompensationLeaseAdmin(admin.ModelAdmin):
+class InfillDevelopmentCompensationLeaseAdmin(FieldPermissionsModelAdmin):
     raw_id_fields = ('lease', )
     inlines = [InfillDevelopmentCompensationDecisionInline, InfillDevelopmentCompensationIntendedUseInline,
                InfillDevelopmentCompensationAttachmentInline]
@@ -321,18 +326,18 @@ class InterestRateAdmin(admin.ModelAdmin):
     ordering = ('-start_date', '-end_date')
 
 
-class InvoicePaymentInline(admin.TabularInline):
+class InvoicePaymentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = InvoicePayment
     extra = 0
 
 
-class InvoiceRowInline(admin.TabularInline):
+class InvoiceRowInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = InvoiceRow
     extra = 0
     raw_id_fields = ('tenant',)
 
 
-class InvoiceAdmin(admin.ModelAdmin):
+class InvoiceAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'due_date', 'billing_period_start_date', 'billing_period_end_date', 'total_amount')
     inlines = [InvoiceRowInline, InvoicePaymentInline]
     raw_id_fields = ('lease', 'invoiceset', 'credited_invoice')
@@ -357,27 +362,27 @@ class InvoiceSetAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class ConstructabilityDescriptionInline(admin.TabularInline):
+class ConstructabilityDescriptionInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = ConstructabilityDescription
     extra = 0
 
 
-class PlotInline(admin.StackedInline):
+class PlotInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = Plot
     extra = 0
 
 
-class PlanUnitInline(admin.StackedInline):
+class PlanUnitInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = PlanUnit
     extra = 0
 
 
-class LeaseAreaAddressInline(admin.TabularInline):
+class LeaseAreaAddressInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = LeaseAreaAddress
     extra = 0
 
 
-class LeaseAreaAdmin(admin.ModelAdmin):
+class LeaseAreaAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'type')
     inlines = [LeaseAreaAddressInline, ConstructabilityDescriptionInline, PlotInline, PlanUnitInline]
     raw_id_fields = ('lease',)
@@ -390,7 +395,7 @@ class LeaseAreaAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class PlotAdmin(admin.ModelAdmin):
+class PlotAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease_area', 'type')
     raw_id_fields = ('lease_area',)
 
@@ -408,7 +413,7 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
-class PlanUnitAdmin(admin.ModelAdmin):
+class PlanUnitAdmin(FieldPermissionsModelAdmin):
     list_display = ('get_lease_identifier', 'lease_area')
     raw_id_fields = ('lease_area',)
 

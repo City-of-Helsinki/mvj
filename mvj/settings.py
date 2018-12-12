@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'users',
     'leasing',
     'laske_export',
+    'field_permissions',
 ]
 if RAVEN_CONFIG['dsn']:
     INSTALLED_APPS += ['raven.contrib.django.raven_compat']

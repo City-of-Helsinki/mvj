@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, Invoice, Lease, Tenant
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
@@ -23,13 +24,13 @@ class ReceivableTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class InvoicePaymentSerializer(serializers.ModelSerializer):
+class InvoicePaymentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = InvoicePayment
         exclude = ('deleted',)
 
 
-class InvoicePaymentCreateUpdateSerializer(serializers.ModelSerializer):
+class InvoicePaymentCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -37,7 +38,7 @@ class InvoicePaymentCreateUpdateSerializer(serializers.ModelSerializer):
         exclude = ('invoice', 'deleted',)
 
 
-class InvoiceRowSerializer(serializers.ModelSerializer):
+class InvoiceRowSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     tenant = TenantSerializer()
 
@@ -47,7 +48,7 @@ class InvoiceRowSerializer(serializers.ModelSerializer):
                   'description', 'amount')
 
 
-class InvoiceRowCreateUpdateSerializer(serializers.ModelSerializer):
+class InvoiceRowCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     tenant = InstanceDictPrimaryKeyRelatedField(instance_class=Tenant,
                                                 queryset=Tenant.objects.all(),
@@ -62,13 +63,13 @@ class InvoiceRowCreateUpdateSerializer(serializers.ModelSerializer):
                   'description', 'amount')
 
 
-class CreditInvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class CreditInvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = ('id', 'number', 'due_date', 'total_amount')
 
 
-class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     recipient = ContactSerializer()
     rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
     payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
@@ -79,7 +80,8 @@ class InvoiceSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer)
         exclude = ('deleted',)
 
 
-class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                        serializers.ModelSerializer):
     recipient = ContactSerializer()
     rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
     payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
@@ -90,7 +92,8 @@ class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, serializers.
         exclude = ('deleted',)
 
 
-class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                              serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     recipient = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
                                                    related_serializer=ContactSerializer)
@@ -129,7 +132,8 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, ser
         read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date')
 
 
-class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                              serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     recipient = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
                                                    related_serializer=ContactSerializer)

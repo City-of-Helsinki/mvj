@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
+
 from ..models import Contract, ContractChange, ContractType, Decision, MortgageDocument
 from .decision import DecisionSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
-class MortgageDocumentSerializer(serializers.ModelSerializer):
+class MortgageDocumentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -13,7 +15,7 @@ class MortgageDocumentSerializer(serializers.ModelSerializer):
         fields = ('id', 'number', 'date', 'note')
 
 
-class ContractChangeSerializer(serializers.ModelSerializer):
+class ContractChangeSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -22,7 +24,7 @@ class ContractChangeSerializer(serializers.ModelSerializer):
                   'description', 'decision')
 
 
-class ContractChangeCreateUpdateSerializer(serializers.ModelSerializer):
+class ContractChangeCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
                                                   related_serializer=DecisionSerializer, required=False)
@@ -39,7 +41,7 @@ class ContractTypeSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class ContractSerializer(serializers.ModelSerializer):
+class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     mortgage_documents = MortgageDocumentSerializer(many=True, required=False, allow_null=True)
     contract_changes = ContractChangeSerializer(many=True, required=False, allow_null=True)
@@ -51,7 +53,7 @@ class ContractSerializer(serializers.ModelSerializer):
                   'collateral_note', 'institution_identifier', 'contract_changes', 'mortgage_documents')
 
 
-class ContractCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSerializer):
+class ContractCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     type = InstanceDictPrimaryKeyRelatedField(instance_class=ContractType, queryset=ContractType.objects.all(),
                                               related_serializer=ContractTypeSerializer)

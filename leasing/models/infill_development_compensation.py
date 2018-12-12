@@ -4,6 +4,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from field_permissions.registry import field_permissions
 from leasing.enums import InfillDevelopmentCompensationState
 from leasing.models.decision import DecisionMaker
 from leasing.models.lease import IntendedUse
@@ -182,3 +183,12 @@ auditlog.register(InfillDevelopmentCompensationLease)
 auditlog.register(InfillDevelopmentCompensationDecision)
 auditlog.register(InfillDevelopmentCompensationIntendedUse)
 auditlog.register(InfillDevelopmentCompensationAttachment)
+
+field_permissions.register(InfillDevelopmentCompensation, exclude_fields=[])
+field_permissions.register(InfillDevelopmentCompensationLease, exclude_fields=['infill_development_compensation'])
+field_permissions.register(InfillDevelopmentCompensationDecision, exclude_fields=[
+    'infill_development_compensation_lease'])
+field_permissions.register(InfillDevelopmentCompensationIntendedUse, exclude_fields=[
+    'infill_development_compensation_lease'])
+field_permissions.register(InfillDevelopmentCompensationAttachment, exclude_fields=[
+    'infill_development_compensation_lease'])

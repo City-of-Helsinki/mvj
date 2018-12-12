@@ -10,6 +10,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from field_permissions.registry import field_permissions
 from leasing.calculation.explanation import Explanation
 from leasing.calculation.index import IndexCalculation
 from leasing.enums import (
@@ -802,3 +803,9 @@ auditlog.register(FixedInitialYearRent)
 auditlog.register(ContractRent)
 auditlog.register(RentAdjustment)
 auditlog.register(LeaseBasisOfRent)
+
+field_permissions.register(Rent, exclude_fields=['lease', 'index_adjusted_rents', 'payable_rents'])
+field_permissions.register(FixedInitialYearRent, exclude_fields=['rent'])
+field_permissions.register(ContractRent, exclude_fields=['rent'])
+field_permissions.register(RentAdjustment, exclude_fields=['rent'])
+field_permissions.register(LeaseBasisOfRent, exclude_fields=['lease'])

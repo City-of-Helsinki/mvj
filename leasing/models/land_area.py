@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from safedelete.models import SafeDeleteModel
 
+from field_permissions.registry import field_permissions
 from leasing.enums import (
     ConstructabilityReportInvestigationState, ConstructabilityState, ConstructabilityType, LeaseAreaType, LocationType,
     PlotType, PollutedLandRentConditionState)
@@ -271,3 +272,8 @@ auditlog.register(LeaseArea)
 auditlog.register(ConstructabilityDescription)
 auditlog.register(Plot)
 auditlog.register(PlanUnit)
+
+field_permissions.register(LeaseArea, exclude_fields=['lease'])
+field_permissions.register(ConstructabilityDescription, exclude_fields=['lease_area'])
+field_permissions.register(Plot, exclude_fields=['lease_area'])
+field_permissions.register(PlanUnit, exclude_fields=['lease_area'])

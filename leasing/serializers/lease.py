@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
@@ -100,7 +101,7 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
         fields = ('type', 'municipality', 'district', 'sequence')
 
 
-class LeaseSuccinctSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseSuccinctSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     type = LeaseTypeSerializer()
     municipality = MunicipalitySerializer()
@@ -142,7 +143,7 @@ class RelatedFromLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSe
         fields = '__all__'
 
 
-class LeaseSerializerBase(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseSerializerBase(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     type = LeaseTypeSerializer()
     municipality = MunicipalitySerializer()
@@ -234,7 +235,8 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         exclude = None
 
 
-class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                  serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)

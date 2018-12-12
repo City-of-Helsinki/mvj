@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import Invoice, Lease, Tenant
 from users.serializers import UserSerializer
 
@@ -7,7 +8,8 @@ from ..models.debt_collection import CollectionCourtDecision, CollectionLetter, 
 from .utils import FileSerializerMixin, InstanceDictPrimaryKeyRelatedField
 
 
-class CollectionCourtDecisionSerializer(FileSerializerMixin, serializers.ModelSerializer):
+class CollectionCourtDecisionSerializer(FileSerializerMixin, FieldPermissionsSerializerMixin,
+                                        serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = UserSerializer()
     file = serializers.SerializerMethodField('get_file_url')
@@ -19,7 +21,7 @@ class CollectionCourtDecisionSerializer(FileSerializerMixin, serializers.ModelSe
         download_url_name = 'collectioncourtdecision-download'
 
 
-class CollectionCourtDecisionCreateUpdateSerializer(serializers.ModelSerializer):
+class CollectionCourtDecisionCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -29,7 +31,7 @@ class CollectionCourtDecisionCreateUpdateSerializer(serializers.ModelSerializer)
         read_only_fields = ('uploaded_at',)
 
 
-class CollectionLetterSerializer(FileSerializerMixin, serializers.ModelSerializer):
+class CollectionLetterSerializer(FileSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = UserSerializer()
     file = serializers.SerializerMethodField('get_file_url')
@@ -41,7 +43,7 @@ class CollectionLetterSerializer(FileSerializerMixin, serializers.ModelSerialize
         download_url_name = 'collectionletter-download'
 
 
-class CollectionLetterCreateUpdateSerializer(serializers.ModelSerializer):
+class CollectionLetterCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -59,7 +61,7 @@ class CollectionLetterTemplateSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class CollectionNoteSerializer(serializers.ModelSerializer):
+class CollectionNoteSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     user = UserSerializer(read_only=True)
 
@@ -68,7 +70,7 @@ class CollectionNoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CollectionNoteCreateUpdateSerializer(serializers.ModelSerializer):
+class CollectionNoteCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -77,7 +79,7 @@ class CollectionNoteCreateUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CreateCollectionLetterDocumentSerializer(serializers.Serializer):
+class CreateCollectionLetterDocumentSerializer(FieldPermissionsSerializerMixin, serializers.Serializer):
     lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all())
     template = InstanceDictPrimaryKeyRelatedField(instance_class=CollectionLetterTemplate,
                                                   queryset=CollectionLetterTemplate.objects.all())

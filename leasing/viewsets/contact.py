@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import ContactFilter
 from leasing.models import Contact
 from leasing.serializers.contact import ContactSerializer
@@ -8,7 +9,7 @@ from leasing.serializers.contact import ContactSerializer
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class ContactViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class ContactViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     filterset_class = ContactFilter

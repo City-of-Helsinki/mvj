@@ -1,6 +1,7 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import DecisionMaker, IntendedUse, Lease
 from users.models import User
 from users.serializers import UserSerializer
@@ -13,7 +14,7 @@ from .lease import IntendedUseSerializer, LeaseSuccinctSerializer
 from .utils import FileSerializerMixin, InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
-class InfillDevelopmentCompensationDecisionSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationDecisionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision_maker = DecisionMakerSerializer()
 
@@ -22,7 +23,8 @@ class InfillDevelopmentCompensationDecisionSerializer(serializers.ModelSerialize
         fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section')
 
 
-class InfillDevelopmentCompensationDecisionCreateUpdateSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationDecisionCreateUpdateSerializer(FieldPermissionsSerializerMixin,
+                                                                  serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision_maker = InstanceDictPrimaryKeyRelatedField(
         instance_class=DecisionMaker, queryset=DecisionMaker.objects.filter(),
@@ -33,7 +35,7 @@ class InfillDevelopmentCompensationDecisionCreateUpdateSerializer(serializers.Mo
         fields = ('id', 'reference_number', 'decision_maker', 'decision_date', 'section')
 
 
-class InfillDevelopmentCompensationIntendedUseSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationIntendedUseSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = IntendedUseSerializer()
 
@@ -42,7 +44,8 @@ class InfillDevelopmentCompensationIntendedUseSerializer(serializers.ModelSerial
         fields = ('id', 'intended_use', 'floor_m2', 'amount_per_floor_m2')
 
 
-class InfillDevelopmentCompensationIntendedUseCreateUpdateSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationIntendedUseCreateUpdateSerializer(FieldPermissionsSerializerMixin,
+                                                                     serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=IntendedUse, queryset=IntendedUse.objects.filter(),
                                                       related_serializer=IntendedUseSerializer, required=False,
@@ -53,7 +56,8 @@ class InfillDevelopmentCompensationIntendedUseCreateUpdateSerializer(serializers
         fields = ('id', 'intended_use', 'floor_m2', 'amount_per_floor_m2')
 
 
-class InfillDevelopmentCompensationAttachmentSerializer(FileSerializerMixin, serializers.ModelSerializer):
+class InfillDevelopmentCompensationAttachmentSerializer(FileSerializerMixin, FieldPermissionsSerializerMixin,
+                                                        serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = UserSerializer()
     file = serializers.SerializerMethodField('get_file_url')
@@ -65,7 +69,8 @@ class InfillDevelopmentCompensationAttachmentSerializer(FileSerializerMixin, ser
         download_url_name = 'infilldevelopmentcompensationattachment-download'
 
 
-class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(serializers.ModelSerializer):
+class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(FieldPermissionsSerializerMixin,
+                                                                    serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     uploader = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -75,7 +80,8 @@ class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(serializers.
         read_only_fields = ('uploaded_at', )
 
 
-class InfillDevelopmentCompensationLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InfillDevelopmentCompensationLeaseSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                                   serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     lease = LeaseSuccinctSerializer()
     decisions = InfillDevelopmentCompensationDecisionSerializer(many=True)
@@ -90,6 +96,7 @@ class InfillDevelopmentCompensationLeaseSerializer(EnumSupportSerializerMixin, s
 
 
 class InfillDevelopmentCompensationLeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
+                                                               FieldPermissionsSerializerMixin,
                                                                serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all(),
@@ -105,7 +112,8 @@ class InfillDevelopmentCompensationLeaseCreateUpdateSerializer(UpdateNestedMixin
                   'paid_date', 'decisions', 'intended_uses')
 
 
-class InfillDevelopmentCompensationSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class InfillDevelopmentCompensationSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                              serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     user = UserSerializer()
     infill_development_compensation_leases = InfillDevelopmentCompensationLeaseSerializer(many=True)
@@ -117,7 +125,7 @@ class InfillDevelopmentCompensationSerializer(EnumSupportSerializerMixin, serial
 
 
 class InfillDevelopmentCompensationCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
-                                                          serializers.ModelSerializer):
+                                                          FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     user = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
                                               related_serializer=UserSerializer)

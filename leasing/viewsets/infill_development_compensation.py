@@ -1,3 +1,4 @@
+from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment
 from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentCreateUpdateSerializer, InfillDevelopmentCompensationAttachmentSerializer,
@@ -6,7 +7,7 @@ from leasing.serializers.infill_development_compensation import (
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, MultiPartJsonParser
 
 
-class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class InfillDevelopmentCompensationViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = InfillDevelopmentCompensation.objects.all()
     serializer_class = InfillDevelopmentCompensationSerializer
 
@@ -32,7 +33,8 @@ class InfillDevelopmentCompensationViewSet(AuditLogMixin, AtomicTransactionModel
         return InfillDevelopmentCompensationSerializer
 
 
-class InfillDevelopmentCompensationAttachmentViewSet(FileMixin, AuditLogMixin, AtomicTransactionModelViewSet):
+class InfillDevelopmentCompensationAttachmentViewSet(FileMixin, AuditLogMixin, FieldPermissionsViewsetMixin,
+                                                     AtomicTransactionModelViewSet):
     queryset = InfillDevelopmentCompensationAttachment.objects.all()
     serializer_class = InfillDevelopmentCompensationAttachmentSerializer
     parser_classes = (MultiPartJsonParser, )

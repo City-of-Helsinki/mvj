@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
+
 from ..models import Condition, ConditionType, Decision, DecisionMaker, DecisionType
 from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
@@ -10,7 +12,7 @@ class ConditionTypeSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class ConditionSerializer(serializers.ModelSerializer):
+class ConditionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -18,7 +20,7 @@ class ConditionSerializer(serializers.ModelSerializer):
         fields = ('id', 'type', 'supervision_date', 'supervised_date', 'description')
 
 
-class ConditionCreateUpdateSerializer(serializers.ModelSerializer):
+class ConditionCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     type = InstanceDictPrimaryKeyRelatedField(instance_class=ConditionType, queryset=ConditionType.objects.filter(),
                                               related_serializer=ConditionTypeSerializer, required=False,
@@ -41,7 +43,7 @@ class DecisionTypeSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class DecisionSerializer(serializers.ModelSerializer):
+class DecisionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     conditions = ConditionSerializer(many=True, required=False, allow_null=True)
 
@@ -51,7 +53,8 @@ class DecisionSerializer(serializers.ModelSerializer):
                   'description', 'conditions')
 
 
-class DecisionCreateUpdateNestedSerializer(UpdateNestedMixin, serializers.ModelSerializer):
+class DecisionCreateUpdateNestedSerializer(UpdateNestedMixin, FieldPermissionsSerializerMixin,
+                                           serializers.ModelSerializer):
     """This is used when the decision is added or updated inside a lease
 
     The lease is not included in this serializer, but set via the UpdateNestedMixin in LeaseCreateUpdateSerializer.
@@ -73,7 +76,7 @@ class DecisionCreateUpdateNestedSerializer(UpdateNestedMixin, serializers.ModelS
                   'conditions')
 
 
-class DecisionCreateUpdateSerializer(UpdateNestedMixin, serializers.ModelSerializer):
+class DecisionCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     """This is used when creating a Decision separately on the decision viewset
     """
     id = serializers.IntegerField(required=False)

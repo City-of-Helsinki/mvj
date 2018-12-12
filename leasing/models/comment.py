@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from field_permissions.registry import field_permissions
 from users.models import User
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -38,3 +39,6 @@ class Comment(TimeStampedSafeDeleteModel):
 
 
 auditlog.register(Comment)
+
+field_permissions.register(Comment, exclude_fields=['lease'])
+field_permissions.register(CommentTopic)

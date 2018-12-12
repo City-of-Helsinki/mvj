@@ -6,6 +6,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from docxtpl import DocxTemplate
 
+from field_permissions.registry import field_permissions
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
 
@@ -129,3 +130,7 @@ auditlog.register(CollectionLetterTemplate)
 auditlog.register(CollectionNote)
 auditlog.register(CollectionCourtDecision)
 auditlog.register(InterestRate)
+
+field_permissions.register(CollectionLetter, exclude_fields=['lease'])
+field_permissions.register(CollectionNote, exclude_fields=['lease'])
+field_permissions.register(CollectionCourtDecision, exclude_fields=['lease'])

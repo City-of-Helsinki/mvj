@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import DueDatesType
 from leasing.models import Index
 from users.serializers import UserSerializer
@@ -29,7 +30,7 @@ class RentDueDateSerializer(serializers.ModelSerializer):
         fields = ('id', 'day', 'month')
 
 
-class FixedInitialYearRentSerializer(serializers.ModelSerializer):
+class FixedInitialYearRentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
@@ -40,7 +41,7 @@ class FixedInitialYearRentSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount', 'intended_use', 'start_date', 'end_date')
 
 
-class ContractRentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class ContractRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
@@ -68,7 +69,8 @@ class PayableRentSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount', 'start_date', 'end_date', 'difference_percent', 'calendar_year_rent')
 
 
-class RentAdjustmentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RentAdjustmentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                               serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = DecisionSerializer()
     intended_use = RentIntendedUseSerializer()
@@ -79,7 +81,8 @@ class RentAdjustmentSerializer(EnumSupportSerializerMixin, serializers.ModelSeri
                   'decision', 'note')
 
 
-class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                           serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
                                                   related_serializer=DecisionSerializer)
@@ -93,7 +96,8 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, serialize
                   'decision', 'note')
 
 
-class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                     serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     due_dates = RentDueDateSerializer(many=True, required=False, allow_null=True)
     fixed_initial_year_rents = FixedInitialYearRentSerializer(many=True, required=False, allow_null=True)
@@ -114,7 +118,8 @@ class RentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
                   'seasonal_end_month', 'manual_ratio', 'manual_ratio_previous')
 
 
-class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RentSimpleSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                           serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -126,7 +131,8 @@ class RentSimpleSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
                   'manual_ratio_previous')
 
 
-class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                 serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     due_dates = RentDueDateSerializer(many=True, required=False, allow_null=True)
     fixed_initial_year_rents = FixedInitialYearRentSerializer(many=True, required=False, allow_null=True)
@@ -163,7 +169,8 @@ class IndexSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                 serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = RentIntendedUseSerializer()
     index = IndexSerializer()
@@ -177,7 +184,8 @@ class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, serializers.ModelSe
                   'archived_at', 'archived_note')
 
 
-class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                             serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),

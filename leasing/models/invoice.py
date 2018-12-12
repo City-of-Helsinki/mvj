@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from sequences import get_next_value
 
+from field_permissions.registry import field_permissions
 from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
@@ -530,3 +531,7 @@ class BankHoliday(models.Model):
 auditlog.register(Invoice)
 auditlog.register(InvoiceRow)
 auditlog.register(InvoicePayment)
+
+field_permissions.register(Invoice, exclude_fields=['lease', 'laskeexportlog'])
+field_permissions.register(InvoiceRow, exclude_fields=['invoice'])
+field_permissions.register(InvoicePayment, exclude_fields=['invoice'])

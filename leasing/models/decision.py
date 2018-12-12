@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from field_permissions.registry import field_permissions
+
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
@@ -93,3 +95,7 @@ class Condition(TimeStampedSafeDeleteModel):
 
 auditlog.register(Decision)
 auditlog.register(Condition)
+
+field_permissions.register(Decision, exclude_fields=['lease', 'rentadjustment', 'contract', 'contractchange',
+                                                     'leasearea'])
+field_permissions.register(Condition, exclude_fields=['decision'])

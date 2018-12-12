@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from field_permissions.registry import field_permissions
+
 
 class Inspection(models.Model):
     """
@@ -29,3 +31,5 @@ class Inspection(models.Model):
 
 
 auditlog.register(Inspection)
+
+field_permissions.register(Inspection, exclude_fields=['lease'])

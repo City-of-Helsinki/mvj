@@ -12,6 +12,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from field_permissions.registry import field_permissions
 from leasing.enums import (
     Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType)
 from leasing.models import Contact
@@ -794,3 +795,6 @@ class RelatedLease(TimeStampedSafeDeleteModel):
 
 auditlog.register(Lease)
 auditlog.register(RelatedLease)
+
+field_permissions.register(Lease, exclude_fields=[
+    'from_leases', 'to_leases', 'leases', 'infill_development_compensation_leases', 'invoicesets', 'leasestatelog'])

@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from field_permissions.registry import field_permissions
+
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
@@ -123,3 +125,7 @@ class ContractChange(models.Model):
 auditlog.register(Contract)
 auditlog.register(ContractChange)
 auditlog.register(MortgageDocument)
+
+field_permissions.register(Contract, exclude_fields=['lease'])
+field_permissions.register(ContractChange, exclude_fields=['contract'])
+field_permissions.register(MortgageDocument, exclude_fields=['contract'])
