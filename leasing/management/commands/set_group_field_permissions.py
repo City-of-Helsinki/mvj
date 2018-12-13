@@ -121,6 +121,15 @@ DEFAULT_FIELD_PERMS = {
         6: "view",
         7: "change",
     },
+    "commenttopic": {
+        1: None,
+        2: "view",
+        3: "view",
+        4: "view",
+        5: "view",
+        6: "view",
+        7: "change",
+    },
     "contact": {
         1: "view",
         2: "view",
