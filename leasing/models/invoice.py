@@ -524,8 +524,11 @@ class InvoicePayment(TimeStampedSafeDeleteModel):
     # In Finnish: Maksettu määrä
     paid_amount = models.DecimalField(verbose_name=_("Paid amount"), max_digits=10, decimal_places=2)
 
-    # In Finnish Maksettu pvm
+    # In Finnish: Maksettu pvm
     paid_date = models.DateField(verbose_name=_("Paid date"))
+
+    # In Finnish: Arkistointitunnus
+    filing_code = models.CharField(verbose_name=_("Name"), null=True, blank=True, max_length=35)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice payment")

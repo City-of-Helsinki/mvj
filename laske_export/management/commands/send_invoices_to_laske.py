@@ -33,25 +33,26 @@ class Command(BaseCommand):
 
     def send(self, filename):
         # Add destination server host key
-        if settings.LASKE_SERVER_KEY_TYPE == 'ssh-ed25519':
-            key = paramiko.ed25519key.Ed25519Key(data=decodebytes(settings.LASKE_SERVER_KEY))
-        elif 'ecdsa' in settings.LASKE_SERVER_KEY_TYPE:
-            key = paramiko.ecdsakey.ECDSAKey(data=decodebytes(settings.LASKE_SERVER_KEY))
+        if settings.LASKE_SERVERS['export']['key_type'] == 'ssh-ed25519':
+            key = paramiko.ed25519key.Ed25519Key(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
+        elif 'ecdsa' in settings.LASKE_SERVERS['export']['key_type']:
+            key = paramiko.ecdsakey.ECDSAKey(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
         else:
-            key = paramiko.rsakey.RSAKey(data=decodebytes(settings.LASKE_SERVER_KEY))
+            key = paramiko.rsakey.RSAKey(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
 
         hostkeys = paramiko.hostkeys.HostKeys()
-        hostkeys.add(settings.LASKE_SERVER_HOST, settings.LASKE_SERVER_KEY_TYPE, key)
+        hostkeys.add(settings.LASKE_SERVERS['export']['host'], settings.LASKE_SERVERS['export']['key_type'], key)
 
         cnopts = pysftp.CnOpts()
         cnopts.hostkeys = hostkeys
         # Or Disable key check:
         # cnopts.hostkeys = None
 
-        with pysftp.Connection(settings.LASKE_SERVER_HOST, port=settings.LASKE_SERVER_PORT,
-                               username=settings.LASKE_SERVER_USERNAME, password=settings.LASKE_SERVER_PASSWORD,
+        with pysftp.Connection(settings.LASKE_SERVERS['export']['host'], port=settings.LASKE_SERVERS['export']['port'],
+                               username=settings.LASKE_SERVERS['export']['username'],
+                               password=settings.LASKE_SERVERS['export']['password'],
                                cnopts=cnopts) as sftp:
-            with sftp.cd(settings.LASKE_SERVER_DIRECTORY):
+            with sftp.cd(settings.LASKE_SERVERS['export']['directory']):
                 sftp.put(os.path.join(settings.LASKE_EXPORT_ROOT, filename))
 
     def check_export_directory(self):
@@ -66,7 +67,18 @@ class Command(BaseCommand):
             self.stdout.write('Can not create file in directory "{}".'.format(settings.LASKE_EXPORT_ROOT))
             sys.exit(-1)
 
+    def check_settings(self):
+        if (not hasattr(settings, 'LASKE_SERVERS') or
+                'export' not in settings.LASKE_SERVERS or
+                not settings.LASKE_SERVERS.get('export') or
+                not settings.LASKE_SERVERS['export'].get('host') or
+                not settings.LASKE_SERVERS['export'].get('username') or
+                not settings.LASKE_SERVERS['export'].get('password')):
+            self.stdout.write('LASKE_SERVERS["export"] settings missing')
+            sys.exit(-1)
+
     def handle(self, *args, **options):
+        self.check_settings()
         self.check_export_directory()
 
         now = timezone.now()
@@ -82,10 +94,17 @@ class Command(BaseCommand):
             due_date__gte=today,
             due_date__lte=one_month_in_the_future,
             sent_to_sap_at__isnull=True
-        ).filter(id__in=[6580, 6582])
+        ).filter(
+            # id__in=[6580, 6582]
+            number__in=[1000796, 1000807]
+        )
 
         sales_orders = []
         log_invoices = []
+
+        if not invoices:
+            self.stdout.write('No invoices to send. Exiting.')
+            return
 
         for invoice in invoices:
             sales_order = SalesOrder()
@@ -111,8 +130,9 @@ class Command(BaseCommand):
 
         xml_string = sales_order_container.to_xml_string()
 
+        # self.stdout.write(xml_string.decode("utf-8"))
         self.save_to_file(xml_string, export_filename)
-        self.send(export_filename)
+        # self.download_payments(export_filename)
 
         # TODO: Log errors
         laske_export_log_entry.ended_at = timezone.now()

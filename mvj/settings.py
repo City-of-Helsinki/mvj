@@ -191,14 +191,26 @@ LASKE_EXPORT_ROOT = project_root('laske_export_files')
 
 LASKE_DUE_DATE_OFFSET_DAYS = 17
 
-LASKE_SERVER_HOST = 'localhost'
-LASKE_SERVER_PORT = 22
-LASKE_SERVER_USERNAME = ''
-LASKE_SERVER_PASSWORD = ''
-LASKE_SERVER_DIRECTORY = './'
-LASKE_SERVER_KEY_TYPE = ''
-LASKE_SERVER_KEY = b''
-
+LASKE_SERVERS = {
+    'export': {
+        'host': 'localhost',
+        'port': 22,
+        'username': '',
+        'password': '',
+        'directory': './',
+        'key_type': '',
+        'key': b'',
+    },
+    'payments': {
+        'host': '',
+        'port': 22,
+        'username': '',
+        'password': '',
+        'directory': '',
+        'key_type': '',
+        'key': b'',
+    },
+}
 
 # See: https://github.com/jjkester/django-auditlog/pull/81
 USE_NATIVE_JSONFIELD = True
