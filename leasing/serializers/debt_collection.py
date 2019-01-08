@@ -85,7 +85,7 @@ class CollectionNoteCreateUpdateSerializer(FieldPermissionsSerializerMixin, seri
         fields = '__all__'
 
 
-class CreateCollectionLetterDocumentSerializer(FieldPermissionsSerializerMixin, serializers.Serializer):
+class CreateCollectionLetterDocumentSerializer(serializers.Serializer):
     lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all())
     template = InstanceDictPrimaryKeyRelatedField(instance_class=CollectionLetterTemplate,
                                                   queryset=CollectionLetterTemplate.objects.all())
