@@ -20,6 +20,10 @@ from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
     StatisticalUseViewSet, SupportiveHousingViewSet)
+from leasing.viewsets.lease_additional_views import (
+    LeaseBillingPeriodsView, LeaseCopyAreasToContractView, LeaseCreateChargeViewSet,
+    LeaseCreateCollectionLetterDocumentViewSet, LeasePreviewInvoicesForYearView, LeaseRentForPeriodView,
+    LeaseSetInvoicingStateView, LeaseSetRentInfoCompletionStateView)
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.vat import VatViewSet
 from users.viewsets import UserViewSet
@@ -45,7 +49,10 @@ router.register(r'invoice', InvoiceViewSet)
 router.register(r'invoice_row', InvoiceRowViewSet)
 router.register(r'invoice_set', InvoiceSetViewSet)
 router.register(r'intended_use', IntendedUseViewSet)
-router.register(r'lease', LeaseViewSet, base_name='lease')
+router.register(r'lease', LeaseViewSet, basename='lease')
+router.register(r'lease_create_charge', LeaseCreateChargeViewSet, basename='lease_create_charge')
+router.register(r'lease_create_collection_letter', LeaseCreateCollectionLetterDocumentViewSet,
+                basename='lease_create_collection_letter')
 router.register(r'lease_type', LeaseTypeViewSet)
 router.register(r'management', ManagementViewSet)
 router.register(r'municipality', MunicipalityViewSet)
@@ -57,8 +64,19 @@ router.register(r'supportive_housing', SupportiveHousingViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
+additional_api_paths = [
+    path('lease_billing_periods/', LeaseBillingPeriodsView.as_view(), name='lease-billing_periods'),
+    path('lease_copy_areas_to_contract/', LeaseCopyAreasToContractView.as_view(), name='lease-copy-areas-to-contract'),
+    path('lease_preview_invoices_for_year/', LeasePreviewInvoicesForYearView.as_view(),
+         name='lease-preview-invoices-for-year'),
+    path('lease_rent_for_period/', LeaseRentForPeriodView.as_view(), name='lease-rent-for-period'),
+    path('lease_set_invoicing_state/', LeaseSetInvoicingStateView.as_view(), name='lease-set-invoicing-state'),
+    path('lease_set_rent_info_completion_state/', LeaseSetRentInfoCompletionStateView.as_view(),
+         name='lease-set-rent-info-completion-state'),
+]
+
 urlpatterns = [
-    path('v1/', include(router.urls)),
+    path('v1/', include(router.urls + additional_api_paths)),
     re_path(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
     path('admin/', admin.site.urls),
     path('auth/', include(rest_framework.urls)),
