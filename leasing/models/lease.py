@@ -726,6 +726,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 'billing_period_start_date': billing_period_start_date,
                 'billing_period_end_date': billing_period_end_date,
                 'billed_amount': total_billed_amount,
+                'outstanding_amount': total_billed_amount,
                 'total_amount': total_total_amount,
                 'state': InvoiceState.OPEN,
                 'type': InvoiceType.CHARGE,
