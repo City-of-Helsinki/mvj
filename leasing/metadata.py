@@ -6,7 +6,18 @@ from rest_framework.relations import PrimaryKeyRelatedField
 
 from field_permissions.metadata import FieldPermissionsMetadataMixin
 from leasing.models import Contact, Decision, Lease
+from leasing.permissions import PerMethodPermission
 from users.models import User
+
+ALL_METHODS = {
+    'GET': False,
+    'OPTIONS': False,
+    'HEAD': False,
+    'POST': False,
+    'PUT': False,
+    'PATCH': False,
+    'DELETE': False,
+}
 
 
 class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
@@ -15,33 +26,40 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
 
     Additionally adds decimal_places and max_digits info for DecimalFields."""
 
-    def determine_metadata(self, request, view):
+    def determine_metadata(self, request, view, serializer=None):
         metadata = super().determine_metadata(request, view)
 
-        serializer = view.get_serializer()
-        metadata["fields"] = self.get_serializer_info(serializer)
+        if not serializer and hasattr(view, 'get_serializer'):
+            serializer = view.get_serializer()
 
-        # TODO: experiment
-        if hasattr(serializer, 'Meta') and serializer.Meta.model:
-            methods = {
-                'GET': False,
-                'OPTIONS': False,
-                'HEAD': False,
-                'POST': False,
-                'PUT': False,
-                'PATCH': False,
-                'DELETE': False,
-            }
+        if serializer:
+            metadata["fields"] = self.get_serializer_info(serializer)
 
-            for permission in view.get_permissions():
-                if not hasattr(permission, 'get_required_permissions'):
-                    continue
+            # Determine allowed methods for model views
+            if hasattr(serializer, 'Meta') and serializer.Meta.model:
 
-                for method in methods.keys():
-                    perms = permission.get_required_permissions(method, serializer.Meta.model)
-                    methods[method] = request.user.has_perms(perms)
+                method_permissions = ALL_METHODS.copy()
 
-            metadata['methods'] = methods
+                for permission in view.get_permissions():
+                    if not hasattr(permission, 'get_required_permissions'):
+                        continue
+
+                    for method in method_permissions.keys():
+                        perms = permission.get_required_permissions(method, serializer.Meta.model)
+                        method_permissions[method] = request.user.has_perms(perms)
+
+                metadata['methods'] = method_permissions
+
+        # Determine methods the user has permission to for custom views
+        # and viewsets that are using PerMethodPermission.
+        if PerMethodPermission in view.permission_classes:
+            permission = PerMethodPermission()
+            method_permissions = {}
+            for method in view.allowed_methods:
+                required_perms = permission.get_required_permissions(method, view)
+                method_permissions[method.upper()] = request.user.has_perms(required_perms)
+
+            metadata['methods'] = method_permissions
 
         return metadata
 
