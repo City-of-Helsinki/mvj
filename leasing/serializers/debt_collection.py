@@ -42,6 +42,12 @@ class CollectionLetterSerializer(FileSerializerMixin, FieldPermissionsSerializer
         fields = ('id', 'lease', 'file', 'filename', 'uploader', 'uploaded_at')
         download_url_name = 'collectionletter-download'
 
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'filename':
+            return 'file'
+
+        return field_name
+
 
 class CollectionLetterCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)

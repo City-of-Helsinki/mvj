@@ -117,6 +117,12 @@ class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin
                   'yearly_due_dates', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day',
                   'seasonal_end_month', 'manual_ratio', 'manual_ratio_previous')
 
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'yearly_due_dates':
+            return 'due_dates'
+
+        return field_name
+
 
 class RentSimpleSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                            serializers.ModelSerializer):

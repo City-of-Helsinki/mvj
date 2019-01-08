@@ -223,6 +223,12 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     def get_related_leases(self, obj):
         return get_related_leases(obj)
 
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'infill_development_compensations':
+            return 'infill_development_compensation_leases'
+
+        return field_name
+
     def get_infill_development_compensations(self, obj):
         infill_development_compensations = InfillDevelopmentCompensation.objects.filter(
             infill_development_compensation_leases__lease__id=obj.id)
