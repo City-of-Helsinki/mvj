@@ -65,7 +65,7 @@ router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
 additional_api_paths = [
-    path('lease_billing_periods/', LeaseBillingPeriodsView.as_view(), name='lease-billing_periods'),
+    path('lease_billing_periods/', LeaseBillingPeriodsView.as_view(), name='lease-billing-periods'),
     path('lease_copy_areas_to_contract/', LeaseCopyAreasToContractView.as_view(), name='lease-copy-areas-to-contract'),
     path('lease_preview_invoices_for_year/', LeasePreviewInvoicesForYearView.as_view(),
          name='lease-preview-invoices-for-year'),
