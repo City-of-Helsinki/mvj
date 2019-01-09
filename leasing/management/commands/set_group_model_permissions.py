@@ -672,6 +672,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "user": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view",),
+        7: ("view",),
+    },
 }
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
@@ -686,26 +695,28 @@ class Command(BaseCommand):
 
         all_model_permissions = []
         group_permissions = []
+        app_names = ['leasing', 'users']
 
-        for model in apps.get_app_config('leasing').get_models(include_auto_created=True):
-            model_name = model._meta.model_name
+        for app_name in app_names:
+            for model in apps.get_app_config(app_name).get_models(include_auto_created=True):
+                model_name = model._meta.model_name
 
-            if model_name not in DEFAULT_MODEL_PERMS:
-                self.stdout.write('Model "{}" not in DEFAULT_MODEL_PERMS. Skipping.'.format(model_name))
-                continue
-
-            for permission_type in PERMISSION_TYPES:
-                all_model_permissions.append(permissions['{}_{}'.format(permission_type, model_name)])
-
-            for group_id, permission_types in DEFAULT_MODEL_PERMS[model_name].items():
-                if not permission_types:
+                if model_name not in DEFAULT_MODEL_PERMS:
+                    self.stdout.write('Model "{}" not in DEFAULT_MODEL_PERMS. Skipping.'.format(model_name))
                     continue
 
-                for permission_type in permission_types:
-                    permission_name = '{}_{}'.format(permission_type, model_name)
-                    group_permissions.append(
-                        Group.permissions.through(group=groups[group_id], permission=permissions[permission_name])
-                    )
+                for permission_type in PERMISSION_TYPES:
+                    all_model_permissions.append(permissions['{}_{}'.format(permission_type, model_name)])
+
+                for group_id, permission_types in DEFAULT_MODEL_PERMS[model_name].items():
+                    if not permission_types:
+                        continue
+
+                    for permission_type in permission_types:
+                        permission_name = '{}_{}'.format(permission_type, model_name)
+                        group_permissions.append(
+                            Group.permissions.through(group=groups[group_id], permission=permissions[permission_name])
+                        )
 
         # Delete existing group permissions from the pre-defined groups
         mvj_groups = [grp for grp in groups.values() if grp.id in range(1, 8)]
