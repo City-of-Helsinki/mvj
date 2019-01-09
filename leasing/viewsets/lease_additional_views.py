@@ -320,7 +320,7 @@ class LeasePreviewInvoicesForYearView(APIView):
 class LeaseCopyAreasToContractView(APIView):
     permission_classes = (PerMethodPermission,)
     perms_map = {
-        'POST': ['leasing.add_area'],
+        'POST': ['leasing.add_leasearea'],
     }
 
     def get_view_name(self):
