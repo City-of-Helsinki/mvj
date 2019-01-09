@@ -94,9 +94,6 @@ class Command(BaseCommand):
             due_date__gte=today,
             due_date__lte=one_month_in_the_future,
             sent_to_sap_at__isnull=True
-        ).filter(
-            # id__in=[6580, 6582]
-            number__in=[1000796, 1000807]
         )
 
         sales_orders = []
@@ -130,9 +127,8 @@ class Command(BaseCommand):
 
         xml_string = sales_order_container.to_xml_string()
 
-        # self.stdout.write(xml_string.decode("utf-8"))
         self.save_to_file(xml_string, export_filename)
-        # self.download_payments(export_filename)
+        self.send(export_filename)
 
         # TODO: Log errors
         laske_export_log_entry.ended_at = timezone.now()
