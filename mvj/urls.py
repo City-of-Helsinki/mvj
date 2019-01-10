@@ -16,6 +16,8 @@ from leasing.viewsets.decision import DecisionViewSet
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
 from leasing.viewsets.invoice import InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
+from leasing.viewsets.invoice_additional_views import (
+    InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceRowCreditView, InvoiceSetCreditView)
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
@@ -65,6 +67,11 @@ router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
 additional_api_paths = [
+    path('invoice_calculate_penalty_interest/', InvoiceCalculatePenaltyInterestView.as_view(),
+         name='invoice-calculate-penalty-interest'),
+    path('invoice_credit/', InvoiceCreditView.as_view(), name='invoice-credit'),
+    path('invoice_row_credit/', InvoiceRowCreditView.as_view(), name='invoice-row-credit'),
+    path('invoice_set_credit/', InvoiceSetCreditView.as_view(), name='invoice-set-credit'),
     path('lease_billing_periods/', LeaseBillingPeriodsView.as_view(), name='lease-billing-periods'),
     path('lease_copy_areas_to_contract/', LeaseCopyAreasToContractView.as_view(), name='lease-copy-areas-to-contract'),
     path('lease_preview_invoices_for_year/', LeasePreviewInvoicesForYearView.as_view(),
