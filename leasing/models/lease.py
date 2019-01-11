@@ -633,7 +633,7 @@ class Lease(TimeStampedSafeDeleteModel):
             return []
 
         lease_due_dates = self.get_due_dates_for_period(datetime.date(year=min(years), month=1, day=1),
-                                                        datetime.date(year=max(years), month=12, day=31))
+                                                        datetime.date(year=max(years) + 1, month=1, day=31))
 
         amounts_for_billing_periods = {}
         # Calculate amounts for all the billing periods that have
