@@ -293,6 +293,15 @@ class Invoice(TimeStampedSafeDeleteModel):
             if total_row_amount.compare(amount) == Decimal(-1):
                 raise RuntimeError('Cannot credit more than invoice row amount')
 
+            total_credited_amount = self.credit_invoices.aggregate(sum=Sum('rows__amount'))['sum']
+            if not total_credited_amount:
+                total_credited_amount = Decimal(0)
+
+            non_credited_amount = total_row_amount - total_credited_amount
+
+            if non_credited_amount.compare(amount) == Decimal(-1):
+                raise RuntimeError('Cannot credit more than total amount minus already credited amount')
+
         has_tenants = row_queryset.filter(tenant__isnull=False).count() == row_count
 
         new_denominator = None
