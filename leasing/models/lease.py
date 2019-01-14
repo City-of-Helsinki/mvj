@@ -798,4 +798,4 @@ auditlog.register(Lease)
 auditlog.register(RelatedLease)
 
 field_permissions.register(Lease, exclude_fields=[
-    'from_leases', 'to_leases', 'leases', 'infill_development_compensation_leases', 'invoicesets', 'leasestatelog'])
+    'from_leases', 'to_leases', 'leases', 'invoicesets', 'leasestatelog'])
