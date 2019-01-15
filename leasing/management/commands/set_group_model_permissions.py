@@ -44,10 +44,10 @@ DEFAULT_MODEL_PERMS = {
     },
     "decision": {
         1: ("view",),
-        2: ("view",),
-        3: ("view",),
+        2: ("view", "change"),
+        3: ("view", "change"),
         4: ("view", "change"),
-        5: ("view",),
+        5: ("view", "change"),
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
@@ -255,7 +255,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
-        6: ("view",),
+        6: ("change",),
         7: ("view", "add", "change", "delete"),
     },
     "mortgagedocument": {
@@ -432,10 +432,10 @@ DEFAULT_MODEL_PERMS = {
     "lease": {
         1: ("view",),
         2: ("view", "add", "change", "delete"),
-        3: ("view",),
+        3: ("view", "change"),
         4: ("view", "add", "change", "delete"),
         5: ("view", "add", "change", "delete"),
-        6: ("view",),
+        6: ("view", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "leasestatelog": {
@@ -566,10 +566,10 @@ DEFAULT_MODEL_PERMS = {
     },
     "leasearea": {
         1: ("view",),
-        2: ("view", "add", "change"),
+        2: ("view",),
         3: ("view",),
         4: ("view", "add", "change", "delete"),
-        5: ("view", "add", "change"),
+        5: ("view",),
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },

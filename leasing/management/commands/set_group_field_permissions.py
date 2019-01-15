@@ -343,17 +343,26 @@ CUSTOM_FIELD_PERMS = {
     "lease": {
         "tenants": {
             2: "view",
+            5: "view",
+        },
+        "rents": {
+            2: "view",
         },
         "decisions": {
             2: "view",
         },
         "contracts": {
             2: "view",
+            6: "change",
         },
         "is_invoicing_enabled": {
             2: "view",
             4: "view",
             6: "change",
+        },
+        "is_rent_info_complete": {
+            2: "view",
+            5: "view",
         },
     },
     "contact": {
@@ -376,6 +385,11 @@ CUSTOM_FIELD_PERMS = {
         },
     },
     "condition": {
+        "id": {
+            2: "view",
+            3: "view",
+            5: "view",
+        },
         "type": {
             2: "view",
             3: "view",
@@ -391,6 +405,59 @@ CUSTOM_FIELD_PERMS = {
         "collateral_note": {
             6: "change",
         },
+        "mortgage_documents": {
+            6: "change",
+        },
+    },
+    "decision": {
+        "id": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "reference_number": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "decision_maker": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "decision_date": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "section": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "type": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "description": {
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+        },
+        "conditions": {
+            2: "change",
+            3: "change",
+            4: "change",
+            5: "change",
+        },
     },
     "mortgagedocument": {
         "note": {
@@ -405,6 +472,11 @@ CUSTOM_FIELD_PERMS = {
             6: "change",
         },
     },
+    "tenant": {
+        "tenantcontact_set": {
+            6: "change",
+        }
+    }
 }
 
 
