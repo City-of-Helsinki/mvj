@@ -190,7 +190,7 @@ def get_lease_from_query_params(query_params):
 class LeaseRentForPeriodView(APIView):
     permission_classes = (PerMethodPermission,)
     perms_map = {
-        'GET': ['leasing.view_rent'],
+        'GET': ['leasing.view_invoice'],
     }
 
     def get_view_name(self):
