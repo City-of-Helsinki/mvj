@@ -48,6 +48,7 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return OrderedDict((item.pk, self.display_value(item)) for item in queryset)
 
 
+# TODO: Make permission checks when adding, changing and removing nested items
 def sync_new_items_to_manager(new_items, manager):
     if not hasattr(manager, 'add'):
         return
@@ -86,6 +87,9 @@ def instance_create_or_update_related(instance=None, related_name=None, serializ
                     pass
 
             serializer = serializer_class(**serializer_params)
+
+            if hasattr(serializer, 'modify_fields_by_field_permissions'):
+                serializer.modify_fields_by_field_permissions()
 
             try:
                 serializer.is_valid(raise_exception=True)
