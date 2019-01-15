@@ -1,6 +1,7 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
+from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
 from leasing.models.land_area import LeaseAreaAddress, PlanUnitIntendedUse, PlotDivisionState
 from leasing.serializers.decision import DecisionSerializer
@@ -35,7 +36,7 @@ class PlotDivisionStateSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class PlanUnitSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class PlanUnitSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -47,7 +48,8 @@ class PlanUnitSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
                   'plan_unit_intended_use', 'geometry')
 
 
-class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer):
+class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, FieldPermissionsSerializerMixin,
+                                     serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     plan_unit_type = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitType, queryset=PlanUnitType.objects.filter(), related_serializer=PlanUnitTypeSerializer)
@@ -70,7 +72,8 @@ class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMix
                   'plan_unit_intended_use', 'geometry')
 
 
-class PlotSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer):
+class PlotSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, FieldPermissionsSerializerMixin,
+                     serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -79,7 +82,8 @@ class PlotSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.
                   'geometry')
 
 
-class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                            serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     user = UserSerializer(read_only=True)
 
@@ -88,7 +92,8 @@ class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, serializ
         fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'modified_at')
 
 
-class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                                        serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     modified_at = serializers.ReadOnlyField()
@@ -104,7 +109,7 @@ class LeaseAreaAddressSerializer(serializers.ModelSerializer):
         fields = ('id', 'address', 'postal_code', 'city')
 
 
-class LeaseAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class LeaseAreaSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     addresses = LeaseAreaAddressSerializer(many=True, required=False, allow_null=True)
     plots = PlotSerializer(many=True, required=False, allow_null=True)
@@ -135,7 +140,8 @@ class LeaseAreaListSerializer(LeaseAreaSerializer):
                   'archived_note')
 
 
-class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer):
+class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin,
+                                      FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     addresses = LeaseAreaAddressSerializer(many=True, required=False, allow_null=True)
     plots = PlotSerializer(many=True, required=False, allow_null=True)
