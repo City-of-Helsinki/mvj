@@ -48,29 +48,6 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return OrderedDict((item.pk, self.display_value(item)) for item in queryset)
 
 
-def instance_replace_related(instance=None, related_name=None, serializer_class=None,
-                             validated_data=None, context=None):
-    manager = getattr(instance, related_name)
-    manager.all().delete()
-
-    for item in validated_data:
-        serializer = serializer_class(data=item, context=context)
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as e:
-            raise ValidationError({
-                related_name: e.detail
-            })
-
-        item_instance = serializer.save(**{
-            manager.field.name: instance
-        })
-
-        if item_instance and hasattr(manager, 'add'):
-            manager.add(item_instance)
-
-
 def sync_new_items_to_manager(new_items, manager):
     if not hasattr(manager, 'add'):
         return
