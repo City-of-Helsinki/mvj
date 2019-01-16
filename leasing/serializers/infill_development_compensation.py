@@ -104,12 +104,13 @@ class InfillDevelopmentCompensationLeaseCreateUpdateSerializer(UpdateNestedMixin
     decisions = InfillDevelopmentCompensationDecisionCreateUpdateSerializer(many=True, required=False, allow_null=True)
     intended_uses = InfillDevelopmentCompensationIntendedUseCreateUpdateSerializer(many=True, required=False,
                                                                                    allow_null=True)
+    attachments = InfillDevelopmentCompensationAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = InfillDevelopmentCompensationLease
         fields = ('id', 'lease', 'note', 'monetary_compensation_amount', 'compensation_investment_amount',
                   'increase_in_value', 'part_of_the_increase_in_value', 'discount_in_rent', 'year', 'sent_to_sap_date',
-                  'paid_date', 'decisions', 'intended_uses')
+                  'paid_date', 'decisions', 'intended_uses', 'attachments')
 
 
 class InfillDevelopmentCompensationSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
