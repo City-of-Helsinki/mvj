@@ -370,7 +370,7 @@ CUSTOM_FIELD_PERMS = {
             1: None,
             2: None,
             3: None,
-            4: "view",
+            4: "change",
             5: "view",
             6: "change",
             7: "change",
