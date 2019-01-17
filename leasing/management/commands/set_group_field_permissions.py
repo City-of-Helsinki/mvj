@@ -344,6 +344,7 @@ CUSTOM_FIELD_PERMS = {
         "tenants": {
             2: "view",
             5: "view",
+            6: "change",
         },
         "rents": {
             2: "view",
@@ -473,10 +474,13 @@ CUSTOM_FIELD_PERMS = {
         },
     },
     "tenant": {
+        "reference": {
+            6: "change",
+        },
         "tenantcontact_set": {
             6: "change",
         }
-    }
+    },
 }
 
 
