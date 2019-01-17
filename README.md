@@ -93,3 +93,65 @@ protected by permission checks on a different URL.
 ## Running tests
 
 * Run `pytest`
+
+
+## Management commands
+
+There are multiple management commands that are required to run. Either when first installing the software or regularly.
+
+
+### Install time commands
+
+#### `set_group_model_permissions`
+
+Sets the default model specific permissions (view, add, change, delete) to the pre-defined groups for the leasing models.
+
+#### `set_group_field_permissions`
+
+Sets field specific permissions (view, change) to the pre-defined groups. 
+
+#### `set_ad_group_mappings`
+
+Sets the default mappings for AD groups to user groups.
+
+### Regularly run commands
+
+#### `create_invoices`
+
+Creates invoices for rents that are due in the next month. 
+
+_Should be run on the first day of every month_
+
+#### `send_invoices_to_laske`
+
+Sends unsent invoices to Laske SAP for invoicing.
+
+_Should be run every night_
+
+#### `import_index`
+
+Imports index from stat.fi.
+
+_Should be run monthly after stat.fi update day_
+
+#### `import_interest_rate`
+
+Imports reference interest rates from the Bank of Finland.
+
+_Should be run after the Bank of Finland releases new rates_
+
+#### `index_rent_equalization`
+
+Creates credit notes or invoices if index number has changed after the invoices are sent.
+
+_Should be run once a year after the previous years index has been released_
+
+
+### Development commands
+
+No need to run.
+
+#### `attach_areas`
+#### `compare_rent_amounts`
+#### `mvj_import`
+#### `set_contact_cities_from_postcodes`
