@@ -251,11 +251,11 @@ DEFAULT_MODEL_PERMS = {
     },
     "contract": {
         1: ("view",),
-        2: ("change",),
+        2: ("view", "change",),
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
-        6: ("change",),
+        6: ("view", "change",),
         7: ("view", "add", "change", "delete"),
     },
     "mortgagedocument": {
