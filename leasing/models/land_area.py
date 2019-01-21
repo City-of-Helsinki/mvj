@@ -269,11 +269,13 @@ class PlanUnit(Land):
 
 
 auditlog.register(LeaseArea)
+auditlog.register(LeaseAreaAddress)
 auditlog.register(ConstructabilityDescription)
 auditlog.register(Plot)
 auditlog.register(PlanUnit)
 
 field_permissions.register(LeaseArea, exclude_fields=['lease'])
+field_permissions.register(LeaseAreaAddress, exclude_fields=['lease_area'])
 field_permissions.register(ConstructabilityDescription, exclude_fields=['lease_area'])
 field_permissions.register(Plot, exclude_fields=['lease_area'])
 field_permissions.register(PlanUnit, exclude_fields=['lease_area'])

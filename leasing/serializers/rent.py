@@ -22,7 +22,7 @@ class RentIntendedUseSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class RentDueDateSerializer(serializers.ModelSerializer):
+class RentDueDateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
