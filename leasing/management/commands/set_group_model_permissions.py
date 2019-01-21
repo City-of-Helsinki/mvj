@@ -251,7 +251,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "contract": {
         1: ("view",),
-        2: ("view",),
+        2: ("change",),
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
