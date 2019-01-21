@@ -68,6 +68,12 @@ class InfillDevelopmentCompensationAttachmentSerializer(FileSerializerMixin, Fie
         fields = ('id', 'file', 'filename', 'uploader', 'uploaded_at', 'infill_development_compensation_lease')
         download_url_name = 'infilldevelopmentcompensationattachment-download'
 
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'filename':
+            return 'file'
+
+        return field_name
+
 
 class InfillDevelopmentCompensationAttachmentCreateUpdateSerializer(FieldPermissionsSerializerMixin,
                                                                     serializers.ModelSerializer):
