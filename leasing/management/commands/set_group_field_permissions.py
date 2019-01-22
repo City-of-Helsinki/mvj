@@ -428,46 +428,8 @@ CUSTOM_FIELD_PERMS = {
         "mortgage_documents": {
             6: "change",
         },
-        # "decisions": {
-        #     2: "change",
-        # },
     },
     "decision": {
-        "id": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "reference_number": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "decision_maker": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "decision_date": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "section": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "type": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "description": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
         "conditions": {
             2: "change",
             3: "change",
