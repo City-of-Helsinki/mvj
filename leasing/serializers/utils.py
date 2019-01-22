@@ -48,14 +48,18 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return OrderedDict((item.pk, self.display_value(item)) for item in queryset)
 
 
-# TODO: Make permission checks when adding, changing and removing nested items
-def sync_new_items_to_manager(new_items, manager):
+def sync_new_items_to_manager(new_items, manager, context):
     if not hasattr(manager, 'add'):
         return
 
     existing_items = set(manager.all())
 
     for item in existing_items.difference(new_items):
+        permission_name = '{}.delete_{}'.format(manager.model._meta.app_label, manager.model._meta.model_name)
+        if not context['request'].user.has_perm(permission_name):
+            # Ignore removal of the item if the user doesn't have permission to delete
+            continue
+
         if hasattr(manager, 'remove'):
             manager.remove(item)
         else:
@@ -65,48 +69,79 @@ def sync_new_items_to_manager(new_items, manager):
         manager.add(item)
 
 
+def get_instance_from_default_manager(pk, model_class):
+    if not pk:
+        return None
+
+    try:
+        return model_class._default_manager.get(id=pk)
+    except ObjectDoesNotExist:
+        return None
+
+
+def serializer_data_differs(serializer, original_serializer):
+    for field_name in serializer.validated_data.keys():
+        if serializer.validated_data[field_name] != original_serializer.data[field_name]:
+            return True
+
+    return False
+
+
+def check_perm(serializer, instance):
+    model_class = serializer.Meta.model
+
+    if not instance:
+        permission_name = '{}.add_{}'.format(model_class._meta.app_label, model_class._meta.model_name)
+        return serializer.context['request'].user.has_perm(permission_name)
+
+    instance_serializer = serializer.__class__(instance)
+    if serializer_data_differs(serializer, instance_serializer):
+        permission_name = '{}.change_{}'.format(model_class._meta.app_label, model_class._meta.model_name)
+        return serializer.context['request'].user.has_perm(permission_name)
+    else:
+        return True
+
+
 def instance_create_or_update_related(instance=None, related_name=None, serializer_class=None,
                                       validated_data=None, context=None):
     manager = getattr(instance, related_name)
     new_items = set()
 
-    try:
-        for item in validated_data:
-            pk = item.pop('id', None)
+    if validated_data is None:
+        validated_data = []
 
-            serializer_params = {
-                'data': item,
-                'context': context,
-            }
+    for item in validated_data:
+        pk = item.pop('id', None)
+        model_class = serializer_class.Meta.model
 
-            if pk:
-                try:
-                    item_instance = serializer_class.Meta.model._default_manager.get(id=pk)
-                    serializer_params['instance'] = item_instance
-                except ObjectDoesNotExist:
-                    pass
+        serializer_params = {
+            'data': item,
+            'instance': get_instance_from_default_manager(pk, model_class),
+            'context': context,
+        }
 
-            serializer = serializer_class(**serializer_params)
+        serializer = serializer_class(**serializer_params)
 
-            if hasattr(serializer, 'modify_fields_by_field_permissions'):
-                serializer.modify_fields_by_field_permissions()
+        if hasattr(serializer, 'modify_fields_by_field_permissions'):
+            serializer.modify_fields_by_field_permissions()
 
-            try:
-                serializer.is_valid(raise_exception=True)
-            except ValidationError as e:
-                raise ValidationError({
-                    related_name: e.detail
-                })
-
-            item_instance = serializer.save(**{
-                manager.field.name: instance
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            raise ValidationError({
+                related_name: e.detail
             })
 
-            new_items.add(item_instance)
-    except TypeError:
-        pass
+        if not check_perm(serializer, serializer.instance):
+            # Ignore the new item if the user doesn't have permission to add
+            continue
 
-    sync_new_items_to_manager(new_items, manager)
+        item_instance = serializer.save(**{
+            manager.field.name: instance
+        })
+        new_items.add(item_instance)
+
+    sync_new_items_to_manager(new_items, manager, context)
 
 
 class UpdateNestedMixin:
