@@ -255,7 +255,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
-        6: ("view", "change",),
+        6: ("view", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "mortgagedocument": {
@@ -264,7 +264,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
-        6: ("view",),
+        6: ("view", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "contractchange": {
