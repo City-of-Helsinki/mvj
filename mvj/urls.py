@@ -28,6 +28,7 @@ from leasing.viewsets.lease_additional_views import (
     LeaseSetInvoicingStateView, LeaseSetRentInfoCompletionStateView)
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.vat import VatViewSet
+from users.views import UsersPermissions
 from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
@@ -80,6 +81,7 @@ additional_api_paths = [
     path('lease_set_invoicing_state/', LeaseSetInvoicingStateView.as_view(), name='lease-set-invoicing-state'),
     path('lease_set_rent_info_completion_state/', LeaseSetRentInfoCompletionStateView.as_view(),
          name='lease-set-rent-info-completion-state'),
+    path('users_permissions/', UsersPermissions.as_view(), name='users-permissions'),
 ]
 
 urlpatterns = [
