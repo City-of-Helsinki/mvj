@@ -84,7 +84,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view",),
         4: ("view", "add", "change", "delete"),
         5: ("view",),
-        6: ("view",),
+        6: ("view", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "rentduedate": {
@@ -566,10 +566,10 @@ DEFAULT_MODEL_PERMS = {
     },
     "leasearea": {
         1: ("view",),
-        2: ("view",),
+        2: ("view", "add", "change", "delete"),
         3: ("view",),
         4: ("view", "add", "change", "delete"),
-        5: ("view",),
+        5: ("view", "add", "change", "delete"),
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
@@ -660,7 +660,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view",),
         4: ("view", "add", "change", "delete"),
         5: ("view",),
-        6: ("view",),
+        6: ("view", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "vat": {

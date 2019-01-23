@@ -275,7 +275,7 @@ class LeaseBillingPeriodsView(APIView):
 class LeasePreviewInvoicesForYearView(APIView):
     permission_classes = (PerMethodPermission,)
     perms_map = {
-        'GET': ['leasing.add_invoice'],
+        'GET': ['leasing.view_invoice'],
     }
 
     def get_view_name(self):

@@ -378,6 +378,7 @@ CUSTOM_FIELD_PERMS = {
         "is_invoicing_enabled": {
             2: "view",
             4: "view",
+            5: "view",
             6: "change",
         },
         "is_rent_info_complete": {
