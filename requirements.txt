@@ -3,48 +3,48 @@
 #   prequ update
 #
 asn1crypto==0.24.0        # via cryptography
-bcrypt==3.1.5             # via paramiko
+bcrypt==3.1.6             # via paramiko
 certifi==2018.11.29       # via requests
 cffi==1.11.5              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
 coreapi==2.3.3            # via django-rest-swagger, openapi-codec
 coreschema==0.0.4         # via coreapi
-cryptography==2.4.2       # via paramiko
+cryptography==2.5         # via paramiko
 django==2.1.5
 git+https://github.com/florencioq/django-auditlog.git#egg=django-auditlog==0.4.5
 django-cors-headers==2.4.0
 django-crispy-forms==1.7.2
 django-enumfields==1.0.0
 django-environ==0.4.5
-django-filter==2.0.0
+django-filter==2.1.0
 django-helusers==0.4.2
 django-jsonfield==1.0.1   # via django-auditlog
 django-jsonfield-compat==0.4.4
 django-rest-swagger==2.2.0
 django-safedelete==0.5.1
 django-sequences==2.2
-djangorestframework==3.9.0
+djangorestframework==3.9.1
 djangorestframework-gis==0.14
-docxtpl==0.5.15
+docxtpl==0.5.17
 drf-oidc-auth==0.9        # via django-helusers
 future==0.17.1            # via pyjwkest
-idna==2.8                 # via cryptography, requests
+idna==2.8                 # via requests
 itypes==1.1.0             # via coreapi
 jinja2==2.10              # via coreschema, docxtpl
 lxml==4.3.0               # via docxtpl, python-docx
 markupsafe==1.1.0         # via jinja2
 openapi-codec==1.3.2      # via django-rest-swagger
 paramiko==2.4.2           # via pysftp
-psycopg2-binary==2.7.6.1
+psycopg2-binary==2.7.7
 pyasn1==0.4.5             # via paramiko
 pycparser==2.19           # via cffi
-pycryptodomex==3.7.2      # via pyjwkest
+pycryptodomex==3.7.3      # via pyjwkest
 pyjwkest==1.4.0           # via drf-oidc-auth
 pynacl==1.3.0             # via paramiko
 pysftp==0.2.9
 python-dateutil==2.6.0
 python-docx==0.8.7        # via docxtpl
-pytz==2018.7              # via django
+pytz==2018.9              # via django
 raven==6.10.0
 requests==2.21.0
 simplejson==3.16.0        # via django-rest-swagger
