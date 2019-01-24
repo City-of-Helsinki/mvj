@@ -3,7 +3,7 @@ import glob
 import os
 import sys
 import tempfile
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import paramiko
@@ -15,7 +15,7 @@ from paramiko import SSHException
 from paramiko.py3compat import decodebytes
 
 from laske_export.models import LaskePaymentsLog
-from leasing.models import Invoice
+from leasing.models import Invoice, Vat
 from leasing.models.invoice import InvoicePayment
 
 
@@ -86,7 +86,7 @@ class Command(BaseCommand):
 
         return result
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # NOQA C901 'Command.handle' is too complex
         self.check_import_directory()
 
         self.stdout.write('Connecting to the Laske payments server and downloading files...')
@@ -95,6 +95,7 @@ class Command(BaseCommand):
             self.stdout.write('Done.')
         except SSHException as e:
             self.stdout.write('Error with the Laske payments server: {}'.format(e))
+            sys.exit(-1)
 
         self.stdout.write('Finding files...')
         filenames = self.find_unimported_files()
@@ -129,21 +130,39 @@ class Command(BaseCommand):
 
                 try:
                     invoice = Invoice.objects.get(number=invoice_number)
-
-                    if invoice.payments.filter(filing_code=filing_code).exists():
-                        self.stdout.write('  Payment already exists! Skipping.'.format(invoice_number))
-                    else:
-                        invoice_payment = InvoicePayment.objects.create(
-                            invoice=invoice,
-                            paid_amount=amount,
-                            paid_date=payment_date,
-                            filing_code=filing_code
-                        )
-                        laske_payments_log_entry.payments.add(invoice_payment)
-                        invoice.update_amounts()
-
                 except Invoice.DoesNotExist:
                     self.stdout.write('  Invoice number "{}" does not exist! Skipping.'.format(invoice_number))
+                    continue
+
+                if invoice.payments.filter(filing_code=filing_code).exists():
+                    self.stdout.write('  Payment already exists! Skipping.')
+                    continue
+
+                if invoice.lease.is_subject_to_vat:
+                    vat = Vat.objects.get_for_date(payment_date)
+                    if not vat:
+                        self.stdout.write(
+                            '  Lease is subject to VAT but no VAT percent found for payment date {}!'.format(
+                                payment_date))
+                        continue
+
+                    amount_without_vat = Decimal(100 * amount / (100 + vat.percent)).quantize(
+                        Decimal('.01'), rounding=ROUND_HALF_UP)
+
+                    self.stdout.write('  Lease is subject to VAT. Amount: {} - VAT {}% = {}'.format(
+                        amount, vat.percent, amount_without_vat
+                    ))
+
+                    amount = amount_without_vat
+
+                invoice_payment = InvoicePayment.objects.create(
+                    invoice=invoice,
+                    paid_amount=amount,
+                    paid_date=payment_date,
+                    filing_code=filing_code
+                )
+                laske_payments_log_entry.payments.add(invoice_payment)
+                invoice.update_amounts()
 
             laske_payments_log_entry.ended_at = timezone.now()
             laske_payments_log_entry.is_finished = True
