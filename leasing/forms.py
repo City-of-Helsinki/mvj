@@ -32,7 +32,7 @@ class LeaseSearchForm(forms.Form):
     tenant_name = forms.CharField(label='Tenant name', max_length=255, required=False)
     tenantcontact_type = CommaSeparatedChoiceField(label='Tenant role', required=False,
                                                    choices=tuple((x.value, str(x)) for x in TenantContactType))
-    only_past_tenants = forms.BooleanField(label='Only past tenants', required=False)  # TODO: spelling
+    only_past_tenants = forms.BooleanField(label='Only past tenants', required=False)
     lease_start_date_start = forms.DateField(required=False)
     lease_start_date_end = forms.DateField(required=False)
     lease_end_date_start = forms.DateField(required=False)
