@@ -396,12 +396,20 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
         (
             date(year=2017, month=1, day=1),
             date(year=2018, month=1, day=1),
-            NotImplementedError
+            [
+                (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31)),
+                (date(year=2017, month=4, day=1), date(year=2018, month=1, day=1)),
+            ]
         ),
         (
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            NotImplementedError
+            [
+                (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31)),
+                (date(year=2017, month=4, day=1), date(year=2018, month=3, day=31)),
+                (date(year=2018, month=4, day=1), date(year=2019, month=3, day=31)),
+                (date(year=2019, month=4, day=1), date(year=2019, month=12, day=31)),
+            ]
         ),
         (
             date(year=2018, month=1, day=1),
@@ -460,20 +468,75 @@ def test_split_range_by_cycle(lease_test_data, rent_factory, range_start, range_
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "ranges, expected",
+    "cycle, range_start, range_end, expected",
     [
         (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
             [
-                (date(year=2017, month=1, day=1), date(year=2018, month=1, day=1)),
-            ],
-            NotImplementedError
+                (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+            ]
         ),
         (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=5, day=1),
+            date(year=2017, month=8, day=31),
             [
-                (date(year=2017, month=1, day=1), date(year=2019, month=12, day=31)),
-            ],
-            NotImplementedError
+                (date(year=2017, month=5, day=1), date(year=2017, month=8, day=31)),
+            ]
         ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=6, day=1),
+            date(year=2018, month=5, day=31),
+            [
+                (date(year=2017, month=6, day=1), date(year=2017, month=12, day=31)),
+                (date(year=2018, month=1, day=1), date(year=2018, month=5, day=31)),
+            ]
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2017, month=4, day=1),
+            date(year=2018, month=3, day=31),
+            [
+                (date(year=2017, month=4, day=1), date(year=2018, month=3, day=31)),
+            ]
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2017, month=1, day=1),
+            date(year=2018, month=12, day=31),
+            [
+                (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31)),
+                (date(year=2017, month=4, day=1), date(year=2018, month=3, day=31)),
+                (date(year=2018, month=4, day=1), date(year=2018, month=12, day=31)),
+            ],
+        ),
+    ]
+)
+def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, cycle, range_start, range_end,
+                                                 expected):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        cycle=cycle,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    if inspect.isclass(expected) and issubclass(expected, Exception):
+        with pytest.raises(expected):
+            rent.split_range_by_cycle(range_start, range_end)
+    else:
+        assert rent.split_range_by_cycle(range_start, range_end) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "ranges, expected",
+    [
         (
             [
                 (date(year=2018, month=1, day=1), date(year=2018, month=1, day=31)),

@@ -152,9 +152,6 @@ class Rent(TimeStampedSafeDeleteModel):
     def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False):  # noqa: C901 TODO
         assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
 
-        if self.type == RentType.INDEX and date_range_start.year != date_range_end.year:
-            raise NotImplementedError('Cannot calculate index adjusted rent that is spanning multiple years.')
-
         explanation = Explanation()
 
         range_filtering = Q(
@@ -169,6 +166,7 @@ class Rent(TimeStampedSafeDeleteModel):
         fixed_applied = False
         remaining_ranges = []
 
+        # TODO: seasonal spanning multiple years
         if self.is_seasonal():
             seasonal_period_start = datetime.date(year=date_range_start.year, month=self.seasonal_start_month,
                                                   day=self.seasonal_start_day)
@@ -239,12 +237,10 @@ class Rent(TimeStampedSafeDeleteModel):
         else:
             date_ranges = [(date_range_start, date_range_end)]
 
-        # We may need to calculate multiple separate ranges if cycle
-        # is APRIL_TO_MARCH and the rent type is index or manual.
-        # The index number could be different in the start of the year
-        # or in the manual rent case the start of the year could have
-        # a different ratio.
-        if self.cycle == RentCycle.APRIL_TO_MARCH and self.type in [RentType.INDEX, RentType.MANUAL]:
+        # We may need to calculate multiple separate ranges if the rent
+        # type is index or manual because the index number could be different
+        # in different years.
+        if self.type in [RentType.INDEX, RentType.MANUAL]:
             date_ranges = self.split_ranges_by_cycle(date_ranges)
 
         for (range_start, range_end) in date_ranges:
@@ -405,20 +401,27 @@ class Rent(TimeStampedSafeDeleteModel):
                 due_date_index]
 
     def split_range_by_cycle(self, date_range_start, date_range_end):
-        if not self.cycle or self.cycle != RentCycle.APRIL_TO_MARCH:
+        if not self.cycle:
             return [(date_range_start, date_range_end)]
 
-        if date_range_start.year != date_range_end.year:
-            raise NotImplementedError('Cannot split range that is spanning a year boundary')
+        ranges = [(date_range_start, date_range_end)]
+        years = range(date_range_start.year, date_range_end.year + 1)
 
-        cycle_change_date = datetime.date(year=date_range_start.year, month=4, day=1)
-        if date_range_start < cycle_change_date < date_range_end:
-            return [
-                (date_range_start, cycle_change_date - relativedelta(days=1)),
-                (cycle_change_date, date_range_end)
-            ]
-        else:
-            return [(date_range_start, date_range_end)]
+        for year in years:
+            if self.cycle == RentCycle.APRIL_TO_MARCH:
+                cycle_change_date = datetime.date(year=year, month=4, day=1)
+            else:
+                cycle_change_date = datetime.date(year=year, month=1, day=1)
+
+            for i, (range_start_date, range_end_date) in enumerate(ranges):
+                if range_start_date < cycle_change_date < range_end_date:
+                    del ranges[i]
+                    ranges.extend([
+                        (range_start_date, cycle_change_date - relativedelta(days=1)),
+                        (cycle_change_date, range_end_date)
+                    ])
+
+        return ranges
 
     def split_ranges_by_cycle(self, ranges):
         if not self.cycle or self.cycle != RentCycle.APRIL_TO_MARCH:
