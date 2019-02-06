@@ -741,12 +741,12 @@ class Index(models.Model):
             models.Index(fields=["year", "month"]),
         ]
         unique_together = ("year", "month")
-        ordering = ("year", "month")
+        ordering = ("-year", "-month")
 
     def __str__(self):
-        return _("Index {}{}={}").format(
+        return _("Index {}{} = {}").format(
             self.year,
-            ":{}".format(self.month) if self.month else "",
+            "/{}".format(self.month) if self.month else "",
             self.number)
 
 
