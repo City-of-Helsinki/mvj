@@ -10,9 +10,9 @@ from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     RelatedLease, StatisticalUse, SupportiveHousing)
 from leasing.serializers.lease import (
-    DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateUpdateSerializer,
-    LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, ManagementSerializer,
-    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
+    DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
+    LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, LeaseUpdateSerializer,
+    ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
     StatisticalUseSerializer, SupportiveHousingSerializer)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
@@ -183,8 +183,11 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
         return queryset.distinct()
 
     def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update', 'metadata'):
-            return LeaseCreateUpdateSerializer
+        if self.action in ('create', 'metadata'):
+            return LeaseCreateSerializer
+
+        if self.action in ('update', 'partial_update'):
+            return LeaseUpdateSerializer
 
         if self.request.query_params.get('succinct'):
             return LeaseSuccinctSerializer
@@ -193,6 +196,20 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             return LeaseListSerializer
 
         return LeaseRetrieveSerializer
+
+    def perform_create(self, serializer):
+        relate_to = None
+        if 'relate_to' in serializer.validated_data:
+            relate_to = serializer.validated_data.pop('relate_to')
+
+        relation_type = None
+        if 'relation_type' in serializer.validated_data:
+            relation_type = serializer.validated_data.pop('relation_type')
+
+        instance = serializer.save()
+
+        if relate_to and relation_type:
+            RelatedLease.objects.create(from_lease=relate_to, to_lease=instance, type=relation_type)
 
     def create(self, request, *args, **kwargs):
         if 'preparer' not in request.data:

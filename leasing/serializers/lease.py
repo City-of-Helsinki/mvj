@@ -1,10 +1,11 @@
 from django.db.models import DurationField
 from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
-from enumfields.drf import EnumSupportSerializerMixin
+from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from leasing.enums import LeaseRelationType
 from leasing.models import InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
@@ -241,8 +242,8 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         exclude = None
 
 
-class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
-                                  serializers.ModelSerializer):
+class LeaseUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                            serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
@@ -263,6 +264,22 @@ class LeaseCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
+
+    class Meta:
+        model = Lease
+        fields = '__all__'
+        read_only_fields = ('is_invoicing_enabled', 'is_rent_info_complete')
+
+
+class LeaseCreateSerializer(LeaseUpdateSerializer):
+    relate_to = serializers.PrimaryKeyRelatedField(required=False, allow_null=True, queryset=Lease.objects.all())
+    relation_type = EnumField(required=False, allow_null=True, enum=LeaseRelationType)
+
+    def override_permission_check_field_name(self, field_name):
+        if field_name in ('relate_to', 'relation_type'):
+            return 'related_leases'
+
+        return field_name
 
     class Meta:
         model = Lease
