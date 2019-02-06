@@ -455,6 +455,24 @@ class Rent(TimeStampedSafeDeleteModel):
             return split_date_range((seasonal_period_start, seasonal_period_end), len(due_dates_in_period))[
                 due_date_index]
 
+    def get_all_billing_periods_for_year(self, year):
+        date_range_start = datetime.date(year, 1, 1)
+        date_range_end = datetime.date(year, 12, 31)
+
+        billing_periods = []
+        for due_date in self.get_due_dates_for_period(date_range_start, date_range_end):
+            billing_periods.append(self.get_billing_period_from_due_date(due_date))
+
+        return billing_periods
+
+    def is_the_last_billing_period(self, billing_period):
+        billing_periods = self.get_all_billing_periods_for_year(billing_period[0].year)
+
+        try:
+            return billing_periods.index(billing_period) == len(billing_periods) - 1
+        except ValueError:
+            return False
+
     def split_range_by_cycle(self, date_range_start, date_range_end):
         if not self.cycle:
             return [(date_range_start, date_range_end)]
