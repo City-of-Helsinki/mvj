@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import InvoiceState, InvoiceType
@@ -129,7 +130,8 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
     class Meta:
         model = Invoice
         exclude = ('deleted',)
-        read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date')
+        read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date',
+                            'credit_invoices')
 
 
 class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
@@ -140,16 +142,32 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
+    def validate(self, attrs):
+        if self.instance.sent_to_sap_at:
+            raise ValidationError(_("Can't edit invoices that have been sent to SAP"))
+
+        return super().validate(attrs)
+
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         instance.update_amounts()
+        if instance.credited_invoice:
+            instance.credited_invoice.update_amounts()
 
         return instance
 
     class Meta:
         model = Invoice
         exclude = ('deleted',)
-        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date')
+        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date', 'credit_invoices')
+
+
+class CreditNoteUpdateSerializer(InvoiceSerializer):
+    class Meta:
+        model = Invoice
+        exclude = ('deleted',)
+        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date',
+                            'due_date', 'billing_period_start_date', 'billing_period_end_date')
 
 
 class InvoiceSetSerializer(serializers.ModelSerializer):
@@ -186,7 +204,7 @@ class CreateChargeSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("Both Billing period start and end are "
                                                 "required if one of them is provided"))
 
-        if data.get('billing_period_start_date') > data.get('billing_period_end_date'):
+        if data.get('billing_period_start_date', 0) > data.get('billing_period_end_date', 0):
             raise serializers.ValidationError(_("Billing period end must be the same or after the start"))
 
         return data

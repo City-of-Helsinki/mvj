@@ -1,11 +1,13 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from leasing.enums import InvoiceType
 from leasing.filters import InvoiceFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
-    InvoiceCreateSerializer, InvoiceRowSerializer, InvoiceSerializer, InvoiceSetSerializer, InvoiceUpdateSerializer)
+    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceRowSerializer, InvoiceSerializer, InvoiceSetSerializer,
+    InvoiceUpdateSerializer)
 
 from .utils import AtomicTransactionModelViewSet
 
@@ -27,6 +29,11 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
             return InvoiceCreateSerializer
 
         if self.action in ('update', 'partial_update', 'metadata'):
+            if 'pk' in self.kwargs:
+                instance = self.get_object()
+                if instance and instance.type == InvoiceType.CREDIT_NOTE:
+                    return CreditNoteUpdateSerializer
+
             return InvoiceUpdateSerializer
 
         return InvoiceSerializer
