@@ -63,8 +63,25 @@ class LeaseImporter(BaseImporter):
         self.update_related_leases()
         self.update_credit_notes()
 
+    def get_or_create_default_lessor(self):
+        (contact, contact_created) = Contact.objects.get_or_create(
+            is_lessor=True,
+            name='Maaomaisuuden kehittäminen ja tontit',
+            defaults={
+                'type': ContactType.UNIT,
+                'address': 'PL2214',
+                'postal_code': '00099',
+                'city': 'Helsingin kaupunki',
+                'business_id': '',
+                'sap_sales_office': 2826,
+            })
+
+        return contact
+
     def import_leases(self):  # noqa: C901 'Command.handle' is too complex
         cursor = self.cursor
+
+        default_lessor = self.get_or_create_default_lessor()
 
         if self.lease_ids is None:
             query = """
@@ -141,6 +158,7 @@ class LeaseImporter(BaseImporter):
                 lease.financing_id = FINANCING_MAP[lease_row['RAHOITUSM']] if lease_row['RAHOITUSM'] else None
                 lease.management_id = MANAGEMENT_MAP[lease_row['HALLINTAM']] if lease_row['HALLINTAM'] else None
                 lease.note = lease_row['SIIRTO_TXT']
+                lease.lessor = default_lessor
 
                 if lease_row['SIIRTO_OIKEUS'] == 'K':
                     lease.transferable = True
