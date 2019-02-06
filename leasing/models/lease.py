@@ -749,6 +749,65 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return invoices
 
+    def credit_rent_after_end(self):
+        from leasing.models.invoice import Invoice, InvoiceRow
+
+        if not self.end_date:
+            return
+
+        today = datetime.date.today()
+
+        invoices = Invoice.objects.filter(generated=True, type=InvoiceType.CHARGE, state=InvoiceState.PAID,
+                                          billing_period_end_date__gt=self.end_date)
+
+        for invoice in invoices:
+            extra_start_date = self.end_date + relativedelta(days=1)
+            extra_end_date = invoice.billing_period_end_date
+            extra_billing_period = (extra_start_date, extra_end_date)
+
+            (extra_amount, tmp) = self.get_rent_amount_and_explations_for_period(extra_start_date, extra_end_date)
+
+            amounts_for_billing_periods = {
+                extra_billing_period: {
+                    'due_date': today,
+                    'amount': extra_amount,
+                    'explanations': [],
+                }
+            }
+
+            new_invoice_data = self.calculate_invoices(amounts_for_billing_periods)
+
+            for period_invoice_data in new_invoice_data:
+                for invoice_data in period_invoice_data:
+                    invoice_data.pop('explanations')
+
+                    # Match the invoice
+                    if not invoice.is_same_recipient_and_tenants(invoice_data):
+                        # TODO: What if not found
+                        continue
+
+                    invoice_data['type'] = InvoiceType.CREDIT_NOTE
+                    invoice_data['state'] = InvoiceState.PAID
+                    invoice_data['generated'] = True
+                    invoice_data['invoiceset'] = invoice.invoiceset
+                    invoice_row_data = invoice_data.pop('rows')
+
+                    try:
+                        credit_note = Invoice.objects.get(**invoice_data)
+                    except Invoice.DoesNotExist:
+                        with transaction.atomic():
+                            invoice_data['invoicing_date'] = today
+
+                            credit_note = Invoice.objects.create(**invoice_data)
+
+                            for invoice_row_datum in invoice_row_data:
+                                invoice_row_datum['invoice'] = credit_note
+                                InvoiceRow.objects.create(**invoice_row_datum)
+
+                            invoice.update_amounts()
+                    except Invoice.MultipleObjectsReturned:
+                        pass
+
     def set_is_invoicing_enabled(self, state):
         if self.is_invoicing_enabled is state:
             return
