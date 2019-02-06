@@ -162,7 +162,7 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
         read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date', 'credit_invoices')
 
 
-class CreditNoteUpdateSerializer(InvoiceSerializer):
+class CreditNoteUpdateSerializer(InvoiceUpdateSerializer):
     class Meta:
         model = Invoice
         exclude = ('deleted',)
