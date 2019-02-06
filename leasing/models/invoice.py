@@ -229,6 +229,8 @@ class Invoice(TimeStampedSafeDeleteModel):
 
     def update_amounts(self):
         rows_sum = self.rows.aggregate(sum=Sum('amount'))['sum']
+        if not rows_sum:
+            rows_sum = Decimal(0)
 
         self.billed_amount = rows_sum
 
@@ -323,7 +325,7 @@ class Invoice(TimeStampedSafeDeleteModel):
             recipient=self.recipient,
             due_date=self.due_date,
             invoicing_date=today,
-            state=InvoiceState.OPEN,
+            state=InvoiceState.PAID,
             total_amount=Decimal(0),
             billed_amount=Decimal(0),
             billing_period_start_date=self.billing_period_start_date,

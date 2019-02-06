@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from leasing.enums import InvoiceType
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow
 
@@ -16,7 +16,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
         today = datetime.date.today()
-        today = today.replace(year=2018, month=3, day=1)
 
         december_last_year = datetime.date(year=today.year - 1, month=12, day=1)
 
@@ -83,6 +82,7 @@ class Command(BaseCommand):
                         # The new new rent is smaller
                         if rent_difference < Decimal(0):
                             invoice_data['type'] = InvoiceType.CREDIT_NOTE
+                            invoice_data['state'] = InvoiceState.PAID
 
                         original_invoice = None
                         for sent_invoice in data['invoices']:
