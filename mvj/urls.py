@@ -10,6 +10,7 @@ from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
+from leasing.viewsets.contact_additional_views import ContactExistsView
 from leasing.viewsets.debt_collection import (
     CollectionCourtDecisionViewSet, CollectionLetterTemplateViewSet, CollectionLetterViewSet, CollectionNoteViewSet)
 from leasing.viewsets.decision import DecisionViewSet
@@ -68,6 +69,7 @@ router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
 additional_api_paths = [
+    path('contact_exists/', ContactExistsView.as_view(), name='contact-exists'),
     path('invoice_calculate_penalty_interest/', InvoiceCalculatePenaltyInterestView.as_view(),
          name='invoice-calculate-penalty-interest'),
     path('invoice_credit/', InvoiceCreditView.as_view(), name='invoice-credit'),
