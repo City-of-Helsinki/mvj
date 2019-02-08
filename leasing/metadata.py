@@ -1,6 +1,7 @@
 from django.utils.encoding import force_text
+from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField
-from rest_framework.fields import DecimalField
+from rest_framework.fields import ChoiceField, DecimalField
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.relations import PrimaryKeyRelatedField
 
@@ -70,6 +71,15 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
         if isinstance(field, DecimalField):
             field_info['decimal_places'] = field.decimal_places
             field_info['max_digits'] = field.max_digits
+
+        # Kludge for translating language names
+        if isinstance(field, ChoiceField) and field.field_name == 'language':
+            field_info['choices'] = [{
+                'value': choice_value,
+                'display_name': _(choice_name).capitalize(),
+            } for choice_value, choice_name in field.choices.items()]
+
+            field_info['choices'].sort(key=lambda x: x['display_name'])
 
         if isinstance(field, PrimaryKeyRelatedField) or isinstance(field, EnumField):
             # TODO: Make configurable
