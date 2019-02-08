@@ -40,7 +40,8 @@ class SendEmailView(APIView):
                 continue
 
             send_mail(
-                _('MVJ vuokraus {} rakentamiskelpoisuus').format(serializer.validated_data['lease'].identifier),
+                _('MVJ lease {} {}').format(serializer.validated_data['lease'].identifier,
+                                            serializer.validated_data['type']),
                 serializer.validated_data['text'],
                 settings.MVJ_EMAIL_FROM,
                 [recipient.email],
