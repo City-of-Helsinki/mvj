@@ -153,11 +153,13 @@ class ConstructabilityState(Enum):
     """
     UNVERIFIED = 'unverified'
     REQUIRES_MEASURES = 'requires_measures'
+    ENQUIRY_SENT = 'enquiry_sent'
     COMPLETE = 'complete'
 
     class Labels:
         UNVERIFIED = pgettext_lazy('Constructability state', 'Unverified')
         REQUIRES_MEASURES = pgettext_lazy('Constructability state', 'Requires measures')
+        ENQUIRY_SENT = pgettext_lazy('Enquiry sent', 'enquiry_sent')
         COMPLETE = pgettext_lazy('Constructability state', 'Complete')
 
 
