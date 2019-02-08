@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.db.models import Union
 from django.db.models import DurationField
 from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
@@ -7,7 +8,7 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import LeaseRelationType
-from leasing.models import EmailLog, InfillDevelopmentCompensation, RelatedLease
+from leasing.models import AreaNote, EmailLog, InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
 from users.models import User
@@ -222,6 +223,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     preparer = UserSerializer()
     infill_development_compensations = serializers.SerializerMethodField()
     email_logs = serializers.SerializerMethodField()
+    area_notes = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
@@ -230,7 +232,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         if field_name == 'infill_development_compensations':
             return 'infill_development_compensation_leases'
 
-        if field_name == 'email_logs':
+        if field_name in ('area_notes', 'email_logs'):
             return 'lease_area'
 
         return field_name
@@ -248,6 +250,16 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         email_logs = EmailLog.objects.filter(content_type=lease_content_type, object_id=obj.id)
 
         return EmailLogSerializer(email_logs, many=True).data
+
+    def get_area_notes(self, obj):
+        from leasing.serializers.area_note import AreaNoteSerializer
+
+        area_notes = None
+        combined_area = obj.lease_areas.aggregate(union=Union("geometry"))["union"]
+        if combined_area:
+            area_notes = AreaNote.objects.filter(geometry__intersects=combined_area)
+
+        return AreaNoteSerializer(area_notes, many=True).data
 
     class Meta:
         model = Lease
