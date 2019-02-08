@@ -14,6 +14,7 @@ from leasing.viewsets.contact_additional_views import ContactExistsView
 from leasing.viewsets.debt_collection import (
     CollectionCourtDecisionViewSet, CollectionLetterTemplateViewSet, CollectionLetterViewSet, CollectionNoteViewSet)
 from leasing.viewsets.decision import DecisionViewSet
+from leasing.viewsets.email import SendEmailView
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
 from leasing.viewsets.invoice import InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
@@ -83,6 +84,7 @@ additional_api_paths = [
     path('lease_set_invoicing_state/', LeaseSetInvoicingStateView.as_view(), name='lease-set-invoicing-state'),
     path('lease_set_rent_info_completion_state/', LeaseSetRentInfoCompletionStateView.as_view(),
          name='lease-set-rent-info-completion-state'),
+    path('send_email/', SendEmailView.as_view(), name='send-email'),
     path('users_permissions/', UsersPermissions.as_view(), name='users-permissions'),
 ]
 

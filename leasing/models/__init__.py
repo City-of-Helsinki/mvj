@@ -9,6 +9,7 @@ from .contract import Contract, ContractChange, ContractType, MortgageDocument
 from .debt_collection import (
     CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote, InterestRate)
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
+from .email import EmailLog
 from .infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
@@ -53,6 +54,7 @@ __all__ = [
     'DecisionMaker',
     'DecisionType',
     'District',
+    'EmailLog',
     'Financing',
     'FixedInitialYearRent',
     'Hitas',

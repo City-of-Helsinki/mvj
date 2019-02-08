@@ -160,6 +160,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 30,
 }
 
+MVJ_EMAIL_FROM = 'mvj@example.com'
+
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_EXPOSE_HEADERS = ['Content-Disposition']
 

@@ -384,3 +384,10 @@ class AreaType(Enum):
         LAND_USE_AGREEMENT = pgettext_lazy('Area type', 'Land use agreement')
         DETAILED_PLAN = pgettext_lazy('Area type', 'Detailed plan')
         OTHER = pgettext_lazy('Area type', 'Other')
+
+
+class EmailLogType(Enum):
+    CONSTRUCTABILITY = 'constructability'
+
+    class Labels:
+        CONSTRUCTABILITY = pgettext_lazy('Email log type', 'Constructability')

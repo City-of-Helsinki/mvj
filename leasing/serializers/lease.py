@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import DurationField
 from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
@@ -6,7 +7,7 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import LeaseRelationType
-from leasing.models import InfillDevelopmentCompensation, RelatedLease
+from leasing.models import EmailLog, InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
 from users.models import User
@@ -220,6 +221,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
     preparer = UserSerializer()
     infill_development_compensations = serializers.SerializerMethodField()
+    email_logs = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
@@ -228,6 +230,9 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         if field_name == 'infill_development_compensations':
             return 'infill_development_compensation_leases'
 
+        if field_name == 'email_logs':
+            return 'lease_area'
+
         return field_name
 
     def get_infill_development_compensations(self, obj):
@@ -235,6 +240,14 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
             infill_development_compensation_leases__lease__id=obj.id)
 
         return [{'id': idc.id, 'name': idc.name} for idc in infill_development_compensations]
+
+    def get_email_logs(self, obj):
+        from leasing.serializers.email import EmailLogSerializer
+
+        lease_content_type = ContentType.objects.get_for_model(obj)
+        email_logs = EmailLog.objects.filter(content_type=lease_content_type, object_id=obj.id)
+
+        return EmailLogSerializer(email_logs, many=True).data
 
     class Meta:
         model = Lease
