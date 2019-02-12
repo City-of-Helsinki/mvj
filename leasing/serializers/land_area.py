@@ -89,7 +89,7 @@ class ConstructabilityDescriptionSerializer(EnumSupportSerializerMixin, FieldPer
 
     class Meta:
         model = ConstructabilityDescription
-        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'modified_at')
+        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'is_static', 'modified_at')
 
 
 class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
@@ -100,7 +100,7 @@ class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMix
 
     class Meta:
         model = ConstructabilityDescription
-        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'modified_at')
+        fields = ('id', 'type', 'user', 'text', 'ahjo_reference_number', 'is_static', 'modified_at')
 
 
 class LeaseAreaAddressSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
@@ -120,7 +120,8 @@ class LeaseAreaSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializer
     class Meta:
         model = LeaseArea
         fields = ('id', 'identifier', 'area', 'section_area', 'addresses', 'type', 'location', 'plots', 'plan_units',
-                  'preconstruction_state', 'demolition_state', 'polluted_land_state',
+                  'preconstruction_state', 'preconstruction_estimated_construction_readiness_moment',
+                  'preconstruction_inspection_moment', 'demolition_state', 'polluted_land_state',
                   'polluted_land_rent_condition_state', 'polluted_land_rent_condition_date', 'polluted_land_planner',
                   'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
                   'constructability_report_state', 'constructability_report_investigation_state',
@@ -159,7 +160,8 @@ class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMi
     class Meta:
         model = LeaseArea
         fields = ('id', 'identifier', 'area', 'section_area', 'addresses', 'type', 'location', 'plots', 'plan_units',
-                  'preconstruction_state', 'demolition_state', 'polluted_land_state',
+                  'preconstruction_state', 'preconstruction_estimated_construction_readiness_moment',
+                  'preconstruction_inspection_moment', 'demolition_state', 'polluted_land_state',
                   'polluted_land_rent_condition_state', 'polluted_land_rent_condition_date', 'polluted_land_planner',
                   'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
                   'constructability_report_state', 'constructability_report_investigation_state',

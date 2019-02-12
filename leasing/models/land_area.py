@@ -66,6 +66,12 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     # In Finnish: Selvitysaste (Esirakentaminen, johtosiirrot ja kunnallistekniikka)
     preconstruction_state = EnumField(ConstructabilityState, verbose_name=_("Preconstruction state"), null=True,
                                       blank=True, max_length=30)
+    # In Finnish: Arvioitu rakentamisvalmiusajankohta (Esirakentaminen)
+    preconstruction_estimated_construction_readiness_moment = models.CharField(
+        verbose_name=_("Preconstruction estimated construction readiness"), null=True, blank=True, max_length=255)
+    # In Finnish: Tarkistusajankohta (Esirakentaminen)
+    preconstruction_inspection_moment = models.CharField(verbose_name=_("Preconstruction inspection"), null=True,
+                                                         blank=True, max_length=255)
 
     # In Finnish: Selvitysaste (Purku)
     demolition_state = EnumField(ConstructabilityState, verbose_name=_("Demolition state"), null=True, blank=True,
@@ -151,6 +157,8 @@ class ConstructabilityDescription(TimeStampedSafeDeleteModel):
     # In Finnish: AHJO diaarinumero
     ahjo_reference_number = models.CharField(verbose_name=_("AHJO reference number"), null=True, blank=True,
                                              max_length=255)
+    # In Finnish: Pysyvä?
+    is_static = models.BooleanField(verbose_name=_("Is static?"), default=False)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Constructability description")
