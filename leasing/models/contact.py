@@ -3,6 +3,7 @@ from django.conf.global_settings import LANGUAGES
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from django_countries.fields import CountryField
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
@@ -23,7 +24,11 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Sukunimi
     last_name = models.CharField(verbose_name=_("Last name"), null=True, blank=True, max_length=255)
 
+    # In Finnish: (Yrityksen) Nimi
     name = models.CharField(verbose_name=_("Name"), null=True, blank=True, max_length=255)
+
+    # In Finnish: c/o
+    care_of = models.CharField(verbose_name=_("c/o"), null=True, blank=True, max_length=255)
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(verbose_name=_("Business ID"), null=True, blank=True, max_length=255)
@@ -36,6 +41,9 @@ class Contact(TimeStampedSafeDeleteModel):
 
     # In Finnish: Kaupunki
     city = models.CharField(verbose_name=_("City"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Maa
+    country = CountryField(verbose_name=_("Country"), null=True, blank=True)
 
     # In Finnish: Sähköpostiosoite
     email = models.CharField(verbose_name=_("Email"), null=True, blank=True, max_length=255)
@@ -71,6 +79,9 @@ class Contact(TimeStampedSafeDeleteModel):
 
     # In Finnish: SAP myyntitoimisto
     sap_sales_office = models.CharField(verbose_name=_("SAP sales office"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Kommentti
+    note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contact")

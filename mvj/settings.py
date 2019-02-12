@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     'auditlog',
     'safedelete',
     'sequences',
+    'django_countries',
 
     'users',
     'leasing',

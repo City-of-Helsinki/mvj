@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-12 14:35+0200\n"
+"POT-Creation-Date: 2019-02-12 15:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -617,7 +617,8 @@ msgid "Area"
 msgstr "Alue"
 
 #: leasing/models/area_note.py:21 leasing/models/basis_of_rent.py:65
-#: leasing/models/contract.py:109 leasing/models/debt_collection.py:72
+#: leasing/models/contact.py:84 leasing/models/contract.py:109
+#: leasing/models/debt_collection.py:72
 #: leasing/models/infill_development_compensation.py:41
 #: leasing/models/infill_development_compensation.py:69
 #: leasing/models/lease.py:326 leasing/models/rent.py:104
@@ -818,7 +819,7 @@ msgctxt "Model name"
 msgid "Comments"
 msgstr "Kommentit"
 
-#: leasing/models/contact.py:18 leasing/models/decision.py:50
+#: leasing/models/contact.py:19 leasing/models/decision.py:50
 #: leasing/models/decision.py:79 leasing/models/invoice.py:200
 #: leasing/models/land_area.py:59 leasing/models/land_area.py:154
 #: leasing/models/land_area.py:173 leasing/models/rent.py:65
@@ -826,97 +827,105 @@ msgstr "Kommentit"
 msgid "Type"
 msgstr "Tyyppi"
 
-#: leasing/models/contact.py:21
+#: leasing/models/contact.py:22
 msgid "First name"
 msgstr "Etunimi"
 
-#: leasing/models/contact.py:24
+#: leasing/models/contact.py:25
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: leasing/models/contact.py:26 leasing/models/debt_collection.py:45
+#: leasing/models/contact.py:28 leasing/models/debt_collection.py:45
 #: leasing/models/infill_development_compensation.py:21
 #: leasing/models/invoice.py:26 leasing/models/invoice.py:533
 #: leasing/models/mixins.py:20
 msgid "Name"
 msgstr "Nimi"
 
-#: leasing/models/contact.py:29
+#: leasing/models/contact.py:31
+msgid "c/o"
+msgstr ""
+
+#: leasing/models/contact.py:34
 msgid "Business ID"
 msgstr "Y-tunnus"
 
-#: leasing/models/contact.py:32 leasing/models/land_area.py:20
+#: leasing/models/contact.py:37 leasing/models/land_area.py:20
 msgid "Address"
 msgstr "Osoite"
 
-#: leasing/models/contact.py:35 leasing/models/land_area.py:23
+#: leasing/models/contact.py:40 leasing/models/land_area.py:23
 msgid "Postal code"
 msgstr "Postinumero"
 
-#: leasing/models/contact.py:38 leasing/models/land_area.py:26
+#: leasing/models/contact.py:43 leasing/models/land_area.py:26
 msgid "City"
 msgstr "Kaupunki"
 
-#: leasing/models/contact.py:41
+#: leasing/models/contact.py:46
+msgid "Country"
+msgstr "Maa"
+
+#: leasing/models/contact.py:49
 msgid "Email"
 msgstr "Sähköposti"
 
-#: leasing/models/contact.py:44
+#: leasing/models/contact.py:52
 msgid "Phone"
 msgstr "Puhelin"
 
-#: leasing/models/contact.py:47
+#: leasing/models/contact.py:55
 msgid "Language"
 msgstr "Kieli"
 
-#: leasing/models/contact.py:50
+#: leasing/models/contact.py:58
 msgid "National identification number"
 msgstr "Henkilötunnus"
 
-#: leasing/models/contact.py:54
+#: leasing/models/contact.py:62
 msgid "Address protection"
 msgstr "Turvakielto"
 
-#: leasing/models/contact.py:57
+#: leasing/models/contact.py:65
 msgid "Customer number"
 msgstr "Asiakasnumero"
 
-#: leasing/models/contact.py:60
+#: leasing/models/contact.py:68
 msgid "SAP customer number"
 msgstr "SAP asiakasnumero"
 
-#: leasing/models/contact.py:63
+#: leasing/models/contact.py:71
 msgid "Electronic billing address"
 msgstr "Verkkolaskutusosoite"
 
-#: leasing/models/contact.py:67
+#: leasing/models/contact.py:75
 msgid "Partner code"
 msgstr "Kumppanitunnus"
 
-#: leasing/models/contact.py:70
+#: leasing/models/contact.py:78
 msgid "Is a lessor"
 msgstr "Onko vuokranantaja"
 
-#: leasing/models/contact.py:73
+#: leasing/models/contact.py:81
 msgid "SAP sales office"
 msgstr "SAP myyntitoimisto"
 
-#: leasing/models/contact.py:76
+#: leasing/models/contact.py:87
 msgctxt "Model name"
 msgid "Contact"
 msgstr "Yhteystieto"
 
-#: leasing/models/contact.py:77
+#: leasing/models/contact.py:88
 msgctxt "Model name"
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: leasing/models/contact.py:104
+#: leasing/models/contact.py:115
 #, python-brace-format
 msgid "{name} (National Identification Number {id})"
 msgstr "{name} (Henkilötunnus {id})"
 
-#: leasing/models/contact.py:111
+#: leasing/models/contact.py:122
 #, python-brace-format
 msgid "{name} (Business ID {id})"
 msgstr "{name} (Y-tunnus {id})"
@@ -1505,7 +1514,8 @@ msgstr "Arvioitu rakentamisvalmiusajankohta (Esirakentaminen)"
 
 #: leasing/models/land_area.py:73
 msgid "Preconstruction inspection"
-msgstr "Tarkistusajankohta (Esirakentaminen, johtosiirrot ja kunnallistekniikka)"
+msgstr ""
+"Tarkistusajankohta (Esirakentaminen, johtosiirrot ja kunnallistekniikka)"
 
 #: leasing/models/land_area.py:77
 msgid "Demolition state"
