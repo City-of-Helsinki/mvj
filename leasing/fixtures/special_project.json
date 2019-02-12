@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.SpecialProject",
+    "pk": 1,
+    "fields": {
+      "name": "Kehittyväkerrostalo"
+    }
+  },
+  {
+    "model": "leasing.SpecialProject",
+    "pk": 2,
+    "fields": {
+      "name": "Ryhmärakennuttaminen"
+    }
+  }
+]

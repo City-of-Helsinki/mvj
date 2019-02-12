@@ -8,12 +8,12 @@ from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.forms import LeaseSearchForm
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
-    RelatedLease, StatisticalUse, SupportiveHousing)
+    RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, LeaseUpdateSerializer,
     ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
-    StatisticalUseSerializer, SupportiveHousingSerializer)
+    SpecialProjectSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
@@ -73,6 +73,11 @@ class StatisticalUseViewSet(AtomicTransactionModelViewSet):
 class SupportiveHousingViewSet(AtomicTransactionModelViewSet):
     queryset = SupportiveHousing.objects.all()
     serializer_class = SupportiveHousingSerializer
+
+
+class SpecialProjectViewSet(AtomicTransactionModelViewSet):
+    queryset = SpecialProject.objects.all()
+    serializer_class = SpecialProjectSerializer
 
 
 class RelatedLeaseViewSet(AtomicTransactionModelViewSet):

@@ -150,6 +150,15 @@ class NoticePeriod(NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Notice periods")
 
 
+class SpecialProject(NameModel):
+    """
+    In Finnish: Erityishanke
+    """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Special project")
+        verbose_name_plural = pgettext_lazy("Model name", "Special projects")
+
+
 class LeaseIdentifier(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokraustunnus
@@ -321,6 +330,22 @@ class Lease(TimeStampedSafeDeleteModel):
 
     # In Finnish: Onko ALV:n alainen
     is_subject_to_vat = models.BooleanField(verbose_name=_("Is subject to VAT?"), default=False)
+
+    # In Finnish: Rakennuttaja
+    real_estate_developer = models.CharField(verbose_name=_("Real estate developer"), null=True, blank=True,
+                                             max_length=255)
+
+    # In Finnish: Luovutusnumero
+    conveyance_number = models.CharField(verbose_name=_("Conveyance number"), null=True, blank=True,
+                                         max_length=255)
+
+    # In Finnish: Rakennuksen kauppahinta
+    building_selling_price = models.DecimalField(verbose_name=_("Building selling price"), null=True, blank=True,
+                                                 max_digits=10, decimal_places=2)
+
+    # In Finnish: Erityishanke
+    special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), null=True, blank=True,
+                                        on_delete=models.PROTECT)
 
     objects = LeaseManager()
 

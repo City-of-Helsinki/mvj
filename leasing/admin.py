@@ -11,8 +11,8 @@ from leasing.models import (
     ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index,
     Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog,
     LeaseType, Management, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
-    Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
-    Tenant, TenantContact, Vat)
+    Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, SpecialProject, StatisticalUse,
+    SupportiveHousing, Tenant, TenantContact, Vat)
 from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
@@ -473,6 +473,7 @@ admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
+admin.site.register(SpecialProject, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
 admin.site.register(Tenant, TenantAdmin)

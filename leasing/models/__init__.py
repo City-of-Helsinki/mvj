@@ -18,7 +18,7 @@ from .invoice import BankHoliday, Invoice, ReceivableType
 from .land_area import ConstructabilityDescription, LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
-    NoticePeriod, Regulation, RelatedLease, StatisticalUse, SupportiveHousing)
+    NoticePeriod, Regulation, RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
 from .rent import (
     ContractRent, FixedInitialYearRent, Index, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent, RentAdjustment,
     RentDueDate, RentIntendedUse)
@@ -92,6 +92,7 @@ __all__ = [
     'RentAdjustment',
     'RentDueDate',
     'RentIntendedUse',
+    'SpecialProject',
     'StatisticalUse',
     'SupportiveHousing',
     'Tenant',

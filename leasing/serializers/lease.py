@@ -16,7 +16,7 @@ from users.serializers import UserSerializer
 
 from ..models import (
     Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Management, Municipality,
-    NoticePeriod, Regulation, StatisticalUse, SupportiveHousing)
+    NoticePeriod, Regulation, SpecialProject, StatisticalUse, SupportiveHousing)
 from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
@@ -91,6 +91,12 @@ class StatisticalUseSerializer(NameModelSerializer):
 class SupportiveHousingSerializer(NameModelSerializer):
     class Meta:
         model = SupportiveHousing
+        fields = '__all__'
+
+
+class SpecialProjectSerializer(NameModelSerializer):
+    class Meta:
+        model = SpecialProject
         fields = '__all__'
 
 

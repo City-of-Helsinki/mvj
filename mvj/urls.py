@@ -23,7 +23,7 @@ from leasing.viewsets.invoice_additional_views import (
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
-    StatisticalUseViewSet, SupportiveHousingViewSet)
+    SpecialProjectViewSet, StatisticalUseViewSet, SupportiveHousingViewSet)
 from leasing.viewsets.lease_additional_views import (
     LeaseBillingPeriodsView, LeaseCopyAreasToContractView, LeaseCreateChargeViewSet,
     LeaseCreateCollectionLetterDocumentViewSet, LeasePreviewInvoicesForYearView, LeaseRentForPeriodView,
@@ -64,6 +64,7 @@ router.register(r'municipality', MunicipalityViewSet)
 router.register(r'notice_period', NoticePeriodViewSet)
 router.register(r'regulation', RegulationViewSet)
 router.register(r'related_lease', RelatedLeaseViewSet)
+router.register(r'special_project', SpecialProjectViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
 router.register(r'supportive_housing', SupportiveHousingViewSet)
 router.register(r'user', UserViewSet)
