@@ -137,6 +137,9 @@ TEMPLATES = [
 
 AUTH_USER_MODEL = 'users.User'
 
+# Required by django-helusers
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'ALLOWED_VERSIONS': ('v1',),
