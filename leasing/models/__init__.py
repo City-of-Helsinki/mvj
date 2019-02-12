@@ -5,7 +5,7 @@ from .basis_of_rent import (
     BasisOfRentPropertyIdentifier, BasisOfRentRate)
 from .comment import Comment, CommentTopic
 from .contact import Contact
-from .contract import Contract, ContractChange, ContractType, MortgageDocument
+from .contract import Collateral, CollateralType, Contract, ContractChange, ContractType
 from .debt_collection import (
     CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote, InterestRate)
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
@@ -36,6 +36,8 @@ __all__ = [
     'BasisOfRentPropertyIdentifier',
     'BasisOfRentRate',
     'BankHoliday',
+    'Collateral',
+    'CollateralType',
     'CollectionCourtDecision',
     'CollectionLetter',
     'CollectionLetterTemplate',
@@ -76,7 +78,6 @@ __all__ = [
     'LeaseStateLog',
     'LeaseType',
     'Management',
-    'MortgageDocument',
     'Municipality',
     'NoticePeriod',
     'PayableRent',

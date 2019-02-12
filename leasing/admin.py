@@ -5,12 +5,12 @@ from enumfields.admin import EnumFieldListFilter
 from field_permissions.admin import FieldPermissionsAdminMixin
 from leasing.models import (
     Area, AreaNote, AreaSource, BankHoliday, BasisOfRent, BasisOfRentBuildPermissionType, BasisOfRentDecision,
-    BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, CollectionCourtDecision, CollectionLetter,
-    CollectionLetterTemplate, CollectionNote, Comment, CommentTopic, Condition, ConditionType,
-    ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent, ContractType, Decision, DecisionMaker,
-    DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index, Inspection, IntendedUse, InterestRate,
-    Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog, LeaseType, Management,
-    MortgageDocument, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
+    BasisOfRentPlotType, BasisOfRentPropertyIdentifier, BasisOfRentRate, Collateral, CollateralType,
+    CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote, Comment, CommentTopic,
+    Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent,
+    ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index,
+    Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog,
+    LeaseType, Management, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
     Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, StatisticalUse, SupportiveHousing,
     Tenant, TenantContact, Vat)
 from leasing.models.infill_development_compensation import (
@@ -166,14 +166,14 @@ class ContractChangeInline(FieldPermissionsAdminMixin, admin.StackedInline):
     extra = 0
 
 
-class MortgageDocumentInline(FieldPermissionsAdminMixin, admin.StackedInline):
-    model = MortgageDocument
+class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
+    model = Collateral
     extra = 0
 
 
 class ContractAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'type', 'contract_number')
-    inlines = [ContractChangeInline, MortgageDocumentInline]
+    inlines = [ContractChangeInline, CollateralInline]
     raw_id_fields = ('lease',)
 
     def get_queryset(self, request):
@@ -439,6 +439,7 @@ admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentTopic, NameAdmin)
+admin.site.register(CollateralType, NameAdmin)
 admin.site.register(CollectionCourtDecision, CollectionCourtDecisionAdmin)
 admin.site.register(CollectionLetter, CollectionLetterAdmin)
 admin.site.register(CollectionLetterTemplate, CollectionLetterTemplateAdmin)

@@ -33,8 +33,20 @@ class Contract(TimeStampedSafeDeleteModel):
     # In Finnish: Allekirjoituspäivämäärä
     signing_date = models.DateField(verbose_name=_("Signing date"), null=True, blank=True)
 
+    # In Finnish: Allekirjoitettava mennessä
+    sign_by_date = models.DateField(verbose_name=_("Sign by date"), null=True, blank=True)
+
     # In Finnish: Kommentti allekirjoitukselle
     signing_note = models.TextField(verbose_name=_("Signing note"), null=True, blank=True)
+
+    # In Finnish: 1. kutsu lähetetty
+    first_call_sent = models.DateField(verbose_name=_("First call sent"), null=True, blank=True)
+
+    # In Finnish: 2. kutsu lähetetty
+    second_call_sent = models.DateField(verbose_name=_("Second call sent"), null=True, blank=True)
+
+    # In Finnish: 3. kutsu lähetetty
+    third_call_sent = models.DateField(verbose_name=_("Third call sent"), null=True, blank=True)
 
     # In Finnish: Järjestelypäätös
     is_readjustment_decision = models.BooleanField(verbose_name=_("Is readjustment decision"), default=False)
@@ -46,18 +58,6 @@ class Contract(TimeStampedSafeDeleteModel):
     # In Finnish: KTJ vuokraoikeustodistuksen linkki
     ktj_link = models.CharField(verbose_name=_("KTJ link"), null=True, blank=True, max_length=1024)
 
-    # In Finnish: Vuokravakuusnumero
-    collateral_number = models.CharField(verbose_name=_("Collateral number"), null=True, blank=True, max_length=255)
-
-    # In Finnish: Vuokravakuus alkupvm
-    collateral_start_date = models.DateField(verbose_name=_("Collateral starting date"), null=True, blank=True)
-
-    # In Finnish: Vuokravakuus loppupvm
-    collateral_end_date = models.DateField(verbose_name=_("Collateral ending date"), null=True, blank=True)
-
-    # In Finnish: Vuokravakuus kommentti
-    collateral_note = models.TextField(verbose_name=_("Collateral note"), null=True, blank=True)
-
     # In Finnish: Laitostunnus
     institution_identifier = models.CharField(verbose_name=_("Institution identifier"), null=True, blank=True,
                                               max_length=255)
@@ -67,25 +67,50 @@ class Contract(TimeStampedSafeDeleteModel):
         verbose_name_plural = pgettext_lazy("Model name", "Contracts")
 
 
-class MortgageDocument(models.Model):
+class CollateralType(NameModel):
     """
-    In Finnish: Panttikirja
+    In Finnish: Vakuuden laji
     """
-    contract = models.ForeignKey(Contract, verbose_name=_("Contract"), related_name='mortgage_documents',
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Collateral type")
+        verbose_name_plural = pgettext_lazy("Model name", "Collateral types")
+
+
+class Collateral(models.Model):
+    """
+    In Finnish: Vakuus
+    """
+    contract = models.ForeignKey(Contract, verbose_name=_("Contract"), related_name='collaterals',
                                  on_delete=models.PROTECT)
 
-    # In Finnish: Panttikirjan numero
+    # In Finnish: Vakuuden laji
+    type = models.ForeignKey(CollateralType, verbose_name=_("Collateral type"), on_delete=models.PROTECT)
+
+    # In Finnish: Numero
     number = models.CharField(verbose_name=_("Number"), null=True, blank=True, max_length=255)
 
-    # In Finnish: Panttikirjan päivämäärä
-    date = models.DateField(verbose_name=_("Date"), null=True, blank=True)
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
-    # In Finnish: Panttikirjan kommentti
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    # In Finnish: Määrä
+    total_amount = models.DecimalField(verbose_name=_("Total amount"), null=True, blank=True, max_digits=10,
+                                       decimal_places=2)
+
+    # In Finnish: Maksettu pvm
+    paid_date = models.DateField(verbose_name=_("Paid date"), null=True, blank=True)
+
+    # In Finnish: Palautettu pvm
+    returned_date = models.DateField(verbose_name=_("Returned date"), null=True, blank=True)
+
+    # In Finnish: Huomautus
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Mortgage document")
-        verbose_name_plural = pgettext_lazy("Model name", "Mortgage documents")
+        verbose_name = pgettext_lazy("Model name", "Collateral")
+        verbose_name_plural = pgettext_lazy("Model name", "Collaterals")
 
 
 class ContractChange(models.Model):
@@ -124,8 +149,8 @@ class ContractChange(models.Model):
 
 auditlog.register(Contract)
 auditlog.register(ContractChange)
-auditlog.register(MortgageDocument)
+auditlog.register(Collateral)
 
 field_permissions.register(Contract, exclude_fields=['lease'])
 field_permissions.register(ContractChange, exclude_fields=['contract'])
-field_permissions.register(MortgageDocument, exclude_fields=['contract'])
+field_permissions.register(Collateral, exclude_fields=['contract'])

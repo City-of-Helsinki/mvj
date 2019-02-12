@@ -8,8 +8,8 @@ from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseRelationType, LeaseState,
     LocationType, PeriodType, RentAdjustmentAmountType, TenantContactType)
 from leasing.models import (
-    Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent, IndexAdjustedRent,
-    IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, MortgageDocument, Municipality, PayableRent,
+    Collateral, Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent,
+    IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, Municipality, PayableRent,
     RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
@@ -710,17 +710,26 @@ class LeaseImporter(BaseImporter):
                         signing_date=contract_row['ALLEKIRJPVM'].date() if contract_row['ALLEKIRJPVM'] else None,
                         signing_note=None,
                         is_readjustment_decision=bool(contract_row['JARJESTELYPAATOS']),
-                        collateral_number=contract_row['VUOKRAKIINNITYSPYKALA'],
-                        collateral_start_date=contract_row['VUOKRAKIINNITYSPVM'],
-                        collateral_end_date=contract_row['VUOKRAKIINNITYSLOPPUPVM'],
-                        collateral_note=contract_row['KOMMENTTI'],
                         institution_identifier=contract_row['LAITOSTUNNUS'],
                     )
+                    if (contract_row['VUOKRAKIINNITYSPYKALA'] or contract_row['VUOKRAKIINNITYSPVM'] or
+                            contract_row['VUOKRAKIINNITYSLOPPUPVM'] or contract_row['KOMMENTTI']):
+                        Collateral.objects.get_or_create(
+                            contract=contract,
+                            type_id=2,  # Rahavakuus
+                            number=contract_row['VUOKRAKIINNITYSPYKALA'],
+                            start_date=contract_row['VUOKRAKIINNITYSPVM'].date() if
+                            contract_row['VUOKRAKIINNITYSPVM'] else None,
+                            end_date=contract_row['VUOKRAKIINNITYSLOPPUPVM'].date() if
+                            contract_row['VUOKRAKIINNITYSLOPPUPVM'] else None,
+                            note=None
+                        )
 
-                    (mortgage_document, mortgage_document_created) = MortgageDocument.objects.get_or_create(
+                    Collateral.objects.get_or_create(
                         contract=contract,
+                        type_id=1,  # Panttikirja
                         number=contract_row['PYSYVYYSKIINNITYSPYKALA'],
-                        date=contract_row['PYSYVYYSKIINNITYSPVM'].date() if contract_row[
+                        start_date=contract_row['PYSYVYYSKIINNITYSPVM'].date() if contract_row[
                             'PYSYVYYSKIINNITYSPVM'] else None,
                         note=None
                     )

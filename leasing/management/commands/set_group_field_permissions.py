@@ -166,7 +166,7 @@ DEFAULT_FIELD_PERMS = {
         6: "view",
         7: "change",
     },
-    "mortgagedocument": {
+    "collateral": {
         1: "view",
         2: "view",
         3: "change",
@@ -423,10 +423,12 @@ CUSTOM_FIELD_PERMS = {
             4: "change",
             5: "change",
         },
-        "collateral_note": {
+        "collaterals": {
             6: "change",
         },
-        "mortgage_documents": {
+    },
+    "collateral": {
+        "note": {
             6: "change",
         },
     },
@@ -435,11 +437,6 @@ CUSTOM_FIELD_PERMS = {
             2: "change",
             3: "change",
             5: "change",
-        },
-    },
-    "mortgagedocument": {
-        "note": {
-            6: "change",
         },
     },
     "rent": {

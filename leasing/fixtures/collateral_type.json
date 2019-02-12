@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.CollateralType",
+    "pk": 1,
+    "fields": {
+      "name": "Panttikirja"
+    }
+  },
+  {
+    "model": "leasing.CollateralType",
+    "pk": 2,
+    "fields": {
+      "name": "Rahavakuus"
+    }
+  }
+]
