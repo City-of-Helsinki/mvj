@@ -239,7 +239,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
             return 'infill_development_compensation_leases'
 
         if field_name in ('area_notes', 'email_logs'):
-            return 'lease_area'
+            return 'lease_areas'
 
         return field_name
 
