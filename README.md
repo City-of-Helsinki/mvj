@@ -4,7 +4,73 @@
 # mvj
 City of Helsinki ground rent system
 
-## Development
+## Development with Docker
+
+1. Run `docker-compose up`
+
+2. Run migrations if needed: 
+    * `docker exec mvj python manage.py migrate`
+
+3. Create superuser if needed: 
+    * `docker exec -it mvj python manage.py createsuperuser`
+
+The project is now running at [localhost:8000](http://localhost:8000)
+
+### Connecting to Tunnistamo
+
+If you have a Tunnistamo and an mvj-ui instance running with docker in separate docker-compose
+environments, you can set up a network to sync mvj, mvj-ui and tunnistamo together.
+
+1. Add network definition to tunnistamo's `docker-compose`:
+
+        version: '3'
+        services:
+            postgres:
+                ...
+                networks:
+                    - net
+        
+            django:
+                ...
+                networks:
+                    - net
+        
+        networks:
+            net:
+                driver: bridge
+                
+2. Connect mvj to tunnistamo's network, by adding this to mvj's and mvj-ui's `docker-compose`:
+
+        networks:
+            default:
+                external:
+                    name: tunnistamo_net
+    
+    The name `tunnistamo_net` comes from the name of the folder, where tunnistamo lives
+    combined with the name of the network. Change those according to your setup, if needed.
+
+3. Now you can access tunnistamo from other docker containers with `tunnistamo-backend`,
+i.e. Tunnistamo's `django` container's name. Connect mvj's OIDC logic to that like so:
+
+        OIDC_API_TOKEN_AUTH = {
+            ...
+            'ISSUER': 'http://tunnistamo-backend:8001/openid',
+            ...        
+        }
+ 
+4. Add `tunnistamo-backend` to your computer's localhost aliases. To do this on UNIX-like systems open
+`/etc/hosts` and add it:
+
+        127.0.0.1    localhost tunnistamo-backend
+        
+   This way callbacks to `tunnistamo-backend` URL will work locally.
+        
+5. Configure OIDC settings in Tunnistamo's admin panel. Might require help from other devs.
+
+6. Configure some social auth application to allow requests from your local tunnistamo by using this
+URL in the settings `http://tunnistamo-backend`
+
+## Development without Docker
 
 ### Install required system packages
 
