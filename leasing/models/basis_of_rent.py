@@ -32,7 +32,7 @@ class BasisOfRentBuildPermissionType(NameModel):
 
 class BasisOfRent(TimeStampedSafeDeleteModel):
     """
-    In Finnish: Vuokrausperuste
+    In Finnish: Vuokrausperiaate
     """
     # In Finnish: Tonttityyppi
     plot_type = models.ForeignKey(BasisOfRentPlotType, verbose_name=_("Plot type"), on_delete=models.PROTECT)

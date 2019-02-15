@@ -3,7 +3,7 @@
     "model": "leasing.DecisionType",
     "pk": 1,
     "fields": {
-      "name": "Vuokrausperusteet"
+      "name": "Vuokrausperiaate"
     }
   },
   {

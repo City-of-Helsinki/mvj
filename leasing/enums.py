@@ -367,7 +367,7 @@ class AreaType(Enum):
     REAL_PROPERTY = 'real_property'  # Kiinteistö
     UNSEPARATED_PARCEL = 'unseparated_parcel'  # Määräala
     PLOT_DIVISION = 'plot_division'  # Tonttijako
-    BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperuste
+    BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperiaate
     INFILL_DEVELOPMENT_COMPENSATION = 'infill_development_compensation'  # Täydennysrakentamiskorvaus
     LAND_USE_AGREEMENT = 'land_use_agreement'  # Maankäyttösopimus
     DETAILED_PLAN = 'detailed_plan'  # Kaava

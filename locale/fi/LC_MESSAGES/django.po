@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-12 15:48+0200\n"
+"POT-Creation-Date: 2019-02-15 13:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -712,12 +712,12 @@ msgstr "Indeksi"
 #: leasing/models/basis_of_rent.py:71
 msgctxt "Model name"
 msgid "Basis of rent"
-msgstr "Vuokrausperuste"
+msgstr "Vuokrausperiaate"
 
 #: leasing/models/basis_of_rent.py:72
 msgctxt "Model name"
 msgid "Basis of rents"
-msgstr "Vuokrausperusteet"
+msgstr "Vuokrausperiaatteet"
 
 #: leasing/models/basis_of_rent.py:79 leasing/models/basis_of_rent.py:101
 msgid "Basis of rent"
@@ -741,22 +741,22 @@ msgstr "Pinta-alayksikkö"
 #: leasing/models/basis_of_rent.py:93
 msgctxt "Model name"
 msgid "Basis of rent rate"
-msgstr "Vuokrausperusteen hinta"
+msgstr "Vuokrausperiaatteen hinta"
 
 #: leasing/models/basis_of_rent.py:94
 msgctxt "Model name"
 msgid "Basis of rent rates"
-msgstr "Vuokrausperusteen hinnat"
+msgstr "Vuokrausperiaatteen hinnat"
 
 #: leasing/models/basis_of_rent.py:109
 msgctxt "Model name"
 msgid "Basis of rent property identifier"
-msgstr "Vuokrausperusteen Kiinteistötunnus"
+msgstr "Vuokrausperiaatteen Kiinteistötunnus"
 
 #: leasing/models/basis_of_rent.py:110
 msgctxt "Model name"
 msgid "Basis of rent property identifiers"
-msgstr "Vuokrausperusteen Kiinteistötunnukset"
+msgstr "Vuokrausperiaatteen Kiinteistötunnukset"
 
 #: leasing/models/basis_of_rent.py:120 leasing/models/decision.py:37
 #: leasing/models/infill_development_compensation.py:24
@@ -783,12 +783,12 @@ msgstr "Pykälä"
 #: leasing/models/basis_of_rent.py:134
 msgctxt "Model name"
 msgid "Basis of rent decision"
-msgstr "Vuokrausperusteen päätös"
+msgstr "Vuokrausperiaatteen päätös"
 
 #: leasing/models/basis_of_rent.py:135
 msgctxt "Model name"
 msgid "Basis of rent decisions"
-msgstr "Vuokrausperusteen päätös"
+msgstr "Vuokrausperiaatteen päätös"
 
 #: leasing/models/comment.py:17
 msgctxt "Model name"
@@ -844,7 +844,7 @@ msgstr "Nimi"
 
 #: leasing/models/contact.py:31
 msgid "c/o"
-msgstr ""
+msgstr "c/o"
 
 #: leasing/models/contact.py:34
 msgid "Business ID"
@@ -2356,11 +2356,11 @@ msgstr "Eräpäivät tulee olla erikseen määritellyt jos käytössä kausilask
 
 #: leasing/serializers/rent.py:213
 msgid "Basis of rent item id {} not found"
-msgstr "Vuokrausperustetta tunnisteella {} ei löydy"
+msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"
 
 #: leasing/serializers/rent.py:218
 msgid "Can't edit locked basis of rent item"
-msgstr "Lukittua vuokrausperustetta ei voi muokata"
+msgstr "Lukittua vuokrausperiaatetta ei voi muokata"
 
 #: leasing/views.py:79
 msgid "Cloudia Proxy"
