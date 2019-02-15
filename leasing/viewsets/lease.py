@@ -185,6 +185,43 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             if search_form.cleaned_data.get('lease_state'):
                 queryset = queryset.filter(state__in=search_form.cleaned_data.get('lease_state'))
 
+            if search_form.cleaned_data.get('business_id'):
+                queryset = queryset.filter(
+                    tenants__tenantcontact__contact__business_id__icontains=search_form.cleaned_data.get('business_id'))
+
+            if search_form.cleaned_data.get('national_identification_number'):
+                nat_id = search_form.cleaned_data.get('national_identification_number')
+                queryset = queryset.filter(
+                    tenants__tenantcontact__contact__national_identification_number__icontains=nat_id)
+
+            if search_form.cleaned_data.get('lessor'):
+                queryset = queryset.filter(lessor=search_form.cleaned_data.get('lessor'))
+
+            if search_form.cleaned_data.get('contract_number'):
+                queryset = queryset.filter(contracts__contract_number__icontains=search_form.cleaned_data.get(
+                    'contract_number'))
+
+            if search_form.cleaned_data.get('decision_maker'):
+                queryset = queryset.filter(decisions__decision_maker=search_form.cleaned_data.get(
+                    'decision_maker'))
+
+            if search_form.cleaned_data.get('decision_date'):
+                queryset = queryset.filter(decisions__decision_date=search_form.cleaned_data.get(
+                    'decision_date'))
+
+            if search_form.cleaned_data.get('decision_section'):
+                queryset = queryset.filter(decisions__section=search_form.cleaned_data.get(
+                    'decision_section'))
+
+            if search_form.cleaned_data.get('reference_number'):
+                reference_number = search_form.cleaned_data.get('reference_number')
+                queryset = queryset.filter(Q(reference_number__icontains=reference_number) | Q(
+                    decisions__reference_number__icontains=reference_number))
+
+            if search_form.cleaned_data.get('invoice_number'):
+                queryset = queryset.filter(
+                    invoices__number__icontains=search_form.cleaned_data.get('invoice_number'))
+
         return queryset.distinct()
 
     def get_serializer_class(self):

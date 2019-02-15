@@ -2,8 +2,8 @@ from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
 
-from leasing.enums import LeaseState, TenantContactType
-from leasing.models import District, LeaseType, Municipality
+from leasing.enums import InfillDevelopmentCompensationState, LeaseState, TenantContactType
+from leasing.models import Contact, DecisionMaker, District, LeaseType, Municipality
 
 
 class CommaSeparatedChoiceField(forms.ChoiceField):
@@ -48,3 +48,35 @@ class LeaseSearchForm(forms.Form):
     sequence = forms.IntegerField(label='Sequence', required=False)
     lease_state = CommaSeparatedChoiceField(label='Lease state', required=False,
                                             choices=tuple((x.value, str(x)) for x in LeaseState))
+    business_id = forms.CharField(label='Business id', max_length=255, required=False, empty_value=None)
+    national_identification_number = forms.CharField(label='National identification number', max_length=255,
+                                                     required=False, empty_value=None)
+    lessor = forms.ModelChoiceField(label='Lessor', queryset=Contact.objects.filter(is_lessor=True), required=False)
+    contract_number = forms.CharField(label='Contract number', max_length=255, required=False, empty_value=None)
+    decision_maker = forms.ModelChoiceField(label='Decision maker', queryset=DecisionMaker.objects.all(),
+                                            required=False)
+    decision_date = forms.DateField(required=False)
+    decision_section = forms.CharField(label='Decision section', max_length=255, required=False, empty_value=None)
+    reference_number = forms.CharField(label='Reference number', max_length=255, required=False, empty_value=None)
+    invoice_number = forms.CharField(label='Invoice number', max_length=255, required=False, empty_value=None)
+
+
+class BasisOfRentSearchForm(forms.Form):
+    search = forms.CharField(label='Search', max_length=255, required=False, empty_value=None)
+    decision_maker = forms.ModelChoiceField(label='Decision maker', queryset=DecisionMaker.objects.all(),
+                                            required=False)
+    decision_date = forms.DateField(required=False)
+    decision_section = forms.CharField(label='Decision section', max_length=255, required=False, empty_value=None)
+    reference_number = forms.CharField(label='Reference number', max_length=255, required=False, empty_value=None)
+
+
+class InfillDevelopmentCompensationSearchForm(forms.Form):
+    search = forms.CharField(label='Search', max_length=255, required=False, empty_value=None)
+    state = CommaSeparatedChoiceField(label='State', required=False,
+                                      choices=tuple((x.value, str(x)) for x in InfillDevelopmentCompensationState))
+
+    decision_maker = forms.ModelChoiceField(label='Decision maker', queryset=DecisionMaker.objects.all(),
+                                            required=False)
+    decision_date = forms.DateField(required=False)
+    decision_section = forms.CharField(label='Decision section', max_length=255, required=False, empty_value=None)
+    reference_number = forms.CharField(label='Reference number', max_length=255, required=False, empty_value=None)
