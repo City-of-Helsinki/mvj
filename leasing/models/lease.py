@@ -268,7 +268,7 @@ class Lease(TimeStampedSafeDeleteModel):
     intended_use_note = models.TextField(verbose_name=_("Intended use note"), null=True, blank=True)
 
     # In Finnish: Siirto-oikeus
-    transferable = models.BooleanField(verbose_name=_("Transferable"), default=True)
+    transferable = models.BooleanField(verbose_name=_("Transferable"), null=True, blank=True, default=None)
 
     # In Finnish: Säännelty
     regulated = models.BooleanField(verbose_name=_("Regulated"), default=False)
@@ -346,6 +346,10 @@ class Lease(TimeStampedSafeDeleteModel):
     # In Finnish: Erityishanke
     special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), null=True, blank=True,
                                         on_delete=models.PROTECT)
+
+    # In Finnish: Järjestelypäätös
+    arrangement_decision = models.BooleanField(verbose_name=_("Arrangement decision"), null=True, blank=True,
+                                               default=False)
 
     objects = LeaseManager()
 
