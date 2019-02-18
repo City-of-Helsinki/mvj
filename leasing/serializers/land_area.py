@@ -42,8 +42,8 @@ class PlanUnitSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerM
     class Meta:
         model = PlanUnit
         fields = ('id', 'identifier', 'area', 'section_area', 'in_contract',
-                  'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_state',
-                  'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
+                  'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_effective_date',
+                  'plot_division_state', 'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
                   'detailed_plan_latest_processing_date_note', 'plan_unit_type', 'plan_unit_state',
                   'plan_unit_intended_use', 'geometry')
 
@@ -66,8 +66,8 @@ class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMix
     class Meta:
         model = PlanUnit
         fields = ('id', 'identifier', 'area', 'section_area', 'in_contract',
-                  'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_state',
-                  'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
+                  'plot_division_identifier', 'plot_division_date_of_approval', 'plot_division_effective_date',
+                  'plot_division_state', 'detailed_plan_identifier', 'detailed_plan_latest_processing_date',
                   'detailed_plan_latest_processing_date_note', 'plan_unit_type', 'plan_unit_state',
                   'plan_unit_intended_use', 'geometry')
 

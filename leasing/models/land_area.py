@@ -243,6 +243,10 @@ class PlanUnit(Land):
     plot_division_date_of_approval = models.DateField(verbose_name=_("Plot division date of approval"), null=True,
                                                       blank=True)
 
+    # In Finnish: Tonttijaon voimaantulopvm
+    plot_division_effective_date = models.DateField(verbose_name=_("Plot division effective date"), null=True,
+                                                    blank=True)
+
     # In Finnish: Tonttijaon olotila
     plot_division_state = models.ForeignKey(PlotDivisionState, verbose_name=_("Plot division state"), null=True,
                                             blank=True, on_delete=models.PROTECT)

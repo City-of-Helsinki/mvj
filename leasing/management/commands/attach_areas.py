@@ -154,6 +154,7 @@ class Command(BaseCommand):
                                 'geometry': other_area.geometry,
                                 'plot_division_identifier': plot_area.identifier,
                                 'plot_division_date_of_approval': plot_area.metadata.get('date_of_approval'),
+                                'plot_division_effective_date': plot_area.metadata.get('effective_date'),
                                 'plot_division_state': plot_division_state,
                                 'detailed_plan_identifier': detailed_plan_identifier,
                                 'detailed_plan_latest_processing_date': detailed_plan_latest_processing_date,
