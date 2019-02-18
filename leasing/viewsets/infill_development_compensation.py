@@ -45,18 +45,26 @@ class InfillDevelopmentCompensationViewSet(AuditLogMixin, FieldPermissionsViewse
                 queryset = queryset.filter(state__in=search_form.cleaned_data.get('state'))
 
             if search_form.cleaned_data.get('decision_maker'):
-                queryset = queryset.filter(decisions__decision_maker=search_form.cleaned_data.get('decision_maker'))
+                queryset = queryset.filter(
+                    infill_development_compensation_leases__decisions__decision_maker=search_form.cleaned_data.get(
+                        'decision_maker'))
 
             if search_form.cleaned_data.get('decision_date'):
-                queryset = queryset.filter(decisions__decision_date=search_form.cleaned_data.get('decision_date'))
+                queryset = queryset.filter(
+                    infill_development_compensation_leases__decisions__decision_date=search_form.cleaned_data.get(
+                        'decision_date'))
 
             if search_form.cleaned_data.get('decision_section'):
-                queryset = queryset.filter(decisions__section=search_form.cleaned_data.get('decision_section'))
+                queryset = queryset.filter(
+                    infill_development_compensation_leases__decisions__section=search_form.cleaned_data.get(
+                        'decision_section'))
 
             if search_form.cleaned_data.get('reference_number'):
                 reference_number = search_form.cleaned_data.get('reference_number')
-                queryset = queryset.filter(Q(reference_number__icontains=reference_number) |
-                                           Q(decisions__reference_number__icontains=reference_number))
+                queryset = queryset.filter(
+                    Q(reference_number__icontains=reference_number) |
+                    Q(infill_development_compensation_leases__decisions__reference_number__icontains=reference_number)
+                )
 
         return queryset
 
