@@ -349,7 +349,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
     # In Finnish: Järjestelypäätös
     arrangement_decision = models.BooleanField(verbose_name=_("Arrangement decision"), null=True, blank=True,
-                                               default=False)
+                                               default=None)
 
     objects = LeaseManager()
 
