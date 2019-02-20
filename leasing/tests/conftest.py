@@ -15,7 +15,7 @@ from leasing.enums import (
     RentType, TenantContactType)
 from leasing.models import (
     Condition, Contact, ContractRent, Decision, District, FixedInitialYearRent, Invoice, Lease, LeaseArea, LeaseType,
-    Municipality, NoticePeriod, Rent, RentAdjustment, Tenant, TenantContact)
+    Municipality, NoticePeriod, Rent, RentAdjustment, Tenant, TenantContact, UiData)
 from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
 from users.models import User
 
@@ -170,6 +170,12 @@ class DecisionFactory(factory.DjangoModelFactory):
 class ConditionFactory(factory.DjangoModelFactory):
     class Meta:
         model = Condition
+
+
+@register
+class UiDataFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = UiData
 
 
 @pytest.fixture

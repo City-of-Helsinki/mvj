@@ -56,3 +56,11 @@ class PerMethodPermission(permissions.BasePermission):
         required_perms = self.get_required_permissions(request.method, view)
 
         return request.user.has_perms(required_perms)
+
+
+class IsSameUser(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if not hasattr(obj, 'user') or not obj.user:
+            return True
+
+        return obj.user == request.user

@@ -690,6 +690,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "uidata": {
+        1: ("view", "add", "change", "delete"),
+        2: ("view", "add", "change", "delete"),
+        3: ("view", "add", "change", "delete"),
+        4: ("view", "add", "change", "delete"),
+        5: ("view", "add", "change", "delete"),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete", "edit_global_ui_data"),
+    },
     "user": {
         1: ("view",),
         2: ("view",),
@@ -707,7 +716,7 @@ PERMISSION_TYPES = ("view", "add", "change", "delete")
 class Command(BaseCommand):
     help = 'Sets predefined model permissions for the predefined MVJ groups'
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # NOQA
         groups = {group.id: group for group in Group.objects.all()}
         permissions = {perm.codename: perm for perm in Permission.objects.all()}
 
@@ -726,14 +735,21 @@ class Command(BaseCommand):
                 for permission_type in PERMISSION_TYPES:
                     all_model_permissions.append(permissions['{}_{}'.format(permission_type, model_name)])
 
+                for (custom_model_permission_name, desc) in model._meta.permissions:
+                    all_model_permissions.append(permissions[custom_model_permission_name])
+
                 for group_id, permission_types in DEFAULT_MODEL_PERMS[model_name].items():
                     if not permission_types:
                         continue
 
                     for permission_type in permission_types:
-                        permission_name = '{}_{}'.format(permission_type, model_name)
+                        if permission_type in permissions:
+                            permission = permissions[permission_type]
+                        else:
+                            permission = permissions['{}_{}'.format(permission_type, model_name)]
+
                         group_permissions.append(
-                            Group.permissions.through(group=groups[group_id], permission=permissions[permission_name])
+                            Group.permissions.through(group=groups[group_id], permission=permission)
                         )
 
         # Delete existing group permissions from the pre-defined groups

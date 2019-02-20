@@ -23,6 +23,7 @@ from .rent import (
     ContractRent, FixedInitialYearRent, Index, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent, RentAdjustment,
     RentDueDate, RentIntendedUse)
 from .tenant import Tenant, TenantContact
+from .ui_data import UiData
 from .vat import Vat
 
 __all__ = [
@@ -97,5 +98,6 @@ __all__ = [
     'SupportiveHousing',
     'Tenant',
     'TenantContact',
+    'UiData',
     'Vat',
 ]

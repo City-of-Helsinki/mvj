@@ -165,6 +165,7 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'leasing.metadata.FieldsMetadata',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 30,
+    'EXCEPTION_HANDLER': 'leasing.viewsets.utils.integrityerror_exception_handler',
 }
 
 MVJ_EMAIL_FROM = 'mvj@example.com'

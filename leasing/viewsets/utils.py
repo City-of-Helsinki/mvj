@@ -4,11 +4,13 @@ import os
 from auditlog.middleware import AuditlogMiddleware
 from django.conf import settings
 from django.core.files import File
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import parsers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import exception_handler
 
 
 class AuditLogMixin:
@@ -97,3 +99,17 @@ class FileMixin:
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(base_filename)
 
             return response
+
+
+def integrityerror_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if isinstance(exc, IntegrityError) and not response:
+        response = Response(
+            {
+                'detail': _("Data integrity error")
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    return response

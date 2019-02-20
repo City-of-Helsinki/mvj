@@ -29,6 +29,7 @@ from leasing.viewsets.lease_additional_views import (
     LeaseCreateCollectionLetterDocumentViewSet, LeasePreviewInvoicesForYearView, LeaseRentForPeriodView,
     LeaseSetInvoicingStateView, LeaseSetRentInfoCompletionStateView)
 from leasing.viewsets.rent import IndexViewSet
+from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from users.views import UsersPermissions
 from users.viewsets import UserViewSet
@@ -67,6 +68,7 @@ router.register(r'related_lease', RelatedLeaseViewSet)
 router.register(r'special_project', SpecialProjectViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
 router.register(r'supportive_housing', SupportiveHousingViewSet)
+router.register(r'ui_data', UiDataViewSet, basename='ui_data')
 router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
