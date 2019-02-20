@@ -1,12 +1,15 @@
 import requests
 from django.conf import settings
-from django.http import Http404, HttpResponse, HttpResponseServerError, StreamingHttpResponse
+from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse, StreamingHttpResponse
 from django.utils.translation import ugettext_lazy as _
+from requests import Session
 from requests.auth import HTTPBasicAuth
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from zeep import Client, Settings
+from zeep.transports import Transport
 
 from leasing.permissions import PerMethodPermission
 
@@ -99,3 +102,66 @@ class CloudiaProxy(APIView):
 
         return StreamingHttpResponse(status=r.status_code, reason=r.reason, content_type=r.headers['Content-Type'],
                                      streaming_content=r.raw)
+
+
+class VirreProxy(APIView):
+    permission_classes = (PerMethodPermission,)
+    perms_map = {
+        'GET': ['leasing.view_invoice'],
+    }
+
+    def get_view_name(self):
+        return _("Virre Proxy")
+
+    def get(self, request, format=None, service=None, business_id=None):
+        known_services = {
+             'company_extended': 'CompanyExtendedInfo',
+             'company_represent': 'CompanyRepresentInfo',
+             'company_notice': 'CompanyNoticeInfo',
+             'trade_register_entry': 'TradeRegisterEntryInfo',
+        }
+        known_pdf_services = [
+            'trade_register_entry',
+        ]
+
+        if service not in known_services.keys():
+            raise APIException(_('service parameter is not valid'))
+
+        session = Session()
+        session.auth = HTTPBasicAuth(settings.VIRRE_USERNAME, settings.VIRRE_PASSWORD)
+        soap_settings = Settings(strict=False)
+
+        wsdl_service = '{}Service'.format(known_services[service])
+
+        client = Client(
+            '{host}/IDSServices11/{wsdl_service}?wsdl'.format(host=settings.VIRRE_API_URL,
+                                                              wsdl_service=wsdl_service),
+            transport=Transport(session=session),
+            settings=soap_settings,
+        )
+
+        data = {
+            "userId": settings.VIRRE_USERNAME,
+            "businessId": business_id,
+        }
+        action = 'get{}'.format(known_services[service])
+        result = getattr(client.service, action)(**data)
+
+        if service in known_pdf_services:
+            # example: 'TradeRegisterEntryInfo' -> 'tradeRegisterEntryInfoResponseDetails'
+            response_key = '{}ResponseDetails'.format(
+                known_services[service][0].lower() + known_services[service][1:])
+
+            if response_key not in result:
+                raise APIException(_('business id is invalid'))
+
+            raw_pdf = result[response_key]['extract']
+
+            response = HttpResponse(raw_pdf, mimetype='application/pdf')
+            response['Content-Disposition'] = (
+                'attachment; filename={}_{}.pdf'.format(service, business_id)
+            )
+            return response
+
+        else:
+            return JsonResponse(result)

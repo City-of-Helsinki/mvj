@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from leasing.views import CloudiaProxy, ktj_proxy
+from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
@@ -94,6 +94,7 @@ urlpatterns = [
     re_path(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
     path('contract_file/<contract_id>/', CloudiaProxy.as_view()),
     path('contract_file/<contract_id>/<file_id>/', CloudiaProxy.as_view()),
+    path('trade_register/<service>/<business_id>/', VirreProxy.as_view()),
     path('admin/', admin.site.urls),
     path('auth/', include(rest_framework.urls)),
     path('docs/', get_swagger_view(title='MVJ API')),
