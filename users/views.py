@@ -22,7 +22,14 @@ class UsersPermissions(APIView):
                     permissions.update(backend._get_user_permissions(request.user))
                     permissions.update(backend._get_group_permissions(request.user))
 
-        return Response([{
-            "name": p.name,
-            "codename": p.codename
-        } for p in permissions])
+        groups = [g.name for g in request.user.groups.all()]
+
+        return Response(
+            {
+                "groups": groups,
+                "permissions": [{
+                    "name": p.name,
+                    "codename": p.codename
+                } for p in permissions]
+            }
+        )
