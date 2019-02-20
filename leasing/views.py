@@ -9,6 +9,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from zeep import Client, Settings
+from zeep.helpers import serialize_object
 from zeep.transports import Transport
 
 from leasing.permissions import PerMethodPermission
@@ -157,11 +158,11 @@ class VirreProxy(APIView):
 
             raw_pdf = result[response_key]['extract']
 
-            response = HttpResponse(raw_pdf, mimetype='application/pdf')
+            response = HttpResponse(raw_pdf, content_type='application/pdf')
             response['Content-Disposition'] = (
                 'attachment; filename={}_{}.pdf'.format(service, business_id)
             )
             return response
 
         else:
-            return JsonResponse(result)
+            return JsonResponse(serialize_object(result))
