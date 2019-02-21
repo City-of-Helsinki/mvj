@@ -1,9 +1,43 @@
+from django.db.models.functions import Coalesce
 from django_filters.rest_framework import FilterSet, filters
+from rest_framework.filters import OrderingFilter
 
 from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionNote
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 
 from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
+
+
+class CoalesceOrderingFilter(OrderingFilter):
+    """Ordering filter that supports defining coalescent fields
+
+    Coalescent fields are configured by adding a new attribute coalesce_ordering to the view.
+
+    Example:
+
+    ordering_fields = ('names',)
+    coalesce_ordering = {"names": ("business_name", "last_name")}
+
+    The coalesce field must be set in the views "ordering_fields" attribute. '__all__' will not work.
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        ordering = self.get_ordering(request, queryset, view)
+
+        if ordering:
+            if hasattr(view, 'coalesce_ordering'):
+                for ordering_term in ordering:
+                    ordering_term = ordering_term.lstrip('-')
+
+                    if ordering_term in view.coalesce_ordering:
+                        kwargs = {
+                            ordering_term: Coalesce(*view.coalesce_ordering[ordering_term])
+                        }
+                        queryset = queryset.annotate(**kwargs)
+
+            return queryset.order_by(*ordering)
+
+        return queryset
 
 
 class CollectionCourtDecisionFilter(FilterSet):

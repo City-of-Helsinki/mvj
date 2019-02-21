@@ -2,6 +2,8 @@ import datetime
 
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DistrictFilter, LeaseFilter
@@ -88,6 +90,15 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
 class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
     filterset_class = LeaseFilter
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    ordering = (
+        'identifier__type__identifier', 'identifier__municipality__identifier', 'identifier__district__identifier',
+        'identifier__sequence'
+    )
+    ordering_fields = (
+        'identifier__type__identifier', 'identifier__municipality__identifier', 'identifier__district__identifier',
+        'identifier__sequence', 'lessor__name', 'state', 'start_date', 'end_date'
+    )
 
     def get_queryset(self):  # noqa: C901
         """Allow filtering leases by various query parameters

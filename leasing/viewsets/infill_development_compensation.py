@@ -1,4 +1,5 @@
 from django.db.models import Q
+from rest_framework.filters import OrderingFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.forms import InfillDevelopmentCompensationSearchForm
@@ -13,6 +14,9 @@ from .utils import AtomicTransactionModelViewSet, AuditLogMixin, FileMixin, Mult
 class InfillDevelopmentCompensationViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = InfillDevelopmentCompensation.objects.all()
     serializer_class = InfillDevelopmentCompensationSerializer
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('name', 'detailed_plan_identifier', 'state', 'lease_contract_change_date', 'reference_number')
+    ordering = ('name', )
 
     def get_queryset(self):
         queryset = InfillDevelopmentCompensation.objects.select_related('user').prefetch_related(
