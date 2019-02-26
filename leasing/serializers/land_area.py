@@ -3,13 +3,13 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
-from leasing.models.land_area import LeaseAreaAddress, PlanUnitIntendedUse, PlotDivisionState
+from leasing.models.land_area import LeaseAreaAddress, LeaseAreaAttachment, PlanUnitIntendedUse, PlotDivisionState
 from leasing.serializers.decision import DecisionSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
 from ..models import LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
-from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
+from .utils import FileSerializerMixin, InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
 
 
 class PlanUnitTypeSerializer(NameModelSerializer):
@@ -109,6 +109,36 @@ class LeaseAreaAddressSerializer(FieldPermissionsSerializerMixin, serializers.Mo
         fields = ('id', 'address', 'postal_code', 'city')
 
 
+class LeaseAreaAttachmentSerializer(FileSerializerMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                    serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    uploader = UserSerializer()
+    file = serializers.SerializerMethodField('get_file_url')
+    filename = serializers.SerializerMethodField('get_file_filename')
+
+    class Meta:
+        model = LeaseAreaAttachment
+        fields = ('id', 'type', 'file', 'filename', 'uploader', 'uploaded_at', 'lease_area')
+        download_url_name = 'leaseareaattachment-download'
+
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'filename':
+            return 'file'
+
+        return field_name
+
+
+class LeaseAreaAttachmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
+                                                serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    uploader = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = LeaseAreaAttachment
+        fields = ('id', 'type', 'file', 'uploader', 'uploaded_at', 'lease_area')
+        read_only_fields = ('uploaded_at',)
+
+
 class LeaseAreaSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     addresses = LeaseAreaAddressSerializer(many=True, required=False, allow_null=True)
@@ -116,6 +146,7 @@ class LeaseAreaSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializer
     plan_units = PlanUnitSerializer(many=True, required=False, allow_null=True)
     polluted_land_planner = UserSerializer()
     constructability_descriptions = ConstructabilityDescriptionSerializer(many=True, required=False, allow_null=True)
+    attachments = LeaseAreaAttachmentSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -123,17 +154,17 @@ class LeaseAreaSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializer
                   'preconstruction_state', 'preconstruction_estimated_construction_readiness_moment',
                   'preconstruction_inspection_moment', 'demolition_state', 'polluted_land_state',
                   'polluted_land_rent_condition_state', 'polluted_land_rent_condition_date', 'polluted_land_planner',
-                  'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
-                  'constructability_report_state', 'constructability_report_investigation_state',
-                  'constructability_report_signing_date', 'constructability_report_signer',
-                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions',
-                  'archived_at', 'archived_note', 'archived_decision', 'geometry')
+                  'polluted_land_projectwise_number', 'constructability_report_state',
+                  'constructability_report_investigation_state', 'constructability_report_signing_date',
+                  'constructability_report_signer', 'other_state', 'constructability_descriptions', 'archived_at',
+                  'archived_note', 'archived_decision', 'geometry', 'attachments')
 
 
 class LeaseAreaListSerializer(LeaseAreaSerializer):
     plots = None
     plan_units = None
     constructability_descriptions = None
+    attachments = None
 
     class Meta:
         model = LeaseArea
@@ -156,6 +187,7 @@ class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMi
     archived_decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
                                                            related_serializer=DecisionSerializer, required=False,
                                                            allow_null=True)
+    attachments = LeaseAreaAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = LeaseArea
@@ -163,8 +195,7 @@ class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMi
                   'preconstruction_state', 'preconstruction_estimated_construction_readiness_moment',
                   'preconstruction_inspection_moment', 'demolition_state', 'polluted_land_state',
                   'polluted_land_rent_condition_state', 'polluted_land_rent_condition_date', 'polluted_land_planner',
-                  'polluted_land_projectwise_number', 'polluted_land_matti_report_number',
-                  'constructability_report_state', 'constructability_report_investigation_state',
-                  'constructability_report_signing_date', 'constructability_report_signer',
-                  'constructability_report_geotechnical_number', 'other_state', 'constructability_descriptions',
-                  'archived_at', 'archived_note', 'archived_decision', 'geometry')
+                  'polluted_land_projectwise_number', 'constructability_report_state',
+                  'constructability_report_investigation_state', 'constructability_report_signing_date',
+                  'constructability_report_signer', 'other_state', 'constructability_descriptions', 'archived_at',
+                  'archived_note', 'archived_decision', 'geometry', 'attachments')

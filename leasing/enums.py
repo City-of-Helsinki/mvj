@@ -106,6 +106,15 @@ class LeaseAreaType(Enum):
         OTHER = pgettext_lazy('Lease area type', 'Other')
 
 
+class LeaseAreaAttachmentType(Enum):
+    MATTI_REPORT = 'matti_report'
+    GEOTECHNICAL = 'geotechnical'
+
+    class Labels:
+        MATTI_REPORT = pgettext_lazy('Lease area attachment type', 'MATTI report')
+        GEOTECHNICAL = pgettext_lazy('Lease area attachment type', 'Geotechnical')
+
+
 class PlotType(Enum):
     """
     In Finnish: Tontin tyyppi

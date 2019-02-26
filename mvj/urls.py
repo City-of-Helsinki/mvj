@@ -20,6 +20,7 @@ from leasing.viewsets.infill_development_compensation import (
 from leasing.viewsets.invoice import InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
 from leasing.viewsets.invoice_additional_views import (
     InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceRowCreditView, InvoiceSetCreditView)
+from leasing.viewsets.land_area import LeaseAreaAttachmentViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
     ManagementViewSet, MunicipalityViewSet, NoticePeriodViewSet, RegulationViewSet, RelatedLeaseViewSet,
@@ -56,6 +57,7 @@ router.register(r'invoice_row', InvoiceRowViewSet)
 router.register(r'invoice_set', InvoiceSetViewSet)
 router.register(r'intended_use', IntendedUseViewSet)
 router.register(r'lease', LeaseViewSet, basename='lease')
+router.register(r'lease_area_attachment', LeaseAreaAttachmentViewSet)
 router.register(r'lease_create_charge', LeaseCreateChargeViewSet, basename='lease_create_charge')
 router.register(r'lease_create_collection_letter', LeaseCreateCollectionLetterDocumentViewSet,
                 basename='lease_create_collection_letter')

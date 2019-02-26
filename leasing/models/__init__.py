@@ -15,7 +15,8 @@ from .infill_development_compensation import (
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from .inspection import Inspection
 from .invoice import BankHoliday, Invoice, ReceivableType
-from .land_area import ConstructabilityDescription, LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
+from .land_area import (
+    ConstructabilityDescription, LeaseArea, LeaseAreaAttachment, PlanUnit, PlanUnitState, PlanUnitType, Plot)
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
@@ -74,6 +75,7 @@ __all__ = [
     'Invoice',
     'Lease',
     'LeaseArea',
+    'LeaseAreaAttachment',
     'LeaseBasisOfRent',
     'LeaseIdentifier',
     'LeaseStateLog',

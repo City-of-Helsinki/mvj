@@ -7,8 +7,8 @@ from safedelete.models import SafeDeleteModel
 
 from field_permissions.registry import field_permissions
 from leasing.enums import (
-    ConstructabilityReportInvestigationState, ConstructabilityState, ConstructabilityType, LeaseAreaType, LocationType,
-    PlotType, PollutedLandRentConditionState)
+    ConstructabilityReportInvestigationState, ConstructabilityState, ConstructabilityType, LeaseAreaAttachmentType,
+    LeaseAreaType, LocationType, PlotType, PollutedLandRentConditionState)
 from leasing.models.lease import Lease
 from users.models import User
 
@@ -98,10 +98,6 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     polluted_land_projectwise_number = models.CharField(verbose_name=_("ProjectWise number"), null=True, blank=True,
                                                         max_length=255)
 
-    # In Finnish: Matti raportti
-    polluted_land_matti_report_number = models.CharField(verbose_name=_("Matti report number"), null=True, blank=True,
-                                                         max_length=255)
-
     # In Finnish: Selvitysaste (Rakennettavuusselvitys)
     constructability_report_state = EnumField(ConstructabilityState, verbose_name=_("Constructability report state"),
                                               null=True, blank=True, max_length=30)
@@ -118,10 +114,6 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     # In Finnish: Allekirjoittaja
     constructability_report_signer = models.CharField(verbose_name=_("Constructability report signer"), null=True,
                                                       blank=True, max_length=255)
-
-    # In Finnish: Geoteknisen palvelun tiedosto
-    constructability_report_geotechnical_number = models.CharField(
-        verbose_name=_("Constructability report geotechnical number"), null=True, blank=True, max_length=255)
 
     # In Finnish: Selvitysaste (Muut)
     other_state = EnumField(ConstructabilityState, verbose_name=_("Other state"), null=True, blank=True, max_length=30)
@@ -144,6 +136,33 @@ class LeaseAreaAddress(AbstractAddress):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease area address")
         verbose_name_plural = pgettext_lazy("Model name", "Lease area addresses")
+
+
+def get_attachment_file_upload_to(instance, filename):
+    return '/'.join(['lease_area_attachments', str(instance.lease_area.id), filename])
+
+
+class LeaseAreaAttachment(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Liitetiedosto (Vuokra-alue)
+    """
+    lease_area = models.ForeignKey(LeaseArea, related_name='attachments', on_delete=models.PROTECT)
+
+    # In Finnish: Tyyppi
+    type = EnumField(LeaseAreaAttachmentType, verbose_name=_("Type"), max_length=30)
+
+    # In Finnish: Tiedosto
+    file = models.FileField(upload_to=get_attachment_file_upload_to, blank=False, null=False)
+
+    # In Finnish: Lataaja
+    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
+
+    # In Finnish: Latausaika
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time uploaded"))
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease area attachment")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease area attachments")
 
 
 class ConstructabilityDescription(TimeStampedSafeDeleteModel):
