@@ -1,7 +1,9 @@
+from django.utils.translation import ugettext_lazy as _
+from rest_framework.exceptions import APIException
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.enums import InvoiceType
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import InvoiceFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow, InvoiceSet
@@ -31,8 +33,12 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         if self.action in ('update', 'partial_update', 'metadata'):
             if 'pk' in self.kwargs:
                 instance = self.get_object()
-                if instance and instance.type == InvoiceType.CREDIT_NOTE:
-                    return CreditNoteUpdateSerializer
+                if instance:
+                    if instance.type == InvoiceType.CREDIT_NOTE:
+                        return CreditNoteUpdateSerializer
+
+                    if instance.state == InvoiceState.REFUNDED:
+                        raise APIException(_("Can't edit fully refunded invoices"))
 
             return InvoiceUpdateSerializer
 

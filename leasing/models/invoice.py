@@ -116,9 +116,17 @@ class InvoiceSet(models.Model):
             billing_period_end_date=self.billing_period_end_date
         )
 
-        for invoice, fraction in shares.items():
+        total_credited_amount = Decimal(0)
+
+        for i, (invoice, fraction) in enumerate(shares.items()):
             invoice_credit_amount = Decimal(amount * Decimal(fraction.numerator / fraction.denominator)).quantize(
                 Decimal('.01'), rounding=ROUND_HALF_UP)
+            total_credited_amount += invoice_credit_amount
+
+            # If this is the last share, check if we need to round
+            if i == len(shares) - 1 and total_credited_amount.compare(amount) != Decimal('0'):
+                invoice_credit_amount += amount - total_credited_amount
+
             credit_invoice = invoice.create_credit_invoice(amount=invoice_credit_amount,
                                                            receivable_type=receivable_type, notes=notes)
             credit_invoiceset.invoices.add(credit_invoice)
@@ -336,17 +344,26 @@ class Invoice(TimeStampedSafeDeleteModel):
 
         total_credited_amount = Decimal(0)
 
-        for invoice_row in row_queryset:
-            if amount and has_tenants:
-                invoice_row_amount = Decimal(
-                    amount * Decimal(invoice_row.tenant.share_numerator / new_denominator)).quantize(
-                        Decimal('.01'), rounding=ROUND_HALF_UP)
-            elif amount:
-                invoice_row_amount = Decimal(amount) / row_count
+        row_count = row_queryset.count()
+
+        for i, invoice_row in enumerate(row_queryset):
+            if amount:
+                if has_tenants:
+                    invoice_row_amount = Decimal(
+                        amount * Decimal(invoice_row.tenant.share_numerator / new_denominator)).quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_UP)
+                else:
+                    invoice_row_amount = Decimal(amount) / row_count
             else:
                 invoice_row_amount = invoice_row.amount
 
             total_credited_amount += invoice_row_amount
+
+            # If this is the last row, check if we need to round
+            if amount and i == row_count - 1 and total_credited_amount.compare(amount) != Decimal('0'):
+                difference = amount - total_credited_amount
+                invoice_row_amount += difference
+                total_credited_amount += difference
 
             InvoiceRow.objects.create(
                 invoice=credit_note,

@@ -16,7 +16,7 @@ from leasing.serializers.invoice import InvoiceSerializer, InvoiceSetSerializer
 def get_values_from_credit_request(data):
     amount = data.get('amount', None)
     receivable_type_id = data.get('receivable_type')
-    notes = data.get('notes')
+    notes = data.get('notes', '')
     receivable_type = None
 
     if amount is not None and not receivable_type_id:
