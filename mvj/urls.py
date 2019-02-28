@@ -29,6 +29,7 @@ from leasing.viewsets.lease_additional_views import (
     LeaseBillingPeriodsView, LeaseCopyAreasToContractView, LeaseCreateChargeViewSet,
     LeaseCreateCollectionLetterDocumentViewSet, LeasePreviewInvoicesForYearView, LeaseRentForPeriodView,
     LeaseSetInvoicingStateView, LeaseSetRentInfoCompletionStateView)
+from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
@@ -62,6 +63,7 @@ router.register(r'lease_create_charge', LeaseCreateChargeViewSet, basename='leas
 router.register(r'lease_create_collection_letter', LeaseCreateCollectionLetterDocumentViewSet,
                 basename='lease_create_collection_letter')
 router.register(r'lease_type', LeaseTypeViewSet)
+router.register(r'leasehold_transfer', LeaseholdTransferViewSet)
 router.register(r'management', ManagementViewSet)
 router.register(r'municipality', MunicipalityViewSet)
 router.register(r'notice_period', NoticePeriodViewSet)

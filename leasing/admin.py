@@ -9,7 +9,8 @@ from leasing.models import (
     CollectionCourtDecision, CollectionLetter, CollectionLetterTemplate, CollectionNote, Comment, CommentTopic,
     Condition, ConditionType, ConstructabilityDescription, Contact, Contract, ContractChange, ContractRent,
     ContractType, Decision, DecisionMaker, DecisionType, District, Financing, FixedInitialYearRent, Hitas, Index,
-    Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseIdentifier, LeaseStateLog,
+    Inspection, IntendedUse, InterestRate, Invoice, Lease, LeaseArea, LeaseBasisOfRent, LeaseholdTransfer,
+    LeaseholdTransferImportLog, LeaseholdTransferParty, LeaseholdTransferProperty, LeaseIdentifier, LeaseStateLog,
     LeaseType, Management, Municipality, NoticePeriod, PlanUnit, PlanUnitState, PlanUnitType, Plot, ReceivableType,
     Regulation, RelatedLease, Rent, RentAdjustment, RentDueDate, RentIntendedUse, SpecialProject, StatisticalUse,
     SupportiveHousing, Tenant, TenantContact, UiData, Vat)
@@ -438,6 +439,35 @@ class UiDataAdmin(admin.ModelAdmin):
     ordering = ('-user',)
 
 
+class ReadOnlyTabularInline(admin.TabularInline):
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+class LeaseholdTransferPartyInline(ReadOnlyTabularInline):
+    model = LeaseholdTransferParty
+
+
+class LeaseholdTransferPropertyInline(ReadOnlyTabularInline):
+    model = LeaseholdTransferProperty
+
+
+class LeaseholdTransferAdmin(admin.ModelAdmin):
+    inlines = [LeaseholdTransferPartyInline, LeaseholdTransferPropertyInline]
+    readonly_fields = ('institution_identifier', 'decision_date')
+
+
+class LeaseholdTransferImportLogAdmin(admin.ModelAdmin):
+    list_display = ('file_name', 'created_at', 'modified_at')
+    readonly_fields = ('created_at', 'modified_at')
+    ordering = ('id',)
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -466,6 +496,8 @@ admin.site.register(LeaseArea, LeaseAreaAdmin)
 admin.site.register(LeaseIdentifier, LeaseIdentifierAdmin)
 admin.site.register(LeaseStateLog, LeaseStateLogAdmin)
 admin.site.register(LeaseType, LeaseTypeAdmin)
+admin.site.register(LeaseholdTransfer, LeaseholdTransferAdmin)
+admin.site.register(LeaseholdTransferImportLog, LeaseholdTransferImportLogAdmin)
 admin.site.register(Management, NameAdmin)
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(NoticePeriod)

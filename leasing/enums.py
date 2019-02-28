@@ -400,3 +400,17 @@ class EmailLogType(Enum):
 
     class Labels:
         CONSTRUCTABILITY = pgettext_lazy('Email log type', 'Constructability')
+
+
+class LeaseholdTransferPartyType(Enum):
+    """
+    In Finnish: Vuokraoikeuden siirron osapuolen tyyppi
+    """
+    LESSOR = 'lessor'  # Vuokranantaja
+    CONVEYOR = 'conveyor'  # Luovuttaja
+    ACQUIRER = 'acquirer'  # Vuokralainen
+
+    class Labels:
+        LESSOR = pgettext_lazy('Leasehold transfer party type', 'Lessor')
+        CONVEYOR = pgettext_lazy('Leasehold transfer party type', 'Conveyor')
+        ACQUIRER = pgettext_lazy('Leasehold transfer party type', 'Acquirer')
