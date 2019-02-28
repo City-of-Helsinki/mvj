@@ -37,12 +37,28 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
                     if instance.type == InvoiceType.CREDIT_NOTE:
                         return CreditNoteUpdateSerializer
 
-                    if instance.state == InvoiceState.REFUNDED:
-                        raise APIException(_("Can't edit fully refunded invoices"))
-
             return InvoiceUpdateSerializer
 
         return InvoiceSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.state == InvoiceState.REFUNDED:
+            raise APIException(_("Can't edit fully refunded invoices"))
+
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.number:
+            raise APIException(_("Can't delete numbered invoices"))
+
+        if instance.sent_to_sap_at:
+            raise APIException(_("Can't delete invoices that have been sent to SAP"))
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class InvoiceRowViewSet(FieldPermissionsViewsetMixin, ReadOnlyModelViewSet):
