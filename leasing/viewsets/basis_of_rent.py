@@ -1,5 +1,6 @@
 from django.db.models import Q
-from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.forms import BasisOfRentSearchForm
@@ -12,7 +13,8 @@ from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 class BasisOfRentViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = BasisOfRent.objects.all()
     serializer_class = BasisOfRentSerializer
-    filter_backends = (OrderingFilter,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    search_fields = ('detailed_plan_identifier', 'note', 'property_identifiers__identifier')
     ordering_fields = ('start_date', 'end_date', 'detailed_plan_identifier', 'plot_type__name')
     ordering = ('-start_date', '-end_date')
 
