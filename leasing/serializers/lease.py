@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models import Union
-from django.db.models import DurationField
+from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import LeaseRelationType
-from leasing.models import AreaNote, EmailLog, InfillDevelopmentCompensation, RelatedLease
+from leasing.models import AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
 from users.models import User
@@ -230,6 +230,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     infill_development_compensations = serializers.SerializerMethodField()
     email_logs = serializers.SerializerMethodField()
     area_notes = serializers.SerializerMethodField()
+    basis_of_rents = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
@@ -266,6 +267,23 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
             area_notes = AreaNote.objects.filter(geometry__intersects=combined_area)
 
         return AreaNoteSerializer(area_notes, many=True).data
+
+    def get_basis_of_rents(self, obj):
+        from leasing.serializers.basis_of_rent import BasisOfRentSerializer
+
+        q = Q()
+        property_identifiers = obj.lease_areas.values_list("identifier", flat=True)
+        if property_identifiers:
+            q = Q(property_identifiers__identifier__in=property_identifiers)
+
+        combined_area = obj.lease_areas.aggregate(union=Union("geometry"))["union"]
+        if combined_area:
+            q |= Q(geometry__intersects=combined_area)
+
+        if not q:
+            return []
+
+        return BasisOfRentSerializer(BasisOfRent.objects.filter(q), many=True).data
 
     class Meta:
         model = Lease
