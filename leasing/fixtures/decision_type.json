@@ -3,476 +3,544 @@
     "model": "leasing.DecisionType",
     "pk": 1,
     "fields": {
-      "name": "Vuokrausperiaate"
+      "name": "Vuokrausperiaate",
+      "kind": "basis_of_rent"
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 2,
     "fields": {
-      "name": "Varaus"
+      "name": "Varaus",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 3,
     "fields": {
-      "name": "Vuokraus-/lupa (1.1.2002->vain kiinteät)"
+      "name": "Vuokraus-/lupa (1.1.2002->vain kiinteät)",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 4,
     "fields": {
-      "name": "Vuokra-/lupa-ajan jatkaminen"
+      "name": "Vuokra-/lupa-ajan jatkaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 5,
     "fields": {
-      "name": "Vuokrasopimuksen irtisanominen"
+      "name": "Vuokrasopimuksen irtisanominen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 6,
     "fields": {
-      "name": "Vuokra-ajan muuttaminen/alkaminen"
+      "name": "Vuokra-ajan muuttaminen/alkaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 7,
     "fields": {
-      "name": "Pinta-alan muutos"
+      "name": "Pinta-alan muutos",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 8,
     "fields": {
-      "name": "Vuokran muutos"
+      "name": "Vuokran muutos",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 9,
     "fields": {
-      "name": "Vuokran alentaminen"
+      "name": "Vuokran alentaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 10,
     "fields": {
-      "name": "Lisävuokran määrääminen/poistaminen"
+      "name": "Lisävuokran määrääminen/poistaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 11,
     "fields": {
-      "name": "Ehdon lisääm.ja/tai muuttam.tai poistam."
+      "name": "Ehdon lisääm.ja/tai muuttam.tai poistam.",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 12,
     "fields": {
-      "name": "Rasite- ja/tai rasitteenluont.ehdon lis."
+      "name": "Rasite- ja/tai rasitteenluont.ehdon lis.",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 13,
     "fields": {
-      "name": "Rakentamisajan jatkaminen"
+      "name": "Rakentamisajan jatkaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 14,
     "fields": {
-      "name": "Käyttötarkoituksen muutos"
+      "name": "Käyttötarkoituksen muutos",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 15,
     "fields": {
-      "name": "Piirustusten hyväksyminen"
+      "name": "Piirustusten hyväksyminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 16,
     "fields": {
-      "name": "Muutospiirustusten hyväksyminen"
+      "name": "Muutospiirustusten hyväksyminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 17,
     "fields": {
-      "name": "Vapaan siirto-oikeuden myöntäminen"
+      "name": "Vapaan siirto-oikeuden myöntäminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 18,
     "fields": {
-      "name": "Siirtohintapäätös"
+      "name": "Siirtohintapäätös",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 19,
     "fields": {
-      "name": "Vuokraoikeuden siirto"
+      "name": "Vuokraoikeuden siirto",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 20,
     "fields": {
-      "name": "Maksulykkäys"
+      "name": "Maksulykkäys",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 21,
     "fields": {
-      "name": "Korvauksen periminen"
+      "name": "Korvauksen periminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 22,
     "fields": {
-      "name": "Hankinta-arvon hyväksyminen (Hitas)"
+      "name": "Hankinta-arvon hyväksyminen (Hitas)",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 23,
     "fields": {
-      "name": "Muu päätös"
+      "name": "Muu päätös",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 24,
     "fields": {
-      "name": "Vuokra-ajan päättyminen"
+      "name": "Vuokra-ajan päättyminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 25,
     "fields": {
-      "name": "Vuokrauspäätöksen peruuttaminen"
+      "name": "Vuokrauspäätöksen peruuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 26,
     "fields": {
-      "name": "Varausajan jatkaminen"
+      "name": "Varausajan jatkaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 27,
     "fields": {
-      "name": "Hallinta- ja/tai rahoitusmuodon muutos"
+      "name": "Hallinta- ja/tai rahoitusmuodon muutos",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 28,
     "fields": {
-      "name": "Vuokra- tai varausalueen myynti"
+      "name": "Vuokra- tai varausalueen myynti",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 29,
     "fields": {
-      "name": "Vuokraus (sopimuksen uusiminen/jatkam.)"
+      "name": "Vuokraus (sopimuksen uusiminen/jatkam.)",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 30,
     "fields": {
-      "name": "Oikaisuote"
+      "name": "Oikaisuote",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 31,
     "fields": {
-      "name": "Vuokra-a. olevien rakennusten ostaminen"
+      "name": "Vuokra-a. olevien rakennusten ostaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 32,
     "fields": {
-      "name": "Lupa vuokraoikeuden siirtoon"
+      "name": "Lupa vuokraoikeuden siirtoon",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 33,
     "fields": {
-      "name": "Siirto perustett. yhtiön lukuun tulossa."
+      "name": "Siirto perustett. yhtiön lukuun tulossa.",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 34,
     "fields": {
-      "name": "Kehotus vuokran maksamis. irtis. uhalla"
+      "name": "Kehotus vuokran maksamis. irtis. uhalla",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 35,
     "fields": {
-      "name": "Vaihto"
+      "name": "Vaihto",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 36,
     "fields": {
-      "name": "Kirjallinen maksukehotus"
+      "name": "Kirjallinen maksukehotus",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 37,
     "fields": {
-      "name": "Osto"
+      "name": "Osto",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 38,
     "fields": {
-      "name": "Vuokrauspäätöksen muuttaminen"
+      "name": "Vuokrauspäätöksen muuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 39,
     "fields": {
-      "name": "Vuokraus (indeksi)"
+      "name": "Vuokraus (indeksi)",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 40,
     "fields": {
-      "name": "Rakennuksen myyminen"
+      "name": "Rakennuksen myyminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 41,
     "fields": {
-      "name": "Varauspäätöksen peruuttaminen"
+      "name": "Varauspäätöksen peruuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 42,
     "fields": {
-      "name": "Maankäyttösopimus"
+      "name": "Maankäyttösopimus",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 43,
     "fields": {
-      "name": "Vuokrakohteen muuttuminen"
+      "name": "Vuokrakohteen muuttuminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 44,
     "fields": {
-      "name": "Myyntipäätöksen peruuttaminen"
+      "name": "Myyntipäätöksen peruuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 45,
     "fields": {
-      "name": "Varausajan päättyminen"
+      "name": "Varausajan päättyminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 46,
     "fields": {
-      "name": "Esityksen hylkääminen"
+      "name": "Esityksen hylkääminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 49,
     "fields": {
-      "name": "Osto-optio"
+      "name": "Osto-optio",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 47,
     "fields": {
-      "name": "Rakennuksen ostaminen"
+      "name": "Rakennuksen ostaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 48,
     "fields": {
-      "name": "Luovutuskirja"
+      "name": "Luovutuskirja",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 54,
     "fields": {
-      "name": "Hitassäätelystä vapautuminen"
+      "name": "Hitassäätelystä vapautuminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 50,
     "fields": {
-      "name": "Väestönsuojakorvaus"
+      "name": "Väestönsuojakorvaus",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 51,
     "fields": {
-      "name": "Varauksen  raukeaminen"
+      "name": "Varauksen  raukeaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 52,
     "fields": {
-      "name": "Vuokrauksen raukeaminen"
+      "name": "Vuokrauksen raukeaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 53,
     "fields": {
-      "name": "Vuokra-ajan pidentäminen"
+      "name": "Vuokra-ajan pidentäminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 55,
     "fields": {
-      "name": "Päätöksen peruuttaminen"
+      "name": "Päätöksen peruuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 56,
     "fields": {
-      "name": "Maanvuorien maksukehotus purku-uhalla"
+      "name": "Maanvuorien maksukehotus purku-uhalla",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 58,
     "fields": {
-      "name": "Vapaa tyyppi"
+      "name": "Vapaa tyyppi",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 59,
     "fields": {
-      "name": "Maanvuokrien maksukeh. oikeudenkäyntiuh."
+      "name": "Maanvuokrien maksukeh. oikeudenkäyntiuh.",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 60,
     "fields": {
-      "name": "Maksamaton maanvuokra"
+      "name": "Maksamaton maanvuokra",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 61,
     "fields": {
-      "name": "Kiinteistön myynti (ei vuokrausta)."
+      "name": "Kiinteistön myynti (ei vuokrausta).",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 62,
     "fields": {
-      "name": "Varauskohteen muuttuminen"
+      "name": "Varauskohteen muuttuminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 63,
     "fields": {
-      "name": "Maanvuokrasopimuksen purkaminen"
+      "name": "Maanvuokrasopimuksen purkaminen",
+      "kind": "lease_cancellation"
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 64,
     "fields": {
-      "name": "Maanvuokrien maksuvaatimus"
+      "name": "Maanvuokrien maksuvaatimus",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 67,
     "fields": {
-      "name": "Vuokrasopimuksen muuttaminen"
+      "name": "Vuokrasopimuksen muuttaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 68,
     "fields": {
-      "name": "Hintakilpailun järjestäminen"
+      "name": "Hintakilpailun järjestäminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 65,
     "fields": {
-      "name": "Maanrakennustöiden suorittaminen"
+      "name": "Maanrakennustöiden suorittaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 57,
     "fields": {
-      "name": "Vuokra-alueen laajentaminen"
+      "name": "Vuokra-alueen laajentaminen",
+      "kind": null
     }
   },
   {
     "model": "leasing.DecisionType",
     "pk": 66,
     "fields": {
-      "name": "Hallintaoikeuden jatkaminen"
+      "name": "Hallintaoikeuden jatkaminen",
+      "kind": null
     }
   }
 ]

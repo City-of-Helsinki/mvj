@@ -2,8 +2,10 @@ from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
+from leasing.enums import DecisionTypeKind
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
@@ -21,6 +23,8 @@ class DecisionType(NameModel):
     """
     In Finnish: Päätöksen tyyppi
     """
+    kind = EnumField(DecisionTypeKind, verbose_name=_("Decision type kind"), null=True, blank=True, max_length=30)
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Decision type")
         verbose_name_plural = pgettext_lazy("Model name", "Decision types")

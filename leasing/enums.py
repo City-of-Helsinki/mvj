@@ -414,3 +414,15 @@ class LeaseholdTransferPartyType(Enum):
         LESSOR = pgettext_lazy('Leasehold transfer party type', 'Lessor')
         CONVEYOR = pgettext_lazy('Leasehold transfer party type', 'Conveyor')
         ACQUIRER = pgettext_lazy('Leasehold transfer party type', 'Acquirer')
+
+
+class DecisionTypeKind(Enum):
+    """
+    In Finnish: Päätöksen tyypin laji
+    """
+    LEASE_CANCELLATION = 'lease_cancellation'  # Vuokrasopimuksen purkaminen
+    BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperiaate
+
+    class Labels:
+        LEASE_CANCELLATION = pgettext_lazy('Decision type kind', 'Lease cancellation')
+        BASIS_OF_RENT = pgettext_lazy('Decision type kind', 'Basis of Rent')

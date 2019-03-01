@@ -36,6 +36,11 @@ class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
 
 
+class NameAdmin(FieldPermissionsModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+
+
 class AreaAdmin(CenterOnHelsinkiOSMGeoAdmin):
     list_display = ('identifier', 'type', 'source')
     list_filter = (('type', EnumFieldListFilter), 'source')
@@ -203,6 +208,10 @@ class DecisionAdmin(FieldPermissionsModelAdmin):
                                  'lease__identifier__district')
 
 
+class DecisionTypeAdmin(NameAdmin):
+    list_display = ('name', 'kind')
+
+
 class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'inspector', 'supervision_date', 'supervised_date')
     raw_id_fields = ('lease',)
@@ -213,11 +222,6 @@ class InspectionAdmin(FieldPermissionsModelAdmin):
         return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
                                  'lease__identifier__type', 'lease__identifier__municipality',
                                  'lease__identifier__district')
-
-
-class NameAdmin(FieldPermissionsModelAdmin):
-    list_display = ('name', )
-    search_fields = ['name']
 
 
 class LeaseTypeAdmin(admin.ModelAdmin):
@@ -519,7 +523,7 @@ admin.site.register(TenantContact, TenantContactAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(ContractType, NameAdmin)
 admin.site.register(Decision, DecisionAdmin)
-admin.site.register(DecisionType, NameAdmin)
+admin.site.register(DecisionType, DecisionTypeAdmin)
 admin.site.register(DecisionMaker, NameAdmin)
 admin.site.register(ConditionType, NameAdmin)
 admin.site.register(BasisOfRent, BasisOfRentAdmin)
