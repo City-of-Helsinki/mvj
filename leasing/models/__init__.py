@@ -20,6 +20,8 @@ from .land_area import (
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
     NoticePeriod, Regulation, RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
+from .leasehold_transfer import (
+    LeaseholdTransfer, LeaseholdTransferImportLog, LeaseholdTransferParty, LeaseholdTransferProperty)
 from .rent import (
     ContractRent, FixedInitialYearRent, Index, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent, RentAdjustment,
     RentDueDate, RentIntendedUse)
@@ -80,6 +82,10 @@ __all__ = [
     'LeaseIdentifier',
     'LeaseStateLog',
     'LeaseType',
+    'LeaseholdTransfer',
+    'LeaseholdTransferParty',
+    'LeaseholdTransferProperty',
+    'LeaseholdTransferImportLog',
     'Management',
     'Municipality',
     'NoticePeriod',

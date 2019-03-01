@@ -212,6 +212,12 @@ Creates credit notes or invoices if index number has changed after the invoices 
 
 _Should be run once a year after the previous years index has been released_
 
+#### `import_leasehold_transfers`
+
+Imports leasehold transfers from National Land Survey of Finland (Maanmittauslaitos).
+
+_Should be run every week_
+
 
 ### Development commands
 

@@ -319,6 +319,24 @@ DEFAULT_FIELD_PERMS = {
         6: "view",
         7: "change",
     },
+    "leaseholdtransfer": {
+        1: "view",
+        2: "view",
+        3: "view",
+        4: "view",
+        5: "view",
+        6: "view",
+        7: "view",
+    },
+    "leaseholdtransferparty": {
+        1: "view",
+        2: "view",
+        3: "view",
+        4: "view",
+        5: "view",
+        6: "view",
+        7: "view",
+    },
     "constructabilitydescription": {
         1: "view",
         2: "change",
@@ -487,6 +505,13 @@ CUSTOM_FIELD_PERMS = {
         "archived_decision": {
             2: "view",
             5: "view",
+        },
+    },
+    "leaseholdtransferparty": {
+        "national_identification_number": {
+            1: None,
+            2: None,
+            3: None,
         },
     },
 }
