@@ -94,6 +94,12 @@ class CollectionCourtDecision(TimeStampedSafeDeleteModel):
     file = models.FileField(upload_to=get_collection_court_decision_file_upload_to, verbose_name=_("File"), blank=False,
                             null=False)
 
+    # In Finnish: Päätöspäivämäärä
+    decision_date = models.DateField(verbose_name=_("Decision date"), null=True, blank=True)
+
+    # In Finnish: Huomautus
+    note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
     # In Finnish: Lataaja
     uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
 

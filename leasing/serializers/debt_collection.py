@@ -17,7 +17,7 @@ class CollectionCourtDecisionSerializer(FileSerializerMixin, FieldPermissionsSer
 
     class Meta:
         model = CollectionCourtDecision
-        fields = ('id', 'lease', 'file', 'filename', 'uploader', 'uploaded_at')
+        fields = ('id', 'lease', 'file', 'decision_date', 'note', 'filename', 'uploader', 'uploaded_at')
         download_url_name = 'collectioncourtdecision-download'
 
     def override_permission_check_field_name(self, field_name):
@@ -33,7 +33,7 @@ class CollectionCourtDecisionCreateUpdateSerializer(FieldPermissionsSerializerMi
 
     class Meta:
         model = CollectionCourtDecision
-        fields = ('id', 'lease', 'file', 'uploader', 'uploaded_at')
+        fields = ('id', 'lease', 'file', 'decision_date', 'note', 'uploader', 'uploaded_at')
         read_only_fields = ('uploaded_at',)
 
 
