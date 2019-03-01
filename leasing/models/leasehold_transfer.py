@@ -1,4 +1,3 @@
-from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -103,7 +102,5 @@ class LeaseholdTransferParty(NameModel):
         return '{}: {}'.format(self.type, self.name)
 
 
-auditlog.register(LeaseholdTransferImportLog)
-auditlog.register(LeaseholdTransfer)
-
+field_permissions.register(LeaseholdTransfer)
 field_permissions.register(LeaseholdTransferParty, exclude_fields=['transfer'])
