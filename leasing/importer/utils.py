@@ -82,11 +82,30 @@ def get_or_create_contact(data):
         else:
             name = data['NIMI']
 
-        (contact, contact_created) = Contact.objects.get_or_create(type=contact_type, first_name=first_name,
-                                                                   last_name=last_name, name=name,
-                                                                   address=data['OSOITE'],
-                                                                   postal_code=data['POSTINO'],
-                                                                   business_id=data['LYTUNNUS'])
+        language = None
+        if data['KIELI'] == '1':
+            language = 'fi'
+        if data['KIELI'] == '2':
+            language = 'sv'
+
+        phone = []
+        for i in range(1, 5):
+            if data['PUHNO{}'.format(i)]:
+                phone.append(data['PUHNO{}'.format(i)])
+
+        (contact, contact_created) = Contact.objects.get_or_create(
+            type=contact_type,
+            first_name=first_name,
+            last_name=last_name,
+            name=name,
+            address=data['OSOITE'],
+            postal_code=data['POSTINO'],
+            business_id=data['LYTUNNUS'],
+            country=data['MAA'],
+            language=language,
+            phone=', '.join(phone),
+            note=data['KOMMENTTI']
+        )
     else:
         contact = get_unknown_contact()
 
