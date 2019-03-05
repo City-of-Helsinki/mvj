@@ -49,7 +49,7 @@ class Contract(TimeStampedSafeDeleteModel):
     third_call_sent = models.DateField(verbose_name=_("Third call sent"), null=True, blank=True)
 
     # In Finnish: Järjestelypäätös
-    is_readjustment_decision = models.BooleanField(verbose_name=_("Is readjustment decision"), default=False)
+    is_readjustment_decision = models.BooleanField(verbose_name=_("Is readjustment decision"), null=True, blank=True)
 
     # In Finnish: Päätös
     decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
