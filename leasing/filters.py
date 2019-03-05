@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models.functions import Coalesce
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
@@ -101,10 +103,19 @@ class IndexFilter(FilterSet):
 
 class InvoiceFilter(FilterSet):
     lease = filters.NumberFilter()
+    going_to_sap = filters.BooleanFilter(method='filter_going_to_sap')
 
     class Meta:
         model = Invoice
         fields = ['lease', 'state', 'type']
+
+    def filter_going_to_sap(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                due_date__gte=datetime.date.today(),
+                sent_to_sap_at__isnull=True
+            )
+        return queryset
 
 
 class InvoiceSetFilter(FilterSet):
