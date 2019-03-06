@@ -13,7 +13,7 @@ from leasing.viewsets.contact import ContactViewSet
 from leasing.viewsets.contact_additional_views import ContactExistsView
 from leasing.viewsets.debt_collection import (
     CollectionCourtDecisionViewSet, CollectionLetterTemplateViewSet, CollectionLetterViewSet, CollectionNoteViewSet)
-from leasing.viewsets.decision import DecisionViewSet
+from leasing.viewsets.decision import DecisionCopyToLeasesView, DecisionViewSet
 from leasing.viewsets.email import SendEmailView
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
@@ -78,6 +78,7 @@ router.register(r'vat', VatViewSet)
 
 additional_api_paths = [
     path('contact_exists/', ContactExistsView.as_view(), name='contact-exists'),
+    path('decision_copy_to_leases/', DecisionCopyToLeasesView.as_view(), name='decision-copy-to-leases'),
     path('invoice_calculate_penalty_interest/', InvoiceCalculatePenaltyInterestView.as_view(),
          name='invoice-calculate-penalty-interest'),
     path('invoice_credit/', InvoiceCreditView.as_view(), name='invoice-credit'),
