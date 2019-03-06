@@ -19,7 +19,8 @@ from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
 from leasing.viewsets.invoice import InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
 from leasing.viewsets.invoice_additional_views import (
-    InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceRowCreditView, InvoiceSetCreditView)
+    InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceExportToLaskeView, InvoiceRowCreditView,
+    InvoiceSetCreditView)
 from leasing.viewsets.land_area import LeaseAreaAttachmentViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet, FinancingViewSet, HitasViewSet, IntendedUseViewSet, LeaseTypeViewSet, LeaseViewSet,
@@ -81,6 +82,7 @@ additional_api_paths = [
     path('invoice_calculate_penalty_interest/', InvoiceCalculatePenaltyInterestView.as_view(),
          name='invoice-calculate-penalty-interest'),
     path('invoice_credit/', InvoiceCreditView.as_view(), name='invoice-credit'),
+    path('invoice_export_to_laske/', InvoiceExportToLaskeView.as_view(), name='invoice-export-to-laske'),
     path('invoice_row_credit/', InvoiceRowCreditView.as_view(), name='invoice-row-credit'),
     path('invoice_set_credit/', InvoiceSetCreditView.as_view(), name='invoice-set-credit'),
     path('lease_billing_periods/', LeaseBillingPeriodsView.as_view(), name='lease-billing-periods'),
