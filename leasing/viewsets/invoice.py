@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django_filters.widgets import BooleanWidget
 from rest_framework.exceptions import APIException
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -8,8 +9,8 @@ from leasing.filters import InvoiceFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
-    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceRowSerializer, InvoiceSerializer, InvoiceSetSerializer,
-    InvoiceUpdateSerializer)
+    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceRowSerializer, InvoiceSerializer,
+    InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer)
 
 from .utils import AtomicTransactionModelViewSet
 
@@ -38,6 +39,14 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
                         return CreditNoteUpdateSerializer
 
             return InvoiceUpdateSerializer
+
+        if self.request.query_params.get('going_to_sap'):
+            boolean_widget = BooleanWidget()
+            # check passed value against widget's truthy values
+            if boolean_widget.value_from_datadict(
+                self.request.query_params, None, 'going_to_sap'
+            ):
+                return InvoiceSerializerWithSuccinctLease
 
         return InvoiceSerializer
 

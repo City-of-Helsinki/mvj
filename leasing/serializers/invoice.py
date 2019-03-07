@@ -81,6 +81,10 @@ class InvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMi
         exclude = ('deleted',)
 
 
+class InvoiceSerializerWithSuccinctLease(InvoiceSerializer):
+    lease = LeaseSuccinctSerializer()
+
+
 class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                                         serializers.ModelSerializer):
     recipient = ContactSerializer()
