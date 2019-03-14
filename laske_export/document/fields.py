@@ -1,5 +1,6 @@
 import inspect
-from collections import Iterable, OrderedDict
+from collections import OrderedDict
+from collections.abc import Iterable
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
