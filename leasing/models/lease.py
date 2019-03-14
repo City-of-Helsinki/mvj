@@ -47,6 +47,8 @@ class Municipality(NameModel):
     """
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
 
+    recursive_get_related_skip_relations = ["districts"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Municipality")
         verbose_name_plural = pgettext_lazy("Model name", "Municipalities")
@@ -164,13 +166,14 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
     In Finnish: Vuokraustunnus
     """
     # In Finnish: Laji
-    type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), on_delete=models.PROTECT)
+    type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Kaupunki
-    municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), on_delete=models.PROTECT)
+    municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Kaupunginosa
-    district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.PROTECT)
+    district = models.ForeignKey(District, verbose_name=_("District"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Juokseva numero
     sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"))
@@ -239,17 +242,18 @@ class Lease(TimeStampedSafeDeleteModel):
     """
     # Identifier fields
     # In Finnish: Laji
-    type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), on_delete=models.PROTECT)
+    type = models.ForeignKey(LeaseType, verbose_name=_("Lease type"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Kaupunki
-    municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), on_delete=models.PROTECT)
+    municipality = models.ForeignKey(Municipality, verbose_name=_("Municipality"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Kaupunginosa
-    district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.PROTECT)
+    district = models.ForeignKey(District, verbose_name=_("District"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Vuokratunnus
-    identifier = models.OneToOneField(LeaseIdentifier, verbose_name=_("Lease identifier"), null=True, blank=True,
-                                      on_delete=models.PROTECT)
+    identifier = models.OneToOneField(LeaseIdentifier, verbose_name=_("Lease identifier"), related_name='+', null=True,
+                                      blank=True, on_delete=models.PROTECT)
 
     # Other fields
     # In Finnish: Alkupäivämäärä
@@ -278,37 +282,39 @@ class Lease(TimeStampedSafeDeleteModel):
 
     # Relations
     # In Finnish: Vuokranantaja
-    lessor = models.ForeignKey(Contact, verbose_name=_("Lessor"), null=True, blank=True, on_delete=models.PROTECT)
+    lessor = models.ForeignKey(Contact, verbose_name=_("Lessor"), related_name='+', null=True, blank=True,
+                               on_delete=models.PROTECT)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
-                                     on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), related_name='+', null=True,
+                                     blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Erityisasunnot
-    supportive_housing = models.ForeignKey(SupportiveHousing, verbose_name=_("Supportive housing"), null=True,
-                                           blank=True, on_delete=models.PROTECT)
+    supportive_housing = models.ForeignKey(SupportiveHousing, verbose_name=_("Supportive housing"), related_name='+',
+                                           null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Tilastollinen pääkäyttötarkoitus
-    statistical_use = models.ForeignKey(StatisticalUse, verbose_name=_("Statistical use"), null=True, blank=True,
-                                        on_delete=models.PROTECT)
+    statistical_use = models.ForeignKey(StatisticalUse, verbose_name=_("Statistical use"), related_name='+',
+                                        null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Rahoitusmuoto
-    financing = models.ForeignKey(Financing, verbose_name=_("Form of financing"), null=True, blank=True,
-                                  on_delete=models.PROTECT)
+    financing = models.ForeignKey(Financing, verbose_name=_("Form of financing"), related_name='+', null=True,
+                                  blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Hallintamuoto
-    management = models.ForeignKey(Management, verbose_name=_("Form of management"), null=True, blank=True,
-                                   on_delete=models.PROTECT)
+    management = models.ForeignKey(Management, verbose_name=_("Form of management"), related_name='+', null=True,
+                                   blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Sääntelymuoto
-    regulation = models.ForeignKey(Regulation, verbose_name=_("Form of regulation"), null=True, blank=True,
-                                   on_delete=models.PROTECT)
+    regulation = models.ForeignKey(Regulation, verbose_name=_("Form of regulation"), related_name='+', null=True,
+                                   blank=True, on_delete=models.PROTECT)
     # In Finnish: Hitas
-    hitas = models.ForeignKey(Hitas, verbose_name=_("Hitas"), null=True, blank=True, on_delete=models.PROTECT)
+    hitas = models.ForeignKey(Hitas, verbose_name=_("Hitas"), related_name='+', null=True, blank=True,
+                              on_delete=models.PROTECT)
 
     # In Finnish: Irtisanomisaika
-    notice_period = models.ForeignKey(NoticePeriod, verbose_name=_("Notice period"), null=True, blank=True,
-                                      on_delete=models.PROTECT)
+    notice_period = models.ForeignKey(NoticePeriod, verbose_name=_("Notice period"), related_name='+', null=True,
+                                      blank=True, on_delete=models.PROTECT)
 
     related_leases = models.ManyToManyField('self', through='leasing.RelatedLease', symmetrical=False,
                                             related_name='related_to')
@@ -326,7 +332,8 @@ class Lease(TimeStampedSafeDeleteModel):
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
     # In Finnish: Valmistelija
-    preparer = models.ForeignKey(User, verbose_name=_("Preparer"), null=True, blank=True, on_delete=models.PROTECT)
+    preparer = models.ForeignKey(User, verbose_name=_("Preparer"), related_name='+', null=True, blank=True,
+                                 on_delete=models.PROTECT)
 
     # In Finnish: Onko ALV:n alainen
     is_subject_to_vat = models.BooleanField(verbose_name=_("Is subject to VAT?"), default=False)
@@ -344,14 +351,16 @@ class Lease(TimeStampedSafeDeleteModel):
                                                  max_digits=10, decimal_places=2)
 
     # In Finnish: Erityishanke
-    special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), null=True, blank=True,
-                                        on_delete=models.PROTECT)
+    special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), related_name='+', null=True,
+                                        blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Järjestelypäätös
     arrangement_decision = models.BooleanField(verbose_name=_("Arrangement decision"), null=True, blank=True,
                                                default=None)
 
     objects = LeaseManager()
+
+    recursive_get_related_skip_relations = ["related_leases", "related_to", "from_leases", "to_leases"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease")
@@ -864,6 +873,8 @@ class LeaseStateLog(TimeStampedModel):
     lease = models.ForeignKey(Lease, verbose_name=_("Lease"), on_delete=models.PROTECT)
     state = EnumField(LeaseState, verbose_name=_("State"), max_length=30)
 
+    recursive_get_related_skip_relations = ["lease"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease state log")
         verbose_name_plural = pgettext_lazy("Model name", "Lease state logs")
@@ -876,6 +887,8 @@ class RelatedLease(TimeStampedSafeDeleteModel):
     type = EnumField(LeaseRelationType, verbose_name=_("Lease relation type"), null=True, blank=True, max_length=30)
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["from_lease", "to_lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Related lease")

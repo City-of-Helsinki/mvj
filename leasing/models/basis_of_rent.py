@@ -35,7 +35,8 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
     In Finnish: Vuokrausperiaate
     """
     # In Finnish: Tonttityyppi
-    plot_type = models.ForeignKey(BasisOfRentPlotType, verbose_name=_("Plot type"), on_delete=models.PROTECT)
+    plot_type = models.ForeignKey(BasisOfRentPlotType, verbose_name=_("Plot type"), related_name='+',
+                                  on_delete=models.PROTECT)
 
     # In Finnish: Alkupäivämäärä
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
@@ -48,18 +49,19 @@ class BasisOfRent(TimeStampedSafeDeleteModel):
                                                 max_length=255)
 
     # In Finnish: Hallintamuoto
-    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), null=True, blank=True,
-                                   on_delete=models.PROTECT)
+    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), related_name='+',
+                                   null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Rahoitusmuoto
-    financing = models.ForeignKey('leasing.Financing', verbose_name=_("Form of financing"), null=True, blank=True,
-                                  on_delete=models.PROTECT)
+    financing = models.ForeignKey('leasing.Financing', verbose_name=_("Form of financing"), related_name='+', null=True,
+                                  blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Vuokraoikeus päättyy
     lease_rights_end_date = models.DateField(verbose_name=_("Lease rights end date"), null=True, blank=True)
 
     # In Finnish: Indeksi
-    index = models.ForeignKey(Index, verbose_name=_("Index"), null=True, blank=True, on_delete=models.PROTECT)
+    index = models.ForeignKey(Index, verbose_name=_("Index"), related_name='+', null=True, blank=True,
+                              on_delete=models.PROTECT)
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
@@ -81,13 +83,15 @@ class BasisOfRentRate(TimeStampedSafeDeleteModel):
 
     # In Finnish: Rakennusoikeustyyppi
     build_permission_type = models.ForeignKey(BasisOfRentBuildPermissionType, verbose_name=_("Build permission type"),
-                                              null=True, blank=True, on_delete=models.PROTECT)
+                                              related_name='+', null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Euroa
     amount = models.DecimalField(verbose_name=_("Amount"), decimal_places=2, max_digits=12)
 
     # In Finnish: Yksikkö
     area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
+
+    recursive_get_related_skip_relations = ["basis_of_rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Basis of rent rate")
@@ -105,6 +109,8 @@ class BasisOfRentPropertyIdentifier(models.Model):
     # In Finnish: Alue
     geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
 
+    recursive_get_related_skip_relations = ["basis_of_rent"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Basis of rent property identifier")
         verbose_name_plural = pgettext_lazy("Model name", "Basis of rent property identifiers")
@@ -120,15 +126,16 @@ class BasisOfRentDecision(models.Model):
     reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
 
     # In Finnish: Päättäjä
-    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"),
-                                       related_name="basis_of_rent_decisions", null=True, blank=True,
-                                       on_delete=models.PROTECT)
+    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), related_name="+", null=True,
+                                       blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Päätöspäivämäärä
     decision_date = models.DateField(verbose_name=_("Decision date"), null=True, blank=True)
 
     # In Finnish: Pykälä
     section = models.CharField(verbose_name=_("Section"), null=True, blank=True, max_length=255)
+
+    recursive_get_related_skip_relations = ["basis_of_rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Basis of rent decision")

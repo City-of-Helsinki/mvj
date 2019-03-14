@@ -25,6 +25,8 @@ class Inspection(models.Model):
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
+    recursive_get_related_skip_relations = ["lease"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Inspection")
         verbose_name_plural = pgettext_lazy("Model name", "Inspections")

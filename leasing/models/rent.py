@@ -131,6 +131,8 @@ class Rent(TimeStampedSafeDeleteModel):
     manual_ratio_previous = models.DecimalField(verbose_name=_("Manual ratio (previous)"), null=True, blank=True,
                                                 max_digits=10, decimal_places=2)
 
+    recursive_get_related_skip_relations = ["lease"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Rent")
         verbose_name_plural = pgettext_lazy("Model name", "Rents")
@@ -448,6 +450,8 @@ class RentDueDate(TimeStampedSafeDeleteModel):
     day = models.IntegerField(verbose_name=_("Day"), validators=[MinValueValidator(1), MaxValueValidator(31)])
     month = models.IntegerField(verbose_name=_("Month"), validators=[MinValueValidator(1), MaxValueValidator(12)])
 
+    recursive_get_related_skip_relations = ["rent"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Rent due date")
         verbose_name_plural = pgettext_lazy("Model name", "Rent due dates")
@@ -467,14 +471,16 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
-                                     on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+', null=True,
+                                     blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Alkupvm
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Fixed initial year rent")
@@ -513,7 +519,8 @@ class ContractRent(TimeStampedSafeDeleteModel):
     period = EnumField(PeriodType, verbose_name=_("Period"), max_length=30)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
     base_amount = models.DecimalField(verbose_name=_("Base amount"), null=True, blank=True, max_digits=10,
@@ -532,6 +539,8 @@ class ContractRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contract rent")
@@ -583,7 +592,8 @@ class IndexAdjustedRent(models.Model):
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Alkupvm
     start_date = models.DateField(verbose_name=_("Start date"))
@@ -593,6 +603,8 @@ class IndexAdjustedRent(models.Model):
 
     # In Finnish: Laskentak.
     factor = models.DecimalField(verbose_name=_("Factor"), max_digits=10, decimal_places=2)
+
+    recursive_get_related_skip_relations = ["rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Index adjusted rent")
@@ -609,7 +621,8 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
     type = EnumField(RentAdjustmentType, verbose_name=_("Type"), max_length=30)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Alkupvm
     start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
@@ -629,10 +642,13 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
                                       decimal_places=2)
 
     # In Finnish: Päätös
-    decision = models.ForeignKey(Decision, verbose_name=_("Decision"), null=True, blank=True, on_delete=models.PROTECT)
+    decision = models.ForeignKey(Decision, verbose_name=_("Decision"), related_name="+", null=True, blank=True,
+                                 on_delete=models.PROTECT)
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["rent"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Rent adjustment")
@@ -700,6 +716,8 @@ class PayableRent(models.Model):
     # In Finnish: Kalenterivuosivuokra
     calendar_year_rent = models.DecimalField(verbose_name=_("Calendar year rent"), max_digits=10, decimal_places=2)
 
+    recursive_get_related_skip_relations = ["rent"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Payable rent")
         verbose_name_plural = pgettext_lazy("Model name", "Payable rents")
@@ -758,7 +776,8 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                               on_delete=models.PROTECT)
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
+                                     on_delete=models.PROTECT)
 
     # In Finnish: Pinta-ala
     area = models.DecimalField(verbose_name=_("Area amount"), decimal_places=2, max_digits=12)
@@ -771,7 +790,8 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                                           max_digits=10, decimal_places=2)
 
     # In Finnish: Indeksi
-    index = models.ForeignKey(Index, verbose_name=_("Index"), null=True, blank=True, on_delete=models.PROTECT)
+    index = models.ForeignKey(Index, verbose_name=_("Index"), related_name='+', null=True, blank=True,
+                              on_delete=models.PROTECT)
 
     # In Finnish: Tuottoprosentti
     profit_margin_percentage = models.DecimalField(verbose_name=_("Profit margin percentage"), null=True, blank=True,
@@ -785,15 +805,17 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     plans_inspected_at = models.DateTimeField(verbose_name=_("Plans inspected at"), null=True, blank=True)
 
     # In Finnish: Piirustukset tarkastettu (Käyttäjä)
-    plans_inspected_by = models.ForeignKey(User, verbose_name=_("Plans inspected by"), null=True, blank=True,
-                                           related_name='basis_of_rents_plans_inspected', on_delete=models.PROTECT)
+    plans_inspected_by = models.ForeignKey(User, verbose_name=_("Plans inspected by"), related_name='+', null=True,
+                                           blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Lukittu (Päivämäärä)
     locked_at = models.DateTimeField(verbose_name=_("Locked at"), null=True, blank=True)
 
     # In Finnish: Lukittu (Käyttäjä)
-    locked_by = models.ForeignKey(User, verbose_name=_("Locked by"), null=True, blank=True,
-                                  related_name='basis_of_rents_locked', on_delete=models.PROTECT)
+    locked_by = models.ForeignKey(User, verbose_name=_("Locked by"), related_name='+', null=True, blank=True,
+                                  on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease basis of rent")

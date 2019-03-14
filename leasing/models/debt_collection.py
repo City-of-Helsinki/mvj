@@ -27,10 +27,12 @@ class CollectionLetter(TimeStampedSafeDeleteModel):
                             null=False)
 
     # In Finnish: Lataaja
-    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
+    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Latausaika
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time uploaded"))
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Collection letter")
@@ -71,7 +73,9 @@ class CollectionNote(TimeStampedSafeDeleteModel):
 
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
-    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.PROTECT)
+    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Collection letter note")
@@ -101,10 +105,12 @@ class CollectionCourtDecision(TimeStampedSafeDeleteModel):
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
     # In Finnish: Lataaja
-    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
+    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Latausaika
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time uploaded"))
+
+    recursive_get_related_skip_relations = ["lease", "uploader"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Collection court decision")

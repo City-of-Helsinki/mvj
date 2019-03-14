@@ -19,7 +19,9 @@ class AreaNote(TimeStampedSafeDeleteModel):
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
-    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.PROTECT)
+    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["user"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Area note")

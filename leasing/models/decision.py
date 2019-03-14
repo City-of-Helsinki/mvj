@@ -41,7 +41,7 @@ class Decision(TimeStampedSafeDeleteModel):
     reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
 
     # In Finnish: Päättäjä
-    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), related_name="decisions",
+    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), related_name="+",
                                        null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Päätöspäivämäärä
@@ -56,6 +56,8 @@ class Decision(TimeStampedSafeDeleteModel):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Decision")
@@ -91,6 +93,8 @@ class Condition(TimeStampedSafeDeleteModel):
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["decision"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Condition")

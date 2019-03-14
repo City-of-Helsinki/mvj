@@ -28,8 +28,7 @@ class InfillDevelopmentCompensation(TimeStampedSafeDeleteModel):
                                                 blank=True)
 
     # In Finnish: Vastuuhenkilö
-    user = models.ForeignKey(User, verbose_name=_("User"), related_name='infill_development_compensations',
-                             on_delete=models.PROTECT)
+    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Neuvotteluvaihe
     state = EnumField(InfillDevelopmentCompensationState, verbose_name=_("State"), null=True, blank=True, max_length=30)
@@ -45,6 +44,8 @@ class InfillDevelopmentCompensation(TimeStampedSafeDeleteModel):
 
     # In Finnish: Alue
     geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["user", "leases"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation")
@@ -97,6 +98,8 @@ class InfillDevelopmentCompensationLease(TimeStampedSafeDeleteModel):
     # In Finnish: Maksettu pvm
     paid_date = models.DateField(verbose_name=_("Paid date"), null=True, blank=True)
 
+    recursive_get_related_skip_relations = ["infill_development_compensation", "lease"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation lease")
         verbose_name_plural = pgettext_lazy("Model name", "Infill development compensation leases")
@@ -114,15 +117,16 @@ class InfillDevelopmentCompensationDecision(TimeStampedSafeDeleteModel):
     reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
 
     # In Finnish: Päättäjä
-    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"),
-                                       related_name="infill_development_compensation_decisions", null=True, blank=True,
-                                       on_delete=models.PROTECT)
+    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), related_name="+", null=True,
+                                       blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Päätöspäivämäärä
     decision_date = models.DateField(verbose_name=_("Decision date"), null=True, blank=True)
 
     # In Finnish: Pykälä
     section = models.CharField(verbose_name=_("Section"), null=True, blank=True, max_length=255)
+
+    recursive_get_related_skip_relations = ["infill_development_compensation_lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation decision")
@@ -137,8 +141,8 @@ class InfillDevelopmentCompensationIntendedUse(TimeStampedSafeDeleteModel):
         InfillDevelopmentCompensationLease, verbose_name=_("Infill development compensation lease"),
         related_name='intended_uses', on_delete=models.PROTECT)
 
-    intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), null=True, blank=True,
-                                     on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(IntendedUse, verbose_name=_("Intended use"), related_name='+', null=True,
+                                     blank=True, on_delete=models.PROTECT)
 
     # In Finnish: K-m2
     floor_m2 = models.DecimalField(verbose_name=_("Floor m2"), null=True, blank=True, max_digits=10, decimal_places=2)
@@ -146,6 +150,8 @@ class InfillDevelopmentCompensationIntendedUse(TimeStampedSafeDeleteModel):
     # In Finnish: € / k-m2
     amount_per_floor_m2 = models.DecimalField(verbose_name=_("Amount per floor m^2"), null=True,
                                               blank=True, max_digits=10, decimal_places=2)
+
+    recursive_get_related_skip_relations = ["infill_development_compensation_lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation intended use")
@@ -168,10 +174,12 @@ class InfillDevelopmentCompensationAttachment(TimeStampedSafeDeleteModel):
     file = models.FileField(upload_to=get_attachment_file_upload_to, blank=False, null=False)
 
     # In Finnish: Lataaja
-    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
+    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Latausaika
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time uploaded"))
+
+    recursive_get_related_skip_relations = ["infill_development_compensation_lease", "uploader"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Infill development compensation attachment")

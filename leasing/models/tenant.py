@@ -31,6 +31,8 @@ class Tenant(TimeStampedSafeDeleteModel):
 
     # TODO: Add start and end dates?
 
+    recursive_get_related_skip_relations = ["lease", "contacts"]
+
     def get_tenantcontacts_for_period(self, contact_type, start_date, end_date):
         range_filter = Q(
             Q(Q(end_date=None) | Q(end_date__gte=start_date)) &

@@ -91,7 +91,7 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
                                                          blank=True)
 
     # In Finnish: PIMA valmistelija
-    polluted_land_planner = models.ForeignKey(User, verbose_name=_("User"), null=True, blank=True,
+    polluted_land_planner = models.ForeignKey(User, verbose_name=_("User"), related_name='+', null=True, blank=True,
                                               on_delete=models.PROTECT)
 
     # In Finnish: ProjectWise kohdenumero
@@ -119,8 +119,10 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     other_state = EnumField(ConstructabilityState, verbose_name=_("Other state"), null=True, blank=True, max_length=30)
 
     # In Finnish: Päätös (arkistointi)
-    archived_decision = models.ForeignKey('leasing.Decision', verbose_name=_("Archive decision"), null=True,
-                                          blank=True, on_delete=models.PROTECT)
+    archived_decision = models.ForeignKey('leasing.Decision', verbose_name=_("Archived decision"), related_name='+',
+                                          null=True, blank=True, on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     def __str__(self):
         return 'LeaseArea {}'.format(self.type)
@@ -132,6 +134,8 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
 
 class LeaseAreaAddress(AbstractAddress):
     lease_area = models.ForeignKey(LeaseArea, related_name='addresses', on_delete=models.CASCADE)
+
+    recursive_get_related_skip_relations = ["lease_area"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease area address")
@@ -155,10 +159,12 @@ class LeaseAreaAttachment(TimeStampedSafeDeleteModel):
     file = models.FileField(upload_to=get_attachment_file_upload_to, blank=False, null=False)
 
     # In Finnish: Lataaja
-    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), on_delete=models.PROTECT)
+    uploader = models.ForeignKey(User, verbose_name=_("Uploader"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Latausaika
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time uploaded"))
+
+    recursive_get_related_skip_relations = ["lease_area", "uploader"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease area attachment")
@@ -171,13 +177,15 @@ class ConstructabilityDescription(TimeStampedSafeDeleteModel):
     """
     lease_area = models.ForeignKey(LeaseArea, related_name='constructability_descriptions', on_delete=models.CASCADE)
     type = EnumField(ConstructabilityType, verbose_name=_("Type"), max_length=30)
-    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.PROTECT)
+    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', on_delete=models.PROTECT)
     text = models.TextField(verbose_name=_("Text"))
     # In Finnish: AHJO diaarinumero
     ahjo_reference_number = models.CharField(verbose_name=_("AHJO reference number"), null=True, blank=True,
                                              max_length=255)
     # In Finnish: Pysyvä?
     is_static = models.BooleanField(verbose_name=_("Is static?"), default=False)
+
+    recursive_get_related_skip_relations = ["lease_area", "user"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Constructability description")
@@ -197,6 +205,8 @@ class Plot(Land):
     lease_area = models.ForeignKey(LeaseArea, related_name='plots', on_delete=models.CASCADE)
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(verbose_name=_("At time of contract"), default=False)
+
+    recursive_get_related_skip_relations = ["lease_area"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot")
@@ -267,8 +277,8 @@ class PlanUnit(Land):
                                                     blank=True)
 
     # In Finnish: Tonttijaon olotila
-    plot_division_state = models.ForeignKey(PlotDivisionState, verbose_name=_("Plot division state"), null=True,
-                                            blank=True, on_delete=models.PROTECT)
+    plot_division_state = models.ForeignKey(PlotDivisionState, verbose_name=_("Plot division state"), related_name='+',
+                                            null=True, blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Asemakaava
     detailed_plan_identifier = models.CharField(verbose_name=_("Detailed plan identifier"), max_length=255, null=True,
@@ -283,16 +293,18 @@ class PlanUnit(Land):
                                                                  null=True, blank=True)
 
     # In Finnish: Kaavayksikön laji
-    plan_unit_type = models.ForeignKey(PlanUnitType, verbose_name=_("Plan unit type"), null=True, blank=True,
-                                       on_delete=models.PROTECT)
+    plan_unit_type = models.ForeignKey(PlanUnitType, verbose_name=_("Plan unit type"), related_name='+', null=True,
+                                       blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Kaavayksikön olotila
-    plan_unit_state = models.ForeignKey(PlanUnitState, verbose_name=_("Plan unit state"), null=True, blank=True,
-                                        on_delete=models.PROTECT)
+    plan_unit_state = models.ForeignKey(PlanUnitState, verbose_name=_("Plan unit state"), related_name='+', null=True,
+                                        blank=True, on_delete=models.PROTECT)
 
     # In Finnish: Kaavayksikön käyttötarkoitus
-    plan_unit_intended_use = models.ForeignKey(PlanUnitIntendedUse, verbose_name=_("Plan unit intended use"), null=True,
-                                               blank=True, on_delete=models.PROTECT)
+    plan_unit_intended_use = models.ForeignKey(PlanUnitIntendedUse, verbose_name=_("Plan unit intended use"),
+                                               related_name='+', null=True, blank=True, on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["lease_area"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plan unit")

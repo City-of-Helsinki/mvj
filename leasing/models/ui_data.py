@@ -8,7 +8,8 @@ from .mixins import TimeStampedModel
 
 
 class UiData(TimeStampedModel):
-    user = models.ForeignKey(User, verbose_name=_("User"), null=True, blank=True, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', null=True, blank=True,
+                             on_delete=models.PROTECT)
     key = models.CharField(verbose_name=_("Key"), max_length=255)
     value = models.TextField(verbose_name=_("Value"))
 

@@ -25,7 +25,7 @@ class Contract(TimeStampedSafeDeleteModel):
                               on_delete=models.PROTECT)
 
     # In Finnish: Sopimuksen tyyppi
-    type = models.ForeignKey(ContractType, verbose_name=_("Contract type"), on_delete=models.PROTECT)
+    type = models.ForeignKey(ContractType, verbose_name=_("Contract type"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Sopimusnumero
     contract_number = models.CharField(verbose_name=_("Contract number"), null=True, blank=True, max_length=255)
@@ -52,8 +52,8 @@ class Contract(TimeStampedSafeDeleteModel):
     is_readjustment_decision = models.BooleanField(verbose_name=_("Is readjustment decision"), null=True, blank=True)
 
     # In Finnish: Päätös
-    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
-                                 on_delete=models.PROTECT)
+    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), related_name='+', null=True,
+                                 blank=True, on_delete=models.PROTECT)
 
     # In Finnish: KTJ vuokraoikeustodistuksen linkki
     ktj_link = models.CharField(verbose_name=_("KTJ link"), null=True, blank=True, max_length=1024)
@@ -61,6 +61,8 @@ class Contract(TimeStampedSafeDeleteModel):
     # In Finnish: Laitostunnus
     institution_identifier = models.CharField(verbose_name=_("Institution identifier"), null=True, blank=True,
                                               max_length=255)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contract")
@@ -84,7 +86,8 @@ class Collateral(models.Model):
                                  on_delete=models.PROTECT)
 
     # In Finnish: Vakuuden laji
-    type = models.ForeignKey(CollateralType, verbose_name=_("Collateral type"), on_delete=models.PROTECT)
+    type = models.ForeignKey(CollateralType, verbose_name=_("Collateral type"), related_name='+',
+                             on_delete=models.PROTECT)
 
     # In Finnish: Numero
     number = models.CharField(verbose_name=_("Number"), null=True, blank=True, max_length=255)
@@ -107,6 +110,8 @@ class Collateral(models.Model):
 
     # In Finnish: Huomautus
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["contract"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Collateral")
@@ -139,8 +144,10 @@ class ContractChange(models.Model):
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
     # In Finnish: Päätös
-    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), null=True, blank=True,
-                                 on_delete=models.PROTECT)
+    decision = models.ForeignKey('leasing.Decision', verbose_name=_("Decision"), related_name='+', null=True,
+                                 blank=True, on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["contract", "decision"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contract change")

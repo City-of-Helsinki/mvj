@@ -20,9 +20,11 @@ class EmailLog(TimeStampedSafeDeleteModel):
     text = models.TextField(verbose_name=_("Text"), null=True, blank=True)
     sent_at = models.DateTimeField(verbose_name=_("Time created"), null=True, blank=True)
     recipients = models.ManyToManyField(User)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, related_name='+', on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    recursive_get_related_skip_relations = ["user"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Email log")

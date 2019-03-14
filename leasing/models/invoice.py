@@ -45,6 +45,8 @@ class InvoiceSet(models.Model):
     # In Finnish: Laskutuskauden loppupvm
     billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"), null=True, blank=True)
 
+    recursive_get_related_skip_relations = ["lease"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice set")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice set")
@@ -148,7 +150,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     number = models.PositiveIntegerField(verbose_name=_("Number"), unique=True, null=True, blank=True)
 
     # In Finnish: Laskunsaaja
-    recipient = models.ForeignKey(Contact, verbose_name=_("Recipient"), on_delete=models.PROTECT)
+    recipient = models.ForeignKey(Contact, verbose_name=_("Recipient"), related_name='+', on_delete=models.PROTECT)
 
     # In Finnish: Lähetetty SAP:iin
     sent_to_sap_at = models.DateTimeField(verbose_name=_("Sent to SAP at"), null=True, blank=True)
@@ -218,6 +220,8 @@ class Invoice(TimeStampedSafeDeleteModel):
     # In Finnish: Hyvitetty lasku
     credited_invoice = models.ForeignKey('self', verbose_name=_("Credited invoice"), related_name='credit_invoices',
                                          null=True, blank=True, on_delete=models.PROTECT)
+
+    recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice")
@@ -510,11 +514,12 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
                                 on_delete=models.CASCADE)
 
     # In Finnish: Vuokralainen
-    tenant = models.ForeignKey('leasing.Tenant', verbose_name=_("Tenant"), null=True, blank=True,
+    tenant = models.ForeignKey('leasing.Tenant', verbose_name=_("Tenant"), related_name='+', null=True, blank=True,
                                on_delete=models.PROTECT)
 
     # In Finnish: Saamislaji
-    receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), on_delete=models.PROTECT)
+    receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), related_name='+',
+                                        on_delete=models.PROTECT)
 
     # In Finnish: Laskutuskauden alkupvm
     billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
@@ -527,6 +532,8 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
 
     # In Finnish: Laskutettu määrä
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
+
+    recursive_get_related_skip_relations = ["invoice"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice row")
@@ -548,6 +555,8 @@ class InvoicePayment(TimeStampedSafeDeleteModel):
 
     # In Finnish: Arkistointitunnus
     filing_code = models.CharField(verbose_name=_("Name"), null=True, blank=True, max_length=35)
+
+    recursive_get_related_skip_relations = ["invoice"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice payment")
