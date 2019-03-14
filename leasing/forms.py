@@ -80,3 +80,8 @@ class InfillDevelopmentCompensationSearchForm(forms.Form):
     decision_date = forms.DateField(required=False)
     decision_section = forms.CharField(label='Decision section', max_length=255, required=False, empty_value=None)
     reference_number = forms.CharField(label='Reference number', max_length=255, required=False, empty_value=None)
+
+
+class AuditLogSearchForm(forms.Form):
+    type = forms.ChoiceField(label='Type', required=True, choices=(('lease', 'Lease'), ('contact', 'Contact')))
+    id = forms.IntegerField(label='Id', required=False)

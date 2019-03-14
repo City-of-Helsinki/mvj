@@ -7,6 +7,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
+from leasing.viewsets.auditlog import AuditLogView
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
@@ -78,6 +79,7 @@ router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
 additional_api_paths = [
+    path('auditlog/', AuditLogView.as_view(), name='auditlog'),
     path('contact_exists/', ContactExistsView.as_view(), name='contact-exists'),
     path('decision_copy_to_leases/', DecisionCopyToLeasesView.as_view(), name='decision-copy-to-leases'),
     path('invoice_calculate_penalty_interest/', InvoiceCalculatePenaltyInterestView.as_view(),
