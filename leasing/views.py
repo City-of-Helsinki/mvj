@@ -120,10 +120,18 @@ class VirreProxy(APIView):
              'company_represent': 'CompanyRepresentInfo',
              'company_notice': 'CompanyNoticeInfo',
              'trade_register_entry': 'TradeRegisterEntryInfo',
+             'statute': 'StatuteInfoV2',
         }
-        known_pdf_services = [
-            'trade_register_entry',
-        ]
+        known_pdf_services = {
+            'trade_register_entry': {
+                'response_key': 'tradeRegisterEntryInfoResponseDetails',
+                'pdf_key': 'extract',
+            },
+            'statute': {
+                'response_key': 'statuteInfoResponseTypeDetails',
+                'pdf_key': 'statute',
+            }
+        }
 
         if service not in known_services.keys():
             raise APIException(_('service parameter is not valid'))
@@ -148,17 +156,18 @@ class VirreProxy(APIView):
         action = 'get{}'.format(known_services[service])
         result = getattr(client.service, action)(**data)
 
-        if service in known_pdf_services:
-            # example: 'TradeRegisterEntryInfo' -> 'tradeRegisterEntryInfoResponseDetails'
-            response_key = '{}ResponseDetails'.format(
-                known_services[service][0].lower() + known_services[service][1:])
+        if service in known_pdf_services.keys():
+            response_key = known_pdf_services[service]['response_key']
+            pdf_key = known_pdf_services[service]['pdf_key']
 
             if response_key not in result:
                 raise APIException(_('business id is invalid'))
 
-            raw_pdf = result[response_key]['extract']
+            try:
+                response = HttpResponse(result[response_key][pdf_key], content_type='application/pdf')
+            except KeyError:
+                raise APIException(_('File not available'))
 
-            response = HttpResponse(raw_pdf, content_type='application/pdf')
             response['Content-Disposition'] = (
                 'attachment; filename={}_{}.pdf'.format(service, business_id)
             )
