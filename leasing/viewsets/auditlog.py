@@ -85,7 +85,7 @@ class AuditLogView(APIView):
                 "read_only": False,
                 "label": field.label,
             }
-            if type(field.choices) == list:
+            if hasattr(field, 'choices') and type(field.choices) == list:
                 metadata['actions']['GET'][field_name]["choices"] = [
                     {
                         "value": c[0],
