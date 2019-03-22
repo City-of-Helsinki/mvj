@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -59,13 +61,19 @@ class DecisionCopyToLeasesView(APIView):
 
         target_leases = request.query_params.getlist('leases')
 
+        if not target_leases:
+            raise APIException('Please provide target lease ids with "leases" parameter')
+
         for target_lease_id in target_leases:
             try:
-                lease = Lease.objects.get(id=target_lease_id)
+                lease = Lease.objects.get(id=int(target_lease_id))
             except Lease.DoesNotExist:
+                # TODO: report failed ids
+                continue
+            except ValueError:
                 continue
 
-            copied_decision = decision
+            copied_decision = deepcopy(decision)
             copied_decision.pk = None
             copied_decision.lease = lease
             copied_decision.save()
