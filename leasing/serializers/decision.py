@@ -1,3 +1,4 @@
+from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
@@ -37,7 +38,7 @@ class DecisionMakerSerializer(NameModelSerializer):
         fields = '__all__'
 
 
-class DecisionTypeSerializer(NameModelSerializer):
+class DecisionTypeSerializer(EnumSupportSerializerMixin, NameModelSerializer):
     class Meta:
         model = DecisionType
         fields = '__all__'
