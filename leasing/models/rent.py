@@ -723,6 +723,35 @@ class PayableRent(models.Model):
         verbose_name_plural = pgettext_lazy("Model name", "Payable rents")
 
 
+class EqualizedRent(models.Model):
+    """
+    In Finnish: Tasattu vuokra
+    """
+    rent = models.ForeignKey(Rent, verbose_name=_("Rent"), related_name='equalized_rents', on_delete=models.CASCADE)
+
+    # In Finnish: Alkupvm
+    start_date = models.DateField(verbose_name=_("Start date"), null=True, blank=True)
+
+    # In Finnish: Loppupvm
+    end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    # In Finnish: Perittävä vuokra
+    payable_amount = models.DecimalField(verbose_name=_("Payable amount"), max_digits=10, decimal_places=2)
+
+    # In Finnish: Tasattu perittävä vuokra
+    equalized_payable_amount = models.DecimalField(verbose_name=_("Equalized payable amount"), max_digits=10,
+                                                   decimal_places=2)
+
+    # In Finnish: Tasauskerroin
+    equalization_factor = models.DecimalField(verbose_name=_("Equalization factor"), max_digits=8, decimal_places=6)
+
+    recursive_get_related_skip_relations = ["rent"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Equalized rent")
+        verbose_name_plural = pgettext_lazy("Model name", "Equalized rents")
+
+
 class IndexManager(models.Manager):
     def get_latest_for_date(self, the_date=None):
         """Returns the latest year average index"""

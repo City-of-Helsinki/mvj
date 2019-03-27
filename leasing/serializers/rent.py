@@ -7,6 +7,7 @@ from rest_framework.serializers import ListSerializer
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import DueDatesType
 from leasing.models import Index
+from leasing.models.rent import EqualizedRent
 from users.serializers import UserSerializer
 
 from ..models import (
@@ -69,6 +70,14 @@ class PayableRentSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount', 'start_date', 'end_date', 'difference_percent', 'calendar_year_rent')
 
 
+class EqualizedRentSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = EqualizedRent
+        fields = ('id', 'start_date', 'end_date', 'payable_amount', 'equalized_payable_amount', 'equalization_factor')
+
+
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                                serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -105,6 +114,7 @@ class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin
     index_adjusted_rents = IndexAdjustedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
     rent_adjustments = RentAdjustmentSerializer(many=True, required=False, allow_null=True)
     payable_rents = PayableRentSerializer(many=True, required=False, allow_null=True, read_only=True)
+    equalized_rents = EqualizedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
     yearly_due_dates = ListSerializer(child=DayMonthField(read_only=True), source='get_due_dates_as_daymonths',
                                       read_only=True)
 
@@ -113,8 +123,8 @@ class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
-                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
-                  'yearly_due_dates', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day',
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'equalized_rents', 'start_date',
+                  'end_date', 'yearly_due_dates', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day',
                   'seasonal_end_month', 'manual_ratio', 'manual_ratio_previous')
 
     def override_permission_check_field_name(self, field_name):
@@ -146,14 +156,15 @@ class RentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, 
     index_adjusted_rents = IndexAdjustedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
     rent_adjustments = RentAdjustmentCreateUpdateSerializer(many=True, required=False, allow_null=True)
     payable_rents = PayableRentSerializer(many=True, required=False, allow_null=True, read_only=True)
+    equalized_rents = EqualizedRentSerializer(many=True, required=False, allow_null=True, read_only=True)
 
     class Meta:
         model = Rent
         fields = ('id', 'type', 'cycle', 'index_type', 'due_dates_type', 'due_dates_per_year', 'elementary_index',
                   'index_rounding', 'x_value', 'y_value', 'y_value_start', 'equalization_start_date',
                   'equalization_end_date', 'amount', 'note', 'due_dates', 'fixed_initial_year_rents', 'contract_rents',
-                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'start_date', 'end_date',
-                  'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month',
+                  'index_adjusted_rents', 'rent_adjustments', 'payable_rents', 'equalized_rents', 'start_date',
+                  'end_date', 'seasonal_start_day', 'seasonal_start_month', 'seasonal_end_day', 'seasonal_end_month',
                   'manual_ratio', 'manual_ratio_previous')
 
     def validate(self, data):

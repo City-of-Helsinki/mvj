@@ -23,23 +23,23 @@ from .lease import (
 from .leasehold_transfer import (
     LeaseholdTransfer, LeaseholdTransferImportLog, LeaseholdTransferParty, LeaseholdTransferProperty)
 from .rent import (
-    ContractRent, FixedInitialYearRent, Index, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent, RentAdjustment,
-    RentDueDate, RentIntendedUse)
+    ContractRent, EqualizedRent, FixedInitialYearRent, Index, IndexAdjustedRent, LeaseBasisOfRent, PayableRent, Rent,
+    RentAdjustment, RentDueDate, RentIntendedUse)
 from .tenant import Tenant, TenantContact
 from .ui_data import UiData
 from .vat import Vat
 
 __all__ = [
     'Area',
-    'AreaSource',
     'AreaNote',
+    'AreaSource',
+    'BankHoliday',
     'BasisOfRent',
     'BasisOfRentBuildPermissionType',
     'BasisOfRentDecision',
     'BasisOfRentPlotType',
     'BasisOfRentPropertyIdentifier',
     'BasisOfRentRate',
-    'BankHoliday',
     'Collateral',
     'CollateralType',
     'CollectionCourtDecision',
@@ -61,16 +61,17 @@ __all__ = [
     'DecisionType',
     'District',
     'EmailLog',
+    'EqualizedRent',
     'Financing',
     'FixedInitialYearRent',
     'Hitas',
     'Index',
     'IndexAdjustedRent',
     'InfillDevelopmentCompensation',
-    'InfillDevelopmentCompensationLease',
+    'InfillDevelopmentCompensationAttachment',
     'InfillDevelopmentCompensationDecision',
     'InfillDevelopmentCompensationIntendedUse',
-    'InfillDevelopmentCompensationAttachment',
+    'InfillDevelopmentCompensationLease',
     'Inspection',
     'IntendedUse',
     'InterestRate',
@@ -79,13 +80,13 @@ __all__ = [
     'LeaseArea',
     'LeaseAreaAttachment',
     'LeaseBasisOfRent',
+    'LeaseholdTransfer',
+    'LeaseholdTransferImportLog',
+    'LeaseholdTransferParty',
+    'LeaseholdTransferProperty',
     'LeaseIdentifier',
     'LeaseStateLog',
     'LeaseType',
-    'LeaseholdTransfer',
-    'LeaseholdTransferParty',
-    'LeaseholdTransferProperty',
-    'LeaseholdTransferImportLog',
     'Management',
     'Municipality',
     'NoticePeriod',
