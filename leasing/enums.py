@@ -220,11 +220,11 @@ class RentType(Enum):
     """
     In Finnish: Vuokralaji
     """
-    INDEX = 'index'
-    ONE_TIME = 'one_time'
-    FIXED = 'fixed'
-    FREE = 'free'
-    MANUAL = 'manual'
+    INDEX = 'index'  # Indeksi
+    ONE_TIME = 'one_time'  # Kertakaikkinen
+    FIXED = 'fixed'  # Kiinteä
+    FREE = 'free'  # Ilmainen
+    MANUAL = 'manual'  # Käsinlaskenta
 
     class Labels:
         INDEX = pgettext_lazy('Rent type', 'Index')
