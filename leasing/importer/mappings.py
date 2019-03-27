@@ -36,6 +36,7 @@ ALENNUS_KOROTUS_MAP = {
 SAAMISLAJI_MAP = {
     'VU': 1,
     'KO': 2,
+    'VT': 3,
 }
 
 LASKUN_TILA_MAP = {
@@ -56,6 +57,17 @@ ASIAKASTYYPPI_MAP = {
     '2': ContactType.UNIT,
     '3': ContactType.ASSOCIATION,
     '4': ContactType.OTHER,
+}
+
+MAA_MAP = {
+    None: None,
+    'FI': 'FI',
+    'LI': 'LI',
+    'NL': 'NL',
+    'NC': 'NZ',
+    'S': 'SE',
+    'EG': 'EG',
+    'U': 'US',
 }
 
 IRTISANOMISAIKA_MAP = {
@@ -83,6 +95,7 @@ HITAS_MAP = {
     '2': 4,  # Hitas II
     '3': 5,  # Laatusääntely
     '4': 6,  # Ei laatusääntelyä
+    '5': 8,  # !!! Not in database
     '6': 8,  # Ei tietoa
     '7': 9,  # Hitas II (Loikkari)
     '8': 10,  # Hitas (vapautettu)
@@ -184,109 +197,109 @@ BASIS_OF_RENT_RATE_AREA_UNIT_MAP = {
 
 DECISION_MAKER_MAP = {
     None: None,
-    'KLK': 54,  # Kiinteistölautakunta
-    'KSLK': 58,  # Kaupunkisuunnittelulautakunta
-    'MIN': 79,  # Sisäasiainministeriö
-    'KHS': 47,  # Kaupunginhallitus
-    'TO OP': 102,  # Tonttios.pääll.päät.
-    'RTKRI': 88,  # Rahatoimikamari
-    'KVSTO': 64,  # Kaupunginvaltuusto
-    'KA PTL': 40,  # Kansliaosaston pääll. ptl
-    'KONVER': 57,  # Konversio-ohjelmisto
-    'ASLK': 7,  # Asuntolautakunta
+    # 'KV H-O': 63,  # Kv hallinto-osasto
+    # 'TI PTL': 98,  # KV TILAKESKUKSEN PÄÄLLIKKÖ
     'AS PTL': 5,  # Asunto-os. tstopääll. ptl .
-    'SALK': 91,  # Satamalautakunta
-    'TOJ': 108,  # Tonttijaosto
-    'VP PTL': 123,  # Virastopäällikön päät.
-    'YTLK': 133,  # Yleisten töiden lautakunta
-    'HTR': 38,  # Hitas-työryhmä
-    'KAJ': 41,  # Apulaiskaupunginjohtaja
-    'KHSYLJ': 50,  # Kaupunginhallituksen yleisjaos
-    'KLK/TA': 55,  # Kiinteistölaut. talo-jaos
-    'KHS/SJ': 49,  # kginhallituksen suunnit.jaosto
-    'HKRPTL': 37,  # rak.viraston toim.johtajan ptl
+    'AS': 4,  # Asuntoasiainosasto
+    'ASKIRJ': 6,  # Asuntoasiainosaston kirje
+    'ASLK': 7,  # Asuntolautakunta
     'ASOPTL': 8,  # Asunto-os. osastopääll. ptl
-    'KA': 39,  # Kansliaosasto
-    'XXX': 125,  # Muu päättäjä
+    'AT PTK': 9,  # Asuntotontti tstopääll. ptk
+    'ATT TJ': 12,  # Asuntotuotantotston tj ptl
+    'ATTPLK': 13,  # Asuntotontit tiimipäällikkö
+    'ATTTK': 14,  # Asuntotuotantotoimikunta
+    'E-S AV': 25,  # Etelä-Suomen Aluevalv.vsto
+    'E-S MM': 26,  # Etelä-Suomen maanmittauststo
+    'ED OIK': 15,  # Eduskunnan oikeusasiamies
+    'EKVSTO': 16,  # Espoon kaupunginvaltuusto
     'ELPTL1': 17,  # Elinkeinot. tstop.(luvat)
     'ELPTL2': 18,  # Elinkeinot. tstop.(tilap.vuok)
-    'HKL': 32,  # Liikennelaitos
-    'TO': 100,  # Tonttiosasto
-    'YMPMIN': 130,  # Ympäristöministeriö
-    'HKR': 34,  # Rakennusvirasto
-    'VP': 122,  # Virastopäällikkö
-    'RAKVV': 86,  # Rakennusvalvontavirasto
-    'TOKIRJ': 109,  # Tonttiosaston kirje
-    'KAKIRJ': 42,  # Kansliaosaston kirje
-    'RAKLK': 85,  # Rakennuslautakunta
-    'VIRKIR': 121,  # Viraston kirje
-    'GEODEE': 29,  # Kaupungingeodeetti
-    'KHO': 46,  # Korkein Hallinto-Oikeus
-    'UUDYMK': 120,  # Uudenmaan ympäristökeskus
     'ELPTL3': 19,  # Elinkeinot. tstop. (siirrot)
-    'KEISAR': 44,  # KEISARILLINEN MÄÄRÄYS
-    'KKO': 53,  # KORKEIN OIKEUS
-    'KI/JTU': 51,  # Kirje/Juhani Tuuttila
-    'ASKIRJ': 6,  # Asuntoasiainosaston kirje
-    'UUD.VE': 119,  # Uuudenmaan verovirasto
-    'YMPLK': 129,  # Ympäristölautakunta
-    'LILK': 70,  # Liikuntalautakunta
-    'YMKHKI': 126,  # Ympäristökeskus
-    'ED OIK': 15,  # Eduskunnan oikeusasiamies
-    'TA PTL': 94,  # Talo-os. tstopäällikön ptl
-    'AS': 4,  # Asuntoasiainosasto
-    'LIV': 71,  # Liikuntavirasto osastopääll.
     'ELPTL4': 20,  # Elinkeinot.tstop. (toimit.ton)
-    'ATTTK': 14,  # Asuntotuotantotoimikunta
-    'YLJ': 50,  # Kaupunginhallituksen yleisjaos
     'ELPTL5': 21,  # Piirustusten tutkiminen
-    'HE H-O': 30,  # Helsingin hallinto-oikeus
     'ELPTL6': 22,  # Elinkeinot. tstop. (teoll.ton)
-    'KIRJ': 52,  # KIRJE
-    'ETULK': 28,  # ELINTARVIKETUKKULAUTAKUNTA
-    'KEI.SE': 45,  # Keisarillinen senaatti
-    'HHO': 31,  # Helsingin hovioikeus
-    'EKVSTO': 16,  # Espoon kaupunginvaltuusto
-    'KAULA': 43,  # Kaupungin lakimies
-    'HE HAO': 30,  # Helsingin hallinto-oikeus
-    'KMO': 56,  # Kaupunginmittausosasto
-    'TOAPT1': 107,  # To.os. ap.os.pääll.ptl piir.
-    'MML': 80,  # Maanmittauslaitos/-toimisto
-    'E-S MM': 26,  # Etelä-Suomen maanmittauststo
-    'KV': 61,  # Kiinteistövirasto
     'ELPTL7': 23,  # Hankinnat
-    'PELLK': 83,  # Pelastuslautakunta
     'ELTSTO': 24,  # Elinkeinotoimisto
-    'MATSTO': 76,  # Maanluovutustoimisto
-    'TILA': 99,  # Kiinteistöviraston tilakeskus
-    'ATT TJ': 12,  # Asuntotuotantotston tj ptl
-    # 'KV H-O': 63,  # Kv hallinto-osasto
-    'SOSLK': 93,  # Sosiaalilautakunta
-    'VÄLK': 124,  # Väestönsuojalautakunta
     'ETUKES': 27,  # Elintarviketukkukaupan keskus
+    'ETULK': 28,  # ELINTARVIKETUKKULAUTAKUNTA
+    'GEODEE': 29,  # Kaupungingeodeetti
+    'HE H-O': 30,  # Helsingin hallinto-oikeus
+    'HE HAO': 30,  # Helsingin hallinto-oikeus
+    'HHO': 31,  # Helsingin hovioikeus
+    'HKL': 32,  # Liikennelaitos
+    'HKLJK': 33,  # Hgin kgin liikennel. johtokunt
+    'HKR': 34,  # Rakennusvirasto
+    'HKRPTL': 37,  # rak.viraston toim.johtajan ptl
+    'HTR': 38,  # Hitas-työryhmä
+    'KA PTL': 40,  # Kansliaosaston pääll. ptl
+    'KA': 39,  # Kansliaosasto
+    'KAJ': 41,  # Apulaiskaupunginjohtaja
+    'KAKIRJ': 42,  # Kansliaosaston kirje
+    'KAULA': 43,  # Kaupungin lakimies
+    'KEI.SE': 45,  # Keisarillinen senaatti
+    'KEISAR': 44,  # KEISARILLINEN MÄÄRÄYS
+    'KHO': 46,  # Korkein Hallinto-Oikeus
+    'KHS': 47,  # Kaupunginhallitus
+    'KHS/SJ': 49,  # kginhallituksen suunnit.jaosto
+    'KHSYLJ': 50,  # Kaupunginhallituksen yleisjaos
+    'KI/JTU': 51,  # Kirje/Juhani Tuuttila
+    'KIRJ': 52,  # KIRJE
+    'KKO': 53,  # KORKEIN OIKEUS
+    'KLK': 54,  # Kiinteistölautakunta
+    'KLK/TA': 55,  # Kiinteistölaut. talo-jaos
+    'KMO': 56,  # Kaupunginmittausosasto
+    'KONVER': 57,  # Konversio-ohjelmisto
+    'KSLK': 58,  # Kaupunkisuunnittelulautakunta
+    'KSV VP': 60,  # Ksv virastopäällikkö
+    'KSV': 59,  # Kaupunkisuunnitteluvirasto
     'KV H-O': 62,  # KV:n Hallinto-osasto
-    'E-S AV': 25,  # Etelä-Suomen Aluevalv.vsto
-    'UUDELY': 117,  # Uudenmaan elykeskus
-    # 'TI PTL': 98,  # KV TILAKESKUKSEN PÄÄLLIKKÖ
-    'TOAPTL': 106,  # To.os.ap.os.pääll.ptl
-    'RLK ES': 87,  # Rakennuslautakunta Espoo
-    'TO PLK': 104,  # Tonttipäällikkö (Make)
-    'TOYKSP': 116,  # Tontit-yksikön päällikkö
+    'KV': 61,  # Kiinteistövirasto
+    'KVSTO': 64,  # Kaupunginvaltuusto
     'KYLK': 65,  # Kaupunkiympäristölautakunta
-    'ATTPLK': 13,  # Asuntotontit tiimipäällikkö
-    'YTTPLK': 135,  # Yritystontit tiimipäällikkö
+    'LILK': 70,  # Liikuntalautakunta
+    'LIV': 71,  # Liikuntavirasto osastopääll.
+    'MATSTO': 76,  # Maanluovutustoimisto
+    'MIN': 79,  # Sisäasiainministeriö
+    'MML': 80,  # Maanmittauslaitos/-toimisto
+    'PELLK': 83,  # Pelastuslautakunta
+    'PT PTK': 84,  # Palvelutsto. tstopääll.
+    'RAKLK': 85,  # Rakennuslautakunta
+    'RAKVV': 86,  # Rakennusvalvontavirasto
+    'RLK ES': 87,  # Rakennuslautakunta Espoo
+    'RTKRI': 88,  # Rahatoimikamari
+    'SA JK': 89,  # Helsingin sataman johtokunta
+    'SALK': 91,  # Satamalautakunta
+    'SOPTII': 92,  # Vuokrasopimustiimi
+    'SOSLK': 93,  # Sosiaalilautakunta
+    'TA PTL': 94,  # Talo-os. tstopäällikön ptl
     'TESTAM': 96,  # Testamentti
     'TI PTL': 97,  # Tilakes.päällikön ptl
-    'HKLJK': 33,  # Hgin kgin liikennel. johtokunt
+    'TILA': 99,  # Kiinteistöviraston tilakeskus
+    'TO OP': 102,  # Tonttios.pääll.päät.
     'TO PAL': 103,  # Tonttiosasto Palvelutoimisto
-    'PT PTK': 84,  # Palvelutsto. tstopääll.
-    'SA JK': 89,  # Helsingin sataman johtokunta
-    'TOOPKI': 110,  # Tonttiosaston op kirje
-    'AT PTK': 9,  # Asuntotontti tstopääll. ptk
-    'YT PTK': 132,  # Yritystontti tstopääll. ptk
-    'YTTSTO': 136,  # Yritystonttitoimisto
-    'KSV': 59,  # Kaupunkisuunnitteluvirasto
-    'KSV VP': 60,  # Ksv virastopäällikkö
+    'TO PLK': 104,  # Tonttipäällikkö (Make)
     'TO PTL': 105,  # Tonttios. pääll.
-    'SOPTII': 92,  # Vuokrasopimustiimi
+    'TO': 100,  # Tonttiosasto
+    'TOAPT1': 107,  # To.os. ap.os.pääll.ptl piir.
+    'TOAPTL': 106,  # To.os.ap.os.pääll.ptl
+    'TOJ': 108,  # Tonttijaosto
+    'TOKIRJ': 109,  # Tonttiosaston kirje
+    'TOOPKI': 110,  # Tonttiosaston op kirje
+    'TOYKSP': 116,  # Tontit-yksikön päällikkö
+    'UUD.VE': 119,  # Uuudenmaan verovirasto
+    'UUDELY': 117,  # Uudenmaan elykeskus
+    'UUDYMK': 120,  # Uudenmaan ympäristökeskus
+    'VIRKIR': 121,  # Viraston kirje
+    'VP PTL': 123,  # Virastopäällikön päät.
+    'VP': 122,  # Virastopäällikkö
+    'VÄLK': 124,  # Väestönsuojalautakunta
+    'XXX': 125,  # Muu päättäjä
+    'YLJ': 50,  # Kaupunginhallituksen yleisjaos
+    'YMKHKI': 126,  # Ympäristökeskus
+    'YMPLK': 129,  # Ympäristölautakunta
+    'YMPMIN': 130,  # Ympäristöministeriö
+    'YT PTK': 132,  # Yritystontti tstopääll. ptk
+    'YTLK': 133,  # Yleisten töiden lautakunta
+    'YTTPLK': 135,  # Yritystontit tiimipäällikkö
+    'YTTSTO': 136,  # Yritystonttitoimisto
 }

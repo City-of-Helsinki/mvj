@@ -164,11 +164,12 @@ AREA_IMPORT_TYPES = {
 class AreaImporter(BaseImporter):
     type_name = 'area'
 
-    def __init__(self, stdout=None):
+    def __init__(self, stdout=None, stderr=None):
         conn = psycopg2.connect(host="localhost", database="tonttiosasto", user="katselu", password="katselu",
                                 cursor_factory=psycopg2.extras.NamedTupleCursor)
         self.cursor = conn.cursor()
         self.stdout = stdout
+        self.stderr = stderr
         self.area_types = None
 
     @classmethod

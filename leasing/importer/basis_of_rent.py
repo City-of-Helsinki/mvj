@@ -11,12 +11,13 @@ from .utils import get_real_property_identifier, rows_to_dict_list
 class BasisOfRentImporter(BaseImporter):
     type_name = 'basis_of_rent'
 
-    def __init__(self, stdout=None):
+    def __init__(self, stdout=None, stderr=None):
         connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
                                        nencoding="UTF-8")
 
         self.cursor = connection.cursor()
         self.stdout = stdout
+        self.stderr = stderr
 
     @classmethod
     def add_arguments(cls, parser):

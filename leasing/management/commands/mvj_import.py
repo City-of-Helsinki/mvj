@@ -31,6 +31,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for importer_type_name in options['types']:
-            importer = self._importers[importer_type_name](stdout=self.stdout)
+            importer = self._importers[importer_type_name](stdout=self.stdout, stderr=self.stderr)
             importer.read_options(options)
             importer.execute()

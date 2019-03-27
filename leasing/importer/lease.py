@@ -1,26 +1,26 @@
 import datetime
 import re
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.core.exceptions import ObjectDoesNotExist
 
 import cx_Oracle
 from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseRelationType, LeaseState,
-    LocationType, PeriodType, RentAdjustmentAmountType, TenantContactType)
+    LocationType, PeriodType, RentAdjustmentAmountType, RentType, TenantContactType)
 from leasing.models import (
-    Collateral, Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent,
-    IndexAdjustedRent, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, Municipality, PayableRent,
-    RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+    Collateral, Condition, Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent,
+    IndexAdjustedRent, Inspection, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, Municipality,
+    PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
-from leasing.models.rent import FIXED_DUE_DATES, RentDueDate
+from leasing.models.rent import FIXED_DUE_DATES, EqualizedRent, RentDueDate
 from leasing.models.utils import DayMonth
 
 from .base import BaseImporter
 from .mappings import (
-    ALENNUS_KOROTUS_MAP, ASIAKASTYYPPI_MAP, DECISION_MAKER_MAP, FINANCING_MAP, HITAS_MAP, IRTISANOMISAIKA_MAP,
-    LASKUN_TILA_MAP, LASKUTYYPPI_MAP, LEASE_AREA_TYPE_MAP, MANAGEMENT_MAP, SAAMISLAJI_MAP, TILA_MAP, VUOKRAKAUSI_MAP,
-    VUOKRALAJI_MAP)
+    ALENNUS_KOROTUS_MAP, DECISION_MAKER_MAP, FINANCING_MAP, HITAS_MAP, IRTISANOMISAIKA_MAP, LASKUN_TILA_MAP,
+    LASKUTYYPPI_MAP, LEASE_AREA_TYPE_MAP, MANAGEMENT_MAP, SAAMISLAJI_MAP, TILA_MAP, VUOKRAKAUSI_MAP, VUOKRALAJI_MAP)
 from .utils import (
     asiakas_cache, expand_lease_identifier, expanded_id_to_query, expanded_id_to_query_alku, get_or_create_contact,
     get_real_property_identifier, get_unknown_contact, rows_to_dict_list)
@@ -29,21 +29,25 @@ from .utils import (
 class LeaseImporter(BaseImporter):
     type_name = 'lease'
 
-    def __init__(self, stdout=None):
+    def __init__(self, stdout=None, stderr=None):
         connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
                                        nencoding="UTF-8")
 
         self.cursor = connection.cursor()
         self.stdout = stdout
+        self.stderr = stderr
         self.related_leases = []
         self.lease_ids = None
         self.invoice_numbers = {}
         self.credit_notes = []
+        self.offset = 0
 
     @classmethod
     def add_arguments(cls, parser):
         parser.add_argument('--lease-ids', dest='lease_ids', type=str, required=False,
                             help='comma separated list of lease ids to import (default: all)')
+        parser.add_argument('--offset', dest='offset', type=int, required=False,
+                            help='start offset')
 
     def read_options(self, options):
         if options['lease_ids']:
@@ -58,7 +62,16 @@ class LeaseImporter(BaseImporter):
 
                 self.lease_ids.append(lease_id)
 
+        if not self.lease_ids and options['offset']:
+            self.offset = options['offset']
+
     def execute(self):
+        from auditlog.registry import auditlog
+
+        # Unregister all models from auditlog when importing
+        for model in list(auditlog._registry.keys()):
+            auditlog.unregister(model)
+
         self.import_leases()
         self.update_related_leases()
         self.update_credit_notes()
@@ -85,12 +98,15 @@ class LeaseImporter(BaseImporter):
 
         if self.lease_ids is None:
             query = """
-                SELECT ALKUOSA, JUOKSU
-                FROM VUOKRAUS
-                WHERE ALKUPVM >= TO_DATE('01/01/2016', 'DD/MM/YYYY')
-                  AND ALKUPVM < TO_DATE('01/01/2017', 'DD/MM/YYYY')
-                ORDER BY ALKUPVM
-                """
+                SELECT * FROM (
+                    SELECT ALKUOSA, JUOKSU, ROW_NUMBER() OVER (ORDER BY ALKUPVM) rn
+                    FROM VUOKRAUS
+                    WHERE TILA <> 'S'
+                    ORDER BY ALKUPVM
+                ) t
+                WHERE rn >= {}
+                """.format(self.offset)
+
             cursor.execute(query)
             self.lease_ids = ['{}-{}'.format(row[0], row[1]) for row in cursor]
 
@@ -101,12 +117,16 @@ class LeaseImporter(BaseImporter):
         intended_use_map = {intended_use.name: intended_use.id for intended_use in IntendedUse.objects.all()}
 
         count = 0
+        if self.offset:
+            count = self.offset - 1
+            lease_id_count += self.offset
+
         for lease_id in self.lease_ids:
             if not lease_id:
                 continue
 
             count += 1
-            self.stdout.write('{} ({}/{})'.format(lease_id, count, lease_id_count))
+            self.stdout.write('\n{} ({}/{})'.format(lease_id, count, lease_id_count))
 
             id_parts = expand_lease_identifier(lease_id)
 
@@ -117,16 +137,17 @@ class LeaseImporter(BaseImporter):
             query = """
                 SELECT v.*, k.NIMI AS KTARK_NIMI
                 FROM VUOKRAUS v
-                LEFT JOIN KTARK_KOODI k ON v.KTARK_KOODI = k.KTARK_KOODI
-                WHERE 1 = 1
-                """ + expanded_id_to_query(id_parts)
+                LEFT JOIN KTARK_KOODI k ON v.KTARK_KOODI = k.KTARK_KOODI""" + expanded_id_to_query(id_parts)
 
             cursor.execute(query)
 
             vuokraus_rows = rows_to_dict_list(cursor)
 
             for lease_row in vuokraus_rows:
-                # self.stdout.write(lease_row)
+                if id_parts['KUNTA'] == 0:
+                    self.stdout.write(' Municipality is 0! Skipping.')
+                    continue
+
                 lease_type = LeaseType.objects.get(identifier=id_parts['TARKOITUS'])
                 municipality = Municipality.objects.get(identifier=id_parts['KUNTA'])
                 district = District.objects.get(municipality=municipality, identifier=id_parts['KAUPOSA'])
@@ -169,6 +190,8 @@ class LeaseImporter(BaseImporter):
 
                 lease.save()
 
+                self.stdout.write('Lease id {}'.format(lease.id))
+
                 self.stdout.write("Related to lease:")
                 if lease_row['LIITTYY_ALKUOSA'] != lease_row['ALKUOSA'] or \
                         lease_row['LIITTYY_JUOKSU'] != lease_row['JUOKSU']:
@@ -186,13 +209,13 @@ class LeaseImporter(BaseImporter):
                         'type': related_type,
                     })
 
+                self.stdout.write(" {} relations".format(len(self.related_leases)))
+
                 self.stdout.write("Vuokralaiset:")
                 query = """
                     SELECT ar.*, a.*
                     FROM ASROOLI ar
-                    LEFT JOIN ASIAKAS a ON ar.ASIAKAS = a.ASIAKAS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    LEFT JOIN ASIAKAS a ON ar.ASIAKAS = a.ASIAKAS""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 asrooli_rows = rows_to_dict_list(cursor)
@@ -202,10 +225,17 @@ class LeaseImporter(BaseImporter):
                     contact = get_or_create_contact(role_row)
                     self.stdout.write('  Contact {}'.format(contact))
 
+                    start_date = role_row['ALKAEN']
+                    if 2100 < start_date.year < 2200:
+                        start_date = start_date.replace(year=start_date.year - 100)
+
+                    if 3000 < start_date.year < 3100:
+                        start_date = start_date.replace(year=start_date.year - 1000)
+
                     try:
                         tenant = lease.tenants.get(tenantcontact__contact=contact,
                                                    tenantcontact__type=TenantContactType.TENANT,
-                                                   tenantcontact__start_date=role_row['ALKAEN'],
+                                                   tenantcontact__start_date=start_date,
                                                    tenantcontact__end_date=role_row['SAAKKA'])
                         self.stdout.write("  USING EXISTING TENANT")
                     except ObjectDoesNotExist:
@@ -220,7 +250,7 @@ class LeaseImporter(BaseImporter):
                         type=TenantContactType.TENANT,
                         tenant=tenant,
                         contact=contact,
-                        start_date=role_row['ALKAEN'],
+                        start_date=start_date,
                         end_date=role_row['SAAKKA']
                     )
 
@@ -230,6 +260,13 @@ class LeaseImporter(BaseImporter):
                     self.stdout.write(" ASIAKAS {} #{}".format(role_row['ROOLI'], role_row['ASIAKAS']))
                     contact = get_or_create_contact(role_row)
                     self.stdout.write('  Contact {}'.format(contact))
+
+                    start_date = role_row['ALKAEN']
+                    if 2100 < start_date.year < 2200:
+                        start_date = start_date.replace(year=start_date.year - 100)
+
+                    if 3000 < start_date.year < 3100:
+                        start_date = start_date.replace(year=start_date.year - 1000)
 
                     this_tenant = None
                     for lease_tenant in lease.tenants.all():
@@ -246,7 +283,7 @@ class LeaseImporter(BaseImporter):
                             type=TenantContactType.BILLING if role_row['ROOLI'] == 'L' else TenantContactType.CONTACT,
                             tenant=this_tenant,
                             contact=contact,
-                            start_date=role_row['ALKAEN'],
+                            start_date=start_date,
                             end_date=role_row['SAAKKA']
                         )
 
@@ -267,11 +304,16 @@ class LeaseImporter(BaseImporter):
                 rent.y_value = lease_row['Y_LUKU']
 
                 if lease_row['Y_KK'] and lease_row['Y_VVVV']:
-                    rent.y_value_start = datetime.date(year=lease_row['Y_VVVV'], month=lease_row['Y_KK'], day=1)
+                    try:
+                        rent.y_value_start = datetime.date(year=lease_row['Y_VVVV'], month=lease_row['Y_KK'], day=1)
+                    except ValueError as e:
+                        self.stdout.write(" Invalid month/year: Exception " + str(e))
 
                 rent.equalization_start_date = lease_row['TASAUS_ALKUPVM']
                 rent.equalization_end_date = lease_row['TASAUS_LOPPUPVM']
                 rent.save()
+
+                self.stdout.write(" Type: {} Index: {}".format(rent_type, index_type))
 
                 # Due dates
                 self.stdout.write("Epäpäivät:")
@@ -283,9 +325,7 @@ class LeaseImporter(BaseImporter):
                 else:
                     query = """
                         SELECT *
-                        FROM VUOKRAUKSEN_ERAPAIVA
-                        WHERE 1 = 1
-                        """ + expanded_id_to_query_alku(id_parts)
+                        FROM VUOKRAUKSEN_ERAPAIVA""" + expanded_id_to_query_alku(id_parts)
 
                     cursor.execute(query)
                     vuokrauksen_erapaiva_rows = rows_to_dict_list(cursor)
@@ -332,6 +372,8 @@ class LeaseImporter(BaseImporter):
 
                 initial_rent = None
                 if lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA'] and lease_row['KIINTEA_ALKUVUOSIVUOKRAN_LOPPU']:
+                    self.stdout.write("Kiinteä alkuvuosivuokra {}".format(lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA']))
+
                     (initial_rent, initial_rent_created) = FixedInitialYearRent.objects.get_or_create(
                         rent=rent,
                         amount=lease_row['KIINTEA_ALKUVUOSIVUOKRAN_MAARA'],
@@ -343,23 +385,27 @@ class LeaseImporter(BaseImporter):
                 query = """
                     SELECT sv.*, kt.NIMI as kt_nimi
                     FROM SOPIMUSVUOKRA sv
-                    LEFT JOIN KAYTTOTARKOITUS kt ON sv.KAYTTOTARKOITUS = kt.KAYTTOTARKOITUS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    LEFT JOIN KAYTTOTARKOITUS kt ON sv.KAYTTOTARKOITUS = kt.KAYTTOTARKOITUS""" + \
+                        expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 sopimusvuokra_rows = rows_to_dict_list(cursor)
 
+                self.stdout.write(" {} rows".format(len(sopimusvuokra_rows)))
+
                 for rent_row in sopimusvuokra_rows:
                     contract_rent_amount = None
                     contract_rent_period = None
-                    if rent_row['SOPIMUSVUOKRA_VUOSI']:
+                    if rent_row['SOPIMUSVUOKRA_VUOSI'] is not None:
                         contract_rent_amount = rent_row['SOPIMUSVUOKRA_VUOSI']
                         contract_rent_period = PeriodType.PER_YEAR
 
-                    if rent_row['SOPIMUSVUOKRA_KK']:
+                    if rent_row['SOPIMUSVUOKRA_KK'] is not None:
                         contract_rent_amount = rent_row['SOPIMUSVUOKRA_KK']
                         contract_rent_period = PeriodType.PER_MONTH
+
+                    if contract_rent_amount is None:
+                        continue
 
                     try:
                         contract_rent_intended_use = RentIntendedUse.objects.get(pk=rent_row['KAYTTOTARKOITUS'])
@@ -384,16 +430,37 @@ class LeaseImporter(BaseImporter):
                         initial_rent.intended_use = contract_rent_intended_use
                         initial_rent.save()
 
+                if rent.type == RentType.ONE_TIME:
+                    # Calculate one time rent from sent invoices
+                    self.stdout.write("Kertakaikkinen vuokra:")
+                    query = """
+                        SELECT *
+                        FROM R_LASKU""" + expanded_id_to_query(id_parts)
+
+                    cursor.execute(query)
+                    lasku_rows = rows_to_dict_list(cursor)
+
+                    one_time_amount = Decimal(0)
+                    for lasku_row in lasku_rows:
+                        one_time_amount += Decimal(lasku_row['LASKUTETTU_MAARA'])
+
+                    if one_time_amount:
+                        one_time_amount = one_time_amount.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+                        self.stdout.write(" {}e".format(one_time_amount))
+
+                        rent.amount = one_time_amount
+                        rent.save()
+
                 self.stdout.write("Tarkistettu vuokra:")
 
                 query = """
                     SELECT *
-                    FROM TARKISTETTU_VUOKRA
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    FROM TARKISTETTU_VUOKRA""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 tarkistettu_vuokra_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(tarkistettu_vuokra_rows)))
 
                 for rent_row in tarkistettu_vuokra_rows:
                     (ia_rent, ia_rent_created) = IndexAdjustedRent.objects.get_or_create(
@@ -409,12 +476,12 @@ class LeaseImporter(BaseImporter):
 
                 query = """
                     SELECT *
-                    FROM VUOSIVUOKRA
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    FROM VUOSIVUOKRA""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 vuosivuokra_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(vuosivuokra_rows)))
 
                 for rent_row in vuosivuokra_rows:
                     (payable_rent, payable_rent_created) = PayableRent.objects.get_or_create(
@@ -430,12 +497,12 @@ class LeaseImporter(BaseImporter):
 
                 query = """
                     SELECT *
-                    FROM ALENNUS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    FROM ALENNUS""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 alennus_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(alennus_rows)))
 
                 for adjustment_row in alennus_rows:
                     adjustment_type = ALENNUS_KOROTUS_MAP[adjustment_row['ALENNUS_KOROTUS']]
@@ -461,48 +528,26 @@ class LeaseImporter(BaseImporter):
                         note=adjustment_row['KOMMENTTITXT']
                     )
 
-                # self.stdout.write("Alennushistoria:")
-                #
-                # query = """
-                #     SELECT *
-                #     FROM ALENNUS_HISTORIA
-                #     WHERE 1 = 1
-                #     """ + expanded_id_to_query_alku(id_parts)
-                #
-                # cursor.execute(query)
-                # alennus_rows = rows_to_dict_list(cursor)
-                #
-                # for adjustment_row in alennus_rows:
-                #     adjustment_type = ALENNUS_KOROTUS_MAP[adjustment_row['ALENNUS_KOROTUS']]
-                #
-                #     if adjustment_row['ALE_MK']:
-                #         amount_type = RentAdjustmentAmountType.AMOUNT_PER_YEAR
-                #         full_amount = adjustment_row['ALE_MK']
-                #
-                #     if adjustment_row['ALE_PROS']:
-                #         amount_type = RentAdjustmentAmountType.PERCENT_PER_YEAR
-                #         full_amount = adjustment_row['ALE_PROS']
-                #
-                #     # History rows might have an ending time, but the
-                #     # row hasn't been in use when it has been moved
-                #     # to the history table
-                #     end_date = adjustment_row['MUUTOSPVM'].date()
-                #     if adjustment_row['LOPPUPVM'] and adjustment_row['LOPPUPVM'].date() < adjustment_row[
-                #         'MUUTOSPVM'].date():
-                #         end_date = adjustment_row['MUUTOSPVM'].date()
-                #
-                #     (adjustment, adjustment_created) = RentAdjustment.objects.get_or_create(
-                #         rent=rent,
-                #         type=adjustment_type,
-                #         intended_use_id=int(adjustment_row['KAYTTOTARKOITUS']),
-                #         start_date=adjustment_row['ALKUPVM'].date() if adjustment_row['ALKUPVM'] else None,
-                #         end_date=end_date,
-                #         full_amount=full_amount,
-                #         amount_type=amount_type,
-                #         amount_left=None,
-                #         decision=None,
-                #         note=adjustment_row['KOMMENTTITXT']
-                #     )
+                self.stdout.write("Tasattu vuokra:")
+
+                query = """
+                    SELECT *
+                    FROM TASATTUVUOKRA""" + expanded_id_to_query_alku(id_parts)
+
+                cursor.execute(query)
+                tasattuvuokra_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(tasattuvuokra_rows)))
+
+                for rent_row in tasattuvuokra_rows:
+                    (equalized_rent, equalized_rent_created) = EqualizedRent.objects.get_or_create(
+                        rent=rent,
+                        start_date=rent_row['ALKUPVM'].date() if rent_row['ALKUPVM'] else None,
+                        end_date=rent_row['LOPPUPVM'].date() if rent_row['LOPPUPVM'] else None,
+                        payable_amount=rent_row['PERITTAVAVUOKRA'],
+                        equalized_payable_amount=rent_row['TASATTU_PERITTAVAVUOKRA'],
+                        equalization_factor=rent_row['TASAUSKERROIN'],
+                    )
 
                 self.stdout.write("Lasku:")
 
@@ -510,38 +555,16 @@ class LeaseImporter(BaseImporter):
                     SELECT l.*, a.*, l.ASIAKAS AS LASKU_ASIAKAS, hl.lasku AS CREDITED_INVOICE
                     FROM R_LASKU l
                     LEFT JOIN R_LASKU_HYVITYSLASKU hl ON hl.HYVITYSLASKU = l.LASKU
-                    LEFT JOIN ASIAKAS a ON l.ASIAKAS = a.ASIAKAS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query(id_parts)
+                    LEFT JOIN ASIAKAS a ON l.ASIAKAS = a.ASIAKAS""" + expanded_id_to_query(id_parts)
 
                 cursor.execute(query)
                 lasku_rows = rows_to_dict_list(cursor)
 
+                self.stdout.write(" {} rows".format(len(lasku_rows)))
+
                 for invoice_row in lasku_rows:
                     if invoice_row['ASIAKAS']:
-                        contact_type = ASIAKASTYYPPI_MAP[invoice_row['ASIAKASTYYPPI']]
-                        name = None
-                        first_name = None
-                        last_name = None
-
-                        if contact_type == ContactType.PERSON:
-                            last_name = invoice_row['NIMI'].split(' ', 1)[0]
-                            try:
-                                first_name = invoice_row['NIMI'].split(' ', 1)[1]
-                            except IndexError:
-                                pass
-                        else:
-                            name = invoice_row['NIMI']
-
-                        (contact, contact_created) = Contact.objects.get_or_create(
-                            type=contact_type,
-                            first_name=first_name,
-                            last_name=last_name,
-                            name=name,
-                            address=invoice_row['OSOITE'],
-                            postal_code=invoice_row['POSTINO'],
-                            business_id=invoice_row['LYTUNNUS'],
-                        )
+                        contact = get_or_create_contact(invoice_row)
                     else:
                         self.stdout.write('ASIAKAS #{} in Invoice #{} missing. Using unkown_contact.'.format(
                             invoice_row['LASKU_ASIAKAS'], invoice_row['LASKU']
@@ -627,14 +650,14 @@ class LeaseImporter(BaseImporter):
                 self.stdout.write('Vuokra-alue:')
 
                 query = """
-                    SELECT *
+                    SELECT h.*, k.KIINTEISTOTYYPPI, k.PINTA_ALA_M2, k.OSOITE
                     FROM HALLINTA h
-                    LEFT JOIN VUOKRAKOHDE k ON k.KOHDE = h.KOHDE
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    LEFT JOIN VUOKRAKOHDE k ON k.KOHDE = h.KOHDE""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 kohde_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(kohde_rows)))
 
                 for lease_area_row in kohde_rows:
                     identifier = get_real_property_identifier(lease_area_row)
@@ -652,18 +675,38 @@ class LeaseImporter(BaseImporter):
                         (lease_area_address, lease_area_address_created) = LeaseAreaAddress.objects.get_or_create(
                             lease_area=lease_area,
                             address=lease_area_row['OSOITE'],
+                            is_primary=True
+                        )
+
+                    query = """
+                        SELECT *
+                        FROM OSOITE
+                        WHERE KOHDE = '{}'
+                        """.format(lease_area_row['KOHDE'])
+
+                    cursor.execute(query)
+                    address_rows = rows_to_dict_list(cursor)
+
+                    for address_row in address_rows:
+                        if address_row['OSOITE'] == lease_area_row['OSOITE']:
+                            continue
+
+                        (lease_area_address, lease_area_address_created) = LeaseAreaAddress.objects.get_or_create(
+                            lease_area=lease_area,
+                            address=address_row['OSOITE'],
+                            is_primary=False
                         )
 
                 self.stdout.write('Päätökset:')
 
                 query = """
                     SELECT *
-                    FROM PAATOS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    FROM PAATOS""" + expanded_id_to_query_alku(id_parts)
 
                 cursor.execute(query)
                 paatos_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(paatos_rows)))
 
                 lease_decisions = {}
 
@@ -687,28 +730,53 @@ class LeaseImporter(BaseImporter):
 
                     lease_decisions[decision_row['PAATOS']] = decision
 
+                    query = """
+                        SELECT *
+                        FROM VUOKRAUKSEN_EHTO
+                        WHERE PAATOS = '{}'
+                        """.format(decision_row['PAATOS'])
+
+                    cursor.execute(query)
+                    ehto_rows = rows_to_dict_list(cursor)
+
+                    for condition_row in ehto_rows:
+                        (condition, condition_created) = Condition.objects.get_or_create(
+                            decision=decision,
+                            type_id=int(condition_row['EHTOTYYPPI']),
+                            supervision_date=condition_row['VALVONTAPVM'],
+                            supervised_date=condition_row['VALVOTTUPVM'],
+                            description=condition_row['EHTOTXT'],
+                        )
+
                 self.stdout.write('Sopimukset:')
 
                 query = """
-                    SELECT *
-                    FROM SOPIMUS
-                    WHERE 1 = 1
-                    """ + expanded_id_to_query_alku(id_parts)
+                    SELECT s.*, sl.KOMMENTTI AS LAITOSTUNNUS_KOMMENTTI
+                    FROM SOPIMUS s
+                    LEFT JOIN OPS$MVJ.SOPIMUS_LAITOSTUNNUS sl ON s.SOPIMUS = sl.SOPIMUS""" + expanded_id_to_query_alku(
+                        id_parts)
 
                 cursor.execute(query)
                 sopimus_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(sopimus_rows)))
 
                 for contract_row in sopimus_rows:
                     # TODO: Other contract numbers
                     if not re.fullmatch(r'\d+', contract_row['SOPIMUS']):
                         continue
 
+                    note = contract_row['KOMMENTTI']
+                    if contract_row['LAITOSTUNNUS_KOMMENTTI'] and contract_row['KOMMENTTI'] != contract_row[
+                            'LAITOSTUNNUS_KOMMENTTI']:
+                        note += ' ' + contract_row['LAITOSTUNNUS_KOMMENTTI']
+
                     (contract, contract_created) = Contract.objects.get_or_create(
                         lease=lease,
                         type_id=1,  # Vuokrasopimus
                         contract_number=contract_row['SOPIMUS'],
                         signing_date=contract_row['ALLEKIRJPVM'].date() if contract_row['ALLEKIRJPVM'] else None,
-                        signing_note=None,
+                        signing_note=note,
                         is_readjustment_decision=bool(contract_row['JARJESTELYPAATOS']),
                         institution_identifier=contract_row['LAITOSTUNNUS'],
                     )
@@ -766,7 +834,118 @@ class LeaseImporter(BaseImporter):
                             decision=decision,
                         )
 
+                self.stdout.write('Tarkastukset:')
+
+                query = """
+                    SELECT *
+                    FROM TARKASTUS""" + expanded_id_to_query_alku(id_parts)
+
+                cursor.execute(query)
+                tarkastus_rows = rows_to_dict_list(cursor)
+
+                self.stdout.write(" {} rows".format(len(tarkastus_rows)))
+
+                for inspection_row in tarkastus_rows:
+                    self.stdout.write(' Inspection #{}'.format(inspection_row['TARKASTUS']))
+
+                    descriptions = []
+
+                    if inspection_row['KOMMENTTITXT']:
+                        descriptions.append(inspection_row['KOMMENTTITXT'])
+
+                    if inspection_row['TOIMENPIDE_EHDOTUS']:
+                        descriptions.append('\nToimenpide-ehdotus:')
+                        descriptions.append(' ' + inspection_row['TOIMENPIDE_EHDOTUS'])
+                        descriptions.append('\n')
+
+                    query = """
+                        SELECT *
+                        FROM TARKASTUS_KEHOTUS
+                        WHERE TARKASTUS = '{}'
+                        ORDER BY VALVONTAPVM
+                        """.format(inspection_row['TARKASTUS'])
+
+                    cursor.execute(query)
+                    tarkastus_kehotus_rows = rows_to_dict_list(cursor)
+
+                    self.stdout.write(' {} requests'.format(len(tarkastus_kehotus_rows)))
+
+                    if tarkastus_kehotus_rows:
+                        descriptions.append('\nKehotukset:')
+
+                    for inspection_request_row in tarkastus_kehotus_rows:
+                        if not inspection_request_row['KEHOTUSTXT']:
+                            continue
+
+                        descriptions.append(' Valvontapvm: {}\n Valvottu pvm: {}\n {}\n'.format(
+                            inspection_request_row['VALVONTAPVM'].date()
+                            if inspection_request_row['VALVONTAPVM'] else '',
+                            inspection_request_row['VALVOTTUPVM'].date()
+                            if inspection_request_row['VALVOTTUPVM'] else '',
+                            inspection_request_row['KEHOTUSTXT'],
+                        ))
+
+                    query = """
+                        SELECT *
+                        FROM TARKASTUS_KAYNTI
+                        WHERE TARKASTUS = '{}'
+                        ORDER BY TARKASTUSPVM
+                        """.format(inspection_row['TARKASTUS'])
+
+                    cursor.execute(query)
+                    tarkastus_kaynti_rows = rows_to_dict_list(cursor)
+
+                    self.stdout.write('  {} visits'.format(len(tarkastus_kaynti_rows)))
+
+                    if tarkastus_kaynti_rows:
+                        descriptions.append('\nKäynnit:')
+
+                    for inspection_visit_row in tarkastus_kaynti_rows:
+                        if not inspection_visit_row['TARKASTUSKERTOMUSTXT']:
+                            continue
+
+                        descriptions.append(' Tarkastus pvm: {}\n Tarkastaja: {}\n {}\n'.format(
+                            inspection_visit_row['TARKASTUSPVM'].date() if inspection_visit_row['TARKASTUSPVM'] else '',
+                            inspection_visit_row['TARKASTAJA'],
+                            inspection_visit_row['TARKASTUSKERTOMUSTXT'],
+                        ))
+
+                    query = """
+                        SELECT *
+                        FROM TARKASTUS_VASTINE
+                        WHERE TARKASTUS = '{}'
+                        ORDER BY SAAPUMISPVM
+                        """.format(inspection_row['TARKASTUS'])
+
+                    cursor.execute(query)
+                    tarkastus_vastine_rows = rows_to_dict_list(cursor)
+
+                    self.stdout.write('  {} replies'.format(len(tarkastus_vastine_rows)))
+
+                    if tarkastus_vastine_rows:
+                        descriptions.append('\nVastineet:')
+
+                    for inspection_reply_row in tarkastus_vastine_rows:
+                        if not inspection_reply_row['VASTINETXT']:
+                            continue
+
+                        descriptions.append(' Saapumispvm: {}\n {}\n'.format(
+                            inspection_reply_row['SAAPUMISPVM'].date() if inspection_reply_row['SAAPUMISPVM'] else '',
+                            inspection_reply_row['VASTINETXT'],
+                        ))
+
+                    (inspection, inspection_created) = Inspection.objects.get_or_create(
+                        lease=lease,
+                        inspector=inspection_row['TARKASTAJA'],
+                        supervision_date=None,
+                        supervised_date=None,
+                        description='\n'.join(descriptions),
+                    )
+
     def update_related_leases(self):
+        if not self.related_leases:
+            return
+
         self.stdout.write('Updating related leases:')
 
         for related_lease_data in self.related_leases:
@@ -783,7 +962,12 @@ class LeaseImporter(BaseImporter):
             except Lease.DoesNotExist:
                 self.stdout.write('  Lease {} does not exist!'.format(related_lease_data['from_lease']))
 
+        self.stdout.write(' {} relations'.format(len(self.credit_notes)))
+
     def update_credit_notes(self):
+        if not self.credit_notes:
+            return
+
         self.stdout.write('Updating credit notes:')
         for credit_note_datum in self.credit_notes:
             credit_note = credit_note_datum['credit_note']
@@ -801,3 +985,5 @@ class LeaseImporter(BaseImporter):
                 except Invoice.MultipleObjectsReturned:
                     self.stdout.write("Multiple invoices returned fot Credited invoice number #{}!".format(
                         credit_note_datum['credited_invoice_number']))
+
+        self.stdout.write(' {} credit notes'.format(len(self.credit_notes)))

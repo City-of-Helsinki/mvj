@@ -1,10 +1,13 @@
 import re
 
 from leasing.enums import ContactType
-from leasing.importer.mappings import ASIAKASTYYPPI_MAP
+from leasing.importer.mappings import ASIAKASTYYPPI_MAP, MAA_MAP
 from leasing.models import Contact
 
 asiakas_cache = {}
+
+PERSON_NAMES = [
+]
 
 
 def expand_lease_identifier(id):
@@ -18,18 +21,26 @@ def expand_lease_identifier(id):
     }
 
 
-def expanded_id_to_query(expanded_id):
-    return """
-AND TARKOITUS = '{TARKOITUS}'
+def expanded_id_to_query(expanded_id, where=True):
+    if where:
+        expanded_id['where_or_and'] = 'WHERE '
+    else:
+        expanded_id['where_or_and'] = 'AND '
+
+    return """\n{where_or_and}TARKOITUS = '{TARKOITUS}'
 AND KUNTA = {KUNTA}
 AND KAUPOSA = {KAUPOSA}
 AND JUOKSU = {JUOKSU}
 """.format(**expanded_id)
 
 
-def expanded_id_to_query_alku(expanded_id):
-    return """
-AND ALKUOSA = '{ALKUOSA}'
+def expanded_id_to_query_alku(expanded_id, where=True):
+    if where:
+        expanded_id['where_or_and'] = 'WHERE '
+    else:
+        expanded_id['where_or_and'] = 'AND '
+
+    return """\n{where_or_and}ALKUOSA = '{ALKUOSA}'
 AND JUOKSU = {JUOKSU}
 """.format(**expanded_id)
 
@@ -63,7 +74,7 @@ def get_unknown_contact():
     return contact
 
 
-def get_or_create_contact(data):
+def get_or_create_contact(data):  # NOQA
     if data['ASIAKAS']:
         if data['ASIAKAS'] in asiakas_cache:
             return asiakas_cache[data['ASIAKAS']]
@@ -73,14 +84,53 @@ def get_or_create_contact(data):
         first_name = None
         last_name = None
 
+        if data['NIMI'].startswith('* '):
+            data['NIMI'] = data['NIMI'][2:]
+
+        data['NIMI'] = re.sub(r'\s+', ' ', data['NIMI'])
+
+        if data['NIMI'].lower().endswith(' oy') or \
+                'isännöitsijä' in data['NIMI'].lower() or \
+                data['NIMI'].lower().endswith(' ry') or \
+                data['NIMI'].lower().startswith('työ') or \
+                'r.y.' in data['NIMI'].lower() or \
+                ' oy ' in data['NIMI'].lower() or \
+                'oyj' in data['NIMI'].lower() or \
+                '/oy' in data['NIMI'].lower() or \
+                'oy/' in data['NIMI'].lower() or \
+                'skanska' in data['NIMI'].lower() or \
+                'sosiaali' in data['NIMI'].lower() or \
+                ' oy:n ' in data['NIMI'].lower() or \
+                'as oy' in data['NIMI'].lower() or \
+                'bo ab' in data['NIMI'].lower() or \
+                'vvo-' in data['NIMI'].lower() or \
+                'vvo ' in data['NIMI'].lower():
+            contact_type = ContactType.BUSINESS
+
+        if data['NIMI'] == 'ATT' or data['NIMI'].startswith('ATT/') or data['NIMI'].startswith('ATT ') or \
+                data['NIMI'].endswith('/ATT'):
+            contact_type = ContactType.UNIT
+
+        if data['NIMI'] in PERSON_NAMES or 'kuolinp' in data['NIMI'].lower():
+            contact_type = ContactType.PERSON
+
         if contact_type == ContactType.PERSON:
-            last_name = data['NIMI'].split(' ', 1)[0]
-            try:
-                first_name = data['NIMI'].split(' ', 1)[1]
-            except IndexError:
-                pass
+            name_parts = [p.strip() for p in data['NIMI'].split(' ') if p.strip()]
+
+            if len(name_parts) == 1:
+                last_name = name_parts[0]
+            else:
+                split_pos = 1
+                if name_parts[0].lower() == 'af' or name_parts[0].lower() == 'von':
+                    split_pos = 2
+
+                last_name = ' '.join(name_parts[0:split_pos])
+                first_name = ' '.join(name_parts[split_pos:])
         else:
-            name = data['NIMI']
+            name = data['NIMI'].strip()
+
+        if data['NIMI2'] and data['NIMI2'].strip():
+            name += ' ' + data['NIMI2'].strip()
 
         language = None
         if data['KIELI'] == '1':
@@ -93,18 +143,29 @@ def get_or_create_contact(data):
             if data['PUHNO{}'.format(i)]:
                 phone.append(data['PUHNO{}'.format(i)])
 
+        postal_code = None
+        if data['POSTINO']:
+            postal_code = data['POSTINO'].strip()
+            if postal_code == '.' or re.match(r'0+$', postal_code) or re.match(r'x+$', postal_code.lower()):
+                postal_code = None
+
         (contact, contact_created) = Contact.objects.get_or_create(
             type=contact_type,
             first_name=first_name,
             last_name=last_name,
             name=name,
             address=data['OSOITE'],
-            postal_code=data['POSTINO'],
+            postal_code=postal_code,
+            country=MAA_MAP[data['MAA']],
             business_id=data['LYTUNNUS'],
-            country=data['MAA'],
+            # national_identification_number=data['HETU'],
             language=language,
             phone=', '.join(phone),
-            note=data['KOMMENTTI']
+            note=data['KOMMENTTI'],
+            email=data['SAHKOPOSTIOSOITE'],
+            sap_customer_number=data['SAP_ASIAKASNUMERO'],
+            partner_code=data['KUMPPANIKOODI'],
+            electronic_billing_address=data['OVT_TUNNUS']
         )
     else:
         contact = get_unknown_contact()
