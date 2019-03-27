@@ -15,7 +15,7 @@
   },
   {
     "model": "leasing.ReceivableType",
-    "pk": 2,
+    "pk": 3,
     "fields": {
       "name": "Muu"
     }

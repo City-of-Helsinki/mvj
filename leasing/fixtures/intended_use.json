@@ -1832,5 +1832,12 @@
     "fields": {
       "name": "toimisto / liike / teollisuus"
     }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 263,
+    "fields": {
+      "name": "Maatalousmaa (peltovuokraus)"
+    }
   }
 ]

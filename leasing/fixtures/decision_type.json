@@ -542,5 +542,21 @@
       "name": "Hallintaoikeuden jatkaminen",
       "kind": null
     }
+  },
+  {
+    "model": "leasing.DecisionType",
+    "pk": 69,
+    "fields": {
+      "name": "Hallintaoikeus",
+      "kind": null
+    }
+  },
+  {
+    "model": "leasing.DecisionType",
+    "pk": 70,
+    "fields": {
+      "name": "Naapuriasiat",
+      "kind": null
+    }
   }
 ]
