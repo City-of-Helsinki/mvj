@@ -106,7 +106,7 @@ class ConstructabilityDescriptionCreateUpdateSerializer(EnumSupportSerializerMix
 class LeaseAreaAddressSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LeaseAreaAddress
-        fields = ('id', 'address', 'postal_code', 'city')
+        fields = ('id', 'address', 'postal_code', 'city', 'is_primary')
 
 
 class LeaseAreaAttachmentSerializer(FileSerializerMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,

@@ -135,6 +135,9 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
 class LeaseAreaAddress(AbstractAddress):
     lease_area = models.ForeignKey(LeaseArea, related_name='addresses', on_delete=models.CASCADE)
 
+    # In Finnish: Ensisijainen osoite
+    is_primary = models.BooleanField(verbose_name=_("Is primary?"), default=False)
+
     recursive_get_related_skip_relations = ["lease_area"]
 
     class Meta:
