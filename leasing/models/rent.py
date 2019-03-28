@@ -858,7 +858,7 @@ auditlog.register(ContractRent)
 auditlog.register(RentAdjustment)
 auditlog.register(LeaseBasisOfRent)
 
-field_permissions.register(Rent, exclude_fields=['lease', 'index_adjusted_rents', 'payable_rents'])
+field_permissions.register(Rent, exclude_fields=['lease', 'index_adjusted_rents', 'payable_rents', 'equalized_rents'])
 field_permissions.register(RentDueDate, exclude_fields=['rent'])
 field_permissions.register(FixedInitialYearRent, exclude_fields=['rent'])
 field_permissions.register(ContractRent, exclude_fields=['rent'])
