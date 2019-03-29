@@ -411,6 +411,12 @@ CUSTOM_FIELD_PERMS = {
             3: "change",
             6: "change",
         },
+        "invoice_notes": {
+            2: "view",
+            4: "view",
+            5: "view",
+            6: "change",
+        },
         "is_invoicing_enabled": {
             2: "view",
             4: "view",
