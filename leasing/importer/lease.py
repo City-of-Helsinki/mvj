@@ -769,7 +769,10 @@ class LeaseImporter(BaseImporter):
                     note = contract_row['KOMMENTTI']
                     if contract_row['LAITOSTUNNUS_KOMMENTTI'] and contract_row['KOMMENTTI'] != contract_row[
                             'LAITOSTUNNUS_KOMMENTTI']:
-                        note += ' ' + contract_row['LAITOSTUNNUS_KOMMENTTI']
+                        if note:
+                            note += ' ' + contract_row['LAITOSTUNNUS_KOMMENTTI']
+                        else:
+                            note = contract_row['LAITOSTUNNUS_KOMMENTTI']
 
                     (contract, contract_created) = Contract.objects.get_or_create(
                         lease=lease,
