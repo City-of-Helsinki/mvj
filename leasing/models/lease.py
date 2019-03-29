@@ -538,7 +538,15 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return year_rent
 
-    def determine_payable_rents_and_periods(self, start_date, end_date):
+    def determine_payable_rents_and_periods(self, start_date, end_date, dry_run=False):
+        """Determines billing periods and rent amounts for them
+
+        dry_run parameter is used when rent calculation is not for
+        a real invoice. e.g. for only previewing the billing periods.
+        The amount in an adjustment with the
+        RentAdjustmentAmountType.AMOUNT_TOTAL-type is not updated
+        when doing a dry run.
+        """
         lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
 
         if not lease_due_dates:
@@ -574,7 +582,8 @@ class Lease(TimeStampedSafeDeleteModel):
                         'explanations': [],
                     }
 
-                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True)
+                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True,
+                                                                            dry_run=dry_run)
 
                 amounts_for_billing_periods[billing_period]['amount'] += this_amount
                 amounts_for_billing_periods[billing_period]['explanations'].append(explanation)

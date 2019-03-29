@@ -5,7 +5,7 @@ from decimal import Decimal
 import pytest
 
 from leasing.enums import DueDatesType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle
-from leasing.models import Index, RentDueDate
+from leasing.models import Index, RentAdjustment, RentDueDate
 
 
 @pytest.mark.django_db
@@ -1908,3 +1908,111 @@ def test_get_amount_for_date_range_two_contracts_with_adjustment(
     range_end = date(year=2018, month=12, day=31)
 
     assert rent.get_amount_for_date_range(range_start, range_end) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "dry_run, adjustment_type, adjustment_amount, expected_rent, expected_amount_left",
+    [
+        # Save amount left
+        # Discount
+        (
+            False,
+            RentAdjustmentType.DISCOUNT,
+            100,
+            Decimal(1827),
+            Decimal(0),
+        ),
+        (
+            False,
+            RentAdjustmentType.DISCOUNT,
+            10000,
+            Decimal(0),
+            Decimal(8073),
+        ),
+        # Increase
+        (
+            False,
+            RentAdjustmentType.INCREASE,
+            100,
+            Decimal(2027),
+            Decimal(0),
+        ),
+        (
+            False,
+            RentAdjustmentType.INCREASE,
+            10000,
+            Decimal(11927),
+            Decimal(0),
+        ),
+        # Don't save amount left
+        # Discount
+        (
+            True,
+            RentAdjustmentType.DISCOUNT,
+            100,
+            Decimal(1827),
+            Decimal(100),
+        ),
+        (
+            True,
+            RentAdjustmentType.DISCOUNT,
+            10000,
+            Decimal(0),
+            Decimal(10000),
+        ),
+        # Increase
+        (
+            True,
+            RentAdjustmentType.INCREASE,
+            100,
+            Decimal(2027),
+            Decimal(100),
+        ),
+        (
+            True,
+            RentAdjustmentType.INCREASE,
+            10000,
+            Decimal(11927),
+            Decimal(10000),
+        ),
+    ]
+)
+def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory,
+                                      dry_run, adjustment_type, adjustment_amount, expected_rent, expected_amount_left):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    contract_rent = contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(100),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(100),
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+
+    rent_adjustment = rent_adjustment_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        type=adjustment_type,
+        start_date=None,
+        end_date=None,
+        amount_type=RentAdjustmentAmountType.AMOUNT_TOTAL,
+        full_amount=adjustment_amount,
+        amount_left=adjustment_amount,
+    )
+
+    range_start = date(year=2018, month=1, day=1)
+    range_end = date(year=2018, month=12, day=31)
+
+    assert rent.get_amount_for_date_range(range_start, range_end, dry_run=dry_run) == expected_rent
+
+    rent_adjustment = RentAdjustment.objects.get(pk=rent_adjustment.id)
+    assert rent_adjustment.amount_left == expected_amount_left

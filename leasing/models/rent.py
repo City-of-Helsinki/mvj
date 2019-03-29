@@ -151,7 +151,7 @@ class Rent(TimeStampedSafeDeleteModel):
         date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
-    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False):  # noqa: C901 TODO
+    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False, dry_run=False):  # noqa: TODO
         assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
 
         explanation = Explanation()
@@ -218,7 +218,8 @@ class Rent(TimeStampedSafeDeleteModel):
                     continue
 
                 tmp_amount = fix_amount_for_overlap(fixed_amount, adjustment_overlap, adjustment_remainders)
-                adjustment_amount = rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                adjustment_amount = rent_adjustment.get_amount_for_date_range(
+                    tmp_amount, *adjustment_overlap, update_amount_total=False if dry_run else True)
                 fixed_amount += adjustment_amount
 
                 explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
@@ -315,7 +316,8 @@ class Rent(TimeStampedSafeDeleteModel):
                         continue
 
                     tmp_amount = fix_amount_for_overlap(contract_amount, adjustment_overlap, adjustment_remainders)
-                    adjustment_amount = rent_adjustment.get_amount_for_date_range(tmp_amount, *adjustment_overlap)
+                    adjustment_amount = rent_adjustment.get_amount_for_date_range(
+                        tmp_amount, *adjustment_overlap, update_amount_total=False if dry_run else True)
                     contract_amount += adjustment_amount
 
                     explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
@@ -658,7 +660,8 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
     def date_range(self):
         return self.start_date, self.end_date
 
-    def get_amount_for_date_range(self, rent_amount, date_range_start, date_range_end):
+    def get_amount_for_date_range(self, rent_amount, date_range_start, date_range_end,  # NOQA TODO
+                                  update_amount_total=False):
         if self.start_date:
             date_range_start = max(self.start_date, date_range_start)
         if self.end_date:
@@ -678,10 +681,14 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
             if self.amount_left is None:
                 adjustment_left = self.full_amount
 
-            adjustment = min(adjustment_left, rent_amount)
-            self.amount_left = max(0, adjustment_left - adjustment)
-            # TODO: This is for demonstration only! The new amount_left should be saved only when the invoice is created
-            self.save()
+            if self.type == RentAdjustmentType.INCREASE:
+                adjustment = adjustment_left
+            else:
+                adjustment = min(adjustment_left, rent_amount)
+
+            if update_amount_total:
+                self.amount_left = max(0, adjustment_left - adjustment)
+                self.save()
         else:
             raise NotImplementedError(
                 'Cannot get adjust amount for RentAdjustmentAmountType {}'.format(self.amount_type))

@@ -304,7 +304,7 @@ class LeasePreviewInvoicesForYearView(APIView):
         for first_day in first_day_of_every_month:
             last_day = first_day + relativedelta(day=31)
 
-            rents = lease.determine_payable_rents_and_periods(first_day, last_day)
+            rents = lease.determine_payable_rents_and_periods(first_day, last_day, dry_run=True)
 
             for period_invoice_data in lease.calculate_invoices(rents):
                 period_invoices = []
