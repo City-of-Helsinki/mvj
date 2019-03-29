@@ -14,7 +14,7 @@ from .infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from .inspection import Inspection
-from .invoice import BankHoliday, Invoice, ReceivableType
+from .invoice import BankHoliday, Invoice, InvoiceNote, ReceivableType
 from .land_area import (
     ConstructabilityDescription, LeaseArea, LeaseAreaAttachment, PlanUnit, PlanUnitState, PlanUnitType, Plot)
 from .lease import (
@@ -76,6 +76,7 @@ __all__ = [
     'IntendedUse',
     'InterestRate',
     'Invoice',
+    'InvoiceNote',
     'Lease',
     'LeaseArea',
     'LeaseAreaAttachment',

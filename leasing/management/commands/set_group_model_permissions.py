@@ -573,6 +573,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view", "add", "change", "delete"),
         7: ("view", "add", "change", "delete"),
     },
+    "invoicenote": {
+        1: None,
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete"),
+    },
     "invoicepayment": {
         1: None,
         2: ("view",),

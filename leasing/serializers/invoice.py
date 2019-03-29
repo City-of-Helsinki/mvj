@@ -5,14 +5,14 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import empty
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import InvoiceState, InvoiceType
-from leasing.models import Contact, Invoice, Lease, Tenant
-from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
+from leasing.models import Contact, Tenant
+from leasing.models.invoice import Invoice, InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
 from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
 from leasing.serializers.explanation import ExplanationSerializer
-from leasing.serializers.lease import LeaseSuccinctSerializer
 from leasing.serializers.tenant import TenantSerializer
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
@@ -28,6 +28,12 @@ class ReceivableTypeSerializer(serializers.ModelSerializer):
 class InvoicePaymentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = InvoicePayment
+        exclude = ('deleted',)
+
+
+class InvoiceNoteSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceNote
         exclude = ('deleted',)
 
 
@@ -82,7 +88,12 @@ class InvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMi
 
 
 class InvoiceSerializerWithSuccinctLease(InvoiceSerializer):
-    lease = LeaseSuccinctSerializer()
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Lease field must be added dynamically to prevent circular imports
+        from leasing.serializers.lease import LeaseSuccinctSerializer
+        self.fields['lease'] = LeaseSuccinctSerializer()
 
 
 class InvoiceSerializerWithExplanations(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
@@ -188,13 +199,21 @@ class CreateChargeInvoiceRowSerializer(serializers.Serializer):
 
 
 class CreateChargeSerializer(serializers.Serializer):
-    lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all(),
-                                               related_serializer=LeaseSuccinctSerializer)
     due_date = serializers.DateField()
     billing_period_start_date = serializers.DateField(required=False)
     billing_period_end_date = serializers.DateField(required=False)
     rows = serializers.ListSerializer(child=CreateChargeInvoiceRowSerializer(), required=True)
     notes = serializers.CharField(required=False)
+
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Lease field must be added dynamically to prevent circular imports
+        from leasing.serializers.lease import LeaseSuccinctSerializer
+        from leasing.models.lease import Lease
+
+        self.fields['lease'] = InstanceDictPrimaryKeyRelatedField(
+            instance_class=Lease, queryset=Lease.objects.all(), related_serializer=LeaseSuccinctSerializer)
 
     def to_representation(self, instance):
         if isinstance(instance, InvoiceSet):

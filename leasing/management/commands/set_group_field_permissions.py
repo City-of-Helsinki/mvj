@@ -283,6 +283,15 @@ DEFAULT_FIELD_PERMS = {
         6: "change",
         7: "change",
     },
+    "invoicenote": {
+        1: None,
+        2: "view",
+        3: "view",
+        4: "view",
+        5: "view",
+        6: "change",
+        7: "change",
+    },
     "invoicepayment": {
         1: None,
         2: "view",

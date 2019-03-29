@@ -506,6 +506,29 @@ class Invoice(TimeStampedSafeDeleteModel):
         return self.number
 
 
+class InvoiceNote(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Laskun tiedote
+    """
+    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='invoice_notes',
+                              on_delete=models.PROTECT)
+
+    # In Finnish: Laskutuskauden alkupvm
+    billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
+
+    # In Finnish: Laskutuskauden loppupvm
+    billing_period_end_date = models.DateField(verbose_name=_("Billing period end date"), null=True, blank=True)
+
+    # In Finnish: Tiedote
+    notes = models.TextField(verbose_name=_("Notes"), blank=True)
+
+    recursive_get_related_skip_relations = ["lease"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice note")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice notes")
+
+
 class InvoiceRow(TimeStampedSafeDeleteModel):
     """
     In Finnish: Rivi laskulla
@@ -576,9 +599,11 @@ class BankHoliday(models.Model):
 
 
 auditlog.register(Invoice)
+auditlog.register(InvoiceNote)
 auditlog.register(InvoiceRow)
 auditlog.register(InvoicePayment)
 
 field_permissions.register(Invoice, exclude_fields=['lease', 'laskeexportlog'])
+field_permissions.register(InvoiceNote, exclude_fields=['lease'])
 field_permissions.register(InvoiceRow, exclude_fields=['invoice'])
 field_permissions.register(InvoicePayment, exclude_fields=['invoice'])

@@ -11,6 +11,7 @@ from leasing.enums import LeaseRelationType
 from leasing.models import AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
+from leasing.serializers.invoice import InvoiceNoteSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -169,6 +170,7 @@ class LeaseSerializerBase(EnumSupportSerializerMixin, FieldPermissionsSerializer
     collection_court_decisions = CollectionCourtDecisionSerializer(many=True, required=False, allow_null=True)
     collection_letters = CollectionLetterSerializer(many=True, required=False, allow_null=True)
     collection_notes = CollectionNoteSerializer(many=True, required=False, allow_null=True)
+    invoice_notes = InvoiceNoteSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease

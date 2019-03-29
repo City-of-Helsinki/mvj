@@ -62,7 +62,9 @@ class Command(BaseCommand):
                     invoice_data['invoiceset'] = invoiceset
 
                     try:
-                        invoice = Invoice.objects.get(**invoice_data)
+                        invoice = Invoice.objects.get(**{
+                            k: v for k, v in invoice_data.items() if k != 'notes'
+                        })
                         self.stdout.write('  Invoice already exists. Invoice id {}. Number {}'.format(invoice.id,
                                                                                                       invoice.number))
                     except Invoice.DoesNotExist:

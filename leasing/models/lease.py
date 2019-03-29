@@ -634,6 +634,12 @@ class Lease(TimeStampedSafeDeleteModel):
                 total_contact_period_amount = Decimal(total_contact_period_amount).quantize(Decimal('.01'),
                                                                                             rounding=ROUND_HALF_UP)
 
+                notes = [note.notes for note in self.invoice_notes.filter(
+                    billing_period_start_date=billing_period[0],
+                    billing_period_end_date=billing_period[1],
+                    notes__isnull=False
+                )]
+
                 invoice_datum = {
                     'type': InvoiceType.CHARGE,
                     'lease': self,
@@ -646,6 +652,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     'rows': invoice_row_data,
                     'explanations': period_rent['explanations'],
                     'state': InvoiceState.OPEN,
+                    'notes': ' '.join(notes),
                 }
 
                 billing_period_invoices.append(invoice_datum)

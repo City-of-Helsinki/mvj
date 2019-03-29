@@ -17,7 +17,7 @@ from leasing.models import (
 from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
-from leasing.models.invoice import InvoicePayment, InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import LeaseAreaAddress, PlanUnitIntendedUse, PlotDivisionState
 
 
@@ -367,6 +367,18 @@ class InvoiceSetAdmin(admin.ModelAdmin):
                                  'lease__identifier__district')
 
 
+class InvoiceNoteAdmin(admin.ModelAdmin):
+    list_display = ('lease', 'billing_period_start_date', 'billing_period_end_date', 'notes')
+    raw_id_fields = ('lease', )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related('lease__type', 'lease__municipality', 'lease__district', 'lease__identifier',
+                                 'lease__identifier__type', 'lease__identifier__municipality',
+                                 'lease__identifier__district')
+
+
 class ConstructabilityDescriptionInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = ConstructabilityDescription
     extra = 0
@@ -494,6 +506,7 @@ admin.site.register(IntendedUse, NameAdmin)
 admin.site.register(InterestRate, InterestRateAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(InvoiceNote, InvoiceNoteAdmin)
 admin.site.register(InvoiceSet, InvoiceSetAdmin)
 admin.site.register(Lease, LeaseAdmin)
 admin.site.register(LeaseArea, LeaseAreaAdmin)
