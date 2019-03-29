@@ -46,6 +46,7 @@ class DecisionTypeSerializer(EnumSupportSerializerMixin, NameModelSerializer):
 
 class DecisionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    type = DecisionTypeSerializer(required=False, allow_null=True)
     conditions = ConditionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
