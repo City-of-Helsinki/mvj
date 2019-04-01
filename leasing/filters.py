@@ -5,7 +5,7 @@ from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
 
 from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionNote
-from leasing.models.invoice import InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 
 from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
 
@@ -116,6 +116,14 @@ class InvoiceFilter(FilterSet):
                 sent_to_sap_at__isnull=True
             )
         return queryset
+
+
+class InvoiceNoteFilter(FilterSet):
+    lease = filters.NumberFilter()
+
+    class Meta:
+        model = InvoiceNote
+        fields = ['lease']
 
 
 class InvoiceSetFilter(FilterSet):

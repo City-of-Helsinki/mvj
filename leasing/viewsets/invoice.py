@@ -5,11 +5,11 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.enums import InvoiceState, InvoiceType
-from leasing.filters import InvoiceFilter, InvoiceRowFilter, InvoiceSetFilter
+from leasing.filters import InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
-from leasing.models.invoice import InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
-    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceRowSerializer, InvoiceSerializer,
+    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceNoteSerializer, InvoiceRowSerializer, InvoiceSerializer,
     InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer)
 
 from .utils import AtomicTransactionModelViewSet
@@ -68,6 +68,12 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
             raise APIException(_("Can't delete invoices that have been sent to SAP"))
 
         return super().destroy(request, *args, **kwargs)
+
+
+class InvoiceNoteViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
+    queryset = InvoiceNote.objects.all()
+    serializer_class = InvoiceNoteSerializer
+    filterset_class = InvoiceNoteFilter
 
 
 class InvoiceRowViewSet(FieldPermissionsViewsetMixin, ReadOnlyModelViewSet):
