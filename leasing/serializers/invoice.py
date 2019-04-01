@@ -25,15 +25,38 @@ class ReceivableTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class InvoicePaymentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class InvoiceNoteSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Lease field must be added dynamically to prevent circular imports
+        from leasing.serializers.lease import LeaseSuccinctSerializer
+        self.fields['lease'] = LeaseSuccinctSerializer()
+
     class Meta:
-        model = InvoicePayment
+        model = InvoiceNote
         exclude = ('deleted',)
 
 
-class InvoiceNoteSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class InvoiceNoteCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Lease field must be added dynamically to prevent circular imports
+        from leasing.serializers.lease import LeaseSuccinctSerializer
+        from leasing.models.lease import Lease
+
+        self.fields['lease'] = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all(),
+                                                                  related_serializer=LeaseSuccinctSerializer)
+
     class Meta:
         model = InvoiceNote
+        exclude = ('deleted',)
+
+
+class InvoicePaymentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = InvoicePayment
         exclude = ('deleted',)
 
 

@@ -9,8 +9,9 @@ from leasing.filters import InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, 
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
-    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceNoteSerializer, InvoiceRowSerializer, InvoiceSerializer,
-    InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer)
+    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer,
+    InvoiceRowSerializer, InvoiceSerializer, InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer,
+    InvoiceUpdateSerializer)
 
 from .utils import AtomicTransactionModelViewSet
 
@@ -74,6 +75,12 @@ class InvoiceNoteViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelVie
     queryset = InvoiceNote.objects.all()
     serializer_class = InvoiceNoteSerializer
     filterset_class = InvoiceNoteFilter
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update', 'metadata'):
+            return InvoiceNoteCreateUpdateSerializer
+
+        return InvoiceNoteSerializer
 
 
 class InvoiceRowViewSet(FieldPermissionsViewsetMixin, ReadOnlyModelViewSet):
