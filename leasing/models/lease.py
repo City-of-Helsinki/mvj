@@ -354,10 +354,6 @@ class Lease(TimeStampedSafeDeleteModel):
     special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), related_name='+', null=True,
                                         blank=True, on_delete=models.PROTECT)
 
-    # In Finnish: Järjestelypäätös
-    arrangement_decision = models.BooleanField(verbose_name=_("Arrangement decision"), null=True, blank=True,
-                                               default=None)
-
     objects = LeaseManager()
 
     recursive_get_related_skip_relations = ["related_leases", "related_to", "from_leases", "to_leases"]
