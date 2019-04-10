@@ -24,7 +24,7 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     def get_queryset(self):
         queryset = Invoice.objects.select_related('recipient').prefetch_related(
             'rows__receivable_type', 'rows', 'rows__tenant', 'rows__tenant__tenantcontact_set',
-            'rows__tenant__tenantcontact_set__contact', 'payments', 'credit_invoices')
+            'rows__tenant__tenantcontact_set__contact', 'payments', 'credit_invoices', 'interest_invoices')
 
         return queryset
 

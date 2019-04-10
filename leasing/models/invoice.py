@@ -221,6 +221,11 @@ class Invoice(TimeStampedSafeDeleteModel):
     credited_invoice = models.ForeignKey('self', verbose_name=_("Credited invoice"), related_name='credit_invoices',
                                          null=True, blank=True, on_delete=models.PROTECT)
 
+    # In Finnish: Korko laskulle
+    interest_invoice_for = models.ForeignKey('self', verbose_name=_("Interest invoice for"),
+                                             related_name='interest_invoices', null=True, blank=True,
+                                             on_delete=models.PROTECT)
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:

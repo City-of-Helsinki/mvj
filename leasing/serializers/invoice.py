@@ -93,7 +93,7 @@ class InvoiceRowCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializ
                   'description', 'amount')
 
 
-class CreditInvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class InlineInvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = ('id', 'number', 'due_date', 'total_amount')
@@ -103,7 +103,8 @@ class InvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMi
     recipient = ContactSerializer()
     rows = InvoiceRowSerializer(many=True, required=False, allow_null=True)
     payments = InvoicePaymentSerializer(many=True, required=False, allow_null=True)
-    credit_invoices = CreditInvoiceSerializer(many=True, required=False, allow_null=True)
+    credit_invoices = InlineInvoiceSerializer(many=True, required=False, allow_null=True)
+    interest_invoices = InlineInvoiceSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Invoice
@@ -169,7 +170,7 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
         model = Invoice
         exclude = ('deleted',)
         read_only_fields = ('number', 'generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date',
-                            'credit_invoices')
+                            'credit_invoices', 'interest_invoices')
 
 
 class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
@@ -197,7 +198,8 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
     class Meta:
         model = Invoice
         exclude = ('deleted',)
-        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date', 'credit_invoices')
+        read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date', 'credit_invoices',
+                            'interest_invoices')
 
 
 class CreditNoteUpdateSerializer(InvoiceUpdateSerializer):

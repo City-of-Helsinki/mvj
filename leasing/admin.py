@@ -345,7 +345,7 @@ class InvoiceRowInline(FieldPermissionsAdminMixin, admin.TabularInline):
 class InvoiceAdmin(FieldPermissionsModelAdmin):
     list_display = ('lease', 'due_date', 'billing_period_start_date', 'billing_period_end_date', 'total_amount')
     inlines = [InvoiceRowInline, InvoicePaymentInline]
-    raw_id_fields = ('lease', 'invoiceset', 'credited_invoice')
+    raw_id_fields = ('lease', 'invoiceset', 'credited_invoice', 'interest_invoice_for')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
