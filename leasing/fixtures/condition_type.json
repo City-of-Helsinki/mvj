@@ -57,13 +57,6 @@
   },
   {
     "model": "leasing.ConditionType",
-    "pk": 13,
-    "fields": {
-      "name": "Muu ehto"
-    }
-  },
-  {
-    "model": "leasing.ConditionType",
     "pk": 9,
     "fields": {
       "name": "Vuokra-ajan päättymisehto"
@@ -92,9 +85,9 @@
   },
   {
     "model": "leasing.ConditionType",
-    "pk": 20,
+    "pk": 13,
     "fields": {
-      "name": "Tiedote laskuun (seuraavaan)"
+      "name": "Muu ehto"
     }
   },
   {
@@ -116,6 +109,13 @@
     "pk": 16,
     "fields": {
       "name": "Rasite- ja/tai rasitteenluont.ehto"
+    }
+  },
+  {
+    "model": "leasing.ConditionType",
+    "pk": 20,
+    "fields": {
+      "name": "Tiedote laskuun (seuraavaan)"
     }
   },
   {

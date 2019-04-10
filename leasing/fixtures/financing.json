@@ -80,7 +80,7 @@
     "model": "leasing.Financing",
     "pk": 12,
     "fields": {
-      "name": "Vap. rah. tai korko"
+      "name": "Vap. rah. tai korkot."
     }
   },
   {

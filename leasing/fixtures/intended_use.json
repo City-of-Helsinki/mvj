@@ -1839,5 +1839,96 @@
     "fields": {
       "name": "Maatalousmaa (peltovuokraus)"
     }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 264,
+    "fields": {
+      "name": "Johtojen pitäminen (myös tieto/valokuit)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 265,
+    "fields": {
+      "name": "Kaup. ostaman kiinteistön hallintaoikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 266,
+    "fields": {
+      "name": "Pihakalusteiden pitäm.(keinu,hiekkal.ym)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 267,
+    "fields": {
+      "name": "Puistoalueen käyttöoik.tont.ajoon (tie)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 268,
+    "fields": {
+      "name": "Pysäköinti / palvelupiste (linja/kuorm.)"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 269,
+    "fields": {
+      "name": "Rakennusluvan hakeminen/pysäköintitontti"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 270,
+    "fields": {
+      "name": "Sairaala/kuntoutusk/terveys-/lääkärias."
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 271,
+    "fields": {
+      "name": "Suurjännitejohto / sähkölinja / -kaapeli"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 272,
+    "fields": {
+      "name": "Tien / ajorampin / liittymän pito-oikeus"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 273,
+    "fields": {
+      "name": "Tilojen käyttöoik. toimistona/liikkeenä"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 274,
+    "fields": {
+      "name": "Tontti-/ LP-alueen käytt. tontille ajoon"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 275,
+    "fields": {
+      "name": "Ulkoilu-/kävelytien käytt.oik.tont.ajoon"
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 276,
+    "fields": {
+      "name": "Venetel. ja veneilyä palv. liiketoiminta"
+    }
   }
 ]
