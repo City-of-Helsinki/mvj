@@ -43,6 +43,11 @@ METADATA_COLUMN_NAME_MAP = {
     'vahvistamispvm': 'ratify_date',
     'sopimusnumero': 'contract_number',
     'olotila': 'state_name',
+    'kunta': 'municipality',
+    'sijaintialue': 'district',
+    'ryhma': 'group',
+    'yksikko': 'unit',
+    'mvj_yks': 'mvj_unit',
 }
 
 
@@ -68,7 +73,8 @@ AREA_IMPORT_TYPES = {
         'source_identifier': 'tonttiosasto.vuokrausalue_paa',
         'area_type': AreaType.LEASE_AREA,
         'identifier_field_name': 'vuokratunnus',
-        'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila'],
+        'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila', 'kunta', 'sijaintialue', 'ryhma', 'yksikko',
+                             'mvj_yks'],
         'query': '''
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
             AS geom_text
@@ -186,11 +192,13 @@ class AreaImporter(BaseImporter):
 
                 self.area_types.append(area_type)
 
-    def execute(self):
+    def execute(self):  # NOQA C901
         cursor = self.cursor
 
         if not self.area_types:
             self.area_types = AREA_IMPORT_TYPES.keys()
+
+        errors = []
 
         for area_import_type in self.area_types:
             area_import = AREA_IMPORT_TYPES[area_import_type]
@@ -215,14 +223,30 @@ class AreaImporter(BaseImporter):
                 try:
                     geom = geos.GEOSGeometry(row.geom_text)
                 except geos.error.GEOSException as e:
-                    self.stdout.write(str(e))
+                    errors.append('id #{} error: ' + str(e))
+
+                    count += 1
+                    self.stdout.write('E', ending='')
+                    if count % 100 == 0:
+                        self.stdout.write(' {}'.format(count))
+                        self.stdout.flush()
+
+                    # self.stdout.write(str(e))
                     continue
 
                 if geom and isinstance(geom, geos.Polygon):
                     geom = geos.MultiPolygon(geom)
 
                 if geom and not isinstance(geom, geos.MultiPolygon):
-                    self.stdout.write(' Error! Geometry is not a Multipolygon but "{}"\n'.format(geom))
+                    errors.append('id #{} error: ' + ' Error! Geometry is not a Multipolygon but "{}"\n'.format(geom))
+
+                    count += 1
+                    self.stdout.write('E', ending='')
+                    if count % 100 == 0:
+                        self.stdout.write(' {}'.format(count))
+                        self.stdout.flush()
+
+                    # self.stdout.write(' Error! Geometry is not a Multipolygon but "{}"\n'.format(geom))
                     continue
 
                 other_data = {
@@ -239,3 +263,7 @@ class AreaImporter(BaseImporter):
                     self.stdout.flush()
 
             self.stdout.write(' Count {}\n'.format(count))
+            if errors:
+                self.stdout.write(' {} errors:\n'.format(len(errors)))
+                for error in errors:
+                    self.stdout.write(error)

@@ -1,4 +1,5 @@
 import cx_Oracle
+
 from leasing.models import BasisOfRent, BasisOfRentDecision, BasisOfRentPropertyIdentifier, BasisOfRentRate, Index
 
 from .base import BaseImporter
@@ -18,31 +19,41 @@ class BasisOfRentImporter(BaseImporter):
         self.cursor = connection.cursor()
         self.stdout = stdout
         self.stderr = stderr
+        self.offset = 0
 
     @classmethod
     def add_arguments(cls, parser):
-        pass
+        parser.add_argument('--offset2', dest='offset', type=int, required=False,
+                            help='basis of rent start offset')
 
     def read_options(self, options):
-        pass
+        self.offset = options['offset']
 
     def execute(self):  # noqa: C901 'Command.handle' is too complex
         cursor = self.cursor
 
         query = """
-            SELECT *
-            FROM PERUSTE
-            ORDER BY ALKUPVM
-            """
+            SELECT * FROM (
+                SELECT p.*, ROW_NUMBER() OVER (ORDER BY ALKUPVM) rn
+                FROM PERUSTE p
+                ORDER BY ALKUPVM
+            ) t
+            WHERE rn >= {}
+            """.format(self.offset)
 
         cursor.execute(query)
 
         peruste_rows = rows_to_dict_list(cursor)
 
         peruste_count = len(peruste_rows)
-        self.stdout.write('{} basis of rent rows'.format(peruste_count))
 
         count = 0
+        if self.offset:
+            count = self.offset - 1
+            peruste_count += self.offset
+
+        self.stdout.write('{} basis of rent rows'.format(peruste_count))
+
         for basis_of_rent_row in peruste_rows:
             count += 1
             self.stdout.write('PERUSTE #{} ({}/{})'.format(basis_of_rent_row['PERUSTE'], count, peruste_count))
@@ -124,6 +135,10 @@ class BasisOfRentImporter(BaseImporter):
                 if not amount:
                     amount = rate_row['KLK_HINTA_ARVIO']
                     area_unit = BASIS_OF_RENT_RATE_AREA_UNIT_MAP[rate_row['KLK_HINTA_YKS']]
+
+                    if not amount:
+                        amount = rate_row['HINTA_ARVIO']
+                        area_unit = BASIS_OF_RENT_RATE_AREA_UNIT_MAP[rate_row['HINTA_YKS']]
 
                 (basis_of_rent_rate, created) = BasisOfRentRate.objects.get_or_create(
                     basis_of_rent=basis_of_rent,
