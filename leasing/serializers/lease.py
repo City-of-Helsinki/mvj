@@ -11,7 +11,7 @@ from leasing.enums import LeaseRelationType
 from leasing.models import AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
-from leasing.serializers.invoice import InvoiceNoteSerializer
+from leasing.serializers.invoice import InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -312,6 +312,7 @@ class LeaseUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Field
     notice_period = serializers.PrimaryKeyRelatedField(
         required=False, allow_null=True, queryset=NoticePeriod.objects.all().annotate(
             duration_as_interval=Cast('duration', DurationField())).order_by('duration_as_interval'))
+    invoice_notes = InvoiceNoteCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
