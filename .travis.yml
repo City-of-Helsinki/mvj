@@ -33,6 +33,6 @@ before_script:
 script:
   - flake8
   - pytest -ra -vvv --cov=.
-  - isort -c
+  - isort -c --multi-line=4
 
 after_success: codecov
