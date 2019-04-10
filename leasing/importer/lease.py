@@ -1,8 +1,8 @@
+import cx_Oracle  # isort:skip (Not installed in CI or production)
 import datetime
 import re
 from decimal import ROUND_HALF_UP, Decimal
 
-import cx_Oracle
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 

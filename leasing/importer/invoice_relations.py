@@ -1,4 +1,4 @@
-import cx_Oracle
+import cx_Oracle  # isort:skip (Not installed in CI or production)
 
 from leasing.models import Invoice
 
