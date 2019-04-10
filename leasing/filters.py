@@ -77,8 +77,8 @@ class CommentFilter(FilterSet):
 class ContactFilter(FilterSet):
     class Meta:
         model = Contact
-        fields = ['type', 'first_name', 'last_name', 'name', 'business_id', 'national_identification_number',
-                  'customer_number', 'sap_customer_number', 'partner_code', 'is_lessor']
+        fields = ['id', 'type', 'first_name', 'last_name', 'name', 'business_id', 'national_identification_number',
+                  'sap_customer_number', 'partner_code', 'is_lessor']
 
 
 class DecisionFilter(FilterSet):

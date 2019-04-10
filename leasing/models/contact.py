@@ -61,9 +61,6 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Turvakielto
     address_protection = models.BooleanField(verbose_name=_("Address protection"), default=False)
 
-    # In Finnish: Asiakasnumero
-    customer_number = models.CharField(verbose_name=_("Customer number"), null=True, blank=True, max_length=255)
-
     # In Finnish: SAP asiakasnumero
     sap_customer_number = models.CharField(verbose_name=_("SAP customer number"), null=True, blank=True, max_length=255)
 
