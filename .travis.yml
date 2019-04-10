@@ -1,3 +1,4 @@
+dist: xenial
 sudo: false
 language: python
 services:
@@ -9,15 +10,11 @@ env:
   global:
     - SECRET_KEY=xxx
     - DATABASE_URL=postgis://postgres:@localhost/mvj
-    - LEGACY_USER=''
-    - LEGACY_PASSWORD=''
-    - LEGACY_HOST=''
-    - LEGACY_PORT=''
-    - LEGACY_SERVICES=''
 
 python:
   - "3.5"
   - "3.6"
+  - "3.7"
 
 addons:
   postgresql: '9.5'
