@@ -232,7 +232,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     infill_development_compensations = serializers.SerializerMethodField()
     email_logs = serializers.SerializerMethodField()
     area_notes = serializers.SerializerMethodField()
-    basis_of_rents = serializers.SerializerMethodField()
+    matching_basis_of_rents = serializers.SerializerMethodField()
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
@@ -270,7 +270,7 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
 
         return AreaNoteSerializer(area_notes, many=True).data
 
-    def get_basis_of_rents(self, obj):
+    def get_matching_basis_of_rents(self, obj):
         from leasing.serializers.basis_of_rent import BasisOfRentSerializer
 
         q = Q()
