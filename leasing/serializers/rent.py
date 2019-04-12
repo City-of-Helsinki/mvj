@@ -103,6 +103,7 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPerm
         model = RentAdjustment
         fields = ('id', 'type', 'intended_use', 'start_date', 'end_date', 'full_amount', 'amount_type', 'amount_left',
                   'decision', 'note')
+        read_only_fields = ('amount_left', )
 
 
 class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
