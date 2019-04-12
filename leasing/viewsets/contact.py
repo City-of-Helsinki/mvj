@@ -14,7 +14,7 @@ class ContactViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransact
     serializer_class = ContactSerializer
     filterset_class = ContactFilter
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, CoalesceOrderingFilter)
-    search_fields = ('id', 'first_name', 'last_name', 'name', 'business_id', 'sap_customer_number')
-    ordering_fields = ('names', 'first_name', 'last_name', 'name', 'business_id', 'type')
+    search_fields = ('id', 'first_name', 'last_name', 'name', 'business_id', 'sap_customer_number', 'care_of')
+    ordering_fields = ('names', 'first_name', 'last_name', 'name', 'business_id', 'type', 'care_of')
     coalesce_ordering = {'names': ('name', 'last_name')}
     ordering = ('names', 'first_name')
