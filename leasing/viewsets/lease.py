@@ -191,6 +191,13 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             if search_form.cleaned_data.get('only_expired_leases'):
                 queryset = queryset.filter(end_date__lte=datetime.date.today())
 
+            if 'has_geometry' in search_form.cleaned_data:
+                if search_form.cleaned_data.get('has_geometry') is True:
+                    queryset = queryset.filter(lease_areas__geometry__isnull=False)
+
+                if search_form.cleaned_data.get('has_geometry') is False:
+                    queryset = queryset.filter(lease_areas__geometry__isnull=True)
+
             if search_form.cleaned_data.get('property_identifier'):
                 queryset = queryset.filter(
                     lease_areas__identifier__icontains=search_form.cleaned_data.get('property_identifier'))

@@ -39,6 +39,7 @@ class LeaseSearchForm(forms.Form):
     lease_end_date_end = forms.DateField(required=False)
     only_active_leases = forms.BooleanField(label='Active', required=False)
     only_expired_leases = forms.BooleanField(label='Expired', required=False)
+    has_geometry = forms.NullBooleanField(label='Has geometry', required=False)
     property_identifier = forms.CharField(label='Real property identifier', max_length=255, required=False,
                                           empty_value=None)
     address = forms.CharField(label='Address', max_length=255, required=False, empty_value=None)
