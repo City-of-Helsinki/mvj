@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import DueDatesType
+from leasing.enums import DueDatesType, RentCycle
 from leasing.models import Index
 from leasing.models.rent import EqualizedRent
 from users.serializers import UserSerializer
@@ -40,6 +40,30 @@ class FixedInitialYearRentSerializer(FieldPermissionsSerializerMixin, serializer
     class Meta:
         model = FixedInitialYearRent
         fields = ('id', 'amount', 'intended_use', 'start_date', 'end_date')
+
+    def is_valid_end_date(self, rent, end_date):
+        if not rent or not rent.cycle or not end_date:
+            return True
+
+        if rent.cycle == RentCycle.JANUARY_TO_DECEMBER and end_date.day == 31 and end_date.month == 12:
+            return True
+
+        if rent.cycle == RentCycle.APRIL_TO_MARCH and end_date.day == 31 and end_date.month == 3:
+            return True
+
+        return False
+
+    def create(self, validated_data):
+        if not self.is_valid_end_date(validated_data.get('rent'), validated_data.get('end_date')):
+            raise serializers.ValidationError(_("Fixed initial rent end date must match rent cycle end date"))
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if not self.is_valid_end_date(validated_data.get('rent'), validated_data.get('end_date')):
+            raise serializers.ValidationError(_("Fixed initial rent end date must match rent cycle end date"))
+
+        return super().update(instance, validated_data)
 
 
 class ContractRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
