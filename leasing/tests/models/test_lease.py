@@ -376,8 +376,8 @@ def test_calculate_invoices_invoice_note(django_db_setup, lease_factory, contact
             invoice_note_factory(lease=lease, billing_period_start_date=billing_period_start_date,
                                  billing_period_end_date=billing_period_end_date, notes=note['notes'])
 
-    period_rents = lease.determine_payable_rents_and_periods(datetime.date(year=2017, month=6, day=1),
-                                                             datetime.date(year=2017, month=6, day=30))
+    period_rents = lease.determine_payable_rents_and_periods(datetime.date(year=2017, month=1, day=1),
+                                                             datetime.date(year=2017, month=1, day=31))
     period_invoice_data = lease.calculate_invoices(period_rents)
 
     assert len(period_invoice_data) == 1

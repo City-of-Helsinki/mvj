@@ -4,8 +4,66 @@ from decimal import Decimal
 
 import pytest
 
-from leasing.enums import DueDatesType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle
+from leasing.enums import DueDatesType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType
 from leasing.models import Index, RentAdjustment, RentDueDate
+from leasing.models.utils import DayMonth
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("rent_type, due_dates_per_year, expected", [
+    (
+        RentType.INDEX,
+        0,
+        []
+    ),
+    (
+        RentType.INDEX,
+        3,
+        []
+    ),
+    (
+        RentType.INDEX,
+        1,
+        [DayMonth(day=30, month=6)]
+    ),
+    (
+        RentType.INDEX,
+        2,
+        [DayMonth(day=15, month=3), DayMonth(day=30, month=9)]
+    ),
+    (
+        RentType.FIXED,
+        0,
+        []
+    ),
+    (
+        RentType.FIXED,
+        3,
+        []
+    ),
+    (
+        RentType.FIXED,
+        1,
+        [DayMonth(day=2, month=1)]
+    ),
+    (
+        RentType.FIXED,
+        2,
+        [DayMonth(day=2, month=1), DayMonth(day=1, month=7)]
+    ),
+])
+def test_fixed_get_due_dates_as_daymonths(lease_test_data, rent_factory, rent_type, due_dates_per_year, expected):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(lease=lease)
+    rent.type = rent_type
+    rent.start_date = date(year=2000, month=1, day=1)
+    rent.end_date = date(year=2020, month=1, day=1)
+    rent.due_dates_type = DueDatesType.FIXED
+    rent.due_dates_per_year = due_dates_per_year
+    rent.save()
+
+    assert rent.get_due_dates_as_daymonths() == expected
 
 
 @pytest.mark.django_db

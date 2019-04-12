@@ -343,7 +343,13 @@ class Rent(TimeStampedSafeDeleteModel):
         if self.due_dates_type == DueDatesType.FIXED:
             # TODO: handle unknown due date count
             if self.due_dates_per_year in (1, 2, 4, 12):
-                due_dates = FIXED_DUE_DATES[self.lease.type.due_dates_position][self.due_dates_per_year]
+                due_dates_position = self.lease.type.due_dates_position
+
+                # Fixed rent due dates are always start of month regardless of lease type
+                if self.type == RentType.FIXED:
+                    due_dates_position = DueDatesPosition.START_OF_MONTH
+
+                due_dates = FIXED_DUE_DATES[due_dates_position][self.due_dates_per_year]
         elif self.due_dates_type == DueDatesType.CUSTOM:
             due_dates = self.get_custom_due_dates_as_daymonths()
 
