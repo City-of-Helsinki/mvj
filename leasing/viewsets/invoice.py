@@ -1,11 +1,12 @@
 from django.utils.translation import ugettext_lazy as _
+from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
 from rest_framework.exceptions import APIException
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.enums import InvoiceState, InvoiceType
-from leasing.filters import InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, InvoiceSetFilter
+from leasing.filters import CoalesceOrderingFilter, InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
@@ -20,6 +21,13 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filterset_class = InvoiceFilter
+    filter_backends = (DjangoFilterBackend, CoalesceOrderingFilter)
+    ordering_fields = ('sent_to_sap_at', 'recipient_name', 'number', 'due_date', 'total_amount', 'billed_amount',
+                       'lease__identifier__type__identifier', 'lease__identifier__municipality__identifier',
+                       'lease__identifier__district__identifier', 'lease__identifier__sequence')
+    coalesce_ordering = {
+        'recipient_name': ('recipient__name', 'recipient__last_name'),
+    }
 
     def get_queryset(self):
         queryset = Invoice.objects.select_related('recipient').prefetch_related(
