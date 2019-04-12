@@ -3,6 +3,8 @@ from decimal import Decimal, InvalidOperation
 
 from dateutil import parser
 from django.utils.translation import ugettext_lazy as _
+from paramiko import SSHException
+from pysftp import ConnectionException, CredentialException, HostKeysException
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -226,7 +228,7 @@ class InvoiceExportToLaskeView(APIView):
         try:
             exporter = LaskeExporter()
             exporter.export_invoices(invoice)
-        except LaskeExporterException as e:
+        except (LaskeExporterException, ConnectionException, CredentialException, SSHException, HostKeysException) as e:
             raise APIException(str(e))
 
         return Response({"success": True})
