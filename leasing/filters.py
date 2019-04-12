@@ -1,6 +1,7 @@
 import datetime
 
 from django.db.models.functions import Coalesce
+from django.utils.translation import ugettext_lazy as _
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
 
@@ -103,7 +104,7 @@ class IndexFilter(FilterSet):
 
 class InvoiceFilter(FilterSet):
     lease = filters.NumberFilter()
-    going_to_sap = filters.BooleanFilter(method='filter_going_to_sap')
+    going_to_sap = filters.BooleanFilter(method='filter_going_to_sap', label=_('Going to SAP'))
 
     class Meta:
         model = Invoice
