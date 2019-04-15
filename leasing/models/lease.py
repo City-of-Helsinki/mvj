@@ -14,7 +14,8 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.enums import (
-    Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType)
+    Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType,
+    TenantContactType)
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 from leasing.models.utils import (
@@ -418,7 +419,7 @@ class Lease(TimeStampedSafeDeleteModel):
         tenant_range_filter = Q(
             Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period_start_date)) &
             Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period_end_date)) &
-            Q(tenantcontact__deleted__isnull=True)
+            Q(tenantcontact__type=TenantContactType.TENANT) & Q(tenantcontact__deleted__isnull=True)
         )
 
         shares = {}
