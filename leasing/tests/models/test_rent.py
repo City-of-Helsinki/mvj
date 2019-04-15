@@ -68,21 +68,19 @@ def test_fixed_get_due_dates_as_daymonths(lease_test_data, rent_factory, rent_ty
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("due_dates_type, due_dates_per_year, start_date, end_date, expected", [
-    # Too early
     (
         DueDatesType.FIXED,
         1,
         date(year=1990, month=1, day=1),
         date(year=1990, month=12, day=31),
-        []
+        [date(year=1990, month=6, day=30)]
     ),
-    # Too late
     (
         DueDatesType.FIXED,
         1,
         date(year=2030, month=1, day=1),
         date(year=2030, month=12, day=31),
-        []
+        [date(year=2030, month=6, day=30)]
     ),
     # Full year
     (

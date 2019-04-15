@@ -356,9 +356,6 @@ class Rent(TimeStampedSafeDeleteModel):
         return due_dates
 
     def get_due_dates_for_period(self, start_date, end_date):
-        if (self.end_date and start_date > self.end_date) or (self.start_date and end_date < self.start_date):
-            return []
-
         rent_due_dates = self.get_due_dates_as_daymonths()
 
         due_dates = []
