@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import DueDatesType, RentCycle
+from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle
 from leasing.models import Index
 from leasing.models.rent import EqualizedRent
 from users.serializers import UserSerializer
@@ -128,6 +128,12 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPerm
         fields = ('id', 'type', 'intended_use', 'start_date', 'end_date', 'full_amount', 'amount_type', 'amount_left',
                   'decision', 'note')
         read_only_fields = ('amount_left', )
+
+    def validate(self, data):
+        if data.get('amount_type') == RentAdjustmentAmountType.AMOUNT_TOTAL and data.get('end_date') is not None:
+            raise serializers.ValidationError(_("Amount total adjustment type cannot have an end date"))
+
+        return data
 
 
 class RentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
