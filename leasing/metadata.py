@@ -6,7 +6,7 @@ from rest_framework.metadata import SimpleMetadata
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from field_permissions.metadata import FieldPermissionsMetadataMixin
-from leasing.models import Contact, Decision, Invoice, Lease, LeaseArea
+from leasing.models import Contact, Decision, Invoice, Lease, LeaseArea, Tenant
 from leasing.models.invoice import InvoiceSet
 from leasing.permissions import PerMethodPermission
 from users.models import User
@@ -83,8 +83,8 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
 
         if isinstance(field, PrimaryKeyRelatedField) or isinstance(field, EnumField):
             # TODO: Make configurable
-            if hasattr(field, 'queryset') and field.queryset.model in (User, Lease, Contact, Decision, Invoice,
-                                                                       InvoiceSet, LeaseArea):
+            if hasattr(field, 'queryset') and field.queryset.model in (
+                    User, Lease, Contact, Decision, Invoice, InvoiceSet, LeaseArea, Tenant):
                 return field_info
 
             field_info['choices'] = [{
