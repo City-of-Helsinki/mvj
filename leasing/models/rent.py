@@ -446,6 +446,16 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return Index.objects.get_latest_for_date(the_date)
 
+    def is_active_on_period(self, date_range_start, date_range_end):
+        if (
+            self.end_date is None or self.end_date >= date_range_start
+        ) and (
+            self.start_date is None or self.start_date <= date_range_end
+        ):
+            return True
+
+        return False
+
 
 class RentDueDate(TimeStampedSafeDeleteModel):
     """

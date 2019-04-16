@@ -2072,3 +2072,102 @@ def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_re
 
     rent_adjustment = RentAdjustment.objects.get(pk=rent_adjustment.id)
     assert rent_adjustment.amount_left == expected_amount_left
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "rent_start_date, rent_end_date, period_start_date, period_end_date, expected",
+    [
+        (
+            None,
+            None,
+            None,
+            None,
+            True,
+        ),
+        (
+            None,
+            None,
+            date(year=1990, month=1, day=1),
+            date(year=1990, month=1, day=1),
+            True,
+        ),
+        (
+            None,
+            None,
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            True,
+        ),
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            True
+        ),
+        (
+            date(year=2000, month=1, day=1),
+            date(year=2000, month=12, day=31),
+            date(year=1990, month=1, day=1),
+            date(year=2020, month=1, day=1),
+            True
+        ),
+        (
+            date(year=1990, month=1, day=1),
+            date(year=2020, month=1, day=1),
+            date(year=2000, month=1, day=1),
+            date(year=2000, month=12, day=31),
+            True
+        ),
+        (
+            date(year=2000, month=1, day=1),
+            date(year=2000, month=12, day=31),
+            date(year=1999, month=12, day=15),
+            date(year=2000, month=1, day=15),
+            True
+        ),
+        (
+            date(year=2000, month=1, day=1),
+            date(year=2000, month=12, day=31),
+            date(year=2000, month=1, day=15),
+            date(year=2000, month=2, day=15),
+            True
+        ),
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            date(year=2020, month=1, day=1),
+            date(year=2020, month=12, day=31),
+            False
+        ),
+        (
+            date(year=1990, month=1, day=1),
+            date(year=1990, month=1, day=1),
+            date(year=2020, month=1, day=1),
+            date(year=2020, month=12, day=31),
+            False
+        ),
+        (
+            date(year=1990, month=1, day=1),
+            date(year=1990, month=1, day=1),
+            date(year=1990, month=1, day=2),
+            date(year=1990, month=1, day=2),
+            False
+        ),
+    ]
+)
+def test_is_active_on_period(lease_test_data, rent_factory, rent_start_date, rent_end_date, period_start_date,
+                             period_end_date, expected):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+        start_date=rent_start_date,
+        end_date=rent_end_date,
+    )
+
+    assert rent.is_active_on_period(period_start_date, period_end_date) == expected
