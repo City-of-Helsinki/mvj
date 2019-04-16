@@ -12,5 +12,12 @@
     "fields": {
       "name": "Rahavakuus"
     }
+  },
+  {
+    "model": "leasing.CollateralType",
+    "pk": 3,
+    "fields": {
+      "name": "Muu vakuus"
+    }
   }
 ]
