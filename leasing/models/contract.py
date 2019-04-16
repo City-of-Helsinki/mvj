@@ -85,9 +85,12 @@ class Collateral(models.Model):
     contract = models.ForeignKey(Contract, verbose_name=_("Contract"), related_name='collaterals',
                                  on_delete=models.PROTECT)
 
-    # In Finnish: Vakuuden laji
+    # In Finnish: Vakuuden tyyppi
     type = models.ForeignKey(CollateralType, verbose_name=_("Collateral type"), related_name='+',
                              on_delete=models.PROTECT)
+
+    # In Finnish: Vakuuden laji
+    other_type = models.CharField(verbose_name=_("Other type"), null=True, blank=True, max_length=255)
 
     # In Finnish: Numero
     number = models.CharField(verbose_name=_("Number"), null=True, blank=True, max_length=255)
@@ -97,6 +100,9 @@ class Collateral(models.Model):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    # In Finnish: Panttikirjan pvm
+    deed_date = models.DateField(verbose_name=_("Deed date"), null=True, blank=True)
 
     # In Finnish: Määrä
     total_amount = models.DecimalField(verbose_name=_("Total amount"), null=True, blank=True, max_digits=10,

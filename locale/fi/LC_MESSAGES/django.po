@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 13:08+0300\n"
+"POT-Creation-Date: 2019-04-16 15:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -683,7 +683,7 @@ msgid "Area"
 msgstr "Alue"
 
 #: leasing/models/area_note.py:21 leasing/models/basis_of_rent.py:67
-#: leasing/models/contact.py:81 leasing/models/contract.py:112
+#: leasing/models/contact.py:81 leasing/models/contract.py:118
 #: leasing/models/debt_collection.py:74 leasing/models/debt_collection.py:105
 #: leasing/models/infill_development_compensation.py:40
 #: leasing/models/infill_development_compensation.py:70
@@ -734,7 +734,7 @@ msgstr "Rakennusoikeustyypit"
 msgid "Plot type"
 msgstr "Tonttityyppi"
 
-#: leasing/models/basis_of_rent.py:42 leasing/models/contract.py:96
+#: leasing/models/basis_of_rent.py:42 leasing/models/contract.py:99
 #: leasing/models/debt_collection.py:125 leasing/models/lease.py:261
 #: leasing/models/lease.py:899 leasing/models/rent.py:107
 #: leasing/models/rent.py:493 leasing/models/rent.py:553
@@ -744,7 +744,7 @@ msgstr "Tonttityyppi"
 msgid "Start date"
 msgstr "Alkupvm"
 
-#: leasing/models/basis_of_rent.py:45 leasing/models/contract.py:99
+#: leasing/models/basis_of_rent.py:45 leasing/models/contract.py:102
 #: leasing/models/debt_collection.py:126 leasing/models/lease.py:264
 #: leasing/models/lease.py:900 leasing/models/rent.py:110
 #: leasing/models/rent.py:496 leasing/models/rent.py:556
@@ -1013,11 +1013,11 @@ msgstr "Sopimuksen tyyppi"
 msgid "Contract number"
 msgstr "Sopimusnumero"
 
-#: leasing/models/contract.py:34 leasing/models/contract.py:129
+#: leasing/models/contract.py:34 leasing/models/contract.py:135
 msgid "Signing date"
 msgstr "Allekirjoituspäivämäärä"
 
-#: leasing/models/contract.py:37 leasing/models/contract.py:132
+#: leasing/models/contract.py:37 leasing/models/contract.py:138
 msgid "Sign by date"
 msgstr "Allekirjoitettava mennessä"
 
@@ -1025,15 +1025,15 @@ msgstr "Allekirjoitettava mennessä"
 msgid "Signing note"
 msgstr "Kommentti allekirjoitukselle"
 
-#: leasing/models/contract.py:43 leasing/models/contract.py:135
+#: leasing/models/contract.py:43 leasing/models/contract.py:141
 msgid "First call sent"
 msgstr "1. kutsu lähetetty"
 
-#: leasing/models/contract.py:46 leasing/models/contract.py:138
+#: leasing/models/contract.py:46 leasing/models/contract.py:144
 msgid "Second call sent"
 msgstr "2. kutsu lähetetty"
 
-#: leasing/models/contract.py:49 leasing/models/contract.py:141
+#: leasing/models/contract.py:49 leasing/models/contract.py:147
 msgid "Third call sent"
 msgstr "3. kutsu lähetetty"
 
@@ -1041,7 +1041,7 @@ msgstr "3. kutsu lähetetty"
 msgid "Is readjustment decision"
 msgstr "Järjestelypäätös"
 
-#: leasing/models/contract.py:55 leasing/models/contract.py:147
+#: leasing/models/contract.py:55 leasing/models/contract.py:153
 #: leasing/models/decision.py:81 leasing/models/rent.py:660
 msgid "Decision"
 msgstr "Päätös"
@@ -1074,7 +1074,7 @@ msgctxt "Model name"
 msgid "Collateral types"
 msgstr "Vakuuden lajit"
 
-#: leasing/models/contract.py:85 leasing/models/contract.py:125
+#: leasing/models/contract.py:85 leasing/models/contract.py:131
 msgid "Contract"
 msgstr "Sopimus"
 
@@ -1082,47 +1082,55 @@ msgstr "Sopimus"
 msgid "Collateral type"
 msgstr "Vakuuden tyyppi"
 
-#: leasing/models/contract.py:93 leasing/models/invoice.py:150
+#: leasing/models/contract.py:93
+msgid "Other type"
+msgstr "Muu vakuuden tyyppi"
+
+#: leasing/models/contract.py:96 leasing/models/invoice.py:150
 #: leasing/models/rent.py:796
 msgid "Number"
 msgstr "Numero"
 
-#: leasing/models/contract.py:102 leasing/models/invoice.py:185
+#: leasing/models/contract.py:105
+msgid "Deed date"
+msgstr "Panttikirjan pvm"
+
+#: leasing/models/contract.py:108 leasing/models/invoice.py:185
 msgid "Total amount"
 msgstr "Pääoma"
 
-#: leasing/models/contract.py:106
+#: leasing/models/contract.py:112
 #: leasing/models/infill_development_compensation.py:99
 #: leasing/models/invoice.py:582
 msgid "Paid date"
 msgstr "Maksettu pvm"
 
-#: leasing/models/contract.py:109
+#: leasing/models/contract.py:115
 msgid "Returned date"
 msgstr "Palautettu pvm"
 
-#: leasing/models/contract.py:117
+#: leasing/models/contract.py:123
 msgctxt "Model name"
 msgid "Collateral"
 msgstr "Vakuus"
 
-#: leasing/models/contract.py:118
+#: leasing/models/contract.py:124
 msgctxt "Model name"
 msgid "Collaterals"
 msgstr "Vakuudet"
 
-#: leasing/models/contract.py:144 leasing/models/decision.py:58
+#: leasing/models/contract.py:150 leasing/models/decision.py:58
 #: leasing/models/decision.py:95 leasing/models/inspection.py:26
 #: leasing/models/invoice.py:218 leasing/models/invoice.py:559
 msgid "Description"
 msgstr "Selite"
 
-#: leasing/models/contract.py:153
+#: leasing/models/contract.py:159
 msgctxt "Model name"
 msgid "Contract change"
 msgstr "Sopimusmuutos"
 
-#: leasing/models/contract.py:154
+#: leasing/models/contract.py:160
 msgctxt "Model name"
 msgid "Contract changes"
 msgstr "Sopimusmuutokset"
