@@ -1067,12 +1067,12 @@ msgstr "Sopimukset"
 #: leasing/models/contract.py:77
 msgctxt "Model name"
 msgid "Collateral type"
-msgstr "Vakuuden laji"
+msgstr "Vakuuden tyyppi"
 
 #: leasing/models/contract.py:78
 msgctxt "Model name"
 msgid "Collateral types"
-msgstr "Vakuuden lajit"
+msgstr "Vakuuden tyypit"
 
 #: leasing/models/contract.py:85 leasing/models/contract.py:131
 msgid "Contract"
