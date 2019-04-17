@@ -695,7 +695,7 @@ class Lease(TimeStampedSafeDeleteModel):
             if due_date_invoicing_date > end_date:
                 continue
 
-            for rent in self.get_active_rents_on_period(self.start_date, end_date):
+            for rent in self.rents.all():
                 billing_period = rent.get_billing_period_from_due_date(due_date)
 
                 if not billing_period:
