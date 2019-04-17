@@ -63,7 +63,8 @@ class ContactAdmin(FieldPermissionsModelAdmin):
 
 
 class MunicipalityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id')
+    list_display = ('name', 'identifier')
+    search_fields = ['name', 'identifier']
     readonly_fields = ('id',)
 
 
@@ -225,9 +226,9 @@ class InspectionAdmin(FieldPermissionsModelAdmin):
 
 
 class LeaseTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', )
-    search_fields = ['id', 'name']
-    ordering = ('id',)
+    list_display = ('name', 'identifier', 'id')
+    search_fields = ['name', 'identifier', 'id']
+    ordering = ('identifier',)
 
 
 class RentDueDateInline(FieldPermissionsAdminMixin, admin.TabularInline):
