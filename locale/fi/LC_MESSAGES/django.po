@@ -633,11 +633,6 @@ msgctxt "Decision type kind"
 msgid "Basis of Rent"
 msgstr "Vuokrausperiaate"
 
-#: leasing/enums.py:434
-msgctxt "Decision type kind"
-msgid "Arrangement decision"
-msgstr "Järjestelypäätös"
-
 #: leasing/filters.py:107
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"

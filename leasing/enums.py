@@ -426,9 +426,7 @@ class DecisionTypeKind(Enum):
     """
     LEASE_CANCELLATION = 'lease_cancellation'  # Vuokrasopimuksen purkaminen
     BASIS_OF_RENT = 'basis_of_rent'  # Vuokrausperiaate
-    ARRANGEMENT_DECISION = 'arrangement_decision'  # Järjestelypäätös
 
     class Labels:
         LEASE_CANCELLATION = pgettext_lazy('Decision type kind', 'Lease cancellation')
         BASIS_OF_RENT = pgettext_lazy('Decision type kind', 'Basis of Rent')
-        ARRANGEMENT_DECISION = pgettext_lazy('Decision type kind', 'Arrangement decision')
