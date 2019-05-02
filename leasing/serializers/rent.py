@@ -105,7 +105,7 @@ class EqualizedRentSerializer(serializers.ModelSerializer):
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                                serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    decision = DecisionSerializer()
+    decision = DecisionSerializer(required=False)
     intended_use = RentIntendedUseSerializer()
 
     class Meta:
@@ -118,7 +118,7 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPerm
                                            serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer)
+                                                  related_serializer=DecisionSerializer, required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
                                                       related_serializer=RentIntendedUseSerializer)
