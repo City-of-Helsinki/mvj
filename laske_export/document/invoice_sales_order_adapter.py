@@ -18,8 +18,15 @@ class InvoiceSalesOrderAdapter:
     def get_bill_text(self):
         if self.invoice.billing_period_start_date:
             invoice_year = self.invoice.billing_period_start_date.year
+
+            # TODO: Which rent
+            rent = self.invoice.lease.get_active_rents_on_period(self.invoice.billing_period_start_date,
+                                                                 self.invoice.billing_period_end_date).first()
         else:
             invoice_year = self.invoice.invoicing_date.year
+
+            rent = self.invoice.lease.get_active_rents_on_period(self.invoice.invoicing_date,
+                                                                 self.invoice.invoicing_date).first()
 
         year_rent = self.invoice.lease.get_rent_amount_for_year(invoice_year)
 
@@ -34,9 +41,6 @@ class InvoiceSalesOrderAdapter:
                 address = lease_area_address.address
 
         index_date = '1.1.'
-        # TODO: Which rent
-        rent = self.invoice.lease.get_active_rents_on_period(
-            self.invoice.invoicing_date, self.invoice.invoicing_date).first()
         if rent.cycle == RentCycle.APRIL_TO_MARCH:
             index_date = '1.4.'
 
