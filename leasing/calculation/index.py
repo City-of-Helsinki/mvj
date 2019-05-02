@@ -73,7 +73,8 @@ class IndexCalculation:
             }, amount=new_base_rent)
             self.explanation_items.append(new_base_rent_explanation_item)
 
-            y_ratio = Decimal(rounded_index / self.y_value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+            y_ratio = Decimal(Decimal(rounded_index) / Decimal(self.y_value)).quantize(
+                Decimal('.01'), rounding=ROUND_HALF_UP)
 
             # TODO: Different name for this ratio
             self._add_ratio_explanation(y_ratio)
@@ -87,19 +88,40 @@ class IndexCalculation:
 
         return ratio * self.amount
 
-    def calculate(self):
+    def get_index_value(self):
+        # TODO: error check
         if self.index.__class__ and self.index.__class__.__name__ == 'Index':
-            index_value = self.index.number
+            if self.index_type == IndexType.TYPE_1:
+                from leasing.models.rent import LegacyIndex
+
+                index_value = LegacyIndex.objects.get(index=self.index).number_1914
+            elif self.index_type == IndexType.TYPE_2:
+                from leasing.models.rent import LegacyIndex
+
+                index_value = LegacyIndex.objects.get(index=self.index).number_1938
+            else:
+                index_value = self.index.number
         else:
             index_value = self.index
 
+        return index_value
+
+    def calculate(self):  # NOQA
+        index_value = self.get_index_value()
+
         if self.index_type == IndexType.TYPE_1:
-            assert self.precision
-            return self.calculate_type_1_2_3_4(index_value, self.precision, 50620)
+            precision = self.precision
+            # TODO: precision is documented as 10%/20%, but we don't currently know which one we should use
+            if not self.precision:
+                precision = 20
+            return self.calculate_type_1_2_3_4(index_value, precision, 50620)
 
         elif self.index_type == IndexType.TYPE_2:
-            assert self.precision
-            return self.calculate_type_1_2_3_4(index_value, self.precision, 4661)
+            precision = self.precision
+            # TODO: precision is documented as 10%/20%, but we don't currently know which one we should use
+            if not self.precision:
+                precision = 20
+            return self.calculate_type_1_2_3_4(index_value, precision, 4661)
 
         elif self.index_type == IndexType.TYPE_3:
             return self.calculate_type_1_2_3_4(index_value, 10, 418)

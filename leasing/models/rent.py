@@ -823,7 +823,7 @@ class Index(models.Model):
     """
     In Finnish: Indeksi
     """
-    # In Finnish: Pisteluku
+    # In Finnish: Pisteluku (Elinkustannusindeksi 1951:10=100)
     number = models.PositiveIntegerField(verbose_name=_("Number"))
 
     year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
@@ -846,6 +846,16 @@ class Index(models.Model):
             self.year,
             "/{}".format(self.month) if self.month else "",
             self.number)
+
+
+class LegacyIndex(models.Model):
+    index = models.ForeignKey(Index, verbose_name=_("Index"), related_name='+', on_delete=models.CASCADE)
+
+    # In Finnish: Pisteluku (Elinkustannusindeksi 1914:1-6=100)
+    number_1914 = models.PositiveIntegerField(verbose_name=_("Index 1914:1-6=100"), null=True, blank=True)
+
+    # In Finnish: Pisteluku (Elinkustannusindeksi 1938:8-1939:7=100)
+    number_1938 = models.PositiveIntegerField(verbose_name=_("Index 1938:8-1939:7=100"), null=True, blank=True)
 
 
 class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
