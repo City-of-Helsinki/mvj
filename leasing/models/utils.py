@@ -230,6 +230,57 @@ def split_date_range(date_range, count):
     return result
 
 
+def _get_date_range_from_item(item):
+    if isinstance(item, dict):
+        return item['date_range']
+    else:
+        if callable(item.date_range):
+            return item.date_range()
+        else:
+            return item.date_range
+
+
+def group_items_in_period_by_date_range(items, min_date, max_date):
+    grouped_items = {}
+
+    if not items:
+        return grouped_items
+
+    for item in items:
+        if (isinstance(item, dict) and 'date_range' not in item) and not hasattr(item, 'date_range'):
+            raise ValueError('Item has no date_range attribute or key')
+
+    sorted_items = sorted(items, key=_get_date_range_from_item)
+
+    start_date = min_date
+    current_date = min_date
+    current_items = None
+    previous_items = None
+
+    while current_date < max_date:
+        current_items = []
+        for item in sorted_items:
+            item_range = _get_date_range_from_item(item)
+            if (item_range[0] is None or item_range[0] <= current_date) and (item_range[1] is None or current_date <=
+                                                                             item_range[1]):
+                current_items.append(item)
+
+        if previous_items is None:
+            previous_items = current_items
+
+        if current_items != previous_items:
+            grouped_items[(start_date, current_date - relativedelta(days=1))] = previous_items
+
+            previous_items = current_items
+            start_date = current_date
+
+        current_date += relativedelta(days=1)
+
+    grouped_items[(start_date, current_date)] = current_items
+
+    return grouped_items
+
+
 def get_monthly_amount_by_period_type(amount, period_type):
     if period_type == PeriodType.PER_MONTH:
         return amount

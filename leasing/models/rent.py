@@ -18,7 +18,8 @@ from leasing.enums import (
     RentCycle, RentType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
-    get_monthly_amount_by_period_type, get_range_overlap_and_remainder, is_date_on_first_quarter, split_date_range)
+    get_monthly_amount_by_period_type, get_range_overlap_and_remainder, group_items_in_period_by_date_range,
+    is_date_on_first_quarter, split_date_range, subtract_range_from_range)
 from users.models import User
 
 from .decision import Decision
@@ -248,7 +249,8 @@ class Rent(TimeStampedSafeDeleteModel):
 
         for (range_start, range_end) in date_ranges:
             if self.type == RentType.ONE_TIME:
-                total += self.amount
+                if self.amount:
+                    total += self.amount
                 continue
 
             for contract_rent in contract_rents:
@@ -305,23 +307,31 @@ class Rent(TimeStampedSafeDeleteModel):
                 else:
                     raise NotImplementedError('RentType {} not implemented'.format(self.type))
 
-                for rent_adjustment in rent_adjustments:
-                    if rent_adjustment.intended_use != contract_rent.intended_use:
+                total_adjustment_amount = Decimal(0)
+
+                # Apply rent adjustments
+                # As overlapping adjustments should be cumulative, but adjustments in series should not,
+                # we group adjustments by time periods and make separate calculations for every set.
+                rent_adjustments = self.get_applicable_adjustments(contract_rent.intended_use, *contract_overlap)
+                grouped_rent_adjustments = group_items_in_period_by_date_range(rent_adjustments, *contract_overlap)
+
+                for adjustment_range, adjustments in grouped_rent_adjustments.items():
+                    if not adjustments:
                         continue
 
-                    (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
-                        contract_overlap[0], contract_overlap[1], *rent_adjustment.date_range)
+                    tmp_amount = fix_amount_for_overlap(
+                        contract_amount, adjustment_range, subtract_range_from_range(contract_overlap,
+                                                                                     adjustment_range))
+                    for rent_adjustment in adjustments:
+                        adjustment_amount = rent_adjustment.get_amount_for_date_range(
+                            tmp_amount, *adjustment_range, update_amount_total=False if dry_run else True)
+                        total_adjustment_amount += adjustment_amount
+                        tmp_amount += adjustment_amount
 
-                    if not adjustment_overlap:
-                        continue
+                        explanation.add(subject=rent_adjustment, date_ranges=[adjustment_range],
+                                        amount=adjustment_amount, related_item=contract_rent_explanation_item)
 
-                    tmp_amount = fix_amount_for_overlap(contract_amount, adjustment_overlap, adjustment_remainders)
-                    adjustment_amount = rent_adjustment.get_amount_for_date_range(
-                        tmp_amount, *adjustment_overlap, update_amount_total=False if dry_run else True)
-                    contract_amount += adjustment_amount
-
-                    explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
-                                    related_item=contract_rent_explanation_item)
+                contract_amount += total_adjustment_amount
 
                 total += max(Decimal(0), contract_amount)
 
@@ -331,6 +341,27 @@ class Rent(TimeStampedSafeDeleteModel):
             return total, explanation
         else:
             return total
+
+    def get_applicable_adjustments(self, intended_use, date_range_start, date_range_end):
+        applicable_adjustments = []
+
+        range_filtering = Q(
+            Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+            Q(Q(start_date=None) | Q(start_date__lte=date_range_end)))
+
+        for rent_adjustment in self.rent_adjustments.filter(range_filtering):
+            if rent_adjustment.intended_use != intended_use:
+                continue
+
+            (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
+                date_range_start, date_range_end, *rent_adjustment.date_range)
+
+            if not adjustment_overlap:
+                continue
+
+            applicable_adjustments.append(rent_adjustment)
+
+        return applicable_adjustments
 
     def get_custom_due_dates_as_daymonths(self):
         if self.due_dates_type != DueDatesType.CUSTOM:

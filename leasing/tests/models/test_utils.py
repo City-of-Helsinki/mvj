@@ -5,8 +5,8 @@ import pytest
 
 from leasing.models.utils import (
     combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_next_business_day,
-    get_range_overlap_and_remainder, is_business_day, is_date_on_first_quarter, split_date_range,
-    subtract_range_from_range, subtract_ranges_from_ranges)
+    get_range_overlap_and_remainder, group_items_in_period_by_date_range, is_business_day, is_date_on_first_quarter,
+    split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -91,6 +91,14 @@ from leasing.models.utils import (
             [
                 (date(2010, 1, 1), date(2010, 6, 30))
             ]
+        ]
+    ),
+    (
+        date(year=2019, month=1, day=1), date(year=2019, month=2, day=15),
+        date(year=2019, month=2, day=16), None,
+        [
+            None,
+            []
         ]
     ),
 ])
@@ -513,3 +521,107 @@ def test_is_date_on_first_quarter(the_day, expected):
             is_date_on_first_quarter(the_day)
     else:
         assert is_date_on_first_quarter(the_day) == expected
+
+
+@pytest.mark.parametrize("items, expected", [
+    (
+        None,
+        {},
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (None, None)},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 12, 31)): [{'id': 1, 'date_range': (None, None)}],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (None, date(2015, 12, 31))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 12, 31)): [{'id': 1, 'date_range': (None, date(2015, 12, 31))}],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 1, 1), None)},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 12, 31)): [{'id': 1, 'date_range': (date(2015, 1, 1), None)}],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 12, 31)): [{'id': 1, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))}],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 6, 1), date(2015, 6, 30))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 5, 31)): [],
+            (date(2015, 6, 1), date(2015, 6, 30)): [{'id': 1, 'date_range': (date(2015, 6, 1), date(2015, 6, 30))}],
+            (date(2015, 7, 1), date(2015, 12, 31)): [],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 1, 1), date(2015, 1, 31))},
+            {'id': 2, 'date_range': (date(2015, 3, 1), date(2015, 3, 31))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 1, 31)): [{'id': 1, 'date_range': (date(2015, 1, 1), date(2015, 1, 31))}],
+            (date(2015, 2, 1), date(2015, 2, 28)): [],
+            (date(2015, 3, 1), date(2015, 3, 31)): [{'id': 2, 'date_range': (date(2015, 3, 1), date(2015, 3, 31))}],
+            (date(2015, 4, 1), date(2015, 12, 31)): [],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))},
+            {'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 2, 28)): [],
+            (date(2015, 3, 1), date(2015, 4, 30)): [{'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))}],
+            (date(2015, 5, 1), date(2015, 8, 31)): [
+                {'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))},
+                {'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))},
+            ],
+            (date(2015, 9, 1), date(2015, 10, 31)): [{'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))}],
+            (date(2015, 11, 1), date(2015, 12, 31)): [],
+        }
+    ),
+    (
+        [
+            {'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))},
+            {'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))},
+            {'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))},
+        ],
+        {
+            (date(2015, 1, 1), date(2015, 2, 28)): [{'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))}],
+            (date(2015, 3, 1), date(2015, 4, 30)): [
+                {'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))},
+                {'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))},
+            ],
+            (date(2015, 5, 1), date(2015, 8, 31)): [
+                {'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))},
+                {'id': 1, 'date_range': (date(2015, 3, 1), date(2015, 8, 31))},
+                {'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))},
+            ],
+            (date(2015, 9, 1), date(2015, 10, 31)): [
+                {'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))},
+                {'id': 2, 'date_range': (date(2015, 5, 1), date(2015, 10, 31))},
+            ],
+            (date(2015, 11, 1), date(2015, 12, 31)): [{'id': 3, 'date_range': (date(2015, 1, 1), date(2015, 12, 31))}],
+        }
+    ),
+])
+def test_group_items_in_period_by_date_range(items, expected):
+    assert group_items_in_period_by_date_range(items, date(2015, 1, 1), date(2015, 12, 31)) == expected
