@@ -834,6 +834,16 @@ class LeaseImporter(BaseImporter):
                     if not re.fullmatch(r'\d+', contract_row['SOPIMUS']):
                         continue
 
+                    (contract, contract_created) = Contract.objects.get_or_create(
+                        lease=lease,
+                        type_id=1,  # Vuokrasopimus
+                        contract_number=contract_row['SOPIMUS'],
+                        signing_date=contract_row['ALLEKIRJPVM'].date() if contract_row['ALLEKIRJPVM'] else None,
+                        signing_note=None,
+                        is_readjustment_decision=bool(contract_row['JARJESTELYPAATOS']),
+                        institution_identifier=contract_row['LAITOSTUNNUS'],
+                    )
+
                     note = contract_row['KOMMENTTI']
                     if contract_row['LAITOSTUNNUS_KOMMENTTI'] and contract_row['KOMMENTTI'] != contract_row[
                             'LAITOSTUNNUS_KOMMENTTI']:
@@ -842,36 +852,28 @@ class LeaseImporter(BaseImporter):
                         else:
                             note = contract_row['LAITOSTUNNUS_KOMMENTTI']
 
-                    (contract, contract_created) = Contract.objects.get_or_create(
-                        lease=lease,
-                        type_id=1,  # Vuokrasopimus
-                        contract_number=contract_row['SOPIMUS'],
-                        signing_date=contract_row['ALLEKIRJPVM'].date() if contract_row['ALLEKIRJPVM'] else None,
-                        signing_note=note,
-                        is_readjustment_decision=bool(contract_row['JARJESTELYPAATOS']),
-                        institution_identifier=contract_row['LAITOSTUNNUS'],
-                    )
                     if (contract_row['VUOKRAKIINNITYSPYKALA'] or contract_row['VUOKRAKIINNITYSPVM'] or
-                            contract_row['VUOKRAKIINNITYSLOPPUPVM'] or contract_row['KOMMENTTI']):
+                            contract_row['VUOKRAKIINNITYSLOPPUPVM']):
                         Collateral.objects.get_or_create(
                             contract=contract,
-                            type_id=2,  # Rahavakuus
+                            type_id=3,  # Muu vakuus
                             number=contract_row['VUOKRAKIINNITYSPYKALA'],
                             start_date=contract_row['VUOKRAKIINNITYSPVM'].date() if
                             contract_row['VUOKRAKIINNITYSPVM'] else None,
                             end_date=contract_row['VUOKRAKIINNITYSLOPPUPVM'].date() if
                             contract_row['VUOKRAKIINNITYSLOPPUPVM'] else None,
-                            note=None
+                            note=note
                         )
 
-                    Collateral.objects.get_or_create(
-                        contract=contract,
-                        type_id=1,  # Panttikirja
-                        number=contract_row['PYSYVYYSKIINNITYSPYKALA'],
-                        start_date=contract_row['PYSYVYYSKIINNITYSPVM'].date() if contract_row[
-                            'PYSYVYYSKIINNITYSPVM'] else None,
-                        note=None
-                    )
+                    if (contract_row['PYSYVYYSKIINNITYSPYKALA'] or contract_row['PYSYVYYSKIINNITYSPVM']):
+                        Collateral.objects.get_or_create(
+                            contract=contract,
+                            type_id=1,  # Panttikirja
+                            number=contract_row['PYSYVYYSKIINNITYSPYKALA'],
+                            start_date=contract_row['PYSYVYYSKIINNITYSPVM'].date() if
+                            contract_row['PYSYVYYSKIINNITYSPVM'] else None,
+                            note=note
+                        )
 
                     self.stdout.write('Sopimuksen muutokset:')
 
