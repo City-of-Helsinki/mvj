@@ -80,32 +80,31 @@ def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, 
 
 
 def fix_amount_for_overlap(amount, overlap, remainders):
-    if not remainders:
+    if not remainders or not amount:
         return amount
 
     overlap_delta = relativedelta(overlap[1] + relativedelta(days=1), overlap[0])
     overlap_months = overlap_delta.months
-
-    if overlap_delta.days:
-        # Round to a half month
-        if overlap_delta.days in (14, 15, 16):
-            overlap_months += Decimal(0.5)
-        else:
-            overlap_months += Decimal(overlap_delta.days / 30)
+    overlap_days = overlap_delta.days
 
     remainder_months = 0
+    remainder_days = 0
     for remainder in remainders:
         remainder_delta = relativedelta(remainder[1] + relativedelta(days=1), remainder[0])
         remainder_months += remainder_delta.months
+        remainder_days += remainder_delta.days
 
-        if remainder_delta.days:
-            # Round to a half month
-            if remainder_delta.days in (14, 15, 16):
-                remainder_months += Decimal(0.5)
-            else:
-                remainder_months += Decimal(remainder_delta.days / 30)
+    # Only full months
+    if not overlap_days and not remainder_days:
+        return amount / (overlap_months + remainder_months) * overlap_months
 
-    return amount / (overlap_months + remainder_months) * overlap_months
+    # Also days
+    full_overlap_days = (overlap[1] + relativedelta(days=1) - overlap[0]).days
+    full_remainder_days = 0
+    for remainder in remainders:
+        full_remainder_days += (remainder[1] + relativedelta(days=1) - remainder[0]).days
+
+    return amount / (full_overlap_days + full_remainder_days) * full_overlap_days
 
 
 def get_billing_periods_for_year(year, periods_per_year):

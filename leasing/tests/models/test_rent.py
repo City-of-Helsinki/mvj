@@ -733,7 +733,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             None,
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             27,
-            Decimal(1900)
+            Decimal(73)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -741,14 +741,14 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             0,
-            Decimal(1927)
+            Decimal(100)
         ),
         (
             RentAdjustmentType.DISCOUNT,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
-            1927,
+            100,
             Decimal(0)
         ),
         (
@@ -765,7 +765,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             -100,
-            Decimal(2027)
+            Decimal(200)
         ),
         # Percent per year
         (
@@ -774,7 +774,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             0,
-            Decimal(1927)
+            Decimal(100)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -782,7 +782,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             -100,
-            Decimal(3854)
+            Decimal(200)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -806,7 +806,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('963.5')
+            Decimal(50)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -814,7 +814,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('963.5')
+            Decimal(50)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -822,7 +822,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('1445.25')
+            Decimal(75)
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -830,7 +830,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=6, day=30),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('1445.25')
+            Decimal(75)
         ),
         # Increase
         # Amount per year
@@ -840,7 +840,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             None,
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             100,
-            Decimal(2027)
+            Decimal(200)
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -848,22 +848,22 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             0,
-            Decimal(1927)
+            Decimal(100)
         ),
         (
             RentAdjustmentType.INCREASE,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
-            -100,
-            Decimal(1827)
+            -10,
+            Decimal(90)
         ),
         (
             RentAdjustmentType.INCREASE,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
-            -2000,
+            -200,
             Decimal(0)
         ),
         (
@@ -871,8 +871,8 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
-            2000,
-            Decimal(3927)
+            200,
+            Decimal(300)
         ),
         # Percent per year
         (
@@ -881,7 +881,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             0,
-            Decimal(1927)
+            Decimal(100)
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -889,7 +889,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('2890.5')
+            Decimal(150)
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -897,7 +897,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('2890.5')
+            Decimal(150)
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -905,7 +905,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('2408.75')
+            Decimal(125)
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -913,7 +913,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=6, day=30),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal('2408.75')
+            Decimal(125)
         ),
     ]
 )
@@ -925,6 +925,7 @@ def test_get_amount_for_date_range_contract_with_adjustment(lease_test_data, ren
 
     rent = rent_factory(
         lease=lease,
+        type=RentType.FIXED,
         cycle=RentCycle.JANUARY_TO_DECEMBER,
         due_dates_type=DueDatesType.FIXED,
         due_dates_per_year=1,
@@ -2072,6 +2073,96 @@ def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_re
 
     rent_adjustment = RentAdjustment.objects.get(pk=rent_adjustment.id)
     assert rent_adjustment.amount_left == expected_amount_left
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, "
+    "adjustment_start_date2, adjustment_end_date2, adjustment_type2, adjustment_amount2, expected",
+    [
+        (
+            date(year=2018, month=1, day=1),  # Adjustment 1 start date
+            date(year=2018, month=6, day=30),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=7, day=1),  # Adjustment 2 start date
+            date(year=2018, month=12, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(600),
+        ),
+        (
+            date(year=2018, month=1, day=1),  # Adjustment 1 start date
+            date(year=2018, month=12, day=31),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=1, day=1),  # Adjustment 2 start date
+            date(year=2018, month=12, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(300),
+        ),
+        (
+            date(year=2018, month=3, day=1),  # Adjustment 1 start date
+            date(year=2018, month=8, day=31),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=5, day=1),  # Adjustment 2 start date
+            date(year=2018, month=10, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(700),
+        ),
+    ]
+)
+def test_get_amount_for_date_range_adjustments_two_in_series(
+        lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory, adjustment_start_date1,
+        adjustment_end_date1, adjustment_type1, adjustment_amount1, adjustment_start_date2, adjustment_end_date2,
+        adjustment_type2, adjustment_amount2, expected):
+
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    contract_rent = contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(1200),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(100),
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        type=adjustment_type1,
+        start_date=adjustment_start_date1,
+        end_date=adjustment_end_date1,
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=adjustment_amount1,
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        type=adjustment_type2,
+        start_date=adjustment_start_date2,
+        end_date=adjustment_end_date2,
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=adjustment_amount2,
+    )
+
+    range_start = date(year=2018, month=1, day=1)
+    range_end = date(year=2018, month=12, day=31)
+
+    assert rent.get_amount_for_date_range(range_start, range_end) == expected
 
 
 @pytest.mark.django_db
