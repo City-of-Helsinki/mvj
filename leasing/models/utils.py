@@ -17,7 +17,10 @@ def get_range_overlap(start1, end1, start2, end2):
 
 
 def get_range_overlap_and_remainder(start1, end1, start2, end2):
-    if start2 and end2 and ((start1 > start2 and start1 > end2) or end1 < start2):
+    if start2 and end2 and (start1 > start2 and start1 > end2):
+        return [None, []]
+
+    if end1 and start2 and end1 < start2:
         return [None, []]
 
     min_end = min(end1, end2) if end1 and end2 else end1 or end2
