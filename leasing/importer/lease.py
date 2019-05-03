@@ -181,6 +181,9 @@ class LeaseImporter(BaseImporter):
                 if id_parts['TARKOITUS'] == 'T3':
                     lease.is_subject_to_vat = True
 
+                if id_parts['TARKOITUS'] == 'Y9':
+                    lease.state = LeaseState.LEASE
+
                 notes = []
 
                 query = """
