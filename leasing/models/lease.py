@@ -276,7 +276,7 @@ class Lease(TimeStampedSafeDeleteModel):
     transferable = models.BooleanField(verbose_name=_("Transferable"), null=True, blank=True, default=None)
 
     # In Finnish: Säännelty
-    regulated = models.BooleanField(verbose_name=_("Regulated"), default=False)
+    regulated = models.BooleanField(verbose_name=_("Regulated"), null=True, blank=True, default=None)
 
     # In Finnish: Irtisanomisilmoituksen selite
     notice_note = models.TextField(verbose_name=_("Notice note"), null=True, blank=True)
