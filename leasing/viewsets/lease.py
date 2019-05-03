@@ -153,19 +153,21 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
         if search_form.is_valid():
             if search_form.cleaned_data.get('tenant_name'):
                 tenant_name = search_form.cleaned_data.get('tenant_name')
-                queryset = queryset.filter(
+
+                q = Q(
                     Q(tenants__tenantcontact__contact__name__icontains=tenant_name) |
                     Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name) |
                     Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name)
                 )
 
-                # Limit further only if searching by tenants
                 if search_form.cleaned_data.get('tenantcontact_type'):
-                    queryset = queryset.filter(tenants__tenantcontact__type__in=search_form.cleaned_data.get(
+                    q &= Q(tenants__tenantcontact__type__in=search_form.cleaned_data.get(
                         'tenantcontact_type'))
 
                 if search_form.cleaned_data.get('only_past_tenants'):
-                    queryset = queryset.filter(tenants__tenantcontact__end_date__lte=datetime.date.today())
+                    q &= Q(tenants__tenantcontact__end_date__lte=datetime.date.today())
+
+                queryset = queryset.filter(q)
 
             if search_form.cleaned_data.get('sequence'):
                 queryset = queryset.filter(identifier__sequence=search_form.cleaned_data.get('sequence'))
