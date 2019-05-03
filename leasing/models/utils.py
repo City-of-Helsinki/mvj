@@ -440,8 +440,7 @@ def normalize_property_identifier(identifier):
         match = re.match(r'(\d{3})(\d{3})(\d{4})(\d{4})([PM])?(\d+)?', identifier)
 
     if match:
-        normalized_identifier = '{}-{}-{}-{}'.format(match[1].lstrip('0'), match[2].lstrip('0'), match[3].lstrip('0'),
-                                                     match[4].lstrip('0'), )
+        normalized_identifier = '{}-{}-{}-{}'.format(*[m.lstrip('0') for m in match.groups()[:4]])
 
         if match[5]:
             normalized_identifier += '-{}{}'.format(match[5], match[6].lstrip('0'))
