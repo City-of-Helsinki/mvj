@@ -442,8 +442,8 @@ def normalize_property_identifier(identifier):
     if match:
         normalized_identifier = '{}-{}-{}-{}'.format(*[m.lstrip('0') for m in match.group(1, 2, 3, 4)])
 
-        if match[5]:
-            normalized_identifier += '-{}{}'.format(match[5], match[6].lstrip('0'))
+        if match.group(5):
+            normalized_identifier += '-{}{}'.format(match.group(5), match.group(6).lstrip('0'))
 
         return normalized_identifier
 
