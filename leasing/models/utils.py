@@ -1,4 +1,5 @@
 import datetime
+import re
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import date
 from decimal import Decimal
@@ -425,3 +426,26 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
             parent_objs.pop()
 
     return acc
+
+
+def normalize_property_identifier(identifier):
+    if not identifier:
+        return identifier
+
+    identifier = identifier.strip()
+
+    match = re.match(r'(\d+)-(\d+)-(\d+(?:[A-Za-z]+)?)-(\d+)(?:-([PM])?(\d+))?', identifier)
+
+    if not match:
+        match = re.match(r'(\d{3})(\d{3})(\d{4})(\d{4})([PM])?(\d+)?', identifier)
+
+    if match:
+        normalized_identifier = '{}-{}-{}-{}'.format(match[1].lstrip('0'), match[2].lstrip('0'), match[3].lstrip('0'),
+                                                     match[4].lstrip('0'), )
+
+        if match[5]:
+            normalized_identifier += '-{}{}'.format(match[5], match[6].lstrip('0'))
+
+        return normalized_identifier
+
+    return identifier

@@ -11,6 +11,7 @@ from leasing.forms import LeaseSearchForm
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
+from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, LeaseUpdateSerializer,
@@ -199,8 +200,13 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                     queryset = queryset.filter(lease_areas__geometry__isnull=True)
 
             if search_form.cleaned_data.get('property_identifier'):
+                property_identifier = search_form.cleaned_data.get('property_identifier')
+                normalized_identifier = normalize_property_identifier(property_identifier)
+
                 queryset = queryset.filter(
-                    lease_areas__identifier__icontains=search_form.cleaned_data.get('property_identifier'))
+                    Q(lease_areas__identifier__icontains=property_identifier) | Q(
+                        lease_areas__identifier__icontains=normalized_identifier)
+                )
 
             if search_form.cleaned_data.get('address'):
                 queryset = queryset.filter(

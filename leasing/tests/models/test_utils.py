@@ -6,7 +6,7 @@ import pytest
 from leasing.models.utils import (
     combine_ranges, fix_amount_for_overlap, get_billing_periods_for_year, get_next_business_day,
     get_range_overlap_and_remainder, group_items_in_period_by_date_range, is_business_day, is_date_on_first_quarter,
-    split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
+    normalize_property_identifier, split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
 
 
 @pytest.mark.parametrize("s1, e1, s2, e2, expected", [
@@ -625,3 +625,19 @@ def test_is_date_on_first_quarter(the_day, expected):
 ])
 def test_group_items_in_period_by_date_range(items, expected):
     assert group_items_in_period_by_date_range(items, date(2015, 1, 1), date(2015, 12, 31)) == expected
+
+
+@pytest.mark.parametrize("identifier, expected", [
+    (None, None),
+    ('', ''),
+    ('123456', '123456'),
+    ('123-456', '123-456'),
+    ('91-49-75-2', '91-49-75-2'),
+    ('09104900750002', '91-49-75-2'),
+    ('091-049-0075-0002', '91-49-75-2'),
+    ('09104900750002M0601', '91-49-75-2-M601'),
+    ('091-049-0075-0002-M601', '91-49-75-2-M601'),
+    ('091-049-0075-0002-M0601', '91-49-75-2-M601'),
+])
+def test_normalize_property_identifier(identifier, expected):
+    assert normalize_property_identifier(identifier) == expected
