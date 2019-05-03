@@ -172,7 +172,7 @@ DEFAULT_FIELD_PERMS = {
         3: "change",
         4: "view",
         5: "view",
-        6: "view",
+        6: "change",
         7: "change",
     },
     "collectionletter": {
@@ -466,11 +466,6 @@ CUSTOM_FIELD_PERMS = {
             5: "change",
         },
         "collaterals": {
-            6: "change",
-        },
-    },
-    "collateral": {
-        "note": {
             6: "change",
         },
     },
