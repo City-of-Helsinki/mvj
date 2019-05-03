@@ -1,4 +1,5 @@
 *.py[cod]
+*.mo
 .coverage*
 .DS_Store
 /local_settings.py
