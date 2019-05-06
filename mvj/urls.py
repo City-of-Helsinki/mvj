@@ -18,6 +18,7 @@ from leasing.viewsets.decision import DecisionCopyToLeasesView, DecisionViewSet
 from leasing.viewsets.email import SendEmailView
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
+from leasing.viewsets.inspection import InspectionAttachmentViewSet
 from leasing.viewsets.invoice import InvoiceNoteViewSet, InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
 from leasing.viewsets.invoice_additional_views import (
     InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceExportToLaskeView, InvoiceRowCreditView,
@@ -55,6 +56,7 @@ router.register(r'hitas', HitasViewSet)
 router.register(r'index', IndexViewSet)
 router.register(r'infill_development_compensation', InfillDevelopmentCompensationViewSet)
 router.register(r'infill_development_compensation_attachment', InfillDevelopmentCompensationAttachmentViewSet)
+router.register(r'inspection_attachment', InspectionAttachmentViewSet)
 router.register(r'invoice', InvoiceViewSet)
 router.register(r'invoice_note', InvoiceNoteViewSet)
 router.register(r'invoice_row', InvoiceRowViewSet)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-02 15:15+0300\n"
+"POT-Creation-Date: 2019-05-06 10:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -30,7 +30,7 @@ msgstr "Laskut"
 #: leasing/models/debt_collection.py:22 leasing/models/debt_collection.py:71
 #: leasing/models/debt_collection.py:94 leasing/models/decision.py:37
 #: leasing/models/infill_development_compensation.py:66
-#: leasing/models/inspection.py:13 leasing/models/invoice.py:40
+#: leasing/models/inspection.py:15 leasing/models/invoice.py:40
 #: leasing/models/invoice.py:143 leasing/models/invoice.py:518
 #: leasing/models/lease.py:884 leasing/models/rent.py:62
 #: leasing/models/rent.py:865 leasing/models/tenant.py:18
@@ -1116,7 +1116,7 @@ msgid "Collaterals"
 msgstr "Vakuudet"
 
 #: leasing/models/contract.py:150 leasing/models/decision.py:58
-#: leasing/models/decision.py:95 leasing/models/inspection.py:26
+#: leasing/models/decision.py:95 leasing/models/inspection.py:28
 #: leasing/models/invoice.py:218 leasing/models/invoice.py:559
 msgid "Description"
 msgstr "Selite"
@@ -1138,13 +1138,13 @@ msgstr "Tiedosto"
 
 #: leasing/models/debt_collection.py:30 leasing/models/debt_collection.py:108
 #: leasing/models/infill_development_compensation.py:177
-#: leasing/models/land_area.py:165
+#: leasing/models/inspection.py:51 leasing/models/land_area.py:165
 msgid "Uploader"
 msgstr "Lataaja"
 
 #: leasing/models/debt_collection.py:33 leasing/models/debt_collection.py:111
 #: leasing/models/infill_development_compensation.py:180
-#: leasing/models/land_area.py:168
+#: leasing/models/inspection.py:54 leasing/models/land_area.py:168
 msgid "Time uploaded"
 msgstr "Latauspäivämäärä"
 
@@ -1250,11 +1250,11 @@ msgctxt "Model name"
 msgid "Condition types"
 msgstr "Ehdon tyypit"
 
-#: leasing/models/decision.py:89 leasing/models/inspection.py:20
+#: leasing/models/decision.py:89 leasing/models/inspection.py:22
 msgid "Supervision date"
 msgstr "Valvontapäivämäärä"
 
-#: leasing/models/decision.py:92 leasing/models/inspection.py:23
+#: leasing/models/decision.py:92 leasing/models/inspection.py:25
 msgid "Supervised date"
 msgstr "Valvottupäivämäärä"
 
@@ -1400,19 +1400,29 @@ msgctxt "Model name"
 msgid "Infill development compensation attachments"
 msgstr "Täydennysrakentamiskorvausliitetiedostot"
 
-#: leasing/models/inspection.py:17
+#: leasing/models/inspection.py:19
 msgid "Inspector"
 msgstr "Tarkastaja"
 
-#: leasing/models/inspection.py:31
+#: leasing/models/inspection.py:33
 msgctxt "Model name"
 msgid "Inspection"
 msgstr "Tarkastus"
 
-#: leasing/models/inspection.py:32
+#: leasing/models/inspection.py:34
 msgctxt "Model name"
 msgid "Inspections"
 msgstr "Tarkastukset"
+
+#: leasing/models/inspection.py:59
+msgctxt "Model name"
+msgid "Inspection attachment"
+msgstr "Tarkastuksen liite"
+
+#: leasing/models/inspection.py:60
+msgctxt "Model name"
+msgid "Inspection attachments"
+msgstr "Tarkastuksen liitteet"
 
 #: leasing/models/invoice.py:27 leasing/models/lease.py:31
 msgid "SAP material code"

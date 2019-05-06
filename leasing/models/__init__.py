@@ -13,7 +13,7 @@ from .email import EmailLog
 from .infill_development_compensation import (
     InfillDevelopmentCompensation, InfillDevelopmentCompensationAttachment, InfillDevelopmentCompensationDecision,
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
-from .inspection import Inspection
+from .inspection import Inspection, InspectionAttachment
 from .invoice import BankHoliday, Invoice, InvoiceNote, ReceivableType
 from .land_area import (
     ConstructabilityDescription, LeaseArea, LeaseAreaAttachment, PlanUnit, PlanUnitState, PlanUnitType, Plot)
@@ -73,6 +73,7 @@ __all__ = [
     'InfillDevelopmentCompensationIntendedUse',
     'InfillDevelopmentCompensationLease',
     'Inspection',
+    'InspectionAttachment',
     'IntendedUse',
     'InterestRate',
     'Invoice',

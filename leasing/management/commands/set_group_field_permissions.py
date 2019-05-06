@@ -265,6 +265,15 @@ DEFAULT_FIELD_PERMS = {
         6: "view",
         7: "change",
     },
+    "inspectionattachment": {
+        1: "view",
+        2: "change",
+        3: "view",
+        4: "change",
+        5: "change",
+        6: "view",
+        7: "change",
+    },
     "invoice": {
         1: None,
         2: "view",
