@@ -118,7 +118,8 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPerm
                                            serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer, required=False)
+                                                  related_serializer=DecisionSerializer, required=False,
+                                                  allow_null=True)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
                                                       related_serializer=RentIntendedUseSerializer)
