@@ -322,6 +322,15 @@ class Rent(TimeStampedSafeDeleteModel):
                                                              amount=contract_amount,
                                                              related_item=contract_rent_explanation_item)
 
+                    # Create a notice if the index used is older than it should be.
+                    # (The previous years average index is not yet available)
+                    if index.year < contract_overlap[0].year - 1:
+                        explanation.add(subject={
+                            "subject_type": "notice",
+                            "description": _('Average index for the year {} is not available!').format(
+                                contract_overlap[0].year - 1),
+                        }, related_item=index_explanation_item)
+
                     for item in index_calculation.explanation_items:
                         explanation.add_item(item, related_item=index_explanation_item)
 
