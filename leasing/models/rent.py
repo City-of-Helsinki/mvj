@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
-from leasing.calculation.explanation import Explanation
+from leasing.calculation.explanation import Explanation, ExplanationItem
 from leasing.calculation.index import IndexCalculation
 from leasing.enums import (
     AreaUnit, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType,
@@ -152,6 +152,38 @@ class Rent(TimeStampedSafeDeleteModel):
         date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
         return self.get_amount_for_date_range(date_range_start, date_range_end)
 
+    def _get_adjustment_amount_for_period(self, rent_adjustments, period, amount, explain=False, dry_run=False):
+        """Calculate adjustment amounts for the provided period and amount
+
+        As overlapping adjustments should be cumulative, but adjustments in series should not,
+        we group adjustments by time periods and make separate calculations for every set.
+        """
+        explanations = []
+        total_adjustment_amount = Decimal(0)
+
+        grouped_rent_adjustments = group_items_in_period_by_date_range(rent_adjustments, *period)
+
+        for adjustment_range, adjustments in grouped_rent_adjustments.items():
+            if not adjustments:
+                continue
+
+            tmp_amount = fix_amount_for_overlap(
+                amount, adjustment_range, subtract_range_from_range(period, adjustment_range))
+
+            for rent_adjustment in adjustments:
+                adjustment_amount = rent_adjustment.get_amount_for_date_range(
+                    tmp_amount, *adjustment_range, update_amount_total=False if dry_run else True)
+                total_adjustment_amount += adjustment_amount
+                tmp_amount += adjustment_amount
+
+                explanations.append(ExplanationItem(subject=rent_adjustment, date_ranges=[adjustment_range],
+                                                    amount=adjustment_amount))
+
+        if explain:
+            return total_adjustment_amount, explanations
+        else:
+            return total_adjustment_amount
+
     def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False, dry_run=False):  # noqa: TODO
         assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
 
@@ -163,7 +195,6 @@ class Rent(TimeStampedSafeDeleteModel):
 
         fixed_initial_year_rents = self.fixed_initial_year_rents.filter(range_filtering)
         contract_rents = self.contract_rents.filter(range_filtering)
-        rent_adjustments = self.rent_adjustments.filter(range_filtering)
 
         total = Decimal('0.00')
         fixed_applied = False
@@ -207,25 +238,17 @@ class Rent(TimeStampedSafeDeleteModel):
             fixed_explanation_item = explanation.add(
                 subject=fixed_initial_year_rent, date_ranges=[fixed_overlap], amount=fixed_amount)
 
-            for rent_adjustment in rent_adjustments:
-                if fixed_initial_year_rent.intended_use and \
-                        rent_adjustment.intended_use != fixed_initial_year_rent.intended_use:
-                    continue
+            # Apply rent adjustments
+            rent_adjustments = self.get_applicable_adjustments(fixed_initial_year_rent.intended_use,
+                                                               *fixed_overlap)
 
-                (adjustment_overlap, adjustment_remainders) = get_range_overlap_and_remainder(
-                    fixed_overlap[0], fixed_overlap[1], *rent_adjustment.date_range)
+            (adjustment_amount, adjustment_explanations) = self._get_adjustment_amount_for_period(
+                rent_adjustments, fixed_overlap, fixed_amount, explain=True, dry_run=dry_run)
 
-                if not adjustment_overlap:
-                    continue
+            for adjustment_explanation in adjustment_explanations:
+                explanation.add_item(adjustment_explanation, related_item=fixed_explanation_item)
 
-                tmp_amount = fix_amount_for_overlap(fixed_amount, adjustment_overlap, adjustment_remainders)
-                adjustment_amount = rent_adjustment.get_amount_for_date_range(
-                    tmp_amount, *adjustment_overlap, update_amount_total=False if dry_run else True)
-                fixed_amount += adjustment_amount
-
-                explanation.add(subject=rent_adjustment, date_ranges=[adjustment_overlap], amount=adjustment_amount,
-                                related_item=fixed_explanation_item)
-
+            fixed_amount += adjustment_amount
             total += fixed_amount
 
         if fixed_applied:
@@ -307,31 +330,16 @@ class Rent(TimeStampedSafeDeleteModel):
                 else:
                     raise NotImplementedError('RentType {} not implemented'.format(self.type))
 
-                total_adjustment_amount = Decimal(0)
-
                 # Apply rent adjustments
-                # As overlapping adjustments should be cumulative, but adjustments in series should not,
-                # we group adjustments by time periods and make separate calculations for every set.
                 rent_adjustments = self.get_applicable_adjustments(contract_rent.intended_use, *contract_overlap)
-                grouped_rent_adjustments = group_items_in_period_by_date_range(rent_adjustments, *contract_overlap)
 
-                for adjustment_range, adjustments in grouped_rent_adjustments.items():
-                    if not adjustments:
-                        continue
+                (adjustment_amount, adjustment_explanations) = self._get_adjustment_amount_for_period(
+                    rent_adjustments, contract_overlap, contract_amount, explain=True, dry_run=dry_run)
 
-                    tmp_amount = fix_amount_for_overlap(
-                        contract_amount, adjustment_range, subtract_range_from_range(contract_overlap,
-                                                                                     adjustment_range))
-                    for rent_adjustment in adjustments:
-                        adjustment_amount = rent_adjustment.get_amount_for_date_range(
-                            tmp_amount, *adjustment_range, update_amount_total=False if dry_run else True)
-                        total_adjustment_amount += adjustment_amount
-                        tmp_amount += adjustment_amount
+                for adjustment_explanation in adjustment_explanations:
+                    explanation.add_item(adjustment_explanation, related_item=contract_rent_explanation_item)
 
-                        explanation.add(subject=rent_adjustment, date_ranges=[adjustment_range],
-                                        amount=adjustment_amount, related_item=contract_rent_explanation_item)
-
-                contract_amount += total_adjustment_amount
+                contract_amount += adjustment_amount
 
                 total += max(Decimal(0), contract_amount)
 

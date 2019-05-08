@@ -2167,6 +2167,93 @@ def test_get_amount_for_date_range_adjustments_two_in_series(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
+    "adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, "
+    "adjustment_start_date2, adjustment_end_date2, adjustment_type2, adjustment_amount2, expected",
+    [
+        (
+            date(year=2018, month=1, day=1),  # Adjustment 1 start date
+            date(year=2018, month=6, day=30),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=7, day=1),  # Adjustment 2 start date
+            date(year=2018, month=12, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(600),
+        ),
+        (
+            date(year=2018, month=1, day=1),  # Adjustment 1 start date
+            date(year=2018, month=12, day=31),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=1, day=1),  # Adjustment 2 start date
+            date(year=2018, month=12, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(300),
+        ),
+        (
+            date(year=2018, month=3, day=1),  # Adjustment 1 start date
+            date(year=2018, month=8, day=31),  # Adjustment 1 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 1 type
+            50,  # Adjustment 1 amount
+            date(year=2018, month=5, day=1),  # Adjustment 2 start date
+            date(year=2018, month=10, day=31),  # Adjustment 2 end date
+            RentAdjustmentType.DISCOUNT,  # Adjustment 2 type
+            50,  # Adjustment 2 amount
+            Decimal(700),
+        ),
+    ]
+)
+def test_get_amount_for_date_range_adjustments_two_in_series_fixed_initial_year_rent(
+        lease_test_data, rent_factory, contract_rent_factory, fixed_initial_year_rent_factory, rent_adjustment_factory,
+        adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, adjustment_start_date2,
+        adjustment_end_date2, adjustment_type2, adjustment_amount2, expected):
+
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    fixed_initial_year_rent = fixed_initial_year_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(1200),
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=fixed_initial_year_rent.intended_use,
+        type=adjustment_type1,
+        start_date=adjustment_start_date1,
+        end_date=adjustment_end_date1,
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=adjustment_amount1,
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=fixed_initial_year_rent.intended_use,
+        type=adjustment_type2,
+        start_date=adjustment_start_date2,
+        end_date=adjustment_end_date2,
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=adjustment_amount2,
+    )
+
+    range_start = date(year=2018, month=1, day=1)
+    range_end = date(year=2018, month=12, day=31)
+
+    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
     "rent_start_date, rent_end_date, period_start_date, period_end_date, expected",
     [
         (
