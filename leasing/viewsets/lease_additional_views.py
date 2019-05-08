@@ -251,7 +251,7 @@ class LeaseBillingPeriodsView(APIView):
         if 'year' in request.query_params:
             try:
                 year = int(request.query_params['year'])
-            except ValueError:
+            except (ValueError, OverflowError):
                 raise APIException(_('Year parameter is not valid'))
         else:
             year = datetime.date.today().year
@@ -259,7 +259,7 @@ class LeaseBillingPeriodsView(APIView):
         try:
             start_date = datetime.date(year=year, month=1, day=1)
             end_date = datetime.date(year=year, month=12, day=31)
-        except ValueError as e:
+        except (ValueError, OverflowError) as e:
             raise APIException(e)
 
         billing_periods = []
@@ -287,14 +287,14 @@ class LeasePreviewInvoicesForYearView(APIView):
         if 'year' in request.query_params:
             try:
                 year = int(request.query_params['year'])
-            except ValueError:
+            except (ValueError, OverflowError):
                 raise APIException(_('Year parameter is not valid'))
         else:
             year = datetime.date.today().year
 
         try:
             first_day_of_year = datetime.date(year=year, month=1, day=1)
-        except ValueError as e:
+        except (ValueError, OverflowError) as e:
             raise APIException(e)
 
         first_day_of_every_month = [dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)]
