@@ -185,12 +185,15 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             if search_form.cleaned_data.get('lease_end_date_end'):
                 queryset = queryset.filter(end_date__lte=search_form.cleaned_data.get('lease_end_date_end'))
 
-            if search_form.cleaned_data.get('only_active_leases'):
-                # No need to filter by start date because future start dates are also considered active
-                queryset = queryset.filter(Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today()))
+            # Filter by active / expired only when only one of the options is set
+            if bool(search_form.cleaned_data.get('only_active_leases')) ^ bool(
+                    search_form.cleaned_data.get('only_expired_leases')):
+                if search_form.cleaned_data.get('only_active_leases'):
+                    # No need to filter by start date because future start dates are also considered active
+                    queryset = queryset.filter(Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today()))
 
-            if search_form.cleaned_data.get('only_expired_leases'):
-                queryset = queryset.filter(end_date__lte=datetime.date.today())
+                if search_form.cleaned_data.get('only_expired_leases'):
+                    queryset = queryset.filter(end_date__lte=datetime.date.today())
 
             if 'has_geometry' in search_form.cleaned_data:
                 if search_form.cleaned_data.get('has_geometry') is True:
