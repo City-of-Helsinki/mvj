@@ -386,3 +386,48 @@ def test_calculate_invoices_invoice_note(django_db_setup, lease_factory, contact
     invoice_data = period_invoice_data[0][0]
 
     assert invoice_data['notes'] == expected
+
+
+@pytest.mark.django_db
+def test_is_empty_empty(django_db_setup, lease_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1)
+
+    assert lease.is_empty()
+
+
+@pytest.mark.django_db
+def test_is_empty_one_field(django_db_setup, lease_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1)
+    lease.start_date = datetime.date(year=2000, month=1, day=1)
+
+    assert not lease.is_empty()
+
+
+@pytest.mark.django_db
+def test_is_empty_one_foreign(django_db_setup, lease_factory, contact_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1)
+
+    contact = contact_factory(type=ContactType.OTHER, is_lessor=True)
+
+    lease.lessor = contact
+
+    assert not lease.is_empty()
+
+
+@pytest.mark.django_db
+def test_is_empty_one_relation(django_db_setup, lease_factory, decision_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1)
+
+    decision_factory(lease=lease)
+
+    assert not lease.is_empty()
+
+
+@pytest.mark.django_db
+def test_is_empty_one_manytomany(django_db_setup, lease_factory, related_lease_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1)
+    lease2 = lease_factory(type_id=1, municipality_id=1, district_id=2)
+
+    related_lease_factory(from_lease=lease, to_lease=lease2)
+
+    assert not lease.is_empty()

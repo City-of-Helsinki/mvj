@@ -11,6 +11,7 @@ from django.db.models import Max, Q
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from safedelete.managers import SafeDeleteManager
 
 from field_permissions.registry import field_permissions
 from leasing.enums import (
@@ -19,7 +20,8 @@ from leasing.enums import (
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 from leasing.models.utils import (
-    combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, subtract_ranges_from_ranges)
+    combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, is_instance_empty,
+    subtract_ranges_from_ranges)
 from users.models import User
 
 
@@ -196,7 +198,7 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
                                      self.sequence)
 
 
-class LeaseManager(models.Manager):
+class LeaseManager(SafeDeleteManager):
     def full_select_related_and_prefetch_related(self):
         return self.get_queryset().select_related(
             'type', 'municipality', 'district', 'identifier', 'identifier__type', 'identifier__municipality',
@@ -362,6 +364,7 @@ class Lease(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease")
         verbose_name_plural = pgettext_lazy("Model name", "Leases")
+        permissions = [("delete_nonempty_lease", "Can delete non-empty Lease")]
 
     def __str__(self):
         return self.get_identifier_string()
@@ -878,6 +881,12 @@ class Lease(TimeStampedSafeDeleteModel):
         # TODO: Notify billing
         self.is_rent_info_complete = state
         self.save()
+
+    def is_empty(self):
+        skip_fields = ('id', 'type', 'municipality', 'district', 'identifier', 'state', 'preparer', 'note',
+                       'created_at', 'modified_at')
+
+        return is_instance_empty(self, skip_fields=skip_fields)
 
 
 class LeaseStateLog(TimeStampedModel):

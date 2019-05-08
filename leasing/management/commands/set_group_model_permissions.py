@@ -463,7 +463,7 @@ DEFAULT_MODEL_PERMS = {
         4: ("view", "add", "change", "delete"),
         5: ("view", "add", "change", "delete"),
         6: ("view", "change"),
-        7: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete", "delete_nonempty"),
     },
     "leasestatelog": {
         1: ("view",),

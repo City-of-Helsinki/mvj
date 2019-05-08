@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Manager, Model
 
 from leasing.enums import PeriodType
 
@@ -448,3 +449,32 @@ def normalize_property_identifier(identifier):
         return normalized_identifier
 
     return identifier
+
+
+def is_instance_empty(instance, skip_fields=None):
+    """Check if all of the fields in the model instance are empty"""
+    assert isinstance(instance, Model), "is_instance_empty expects a django.db.models.Model instance"
+
+    if skip_fields is None:
+        skip_fields = []
+
+    for field in instance.__class__._meta.get_fields():
+        if field.name in skip_fields:
+            continue
+
+        if field.is_relation:
+            accessor_name = field.name
+            if hasattr(field, 'get_accessor_name'):
+                accessor_name = field.get_accessor_name()
+
+            val = getattr(instance, accessor_name)
+
+            if isinstance(val, Manager):
+                if len(val.all()):
+                    return False
+            elif bool(val):
+                return False
+        elif bool(getattr(instance, field.name)):
+            return False
+
+    return True

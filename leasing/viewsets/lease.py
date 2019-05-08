@@ -2,8 +2,12 @@ import datetime
 
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django.utils.translation import ugettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DistrictFilter, LeaseFilter
@@ -291,3 +295,14 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             request.data['preparer'] = request.user.id
 
         return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if (instance.preparer == request.user and instance.is_empty()) or request.user.has_perm(
+                'leasing.delete_nonempty_lease'):
+            self.perform_destroy(instance)
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        raise PermissionDenied(_("No permission. Can only delete own empty leases."))
