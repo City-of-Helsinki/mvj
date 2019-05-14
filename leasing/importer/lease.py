@@ -10,9 +10,9 @@ from leasing.enums import (
     ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseRelationType, LeaseState,
     LocationType, PeriodType, RentAdjustmentAmountType, RentType, TenantContactType)
 from leasing.models import (
-    Collateral, Condition, Contact, Contract, ContractChange, ContractRent, Decision, District, FixedInitialYearRent,
-    IndexAdjustedRent, Inspection, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier, LeaseType, Municipality,
-    PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+    Collateral, Comment, Condition, Contact, Contract, ContractChange, ContractRent, Decision, District,
+    FixedInitialYearRent, IndexAdjustedRent, Inspection, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier,
+    LeaseType, Municipality, PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, EqualizedRent, RentDueDate
@@ -114,6 +114,10 @@ class LeaseImporter(BaseImporter):
         # LEASE_TYPE_MAP = {lt.identifier: lt.id for lt in LeaseType.objects.all()}
         intended_use_map = {intended_use.name: intended_use.id for intended_use in IntendedUse.objects.all()}
 
+        # Disable auto_now and auto_now_add on comment timestamps
+        Comment._meta.get_field('created_at').auto_now_add = False
+        Comment._meta.get_field('modified_at').auto_now = False
+
         count = 0
         if self.offset:
             count = self.offset - 1
@@ -184,19 +188,25 @@ class LeaseImporter(BaseImporter):
                 if id_parts['TARKOITUS'] == 'Y9':
                     lease.state = LeaseState.LEASE
 
-                notes = []
-
                 query = """
-                    SELECT TEKSTI
+                    SELECT TEKSTI, MUUTOSPVM
                     FROM TUNNUS_OPASTE""" + expanded_id_to_query(id_parts)
 
                 cursor.execute(query)
                 for row in cursor:
-                    if not row[0]:
+                    if not row[0] or not row[0].strip():
                         continue
 
-                    notes.append(row[0])
+                    (comment, comment_created) = Comment.objects.get_or_create(
+                        lease=lease,
+                        user_id=1,  # TODO: Which user id
+                        topic_id=5,  # "Huomautukset"
+                        text=row[0].strip(),
+                        created_at=make_aware(row[1]),
+                        modified_at=make_aware(row[1])
+                    )
 
+                notes = []
                 if lease_row['HAKEMUS_SISALTO']:
                     notes.append(lease_row['HAKEMUS_SISALTO'])
                 if lease_row['SIIRTO_TXT']:

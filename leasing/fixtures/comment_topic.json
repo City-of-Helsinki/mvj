@@ -26,5 +26,12 @@
     "fields": {
       "name": "Sopimusehdot"
     }
+  },
+  {
+    "model": "leasing.commenttopic",
+    "pk": 5,
+    "fields": {
+      "name": "Huomautukset"
+    }
   }
 ]
