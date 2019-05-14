@@ -16,10 +16,11 @@ from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
     RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import normalize_property_identifier
+from leasing.serializers.common import ManagementSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, LeaseUpdateSerializer,
-    ManagementSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
+    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
     SpecialProjectSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin

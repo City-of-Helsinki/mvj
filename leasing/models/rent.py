@@ -15,7 +15,7 @@ from leasing.calculation.explanation import Explanation, ExplanationItem
 from leasing.calculation.index import IndexCalculation
 from leasing.enums import (
     AreaUnit, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType,
-    RentCycle, RentType)
+    RentCycle, RentType, SubventionType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
     get_monthly_amount_by_period_type, get_range_overlap_and_remainder, group_items_in_period_by_date_range,
@@ -711,6 +711,18 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
+    # In Finnish: Subventioalennuksen tyyppi
+    subvention_type = EnumField(SubventionType, verbose_name=_("Subvention type"), null=True, blank=True,
+                                max_length=30)
+
+    # In Finnish: Perusalennus markkinavuokrasta
+    subvention_base_percent = models.DecimalField(verbose_name=_("Subvention base percent"), null=True, blank=True,
+                                                  max_digits=10, decimal_places=2)
+
+    # In Finnish: Porrastettu alennus
+    subvention_graduated_percent = models.DecimalField(verbose_name=_("Graduated subvention percent"), null=True,
+                                                       blank=True, max_digits=10, decimal_places=2)
+
     recursive_get_related_skip_relations = ["rent"]
 
     class Meta:
@@ -761,6 +773,40 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
         else:
             raise NotImplementedError(
                 'Cannot get adjust amount for RentAdjustmentType {}'.format(self.amount_type))
+
+
+class ManagementSubvention(models.Model):
+    rent_adjustment = models.ForeignKey(RentAdjustment, verbose_name=_("Rent adjustment"),
+                                        related_name='management_subventions', on_delete=models.CASCADE)
+
+    # In Finnish: Hallintamuoto
+    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), related_name='+',
+                                   on_delete=models.PROTECT)
+
+    # In Finnish: Alennus markkinavuokrasta
+    subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
+
+    recursive_get_related_skip_relations = ["rent_adjustment"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Management subvention")
+        verbose_name_plural = pgettext_lazy("Model name", "Management subventions")
+
+
+class TemporarySubvention(models.Model):
+    rent_adjustment = models.ForeignKey(RentAdjustment, verbose_name=_("Rent adjustment"),
+                                        related_name='temporary_subventions', on_delete=models.CASCADE)
+    # In Finnish: Kuvaus
+    description = models.CharField(verbose_name=_("Description"), null=True, blank=True, max_length=255)
+
+    # In Finnish: Alennus markkinavuokrasta
+    subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
+
+    recursive_get_related_skip_relations = ["rent_adjustment"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Temporary subvention")
+        verbose_name_plural = pgettext_lazy("Model name", "Temporary subventions")
 
 
 class PayableRent(models.Model):

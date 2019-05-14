@@ -16,8 +16,8 @@ from users.models import User
 from users.serializers import UserSerializer
 
 from ..models import (
-    Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Management, Municipality,
-    NoticePeriod, Regulation, SpecialProject, StatisticalUse, SupportiveHousing)
+    Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Municipality, NoticePeriod,
+    Regulation, SpecialProject, StatisticalUse, SupportiveHousing)
 from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
@@ -56,12 +56,6 @@ class IntendedUseSerializer(serializers.ModelSerializer):
 class LeaseTypeSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LeaseType
-        fields = '__all__'
-
-
-class ManagementSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Management
         fields = '__all__'
 
 

@@ -6,8 +6,9 @@ from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle
-from leasing.models import Index
-from leasing.models.rent import EqualizedRent
+from leasing.models import Index, Management
+from leasing.models.rent import EqualizedRent, ManagementSubvention, TemporarySubvention
+from leasing.serializers.common import ManagementSerializer
 from users.serializers import UserSerializer
 
 from ..models import (
@@ -102,20 +103,50 @@ class EqualizedRentSerializer(serializers.ModelSerializer):
         fields = ('id', 'start_date', 'end_date', 'payable_amount', 'equalized_payable_amount', 'equalization_factor')
 
 
+class ManagementSubventionSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    management = ManagementSerializer(required=False)
+
+    class Meta:
+        model = ManagementSubvention
+        fields = ('id', 'management', 'subvention_percent')
+
+
+class ManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    management = InstanceDictPrimaryKeyRelatedField(instance_class=Management, queryset=Management.objects.all(),
+                                                    related_serializer=ManagementSerializer)
+
+    class Meta:
+        model = ManagementSubvention
+        fields = ('id', 'management', 'subvention_percent')
+
+
+class TemporarySubventionSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = TemporarySubvention
+        fields = ('id', 'description', 'subvention_percent')
+
+
 class RentAdjustmentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                                serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = DecisionSerializer(required=False)
     intended_use = RentIntendedUseSerializer()
+    management_subventions = ManagementSubventionSerializer(many=True, required=False, allow_null=True)
+    temporary_subventions = TemporarySubventionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = RentAdjustment
         fields = ('id', 'type', 'intended_use', 'start_date', 'end_date', 'full_amount', 'amount_type', 'amount_left',
-                  'decision', 'note')
+                  'decision', 'note', 'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
+                  'management_subventions', 'temporary_subventions')
 
 
-class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
-                                           serializers.ModelSerializer):
+class RentAdjustmentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
+                                           FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
                                                   related_serializer=DecisionSerializer, required=False,
@@ -123,11 +154,14 @@ class RentAdjustmentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPerm
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
                                                       related_serializer=RentIntendedUseSerializer)
+    management_subventions = ManagementSubventionCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    temporary_subventions = TemporarySubventionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = RentAdjustment
         fields = ('id', 'type', 'intended_use', 'start_date', 'end_date', 'full_amount', 'amount_type', 'amount_left',
-                  'decision', 'note')
+                  'decision', 'note', 'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
+                  'management_subventions', 'temporary_subventions')
         read_only_fields = ('amount_left', )
 
     def validate(self, data):

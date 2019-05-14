@@ -313,6 +313,15 @@ class RentAdjustmentAmountType(Enum):
         AMOUNT_TOTAL = pgettext_lazy('Rent Adjustment amount type', '€ total')
 
 
+class SubventionType(Enum):
+    X_DISCOUNT = 'x_discount'  # In Finnish: X alennus
+    RE_LEASE_DISCOUNT = 're_lease_discount'  # In Finnish: Jatkovuokrauksen alennus
+
+    class Labels:
+        X_DISCOUNT = pgettext_lazy('Subvention type', 'X discount')
+        RE_LEASE_DISCOUNT = pgettext_lazy('Subvention type', 'Re-lease discount')
+
+
 class InvoiceDeliveryMethod(Enum):
     MAIL = 'mail'
     ELECTRONIC = 'electronic'
