@@ -7,7 +7,9 @@ from rest_framework.serializers import ListSerializer
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle
 from leasing.models import Index, Management
-from leasing.models.rent import EqualizedRent, ManagementSubvention, TemporarySubvention
+from leasing.models.rent import (
+    EqualizedRent, LeaseBasisOfRentManagementSubvention, LeaseBasisOfRentTemporarySubvention, ManagementSubvention,
+    TemporarySubvention)
 from leasing.serializers.common import ManagementSerializer
 from users.serializers import UserSerializer
 
@@ -252,6 +254,33 @@ class IndexSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    management = ManagementSerializer(required=False)
+
+    class Meta:
+        model = LeaseBasisOfRentManagementSubvention
+        fields = ('id', 'management', 'subvention_percent')
+
+
+class LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    management = InstanceDictPrimaryKeyRelatedField(instance_class=Management, queryset=Management.objects.all(),
+                                                    related_serializer=ManagementSerializer)
+
+    class Meta:
+        model = LeaseBasisOfRentManagementSubvention
+        fields = ('id', 'management', 'subvention_percent')
+
+
+class LeaseBasisOfRentTemporarySubventionSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LeaseBasisOfRentTemporarySubvention
+        fields = ('id', 'description', 'subvention_percent')
+
+
 class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
                                  serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -259,16 +288,19 @@ class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSer
     index = IndexSerializer()
     plans_inspected_by = UserSerializer(read_only=True)
     locked_by = UserSerializer(read_only=True)
+    management_subventions = LeaseBasisOfRentManagementSubventionSerializer(many=True, required=False, allow_null=True)
+    temporary_subventions = LeaseBasisOfRentTemporarySubventionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = LeaseBasisOfRent
         fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
                   'discount_percentage', 'plans_inspected_at', 'plans_inspected_by', 'locked_at', 'locked_by',
-                  'archived_at', 'archived_note')
+                  'archived_at', 'archived_note', 'subvention_type', 'subvention_base_percent',
+                  'subvention_graduated_percent', 'management_subventions', 'temporary_subventions')
 
 
-class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
-                                             serializers.ModelSerializer):
+class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
+                                             FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
@@ -276,11 +308,16 @@ class LeaseBasisOfRentCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPe
     index = InstanceDictPrimaryKeyRelatedField(instance_class=Index,
                                                queryset=Index.objects.all(),
                                                related_serializer=IndexSerializer)
+    management_subventions = LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(many=True, required=False,
+                                                                                        allow_null=True)
+    temporary_subventions = LeaseBasisOfRentTemporarySubventionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = LeaseBasisOfRent
         fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
-                  'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note')
+                  'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note',
+                  'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
+                  'management_subventions', 'temporary_subventions')
 
     def validate(self, data):
         if data.get('id'):
