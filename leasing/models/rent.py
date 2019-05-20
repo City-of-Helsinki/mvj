@@ -324,11 +324,11 @@ class Rent(TimeStampedSafeDeleteModel):
 
                     # Create a notice if the index used is older than it should be.
                     # (The previous years average index is not yet available)
-                    if index.year < contract_overlap[0].year - 1:
+                    if not self.is_correct_index_for_date(index, contract_overlap[0]):
                         explanation.add(subject={
                             "subject_type": "notice",
                             "description": _('Average index for the year {} is not available!').format(
-                                contract_overlap[0].year - 1),
+                                self.get_rent_year_for_date(contract_overlap[0]) - 1),
                         }, related_item=index_explanation_item)
 
                     for item in index_calculation.explanation_items:
@@ -488,11 +488,23 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return new_ranges
 
-    def get_index_for_date(self, the_date):
+    def get_rent_year_for_date(self, the_date):
+        """Returns the year on which the_date is considered to land on
+        regarding this rent. i.e. if the billing cycle is from april to march
+        the start of the year is considered to be part of the previous years rent"""
         if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(the_date):
-            return Index.objects.get_latest_for_year(the_date.year - 1)
+            return the_date.year - 1
 
-        return Index.objects.get_latest_for_date(the_date)
+        return the_date.year
+
+    def get_index_for_date(self, the_date):
+        return Index.objects.get_latest_for_year(self.get_rent_year_for_date(the_date))
+
+    def is_correct_index_for_date(self, index, the_date):
+        """Check if the provided index is the previous years average index"""
+        correct_year = self.get_rent_year_for_date(the_date) - 1
+
+        return index.month is None and index.year == correct_year
 
     def is_active_on_period(self, date_range_start, date_range_end):
         if (

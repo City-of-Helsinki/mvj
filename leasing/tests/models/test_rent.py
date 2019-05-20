@@ -653,6 +653,39 @@ def test_split_ranges_by_cycle(lease_test_data, rent_factory, ranges, expected):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("rent_cycle, the_date, expected", [
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 2016),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 2017),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=1, day=1), 2018),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=6, day=1), 2018),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=12, day=31), 2018),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), 2019),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), 2020),
+    (RentCycle.APRIL_TO_MARCH, date(year=2016, month=1, day=1), 2015),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), 2016),
+    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=1, day=1), 2017),
+    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=6, day=1), 2018),
+    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=12, day=31), 2018),
+    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), 2018),
+    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), 2019),
+    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), 2020),
+])
+def test_get_rent_year_for_date(lease_test_data, rent_factory, rent_cycle, the_date, expected):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        start_date=date(year=2000, month=1, day=1),
+        end_date=date(year=2020, month=1, day=1),
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+        cycle=rent_cycle,
+    )
+
+    assert rent.get_rent_year_for_date(the_date) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("rent_cycle, the_date, expected", [
     # Index numbers are from the fixtures. 2017 index number (1927) is the latest.
     (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 1906),
     (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 1913),
@@ -682,6 +715,44 @@ def test_get_index_for_date(lease_test_data, rent_factory, rent_cycle, the_date,
     )
 
     assert rent.get_index_for_date(the_date).number == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("rent_cycle, the_date, index_year_month, expected", [
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2015, None), False),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, None), True),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, 1), False),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, 12), False),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=6, day=1), (2016, None), True),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=12, day=31), (2016, None), True),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), (2018, None), True),
+    (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), (2019, None), True),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2015, None), True),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, None), False),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 1), False),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 12), False),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=6, day=1), (2016, None), True),
+    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=12, day=31), (2016, None), True),
+    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), (2018, None), False),
+    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), (2019, None), False),
+    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=4, day=1), (2018, None), True),
+    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), (2019, None), True),
+])
+def test_is_correct_index_for_date(lease_test_data, rent_factory, rent_cycle, the_date, index_year_month, expected):
+    lease = lease_test_data['lease']
+
+    index = Index(year=index_year_month[0], month=index_year_month[1], number=12345)
+
+    rent = rent_factory(
+        lease=lease,
+        start_date=date(year=2000, month=1, day=1),
+        end_date=date(year=2020, month=1, day=1),
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+        cycle=rent_cycle,
+    )
+
+    assert rent.is_correct_index_for_date(index, the_date) == expected
 
 
 @pytest.mark.django_db
