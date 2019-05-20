@@ -273,7 +273,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view",),
         4: ("view", "add", "change", "delete"),
         5: ("view", "add", "change", "delete"),
-        6: ("view",),
+        6: ("view", "add", "change", "delete"),
         7: ("view", "add", "change", "delete"),
     },
     "contact": {

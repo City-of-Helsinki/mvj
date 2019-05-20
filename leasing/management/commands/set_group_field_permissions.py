@@ -533,6 +533,17 @@ CUSTOM_FIELD_PERMS = {
             3: None,
         },
     },
+    "leasebasisofrent": {
+        "locked_at": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "change",
+            5: "view",
+            6: "view",
+            7: "change",
+        },
+    },
 }
 
 
