@@ -303,13 +303,13 @@ class LeaseImporter(BaseImporter):
 
                     this_tenant = None
                     for lease_tenant in lease.tenants.all():
-                        for lease_tenantcontact in lease_tenant.tenantcontact_set.all():
+                        for lease_tenantcontact in lease_tenant.tenantcontact_set.filter(type=TenantContactType.TENANT):
                             try:
                                 if lease_tenantcontact.contact == asiakas_cache[role_row['LIITTYY_ASIAKAS']]:
                                     this_tenant = lease_tenant
+                                    break
                             except KeyError:
-                                self.stdout.write('  LIITTYY_ASIAKAS {} not one of the tenants! Skipping.'.format(
-                                    role_row['LIITTYY_ASIAKAS']))
+                                pass
 
                     if this_tenant:
                         (tenantcontact, tenantcontact_created) = TenantContact.objects.get_or_create(
@@ -321,6 +321,9 @@ class LeaseImporter(BaseImporter):
                         )
 
                         asiakas_num_to_tenant[role_row['ASIAKAS']] = this_tenant
+                    else:
+                        self.stdout.write('  LIITTYY_ASIAKAS {} not one of the tenants! Skipping.'.format(
+                            role_row['LIITTYY_ASIAKAS']))
 
                 self.stdout.write("Vuokra:")
                 rent_type = VUOKRALAJI_MAP[lease_row['VUOKRALAJI']]
