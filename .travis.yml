@@ -33,5 +33,6 @@ script:
   - flake8
   - isort --check-only --diff
   - pytest -ra -vvv --cov=.
+  - ./run-type-checks
 
 after_success: codecov
