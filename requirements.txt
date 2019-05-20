@@ -14,6 +14,7 @@ chardet==3.0.4            # via requests
 coreapi==2.3.3            # via django-rest-swagger, openapi-codec
 coreschema==0.0.4         # via coreapi
 cryptography==2.6.1       # via paramiko
+dataclasses==0.6 ; python_version < "3.7"
 defusedxml==0.6.0         # via zeep
 django==2.2.1
 git+https://github.com/florencioq/django-auditlog.git#egg=django-auditlog==0.4.5
@@ -31,6 +32,7 @@ django-safedelete==0.5.1
 django-sequences==2.2
 djangorestframework==3.9.3
 djangorestframework-gis==0.14
+docutils==0.14            # via python-daemon
 docxtpl==0.5.17
 drf-oidc-auth==0.9        # via django-helusers
 ecdsa==0.13.2             # via python-jose
@@ -39,6 +41,7 @@ idna==2.8                 # via requests
 isodate==0.6.0            # via zeep
 itypes==1.1.0             # via coreapi
 jinja2==2.10.1            # via coreschema, docxtpl
+lockfile==0.12.2          # via python-daemon
 lxml==4.3.3               # via docxtpl, python-docx, zeep
 markupsafe==1.1.1         # via jinja2
 openapi-codec==1.3.2      # via django-rest-swagger
@@ -50,6 +53,7 @@ pycryptodomex==3.8.1      # via pyjwkest
 pyjwkest==1.4.0           # via drf-oidc-auth
 pynacl==1.3.0             # via paramiko
 pysftp==0.2.9
+python-daemon==2.2.3
 python-dateutil==2.6.0
 python-docx==0.8.7        # via docxtpl
 python-jose==3.0.1        # via django-helusers
@@ -65,3 +69,6 @@ sqlparse==0.3.0           # via django
 uritemplate==3.0.0        # via coreapi
 urllib3==1.24.2           # via requests
 zeep==3.3.1
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools                # via python-daemon
