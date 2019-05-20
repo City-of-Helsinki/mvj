@@ -31,7 +31,7 @@ class InvoiceRelationsImporter(BaseImporter):
         for model in list(auditlog._registry.keys()):
             auditlog.unregister(model)
 
-        # self.update_credit_notes()
+        self.update_credit_notes()
         self.update_interest_invoices()
 
     def update_credit_notes(self):
