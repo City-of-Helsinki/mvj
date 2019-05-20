@@ -27,9 +27,16 @@ class BasisOfRentImporter(BaseImporter):
                             help='basis of rent start offset')
 
     def read_options(self, options):
-        self.offset = options['offset']
+        if options['offset']:
+            self.offset = options['offset']
 
     def execute(self):  # noqa: C901 'Command.handle' is too complex
+        from auditlog.registry import auditlog
+
+        # Unregister all models from auditlog when importing
+        for model in list(auditlog._registry.keys()):
+            auditlog.unregister(model)
+
         cursor = self.cursor
 
         query = """
