@@ -1,5 +1,6 @@
 import datetime
 
+from dateutil.parser import parse, parserinfo
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
 from django.utils.translation import ugettext_lazy as _
@@ -123,25 +124,27 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
         if self.action != 'list':
             return queryset
 
+        # Simple search
         if identifier is not None:
+            # Search by identifier or parts of it
             if len(identifier) < 3:
-                queryset = queryset.filter(identifier__type__identifier__istartswith=identifier)
+                identifier_q = Q(identifier__type__identifier__istartswith=identifier)
             elif len(identifier) == 3:
-                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
-                                           identifier__municipality__identifier=identifier[2:3])
+                identifier_q = Q(identifier__type__identifier__iexact=identifier[:2],
+                                 identifier__municipality__identifier=identifier[2:3])
             elif len(identifier) < 7:
                 district_identifier = identifier[3:5]
                 if district_identifier == '0':
-                    queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
-                                               identifier__municipality__identifier=identifier[2:3],
-                                               identifier__district__identifier__in=range(0, 10))
+                    identifier_q = Q(identifier__type__identifier__iexact=identifier[:2],
+                                     identifier__municipality__identifier=identifier[2:3],
+                                     identifier__district__identifier__in=range(0, 10))
                 else:
                     if district_identifier != '00':
                         district_identifier = district_identifier.lstrip('0')
 
-                    queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
-                                               identifier__municipality__identifier=identifier[2:3],
-                                               identifier__district__identifier__startswith=district_identifier)
+                    identifier_q = Q(identifier__type__identifier__iexact=identifier[:2],
+                                     identifier__municipality__identifier=identifier[2:3],
+                                     identifier__district__identifier__startswith=district_identifier)
             else:
                 district_identifier = identifier[3:5]
                 if district_identifier == "00":
@@ -149,11 +152,44 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                 else:
                     district_identifier = district_identifier.lstrip('0')
 
-                queryset = queryset.filter(identifier__type__identifier__iexact=identifier[:2],
-                                           identifier__municipality__identifier=identifier[2:3],
-                                           identifier__district__identifier=district_identifier,
-                                           identifier__sequence__startswith=identifier[6:])
+                identifier_q = Q(identifier__type__identifier__iexact=identifier[:2],
+                                 identifier__municipality__identifier=identifier[2:3],
+                                 identifier__district__identifier=district_identifier,
+                                 identifier__sequence__startswith=identifier[6:])
 
+            # Search from other fields
+            other_q = Q()
+
+            # Address
+            other_q |= Q(lease_areas__addresses__address__icontains=identifier)
+
+            # Property identifier
+            other_q |= Q(lease_areas__identifier__icontains=identifier)
+            normalized_identifier = normalize_property_identifier(identifier)
+            other_q |= Q(lease_areas__identifier__icontains=normalized_identifier)
+
+            # Tenantcontact name
+            other_q |= Q(tenants__tenantcontact__contact__name__icontains=identifier)
+            other_q |= Q(tenants__tenantcontact__contact__first_name__icontains=identifier)
+            other_q |= Q(tenants__tenantcontact__contact__last_name__icontains=identifier)
+
+            # Lessor
+            other_q |= Q(lessor__name__icontains=identifier)
+            other_q |= Q(lessor__first_name__icontains=identifier)
+            other_q |= Q(lessor__last_name__icontains=identifier)
+
+            # Date
+            try:
+                search_date = parse(identifier, parserinfo=parserinfo(dayfirst=True))
+                if search_date:
+                    other_q |= Q(start_date=search_date.date())
+                    other_q |= Q(end_date=search_date.date())
+            except ValueError:
+                pass
+
+            queryset = queryset.filter(identifier_q | other_q)
+
+        # Advanced search
         search_form = LeaseSearchForm(self.request.query_params)
 
         if search_form.is_valid():
