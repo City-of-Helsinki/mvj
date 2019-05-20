@@ -32,7 +32,7 @@ before_script:
 script:
   - flake8
   - isort --check-only --diff
-  - pytest -ra -vvv --cov=.
+  - pytest -ra -vvv --doctest-modules --cov=.
   - ./run-type-checks
 
 after_success: codecov
