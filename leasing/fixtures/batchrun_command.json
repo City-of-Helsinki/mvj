@@ -1,0 +1,62 @@
+[
+  {
+    "model": "batchrun.command",
+    "pk": 1,
+    "fields": {
+      "type": "django-manage",
+      "name": "import_index",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 2,
+    "fields": {
+      "type": "django-manage",
+      "name": "import_interest_rate",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 3,
+    "fields": {
+      "type": "django-manage",
+      "name": "create_invoices",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 4,
+    "fields": {
+      "type": "django-manage",
+      "name": "import_leasehold_transfers",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 5,
+    "fields": {
+      "type": "django-manage",
+      "name": "index_rent_equalization",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 6,
+    "fields": {
+      "type": "django-manage",
+      "name": "send_invoices_to_laske",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  }
+]
