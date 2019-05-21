@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -32,8 +32,6 @@ class Command(BaseCommand):
         sent_invoice_data = {}
         for invoice in invoices:
             billing_period = (invoice.billing_period_start_date, invoice.billing_period_end_date)
-            self.stdout.write('Invoice #{} Lease {} Billing period {} - {}'.format(
-                invoice.id, invoice.lease.identifier, billing_period[0], billing_period[1]))
 
             if invoice.lease not in sent_invoice_data:
                 sent_invoice_data[invoice.lease] = {
@@ -51,8 +49,24 @@ class Command(BaseCommand):
                 sent_invoice_data[invoice.lease]['billing_periods'][billing_period] -= invoice.billed_amount
 
         for lease, data in sent_invoice_data.items():
+            for invoice in data['invoices']:
+                self.stdout.write(
+                    'Invoice #{} Lease {} Billing period {} - {}'.format(
+                        invoice.id, lease.identifier, invoice.billing_period_start_date,
+                        invoice.billing_period_end_date))
+
             for billing_period, invoiced_rent_amount in data['billing_periods'].items():
-                (rent_amount, explanations) = lease.get_rent_amount_and_explations_for_period(*billing_period)
+                if not all(billing_period):
+                    self.stdout.write(' No billing period. Skipping.')
+                    continue
+
+                try:
+                    (rent_amount, explanations) = lease.get_rent_amount_and_explations_for_period(*billing_period)
+                except TypeError as e:
+                    self.stdout.write(' Error calculating rent "{}". Skipping.'.format(str(e)))
+                    continue
+
+                rent_amount = rent_amount.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
                 if rent_amount == invoiced_rent_amount:
                     self.stdout.write(' Rent amount is the same ({}) no need to equalize.'.format(rent_amount))
@@ -90,7 +104,7 @@ class Command(BaseCommand):
                                 original_invoice = sent_invoice
 
                         if original_invoice is None:
-                            self.stdout.print(' Original invoice not found')
+                            self.stdout.write(' Original invoice not found')
                             continue
 
                         invoice_data['generated'] = True
