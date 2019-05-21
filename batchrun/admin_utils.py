@@ -4,6 +4,7 @@ from typing import Optional, Type
 from django.contrib import admin
 from django.db.models import Model
 from django.http import HttpRequest
+from django.utils import timezone
 
 
 class ReadOnlyAdmin(admin.ModelAdmin):
@@ -47,4 +48,4 @@ class PreciseTimeFormatter:
         if value is None:
             return value
         assert isinstance(value, datetime)
-        return value.strftime(self._format_string)
+        return timezone.template_localtime(value).strftime(self._format_string)
