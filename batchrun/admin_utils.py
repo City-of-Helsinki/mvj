@@ -48,4 +48,4 @@ class PreciseTimeFormatter:
         if value is None:
             return value
         assert isinstance(value, datetime)
-        return timezone.template_localtime(value).strftime(self._format_string)
+        return timezone.localtime(value).strftime(self._format_string)
