@@ -14,6 +14,7 @@
 /venv/
 /laske_export_files/
 /nls_leasehold_transfers/
+.mypy_cache
 PCF_20181128.dat
 leasing/management/commands/anonymize.py
 leasing/management/commands/find_identifiers_for_lease_areas.py
