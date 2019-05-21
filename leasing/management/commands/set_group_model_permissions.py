@@ -807,6 +807,70 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view",),
     },
+    # Batchrun
+    "command": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view", "add", "change", "delete"),
+    },
+    "job": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view", "add", "change", "delete"),
+    },
+    "jobrun": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view",),
+    },
+    "jobrunlogentry": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view",),
+    },
+    "jobrunqueueitem": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view",),
+    },
+    "scheduledjob": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view", "add", "change", "delete"),
+    },
+    "timezone": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view", "add", "change", "delete"),
+    },
 }
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
@@ -821,7 +885,7 @@ class Command(BaseCommand):
 
         all_model_permissions = []
         group_permissions = []
-        app_names = ['leasing', 'users']
+        app_names = ['leasing', 'users', 'batchrun']
 
         for app_name in app_names:
             for model in apps.get_app_config(app_name).get_models(include_auto_created=True):
