@@ -5,11 +5,11 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from batchrun.api.urls import router as batchrun_router
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.auditlog import AuditLogView
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
+from leasing.viewsets.batchrun import JobRunLogEntryViewSet, JobRunViewSet, JobViewSet, ScheduledJobViewSet
 from leasing.viewsets.comment import CommentTopicViewSet, CommentViewSet
 from leasing.viewsets.contact import ContactViewSet
 from leasing.viewsets.contact_additional_views import ContactExistsView
@@ -82,6 +82,12 @@ router.register(r'ui_data', UiDataViewSet, basename='ui_data')
 router.register(r'user', UserViewSet)
 router.register(r'vat', VatViewSet)
 
+# Batchrun
+router.register('scheduled_job', ScheduledJobViewSet)
+router.register('job', JobViewSet)
+router.register('job_run', JobRunViewSet)
+router.register('job_run_log_entry', JobRunLogEntryViewSet)
+
 additional_api_paths = [
     path('auditlog/', AuditLogView.as_view(), name='auditlog'),
     path('contact_exists/', ContactExistsView.as_view(), name='contact-exists'),
@@ -106,7 +112,6 @@ additional_api_paths = [
 
 urlpatterns = [
     path('v1/', include(router.urls + additional_api_paths)),
-    path('v1/batchrun/', include(batchrun_router.urls)),
     re_path(r'(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf', ktj_proxy),
     path('contract_file/<contract_id>/', CloudiaProxy.as_view()),
     path('contract_file/<contract_id>/<file_id>/', CloudiaProxy.as_view()),
