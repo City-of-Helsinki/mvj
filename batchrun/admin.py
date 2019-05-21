@@ -22,6 +22,10 @@ class JobRunAdmin(ReadOnlyAdmin):
     date_hierarchy = 'started_at'
     list_display = ['started_at_p', 'stopped_at_p', 'job', 'exit_code']
     list_filter = ['exit_code']
+    # auto_now_add_fields don't show even in readonlyadmin.
+    # Therefore we'll add all the fields by hand in a suitable order
+    readonly_fields = ('job', 'pid', 'started_at_p', 'stopped_at_p', 'exit_code')
+    exclude = ['stopped_at']
 
     started_at_p = PreciseTimeFormatter(JobRun, 'started_at')
     stopped_at_p = PreciseTimeFormatter(JobRun, 'stopped_at')
@@ -32,6 +36,7 @@ class JobRunLogEntryAdmin(ReadOnlyAdmin):
     date_hierarchy = 'time'
     list_display = ['time_p', 'run', 'kind', 'line_number', 'number', 'text']
     list_filter = ['kind']
+    readonly_fields = ('time_p', 'run', 'kind', 'line_number', 'number', 'text')
 
     time_p = PreciseTimeFormatter(JobRunLogEntry, 'time')
 
