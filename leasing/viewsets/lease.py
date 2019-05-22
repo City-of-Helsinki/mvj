@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
+from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DistrictFilter, LeaseFilter
@@ -20,9 +21,9 @@ from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
-    LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseTypeSerializer, LeaseUpdateSerializer,
-    MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer, RelatedLeaseSerializer,
-    SpecialProjectSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
+    LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseSuccinctWithGeometrySerializer,
+    LeaseTypeSerializer, LeaseUpdateSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer,
+    RelatedLeaseSerializer, SpecialProjectSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
@@ -97,7 +98,7 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
 class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
     filterset_class = LeaseFilter
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     ordering = (
         'identifier__type__identifier', 'identifier__municipality__identifier', 'identifier__district__identifier',
         'identifier__sequence'
@@ -106,6 +107,8 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
         'identifier__type__identifier', 'identifier__municipality__identifier', 'identifier__district__identifier',
         'identifier__sequence', 'lessor__name', 'state', 'start_date', 'end_date'
     )
+    bbox_filter_field = 'lease_areas__geometry'
+    bbox_filter_include_overlapping = True
 
     def get_queryset(self):  # noqa: C901
         """Allow filtering leases by various query parameters
@@ -307,6 +310,9 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
 
         if self.request.query_params.get('succinct'):
             return LeaseSuccinctSerializer
+
+        if self.request.query_params.get('in_bbox'):
+            return LeaseSuccinctWithGeometrySerializer
 
         if self.action == 'list':
             return LeaseListSerializer

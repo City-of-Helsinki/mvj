@@ -172,6 +172,13 @@ class LeaseAreaListSerializer(LeaseAreaSerializer):
                   'archived_note')
 
 
+class LeaseAreaWithGeometryListSerializer(LeaseAreaListSerializer):
+    class Meta:
+        model = LeaseArea
+        fields = ('id', 'identifier', 'area', 'section_area', 'addresses', 'type', 'location', 'archived_at',
+                  'archived_note', 'geometry')
+
+
 class LeaseAreaCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMixin,
                                       FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)

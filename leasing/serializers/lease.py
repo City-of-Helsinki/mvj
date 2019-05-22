@@ -22,7 +22,8 @@ from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
-from .land_area import LeaseAreaCreateUpdateSerializer, LeaseAreaListSerializer, LeaseAreaSerializer
+from .land_area import (
+    LeaseAreaCreateUpdateSerializer, LeaseAreaListSerializer, LeaseAreaSerializer, LeaseAreaWithGeometryListSerializer)
 from .rent import (
     LeaseBasisOfRentCreateUpdateSerializer, LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer)
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
@@ -117,6 +118,16 @@ class LeaseSuccinctSerializer(EnumSupportSerializerMixin, FieldPermissionsSerial
         fields = ('id', 'deleted', 'created_at', 'modified_at', 'type', 'municipality', 'district', 'identifier',
                   'start_date', 'end_date', 'state', 'is_rent_info_complete', 'is_invoicing_enabled',
                   'reference_number', 'note', 'preparer', 'is_subject_to_vat')
+
+
+class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
+    lease_areas = LeaseAreaWithGeometryListSerializer(many=True, required=False, allow_null=True)
+
+    class Meta:
+        model = Lease
+        fields = ('id', 'deleted', 'created_at', 'modified_at', 'type', 'municipality', 'district', 'identifier',
+                  'start_date', 'end_date', 'state', 'is_rent_info_complete', 'is_invoicing_enabled',
+                  'reference_number', 'note', 'preparer', 'is_subject_to_vat', 'lease_areas')
 
 
 class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
