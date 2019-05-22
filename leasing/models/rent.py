@@ -296,14 +296,22 @@ class Rent(TimeStampedSafeDeleteModel):
                     if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(contract_overlap[0]):
                         manual_ratio = self.manual_ratio_previous
 
-                    contract_amount *= manual_ratio
+                    if manual_ratio:
+                        contract_amount *= manual_ratio
 
-                    contract_rent_explanation_item = explanation.add(
-                        subject={
-                            "subject_type": "ratio",
-                            "description": _("Manual ratio {ratio}").format(
-                                ratio=manual_ratio),
-                        }, date_ranges=[contract_overlap], amount=contract_amount)
+                        contract_rent_explanation_item = explanation.add(
+                            subject={
+                                "subject_type": "ratio",
+                                "description": _("Manual ratio {ratio}").format(
+                                    ratio=manual_ratio),
+                            }, date_ranges=[contract_overlap], amount=contract_amount)
+                    else:
+                        contract_amount = Decimal(0)
+                        contract_rent_explanation_item = explanation.add(subject={
+                            "subject_type": "notice",
+                            "description": _('Manual ratio not found!'),
+                        }, date_ranges=[contract_overlap])
+
                 elif self.type == RentType.INDEX:
                     original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
