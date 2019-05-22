@@ -67,7 +67,11 @@ def ktj_proxy(request, base_type, print_type):
                      stream=True)
 
     if r.status_code != 200:
-        return HttpResponse(status=r.status_code, content=r.content)
+        content = _("Error in upstream service")
+        if settings.DEBUG:
+            content = r.content
+
+        return HttpResponse(status=r.status_code, content=content)
 
     return StreamingHttpResponse(status=r.status_code, reason=r.reason, content_type=r.headers['Content-Type'],
                                  streaming_content=r.raw)
@@ -99,7 +103,11 @@ class CloudiaProxy(APIView):
                           stream=True)
 
         if r.status_code != 200:
-            return HttpResponse(status=r.status_code, content=r.content)
+            content = _("Error in upstream service")
+            if settings.DEBUG:
+                content = r.content
+
+            return HttpResponse(status=r.status_code, content=content)
 
         return StreamingHttpResponse(status=r.status_code, reason=r.reason, content_type=r.headers['Content-Type'],
                                      streaming_content=r.raw)
