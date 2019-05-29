@@ -1006,6 +1006,11 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Lease basis of rent")
         verbose_name_plural = pgettext_lazy("Model name", "Lease basis of rents")
 
+    def delete(self, *args, **kwargs):
+        # Skip delete if locked
+        if self.locked_at is None:
+            super().delete(*args, **kwargs)
+
 
 class LeaseBasisOfRentManagementSubvention(models.Model):
     lease_basis_of_rent = models.ForeignKey(LeaseBasisOfRent, verbose_name=_("Lease basis of rent"),
