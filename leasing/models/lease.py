@@ -211,13 +211,13 @@ class LeaseManager(SafeDeleteManager):
             'rents__rent_adjustments__intended_use', 'rents__index_adjusted_rents', 'rents__payable_rents',
             'rents__fixed_initial_year_rents', 'rents__fixed_initial_year_rents__intended_use',
             'lease_areas__addresses', 'basis_of_rents', 'collection_letters', 'collection_notes',
-            'collection_court_decisions'
+            'collection_court_decisions', 'invoice_notes'
         )
 
     def succinct_select_related_and_prefetch_related(self):
         return self.get_queryset().select_related(
             'type', 'municipality', 'district', 'identifier', 'identifier__type',
-            'identifier__municipality', 'identifier__district', 'preparer').prefetch_related('related_leases')
+            'identifier__municipality', 'identifier__district', 'preparer')
 
     def get_by_identifier(self, identifier):
         id_match = re.match(r'(?P<lease_type>\w\d)(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$',
