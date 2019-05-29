@@ -448,6 +448,17 @@ class Lease(TimeStampedSafeDeleteModel):
                 if not billing_overlap:
                     continue
 
+                # Make sure that there are no multiple billing contacts for
+                # the same tenant and period
+                existing_overlaps = []
+                for contact in shares:
+                    for this_tenant, periods in shares[contact].items():
+                        if this_tenant == tenant:
+                            existing_overlaps.extend(periods)
+
+                if billing_overlap in existing_overlaps:
+                    continue
+
                 if billing_tenantcontact.contact not in shares:
                     shares[billing_tenantcontact.contact] = {}
 
