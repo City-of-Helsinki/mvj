@@ -39,7 +39,7 @@ class Tenant(TimeStampedSafeDeleteModel):
             Q(Q(start_date=None) | Q(start_date__lte=end_date))
         )
 
-        tenantcontacts = self.tenantcontact_set.filter(type=contact_type).filter(range_filter)
+        tenantcontacts = self.tenantcontact_set.filter(type=contact_type).filter(range_filter).order_by('-start_date')
 
         return tenantcontacts
 
