@@ -158,6 +158,70 @@ def test_get_tenant_shares_for_period_change_tenant(django_db_setup, lease_facto
 
 
 @pytest.mark.django_db
+def test_get_tenant_shares_for_period_same_billing_contact_twice(django_db_setup, lease_factory, contact_factory,
+                                                                 tenant_factory, tenant_contact_factory,
+                                                                 assert_count_equal):
+    """Lease with one tenant with one billing contact twice"""
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+
+    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
+    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
+
+    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
+                           start_date=datetime.date(year=2017, month=1, day=1))
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact2,
+                           start_date=datetime.date(year=2017, month=1, day=1))
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact2,
+                           start_date=datetime.date(year=2015, month=1, day=1))
+
+    start_date = datetime.date(year=2017, month=1, day=1)
+    end_date = datetime.date(year=2017, month=12, day=31)
+
+    shares = lease.get_tenant_shares_for_period(start_date, end_date)
+
+    assert len(shares) == 1
+    assert_count_equal(shares.keys(), [contact2])
+
+    assert shares[contact2] == {
+        tenant1: [(start_date, end_date)]
+    }
+
+
+@pytest.mark.django_db
+def test_get_tenant_shares_for_period_same_contact_twice(django_db_setup, lease_factory, contact_factory,
+                                                         tenant_factory, tenant_contact_factory, assert_count_equal):
+    """Lease with one tenant with two active billing contacts"""
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+
+    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
+    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
+    contact3 = contact_factory(first_name="First name 3", last_name="Last name 3", type=ContactType.PERSON)
+
+    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
+                           start_date=datetime.date(year=2017, month=1, day=1))
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact2,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact3,
+                           start_date=datetime.date(year=2015, month=1, day=1))
+
+    start_date = datetime.date(year=2017, month=1, day=1)
+    end_date = datetime.date(year=2017, month=12, day=31)
+
+    shares = lease.get_tenant_shares_for_period(start_date, end_date)
+
+    assert len(shares) == 1
+    assert_count_equal(shares.keys(), [contact3])
+
+    assert shares[contact3] == {
+        tenant1: [(start_date, end_date)]
+    }
+
+
+@pytest.mark.django_db
 def test_credit_rent_after_end(django_db_setup, lease_factory, contact_factory, tenant_factory,
                                tenant_contact_factory, invoice_factory, invoice_row_factory, rent_factory,
                                contract_rent_factory):
