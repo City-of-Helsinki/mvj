@@ -7,7 +7,7 @@ attrs==19.1.0             # via pytest
 backcall==0.1.0           # via ipython
 coverage==4.5.3           # via pytest-cov
 decorator==4.4.0          # via ipython, traitlets
-django==2.2.1             # via django-debug-toolbar
+django==2.2.2             # via django-debug-toolbar
 django-debug-toolbar==1.11
 django-extensions==2.1.6
 django-stubs==0.12.1
