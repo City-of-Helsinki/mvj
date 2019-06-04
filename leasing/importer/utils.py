@@ -1,5 +1,7 @@
 import re
 
+from django.contrib.auth import get_user_model
+
 from leasing.enums import ContactType
 from leasing.importer.mappings import ASIAKASTYYPPI_MAP, MAA_MAP
 from leasing.models import Contact
@@ -173,3 +175,23 @@ def get_or_create_contact(data):  # NOQA
     asiakas_cache[data['ASIAKAS']] = contact
 
     return contact
+
+
+def get_import_user():
+    model = get_user_model()
+
+    (user, user_created) = model.objects.get_or_create(
+        username='mvj_import',
+        first_name='MVJ',
+        last_name='Tuonti',
+        email='',
+        is_staff=False,
+        is_superuser=False,
+        is_active=False,
+    )
+
+    if user_created:
+        user.set_unusable_password()
+        user.save()
+
+    return user

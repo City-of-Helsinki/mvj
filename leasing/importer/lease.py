@@ -3,6 +3,8 @@ import datetime
 import re
 from decimal import ROUND_HALF_UP, Decimal
 
+from auditlog.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 
@@ -21,10 +23,11 @@ from leasing.models.utils import DayMonth
 from .base import BaseImporter
 from .mappings import (
     ALENNUS_KOROTUS_MAP, DECISION_MAKER_MAP, FINANCING_MAP, HITAS_MAP, IRTISANOMISAIKA_MAP, LASKUN_TILA_MAP,
-    LASKUTYYPPI_MAP, LEASE_AREA_TYPE_MAP, MANAGEMENT_MAP, SAAMISLAJI_MAP, TILA_MAP, VUOKRAKAUSI_MAP, VUOKRALAJI_MAP)
+    LASKUTYYPPI_MAP, LEASE_AREA_TYPE_MAP, MANAGEMENT_MAP, MANUAL_RATIOS, SAAMISLAJI_MAP, TILA_MAP, VUOKRAKAUSI_MAP,
+    VUOKRALAJI_MAP)
 from .utils import (
-    asiakas_cache, expand_lease_identifier, expanded_id_to_query, expanded_id_to_query_alku, get_or_create_contact,
-    get_real_property_identifier, get_unknown_contact, rows_to_dict_list)
+    asiakas_cache, expand_lease_identifier, expanded_id_to_query, expanded_id_to_query_alku, get_import_user,
+    get_or_create_contact, get_real_property_identifier, get_unknown_contact, rows_to_dict_list)
 
 
 class LeaseImporter(BaseImporter):
@@ -118,6 +121,9 @@ class LeaseImporter(BaseImporter):
         Comment._meta.get_field('created_at').auto_now_add = False
         Comment._meta.get_field('modified_at').auto_now = False
 
+        lease_content_type = ContentType.objects.get_for_model(Lease)
+        mvj_import_user = get_import_user()
+
         count = 0
         if self.offset:
             count = self.offset - 1
@@ -199,7 +205,7 @@ class LeaseImporter(BaseImporter):
 
                     (comment, comment_created) = Comment.objects.get_or_create(
                         lease=lease,
-                        user_id=1,  # TODO: Which user id
+                        user=mvj_import_user,
                         topic_id=5,  # "Huomautukset"
                         text=row[0].strip(),
                         created_at=make_aware(row[1]),
@@ -224,6 +230,15 @@ class LeaseImporter(BaseImporter):
                 lease.save()
 
                 self.stdout.write('Lease id {}'.format(lease.id))
+
+                LogEntry.objects.create(
+                    action=LogEntry.Action.CREATE,
+                    content_type=lease_content_type,
+                    object_pk=lease.id,
+                    object_id=lease.id,
+                    object_repr='Tuonti {}'.format(lease.get_identifier_string()),
+                    actor=mvj_import_user,
+                )
 
                 self.stdout.write("Related to lease:")
                 if lease_row['LIITTYY_ALKUOSA'] != lease_row['ALKUOSA'] or \
@@ -368,6 +383,14 @@ class LeaseImporter(BaseImporter):
 
                 rent.equalization_start_date = lease_row['TASAUS_ALKUPVM']
                 rent.equalization_end_date = lease_row['TASAUS_LOPPUPVM']
+
+                if lease_id in MANUAL_RATIOS:
+                    try:
+                        rent.manual_ratio = MANUAL_RATIOS[lease_id][0]
+                        rent.manual_ratio_previous = MANUAL_RATIOS[lease_id][1]
+                    except IndexError:
+                        pass
+
                 rent.save()
 
                 self.stdout.write(" Type: {} Index: {}".format(rent_type, index_type))
