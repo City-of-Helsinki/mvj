@@ -29,6 +29,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         code_to_city_name = read_post_codes(options['pcf_file'])
 
+        from auditlog.registry import auditlog
+
+        # Unregister Contact model from auditlog
+        auditlog.unregister(Contact)
+
         contacts = Contact.objects.filter(city__isnull=True)
         self.stdout.write('{} contacts without city'.format(contacts.count()))
 
