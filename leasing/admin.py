@@ -19,6 +19,7 @@ from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensationIntendedUse, InfillDevelopmentCompensationLease)
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import LeaseAreaAddress, PlanUnitIntendedUse, PlotDivisionState
+from leasing.models.lease import ReservationProcedure
 
 
 class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
@@ -529,6 +530,7 @@ admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
+admin.site.register(ReservationProcedure, NameAdmin)
 admin.site.register(SpecialProject, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)

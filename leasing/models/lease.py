@@ -164,6 +164,15 @@ class SpecialProject(NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Special projects")
 
 
+class ReservationProcedure(NameModel):
+    """
+    In Finnish: Varauksen menettely
+    """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Reservation procedure")
+        verbose_name_plural = pgettext_lazy("Model name", "Reservation Procedures")
+
+
 class LeaseIdentifier(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokraustunnus
@@ -356,6 +365,10 @@ class Lease(TimeStampedSafeDeleteModel):
     # In Finnish: Erityishanke
     special_project = models.ForeignKey(SpecialProject, verbose_name=_("Special project"), related_name='+', null=True,
                                         blank=True, on_delete=models.PROTECT)
+
+    # In Finnish: Varauksen menettely
+    reservation_procedure = models.ForeignKey(ReservationProcedure, verbose_name=_("Reservation procedure"),
+                                              related_name='+', null=True, blank=True, on_delete=models.PROTECT)
 
     objects = LeaseManager()
 

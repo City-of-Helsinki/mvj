@@ -19,7 +19,7 @@ from .land_area import (
     ConstructabilityDescription, LeaseArea, LeaseAreaAttachment, PlanUnit, PlanUnitState, PlanUnitType, Plot)
 from .lease import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseStateLog, LeaseType, Management, Municipality,
-    NoticePeriod, Regulation, RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
+    NoticePeriod, Regulation, RelatedLease, ReservationProcedure, SpecialProject, StatisticalUse, SupportiveHousing)
 from .leasehold_transfer import (
     LeaseholdTransfer, LeaseholdTransferImportLog, LeaseholdTransferParty, LeaseholdTransferProperty)
 from .rent import (
@@ -104,6 +104,7 @@ __all__ = [
     'RentAdjustment',
     'RentDueDate',
     'RentIntendedUse',
+    'ReservationProcedure',
     'SpecialProject',
     'StatisticalUse',
     'SupportiveHousing',

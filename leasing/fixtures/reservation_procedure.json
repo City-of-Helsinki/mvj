@@ -1,0 +1,51 @@
+[
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 1,
+    "fields": {
+      "name": "Hintakilpailu (Myynti)"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 2,
+    "fields": {
+      "name": "Hintakilpailu (Vuokraus)"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 3,
+    "fields": {
+      "name": "Jatkuva tonttihaku"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 4,
+    "fields": {
+      "name": "Laatu- ja hintakilpailu"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 5,
+    "fields": {
+      "name": "Ilmoittautumis- ja neuvottelumenettely"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 6,
+    "fields": {
+      "name": "Omatoiminen omakotitalon rakentaminen"
+    }
+  },
+  {
+    "model": "leasing.reservationprocedure",
+    "pk": 7,
+    "fields": {
+      "name": "Hintakilpailu tai ilmoittautumismenettely"
+    }
+  }
+]

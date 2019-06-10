@@ -8,7 +8,8 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import LeaseRelationType
-from leasing.models import AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease
+from leasing.models import (
+    AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease, ReservationProcedure)
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
 from leasing.serializers.invoice import InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer
@@ -93,6 +94,12 @@ class SupportiveHousingSerializer(NameModelSerializer):
 class SpecialProjectSerializer(NameModelSerializer):
     class Meta:
         model = SpecialProject
+        fields = '__all__'
+
+
+class ReservationProcedureSerializer(NameModelSerializer):
+    class Meta:
+        model = ReservationProcedure
         fields = '__all__'
 
 

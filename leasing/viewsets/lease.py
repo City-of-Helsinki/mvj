@@ -17,14 +17,15 @@ from leasing.filters import DistrictFilter, LeaseFilter
 from leasing.forms import LeaseSearchForm
 from leasing.models import (
     District, Financing, Hitas, IntendedUse, Lease, LeaseType, Management, Municipality, NoticePeriod, Regulation,
-    RelatedLease, SpecialProject, StatisticalUse, SupportiveHousing)
+    RelatedLease, ReservationProcedure, SpecialProject, StatisticalUse, SupportiveHousing)
 from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
 from leasing.serializers.lease import (
     DistrictSerializer, FinancingSerializer, HitasSerializer, IntendedUseSerializer, LeaseCreateSerializer,
     LeaseListSerializer, LeaseRetrieveSerializer, LeaseSuccinctSerializer, LeaseSuccinctWithGeometrySerializer,
     LeaseTypeSerializer, LeaseUpdateSerializer, MunicipalitySerializer, NoticePeriodSerializer, RegulationSerializer,
-    RelatedLeaseSerializer, SpecialProjectSerializer, StatisticalUseSerializer, SupportiveHousingSerializer)
+    RelatedLeaseSerializer, ReservationProcedureSerializer, SpecialProjectSerializer, StatisticalUseSerializer,
+    SupportiveHousingSerializer)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
@@ -89,6 +90,11 @@ class SupportiveHousingViewSet(AtomicTransactionModelViewSet):
 class SpecialProjectViewSet(AtomicTransactionModelViewSet):
     queryset = SpecialProject.objects.all()
     serializer_class = SpecialProjectSerializer
+
+
+class ReservationProcedureViewSet(AtomicTransactionModelViewSet):
+    queryset = ReservationProcedure.objects.all()
+    serializer_class = ReservationProcedureSerializer
 
 
 class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
