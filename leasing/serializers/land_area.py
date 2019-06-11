@@ -52,16 +52,17 @@ class PlanUnitCreateUpdateSerializer(EnumSupportSerializerMixin, UpdateNestedMix
                                      serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     plan_unit_type = InstanceDictPrimaryKeyRelatedField(
-        instance_class=PlanUnitType, queryset=PlanUnitType.objects.filter(), related_serializer=PlanUnitTypeSerializer)
+        instance_class=PlanUnitType, queryset=PlanUnitType.objects.filter(), related_serializer=PlanUnitTypeSerializer,
+        required=False)
     plan_unit_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState, queryset=PlanUnitState.objects.filter(),
-        related_serializer=PlanUnitStateSerializer)
+        related_serializer=PlanUnitStateSerializer, required=False)
     plan_unit_intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse, queryset=PlanUnitIntendedUse.objects.filter(),
-        related_serializer=PlanUnitIntendedUseSerializer)
+        related_serializer=PlanUnitIntendedUseSerializer, required=False)
     plot_division_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotDivisionState, queryset=PlotDivisionState.objects.filter(),
-        related_serializer=PlotDivisionStateSerializer)
+        related_serializer=PlotDivisionStateSerializer, required=False)
 
     class Meta:
         model = PlanUnit
