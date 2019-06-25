@@ -77,7 +77,8 @@ class Command(BaseCommand):
 
         for file_name in file_list:
             if not file_name.lower().startswith('mr_out_'):
-                self.stderr.write('Skipping the file "{}" because its name does not start with "MR_OUT_"')
+                self.stderr.write('Skipping the file "{}" because its name does not start with "MR_OUT_"'.format(
+                    file_name))
                 continue
 
             try:
