@@ -6,13 +6,9 @@ import tempfile
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-import paramiko
-import pysftp
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from paramiko import SSHException
-from paramiko.py3compat import decodebytes
 
 from laske_export.models import LaskePaymentsLog
 from leasing.models import Invoice, Vat
@@ -26,29 +22,77 @@ def get_import_dir():
 class Command(BaseCommand):
     help = 'Get payments from Laske'
 
+    def download_payments_sftp(self):
+        import paramiko
+        import pysftp
+        from paramiko import SSHException
+        from paramiko.py3compat import decodebytes
+
+        try:
+            # Add destination server host key
+            if settings.LASKE_SERVERS['payments']['key_type'] == 'ssh-ed25519':
+                key = paramiko.ed25519key.Ed25519Key(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
+            elif 'ecdsa' in settings.LASKE_SERVERS['payments']['key_type']:
+                key = paramiko.ecdsakey.ECDSAKey(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
+            else:
+                key = paramiko.rsakey.RSAKey(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
+
+            hostkeys = paramiko.hostkeys.HostKeys()
+            hostkeys.add(settings.LASKE_SERVERS['payments']['host'], settings.LASKE_SERVERS['payments']['key_type'],
+                         key)
+
+            cnopts = pysftp.CnOpts()
+            cnopts.hostkeys = hostkeys
+            # Or Disable key check:
+            # cnopts.hostkeys = None
+
+            with pysftp.Connection(settings.LASKE_SERVERS['payments']['host'],
+                                   port=settings.LASKE_SERVERS['payments']['port'],
+                                   username=settings.LASKE_SERVERS['payments']['username'],
+                                   password=settings.LASKE_SERVERS['payments']['password'],
+                                   cnopts=cnopts) as sftp:
+                sftp.get_d(settings.LASKE_SERVERS['payments']['directory'], get_import_dir(), preserve_mtime=True)
+        except SSHException as e:
+            self.stdout.write('Error with the Laske payments server: {}'.format(e))
+
+    def download_payments_ftp(self):
+        from ftplib import FTP
+
+        try:
+            ftp = FTP()
+            ftp.connect(host=settings.LASKE_SERVERS['payments']['host'],
+                        port=settings.LASKE_SERVERS['payments']['port'])
+            ftp.login(user=settings.LASKE_SERVERS['payments']['username'],
+                      passwd=settings.LASKE_SERVERS['payments']['password'])
+            ftp.cwd(settings.LASKE_SERVERS['payments']['directory'])
+        except Exception as e:
+            self.stderr.write('Could connect to the server. Error: '.format(str(e)))
+            return
+
+        try:
+            file_list = ftp.nlst()
+        except Exception as e:
+            self.stderr.write('Could not get file list. Error: '.format(str(e)))
+            return
+
+        for file_name in file_list:
+            if not file_name.lower().startswith('mr_out_'):
+                self.stderr.write('Skipping the file "{}" because its name does not start with "MR_OUT_"')
+                continue
+
+            try:
+                fp = open(os.path.join(get_import_dir(), file_name), "wb")
+                ftp.retrbinary("RETR {}".format(file_name), fp.write)
+            except Exception as e:
+                self.stderr.write('Could not download file "{}". Error: '.format(file_name, str(e)))
+
+        ftp.quit()
+
     def download_payments(self):
-        # # Add destination server host key
-        if settings.LASKE_SERVERS['payments']['key_type'] == 'ssh-ed25519':
-            key = paramiko.ed25519key.Ed25519Key(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
-        elif 'ecdsa' in settings.LASKE_SERVERS['payments']['key_type']:
-            key = paramiko.ecdsakey.ECDSAKey(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
+        if 'key_type' in settings.LASKE_SERVERS['payments'] and 'key' in settings.LASKE_SERVERS['payments']:
+            self.download_payments_sftp()
         else:
-            key = paramiko.rsakey.RSAKey(data=decodebytes(settings.LASKE_SERVERS['payments']['key']))
-
-        hostkeys = paramiko.hostkeys.HostKeys()
-        hostkeys.add(settings.LASKE_SERVERS['payments']['host'], settings.LASKE_SERVERS['payments']['key_type'], key)
-
-        cnopts = pysftp.CnOpts()
-        cnopts.hostkeys = hostkeys
-        # Or Disable key check:
-        # cnopts.hostkeys = None
-
-        with pysftp.Connection(settings.LASKE_SERVERS['payments']['host'],
-                               port=settings.LASKE_SERVERS['payments']['port'],
-                               username=settings.LASKE_SERVERS['payments']['username'],
-                               password=settings.LASKE_SERVERS['payments']['password'],
-                               cnopts=cnopts) as sftp:
-            sftp.get_d(settings.LASKE_SERVERS['payments']['directory'], get_import_dir(), preserve_mtime=True)
+            self.download_payments_ftp()
 
     def check_import_directory(self):
         if not os.path.isdir(get_import_dir()):
@@ -90,12 +134,8 @@ class Command(BaseCommand):
         self.check_import_directory()
 
         self.stdout.write('Connecting to the Laske payments server and downloading files...')
-        try:
-            self.download_payments()
-            self.stdout.write('Done.')
-        except SSHException as e:
-            self.stdout.write('Error with the Laske payments server: {}'.format(e))
-            sys.exit(-1)
+        self.download_payments()
+        self.stdout.write('Done.')
 
         self.stdout.write('Finding files...')
         filenames = self.find_unimported_files()
