@@ -63,8 +63,16 @@ class Command(BaseCommand):
             areas = Area.objects.filter(type=AreaType.LEASE_AREA, identifier=str(lease.identifier))
 
             for area in areas:
-                area_identifier = normalize_identifier(area.metadata['property_identifier'])
-                self.stdout.write(' {} -> {}'.format(area.metadata['property_identifier'], area_identifier))
+                property_identifier = '{}-{}-{}-{}{}'.format(
+                    area.metadata.get('municipality', '0') if area.metadata.get('municipality') else '0',
+                    area.metadata.get('district', '0') if area.metadata.get('district') else '0',
+                    area.metadata.get('group', '0') if area.metadata.get('group') else '0',
+                    area.metadata.get('unit', '0') if area.metadata.get('unit') else '0',
+                    '-{}'.format(area.metadata.get('mvj_unit', '0')) if 'mvj_unit' in area.metadata else '',
+                )
+                area_identifier = normalize_identifier(property_identifier)
+                self.stdout.write(' {} -> {}'.format(property_identifier, area_identifier))
+
                 if area_identifier not in lease_areas.keys():
                     self.stdout.write('Lease area NOT FOUND!')
                     continue
