@@ -1,4 +1,5 @@
 import psycopg2
+from django.conf import settings
 from django.contrib.gis import geos
 
 from leasing.enums import AreaType
@@ -171,8 +172,7 @@ class AreaImporter(BaseImporter):
     type_name = 'area'
 
     def __init__(self, stdout=None, stderr=None):
-        conn = psycopg2.connect(host="localhost", database="tonttiosasto", user="katselu", password="katselu",
-                                cursor_factory=psycopg2.extras.NamedTupleCursor)
+        conn = psycopg2.connect(settings.AREA_DATABASE_DSN, cursor_factory=psycopg2.extras.NamedTupleCursor)
         self.cursor = conn.cursor()
         self.stdout = stdout
         self.stderr = stderr

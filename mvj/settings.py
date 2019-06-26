@@ -31,6 +31,8 @@ env = environ.Env(
     TOKEN_AUTH_AUTHSERVER_URL=(str, ''),
     TOKEN_AUTH_FIELD_FOR_CONSENTS=(str, ''),
     TOKEN_AUTH_REQUIRE_SCOPE_PREFIX=(bool, True),
+    # See http://initd.org/psycopg/docs/module.html#psycopg2.connect for DSN format
+    AREA_DATABASE_DSN=(str, 'host= port= user= password= dbname='),
 )
 
 env_file = project_root('.env')
@@ -240,6 +242,8 @@ LASKE_SERVERS = {
 USE_NATIVE_JSONFIELD = True
 
 MVJ_DUE_DATE_OFFSET_DAYS = 17
+
+AREA_DATABASE_DSN = env.str('AREA_DATABASE_DSN')
 
 local_settings = project_root('local_settings.py')
 if os.path.exists(local_settings):
