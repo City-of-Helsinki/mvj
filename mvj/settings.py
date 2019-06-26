@@ -1,9 +1,38 @@
 import os
+import subprocess
 
 import environ
-import raven
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 project_root = environ.Path(__file__) - 2
+
+# Location of the fallback version file, used when no repository is available.
+# This is hardcoded as reading it from configuration does not really make
+# sense. It is supposed to be a fallback after all.
+VERSION_FILE = project_root('../service_state/deployed_version')
+
+
+def get_git_revision_hash():
+    """
+    We need a way to retrieve git revision hash for sentry reports
+    """
+    try:
+        # We are not interested in gits complaints, stderr -> null
+        git_hash = subprocess.check_output(['git', 'describe', '--tags', '--long', '--always'],
+                                           stderr=subprocess.DEVNULL,
+                                           encoding='utf8')
+    # First is "git not found", second is most likely "no repository"
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        try:
+            # fall back to hardcoded file location
+            with open(VERSION_FILE) as f:
+                git_hash = f.readline()
+        except FileNotFoundError:
+            git_hash = "revision_not_available"
+
+    return git_hash.rstrip()
+
 
 env = environ.Env(
     DEBUG=(bool, True),
@@ -14,6 +43,7 @@ env = environ.Env(
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
+    SENTRY_ENVIRONMENT=(str, ''),
     KTJ_PRINT_ROOT_URL=(str, 'https://ktjws.nls.fi'),
     KTJ_PRINT_USERNAME=(str, ''),
     KTJ_PRINT_PASSWORD=(str, ''),
@@ -57,12 +87,13 @@ CACHES = {
 
 vars().update(env.email_url())  # EMAIL_BACKEND etc.
 
-try:
-    version = raven.fetch_git_sha(project_root())
-except Exception:
-    version = None
-
-RAVEN_CONFIG = {'dsn': env.str('SENTRY_DSN'), 'release': version}
+if env('SENTRY_DSN'):
+    sentry_sdk.init(
+        dsn=env('SENTRY_DSN'),
+        environment=env('SENTRY_ENVIRONMENT'),
+        release=get_git_revision_hash(),
+        integrations=[DjangoIntegration()]
+    )
 
 MEDIA_ROOT = project_root('media')
 STATIC_ROOT = project_root('static')
@@ -110,8 +141,6 @@ INSTALLED_APPS = [
 
     'batchrun',
 ]
-if RAVEN_CONFIG['dsn']:
-    INSTALLED_APPS += ['raven.contrib.django.raven_compat']
 
 if DEBUG:
     INSTALLED_APPS += [
