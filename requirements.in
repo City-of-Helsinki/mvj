@@ -25,6 +25,6 @@ psycopg2-binary
 pysftp
 python-daemon
 python-dateutil
-raven
+sentry-sdk
 requests
 zeep
