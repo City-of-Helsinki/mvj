@@ -1,5 +1,3 @@
-import cx_Oracle  # isort:skip (Not installed in CI or production)
-
 from leasing.models import BasisOfRent, BasisOfRentDecision, BasisOfRentPropertyIdentifier, BasisOfRentRate, Index
 
 from .base import BaseImporter
@@ -13,6 +11,7 @@ class BasisOfRentImporter(BaseImporter):
     type_name = 'basis_of_rent'
 
     def __init__(self, stdout=None, stderr=None):
+        import cx_Oracle
         connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
                                        nencoding="UTF-8")
 

@@ -1,5 +1,3 @@
-import cx_Oracle  # isort:skip (Not installed in CI or production)
-
 from leasing.models import Invoice
 
 from .base import BaseImporter
@@ -10,6 +8,7 @@ class InvoiceRelationsImporter(BaseImporter):
     type_name = 'invoice_relations'
 
     def __init__(self, stdout=None, stderr=None):
+        import cx_Oracle
         connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
                                        nencoding="UTF-8")
 

@@ -1,4 +1,3 @@
-import cx_Oracle  # isort:skip (Not installed in CI or production)
 import datetime
 import re
 from decimal import ROUND_HALF_UP, Decimal
@@ -34,6 +33,7 @@ class LeaseImporter(BaseImporter):
     type_name = 'lease'
 
     def __init__(self, stdout=None, stderr=None):
+        import cx_Oracle
         connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
                                        nencoding="UTF-8")
 
