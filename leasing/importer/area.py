@@ -69,20 +69,20 @@ AREA_IMPORT_TYPES = {
         ''',
     },
     # Vuokra-alueet
-    'lease_area': {
-        'source_name': 'Tonttiosasto: vuokrausalue_paa',
-        'source_identifier': 'tonttiosasto.vuokrausalue_paa',
-        'area_type': AreaType.LEASE_AREA,
-        'identifier_field_name': 'vuokratunnus',
-        'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila', 'kunta', 'sijaintialue', 'ryhma', 'yksikko',
-                             'mvj_yks'],
-        'query': '''
-        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-            AS geom_text
-        FROM tonttiosasto.vuokrausalue_paa AS a
-        WHERE vuokratunnus IS NOT NULL
-        ''',
-    },
+    # 'lease_area': {
+    #     'source_name': 'Tonttiosasto: vuokrausalue_paa',
+    #     'source_identifier': 'tonttiosasto.vuokrausalue_paa',
+    #     'area_type': AreaType.LEASE_AREA,
+    #     'identifier_field_name': 'vuokratunnus',
+    #     'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila', 'kunta', 'sijaintialue', 'ryhma', 'yksikko',
+    #                          'mvj_yks'],
+    #     'query': '''
+    #     SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+    #         AS geom_text
+    #     FROM tonttiosasto.vuokrausalue_paa AS a
+    #     WHERE vuokratunnus IS NOT NULL
+    #     ''',
+    # },
     # 'lease_area': {
     #     'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
     #     'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',

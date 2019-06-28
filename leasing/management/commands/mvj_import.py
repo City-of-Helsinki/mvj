@@ -4,6 +4,7 @@ from leasing.importer.area import AreaImporter
 from leasing.importer.basis_of_rent import BasisOfRentImporter
 from leasing.importer.invoice_relations import InvoiceRelationsImporter
 from leasing.importer.lease import LeaseImporter
+from leasing.importer.lease_area import LeaseAreaImporter
 
 
 class Command(BaseCommand):
@@ -16,6 +17,7 @@ class Command(BaseCommand):
             BasisOfRentImporter,
             LeaseImporter,
             AreaImporter,
+            LeaseAreaImporter,
             InvoiceRelationsImporter,
         ]
 
