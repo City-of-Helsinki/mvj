@@ -63,6 +63,9 @@ env = environ.Env(
     TOKEN_AUTH_REQUIRE_SCOPE_PREFIX=(bool, True),
     # See http://initd.org/psycopg/docs/module.html#psycopg2.connect for DSN format
     AREA_DATABASE_DSN=(str, 'host= port= user= password= dbname='),
+    LEASE_AREA_DATABASE_USER=(str, ''),
+    LEASE_AREA_DATABASE_PASSWORD=(str, ''),
+    LEASE_AREA_DATABASE_DSN=(str, ''),
 )
 
 env_file = project_root('.env')
@@ -273,6 +276,10 @@ USE_NATIVE_JSONFIELD = True
 MVJ_DUE_DATE_OFFSET_DAYS = 17
 
 AREA_DATABASE_DSN = env.str('AREA_DATABASE_DSN')
+
+LEASE_AREA_DATABASE_USER = env.str('LEASE_AREA_DATABASE_USER')
+LEASE_AREA_DATABASE_PASSWORD = env.str('LEASE_AREA_DATABASE_PASSWORD')
+LEASE_AREA_DATABASE_DSN = env.str('LEASE_AREA_DATABASE_DSN')
 
 local_settings = project_root('local_settings.py')
 if os.path.exists(local_settings):
