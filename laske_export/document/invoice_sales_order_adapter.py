@@ -176,7 +176,7 @@ class InvoiceSalesOrderAdapter:
 
     def get_original_order(self):
         if self.invoice.type == InvoiceType.CREDIT_NOTE:
-            return self.invoice.credited_invoice.number
+            return str(self.invoice.credited_invoice.number)
 
     def get_sales_office(self):
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
