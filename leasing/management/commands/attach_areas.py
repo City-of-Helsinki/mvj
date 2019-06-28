@@ -148,8 +148,11 @@ class Command(BaseCommand):
                                 name=other_area.metadata.get('type_name'))
                             (plan_unit_state, created) = PlanUnitState.objects.get_or_create(
                                 name=other_area.metadata.get('state_name'))
-                            (plan_unit_intended_use, created) = PlanUnitIntendedUse.objects.get_or_create(
-                                name=other_area.metadata.get('intended_use_name'))
+                            if other_area.metadata.get('intended_use_name'):
+                                (plan_unit_intended_use, created) = PlanUnitIntendedUse.objects.get_or_create(
+                                    name=other_area.metadata.get('intended_use_name'))
+                            else:
+                                plan_unit_intended_use = None
 
                             match_data = {
                                 'lease_area': lease_areas[area_identifier],
