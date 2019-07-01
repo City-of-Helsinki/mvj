@@ -55,6 +55,7 @@ METADATA_COLUMN_NAME_MAP = {
 AREA_IMPORT_TYPES = {
     # Kaava
     'detailed_plan': {
+        'source_dsn_setting_name': 'AREA_DATABASE_DSN',
         'source_name': 'Kaava: Kaavahakemisto',
         'source_identifier': 'kaava.kaavahakemisto_alueet',
         'area_type': AreaType.DETAILED_PLAN,
@@ -69,21 +70,24 @@ AREA_IMPORT_TYPES = {
         ''',
     },
     # Vuokra-alueet
+    'lease_area': {
+        'source_dsn_setting_name': 'LEASE_AREA_DATABASE_DSN',
+        'source_name': 'Tonttiosasto: vuokrausalue_paa',
+        'source_identifier': 'tonttiosasto.vuokrausalue_paa',
+        'area_type': AreaType.LEASE_AREA,
+        'identifier_field_name': 'vuokratunnus',
+        'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila', 'kunta', 'sijaintialue', 'ryhma', 'yksikko',
+                             'mvj_yks'],
+        'query': '''
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM tonttiosasto.vuokrausalue_paa AS a
+        WHERE vuokratunnus IS NOT NULL
+        AND geom IS NOT NULL
+        ''',
+    },
     # 'lease_area': {
-    #     'source_name': 'Tonttiosasto: vuokrausalue_paa',
-    #     'source_identifier': 'tonttiosasto.vuokrausalue_paa',
-    #     'area_type': AreaType.LEASE_AREA,
-    #     'identifier_field_name': 'vuokratunnus',
-    #     'metadata_columns': ['vuokratunnus', 'sopimusnumero', 'olotila', 'kunta', 'sijaintialue', 'ryhma', 'yksikko',
-    #                          'mvj_yks'],
-    #     'query': '''
-    #     SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-    #         AS geom_text
-    #     FROM tonttiosasto.vuokrausalue_paa AS a
-    #     WHERE vuokratunnus IS NOT NULL
-    #     ''',
-    # },
-    # 'lease_area': {
+    #     'source_dsn_setting_name': 'AREA_DATABASE_DSN',
     #     'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
     #     'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',
     #     'area_type': AreaType.LEASE_AREA,
@@ -98,6 +102,7 @@ AREA_IMPORT_TYPES = {
     # },
     # Kiinteistöt
     'real_property': {
+        'source_dsn_setting_name': 'AREA_DATABASE_DSN',
         'source_name': 'Kiinteistö: Kiinteistöalue',
         'source_identifier': 'kiinteisto.kiinteisto_alue_alueet',
         'area_type': AreaType.REAL_PROPERTY,
@@ -116,6 +121,7 @@ AREA_IMPORT_TYPES = {
     },
     # Määräalat
     'unseparated_parcel': {
+        'source_dsn_setting_name': 'AREA_DATABASE_DSN',
         'source_name': 'Kiinteistö: Määräala',
         'source_identifier': 'kiinteisto.maaraala_alue_alueet',
         'area_type': AreaType.UNSEPARATED_PARCEL,
@@ -134,6 +140,7 @@ AREA_IMPORT_TYPES = {
     },
     # Kaavayksiköt
     'plan_unit': {
+        'source_dsn_setting_name': 'AREA_DATABASE_DSN',
         'source_name': 'Kaava: Kaavayksiköt',
         'source_identifier': 'kaava.kaavayksikot_alueet',
         'area_type': AreaType.PLAN_UNIT,
@@ -150,6 +157,7 @@ AREA_IMPORT_TYPES = {
     },
     # Tonttijaot
     'plot_division': {
+        'source_dsn_setting_name': 'AREA_DATABASE_DSN',
         'source_name': 'Kaava: Tonttijako',
         'source_identifier': 'kaava.tonttijako_alueet',
         'area_type': AreaType.PLOT_DIVISION,
@@ -172,8 +180,6 @@ class AreaImporter(BaseImporter):
     type_name = 'area'
 
     def __init__(self, stdout=None, stderr=None):
-        conn = psycopg2.connect(settings.AREA_DATABASE_DSN, cursor_factory=psycopg2.extras.NamedTupleCursor)
-        self.cursor = conn.cursor()
         self.stdout = stdout
         self.stderr = stderr
         self.area_types = None
@@ -193,8 +199,6 @@ class AreaImporter(BaseImporter):
                 self.area_types.append(area_type)
 
     def execute(self):  # NOQA C901
-        cursor = self.cursor
-
         if not self.area_types:
             self.area_types = AREA_IMPORT_TYPES.keys()
 
@@ -202,6 +206,18 @@ class AreaImporter(BaseImporter):
 
         for area_import_type in self.area_types:
             area_import = AREA_IMPORT_TYPES[area_import_type]
+
+            try:
+                conn = psycopg2.connect(getattr(settings, area_import['source_dsn_setting_name']),
+                                        cursor_factory=psycopg2.extras.NamedTupleCursor)
+            except (psycopg2.ProgrammingError, psycopg2.OperationalError) as e:
+                self.stderr.write(str(e))
+                self.stderr.write(
+                    'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
+                        area_import_type, area_import['source_dsn_setting_name']))
+                continue
+
+            cursor = conn.cursor()
 
             self.stdout.write(area_import['source_name'])
             (source, source_created) = AreaSource.objects.get_or_create(identifier=area_import['source_identifier'],
