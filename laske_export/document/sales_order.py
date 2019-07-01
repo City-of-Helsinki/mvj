@@ -67,10 +67,10 @@ class Party(FieldGroup):
                 setattr(self, 'info_name{}'.format(n), name[i:i + 35])
                 n += 1
 
-        self.priority_address1 = contact.address
+        self.priority_address1 = contact.address[:35] if contact.address else ''
         self.priority_city = contact.city
         self.priority_postalcode = contact.postal_code
-        self.info_address1 = contact.address
+        self.info_address1 = contact.address[:35] if contact.address else ''
         self.info_city = contact.city
         self.info_postalcode = contact.postal_code
 
