@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional
 
-
 class DaemonContext:
     def __init__(
             self,

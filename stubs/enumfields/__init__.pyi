@@ -3,7 +3,6 @@ from typing import Any, Sequence, Tuple, Type, Union
 
 from django.db import models
 
-
 class Enum(enum.Enum):
     @classmethod
     def choices(cls) -> Sequence[Tuple[str, str]]: ...
