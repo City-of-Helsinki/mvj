@@ -1,5 +1,4 @@
 beautifulsoup4
-cx_Oracle
 dataclasses ; python_version<"3.7"
 Django
 #django-auditlog

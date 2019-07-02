@@ -1,4 +1,5 @@
 -c requirements.txt
+cx_Oracle
 django-debug-toolbar
 django-extensions
 django-stubs
@@ -10,7 +11,8 @@ isort
 mypy
 pep8-naming
 pydocstyle
-pytest
+# pytest-factoryboy doesn't support pytest 5.0.0 yet. See: https://github.com/pytest-dev/pytest-factoryboy/issues/77
+pytest<5.0.0
 pytest-cov
 pytest-django
 pytest-factoryboy
