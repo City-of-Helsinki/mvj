@@ -7,7 +7,7 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.enums import TenantContactType
-from leasing.models import Contact
+from leasing.models import Contact, RentIntendedUse
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 
 
@@ -33,6 +33,13 @@ class Tenant(TimeStampedSafeDeleteModel):
 
     recursive_get_related_skip_relations = ["lease", "contacts"]
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Tenant")
+        verbose_name_plural = pgettext_lazy("Model name", "Tenants")
+
+    def __str__(self):
+        return 'Tenant id: {} share: {}/{}'.format(self.id, self.share_numerator, self.share_denominator)
+
     def get_tenantcontacts_for_period(self, contact_type, start_date, end_date):
         range_filter = Q(
             Q(Q(end_date=None) | Q(end_date__gte=start_date)) &
@@ -54,12 +61,12 @@ class Tenant(TimeStampedSafeDeleteModel):
         else:
             return self.get_tenant_tenantcontacts(start_date, end_date)
 
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Tenant")
-        verbose_name_plural = pgettext_lazy("Model name", "Tenants")
-
-    def __str__(self):
-        return 'Tenant id: {} share: {}/{}'.format(self.id, self.share_numerator, self.share_denominator)
+    def get_rent_share_by_intended_use(self, intended_use):
+        try:
+            return self.rent_shares.get(intended_use=intended_use)
+        except TenantRentShare.DoesNotExist:
+            # TODO: Better error handling
+            return None
 
 
 class TenantContact(TimeStampedSafeDeleteModel):
@@ -72,6 +79,8 @@ class TenantContact(TimeStampedSafeDeleteModel):
 
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["tenant"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Tenant contact")
@@ -86,8 +95,33 @@ class TenantContact(TimeStampedSafeDeleteModel):
         return self.start_date, self.end_date
 
 
+class TenantRentShare(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Laskuosuus
+    """
+    tenant = models.ForeignKey(Tenant, verbose_name=_("Tenant"), related_name='rent_shares', on_delete=models.PROTECT)
+
+    # In Finnish: Käyttötarkoitus
+    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
+                                     on_delete=models.PROTECT)
+
+    # In Finnish: Jaettava / Osoittaja (Laskuosuus)
+    share_numerator = models.PositiveIntegerField(verbose_name=_("Rent share numerator"))
+
+    # In Finnish: Jakaja / Nimittäjä (Laskuosuus)
+    share_denominator = models.PositiveIntegerField(verbose_name=_("Rent share denominator"))
+
+    recursive_get_related_skip_relations = ["tenant"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Tenant rent share")
+        verbose_name_plural = pgettext_lazy("Model name", "Tenant rent shares")
+
+
 auditlog.register(Tenant)
 auditlog.register(TenantContact)
+auditlog.register(TenantRentShare)
 
 field_permissions.register(Tenant, exclude_fields=['lease', 'invoicerow'])
 field_permissions.register(TenantContact, exclude_fields=['tenant'])
+field_permissions.register(TenantRentShare, exclude_fields=['tenant'])
