@@ -11,15 +11,16 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
-from leasing.calculation.explanation import Explanation, ExplanationItem
 from leasing.calculation.index import IndexCalculation
+from leasing.calculation.result import (
+    CalculationAmount, CalculationNote, CalculationResult, FixedInitialYearRentCalculationResult)
 from leasing.enums import (
     AreaUnit, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType,
     RentCycle, RentType, SubventionType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
     get_monthly_amount_by_period_type, get_range_overlap_and_remainder, group_items_in_period_by_date_range,
-    is_date_on_first_quarter, split_date_range, subtract_range_from_range)
+    is_date_on_first_quarter, split_date_range, subtract_range_from_range, subtract_ranges_from_ranges)
 from users.models import User
 
 from .decision import Decision
@@ -142,23 +143,50 @@ class Rent(TimeStampedSafeDeleteModel):
         return (self.seasonal_start_day and self.seasonal_start_month and
                 self.seasonal_end_day and self.seasonal_end_month)
 
-    def get_amount_for_year(self, year):
-        date_range_start = datetime.date(year, 1, 1)
-        date_range_end = datetime.date(year, 12, 31)
-        return self.get_amount_for_date_range(date_range_start, date_range_end)
+    def get_intended_uses_for_date_range(self, date_range_start, date_range_end):
+        intended_uses = set()
 
-    def get_amount_for_month(self, year, month):
-        date_range_start = datetime.date(year, month, 1)
-        date_range_end = datetime.date(year, month, 1) + relativedelta(day=31)
-        return self.get_amount_for_date_range(date_range_start, date_range_end)
+        range_filtering = Q(
+            Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+            Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+        )
 
-    def _get_adjustment_amount_for_period(self, rent_adjustments, period, amount, explain=False, dry_run=False):
-        """Calculate adjustment amounts for the provided period and amount
+        intended_uses.update([fiyr.intended_use for fiyr in self.fixed_initial_year_rents.filter(range_filtering)])
+        intended_uses.update([cr.intended_use for cr in self.contract_rents.filter(range_filtering)])
 
-        As overlapping adjustments should be cumulative, but adjustments in series should not,
-        we group adjustments by time periods and make separate calculations for every set.
-        """
-        explanations = []
+        return intended_uses
+
+    def clamp_date_range(self, date_range_start, date_range_end):
+        clamped_date_range_start = date_range_start
+        clamped_date_range_end = date_range_end
+
+        if self.is_seasonal():
+            seasonal_period_start = datetime.date(year=date_range_start.year, month=self.seasonal_start_month,
+                                                  day=self.seasonal_start_day)
+            seasonal_period_end = datetime.date(year=date_range_start.year, month=self.seasonal_end_month,
+                                                day=self.seasonal_end_day)
+
+            if date_range_start < seasonal_period_start and date_range_start < seasonal_period_end:
+                clamped_date_range_start = seasonal_period_start
+
+            if date_range_end > seasonal_period_end and date_range_end > seasonal_period_start:
+                clamped_date_range_end = seasonal_period_end
+        else:
+            if ((self.start_date and date_range_start < self.start_date) and
+                    (not self.end_date or date_range_start < self.end_date)):
+                clamped_date_range_start = self.start_date
+
+            if ((self.end_date and date_range_end > self.end_date) and
+                    (self.start_date and date_range_end > self.start_date)):
+                clamped_date_range_end = self.end_date
+
+        return clamped_date_range_start, clamped_date_range_end
+
+    def get_rent_adjustment_amount(self, intended_use, amount, period, dry_run=False):
+        calculation_amounts = []
+
+        rent_adjustments = self.get_applicable_adjustments(intended_use, *period)
+
         total_adjustment_amount = Decimal(0)
 
         grouped_rent_adjustments = group_items_in_period_by_date_range(rent_adjustments, *period)
@@ -173,53 +201,26 @@ class Rent(TimeStampedSafeDeleteModel):
             for rent_adjustment in adjustments:
                 adjustment_amount = rent_adjustment.get_amount_for_date_range(
                     tmp_amount, *adjustment_range, update_amount_total=False if dry_run else True)
-                total_adjustment_amount += adjustment_amount
-                tmp_amount += adjustment_amount
 
-                explanations.append(ExplanationItem(subject=rent_adjustment, date_ranges=[adjustment_range],
-                                                    amount=adjustment_amount))
+                total_adjustment_amount += adjustment_amount.amount
+                tmp_amount += adjustment_amount.amount
 
-        if explain:
-            return total_adjustment_amount, explanations
-        else:
-            return total_adjustment_amount
+                calculation_amounts.append(adjustment_amount)
 
-    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False, dry_run=False):  # noqa: TODO
-        assert date_range_start <= date_range_end, 'date_range_start cannot be after date_range_end.'
+        return calculation_amounts
 
-        explanation = Explanation()
+    def fixed_initial_year_rent_amount_for_date_range(self, intended_use, date_range_start, date_range_end,
+                                                      dry_run=False):
+        fixed_initial_year_rents = self.fixed_initial_year_rents.filter(
+            Q(
+                Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+                Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+            ) &
+            Q(intended_use=intended_use)
+        )
 
-        range_filtering = Q(
-            Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
-            Q(Q(start_date=None) | Q(start_date__lte=date_range_end)))
-
-        fixed_initial_year_rents = self.fixed_initial_year_rents.filter(range_filtering)
-        contract_rents = self.contract_rents.filter(range_filtering)
-
-        total = Decimal('0.00')
-        fixed_applied = False
-        remaining_ranges = []
-
-        # TODO: seasonal spanning multiple years
-        if self.is_seasonal():
-            seasonal_period_start = datetime.date(year=date_range_start.year, month=self.seasonal_start_month,
-                                                  day=self.seasonal_start_day)
-            seasonal_period_end = datetime.date(year=date_range_start.year, month=self.seasonal_end_month,
-                                                day=self.seasonal_end_day)
-
-            if date_range_start < seasonal_period_start and date_range_start < seasonal_period_end:
-                date_range_start = seasonal_period_start
-
-            if date_range_end > seasonal_period_end and date_range_end > seasonal_period_start:
-                date_range_end = seasonal_period_end
-        else:
-            if ((self.start_date and date_range_start < self.start_date) and
-                    (not self.end_date or date_range_start < self.end_date)):
-                date_range_start = self.start_date
-
-            if ((self.end_date and date_range_end > self.end_date) and
-                    (self.start_date and date_range_end > self.start_date)):
-                date_range_end = self.end_date
+        calculation_result = FixedInitialYearRentCalculationResult(
+            date_range_start=date_range_start, date_range_end=date_range_end)
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
             (fixed_overlap, fixed_remainders) = get_range_overlap_and_remainder(
@@ -228,144 +229,137 @@ class Rent(TimeStampedSafeDeleteModel):
             if not fixed_overlap:
                 continue
 
-            if fixed_remainders:
-                remaining_ranges.extend(fixed_remainders)
-
-            fixed_applied = True
+            calculation_result.applied_ranges.append(fixed_overlap)
 
             fixed_amount = fixed_initial_year_rent.get_amount_for_date_range(*fixed_overlap)
 
-            fixed_explanation_item = explanation.add(
-                subject=fixed_initial_year_rent, date_ranges=[fixed_overlap], amount=fixed_amount)
+            rent_adjustment_amounts = self.get_rent_adjustment_amount(
+                fixed_initial_year_rent.intended_use, fixed_amount.amount, fixed_overlap, dry_run=dry_run)
+            fixed_amount.add_sub_amounts(rent_adjustment_amounts)
 
-            # Apply rent adjustments
-            rent_adjustments = self.get_applicable_adjustments(fixed_initial_year_rent.intended_use,
-                                                               *fixed_overlap)
+            calculation_result.add_amount(fixed_amount)
 
-            (adjustment_amount, adjustment_explanations) = self._get_adjustment_amount_for_period(
-                rent_adjustments, fixed_overlap, fixed_amount, explain=True, dry_run=dry_run)
+        if calculation_result.applied_ranges:
+            calculation_result.remaining_ranges = subtract_ranges_from_ranges(
+                [(date_range_start, date_range_end)], calculation_result.applied_ranges)
 
-            for adjustment_explanation in adjustment_explanations:
-                explanation.add_item(adjustment_explanation, related_item=fixed_explanation_item)
+        return calculation_result
 
-            fixed_amount += adjustment_amount
-            total += fixed_amount
+    def contract_rent_amount_for_date_range(self, intended_use, date_range_start, date_range_end, dry_run=False):  # noqa: TODO
+        calculation_result = CalculationResult(date_range_start=date_range_start, date_range_end=date_range_end)
 
-        if fixed_applied:
-            if not remaining_ranges:
-                if explain:
-                    explanation.add(subject=self, date_ranges=[(date_range_start, date_range_end)], amount=total)
+        contract_rents = self.contract_rents.filter(
+            Q(
+                Q(Q(end_date=None) | Q(end_date__gte=date_range_start)) &
+                Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+            ) &
+            Q(intended_use=intended_use)
+        )
 
-                    return total, explanation
-                else:
-                    return total
-            else:
-                date_ranges = remaining_ranges
-        else:
-            date_ranges = [(date_range_start, date_range_end)]
+        for contract_rent in contract_rents:
+            (contract_overlap, _remainder) = get_range_overlap_and_remainder(date_range_start, date_range_end,
+                                                                             *contract_rent.date_range)
 
-        # We may need to calculate multiple separate ranges if the rent
-        # type is index or manual because the index number could be different
-        # in different years.
-        if self.type in [RentType.INDEX, RentType.MANUAL]:
-            date_ranges = self.split_ranges_by_cycle(date_ranges)
-
-        for (range_start, range_end) in date_ranges:
-            if self.type == RentType.ONE_TIME:
-                if self.amount:
-                    total += self.amount
+            if not contract_overlap:
                 continue
 
-            for contract_rent in contract_rents:
-                (contract_overlap, _remainder) = get_range_overlap_and_remainder(
-                    range_start, range_end, *contract_rent.date_range)
+            if self.type == RentType.FREE:
+                continue
+            elif self.type == RentType.FIXED:
+                contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+            elif self.type == RentType.MANUAL:
+                contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
 
-                if not contract_overlap:
-                    continue
+                manual_ratio = self.manual_ratio
 
-                if self.type == RentType.FIXED:
-                    contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
-                    contract_rent_explanation_item = explanation.add(
-                        subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
-                elif self.type == RentType.MANUAL:
-                    contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
-                    explanation.add(subject=contract_rent, date_ranges=[contract_overlap], amount=contract_amount)
+                if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(contract_overlap[0]):
+                    manual_ratio = self.manual_ratio_previous
 
-                    manual_ratio = self.manual_ratio
-
-                    if self.cycle == RentCycle.APRIL_TO_MARCH and is_date_on_first_quarter(contract_overlap[0]):
-                        manual_ratio = self.manual_ratio_previous
-
-                    if manual_ratio:
-                        contract_amount *= manual_ratio
-
-                        contract_rent_explanation_item = explanation.add(
-                            subject={
-                                "subject_type": "ratio",
-                                "description": _("Manual ratio {ratio}").format(
-                                    ratio=manual_ratio),
-                            }, date_ranges=[contract_overlap], amount=contract_amount)
-                    else:
-                        contract_amount = Decimal(0)
-                        contract_rent_explanation_item = explanation.add(subject={
-                            "subject_type": "notice",
-                            "description": _('Manual ratio not found!'),
-                        }, date_ranges=[contract_overlap])
-
-                elif self.type == RentType.INDEX:
-                    original_rent_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
-
-                    index = self.get_index_for_date(contract_overlap[0])
-
-                    index_calculation = IndexCalculation(amount=original_rent_amount, index=index,
-                                                         index_type=self.index_type, precision=self.index_rounding,
-                                                         x_value=self.x_value, y_value=self.y_value)
-
-                    contract_amount = index_calculation.calculate()
-
-                    contract_rent_explanation_item = explanation.add(
-                        subject=contract_rent, date_ranges=[contract_overlap], amount=original_rent_amount)
-
-                    index_explanation_item = explanation.add(subject=index, date_ranges=[contract_overlap],
-                                                             amount=contract_amount,
-                                                             related_item=contract_rent_explanation_item)
-
-                    # Create a notice if the index used is older than it should be.
-                    # (The previous years average index is not yet available)
-                    if not self.is_correct_index_for_date(index, contract_overlap[0]):
-                        explanation.add(subject={
-                            "subject_type": "notice",
-                            "description": _('Average index for the year {} is not available!').format(
-                                self.get_rent_year_for_date(contract_overlap[0]) - 1),
-                        }, related_item=index_explanation_item)
-
-                    for item in index_calculation.explanation_items:
-                        explanation.add_item(item, related_item=index_explanation_item)
-
-                elif self.type == RentType.FREE:
-                    continue
+                if manual_ratio:
+                    contract_amount.amount *= manual_ratio
+                    contract_amount.add_note(CalculationNote(
+                        type="ratio", description=_("Manual ratio {ratio}").format(ratio=manual_ratio)))
                 else:
-                    raise NotImplementedError('RentType {} not implemented'.format(self.type))
+                    contract_amount.amount = Decimal(0)
+                    contract_amount.add_note(CalculationNote(type="notice", description=_('Manual ratio not found!')))
+            elif self.type == RentType.INDEX:
+                contract_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
-                # Apply rent adjustments
-                rent_adjustments = self.get_applicable_adjustments(contract_rent.intended_use, *contract_overlap)
+                index = self.get_index_for_date(contract_overlap[0])
 
-                (adjustment_amount, adjustment_explanations) = self._get_adjustment_amount_for_period(
-                    rent_adjustments, contract_overlap, contract_amount, explain=True, dry_run=dry_run)
+                index_calculation = IndexCalculation(amount=contract_amount.amount, index=index,
+                                                     index_type=self.index_type, precision=self.index_rounding,
+                                                     x_value=self.x_value, y_value=self.y_value)
 
-                for adjustment_explanation in adjustment_explanations:
-                    explanation.add_item(adjustment_explanation, related_item=contract_rent_explanation_item)
+                contract_amount.amount = index_calculation.calculate()
 
-                contract_amount += adjustment_amount
+                for note in index_calculation.notes:
+                    contract_amount.add_note(note)
 
-                total += max(Decimal(0), contract_amount)
+                # Create a notice if the index used is older than it should be.
+                # (The previous years average index is not yet available)
+                if not self.is_correct_index_for_date(index, contract_overlap[0]):
+                    contract_amount.add_note(
+                        CalculationNote(
+                            type="notice", description=_('Average index for the year {} is not available!').format(
+                                self.get_rent_year_for_date(contract_overlap[0]) - 1)))
+            else:
+                raise NotImplementedError('RentType {} not implemented'.format(self.type))
 
-        explanation.add(subject=self, date_ranges=[(date_range_start, date_range_end)], amount=total)
+            rent_adjustment_amounts = self.get_rent_adjustment_amount(
+                intended_use, contract_amount.amount, contract_overlap, dry_run=dry_run)
+            contract_amount.add_sub_amounts(rent_adjustment_amounts)
 
-        if explain:
-            return total, explanation
-        else:
-            return total
+            calculation_result.add_amount(contract_amount)
+
+        return calculation_result
+
+    def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False, dry_run=False):  # noqa: TODO
+        calculation_result = CalculationResult(date_range_start=date_range_start, date_range_end=date_range_end)
+
+        # Limit the date range by season dates if the rent is seasonal or
+        # by the rent start and end dates if not
+        (clamped_date_range_start, clamped_date_range_end) = self.clamp_date_range(date_range_start, date_range_end)
+
+        # Calculate rent separately for every intended use
+        for intended_use in self.get_intended_uses_for_date_range(clamped_date_range_start, clamped_date_range_end):
+            fixed_initial_year_rent_calculation_result = self.fixed_initial_year_rent_amount_for_date_range(
+                intended_use, clamped_date_range_start, clamped_date_range_end, dry_run=dry_run)
+
+            calculation_result.combine(fixed_initial_year_rent_calculation_result)
+
+            # Fixed initial year rent overrides contract rent. Therefore
+            # if there are fixed initial year rents for the whole date range,
+            # there is no need to calculate the contract rents.
+            if fixed_initial_year_rent_calculation_result.is_range_fully_applied():
+                continue
+
+            # Otherwise calculate contract rents for the remaining date ranges
+            # or for the whole range
+            if fixed_initial_year_rent_calculation_result.applied_ranges:
+                date_ranges = fixed_initial_year_rent_calculation_result.remaining_ranges
+            else:
+                date_ranges = [(clamped_date_range_start, clamped_date_range_end)]
+
+            # We may need to calculate multiple separate ranges if the rent
+            # type is index or manual because the index number could be different
+            # in different years.
+            if self.type in [RentType.INDEX, RentType.MANUAL]:
+                date_ranges = self.split_ranges_by_cycle(date_ranges)
+
+            for (range_start, range_end) in date_ranges:
+                if self.type == RentType.ONE_TIME:
+                    # TODO: ONE_TIME needs intended use
+                    # if self.amount:
+                    #     total += self.amount
+                    continue
+
+                contract_rent_calculation_result = self.contract_rent_amount_for_date_range(
+                    intended_use, range_start, range_end, dry_run=dry_run)
+
+                calculation_result.combine(contract_rent_calculation_result)
+
+        return calculation_result
 
     def get_applicable_adjustments(self, intended_use, date_range_start, date_range_end):
         applicable_adjustments = []
@@ -586,7 +580,10 @@ class FixedInitialYearRent(TimeStampedSafeDeleteModel):
         date_range_amount = get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end,
                                                                       real_month_lengths=False)
 
-        return date_range_amount
+        calculation_amount = CalculationAmount(item=self, date_range_start=date_range_start,
+                                               date_range_end=date_range_end, amount=date_range_amount)
+
+        return calculation_amount
 
 
 class ContractRent(TimeStampedSafeDeleteModel):
@@ -655,7 +652,10 @@ class ContractRent(TimeStampedSafeDeleteModel):
 
         date_range_amount = get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end)
 
-        return date_range_amount
+        calculation_amount = CalculationAmount(item=self, date_range_start=date_range_start,
+                                               date_range_end=date_range_end, amount=date_range_amount)
+
+        return calculation_amount
 
     def get_amount_for_date_range(self, date_range_start, date_range_end):
         return self._get_amount_for_date_range(date_range_start, date_range_end, "amount")
@@ -786,10 +786,17 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
             raise NotImplementedError(
                 'Cannot get adjust amount for RentAdjustmentAmountType {}'.format(self.amount_type))
 
+        calculation_amount = CalculationAmount(item=self, amount=Decimal(0), date_range_start=date_range_start,
+                                               date_range_end=date_range_end)
+
         if self.type == RentAdjustmentType.INCREASE:
-            return adjustment
+            calculation_amount.amount = adjustment
+
+            return calculation_amount
         elif self.type == RentAdjustmentType.DISCOUNT:
-            return -adjustment
+            calculation_amount.amount = -adjustment
+
+            return calculation_amount
         else:
             raise NotImplementedError(
                 'Cannot get adjust amount for RentAdjustmentType {}'.format(self.amount_type))

@@ -2,6 +2,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from django.utils.translation import ugettext_lazy as _
 
+from leasing.calculation.result import CalculationNote
 from leasing.enums import IndexType
 
 from .explanation import ExplanationItem
@@ -14,6 +15,7 @@ def int_floor(value, precision):
 class IndexCalculation:
     def __init__(self, amount=None, index=None, index_type=None, precision=None, x_value=None, y_value=None):
         self.explanation_items = []
+        self.notes = []
         self.amount = amount
         self.index = index
         self.index_type = index_type
@@ -27,6 +29,7 @@ class IndexCalculation:
             "description": _("Ratio {ratio}").format(ratio=ratio),
         })
         self.explanation_items.append(ratio_explanation_item)
+        self.notes.append(CalculationNote(type="ratio", description=_('Ratio {}'.format(ratio))))
 
     def calculate_type_1_2_3_4(self, index_value, precision, base):
         ratio = Decimal(int_floor(index_value, precision) / base).quantize(Decimal('.01'))
@@ -72,6 +75,9 @@ class IndexCalculation:
                 "description": _("New base rent"),
             }, amount=new_base_rent)
             self.explanation_items.append(new_base_rent_explanation_item)
+
+            self.notes.append(CalculationNote(type="new_base_rent", description=_('New base rent {}'.format(
+                new_base_rent))))
 
             y_ratio = Decimal(Decimal(rounded_index) / Decimal(self.y_value)).quantize(
                 Decimal('.01'), rounding=ROUND_HALF_UP)

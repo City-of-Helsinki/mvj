@@ -221,15 +221,15 @@ class LeaseRentForPeriodView(APIView):
         }
 
         for rent in lease.rents.all():
-            (rent_amount, explanation) = rent.get_amount_for_date_range(start_date, end_date, explain=True)
+            calculation_result = rent.get_amount_for_date_range(start_date, end_date, dry_run=True)
 
-            explanation_serializer = ExplanationSerializer(explanation)
+            explanation_serializer = ExplanationSerializer(calculation_result.get_explanation())
 
             result['rents'].append({
                 'id': rent.id,
                 'start_date': rent.start_date,
                 'end_date': rent.end_date,
-                'amount': rent_amount,
+                'amount': calculation_result.get_total_amount(),
                 'explanation': explanation_serializer.data,
             })
 

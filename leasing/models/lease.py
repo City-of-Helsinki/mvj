@@ -1,7 +1,9 @@
 import datetime
 import re
+from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from itertools import chain, groupby
+from random import choice
 
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
@@ -14,14 +16,14 @@ from enumfields import EnumField
 from safedelete.managers import SafeDeleteManager
 
 from field_permissions.registry import field_permissions
+from leasing.calculation.result import CalculationResult
 from leasing.enums import (
     Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType,
     TenantContactType)
 from leasing.models import Contact
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 from leasing.models.utils import (
-    combine_ranges, fix_amount_for_overlap, get_range_overlap_and_remainder, is_instance_empty,
-    subtract_ranges_from_ranges)
+    fix_amount_for_overlap, get_range_overlap_and_remainder, is_instance_empty, subtract_ranges_from_ranges)
 from users.models import User
 
 
@@ -214,7 +216,7 @@ class LeaseManager(SafeDeleteManager):
             'identifier__district', 'lessor', 'intended_use', 'supportive_housing', 'statistical_use', 'financing',
             'management', 'regulation', 'hitas', 'notice_period', 'preparer'
         ).prefetch_related(
-            'tenants', 'tenants__tenantcontact_set', 'tenants__tenantcontact_set__contact',
+            'tenants', 'tenants__rent_shares', 'tenants__tenantcontact_set', 'tenants__tenantcontact_set__contact',
             'lease_areas', 'contracts', 'decisions', 'inspections', 'rents', 'rents__due_dates',
             'rents__contract_rents', 'rents__contract_rents__intended_use', 'rents__rent_adjustments',
             'rents__rent_adjustments__intended_use', 'rents__index_adjusted_rents', 'rents__payable_rents',
@@ -431,28 +433,28 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return sorted(due_dates)
 
-    def get_tenant_shares_for_period(self, billing_period_start_date, billing_period_end_date):  # noqa C901 TODO
+    def get_tenant_shares_for_period(self, period_start_date, period_end_date):  # noqa C901 TODO
         tenant_range_filter = Q(
-            Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=billing_period_start_date)) &
-            Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=billing_period_end_date)) &
+            Q(Q(tenantcontact__end_date=None) | Q(tenantcontact__end_date__gte=period_start_date)) &
+            Q(Q(tenantcontact__start_date=None) | Q(tenantcontact__start_date__lte=period_end_date)) &
             Q(tenantcontact__type=TenantContactType.TENANT) & Q(tenantcontact__deleted__isnull=True)
         )
 
         shares = {}
         for tenant in self.tenants.filter(tenant_range_filter).distinct():
-            tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(billing_period_start_date, billing_period_end_date)
-            billing_tenantcontacts = tenant.get_billing_tenantcontacts(billing_period_start_date,
-                                                                       billing_period_end_date)
+            tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(period_start_date, period_end_date)
+            billing_tenantcontacts = tenant.get_billing_tenantcontacts(period_start_date,
+                                                                       period_end_date)
 
             if not tenant_tenantcontacts or not billing_tenantcontacts:
-                raise Exception('No suitable contacts in the period {} - {}'.format(billing_period_start_date,
-                                                                                    billing_period_end_date))
+                raise Exception('No suitable contacts in the period {} - {}'.format(period_start_date,
+                                                                                    period_end_date))
 
             (tenant_overlap, tenant_remainders) = get_range_overlap_and_remainder(
-                billing_period_start_date, billing_period_end_date, *tenant_tenantcontacts[0].date_range)
+                period_start_date, period_end_date, *tenant_tenantcontacts[0].date_range)
 
             if not tenant_overlap:
-                raise Exception('No overlap with this billing period. Error?')
+                continue
 
             for billing_tenantcontact in billing_tenantcontacts:
                 (billing_overlap, billing_remainders) = get_range_overlap_and_remainder(
@@ -537,27 +539,22 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return self.rents.filter(rent_range_filter)
 
-    def get_rent_amount_and_explations_for_period(self, start_date, end_date):
-        amount = Decimal(0)
-        explanations = []
+    def calculate_rent_amount_for_period(self, start_date, end_date):
+        calculation_result = CalculationResult(date_range_start=start_date, date_range_end=end_date)
 
         for rent in self.get_active_rents_on_period(start_date, end_date):
-            (this_amount, explanation) = rent.get_amount_for_date_range(start_date, end_date, explain=True)
+            calculation_result.combine(rent.get_amount_for_date_range(start_date, end_date))
 
-            amount += this_amount
-            explanations.append(explanation)
+        return calculation_result
 
-        return amount, explanations
-
-    def get_rent_amount_for_year(self, year):
+    def calculate_rent_amount_for_year(self, year):
         first_day_of_year = datetime.date(year=year, month=1, day=1)
         last_day_of_year = datetime.date(year=year, month=12, day=31)
 
-        (year_rent, explanations) = self.get_rent_amount_and_explations_for_period(first_day_of_year, last_day_of_year)
+        return self.calculate_rent_amount_for_period(first_day_of_year, last_day_of_year)
 
-        return year_rent
-
-    def determine_payable_rents_and_periods(self, start_date, end_date, dry_run=False):
+    def determine_payable_rents_and_periods(self, start_date, end_date, dry_run=False,  # noqa: TODO
+                                            ignore_invoicing_date_after=None):
         """Determines billing periods and rent amounts for them
 
         dry_run parameter is used when rent calculation is not for
@@ -565,6 +562,10 @@ class Lease(TimeStampedSafeDeleteModel):
         The amount in an adjustment with the
         RentAdjustmentAmountType.AMOUNT_TOTAL-type is not updated
         when doing a dry run.
+
+        ignore_invoicing_date_after -parameter can be used to limit
+        calculation to only for the due dates that would be invoiced
+        before the provided date.
         """
         lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
 
@@ -575,6 +576,13 @@ class Lease(TimeStampedSafeDeleteModel):
         amounts_for_billing_periods = {}
 
         for lease_due_date in lease_due_dates:
+            if ignore_invoicing_date_after:
+                due_date_invoicing_date = lease_due_date - relativedelta(months=1, day=1)
+
+                # Don't include due dates that have an upcoming invoicing date
+                if due_date_invoicing_date > ignore_invoicing_date_after:
+                    continue
+
             for rent in self.rents.all():
                 billing_period = rent.get_billing_period_from_due_date(lease_due_date)
 
@@ -600,76 +608,104 @@ class Lease(TimeStampedSafeDeleteModel):
                 if billing_period not in amounts_for_billing_periods:
                     amounts_for_billing_periods[billing_period] = {
                         'due_date': lease_due_date,
-                        'amount': Decimal(0),
-                        'explanations': [],
+                        'calculation_result': CalculationResult(date_range_start=start_date, date_range_end=end_date),
                     }
 
-                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True,
-                                                                            dry_run=dry_run)
+                rent_calculation_result = rent.get_amount_for_date_range(*billing_period, explain=True, dry_run=dry_run)
 
-                amounts_for_billing_periods[billing_period]['amount'] += this_amount
-                amounts_for_billing_periods[billing_period]['explanations'].append(explanation)
+                amounts_for_billing_periods[billing_period]['calculation_result'].combine(rent_calculation_result)
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(self, period_rents):
+    def calculate_invoices(self, period_rents):  # noqa: TODO
         from leasing.models import ReceivableType
 
         # TODO: Make configurable
         receivable_type_rent = ReceivableType.objects.get(pk=1)
 
-        # rents = self.determine_payable_rents_and_periods(self.start_date, self.end_date)
-
         invoice_data = []
 
         for billing_period, period_rent in period_rents.items():
-            billing_period_invoices = []
-            rent_amount = period_rent['amount']
+            contact_rows = defaultdict(list)
 
-            shares = self.get_tenant_shares_for_period(*billing_period)
+            for calculation_amount in period_rent['calculation_result'].get_all_amounts():
+                amount_period = (calculation_amount.date_range_start, calculation_amount.date_range_end)
 
-            for contact, share in shares.items():
-                billable_amount = Decimal(0)
-                contact_ranges = []
-                invoice_row_data = []
+                shares = self.get_tenant_shares_for_period(*amount_period)
 
-                for tenant, overlaps in share.items():
-                    overlap_amount = Decimal(0)
-                    for overlap in overlaps:
-                        overlap_amount += fix_amount_for_overlap(
-                            rent_amount, overlap, subtract_ranges_from_ranges([billing_period], [overlap]))
+                if not shares:
+                    continue
 
-                        share_amount = Decimal(
-                            overlap_amount * Decimal(tenant.share_numerator / tenant.share_denominator)
-                        ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+                all_shares_total = Decimal(0)
+                amount_rows = defaultdict(list)
 
-                        billable_amount += share_amount
+                for contact, share in shares.items():
+                    for tenant, overlaps in share.items():
+                        rent_share = tenant.get_rent_share_by_intended_use(calculation_amount.item.intended_use)
 
-                        contact_ranges.append(overlap)
-                        invoice_row_data.append({
-                            'tenant': tenant,
+                        if not rent_share:
+                            continue
+
+                        for overlap in overlaps:
+                            overlap_amount = fix_amount_for_overlap(
+                                calculation_amount.amount, overlap, subtract_ranges_from_ranges(
+                                    [amount_period], [overlap]))
+
+                            share_amount = Decimal(
+                                overlap_amount * Decimal(rent_share.share_numerator / rent_share.share_denominator)
+                            ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+                            all_shares_total += share_amount
+
+                            amount_rows[contact].append({
+                                'tenant': tenant,
+                                'receivable_type': receivable_type_rent,
+                                'billing_period_start_date': overlap[0],
+                                'billing_period_end_date': overlap[1],
+                                'amount': share_amount,
+                            })
+
+                # Add the difference to a random row in random contact if the total
+                # of the rows doesn't match the amount. e.g. a rounding error.
+                if all_shares_total != calculation_amount.amount:
+                    difference = calculation_amount.amount - all_shares_total
+
+                    if amount_rows:
+                        random_contact = choice(list(amount_rows.keys()))
+                        random_row = choice(amount_rows[random_contact])
+                        random_row['amount'] = Decimal(random_row['amount'] + difference).quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_UP)
+                    else:
+                        # Somehow there was no suitable rent share. Add
+                        # The amount to a random tenant
+                        # TODO: Should do something else?
+                        random_contact = choice(list(shares.keys()))
+                        random_tenant = choice(list(shares[random_contact].keys()))
+
+                        amount_rows[random_contact].append({
+                            'tenant': random_tenant,
                             'receivable_type': receivable_type_rent,
-                            'billing_period_start_date': overlap[0],
-                            'billing_period_end_date': overlap[1],
-                            'amount': share_amount,
+                            'billing_period_start_date': amount_period[0],
+                            'billing_period_end_date': amount_period[1],
+                            'amount': calculation_amount.amount,
                         })
 
-                combined_contact_ranges = combine_ranges(contact_ranges)
+                for contact, rows in amount_rows.items():
+                    contact_rows[contact].extend(rows)
 
-                total_contact_period_amount = Decimal(0)
-                for combined_contact_range in combined_contact_ranges:
-                    total_contact_period_amount += fix_amount_for_overlap(
-                        rent_amount, combined_contact_range, subtract_ranges_from_ranges(
-                            [billing_period], [combined_contact_range]))
+            # TODO: If there are no suitable contacts for some time periods, add
+            #  the remaining amounts to someone
+            total_period_amount = sum([row['amount'] for rows in contact_rows.values() for row in rows])
 
-                total_contact_period_amount = Decimal(total_contact_period_amount).quantize(Decimal('.01'),
-                                                                                            rounding=ROUND_HALF_UP)
-
+            billing_period_invoices = []
+            for contact, rows in contact_rows.items():
                 notes = [note.notes for note in self.invoice_notes.filter(
                     billing_period_start_date=billing_period[0],
                     billing_period_end_date=billing_period[1],
                     notes__isnull=False
                 )]
+
+                billable_amount = sum([row['amount'] for row in rows])
 
                 invoice_datum = {
                     'type': InvoiceType.CHARGE,
@@ -678,10 +714,11 @@ class Lease(TimeStampedSafeDeleteModel):
                     'due_date': period_rent['due_date'],
                     'billing_period_start_date': billing_period[0],
                     'billing_period_end_date': billing_period[1],
-                    'total_amount': total_contact_period_amount,
+                    'total_amount': total_period_amount,
                     'billed_amount': billable_amount,
-                    'rows': invoice_row_data,
-                    'explanations': period_rent['explanations'],
+                    'rows': rows,
+                    'explanations': [period_rent['calculation_result'].get_explanation()],
+                    'calculation_result': period_rent['calculation_result'],
                     'state': InvoiceState.OPEN,
                     'notes': ' '.join(notes),
                 }
@@ -708,50 +745,18 @@ class Lease(TimeStampedSafeDeleteModel):
         if not years:
             return []
 
-        lease_due_dates = self.get_due_dates_for_period(datetime.date(year=min(years), month=1, day=1),
-                                                        datetime.date(year=max(years) + 1, month=1, day=31))
-
-        amounts_for_billing_periods = {}
         # Calculate amounts for all the billing periods that have
         # occurred before the next possible invoicing day.
-        # TODO: merge with lease.determine_payable_rents_and_periods
-        for due_date in lease_due_dates:
-            due_date_invoicing_date = due_date - relativedelta(months=1, day=1)
+        amounts_for_billing_periods = self.determine_payable_rents_and_periods(
+            datetime.date(year=min(years), month=1, day=1),
+            datetime.date(year=max(years) + 1, month=1, day=31),
+            dry_run=False,
+            ignore_invoicing_date_after=end_date
+        )
 
-            # Don't include due dates that have an upcoming invoicing date
-            if due_date_invoicing_date > end_date:
-                continue
-
-            for rent in self.rents.all():
-                billing_period = rent.get_billing_period_from_due_date(due_date)
-
-                if not billing_period:
-                    continue
-
-                # Ignore periods that occur before the lease start date or after the lease end date
-                if ((self.start_date and billing_period[1] < self.start_date) or
-                        (self.end_date and billing_period[0] > self.end_date)):
-                    continue
-
-                # Adjust billing period start to the lease start date if needed
-                if billing_period[0] < self.start_date:
-                    billing_period = (self.start_date, billing_period[1])
-
-                # Adjust billing period end to the lease end date if needed
-                if self.end_date and billing_period[1] > self.end_date:
-                    billing_period = (billing_period[0], self.end_date)
-
-                if billing_period not in amounts_for_billing_periods:
-                    amounts_for_billing_periods[billing_period] = {
-                        'due_date': due_date,
-                        'amount': Decimal(0),
-                        'explanations': [],
-                    }
-
-                (this_amount, explanation) = rent.get_amount_for_date_range(*billing_period, explain=True)
-
-                amounts_for_billing_periods[billing_period]['amount'] += this_amount
-                amounts_for_billing_periods[billing_period]['explanations'].append(explanation)
+        # Nothing to invoice
+        if not amounts_for_billing_periods:
+            return []
 
         invoice_data = self.calculate_invoices(amounts_for_billing_periods)
 
@@ -833,21 +838,20 @@ class Lease(TimeStampedSafeDeleteModel):
 
         today = datetime.date.today()
 
-        invoices = Invoice.objects.filter(generated=True, type=InvoiceType.CHARGE, state=InvoiceState.PAID,
-                                          billing_period_end_date__gt=self.end_date)
+        invoices = self.invoices.filter(generated=True, type=InvoiceType.CHARGE, state=InvoiceState.PAID,
+                                        billing_period_end_date__gt=self.end_date)
 
         for invoice in invoices:
             extra_start_date = self.end_date + relativedelta(days=1)
             extra_end_date = invoice.billing_period_end_date
             extra_billing_period = (extra_start_date, extra_end_date)
 
-            (extra_amount, tmp) = self.get_rent_amount_and_explations_for_period(extra_start_date, extra_end_date)
+            calculation_result = self.calculate_rent_amount_for_period(extra_start_date, extra_end_date)
 
             amounts_for_billing_periods = {
                 extra_billing_period: {
                     'due_date': today,
-                    'amount': extra_amount,
-                    'explanations': [],
+                    'calculation_result': calculation_result,
                 }
             }
 
@@ -856,10 +860,12 @@ class Lease(TimeStampedSafeDeleteModel):
             for period_invoice_data in new_invoice_data:
                 for invoice_data in period_invoice_data:
                     invoice_data.pop('explanations')
+                    invoice_data.pop('calculation_result')
 
                     # Match the invoice
                     if not invoice.is_same_recipient_and_tenants(invoice_data):
-                        # TODO: What if not found
+                        # TODO: What if not found when the rents could have
+                        #  changed in the billing period
                         continue
 
                     invoice_data['type'] = InvoiceType.CREDIT_NOTE

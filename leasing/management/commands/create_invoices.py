@@ -30,7 +30,7 @@ class Command(BaseCommand):
             is_invoicing_enabled=True,
         ).filter(
             Q(Q(end_date=None) | Q(end_date__gte=today)) &
-            Q(Q(start_date=None) | Q(start_date__lte=today))
+            Q(Q(start_date=None) | Q(start_date__lte=end_of_next_month))
         )
 
         for lease in leases:
@@ -56,6 +56,7 @@ class Command(BaseCommand):
 
                 for invoice_data in period_invoice_data:
                     invoice_data.pop('explanations')
+                    invoice_data.pop('calculation_result')
                     invoice_row_data = invoice_data.pop('rows')
 
                     invoice_data['generated'] = True

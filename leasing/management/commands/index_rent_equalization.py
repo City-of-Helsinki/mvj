@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from leasing.calculation.result import CalculationAmount, CalculationResult
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Invoice
 from leasing.models.invoice import InvoiceRow
@@ -61,12 +62,13 @@ class Command(BaseCommand):
                     continue
 
                 try:
-                    (rent_amount, explanations) = lease.get_rent_amount_and_explations_for_period(*billing_period)
+                    calculation_result = lease.calculate_rent_amount_for_period(*billing_period)
                 except TypeError as e:
                     self.stdout.write(' Error calculating rent "{}". Skipping.'.format(str(e)))
                     continue
 
-                rent_amount = rent_amount.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+                # TODO: Calculate by intended uses
+                rent_amount = calculation_result.get_total_amount().quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
                 if rent_amount == invoiced_rent_amount:
                     self.stdout.write(' Rent amount is the same ({}) no need to equalize.'.format(rent_amount))
@@ -79,11 +81,25 @@ class Command(BaseCommand):
 
                 new_due_date = today + relativedelta(days=settings.MVJ_DUE_DATE_OFFSET_DAYS)
 
+                new_calculation_result = CalculationResult(date_range_start=billing_period[0],
+                                                           date_range_end=billing_period[1])
+
+                # TODO: Just take the first item for now
+                items = [amount.item for amount in calculation_result.get_all_amounts()]
+
+                calculation_amount = CalculationAmount(
+                    item=items[0],
+                    amount=abs(rent_difference),
+                    date_range_start=billing_period[0],
+                    date_range_end=billing_period[1]
+                )
+
+                new_calculation_result.add_amount(calculation_amount)
+
                 amounts_for_billing_periods = {
                     billing_period: {
                         'due_date': new_due_date,
-                        'amount': abs(rent_difference),
-                        'explanations': [],
+                        'calculation_result': new_calculation_result,
                     }
                 }
 
@@ -91,6 +107,7 @@ class Command(BaseCommand):
 
                 for period_invoice_data in new_invoice_data:
                     for invoice_data in period_invoice_data:
+                        invoice_data.pop('calculation_result')
                         invoice_data.pop('explanations')
 
                         # The new new rent is smaller
