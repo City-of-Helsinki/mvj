@@ -146,6 +146,15 @@ class CalculationResult:
         for amount in self.amounts:
             explanation.add_item(amount.get_explanation())
 
+        explanation_item = ExplanationItem()
+        explanation_item.subject = {
+            "type": "total",
+            "description": "Total"
+        }
+        explanation_item.date_ranges = [(self.date_range_start, self.date_range_end)]
+        explanation_item.amount = self.get_total_amount()
+        explanation.add_item(explanation_item)
+
         return explanation
 
 
