@@ -131,5 +131,6 @@ def test_calculate_invoices_two_tenants(django_db_setup, lease_factory, tenant_f
     assert invoice_data[0][1]['billed_amount'] == Decimal(500)
     assert len(invoice_data[0][0]['rows']) == 1
     assert len(invoice_data[0][1]['rows']) == 1
-    assert invoice_data[0][0]['rows'][0]['tenant'] == tenant1
-    assert invoice_data[0][1]['rows'][0]['tenant'] == tenant2
+
+    tenants = {invoice_data[0][0]['rows'][0]['tenant'], invoice_data[0][1]['rows'][0]['tenant']}
+    assert tenants == {tenant1, tenant2}
