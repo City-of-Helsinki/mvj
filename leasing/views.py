@@ -89,7 +89,7 @@ class CloudiaProxy(APIView):
     def get(self, request, format=None, contract_id=None, file_id=None):
         # TODO: Remove after the contract number is prepended by "MV" in the UI
         if contract_id.isdigit():
-            contract_id = 'MV {}'.format(contract_id)
+            contract_id = 'MV{}'.format(contract_id)
 
         data = {
             "extid": contract_id,
