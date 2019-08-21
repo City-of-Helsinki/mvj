@@ -20,7 +20,8 @@ class ContractChangeSerializer(FieldPermissionsSerializerMixin, serializers.Mode
 class ContractChangeCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision, queryset=Decision.objects.all(),
-                                                  related_serializer=DecisionSerializer, required=False)
+                                                  related_serializer=DecisionSerializer, required=False,
+                                                  allow_null=True)
 
     class Meta:
         model = ContractChange
@@ -78,7 +79,7 @@ class ContractCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializ
     decision = InstanceDictPrimaryKeyRelatedField(instance_class=Decision,
                                                   queryset=Decision.objects.all(),
                                                   related_serializer=DecisionSerializer,
-                                                  required=False)
+                                                  required=False, allow_null=True)
     contract_changes = ContractChangeCreateUpdateSerializer(many=True, required=False, allow_null=True)
     collaterals = CollateralCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
