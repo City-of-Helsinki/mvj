@@ -666,7 +666,7 @@ DEFAULT_MODEL_PERMS = {
     "leaseholdtransfer": {
         1: ("view",),
         2: ("view",),
-        3: ("view",),
+        3: ("view", "delete"),
         4: ("view",),
         5: ("view",),
         6: ("view",),
@@ -675,7 +675,7 @@ DEFAULT_MODEL_PERMS = {
     "leaseholdtransferparty": {
         1: ("view",),
         2: ("view",),
-        3: ("view",),
+        3: ("view", "delete"),
         4: ("view",),
         5: ("view",),
         6: ("view",),
@@ -684,7 +684,7 @@ DEFAULT_MODEL_PERMS = {
     "leaseholdtransferproperty": {
         1: ("view",),
         2: ("view",),
-        3: ("view",),
+        3: ("view", "delete"),
         4: ("view",),
         5: ("view",),
         6: ("view",),
