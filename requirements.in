@@ -1,12 +1,7 @@
 beautifulsoup4
 dataclasses ; python_version<"3.7"
 Django
-#django-auditlog
-# Django auditlog uses django-jsonfield which clashes with the native JSONField.
-# That's why we use a patched auditlog.
-# see: https://github.com/jjkester/django-auditlog/issues/71
-# and: https://bitbucket.org/schinckel/django-jsonfield/issues/57/cannot-use-in-the-same-project-as-djangos
-git+https://github.com/florencioq/django-auditlog.git
+django-auditlog
 django-jsonfield-compat
 django-cors-headers
 django-countries

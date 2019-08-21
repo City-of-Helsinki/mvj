@@ -41,9 +41,9 @@ class FieldPermissionsSerializerMixin:
 
             if user.has_perm('{}.view_{}_{}'.format(model._meta.app_label, model._meta.model_name,
                                                     permission_check_field_name)):
-                self._fields[field_name].read_only = True
+                self.fields[field_name].read_only = True
             else:
-                del self._fields[field_name]
+                del self.fields[field_name]
 
     def to_representation(self, instance):
         self.modify_fields_by_field_permissions()
