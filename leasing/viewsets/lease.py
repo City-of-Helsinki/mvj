@@ -146,6 +146,8 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                 search_string = search
                 search_by_other = True
 
+            looks_like_identifier = bool(re.match(r'[A-Z]\d{4}-\d+$', search_string.strip(), re.IGNORECASE))
+
             # Search by identifier or parts of it
             if len(search_string) < 3:
                 identifier_q = Q(identifier__type__identifier__istartswith=search_string)
@@ -165,7 +167,7 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                     identifier_q = Q(identifier__type__identifier__iexact=search_string[:2],
                                      identifier__municipality__identifier=search_string[2:3],
                                      identifier__district__identifier__startswith=district_identifier)
-            else:
+            elif looks_like_identifier:
                 district_identifier = search_string[3:5]
                 if district_identifier == "00":
                     district_identifier = '0'
@@ -176,23 +178,38 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                                  identifier__municipality__identifier=search_string[2:3],
                                  identifier__district__identifier=district_identifier,
                                  identifier__sequence__startswith=search_string[6:])
+            else:
+                identifier_q = Q()
 
             other_q = Q()
 
-            # Search also by other fields if the search string is cleary not a lease identifier
-            if search_by_other and not re.match(r'[A-Z]\d{4}-\d+$', search_string.strip(), re.IGNORECASE):
+            # Search also by other fields if the search string is clearly not a lease identifier
+            if search_by_other and not looks_like_identifier:
                 # Address
                 other_q |= Q(lease_areas__addresses__address__icontains=search_string)
 
                 # Property identifier
                 other_q |= Q(lease_areas__identifier__icontains=search_string)
                 normalized_identifier = normalize_property_identifier(search_string)
-                other_q |= Q(lease_areas__identifier__icontains=normalized_identifier)
+                if search_string != normalized_identifier:
+                    other_q |= Q(lease_areas__identifier__icontains=normalized_identifier)
 
                 # Tenantcontact name
                 other_q |= Q(tenants__tenantcontact__contact__name__icontains=search_string)
-                other_q |= Q(tenants__tenantcontact__contact__first_name__icontains=search_string)
-                other_q |= Q(tenants__tenantcontact__contact__last_name__icontains=search_string)
+
+                if ' ' in search_string:
+                    search_string_parts = search_string.split(' ', 2)
+                    other_q |= (
+                        Q(tenants__tenantcontact__contact__first_name__icontains=search_string_parts[0]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=search_string_parts[1])
+                    )
+                    other_q |= (
+                        Q(tenants__tenantcontact__contact__first_name__icontains=search_string_parts[1]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=search_string_parts[0])
+                    )
+                else:
+                    other_q |= Q(tenants__tenantcontact__contact__first_name__icontains=search_string)
+                    other_q |= Q(tenants__tenantcontact__contact__last_name__icontains=search_string)
 
                 # Lessor
                 other_q |= Q(lessor__name__icontains=search_string)
