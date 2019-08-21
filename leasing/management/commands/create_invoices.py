@@ -79,8 +79,6 @@ class Command(BaseCommand):
                                 invoice_row_datum['invoice'] = invoice
                                 InvoiceRow.objects.create(**invoice_row_datum)
 
-                        invoice.generate_number()
-
                         self.stdout.write('  Invoice created. Invoice id {}. Number {}'.format(
                             invoice.id, invoice.number))
                     except Invoice.MultipleObjectsReturned:
