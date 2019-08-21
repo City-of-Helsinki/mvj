@@ -786,7 +786,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view",),
         4: ("view", "add", "change", "delete"),
         5: ("view",),
-        6: ("view", "change"),
+        6: ("view", "add", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "tenantrentshare": {
@@ -795,7 +795,7 @@ DEFAULT_MODEL_PERMS = {
         3: ("view",),
         4: ("view", "add", "change", "delete"),
         5: ("view",),
-        6: ("view", "change"),
+        6: ("view", "add", "change"),
         7: ("view", "add", "change", "delete"),
     },
     "vat": {
