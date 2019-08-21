@@ -400,6 +400,15 @@ DEFAULT_FIELD_PERMS = {
         6: "change",
         7: "change",
     },
+    "tenantrentshare": {
+        1: "view",
+        2: "view",
+        3: "view",
+        4: "change",
+        5: "view",
+        6: "change",
+        7: "change",
+    },
 }
 
 CUSTOM_FIELD_PERMS = {

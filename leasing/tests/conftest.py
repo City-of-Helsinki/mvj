@@ -18,6 +18,7 @@ from leasing.models import (
     LeaseBasisOfRent, LeaseType, Municipality, NoticePeriod, RelatedLease, Rent, RentAdjustment, Tenant, TenantContact,
     UiData)
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet, ReceivableType
+from leasing.models.tenant import TenantRentShare
 from users.models import User
 
 
@@ -74,6 +75,12 @@ class TenantFactory(factory.DjangoModelFactory):
 class TenantContactFactory(factory.DjangoModelFactory):
     class Meta:
         model = TenantContact
+
+
+@register
+class TenantRentShareFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = TenantRentShare
 
 
 @register

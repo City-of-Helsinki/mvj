@@ -404,7 +404,8 @@ def test_get_amount_for_date_range_empty(lease_test_data, rent_factory):
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == Decimal(0)
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == Decimal(0)
 
 
 @pytest.mark.django_db
@@ -442,7 +443,8 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -789,7 +791,8 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -1024,7 +1027,8 @@ def test_get_amount_for_date_range_contract_with_adjustment(lease_test_data, ren
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -1061,7 +1065,8 @@ def test_get_amount_for_date_range_contract_with_adjustment_different_intended_u
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == Decimal(1927)
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == Decimal(1927)
 
 
 @pytest.mark.django_db
@@ -1078,7 +1083,9 @@ def test_get_amount_for_date_range_contract_with_adjustment_different_intended_u
             -100,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            Decimal(-100)
+            # TODO: Is negative fixed initial year rent allowed?
+            # Decimal(-100)
+            Decimal(0)
         ),
         (
             100,
@@ -1145,7 +1152,8 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -1356,7 +1364,8 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -1490,7 +1499,8 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -2035,7 +2045,8 @@ def test_get_amount_for_date_range_two_contracts_with_adjustment(
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -2140,7 +2151,8 @@ def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_re
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end, dry_run=dry_run) == expected_rent
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end, dry_run=dry_run)
+    assert calculation_result.get_total_amount() == expected_rent
 
     rent_adjustment = RentAdjustment.objects.get(pk=rent_adjustment.id)
     assert rent_adjustment.amount_left == expected_amount_left
@@ -2233,7 +2245,8 @@ def test_get_amount_for_date_range_adjustments_two_in_series(
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -2320,7 +2333,61 @@ def test_get_amount_for_date_range_adjustments_two_in_series_fixed_initial_year_
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    assert rent.get_amount_for_date_range(range_start, range_end) == expected
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, expected",
+    [
+        (
+            date(year=2018, month=1, day=1),
+            date(year=2018, month=6, day=30),
+            RentAdjustmentType.DISCOUNT,
+            50,
+            Decimal(900),
+        ),
+    ]
+)
+def test_fixed_initial_year_rent_amount_for_date_range(
+        lease_test_data, rent_factory, fixed_initial_year_rent_factory, rent_adjustment_factory,
+        adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, expected):
+
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    fixed_initial_year_rent = fixed_initial_year_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        start_date=date(year=2018, month=1, day=1),
+        end_date=date(year=2018, month=12, day=31),
+        amount=Decimal(1200),
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=fixed_initial_year_rent.intended_use,
+        type=adjustment_type1,
+        start_date=adjustment_start_date1,
+        end_date=adjustment_end_date1,
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=adjustment_amount1,
+    )
+
+    range_start = date(year=2018, month=1, day=1)
+    range_end = date(year=2018, month=12, day=31)
+
+    calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(
+        fixed_initial_year_rent.intended_use, range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
@@ -2420,3 +2487,104 @@ def test_is_active_on_period(lease_test_data, rent_factory, rent_start_date, ren
     )
 
     assert rent.is_active_on_period(period_start_date, period_end_date) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "start_date1, end_date1, start_date2, end_date2, expected",
+    [
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            date(year=2017, month=1, day=1),
+            date(year=2019, month=12, day=31),
+            []
+        ),
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            date(year=2018, month=1, day=1),
+            date(year=2018, month=3, day=31),
+            [(date(2018, 4, 1), date(2018, 8, 31))]
+        ),
+        (
+            date(year=2018, month=1, day=1),
+            date(year=2018, month=3, day=31),
+            date(year=2018, month=8, day=1),
+            date(year=2018, month=12, day=31),
+            [(date(2018, 4, 1), date(2018, 7, 31))]
+        ),
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2018, month=6, day=30),
+            date(year=2017, month=1, day=1),
+            date(year=2018, month=6, day=30),
+            [(date(2018, 7, 1), date(2018, 8, 31))]
+        ),
+        (
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=1, day=1),
+            []
+        ),
+        (
+            date(year=2019, month=1, day=1),
+            date(year=2019, month=1, day=1),
+            date(year=2019, month=1, day=1),
+            date(year=2019, month=1, day=1),
+            []
+        ),
+        (
+            date(year=2018, month=3, day=1),
+            date(year=2018, month=3, day=31),
+            date(year=2018, month=3, day=1),
+            date(year=2018, month=3, day=31),
+            [(date(2018, 4, 1), date(2018, 8, 31))]
+        ),
+    ]
+)
+def test_fixed_initial_year_rent_for_date_range_remaining_ranges(
+        lease_test_data, rent_factory, contract_rent_factory, fixed_initial_year_rent_factory,
+        start_date1, end_date1, start_date2, end_date2, expected):
+
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(
+        lease=lease,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    contract_rent = contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(100),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(100),
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+
+    fixed_initial_year_rent_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        amount=Decimal(100),
+        start_date=start_date1,
+        end_date=end_date1,
+    )
+
+    fixed_initial_year_rent_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        amount=Decimal(100),
+        start_date=start_date2,
+        end_date=end_date2,
+    )
+
+    range_start = date(year=2018, month=3, day=1)
+    range_end = date(year=2018, month=8, day=31)
+
+    calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(contract_rent.intended_use, range_start,
+                                                                            range_end)
+    assert calculation_result.remaining_ranges == expected

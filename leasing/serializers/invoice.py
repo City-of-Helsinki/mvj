@@ -1,4 +1,6 @@
+from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
+from random import choice
 
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -257,7 +259,7 @@ class CreateChargeSerializer(serializers.Serializer):
 
         return data
 
-    def create(self, validated_data):
+    def create(self, validated_data):  # noqa: C901 TODO
         today = timezone.now().date()
         lease = validated_data.get('lease')
         billing_period_start_date = validated_data.get('billing_period_start_date', today)
@@ -276,26 +278,26 @@ class CreateChargeSerializer(serializers.Serializer):
             invoiceset = InvoiceSet.objects.create(lease=lease, billing_period_start_date=billing_period_start_date,
                                                    billing_period_end_date=billing_period_end_date)
 
+        invoice_data = []
+
         # TODO: check for periods without 1/1 shares
         for contact, share in shares.items():
-            invoice_row_data = []
-            billable_amount = Decimal(0)
+            invoice_rows_by_index = defaultdict(list)
 
             for tenant, overlaps in share.items():
-                for row in validated_data.get('rows', []):
+                for row_index, row in enumerate(validated_data.get('rows', [])):
                     overlap_amount = Decimal(0)
                     for overlap in overlaps:
                         overlap_amount += fix_amount_for_overlap(
                             row.get('amount', Decimal(0)), overlap, subtract_ranges_from_ranges([billing_period],
                                                                                                 [overlap]))
 
+                        # Notice! Custom charge uses tenant share, not rent share
                         share_amount = Decimal(
                             overlap_amount * Decimal(tenant.share_numerator / tenant.share_denominator)
                         ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
-                        billable_amount += share_amount
-
-                        invoice_row_data.append({
+                        invoice_rows_by_index[row_index].append({
                             'tenant': tenant,
                             'receivable_type': row.get('receivable_type'),
                             'billing_period_start_date': overlap[0],
@@ -303,21 +305,46 @@ class CreateChargeSerializer(serializers.Serializer):
                             'amount': share_amount,
                         })
 
-            invoice = Invoice.objects.create(
-                type=InvoiceType.CHARGE,
-                lease=lease,
-                recipient=contact,
-                due_date=validated_data.get('due_date'),
-                invoicing_date=today,
-                state=InvoiceState.OPEN,
-                billing_period_start_date=billing_period_start_date,
-                billing_period_end_date=billing_period_end_date,
-                total_amount=total_amount,
-                billed_amount=billable_amount,
-                outstanding_amount=billable_amount,
-                invoiceset=invoiceset,
-                notes=validated_data.get('notes', ''),
-            )
+            invoice_data.append({
+                'type': InvoiceType.CHARGE,
+                'lease': lease,
+                'recipient': contact,
+                'due_date': validated_data.get('due_date'),
+                'invoicing_date': today,
+                'state': InvoiceState.OPEN,
+                'billing_period_start_date': billing_period_start_date,
+                'billing_period_end_date': billing_period_end_date,
+                'total_amount': total_amount,
+                'invoiceset': invoiceset,
+                'notes': validated_data.get('notes', ''),
+                'rows': invoice_rows_by_index,
+            })
+
+        # Check that the total row amount is correct or add the missing
+        # amount to a random invoice if not
+        for input_row_index, input_row in enumerate(validated_data.get('rows', [])):
+            row_sum = Decimal(0)
+            all_rows = []
+            for invoice_datum in invoice_data:
+                for row_data in invoice_datum['rows'][input_row_index]:
+                    row_sum += row_data['amount']
+                    all_rows.append(row_data)
+
+            difference = input_row['amount'] - row_sum
+            if difference:
+                random_row = choice(all_rows)
+                random_row['amount'] += difference
+
+        # Flatten rows, update totals and save the invoices
+        for invoice_datum in invoice_data:
+            invoice_datum['rows'] = [row for rows in invoice_datum['rows'].values() for row in rows]
+            rows_sum = sum([row['amount'] for row in invoice_datum['rows']])
+            invoice_datum['billed_amount'] = rows_sum
+            invoice_datum['outstanding_amount'] = rows_sum
+
+            invoice_row_data = invoice_datum.pop('rows')
+
+            invoice = Invoice.objects.create(**invoice_datum)
 
             for invoice_row_datum in invoice_row_data:
                 invoice_row_datum['invoice'] = invoice

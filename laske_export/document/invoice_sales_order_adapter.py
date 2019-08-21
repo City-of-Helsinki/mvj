@@ -28,7 +28,8 @@ class InvoiceSalesOrderAdapter:
             rent = self.invoice.lease.get_active_rents_on_period(self.invoice.invoicing_date,
                                                                  self.invoice.invoicing_date).first()
 
-        year_rent = self.invoice.lease.get_rent_amount_for_year(invoice_year)
+        rent_calculation = self.invoice.lease.calculate_rent_amount_for_year(invoice_year)
+        year_rent = rent_calculation.get_total_amount()
 
         real_property_identifier = ''
         address = ''
