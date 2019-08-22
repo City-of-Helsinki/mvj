@@ -14,6 +14,7 @@ chardet==3.0.4            # via requests
 coreapi==2.3.3            # via django-rest-swagger, openapi-codec
 coreschema==0.0.4         # via coreapi
 cryptography==2.7         # via paramiko
+dataclasses==0.6 ; python_version<"3.7"
 defusedxml==0.6.0         # via zeep
 django==2.2.4
 django-auditlog==0.4.5
