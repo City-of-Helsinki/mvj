@@ -7,7 +7,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import CoalesceOrderingFilter, InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, InvoiceSetFilter
-from leasing.models import Invoice
+from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
     CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer,
@@ -58,6 +58,14 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
                 return InvoiceSerializerWithSuccinctLease
 
         return InvoiceSerializer
+
+    def create(self, request, *args, **kwargs):
+        lease = Lease.objects.get(pk=request.data.get('lease'))
+
+        if not lease.is_invoicing_enabled:
+            raise APIException(_("Can't create invoices if invoicing is not enabled."))
+
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
