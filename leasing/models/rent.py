@@ -317,6 +317,10 @@ class Rent(TimeStampedSafeDeleteModel):
     def get_amount_for_date_range(self, date_range_start, date_range_end, explain=False, dry_run=False):  # noqa: TODO
         calculation_result = CalculationResult(date_range_start=date_range_start, date_range_end=date_range_end)
 
+        if self.type == RentType.ONE_TIME:
+            # ONE_TIME rents are calculated manually
+            return calculation_result
+
         # Limit the date range by season dates if the rent is seasonal or
         # by the rent start and end dates if not
         (clamped_date_range_start, clamped_date_range_end) = self.clamp_date_range(date_range_start, date_range_end)
@@ -348,12 +352,6 @@ class Rent(TimeStampedSafeDeleteModel):
                 date_ranges = self.split_ranges_by_cycle(date_ranges)
 
             for (range_start, range_end) in date_ranges:
-                if self.type == RentType.ONE_TIME:
-                    # TODO: ONE_TIME needs intended use
-                    # if self.amount:
-                    #     total += self.amount
-                    continue
-
                 contract_rent_calculation_result = self.contract_rent_amount_for_date_range(
                     intended_use, range_start, range_end, dry_run=dry_run)
 
