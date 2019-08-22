@@ -277,7 +277,14 @@ class Invoice(TimeStampedSafeDeleteModel):
         if not total_credited_amount:
             total_credited_amount = Decimal(0)
 
-        self.outstanding_amount = max(Decimal(0), self.billed_amount - payments_total - total_credited_amount)
+        collection_charge = Decimal(0)
+        if self.collection_charge:
+            collection_charge = self.collection_charge
+
+        self.outstanding_amount = max(
+            Decimal(0),
+            self.billed_amount + collection_charge - payments_total - total_credited_amount
+        )
 
         if total_credited_amount.compare(self.billed_amount) != Decimal(-1):
             self.state = InvoiceState.REFUNDED

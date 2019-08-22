@@ -1380,6 +1380,87 @@ def test_outstanding_amount_after_multiple_payments_full(django_db_setup, lease_
 
 
 @pytest.mark.django_db
+def test_outstanding_amount_with_collection_charge(django_db_setup, lease_factory, contact_factory, invoice_factory,
+                                                   invoice_row_factory, invoice_payment_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=5, notice_period_id=1, )
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    billing_period_start_date = datetime.date(year=2017, month=7, day=1)
+    billing_period_end_date = datetime.date(year=2017, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        outstanding_amount=None,
+        collection_charge=Decimal(5),
+        recipient=contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date
+    )
+
+    receivable_type = ReceivableType.objects.get(pk=1)
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal(200),
+    )
+
+    invoice.update_amounts()
+
+    assert invoice.outstanding_amount == Decimal(205)
+    assert invoice.state == InvoiceState.OPEN
+
+
+@pytest.mark.django_db
+def test_outstanding_amount_with_collection_charge_one_payment(django_db_setup, lease_factory, contact_factory,
+                                                               invoice_factory, invoice_row_factory,
+                                                               invoice_payment_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=5, notice_period_id=1, )
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    billing_period_start_date = datetime.date(year=2017, month=7, day=1)
+    billing_period_end_date = datetime.date(year=2017, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        outstanding_amount=None,
+        collection_charge=Decimal(5),
+        recipient=contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date
+    )
+
+    receivable_type = ReceivableType.objects.get(pk=1)
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal(200),
+    )
+
+    invoice_payment_factory(
+        invoice=invoice,
+        paid_amount=Decimal(100),
+        paid_date=datetime.date(year=2018, month=1, day=1)
+    )
+
+    invoice.update_amounts()
+
+    assert invoice.outstanding_amount == Decimal(105)
+    assert invoice.state == InvoiceState.OPEN
+
+
+@pytest.mark.django_db
 def test_calculate_penalty_amount(django_db_setup, lease_factory, contact_factory, invoice_factory):
     calculation_date = datetime.date(year=2018, month=9, day=6)
 
