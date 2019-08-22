@@ -11,6 +11,7 @@ from paramiko.py3compat import decodebytes
 from laske_export.document.invoice_sales_order_adapter import InvoiceSalesOrderAdapter
 from laske_export.document.sales_order import SalesOrder, SalesOrderContainer
 from laske_export.models import LaskeExportLog
+from leasing.enums import InvoiceType
 from leasing.models import Invoice, ReceivableType
 
 
@@ -25,6 +26,7 @@ class LaskeExporterException(Exception):
 
 class LaskeExporter:
     def __init__(self):
+        self.message_output = None
         self._check_export_directory()
         self._check_settings()
 
@@ -83,6 +85,12 @@ class LaskeExporter:
             with sftp.cd(settings.LASKE_SERVERS['export']['directory']):
                 sftp.put(os.path.join(settings.LASKE_EXPORT_ROOT, filename))
 
+    def write_to_output(self, message):
+        if not self.message_output:
+            return
+
+        self.message_output.write(message)
+
     def export_invoices(self, invoices):
         """
         :type invoices: list of Invoice | Invoice
@@ -99,8 +107,28 @@ class LaskeExporter:
 
         sales_orders = []
         log_invoices = []
+        invoice_count = 0
+
+        self.write_to_output('Going through {} invoices'.format(len(invoices)))
 
         for invoice in invoices:
+            # If this invoice is a credit note, but the credited invoice has
+            # not been sent to SAP, don't send the credit invoice either.
+            # TODO This doesn't check if the credited invoice would be sent
+            #   in this same export. Need to check if the SAP can handle it.
+            if invoice.type == InvoiceType.CREDIT_NOTE and (
+                not invoice.credited_invoice or not invoice.credited_invoice.sent_to_sap_at
+            ):
+                if invoice.credited_invoice:
+                    self.write_to_output(
+                        ' Not sending invoice id {} because the credited invoice (id {}) '
+                        'has not been sent to SAP.'.format(invoice.id, invoice.credited_invoice.id))
+                else:
+                    self.write_to_output(
+                        ' Not sending invoice id {} because the credited invoice is unknown.'.format(invoice.id))
+
+                continue
+
             sales_order = SalesOrder()
             set_constant_laske_values(sales_order)
 
@@ -115,6 +143,12 @@ class LaskeExporter:
             sales_orders.append(sales_order)
             log_invoices.append(invoice)
 
+            invoice_count += 1
+
+            self.write_to_output(' Added invoice id {} as invoice number {}'.format(invoice.id, invoice.number))
+
+        self.write_to_output('Added {} invoices to the export'.format(invoice_count))
+
         sales_order_container = SalesOrderContainer()
         sales_order_container.sales_orders = sales_orders
 
@@ -122,10 +156,17 @@ class LaskeExporter:
 
         export_filename = 'MTIL_IN_{}_{:08}.xml'.format(settings.LASKE_VALUES['sender_id'], laske_export_log_entry.id)
 
+        self.write_to_output('Export filename: {}'.format(export_filename))
+
         xml_string = sales_order_container.to_xml_string()
 
         self.save_to_file(xml_string, export_filename)
+
+        self.write_to_output('Sending...')
+
         self.send(export_filename)
+
+        self.write_to_output('Done.')
 
         Invoice.objects.filter(id__in=[o.id for o in invoices]).update(sent_to_sap_at=now)
 

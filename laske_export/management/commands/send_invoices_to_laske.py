@@ -18,9 +18,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         exporter = LaskeExporter()
+        exporter.message_output = self.stdout
 
         today = datetime.date.today()
         one_month_in_the_future = today + relativedelta(months=1)
+
+        self.stdout.write('Finding unsent invoices with due dates between {} and {}'.format(
+            today, one_month_in_the_future))
 
         invoices = Invoice.objects.filter(
             due_date__gte=today,
