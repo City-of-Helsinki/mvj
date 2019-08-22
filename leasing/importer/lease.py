@@ -668,11 +668,15 @@ class LeaseImporter(BaseImporter):
 
                     sent_to_sap_at = make_aware(invoice_row['SAP_SIIRTOPVM']) if invoice_row['SAP_SIIRTOPVM'] else None
 
+                    due_date = invoice_row['ERAPVM']
+                    if due_date.year == 2101:
+                        due_date = due_date.replace(year=2011)
+
                     (invoice, invoice_created) = Invoice.objects.get_or_create(
                         lease=lease,
                         number=invoice_row['LASKU'],
                         recipient=contact,
-                        due_date=invoice_row['ERAPVM'],
+                        due_date=due_date,
                         state=invoice_state,
                         billing_period_start_date=period_start_date,
                         billing_period_end_date=period_end_date,
