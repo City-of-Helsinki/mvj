@@ -5,6 +5,7 @@ import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum
 from django.urls import reverse
+from django.utils import timezone
 
 from leasing.enums import ContactType, InvoiceType
 from leasing.models import Invoice
@@ -25,6 +26,7 @@ def test_invoice_credit_rounding(django_db_setup, assert_count_equal, admin_clie
         billed_amount=Decimal(300),
         outstanding_amount=Decimal(300),
         recipient=contact,
+        sent_to_sap_at=timezone.now(),
     )
 
     for i in range(1, 4):

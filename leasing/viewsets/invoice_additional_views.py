@@ -113,6 +113,10 @@ class InvoiceCreditView(APIView):
 
     def post(self, request, format=None):
         invoice = get_object_from_query_params('invoice', request.query_params)
+
+        if not invoice.sent_to_sap_at:
+            raise APIException(_("Cannot credit invoices that have not been sent to SAP"))
+
         amount, receivable_type, notes = get_values_from_credit_request(request.data)
 
         try:
@@ -158,7 +162,7 @@ class InvoiceRowCreditView(APIView):
         try:
             credit_invoice = invoice_row.invoice.create_credit_invoice(row_ids=[invoice_row.id], amount=amount)
         except RuntimeError as e:
-            raise APIException(e)
+            raise APIException(str(e))
 
         credit_invoice_serializer = InvoiceSerializer(credit_invoice)
 
@@ -193,7 +197,7 @@ class InvoiceSetCreditView(APIView):
             else:
                 credit_invoiceset = invoiceset.create_credit_invoiceset(receivable_type=receivable_type, notes=notes)
         except RuntimeError as e:
-            raise APIException(e)
+            raise APIException(str(e))
 
         credit_invoiceset_serializer = InvoiceSetSerializer(credit_invoiceset)
 
@@ -224,6 +228,9 @@ class InvoiceExportToLaskeView(APIView):
         invoice = get_object_from_query_params('invoice', request.query_params)
         if invoice.sent_to_sap_at:
             raise APIException(_("This invoice has already been sent to SAP"))
+
+        if invoice.number:
+            raise APIException(_("Can't send invoices that already have a number to SAP"))
 
         try:
             exporter = LaskeExporter()
