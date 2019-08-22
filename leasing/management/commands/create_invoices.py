@@ -33,10 +33,16 @@ class Command(BaseCommand):
             Q(Q(start_date=None) | Q(start_date__lte=end_of_next_month))
         )
 
+        invoice_count = 0
+
         for lease in leases:
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
 
             period_rents = lease.determine_payable_rents_and_periods(start_of_next_month, end_of_next_month)
+
+            if not period_rents:
+                self.stdout.write('  No due rents in period')
+                continue
 
             for period_invoice_data in lease.calculate_invoices(period_rents):
                 invoiceset = None
@@ -81,7 +87,10 @@ class Command(BaseCommand):
 
                         self.stdout.write('  Invoice created. Invoice id {}. Number {}'.format(
                             invoice.id, invoice.number))
+                        invoice_count += 1
                     except Invoice.MultipleObjectsReturned:
                         self.stdout.write('  Warning! Multiple invoices already exist. Not creating a new invoice.')
 
             self.stdout.write('')
+
+        self.stdout.write('{} invoices created'.format(invoice_count))
