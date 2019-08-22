@@ -20,6 +20,8 @@ from leasing.models import Lease
 ])
 def test_set_invoicing_state(django_db_setup, admin_client, lease_test_data, value, expected_value, expected_code):
     lease = lease_test_data['lease']
+    lease.is_rent_info_complete = True
+    lease.save()
 
     assert lease.is_invoicing_enabled is False
 

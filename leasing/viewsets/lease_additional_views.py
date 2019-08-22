@@ -382,6 +382,9 @@ class LeaseSetInvoicingStateView(APIView):
         if request.data['invoicing_enabled'] is not True and request.data['invoicing_enabled'] is not False:
             raise APIException('"invoicing_enabled" value has to be true or false')
 
+        if request.data['invoicing_enabled'] and not lease.is_rent_info_complete:
+            raise APIException(_('Cannot enable invoicing if rent info is not complete'))
+
         lease.set_is_invoicing_enabled(request.data['invoicing_enabled'])
 
         return Response({'success': True})
