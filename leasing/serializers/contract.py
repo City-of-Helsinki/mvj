@@ -70,6 +70,7 @@ class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
                   'is_readjustment_decision', 'decision', 'ktj_link', 'institution_identifier',
                   'first_call_sent', 'second_call_sent', 'third_call_sent', 'contract_changes',
                   'collaterals')
+        read_only_fields = ('is_readjustment_decision', )
 
 
 class ContractCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
@@ -89,3 +90,4 @@ class ContractCreateUpdateSerializer(UpdateNestedMixin, FieldPermissionsSerializ
                   'is_readjustment_decision', 'decision', 'ktj_link', 'institution_identifier',
                   'first_call_sent', 'second_call_sent', 'third_call_sent', 'contract_changes',
                   'collaterals')
+        read_only_fields = ('is_readjustment_decision',)
