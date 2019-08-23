@@ -17,8 +17,8 @@ TILA_MAP = {
     'H': LeaseState.APPLICATION,
     'L': LeaseState.PERMISSION,
     'R': LeaseState.RESERVATION,
-    'S': LeaseState.TRANSFER,
-    'T': LeaseState.FREE,
+    'S': LeaseState.LEASE,
+    'T': LeaseState.LEASE,
 }
 
 VUOKRAKAUSI_MAP = {

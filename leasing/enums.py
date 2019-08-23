@@ -26,9 +26,8 @@ class LeaseState(Enum):
     RESERVATION = 'reservation'
     RESERVE = 'reserve'
     PERMISSION = 'permission'
-    TRANSFER = 'transfer'
     APPLICATION = 'application'
-    FREE = 'free'
+    RYA = 'rya'
 
     class Labels:
         LEASE = pgettext_lazy('Lease state', 'Lease')
@@ -37,9 +36,8 @@ class LeaseState(Enum):
         RESERVATION = pgettext_lazy('Lease state', 'Reservation')
         RESERVE = pgettext_lazy('Lease state', 'Reserve')
         PERMISSION = pgettext_lazy('Lease state', 'Permission')
-        TRANSFER = pgettext_lazy('Lease state', 'Transfer')
         APPLICATION = pgettext_lazy('Lease state', 'Application')
-        FREE = pgettext_lazy('Lease state', 'Free')
+        RYA = pgettext_lazy('Lease state', 'Buildings and public areas')
 
 
 class LeaseRelationType(Enum):

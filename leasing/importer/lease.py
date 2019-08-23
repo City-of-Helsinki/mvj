@@ -8,8 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 
 from leasing.enums import (
-    ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseRelationType, LeaseState,
-    LocationType, PeriodType, RentAdjustmentAmountType, RentType, TenantContactType)
+    ContactType, DueDatesPosition, DueDatesType, IndexType, InvoiceDeliveryMethod, LeaseState, LocationType, PeriodType,
+    RentAdjustmentAmountType, RentType, TenantContactType)
 from leasing.models import (
     Collateral, Comment, Condition, Contact, Contract, ContractChange, ContractRent, Decision, District,
     FixedInitialYearRent, IndexAdjustedRent, Inspection, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier,
@@ -192,7 +192,7 @@ class LeaseImporter(BaseImporter):
                     lease.is_subject_to_vat = True
 
                 if id_parts['TARKOITUS'] == 'Y9':
-                    lease.state = LeaseState.LEASE
+                    lease.state = LeaseState.RYA
 
                 query = """
                     SELECT TEKSTI, MUUTOSPVM
@@ -247,14 +247,10 @@ class LeaseImporter(BaseImporter):
 
                     self.stdout.write(" {}".format(related_identifier))
 
-                    related_type = None
-                    if lease.state == LeaseState.TRANSFER:
-                        related_type = LeaseRelationType.TRANSFER
-
                     self.related_leases.append({
                         'from_lease': related_identifier,
                         'to_lease': lease,
-                        'type': related_type,
+                        'type': None,
                     })
 
                 self.stdout.write(" {} relations".format(len(self.related_leases)))
