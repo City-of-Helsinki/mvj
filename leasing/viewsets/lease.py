@@ -161,7 +161,9 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                                      identifier__municipality__identifier=search_string[2:3],
                                      identifier__district__identifier__in=range(0, 10))
                 else:
-                    if district_identifier != '00':
+                    if district_identifier == '00':
+                        district_identifier = '0'
+                    else:
                         district_identifier = district_identifier.lstrip('0')
 
                     identifier_q = Q(identifier__type__identifier__iexact=search_string[:2],
@@ -169,7 +171,7 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                                      identifier__district__identifier__startswith=district_identifier)
             elif looks_like_identifier:
                 district_identifier = search_string[3:5]
-                if district_identifier == "00":
+                if district_identifier == '00':
                     district_identifier = '0'
                 else:
                     district_identifier = district_identifier.lstrip('0')
