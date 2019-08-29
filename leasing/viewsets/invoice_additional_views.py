@@ -5,7 +5,7 @@ from dateutil import parser
 from django.utils.translation import ugettext_lazy as _
 from paramiko import SSHException
 from pysftp import ConnectionException, CredentialException, HostKeysException
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,22 +23,22 @@ def get_values_from_credit_request(data):
     receivable_type = None
 
     if amount is not None and not receivable_type_id:
-        raise APIException('receivable_type is required if amount is provided.')
+        raise ValidationError('receivable_type is required if amount is provided.')
 
     if amount is not None:
         try:
             amount = Decimal(amount)
         except InvalidOperation:
-            raise APIException(_('Invalid amount'))
+            raise ValidationError(_('Invalid amount'))
 
         if amount.compare(Decimal(0)) != Decimal(1):
-            raise APIException(_('Amount must be bigger than zero'))
+            raise ValidationError(_('Amount must be bigger than zero'))
 
     if receivable_type_id:
         try:
             receivable_type = ReceivableType.objects.get(pk=receivable_type_id)
         except ReceivableType.DoesNotExist:
-            raise APIException('Receivable_type "{}" not found'.format(receivable_type_id))
+            raise ValidationError('Receivable_type "{}" not found'.format(receivable_type_id))
 
     return amount, receivable_type, notes
 
@@ -65,16 +65,16 @@ def get_object_from_query_params(object_type, query_params):
     }
 
     if not query_params.get(object_type_map[object_type]['param_name']):
-        raise APIException('{} parameter is mandatory'.format(object_type_map[object_type]['param_name']))
+        raise ValidationError('{} parameter is mandatory'.format(object_type_map[object_type]['param_name']))
 
     try:
 
         return object_type_map[object_type]['class'].objects.get(
             pk=int(query_params.get(object_type_map[object_type]['param_name'])))
     except Invoice.DoesNotExist:
-        raise APIException('{} does not exist'.format(object_type_map[object_type]['name']))
+        raise ValidationError('{} does not exist'.format(object_type_map[object_type]['name']))
     except ValueError:
-        raise APIException('Invalid {} id'.format(object_type_map[object_type]['name']))
+        raise ValidationError('Invalid {} id'.format(object_type_map[object_type]['name']))
 
 
 class InvoiceCalculatePenaltyInterestView(APIView):
@@ -115,14 +115,14 @@ class InvoiceCreditView(APIView):
         invoice = get_object_from_query_params('invoice', request.query_params)
 
         if not invoice.sent_to_sap_at:
-            raise APIException(_("Cannot credit invoices that have not been sent to SAP"))
+            raise ValidationError(_("Cannot credit invoices that have not been sent to SAP"))
 
         amount, receivable_type, notes = get_values_from_credit_request(request.data)
 
         try:
             credit_invoice = invoice.create_credit_invoice(amount=amount, receivable_type=receivable_type, notes=notes)
         except RuntimeError as e:
-            raise APIException(e)
+            raise APIException(str(e))
 
         credit_invoice_serializer = InvoiceSerializer(credit_invoice)
 
@@ -154,10 +154,10 @@ class InvoiceRowCreditView(APIView):
             try:
                 amount = Decimal(amount)
             except InvalidOperation:
-                raise APIException(_('Invalid amount'))
+                raise ValidationError(_('Invalid amount'))
 
             if amount.compare(Decimal(0)) != Decimal(1):
-                raise APIException(_('Amount must be bigger than zero'))
+                raise ValidationError(_('Amount must be bigger than zero'))
 
         try:
             credit_invoice = invoice_row.invoice.create_credit_invoice(row_ids=[invoice_row.id], amount=amount)
@@ -227,10 +227,10 @@ class InvoiceExportToLaskeView(APIView):
     def post(self, request, format=None):
         invoice = get_object_from_query_params('invoice', request.query_params)
         if invoice.sent_to_sap_at:
-            raise APIException(_("This invoice has already been sent to SAP"))
+            raise ValidationError(_("This invoice has already been sent to SAP"))
 
         if invoice.number:
-            raise APIException(_("Can't send invoices that already have a number to SAP"))
+            raise ValidationError(_("Can't send invoices that already have a number to SAP"))
 
         try:
             exporter = LaskeExporter()

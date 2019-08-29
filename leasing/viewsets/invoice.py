@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
@@ -63,7 +63,7 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         lease = Lease.objects.get(pk=request.data.get('lease'))
 
         if not lease.is_invoicing_enabled:
-            raise APIException(_("Can't create invoices if invoicing is not enabled."))
+            raise ValidationError(_("Can't create invoices if invoicing is not enabled."))
 
         return super().create(request, *args, **kwargs)
 
@@ -71,7 +71,7 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         instance = self.get_object()
 
         if instance.state == InvoiceState.REFUNDED:
-            raise APIException(_("Can't edit fully refunded invoices"))
+            raise ValidationError(_("Can't edit fully refunded invoices"))
 
         return super().update(request, *args, **kwargs)
 
@@ -79,10 +79,10 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         instance = self.get_object()
 
         if instance.number:
-            raise APIException(_("Can't delete numbered invoices"))
+            raise ValidationError(_("Can't delete numbered invoices"))
 
         if instance.sent_to_sap_at:
-            raise APIException(_("Can't delete invoices that have been sent to SAP"))
+            raise ValidationError(_("Can't delete invoices that have been sent to SAP"))
 
         return super().destroy(request, *args, **kwargs)
 
