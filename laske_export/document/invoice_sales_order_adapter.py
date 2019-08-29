@@ -16,7 +16,7 @@ class InvoiceSalesOrderAdapter:
         self.receivable_type_rent = receivable_type_rent
 
     def get_bill_text(self):
-        if self.invoice.billing_period_start_date:
+        if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
             invoice_year = self.invoice.billing_period_start_date.year
 
             # TODO: Which rent
@@ -50,7 +50,7 @@ class InvoiceSalesOrderAdapter:
             lease_identifier=self.invoice.lease.get_identifier_string())
 
         if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
-            row1 += 'Vuokra ajalta: {billing_period_start_date}-{billing_period_end_date}  '.format(
+            row1 += 'Ajalta: {billing_period_start_date}-{billing_period_end_date}  '.format(
                 billing_period_start_date=self.invoice.billing_period_start_date.strftime('%d.%m.%Y'),
                 billing_period_end_date=self.invoice.billing_period_end_date.strftime('%d.%m.%Y'))
         bill_texts.append(row1)
