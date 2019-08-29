@@ -24,7 +24,7 @@
     "model": "leasing.Regulation",
     "pk": 4,
     "fields": {
-      "name": "Puoli Hitas"
+      "name": "Hintakontrolloitu"
     }
   }
 ]

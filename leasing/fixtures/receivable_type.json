@@ -3,21 +3,81 @@
     "model": "leasing.ReceivableType",
     "pk": 1,
     "fields": {
-      "name": "Vuokra"
+      "name": "Maanvuokraus",
+      "sap_material_code": null,
+      "sap_order_item_number": null
     }
   },
   {
     "model": "leasing.ReceivableType",
     "pk": 2,
     "fields": {
-      "name": "Korko"
+      "name": "Korko",
+      "sap_material_code": null,
+      "sap_order_item_number": null
     }
   },
   {
     "model": "leasing.ReceivableType",
     "pk": 3,
     "fields": {
-      "name": "Muu"
+      "name": "Yhteismarkkinointi (sis. ALV)",
+      "sap_material_code": "20002162",
+      "sap_order_item_number": "2813101001"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 4,
+    "fields": {
+      "name": "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
+      "sap_material_code": "20001751",
+      "sap_order_item_number": "2813000003"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 5,
+    "fields": {
+      "name": "Haastemiestiedoksianto",
+      "sap_material_code": "10002534",
+      "sap_order_item_number": "2813100000"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 6,
+    "fields": {
+      "name": "Rasite ja muut vastaavat korvaukset",
+      "sap_material_code": "10002495",
+      "sap_order_item_number": "2813000004"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 7,
+    "fields": {
+      "name": "Esirakentamistoimenpiteet",
+      "sap_material_code": "20002161",
+      "sap_order_item_number": "2813100000"
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 8,
+    "fields": {
+      "name": "Rahavakuus",
+      "sap_material_code": null,
+      "sap_order_item_number": null
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 9,
+    "fields": {
+      "name": "Väestösuojakorvaus",
+      "sap_material_code": "10002532",
+      "sap_order_item_number": "2813000000"
     }
   }
 ]
