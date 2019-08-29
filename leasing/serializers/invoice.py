@@ -141,7 +141,7 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
                                                    related_serializer=ContactSerializer)
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    # Make total_amount, billed_amount, and type not requided in serializer and set them in create() if needed
+    # Make total_amount, billed_amount, and type not required in the serializer and set them in create() if needed
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     billed_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     type = EnumField(enum=InvoiceType, required=False)
@@ -166,7 +166,13 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
         if not validated_data.get('type'):
             validated_data['type'] = InvoiceType.CHARGE
 
-        return super().create(validated_data)
+        invoice = super().create(validated_data)
+
+        invoice.invoicing_date = timezone.now().date()
+        invoice.outstanding_amount = validated_data['total_amount']
+        invoice.save()
+
+        return invoice
 
     class Meta:
         model = Invoice
