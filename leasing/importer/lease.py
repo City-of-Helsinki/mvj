@@ -213,10 +213,21 @@ class LeaseImporter(BaseImporter):
                     )
 
                 notes = []
+
+                preparers = []
+                if lease_row['VALMISTELIJA1']:
+                    preparers.append(lease_row['VALMISTELIJA1'])
+                if lease_row['VALMISTELIJA2']:
+                    preparers.append(lease_row['VALMISTELIJA2'])
+                if preparers:
+                    notes.append('Valmistelija: {}'.format(', '.join(preparers)))
+
+                if lease_row['VARAUSEHTO']:
+                    notes.append('Varausehto: {}'.format(lease_row['VARAUSEHTO']))
                 if lease_row['HAKEMUS_SISALTO']:
-                    notes.append(lease_row['HAKEMUS_SISALTO'])
+                    notes.append('Hakemus: {}'.format(lease_row['HAKEMUS_SISALTO']))
                 if lease_row['SIIRTO_TXT']:
-                    notes.append(lease_row['SIIRTO_TXT'])
+                    notes.append('Siirto: {}'.format(lease_row['SIIRTO_TXT']))
 
                 lease.note = '\n'.join(notes)
 
@@ -226,6 +237,7 @@ class LeaseImporter(BaseImporter):
                     lease.transferable = False
 
                 lease.is_invoicing_enabled = True if lease_row['LASKUTUS'] == 'K' else False
+                lease.is_rent_info_complete = lease.is_invoicing_enabled
 
                 lease.save()
 
