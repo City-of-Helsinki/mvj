@@ -391,6 +391,58 @@ def test_patch_invoice_cant_change_if_sent_to_sap(django_db_setup, admin_client,
 
 
 @pytest.mark.django_db
+def test_patch_invoice_cant_change_if_generated(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                                invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal('123.45'),
+        billed_amount=Decimal('123.45'),
+        outstanding_amount=Decimal('123.45'),
+        recipient=contact,
+        due_date=datetime.date(year=2017, month=6, day=1),
+        generated=True,
+    )
+
+    invoice_row = invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,
+        amount=Decimal('123.45'),
+    )
+
+    data = {
+        "id": invoice.id,
+        "due_date": datetime.date(year=2017, month=6, day=2),
+        "rows": [
+            {
+                "id": invoice_row.id,
+                "receivable_type": invoice_row.receivable_type_id,
+                "amount": 100,
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 400, '%s %s' % (response.status_code, response.data)
+
+    invoice_row = InvoiceRow.objects.get(pk=invoice_row.id)
+
+    assert invoice_row.amount == Decimal('123.45')
+
+    invoice = Invoice.objects.get(pk=invoice.id)
+
+    assert invoice.billed_amount == Decimal('123.45')
+    assert invoice.outstanding_amount == Decimal('123.45')
+    assert invoice.total_amount == Decimal('123.45')
+
+
+@pytest.mark.django_db
 def test_patch_credit_note_credited_invoice_outstanding_amount(django_db_setup, admin_client, lease_test_data,
                                                                contact_factory, invoice_factory, invoice_row_factory):
     lease = lease_test_data['lease']
@@ -515,3 +567,90 @@ def test_patch_credit_note_dates_read_only(django_db_setup, admin_client, lease_
     assert credit_note.due_date == datetime.date(year=2018, month=1, day=1)
     assert credit_note.billing_period_start_date == datetime.date(year=2018, month=4, day=1)
     assert credit_note.billing_period_end_date == datetime.date(year=2018, month=6, day=30)
+
+
+@pytest.mark.django_db
+def test_patch_invoice_add_payment(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                   invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        outstanding_amount=Decimal(200),
+        recipient=contact,
+    )
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,
+        amount=Decimal(200),
+    )
+
+    data = {
+        "id": invoice.id,
+        "payments": [
+            {
+                "paid_amount": 100,
+                "paid_date": timezone.now().date()
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+
+    invoice = Invoice.objects.get(pk=invoice.id)
+
+    assert invoice.billed_amount == Decimal(200)
+    assert invoice.outstanding_amount == Decimal(100)
+
+
+@pytest.mark.django_db
+def test_patch_invoice_cannot_add_payment_if_sent_to_sap(django_db_setup, admin_client, lease_test_data,
+                                                         contact_factory, invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        outstanding_amount=Decimal(200),
+        recipient=contact,
+        sent_to_sap_at=timezone.now()
+    )
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,
+        amount=Decimal(200),
+    )
+
+    data = {
+        "id": invoice.id,
+        "payments": [
+            {
+                "paid_amount": 100,
+                "paid_date": timezone.now().date()
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 400, '%s %s' % (response.status_code, response.data)
+
+    invoice = Invoice.objects.get(pk=invoice.id)
+
+    assert invoice.billed_amount == Decimal(200)
+    assert invoice.outstanding_amount == Decimal(200)

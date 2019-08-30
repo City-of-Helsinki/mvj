@@ -2,7 +2,10 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
+from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 
 from laske_export.exporter import LaskeExporter
 from leasing.models import Invoice
@@ -17,6 +20,8 @@ class Command(BaseCommand):
     help = 'Send invoices to Laske'
 
     def handle(self, *args, **options):
+        translation.activate(settings.LANGUAGE_CODE)
+
         exporter = LaskeExporter()
         exporter.message_output = self.stdout
 
@@ -36,4 +41,21 @@ class Command(BaseCommand):
             self.stdout.write('No invoices to send. Exiting.')
             return
 
-        exporter.export_invoices(invoices)
+        laske_export_log_entry = exporter.export_invoices(invoices)
+
+        if settings.LASKE_EXPORT_ANNOUNCE_EMAIL:
+            self.stdout.write('Sending announce email to {}'.format(settings.LASKE_EXPORT_ANNOUNCE_EMAIL))
+
+            email_content = _('MVJ ({}) sent {} invoices to Laske on {}').format(
+                settings.LASKE_VALUES['sender_id'],
+                laske_export_log_entry.invoices.count(),
+                laske_export_log_entry.ended_at.strftime('%d.%m.%Y %H.%M')
+            )
+
+            send_mail(
+                _('MVJ ({}) transfer').format(settings.LASKE_VALUES['sender_id']),
+                email_content,
+                settings.MVJ_EMAIL_FROM,
+                [settings.LASKE_EXPORT_ANNOUNCE_EMAIL],
+                fail_silently=False,
+            )
