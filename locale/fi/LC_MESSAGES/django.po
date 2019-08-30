@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-23 14:54+0300\n"
+"POT-Creation-Date: 2019-08-30 11:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -313,6 +313,16 @@ msgstr ""
 #: laske_export/exporter.py:56
 msgid "LASKE_SERVERS[\"export\"] settings missing"
 msgstr ""
+
+#: laske_export/management/commands/send_invoices_to_laske.py:49
+msgid "MVJ ({}) sent {} invoices to Laske on {}"
+msgstr ""
+"Maanvuokrausjärjestelmä ({}) lähetti {} laskua Laske-järjestelmään. "
+"Lähetysaika {}"
+
+#: laske_export/management/commands/send_invoices_to_laske.py:56
+msgid "MVJ ({}) transfer"
+msgstr "MVJ ({}) siirto"
 
 #: laske_export/models.py:16 laske_export/models.py:40
 msgid "Time started"
@@ -2876,18 +2886,18 @@ msgstr "ALV {}% {} - {}"
 msgid "Only one VAT can be active at a time"
 msgstr "Vain yksi ALV voi olla voimassa kerrallaan"
 
-#: leasing/serializers/invoice.py:188
+#: leasing/serializers/invoice.py:194
 msgid "Can't edit invoices that have been sent to SAP"
 msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
 
-#: leasing/serializers/invoice.py:254
+#: leasing/serializers/invoice.py:260
 msgid ""
 "Both Billing period start and end are required if one of them is provided"
 msgstr ""
 "Laskutusjakson alku- ja loppupäivämäärät ovat molemmat pakollisia jos "
 "jompikumpi valittu"
 
-#: leasing/serializers/invoice.py:258
+#: leasing/serializers/invoice.py:264
 msgid "Billing period end must be the same or after the start"
 msgstr ""
 "Laskutusjakson loppupäivämäärä pitää olla alkupäivämäärä tai sen jälkeen"
@@ -2994,11 +3004,15 @@ msgstr "Ei voi luoda laskuja jos laskutusta ei ole käynnistetty"
 msgid "Can't edit fully refunded invoices"
 msgstr "Ei voi muokata kokonaan hyvitettyä laskua"
 
-#: leasing/viewsets/invoice.py:82
+#: leasing/viewsets/invoice.py:77
+msgid "Can't edit automatically generated invoices"
+msgstr "Ei voi muokata automaattisesti luotua laskua"
+
+#: leasing/viewsets/invoice.py:85
 msgid "Can't delete numbered invoices"
 msgstr "Numeroitua laskua ei voi poistaa"
 
-#: leasing/viewsets/invoice.py:85
+#: leasing/viewsets/invoice.py:88
 msgid "Can't delete invoices that have been sent to SAP"
 msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
 
@@ -3058,7 +3072,7 @@ msgstr "Lasku on jo lähetetty SAP:iin"
 msgid "Can't send invoices that already have a number to SAP"
 msgstr "Numeroitua laskua ei voi lähettää SAP:iin"
 
-#: leasing/viewsets/lease.py:386
+#: leasing/viewsets/lease.py:388
 msgid "No permission. Can only delete own empty leases."
 msgstr "Ei oikeutta. Voit poistaa vain omia tyhjiä vuokrauksia."
 
