@@ -94,7 +94,7 @@ class LaskeExporter:
     def export_invoices(self, invoices):
         """
         :type invoices: list of Invoice | Invoice
-        :rtype: bool
+        :rtype: LaskeExportLog
         """
         if isinstance(invoices, Invoice):
             invoices = [invoices]
@@ -112,6 +112,8 @@ class LaskeExporter:
         self.write_to_output('Going through {} invoices'.format(len(invoices)))
 
         for invoice in invoices:
+            self.write_to_output(' Invoice id {}'.format(invoice.id))
+
             # If this invoice is a credit note, but the credited invoice has
             # not been sent to SAP, don't send the credit invoice either.
             # TODO This doesn't check if the credited invoice would be sent
@@ -128,6 +130,10 @@ class LaskeExporter:
                         ' Not sending invoice id {} because the credited invoice is unknown.'.format(invoice.id))
 
                 continue
+
+            if not invoice.invoicing_date:
+                invoice.invoicing_date = now.date()
+                invoice.save()
 
             sales_order = SalesOrder()
             set_constant_laske_values(sales_order)
@@ -174,3 +180,5 @@ class LaskeExporter:
         laske_export_log_entry.ended_at = timezone.now()
         laske_export_log_entry.is_finished = True
         laske_export_log_entry.save()
+
+        return laske_export_log_entry
