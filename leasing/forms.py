@@ -33,6 +33,11 @@ class LeaseSearchForm(forms.Form):
     tenantcontact_type = CommaSeparatedChoiceField(label='Tenant role', required=False,
                                                    choices=tuple((x.value, str(x)) for x in TenantContactType))
     only_past_tenants = forms.BooleanField(label='Only past tenants', required=False)
+    tenant_activity = forms.ChoiceField(label='Tenants', required=False, choices=(
+        ('all', 'All'),
+        ('past', 'Only past tenants'),
+        ('active', 'Only active tenants')
+    ))
     lease_start_date_start = forms.DateField(required=False)
     lease_start_date_end = forms.DateField(required=False)
     lease_end_date_start = forms.DateField(required=False)

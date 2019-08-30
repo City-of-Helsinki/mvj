@@ -249,6 +249,17 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                 if search_form.cleaned_data.get('only_past_tenants'):
                     q &= Q(tenants__tenantcontact__end_date__lte=datetime.date.today())
 
+                if search_form.cleaned_data.get('tenant_activity'):
+                    if search_form.cleaned_data.get('tenant_activity') == 'past':
+                        q &= Q(tenants__tenantcontact__end_date__lte=datetime.date.today())
+
+                    if search_form.cleaned_data.get('tenant_activity') == 'active':
+                        # No need to filter by start date because future start dates are also considered active
+                        q &= (
+                            Q(tenants__tenantcontact__end_date=None) |
+                            Q(tenants__tenantcontact__end_date__gte=datetime.date.today())
+                        )
+
                 queryset = queryset.filter(q)
 
             if search_form.cleaned_data.get('sequence'):
