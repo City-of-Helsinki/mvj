@@ -73,6 +73,9 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         if instance.state == InvoiceState.REFUNDED:
             raise ValidationError(_("Can't edit fully refunded invoices"))
 
+        if instance.generated:
+            raise ValidationError(_("Can't edit automatically generated invoices"))
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
