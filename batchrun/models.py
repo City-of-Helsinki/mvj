@@ -1,7 +1,7 @@
 import shlex
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pytz
 from django.contrib.postgres.fields import JSONField
@@ -276,8 +276,14 @@ class JobRunLogEntry(models.Model):
             run_name=self.run, kind=self.kind, number=self.number)
 
 
-class JobRunQueueItemQuerySet(models.QuerySet):
-    def to_run(self) -> models.QuerySet:
+if TYPE_CHECKING:
+    BaseQueryset = models.QuerySet[Any]
+else:
+    BaseQueryset = models.QuerySet
+
+
+class JobRunQueueItemQuerySet(BaseQueryset):
+    def to_run(self) -> 'models.QuerySet[JobRunQueueItem]':
         return self.filter(scheduled_job__enabled=True, assigned_at=None)
 
     def remove_old_items(self, limit: Optional[datetime] = None) -> None:
