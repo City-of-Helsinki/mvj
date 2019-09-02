@@ -8,10 +8,10 @@ backcall==0.1.0           # via ipython
 coverage==4.5.4           # via pytest-cov
 cx-oracle==7.2.2
 decorator==4.4.0          # via ipython, traitlets
-django==2.2.4             # via django-debug-toolbar, django-stubs
+django==2.2.5             # via django-debug-toolbar, django-stubs
 django-debug-toolbar==2.0
 django-extensions==2.2.1
-django-stubs==1.0.2
+django-stubs==1.1.0
 djangorestframework-stubs==1.0.0
 entrypoints==0.3          # via flake8
 factory-boy==2.12.0
@@ -21,12 +21,12 @@ flake8-polyfill==1.0.2    # via pep8-naming
 flake8-print==3.1.0
 importlib-metadata==0.19  # via pluggy, pytest
 inflection==0.3.1         # via pytest-factoryboy
-ipython==7.7.0
+ipython==7.8.0
 ipython-genutils==0.2.0   # via traitlets
 isort==4.3.21
 jedi==0.15.1              # via ipython
 mccabe==0.6.1             # via flake8
-more-itertools==7.2.0     # via pytest
+more-itertools==7.2.0     # via pytest, zipp
 mypy==0.720
 mypy-extensions==0.4.1    # via mypy
 packaging==19.1           # via pytest
@@ -58,7 +58,7 @@ typed-ast==1.4.0          # via mypy
 typing-extensions==3.7.4  # via django-stubs, djangorestframework-stubs, mypy
 wcwidth==0.1.7            # via prompt-toolkit, pytest
 werkzeug==0.15.5
-zipp==0.5.2               # via importlib-metadata
+zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools                # via ipython
