@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import connection, models, transaction
 from django.db.models import Max, Q
+from django.db.models.aggregates import Sum
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -609,24 +610,32 @@ class Lease(TimeStampedSafeDeleteModel):
                     amounts_for_billing_periods[billing_period] = {
                         'due_date': lease_due_date,
                         'calculation_result': CalculationResult(date_range_start=start_date, date_range_end=end_date),
+                        'last_billing_period': False
                     }
 
                 rent_calculation_result = rent.get_amount_for_date_range(*billing_period, explain=True, dry_run=dry_run)
+
+                if rent.is_the_last_billing_period(billing_period):
+                    amounts_for_billing_periods[billing_period]['last_billing_period'] = True
 
                 amounts_for_billing_periods[billing_period]['calculation_result'].combine(rent_calculation_result)
 
         return amounts_for_billing_periods
 
     def calculate_invoices(self, period_rents):  # noqa: TODO
-        from leasing.models import ReceivableType
+        from leasing.models import Invoice, ReceivableType
 
         # TODO: Make configurable
         receivable_type_rent = ReceivableType.objects.get(pk=1)
 
         invoice_data = []
+        last_billing_period = None
 
         for billing_period, period_rent in period_rents.items():
             contact_rows = defaultdict(list)
+
+            if period_rent['last_billing_period']:
+                last_billing_period = billing_period
 
             for calculation_amount in period_rent['calculation_result'].get_all_amounts():
                 amount_period = (calculation_amount.date_range_start, calculation_amount.date_range_end)
@@ -696,6 +705,7 @@ class Lease(TimeStampedSafeDeleteModel):
             # TODO: If there are no suitable contacts for some time periods, add
             #  the remaining amounts to someone
             total_period_amount = sum([row['amount'] for rows in contact_rows.values() for row in rows])
+            total_period_amount = Decimal(total_period_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
             billing_period_invoices = []
             for contact, rows in contact_rows.items():
@@ -706,6 +716,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 )]
 
                 billable_amount = sum([row['amount'] for row in rows])
+                billable_amount = Decimal(billable_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
                 invoice_datum = {
                     'type': InvoiceType.CHARGE,
@@ -726,6 +737,48 @@ class Lease(TimeStampedSafeDeleteModel):
                 billing_period_invoices.append(invoice_datum)
 
             invoice_data.append(billing_period_invoices)
+
+        # Rounding error correction
+        if last_billing_period:
+            round_adjust_year = last_billing_period[0].year
+            first_day_of_year = datetime.date(year=round_adjust_year, month=1, day=1)
+            last_day_of_year = datetime.date(year=round_adjust_year, month=12, day=31)
+
+            total_amount_for_year = Decimal(
+                self.calculate_rent_amount_for_year(round_adjust_year).get_total_amount()
+            ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+            billing_periods = set()
+            for rent in self.get_active_rents_on_period(first_day_of_year, last_day_of_year):
+                billing_periods.update(rent.get_all_billing_periods_for_year(round_adjust_year))
+
+            already_billed_amount = Decimal(0)
+            for billing_period in billing_periods:
+                found = False
+                for period_invoice_data in invoice_data:
+                    for datum in period_invoice_data:
+                        if (datum['billing_period_start_date'] == billing_period[0] and
+                                datum['billing_period_end_date'] == billing_period[1]):
+                            already_billed_amount += datum['billed_amount']
+                            found = True
+
+                if not found:
+                    already_billed_amount += Invoice.objects.filter(
+                        billing_period_start_date=billing_period[0],
+                        billing_period_end_date=billing_period[1],
+                        generated=True,
+                        deleted__isnull=True
+                    ).aggregate(sum=Sum('rows__amount'))['sum']
+
+            already_billed_amount = Decimal(already_billed_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+            difference = total_amount_for_year - already_billed_amount
+
+            if difference:
+                # TODO: distribute difference
+                invoice_data[-1][-1]['total_amount'] += difference
+                invoice_data[-1][-1]['billed_amount'] += difference
+                invoice_data[-1][-1]['rows'][-1]['amount'] += difference
 
         return invoice_data
 
@@ -852,6 +905,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 extra_billing_period: {
                     'due_date': today,
                     'calculation_result': calculation_result,
+                    'last_billing_period': False,  # TODO: check
                 }
             }
 

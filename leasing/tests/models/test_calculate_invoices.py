@@ -58,6 +58,7 @@ def test_calculate_invoices_one_tenant(django_db_setup, lease_factory, tenant_fa
         billing_period: {
             'due_date': datetime.date(year=2017, month=6, day=1),
             'calculation_result': calculation_result,
+            'last_billing_period': False,
         }
     }
 
@@ -120,6 +121,7 @@ def test_calculate_invoices_two_tenants(django_db_setup, lease_factory, tenant_f
         billing_period: {
             'due_date': datetime.date(year=2017, month=6, day=1),
             'calculation_result': calculation_result,
+            'last_billing_period': False,
         }
     }
 

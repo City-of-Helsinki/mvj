@@ -2,10 +2,12 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.db.models.aggregates import Sum
 
 from leasing.enums import (
     ContactType, DueDatesType, InvoiceState, InvoiceType, PeriodType, RentCycle, RentType, TenantContactType)
 from leasing.models import Invoice, Lease, ReceivableType
+from leasing.models.invoice import InvoiceRow
 
 
 @pytest.mark.django_db
@@ -496,3 +498,62 @@ def test_is_empty_one_manytomany(django_db_setup, lease_factory, related_lease_f
     related_lease_factory(from_lease=lease, to_lease=lease2)
 
     assert not lease.is_empty()
+
+
+@pytest.mark.django_db
+def test_add_rounded_amount(django_db_setup, lease_factory, contact_factory, tenant_factory,
+                            tenant_contact_factory, invoice_factory, invoice_row_factory, rent_factory,
+                            contract_rent_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
+                          start_date=datetime.date(year=2000, month=1, day=1))
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+
+    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
+
+    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=12,
+    )
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=1000,
+        period=PeriodType.PER_YEAR,
+        base_amount=1000,
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+
+    assert lease.calculate_rent_amount_for_year(2017).get_total_amount() == Decimal(1000)
+
+    year_start = datetime.date(year=2017, month=1, day=1)
+    year_end = datetime.date(year=2017, month=12, day=31)
+
+    period_rents = lease.determine_payable_rents_and_periods(year_start, year_end)
+
+    for period_invoice_data in lease.calculate_invoices(period_rents):
+        for invoice_data in period_invoice_data:
+            invoice_data.pop('explanations')
+            invoice_data.pop('calculation_result')
+            invoice_row_data = invoice_data.pop('rows')
+
+            invoice_data['generated'] = True
+            invoice_data['invoicing_date'] = datetime.date.today()
+            invoice_data['outstanding_amount'] = invoice_data['billed_amount']
+
+            invoice = Invoice.objects.create(**invoice_data)
+
+            for invoice_row_datum in invoice_row_data:
+                invoice_row_datum['invoice'] = invoice
+                InvoiceRow.objects.create(**invoice_row_datum)
+
+    invoice_sum = lease.invoices.aggregate(sum=Sum('rows__amount'))['sum']
+
+    assert invoice_sum == lease.calculate_rent_amount_for_year(2017).get_total_amount()
