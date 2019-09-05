@@ -109,6 +109,9 @@ class LeaseAreaType(Enum):
 
 
 class LeaseAreaAttachmentType(Enum):
+    """
+    In Finnish: Liitetiedoston tyyppi
+    """
     MATTI_REPORT = 'matti_report'
     GEOTECHNICAL = 'geotechnical'
 
@@ -283,6 +286,9 @@ class DueDatesType(Enum):
 
 
 class DueDatesPosition(Enum):
+    """
+    In Finnish: Eräpäivän sijainti
+    """
     START_OF_MONTH = 'start_of_month'
     MIDDLE_OF_MONTH = 'middle_of_month'
 
@@ -292,6 +298,9 @@ class DueDatesPosition(Enum):
 
 
 class RentAdjustmentType(Enum):
+    """
+    In Finnish: Alennus/Korotus
+    """
     DISCOUNT = 'discount'
     INCREASE = 'increase'
 
@@ -301,6 +310,9 @@ class RentAdjustmentType(Enum):
 
 
 class RentAdjustmentAmountType(Enum):
+    """
+    In Finnish: Määrän tyyppi
+    """
     PERCENT_PER_YEAR = 'percent_per_year'
     AMOUNT_PER_YEAR = 'amount_per_year'
     AMOUNT_TOTAL = 'amount_total'
@@ -312,6 +324,9 @@ class RentAdjustmentAmountType(Enum):
 
 
 class SubventionType(Enum):
+    """
+    In Finnish: Subvention tyyppi
+    """
     X_DISCOUNT = 'x_discount'  # In Finnish: X alennus
     RE_LEASE_DISCOUNT = 're_lease_discount'  # In Finnish: Jatkovuokrauksen alennus
 
@@ -321,6 +336,9 @@ class SubventionType(Enum):
 
 
 class InvoiceDeliveryMethod(Enum):
+    """
+    In Finnish: E vai paperilasku
+    """
     MAIL = 'mail'
     ELECTRONIC = 'electronic'
 
@@ -330,6 +348,9 @@ class InvoiceDeliveryMethod(Enum):
 
 
 class InvoiceState(Enum):
+    """
+    In Finnish: Laskun tila
+    """
     OPEN = 'open'
     PAID = 'paid'
     REFUNDED = 'refunded'
@@ -341,6 +362,9 @@ class InvoiceState(Enum):
 
 
 class InvoiceType(Enum):
+    """
+    In Finnish: Laskun tyyppi
+    """
     CHARGE = 'charge'
     CREDIT_NOTE = 'credit_note'
 
@@ -350,6 +374,9 @@ class InvoiceType(Enum):
 
 
 class ContactType(Enum):
+    """
+    In Finnish: Yhteystiedon tyyppi
+    """
     PERSON = 'person'
     BUSINESS = 'business'
     UNIT = 'unit'
@@ -407,6 +434,9 @@ class AreaType(Enum):
 
 
 class EmailLogType(Enum):
+    """
+    In Finnish: Sähköpostilokin tyyppi
+    """
     CONSTRUCTABILITY = 'constructability'
 
     class Labels:
