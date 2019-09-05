@@ -413,6 +413,12 @@ DEFAULT_FIELD_PERMS = {
 
 CUSTOM_FIELD_PERMS = {
     "lease": {
+        "start_date": {
+            2: "view",
+        },
+        "end_date": {
+            2: "view",
+        },
         "tenants": {
             2: "view",
             5: "view",
