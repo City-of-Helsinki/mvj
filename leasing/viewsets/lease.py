@@ -200,14 +200,14 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
                 other_q |= Q(tenants__tenantcontact__contact__name__icontains=search_string)
 
                 if ' ' in search_string:
-                    search_string_parts = search_string.split(' ', 2)
+                    tenant_name_parts = search_string.split(' ', 2)
                     other_q |= (
-                        Q(tenants__tenantcontact__contact__first_name__icontains=search_string_parts[0]) &
-                        Q(tenants__tenantcontact__contact__last_name__icontains=search_string_parts[1])
+                        Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[0]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[1])
                     )
                     other_q |= (
-                        Q(tenants__tenantcontact__contact__first_name__icontains=search_string_parts[1]) &
-                        Q(tenants__tenantcontact__contact__last_name__icontains=search_string_parts[0])
+                        Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[1]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[0])
                     )
                 else:
                     other_q |= Q(tenants__tenantcontact__contact__first_name__icontains=search_string)
@@ -236,11 +236,22 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             if search_form.cleaned_data.get('tenant_name'):
                 tenant_name = search_form.cleaned_data.get('tenant_name')
 
-                q = Q(
-                    Q(tenants__tenantcontact__contact__name__icontains=tenant_name) |
-                    Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name) |
-                    Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name)
-                )
+                # Tenantcontact name
+                q = Q(tenants__tenantcontact__contact__name__icontains=tenant_name)
+
+                if ' ' in tenant_name:
+                    tenant_name_parts = tenant_name.split(' ', 2)
+                    q |= (
+                        Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[0]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[1])
+                    )
+                    q |= (
+                        Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[1]) &
+                        Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[0])
+                    )
+                else:
+                    q |= Q(tenants__tenantcontact__contact__first_name__icontains=tenant_name)
+                    q |= Q(tenants__tenantcontact__contact__last_name__icontains=tenant_name)
 
                 if search_form.cleaned_data.get('tenantcontact_type'):
                     q &= Q(tenants__tenantcontact__type__in=search_form.cleaned_data.get(
