@@ -102,9 +102,22 @@ class InvoiceSalesOrderAdapter:
             return self.invoice.recipient
 
     def get_po_number(self):
-        tenant = self.get_first_tenant()
-        if tenant and tenant.reference:
-            return tenant.reference[:35]
+        # Get reference from the tenant that is the same contact
+        # as the recipient. Or all references from all of the tenants.
+        references = []
+        for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
+            tenant_tenantcontact = invoice_row.tenant.get_tenant_tenantcontacts(
+                self.invoice.billing_period_start_date, self.invoice.billing_period_end_date).first()
+            if (tenant_tenantcontact and tenant_tenantcontact.contact and
+                    tenant_tenantcontact.contact == self.invoice.recipient):
+                if invoice_row.tenant.reference:
+                    return invoice_row.tenant.reference[:35]
+
+            if invoice_row.tenant.reference:
+                references.append(invoice_row.tenant.reference)
+
+        if references:
+            return ' '.join(references)[:35]
 
     def set_dates(self):
         billing_date = self.invoice.due_date.replace(day=1)
