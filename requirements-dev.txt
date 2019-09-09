@@ -19,7 +19,7 @@ faker==2.0.1              # via factory-boy
 flake8==3.7.8
 flake8-polyfill==1.0.2    # via pep8-naming
 flake8-print==3.1.0
-importlib-metadata==0.19  # via pluggy, pytest
+importlib-metadata==0.20  # via pluggy, pytest
 inflection==0.3.1         # via pytest-factoryboy
 ipython==7.8.0
 ipython-genutils==0.2.0   # via traitlets
@@ -50,14 +50,14 @@ pytest-factoryboy==2.0.3
 python-dateutil==2.6.0    # via faker
 pytz==2019.2              # via django
 six==1.12.0               # via faker, django-extensions, flake8-print, packaging, prompt-toolkit, pytest, python-dateutil, traitlets
-snowballstemmer==1.9.0    # via pydocstyle
+snowballstemmer==1.9.1    # via pydocstyle
 sqlparse==0.3.0           # via django, django-debug-toolbar
 text-unidecode==1.2       # via faker
 traitlets==4.3.2          # via ipython
 typed-ast==1.4.0          # via mypy
 typing-extensions==3.7.4  # via django-stubs, djangorestframework-stubs, mypy
 wcwidth==0.1.7            # via prompt-toolkit, pytest
-werkzeug==0.15.5
+werkzeug==0.15.6
 zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

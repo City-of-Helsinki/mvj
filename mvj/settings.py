@@ -41,9 +41,11 @@ env = environ.Env(
     ADMINS=(list, []),
     DATABASE_URL=(str, 'postgis://mvj:mvj@localhost/mvj'),
     CACHE_URL=(str, 'locmemcache://'),
-    EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
     SENTRY_ENVIRONMENT=(str, ''),
+    EMAIL_BACKEND=(str, 'anymail.backends.sendgrid.EmailBackend'),
+    DEFAULT_FROM_EMAIL=(str, 'mvj@example.com'),
+    SENDGRID_API_KEY=(str, ''),
     KTJ_PRINT_ROOT_URL=(str, 'https://ktjws.nls.fi'),
     KTJ_PRINT_USERNAME=(str, ''),
     KTJ_PRINT_PASSWORD=(str, ''),
@@ -85,8 +87,6 @@ DATABASES = {
 CACHES = {
     'default': env.cache()
 }
-
-vars().update(env.email_url())  # EMAIL_BACKEND etc.
 
 if env('SENTRY_DSN'):
     sentry_sdk.init(
@@ -134,6 +134,7 @@ INSTALLED_APPS = [
     'safedelete',
     'sequences',
     'django_countries',
+    'anymail',
 
     'users',
     'leasing',
@@ -206,7 +207,15 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
-MVJ_EMAIL_FROM = 'mvj@example.com'
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+MVJ_EMAIL_FROM = DEFAULT_FROM_EMAIL
+
+ANYMAIL = {
+    'SENDGRID_API_KEY': env.str('SENDGRID_API_KEY'),
+}
+
+EMAIL_BACKEND = env.str('EMAIL_BACKEND')
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_EXPOSE_HEADERS = ['Content-Disposition']

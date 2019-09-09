@@ -1,6 +1,7 @@
 beautifulsoup4
 dataclasses ; python_version<"3.7"
 Django
+django-anymail
 django-auditlog
 django-jsonfield-compat
 django-cors-headers
