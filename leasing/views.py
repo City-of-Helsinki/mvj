@@ -15,14 +15,21 @@ from zeep.transports import Transport
 from leasing.permissions import PerMethodPermission
 
 
+def are_settings_available(required_settings):
+    for required_setting in required_settings:
+        if not hasattr(settings, required_setting) or not getattr(settings, required_setting):
+            return False
+
+    return True
+
+
 @api_view()
 @permission_classes([IsAuthenticated])
 def ktj_proxy(request, base_type, print_type):
     required_settings = ('KTJ_PRINT_ROOT_URL', 'KTJ_PRINT_USERNAME', 'KTJ_PRINT_PASSWORD')
 
-    for required_setting in required_settings:
-        if not hasattr(settings, required_setting) or not getattr(settings, required_setting):
-            return HttpResponseServerError("Please set {} setting".format(required_setting))
+    if not are_settings_available(required_settings):
+        return HttpResponseServerError("Please set all required settings: {}".format(', '.join(required_settings)))
 
     allowed_types = [
         'kiinteistorekisteriote_oik_tod/rekisteriyksikko',
@@ -87,9 +94,10 @@ class CloudiaProxy(APIView):
         return _("Cloudia Proxy")
 
     def get(self, request, format=None, contract_id=None, file_id=None):
-        # TODO: Remove after the contract number is prepended by "MV" in the UI
-        if contract_id.isdigit():
-            contract_id = 'MV{}'.format(contract_id)
+        required_settings = ('CLOUDIA_ROOT_URL', 'CLOUDIA_USERNAME', 'CLOUDIA_PASSWORD')
+
+        if not are_settings_available(required_settings):
+            return HttpResponseServerError("Please set all required settings: {}".format(', '.join(required_settings)))
 
         data = {
             "extid": contract_id,
@@ -127,6 +135,11 @@ class VirreProxy(APIView):
         return _("Virre Proxy")
 
     def get(self, request, format=None, service=None, business_id=None):
+        required_settings = ('VIRRE_API_URL', 'VIRRE_USERNAME', 'VIRRE_PASSWORD')
+
+        if not are_settings_available(required_settings):
+            return HttpResponseServerError("Please set all required settings: {}".format(', '.join(required_settings)))
+
         known_services = {
              'company_extended': 'CompanyExtendedInfo',
              'company_represent': 'CompanyRepresentInfo',
