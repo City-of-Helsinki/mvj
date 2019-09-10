@@ -17,6 +17,7 @@ from leasing.models import (
 from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, EqualizedRent, RentDueDate
+from leasing.models.tenant import TenantRentShare
 from leasing.models.utils import DayMonth
 
 from .base import BaseImporter
@@ -470,6 +471,8 @@ class LeaseImporter(BaseImporter):
 
                 self.stdout.write("Sopimusvuokrat:")
 
+                rent_intended_uses = set()
+
                 query = """
                     SELECT sv.*, kt.NIMI as kt_nimi
                     FROM SOPIMUSVUOKRA sv
@@ -500,6 +503,8 @@ class LeaseImporter(BaseImporter):
                     except RentIntendedUse.DoesNotExist:
                         (contract_rent_intended_use, _) = RentIntendedUse.objects.get_or_create(
                             id=rent_row['KAYTTOTARKOITUS'], name=rent_row['KT_NIMI'])
+
+                    rent_intended_uses.add(contract_rent_intended_use)
 
                     (contract_rent, contract_rent_created) = ContractRent.objects.get_or_create(
                         rent=rent, period=contract_rent_period, intended_use=contract_rent_intended_use,
@@ -538,6 +543,20 @@ class LeaseImporter(BaseImporter):
 
                         rent.amount = one_time_amount
                         rent.save()
+
+                if rent_intended_uses:
+                    self.stdout.write("Vuokralaisten laskutusosuudet")
+
+                    for tenant in lease.tenants.all():
+                        for rent_intended_use in rent_intended_uses:
+                            TenantRentShare.objects.update_or_create(
+                                tenant=tenant,
+                                intended_use=rent_intended_use,
+                                defaults={
+                                    'share_denominator': tenant.share_denominator,
+                                    'share_numerator': tenant.share_numerator,
+                                }
+                            )
 
                 self.stdout.write("Tarkistettu vuokra:")
 
