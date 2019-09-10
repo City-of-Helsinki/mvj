@@ -35,6 +35,11 @@ class SendEmailView(APIView):
             content_object=serializer.validated_data['lease'],
         )
 
+        if request.user.email:
+            from_email = request.user.email
+        else:
+            from_email = settings.MVJ_EMAIL_FROM
+
         for recipient in serializer.validated_data['recipients']:
             if not recipient.email:
                 continue
@@ -43,7 +48,7 @@ class SendEmailView(APIView):
                 _('MVJ lease {} {}').format(serializer.validated_data['lease'].identifier,
                                             serializer.validated_data['type']),
                 serializer.validated_data['text'],
-                settings.MVJ_EMAIL_FROM,
+                from_email,
                 [recipient.email],
                 fail_silently=False,
             )
