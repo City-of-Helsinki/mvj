@@ -52,10 +52,16 @@ class Command(BaseCommand):
                 laske_export_log_entry.ended_at.strftime('%d.%m.%Y %H.%M')
             )
 
+            from_email = settings.DEFAULT_FROM_EMAIL
+            if hasattr(settings, 'MVJ_EMAIL_FROM'):
+                from_email = settings.MVJ_EMAIL_FROM
+            if hasattr(settings, 'LASKE_EXPORT_FROM_EMAIL'):
+                from_email = settings.LASKE_EXPORT_FROM_EMAIL
+
             send_mail(
                 _('MVJ ({}) transfer').format(settings.LASKE_VALUES['sender_id']),
                 email_content,
-                settings.MVJ_EMAIL_FROM,
-                [settings.LASKE_EXPORT_ANNOUNCE_EMAIL],
+                from_email,
+                settings.LASKE_EXPORT_ANNOUNCE_EMAIL,
                 fail_silently=False,
             )

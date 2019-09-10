@@ -278,7 +278,8 @@ LASKE_SERVERS = {
     },
 }
 
-LASKE_EXPORT_ANNOUNCE_EMAIL = 'recipient@example.com'
+LASKE_EXPORT_FROM_EMAIL = 'from@example.com'
+LASKE_EXPORT_ANNOUNCE_EMAIL = ['recipient@example.com', 'recipient2@example.com']
 
 # See: https://github.com/jjkester/django-auditlog/pull/81
 USE_NATIVE_JSONFIELD = True
