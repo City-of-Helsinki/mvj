@@ -26,7 +26,7 @@ TEMPLATE_NAMES = {
         'filename': 'purku_uhka_yritystontti_template.docx',
     },
     'Oikeudenkäyntiuhka': {
-        'filename': 'oikeudenkayntiuhka_template.doc',
+        'filename': 'oikeudenkayntiuhka_template.docx',
     },
 }
 """
