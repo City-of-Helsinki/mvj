@@ -91,12 +91,16 @@ class CollectionNoteCreateUpdateSerializer(FieldPermissionsSerializerMixin, seri
         fields = '__all__'
 
 
+class CreateCollectionLetterDocumentInvoiceSerializer(serializers.Serializer):
+    invoice = serializers.PrimaryKeyRelatedField(queryset=Invoice.objects.all())
+    collection_charge = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
 class CreateCollectionLetterDocumentSerializer(serializers.Serializer):
     lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all())
     template = InstanceDictPrimaryKeyRelatedField(instance_class=CollectionLetterTemplate,
                                                   queryset=CollectionLetterTemplate.objects.all())
-    collection_charge = serializers.DecimalField(max_digits=12, decimal_places=2)
     tenants = serializers.PrimaryKeyRelatedField(many=True, queryset=Tenant.objects.all())
-    invoices = serializers.PrimaryKeyRelatedField(many=True, queryset=Invoice.objects.all())
+    invoices = CreateCollectionLetterDocumentInvoiceSerializer(many=True)
 
     # TODO: Validate tenant and invoices

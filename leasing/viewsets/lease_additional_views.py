@@ -9,7 +9,7 @@ from dateutil.rrule import MONTHLY, rrule
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import status, viewsets
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -91,7 +91,6 @@ class LeaseCreateCollectionLetterDocumentViewSet(AtomicTransactionMixin, viewset
         serializer = CreateCollectionLetterDocumentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        collection_charge = Decimal(serializer.validated_data['collection_charge'])
         invoices = serializer.validated_data['invoices']
         debt = Decimal(0)
         debt_strings = []
@@ -107,22 +106,29 @@ class LeaseCreateCollectionLetterDocumentViewSet(AtomicTransactionMixin, viewset
                 raise APIException(_('No billing info or billing info does not have a contact address'))
 
             billing_addresses.append('<w:br/>'.join([
-                str(billing_tenantcontact.contact), billing_tenantcontact.contact.address,
-                '{} {}'.format(billing_tenantcontact.contact.postal_code,
-                               billing_tenantcontact.contact.city if billing_tenantcontact.contact.city else '')
+                str(billing_tenantcontact.contact),
+                billing_tenantcontact.contact.address if billing_tenantcontact.contact.address else '',
+                '{} {}'.format(
+                    billing_tenantcontact.contact.postal_code if billing_tenantcontact.contact.postal_code else '',
+                    billing_tenantcontact.contact.city if billing_tenantcontact.contact.city else ''
+                )
             ]))
 
-        for invoice in invoices:
-            penalty_interest_data = invoice.calculate_penalty_interest()
-            if not penalty_interest_data['total_interest_amount']:
-                continue
+        collection_charge_total = Decimal(0)
 
-            interest_strings.append(
-                _('Penalty interest for the invoice with the due date of {due_date} is {interest_amount} euroa').format(
-                    due_date=invoice.due_date.strftime('%d.%m.%Y'),
-                    interest_amount=penalty_interest_data['total_interest_amount']
-                ))
-            interest_total += penalty_interest_data['total_interest_amount']
+        for invoice_datum in invoices:
+            invoice = invoice_datum['invoice']
+            penalty_interest_data = invoice.calculate_penalty_interest()
+
+            if penalty_interest_data['total_interest_amount']:
+                interest_strings.append(
+                    _(
+                        'Penalty interest for the invoice with the due date of {due_date} is {interest_amount} euroa'
+                    ).format(
+                        due_date=invoice.due_date.strftime('%d.%m.%Y'),
+                        interest_amount=penalty_interest_data['total_interest_amount']
+                    ))
+                interest_total += penalty_interest_data['total_interest_amount']
 
             invoice_debt_amount = invoice.outstanding_amount
             debt += invoice_debt_amount
@@ -140,7 +146,8 @@ class LeaseCreateCollectionLetterDocumentViewSet(AtomicTransactionMixin, viewset
 
                 interest_rates.add(interest_rate_tuple)
 
-        collection_charge_total = len(invoices) * collection_charge
+            collection_charge_total += Decimal(invoice_datum['collection_charge'])
+
         grand_total = debt + interest_total + collection_charge_total
 
         lease = serializer.validated_data['lease']
@@ -156,7 +163,6 @@ class LeaseCreateCollectionLetterDocumentViewSet(AtomicTransactionMixin, viewset
             'interests': '<w:br/>'.join(interest_strings),
             'interest_total': interest_total,
             'grand_total': grand_total,
-            'collection_charge': collection_charge,
             'collection_charge_total': collection_charge_total,
             'invoice_count': len(invoices),
         }
@@ -164,13 +170,15 @@ class LeaseCreateCollectionLetterDocumentViewSet(AtomicTransactionMixin, viewset
         doc = serializer.validated_data['template'].render_document(template_data)
 
         if not doc:
-            raise APIException(_('Error creating the document from the template'))
+            raise ValidationError(_('Error creating the document from the template'))
 
         response = HttpResponse(
             doc, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
         response['Content-Disposition'] = 'attachment; filename={}_{}'.format(
-            str(lease.identifier), os.path.basename(serializer.validated_data['template'].file.name))
+            str(lease.identifier), os.path.basename(
+                serializer.validated_data['template'].file.name.replace('_template', '')
+            ))
 
         return response
 
