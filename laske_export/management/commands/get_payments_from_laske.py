@@ -81,9 +81,11 @@ class Command(BaseCommand):
                     file_name))
                 continue
 
+            self.stdout.write('Downloading file "{}".'.format(file_name))
             try:
                 fp = open(os.path.join(get_import_dir(), file_name), "wb")
                 ftp.retrbinary("RETR {}".format(file_name), fp.write)
+                self.stdout.write('Done.')
             except Exception as e:
                 self.stderr.write('Could not download file "{}". Error: '.format(file_name, str(e)))
 
@@ -108,7 +110,7 @@ class Command(BaseCommand):
             sys.exit(-1)
 
     def find_unimported_files(self):
-        all_files = glob.glob(get_import_dir() + '/MR_OUT_{}_*'.format(settings.LASKE_VALUES['sender_id']))
+        all_files = glob.glob(get_import_dir() + '/MR_OUT_{}_*'.format(settings.LASKE_VALUES['import_id']))
         already_imported_filenames = LaskePaymentsLog.objects.filter(is_finished=True).values_list(
             'filename', flat=True)
 
