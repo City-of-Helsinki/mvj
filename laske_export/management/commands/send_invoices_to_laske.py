@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import ugettext_lazy as _
 
 from laske_export.exporter import LaskeExporter
@@ -49,7 +49,8 @@ class Command(BaseCommand):
             email_content = _('MVJ ({}) sent {} invoices to Laske on {}').format(
                 settings.LASKE_VALUES['sender_id'],
                 laske_export_log_entry.invoices.count(),
-                laske_export_log_entry.ended_at.strftime('%d.%m.%Y %H.%M')
+                laske_export_log_entry.ended_at.astimezone(
+                    timezone.get_current_timezone()).strftime('%d.%m.%Y %H.%M %Z')
             )
 
             from_email = settings.DEFAULT_FROM_EMAIL
