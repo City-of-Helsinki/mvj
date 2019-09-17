@@ -104,7 +104,7 @@ class Contact(TimeStampedSafeDeleteModel):
         if self.type == ContactType.PERSON:
             return ' '.join([n for n in [self.first_name, self.last_name] if n]).strip()
         else:
-            return self.name
+            return self.name if self.name else ''
 
     def get_name_and_identifier(self):
         if self.type == ContactType.PERSON:

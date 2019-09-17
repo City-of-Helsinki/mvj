@@ -57,15 +57,30 @@ class Party(FieldGroup):
 
         name = contact.get_name()[:140]  # PriorityName1-4 max length = 4 * 35 chars
 
-        if len(name) <= 35:
-            self.priority_name1 = name
-            self.info_name1 = name
+        n = 1
+        if not name:
+            self.priority_name1 = ''
+            self.info_name1 = ''
+            n += 1
         else:
-            n = 1
             for i in range(0, len(name), 35):
                 setattr(self, 'priority_name{}'.format(n), name[i:i + 35])
                 setattr(self, 'info_name{}'.format(n), name[i:i + 35])
                 n += 1
+
+        # Add care of to the priority name overwriting part of the name if necessary
+        if contact.care_of:
+            care_of = 'c/o {}'.format(contact.care_of)
+
+            if n == 5:
+                n = 4
+
+            for i in range(0, len(care_of), 35):
+                setattr(self, 'priority_name{}'.format(n), care_of[i:i + 35])
+                setattr(self, 'info_name{}'.format(n), care_of[i:i + 35])
+                n += 1
+                if n >= 5:
+                    break
 
         self.priority_address1 = contact.address[:35] if contact.address else ''
         self.priority_city = contact.city
