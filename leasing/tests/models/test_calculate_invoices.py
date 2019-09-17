@@ -194,6 +194,7 @@ def test_calculate_invoices_three_tenants(django_db_setup, assert_count_equal, l
         billing_period: {
             'due_date': datetime.date(year=2017, month=6, day=1),
             'calculation_result': calculation_result,
+            'last_billing_period': False,
         }
     }
 

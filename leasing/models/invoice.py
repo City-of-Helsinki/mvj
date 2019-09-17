@@ -549,6 +549,10 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
     receivable_type = models.ForeignKey(ReceivableType, verbose_name=_("Receivable type"), related_name='+',
                                         on_delete=models.PROTECT)
 
+    # In Finnish: Käyttötarkoitus
+    intended_use = models.ForeignKey('leasing.RentIntendedUse', verbose_name=_("Intended use"), related_name='+',
+                                     null=True, blank=True, on_delete=models.PROTECT)
+
     # In Finnish: Laskutuskauden alkupvm
     billing_period_start_date = models.DateField(verbose_name=_("Billing period start date"), null=True, blank=True)
 
@@ -558,7 +562,7 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
-    # In Finnish: Laskutettu määrä
+    # In Finnish: Määrä
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2)
 
     recursive_get_related_skip_relations = ["invoice"]
