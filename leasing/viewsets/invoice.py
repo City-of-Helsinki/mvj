@@ -10,9 +10,9 @@ from leasing.filters import CoalesceOrderingFilter, InvoiceFilter, InvoiceNoteFi
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.serializers.invoice import (
-    CreditNoteUpdateSerializer, InvoiceCreateSerializer, InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer,
-    InvoiceRowSerializer, InvoiceSerializer, InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer,
-    InvoiceUpdateSerializer)
+    CreditNoteUpdateSerializer, GeneratedInvoiceUpdateSerializer, InvoiceCreateSerializer,
+    InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer, InvoiceRowSerializer, InvoiceSerializer,
+    InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer)
 
 from .utils import AtomicTransactionModelViewSet
 
@@ -47,6 +47,9 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
                     if instance.type == InvoiceType.CREDIT_NOTE:
                         return CreditNoteUpdateSerializer
 
+                    if instance.generated:
+                        return GeneratedInvoiceUpdateSerializer
+
             return InvoiceUpdateSerializer
 
         if self.request.query_params.get('going_to_sap'):
@@ -70,11 +73,11 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
+        if instance.sent_to_sap_at:
+            raise ValidationError(_("Can't edit invoices that have been sent to SAP"))
+
         if instance.state == InvoiceState.REFUNDED:
             raise ValidationError(_("Can't edit fully refunded invoices"))
-
-        if instance.generated:
-            raise ValidationError(_("Can't edit automatically generated invoices"))
 
         return super().update(request, *args, **kwargs)
 

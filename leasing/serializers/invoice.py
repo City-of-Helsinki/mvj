@@ -189,12 +189,6 @@ class InvoiceUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
 
-    def validate(self, attrs):
-        if self.instance.sent_to_sap_at:
-            raise ValidationError(_("Can't edit invoices that have been sent to SAP"))
-
-        return super().validate(attrs)
-
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         instance.update_amounts()
@@ -216,6 +210,21 @@ class CreditNoteUpdateSerializer(InvoiceUpdateSerializer):
         exclude = ('deleted',)
         read_only_fields = ('generated', 'sent_to_sap_at', 'sap_id', 'state', 'adjusted_due_date',
                             'due_date', 'billing_period_start_date', 'billing_period_end_date')
+
+
+class GeneratedInvoiceUpdateSerializer(InvoiceUpdateSerializer):
+    """Invoice serializer where all but "payments" is read only"""
+    rows = InvoiceRowCreateUpdateSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Invoice
+        exclude = ('deleted',)
+        read_only_fields = ('lease', 'invoiceset', 'number', 'recipient', 'sent_to_sap_at', 'sap_id',
+                            'adjusted_due_date', 'due_date', 'invoicing_date', 'state', 'billing_period_start_date',
+                            'billing_period_end_date', 'postpone_date', 'total_amount', 'billed_amount',
+                            'outstanding_amount', 'payment_notification_date', 'collection_charge',
+                            'payment_notification_catalog_date', 'delivery_method', 'type', 'notes', 'generated',
+                            'description', 'credited_invoices', 'interest_invoices', 'rows')
 
 
 class InvoiceSetSerializer(serializers.ModelSerializer):

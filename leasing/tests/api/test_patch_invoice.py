@@ -429,7 +429,7 @@ def test_patch_invoice_cant_change_if_generated(django_db_setup, admin_client, l
     url = reverse('invoice-detail', kwargs={'pk': invoice.id})
     response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
 
-    assert response.status_code == 400, '%s %s' % (response.status_code, response.data)
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
 
     invoice_row = InvoiceRow.objects.get(pk=invoice_row.id)
 
@@ -610,6 +610,53 @@ def test_patch_invoice_add_payment(django_db_setup, admin_client, lease_test_dat
 
     assert invoice.billed_amount == Decimal(200)
     assert invoice.outstanding_amount == Decimal(100)
+
+
+@pytest.mark.django_db
+def test_patch_generated_invoice_add_payment(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                             invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(200),
+        billed_amount=Decimal(200),
+        outstanding_amount=Decimal(200),
+        recipient=contact,
+        notes="No change",
+        generated=True
+    )
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,
+        amount=Decimal(200),
+    )
+
+    data = {
+        "id": invoice.id,
+        "notes": "Should not change",
+        "payments": [
+            {
+                "paid_amount": 100,
+                "paid_date": timezone.now().date()
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+
+    invoice = Invoice.objects.get(pk=invoice.id)
+
+    assert invoice.billed_amount == Decimal(200)
+    assert invoice.outstanding_amount == Decimal(100)
+    assert invoice.notes == "No change"
 
 
 @pytest.mark.django_db
