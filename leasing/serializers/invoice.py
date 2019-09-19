@@ -1,3 +1,4 @@
+import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from random import choice
@@ -138,13 +139,30 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
                               serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     recipient = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                   related_serializer=ContactSerializer)
+                                                   related_serializer=ContactSerializer, required=False)
+    tenant = InstanceDictPrimaryKeyRelatedField(instance_class=Tenant, queryset=Tenant.objects.all(),
+                                                related_serializer=TenantSerializer, required=False)
     rows = InvoiceRowCreateUpdateSerializer(many=True)
     payments = InvoicePaymentCreateUpdateSerializer(many=True, required=False, allow_null=True)
     # Make total_amount, billed_amount, and type not required in the serializer and set them in create() if needed
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     billed_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     type = EnumField(enum=InvoiceType, required=False)
+
+    def override_permission_check_field_name(self, field_name):
+        if field_name == 'tenant':
+            return 'recipient'
+
+        return field_name
+
+    def validate(self, attrs):
+        if not bool(attrs.get('recipient')) ^ bool(attrs.get('tenant')):
+            raise ValidationError(_('Either recipient or tenant is required.'))
+
+        if attrs.get('tenant') and attrs.get('tenant') not in attrs.get('lease').tenants.all():
+            raise ValidationError(_('Tenant not found in lease'))
+
+        return attrs
 
     def create(self, validated_data):
         validated_data['state'] = InvoiceState.OPEN
@@ -165,6 +183,17 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
 
         if not validated_data.get('type'):
             validated_data['type'] = InvoiceType.CHARGE
+
+        if validated_data.get('tenant'):
+            today = datetime.date.today()
+            tenant = validated_data.pop('tenant')
+            billing_tenantcontact = tenant.get_billing_tenantcontacts(today, today).first()
+            if not billing_tenantcontact:
+                raise ValidationError(_('Billing contact not found for tenant'))
+
+            validated_data['recipient'] = billing_tenantcontact.contact
+            for row in validated_data.get('rows', []):
+                row['tenant'] = tenant
 
         invoice = super().create(validated_data)
 
