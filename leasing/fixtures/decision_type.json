@@ -558,5 +558,13 @@
       "name": "Naapuriasiat",
       "kind": null
     }
+  },
+  {
+    "model": "leasing.DecisionType",
+    "pk": 71,
+    "fields": {
+      "name": "Alennuksen myöntäminen",
+      "kind": null
+    }
   }
 ]
