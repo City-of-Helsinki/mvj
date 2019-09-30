@@ -9,6 +9,7 @@ flake8-print
 ipython
 isort
 mypy
+openpyxl
 pep8-naming
 pydocstyle
 # pytest-factoryboy doesn't support pytest 5.0.0 yet. See: https://github.com/pytest-dev/pytest-factoryboy/issues/77
