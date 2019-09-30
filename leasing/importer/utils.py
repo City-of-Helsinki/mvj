@@ -132,6 +132,9 @@ def get_or_create_contact(data):  # NOQA
             name = data['NIMI'].strip()
 
         if data['NIMI2'] and data['NIMI2'].strip():
+            if not name:
+                name = ''
+
             name += ' ' + data['NIMI2'].strip()
 
         language = None
