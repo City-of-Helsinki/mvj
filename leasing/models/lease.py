@@ -781,6 +781,8 @@ class Lease(TimeStampedSafeDeleteModel):
             total_amounts_for_year = self.calculate_rent_amount_for_year(
                 round_adjust_year).get_total_amounts_by_intended_uses()
 
+            difference_by_intended_use = {}
+
             for intended_use, already_billed_amount in already_billed_amounts.items():
                 if intended_use not in total_amounts_for_year:
                     continue
@@ -794,10 +796,14 @@ class Lease(TimeStampedSafeDeleteModel):
                 difference = total_amount_for_year - already_billed_amount
 
                 if difference:
-                    # TODO: distribute difference
-                    invoice_data[-1][-1]['total_amount'] += difference
-                    invoice_data[-1][-1]['billed_amount'] += difference
-                    invoice_data[-1][-1]['rows'][-1]['amount'] += difference
+                    difference_by_intended_use[intended_use] = difference
+
+            if difference_by_intended_use:
+                # TODO: distribute difference
+                # invoice_data[-1][-1]['total_amount'] += difference
+                # invoice_data[-1][-1]['billed_amount'] += difference
+                # invoice_data[-1][-1]['rows'][-1]['amount'] += difference
+                pass
 
         return invoice_data
 
