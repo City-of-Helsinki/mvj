@@ -844,5 +844,14 @@
       "identifier": 0,
       "name": "Muu"
     }
+  },
+  {
+    "model": "leasing.District",
+    "pk": 95,
+    "fields": {
+      "municipality_id": 10,
+      "identifier": 0,
+      "name": "Muu"
+    }
   }
 ]

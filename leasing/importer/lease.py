@@ -153,10 +153,6 @@ class LeaseImporter(BaseImporter):
             vuokraus_rows = rows_to_dict_list(cursor)
 
             for lease_row in vuokraus_rows:
-                if id_parts['KUNTA'] == 0:
-                    self.stdout.write(' Municipality is 0! Skipping.')
-                    continue
-
                 lease_type = LeaseType.objects.get(identifier=id_parts['TARKOITUS'])
                 municipality = Municipality.objects.get(identifier=id_parts['KUNTA'])
                 district = District.objects.get(municipality=municipality, identifier=id_parts['KAUPOSA'])

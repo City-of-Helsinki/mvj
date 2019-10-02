@@ -70,5 +70,13 @@
       "name": "Lohja",
       "identifier": "9"
     }
+  },
+  {
+    "model": "leasing.Municipality",
+    "pk": 10,
+    "fields": {
+      "name": "Muu",
+      "identifier": "0"
+    }
   }
 ]
