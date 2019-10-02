@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.utils.translation import ugettext_lazy as _
+
 from leasing.calculation.explanation import Explanation, ExplanationItem
 
 
@@ -149,7 +151,7 @@ class CalculationResult:
         explanation_item = ExplanationItem()
         explanation_item.subject = {
             "type": "total",
-            "description": "Total"
+            "description": _("Total payable")
         }
         explanation_item.date_ranges = [(self.date_range_start, self.date_range_end)]
         explanation_item.amount = self.get_total_amount()
