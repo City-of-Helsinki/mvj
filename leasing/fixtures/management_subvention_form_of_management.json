@@ -1,0 +1,30 @@
+[
+  {
+    "model": "leasing.ManagementSubventionFormOfManagement",
+    "pk": 1,
+    "fields": {
+      "name": "ARAn pitkä vuokratuki"
+    }
+  },
+  {
+    "model": "leasing.ManagementSubventionFormOfManagement",
+    "pk": 2,
+    "fields": {
+      "name": "ARAn muut tuet"
+    }
+  },
+  {
+    "model": "leasing.ManagementSubventionFormOfManagement",
+    "pk": 3,
+    "fields": {
+      "name": "Hitas"
+    }
+  },
+  {
+    "model": "leasing.ManagementSubventionFormOfManagement",
+    "pk": 4,
+    "fields": {
+      "name": "Muu välimuoto"
+    }
+  }
+]

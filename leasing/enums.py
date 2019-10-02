@@ -327,12 +327,12 @@ class SubventionType(Enum):
     """
     In Finnish: Subvention tyyppi
     """
-    X_DISCOUNT = 'x_discount'  # In Finnish: X alennus
-    RE_LEASE_DISCOUNT = 're_lease_discount'  # In Finnish: Jatkovuokrauksen alennus
+    FORM_OF_MANAGEMENT = 'form_of_management'  # In Finnish: Hallintamuoto
+    RE_LEASE = 're_lease'  # In Finnish: Uudelleenvuokraus
 
     class Labels:
-        X_DISCOUNT = pgettext_lazy('Subvention type', 'X discount')
-        RE_LEASE_DISCOUNT = pgettext_lazy('Subvention type', 'Re-lease discount')
+        FORM_OF_MANAGEMENT = pgettext_lazy('Subvention type', 'Form of management')
+        RE_LEASE = pgettext_lazy('Subvention type', 'Re-lease')
 
 
 class InvoiceDeliveryMethod(Enum):

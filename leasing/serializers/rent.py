@@ -111,7 +111,7 @@ class ManagementSubventionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManagementSubvention
-        fields = ('id', 'management', 'subvention_percent')
+        fields = ('id', 'management', 'subvention_amount')
 
 
 class ManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
@@ -121,7 +121,7 @@ class ManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManagementSubvention
-        fields = ('id', 'management', 'subvention_percent')
+        fields = ('id', 'management', 'subvention_amount')
 
 
 class TemporarySubventionSerializer(serializers.ModelSerializer):
@@ -260,7 +260,7 @@ class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer
 
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
-        fields = ('id', 'management', 'subvention_percent')
+        fields = ('id', 'management', 'subvention_amount')
 
 
 class LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
@@ -270,7 +270,7 @@ class LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(serializers.Mod
 
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
-        fields = ('id', 'management', 'subvention_percent')
+        fields = ('id', 'management', 'subvention_amount')
 
 
 class LeaseBasisOfRentTemporarySubventionSerializer(serializers.ModelSerializer):

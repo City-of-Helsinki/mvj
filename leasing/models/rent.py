@@ -729,15 +729,15 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
-    # In Finnish: Subventioalennuksen tyyppi
+    # In Finnish: Subventiotyyppi
     subvention_type = EnumField(SubventionType, verbose_name=_("Subvention type"), null=True, blank=True,
                                 max_length=30)
 
-    # In Finnish: Perusalennus markkinavuokrasta
+    # In Finnish: Markkinavuokran subventio
     subvention_base_percent = models.DecimalField(verbose_name=_("Subvention base percent"), null=True, blank=True,
                                                   max_digits=10, decimal_places=2)
 
-    # In Finnish: Porrastettu alennus
+    # In Finnish: Siirtymäajan subventio
     subvention_graduated_percent = models.DecimalField(verbose_name=_("Graduated subvention percent"), null=True,
                                                        blank=True, max_digits=10, decimal_places=2)
 
@@ -800,22 +800,31 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
                 'Cannot get adjust amount for RentAdjustmentType {}'.format(self.amount_type))
 
 
+class ManagementSubventionFormOfManagement(NameModel):
+    """
+    In Finnish: Hallintamuoto (Hallintamuotosubventio)
+    """
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Form of management (Subvention)")
+        verbose_name_plural = pgettext_lazy("Model name", "Form of management (Subvention)")
+
+
 class ManagementSubvention(models.Model):
     rent_adjustment = models.ForeignKey(RentAdjustment, verbose_name=_("Rent adjustment"),
                                         related_name='management_subventions', on_delete=models.CASCADE)
 
     # In Finnish: Hallintamuoto
-    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), related_name='+',
-                                   on_delete=models.PROTECT)
+    management = models.ForeignKey(ManagementSubventionFormOfManagement, verbose_name=_("Form of management"),
+                                   related_name='+', on_delete=models.PROTECT)
 
-    # In Finnish: Alennus markkinavuokrasta
-    subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
+    # In Finnish: Subventio markkinavuokrasta / vuosi
+    subvention_amount = models.DecimalField(verbose_name=_("Subvention amount"), max_digits=10, decimal_places=2)
 
     recursive_get_related_skip_relations = ["rent_adjustment"]
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Management subvention")
-        verbose_name_plural = pgettext_lazy("Model name", "Management subventions")
+        verbose_name = pgettext_lazy("Model name", "Management subvention (Rent adjustment)")
+        verbose_name_plural = pgettext_lazy("Model name", "Management subventions (Rent adjustment)")
 
 
 class TemporarySubvention(models.Model):
@@ -825,14 +834,14 @@ class TemporarySubvention(models.Model):
     # In Finnish: Kuvaus
     description = models.CharField(verbose_name=_("Description"), null=True, blank=True, max_length=255)
 
-    # In Finnish: Alennus markkinavuokrasta
+    # In Finnish: Subventio markkinavuokrasta prosenttia / vuosi
     subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
 
     recursive_get_related_skip_relations = ["rent_adjustment"]
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Temporary subvention")
-        verbose_name_plural = pgettext_lazy("Model name", "Temporary subventions")
+        verbose_name = pgettext_lazy("Model name", "Temporary subvention (Rent adjustment)")
+        verbose_name_plural = pgettext_lazy("Model name", "Temporary subventions (Rent adjustment)")
 
 
 class PayableRent(models.Model):
@@ -994,14 +1003,14 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     locked_by = models.ForeignKey(User, verbose_name=_("Locked by"), related_name='+', null=True, blank=True,
                                   on_delete=models.PROTECT)
 
-    # In Finnish: Subventioalennuksen tyyppi
+    # In Finnish: Subvention tyyppi
     subvention_type = EnumField(SubventionType, verbose_name=_("Subvention type"), null=True, blank=True, max_length=30)
 
-    # In Finnish: Perusalennus markkinavuokrasta
+    # In Finnish: Markkinavuokran subventio
     subvention_base_percent = models.DecimalField(verbose_name=_("Subvention base percent"), null=True, blank=True,
                                                   max_digits=10, decimal_places=2)
 
-    # In Finnish: Porrastettu alennus
+    # In Finnish: Siirtymäjan subventio
     subvention_graduated_percent = models.DecimalField(verbose_name=_("Graduated subvention percent"), null=True,
                                                        blank=True, max_digits=10, decimal_places=2)
 
@@ -1022,17 +1031,17 @@ class LeaseBasisOfRentManagementSubvention(models.Model):
                                             related_name='management_subventions', on_delete=models.CASCADE)
 
     # In Finnish: Hallintamuoto
-    management = models.ForeignKey('leasing.Management', verbose_name=_("Form of management"), related_name='+',
-                                   on_delete=models.PROTECT)
+    management = models.ForeignKey(ManagementSubventionFormOfManagement, verbose_name=_("Form of management"),
+                                   related_name='+', on_delete=models.PROTECT)
 
-    # In Finnish: Alennus markkinavuokrasta
-    subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
+    # In Finnish: Subventio markkinavuokrasta / vuosi
+    subvention_amount = models.DecimalField(verbose_name=_("Subvention amount"), max_digits=10, decimal_places=2)
 
     recursive_get_related_skip_relations = ["lease_basis_of_rent"]
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Management subvention")
-        verbose_name_plural = pgettext_lazy("Model name", "Management subventions")
+        verbose_name = pgettext_lazy("Model name", "Management subvention (Basis of rent)")
+        verbose_name_plural = pgettext_lazy("Model name", "Management subventions (Basis of rent)")
 
 
 class LeaseBasisOfRentTemporarySubvention(models.Model):
@@ -1042,14 +1051,14 @@ class LeaseBasisOfRentTemporarySubvention(models.Model):
     # In Finnish: Kuvaus
     description = models.CharField(verbose_name=_("Description"), null=True, blank=True, max_length=255)
 
-    # In Finnish: Alennus markkinavuokrasta
+    # In Finnish: Subventio markkinavuokrasta prosenttia / vuosi
     subvention_percent = models.DecimalField(verbose_name=_("Subvention percent"), max_digits=10, decimal_places=2)
 
     recursive_get_related_skip_relations = ["lease_basis_of_rent"]
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Temporary subvention")
-        verbose_name_plural = pgettext_lazy("Model name", "Temporary subventions")
+        verbose_name = pgettext_lazy("Model name", "Temporary subvention (Basis of rent)")
+        verbose_name_plural = pgettext_lazy("Model name", "Temporary subventions (Basis of rent)")
 
 
 auditlog.register(Rent)
