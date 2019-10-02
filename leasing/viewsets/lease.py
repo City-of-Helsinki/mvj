@@ -370,7 +370,7 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
         if self.request.query_params.get('succinct'):
             return LeaseSuccinctSerializer
 
-        if self.request.query_params.get('in_bbox'):
+        if self.request.query_params.get('in_bbox') or self.request.query_params.get('succinct_with_geometry'):
             return LeaseSuccinctWithGeometrySerializer
 
         if self.action == 'list':
