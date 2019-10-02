@@ -6,11 +6,10 @@ from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle
-from leasing.models import Index, Management
+from leasing.models import Index
 from leasing.models.rent import (
     EqualizedRent, LeaseBasisOfRentManagementSubvention, LeaseBasisOfRentTemporarySubvention, ManagementSubvention,
-    TemporarySubvention)
-from leasing.serializers.common import ManagementSerializer
+    ManagementSubventionFormOfManagement, TemporarySubvention)
 from users.serializers import UserSerializer
 
 from ..models import (
@@ -105,9 +104,15 @@ class EqualizedRentSerializer(serializers.ModelSerializer):
         fields = ('id', 'start_date', 'end_date', 'payable_amount', 'equalized_payable_amount', 'equalization_factor')
 
 
+class ManagementSubventionFormOfManagementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManagementSubventionFormOfManagement
+        fields = '__all__'
+
+
 class ManagementSubventionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    management = ManagementSerializer(required=False)
+    management = ManagementSubventionFormOfManagementSerializer(required=False)
 
     class Meta:
         model = ManagementSubvention
@@ -116,8 +121,9 @@ class ManagementSubventionSerializer(serializers.ModelSerializer):
 
 class ManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    management = InstanceDictPrimaryKeyRelatedField(instance_class=Management, queryset=Management.objects.all(),
-                                                    related_serializer=ManagementSerializer)
+    management = InstanceDictPrimaryKeyRelatedField(instance_class=ManagementSubventionFormOfManagement,
+                                                    queryset=ManagementSubventionFormOfManagement.objects.all(),
+                                                    related_serializer=ManagementSubventionFormOfManagementSerializer)
 
     class Meta:
         model = ManagementSubvention
@@ -256,7 +262,7 @@ class IndexSerializer(serializers.ModelSerializer):
 
 class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    management = ManagementSerializer(required=False)
+    management = ManagementSubventionFormOfManagementSerializer(required=False)
 
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
@@ -265,8 +271,9 @@ class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer
 
 class LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    management = InstanceDictPrimaryKeyRelatedField(instance_class=Management, queryset=Management.objects.all(),
-                                                    related_serializer=ManagementSerializer)
+    management = InstanceDictPrimaryKeyRelatedField(instance_class=ManagementSubventionFormOfManagement,
+                                                    queryset=ManagementSubventionFormOfManagement.objects.all(),
+                                                    related_serializer=ManagementSubventionFormOfManagementSerializer)
 
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
