@@ -13,7 +13,7 @@ from leasing.enums import (
 from leasing.models import (
     Collateral, Comment, Condition, Contact, Contract, ContractChange, ContractRent, Decision, District,
     FixedInitialYearRent, IndexAdjustedRent, Inspection, IntendedUse, Invoice, Lease, LeaseArea, LeaseIdentifier,
-    LeaseType, Municipality, PayableRent, RelatedLease, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
+    LeaseType, Municipality, PayableRent, Rent, RentAdjustment, RentIntendedUse, Tenant, TenantContact)
 from leasing.models.invoice import InvoicePayment, InvoiceRow
 from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.rent import FIXED_DUE_DATES, EqualizedRent, RentDueDate
@@ -41,7 +41,6 @@ class LeaseImporter(BaseImporter):
         self.cursor = connection.cursor()
         self.stdout = stdout
         self.stderr = stderr
-        self.related_leases = []
         self.lease_ids = None
         self.offset = 0
 
@@ -76,7 +75,6 @@ class LeaseImporter(BaseImporter):
             auditlog.unregister(model)
 
         self.import_leases()
-        self.update_related_leases()
 
     def get_or_create_default_lessor(self):
         (contact, contact_created) = Contact.objects.get_or_create(
@@ -248,21 +246,6 @@ class LeaseImporter(BaseImporter):
                     object_repr='Tuonti {}'.format(lease.get_identifier_string()),
                     actor=mvj_import_user,
                 )
-
-                self.stdout.write("Related to lease:")
-                if lease_row['LIITTYY_ALKUOSA'] != lease_row['ALKUOSA'] or \
-                        lease_row['LIITTYY_JUOKSU'] != lease_row['JUOKSU']:
-                    related_identifier = "{}-{}".format(lease_row['LIITTYY_ALKUOSA'], lease_row['LIITTYY_JUOKSU'])
-
-                    self.stdout.write(" {}".format(related_identifier))
-
-                    self.related_leases.append({
-                        'from_lease': related_identifier,
-                        'to_lease': lease,
-                        'type': None,
-                    })
-
-                self.stdout.write(" {} relations".format(len(self.related_leases)))
 
                 self.stdout.write("Vuokralaiset:")
                 query = """
@@ -1084,25 +1067,3 @@ class LeaseImporter(BaseImporter):
                         supervised_date=None,
                         description='\n'.join(descriptions),
                     )
-
-    def update_related_leases(self):
-        if not self.related_leases:
-            return
-
-        self.stdout.write('Updating related leases:')
-
-        for related_lease_data in self.related_leases:
-            self.stdout.write(' {} -> {}'.format(related_lease_data['from_lease'],
-                                                 related_lease_data['to_lease']))
-
-            try:
-                from_lease = Lease.objects.get_by_identifier(related_lease_data['from_lease'])
-                (related_lease, related_lease_created) = RelatedLease.objects.get_or_create(
-                    from_lease=from_lease,
-                    to_lease=related_lease_data['to_lease'],
-                    type=related_lease_data['type']
-                )
-            except Lease.DoesNotExist:
-                self.stdout.write('  Lease {} does not exist!'.format(related_lease_data['from_lease']))
-
-        self.stdout.write(' {} relations'.format(len(self.related_leases)))
