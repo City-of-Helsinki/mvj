@@ -150,6 +150,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "managementsubventionformofmanagement": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view",),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
     "temporarysubvention": {
         1: ("view",),
         2: ("view",),
