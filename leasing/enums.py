@@ -228,7 +228,7 @@ class RentType(Enum):
     INDEX = 'index'  # Indeksi
     ONE_TIME = 'one_time'  # Kertakaikkinen
     FIXED = 'fixed'  # Kiinteä
-    FREE = 'free'  # Ilmainen
+    FREE = 'free'  # Korvauksetta
     MANUAL = 'manual'  # Käsinlaskenta
 
     class Labels:

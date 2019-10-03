@@ -639,7 +639,7 @@ msgstr "Kiinteä"
 #: leasing/enums.py:238
 msgctxt "Rent type"
 msgid "Free"
-msgstr "Ilmainen"
+msgstr "Korvauksetta"
 
 #: leasing/enums.py:239
 msgctxt "Rent type"
