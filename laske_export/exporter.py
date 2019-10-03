@@ -131,6 +131,11 @@ class LaskeExporter:
 
                 continue
 
+            # Zero amount invoices are currently sent to Laske. Uncomment this if desired otherwise.
+            # if invoice.billed_amount == 0:
+            #     self.write_to_output(' Not sending invoice id {} because the billed amount is 0'.format(invoice.id))
+            #     continue
+
             if not invoice.invoicing_date:
                 invoice.invoicing_date = now.date()
                 invoice.save()
@@ -153,28 +158,30 @@ class LaskeExporter:
 
             self.write_to_output(' Added invoice id {} as invoice number {}'.format(invoice.id, invoice.number))
 
-        self.write_to_output('Added {} invoices to the export'.format(invoice_count))
+        if invoice_count > 0:
+            self.write_to_output('Added {} invoices to the export'.format(invoice_count))
 
-        sales_order_container = SalesOrderContainer()
-        sales_order_container.sales_orders = sales_orders
+            sales_order_container = SalesOrderContainer()
+            sales_order_container.sales_orders = sales_orders
 
-        laske_export_log_entry.invoices.set(log_invoices)
+            laske_export_log_entry.invoices.set(log_invoices)
 
-        export_filename = 'MTIL_IN_{}_{:08}.xml'.format(settings.LASKE_VALUES['sender_id'], laske_export_log_entry.id)
+            export_filename = 'MTIL_IN_{}_{:08}.xml'.format(
+                settings.LASKE_VALUES['sender_id'], laske_export_log_entry.id)
 
-        self.write_to_output('Export filename: {}'.format(export_filename))
+            self.write_to_output('Export filename: {}'.format(export_filename))
 
-        xml_string = sales_order_container.to_xml_string()
+            xml_string = sales_order_container.to_xml_string()
 
-        self.save_to_file(xml_string, export_filename)
+            self.save_to_file(xml_string, export_filename)
 
-        self.write_to_output('Sending...')
+            self.write_to_output('Sending...')
 
-        self.send(export_filename)
+            self.send(export_filename)
 
-        self.write_to_output('Done.')
+            self.write_to_output('Done.')
 
-        Invoice.objects.filter(id__in=[o.id for o in invoices]).update(sent_to_sap_at=now)
+            Invoice.objects.filter(id__in=[o.id for o in invoices]).update(sent_to_sap_at=now)
 
         # TODO: Log errors
         laske_export_log_entry.ended_at = timezone.now()
