@@ -54,13 +54,24 @@ class Command(BaseCommand):
     help = 'Attach areas'
 
     def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
+        from auditlog.registry import auditlog
+
+        # Unregister all models from auditlog when importing
+        for model in list(auditlog._registry.keys()):
+            auditlog.unregister(model)
+
         leases = Lease.objects.all()
 
         for lease in leases:
             self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
 
             lease_areas = {normalize_identifier(la.identifier): la for la in lease.lease_areas.all()}
+            self.stdout.write(' Existing lease areas: {}'.format(', '.join(lease_areas.keys())))
+
             areas = Area.objects.filter(type=AreaType.LEASE_AREA, identifier=str(lease.identifier))
+
+            if not areas:
+                self.stdout.write(' No lease areas found in area table')
 
             for area in areas:
                 property_identifier = '{}-{}-{}-{}{}'.format(
@@ -74,12 +85,12 @@ class Command(BaseCommand):
                 self.stdout.write(' {} -> {}'.format(property_identifier, area_identifier))
 
                 if area_identifier not in lease_areas.keys():
-                    self.stdout.write('Lease area NOT FOUND!')
+                    self.stdout.write('  Lease area NOT FOUND!')
                     continue
 
                 lease_areas[area_identifier].geometry = area.geometry
                 lease_areas[area_identifier].save()
-                self.stdout.write(' Lease area FOUND. SAVED.')
+                self.stdout.write('  Lease area FOUND. SAVED.')
 
                 try:
                     other_areas = Area.objects.filter(geometry__intersects=area.geometry).exclude(
