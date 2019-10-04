@@ -2588,3 +2588,105 @@ def test_fixed_initial_year_rent_for_date_range_remaining_ranges(
     calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(contract_rent.intended_use, range_start,
                                                                             range_end)
     assert calculation_result.remaining_ranges == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("rent_cycle, due_dates_per_year, billing_period, expected", [
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        0,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        1,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        4,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        12,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        1,
+        (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+        True
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        2,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+        False
+    ),
+    (
+        RentCycle.JANUARY_TO_DECEMBER,
+        2,
+        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+        True
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        0,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        1,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        4,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        12,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+        False
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        1,
+        (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+        True
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        2,
+        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+        False
+    ),
+    (
+        RentCycle.APRIL_TO_MARCH,
+        2,
+        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+        True
+    ),
+])
+def test_is_the_last_billing_period(lease_test_data, rent_factory, rent_cycle, due_dates_per_year, billing_period,
+                                    expected):
+    lease = lease_test_data['lease']
+
+    rent = rent_factory(lease=lease)
+    rent.cycle = rent_cycle
+    rent.start_date = date(year=2000, month=1, day=1)
+    rent.end_date = date(year=2030, month=1, day=1)
+    rent.due_dates_type = DueDatesType.FIXED
+    rent.due_dates_per_year = due_dates_per_year
+    rent.save()
+
+    assert rent.is_the_last_billing_period(billing_period) == expected

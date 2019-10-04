@@ -16,11 +16,12 @@ from enumfields import EnumField
 from safedelete.managers import SafeDeleteManager
 
 from field_permissions.registry import field_permissions
-from leasing.calculation.result import CalculationResult
+from leasing.calculation.result import CalculationAmount, CalculationResult
 from leasing.enums import (
     Classification, DueDatesPosition, InvoiceState, InvoiceType, LeaseRelationType, LeaseState, NoticePeriodType,
     TenantContactType)
 from leasing.models import Contact
+from leasing.models.invoice import InvoiceRow
 from leasing.models.mixins import NameModel, TimeStampedModel, TimeStampedSafeDeleteModel
 from leasing.models.utils import (
     fix_amount_for_overlap, get_range_overlap_and_remainder, is_instance_empty, subtract_ranges_from_ranges)
@@ -609,9 +610,13 @@ class Lease(TimeStampedSafeDeleteModel):
                     amounts_for_billing_periods[billing_period] = {
                         'due_date': lease_due_date,
                         'calculation_result': CalculationResult(date_range_start=start_date, date_range_end=end_date),
+                        'last_billing_period': False
                     }
 
                 rent_calculation_result = rent.get_amount_for_date_range(*billing_period, explain=True, dry_run=dry_run)
+
+                if rent.is_the_last_billing_period(billing_period):
+                    amounts_for_billing_periods[billing_period]['last_billing_period'] = True
 
                 amounts_for_billing_periods[billing_period]['calculation_result'].combine(rent_calculation_result)
 
@@ -624,9 +629,13 @@ class Lease(TimeStampedSafeDeleteModel):
         receivable_type_rent = ReceivableType.objects.get(pk=1)
 
         invoice_data = []
+        last_billing_period = None
 
         for billing_period, period_rent in period_rents.items():
             contact_rows = defaultdict(list)
+
+            if period_rent['last_billing_period']:
+                last_billing_period = billing_period
 
             for calculation_amount in period_rent['calculation_result'].get_all_amounts():
                 amount_period = (calculation_amount.date_range_start, calculation_amount.date_range_end)
@@ -660,6 +669,7 @@ class Lease(TimeStampedSafeDeleteModel):
                             amount_rows[contact].append({
                                 'tenant': tenant,
                                 'receivable_type': receivable_type_rent,
+                                'intended_use': calculation_amount.item.intended_use,
                                 'billing_period_start_date': overlap[0],
                                 'billing_period_end_date': overlap[1],
                                 'amount': share_amount,
@@ -681,13 +691,16 @@ class Lease(TimeStampedSafeDeleteModel):
                         # TODO: Should do something else?
                         random_contact = choice(list(shares.keys()))
                         random_tenant = choice(list(shares[random_contact].keys()))
+                        rounded_amount = Decimal(calculation_amount.amount).quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_UP)
 
                         amount_rows[random_contact].append({
                             'tenant': random_tenant,
                             'receivable_type': receivable_type_rent,
+                            'intended_use': calculation_amount.item.intended_use,
                             'billing_period_start_date': amount_period[0],
                             'billing_period_end_date': amount_period[1],
-                            'amount': calculation_amount.amount,
+                            'amount': rounded_amount,
                         })
 
                 for contact, rows in amount_rows.items():
@@ -696,6 +709,7 @@ class Lease(TimeStampedSafeDeleteModel):
             # TODO: If there are no suitable contacts for some time periods, add
             #  the remaining amounts to someone
             total_period_amount = sum([row['amount'] for rows in contact_rows.values() for row in rows])
+            total_period_amount = Decimal(total_period_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
             billing_period_invoices = []
             for contact, rows in contact_rows.items():
@@ -706,6 +720,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 )]
 
                 billable_amount = sum([row['amount'] for row in rows])
+                billable_amount = Decimal(billable_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
                 invoice_datum = {
                     'type': InvoiceType.CHARGE,
@@ -727,7 +742,119 @@ class Lease(TimeStampedSafeDeleteModel):
 
             invoice_data.append(billing_period_invoices)
 
+        # Add the cent amounts to the invoice_data that are missing
+        # due to roundings during the year.
+        if last_billing_period:
+            self._year_rent_rounding_correction(last_billing_period, invoice_data)
+
         return invoice_data
+
+    def _year_rent_rounding_correction(self, last_billing_period, invoice_data):  # noqa C901 TODO
+        round_adjust_year = last_billing_period[0].year
+        first_day_of_year = datetime.date(year=round_adjust_year, month=1, day=1)
+        last_day_of_year = datetime.date(year=round_adjust_year, month=12, day=31)
+
+        # Gather all billing periods there are for all of the rents
+        billing_periods = set()
+        for rent in self.get_active_rents_on_period(first_day_of_year, last_day_of_year):
+            billing_periods.update(rent.get_all_billing_periods_for_year(round_adjust_year))
+
+        # Calculate what the already billed amount is
+        already_billed_amounts = defaultdict(Decimal)
+        for billing_period in billing_periods:
+            # First try to find the billing period invoice from the invoices
+            # currently being created.
+            found = False
+            for period_invoice_data in invoice_data:
+                for datum in period_invoice_data:
+                    if (datum['billing_period_start_date'] == billing_period[0] and
+                            datum['billing_period_end_date'] == billing_period[1]):
+                        for row in datum['rows']:
+                            already_billed_amounts[row['intended_use']] += row['amount']
+                        found = True
+
+            # If not found, calculate from the previously generated invoices
+            if not found:
+                for row in InvoiceRow.objects.filter(
+                    intended_use__isnull=False,
+                    invoice__billing_period_start_date=billing_period[0],
+                    invoice__billing_period_end_date=billing_period[1],
+                    invoice__generated=True,
+                    invoice__deleted__isnull=True
+                ):
+                    already_billed_amounts[row.intended_use] += row.amount
+
+        total_amounts_for_year = self.calculate_rent_amount_for_year(
+            round_adjust_year).get_total_amounts_by_intended_uses()
+
+        difference_by_intended_use = {}
+
+        for intended_use, already_billed_amount in already_billed_amounts.items():
+            if intended_use not in total_amounts_for_year:
+                continue
+
+            already_billed_amount = Decimal(already_billed_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+            total_amount_for_year = Decimal(
+               total_amounts_for_year[intended_use]
+            ).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+            # Check for rounding errors
+            difference = total_amount_for_year - already_billed_amount
+            if not difference:
+                continue
+
+            difference_by_intended_use[intended_use] = difference
+
+        if not difference_by_intended_use:
+            return
+
+        # Distribute the differences to the tenants according to their rent
+        # share by using calculate_invoices method again. Rounding error
+        # correction won't happen again because last_billing_period is set
+        # to False.
+        rounding_calculation_result = CalculationResult(
+            date_range_start=last_billing_period[0], date_range_end=last_billing_period[1])
+
+        class BogusItem:
+            def __init__(self, intended_use):
+                self.intended_use = intended_use
+
+        for intended_use, amount in difference_by_intended_use.items():
+            rounding_calculation_result.add_amount(
+                CalculationAmount(BogusItem(intended_use), last_billing_period[0], last_billing_period[1],
+                                  amount)
+            )
+
+        rounding_amounts = {
+            last_billing_period: {
+                'due_date': None,
+                'calculation_result': rounding_calculation_result,
+                'last_billing_period': False
+            }
+        }
+
+        rounding_invoice_data = self.calculate_invoices(rounding_amounts)
+
+        # Inject the rounding rows to the invoices
+        for rounding_invoice_datum in rounding_invoice_data[0]:
+            for period_invoices in invoice_data:
+                injected = False
+                for invoice_datum in period_invoices:
+                    if (invoice_datum['billing_period_start_date'] == last_billing_period[0] and
+                            invoice_datum['billing_period_end_date'] == last_billing_period[1] and
+                            invoice_datum['recipient'] == rounding_invoice_datum['recipient']):
+                        invoice_datum['rows'].extend(rounding_invoice_datum['rows'])
+                        invoice_datum['billed_amount'] = sum([row['amount'] for row in invoice_datum['rows']])
+                        injected = True
+
+                if not injected:
+                    continue
+
+                # Adjust total_amount in the affected invoice sets
+                total_period_amount = sum(
+                    [row['amount'] for period_invoice in period_invoices for row in period_invoice['rows']])
+                for period_invoice in period_invoices:
+                    period_invoice['total_amount'] = total_period_amount
 
     def generate_first_invoices(self, end_date=None):  # noqa C901 TODO
         from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
@@ -852,6 +979,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 extra_billing_period: {
                     'due_date': today,
                     'calculation_result': calculation_result,
+                    'last_billing_period': False,  # TODO: check
                 }
             }
 
