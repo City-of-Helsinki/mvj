@@ -1,0 +1,58 @@
+[
+  {
+    "model": "helusers.ADGroup",
+    "pk": 1,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_selailija",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_selailija"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 2,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_valmistelijat",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_valmistelijat"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 3,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_sopimusvalmistelija",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_sopimusvalmistelija"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 4,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_syottaja",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_syottaja"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 5,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_perintalakimies",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_perintalakimies"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 6,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_laskuttaja",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_laskuttaja"
+    }
+  },
+  {
+    "model": "helusers.ADGroup",
+    "pk": 7,
+    "fields": {
+      "name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_paakayttaja",
+      "display_name": "helsinki1\\sg_kymp_ad-tunnistamo_mvj_paakayttaja"
+    }
+  }
+]
