@@ -1,10 +1,10 @@
 from enumfields.drf.serializers import EnumSupportSerializerMixin
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets  # type: ignore
 
 from .. import models
 
 
-class Serializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class Serializer(EnumSupportSerializerMixin, serializers.ModelSerializer):  # type: ignore
     pass
 
 
@@ -14,7 +14,7 @@ class JobSerializer(Serializer):
         fields = '__all__'
 
 
-class JobViewSet(viewsets.ReadOnlyModelViewSet):
+class JobViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
     queryset = models.Job.objects.all()
     serializer_class = JobSerializer
 
@@ -25,7 +25,7 @@ class JobRunSerializer(Serializer):
         fields = '__all__'
 
 
-class JobRunViewSet(viewsets.ReadOnlyModelViewSet):
+class JobRunViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
     queryset = models.JobRun.objects.all()
     serializer_class = JobRunSerializer
     filterset_fields = ['exit_code']
@@ -37,7 +37,7 @@ class JobRunLogEntrySerializer(Serializer):
         fields = '__all__'
 
 
-class JobRunLogEntryViewSet(viewsets.ReadOnlyModelViewSet):
+class JobRunLogEntryViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
     queryset = models.JobRunLogEntry.objects.all()
     serializer_class = JobRunLogEntrySerializer
     filterset_fields = ['run', 'kind']

@@ -1,9 +1,11 @@
 -c requirements.txt
-cx_Oracle
 django-debug-toolbar
 django-extensions
 django-stubs
-djangorestframework-stubs
+# djangorestframework-stubs doesn't support Django Rest Framework 3.10
+# or mypy >= 0.730. When It supports, this can be uncommented and the
+# "type: ignore" can be removed from couple of files in the batchrun.
+#djangorestframework-stubs
 flake8
 flake8-print
 ipython
@@ -12,8 +14,7 @@ mypy
 openpyxl
 pep8-naming
 pydocstyle
-# pytest-factoryboy doesn't support pytest 5.0.0 yet. See: https://github.com/pytest-dev/pytest-factoryboy/issues/77
-pytest<5.0.0
+pytest
 pytest-cov
 pytest-django
 pytest-factoryboy
