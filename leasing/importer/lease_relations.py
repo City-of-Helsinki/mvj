@@ -93,8 +93,8 @@ class LeaseRelationsImporter(BaseImporter):
 
             found += 1
             (related_lease, related_lease_created) = RelatedLease.objects.get_or_create(
-                from_lease_id=from_lease,
-                to_lease_id=to_lease,
+                from_lease_id=from_lease_id,
+                to_lease_id=to_lease_id,
                 type=LeaseRelationType.OTHER,
             )
 
