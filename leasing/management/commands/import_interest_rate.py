@@ -13,6 +13,10 @@ class Command(BaseCommand):
     help = 'Import interest rate from suomenpankki.fi'
 
     def handle(self, *args, **options):
+        from auditlog.registry import auditlog
+
+        auditlog.unregister(InterestRate)
+
         r = requests.get('https://www.suomenpankki.fi/WebForms/ReportViewerPage.aspx',
                          params={
                              'report': '/tilastot/markkina-_ja_hallinnolliset_korot/viitekorko_fi',
