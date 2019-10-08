@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import decimal
 import re
 from decimal import Decimal
 
@@ -59,10 +60,16 @@ class Command(BaseCommand):
             returned_date_cell = sheet.cell(row=row_num, column=RETURNED_DATE_COLUMN)
             note_cell = sheet.cell(row=row_num, column=NOTE_COLUMN)
 
+            if lease_identifier_cell.value is None:
+                continue
+
             if lease_identifier_cell.value is None or amount_cell.value is None:
                 amount = Decimal(0)
             else:
-                amount = Decimal(str(amount_cell.value))
+                try:
+                    amount = Decimal(str(amount_cell.value))
+                except decimal.InvalidOperation:
+                    amount = Decimal(0)
 
             lease_identifier_cell_value = lease_identifier_cell.value.strip()
             # Fix typos in excel
