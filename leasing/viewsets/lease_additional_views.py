@@ -229,6 +229,9 @@ class LeaseRentForPeriodView(APIView):
         }
 
         for rent in lease.rents.all():
+            if not rent.is_active_on_period(start_date, end_date):
+                continue
+
             calculation_result = rent.get_amount_for_date_range(start_date, end_date, dry_run=True)
 
             explanation_serializer = ExplanationSerializer(calculation_result.get_explanation())
