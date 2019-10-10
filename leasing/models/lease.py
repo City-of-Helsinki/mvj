@@ -540,6 +540,28 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return self.rents.filter(rent_range_filter)
 
+    # TODO: Create tests for this
+    def get_all_billing_periods_for_year(self, year):
+        date_range_start = datetime.date(year, 1, 1)
+        date_range_end = datetime.date(year, 12, 31)
+
+        billing_periods = set()
+        for rent in self.get_active_rents_on_period(date_range_start, date_range_end):
+            billing_periods.update(rent.get_all_billing_periods_for_year(year))
+
+        billing_periods = sorted(list(billing_periods))
+
+        return billing_periods
+
+    # TODO: Create tests for this
+    def is_the_last_billing_period(self, billing_period):
+        billing_periods = self.get_all_billing_periods_for_year(billing_period[0].year)
+
+        try:
+            return billing_periods.index(billing_period) == len(billing_periods) - 1
+        except ValueError:
+            return False
+
     def calculate_rent_amount_for_period(self, start_date, end_date):
         calculation_result = CalculationResult(date_range_start=start_date, date_range_end=end_date)
 
@@ -615,7 +637,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
                 rent_calculation_result = rent.get_amount_for_date_range(*billing_period, explain=True, dry_run=dry_run)
 
-                if rent.is_the_last_billing_period(billing_period):
+                if self.is_the_last_billing_period(billing_period):
                     amounts_for_billing_periods[billing_period]['last_billing_period'] = True
 
                 amounts_for_billing_periods[billing_period]['calculation_result'].combine(rent_calculation_result)
@@ -800,7 +822,10 @@ class Lease(TimeStampedSafeDeleteModel):
 
             # Check for rounding errors
             difference = total_amount_for_year - already_billed_amount
-            if not difference:
+
+            # Limit rounding to maximum of Decimal(1) because cancelled
+            # or manually added invoices could affect the calculation.
+            if not difference or difference > Decimal(1):
                 continue
 
             difference_by_intended_use[intended_use] = difference
