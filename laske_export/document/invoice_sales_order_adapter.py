@@ -106,8 +106,15 @@ class InvoiceSalesOrderAdapter:
         # as the recipient. Or all references from all of the tenants.
         references = []
         for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
-            tenant_tenantcontact = invoice_row.tenant.get_tenant_tenantcontacts(
-                self.invoice.billing_period_start_date, self.invoice.billing_period_end_date).first()
+            start_date = self.invoice.billing_period_start_date
+            end_date = self.invoice.billing_period_end_date
+
+            # There might be invoices that have no billing_period_start and end_date at all!
+            # If this is the case, use the invoicing date to find the proper contacts
+            if not start_date and not end_date:
+                start_date = end_date = self.invoice.invoicing_date
+
+            tenant_tenantcontact = invoice_row.tenant.get_tenant_tenantcontacts(start_date, end_date).first()
             if (tenant_tenantcontact and tenant_tenantcontact.contact and
                     tenant_tenantcontact.contact == self.invoice.recipient):
                 if invoice_row.tenant.reference:
@@ -166,9 +173,21 @@ class InvoiceSalesOrderAdapter:
             line_item.line_text_l1 = ' '.join(line1_strings)[:70]
 
             if invoice_row.tenant:
-                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
-                    invoice_row.billing_period_start_date,
-                    invoice_row.billing_period_start_date).first()
+                # NB! As can be seen below, here the billing_period_start_date was used twice originally.
+                # I believe it's a mistake, but I'm leaving it here as a reminder in case some weird bugs pop up.
+                # tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
+                #     invoice_row.billing_period_start_date,
+                #     invoice_row.billing_period_start_date).first()
+
+                start_date = self.invoice.billing_period_start_date
+                end_date = self.invoice.billing_period_end_date
+
+                # There might be invoices that have no billing_period_start and end_date at all!
+                # If this is the case, use the invoicing date to find the proper contacts
+                if not start_date and not end_date:
+                    start_date = end_date = self.invoice.invoicing_date
+
+                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(start_date, end_date).first()
 
                 if tenant_contact and tenant_contact.contact:
                     line_item.line_text_l2 = '{}  '.format(tenant_contact.contact.get_name()[:68])
