@@ -69,7 +69,7 @@ class InvoiceSalesOrderAdapter:
 
             bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  '.format(
                 index_date=index_date,
-                year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))
+                year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))  # noqa: E501
 
         bill_texts.append('Vuokrakohde: {real_property_identifier}, {address}  '.format(
             real_property_identifier=real_property_identifier, address=address))

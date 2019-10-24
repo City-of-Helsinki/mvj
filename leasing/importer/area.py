@@ -273,8 +273,9 @@ class AreaImporter(BaseImporter):
                 Area.objects.update_or_create(defaults=other_data, **match_data)
 
                 count += 1
-                self.stdout.write('.', ending='')
-                if count % 100 == 0:
+                if count % 10 == 0:
+                    self.stdout.write('.', ending='')
+                if count % 1000 == 0:
                     self.stdout.write(' {}'.format(count))
                     self.stdout.flush()
 
