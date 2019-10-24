@@ -41,10 +41,6 @@ class InvoiceSalesOrderAdapter:
             if lease_area_address:
                 address = lease_area_address.address
 
-        index_date = '1.1.'
-        if rent.cycle == RentCycle.APRIL_TO_MARCH:
-            index_date = '1.4.'
-
         bill_texts = []
         row1 = 'Vuokraustunnus: {lease_identifier}  '.format(
             lease_identifier=self.invoice.lease.get_identifier_string())
@@ -63,9 +59,18 @@ class InvoiceSalesOrderAdapter:
                 lease_intended_use=self.invoice.lease.intended_use.name[:25])
         bill_texts.append(row2)
 
-        bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  '.format(
-            index_date=index_date,
-            year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))
+        # It's possible that the rent starts after the invoicing date, so there is no active rent.
+        # Rather than trying to guess which rent to use to calculate the yearly cost and index check date,
+        # ...just skip the row.
+        if rent:
+            index_date = '1.1.'
+            if rent.cycle == RentCycle.APRIL_TO_MARCH:
+                index_date = '1.4.'
+
+            bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  '.format(
+                index_date=index_date,
+                year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))
+
         bill_texts.append('Vuokrakohde: {real_property_identifier}, {address}  '.format(
             real_property_identifier=real_property_identifier, address=address))
 
