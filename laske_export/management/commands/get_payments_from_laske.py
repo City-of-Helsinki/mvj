@@ -85,6 +85,8 @@ class Command(BaseCommand):
             try:
                 fp = open(os.path.join(get_import_dir(), file_name), "wb")
                 ftp.retrbinary("RETR {}".format(file_name), fp.write)
+                self.stdout.write('Download complete. Moving it to arch directory on the FTP server.')
+                ftp.rename(file_name, 'arch/{}'.format(file_name))
                 self.stdout.write('Done.')
             except Exception as e:
                 self.stderr.write('Could not download file "{}". Error: '.format(file_name, str(e)))
