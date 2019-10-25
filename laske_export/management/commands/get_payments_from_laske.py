@@ -162,7 +162,11 @@ class Command(BaseCommand):
                     "started_at": timezone.now()
                 })
 
-            lines = self.get_payment_lines_from_file(filename)
+            try:
+                lines = self.get_payment_lines_from_file(filename)
+            except UnicodeDecodeError as e:
+                self.stderr.write('Failed to read file! Error {}'.format(str(e)))
+                continue
 
             for line in lines:
                 try:
