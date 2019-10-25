@@ -167,8 +167,16 @@ class Command(BaseCommand):
             for line in lines:
                 invoice_number = int(line[43:63])
                 amount = Decimal('{}.{}'.format(line[77:85], line[85:87]))
-                payment_date = datetime.date(year=2000 + int(line[21:23]), month=int(line[23:25]), day=int(line[25:27]))
                 filing_code = line[27:43].strip()
+                try:
+                    payment_date = datetime.date(
+                        year=2000 + int(line[21:23]),
+                        month=int(line[23:25]),
+                        day=int(line[25:27])
+                    )
+                except ValueError:
+                    self.stderr.write('Import failed: malformed date in payment for invoice #{} (filing code {})!')
+                    continue
 
                 self.stdout.write(' Invoice #{} amount: {} date: {} filing code: {}'.format(
                     invoice_number, amount, payment_date, filing_code))
