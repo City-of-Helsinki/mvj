@@ -175,7 +175,10 @@ class Command(BaseCommand):
                         day=int(line[25:27])
                     )
                 except ValueError:
-                    self.stderr.write('Import failed: malformed date in payment for invoice #{} (filing code {})!')
+                    self.stderr.write(
+                        'Import failed: malformed date in payment for invoice #{} (filing code {})!'.format(
+                            invoice_number, filing_code
+                        ))
                     continue
 
                 self.stdout.write(' Invoice #{} amount: {} date: {} filing code: {}'.format(
