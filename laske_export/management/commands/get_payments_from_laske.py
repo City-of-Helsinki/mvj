@@ -165,7 +165,12 @@ class Command(BaseCommand):
             lines = self.get_payment_lines_from_file(filename)
 
             for line in lines:
-                invoice_number = int(line[43:63])
+                try:
+                    invoice_number = int(line[43:63])
+                except ValueError:
+                    self.stderr.write('Import failed: no invoice number found in payment row!')
+                    continue
+
                 amount = Decimal('{}.{}'.format(line[77:85], line[85:87]))
                 filing_code = line[27:43].strip()
                 try:
