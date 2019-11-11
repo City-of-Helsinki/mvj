@@ -87,7 +87,7 @@ class InvoiceRowCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializ
                                                 queryset=Tenant.objects.all(),
                                                 related_serializer=TenantSerializer, required=False, allow_null=True)
     receivable_type = InstanceDictPrimaryKeyRelatedField(instance_class=ReceivableType,
-                                                         queryset=ReceivableType.objects.all(),
+                                                         queryset=ReceivableType.objects.exclude(name__iexact='Korko'),
                                                          related_serializer=ReceivableTypeSerializer)
 
     class Meta:
