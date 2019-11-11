@@ -104,12 +104,12 @@ class CloudiaProxy(APIView):
         }
 
         if not file_id:
-            url = '{}/api/export/contract/files'.format(settings.CLOUDIA_ROOT_URL)
+            url = '{}/api/export/contract/file'.format(settings.CLOUDIA_ROOT_URL)
         else:
             if not file_id.isdigit() and not file_id == 'contractdocument':
                 raise APIException(_('file_id parameter is not valid'))
 
-            url = '{}/api/export/contract/files/{}'.format(settings.CLOUDIA_ROOT_URL, file_id)
+            url = '{}/api/export/contract/file/{}'.format(settings.CLOUDIA_ROOT_URL, file_id)
 
         r = requests.post(url, json=data, auth=HTTPBasicAuth(settings.CLOUDIA_USERNAME, settings.CLOUDIA_PASSWORD),
                           stream=True)
