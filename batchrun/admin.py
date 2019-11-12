@@ -35,7 +35,7 @@ class JobRunAdmin(ReadOnlyAdmin):
 class JobRunLogEntryAdmin(ReadOnlyAdmin):
     date_hierarchy = 'time'
     list_display = ['time_p', 'run', 'kind', 'line_number', 'number', 'text']
-    list_filter = ['kind']
+    list_filter = ['kind', 'run__job']
     readonly_fields = ('time_p', 'run', 'kind', 'line_number', 'number', 'text')
 
     time_p = PreciseTimeFormatter(JobRunLogEntry, 'time')
