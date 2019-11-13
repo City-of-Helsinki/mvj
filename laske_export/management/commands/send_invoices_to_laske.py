@@ -28,14 +28,21 @@ class Command(BaseCommand):
         today = datetime.date.today()
         one_month_in_the_future = today + relativedelta(months=1)
 
-        self.stdout.write('Finding unsent invoices with due dates between {} and {}'.format(
-            today, one_month_in_the_future))
-
+        self.stdout.write('Finding unsent invoices with due dates before {}'.format(one_month_in_the_future))
+        # Creating (credit) invoices with due dates in the past seems to be quite common.
+        # We can't just choose all with sent_to_sap_at__isnull=True, because that's the default value...
         invoices = Invoice.objects.filter(
-            due_date__gte=today,
+            # ...so we look for "modern" invoices (created in the new MVJ)
+            created_at__gt=datetime.datetime(year=2019, month=10, day=9, tzinfo=timezone.get_current_timezone()),
             due_date__lte=one_month_in_the_future,
             sent_to_sap_at__isnull=True
+        ).exclude(
+            # Invoices due before 1.11.2018 are not in SAP so their credit notes shouldn't be be sent there either
+            credited_invoice__isnull=False,
+            credited_invoice__due_date__lte=datetime.date(year=2018, month=11, day=1)
         )
+        self.stdout.write('Found {} unsent invoices with due dates before {}'.format(
+            invoices.count(), one_month_in_the_future))
 
         if not invoices:
             self.stdout.write('No invoices to send. Exiting.')

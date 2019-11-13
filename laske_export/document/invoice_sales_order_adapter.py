@@ -61,7 +61,7 @@ class InvoiceSalesOrderAdapter:
 
         # It's possible that the rent starts after the invoicing date, so there is no active rent.
         # Rather than trying to guess which rent to use to calculate the yearly cost and index check date,
-        # ...just skip the row.
+        # ...just skip writing this one description row on the invoice.
         if rent:
             index_date = '1.1.'
             if rent.cycle == RentCycle.APRIL_TO_MARCH:
