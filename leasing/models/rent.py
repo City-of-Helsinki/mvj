@@ -268,7 +268,7 @@ class Rent(TimeStampedSafeDeleteModel):
             elif self.type == RentType.FIXED:
                 contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
             elif self.type == RentType.MANUAL:
-                contract_amount = contract_rent.get_amount_for_date_range(*contract_overlap)
+                contract_amount = contract_rent.get_base_amount_for_date_range(*contract_overlap)
 
                 manual_ratio = self.manual_ratio
 
