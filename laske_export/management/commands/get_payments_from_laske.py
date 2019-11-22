@@ -121,7 +121,7 @@ class Command(BaseCommand):
     def get_payment_lines_from_file(self, filename):
         result = []
 
-        with open(filename, 'rt') as fp:
+        with open(filename, 'rt', encoding='latin-1') as fp:
             lines = fp.readlines()
 
         for line in lines:
@@ -165,18 +165,22 @@ class Command(BaseCommand):
             try:
                 lines = self.get_payment_lines_from_file(filename)
             except UnicodeDecodeError as e:
-                self.stderr.write('Failed to read file! Error {}'.format(str(e)))
+                self.stderr.write('Error: failed to read file {}! Error {}'.format(filename, str(e)))
                 continue
 
             for line in lines:
+                filing_code = line[27:43].strip()
+                if filing_code[:3] != '288':
+                    self.stderr.write('  Skipped row: filing code ({}) should start with 288'.format(filing_code))
+                    continue
+
                 try:
                     invoice_number = int(line[43:63])
                 except ValueError:
-                    self.stderr.write('Import failed: no invoice number found in payment row!')
+                    self.stderr.write('  Skipped row: no invoice number provided in payment row')
                     continue
 
                 amount = Decimal('{}.{}'.format(line[77:85], line[85:87]))
-                filing_code = line[27:43].strip()
                 try:
                     payment_date = datetime.date(
                         year=2000 + int(line[21:23]),
@@ -185,8 +189,8 @@ class Command(BaseCommand):
                     )
                 except ValueError:
                     self.stderr.write(
-                        'Import failed: malformed date in payment for invoice #{} (filing code {})!'.format(
-                            invoice_number, filing_code
+                        '  Skipped row: malformed date in payment row: {}.'.format(
+                            invoice_number, line[21:27]
                         ))
                     continue
 
@@ -196,11 +200,7 @@ class Command(BaseCommand):
                 try:
                     invoice = Invoice.objects.get(number=invoice_number)
                 except Invoice.DoesNotExist:
-                    self.stdout.write('  Invoice number "{}" does not exist! Skipping.'.format(invoice_number))
-                    continue
-
-                if invoice.payments.filter(filing_code=filing_code).exists():
-                    self.stdout.write('  Payment already exists! Skipping.')
+                    self.stderr.write('  Skipped row: invoice number "{}" does not exist.'.format(invoice_number))
                     continue
 
                 if invoice.lease.is_subject_to_vat:
@@ -219,6 +219,18 @@ class Command(BaseCommand):
                     ))
 
                     amount = amount_without_vat
+
+                # If the invoice is paid in parts, the different payments will have the same filing_code.
+                # Avoiding duplicate payments by checking only the filing_code will skip legit payments
+                # so we'll only the skip adding the payments which match on date and amount as well.
+                # NB! It's still possible that someone pays e.g. a 40€ invoice with two separate 20€ payments
+                # ...but that situation is so rare that we'll handle it manually.
+                if invoice.payments.filter(
+                    paid_amount=amount,
+                    paid_date=payment_date,
+                ).exists():
+                    self.stdout.write('  Skipped row: payment with same paid_date and paid_amount exists!')
+                    continue
 
                 invoice_payment = InvoicePayment.objects.create(
                     invoice=invoice,
