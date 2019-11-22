@@ -227,8 +227,19 @@ class AreaImporter(BaseImporter):
 
             count = 0
             for row in cursor:
-                metadata = {METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name) for column_name in
-                            area_import['metadata_columns']}
+                try:
+                    metadata = {METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name) for column_name in
+                                area_import['metadata_columns']}
+                except AttributeError as e:  # a row fails sometimes on getattr(row, 'pintaala')
+                    errors.append('id #{}, metadata field missing. Error: {}\n'.format(row.id, str(e)))
+
+                    count += 1
+                    self.stdout.write('E', ending='')
+                    if count % 1000 == 0:
+                        self.stdout.write(' {}'.format(count))
+                        self.stdout.flush()
+                    continue
+
                 match_data = {
                     'type': area_import['area_type'],
                     'identifier': getattr(row, area_import['identifier_field_name']),
@@ -239,30 +250,26 @@ class AreaImporter(BaseImporter):
                 try:
                     geom = geos.GEOSGeometry(row.geom_text)
                 except geos.error.GEOSException as e:
-                    errors.append('id #{} error: ' + str(e))
+                    errors.append('id #{} error: {}\n'.format(row.id, str(e)))
 
                     count += 1
                     self.stdout.write('E', ending='')
-                    if count % 100 == 0:
+                    if count % 1000 == 0:
                         self.stdout.write(' {}'.format(count))
                         self.stdout.flush()
-
-                    # self.stdout.write(str(e))
                     continue
 
                 if geom and isinstance(geom, geos.Polygon):
                     geom = geos.MultiPolygon(geom)
 
                 if geom and not isinstance(geom, geos.MultiPolygon):
-                    errors.append('id #{} error: ' + ' Error! Geometry is not a Multipolygon but "{}"\n'.format(geom))
+                    errors.append('id #{} Error! Geometry is not a Multipolygon but "{}"\n'.format(row.id, geom))
 
                     count += 1
                     self.stdout.write('E', ending='')
-                    if count % 100 == 0:
+                    if count % 1000 == 0:
                         self.stdout.write(' {}'.format(count))
                         self.stdout.flush()
-
-                    # self.stdout.write(' Error! Geometry is not a Multipolygon but "{}"\n'.format(geom))
                     continue
 
                 other_data = {
@@ -273,7 +280,7 @@ class AreaImporter(BaseImporter):
                 Area.objects.update_or_create(defaults=other_data, **match_data)
 
                 count += 1
-                if count % 10 == 0:
+                if count % 100 == 0:
                     self.stdout.write('.', ending='')
                 if count % 1000 == 0:
                     self.stdout.write(' {}'.format(count))
