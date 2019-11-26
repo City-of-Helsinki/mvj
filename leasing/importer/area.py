@@ -146,7 +146,7 @@ AREA_IMPORT_TYPES = {
         'area_type': AreaType.PLAN_UNIT,
         'identifier_field_name': 'kaavayksikkotunnus',
         'metadata_columns': [
-            'kaavayksikkotunnus', 'kaavatunnus', 'tyyppi', 'luokka', 'kayttotarkoitus', 'pintaala',
+            'kaavayksikkotunnus', 'kaavatunnus', 'tyyppi', 'luokka', 'kayttotarkoitus', 'rekisteriala',
         ],
         'query': '''
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
