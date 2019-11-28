@@ -14,6 +14,7 @@ METADATA_COLUMN_NAME_MAP = {
     'maaraalatunnus': 'unseparated_parcel_identifier',
     'pinta_ala_sopimuksessa': 'area',
     'pintaala': 'area',
+    'rekisteriala': 'area',
     'osoite': 'address',
     'rekisterointipvm': 'registration_date',
     'kumoamispvm': 'repeal_date',
@@ -230,7 +231,7 @@ class AreaImporter(BaseImporter):
                 try:
                     metadata = {METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name) for column_name in
                                 area_import['metadata_columns']}
-                except AttributeError as e:  # a row fails sometimes on getattr(row, 'pintaala')
+                except AttributeError as e:
                     errors.append('id #{}, metadata field missing. Error: {}\n'.format(row.id, str(e)))
 
                     count += 1
