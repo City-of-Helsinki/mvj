@@ -12,12 +12,14 @@ from leasing.models.invoice import InvoiceRow, InvoiceSet
 class Command(BaseCommand):
     help = 'A Bogus Invoice creator'
 
-    def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
-        today = datetime.date.today()
-        # today = today.replace(day=1)
+    def add_arguments(self, parser):
+        parser.add_argument('override', nargs='?', type=bool)  # force run even if it's not the 1st of the month
 
-        if today.day != 1:
-            # TODO: allow override
+    def handle(self, *args, **options):  # noqa: C901 'Command.handle' is too complex TODO
+        override = options.get('override', False)
+        today = datetime.date.today()
+
+        if not override and today.day != 1:
             raise CommandError('Invoices should only be generated on the first day of the month')
 
         start_of_next_month = today.replace(day=1) + relativedelta(months=1)
@@ -29,21 +31,19 @@ class Command(BaseCommand):
         leases = Lease.objects.filter(
             is_invoicing_enabled=True,
         ).filter(
-            Q(Q(end_date=None) | Q(end_date__gte=today)) &
+            Q(Q(end_date=None) | Q(end_date__gte=today.replace(day=1))) &  # ensure whole month is included when forced
             Q(Q(start_date=None) | Q(start_date__lte=end_of_next_month))
         )
 
         invoice_count = 0
 
         for lease in leases:
-            self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
-
             period_rents = lease.determine_payable_rents_and_periods(start_of_next_month, end_of_next_month)
 
             if not period_rents:
-                self.stdout.write('  No due rents in period')
                 continue
 
+            self.stdout.write('Lease #{} {}:'.format(lease.id, lease.identifier))
             for period_invoice_data in lease.calculate_invoices(period_rents):
                 invoiceset = None
                 if len(period_invoice_data) > 1:
