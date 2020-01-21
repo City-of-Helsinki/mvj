@@ -111,9 +111,17 @@ class Command(BaseCommand):
 
                     self.stdout.write('   intersection area {} m^2'.format(intersection.area))
 
+                    # As of 21.1.2020, there are about 250 of plan unit area objects that have {'area': None, ...}
+                    # in their metadata json field. I suspect this is due to accidental duplications in the source db
+                    # since it seems like there is usually another object with identical metadata and identifier fields
+                    # (except also having a value for the 'area' key) to be found, which we want to actually use.
+                    if not other_area.metadata.get('area'):
+                        self.stdout.write('   DISCARD: no area value in metadata')
+                        continue
+
                     # Discard too small intersecting areas
                     if intersection.area < 1:
-                        self.stdout.write('   DISCARD')
+                        self.stdout.write('   DISCARD: intersection area too small')
                         continue
 
                     if other_area.type == AreaType.REAL_PROPERTY or other_area.type == AreaType.UNSEPARATED_PARCEL:
