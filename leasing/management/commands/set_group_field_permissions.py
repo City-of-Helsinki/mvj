@@ -456,7 +456,7 @@ CUSTOM_FIELD_PERMS = {
         "national_identification_number": {
             1: None,
             2: None,
-            3: None,
+            3: "view",
             4: "change",
             5: "view",
             6: "change",
