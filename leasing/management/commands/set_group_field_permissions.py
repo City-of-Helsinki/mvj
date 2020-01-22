@@ -78,10 +78,10 @@ DEFAULT_FIELD_PERMS = {
     },
     "rentadjustment": {
         1: "view",
-        2: "view",
-        3: "view",
+        2: "change",
+        3: "change",
         4: "change",
-        5: "view",
+        5: "change",
         6: "view",
         7: "change",
     },
@@ -425,7 +425,10 @@ CUSTOM_FIELD_PERMS = {
             6: "change",
         },
         "rents": {
-            2: "view",
+            2: "change",
+            3: "change",
+            4: "change",
+            5: "change",
             6: "change",
         },
         "decisions": {
@@ -510,6 +513,12 @@ CUSTOM_FIELD_PERMS = {
         "due_dates": {
             6: "change",
         },
+        "rent_adjustments": {
+            2: "change",
+            3: "change",
+            4: "change",
+            5: "change",
+        }
     },
     "tenant": {
         "reference": {
