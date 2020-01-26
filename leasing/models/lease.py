@@ -799,6 +799,7 @@ class Lease(TimeStampedSafeDeleteModel):
             if not found:
                 for row in InvoiceRow.objects.filter(
                     intended_use__isnull=False,
+                    invoice__lease=self,
                     invoice__billing_period_start_date=billing_period[0],
                     invoice__billing_period_end_date=billing_period[1],
                     invoice__generated=True,
@@ -825,7 +826,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
             # Limit rounding to maximum of Decimal(1) because cancelled
             # or manually added invoices could affect the calculation.
-            if not difference or difference > Decimal(1):
+            if not difference or difference.copy_abs() > Decimal(1):
                 continue
 
             difference_by_intended_use[intended_use] = difference
