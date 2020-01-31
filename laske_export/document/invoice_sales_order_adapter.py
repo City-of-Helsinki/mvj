@@ -10,10 +10,11 @@ from .sales_order import BillingParty1, LineItem, OrderParty
 
 
 class InvoiceSalesOrderAdapter:
-    def __init__(self, invoice=None, sales_order=None, receivable_type_rent=None):
+    def __init__(self, invoice=None, sales_order=None, receivable_type_rent=None, receivable_type_collateral=None):
         self.invoice = invoice
         self.sales_order = sales_order
         self.receivable_type_rent = receivable_type_rent
+        self.receivable_type_collateral = receivable_type_collateral
 
     def get_bill_text(self):
         if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
@@ -101,35 +102,18 @@ class InvoiceSalesOrderAdapter:
         # TODO: If no tenants in rows
 
     def get_billing_party_contact(self):
+        # Returns the billing contact if it exists, otherwise the tenant (order party) contact
         order_party_contact = self.get_order_party_contact()
 
         if order_party_contact and order_party_contact != self.invoice.recipient:
             return self.invoice.recipient
+        return order_party_contact
 
     def get_po_number(self):
-        # Get reference from the tenant that is the same contact
-        # as the recipient. Or all references from all of the tenants.
-        references = []
+        # Simply return the first reference ("viite") we come across
         for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
-            start_date = self.invoice.billing_period_start_date
-            end_date = self.invoice.billing_period_end_date
-
-            # There might be invoices that have no billing_period_start and end_date at all!
-            # If this is the case, use the invoicing date to find the proper contacts
-            if not start_date and not end_date:
-                start_date = end_date = self.invoice.invoicing_date
-
-            tenant_tenantcontact = invoice_row.tenant.get_tenant_tenantcontacts(start_date, end_date).first()
-            if (tenant_tenantcontact and tenant_tenantcontact.contact and
-                    tenant_tenantcontact.contact == self.invoice.recipient):
-                if invoice_row.tenant.reference:
-                    return invoice_row.tenant.reference[:35]
-
             if invoice_row.tenant.reference:
-                references.append(invoice_row.tenant.reference)
-
-        if references:
-            return ' '.join(references)[:35]
+                return invoice_row.tenant.reference[:35]
 
     def set_dates(self):
         billing_date = self.invoice.due_date.replace(day=1)
@@ -155,12 +139,20 @@ class InvoiceSalesOrderAdapter:
         for i, invoice_row in enumerate(invoice_rows):
             line_item = LineItem()
 
-            if invoice_row.receivable_type == self.receivable_type_rent:
+            receivable_type = invoice_row.receivable_type
+            # When dealing with rent invoice rows, we look up the SAP codes from the LeaseType object...
+            if receivable_type == self.receivable_type_rent:
                 line_item.material = self.invoice.lease.type.sap_material_code
                 line_item.order_item_number = self.invoice.lease.type.sap_order_item_number
+
+            # ...but in other cases the SAP codes are found in the ReceivableType object of the invoice row.
+            elif receivable_type == self.receivable_type_collateral:
+                # In case of a collateral ("Rahavakuus") row, need to populate ProfitCenter element instead
+                line_item.profit_center = receivable_type.sap_order_item_number
+                line_item.material = receivable_type.sap_material_code
             else:
-                line_item.material = invoice_row.receivable_type.sap_material_code
-                line_item.order_item_number = invoice_row.receivable_type.sap_order_item_number
+                line_item.material = receivable_type.sap_material_code
+                line_item.order_item_number = receivable_type.sap_order_item_number
 
             line_item.quantity = '1,00'
             line_item.net_price = '{:.2f}'.format(invoice_row.amount).replace('.', ',')
@@ -232,10 +224,9 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.order_party = order_party
 
         billing_party_contact = self.get_billing_party_contact()
-        if billing_party_contact:
-            billing_party1 = BillingParty1()
-            billing_party1.from_contact(billing_party_contact)
-            self.sales_order.billing_party1 = billing_party1
+        billing_party1 = BillingParty1()
+        billing_party1.from_contact(billing_party_contact)
+        self.sales_order.billing_party1 = billing_party1
 
         self.sales_order.sales_office = self.get_sales_office()
         self.sales_order.po_number = self.get_po_number()

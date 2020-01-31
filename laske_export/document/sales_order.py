@@ -47,6 +47,9 @@ class Party(FieldGroup):
         if not contact:
             return
 
+        self.customer_ovt = contact.electronic_billing_address
+        self.info_customer_ovt = contact.electronic_billing_address
+
         self.sap_customer_id = contact.sap_customer_number
         if contact.type == ContactType.PERSON:
             self.customer_id = contact.national_identification_number
