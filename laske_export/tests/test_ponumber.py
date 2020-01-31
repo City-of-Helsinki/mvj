@@ -142,7 +142,7 @@ def test_ponumber_from_recipient_tenant(django_db_setup, lease_factory, rent_fac
 
     adapter.set_values()
 
-    assert adapter.get_po_number() == 'testreference2'
+    assert adapter.get_po_number() == 'testreference1'
 
 
 @pytest.mark.django_db
@@ -219,4 +219,4 @@ def test_ponumber_from_all_tenants(django_db_setup, lease_factory, rent_factory,
 
     adapter.set_values()
 
-    assert adapter.get_po_number() == 'testreference1 testreference2'
+    assert adapter.get_po_number() == 'testreference1'
