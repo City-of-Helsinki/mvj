@@ -226,11 +226,11 @@ def lease_test_data(lease_factory, contact_factory, tenant_factory, tenant_conta
 
     tenantcontacts = [
         tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contacts[1],
-                               start_date=timezone.now().date()),
+                               start_date=timezone.now().replace(year=2019).date()),
         tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant2, contact=contacts[2],
-                               start_date=timezone.now().date()),
+                               start_date=timezone.now().replace(year=2019).date()),
         tenant_contact_factory(type=TenantContactType.CONTACT, tenant=tenant2, contact=contacts[3],
-                               start_date=timezone.now().date()),
+                               start_date=timezone.now().replace(year=2019).date()),
     ]
 
     lease.tenants.set(tenants)

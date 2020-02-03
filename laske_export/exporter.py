@@ -101,6 +101,7 @@ class LaskeExporter:
 
         # TODO: Make configurable
         receivable_type_rent = ReceivableType.objects.get(pk=1)
+        receivable_type_collateral = ReceivableType.objects.get(pk=8)
 
         now = timezone.now()
         laske_export_log_entry = LaskeExportLog.objects.create(started_at=now)
@@ -146,7 +147,8 @@ class LaskeExporter:
             adapter = InvoiceSalesOrderAdapter(
                 invoice=invoice,
                 sales_order=sales_order,
-                receivable_type_rent=receivable_type_rent
+                receivable_type_rent=receivable_type_rent,
+                receivable_type_collateral=receivable_type_collateral
             )
             adapter.set_values()
 
