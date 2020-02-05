@@ -26,5 +26,12 @@
     "fields": {
       "name": "Muu välimuoto"
     }
+  },
+  {
+    "model": "leasing.ManagementSubventionFormOfManagement",
+    "pk": 5,
+    "fields": {
+      "name": "ASO"
+    }
   }
 ]
