@@ -285,8 +285,8 @@ class Invoice(TimeStampedSafeDeleteModel):
             Decimal(0),
             self.billed_amount + collection_charge - payments_total - total_credited_amount
         )
-
-        if total_credited_amount.compare(self.billed_amount) != Decimal(-1):
+        # Don't mark as refunded unless credited amount is nonzero
+        if total_credited_amount != Decimal(0) and total_credited_amount.compare(self.billed_amount) != Decimal(-1):
             self.state = InvoiceState.REFUNDED
         elif self.type == InvoiceType.CHARGE and self.outstanding_amount == Decimal(0):
             self.state = InvoiceState.PAID

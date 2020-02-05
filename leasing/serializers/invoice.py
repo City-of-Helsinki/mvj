@@ -199,6 +199,7 @@ class InvoiceCreateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, Fie
 
         invoice.invoicing_date = timezone.now().date()
         invoice.outstanding_amount = validated_data['total_amount']
+        invoice.update_amounts()  # 0€ invoice would stay OPEN otherwise
         invoice.save()
 
         return invoice
