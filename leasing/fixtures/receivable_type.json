@@ -5,7 +5,8 @@
     "fields": {
       "name": "Maanvuokraus",
       "sap_material_code": null,
-      "sap_order_item_number": null
+      "sap_order_item_number": null,
+      "is_active": true
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "name": "Korko",
       "sap_material_code": null,
-      "sap_order_item_number": null
+      "sap_order_item_number": null,
+      "is_active": false
     }
   },
   {
@@ -23,7 +25,8 @@
     "fields": {
       "name": "Yhteismarkkinointi (sis. ALV)",
       "sap_material_code": "20002162",
-      "sap_order_item_number": "2813101001"
+      "sap_order_item_number": "2813101001",
+      "is_active": true
     }
   },
   {
@@ -32,7 +35,8 @@
     "fields": {
       "name": "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
       "sap_material_code": "20001751",
-      "sap_order_item_number": "2813000003"
+      "sap_order_item_number": "2813000003",
+      "is_active": true
     }
   },
   {
@@ -41,7 +45,8 @@
     "fields": {
       "name": "Haastemiestiedoksianto",
       "sap_material_code": "10002534",
-      "sap_order_item_number": "2813100000"
+      "sap_order_item_number": "2813100000",
+      "is_active": true
     }
   },
   {
@@ -50,7 +55,8 @@
     "fields": {
       "name": "Rasite ja muut vastaavat korvaukset",
       "sap_material_code": "10002495",
-      "sap_order_item_number": "2813000004"
+      "sap_order_item_number": "2813000004",
+      "is_active": true
     }
   },
   {
@@ -59,7 +65,8 @@
     "fields": {
       "name": "Esirakentamistoimenpiteet",
       "sap_material_code": "20002161",
-      "sap_order_item_number": "2813100000"
+      "sap_order_item_number": "2813100000",
+      "is_active": true
     }
   },
   {
@@ -68,7 +75,8 @@
     "fields": {
       "name": "Rahavakuus",
       "sap_material_code": null,
-      "sap_order_item_number": null
+      "sap_order_item_number": null,
+      "is_active": true
     }
   },
   {
@@ -77,7 +85,8 @@
     "fields": {
       "name": "Väestösuojakorvaus",
       "sap_material_code": "10002532",
-      "sap_order_item_number": "2813000000"
+      "sap_order_item_number": "2813000000",
+      "is_active": true
     }
   }
 ]
