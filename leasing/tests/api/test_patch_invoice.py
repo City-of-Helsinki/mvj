@@ -701,3 +701,132 @@ def test_patch_invoice_cannot_add_payment_if_sent_to_sap(django_db_setup, admin_
 
     assert invoice.billed_amount == Decimal(200)
     assert invoice.outstanding_amount == Decimal(200)
+
+
+@pytest.mark.django_db
+def test_patch_invoice_existing_interest_row_success(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                                     invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(123.45),
+        billed_amount=Decimal(123.45),
+        outstanding_amount=Decimal(123.45),
+        recipient=contact,
+    )
+
+    invoice_row = invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=2,  # Interest
+        amount=Decimal(123.45),
+    )
+
+    data = {
+        "id": invoice.id,
+        "rows": [
+            {
+                "id": invoice_row.id,
+                "receivable_type": invoice_row.receivable_type_id,
+                "amount": 100,
+            },
+            {
+                "receivable_type": 1,
+                "amount": 200,
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+
+    invoice_row = InvoiceRow.objects.get(pk=invoice_row.id)
+
+    assert invoice_row.amount == Decimal(100)
+
+    invoice = Invoice.objects.get(pk=response.data['id'])
+
+    assert invoice.billed_amount == Decimal(300)
+    assert invoice.outstanding_amount == Decimal(300)
+    assert invoice.total_amount == Decimal(300)
+
+
+@pytest.mark.django_db
+def test_patch_invoice_change_interest_row_fail(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                                invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(123.45),
+        billed_amount=Decimal(123.45),
+        outstanding_amount=Decimal(123.45),
+        recipient=contact,
+    )
+
+    invoice_row = invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,  # Rent
+        amount=Decimal(123.45),
+    )
+
+    data = {
+        "id": invoice.id,
+        "rows": [
+            {
+                "id": invoice_row.id,
+                "receivable_type": 2,  # Interest
+                "amount": 100,
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 400, '%s %s' % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_patch_invoice_new_interest_row_fail(django_db_setup, admin_client, lease_test_data, contact_factory,
+                                             invoice_factory, invoice_row_factory):
+    lease = lease_test_data['lease']
+
+    contact = contact_factory(first_name="First name", last_name="Last name", type=ContactType.PERSON)
+
+    invoice = invoice_factory(
+        lease=lease,
+        type=InvoiceType.CHARGE,
+        total_amount=Decimal(123.45),
+        billed_amount=Decimal(123.45),
+        outstanding_amount=Decimal(123.45),
+        recipient=contact,
+    )
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type_id=1,  # Rent
+        amount=Decimal(123.45),
+    )
+
+    data = {
+        "id": invoice.id,
+        "rows": [
+            {
+                "receivable_type": 2,  # Interest
+                "amount": 100,
+            },
+        ],
+    }
+
+    url = reverse('invoice-detail', kwargs={'pk': invoice.id})
+    response = admin_client.patch(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 400, '%s %s' % (response.status_code, response.data)
