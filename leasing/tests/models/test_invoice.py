@@ -1,11 +1,15 @@
 import datetime
+import json
 from decimal import Decimal
 
 import pytest
+from django.core.serializers.json import DjangoJSONEncoder
+from django.urls import reverse
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
 from leasing.models import Invoice, ReceivableType
 from leasing.models.invoice import InvoiceSet
+from leasing.models.tenant import TenantContactType
 
 
 @pytest.mark.django_db
@@ -1548,3 +1552,85 @@ def test_is_same_recipient_and_tenants4(django_db_setup, invoices_test_data, con
     invoices_test_data['invoice2'].rows.all().delete()
 
     assert invoices_test_data['invoice1'].is_same_recipient_and_tenants(invoices_test_data['invoice2'])
+
+
+@pytest.mark.django_db
+def test_create_invoice_zero_amount_is_set_to_status_paid(django_db_setup, admin_client, lease_factory, tenant_factory,
+                                                          tenant_rent_share_factory, contact_factory,
+                                                          tenant_contact_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
+                          start_date=datetime.date(year=2000, month=1, day=1), is_invoicing_enabled=True)
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1)
+    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
+    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact2,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+
+    # Create invoice with API because invoice_factory sets state to OPEN (which is fine as a default)
+    data = {
+        'lease': lease.id,
+        'tenant': tenant1.id,
+        'due_date': '2019-01-01',
+        'rows': [
+            {
+                'amount': Decimal(0),
+                'receivable_type': 1,
+            }
+        ],
+    }
+
+    url = reverse('invoice-list')
+    response = admin_client.post(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    invoice = Invoice.objects.get(pk=response.data['id'])
+    assert invoice.total_amount == Decimal(0)
+    assert invoice.outstanding_amount == Decimal(0)
+    assert invoice.state == InvoiceState.PAID
+
+
+@pytest.mark.django_db
+def test_create_invoice_zero_row_sum_is_set_to_status_paid(django_db_setup, admin_client, lease_factory, tenant_factory,
+                                                           tenant_rent_share_factory, contact_factory,
+                                                           tenant_contact_factory):
+    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
+                          start_date=datetime.date(year=2000, month=1, day=1), is_invoicing_enabled=True)
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1)
+    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
+    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
+    tenant_contact_factory(type=TenantContactType.BILLING, tenant=tenant1, contact=contact2,
+                           start_date=datetime.date(year=2000, month=1, day=1))
+
+    # Create invoice with API because invoice_factory sets state to OPEN (which is fine as a default)
+    data = {
+        'lease': lease.id,
+        'tenant': tenant1.id,
+        'due_date': '2019-01-01',
+        'rows': [
+            {
+                'amount': Decimal(100),
+                'receivable_type': 1,
+            },
+            {
+                'amount': Decimal(-100),
+                'receivable_type': 1,
+            }
+        ],
+    }
+
+    url = reverse('invoice-list')
+    response = admin_client.post(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+
+    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    invoice = Invoice.objects.get(pk=response.data['id'])
+    assert invoice.total_amount == Decimal(0)
+    assert invoice.outstanding_amount == Decimal(0)
+    assert invoice.state == InvoiceState.PAID
