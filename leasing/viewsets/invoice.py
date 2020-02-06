@@ -8,11 +8,11 @@ from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import CoalesceOrderingFilter, InvoiceFilter, InvoiceNoteFilter, InvoiceRowFilter, InvoiceSetFilter
 from leasing.models import Invoice, Lease
-from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet, ReceivableType
 from leasing.serializers.invoice import (
     CreditNoteUpdateSerializer, GeneratedInvoiceUpdateSerializer, InvoiceCreateSerializer,
     InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer, InvoiceRowSerializer, InvoiceSerializer,
-    InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer)
+    InvoiceSerializerWithSuccinctLease, InvoiceSetSerializer, InvoiceUpdateSerializer, ReceivableTypeSerializer)
 
 from .utils import AtomicTransactionModelViewSet
 
@@ -115,3 +115,8 @@ class InvoiceSetViewSet(ReadOnlyModelViewSet):
     queryset = InvoiceSet.objects.all()
     serializer_class = InvoiceSetSerializer
     filterset_class = InvoiceSetFilter
+
+
+class ReceivableTypeViewSet(ReadOnlyModelViewSet):
+    queryset = ReceivableType.objects.all()
+    serializer_class = ReceivableTypeSerializer

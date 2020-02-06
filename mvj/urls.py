@@ -20,7 +20,8 @@ from leasing.viewsets.email import SendEmailView
 from leasing.viewsets.infill_development_compensation import (
     InfillDevelopmentCompensationAttachmentViewSet, InfillDevelopmentCompensationViewSet)
 from leasing.viewsets.inspection import InspectionAttachmentViewSet
-from leasing.viewsets.invoice import InvoiceNoteViewSet, InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet
+from leasing.viewsets.invoice import (
+    InvoiceNoteViewSet, InvoiceRowViewSet, InvoiceSetViewSet, InvoiceViewSet, ReceivableTypeViewSet)
 from leasing.viewsets.invoice_additional_views import (
     InvoiceCalculatePenaltyInterestView, InvoiceCreditView, InvoiceExportToLaskeView, InvoiceRowCreditView,
     InvoiceSetCreditView)
@@ -74,6 +75,7 @@ router.register(r'management', ManagementViewSet)
 router.register(r'municipality', MunicipalityViewSet)
 router.register(r'notice_period', NoticePeriodViewSet)
 router.register(r'regulation', RegulationViewSet)
+router.register(r'receivable_type', ReceivableTypeViewSet)
 router.register(r'related_lease', RelatedLeaseViewSet)
 router.register(r'special_project', SpecialProjectViewSet)
 router.register(r'reservation_procedure', ReservationProcedureViewSet)
