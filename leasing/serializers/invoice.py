@@ -3,6 +3,7 @@ from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from random import choice
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
@@ -94,6 +95,41 @@ class InvoiceRowCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializ
         model = InvoiceRow
         fields = ('id', 'tenant', 'receivable_type', 'billing_period_start_date', 'billing_period_end_date',
                   'description', 'amount')
+
+    def validate(self, data):
+        """Validate that rows with an inactive receivable type cannot be created
+
+        Saving an existing row should succeed, but creating
+        new rows or changing a rows receivable type to an inactive type
+        should fail."""
+
+        valid = True
+
+        if not data['receivable_type'].is_active:
+            if self.instance:
+                if self.instance.receivable_type != data['receivable_type']:
+                    # We have an existing row but the receivable type wasn't the
+                    # same as before
+                    valid = False
+            else:
+                # We have data without an instance.
+                # If there is no id it's a new row.
+                if 'id' not in data:
+                    valid = False
+                else:
+                    # Else try to see if the existing row has the same receivable type
+                    try:
+                        existing_row = InvoiceRow.objects.get(pk=data['id'])
+
+                        if existing_row.receivable_type != data['receivable_type']:
+                            valid = False
+                    except ObjectDoesNotExist:
+                        valid = False
+
+        if not valid:
+            raise ValidationError(_('Cannot use an inactive receivable type'))
+
+        return data
 
 
 class InlineInvoiceSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
