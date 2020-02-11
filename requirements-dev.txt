@@ -7,28 +7,28 @@ attrs==19.2.0             # via pytest
 backcall==0.1.0           # via ipython
 coverage==4.5.4           # via pytest-cov
 decorator==4.4.0          # via ipython, traitlets
-django==2.2.6             # via django-debug-toolbar, django-stubs
 django-debug-toolbar==2.0
 django-extensions==2.2.3
 django-stubs==1.2.0
+django==2.2.10            # via django-debug-toolbar, django-stubs
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
 factory-boy==2.12.0
 faker==2.0.2              # via factory-boy
-flake8==3.7.8
 flake8-polyfill==1.0.2    # via pep8-naming
 flake8-print==3.1.0
+flake8==3.7.8
 importlib-metadata==0.23  # via pluggy, pytest
 inflection==0.3.1         # via pytest-factoryboy
-ipython==7.8.0
 ipython-genutils==0.2.0   # via traitlets
+ipython==7.8.0
 isort==4.3.21
 jdcal==1.4.1              # via openpyxl
 jedi==0.15.1              # via ipython
 mccabe==0.6.1             # via flake8
 more-itertools==7.2.0     # via pytest, zipp
-mypy==0.730
 mypy-extensions==0.4.2    # via mypy
+mypy==0.730
 openpyxl==3.0.0
 packaging==19.2           # via pytest
 parso==0.5.1              # via jedi
@@ -44,10 +44,10 @@ pydocstyle==4.0.1
 pyflakes==2.1.1           # via flake8
 pygments==2.4.2           # via ipython
 pyparsing==2.4.2          # via packaging
-pytest==5.2.1
 pytest-cov==2.8.1
 pytest-django==3.5.1
 pytest-factoryboy==2.0.3
+pytest==5.2.1
 python-dateutil==2.6.0    # via faker
 pytz==2019.3              # via django
 six==1.12.0               # via django-extensions, faker, flake8-print, packaging, prompt-toolkit, python-dateutil, traitlets
@@ -62,4 +62,4 @@ werkzeug==0.16.0
 zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools                # via ipython
+# setuptools
