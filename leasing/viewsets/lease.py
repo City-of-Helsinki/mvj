@@ -1,14 +1,20 @@
 import datetime
+import io
 import re
 
+import coreapi
+import xlsxwriter
 from dateutil.parser import parse, parserinfo
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -408,3 +414,64 @@ class LeaseViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactio
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         raise PermissionDenied(_("No permission. Can only delete own empty leases."))
+
+#class SimpleFilterBackend(BaseFilterBackend):
+#    def get_schema_fields(self, view):
+#        print("GET SCHEMA FIELDS!!!!!!!!!!")
+#        return [coreapi.Field(
+#            name='diu',
+#            location='diuquery',
+#            required=False,
+#            type='string'
+#        )]
+
+
+class LeaseStatisticReportViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
+    queryset = Lease.objects.all()
+    serializer_class = LeaseListSerializer
+    # filter_backends = (SimpleFilterBackend,)
+    filterset_fields = {
+        'start_date': ['gte', 'lte', 'exact', 'gt', 'lt'],
+        'end_date': ['gte', 'lte', 'exact', 'gt', 'lt'],
+        'state': ['exact']
+        }
+    http_method_names = ['get', 'post' ,'head', 'options']
+
+    def get_queryset(self):
+        today = timezone.now().date()
+        leases = Lease.objects.all()
+        if(self.request.query_params.get('only_active_leases')):
+          leases = Lease.objects.filter(
+              Q(end_date__isnull=True) | Q(end_date__gte=today)
+          )
+        return leases
+
+    @action(detail=False)
+    def xls(self, request):
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+        fields = {
+            'start_date':'yyyy-m-d',
+            'end_date':'yyyy-m-d'
+            }
+        queryset = self.get_queryset()
+        row_num = 0
+        for rownum, row in enumerate(queryset):
+            worksheet.write(rownum + 1, 0, rownum + 1)
+            for idx,fieldname in enumerate(fields):
+                value = getattr(row,fieldname)
+                frmt = fields.get(fieldname)
+                if(value):
+                    worksheet.write_string(rownum + 1, idx + 1, str(value))
+
+        workbook.close()
+        output.seek(0)
+        filename = 'lease_statistic_report.xlsx'
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        return response

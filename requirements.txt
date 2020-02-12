@@ -14,7 +14,7 @@ chardet==3.0.4            # via requests
 coreapi==2.3.3            # via django-rest-swagger, openapi-codec
 coreschema==0.0.4         # via coreapi
 cryptography==2.7         # via paramiko
-dataclasses==0.6 ; python_version<"3.7"
+dataclasses==0.6 ; python_version < "3.7"
 defusedxml==0.6.0         # via zeep
 django==2.2.6
 django-anymail==7.0.0
@@ -69,6 +69,7 @@ soupsieve==1.9.4          # via beautifulsoup4
 sqlparse==0.3.0           # via django
 uritemplate==3.0.0        # via coreapi
 urllib3==1.25.6           # via requests, sentry-sdk
+xlsxwriter==1.2.7
 zeep==3.4.0
 
 # The following packages are considered to be unsafe in a requirements file:

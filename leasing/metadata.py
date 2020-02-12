@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField
@@ -36,6 +38,7 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
 
         if serializer:
             metadata["fields"] = self.get_serializer_info(serializer)
+            print("METADATA!!!!!")
 
             # Determine allowed methods for model views
             if hasattr(serializer, 'Meta') and serializer.Meta.model:
@@ -51,6 +54,8 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
                         method_permissions[method] = request.user.has_perms(perms)
 
                 metadata['methods'] = method_permissions
+            newdict = {m: metadata['methods'].get(m.upper()) for m in view.http_method_names}
+            metadata['methods'] = newdict
 
         # Determine methods the user has permission to for custom views
         # and viewsets that are using PerMethodPermission.
@@ -62,6 +67,18 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
                 method_permissions[method.upper()] = request.user.has_perms(required_perms)
 
             metadata['methods'] = method_permissions
+
+        if hasattr(view, 'filterset_fields'):
+            metadata['filterset_fields'] = view.filterset_fields
+
+        if hasattr(view, 'search_fields'):
+            metadata['search_fields'] = view.search_fields
+
+        if hasattr(view, 'ordering_fields'):
+            metadata['ordering_fields'] = view.ordering_fields
+
+        #print(view.filter_backends[0].get_schema_fields(view))
+        #view.get_schema_fields
 
         return metadata
 
