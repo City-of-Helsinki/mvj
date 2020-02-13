@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
     postgres:
         build: ./docker/postgres/
@@ -28,7 +28,12 @@ services:
         depends_on:
             - postgres
         container_name: mvj
+        restart: unless-stopped
 
 volumes:
         mvj-postgres-data-volume:
         mvj-django-media-volume:
+networks:
+    default:
+        name: helsinki
+
