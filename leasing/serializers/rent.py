@@ -314,7 +314,8 @@ class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSeria
                                                       related_serializer=RentIntendedUseSerializer)
     index = InstanceDictPrimaryKeyRelatedField(instance_class=Index,
                                                queryset=Index.objects.all(),
-                                               related_serializer=IndexSerializer)
+                                               related_serializer=IndexSerializer,
+                                               required=False, allow_null=True)
     management_subventions = LeaseBasisOfRentManagementSubventionCreateUpdateSerializer(many=True, required=False,
                                                                                         allow_null=True)
     temporary_subventions = LeaseBasisOfRentTemporarySubventionSerializer(many=True, required=False, allow_null=True)
