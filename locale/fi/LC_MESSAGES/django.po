@@ -901,6 +901,36 @@ msgctxt "Decision type kind"
 msgid "Basis of Rent"
 msgstr "Vuokrausperiaate"
 
+#: leasing/enums.py:484
+msgctxt "Basis of rent type"
+msgid "Lease"
+msgstr "Vuokra"
+
+#: leasing/enums.py:485
+msgctxt "Basis of rent type"
+msgid "Temporary"
+msgstr "Tilapäinen"
+
+#: leasing/enums.py:486
+msgctxt "Basis of rent type"
+msgid "Additional yard"
+msgstr "Lisäpiha"
+
+#: leasing/enums.py:487
+msgctxt "Basis of rent type"
+msgid "Field"
+msgstr "Pelto"
+
+#: leasing/enums.py:488
+msgctxt "Basis of rent type"
+msgid "Mast"
+msgstr "Masto"
+
+#: leasing/enums.py:489
+msgctxt "Basis of rent type"
+msgid "Device cabinet"
+msgstr "Laitekaappi"
+
 #: leasing/filters.py:107
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"

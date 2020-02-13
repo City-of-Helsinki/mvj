@@ -467,3 +467,23 @@ class DecisionTypeKind(Enum):
     class Labels:
         LEASE_CANCELLATION = pgettext_lazy('Decision type kind', 'Lease cancellation')
         BASIS_OF_RENT = pgettext_lazy('Decision type kind', 'Basis of Rent')
+
+
+class BasisOfRentType(Enum):
+    """
+    In Finnish: Vuokraperusteen tyyppi
+    """
+    LEASE = 'lease'  # In Finnish: Vuokra
+    TEMPORARY = 'temporary'  # In Finnish: Tilapäinen
+    ADDITIONAL_YARD = 'additional_yard'  # In Finnish: Lisäpiha
+    FIELD = 'field'  # In Finnish: Pelto
+    MAST = 'mast'  # In Finnish: Masto
+    DEVICE_CABINET = 'device cabinet'  # In Finnish: Laitekaappi
+
+    class Labels:
+        LEASE = pgettext_lazy('Basis of rent type', 'Lease')
+        TEMPORARY = pgettext_lazy('Basis of rent type', 'Temporary')
+        ADDITIONAL_YARD = pgettext_lazy('Basis of rent type', 'Additional yard')
+        FIELD = pgettext_lazy('Basis of rent type', 'Field')
+        MAST = pgettext_lazy('Basis of rent type', 'Mast')
+        DEVICE_CABINET = pgettext_lazy('Basis of rent type', 'Device cabinet')

@@ -300,14 +300,15 @@ class LeaseBasisOfRentSerializer(EnumSupportSerializerMixin, FieldPermissionsSer
 
     class Meta:
         model = LeaseBasisOfRent
-        fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
-                  'discount_percentage', 'plans_inspected_at', 'plans_inspected_by', 'locked_at', 'locked_by',
-                  'archived_at', 'archived_note', 'subvention_type', 'subvention_base_percent',
-                  'subvention_graduated_percent', 'management_subventions', 'temporary_subventions')
+        fields = ('id', 'type', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'zone', 'index',
+                  'profit_margin_percentage', 'discount_percentage', 'plans_inspected_at', 'plans_inspected_by',
+                  'locked_at', 'locked_by', 'archived_at', 'archived_note', 'subvention_type',
+                  'subvention_base_percent', 'subvention_graduated_percent', 'management_subventions',
+                  'temporary_subventions', 'children')
 
 
-class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
-                                             FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class LeaseBaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
+                                                 FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
                                                       queryset=RentIntendedUse.objects.all(),
@@ -325,7 +326,7 @@ class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSeria
         fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
                   'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note',
                   'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
-                  'management_subventions', 'temporary_subventions')
+                  'management_subventions', 'temporary_subventions', 'zone', 'type', 'children')
         extra_kwargs = {'area_unit': {'required': True}}
 
     def validate(self, data):
@@ -358,3 +359,38 @@ class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSeria
                 data['plans_inspected_by'] = None
 
         return data
+
+
+class LeaseSubBasisOfRentCreateUpdateSerializer(LeaseBaseBasisOfRentCreateUpdateSerializer):
+
+    class Meta:
+        model = LeaseBasisOfRent
+        fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
+                  'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note',
+                  'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
+                  'management_subventions', 'temporary_subventions', 'zone', 'type')
+        extra_kwargs = {'area_unit': {'required': True}}
+
+    def create(self, validated_data):
+        validated_data['lease'] = validated_data.get('parent').lease
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['lease'] = validated_data.get('parent').lease
+        return super().update(instance, validated_data)
+
+    def to_representation(self, instance):
+        return super(LeaseSubBasisOfRentCreateUpdateSerializer, self).to_representation(instance)['id']
+
+
+class LeaseBasisOfRentCreateUpdateSerializer(LeaseBaseBasisOfRentCreateUpdateSerializer):
+
+    children = LeaseSubBasisOfRentCreateUpdateSerializer(many=True, required=False, allow_null=True)
+
+    class Meta:
+        model = LeaseBasisOfRent
+        fields = ('id', 'intended_use', 'area', 'area_unit', 'amount_per_area', 'index', 'profit_margin_percentage',
+                  'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note',
+                  'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
+                  'management_subventions', 'temporary_subventions', 'zone', 'type', 'children')
+        extra_kwargs = {'area_unit': {'required': True}}
