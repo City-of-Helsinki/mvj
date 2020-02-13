@@ -326,6 +326,7 @@ class LeaseBasisOfRentCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSeria
                   'discount_percentage', 'plans_inspected_at', 'locked_at', 'archived_at', 'archived_note',
                   'subvention_type', 'subvention_base_percent', 'subvention_graduated_percent',
                   'management_subventions', 'temporary_subventions')
+        extra_kwargs = {'area_unit': {'required': True}}
 
     def validate(self, data):
         if data.get('id'):
