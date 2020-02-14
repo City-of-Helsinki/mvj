@@ -15,8 +15,8 @@ from leasing.calculation.index import IndexCalculation
 from leasing.calculation.result import (
     CalculationAmount, CalculationNote, CalculationResult, FixedInitialYearRentCalculationResult)
 from leasing.enums import (
-    AreaUnit, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType,
-    RentCycle, RentType, SubventionType)
+    AreaUnit, BasisOfRentType, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType,
+    RentAdjustmentType, RentCycle, RentType, SubventionType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
     get_monthly_amount_by_period_type, get_range_overlap_and_remainder, group_items_in_period_by_date_range,
@@ -981,12 +981,21 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='basis_of_rents',
                               on_delete=models.PROTECT)
 
+    # In Finnish: Tyyppi
+    type = EnumField(BasisOfRentType, verbose_name=_("Type"), max_length=20, default=BasisOfRentType.LEASE)
+
+    parent = models.ForeignKey('self', verbose_name=_("Lease basis of rent"), null=True, blank=True,
+                               related_name='children', on_delete=models.CASCADE)
+
     # In Finnish: Käyttötarkoitus
     intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
                                      on_delete=models.PROTECT)
 
     # In Finnish: Pinta-ala
     area = models.DecimalField(verbose_name=_("Area amount"), decimal_places=2, max_digits=12)
+
+    # In Finnish: Vyöhyke
+    zone = models.PositiveIntegerField(verbose_name=_("Zone"), null=True, blank=True)
 
     # In Finnish: Yksikkö
     area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
