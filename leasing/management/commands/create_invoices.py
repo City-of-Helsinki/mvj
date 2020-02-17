@@ -36,6 +36,7 @@ class Command(BaseCommand):
             Q(Q(end_date=None) | Q(end_date__gte=today.replace(day=1))) &  # ensure whole month is included when forced
             Q(Q(start_date=None) | Q(start_date__lte=end_of_next_month))
         )
+        self.stdout.write('Found {} leases, starting to create invoices'.format(leases.count()))
 
         invoice_count = 0
 
@@ -74,8 +75,9 @@ class Command(BaseCommand):
                         invoice = Invoice.objects.get(**{
                             k: v for k, v in invoice_data.items() if k != 'notes'
                         })
-                        self.stdout.write('  Invoice already exists. Invoice id {}. Number {}'.format(invoice.id,
-                                                                                                      invoice.number))
+                        self.stdout.write('Lease #{} {}: Invoice already exists. Invoice id {}. Number {}'.format(
+                            lease.id, lease.identifier, invoice.id, invoice.number)
+                        )
                     except Invoice.DoesNotExist:
                         with transaction.atomic():
                             invoice_data['invoicing_date'] = today
@@ -94,7 +96,10 @@ class Command(BaseCommand):
                             invoice.id, invoice.number))
                         invoice_count += 1
                     except Invoice.MultipleObjectsReturned:
-                        self.stdout.write('  Warning! Multiple invoices already exist. Not creating a new invoice.')
+                        self.stdout.write(
+                            'Lease #{} {}: Warning! Found multiple invoices. Not creating a new invoice.'.format(
+                                lease.id, lease.identifier)
+                        )
 
             self.stdout.write('')
 

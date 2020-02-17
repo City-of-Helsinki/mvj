@@ -71,7 +71,7 @@ class Command(BaseCommand):
             areas = Area.objects.filter(type=AreaType.LEASE_AREA, identifier=str(lease.identifier))
 
             if not areas:
-                self.stdout.write(' No lease areas found in area table')
+                self.stdout.write('Lease #{} {}: No lease areas found in area table'.format(lease.id, lease.identifier))
 
             for area in areas:
                 property_identifier = '{}-{}-{}-{}{}'.format(
@@ -85,12 +85,21 @@ class Command(BaseCommand):
                 self.stdout.write(' {} -> {}'.format(property_identifier, area_identifier))
 
                 if area_identifier not in lease_areas.keys():
-                    self.stdout.write('  Lease area NOT FOUND!')
+                    self.stdout.write(
+                        'Lease #{} {}: Area id {} not in lease areas of lease!'.format(
+                            lease.id, lease.identifier, area_identifier)
+                    )
                     continue
 
                 lease_areas[area_identifier].geometry = area.geometry
                 lease_areas[area_identifier].save()
                 self.stdout.write('  Lease area FOUND. SAVED.')
+
+                del_plots = lease_areas[area_identifier].plots.exclude(in_contract=True).delete()
+                del_plan_units = lease_areas[area_identifier].plan_units.exclude(in_contract=True).delete()
+                self.stdout.write('  Cleared existing current Plots ({}) and PlanUnits ({}) not in contract'.format(
+                    del_plots, del_plan_units
+                ))
 
                 try:
                     other_areas = Area.objects.filter(geometry__intersects=area.geometry).exclude(
@@ -98,7 +107,6 @@ class Command(BaseCommand):
                 except InternalError as e:
                     self.stdout.write(str(e))
                     continue
-
                 for other_area in other_areas:
                     self.stdout.write('  #{} {} {}'.format(other_area.id, other_area.identifier, other_area.type))
 
@@ -109,19 +117,23 @@ class Command(BaseCommand):
                         self.stdout.write(str(e))
                         continue
 
-                    self.stdout.write('   intersection area {} m^2'.format(intersection.area))
-
                     # As of 21.1.2020, there are about 250 of plan unit area objects that have {'area': None, ...}
                     # in their metadata json field. I suspect this is due to accidental duplications in the source db
                     # since it seems like there is usually another object with identical metadata and identifier fields
                     # (except also having a value for the 'area' key) to be found, which we want to actually use.
                     if not other_area.metadata.get('area'):
-                        self.stdout.write('   DISCARD: no area value in metadata')
+                        self.stdout.write(
+                            'Lease #{} {}: DISCARD area {}: no \'area\' value in metadata'.format(
+                                lease.id, lease.identifier, other_area.id)
+                        )
                         continue
 
                     # Discard too small intersecting areas
                     if intersection.area < 1:
-                        self.stdout.write('   DISCARD: intersection area too small')
+                        self.stdout.write(
+                            'Lease #{} {}: DISCARD area {}: intersection area too small'.format(
+                                lease.id, lease.identifier, other_area.id)
+                        )
                         continue
 
                     if other_area.type == AreaType.REAL_PROPERTY or other_area.type == AreaType.UNSEPARATED_PARCEL:
@@ -139,7 +151,9 @@ class Command(BaseCommand):
                             'geometry': other_area.geometry,
                         }
                         (plot, plot_created) = Plot.objects.update_or_create(defaults=rest_data, **match_data)
-                        self.stdout.write('   Plot #{} ({}) saved.'.format(plot.id, plot.type))
+                        self.stdout.write('Lease #{} {}: Plot #{} ({}) saved'.format(
+                            lease.id, lease.identifier, plot.id, plot.type)
+                        )
                     elif other_area.type == AreaType.PLAN_UNIT:
                         # Find the plot division that intersects the most
                         plot_area = Area.objects.filter(
@@ -196,6 +210,6 @@ class Command(BaseCommand):
                             (plan_unit, plan_unit_created) = PlanUnit.objects.update_or_create(
                                 defaults=rest_data, **match_data)
 
-                            self.stdout.write('   PlanUnit #{} saved.'.format(plan_unit.id))
-
-            self.stdout.write('')
+                            self.stdout.write('Lease #{} {}: PlanUnit #{} saved'.format(
+                                lease.id, lease.identifier, plan_unit.id)
+                            )

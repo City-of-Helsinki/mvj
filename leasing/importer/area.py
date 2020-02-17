@@ -1,6 +1,7 @@
 import psycopg2
 from django.conf import settings
 from django.contrib.gis import geos
+from django.core.exceptions import MultipleObjectsReturned
 
 from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
@@ -226,6 +227,7 @@ class AreaImporter(BaseImporter):
 
             cursor.execute(area_import['query'])
 
+            imported_identifiers = []
             count = 0
             for row in cursor:
                 try:
@@ -244,7 +246,6 @@ class AreaImporter(BaseImporter):
                 match_data = {
                     'type': area_import['area_type'],
                     'identifier': getattr(row, area_import['identifier_field_name']),
-                    'external_id': row.id,
                     'source': source,
                 }
 
@@ -276,9 +277,19 @@ class AreaImporter(BaseImporter):
                 other_data = {
                     'geometry': geom,
                     'metadata': metadata,
+                    'external_id': row.id,
                 }
 
-                Area.objects.update_or_create(defaults=other_data, **match_data)
+                try:
+                    Area.objects.update_or_create(defaults=other_data, **match_data)
+                except MultipleObjectsReturned:  # There should only be one object per identifier...
+                    ext_id = other_data.pop('external_id')
+                    # ...so we delete them all but spare the one with the correct external_id (if it happens to exist)
+                    Area.objects.filter(**match_data).exclude(external_id=ext_id).delete()
+                    match_data['external_id'] = ext_id
+                    Area.objects.update_or_create(defaults=other_data, **match_data)
+
+                imported_identifiers.append(match_data['identifier'])
 
                 count += 1
                 if count % 100 == 0:
@@ -287,7 +298,10 @@ class AreaImporter(BaseImporter):
                     self.stdout.write(' {}'.format(count))
                     self.stdout.flush()
 
-            self.stdout.write(' Count {}\n'.format(count))
+            stale = Area.objects.filter(type=area_import['area_type'], source=source).exclude(
+                identifier__in=imported_identifiers)
+            self.stdout.write(' Imported count {}, to be deleted / stale count {}\n'.format(count, stale.count()))
+            stale.delete()
             if errors:
                 self.stdout.write(' {} errors:\n'.format(len(errors)))
                 for error in errors:

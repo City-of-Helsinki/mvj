@@ -97,7 +97,7 @@ class FieldGroup:
             field_value = getattr(self, field_name)
 
             if not field.is_valid(field_value):
-                raise FieldError('Value of field {} is not valid'.format(field_name))
+                raise FieldError('Value ({}) of field {} is not valid'.format(field_value, field_name))
 
             if not field_value:
                 el = etree.Element(field.element_name)
