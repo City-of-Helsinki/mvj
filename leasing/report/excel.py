@@ -1,0 +1,55 @@
+from xlsxwriter.utility import xl_range, xl_rowcol_to_cell
+
+
+class ExcelRow:
+    def __init__(self):
+        self.cells = []
+
+
+class ExcelCell:
+    def __init__(self, column, value=None):
+        self.column = column
+        self.value = value
+        self.row = None
+        self.first_data_row_num = None
+
+    def get_value(self):
+        return self.value
+
+    def get_format(self):
+        return None
+
+    def set_row(self, row_num):
+        self.row = row_num
+
+    def set_first_data_row_num(self, row_num):
+        self.first_data_row_num = row_num
+
+
+class PreviousRowsSumCell(ExcelCell):
+    def __init__(self, column, count):
+        super().__init__(column)
+
+        self.count = count
+
+    def get_value(self):
+        return '=SUM({}:{})'.format(
+            xl_rowcol_to_cell(self.row - self.count, self.column),
+            xl_rowcol_to_cell(self.row - 1, self.column),
+        )
+
+
+class SumCell(ExcelCell):
+    def __init__(self, column):
+        super().__init__(column)
+
+        self.target_ranges = []
+
+    def add_target_range(self, range):
+        self.target_ranges.append(range)
+
+    def get_value(self):
+        return '=SUM({})'.format(','.join([xl_range(
+            i[0] + self.first_data_row_num, i[1],
+            i[2] + self.first_data_row_num, i[3]
+        ) for i in self.target_ranges]))

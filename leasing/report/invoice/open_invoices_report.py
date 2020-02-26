@@ -1,8 +1,13 @@
+from itertools import groupby
+from operator import itemgetter
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.response import Response
 
 from leasing.enums import InvoiceState
 from leasing.models import Invoice
+from leasing.report.excel import ExcelCell, ExcelRow, PreviousRowsSumCell, SumCell
 from leasing.report.report_base import ReportBase
 
 
@@ -41,14 +46,17 @@ class OpenInvoicesReport(ReportBase):
         'total_amount': {
             'label': _('Total amount'),
             'format': 'money',
+            'width': 13,
         },
         'billed_amount': {
             'label': _('Billed amount'),
             'format': 'money',
+            'width': 13,
         },
         'outstanding_amount': {
             'label': _('Outstanding amount'),
             'format': 'money',
+            'width': 13,
         },
     }
 
@@ -61,3 +69,51 @@ class OpenInvoicesReport(ReportBase):
             'lease', 'lease__identifier', 'lease__identifier__type', 'lease__identifier__district',
             'lease__identifier__municipality',
         ).order_by('lease__identifier__type__identifier', 'due_date')
+
+    def get_response(self, request):
+        report_data = self.get_data(self.get_input_data(request))
+        serialized_report_data = self.serialize_data(report_data)
+
+        if request.accepted_renderer.format != 'xlsx':
+            return Response(serialized_report_data)
+
+        # Custom processing for xlsx output
+        grouped_data = groupby(serialized_report_data, itemgetter('lease_type'))
+
+        result = []
+        totals_row_nums = []
+        data_row_num = 0
+        for lease_type, invoices in grouped_data:
+            invoice_count = 0
+            for invoice in invoices:
+                result.append(invoice)
+                invoice_count += 1
+                data_row_num += 1
+
+            totals_row = ExcelRow()
+            totals_row.cells.append(ExcelCell(column=0, value='{} {}'.format(lease_type, _('Total'))))
+            totals_row.cells.append(PreviousRowsSumCell(column=4, count=invoice_count))
+            totals_row.cells.append(PreviousRowsSumCell(column=5, count=invoice_count))
+            totals_row.cells.append(PreviousRowsSumCell(column=6, count=invoice_count))
+            result.append(totals_row)
+            totals_row_nums.append(data_row_num)
+
+            data_row_num += 1
+
+        totals_row = ExcelRow()
+        totals_row.cells.append(ExcelCell(column=0, value=str(_('Grand total'))))
+
+        total_amount_sum_cell = SumCell(column=4)
+        billed_amount_sum_cell = SumCell(column=5)
+        outstanding_amount_sum_cell = SumCell(column=6)
+        for totals_row_num in totals_row_nums:
+            total_amount_sum_cell.add_target_range((totals_row_num, 4, totals_row_num, 4))
+            billed_amount_sum_cell.add_target_range((totals_row_num, 5, totals_row_num, 5))
+            outstanding_amount_sum_cell.add_target_range((totals_row_num, 6, totals_row_num, 6))
+
+        totals_row.cells.append(total_amount_sum_cell)
+        totals_row.cells.append(billed_amount_sum_cell)
+        totals_row.cells.append(outstanding_amount_sum_cell)
+        result.append(totals_row)
+
+        return Response(result)
