@@ -38,7 +38,13 @@ class InvoiceSalesOrderAdapter:
         first_lease_area = self.invoice.lease.lease_areas.first()
         if first_lease_area:
             real_property_identifier = first_lease_area.identifier
-            lease_area_address = first_lease_area.addresses.first()
+            first_primary_address = first_lease_area.addresses.filter(is_primary=True).first()
+
+            if first_primary_address:
+                lease_area_address = first_primary_address
+            else:
+                lease_area_address = first_lease_area.addresses.first()
+
             if lease_area_address:
                 address = lease_area_address.address
 
