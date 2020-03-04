@@ -4,6 +4,11 @@ from rest_framework import serializers
 
 
 class ReportOutputSerializer(serializers.Serializer):
+    """Default serializer for the report data
+
+    Serializes fields that are passed in the output_fields keyword argument
+    on instantiation."""
+
     def __init__(self, *args, output_fields=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.output_fields = output_fields
