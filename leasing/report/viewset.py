@@ -8,6 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.viewsets import ViewSet
 
 from leasing.renderers import BrowsableAPIRendererWithoutForms
+from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
@@ -15,6 +16,7 @@ from leasing.report.renderers import XLSXRenderer
 
 ENABLED_REPORTS = [
     OpenInvoicesReport,
+    InvoicesInPeriodReport,
     LaskeInvoiceCountReport,
     LeaseInvoicingDisabledReport,
 ]
@@ -89,7 +91,8 @@ class ReportViewSet(ViewSet):
                     "read_only": False,
                     "label": field.label,
                 }
-                if hasattr(field, 'choices') and type(field.choices) == list:
+
+                if hasattr(field, 'choices'):
                     metadata['actions']['GET'][field_name]["choices"] = [
                         {
                             "value": c[0],
