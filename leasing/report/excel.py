@@ -40,10 +40,13 @@ class PreviousRowsSumCell(ExcelCell):
 
 
 class SumCell(ExcelCell):
-    def __init__(self, column):
+    def __init__(self, column, target_ranges=None):
         super().__init__(column)
 
-        self.target_ranges = []
+        if target_ranges:
+            self.target_ranges = target_ranges
+        else:
+            self.target_ranges = []
 
     def add_target_range(self, range):
         self.target_ranges.append(range)
