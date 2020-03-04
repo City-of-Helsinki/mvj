@@ -4,6 +4,7 @@ from io import BytesIO
 
 import xlsxwriter
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Model
 from django.utils.translation import ugettext as _
 from rest_framework import renderers
 
@@ -49,7 +50,17 @@ class XLSXRenderer(renderers.BaseRenderer):
             if input_field.__class__.__name__ == 'DateField':
                 field_format = date_format
 
-            worksheet.write(row_num, 1, report.form.cleaned_data[input_field_name], field_format)
+            input_value = report.form.cleaned_data[input_field_name]
+            if hasattr(input_field, 'choices'):
+                for choice_value, choice_label in input_field.choices:
+                    if choice_value == input_value:
+                        input_value = str(choice_label)
+                        break
+
+            if isinstance(input_value, Model):
+                input_value = str(input_value)
+
+            worksheet.write(row_num, 1, input_value, field_format)
             row_num += 1
 
         # Labels from the first row
