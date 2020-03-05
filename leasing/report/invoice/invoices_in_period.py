@@ -17,6 +17,18 @@ def get_lease_id(obj):
     return obj.lease.get_identifier_string()
 
 
+def get_recipient_name(obj):
+    return obj.recipient.get_name()
+
+
+def get_recipient_address(obj):
+    return ', '.join(filter(None, [
+        obj.recipient.address,
+        obj.recipient.postal_code,
+        obj.recipient.city
+    ]))
+
+
 class InvoicesInPeriodReport(ReportBase):
     name = _('Invoces in period')
     description = _('Show all the invoices that have due date between start and end date')
@@ -63,6 +75,16 @@ class InvoicesInPeriodReport(ReportBase):
             'format': 'money',
             'width': 13,
         },
+        'recipient_name': {
+            'source': get_recipient_name,
+            'label': _('Recipient name'),
+            'width': 50,
+        },
+        'recipient_address': {
+            'source': get_recipient_address,
+            'label': _('Recipient address'),
+            'width': 50,
+        }
     }
 
     def get_data(self, input_data):
@@ -71,7 +93,7 @@ class InvoicesInPeriodReport(ReportBase):
             due_date__lte=input_data['end_date'],
         ).select_related(
             'lease', 'lease__identifier', 'lease__identifier__type', 'lease__identifier__district',
-            'lease__identifier__municipality',
+            'lease__identifier__municipality', 'recipient'
         ).order_by('lease__identifier__type__identifier', 'due_date')
 
         if input_data['invoice_state']:

@@ -19,6 +19,18 @@ def get_lease_id(obj):
     return obj.lease.get_identifier_string()
 
 
+def get_recipient_name(obj):
+    return obj.recipient.get_name()
+
+
+def get_recipient_address(obj):
+    return ', '.join(filter(None, [
+        obj.recipient.address,
+        obj.recipient.postal_code,
+        obj.recipient.city
+    ]))
+
+
 class OpenInvoicesReport(ReportBase):
     name = _('Open invoices')
     description = _('Show all the invoices that have their state as "open"')
@@ -58,6 +70,16 @@ class OpenInvoicesReport(ReportBase):
             'format': 'money',
             'width': 13,
         },
+        'recipient_name': {
+            'source': get_recipient_name,
+            'label': _('Recipient name'),
+            'width': 50,
+        },
+        'recipient_address': {
+            'source': get_recipient_address,
+            'label': _('Recipient address'),
+            'width': 50,
+        }
     }
 
     def get_data(self, input_data):
@@ -67,7 +89,7 @@ class OpenInvoicesReport(ReportBase):
             state=InvoiceState.OPEN
         ).select_related(
             'lease', 'lease__identifier', 'lease__identifier__type', 'lease__identifier__district',
-            'lease__identifier__municipality',
+            'lease__identifier__municipality', 'recipient'
         ).order_by('lease__identifier__type__identifier', 'due_date')
 
     def get_response(self, request):
