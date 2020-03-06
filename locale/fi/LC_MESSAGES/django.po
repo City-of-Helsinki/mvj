@@ -926,11 +926,6 @@ msgctxt "Basis of rent type"
 msgid "Mast"
 msgstr "Masto"
 
-#: leasing/enums.py:489
-msgctxt "Basis of rent type"
-msgid "Device cabinet"
-msgstr "Laitekaappi"
-
 #: leasing/filters.py:107
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
