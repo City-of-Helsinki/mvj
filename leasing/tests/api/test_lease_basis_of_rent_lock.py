@@ -36,6 +36,7 @@ def test_lock_lease_basis_of_rent(django_db_setup, client, lease_test_data, user
         lease=lease,
         intended_use_id=1,
         area=12345,
+        area_unit="m2",
         index_id=1,
     )
 
@@ -91,6 +92,7 @@ def test_cannot_change_locked_lease_basis_of_rent(django_db_setup, client, lease
         lease=lease,
         intended_use_id=1,
         area=12345,
+        area_unit="m2",
         index_id=1,
         locked_at=lock_time,
     )
@@ -144,6 +146,7 @@ def test_cannot_unclock_locked_lease_basis_of_rent(django_db_setup, client, leas
         lease=lease,
         intended_use_id=1,
         area=12345,
+        area_unit="m2",
         index_id=1,
         locked_at=lock_time,
     )
@@ -198,6 +201,7 @@ def test_can_unclock_locked_lease_basis_of_rent(django_db_setup, client, lease_t
         lease=lease,
         intended_use_id=1,
         area=12345,
+        area_unit="m2",
         index_id=1,
         locked_at=lock_time,
     )
@@ -253,6 +257,7 @@ def test_cannot_remove_locked_lease_basis_of_rent(django_db_setup, client, lease
         lease=lease,
         intended_use_id=1,
         area=12345,
+        area_unit="m2",
         index_id=1,
         locked_at=lock_time,
     )

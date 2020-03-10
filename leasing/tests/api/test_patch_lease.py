@@ -156,3 +156,71 @@ def test_patch_lease_is_rent_info_complete_not_possible(django_db_setup, admin_c
     lease = Lease.objects.get(pk=response.data['id'])
 
     assert lease.is_rent_info_complete is False
+
+
+def test_patch_lease_basis_of_rents(
+    django_db_setup, admin_client, contact_factory, lease_test_data
+):
+    lease = lease_test_data["lease"]
+    data = {
+        "basis_of_rents": [{"intended_use": 1, "area": "101.00", "area_unit": "m2"}]
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+
+def test_patch_lease_basis_of_rents_without_intended_use(
+    django_db_setup, admin_client, contact_factory, lease_test_data
+):
+    lease = lease_test_data["lease"]
+    data = {"basis_of_rents": [{"area": "101.00", "area_unit": "m2"}]}
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+def test_patch_lease_basis_of_rents_predefined_area_unit(
+    django_db_setup, admin_client, contact_factory, lease_test_data
+):
+    lease = lease_test_data["lease"]
+    data = {
+        "basis_of_rents": [{"intended_use": 1, "area": "100.00", "area_unit": "m2"}]
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    data["basis_of_rents"] = [
+        {
+            "id": response.data["basis_of_rents"][0]["id"],
+            "intended_use": 1,
+            "area": "102.00",
+        }
+    ]
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
