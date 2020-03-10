@@ -11,15 +11,21 @@ from leasing.renderers import BrowsableAPIRendererWithoutForms
 from leasing.report.invoice.invoice_payments import InvoicePaymentsReport
 from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
+from leasing.report.invoice.money_collaterals_report import MoneyCollateralsReport
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
+from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
+from leasing.report.lease.lease_count_report import LeaseCountReport
 from leasing.report.renderers import XLSXRenderer
 
 ENABLED_REPORTS = [
+    DecisionConditionsReport,
+    MoneyCollateralsReport,
     OpenInvoicesReport,
     InvoicePaymentsReport,
     InvoicesInPeriodReport,
     LaskeInvoiceCountReport,
+    LeaseCountReport,
     LeaseInvoicingDisabledReport,
 ]
 
