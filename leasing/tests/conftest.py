@@ -317,3 +317,90 @@ def invoices_test_data(lease_factory, contact_factory, tenant_factory, invoice_f
         'invoice1': invoice1,
         'invoice2': invoice2,
     }
+
+
+@pytest.fixture
+def lease_data_dict_with_contacts(contact_factory):
+    test_contacts = [contact_factory(first_name="First name", last_name="Last name", is_lessor=True,
+                                     type=ContactType.PERSON)]
+    for i in range(3):
+        test_contacts.append(contact_factory(first_name="First name " + str(i), last_name="Last name " + str(i),
+                                             type=ContactType.PERSON))
+
+    data = {
+        "state": "lease",
+        "classification": "public",
+        "intended_use_note": "Intended use note...",
+        "transferable": True,
+        "regulated": False,
+        "notice_note": "Notice note...",
+        "type": 1,
+        "municipality": 1,
+        "district": 31,
+        "intended_use": 1,
+        "supportive_housing": 5,
+        "statistical_use": 1,
+        "financing": 1,
+        "management": 1,
+        "regulation": 1,
+        "hitas": 1,
+        "notice_period": 1,
+        "lessor": test_contacts[0].id,
+        "tenants": [
+            {
+                "share_numerator": 1,
+                "share_denominator": 2,
+                "reference": "123",
+                "tenantcontact_set": [
+                    {
+                        "type": "tenant",
+                        "contact": test_contacts[1].id,
+                        "start_date": timezone.now().date()
+                    },
+                    {
+                        "type": "billing",
+                        "contact": test_contacts[3].id,
+                        "start_date": timezone.now().date()
+                    }
+                ]
+            },
+            {
+                "share_numerator": 1,
+                "share_denominator": 2,
+                "reference": "345",
+                "tenantcontact_set": [
+                    {
+                        "type": "tenant",
+                        "contact": test_contacts[2].id,
+                        "start_date": timezone.now().date()
+                    }
+                ]
+            }
+        ],
+        "lease_areas": [
+            {
+                "identifier": "12345",
+                "area": 100,
+                "section_area": 100,
+                "address": "Testaddress 1",
+                "postal_code": "00100",
+                "city": "Helsinki",
+                "type": "real_property",
+                "location": "surface",
+                "plots": [
+                    {
+                        "identifier": "plot-1",
+                        "area": 100,
+                        "section_area": 100,
+                        "address": "Test plotaddress 1",
+                        "postal_code": "00100",
+                        "city": "Helsinki",
+                        "type": "real_property",
+                        "registration_date": None,
+                        "in_contract": True
+                    }
+                ]
+            }
+        ]
+    }
+    return data

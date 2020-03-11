@@ -998,7 +998,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     zone = models.PositiveIntegerField(verbose_name=_("Zone"), null=True, blank=True)
 
     # In Finnish: Yksikkö
-    area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), null=True, blank=True, max_length=20)
+    area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), max_length=20)
 
     # In Finnish: Yksikköhinta (ind 100)
     amount_per_area = models.DecimalField(verbose_name=_("Amount per area (index 100)"), null=True, blank=True,
