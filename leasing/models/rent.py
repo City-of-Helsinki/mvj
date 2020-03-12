@@ -15,8 +15,8 @@ from leasing.calculation.index import IndexCalculation
 from leasing.calculation.result import (
     CalculationAmount, CalculationNote, CalculationResult, FixedInitialYearRentCalculationResult)
 from leasing.enums import (
-    AreaUnit, BasisOfRentType, DueDatesPosition, DueDatesType, IndexType, PeriodType, RentAdjustmentAmountType,
-    RentAdjustmentType, RentCycle, RentType, SubventionType)
+    AreaUnit, BasisOfRentType, BasisOfRentZone, DueDatesPosition, DueDatesType, IndexType, PeriodType,
+    RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType, SubventionType)
 from leasing.models.utils import (
     DayMonth, fix_amount_for_overlap, get_billing_periods_for_year, get_date_range_amount_from_monthly_amount,
     get_monthly_amount_by_period_type, get_range_overlap_and_remainder, group_items_in_period_by_date_range,
@@ -995,7 +995,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
     area = models.DecimalField(verbose_name=_("Area amount"), decimal_places=2, max_digits=12)
 
     # In Finnish: Vyöhyke
-    zone = models.PositiveIntegerField(verbose_name=_("Zone"), null=True, blank=True)
+    zone = EnumField(BasisOfRentZone, verbose_name=_("Zone"), null=True, blank=True, max_length=20)
 
     # In Finnish: Yksikkö
     area_unit = EnumField(AreaUnit, verbose_name=_("Area unit"), max_length=20)

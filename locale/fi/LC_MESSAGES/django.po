@@ -931,6 +931,22 @@ msgctxt "Basis of rent type"
 msgid "Mast"
 msgstr "Masto"
 
+#: leasing/enums.py:501
+msgctxt "Basis of rent zone"
+msgid "Zone 1"
+msgstr "Vyöhyke 1"
+
+#: leasing/enums.py:502
+msgctxt "Basis of rent zone"
+msgid "Zone 2"
+msgstr "Vyöhyke 2"
+
+#: leasing/enums.py:503
+msgctxt "Basis of rent zone"
+msgid "Zone 3"
+msgstr "Vyöhyke 3"
+
+
 #: leasing/filters.py:107
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
@@ -2814,7 +2830,7 @@ msgstr "Pinta-ala"
 
 #: leasing/models/rent.py:998
 msgid "Zone"
-msgstr ""
+msgstr "Vyöhyke"
 
 #: leasing/models/rent.py:1004
 msgid "Amount per area (index 100)"
