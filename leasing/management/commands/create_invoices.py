@@ -1,10 +1,12 @@
 import datetime
+from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import Q
 
+from leasing.enums import InvoiceState
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 
@@ -78,6 +80,9 @@ class Command(BaseCommand):
                         with transaction.atomic():
                             invoice_data['invoicing_date'] = today
                             invoice_data['outstanding_amount'] = invoice_data['billed_amount']
+                            # ensure 0€ total invoices get marked as PAID
+                            if invoice_data['outstanding_amount'] == Decimal(0):
+                                invoice_data['state'] = InvoiceState.PAID
 
                             invoice = Invoice.objects.create(**invoice_data)
 
