@@ -1,23 +1,36 @@
+from enum import Enum
+
 from xlsxwriter.utility import xl_range, xl_rowcol_to_cell
 
 
+class FormatType(Enum):
+    BOLD = 'bold'
+    DATE = 'date'
+    MONEY = 'money'
+    BOLD_MONEY = 'bold_money'
+
+
 class ExcelRow:
-    def __init__(self):
+    def __init__(self, cells=None):
         self.cells = []
+
+        if cells is not None:
+            self.cells.extend(cells)
 
 
 class ExcelCell:
-    def __init__(self, column, value=None):
+    def __init__(self, column, value=None, format_type=None):
         self.column = column
         self.value = value
+        self.format_type = format_type
         self.row = None
         self.first_data_row_num = None
 
     def get_value(self):
         return self.value
 
-    def get_format(self):
-        return None
+    def get_format_type(self):
+        return self.format_type
 
     def set_row(self, row_num):
         self.row = row_num
@@ -27,8 +40,8 @@ class ExcelCell:
 
 
 class PreviousRowsSumCell(ExcelCell):
-    def __init__(self, column, count):
-        super().__init__(column)
+    def __init__(self, column, count, format_type=FormatType.BOLD):
+        super().__init__(column, format_type=format_type)
 
         self.count = count
 
@@ -40,8 +53,8 @@ class PreviousRowsSumCell(ExcelCell):
 
 
 class SumCell(ExcelCell):
-    def __init__(self, column, target_ranges=None):
-        super().__init__(column)
+    def __init__(self, column, format_type=FormatType.BOLD, target_ranges=None):
+        super().__init__(column, format_type=format_type)
 
         if target_ranges:
             self.target_ranges = target_ranges

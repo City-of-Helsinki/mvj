@@ -54,6 +54,9 @@ class ReportBase:
     # the formatting to xlsxwriter.
     output_fields = {}
 
+    # If the column labels should be automatically added as the first row
+    automatic_excel_column_labels = True
+
     def __init__(self):
         self.form = None
 
