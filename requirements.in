@@ -1,6 +1,6 @@
 beautifulsoup4
-dataclasses ; python_version<"3.7"
-Django
+dataclasses
+Django~=2.2.0
 django-anymail
 django-auditlog
 django-jsonfield-compat

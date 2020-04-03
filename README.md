@@ -8,10 +8,10 @@ City of Helsinki ground rent system
 
 1. Run `docker-compose up`
 
-2. Run migrations if needed: 
+2. Run migrations if needed:
     * `docker exec mvj python manage.py migrate`
 
-3. Create superuser if needed: 
+3. Create superuser if needed:
     * `docker exec -it mvj python manage.py createsuperuser`
 
 The project is now running at [localhost:8000](http://localhost:8000)
@@ -29,23 +29,23 @@ environments, you can set up a network to sync mvj, mvj-ui and tunnistamo togeth
                 ...
                 networks:
                     - net
-        
+
             django:
                 ...
                 networks:
                     - net
-        
+
         networks:
             net:
                 driver: bridge
-                
+
 2. Connect mvj to tunnistamo's network, by adding this to mvj's and mvj-ui's `docker-compose`:
 
         networks:
             default:
                 external:
                     name: tunnistamo_net
-    
+
     The name `tunnistamo_net` comes from the name of the folder, where tunnistamo lives
     combined with the name of the network. Change those according to your setup, if needed.
 
@@ -55,16 +55,16 @@ i.e. Tunnistamo's `django` container's name. Connect mvj's OIDC logic to that li
         OIDC_API_TOKEN_AUTH = {
             ...
             'ISSUER': 'http://tunnistamo-backend:8001/openid',
-            ...        
+            ...
         }
- 
+
 4. Add `tunnistamo-backend` to your computer's localhost aliases. To do this on UNIX-like systems open
 `/etc/hosts` and add it:
 
         127.0.0.1    localhost tunnistamo-backend
-        
+
    This way callbacks to `tunnistamo-backend` URL will work locally.
-        
+
 5. Configure OIDC settings in Tunnistamo's admin panel. Might require help from other devs.
 
 6. Configure some social auth application to allow requests from your local tunnistamo by using this
@@ -100,6 +100,7 @@ The virtualenv will automatically activate. To activate it in the future, just d
 
 ### Creating Python requirements files
 
+* Run `pip install pip-tools`
 * Run `pip-compile requirements.in`
 * Run `pip-compile requirements-dev.in`
 
@@ -128,7 +129,7 @@ Enable PostGIS
 
 Allow the mvj user to create databases when running tests
 
-    sudo -u postgres psql -c "ALTER USER mvj CREATEDB;"
+    sudo -u postgres psql -d "mvj" -c "ALTER USER mvj CREATEDB;"
 
 Tests also require that PostGIS extension is installed on the test database. This can be achieved the easiest by
 adding PostGIS extension to the default template which is then used when the test databases are created:
@@ -174,7 +175,7 @@ Sets the default model specific permissions (view, add, change, delete) to the p
 
 #### `set_group_field_permissions`
 
-Sets field specific permissions (view, change) to the pre-defined groups. 
+Sets field specific permissions (view, change) to the pre-defined groups.
 
 #### `set_ad_group_mappings`
 
@@ -184,7 +185,7 @@ Sets the default mappings for AD groups to user groups.
 
 #### `create_invoices`
 
-Creates invoices for rents that are due in the next month. 
+Creates invoices for rents that are due in the next month.
 
 _Should be run on the first day of every month_
 
