@@ -13,10 +13,10 @@ POLL_INTERVAL = 10.0  # seconds
 
 def run_scheduler_loop() -> NoReturn:
     # Make sure that the job run queue is up to date
-    JobRunQueueItem.objects.refresh()
+    JobRunQueueItem.objects.refresh()  # type: ignore
 
     # Get the runnable items ordered by run time
-    queue_items = JobRunQueueItem.objects.to_run().order_by('run_at')
+    queue_items = JobRunQueueItem.objects.to_run().order_by("run_at")  # type: ignore
 
     while True:
         first_item = queue_items.first()
