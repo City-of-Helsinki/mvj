@@ -110,7 +110,7 @@ class ReportBase:
         return ReportOutputSerializer
 
     def get_filename(self, format):
-        return '{}_{}.{}'.format(timezone.now().strftime('%Y-%m-%d_%H-%M'), self.slug, format)
+        return '{}_{}.{}'.format(timezone.localtime(timezone.now()).strftime('%Y-%m-%d_%H-%M'), self.slug, format)
 
     def get_output_field_attr(self, field_name, attr_name, default=None):
         """Returns the value of [`field_name`][`attr_name`] attribute from output_fields"""
