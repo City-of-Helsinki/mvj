@@ -93,6 +93,8 @@ class ReportViewSet(ViewSet):
 
         if 'report_type' in kwargs and kwargs['report_type'] in self.report_classes_by_slug:
             report_class = self.report_classes_by_slug[kwargs['report_type']]
+            metadata['name'] = report_class.name
+            metadata['description'] = report_class.description
 
             for field_name, field in report_class.input_fields.items():
                 metadata['actions']['GET'][field_name] = {
@@ -109,5 +111,7 @@ class ReportViewSet(ViewSet):
                             "display_name": c[1],
                         } for c in field.choices
                     ]
+
+            metadata['output_fields'] = report_class.get_output_fields_metadata()
 
         return Response(metadata, status=status.HTTP_200_OK)

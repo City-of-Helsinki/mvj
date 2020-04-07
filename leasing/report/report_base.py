@@ -66,6 +66,18 @@ class ReportBase:
     def __init__(self):
         self.form = None
 
+    @classmethod
+    def get_output_fields_metadata(cls):
+        metadata = {}
+        for field_name, output_field in cls.output_fields.items():
+            metadata[field_name] = {k: v for k, v in output_field.items() if k not in [
+                'source',
+                'width',
+                'serializer_field',
+            ]}
+
+        return metadata
+
     def get_form(self, data=None):
         """Initializes a form with fields from input_fields, saves the form as
         self.form instance attribute and returns it."""
