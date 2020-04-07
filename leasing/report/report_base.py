@@ -1,9 +1,12 @@
 from io import BytesIO
 
 import xlsxwriter
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.db.models import Model
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -218,3 +221,58 @@ class ReportBase:
         workbook.close()
 
         return output.getvalue()
+
+
+class AsyncReportBase(ReportBase):
+    async_task_timeout = 90  # in seconds
+
+    @classmethod
+    def get_output_fields_metadata(cls):
+        return {
+            'message': {
+                'label': _('Message')
+            }
+        }
+
+    def generate_report(self, user, input_data):
+        report_data = self.get_data(input_data)
+
+        return self.data_as_excel(report_data)
+
+    def send_report(self, task):
+        user = task.kwargs['user']
+
+        message = EmailMessage(
+            from_email=settings.MVJ_EMAIL_FROM,
+            to=[user.email],
+        )
+
+        if task.success:
+            message.subject = _('Report "{}" successfully generated').format(self.name)
+            message.body = _('Generated report attached')
+            message.attach(
+                self.get_filename('xlsx'),
+                task.result,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+        else:
+            message.subject = _('Failed to generate report "{}"').format(self.name)
+            message.body = _('Please try again')
+
+        message.send()
+
+    def get_response(self, request):
+        user = request.user
+        input_data = self.get_input_data(request)
+
+        async_task(
+            self.generate_report,
+            user=user,
+            input_data=input_data,
+            hook=self.send_report,
+            timeout=self.async_task_timeout
+        )
+
+        return Response({
+            'message': _('Results will be sent by email to {}'.format(user.email)),
+        })
