@@ -5,9 +5,11 @@
 #    pip-compile requirements.in
 #
 appdirs==1.4.3            # via zeep
+arrow==0.15.5             # via django-q
 attrs==19.3.0             # via zeep
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.2     # via -r requirements.in
+blessed==1.17.4           # via django-q
 cached-property==1.5.1    # via zeep
 certifi==2019.11.28       # via requests, sentry-sdk
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
@@ -28,10 +30,12 @@ django-filter==2.2.0      # via -r requirements.in
 django-helusers==0.5.6    # via -r requirements.in
 django-jsonfield-compat==0.4.4  # via -r requirements.in
 django-jsonfield==1.4.0   # via django-auditlog
+django-picklefield==2.1.1  # via django-q
+django-q==1.2.1           # via -r requirements.in
 django-rest-swagger==2.2.0  # via -r requirements.in
 django-safedelete==0.5.4  # via -r requirements.in
 django-sequences==2.4     # via -r requirements.in
-django==2.2.12            # via -r requirements.in, django-anymail, django-cors-headers, django-filter, django-helusers, django-jsonfield, django-safedelete, djangorestframework, drf-oidc-auth
+django==2.2.12            # via -r requirements.in, django-anymail, django-cors-headers, django-filter, django-helusers, django-jsonfield, django-picklefield, django-q, django-safedelete, djangorestframework, drf-oidc-auth
 djangorestframework-gis==0.15  # via -r requirements.in
 djangorestframework==3.11.0  # via -r requirements.in, django-rest-swagger, djangorestframework-gis, drf-oidc-auth
 docutils==0.16            # via python-daemon
@@ -56,7 +60,7 @@ pyjwkest==1.4.2           # via drf-oidc-auth
 pynacl==1.3.0             # via paramiko
 pysftp==0.2.9             # via -r requirements.in
 python-daemon==2.2.4      # via -r requirements.in
-python-dateutil==2.6.0    # via -r requirements.in, django-auditlog
+python-dateutil==2.6.0    # via -r requirements.in, arrow, django-auditlog
 python-docx==0.8.7        # via docxtpl
 python-jose==3.1.0        # via django-helusers
 pytz==2019.3              # via django, zeep
@@ -65,11 +69,13 @@ requests==2.23.0          # via -r requirements.in, coreapi, django-anymail, dja
 rsa==4.0                  # via python-jose
 sentry-sdk==0.14.3        # via -r requirements.in
 simplejson==3.17.0        # via django-rest-swagger
-six==1.14.0               # via bcrypt, cryptography, django-anymail, django-jsonfield, docxtpl, ecdsa, isodate, pyjwkest, pynacl, python-dateutil, python-jose, zeep
+six==1.14.0               # via bcrypt, blessed, cryptography, django-anymail, django-jsonfield, docxtpl, ecdsa, isodate, pyjwkest, pynacl, python-dateutil, python-jose, zeep
 soupsieve==2.0            # via beautifulsoup4
 sqlparse==0.3.1           # via django
 uritemplate==3.0.1        # via coreapi
 urllib3==1.25.8           # via requests, sentry-sdk
+wcwidth==0.1.9            # via blessed
+xlsxwriter==1.2.8         # via -r requirements.in
 zeep==3.4.0               # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:

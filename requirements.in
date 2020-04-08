@@ -11,6 +11,7 @@ django-enumfields
 django-environ
 django-filter
 django-helusers
+django-q
 django-safedelete
 django-sequences
 djangorestframework
@@ -23,4 +24,5 @@ python-daemon
 python-dateutil
 sentry-sdk
 requests
+xlsxwriter
 zeep
