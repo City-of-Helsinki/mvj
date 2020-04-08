@@ -274,5 +274,5 @@ class AsyncReportBase(ReportBase):
         )
 
         return Response({
-            'message': _('Results will be sent by email to {}'.format(user.email)),
+            'message': _('Results will be sent by email to {}').format(user.email),
         })
