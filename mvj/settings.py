@@ -141,6 +141,7 @@ INSTALLED_APPS = [
     'field_permissions',
 
     'batchrun',
+    'django_q',
 ]
 
 if DEBUG:
@@ -218,6 +219,13 @@ EMAIL_BACKEND = env.str('EMAIL_BACKEND')
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_EXPOSE_HEADERS = ['Content-Disposition']
+
+Q_CLUSTER = {
+    'name': 'DjangORM',
+    'timeout': 90,
+    'retry': 60 * 60,  # 1 hour
+    'orm': 'default'
+}
 
 KTJ_PRINT_ROOT_URL = env.str('KTJ_PRINT_ROOT_URL')
 KTJ_PRINT_USERNAME = env.str('KTJ_PRINT_USERNAME')

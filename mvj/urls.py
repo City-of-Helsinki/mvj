@@ -5,6 +5,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
+from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.auditlog import AuditLogView
@@ -77,6 +78,7 @@ router.register(r'notice_period', NoticePeriodViewSet)
 router.register(r'regulation', RegulationViewSet)
 router.register(r'receivable_type', ReceivableTypeViewSet)
 router.register(r'related_lease', RelatedLeaseViewSet)
+router.register(r'report', ReportViewSet, basename='report')
 router.register(r'special_project', SpecialProjectViewSet)
 router.register(r'reservation_procedure', ReservationProcedureViewSet)
 router.register(r'statistical_use', StatisticalUseViewSet)
