@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -33,8 +34,8 @@ class LeaseInvoicingDisabledReport(ReportBase):
         today = timezone.now().date()
 
         return Lease.objects.filter(
+            Q(end_date__isnull=True) | Q(end_date__gte=today),
             start_date__isnull=False,
-            end_date__gte=today,
             state__in=[LeaseState.LEASE, LeaseState.SHORT_TERM_LEASE, LeaseState.LONG_TERM_LEASE],
             is_invoicing_enabled=False
         ).select_related(
