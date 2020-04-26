@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Model
 from django.utils import timezone
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
@@ -164,6 +165,12 @@ class ReportBase:
             if isinstance(input_value, Model):
                 input_value = str(input_value)
 
+            if isinstance(input_value, bool):
+                if input_value:
+                    input_value = ugettext('Yes')
+                else:
+                    input_value = ugettext('No')
+
             worksheet.write(row_num, 1, input_value, field_format)
             row_num += 1
 
@@ -179,7 +186,7 @@ class ReportBase:
             while lookup_row_num < len(data) and lookup_row_num in data and isinstance(data[lookup_row_num], ExcelRow):
                 lookup_row_num += 1
 
-            if lookup_row_num in data:
+            if len(data) > lookup_row_num:
                 for index, field_name in enumerate(data[lookup_row_num].keys()):
                     field_label = report.get_output_field_attr(field_name, 'label', default=field_name)
 
