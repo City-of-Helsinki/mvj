@@ -18,6 +18,7 @@ from leasing.report.lease.extra_city_rent import ExtraCityRentReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
 from leasing.report.lease.lease_count_report import LeaseCountReport
 from leasing.report.lease.rent_forecast import RentForecastReport
+from leasing.report.lease.reservations import ReservationsReport
 from leasing.report.renderers import XLSXRenderer
 
 ENABLED_REPORTS = [
@@ -31,6 +32,7 @@ ENABLED_REPORTS = [
     LeaseCountReport,
     LeaseInvoicingDisabledReport,
     RentForecastReport,
+    ReservationsReport,
 ]
 
 
