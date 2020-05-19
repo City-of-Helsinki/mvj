@@ -38,6 +38,12 @@ class DecisionConditionsReport(ReportBase):
     input_fields = {
         'start_date': forms.DateField(label=_('Start date'), required=True),
         'end_date': forms.DateField(label=_('End date'), required=True),
+        "condition_type": forms.ModelChoiceField(
+            label=_("Type"),
+            queryset=Condition.objects.all(),
+            empty_label=None,
+            required=False,
+        ),
     }
     output_fields = {
         'lease_id': {
@@ -98,5 +104,8 @@ class DecisionConditionsReport(ReportBase):
             'decision__lease__identifier__district__identifier',
             'decision__lease__identifier__sequence',
         )
+
+        if input_data["condition_type"]:
+            qs = qs.filter(type=input_data["condition_type"])
 
         return qs
