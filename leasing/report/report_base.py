@@ -9,6 +9,7 @@ from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import ChoiceField
 from rest_framework.response import Response
 
 from leasing.report.excel import ExcelRow, FormatType
@@ -210,9 +211,13 @@ class ReportBase:
                             field_format = formats[FormatType.MONEY]
                     elif field_format_name == 'boolean':
                         if field_value:
-                            field_value = _('Yes')
+                            field_value = str(_('Yes'))
                         else:
-                            field_value = _('No')
+                            field_value = str(_('No'))
+
+                    field_serializer_field = report.get_output_field_attr(field_name, 'serializer_field')
+                    if isinstance(field_serializer_field, ChoiceField):
+                        field_value = str(field_serializer_field.choices[field_value])
 
                     worksheet.write(row_num, column, field_value, field_format)
                     column += 1
