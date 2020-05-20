@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from leasing.models import Condition
+from leasing.models import Condition, ConditionType
 from leasing.report.report_base import ReportBase
 
 
@@ -40,7 +40,7 @@ class DecisionConditionsReport(ReportBase):
         'end_date': forms.DateField(label=_('End date'), required=True),
         "condition_type": forms.ModelChoiceField(
             label=_("Type"),
-            queryset=Condition.objects.all(),
+            queryset=ConditionType.objects.all(),
             empty_label=None,
             required=False,
         ),
