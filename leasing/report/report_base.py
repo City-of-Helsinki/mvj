@@ -135,8 +135,8 @@ class ReportBase:
         formats = {
             FormatType.BOLD: workbook.add_format({'bold': True}),
             FormatType.DATE: workbook.add_format({'num_format': 'dd.mm.yyyy'}),
-            FormatType.MONEY: workbook.add_format({'num_format': '€#.00'}),
-            FormatType.BOLD_MONEY: workbook.add_format({'bold': True, 'num_format': '€#.00'}),
+            FormatType.MONEY: workbook.add_format({'num_format': '#,##0.00 €'}),
+            FormatType.BOLD_MONEY: workbook.add_format({'bold': True, 'num_format': '#,##0.00 €'}),
         }
 
         row_num = 0
