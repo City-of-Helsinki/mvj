@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from leasing.enums import LeaseState
+from leasing.enums import LeaseState, RentType
 from leasing.models import Lease
 from leasing.report.report_base import ReportBase
 
@@ -33,11 +33,25 @@ class LeaseInvoicingDisabledReport(ReportBase):
     def get_data(self, input_data):
         today = timezone.now().date()
 
-        return Lease.objects.filter(
+        qs = Lease.objects.filter(
             Q(end_date__isnull=True) | Q(end_date__gte=today),
             start_date__isnull=False,
             state__in=[LeaseState.LEASE, LeaseState.SHORT_TERM_LEASE, LeaseState.LONG_TERM_LEASE],
             is_invoicing_enabled=False
         ).select_related(
             'identifier', 'identifier__type', 'identifier__district', 'identifier__municipality',
+        ).prefetch_related(
+            'rents',
         ).order_by('start_date', 'end_date')
+
+        leases = []
+        for lease in qs:
+            free = True
+            for rent in lease.rents.all():
+                if rent.type is not RentType.FREE:
+                    free = False
+                    break
+            if not free:
+                leases.append(lease)
+
+        return leases
