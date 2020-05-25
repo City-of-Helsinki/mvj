@@ -3114,8 +3114,8 @@ msgid "Invoice count"
 msgstr "Laskujen määrä"
 
 #: leasing/report/invoice/laske_invoice_count_report.py:32
-msgid "Is estimate?"
-msgstr "Onko arvio?"
+msgid "Estimate"
+msgstr "Arvio"
 
 #: leasing/report/invoice/money_collaterals_report.py:13
 msgid "Money collaterals"

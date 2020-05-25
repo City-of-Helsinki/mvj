@@ -29,7 +29,7 @@ class LaskeInvoiceCountReport(ReportBase):
             'label': _('Invoice count'),
         },
         'is_estimate': {
-            'label': _('Is estimate?'),
+            'label': _('Estimate'),
             'format': 'boolean',
         },
     }
