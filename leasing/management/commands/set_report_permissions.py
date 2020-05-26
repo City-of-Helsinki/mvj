@@ -27,7 +27,7 @@ DEFAULT_REPORT_PERMS = {
 
 
 class Command(BaseCommand):
-    help = "Sets predefined model permissions for the predefined MVJ groups"
+    help = "Sets report generation permissions for the predefined MVJ groups"
 
     def handle(self, *args, **options):
         ctype, created = ContentType.objects.get_or_create(

@@ -169,6 +169,10 @@ There are multiple management commands that are required to run. Either when fir
 
 ### Install time commands
 
+#### `set_report_permissions`
+
+Sets permitted groups for each report type.
+
 #### `set_group_model_permissions`
 
 Sets the default model specific permissions (view, add, change, delete) to the pre-defined groups for the leasing models.
