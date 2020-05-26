@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 
 from leasing.models.invoice import InvoicePayment
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
@@ -59,6 +60,10 @@ class InvoicePaymentsReport(ReportBase):
         return qs
 
     def get_response(self, request):
+        codename = 'leasing.can_generate_report_{}'.format(self.slug)
+        if not request.user.has_perm(codename):
+            raise PermissionDenied()
+
         report_data = self.get_data(self.get_input_data(request))
         serialized_report_data = self.serialize_data(report_data)
 

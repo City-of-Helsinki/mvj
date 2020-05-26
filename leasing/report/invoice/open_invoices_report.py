@@ -4,6 +4,7 @@ from operator import itemgetter
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 
 from leasing.enums import InvoiceState
 from leasing.models import Invoice
@@ -93,6 +94,10 @@ class OpenInvoicesReport(ReportBase):
         ).order_by('lease__identifier__type__identifier', 'due_date')
 
     def get_response(self, request):
+        codename = 'leasing.can_generate_report_{}'.format(self.slug)
+        if not request.user.has_perm(codename):
+            raise PermissionDenied()
+
         report_data = self.get_data(self.get_input_data(request))
         serialized_report_data = self.serialize_data(report_data)
 
