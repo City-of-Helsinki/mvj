@@ -19,6 +19,10 @@ class LeaseCountReport(ReportBase):
             'source': 'identifier__type__identifier',
             'label': _('Lease type'),
         },
+        'description': {
+            'label': _('Description'),
+            'source': 'identifier__type__name',
+        },
         'count': {
             'label': _('Count'),
         },
@@ -30,7 +34,8 @@ class LeaseCountReport(ReportBase):
         return Lease.objects.filter(
             Q(end_date__isnull=True) | Q(end_date__gte=today)
         ).values(
-            'identifier__type__identifier'
+            'identifier__type__identifier',
+            'identifier__type__name'
         ).annotate(
             count=Count('identifier__type__identifier')
         ).order_by(
