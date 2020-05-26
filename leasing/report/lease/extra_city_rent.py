@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 from itertools import groupby
 from operator import itemgetter
@@ -13,16 +14,78 @@ from leasing.report.excel import ExcelCell, ExcelRow, FormatType, PreviousRowsSu
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
-    return obj.lease.get_identifier_string()
-
-
 def get_recipient_address(obj):
     return ', '.join(filter(None, [
         obj.recipient.address,
         obj.recipient.postal_code,
         obj.recipient.city
     ]))
+
+
+def get_contract_number(obj):
+    contract_numbers = []
+    for contract in obj.contracts.all():
+        if not contract.contract_number:
+            continue
+
+        contract_numbers.append(contract.contract_number)
+
+    return ' / '.join(contract_numbers)
+
+
+def get_lease_area_identifier(obj):
+    lease_area_identifiers = []
+
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+
+        lease_area_identifiers.extend([lease_area.identifier])
+
+    return ' / '.join(lease_area_identifiers)
+
+
+def get_address(obj):
+    addresses = []
+
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+
+        for area_address in lease_area.addresses.all():
+            if not area_address.is_primary:
+                continue
+
+            addresses.append(area_address.address)
+
+    return ' / '.join(addresses)
+
+
+def get_tenants(obj):
+    today = datetime.date.today()
+
+    contacts = set()
+
+    for tenant in obj.tenants.all():
+        for tc in tenant.tenantcontact_set.all():
+            if tc.type != TenantContactType.TENANT:
+                continue
+
+            if (tc.end_date is None or tc.end_date >= today) and (tc.start_date is None or tc.start_date <= today):
+                contacts.add(tc.contact)
+
+    return ', '.join([c.get_name() for c in contacts])
+
+
+def get_total_area(obj):
+    total_area = 0
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+
+        total_area += lease_area.area
+
+    return total_area
 
 
 class ExtraCityRentReport(ReportBase):
@@ -57,6 +120,36 @@ class ExtraCityRentReport(ReportBase):
             'format': 'money',
             'width': 13,
         },
+        'contract_number': {
+            'label': _('Contract number'),
+        },
+        'lease_area_identifier': {
+            'label': _('Lease area identifier'),
+            'width': 20,
+        },
+        'address': {
+            'label': _('Address'),
+            'width': 20,
+        },
+        'tenants': {
+            'label': _('Tenants'),
+            'width': 40,
+        },
+        'start_date': {
+            'label': _("Start date"),
+            'format': 'date',
+        },
+        'end_date': {
+            'label': _("End date"),
+            'format': 'date',
+        },
+        'intended_use': {
+            'label': _("Intended use"),
+        },
+        'total_area': {
+            'label': _('Total area'),
+        },
+
     }
     automatic_excel_column_labels = False
 
@@ -125,6 +218,14 @@ class ExtraCityRentReport(ReportBase):
                     'area': sum([la.area for la in lease.lease_areas.all() if la.archived_at is None]),
                     'area_address': ' / '.join(addresses),
                     'rent': total_rent,
+                    'contract_number': get_contract_number(lease),
+                    'lease_area_identifier': get_lease_area_identifier(lease),
+                    'address': get_address(lease),
+                    'tenants': get_tenants(lease),
+                    'start_date': lease.start_date,
+                    'end_date': lease.end_date,
+                    'intended_use': lease.intended_use.name,
+                    'total_area': get_total_area(lease),
                 }
             )
 
