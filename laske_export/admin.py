@@ -16,9 +16,9 @@ class NoDeleteInlineFormSet(BaseInlineFormSet):
 
 class InvoiceInline(admin.TabularInline):
     model = LaskeExportLog.invoices.through
-    readonly_fields = ('laskeexportlog', 'invoice_number', 'due_date', 'lease')
-    exclude = ('invoice', )
-    raw_id_fields = ('invoice',)
+    readonly_fields = ("laskeexportlog", "invoice_number", "due_date", "lease")
+    exclude = ("invoice",)
+    raw_id_fields = ("invoice",)
     formset = NoDeleteInlineFormSet
     extra = 0
     verbose_name = _("Invoice")
@@ -39,10 +39,18 @@ class InvoiceInline(admin.TabularInline):
     lease.short_description = _("Lease")
 
     def invoice_number(self, obj):
-        invoice_url = reverse('admin:{}_{}_change'.format(obj.invoice._meta.app_label, obj.invoice._meta.model_name),
-                              args=(obj.invoice.pk, ))
+        invoice_url = reverse(
+            "admin:{}_{}_change".format(
+                obj.invoice._meta.app_label, obj.invoice._meta.model_name
+            ),
+            args=(obj.invoice.pk,),
+        )
 
-        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(invoice_url, obj.invoice.number))
+        return mark_safe(
+            '<a target="_blank" href="{}">{}</a>'.format(
+                invoice_url, obj.invoice.number
+            )
+        )
 
     lease.short_description = _("Lease identifier")
 
@@ -53,11 +61,11 @@ class InvoiceInline(admin.TabularInline):
 
 
 class LaskeExportLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'started_at', 'ended_at', 'is_finished')
-    readonly_fields = ('id', 'started_at', 'ended_at', 'is_finished', 'export_filename')
+    list_display = ("id", "started_at", "ended_at", "is_finished")
+    readonly_fields = ("id", "started_at", "ended_at", "is_finished", "export_filename")
     inlines = [InvoiceInline]
-    exclude = ('invoices',)
-    search_fields = ['invoices__number']
+    exclude = ("invoices",)
+    search_fields = ["invoices__number"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -69,7 +77,7 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
         return False
 
     def export_filename(self, obj):
-        return 'MTIL_IN_{}_{:08}.xml'.format(settings.LASKE_VALUES['sender_id'], obj.id)
+        return "MTIL_IN_{}_{:08}.xml".format(settings.LASKE_VALUES["sender_id"], obj.id)
 
 
 admin.site.register(LaskeExportLog, LaskeExportLogAdmin)

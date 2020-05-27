@@ -9,98 +9,135 @@ from rest_framework import serializers
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.enums import LeaseRelationType
 from leasing.models import (
-    AreaNote, BasisOfRent, EmailLog, InfillDevelopmentCompensation, RelatedLease, ReservationProcedure)
+    AreaNote,
+    BasisOfRent,
+    EmailLog,
+    InfillDevelopmentCompensation,
+    RelatedLease,
+    ReservationProcedure,
+)
 from leasing.serializers.debt_collection import (
-    CollectionCourtDecisionSerializer, CollectionLetterSerializer, CollectionNoteSerializer)
-from leasing.serializers.invoice import InvoiceNoteCreateUpdateSerializer, InvoiceNoteSerializer
+    CollectionCourtDecisionSerializer,
+    CollectionLetterSerializer,
+    CollectionNoteSerializer,
+)
+from leasing.serializers.invoice import (
+    InvoiceNoteCreateUpdateSerializer,
+    InvoiceNoteSerializer,
+)
 from users.models import User
 from users.serializers import UserSerializer
 
 from ..models import (
-    Contact, District, Financing, Hitas, IntendedUse, Lease, LeaseIdentifier, LeaseType, Municipality, NoticePeriod,
-    Regulation, SpecialProject, StatisticalUse, SupportiveHousing)
+    Contact,
+    District,
+    Financing,
+    Hitas,
+    IntendedUse,
+    Lease,
+    LeaseIdentifier,
+    LeaseType,
+    Municipality,
+    NoticePeriod,
+    Regulation,
+    SpecialProject,
+    StatisticalUse,
+    SupportiveHousing,
+)
 from .contact import ContactSerializer
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
 from .land_area import (
-    LeaseAreaCreateUpdateSerializer, LeaseAreaListSerializer, LeaseAreaSerializer, LeaseAreaWithGeometryListSerializer)
+    LeaseAreaCreateUpdateSerializer,
+    LeaseAreaListSerializer,
+    LeaseAreaSerializer,
+    LeaseAreaWithGeometryListSerializer,
+)
 from .rent import (
-    LeaseBasisOfRentCreateUpdateSerializer, LeaseBasisOfRentSerializer, RentCreateUpdateSerializer, RentSerializer)
+    LeaseBasisOfRentCreateUpdateSerializer,
+    LeaseBasisOfRentSerializer,
+    RentCreateUpdateSerializer,
+    RentSerializer,
+)
 from .tenant import TenantCreateUpdateSerializer, TenantSerializer
-from .utils import InstanceDictPrimaryKeyRelatedField, NameModelSerializer, UpdateNestedMixin
+from .utils import (
+    InstanceDictPrimaryKeyRelatedField,
+    NameModelSerializer,
+    UpdateNestedMixin,
+)
 
 
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
-        fields = '__all__'
+        fields = "__all__"
 
 
 class FinancingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Financing
-        fields = '__all__'
+        fields = "__all__"
 
 
 class HitasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hitas
-        fields = '__all__'
+        fields = "__all__"
 
 
 class IntendedUseSerializer(serializers.ModelSerializer):
     class Meta:
         model = IntendedUse
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LeaseTypeSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LeaseType
-        fields = '__all__'
+        fields = "__all__"
 
 
 class MunicipalitySerializer(NameModelSerializer):
     class Meta:
         model = Municipality
-        fields = '__all__'
+        fields = "__all__"
 
 
 class NoticePeriodSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = NoticePeriod
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RegulationSerializer(NameModelSerializer):
     class Meta:
         model = Regulation
-        fields = '__all__'
+        fields = "__all__"
 
 
 class StatisticalUseSerializer(NameModelSerializer):
     class Meta:
         model = StatisticalUse
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SupportiveHousingSerializer(NameModelSerializer):
     class Meta:
         model = SupportiveHousing
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SpecialProjectSerializer(NameModelSerializer):
     class Meta:
         model = SpecialProject
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ReservationProcedureSerializer(NameModelSerializer):
     class Meta:
         model = ReservationProcedure
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LeaseIdentifierSerializer(serializers.ModelSerializer):
@@ -110,10 +147,14 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LeaseIdentifier
-        fields = ('type', 'municipality', 'district', 'sequence')
+        fields = ("type", "municipality", "district", "sequence")
 
 
-class LeaseSuccinctSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class LeaseSuccinctSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.ReadOnlyField()
     type = LeaseTypeSerializer()
     municipality = MunicipalitySerializer()
@@ -122,19 +163,54 @@ class LeaseSuccinctSerializer(EnumSupportSerializerMixin, FieldPermissionsSerial
 
     class Meta:
         model = Lease
-        fields = ('id', 'deleted', 'created_at', 'modified_at', 'type', 'municipality', 'district', 'identifier',
-                  'start_date', 'end_date', 'state', 'is_rent_info_complete', 'is_invoicing_enabled',
-                  'reference_number', 'note', 'preparer', 'is_subject_to_vat')
+        fields = (
+            "id",
+            "deleted",
+            "created_at",
+            "modified_at",
+            "type",
+            "municipality",
+            "district",
+            "identifier",
+            "start_date",
+            "end_date",
+            "state",
+            "is_rent_info_complete",
+            "is_invoicing_enabled",
+            "reference_number",
+            "note",
+            "preparer",
+            "is_subject_to_vat",
+        )
 
 
 class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
-    lease_areas = LeaseAreaWithGeometryListSerializer(many=True, required=False, allow_null=True)
+    lease_areas = LeaseAreaWithGeometryListSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = Lease
-        fields = ('id', 'deleted', 'created_at', 'modified_at', 'type', 'municipality', 'district', 'identifier',
-                  'start_date', 'end_date', 'state', 'is_rent_info_complete', 'is_invoicing_enabled',
-                  'reference_number', 'note', 'preparer', 'is_subject_to_vat', 'lease_areas')
+        fields = (
+            "id",
+            "deleted",
+            "created_at",
+            "modified_at",
+            "type",
+            "municipality",
+            "district",
+            "identifier",
+            "start_date",
+            "end_date",
+            "state",
+            "is_rent_info_complete",
+            "is_invoicing_enabled",
+            "reference_number",
+            "note",
+            "preparer",
+            "is_subject_to_vat",
+            "lease_areas",
+        )
 
 
 class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -142,30 +218,38 @@ class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSeri
 
     class Meta:
         model = RelatedLease
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     def validate(self, data):
-        if data['from_lease'] == data['to_lease']:
-            raise serializers.ValidationError(_("from_lease and to_lease cannot be the same Lease"))
+        if data["from_lease"] == data["to_lease"]:
+            raise serializers.ValidationError(
+                _("from_lease and to_lease cannot be the same Lease")
+            )
 
         return data
 
     class Meta:
         model = RelatedLease
-        fields = '__all__'
+        fields = "__all__"
 
 
-class RelatedFromLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+class RelatedFromLeaseSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer
+):
     from_lease = LeaseSuccinctSerializer()
 
     class Meta:
         model = RelatedLease
-        fields = '__all__'
+        fields = "__all__"
 
 
-class LeaseSerializerBase(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class LeaseSerializerBase(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.ReadOnlyField()
     type = LeaseTypeSerializer()
     municipality = MunicipalitySerializer()
@@ -178,15 +262,23 @@ class LeaseSerializerBase(EnumSupportSerializerMixin, FieldPermissionsSerializer
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentSerializer(many=True, required=False, allow_null=True)
-    basis_of_rents = LeaseBasisOfRentSerializer(many=True, required=False, allow_null=True)
-    collection_court_decisions = CollectionCourtDecisionSerializer(many=True, required=False, allow_null=True)
-    collection_letters = CollectionLetterSerializer(many=True, required=False, allow_null=True)
-    collection_notes = CollectionNoteSerializer(many=True, required=False, allow_null=True)
+    basis_of_rents = LeaseBasisOfRentSerializer(
+        many=True, required=False, allow_null=True
+    )
+    collection_court_decisions = CollectionCourtDecisionSerializer(
+        many=True, required=False, allow_null=True
+    )
+    collection_letters = CollectionLetterSerializer(
+        many=True, required=False, allow_null=True
+    )
+    collection_notes = CollectionNoteSerializer(
+        many=True, required=False, allow_null=True
+    )
     invoice_notes = InvoiceNoteSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Lease
-        exclude = ('related_leases', )
+        exclude = ("related_leases",)
 
 
 class LeaseListSerializer(LeaseSerializerBase):
@@ -209,7 +301,9 @@ def get_related_lease_predecessors(to_lease_id, accumulator=None):
     accumulator.append(to_lease_id)
 
     result = set()
-    predecessors = RelatedLease.objects.filter(to_lease=to_lease_id).select_related('to_lease', 'from_lease')
+    predecessors = RelatedLease.objects.filter(to_lease=to_lease_id).select_related(
+        "to_lease", "from_lease"
+    )
 
     if predecessors:
         for predecessor in predecessors:
@@ -221,20 +315,26 @@ def get_related_lease_predecessors(to_lease_id, accumulator=None):
             if predecessor.from_lease_id in accumulator:
                 continue
 
-            result.update(get_related_lease_predecessors(predecessor.from_lease_id, accumulator))
+            result.update(
+                get_related_lease_predecessors(predecessor.from_lease_id, accumulator)
+            )
 
     return result
 
 
 def get_related_leases(obj):
     # Immediate successors
-    related_to_leases = set(RelatedLease.objects.filter(from_lease=obj).select_related('to_lease', 'from_lease'))
+    related_to_leases = set(
+        RelatedLease.objects.filter(from_lease=obj).select_related(
+            "to_lease", "from_lease"
+        )
+    )
     # All predecessors
     related_from_leases = get_related_lease_predecessors(obj.id)
 
     return {
-        'related_to': RelatedToLeaseSerializer(related_to_leases, many=True).data,
-        'related_from': RelatedFromLeaseSerializer(related_from_leases, many=True).data,
+        "related_to": RelatedToLeaseSerializer(related_to_leases, many=True).data,
+        "related_from": RelatedFromLeaseSerializer(related_from_leases, many=True).data,
     }
 
 
@@ -250,25 +350,30 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         return get_related_leases(obj)
 
     def override_permission_check_field_name(self, field_name):
-        if field_name == 'infill_development_compensations':
-            return 'infill_development_compensation_leases'
+        if field_name == "infill_development_compensations":
+            return "infill_development_compensation_leases"
 
-        if field_name in ('area_notes', 'email_logs'):
-            return 'lease_areas'
+        if field_name in ("area_notes", "email_logs"):
+            return "lease_areas"
 
         return field_name
 
     def get_infill_development_compensations(self, obj):
         infill_development_compensations = InfillDevelopmentCompensation.objects.filter(
-            infill_development_compensation_leases__lease__id=obj.id)
+            infill_development_compensation_leases__lease__id=obj.id
+        )
 
-        return [{'id': idc.id, 'name': idc.name} for idc in infill_development_compensations]
+        return [
+            {"id": idc.id, "name": idc.name} for idc in infill_development_compensations
+        ]
 
     def get_email_logs(self, obj):
         from leasing.serializers.email import EmailLogSerializer
 
         lease_content_type = ContentType.objects.get_for_model(obj)
-        email_logs = EmailLog.objects.filter(content_type=lease_content_type, object_id=obj.id)
+        email_logs = EmailLog.objects.filter(
+            content_type=lease_content_type, object_id=obj.id
+        )
 
         return EmailLogSerializer(email_logs, many=True).data
 
@@ -301,51 +406,81 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
 
     class Meta:
         model = Lease
-        fields = '__all__'
+        fields = "__all__"
         exclude = None
 
 
-class LeaseUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
-                            serializers.ModelSerializer):
+class LeaseUpdateSerializer(
+    UpdateNestedMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.ReadOnlyField()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    lease_areas = LeaseAreaCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    lessor = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.filter(is_lessor=True),
-                                                related_serializer=ContactSerializer, required=False, allow_null=True)
-    contracts = ContractCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    decisions = DecisionCreateUpdateNestedSerializer(many=True, required=False, allow_null=True)
+    lease_areas = LeaseAreaCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    lessor = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Contact,
+        queryset=Contact.objects.filter(is_lessor=True),
+        related_serializer=ContactSerializer,
+        required=False,
+        allow_null=True,
+    )
+    contracts = ContractCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    decisions = DecisionCreateUpdateNestedSerializer(
+        many=True, required=False, allow_null=True
+    )
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
     rents = RentCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    basis_of_rents = LeaseBasisOfRentCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    preparer = InstanceDictPrimaryKeyRelatedField(instance_class=User, queryset=User.objects.all(),
-                                                  related_serializer=UserSerializer, required=False, allow_null=True)
+    basis_of_rents = LeaseBasisOfRentCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    preparer = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        allow_null=True,
+    )
     related_leases = serializers.SerializerMethodField()
     notice_period = serializers.PrimaryKeyRelatedField(
-        required=False, allow_null=True, queryset=NoticePeriod.objects.all().annotate(
-            duration_as_interval=Cast('duration', DurationField())).order_by('duration_as_interval'))
-    invoice_notes = InvoiceNoteCreateUpdateSerializer(many=True, required=False, allow_null=True)
+        required=False,
+        allow_null=True,
+        queryset=NoticePeriod.objects.all()
+        .annotate(duration_as_interval=Cast("duration", DurationField()))
+        .order_by("duration_as_interval"),
+    )
+    invoice_notes = InvoiceNoteCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
 
     class Meta:
         model = Lease
-        fields = '__all__'
-        read_only_fields = ('is_invoicing_enabled', 'is_rent_info_complete')
+        fields = "__all__"
+        read_only_fields = ("is_invoicing_enabled", "is_rent_info_complete")
 
 
 class LeaseCreateSerializer(LeaseUpdateSerializer):
-    relate_to = serializers.PrimaryKeyRelatedField(required=False, allow_null=True, queryset=Lease.objects.all())
+    relate_to = serializers.PrimaryKeyRelatedField(
+        required=False, allow_null=True, queryset=Lease.objects.all()
+    )
     relation_type = EnumField(required=False, allow_null=True, enum=LeaseRelationType)
 
     def override_permission_check_field_name(self, field_name):
-        if field_name in ('relate_to', 'relation_type'):
-            return 'related_leases'
+        if field_name in ("relate_to", "relation_type"):
+            return "related_leases"
 
         return field_name
 
     class Meta:
         model = Lease
-        fields = '__all__'
-        read_only_fields = ('is_invoicing_enabled', 'is_rent_info_complete')
+        fields = "__all__"
+        read_only_fields = ("is_invoicing_enabled", "is_rent_info_complete")

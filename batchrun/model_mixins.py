@@ -16,9 +16,11 @@ class CleansOnSave(models.Model):
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_('creation time'))
+        auto_now_add=True, verbose_name=_("creation time")
+    )
     modified_at = models.DateTimeField(
-        auto_now=True, verbose_name=_('modification time'))
+        auto_now=True, verbose_name=_("modification time")
+    )
 
     class Meta:
         abstract = True

@@ -9,17 +9,27 @@ from ..models import LeaseholdTransfer
 from ..serializers.leasehold_transfer import LeaseholdTransferSerializer
 
 
-class LeaseholdTransferViewSet(FieldPermissionsViewsetMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin,
-                               GenericViewSet):
+class LeaseholdTransferViewSet(
+    FieldPermissionsViewsetMixin,
+    RetrieveModelMixin,
+    ListModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
     queryset = LeaseholdTransfer.objects.all()
     serializer_class = LeaseholdTransferSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    search_fields = ('properties__identifier', 'decision_date', 'institution_identifier', 'parties__name')
-    ordering_fields = ('decision_date', 'institution_identifier')
-    ordering = ('-decision_date',)
+    search_fields = (
+        "properties__identifier",
+        "decision_date",
+        "institution_identifier",
+        "parties__name",
+    )
+    ordering_fields = ("decision_date", "institution_identifier")
+    ordering = ("-decision_date",)
 
     def get_queryset(self):
-        if self.request.query_params.get('with_deleted'):
+        if self.request.query_params.get("with_deleted"):
             return LeaseholdTransfer.objects.all_with_deleted()
 
         return LeaseholdTransfer.objects.all()

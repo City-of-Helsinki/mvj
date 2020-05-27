@@ -13,23 +13,25 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     """
 
     def __init__(self, *args, **kwargs):
-        self.instance_class = kwargs.pop('instance_class', None)
-        self.related_serializer = kwargs.pop('related_serializer', None)
+        self.instance_class = kwargs.pop("instance_class", None)
+        self.related_serializer = kwargs.pop("related_serializer", None)
 
         super().__init__(**kwargs)
 
     def to_representation(self, obj):
-        if self.related_serializer and hasattr(obj, 'pk') and obj.pk:
+        if self.related_serializer and hasattr(obj, "pk") and obj.pk:
             obj = self.get_queryset().get(pk=obj.pk)
-            return self.related_serializer(obj, context=self.context).to_representation(obj)
+            return self.related_serializer(obj, context=self.context).to_representation(
+                obj
+            )
 
         return super().to_representation(obj)
 
     def to_internal_value(self, value):
         pk = value
 
-        if isinstance(value, dict) and 'id' in value:
-            pk = value['id']
+        if isinstance(value, dict) and "id" in value:
+            pk = value["id"]
 
         if self.instance_class and isinstance(value, self.instance_class):
             pk = value.id
@@ -49,18 +51,20 @@ class InstanceDictPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 def sync_new_items_to_manager(new_items, manager, context):
-    if not hasattr(manager, 'add'):
+    if not hasattr(manager, "add"):
         return
 
     existing_items = set(manager.all())
 
     for item in existing_items.difference(new_items):
-        permission_name = '{}.delete_{}'.format(manager.model._meta.app_label, manager.model._meta.model_name)
-        if not context['request'].user.has_perm(permission_name):
+        permission_name = "{}.delete_{}".format(
+            manager.model._meta.app_label, manager.model._meta.model_name
+        )
+        if not context["request"].user.has_perm(permission_name):
             # Ignore removal of the item if the user doesn't have permission to delete
             continue
 
-        if hasattr(manager, 'remove'):
+        if hasattr(manager, "remove"):
             manager.remove(item)
         else:
             item.delete()
@@ -81,7 +85,10 @@ def get_instance_from_default_manager(pk, model_class):
 
 def serializer_data_differs(serializer, original_serializer):
     for field_name in serializer.validated_data.keys():
-        if serializer.validated_data[field_name] != original_serializer.data[field_name]:
+        if (
+            serializer.validated_data[field_name]
+            != original_serializer.data[field_name]
+        ):
             return True
 
     return False
@@ -91,19 +98,28 @@ def check_perm(serializer, instance):
     model_class = serializer.Meta.model
 
     if not instance:
-        permission_name = '{}.add_{}'.format(model_class._meta.app_label, model_class._meta.model_name)
-        return serializer.context['request'].user.has_perm(permission_name)
+        permission_name = "{}.add_{}".format(
+            model_class._meta.app_label, model_class._meta.model_name
+        )
+        return serializer.context["request"].user.has_perm(permission_name)
 
     instance_serializer = serializer.__class__(instance)
     if serializer_data_differs(serializer, instance_serializer):
-        permission_name = '{}.change_{}'.format(model_class._meta.app_label, model_class._meta.model_name)
-        return serializer.context['request'].user.has_perm(permission_name)
+        permission_name = "{}.change_{}".format(
+            model_class._meta.app_label, model_class._meta.model_name
+        )
+        return serializer.context["request"].user.has_perm(permission_name)
     else:
         return True
 
 
-def instance_create_or_update_related(instance=None, related_name=None, serializer_class=None,
-                                      validated_data=None, context=None):
+def instance_create_or_update_related(
+    instance=None,
+    related_name=None,
+    serializer_class=None,
+    validated_data=None,
+    context=None,
+):
     manager = getattr(instance, related_name)
     new_items = set()
 
@@ -111,34 +127,30 @@ def instance_create_or_update_related(instance=None, related_name=None, serializ
         validated_data = []
 
     for item in validated_data:
-        pk = item.pop('id', None)
+        pk = item.pop("id", None)
         model_class = serializer_class.Meta.model
 
         serializer_params = {
-            'data': item,
-            'instance': get_instance_from_default_manager(pk, model_class),
-            'context': context,
+            "data": item,
+            "instance": get_instance_from_default_manager(pk, model_class),
+            "context": context,
         }
 
         serializer = serializer_class(**serializer_params)
 
-        if hasattr(serializer, 'modify_fields_by_field_permissions'):
+        if hasattr(serializer, "modify_fields_by_field_permissions"):
             serializer.modify_fields_by_field_permissions()
 
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError as e:
-            raise ValidationError({
-                related_name: e.detail
-            })
+            raise ValidationError({related_name: e.detail})
 
         if not check_perm(serializer, serializer.instance):
             # Ignore the new item if the user doesn't have permission to add
             continue
 
-        item_instance = serializer.save(**{
-            manager.field.name: instance
-        })
+        item_instance = serializer.save(**{manager.field.name: instance})
         new_items.add(item_instance)
 
     sync_new_items_to_manager(new_items, manager, context)
@@ -164,10 +176,13 @@ class UpdateNestedMixin:
 
     def save_nested(self, instance, nested_data, context=None):
         for nested_name, nested_datum in nested_data.items():
-            instance_create_or_update_related(instance=instance, related_name=nested_name,
-                                              serializer_class=self.fields[nested_name].child.__class__,
-                                              validated_data=nested_datum,
-                                              context=context)
+            instance_create_or_update_related(
+                instance=instance,
+                related_name=nested_name,
+                serializer_class=self.fields[nested_name].child.__class__,
+                validated_data=nested_datum,
+                context=context,
+            )
 
     def create(self, validated_data):
         nested_data = self.extract_nested(validated_data)
@@ -208,7 +223,7 @@ class FileSerializerMixin:
 
         url = reverse(self.Meta.download_url_name, args=[obj.id])
 
-        request = self.context.get('request', None)
+        request = self.context.get("request", None)
         if request is not None:
             return request.build_absolute_uri(url)
 

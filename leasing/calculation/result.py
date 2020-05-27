@@ -24,16 +24,18 @@ class CalculationAmount:
         self.notes = []
 
     def __str__(self):
-        result = 'Item: {}\n'.format(self.item)
-        result += 'Date range: {} - {}\n'.format(self.date_range_start, self.date_range_end)
-        result += 'Intended use: {}\n'.format(self.item.intended_use)
-        result += 'Amount: {}\n'.format(self.amount)
-        result += 'Notes:\n'
+        result = "Item: {}\n".format(self.item)
+        result += "Date range: {} - {}\n".format(
+            self.date_range_start, self.date_range_end
+        )
+        result += "Intended use: {}\n".format(self.item.intended_use)
+        result += "Amount: {}\n".format(self.amount)
+        result += "Notes:\n"
         for note in self.notes:
-            result += str(note) + '\n'
-        result += 'Sub amounts:\n'
+            result += str(note) + "\n"
+        result += "Sub amounts:\n"
         for sub_amount in self.sub_amounts:
-            result += ' ' + str(sub_amount).replace('\n', '\n ')
+            result += " " + str(sub_amount).replace("\n", "\n ")
 
         return result
 
@@ -49,7 +51,12 @@ class CalculationAmount:
 
     def get_total_amount(self, allow_negative=False):
         amounts = [self.amount]
-        amounts.extend([sub_amount.get_total_amount(allow_negative=True) for sub_amount in self.sub_amounts])
+        amounts.extend(
+            [
+                sub_amount.get_total_amount(allow_negative=True)
+                for sub_amount in self.sub_amounts
+            ]
+        )
 
         return sum(amounts) if allow_negative else max(Decimal(0), sum(amounts))
 
@@ -81,10 +88,13 @@ class CalculationAmount:
         explanation_item.amount = self.amount
 
         for note in self.notes:
-            explanation_item.sub_items.append(ExplanationItem(subject={
-                "type": note.type,
-                "description": note.description
-            }, date_ranges=None, amount=None))
+            explanation_item.sub_items.append(
+                ExplanationItem(
+                    subject={"type": note.type, "description": note.description},
+                    date_ranges=None,
+                    amount=None,
+                )
+            )
 
         if self.sub_amounts:
             for amount in self.sub_amounts:
@@ -100,9 +110,11 @@ class CalculationResult:
         self.amounts = []
 
     def __str__(self):
-        result = 'Date range: {} - {}\n'.format(self.date_range_start, self.date_range_end)
+        result = "Date range: {} - {}\n".format(
+            self.date_range_start, self.date_range_end
+        )
 
-        result += 'Amounts:\n'
+        result += "Amounts:\n"
         for amount in self.amounts:
             result += str(amount)
 
@@ -149,10 +161,7 @@ class CalculationResult:
             explanation.add_item(amount.get_explanation())
 
         explanation_item = ExplanationItem()
-        explanation_item.subject = {
-            "type": "total",
-            "description": _("Total payable")
-        }
+        explanation_item.subject = {"type": "total", "description": _("Total payable")}
         explanation_item.date_ranges = [(self.date_range_start, self.date_range_end)]
         explanation_item.amount = self.get_total_amount()
         explanation.add_item(explanation_item)

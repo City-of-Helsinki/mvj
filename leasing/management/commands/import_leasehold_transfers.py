@@ -16,7 +16,12 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from ...enums import LeaseholdTransferPartyType
-from ...models import LeaseholdTransfer, LeaseholdTransferImportLog, LeaseholdTransferParty, LeaseholdTransferProperty
+from ...models import (
+    LeaseholdTransfer,
+    LeaseholdTransferImportLog,
+    LeaseholdTransferParty,
+    LeaseholdTransferProperty,
+)
 
 NS = {  # Namespace links for NLS XMLs
     "y": "http://xml.nls.fi/ktjkir/yhteinen/2018/02/01",
@@ -35,17 +40,17 @@ def get_name_from_xml_elem(elem):
     :type elem: xml.etree.ElementTree.Element
     :rtype: str
     """
-    name = ''
+    name = ""
 
-    first_names_xml = elem.find('.//y:etunimet', NS)
+    first_names_xml = elem.find(".//y:etunimet", NS)
     if first_names_xml is not None:
         name += first_names_xml.text
-    last_name_xml = elem.find('.//y:sukunimi', NS)
+    last_name_xml = elem.find(".//y:sukunimi", NS)
     if last_name_xml is not None:
-        name += ' ' + last_name_xml.text if name else last_name_xml.text
+        name += " " + last_name_xml.text if name else last_name_xml.text
 
     if not name:
-        name_xml = elem.find('.//y:nimi', NS)
+        name_xml = elem.find(".//y:nimi", NS)
         if name_xml is not None:
             name = name_xml.text
 
@@ -59,7 +64,7 @@ def get_business_id_or_none_from_xml_elem(elem):
     """
     business_id = None
 
-    business_id_xml = elem.find('.//y:ytunnus', NS)
+    business_id_xml = elem.find(".//y:ytunnus", NS)
     if business_id_xml is not None:
         business_id = business_id_xml.text
     return business_id
@@ -72,7 +77,7 @@ def get_national_id_or_none_from_xml_elem(elem):
     """
     national_id = None
 
-    national_id_xml = elem.find('.//y:henkilotunnus', NS)
+    national_id_xml = elem.find(".//y:henkilotunnus", NS)
     if national_id_xml is not None:
         national_id = national_id_xml.text
     return national_id
@@ -85,7 +90,7 @@ class Command(BaseCommand):
         super().__init__(*args, **kwargs)
         self.nls_url = settings.NLS_HELSINKI_FOLDER_URL
         self.nls_user = settings.NLS_HELSINKI_USERNAME
-        self.nls_password = settings.NLS_HELSINKI_PASSWORD.encode('utf-8')
+        self.nls_password = settings.NLS_HELSINKI_PASSWORD.encode("utf-8")
         self.touched_transfers_count = 0
 
     def _auth_get(self, url):
@@ -93,34 +98,40 @@ class Command(BaseCommand):
 
     def _check_import_directory(self):
         if not os.path.isdir(get_import_dir()):
-            self.stdout.write('Directory "{}" does not exist. Please create it.'.format(get_import_dir()))
+            self.stdout.write(
+                'Directory "{}" does not exist. Please create it.'.format(
+                    get_import_dir()
+                )
+            )
             sys.exit(-1)
 
         try:
             fp = tempfile.TemporaryFile(dir=get_import_dir())
             fp.close()
         except PermissionError:
-            self.stdout.write('Can not create file in directory "{}".'.format(get_import_dir()))
+            self.stdout.write(
+                'Can not create file in directory "{}".'.format(get_import_dir())
+            )
             sys.exit(-1)
 
     def handle(self, *args, **options):
         self._check_import_directory()
 
-        target_folder_path = self.nls_url + 'ktjkiraineistoluovutus/'
+        target_folder_path = self.nls_url + "ktjkiraineistoluovutus/"
 
         folder_response = self._auth_get(target_folder_path)
 
         if folder_response.status_code != 200:
-            raise CommandError('Failed to connect to NLS server')
+            raise CommandError("Failed to connect to NLS server")
 
-        html_soup = BeautifulSoup(folder_response.content, 'html.parser')
+        html_soup = BeautifulSoup(folder_response.content, "html.parser")
 
         imported_archives = 0
         new_archives = 0
 
-        for link in html_soup.select('a[href*=vuokraoikeudet_muuttuneet]'):
-            file_link = link['href']
-            file_name = file_link.split('/')[-1]
+        for link in html_soup.select("a[href*=vuokraoikeudet_muuttuneet]"):
+            file_link = link["href"]
+            file_name = file_link.split("/")[-1]
 
             if LeaseholdTransferImportLog.objects.filter(file_name=file_name).exists():
                 # skipping this already processed archive
@@ -129,18 +140,18 @@ class Command(BaseCommand):
             zip_file_response = self._auth_get(target_folder_path + file_name)
             zip_bytes = zip_file_response.content
 
-            with open(os.path.join(get_import_dir(), file_name), 'wb') as local_zip:
+            with open(os.path.join(get_import_dir(), file_name), "wb") as local_zip:
                 local_zip.write(zip_bytes)
                 local_zip.close()
 
             archive = zipfile.ZipFile(io.BytesIO(zip_bytes))
-            xml_file = archive.read('vuokraoikeustiedot.xml')
+            xml_file = archive.read("vuokraoikeustiedot.xml")
             self._handle_xml_file(xml_file)
 
-            processed_archive_object, created = (
-                LeaseholdTransferImportLog
-                .objects.get_or_create(file_name=file_name)
-            )
+            (
+                processed_archive_object,
+                created,
+            ) = LeaseholdTransferImportLog.objects.get_or_create(file_name=file_name)
 
             # save to update the timestamp, if object existed
             processed_archive_object.save()
@@ -149,9 +160,9 @@ class Command(BaseCommand):
             if created:
                 new_archives += 1
 
-        self.stdout.write('Imported data from {} archive(s)'.format(imported_archives))
-        self.stdout.write('From which {} were new'.format(new_archives))
-        self.stdout.write('Touched {} transfer(s)'.format(self.touched_transfers_count))
+        self.stdout.write("Imported data from {} archive(s)".format(imported_archives))
+        self.stdout.write("From which {} were new".format(new_archives))
+        self.stdout.write("Touched {} transfer(s)".format(self.touched_transfers_count))
 
     def _handle_xml_file(self, xml_file):
         """
@@ -159,47 +170,45 @@ class Command(BaseCommand):
         """
         root = ElementTree.fromstring(xml_file)
 
-        for entry in root.findall('./eavo:Laitos', NS):
-            leasehold_items = entry.findall('.//trvo:ErityinenOikeusAsia', NS)
+        for entry in root.findall("./eavo:Laitos", NS):
+            leasehold_items = entry.findall(".//trvo:ErityinenOikeusAsia", NS)
 
             if not leasehold_items:
                 # go to next laitos
                 continue
 
             for item in leasehold_items:
-                item_type = item.find('./y:asianLaatu', NS).text
+                item_type = item.find("./y:asianLaatu", NS).text
 
-                if item_type != 'EO03':
+                if item_type != "EO03":
                     # only EO03 == OikeuksienSiirto
                     # go to next item
                     continue
 
-                item_status = item.find('./y:asianTila', NS).text
+                item_status = item.find("./y:asianTila", NS).text
 
-                if item_status != '03':
+                if item_status != "03":
                     # only 03 == loppuun saatettu
                     # go to next item
                     continue
 
-                decision = item.find('./y:Ratkaisu', NS)
-                transfer_shares = item.find('./trvo:osuudetAsianKohteesta', NS)
+                decision = item.find("./y:Ratkaisu", NS)
+                transfer_shares = item.find("./trvo:osuudetAsianKohteesta", NS)
 
                 if decision is None or transfer_shares is None:
                     # probably an update to previous transfer
                     # go to next item
                     continue
 
-                decision_date_el = decision.find('./y:ratkaisupvm', NS)
+                decision_date_el = decision.find("./y:ratkaisupvm", NS)
                 decision_date = None
                 if decision_date_el is not None:
                     decision_date_str = decision_date_el.text  # e.g. '2016-05-15'
-                    decision_date = (
-                        datetime
-                        .strptime(decision_date_str, '%Y-%d-%M')
-                        .replace(tzinfo=pytz.timezone('Europe/Helsinki'))
-                    )
+                    decision_date = datetime.strptime(
+                        decision_date_str, "%Y-%d-%M"
+                    ).replace(tzinfo=pytz.timezone("Europe/Helsinki"))
 
-                institution_identifier = entry.find('.//y:laitostunnus', NS).text
+                institution_identifier = entry.find(".//y:laitostunnus", NS).text
 
                 transfer = LeaseholdTransfer.objects.create(
                     institution_identifier=institution_identifier,
@@ -214,21 +223,22 @@ class Command(BaseCommand):
 
     @staticmethod
     def _handle_lease_properties(transfer, entry_xml):
-        properties_xml_elems = (
-            entry_xml.findall('./trpt:laitoksenPerustiedot//trpt:EOKohde', NS))
+        properties_xml_elems = entry_xml.findall(
+            "./trpt:laitoksenPerustiedot//trpt:EOKohde", NS
+        )
 
         for prop_element in properties_xml_elems:
-            property_id = prop_element.find('./y:kiinteistotunnus', NS)
+            property_id = prop_element.find("./y:kiinteistotunnus", NS)
             if property_id is not None:
                 prop, _ = LeaseholdTransferProperty.objects.get_or_create(
-                    identifier=property_id.text,
-                    transfer=transfer,
+                    identifier=property_id.text, transfer=transfer
                 )
 
     @staticmethod
     def _handle_lease_parties(transfer, entry_xml, transfer_shares_xml):
         lessors_xml_elems = entry_xml.findall(
-            './trpt:laitoksenPerustiedot/trpt:eoHenkilot/y:Henkilo', NS)
+            "./trpt:laitoksenPerustiedot/trpt:eoHenkilot/y:Henkilo", NS
+        )
 
         for lessor_element in lessors_xml_elems:
             lessor_name = get_name_from_xml_elem(lessor_element)
@@ -243,11 +253,13 @@ class Command(BaseCommand):
                     transfer=transfer,
                 )
 
-        for share_elem in transfer_shares_xml.findall('./trvo:OsuusAsianKohteesta', NS):
-            share_numerator = int(share_elem.find('./y:osoittaja', NS).text)
-            share_denominator = int(share_elem.find('./y:nimittaja', NS).text)
+        for share_elem in transfer_shares_xml.findall("./trvo:OsuusAsianKohteesta", NS):
+            share_numerator = int(share_elem.find("./y:osoittaja", NS).text)
+            share_denominator = int(share_elem.find("./y:nimittaja", NS).text)
 
-            for conveyor_xml_elem in share_elem.findall('.//y:saannonHenkilot/y:Henkilo', NS):
+            for conveyor_xml_elem in share_elem.findall(
+                ".//y:saannonHenkilot/y:Henkilo", NS
+            ):
                 conveyor_name = get_name_from_xml_elem(conveyor_xml_elem)
                 business_id = get_business_id_or_none_from_xml_elem(conveyor_xml_elem)
                 national_id = get_national_id_or_none_from_xml_elem(conveyor_xml_elem)
@@ -259,7 +271,9 @@ class Command(BaseCommand):
                     transfer=transfer,
                 )
 
-            for acquirer_xml_elem in share_elem.findall('./y:osuudenHenkilot/y:Henkilo', NS):
+            for acquirer_xml_elem in share_elem.findall(
+                "./y:osuudenHenkilot/y:Henkilo", NS
+            ):
                 acquirer_name = get_name_from_xml_elem(acquirer_xml_elem)
                 business_id = get_business_id_or_none_from_xml_elem(acquirer_xml_elem)
                 national_id = get_national_id_or_none_from_xml_elem(acquirer_xml_elem)

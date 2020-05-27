@@ -3,7 +3,14 @@ from django.db import DEFAULT_DB_ALIAS, router
 
 
 # This is mostly from Django (django/contrib/auth/management/__init__.py)
-def create_permissions(app_config, verbosity=2, interactive=True, using=DEFAULT_DB_ALIAS, apps=global_apps, **kwargs):  # NOQA
+def create_permissions(  # NOQA
+    app_config,
+    verbosity=2,
+    interactive=True,
+    using=DEFAULT_DB_ALIAS,
+    apps=global_apps,
+    **kwargs
+):
     if not app_config.models_module:
         return
 
@@ -12,8 +19,8 @@ def create_permissions(app_config, verbosity=2, interactive=True, using=DEFAULT_
     app_label = app_config.label
     try:
         app_config = apps.get_app_config(app_label)
-        ContentType = apps.get_model('contenttypes', 'ContentType')  # NOQA
-        Permission = apps.get_model('auth', 'Permission')  # NOQA
+        ContentType = apps.get_model("contenttypes", "ContentType")  # NOQA
+        Permission = apps.get_model("auth", "Permission")  # NOQA
     except LookupError:
         return
 
@@ -44,10 +51,16 @@ def create_permissions(app_config, verbosity=2, interactive=True, using=DEFAULT_
     # looking for.  We don't need to check for codenames since we already have
     # a list of the ones we're going to create.
     all_perms = set(
-        Permission.objects.using(using).filter(content_type__in=ctypes, ).values_list("content_type", "codename"))
+        Permission.objects.using(using)
+        .filter(content_type__in=ctypes)
+        .values_list("content_type", "codename")
+    )
 
-    perms = [Permission(codename=codename, name=name, content_type=ct) for ct, (codename, name) in searched_perms if
-             (ct.pk, codename) not in all_perms]
+    perms = [
+        Permission(codename=codename, name=name, content_type=ct)
+        for ct, (codename, name) in searched_perms
+        if (ct.pk, codename) not in all_perms
+    ]
 
     Permission.objects.using(using).bulk_create(perms)
 

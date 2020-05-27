@@ -413,47 +413,15 @@ DEFAULT_FIELD_PERMS = {
 
 CUSTOM_FIELD_PERMS = {
     "lease": {
-        "start_date": {
-            2: "view",
-        },
-        "end_date": {
-            2: "view",
-        },
-        "tenants": {
-            2: "view",
-            5: "view",
-            6: "change",
-        },
-        "rents": {
-            2: "change",
-            3: "change",
-            4: "change",
-            5: "change",
-            6: "change",
-        },
-        "decisions": {
-            3: "change",
-        },
-        "contracts": {
-            3: "change",
-            6: "change",
-        },
-        "invoice_notes": {
-            2: "view",
-            4: "view",
-            5: "view",
-            6: "change",
-        },
-        "is_invoicing_enabled": {
-            2: "view",
-            4: "view",
-            5: "view",
-            6: "change",
-        },
-        "is_rent_info_complete": {
-            2: "view",
-            5: "view",
-        },
+        "start_date": {2: "view"},
+        "end_date": {2: "view"},
+        "tenants": {2: "view", 5: "view", 6: "change"},
+        "rents": {2: "change", 3: "change", 4: "change", 5: "change", 6: "change"},
+        "decisions": {3: "change"},
+        "contracts": {3: "change", 6: "change"},
+        "invoice_notes": {2: "view", 4: "view", 5: "view", 6: "change"},
+        "is_invoicing_enabled": {2: "view", 4: "view", 5: "view", 6: "change"},
+        "is_rent_info_complete": {2: "view", 5: "view"},
     },
     "contact": {
         "national_identification_number": {
@@ -465,97 +433,34 @@ CUSTOM_FIELD_PERMS = {
             6: "change",
             7: "change",
         },
-        "phone": {
-            2: "change",
-            5: "change",
-        },
-        "email": {
-            2: "change",
-            5: "change",
-        },
+        "phone": {2: "change", 5: "change"},
+        "email": {2: "change", 5: "change"},
     },
     "condition": {
-        "id": {
-            2: "view",
-            3: "view",
-            5: "view",
-        },
-        "type": {
-            2: "view",
-            3: "view",
-            5: "view",
-        }
+        "id": {2: "view", 3: "view", 5: "view"},
+        "type": {2: "view", 3: "view", 5: "view"},
     },
     "contract": {
-        "ktj_link": {
-            2: "change",
-            4: "change",
-            5: "change",
-        },
-        "collaterals": {
-            6: "change",
-        },
+        "ktj_link": {2: "change", 4: "change", 5: "change"},
+        "collaterals": {6: "change"},
     },
-    "decision": {
-        "conditions": {
-            2: "change",
-            3: "change",
-            5: "change",
-        },
-    },
+    "decision": {"conditions": {2: "change", 3: "change", 5: "change"}},
     "rent": {
-        "due_dates_type": {
-            6: "change",
-        },
-        "due_dates_per_year": {
-            6: "change",
-        },
-        "due_dates": {
-            6: "change",
-        },
-        "rent_adjustments": {
-            2: "change",
-            3: "change",
-            4: "change",
-            5: "change",
-        }
+        "due_dates_type": {6: "change"},
+        "due_dates_per_year": {6: "change"},
+        "due_dates": {6: "change"},
+        "rent_adjustments": {2: "change", 3: "change", 4: "change", 5: "change"},
     },
-    "tenant": {
-        "reference": {
-            6: "change",
-        },
-        "tenantcontact_set": {
-            6: "change",
-        }
-    },
+    "tenant": {"reference": {6: "change"}, "tenantcontact_set": {6: "change"}},
     "leasearea": {
-        "plots": {
-            2: "view",
-            5: "view",
-        },
-        "plan_units": {
-            2: "view",
-            5: "view",
-        },
-        "archived_at": {
-            2: "view",
-            5: "view",
-        },
-        "archived_note": {
-            2: "view",
-            5: "view",
-        },
-        "archived_decision": {
-            2: "view",
-            5: "view",
-        },
+        "plots": {2: "view", 5: "view"},
+        "plan_units": {2: "view", 5: "view"},
+        "archived_at": {2: "view", 5: "view"},
+        "archived_note": {2: "view", 5: "view"},
+        "archived_decision": {2: "view", 5: "view"},
     },
     "leaseholdtransferparty": {
-        "national_identification_number": {
-            1: None,
-            2: None,
-            3: None,
-        },
+        "national_identification_number": {1: None, 2: None, 3: None}
     },
     "leasebasisofrent": {
         "locked_at": {
@@ -566,7 +471,7 @@ CUSTOM_FIELD_PERMS = {
             5: "view",
             6: "view",
             7: "change",
-        },
+        }
     },
 }
 
@@ -582,11 +487,13 @@ def update(d, u):
 
 
 class Command(BaseCommand):
-    help = 'Sets predefined field permissions for the predefined MVJ groups'
+    help = "Sets predefined field permissions for the predefined MVJ groups"
 
     def handle(self, *args, **options):  # NOQA
         if not apps.is_installed("field_permissions"):
-            raise CommandError('App "field_permissions" must be installed to use this command.')
+            raise CommandError(
+                'App "field_permissions" must be installed to use this command.'
+            )
 
         from field_permissions.registry import field_permissions
 
@@ -607,13 +514,15 @@ class Command(BaseCommand):
                 try:
                     all_field_permissions.append(permissions[codename])
                 except KeyError:
-                    raise CommandError('"{}" field permission is missing. Please run migrate to create '
-                                       'the missing permissions.'.format(codename))
+                    raise CommandError(
+                        '"{}" field permission is missing. Please run migrate to create '
+                        "the missing permissions.".format(codename)
+                    )
 
-                if codename.startswith('change_'):
+                if codename.startswith("change_"):
                     continue
 
-                field_name = codename.replace('view_{}_'.format(model_name), '')
+                field_name = codename.replace("view_{}_".format(model_name), "")
 
                 # Set field permissions to their default value
                 if model_name in DEFAULT_FIELD_PERMS:
@@ -629,18 +538,28 @@ class Command(BaseCommand):
                     if not permission_type:
                         continue
 
-                    permission_name = '{}_{}_{}'.format(permission_type, model_name, field_name)
+                    permission_name = "{}_{}_{}".format(
+                        permission_type, model_name, field_name
+                    )
 
                     group_permissions.append(
-                        Group.permissions.through(group=groups[group_id], permission=permissions[permission_name])
+                        Group.permissions.through(
+                            group=groups[group_id],
+                            permission=permissions[permission_name],
+                        )
                     )
 
         # Delete existing field permissions from the pre-defined groups
         mvj_groups = [grp for grp in groups.values() if grp.id in range(1, 8)]
-        Group.permissions.through.objects.filter(group__in=mvj_groups, permission__in=all_field_permissions).delete()
+        Group.permissions.through.objects.filter(
+            group__in=mvj_groups, permission__in=all_field_permissions
+        ).delete()
 
         # Save the desired field permissions for the groups
         Group.permissions.through.objects.bulk_create(group_permissions)
         for group_permission in group_permissions:
-            self.stdout.write('Added field permission "{}" for group "{}"'.format(
-                group_permission.permission.codename, group_permission.group.name))
+            self.stdout.write(
+                'Added field permission "{}" for group "{}"'.format(
+                    group_permission.permission.codename, group_permission.group.name
+                )
+            )

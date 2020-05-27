@@ -7,12 +7,14 @@ from ..models import Comment, CommentTopic
 from .utils import InstanceDictPrimaryKeyRelatedField
 
 
-class CommentTopicSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class CommentTopicSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
     id = serializers.ReadOnlyField()
 
     class Meta:
         model = CommentTopic
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CommentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
@@ -22,15 +24,20 @@ class CommentSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerial
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = "__all__"
 
 
-class CommentCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class CommentCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
     id = serializers.ReadOnlyField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    topic = InstanceDictPrimaryKeyRelatedField(instance_class=CommentTopic, queryset=CommentTopic.objects.all(),
-                                               related_serializer=CommentTopicSerializer)
+    topic = InstanceDictPrimaryKeyRelatedField(
+        instance_class=CommentTopic,
+        queryset=CommentTopic.objects.all(),
+        related_serializer=CommentTopicSerializer,
+    )
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = "__all__"

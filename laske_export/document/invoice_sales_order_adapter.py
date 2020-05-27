@@ -10,76 +10,113 @@ from .sales_order import BillingParty1, LineItem, OrderParty
 
 
 class InvoiceSalesOrderAdapter:
-    def __init__(self, invoice=None, sales_order=None, receivable_type_rent=None, receivable_type_collateral=None):
+    def __init__(
+        self,
+        invoice=None,
+        sales_order=None,
+        receivable_type_rent=None,
+        receivable_type_collateral=None,
+    ):
         self.invoice = invoice
         self.sales_order = sales_order
         self.receivable_type_rent = receivable_type_rent
         self.receivable_type_collateral = receivable_type_collateral
 
     def get_bill_text(self):
-        if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
+        if (
+            self.invoice.billing_period_start_date
+            and self.invoice.billing_period_end_date
+        ):
             invoice_year = self.invoice.billing_period_start_date.year
 
             # TODO: Which rent
-            rent = self.invoice.lease.get_active_rents_on_period(self.invoice.billing_period_start_date,
-                                                                 self.invoice.billing_period_end_date).first()
+            rent = self.invoice.lease.get_active_rents_on_period(
+                self.invoice.billing_period_start_date,
+                self.invoice.billing_period_end_date,
+            ).first()
         else:
             invoice_year = self.invoice.invoicing_date.year
 
-            rent = self.invoice.lease.get_active_rents_on_period(self.invoice.invoicing_date,
-                                                                 self.invoice.invoicing_date).first()
+            rent = self.invoice.lease.get_active_rents_on_period(
+                self.invoice.invoicing_date, self.invoice.invoicing_date
+            ).first()
 
-        rent_calculation = self.invoice.lease.calculate_rent_amount_for_year(invoice_year)
+        rent_calculation = self.invoice.lease.calculate_rent_amount_for_year(
+            invoice_year
+        )
         year_rent = rent_calculation.get_total_amount()
 
-        real_property_identifier = ''
-        address = ''
+        real_property_identifier = ""
+        address = ""
 
         first_lease_area = self.invoice.lease.lease_areas.first()
         if first_lease_area:
             real_property_identifier = first_lease_area.identifier
-            lease_area_address = first_lease_area.addresses.order_by('-is_primary').first()
+            lease_area_address = first_lease_area.addresses.order_by(
+                "-is_primary"
+            ).first()
 
             if lease_area_address:
                 address = lease_area_address.address
 
         bill_texts = []
-        row1 = 'Vuokraustunnus: {lease_identifier}  '.format(
-            lease_identifier=self.invoice.lease.get_identifier_string())
+        row1 = "Vuokraustunnus: {lease_identifier}  ".format(
+            lease_identifier=self.invoice.lease.get_identifier_string()
+        )
 
-        if self.invoice.billing_period_start_date and self.invoice.billing_period_end_date:
-            row1 += 'Ajalta: {billing_period_start_date}-{billing_period_end_date}  '.format(
-                billing_period_start_date=self.invoice.billing_period_start_date.strftime('%d.%m.%Y'),
-                billing_period_end_date=self.invoice.billing_period_end_date.strftime('%d.%m.%Y'))
+        if (
+            self.invoice.billing_period_start_date
+            and self.invoice.billing_period_end_date
+        ):
+            row1 += "Ajalta: {billing_period_start_date}-{billing_period_end_date}  ".format(
+                billing_period_start_date=self.invoice.billing_period_start_date.strftime(
+                    "%d.%m.%Y"
+                ),
+                billing_period_end_date=self.invoice.billing_period_end_date.strftime(
+                    "%d.%m.%Y"
+                ),
+            )
         bill_texts.append(row1)
 
-        row2 = 'Päättymispvm: {lease_end_date}  '.format(
-            lease_end_date=self.invoice.lease.end_date.strftime('%d.%m.%Y') if self.invoice.lease.end_date else '-')
+        row2 = "Päättymispvm: {lease_end_date}  ".format(
+            lease_end_date=self.invoice.lease.end_date.strftime("%d.%m.%Y")
+            if self.invoice.lease.end_date
+            else "-"
+        )
 
         if self.invoice.lease.intended_use:
-            row2 += 'Käyttötarkoitus: {lease_intended_use}  '.format(
-                lease_intended_use=self.invoice.lease.intended_use.name[:25])
+            row2 += "Käyttötarkoitus: {lease_intended_use}  ".format(
+                lease_intended_use=self.invoice.lease.intended_use.name[:25]
+            )
         bill_texts.append(row2)
 
         # It's possible that the rent starts after the invoicing date, so there is no active rent.
         # Rather than trying to guess which rent to use to calculate the yearly cost and index check date,
         # ...just skip writing this one description row on the invoice.
         if rent:
-            index_date = '1.1.'
+            index_date = "1.1."
             if rent.cycle == RentCycle.APRIL_TO_MARCH:
-                index_date = '1.4.'
+                index_date = "1.4."
 
-            bill_texts.append('Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  '.format(
-                index_date=index_date,
-                year_rent='{:.2f}'.format(year_rent.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)).replace('.', ',')))  # noqa: E501
+            bill_texts.append(
+                "Indeksin tark.pvm: {index_date}  Vuosivuokra: {year_rent}  ".format(
+                    index_date=index_date,
+                    year_rent="{:.2f}".format(
+                        year_rent.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+                    ).replace(".", ","),
+                )
+            )  # noqa: E501
 
-        bill_texts.append('Vuokrakohde: {real_property_identifier}, {address}  '.format(
-            real_property_identifier=real_property_identifier, address=address))
+        bill_texts.append(
+            "Vuokrakohde: {real_property_identifier}, {address}  ".format(
+                real_property_identifier=real_property_identifier, address=address
+            )
+        )
 
         if self.invoice.notes:
             bill_texts.append(self.invoice.notes)
 
-        return '\n'.join(bill_texts)
+        return "\n".join(bill_texts)
 
     def get_first_tenant(self):
         for invoice_row in self.invoice.rows.all():
@@ -95,7 +132,8 @@ class InvoiceSalesOrderAdapter:
             return self.invoice.recipient
 
         tenant_tenantcontact = tenant.get_tenant_tenantcontacts(
-            self.invoice.billing_period_start_date, self.invoice.billing_period_end_date).first()
+            self.invoice.billing_period_start_date, self.invoice.billing_period_end_date
+        ).first()
 
         if tenant_tenantcontact:
             return tenant_tenantcontact.contact
@@ -118,7 +156,7 @@ class InvoiceSalesOrderAdapter:
 
     def set_dates(self):
         billing_date = self.invoice.due_date.replace(day=1)
-        self.sales_order.billing_date = billing_date.strftime('%Y%m%d')
+        self.sales_order.billing_date = billing_date.strftime("%Y%m%d")
 
         due_date = self.invoice.due_date
         if not is_business_day(due_date):
@@ -127,7 +165,7 @@ class InvoiceSalesOrderAdapter:
             self.invoice.save()
 
         value_date = due_date - relativedelta(days=settings.LASKE_DUE_DATE_OFFSET_DAYS)
-        self.sales_order.value_date = value_date.strftime('%Y%m%d')
+        self.sales_order.value_date = value_date.strftime("%Y%m%d")
 
     def set_references(self):
         self.sales_order.reference = str(self.invoice.generate_number())
@@ -144,7 +182,9 @@ class InvoiceSalesOrderAdapter:
             # When dealing with rent invoice rows, we look up the SAP codes from the LeaseType object...
             if receivable_type == self.receivable_type_rent:
                 line_item.material = self.invoice.lease.type.sap_material_code
-                line_item.order_item_number = self.invoice.lease.type.sap_order_item_number
+                line_item.order_item_number = (
+                    self.invoice.lease.type.sap_order_item_number
+                )
 
             # ...but in other cases the SAP codes are found in the ReceivableType object of the invoice row.
             elif receivable_type == self.receivable_type_collateral:
@@ -155,20 +195,25 @@ class InvoiceSalesOrderAdapter:
                 line_item.material = receivable_type.sap_material_code
                 line_item.order_item_number = receivable_type.sap_order_item_number
 
-            line_item.quantity = '1,00'
-            line_item.net_price = '{:.2f}'.format(invoice_row.amount).replace('.', ',')
+            line_item.quantity = "1,00"
+            line_item.net_price = "{:.2f}".format(invoice_row.amount).replace(".", ",")
 
-            line1_strings = ['{}'.format(invoice_row.receivable_type.name)]
+            line1_strings = ["{}".format(invoice_row.receivable_type.name)]
 
-            if invoice_row.billing_period_start_date and invoice_row.billing_period_end_date:
-                line1_strings.append('{} - {}'.format(
-                    invoice_row.billing_period_start_date.strftime('%d.%m.%Y'),
-                    invoice_row.billing_period_end_date.strftime('%d.%m.%Y'),
-                ))
+            if (
+                invoice_row.billing_period_start_date
+                and invoice_row.billing_period_end_date
+            ):
+                line1_strings.append(
+                    "{} - {}".format(
+                        invoice_row.billing_period_start_date.strftime("%d.%m.%Y"),
+                        invoice_row.billing_period_end_date.strftime("%d.%m.%Y"),
+                    )
+                )
 
-            line1_strings.append(' ')
+            line1_strings.append(" ")
 
-            line_item.line_text_l1 = ' '.join(line1_strings)[:70]
+            line_item.line_text_l1 = " ".join(line1_strings)[:70]
 
             if invoice_row.tenant:
                 # NB! As can be seen below, here the billing_period_start_date was used twice originally.
@@ -185,15 +230,23 @@ class InvoiceSalesOrderAdapter:
                 if not start_date and not end_date:
                     start_date = end_date = self.invoice.invoicing_date
 
-                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(start_date, end_date).first()
+                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
+                    start_date, end_date
+                ).first()
 
                 if tenant_contact and tenant_contact.contact:
-                    line_item.line_text_l2 = '{}  '.format(tenant_contact.contact.get_name()[:68])
+                    line_item.line_text_l2 = "{}  ".format(
+                        tenant_contact.contact.get_name()[:68]
+                    )
 
             if i == len(invoice_rows) - 1:
-                line_item.line_text_l4 = '   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä.'
-                line_item.line_text_l5 = ' Eräpäivän jälkeen peritään korkolain mukainen viivästyskorko ja'
-                line_item.line_text_l6 = ' mahdollisista perimistoimenpiteistä perimispalkkio.'
+                line_item.line_text_l4 = "   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä."
+                line_item.line_text_l5 = (
+                    " Eräpäivän jälkeen peritään korkolain mukainen viivästyskorko ja"
+                )
+                line_item.line_text_l6 = (
+                    " mahdollisista perimistoimenpiteistä perimispalkkio."
+                )
 
             line_items.append(line_item)
 
@@ -201,9 +254,9 @@ class InvoiceSalesOrderAdapter:
 
     def get_order_type(self):
         if self.invoice.type == InvoiceType.CHARGE:
-            return 'ZTY1'
+            return "ZTY1"
         elif self.invoice.type == InvoiceType.CREDIT_NOTE:
-            return 'ZHY1'
+            return "ZHY1"
 
     def get_original_order(self):
         if self.invoice.type == InvoiceType.CREDIT_NOTE:
@@ -214,7 +267,7 @@ class InvoiceSalesOrderAdapter:
             return self.invoice.lease.lessor.sap_sales_office
 
         # TODO: Remove
-        return '2826'
+        return "2826"
 
     def set_values(self):
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())

@@ -4,9 +4,11 @@
 #
 #    pip-compile requirements-dev.in
 #
-appnope==0.1.0            # via ipython
-attrs==19.3.0             # via -c requirements.txt, pytest
+appdirs==1.4.3            # via -c requirements.txt, black
+attrs==19.3.0             # via -c requirements.txt, black, pytest
 backcall==0.1.0           # via ipython
+black==19.10b0            # via -r requirements-dev.in
+click==7.1.2              # via black
 coverage==5.0.4           # via pytest-cov
 decorator==4.4.2          # via ipython, traitlets
 django-debug-toolbar==2.2  # via -r requirements-dev.in
@@ -34,6 +36,7 @@ mypy==0.770               # via -r requirements-dev.in, django-stubs
 openpyxl==3.0.3           # via -r requirements-dev.in
 packaging==20.3           # via pytest
 parso==0.6.2              # via jedi
+pathspec==0.8.0           # via black
 pep8-naming==0.10.0       # via -r requirements-dev.in
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
@@ -52,12 +55,14 @@ pytest-factoryboy==2.0.3  # via -r requirements-dev.in
 pytest==5.4.1             # via -r requirements-dev.in, pytest-cov, pytest-django, pytest-factoryboy
 python-dateutil==2.6.0    # via -c requirements.txt, faker
 pytz==2019.3              # via -c requirements.txt, django
+regex==2020.5.14          # via black
 six==1.14.0               # via -c requirements.txt, django-extensions, flake8-print, packaging, python-dateutil, traitlets
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via -c requirements.txt, django, django-debug-toolbar
 text-unidecode==1.3       # via faker
+toml==0.10.1              # via black
 traitlets==4.3.3          # via ipython
-typed-ast==1.4.1          # via mypy
+typed-ast==1.4.1          # via black, mypy
 typing-extensions==3.7.4.2  # via django-stubs, mypy
 wcwidth==0.1.9            # via -c requirements.txt, prompt-toolkit, pytest
 werkzeug==1.0.1           # via -r requirements-dev.in

@@ -95,15 +95,16 @@ _SPEC_PART_RX = r"""
 """
 
 _SPECIFIER_RX = re.compile(
-    r'^(' + _SPEC_PART_RX + r')(,(' + _SPEC_PART_RX + r'))*$', re.VERBOSE)
+    r"^(" + _SPEC_PART_RX + r")(,(" + _SPEC_PART_RX + r"))*$", re.VERBOSE
+)
 
 
 class IntegerSetSpecifier:
     def __init__(self, spec: str, min_value: int, max_value: int) -> None:
         if not _SPECIFIER_RX.match(spec):
-            raise ValueError('Invalid spec')
+            raise ValueError("Invalid spec")
         if max_value < min_value:
-            raise ValueError('max_value should not be smaller than min_value')
+            raise ValueError("max_value should not be smaller than min_value")
 
         self.spec: str = spec
         self.min_value: int = min_value
@@ -115,7 +116,7 @@ class IntegerSetSpecifier:
         self._total_range: range = range(min_value, max_value + 1)
 
     def is_total(self) -> bool:
-        if self.spec == '*' or self._ranges == [self._total_range]:
+        if self.spec == "*" or self._ranges == [self._total_range]:
             return True
         elif self._separated:
             # There must be holes between the ranges, because otherwise
@@ -123,16 +124,21 @@ class IntegerSetSpecifier:
             return False
         return all((x in self) for x in self._total_range)
 
-    def simplify(self) -> 'IntegerSetSpecifier':
+    def simplify(self) -> "IntegerSetSpecifier":
         def _format_range(rng: range) -> str:
             return (
-                str(rng.start) if rng.start + rng.step >= rng.stop else
-                '{}-{}{}'.format(
-                    rng.start, rng.stop - 1,
-                    '/{}'.format(rng.step) if rng.step != 1 else ''))
+                str(rng.start)
+                if rng.start + rng.step >= rng.stop
+                else "{}-{}{}".format(
+                    rng.start,
+                    rng.stop - 1,
+                    "/{}".format(rng.step) if rng.step != 1 else "",
+                )
+            )
+
         simplified_spec = (
-            '*' if self.is_total() else
-            ','.join(_format_range(x) for x in self._ranges))
+            "*" if self.is_total() else ",".join(_format_range(x) for x in self._ranges)
+        )
         return type(self)(simplified_spec, self.min_value, self.max_value)
 
     def __iter__(self) -> Iterator[int]:
@@ -157,13 +163,14 @@ class IntegerSetSpecifier:
 
     def __eq__(self, other: Any) -> bool:
         return (
-            isinstance(other, type(self)) and
-            self.spec == other.spec and
-            self.min_value == other.min_value and
-            self.max_value == other.max_value)
+            isinstance(other, type(self))
+            and self.spec == other.spec
+            and self.min_value == other.min_value
+            and self.max_value == other.max_value
+        )
 
     def __repr__(self) -> str:
-        return '{cls_name}({spec!r}, {min_value}, {max_value})'.format(
+        return "{cls_name}({spec!r}, {min_value}, {max_value})".format(
             cls_name=type(self).__name__,
             spec=self.spec,
             min_value=self.min_value,
@@ -171,27 +178,20 @@ class IntegerSetSpecifier:
         )
 
 
-def _parse_spec_as_ranges(
-        spec: str,
-        min_value: int,
-        max_value: int,
-) -> List[range]:
-    return [
-        _parse_spec_part(part, min_value, max_value)
-        for part in spec.split(',')
-    ]
+def _parse_spec_as_ranges(spec: str, min_value: int, max_value: int) -> List[range]:
+    return [_parse_spec_part(part, min_value, max_value) for part in spec.split(",")]
 
 
 def _parse_spec_part(part: str, min_value: int, max_value: int) -> range:
-    match = re.match(r'^(?:\*|(\d+)(?:-(\d+))?)(?:/(\d+))?$', part)
+    match = re.match(r"^(?:\*|(\d+)(?:-(\d+))?)(?:/(\d+))?$", part)
     if not match:
-        raise ValueError('Invalid spec part: {}'.format(part))
+        raise ValueError("Invalid spec part: {}".format(part))
     (start_str, stop_str, step_str) = match.groups()
     step = int(step_str) if step_str else 1
     if start_str and stop_str:
         (start, stop) = (int(start_str), int(stop_str))
         if start > stop:
-            raise ValueError('Invalid value range in spec')
+            raise ValueError("Invalid value range in spec")
     elif start_str:
         start = stop = int(start_str)
     else:
@@ -200,7 +200,7 @@ def _parse_spec_part(part: str, min_value: int, max_value: int) -> range:
         start = ((min_value - 1) // step + 1) * step
         stop = max_value
     if start < min_value or stop > max_value:
-        raise ValueError('Values in spec not within value range')
+        raise ValueError("Values in spec not within value range")
     return range(start, stop + 1, step)
 
 
@@ -254,9 +254,10 @@ def _combine_ranges(ranges: Iterable[range]) -> List[range]:
     """
     # Replace single item ranges with a range with step=1, remove
     # empty ranges and sort by step and start
-    processed_ranges = sorted((
-        x if len(x) != 1 else range(x.start, x.start + 1, 1)
-        for x in ranges if x), key=(lambda x: (x.step, x.start, x.stop)))
+    processed_ranges = sorted(
+        (x if len(x) != 1 else range(x.start, x.start + 1, 1) for x in ranges if x),
+        key=(lambda x: (x.step, x.start, x.stop)),
+    )
 
     if not processed_ranges:
         return []

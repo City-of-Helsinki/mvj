@@ -305,7 +305,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "contract": {
         1: ("view",),
-        2: ("view", "change",),
+        2: ("view", "change"),
         3: ("view", "add", "change", "delete"),
         4: ("view",),
         5: ("view",),
@@ -904,7 +904,7 @@ PERMISSION_TYPES = ("view", "add", "change", "delete")
 
 
 class Command(BaseCommand):
-    help = 'Sets predefined model permissions for the predefined MVJ groups'
+    help = "Sets predefined model permissions for the predefined MVJ groups"
 
     def handle(self, *args, **options):  # NOQA
         groups = {group.id: group for group in Group.objects.all()}
@@ -912,23 +912,35 @@ class Command(BaseCommand):
 
         all_model_permissions = []
         group_permissions = []
-        app_names = ['leasing', 'users', 'batchrun']
+        app_names = ["leasing", "users", "batchrun"]
 
         for app_name in app_names:
-            for model in apps.get_app_config(app_name).get_models(include_auto_created=True):
+            for model in apps.get_app_config(app_name).get_models(
+                include_auto_created=True
+            ):
                 model_name = model._meta.model_name
 
                 if model_name not in DEFAULT_MODEL_PERMS:
-                    self.stdout.write('Model "{}" not in DEFAULT_MODEL_PERMS. Skipping.'.format(model_name))
+                    self.stdout.write(
+                        'Model "{}" not in DEFAULT_MODEL_PERMS. Skipping.'.format(
+                            model_name
+                        )
+                    )
                     continue
 
                 for permission_type in PERMISSION_TYPES:
-                    all_model_permissions.append(permissions['{}_{}'.format(permission_type, model_name)])
+                    all_model_permissions.append(
+                        permissions["{}_{}".format(permission_type, model_name)]
+                    )
 
                 for (custom_model_permission_name, desc) in model._meta.permissions:
-                    all_model_permissions.append(permissions[custom_model_permission_name])
+                    all_model_permissions.append(
+                        permissions[custom_model_permission_name]
+                    )
 
-                for group_id, permission_types in DEFAULT_MODEL_PERMS[model_name].items():
+                for group_id, permission_types in DEFAULT_MODEL_PERMS[
+                    model_name
+                ].items():
                     if not permission_types:
                         continue
 
@@ -936,18 +948,27 @@ class Command(BaseCommand):
                         if permission_type in permissions:
                             permission = permissions[permission_type]
                         else:
-                            permission = permissions['{}_{}'.format(permission_type, model_name)]
+                            permission = permissions[
+                                "{}_{}".format(permission_type, model_name)
+                            ]
 
                         group_permissions.append(
-                            Group.permissions.through(group=groups[group_id], permission=permission)
+                            Group.permissions.through(
+                                group=groups[group_id], permission=permission
+                            )
                         )
 
         # Delete existing group permissions from the pre-defined groups
         mvj_groups = [grp for grp in groups.values() if grp.id in range(1, 8)]
-        Group.permissions.through.objects.filter(group__in=mvj_groups, permission__in=all_model_permissions).delete()
+        Group.permissions.through.objects.filter(
+            group__in=mvj_groups, permission__in=all_model_permissions
+        ).delete()
 
         # Save the desired field permissions for the groups
         Group.permissions.through.objects.bulk_create(group_permissions)
         for group_permission in group_permissions:
-            self.stdout.write('Added permission "{}" for group "{}"'.format(
-                group_permission.permission.codename, group_permission.group.name))
+            self.stdout.write(
+                'Added permission "{}" for group "{}"'.format(
+                    group_permission.permission.codename, group_permission.group.name
+                )
+            )

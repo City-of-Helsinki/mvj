@@ -12,13 +12,15 @@ class AreaNoteSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
 
     class Meta:
         model = AreaNote
-        fields = '__all__'
+        fields = "__all__"
 
 
-class AreaNoteCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class AreaNoteCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
     id = serializers.ReadOnlyField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = AreaNote
-        fields = '__all__'
+        fields = "__all__"

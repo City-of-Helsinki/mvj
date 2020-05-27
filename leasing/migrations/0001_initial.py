@@ -21,1962 +21,5902 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Area',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.AreaType, max_length=30, verbose_name='Area type')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-                ('external_id', models.CharField(max_length=255, verbose_name='External ID')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-                ('metadata', django.contrib.postgres.fields.jsonb.JSONField(blank=True, encoder=django.core.serializers.json.DjangoJSONEncoder, null=True, verbose_name='Metadata')),
-            ],
-            options={
-                'verbose_name': 'Area',
-                'verbose_name_plural': 'Area',
-            },
-        ),
-        migrations.CreateModel(
-            name='AreaNote',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326)),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-            ],
-            options={
-                'verbose_name': 'Area note',
-                'verbose_name_plural': 'Area notes',
-            },
-        ),
-        migrations.CreateModel(
-            name='AreaSource',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('identifier', models.CharField(max_length=255, unique=True, verbose_name='Identifier')),
-            ],
-            options={
-                'verbose_name': 'Area source',
-                'verbose_name_plural': 'Area source',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='BankHoliday',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('day', models.DateField(db_index=True, unique=True, verbose_name='Day')),
-            ],
-            options={
-                'verbose_name': 'Bank holiday',
-                'verbose_name_plural': 'Bank holidays',
-                'ordering': ('day',),
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('detailed_plan_identifier', models.CharField(blank=True, max_length=255, null=True, verbose_name='Detailed plan identifier')),
-                ('lease_rights_end_date', models.DateField(blank=True, null=True, verbose_name='Lease rights end date')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent',
-                'verbose_name_plural': 'Basis of rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRentBuildPermissionType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent build permission type',
-                'verbose_name_plural': 'Basis of rent build permission types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRentDecision',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Reference number')),
-                ('decision_date', models.DateField(blank=True, null=True, verbose_name='Decision date')),
-                ('section', models.CharField(blank=True, max_length=255, null=True, verbose_name='Section')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent decision',
-                'verbose_name_plural': 'Basis of rent decisions',
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRentPlotType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent plot type',
-                'verbose_name_plural': 'Basis of rent plot types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRentPropertyIdentifier',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent property identifier',
-                'verbose_name_plural': 'Basis of rent property identifiers',
-            },
-        ),
-        migrations.CreateModel(
-            name='BasisOfRentRate',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=12, verbose_name='Amount')),
-                ('area_unit', enumfields.fields.EnumField(blank=True, enum=leasing.enums.AreaUnit, max_length=20, null=True, verbose_name='Area unit')),
-            ],
-            options={
-                'verbose_name': 'Basis of rent rate',
-                'verbose_name_plural': 'Basis of rent rates',
-            },
-        ),
-        migrations.CreateModel(
-            name='Collateral',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('other_type', models.CharField(blank=True, max_length=255, null=True, verbose_name='Other type')),
-                ('number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Number')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('deed_date', models.DateField(blank=True, null=True, verbose_name='Deed date')),
-                ('total_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Total amount')),
-                ('paid_date', models.DateField(blank=True, null=True, verbose_name='Paid date')),
-                ('returned_date', models.DateField(blank=True, null=True, verbose_name='Returned date')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-            ],
-            options={
-                'verbose_name': 'Collateral',
-                'verbose_name_plural': 'Collaterals',
-            },
-        ),
-        migrations.CreateModel(
-            name='CollateralType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Collateral type',
-                'verbose_name_plural': 'Collateral types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='CollectionCourtDecision',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('file', models.FileField(upload_to=leasing.models.debt_collection.get_collection_court_decision_file_upload_to, verbose_name='File')),
-                ('decision_date', models.DateField(blank=True, null=True, verbose_name='Decision date')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Time uploaded')),
-            ],
-            options={
-                'verbose_name': 'Collection court decision',
-                'verbose_name_plural': 'Collection court decisions',
-                'ordering': ['-uploaded_at'],
-            },
-        ),
-        migrations.CreateModel(
-            name='CollectionLetter',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('file', models.FileField(upload_to=leasing.models.debt_collection.get_collection_letter_file_upload_to, verbose_name='File')),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Time uploaded')),
-            ],
-            options={
-                'verbose_name': 'Collection letter',
-                'verbose_name_plural': 'Collection letters',
-                'ordering': ['-uploaded_at'],
-            },
-        ),
-        migrations.CreateModel(
-            name='CollectionLetterTemplate',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('file', models.FileField(upload_to='collection_letter_templates/', verbose_name='File')),
-            ],
-            options={
-                'verbose_name': 'Collection letter template',
-                'verbose_name_plural': 'Collection letter templates',
-                'ordering': ['name'],
-            },
-        ),
-        migrations.CreateModel(
-            name='CollectionNote',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-            ],
-            options={
-                'verbose_name': 'Collection letter note',
-                'verbose_name_plural': 'Collection letter notes',
-                'ordering': ['-created_at'],
-            },
-        ),
-        migrations.CreateModel(
-            name='Comment',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('text', models.TextField(blank=True, null=True, verbose_name='Text')),
-            ],
-            options={
-                'verbose_name': 'Comment',
-                'verbose_name_plural': 'Comments',
-                'ordering': ('-created_at',),
-            },
-        ),
-        migrations.CreateModel(
-            name='CommentTopic',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Comment topic',
-                'verbose_name_plural': 'Comment topics',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Condition',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('supervision_date', models.DateField(blank=True, null=True, verbose_name='Supervision date')),
-                ('supervised_date', models.DateField(blank=True, null=True, verbose_name='Supervised date')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-            ],
-            options={
-                'verbose_name': 'Condition',
-                'verbose_name_plural': 'Conditions',
-            },
-        ),
-        migrations.CreateModel(
-            name='ConditionType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Condition type',
-                'verbose_name_plural': 'Condition types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='ConstructabilityDescription',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.ConstructabilityType, max_length=30, verbose_name='Type')),
-                ('text', models.TextField(verbose_name='Text')),
-                ('ahjo_reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='AHJO reference number')),
-                ('is_static', models.BooleanField(default=False, verbose_name='Is static?')),
-            ],
-            options={
-                'verbose_name': 'Constructability description',
-                'verbose_name_plural': 'Constructability descriptions',
-            },
-        ),
-        migrations.CreateModel(
-            name='Contact',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.ContactType, max_length=30, verbose_name='Type')),
-                ('first_name', models.CharField(blank=True, max_length=255, null=True, verbose_name='First name')),
-                ('last_name', models.CharField(blank=True, max_length=255, null=True, verbose_name='Last name')),
-                ('name', models.CharField(blank=True, max_length=255, null=True, verbose_name='Name')),
-                ('care_of', models.CharField(blank=True, max_length=255, null=True, verbose_name='c/o')),
-                ('business_id', models.CharField(blank=True, max_length=255, null=True, verbose_name='Business ID')),
-                ('address', models.CharField(blank=True, max_length=255, null=True, verbose_name='Address')),
-                ('postal_code', models.CharField(blank=True, max_length=255, null=True, verbose_name='Postal code')),
-                ('city', models.CharField(blank=True, max_length=255, null=True, verbose_name='City')),
-                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, verbose_name='Country')),
-                ('email', models.CharField(blank=True, max_length=255, null=True, verbose_name='Email')),
-                ('phone', models.CharField(blank=True, max_length=255, null=True, verbose_name='Phone')),
-                ('language', models.CharField(blank=True, choices=[('af', 'Afrikaans'), ('ar', 'Arabic'), ('ast', 'Asturian'), ('az', 'Azerbaijani'), ('bg', 'Bulgarian'), ('be', 'Belarusian'), ('bn', 'Bengali'), ('br', 'Breton'), ('bs', 'Bosnian'), ('ca', 'Catalan'), ('cs', 'Czech'), ('cy', 'Welsh'), ('da', 'Danish'), ('de', 'German'), ('dsb', 'Lower Sorbian'), ('el', 'Greek'), ('en', 'English'), ('en-au', 'Australian English'), ('en-gb', 'British English'), ('eo', 'Esperanto'), ('es', 'Spanish'), ('es-ar', 'Argentinian Spanish'), ('es-co', 'Colombian Spanish'), ('es-mx', 'Mexican Spanish'), ('es-ni', 'Nicaraguan Spanish'), ('es-ve', 'Venezuelan Spanish'), ('et', 'Estonian'), ('eu', 'Basque'), ('fa', 'Persian'), ('fi', 'Finnish'), ('fr', 'French'), ('fy', 'Frisian'), ('ga', 'Irish'), ('gd', 'Scottish Gaelic'), ('gl', 'Galician'), ('he', 'Hebrew'), ('hi', 'Hindi'), ('hr', 'Croatian'), ('hsb', 'Upper Sorbian'), ('hu', 'Hungarian'), ('hy', 'Armenian'), ('ia', 'Interlingua'), ('id', 'Indonesian'), ('io', 'Ido'), ('is', 'Icelandic'), ('it', 'Italian'), ('ja', 'Japanese'), ('ka', 'Georgian'), ('kab', 'Kabyle'), ('kk', 'Kazakh'), ('km', 'Khmer'), ('kn', 'Kannada'), ('ko', 'Korean'), ('lb', 'Luxembourgish'), ('lt', 'Lithuanian'), ('lv', 'Latvian'), ('mk', 'Macedonian'), ('ml', 'Malayalam'), ('mn', 'Mongolian'), ('mr', 'Marathi'), ('my', 'Burmese'), ('nb', 'Norwegian Bokmål'), ('ne', 'Nepali'), ('nl', 'Dutch'), ('nn', 'Norwegian Nynorsk'), ('os', 'Ossetic'), ('pa', 'Punjabi'), ('pl', 'Polish'), ('pt', 'Portuguese'), ('pt-br', 'Brazilian Portuguese'), ('ro', 'Romanian'), ('ru', 'Russian'), ('sk', 'Slovak'), ('sl', 'Slovenian'), ('sq', 'Albanian'), ('sr', 'Serbian'), ('sr-latn', 'Serbian Latin'), ('sv', 'Swedish'), ('sw', 'Swahili'), ('ta', 'Tamil'), ('te', 'Telugu'), ('th', 'Thai'), ('tr', 'Turkish'), ('tt', 'Tatar'), ('udm', 'Udmurt'), ('uk', 'Ukrainian'), ('ur', 'Urdu'), ('vi', 'Vietnamese'), ('zh-hans', 'Simplified Chinese'), ('zh-hant', 'Traditional Chinese')], max_length=255, null=True, verbose_name='Language')),
-                ('national_identification_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='National identification number')),
-                ('address_protection', models.BooleanField(default=False, verbose_name='Address protection')),
-                ('sap_customer_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP customer number')),
-                ('electronic_billing_address', models.CharField(blank=True, max_length=255, null=True, verbose_name='Electronic billing address')),
-                ('partner_code', models.CharField(blank=True, max_length=255, null=True, verbose_name='Partner code')),
-                ('is_lessor', models.BooleanField(default=False, verbose_name='Is a lessor')),
-                ('sap_sales_office', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP sales office')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-            ],
-            options={
-                'verbose_name': 'Contact',
-                'verbose_name_plural': 'Contacts',
-                'ordering': ['type', 'name', 'last_name', 'first_name'],
-            },
-        ),
-        migrations.CreateModel(
-            name='Contract',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('contract_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Contract number')),
-                ('signing_date', models.DateField(blank=True, null=True, verbose_name='Signing date')),
-                ('sign_by_date', models.DateField(blank=True, null=True, verbose_name='Sign by date')),
-                ('signing_note', models.TextField(blank=True, null=True, verbose_name='Signing note')),
-                ('first_call_sent', models.DateField(blank=True, null=True, verbose_name='First call sent')),
-                ('second_call_sent', models.DateField(blank=True, null=True, verbose_name='Second call sent')),
-                ('third_call_sent', models.DateField(blank=True, null=True, verbose_name='Third call sent')),
-                ('is_readjustment_decision', models.BooleanField(blank=True, null=True, verbose_name='Is readjustment decision')),
-                ('ktj_link', models.CharField(blank=True, max_length=1024, null=True, verbose_name='KTJ link')),
-                ('institution_identifier', models.CharField(blank=True, max_length=255, null=True, verbose_name='Institution identifier')),
-            ],
-            options={
-                'verbose_name': 'Contract',
-                'verbose_name_plural': 'Contracts',
-            },
-        ),
-        migrations.CreateModel(
-            name='ContractChange',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('signing_date', models.DateField(blank=True, null=True, verbose_name='Signing date')),
-                ('sign_by_date', models.DateField(blank=True, null=True, verbose_name='Sign by date')),
-                ('first_call_sent', models.DateField(blank=True, null=True, verbose_name='First call sent')),
-                ('second_call_sent', models.DateField(blank=True, null=True, verbose_name='Second call sent')),
-                ('third_call_sent', models.DateField(blank=True, null=True, verbose_name='Third call sent')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-            ],
-            options={
-                'verbose_name': 'Contract change',
-                'verbose_name_plural': 'Contract changes',
-            },
-        ),
-        migrations.CreateModel(
-            name='ContractRent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Amount')),
-                ('period', enumfields.fields.EnumField(enum=leasing.enums.PeriodType, max_length=30, verbose_name='Period')),
-                ('base_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Base amount')),
-                ('base_amount_period', enumfields.fields.EnumField(blank=True, enum=leasing.enums.PeriodType, max_length=30, null=True, verbose_name='Base amount period')),
-                ('base_year_rent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Base year rent')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-            ],
-            options={
-                'verbose_name': 'Contract rent',
-                'verbose_name_plural': 'Contract rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='ContractType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Contract type',
-                'verbose_name_plural': 'Contract types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Decision',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Reference number')),
-                ('decision_date', models.DateField(blank=True, null=True, verbose_name='Decision date')),
-                ('section', models.CharField(blank=True, max_length=255, null=True, verbose_name='Section')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-            ],
-            options={
-                'verbose_name': 'Decision',
-                'verbose_name_plural': 'Decisions',
-            },
-        ),
-        migrations.CreateModel(
-            name='DecisionMaker',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Decision maker',
-                'verbose_name_plural': 'Decision makers',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='DecisionType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('kind', enumfields.fields.EnumField(blank=True, enum=leasing.enums.DecisionTypeKind, max_length=30, null=True, verbose_name='Decision type kind')),
-            ],
-            options={
-                'verbose_name': 'Decision type',
-                'verbose_name_plural': 'Decision types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='District',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-            ],
-            options={
-                'verbose_name': 'District',
-                'verbose_name_plural': 'Districts',
-                'ordering': ('municipality__name', 'name'),
-            },
-        ),
-        migrations.CreateModel(
-            name='EmailLog',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.EmailLogType, max_length=30, verbose_name='Email log type')),
-                ('text', models.TextField(blank=True, null=True, verbose_name='Text')),
-                ('sent_at', models.DateTimeField(blank=True, null=True, verbose_name='Time created')),
-                ('object_id', models.PositiveIntegerField()),
-            ],
-            options={
-                'verbose_name': 'Email log',
-                'verbose_name_plural': 'Email logs',
-            },
-        ),
-        migrations.CreateModel(
-            name='EqualizedRent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('payable_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Payable amount')),
-                ('equalized_payable_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Equalized payable amount')),
-                ('equalization_factor', models.DecimalField(decimal_places=6, max_digits=8, verbose_name='Equalization factor')),
-            ],
-            options={
-                'verbose_name': 'Equalized rent',
-                'verbose_name_plural': 'Equalized rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='Financing',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Form of financing',
-                'verbose_name_plural': 'Forms of financing',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='FixedInitialYearRent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Amount')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-            ],
-            options={
-                'verbose_name': 'Fixed initial year rent',
-                'verbose_name_plural': 'Fixed initial year rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='Hitas',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Hitas',
-                'verbose_name_plural': 'Hitas',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Index',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.PositiveIntegerField(verbose_name='Number')),
-                ('year', models.PositiveSmallIntegerField(verbose_name='Year')),
-                ('month', models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(12)], verbose_name='Month')),
-            ],
-            options={
-                'verbose_name': 'Index',
-                'verbose_name_plural': 'Indexes',
-                'ordering': ('-year', '-month'),
-            },
-        ),
-        migrations.CreateModel(
-            name='InfillDevelopmentCompensation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('name', models.CharField(blank=True, max_length=255, null=True, verbose_name='Name')),
-                ('reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Reference number')),
-                ('detailed_plan_identifier', models.CharField(blank=True, max_length=255, null=True, verbose_name='Detailed plan identifier')),
-                ('state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.InfillDevelopmentCompensationState, max_length=30, null=True, verbose_name='State')),
-                ('lease_contract_change_date', models.DateField(blank=True, null=True, verbose_name='Lease contract change date')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-            ],
-            options={
-                'verbose_name': 'Infill development compensation',
-                'verbose_name_plural': 'Infill development compensations',
-            },
-        ),
-        migrations.CreateModel(
-            name='Inspection',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('inspector', models.CharField(blank=True, max_length=255, null=True, verbose_name='Inspector')),
-                ('supervision_date', models.DateField(blank=True, null=True, verbose_name='Supervision date')),
-                ('supervised_date', models.DateField(blank=True, null=True, verbose_name='Supervised date')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-            ],
-            options={
-                'verbose_name': 'Inspection',
-                'verbose_name_plural': 'Inspections',
-            },
-        ),
-        migrations.CreateModel(
-            name='IntendedUse',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Intended use',
-                'verbose_name_plural': 'Intended uses',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='InterestRate',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField(verbose_name='Start date')),
-                ('end_date', models.DateField(verbose_name='End date')),
-                ('reference_rate', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Reference rate')),
-                ('penalty_rate', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Penalty rate')),
-            ],
-            options={
-                'verbose_name': 'Interest rate',
-                'verbose_name_plural': 'Interest rates',
-            },
-        ),
-        migrations.CreateModel(
-            name='Invoice',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('number', models.PositiveIntegerField(blank=True, null=True, unique=True, verbose_name='Number')),
-                ('sent_to_sap_at', models.DateTimeField(blank=True, null=True, verbose_name='Sent to SAP at')),
-                ('sap_id', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP ID')),
-                ('due_date', models.DateField(verbose_name='Due date')),
-                ('adjusted_due_date', models.DateField(blank=True, null=True, verbose_name='Adjusted due date')),
-                ('invoicing_date', models.DateField(blank=True, null=True, verbose_name='Invoicing date')),
-                ('state', enumfields.fields.EnumField(enum=leasing.enums.InvoiceState, max_length=30, verbose_name='State')),
-                ('billing_period_start_date', models.DateField(blank=True, null=True, verbose_name='Billing period start date')),
-                ('billing_period_end_date', models.DateField(blank=True, null=True, verbose_name='Billing period end date')),
-                ('postpone_date', models.DateField(blank=True, null=True, verbose_name='Postpone date')),
-                ('total_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Total amount')),
-                ('billed_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Billed amount')),
-                ('outstanding_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Outstanding amount')),
-                ('payment_notification_date', models.DateField(blank=True, null=True, verbose_name='Payment notification date')),
-                ('collection_charge', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Collection charge')),
-                ('payment_notification_catalog_date', models.DateField(blank=True, null=True, verbose_name='Payment notification catalog date')),
-                ('delivery_method', enumfields.fields.EnumField(blank=True, enum=leasing.enums.InvoiceDeliveryMethod, max_length=30, null=True, verbose_name='Delivery method')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.InvoiceType, max_length=30, verbose_name='Type')),
-                ('notes', models.TextField(blank=True, verbose_name='Notes')),
-                ('generated', models.BooleanField(default=False, verbose_name='Is automatically generated?')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-                ('credited_invoice', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='credit_invoices', to='leasing.Invoice', verbose_name='Credited invoice')),
-                ('interest_invoice_for', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='interest_invoices', to='leasing.Invoice', verbose_name='Interest invoice for')),
-            ],
-            options={
-                'verbose_name': 'Invoice',
-                'verbose_name_plural': 'Invoices',
-            },
-        ),
-        migrations.CreateModel(
-            name='Lease',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.LeaseState, max_length=30, null=True, verbose_name='State')),
-                ('classification', enumfields.fields.EnumField(blank=True, enum=leasing.enums.Classification, max_length=30, null=True, verbose_name='Classification')),
-                ('intended_use_note', models.TextField(blank=True, null=True, verbose_name='Intended use note')),
-                ('transferable', models.BooleanField(blank=True, default=None, null=True, verbose_name='Transferable')),
-                ('regulated', models.BooleanField(blank=True, default=None, null=True, verbose_name='Regulated')),
-                ('notice_note', models.TextField(blank=True, null=True, verbose_name='Notice note')),
-                ('is_rent_info_complete', models.BooleanField(default=False, verbose_name='Rent info complete?')),
-                ('is_invoicing_enabled', models.BooleanField(default=False, verbose_name='Invoicing enabled?')),
-                ('reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Reference number')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('is_subject_to_vat', models.BooleanField(default=False, verbose_name='Is subject to VAT?')),
-                ('real_estate_developer', models.CharField(blank=True, max_length=255, null=True, verbose_name='Real estate developer')),
-                ('conveyance_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Conveyance number')),
-                ('building_selling_price', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Building selling price')),
-                ('district', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.District', verbose_name='District')),
-                ('financing', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Financing', verbose_name='Form of financing')),
-                ('hitas', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Hitas', verbose_name='Hitas')),
-            ],
-            options={
-                'verbose_name': 'Lease',
-                'verbose_name_plural': 'Leases',
-                'permissions': [('delete_nonempty_lease', 'Can delete non-empty Lease')],
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseArea',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('archived_at', models.DateTimeField(blank=True, null=True, verbose_name='Time archived')),
-                ('archived_note', models.TextField(blank=True, null=True, verbose_name='Archived note')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-                ('area', models.PositiveIntegerField(verbose_name='Area in square meters')),
-                ('section_area', models.PositiveIntegerField(blank=True, null=True, verbose_name='Section area')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.LeaseAreaType, max_length=30, verbose_name='Type')),
-                ('location', enumfields.fields.EnumField(enum=leasing.enums.LocationType, max_length=30, verbose_name='Location')),
-                ('preconstruction_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityState, max_length=30, null=True, verbose_name='Preconstruction state')),
-                ('preconstruction_estimated_construction_readiness_moment', models.CharField(blank=True, max_length=255, null=True, verbose_name='Preconstruction estimated construction readiness')),
-                ('preconstruction_inspection_moment', models.CharField(blank=True, max_length=255, null=True, verbose_name='Preconstruction inspection')),
-                ('demolition_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityState, max_length=30, null=True, verbose_name='Demolition state')),
-                ('polluted_land_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityState, max_length=30, null=True, verbose_name='Polluted land state')),
-                ('polluted_land_rent_condition_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.PollutedLandRentConditionState, max_length=30, null=True, verbose_name='Polluted land rent condition state')),
-                ('polluted_land_rent_condition_date', models.DateField(blank=True, null=True, verbose_name='Polluted land rent condition date')),
-                ('polluted_land_projectwise_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='ProjectWise number')),
-                ('constructability_report_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityState, max_length=30, null=True, verbose_name='Constructability report state')),
-                ('constructability_report_investigation_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityReportInvestigationState, max_length=30, null=True, verbose_name='Constructability report investigation state')),
-                ('constructability_report_signing_date', models.DateField(blank=True, null=True, verbose_name='Constructability report signing date')),
-                ('constructability_report_signer', models.CharField(blank=True, max_length=255, null=True, verbose_name='Constructability report signer')),
-                ('other_state', enumfields.fields.EnumField(blank=True, enum=leasing.enums.ConstructabilityState, max_length=30, null=True, verbose_name='Other state')),
-                ('archived_decision', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Decision', verbose_name='Archived decision')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='lease_areas', to='leasing.Lease')),
-                ('polluted_land_planner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User')),
-            ],
-            options={
-                'verbose_name': 'Lease area',
-                'verbose_name_plural': 'Lease areas',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseBasisOfRent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('archived_at', models.DateTimeField(blank=True, null=True, verbose_name='Time archived')),
-                ('archived_note', models.TextField(blank=True, null=True, verbose_name='Archived note')),
-                ('area', models.DecimalField(decimal_places=2, max_digits=12, verbose_name='Area amount')),
-                ('area_unit', enumfields.fields.EnumField(blank=True, enum=leasing.enums.AreaUnit, max_length=20, null=True, verbose_name='Area unit')),
-                ('amount_per_area', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Amount per area (index 100)')),
-                ('profit_margin_percentage', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Profit margin percentage')),
-                ('discount_percentage', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Discount percentage')),
-                ('plans_inspected_at', models.DateTimeField(blank=True, null=True, verbose_name='Plans inspected at')),
-                ('locked_at', models.DateTimeField(blank=True, null=True, verbose_name='Locked at')),
-                ('subvention_type', enumfields.fields.EnumField(blank=True, enum=leasing.enums.SubventionType, max_length=30, null=True, verbose_name='Subvention type')),
-                ('subvention_base_percent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Subvention base percent')),
-                ('subvention_graduated_percent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Graduated subvention percent')),
-                ('index', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Index', verbose_name='Index')),
-            ],
-            options={
-                'verbose_name': 'Lease basis of rent',
-                'verbose_name_plural': 'Lease basis of rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseholdTransfer',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('institution_identifier', models.CharField(max_length=127, verbose_name='Institution identifier')),
-                ('decision_date', models.DateField(verbose_name='Decision date')),
-            ],
-            options={
-                'verbose_name': 'Leasehold transfer',
-                'verbose_name_plural': 'Leasehold transfers',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseholdTransferImportLog',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('file_name', models.CharField(max_length=255, verbose_name='File name')),
-            ],
-            options={
-                'verbose_name': 'Leasehold transfer import log',
-                'verbose_name_plural': 'Leasehold transfer import logs',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('identifier', models.CharField(max_length=255, unique=True, verbose_name='Identifier')),
-                ('sap_material_code', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP material code')),
-                ('sap_order_item_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP order item number')),
-                ('due_dates_position', enumfields.fields.EnumField(default='start_of_month', enum=leasing.enums.DueDatesPosition, max_length=30, verbose_name='Due dates position')),
-            ],
-            options={
-                'verbose_name': 'Lease type',
-                'verbose_name_plural': 'Lease types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Management',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Form of management',
-                'verbose_name_plural': 'Forms of management',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='ManagementSubventionFormOfManagement',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Form of management (Subvention)',
-                'verbose_name_plural': 'Form of management (Subvention)',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Municipality',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('identifier', models.CharField(max_length=255, unique=True, verbose_name='Identifier')),
-            ],
-            options={
-                'verbose_name': 'Municipality',
-                'verbose_name_plural': 'Municipalities',
-                'ordering': ['id'],
-            },
-        ),
-        migrations.CreateModel(
-            name='NoticePeriod',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.NoticePeriodType, max_length=30, verbose_name='Period type')),
-                ('duration', models.CharField(blank=True, help_text='In ISO 8601 Duration format', max_length=255, null=True, verbose_name='Duration')),
-            ],
-            options={
-                'verbose_name': 'Notice period',
-                'verbose_name_plural': 'Notice periods',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='PlanUnitIntendedUse',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Plan unit intended use',
-                'verbose_name_plural': 'Plan unit intended uses',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='PlanUnitState',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Plan unit state',
-                'verbose_name_plural': 'Plan unit states',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='PlanUnitType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Plan unit type',
-                'verbose_name_plural': 'Plan unit types',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='PlotDivisionState',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Plot divisions state',
-                'verbose_name_plural': 'Plot division states',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='ReceivableType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('sap_material_code', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP material code')),
-                ('sap_order_item_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='SAP order item number')),
-            ],
-            options={
-                'verbose_name': 'Receivable type',
-                'verbose_name_plural': 'Receivable types',
-            },
-        ),
-        migrations.CreateModel(
-            name='Regulation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Form of regulation',
-                'verbose_name_plural': 'Forms of regulation',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Rent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.RentType, max_length=30, verbose_name='Type')),
-                ('cycle', enumfields.fields.EnumField(blank=True, enum=leasing.enums.RentCycle, max_length=30, null=True, verbose_name='Cycle')),
-                ('index_type', enumfields.fields.EnumField(blank=True, enum=leasing.enums.IndexType, max_length=30, null=True, verbose_name='Index type')),
-                ('due_dates_type', enumfields.fields.EnumField(blank=True, enum=leasing.enums.DueDatesType, max_length=30, null=True, verbose_name='Due dates type')),
-                ('due_dates_per_year', models.PositiveIntegerField(blank=True, null=True, verbose_name='Due dates per year')),
-                ('elementary_index', models.PositiveIntegerField(blank=True, null=True, verbose_name='Elementary index')),
-                ('index_rounding', models.PositiveIntegerField(blank=True, null=True, verbose_name='Index rounding')),
-                ('x_value', models.PositiveIntegerField(blank=True, null=True, verbose_name='X value')),
-                ('y_value', models.PositiveIntegerField(blank=True, null=True, verbose_name='Y value')),
-                ('y_value_start', models.DateField(blank=True, null=True, verbose_name='Y value start date')),
-                ('equalization_start_date', models.DateField(blank=True, null=True, verbose_name='Equalization start date')),
-                ('equalization_end_date', models.DateField(blank=True, null=True, verbose_name='Equalization end date')),
-                ('amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Amount')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('seasonal_start_day', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(31)], verbose_name='Seasonal start day')),
-                ('seasonal_start_month', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(12)], verbose_name='Seasonal start month')),
-                ('seasonal_end_day', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(31)], verbose_name='Seasonal end day')),
-                ('seasonal_end_month', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(12)], verbose_name='Seasonal end month')),
-                ('manual_ratio', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Manual ratio')),
-                ('manual_ratio_previous', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Manual ratio (previous)')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='rents', to='leasing.Lease', verbose_name='Lease')),
-            ],
-            options={
-                'verbose_name': 'Rent',
-                'verbose_name_plural': 'Rents',
-            },
-        ),
-        migrations.CreateModel(
-            name='RentAdjustment',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.RentAdjustmentType, max_length=30, verbose_name='Type')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('full_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Full amount')),
-                ('amount_type', enumfields.fields.EnumField(enum=leasing.enums.RentAdjustmentAmountType, max_length=30, verbose_name='Amount type')),
-                ('amount_left', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Amount left')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('subvention_type', enumfields.fields.EnumField(blank=True, enum=leasing.enums.SubventionType, max_length=30, null=True, verbose_name='Subvention type')),
-                ('subvention_base_percent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Subvention base percent')),
-                ('subvention_graduated_percent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Graduated subvention percent')),
-                ('decision', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Decision', verbose_name='Decision')),
-            ],
-            options={
-                'verbose_name': 'Rent adjustment',
-                'verbose_name_plural': 'Rent adjustments',
-            },
-        ),
-        migrations.CreateModel(
-            name='RentIntendedUse',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Rent intended use',
-                'verbose_name_plural': 'Rent intended uses',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='ReservationProcedure',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Reservation procedure',
-                'verbose_name_plural': 'Reservation Procedures',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='SpecialProject',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Special project',
-                'verbose_name_plural': 'Special projects',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='StatisticalUse',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Statistical use',
-                'verbose_name_plural': 'Statistical uses',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='SupportiveHousing',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-            ],
-            options={
-                'verbose_name': 'Supportive housing',
-                'verbose_name_plural': 'Supportive housings',
-                'ordering': ['name'],
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Tenant',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('share_numerator', models.PositiveIntegerField(verbose_name='Numerator')),
-                ('share_denominator', models.PositiveIntegerField(verbose_name='Denominator')),
-                ('reference', models.CharField(blank=True, max_length=35, null=True, verbose_name='Reference')),
-            ],
-            options={
-                'verbose_name': 'Tenant',
-                'verbose_name_plural': 'Tenants',
-            },
-        ),
-        migrations.CreateModel(
-            name='Vat',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('percent', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)], verbose_name='Percent')),
-                ('start_date', models.DateField(verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-            ],
-            options={
-                'verbose_name': 'VAT',
-                'verbose_name_plural': 'VATs',
-                'ordering': ('-start_date',),
-            },
-        ),
-        migrations.CreateModel(
-            name='UiData',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('key', models.CharField(max_length=255, verbose_name='Key')),
-                ('value', models.TextField(verbose_name='Value')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User')),
-            ],
-            options={
-                'verbose_name': 'UI Datum',
-                'verbose_name_plural': 'UI Data',
-                'permissions': (('edit_global_ui_data', 'Can create, edit and delete global UI data'),),
-            },
-        ),
-        migrations.CreateModel(
-            name='TenantRentShare',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('share_numerator', models.PositiveIntegerField(verbose_name='Rent share numerator')),
-                ('share_denominator', models.PositiveIntegerField(verbose_name='Rent share denominator')),
-                ('intended_use', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use')),
-                ('tenant', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='rent_shares', to='leasing.Tenant', verbose_name='Tenant')),
-            ],
-            options={
-                'verbose_name': 'Tenant rent share',
-                'verbose_name_plural': 'Tenant rent shares',
-            },
-        ),
-        migrations.CreateModel(
-            name='TenantContact',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.TenantContactType, max_length=255)),
-                ('start_date', models.DateField(verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('contact', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='leasing.Contact', verbose_name='Contact')),
-                ('tenant', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='leasing.Tenant', verbose_name='Tenant')),
-            ],
-            options={
-                'verbose_name': 'Tenant contact',
-                'verbose_name_plural': 'Tenant contacts',
+            name="Area",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.AreaType,
+                        max_length=30,
+                        verbose_name="Area type",
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+                (
+                    "external_id",
+                    models.CharField(max_length=255, verbose_name="External ID"),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+                (
+                    "metadata",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                        null=True,
+                        verbose_name="Metadata",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Area", "verbose_name_plural": "Area"},
+        ),
+        migrations.CreateModel(
+            name="AreaNote",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+            ],
+            options={"verbose_name": "Area note", "verbose_name_plural": "Area notes"},
+        ),
+        migrations.CreateModel(
+            name="AreaSource",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "identifier",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Identifier"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Area source",
+                "verbose_name_plural": "Area source",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="BankHoliday",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "day",
+                    models.DateField(db_index=True, unique=True, verbose_name="Day"),
+                ),
+            ],
+            options={
+                "verbose_name": "Bank holiday",
+                "verbose_name_plural": "Bank holidays",
+                "ordering": ("day",),
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "detailed_plan_identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Detailed plan identifier",
+                    ),
+                ),
+                (
+                    "lease_rights_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Lease rights end date"
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Basis of rent",
+                "verbose_name_plural": "Basis of rents",
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRentBuildPermissionType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Basis of rent build permission type",
+                "verbose_name_plural": "Basis of rent build permission types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRentDecision",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Reference number",
+                    ),
+                ),
+                (
+                    "decision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Decision date"
+                    ),
+                ),
+                (
+                    "section",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Section"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Basis of rent decision",
+                "verbose_name_plural": "Basis of rent decisions",
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRentPlotType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Basis of rent plot type",
+                "verbose_name_plural": "Basis of rent plot types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRentPropertyIdentifier",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Basis of rent property identifier",
+                "verbose_name_plural": "Basis of rent property identifiers",
+            },
+        ),
+        migrations.CreateModel(
+            name="BasisOfRentRate",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=12, verbose_name="Amount"
+                    ),
+                ),
+                (
+                    "area_unit",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.AreaUnit,
+                        max_length=20,
+                        null=True,
+                        verbose_name="Area unit",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Basis of rent rate",
+                "verbose_name_plural": "Basis of rent rates",
+            },
+        ),
+        migrations.CreateModel(
+            name="Collateral",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "other_type",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Other type"
+                    ),
+                ),
+                (
+                    "number",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Number"
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "deed_date",
+                    models.DateField(blank=True, null=True, verbose_name="Deed date"),
+                ),
+                (
+                    "total_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Total amount",
+                    ),
+                ),
+                (
+                    "paid_date",
+                    models.DateField(blank=True, null=True, verbose_name="Paid date"),
+                ),
+                (
+                    "returned_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Returned date"
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+            ],
+            options={
+                "verbose_name": "Collateral",
+                "verbose_name_plural": "Collaterals",
+            },
+        ),
+        migrations.CreateModel(
+            name="CollateralType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Collateral type",
+                "verbose_name_plural": "Collateral types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="CollectionCourtDecision",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to=leasing.models.debt_collection.get_collection_court_decision_file_upload_to,
+                        verbose_name="File",
+                    ),
+                ),
+                (
+                    "decision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Decision date"
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "uploaded_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time uploaded"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Collection court decision",
+                "verbose_name_plural": "Collection court decisions",
+                "ordering": ["-uploaded_at"],
+            },
+        ),
+        migrations.CreateModel(
+            name="CollectionLetter",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to=leasing.models.debt_collection.get_collection_letter_file_upload_to,
+                        verbose_name="File",
+                    ),
+                ),
+                (
+                    "uploaded_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time uploaded"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Collection letter",
+                "verbose_name_plural": "Collection letters",
+                "ordering": ["-uploaded_at"],
+            },
+        ),
+        migrations.CreateModel(
+            name="CollectionLetterTemplate",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to="collection_letter_templates/", verbose_name="File"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Collection letter template",
+                "verbose_name_plural": "Collection letter templates",
+                "ordering": ["name"],
+            },
+        ),
+        migrations.CreateModel(
+            name="CollectionNote",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+            ],
+            options={
+                "verbose_name": "Collection letter note",
+                "verbose_name_plural": "Collection letter notes",
+                "ordering": ["-created_at"],
+            },
+        ),
+        migrations.CreateModel(
+            name="Comment",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("text", models.TextField(blank=True, null=True, verbose_name="Text")),
+            ],
+            options={
+                "verbose_name": "Comment",
+                "verbose_name_plural": "Comments",
+                "ordering": ("-created_at",),
+            },
+        ),
+        migrations.CreateModel(
+            name="CommentTopic",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Comment topic",
+                "verbose_name_plural": "Comment topics",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Condition",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "supervision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Supervision date"
+                    ),
+                ),
+                (
+                    "supervised_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Supervised date"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+            ],
+            options={"verbose_name": "Condition", "verbose_name_plural": "Conditions"},
+        ),
+        migrations.CreateModel(
+            name="ConditionType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Condition type",
+                "verbose_name_plural": "Condition types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="ConstructabilityDescription",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.ConstructabilityType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                ("text", models.TextField(verbose_name="Text")),
+                (
+                    "ahjo_reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="AHJO reference number",
+                    ),
+                ),
+                (
+                    "is_static",
+                    models.BooleanField(default=False, verbose_name="Is static?"),
+                ),
+            ],
+            options={
+                "verbose_name": "Constructability description",
+                "verbose_name_plural": "Constructability descriptions",
+            },
+        ),
+        migrations.CreateModel(
+            name="Contact",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.ContactType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="First name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Last name"
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Name"
+                    ),
+                ),
+                (
+                    "care_of",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="c/o"
+                    ),
+                ),
+                (
+                    "business_id",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Business ID",
+                    ),
+                ),
+                (
+                    "address",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Address"
+                    ),
+                ),
+                (
+                    "postal_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Postal code",
+                    ),
+                ),
+                (
+                    "city",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="City"
+                    ),
+                ),
+                (
+                    "country",
+                    django_countries.fields.CountryField(
+                        blank=True, max_length=2, null=True, verbose_name="Country"
+                    ),
+                ),
+                (
+                    "email",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Email"
+                    ),
+                ),
+                (
+                    "phone",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Phone"
+                    ),
+                ),
+                (
+                    "language",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("af", "Afrikaans"),
+                            ("ar", "Arabic"),
+                            ("ast", "Asturian"),
+                            ("az", "Azerbaijani"),
+                            ("bg", "Bulgarian"),
+                            ("be", "Belarusian"),
+                            ("bn", "Bengali"),
+                            ("br", "Breton"),
+                            ("bs", "Bosnian"),
+                            ("ca", "Catalan"),
+                            ("cs", "Czech"),
+                            ("cy", "Welsh"),
+                            ("da", "Danish"),
+                            ("de", "German"),
+                            ("dsb", "Lower Sorbian"),
+                            ("el", "Greek"),
+                            ("en", "English"),
+                            ("en-au", "Australian English"),
+                            ("en-gb", "British English"),
+                            ("eo", "Esperanto"),
+                            ("es", "Spanish"),
+                            ("es-ar", "Argentinian Spanish"),
+                            ("es-co", "Colombian Spanish"),
+                            ("es-mx", "Mexican Spanish"),
+                            ("es-ni", "Nicaraguan Spanish"),
+                            ("es-ve", "Venezuelan Spanish"),
+                            ("et", "Estonian"),
+                            ("eu", "Basque"),
+                            ("fa", "Persian"),
+                            ("fi", "Finnish"),
+                            ("fr", "French"),
+                            ("fy", "Frisian"),
+                            ("ga", "Irish"),
+                            ("gd", "Scottish Gaelic"),
+                            ("gl", "Galician"),
+                            ("he", "Hebrew"),
+                            ("hi", "Hindi"),
+                            ("hr", "Croatian"),
+                            ("hsb", "Upper Sorbian"),
+                            ("hu", "Hungarian"),
+                            ("hy", "Armenian"),
+                            ("ia", "Interlingua"),
+                            ("id", "Indonesian"),
+                            ("io", "Ido"),
+                            ("is", "Icelandic"),
+                            ("it", "Italian"),
+                            ("ja", "Japanese"),
+                            ("ka", "Georgian"),
+                            ("kab", "Kabyle"),
+                            ("kk", "Kazakh"),
+                            ("km", "Khmer"),
+                            ("kn", "Kannada"),
+                            ("ko", "Korean"),
+                            ("lb", "Luxembourgish"),
+                            ("lt", "Lithuanian"),
+                            ("lv", "Latvian"),
+                            ("mk", "Macedonian"),
+                            ("ml", "Malayalam"),
+                            ("mn", "Mongolian"),
+                            ("mr", "Marathi"),
+                            ("my", "Burmese"),
+                            ("nb", "Norwegian Bokmål"),
+                            ("ne", "Nepali"),
+                            ("nl", "Dutch"),
+                            ("nn", "Norwegian Nynorsk"),
+                            ("os", "Ossetic"),
+                            ("pa", "Punjabi"),
+                            ("pl", "Polish"),
+                            ("pt", "Portuguese"),
+                            ("pt-br", "Brazilian Portuguese"),
+                            ("ro", "Romanian"),
+                            ("ru", "Russian"),
+                            ("sk", "Slovak"),
+                            ("sl", "Slovenian"),
+                            ("sq", "Albanian"),
+                            ("sr", "Serbian"),
+                            ("sr-latn", "Serbian Latin"),
+                            ("sv", "Swedish"),
+                            ("sw", "Swahili"),
+                            ("ta", "Tamil"),
+                            ("te", "Telugu"),
+                            ("th", "Thai"),
+                            ("tr", "Turkish"),
+                            ("tt", "Tatar"),
+                            ("udm", "Udmurt"),
+                            ("uk", "Ukrainian"),
+                            ("ur", "Urdu"),
+                            ("vi", "Vietnamese"),
+                            ("zh-hans", "Simplified Chinese"),
+                            ("zh-hant", "Traditional Chinese"),
+                        ],
+                        max_length=255,
+                        null=True,
+                        verbose_name="Language",
+                    ),
+                ),
+                (
+                    "national_identification_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="National identification number",
+                    ),
+                ),
+                (
+                    "address_protection",
+                    models.BooleanField(
+                        default=False, verbose_name="Address protection"
+                    ),
+                ),
+                (
+                    "sap_customer_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP customer number",
+                    ),
+                ),
+                (
+                    "electronic_billing_address",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Electronic billing address",
+                    ),
+                ),
+                (
+                    "partner_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Partner code",
+                    ),
+                ),
+                (
+                    "is_lessor",
+                    models.BooleanField(default=False, verbose_name="Is a lessor"),
+                ),
+                (
+                    "sap_sales_office",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP sales office",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+            ],
+            options={
+                "verbose_name": "Contact",
+                "verbose_name_plural": "Contacts",
+                "ordering": ["type", "name", "last_name", "first_name"],
+            },
+        ),
+        migrations.CreateModel(
+            name="Contract",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "contract_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Contract number",
+                    ),
+                ),
+                (
+                    "signing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Signing date"
+                    ),
+                ),
+                (
+                    "sign_by_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Sign by date"
+                    ),
+                ),
+                (
+                    "signing_note",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Signing note"
+                    ),
+                ),
+                (
+                    "first_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="First call sent"
+                    ),
+                ),
+                (
+                    "second_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Second call sent"
+                    ),
+                ),
+                (
+                    "third_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Third call sent"
+                    ),
+                ),
+                (
+                    "is_readjustment_decision",
+                    models.BooleanField(
+                        blank=True, null=True, verbose_name="Is readjustment decision"
+                    ),
+                ),
+                (
+                    "ktj_link",
+                    models.CharField(
+                        blank=True, max_length=1024, null=True, verbose_name="KTJ link"
+                    ),
+                ),
+                (
+                    "institution_identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Institution identifier",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Contract", "verbose_name_plural": "Contracts"},
+        ),
+        migrations.CreateModel(
+            name="ContractChange",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "signing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Signing date"
+                    ),
+                ),
+                (
+                    "sign_by_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Sign by date"
+                    ),
+                ),
+                (
+                    "first_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="First call sent"
+                    ),
+                ),
+                (
+                    "second_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Second call sent"
+                    ),
+                ),
+                (
+                    "third_call_sent",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Third call sent"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+            ],
+            options={
+                "verbose_name": "Contract change",
+                "verbose_name_plural": "Contract changes",
+            },
+        ),
+        migrations.CreateModel(
+            name="ContractRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Amount"
+                    ),
+                ),
+                (
+                    "period",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.PeriodType,
+                        max_length=30,
+                        verbose_name="Period",
+                    ),
+                ),
+                (
+                    "base_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Base amount",
+                    ),
+                ),
+                (
+                    "base_amount_period",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.PeriodType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Base amount period",
+                    ),
+                ),
+                (
+                    "base_year_rent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Base year rent",
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+            ],
+            options={
+                "verbose_name": "Contract rent",
+                "verbose_name_plural": "Contract rents",
+            },
+        ),
+        migrations.CreateModel(
+            name="ContractType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Contract type",
+                "verbose_name_plural": "Contract types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Decision",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Reference number",
+                    ),
+                ),
+                (
+                    "decision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Decision date"
+                    ),
+                ),
+                (
+                    "section",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Section"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+            ],
+            options={"verbose_name": "Decision", "verbose_name_plural": "Decisions"},
+        ),
+        migrations.CreateModel(
+            name="DecisionMaker",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Decision maker",
+                "verbose_name_plural": "Decision makers",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="DecisionType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "kind",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.DecisionTypeKind,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Decision type kind",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Decision type",
+                "verbose_name_plural": "Decision types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="District",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+            ],
+            options={
+                "verbose_name": "District",
+                "verbose_name_plural": "Districts",
+                "ordering": ("municipality__name", "name"),
+            },
+        ),
+        migrations.CreateModel(
+            name="EmailLog",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.EmailLogType,
+                        max_length=30,
+                        verbose_name="Email log type",
+                    ),
+                ),
+                ("text", models.TextField(blank=True, null=True, verbose_name="Text")),
+                (
+                    "sent_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Time created"
+                    ),
+                ),
+                ("object_id", models.PositiveIntegerField()),
+            ],
+            options={"verbose_name": "Email log", "verbose_name_plural": "Email logs"},
+        ),
+        migrations.CreateModel(
+            name="EqualizedRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "payable_amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Payable amount"
+                    ),
+                ),
+                (
+                    "equalized_payable_amount",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Equalized payable amount",
+                    ),
+                ),
+                (
+                    "equalization_factor",
+                    models.DecimalField(
+                        decimal_places=6,
+                        max_digits=8,
+                        verbose_name="Equalization factor",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Equalized rent",
+                "verbose_name_plural": "Equalized rents",
+            },
+        ),
+        migrations.CreateModel(
+            name="Financing",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Form of financing",
+                "verbose_name_plural": "Forms of financing",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="FixedInitialYearRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Amount"
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+            ],
+            options={
+                "verbose_name": "Fixed initial year rent",
+                "verbose_name_plural": "Fixed initial year rents",
+            },
+        ),
+        migrations.CreateModel(
+            name="Hitas",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Hitas",
+                "verbose_name_plural": "Hitas",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Index",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("number", models.PositiveIntegerField(verbose_name="Number")),
+                ("year", models.PositiveSmallIntegerField(verbose_name="Year")),
+                (
+                    "month",
+                    models.PositiveSmallIntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(12),
+                        ],
+                        verbose_name="Month",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Index",
+                "verbose_name_plural": "Indexes",
+                "ordering": ("-year", "-month"),
+            },
+        ),
+        migrations.CreateModel(
+            name="InfillDevelopmentCompensation",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Name"
+                    ),
+                ),
+                (
+                    "reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Reference number",
+                    ),
+                ),
+                (
+                    "detailed_plan_identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Detailed plan identifier",
+                    ),
+                ),
+                (
+                    "state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.InfillDevelopmentCompensationState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="State",
+                    ),
+                ),
+                (
+                    "lease_contract_change_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Lease contract change date"
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Infill development compensation",
+                "verbose_name_plural": "Infill development compensations",
+            },
+        ),
+        migrations.CreateModel(
+            name="Inspection",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "inspector",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Inspector"
+                    ),
+                ),
+                (
+                    "supervision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Supervision date"
+                    ),
+                ),
+                (
+                    "supervised_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Supervised date"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+            ],
+            options={
+                "verbose_name": "Inspection",
+                "verbose_name_plural": "Inspections",
+            },
+        ),
+        migrations.CreateModel(
+            name="IntendedUse",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Intended use",
+                "verbose_name_plural": "Intended uses",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="InterestRate",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Start date")),
+                ("end_date", models.DateField(verbose_name="End date")),
+                (
+                    "reference_rate",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Reference rate"
+                    ),
+                ),
+                (
+                    "penalty_rate",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Penalty rate"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Interest rate",
+                "verbose_name_plural": "Interest rates",
+            },
+        ),
+        migrations.CreateModel(
+            name="Invoice",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "number",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, unique=True, verbose_name="Number"
+                    ),
+                ),
+                (
+                    "sent_to_sap_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Sent to SAP at"
+                    ),
+                ),
+                (
+                    "sap_id",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="SAP ID"
+                    ),
+                ),
+                ("due_date", models.DateField(verbose_name="Due date")),
+                (
+                    "adjusted_due_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Adjusted due date"
+                    ),
+                ),
+                (
+                    "invoicing_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Invoicing date"
+                    ),
+                ),
+                (
+                    "state",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.InvoiceState,
+                        max_length=30,
+                        verbose_name="State",
+                    ),
+                ),
+                (
+                    "billing_period_start_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period start date"
+                    ),
+                ),
+                (
+                    "billing_period_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period end date"
+                    ),
+                ),
+                (
+                    "postpone_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Postpone date"
+                    ),
+                ),
+                (
+                    "total_amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Total amount"
+                    ),
+                ),
+                (
+                    "billed_amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Billed amount"
+                    ),
+                ),
+                (
+                    "outstanding_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Outstanding amount",
+                    ),
+                ),
+                (
+                    "payment_notification_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Payment notification date"
+                    ),
+                ),
+                (
+                    "collection_charge",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Collection charge",
+                    ),
+                ),
+                (
+                    "payment_notification_catalog_date",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Payment notification catalog date",
+                    ),
+                ),
+                (
+                    "delivery_method",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.InvoiceDeliveryMethod,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Delivery method",
+                    ),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.InvoiceType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Notes")),
+                (
+                    "generated",
+                    models.BooleanField(
+                        default=False, verbose_name="Is automatically generated?"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+                (
+                    "credited_invoice",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="credit_invoices",
+                        to="leasing.Invoice",
+                        verbose_name="Credited invoice",
+                    ),
+                ),
+                (
+                    "interest_invoice_for",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="interest_invoices",
+                        to="leasing.Invoice",
+                        verbose_name="Interest invoice for",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Invoice", "verbose_name_plural": "Invoices"},
+        ),
+        migrations.CreateModel(
+            name="Lease",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.LeaseState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="State",
+                    ),
+                ),
+                (
+                    "classification",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.Classification,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Classification",
+                    ),
+                ),
+                (
+                    "intended_use_note",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Intended use note"
+                    ),
+                ),
+                (
+                    "transferable",
+                    models.BooleanField(
+                        blank=True, default=None, null=True, verbose_name="Transferable"
+                    ),
+                ),
+                (
+                    "regulated",
+                    models.BooleanField(
+                        blank=True, default=None, null=True, verbose_name="Regulated"
+                    ),
+                ),
+                (
+                    "notice_note",
+                    models.TextField(blank=True, null=True, verbose_name="Notice note"),
+                ),
+                (
+                    "is_rent_info_complete",
+                    models.BooleanField(
+                        default=False, verbose_name="Rent info complete?"
+                    ),
+                ),
+                (
+                    "is_invoicing_enabled",
+                    models.BooleanField(
+                        default=False, verbose_name="Invoicing enabled?"
+                    ),
+                ),
+                (
+                    "reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Reference number",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "is_subject_to_vat",
+                    models.BooleanField(
+                        default=False, verbose_name="Is subject to VAT?"
+                    ),
+                ),
+                (
+                    "real_estate_developer",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Real estate developer",
+                    ),
+                ),
+                (
+                    "conveyance_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Conveyance number",
+                    ),
+                ),
+                (
+                    "building_selling_price",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Building selling price",
+                    ),
+                ),
+                (
+                    "district",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.District",
+                        verbose_name="District",
+                    ),
+                ),
+                (
+                    "financing",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Financing",
+                        verbose_name="Form of financing",
+                    ),
+                ),
+                (
+                    "hitas",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Hitas",
+                        verbose_name="Hitas",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Lease",
+                "verbose_name_plural": "Leases",
+                "permissions": [
+                    ("delete_nonempty_lease", "Can delete non-empty Lease")
+                ],
+            },
+        ),
+        migrations.CreateModel(
+            name="LeaseArea",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "archived_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Time archived"
+                    ),
+                ),
+                (
+                    "archived_note",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Archived note"
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+                (
+                    "area",
+                    models.PositiveIntegerField(verbose_name="Area in square meters"),
+                ),
+                (
+                    "section_area",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Section area"
+                    ),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.LeaseAreaType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                (
+                    "location",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.LocationType,
+                        max_length=30,
+                        verbose_name="Location",
+                    ),
+                ),
+                (
+                    "preconstruction_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Preconstruction state",
+                    ),
+                ),
+                (
+                    "preconstruction_estimated_construction_readiness_moment",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Preconstruction estimated construction readiness",
+                    ),
+                ),
+                (
+                    "preconstruction_inspection_moment",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Preconstruction inspection",
+                    ),
+                ),
+                (
+                    "demolition_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Demolition state",
+                    ),
+                ),
+                (
+                    "polluted_land_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Polluted land state",
+                    ),
+                ),
+                (
+                    "polluted_land_rent_condition_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.PollutedLandRentConditionState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Polluted land rent condition state",
+                    ),
+                ),
+                (
+                    "polluted_land_rent_condition_date",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Polluted land rent condition date",
+                    ),
+                ),
+                (
+                    "polluted_land_projectwise_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="ProjectWise number",
+                    ),
+                ),
+                (
+                    "constructability_report_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Constructability report state",
+                    ),
+                ),
+                (
+                    "constructability_report_investigation_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityReportInvestigationState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Constructability report investigation state",
+                    ),
+                ),
+                (
+                    "constructability_report_signing_date",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Constructability report signing date",
+                    ),
+                ),
+                (
+                    "constructability_report_signer",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Constructability report signer",
+                    ),
+                ),
+                (
+                    "other_state",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.ConstructabilityState,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Other state",
+                    ),
+                ),
+                (
+                    "archived_decision",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Decision",
+                        verbose_name="Archived decision",
+                    ),
+                ),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="lease_areas",
+                        to="leasing.Lease",
+                    ),
+                ),
+                (
+                    "polluted_land_planner",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Lease area",
+                "verbose_name_plural": "Lease areas",
+            },
+        ),
+        migrations.CreateModel(
+            name="LeaseBasisOfRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "archived_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Time archived"
+                    ),
+                ),
+                (
+                    "archived_note",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Archived note"
+                    ),
+                ),
+                (
+                    "area",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=12, verbose_name="Area amount"
+                    ),
+                ),
+                (
+                    "area_unit",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.AreaUnit,
+                        max_length=20,
+                        null=True,
+                        verbose_name="Area unit",
+                    ),
+                ),
+                (
+                    "amount_per_area",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Amount per area (index 100)",
+                    ),
+                ),
+                (
+                    "profit_margin_percentage",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Profit margin percentage",
+                    ),
+                ),
+                (
+                    "discount_percentage",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Discount percentage",
+                    ),
+                ),
+                (
+                    "plans_inspected_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Plans inspected at"
+                    ),
+                ),
+                (
+                    "locked_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Locked at"
+                    ),
+                ),
+                (
+                    "subvention_type",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.SubventionType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Subvention type",
+                    ),
+                ),
+                (
+                    "subvention_base_percent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Subvention base percent",
+                    ),
+                ),
+                (
+                    "subvention_graduated_percent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Graduated subvention percent",
+                    ),
+                ),
+                (
+                    "index",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Index",
+                        verbose_name="Index",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Lease basis of rent",
+                "verbose_name_plural": "Lease basis of rents",
+            },
+        ),
+        migrations.CreateModel(
+            name="LeaseholdTransfer",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "institution_identifier",
+                    models.CharField(
+                        max_length=127, verbose_name="Institution identifier"
+                    ),
+                ),
+                ("decision_date", models.DateField(verbose_name="Decision date")),
+            ],
+            options={
+                "verbose_name": "Leasehold transfer",
+                "verbose_name_plural": "Leasehold transfers",
+            },
+        ),
+        migrations.CreateModel(
+            name="LeaseholdTransferImportLog",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "file_name",
+                    models.CharField(max_length=255, verbose_name="File name"),
+                ),
+            ],
+            options={
+                "verbose_name": "Leasehold transfer import log",
+                "verbose_name_plural": "Leasehold transfer import logs",
+            },
+        ),
+        migrations.CreateModel(
+            name="LeaseType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "identifier",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Identifier"
+                    ),
+                ),
+                (
+                    "sap_material_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP material code",
+                    ),
+                ),
+                (
+                    "sap_order_item_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP order item number",
+                    ),
+                ),
+                (
+                    "due_dates_position",
+                    enumfields.fields.EnumField(
+                        default="start_of_month",
+                        enum=leasing.enums.DueDatesPosition,
+                        max_length=30,
+                        verbose_name="Due dates position",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Lease type",
+                "verbose_name_plural": "Lease types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Management",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Form of management",
+                "verbose_name_plural": "Forms of management",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="ManagementSubventionFormOfManagement",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Form of management (Subvention)",
+                "verbose_name_plural": "Form of management (Subvention)",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Municipality",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "identifier",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Identifier"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Municipality",
+                "verbose_name_plural": "Municipalities",
+                "ordering": ["id"],
+            },
+        ),
+        migrations.CreateModel(
+            name="NoticePeriod",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.NoticePeriodType,
+                        max_length=30,
+                        verbose_name="Period type",
+                    ),
+                ),
+                (
+                    "duration",
+                    models.CharField(
+                        blank=True,
+                        help_text="In ISO 8601 Duration format",
+                        max_length=255,
+                        null=True,
+                        verbose_name="Duration",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Notice period",
+                "verbose_name_plural": "Notice periods",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="PlanUnitIntendedUse",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Plan unit intended use",
+                "verbose_name_plural": "Plan unit intended uses",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="PlanUnitState",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Plan unit state",
+                "verbose_name_plural": "Plan unit states",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="PlanUnitType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Plan unit type",
+                "verbose_name_plural": "Plan unit types",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="PlotDivisionState",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Plot divisions state",
+                "verbose_name_plural": "Plot division states",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="ReceivableType",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "sap_material_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP material code",
+                    ),
+                ),
+                (
+                    "sap_order_item_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="SAP order item number",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Receivable type",
+                "verbose_name_plural": "Receivable types",
+            },
+        ),
+        migrations.CreateModel(
+            name="Regulation",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Form of regulation",
+                "verbose_name_plural": "Forms of regulation",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Rent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.RentType, max_length=30, verbose_name="Type"
+                    ),
+                ),
+                (
+                    "cycle",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.RentCycle,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Cycle",
+                    ),
+                ),
+                (
+                    "index_type",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.IndexType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Index type",
+                    ),
+                ),
+                (
+                    "due_dates_type",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.DueDatesType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Due dates type",
+                    ),
+                ),
+                (
+                    "due_dates_per_year",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Due dates per year"
+                    ),
+                ),
+                (
+                    "elementary_index",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Elementary index"
+                    ),
+                ),
+                (
+                    "index_rounding",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Index rounding"
+                    ),
+                ),
+                (
+                    "x_value",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="X value"
+                    ),
+                ),
+                (
+                    "y_value",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Y value"
+                    ),
+                ),
+                (
+                    "y_value_start",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Y value start date"
+                    ),
+                ),
+                (
+                    "equalization_start_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Equalization start date"
+                    ),
+                ),
+                (
+                    "equalization_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Equalization end date"
+                    ),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Amount",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "seasonal_start_day",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(31),
+                        ],
+                        verbose_name="Seasonal start day",
+                    ),
+                ),
+                (
+                    "seasonal_start_month",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(12),
+                        ],
+                        verbose_name="Seasonal start month",
+                    ),
+                ),
+                (
+                    "seasonal_end_day",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(31),
+                        ],
+                        verbose_name="Seasonal end day",
+                    ),
+                ),
+                (
+                    "seasonal_end_month",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(12),
+                        ],
+                        verbose_name="Seasonal end month",
+                    ),
+                ),
+                (
+                    "manual_ratio",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Manual ratio",
+                    ),
+                ),
+                (
+                    "manual_ratio_previous",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Manual ratio (previous)",
+                    ),
+                ),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="rents",
+                        to="leasing.Lease",
+                        verbose_name="Lease",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Rent", "verbose_name_plural": "Rents"},
+        ),
+        migrations.CreateModel(
+            name="RentAdjustment",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.RentAdjustmentType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "full_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Full amount",
+                    ),
+                ),
+                (
+                    "amount_type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.RentAdjustmentAmountType,
+                        max_length=30,
+                        verbose_name="Amount type",
+                    ),
+                ),
+                (
+                    "amount_left",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Amount left",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "subvention_type",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.SubventionType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Subvention type",
+                    ),
+                ),
+                (
+                    "subvention_base_percent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Subvention base percent",
+                    ),
+                ),
+                (
+                    "subvention_graduated_percent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Graduated subvention percent",
+                    ),
+                ),
+                (
+                    "decision",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Decision",
+                        verbose_name="Decision",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Rent adjustment",
+                "verbose_name_plural": "Rent adjustments",
+            },
+        ),
+        migrations.CreateModel(
+            name="RentIntendedUse",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Rent intended use",
+                "verbose_name_plural": "Rent intended uses",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="ReservationProcedure",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Reservation procedure",
+                "verbose_name_plural": "Reservation Procedures",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="SpecialProject",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Special project",
+                "verbose_name_plural": "Special projects",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="StatisticalUse",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Statistical use",
+                "verbose_name_plural": "Statistical uses",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="SupportiveHousing",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+            ],
+            options={
+                "verbose_name": "Supportive housing",
+                "verbose_name_plural": "Supportive housings",
+                "ordering": ["name"],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Tenant",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "share_numerator",
+                    models.PositiveIntegerField(verbose_name="Numerator"),
+                ),
+                (
+                    "share_denominator",
+                    models.PositiveIntegerField(verbose_name="Denominator"),
+                ),
+                (
+                    "reference",
+                    models.CharField(
+                        blank=True, max_length=35, null=True, verbose_name="Reference"
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Tenant", "verbose_name_plural": "Tenants"},
+        ),
+        migrations.CreateModel(
+            name="Vat",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "percent",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                        verbose_name="Percent",
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Start date")),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+            ],
+            options={
+                "verbose_name": "VAT",
+                "verbose_name_plural": "VATs",
+                "ordering": ("-start_date",),
+            },
+        ),
+        migrations.CreateModel(
+            name="UiData",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("key", models.CharField(max_length=255, verbose_name="Key")),
+                ("value", models.TextField(verbose_name="Value")),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "UI Datum",
+                "verbose_name_plural": "UI Data",
+                "permissions": (
+                    (
+                        "edit_global_ui_data",
+                        "Can create, edit and delete global UI data",
+                    ),
+                ),
+            },
+        ),
+        migrations.CreateModel(
+            name="TenantRentShare",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "share_numerator",
+                    models.PositiveIntegerField(verbose_name="Rent share numerator"),
+                ),
+                (
+                    "share_denominator",
+                    models.PositiveIntegerField(verbose_name="Rent share denominator"),
+                ),
+                (
+                    "intended_use",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.RentIntendedUse",
+                        verbose_name="Intended use",
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="rent_shares",
+                        to="leasing.Tenant",
+                        verbose_name="Tenant",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Tenant rent share",
+                "verbose_name_plural": "Tenant rent shares",
+            },
+        ),
+        migrations.CreateModel(
+            name="TenantContact",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.TenantContactType, max_length=255
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Start date")),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "contact",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="leasing.Contact",
+                        verbose_name="Contact",
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="leasing.Tenant",
+                        verbose_name="Tenant",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Tenant contact",
+                "verbose_name_plural": "Tenant contacts",
             },
         ),
         migrations.AddField(
-            model_name='tenant',
-            name='contacts',
-            field=models.ManyToManyField(related_name='tenants', through='leasing.TenantContact', to='leasing.Contact'),
+            model_name="tenant",
+            name="contacts",
+            field=models.ManyToManyField(
+                related_name="tenants",
+                through="leasing.TenantContact",
+                to="leasing.Contact",
+            ),
         ),
         migrations.AddField(
-            model_name='tenant',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='tenants', to='leasing.Lease', verbose_name='Lease'),
+            model_name="tenant",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="tenants",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.CreateModel(
-            name='TemporarySubvention',
+            name="TemporarySubvention",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(blank=True, max_length=255, null=True, verbose_name='Description')),
-                ('subvention_percent', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Subvention percent')),
-                ('rent_adjustment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='temporary_subventions', to='leasing.RentAdjustment', verbose_name='Rent adjustment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "description",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Description",
+                    ),
+                ),
+                (
+                    "subvention_percent",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Subvention percent",
+                    ),
+                ),
+                (
+                    "rent_adjustment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="temporary_subventions",
+                        to="leasing.RentAdjustment",
+                        verbose_name="Rent adjustment",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Temporary subvention (Rent adjustment)',
-                'verbose_name_plural': 'Temporary subventions (Rent adjustment)',
+                "verbose_name": "Temporary subvention (Rent adjustment)",
+                "verbose_name_plural": "Temporary subventions (Rent adjustment)",
             },
         ),
         migrations.CreateModel(
-            name='RentDueDate',
+            name="RentDueDate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('day', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(31)], verbose_name='Day')),
-                ('month', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(12)], verbose_name='Month')),
-                ('rent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='due_dates', to='leasing.Rent', verbose_name='Rent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "day",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(31),
+                        ],
+                        verbose_name="Day",
+                    ),
+                ),
+                (
+                    "month",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(12),
+                        ],
+                        verbose_name="Month",
+                    ),
+                ),
+                (
+                    "rent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="due_dates",
+                        to="leasing.Rent",
+                        verbose_name="Rent",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Rent due date',
-                'verbose_name_plural': 'Rent due dates',
+                "verbose_name": "Rent due date",
+                "verbose_name_plural": "Rent due dates",
             },
         ),
         migrations.AddField(
-            model_name='rentadjustment',
-            name='intended_use',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use'),
+            model_name="rentadjustment",
+            name="intended_use",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.RentIntendedUse",
+                verbose_name="Intended use",
+            ),
         ),
         migrations.AddField(
-            model_name='rentadjustment',
-            name='rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rent_adjustments', to='leasing.Rent', verbose_name='Rent'),
+            model_name="rentadjustment",
+            name="rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="rent_adjustments",
+                to="leasing.Rent",
+                verbose_name="Rent",
+            ),
         ),
         migrations.CreateModel(
-            name='RelatedLease',
+            name="RelatedLease",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(blank=True, enum=leasing.enums.LeaseRelationType, max_length=30, null=True, verbose_name='Lease relation type')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('from_lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='from_leases', to='leasing.Lease', verbose_name='From lease')),
-                ('to_lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='to_leases', to='leasing.Lease', verbose_name='To lease')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        blank=True,
+                        enum=leasing.enums.LeaseRelationType,
+                        max_length=30,
+                        null=True,
+                        verbose_name="Lease relation type",
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "from_lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="from_leases",
+                        to="leasing.Lease",
+                        verbose_name="From lease",
+                    ),
+                ),
+                (
+                    "to_lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="to_leases",
+                        to="leasing.Lease",
+                        verbose_name="To lease",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Related lease',
-                'verbose_name_plural': 'Related leases',
+                "verbose_name": "Related lease",
+                "verbose_name_plural": "Related leases",
             },
         ),
         migrations.CreateModel(
-            name='Plot',
+            name="Plot",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-                ('area', models.PositiveIntegerField(verbose_name='Area in square meters')),
-                ('section_area', models.PositiveIntegerField(blank=True, null=True, verbose_name='Section area')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.PlotType, max_length=30, verbose_name='Type')),
-                ('registration_date', models.DateField(blank=True, null=True, verbose_name='Registration date')),
-                ('repeal_date', models.DateField(blank=True, null=True, verbose_name='Repeal date')),
-                ('in_contract', models.BooleanField(default=False, verbose_name='At time of contract')),
-                ('lease_area', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='plots', to='leasing.LeaseArea')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+                (
+                    "area",
+                    models.PositiveIntegerField(verbose_name="Area in square meters"),
+                ),
+                (
+                    "section_area",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Section area"
+                    ),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.PlotType, max_length=30, verbose_name="Type"
+                    ),
+                ),
+                (
+                    "registration_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Registration date"
+                    ),
+                ),
+                (
+                    "repeal_date",
+                    models.DateField(blank=True, null=True, verbose_name="Repeal date"),
+                ),
+                (
+                    "in_contract",
+                    models.BooleanField(
+                        default=False, verbose_name="At time of contract"
+                    ),
+                ),
+                (
+                    "lease_area",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="plots",
+                        to="leasing.LeaseArea",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Plot", "verbose_name_plural": "Plots"},
+        ),
+        migrations.CreateModel(
+            name="PlanUnit",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=255, verbose_name="Identifier"),
+                ),
+                (
+                    "area",
+                    models.PositiveIntegerField(verbose_name="Area in square meters"),
+                ),
+                (
+                    "section_area",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Section area"
+                    ),
+                ),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=4326, verbose_name="Geometry"
+                    ),
+                ),
+                (
+                    "in_contract",
+                    models.BooleanField(
+                        default=False, verbose_name="At time of contract"
+                    ),
+                ),
+                (
+                    "plot_division_identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Plot division identifier",
+                    ),
+                ),
+                (
+                    "plot_division_date_of_approval",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Plot division date of approval",
+                    ),
+                ),
+                (
+                    "plot_division_effective_date",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Plot division effective date",
+                    ),
+                ),
+                (
+                    "detailed_plan_identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Detailed plan identifier",
+                    ),
+                ),
+                (
+                    "detailed_plan_latest_processing_date",
+                    models.DateField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Detailed plan latest processing date",
+                    ),
+                ),
+                (
+                    "detailed_plan_latest_processing_date_note",
+                    models.TextField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Note for latest processing date",
+                    ),
+                ),
+                (
+                    "lease_area",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="plan_units",
+                        to="leasing.LeaseArea",
+                    ),
+                ),
+                (
+                    "plan_unit_intended_use",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.PlanUnitIntendedUse",
+                        verbose_name="Plan unit intended use",
+                    ),
+                ),
+                (
+                    "plan_unit_state",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.PlanUnitState",
+                        verbose_name="Plan unit state",
+                    ),
+                ),
+                (
+                    "plan_unit_type",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.PlanUnitType",
+                        verbose_name="Plan unit type",
+                    ),
+                ),
+                (
+                    "plot_division_state",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.PlotDivisionState",
+                        verbose_name="Plot division state",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Plan unit", "verbose_name_plural": "Plan units"},
+        ),
+        migrations.CreateModel(
+            name="PayableRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Amount"
+                    ),
+                ),
+                (
+                    "start_date",
+                    models.DateField(blank=True, null=True, verbose_name="Start date"),
+                ),
+                (
+                    "end_date",
+                    models.DateField(blank=True, null=True, verbose_name="End date"),
+                ),
+                (
+                    "difference_percent",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Difference percent",
+                    ),
+                ),
+                (
+                    "calendar_year_rent",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Calendar year rent",
+                    ),
+                ),
+                (
+                    "rent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payable_rents",
+                        to="leasing.Rent",
+                        verbose_name="Rent",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Plot',
-                'verbose_name_plural': 'Plots',
+                "verbose_name": "Payable rent",
+                "verbose_name_plural": "Payable rents",
             },
         ),
         migrations.CreateModel(
-            name='PlanUnit',
+            name="ManagementSubvention",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('identifier', models.CharField(max_length=255, verbose_name='Identifier')),
-                ('area', models.PositiveIntegerField(verbose_name='Area in square meters')),
-                ('section_area', models.PositiveIntegerField(blank=True, null=True, verbose_name='Section area')),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326, verbose_name='Geometry')),
-                ('in_contract', models.BooleanField(default=False, verbose_name='At time of contract')),
-                ('plot_division_identifier', models.CharField(blank=True, max_length=255, null=True, verbose_name='Plot division identifier')),
-                ('plot_division_date_of_approval', models.DateField(blank=True, null=True, verbose_name='Plot division date of approval')),
-                ('plot_division_effective_date', models.DateField(blank=True, null=True, verbose_name='Plot division effective date')),
-                ('detailed_plan_identifier', models.CharField(blank=True, max_length=255, null=True, verbose_name='Detailed plan identifier')),
-                ('detailed_plan_latest_processing_date', models.DateField(blank=True, null=True, verbose_name='Detailed plan latest processing date')),
-                ('detailed_plan_latest_processing_date_note', models.TextField(blank=True, null=True, verbose_name='Note for latest processing date')),
-                ('lease_area', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='plan_units', to='leasing.LeaseArea')),
-                ('plan_unit_intended_use', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.PlanUnitIntendedUse', verbose_name='Plan unit intended use')),
-                ('plan_unit_state', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.PlanUnitState', verbose_name='Plan unit state')),
-                ('plan_unit_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.PlanUnitType', verbose_name='Plan unit type')),
-                ('plot_division_state', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.PlotDivisionState', verbose_name='Plot division state')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "subvention_amount",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Subvention amount",
+                    ),
+                ),
+                (
+                    "management",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.ManagementSubventionFormOfManagement",
+                        verbose_name="Form of management",
+                    ),
+                ),
+                (
+                    "rent_adjustment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="management_subventions",
+                        to="leasing.RentAdjustment",
+                        verbose_name="Rent adjustment",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Plan unit',
-                'verbose_name_plural': 'Plan units',
+                "verbose_name": "Management subvention (Rent adjustment)",
+                "verbose_name_plural": "Management subventions (Rent adjustment)",
             },
         ),
         migrations.CreateModel(
-            name='PayableRent',
+            name="LegacyIndex",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Amount')),
-                ('start_date', models.DateField(blank=True, null=True, verbose_name='Start date')),
-                ('end_date', models.DateField(blank=True, null=True, verbose_name='End date')),
-                ('difference_percent', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Difference percent')),
-                ('calendar_year_rent', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Calendar year rent')),
-                ('rent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payable_rents', to='leasing.Rent', verbose_name='Rent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "number_1914",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Index 1914:1-6=100"
+                    ),
+                ),
+                (
+                    "number_1938",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Index 1938:8-1939:7=100"
+                    ),
+                ),
+                (
+                    "index",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="leasing.Index",
+                        verbose_name="Index",
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="LeaseStateLog",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "state",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.LeaseState,
+                        max_length=30,
+                        verbose_name="State",
+                    ),
+                ),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="leasing.Lease",
+                        verbose_name="Lease",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Payable rent',
-                'verbose_name_plural': 'Payable rents',
+                "verbose_name": "Lease state log",
+                "verbose_name_plural": "Lease state logs",
             },
         ),
         migrations.CreateModel(
-            name='ManagementSubvention',
+            name="LeaseIdentifier",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subvention_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Subvention amount')),
-                ('management', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ManagementSubventionFormOfManagement', verbose_name='Form of management')),
-                ('rent_adjustment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='management_subventions', to='leasing.RentAdjustment', verbose_name='Rent adjustment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "sequence",
+                    models.PositiveIntegerField(verbose_name="Sequence number"),
+                ),
+                (
+                    "district",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.District",
+                        verbose_name="District",
+                    ),
+                ),
+                (
+                    "municipality",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Municipality",
+                        verbose_name="Municipality",
+                    ),
+                ),
+                (
+                    "type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.LeaseType",
+                        verbose_name="Lease type",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Management subvention (Rent adjustment)',
-                'verbose_name_plural': 'Management subventions (Rent adjustment)',
+                "verbose_name": "Lease identifier",
+                "verbose_name_plural": "Lease identifiers",
             },
         ),
         migrations.CreateModel(
-            name='LegacyIndex',
+            name="LeaseholdTransferProperty",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number_1914', models.PositiveIntegerField(blank=True, null=True, verbose_name='Index 1914:1-6=100')),
-                ('number_1938', models.PositiveIntegerField(blank=True, null=True, verbose_name='Index 1938:8-1939:7=100')),
-                ('index', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='leasing.Index', verbose_name='Index')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='LeaseStateLog',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('state', enumfields.fields.EnumField(enum=leasing.enums.LeaseState, max_length=30, verbose_name='State')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='leasing.Lease', verbose_name='Lease')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(max_length=127, verbose_name="Identifier"),
+                ),
+                (
+                    "transfer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="properties",
+                        to="leasing.LeaseholdTransfer",
+                        verbose_name="Leasehold transfer",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Lease state log',
-                'verbose_name_plural': 'Lease state logs',
+                "verbose_name": "Leasehold transfer property",
+                "verbose_name_plural": "Leasehold transfer properties",
             },
         ),
         migrations.CreateModel(
-            name='LeaseIdentifier',
+            name="LeaseholdTransferParty",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('sequence', models.PositiveIntegerField(verbose_name='Sequence number')),
-                ('district', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.District', verbose_name='District')),
-                ('municipality', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Municipality', verbose_name='Municipality')),
-                ('type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.LeaseType', verbose_name='Lease type')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.LeaseholdTransferPartyType, max_length=10
+                    ),
+                ),
+                (
+                    "business_id",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Business ID",
+                    ),
+                ),
+                (
+                    "national_identification_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="National identification number",
+                    ),
+                ),
+                (
+                    "share_numerator",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Numerator"
+                    ),
+                ),
+                (
+                    "share_denominator",
+                    models.PositiveIntegerField(
+                        blank=True, null=True, verbose_name="Denominator"
+                    ),
+                ),
+                (
+                    "transfer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parties",
+                        to="leasing.LeaseholdTransfer",
+                        verbose_name="Leasehold transfer",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Lease identifier',
-                'verbose_name_plural': 'Lease identifiers',
+                "verbose_name": "Leasehold transfer party",
+                "verbose_name_plural": "Leasehold transfer parties",
+                "ordering": ("-type",),
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='LeaseholdTransferProperty',
+            name="LeaseBasisOfRentTemporarySubvention",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.CharField(max_length=127, verbose_name='Identifier')),
-                ('transfer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='properties', to='leasing.LeaseholdTransfer', verbose_name='Leasehold transfer')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "description",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Description",
+                    ),
+                ),
+                (
+                    "subvention_percent",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Subvention percent",
+                    ),
+                ),
+                (
+                    "lease_basis_of_rent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="temporary_subventions",
+                        to="leasing.LeaseBasisOfRent",
+                        verbose_name="Lease basis of rent",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Leasehold transfer property',
-                'verbose_name_plural': 'Leasehold transfer properties',
+                "verbose_name": "Temporary subvention (Basis of rent)",
+                "verbose_name_plural": "Temporary subventions (Basis of rent)",
             },
         ),
         migrations.CreateModel(
-            name='LeaseholdTransferParty',
+            name="LeaseBasisOfRentManagementSubvention",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.LeaseholdTransferPartyType, max_length=10)),
-                ('business_id', models.CharField(blank=True, max_length=255, null=True, verbose_name='Business ID')),
-                ('national_identification_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='National identification number')),
-                ('share_numerator', models.PositiveIntegerField(blank=True, null=True, verbose_name='Numerator')),
-                ('share_denominator', models.PositiveIntegerField(blank=True, null=True, verbose_name='Denominator')),
-                ('transfer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='parties', to='leasing.LeaseholdTransfer', verbose_name='Leasehold transfer')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "subvention_amount",
+                    models.DecimalField(
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Subvention amount",
+                    ),
+                ),
+                (
+                    "lease_basis_of_rent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="management_subventions",
+                        to="leasing.LeaseBasisOfRent",
+                        verbose_name="Lease basis of rent",
+                    ),
+                ),
+                (
+                    "management",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.ManagementSubventionFormOfManagement",
+                        verbose_name="Form of management",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Leasehold transfer party',
-                'verbose_name_plural': 'Leasehold transfer parties',
-                'ordering': ('-type',),
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseBasisOfRentTemporarySubvention',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(blank=True, max_length=255, null=True, verbose_name='Description')),
-                ('subvention_percent', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Subvention percent')),
-                ('lease_basis_of_rent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='temporary_subventions', to='leasing.LeaseBasisOfRent', verbose_name='Lease basis of rent')),
-            ],
-            options={
-                'verbose_name': 'Temporary subvention (Basis of rent)',
-                'verbose_name_plural': 'Temporary subventions (Basis of rent)',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseBasisOfRentManagementSubvention',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subvention_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Subvention amount')),
-                ('lease_basis_of_rent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='management_subventions', to='leasing.LeaseBasisOfRent', verbose_name='Lease basis of rent')),
-                ('management', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ManagementSubventionFormOfManagement', verbose_name='Form of management')),
-            ],
-            options={
-                'verbose_name': 'Management subvention (Basis of rent)',
-                'verbose_name_plural': 'Management subventions (Basis of rent)',
-            },
-        ),
-        migrations.AddField(
-            model_name='leasebasisofrent',
-            name='intended_use',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use'),
-        ),
-        migrations.AddField(
-            model_name='leasebasisofrent',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='basis_of_rents', to='leasing.Lease', verbose_name='Lease'),
-        ),
-        migrations.AddField(
-            model_name='leasebasisofrent',
-            name='locked_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Locked by'),
-        ),
-        migrations.AddField(
-            model_name='leasebasisofrent',
-            name='plans_inspected_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Plans inspected by'),
-        ),
-        migrations.CreateModel(
-            name='LeaseAreaAttachment',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('type', enumfields.fields.EnumField(enum=leasing.enums.LeaseAreaAttachmentType, max_length=30, verbose_name='Type')),
-                ('file', models.FileField(upload_to=leasing.models.land_area.get_attachment_file_upload_to)),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Time uploaded')),
-                ('lease_area', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='attachments', to='leasing.LeaseArea')),
-                ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Uploader')),
-            ],
-            options={
-                'verbose_name': 'Lease area attachment',
-                'verbose_name_plural': 'Lease area attachments',
-            },
-        ),
-        migrations.CreateModel(
-            name='LeaseAreaAddress',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('address', models.CharField(max_length=255, verbose_name='Address')),
-                ('postal_code', models.CharField(blank=True, max_length=255, null=True, verbose_name='Postal code')),
-                ('city', models.CharField(blank=True, max_length=255, null=True, verbose_name='City')),
-                ('is_primary', models.BooleanField(default=False, verbose_name='Is primary?')),
-                ('lease_area', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='addresses', to='leasing.LeaseArea')),
-            ],
-            options={
-                'verbose_name': 'Lease area address',
-                'verbose_name_plural': 'Lease area addresses',
+                "verbose_name": "Management subvention (Basis of rent)",
+                "verbose_name_plural": "Management subventions (Basis of rent)",
             },
         ),
         migrations.AddField(
-            model_name='lease',
-            name='identifier',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.LeaseIdentifier', verbose_name='Lease identifier'),
+            model_name="leasebasisofrent",
+            name="intended_use",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.RentIntendedUse",
+                verbose_name="Intended use",
+            ),
         ),
         migrations.AddField(
-            model_name='lease',
-            name='intended_use',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.IntendedUse', verbose_name='Intended use'),
+            model_name="leasebasisofrent",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="basis_of_rents",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='lease',
-            name='lessor',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Contact', verbose_name='Lessor'),
+            model_name="leasebasisofrent",
+            name="locked_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Locked by",
+            ),
         ),
         migrations.AddField(
-            model_name='lease',
-            name='management',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Management', verbose_name='Form of management'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='municipality',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Municipality', verbose_name='Municipality'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='notice_period',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.NoticePeriod', verbose_name='Notice period'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='preparer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Preparer'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='regulation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Regulation', verbose_name='Form of regulation'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='related_leases',
-            field=models.ManyToManyField(related_name='related_to', through='leasing.RelatedLease', to='leasing.Lease'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='reservation_procedure',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ReservationProcedure', verbose_name='Reservation procedure'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='special_project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.SpecialProject', verbose_name='Special project'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='statistical_use',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.StatisticalUse', verbose_name='Statistical use'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='supportive_housing',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.SupportiveHousing', verbose_name='Supportive housing'),
-        ),
-        migrations.AddField(
-            model_name='lease',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.LeaseType', verbose_name='Lease type'),
+            model_name="leasebasisofrent",
+            name="plans_inspected_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Plans inspected by",
+            ),
         ),
         migrations.CreateModel(
-            name='InvoiceSet',
+            name="LeaseAreaAttachment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('billing_period_start_date', models.DateField(blank=True, null=True, verbose_name='Billing period start date')),
-                ('billing_period_end_date', models.DateField(blank=True, null=True, verbose_name='Billing period end date')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='invoicesets', to='leasing.Lease', verbose_name='Lease')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "type",
+                    enumfields.fields.EnumField(
+                        enum=leasing.enums.LeaseAreaAttachmentType,
+                        max_length=30,
+                        verbose_name="Type",
+                    ),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to=leasing.models.land_area.get_attachment_file_upload_to
+                    ),
+                ),
+                (
+                    "uploaded_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time uploaded"
+                    ),
+                ),
+                (
+                    "lease_area",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="attachments",
+                        to="leasing.LeaseArea",
+                    ),
+                ),
+                (
+                    "uploader",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Uploader",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Invoice set',
-                'verbose_name_plural': 'Invoice set',
+                "verbose_name": "Lease area attachment",
+                "verbose_name_plural": "Lease area attachments",
             },
         ),
         migrations.CreateModel(
-            name='InvoiceRow',
+            name="LeaseAreaAddress",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('billing_period_start_date', models.DateField(blank=True, null=True, verbose_name='Billing period start date')),
-                ('billing_period_end_date', models.DateField(blank=True, null=True, verbose_name='Billing period end date')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Amount')),
-                ('intended_use', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use')),
-                ('invoice', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rows', to='leasing.Invoice', verbose_name='Invoice')),
-                ('receivable_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ReceivableType', verbose_name='Receivable type')),
-                ('tenant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Tenant', verbose_name='Tenant')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("address", models.CharField(max_length=255, verbose_name="Address")),
+                (
+                    "postal_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Postal code",
+                    ),
+                ),
+                (
+                    "city",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="City"
+                    ),
+                ),
+                (
+                    "is_primary",
+                    models.BooleanField(default=False, verbose_name="Is primary?"),
+                ),
+                (
+                    "lease_area",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="addresses",
+                        to="leasing.LeaseArea",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Invoice row',
-                'verbose_name_plural': 'Invoice rows',
-            },
-        ),
-        migrations.CreateModel(
-            name='InvoicePayment',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('paid_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Paid amount')),
-                ('paid_date', models.DateField(verbose_name='Paid date')),
-                ('filing_code', models.CharField(blank=True, max_length=35, null=True, verbose_name='Name')),
-                ('invoice', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='leasing.Invoice', verbose_name='Invoice')),
-            ],
-            options={
-                'verbose_name': 'Invoice payment',
-                'verbose_name_plural': 'Invoice payments',
-            },
-        ),
-        migrations.CreateModel(
-            name='InvoiceNote',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('billing_period_start_date', models.DateField(blank=True, null=True, verbose_name='Billing period start date')),
-                ('billing_period_end_date', models.DateField(blank=True, null=True, verbose_name='Billing period end date')),
-                ('notes', models.TextField(blank=True, verbose_name='Notes')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='invoice_notes', to='leasing.Lease', verbose_name='Lease')),
-            ],
-            options={
-                'verbose_name': 'Invoice note',
-                'verbose_name_plural': 'Invoice notes',
-            },
-        ),
-        migrations.AddField(
-            model_name='invoice',
-            name='invoiceset',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='invoices', to='leasing.InvoiceSet', verbose_name='Invoice set'),
-        ),
-        migrations.AddField(
-            model_name='invoice',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='invoices', to='leasing.Lease', verbose_name='Lease'),
-        ),
-        migrations.AddField(
-            model_name='invoice',
-            name='recipient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Contact', verbose_name='Recipient'),
-        ),
-        migrations.CreateModel(
-            name='InspectionAttachment',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('file', models.FileField(upload_to=leasing.models.inspection.get_inspection_attachment_file_upload_to)),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Time uploaded')),
-                ('inspection', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='attachments', to='leasing.Inspection')),
-                ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Uploader')),
-            ],
-            options={
-                'verbose_name': 'Inspection attachment',
-                'verbose_name_plural': 'Inspection attachments',
+                "verbose_name": "Lease area address",
+                "verbose_name_plural": "Lease area addresses",
             },
         ),
         migrations.AddField(
-            model_name='inspection',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='inspections', to='leasing.Lease', verbose_name='Lease'),
+            model_name="lease",
+            name="identifier",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.LeaseIdentifier",
+                verbose_name="Lease identifier",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="intended_use",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.IntendedUse",
+                verbose_name="Intended use",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="lessor",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Contact",
+                verbose_name="Lessor",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="management",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Management",
+                verbose_name="Form of management",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="municipality",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Municipality",
+                verbose_name="Municipality",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="notice_period",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.NoticePeriod",
+                verbose_name="Notice period",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="preparer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Preparer",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="regulation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Regulation",
+                verbose_name="Form of regulation",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="related_leases",
+            field=models.ManyToManyField(
+                related_name="related_to",
+                through="leasing.RelatedLease",
+                to="leasing.Lease",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="reservation_procedure",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.ReservationProcedure",
+                verbose_name="Reservation procedure",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="special_project",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.SpecialProject",
+                verbose_name="Special project",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="statistical_use",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.StatisticalUse",
+                verbose_name="Statistical use",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="supportive_housing",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.SupportiveHousing",
+                verbose_name="Supportive housing",
+            ),
+        ),
+        migrations.AddField(
+            model_name="lease",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.LeaseType",
+                verbose_name="Lease type",
+            ),
         ),
         migrations.CreateModel(
-            name='InfillDevelopmentCompensationLease',
+            name="InvoiceSet",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('note', models.TextField(blank=True, null=True, verbose_name='Note')),
-                ('monetary_compensation_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Monetary compensation amount')),
-                ('compensation_investment_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Compensation investment amount')),
-                ('increase_in_value', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Increase in value')),
-                ('part_of_the_increase_in_value', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Part of the increase in value')),
-                ('discount_in_rent', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Discount in rent')),
-                ('year', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Year')),
-                ('sent_to_sap_date', models.DateField(blank=True, null=True, verbose_name='Sent to SAP date')),
-                ('paid_date', models.DateField(blank=True, null=True, verbose_name='Paid date')),
-                ('infill_development_compensation', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='infill_development_compensation_leases', to='leasing.InfillDevelopmentCompensation', verbose_name='Infill development compensation')),
-                ('lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='infill_development_compensation_leases', to='leasing.Lease', verbose_name='Lease')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "billing_period_start_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period start date"
+                    ),
+                ),
+                (
+                    "billing_period_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period end date"
+                    ),
+                ),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="invoicesets",
+                        to="leasing.Lease",
+                        verbose_name="Lease",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Infill development compensation lease',
-                'verbose_name_plural': 'Infill development compensation leases',
+                "verbose_name": "Invoice set",
+                "verbose_name_plural": "Invoice set",
             },
         ),
         migrations.CreateModel(
-            name='InfillDevelopmentCompensationIntendedUse',
+            name="InvoiceRow",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('floor_m2', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Floor m2')),
-                ('amount_per_floor_m2', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Amount per floor m^2')),
-                ('infill_development_compensation_lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='intended_uses', to='leasing.InfillDevelopmentCompensationLease', verbose_name='Infill development compensation lease')),
-                ('intended_use', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.IntendedUse', verbose_name='Intended use')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "billing_period_start_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period start date"
+                    ),
+                ),
+                (
+                    "billing_period_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period end date"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="Description"),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Amount"
+                    ),
+                ),
+                (
+                    "intended_use",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.RentIntendedUse",
+                        verbose_name="Intended use",
+                    ),
+                ),
+                (
+                    "invoice",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="rows",
+                        to="leasing.Invoice",
+                        verbose_name="Invoice",
+                    ),
+                ),
+                (
+                    "receivable_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.ReceivableType",
+                        verbose_name="Receivable type",
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.Tenant",
+                        verbose_name="Tenant",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Infill development compensation intended use',
-                'verbose_name_plural': 'Infill development compensation intended uses',
+                "verbose_name": "Invoice row",
+                "verbose_name_plural": "Invoice rows",
             },
         ),
         migrations.CreateModel(
-            name='InfillDevelopmentCompensationDecision',
+            name="InvoicePayment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('reference_number', models.CharField(blank=True, max_length=255, null=True, verbose_name='Reference number')),
-                ('decision_date', models.DateField(blank=True, null=True, verbose_name='Decision date')),
-                ('section', models.CharField(blank=True, max_length=255, null=True, verbose_name='Section')),
-                ('decision_maker', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.DecisionMaker', verbose_name='Decision maker')),
-                ('infill_development_compensation_lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='decisions', to='leasing.InfillDevelopmentCompensationLease', verbose_name='Infill development compensation lease')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "paid_amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Paid amount"
+                    ),
+                ),
+                ("paid_date", models.DateField(verbose_name="Paid date")),
+                (
+                    "filing_code",
+                    models.CharField(
+                        blank=True, max_length=35, null=True, verbose_name="Name"
+                    ),
+                ),
+                (
+                    "invoice",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to="leasing.Invoice",
+                        verbose_name="Invoice",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Infill development compensation decision',
-                'verbose_name_plural': 'Infill development compensation decisions',
+                "verbose_name": "Invoice payment",
+                "verbose_name_plural": "Invoice payments",
             },
         ),
         migrations.CreateModel(
-            name='InfillDevelopmentCompensationAttachment',
+            name="InvoiceNote",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('file', models.FileField(upload_to=leasing.models.infill_development_compensation.get_attachment_file_upload_to)),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Time uploaded')),
-                ('infill_development_compensation_lease', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='attachments', to='leasing.InfillDevelopmentCompensationLease', verbose_name='Infill development compensation lease')),
-                ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Uploader')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "billing_period_start_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period start date"
+                    ),
+                ),
+                (
+                    "billing_period_end_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Billing period end date"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Notes")),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="invoice_notes",
+                        to="leasing.Lease",
+                        verbose_name="Lease",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Infill development compensation attachment',
-                'verbose_name_plural': 'Infill development compensation attachments',
+                "verbose_name": "Invoice note",
+                "verbose_name_plural": "Invoice notes",
             },
         ),
         migrations.AddField(
-            model_name='infilldevelopmentcompensation',
-            name='leases',
-            field=models.ManyToManyField(related_name='leases', through='leasing.InfillDevelopmentCompensationLease', to='leasing.Lease'),
+            model_name="invoice",
+            name="invoiceset",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="invoices",
+                to="leasing.InvoiceSet",
+                verbose_name="Invoice set",
+            ),
         ),
         migrations.AddField(
-            model_name='infilldevelopmentcompensation',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="invoice",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="invoices",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
+        ),
+        migrations.AddField(
+            model_name="invoice",
+            name="recipient",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Contact",
+                verbose_name="Recipient",
+            ),
         ),
         migrations.CreateModel(
-            name='IndexAdjustedRent',
+            name="InspectionAttachment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Amount')),
-                ('start_date', models.DateField(verbose_name='Start date')),
-                ('end_date', models.DateField(verbose_name='End date')),
-                ('factor', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Factor')),
-                ('intended_use', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use')),
-                ('rent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='index_adjusted_rents', to='leasing.Rent', verbose_name='Rent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to=leasing.models.inspection.get_inspection_attachment_file_upload_to
+                    ),
+                ),
+                (
+                    "uploaded_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time uploaded"
+                    ),
+                ),
+                (
+                    "inspection",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="attachments",
+                        to="leasing.Inspection",
+                    ),
+                ),
+                (
+                    "uploader",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Uploader",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Index adjusted rent',
-                'verbose_name_plural': 'Index adjusted rents',
+                "verbose_name": "Inspection attachment",
+                "verbose_name_plural": "Inspection attachments",
+            },
+        ),
+        migrations.AddField(
+            model_name="inspection",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="inspections",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
+        ),
+        migrations.CreateModel(
+            name="InfillDevelopmentCompensationLease",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("note", models.TextField(blank=True, null=True, verbose_name="Note")),
+                (
+                    "monetary_compensation_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Monetary compensation amount",
+                    ),
+                ),
+                (
+                    "compensation_investment_amount",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Compensation investment amount",
+                    ),
+                ),
+                (
+                    "increase_in_value",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Increase in value",
+                    ),
+                ),
+                (
+                    "part_of_the_increase_in_value",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Part of the increase in value",
+                    ),
+                ),
+                (
+                    "discount_in_rent",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Discount in rent",
+                    ),
+                ),
+                (
+                    "year",
+                    models.PositiveSmallIntegerField(
+                        blank=True, null=True, verbose_name="Year"
+                    ),
+                ),
+                (
+                    "sent_to_sap_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Sent to SAP date"
+                    ),
+                ),
+                (
+                    "paid_date",
+                    models.DateField(blank=True, null=True, verbose_name="Paid date"),
+                ),
+                (
+                    "infill_development_compensation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="infill_development_compensation_leases",
+                        to="leasing.InfillDevelopmentCompensation",
+                        verbose_name="Infill development compensation",
+                    ),
+                ),
+                (
+                    "lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="infill_development_compensation_leases",
+                        to="leasing.Lease",
+                        verbose_name="Lease",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Infill development compensation lease",
+                "verbose_name_plural": "Infill development compensation leases",
+            },
+        ),
+        migrations.CreateModel(
+            name="InfillDevelopmentCompensationIntendedUse",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "floor_m2",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Floor m2",
+                    ),
+                ),
+                (
+                    "amount_per_floor_m2",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        max_digits=10,
+                        null=True,
+                        verbose_name="Amount per floor m^2",
+                    ),
+                ),
+                (
+                    "infill_development_compensation_lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="intended_uses",
+                        to="leasing.InfillDevelopmentCompensationLease",
+                        verbose_name="Infill development compensation lease",
+                    ),
+                ),
+                (
+                    "intended_use",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.IntendedUse",
+                        verbose_name="Intended use",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Infill development compensation intended use",
+                "verbose_name_plural": "Infill development compensation intended uses",
+            },
+        ),
+        migrations.CreateModel(
+            name="InfillDevelopmentCompensationDecision",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "reference_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Reference number",
+                    ),
+                ),
+                (
+                    "decision_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Decision date"
+                    ),
+                ),
+                (
+                    "section",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Section"
+                    ),
+                ),
+                (
+                    "decision_maker",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.DecisionMaker",
+                        verbose_name="Decision maker",
+                    ),
+                ),
+                (
+                    "infill_development_compensation_lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="decisions",
+                        to="leasing.InfillDevelopmentCompensationLease",
+                        verbose_name="Infill development compensation lease",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Infill development compensation decision",
+                "verbose_name_plural": "Infill development compensation decisions",
+            },
+        ),
+        migrations.CreateModel(
+            name="InfillDevelopmentCompensationAttachment",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to=leasing.models.infill_development_compensation.get_attachment_file_upload_to
+                    ),
+                ),
+                (
+                    "uploaded_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time uploaded"
+                    ),
+                ),
+                (
+                    "infill_development_compensation_lease",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="attachments",
+                        to="leasing.InfillDevelopmentCompensationLease",
+                        verbose_name="Infill development compensation lease",
+                    ),
+                ),
+                (
+                    "uploader",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Uploader",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Infill development compensation attachment",
+                "verbose_name_plural": "Infill development compensation attachments",
+            },
+        ),
+        migrations.AddField(
+            model_name="infilldevelopmentcompensation",
+            name="leases",
+            field=models.ManyToManyField(
+                related_name="leases",
+                through="leasing.InfillDevelopmentCompensationLease",
+                to="leasing.Lease",
+            ),
+        ),
+        migrations.AddField(
+            model_name="infilldevelopmentcompensation",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
+        ),
+        migrations.CreateModel(
+            name="IndexAdjustedRent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Amount"
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Start date")),
+                ("end_date", models.DateField(verbose_name="End date")),
+                (
+                    "factor",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Factor"
+                    ),
+                ),
+                (
+                    "intended_use",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="leasing.RentIntendedUse",
+                        verbose_name="Intended use",
+                    ),
+                ),
+                (
+                    "rent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="index_adjusted_rents",
+                        to="leasing.Rent",
+                        verbose_name="Rent",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Index adjusted rent",
+                "verbose_name_plural": "Index adjusted rents",
             },
         ),
         migrations.AddIndex(
-            model_name='index',
-            index=models.Index(fields=['year', 'month'], name='leasing_ind_year_ffd71e_idx'),
+            model_name="index",
+            index=models.Index(
+                fields=["year", "month"], name="leasing_ind_year_ffd71e_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='index',
-            unique_together={('year', 'month')},
+            name="index", unique_together={("year", "month")}
         ),
         migrations.AddField(
-            model_name='fixedinitialyearrent',
-            name='intended_use',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use'),
+            model_name="fixedinitialyearrent",
+            name="intended_use",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.RentIntendedUse",
+                verbose_name="Intended use",
+            ),
         ),
         migrations.AddField(
-            model_name='fixedinitialyearrent',
-            name='rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fixed_initial_year_rents', to='leasing.Rent', verbose_name='Rent'),
+            model_name="fixedinitialyearrent",
+            name="rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="fixed_initial_year_rents",
+                to="leasing.Rent",
+                verbose_name="Rent",
+            ),
         ),
         migrations.AddField(
-            model_name='equalizedrent',
-            name='rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='equalized_rents', to='leasing.Rent', verbose_name='Rent'),
+            model_name="equalizedrent",
+            name="rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="equalized_rents",
+                to="leasing.Rent",
+                verbose_name="Rent",
+            ),
         ),
         migrations.AddField(
-            model_name='emaillog',
-            name='content_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='contenttypes.ContentType'),
+            model_name="emaillog",
+            name="content_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="contenttypes.ContentType",
+            ),
         ),
         migrations.AddField(
-            model_name='emaillog',
-            name='recipients',
+            model_name="emaillog",
+            name="recipients",
             field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='emaillog',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='emaillogs', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="emaillog",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="emaillogs",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='district',
-            name='municipality',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='districts', to='leasing.Municipality', verbose_name='Municipality'),
+            model_name="district",
+            name="municipality",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="districts",
+                to="leasing.Municipality",
+                verbose_name="Municipality",
+            ),
         ),
         migrations.AddField(
-            model_name='decision',
-            name='decision_maker',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.DecisionMaker', verbose_name='Decision maker'),
+            model_name="decision",
+            name="decision_maker",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.DecisionMaker",
+                verbose_name="Decision maker",
+            ),
         ),
         migrations.AddField(
-            model_name='decision',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='decisions', to='leasing.Lease', verbose_name='Lease'),
+            model_name="decision",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="decisions",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='decision',
-            name='type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.DecisionType', verbose_name='Type'),
+            model_name="decision",
+            name="type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.DecisionType",
+                verbose_name="Type",
+            ),
         ),
         migrations.AddField(
-            model_name='contractrent',
-            name='intended_use',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.RentIntendedUse', verbose_name='Intended use'),
+            model_name="contractrent",
+            name="intended_use",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.RentIntendedUse",
+                verbose_name="Intended use",
+            ),
         ),
         migrations.AddField(
-            model_name='contractrent',
-            name='rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contract_rents', to='leasing.Rent', verbose_name='Rent'),
+            model_name="contractrent",
+            name="rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="contract_rents",
+                to="leasing.Rent",
+                verbose_name="Rent",
+            ),
         ),
         migrations.AddField(
-            model_name='contractchange',
-            name='contract',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='contract_changes', to='leasing.Contract', verbose_name='Contract'),
+            model_name="contractchange",
+            name="contract",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="contract_changes",
+                to="leasing.Contract",
+                verbose_name="Contract",
+            ),
         ),
         migrations.AddField(
-            model_name='contractchange',
-            name='decision',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Decision', verbose_name='Decision'),
+            model_name="contractchange",
+            name="decision",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Decision",
+                verbose_name="Decision",
+            ),
         ),
         migrations.AddField(
-            model_name='contract',
-            name='decision',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Decision', verbose_name='Decision'),
+            model_name="contract",
+            name="decision",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Decision",
+                verbose_name="Decision",
+            ),
         ),
         migrations.AddField(
-            model_name='contract',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='contracts', to='leasing.Lease', verbose_name='Lease'),
+            model_name="contract",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="contracts",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='contract',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ContractType', verbose_name='Contract type'),
+            model_name="contract",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.ContractType",
+                verbose_name="Contract type",
+            ),
         ),
         migrations.AddField(
-            model_name='constructabilitydescription',
-            name='lease_area',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='constructability_descriptions', to='leasing.LeaseArea'),
+            model_name="constructabilitydescription",
+            name="lease_area",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="constructability_descriptions",
+                to="leasing.LeaseArea",
+            ),
         ),
         migrations.AddField(
-            model_name='constructabilitydescription',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="constructabilitydescription",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='condition',
-            name='decision',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='conditions', to='leasing.Decision', verbose_name='Decision'),
+            model_name="condition",
+            name="decision",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="conditions",
+                to="leasing.Decision",
+                verbose_name="Decision",
+            ),
         ),
         migrations.AddField(
-            model_name='condition',
-            name='type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.ConditionType', verbose_name='Type'),
+            model_name="condition",
+            name="type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.ConditionType",
+                verbose_name="Type",
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='comments', to='leasing.Lease', verbose_name='Lease'),
+            model_name="comment",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="comments",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='topic',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.CommentTopic', verbose_name='Topic'),
+            model_name="comment",
+            name="topic",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.CommentTopic",
+                verbose_name="Topic",
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="comment",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='collectionnote',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='collection_notes', to='leasing.Lease', verbose_name='Lease'),
+            model_name="collectionnote",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="collection_notes",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='collectionnote',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="collectionnote",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='collectionletter',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='collection_letters', to='leasing.Lease', verbose_name='Lease'),
+            model_name="collectionletter",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="collection_letters",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='collectionletter',
-            name='uploader',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Uploader'),
+            model_name="collectionletter",
+            name="uploader",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Uploader",
+            ),
         ),
         migrations.AddField(
-            model_name='collectioncourtdecision',
-            name='lease',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='collection_court_decisions', to='leasing.Lease', verbose_name='Lease'),
+            model_name="collectioncourtdecision",
+            name="lease",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="collection_court_decisions",
+                to="leasing.Lease",
+                verbose_name="Lease",
+            ),
         ),
         migrations.AddField(
-            model_name='collectioncourtdecision',
-            name='uploader',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Uploader'),
+            model_name="collectioncourtdecision",
+            name="uploader",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Uploader",
+            ),
         ),
         migrations.AddField(
-            model_name='collateral',
-            name='contract',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='collaterals', to='leasing.Contract', verbose_name='Contract'),
+            model_name="collateral",
+            name="contract",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="collaterals",
+                to="leasing.Contract",
+                verbose_name="Contract",
+            ),
         ),
         migrations.AddField(
-            model_name='collateral',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.CollateralType', verbose_name='Collateral type'),
+            model_name="collateral",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.CollateralType",
+                verbose_name="Collateral type",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrentrate',
-            name='basis_of_rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rent_rates', to='leasing.BasisOfRent', verbose_name='Basis of rent'),
+            model_name="basisofrentrate",
+            name="basis_of_rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="rent_rates",
+                to="leasing.BasisOfRent",
+                verbose_name="Basis of rent",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrentrate',
-            name='build_permission_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.BasisOfRentBuildPermissionType', verbose_name='Build permission type'),
+            model_name="basisofrentrate",
+            name="build_permission_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.BasisOfRentBuildPermissionType",
+                verbose_name="Build permission type",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrentpropertyidentifier',
-            name='basis_of_rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='property_identifiers', to='leasing.BasisOfRent', verbose_name='Basis of rent'),
+            model_name="basisofrentpropertyidentifier",
+            name="basis_of_rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="property_identifiers",
+                to="leasing.BasisOfRent",
+                verbose_name="Basis of rent",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrentdecision',
-            name='basis_of_rent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='decisions', to='leasing.BasisOfRent'),
+            model_name="basisofrentdecision",
+            name="basis_of_rent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="decisions",
+                to="leasing.BasisOfRent",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrentdecision',
-            name='decision_maker',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.DecisionMaker', verbose_name='Decision maker'),
+            model_name="basisofrentdecision",
+            name="decision_maker",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.DecisionMaker",
+                verbose_name="Decision maker",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrent',
-            name='financing',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Financing', verbose_name='Form of financing'),
+            model_name="basisofrent",
+            name="financing",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Financing",
+                verbose_name="Form of financing",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrent',
-            name='index',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Index', verbose_name='Index'),
+            model_name="basisofrent",
+            name="index",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Index",
+                verbose_name="Index",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrent',
-            name='management',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.Management', verbose_name='Form of management'),
+            model_name="basisofrent",
+            name="management",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.Management",
+                verbose_name="Form of management",
+            ),
         ),
         migrations.AddField(
-            model_name='basisofrent',
-            name='plot_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='leasing.BasisOfRentPlotType', verbose_name='Plot type'),
+            model_name="basisofrent",
+            name="plot_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="leasing.BasisOfRentPlotType",
+                verbose_name="Plot type",
+            ),
         ),
         migrations.AddField(
-            model_name='areanote',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="areanote",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='area',
-            name='source',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='areas', to='leasing.AreaSource', verbose_name='Source'),
+            model_name="area",
+            name="source",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="areas",
+                to="leasing.AreaSource",
+                verbose_name="Source",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='uidata',
-            unique_together={('user', 'key')},
+            name="uidata", unique_together={("user", "key")}
         ),
         migrations.AlterUniqueTogether(
-            name='leaseidentifier',
-            unique_together={('type', 'municipality', 'district', 'sequence')},
+            name="leaseidentifier",
+            unique_together={("type", "municipality", "district", "sequence")},
         ),
         migrations.AlterUniqueTogether(
-            name='district',
-            unique_together={('municipality', 'identifier')},
+            name="district", unique_together={("municipality", "identifier")}
         ),
     ]

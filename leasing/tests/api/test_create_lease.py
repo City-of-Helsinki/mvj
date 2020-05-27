@@ -9,15 +9,20 @@ from leasing.models import Lease
 
 
 @pytest.mark.django_db
-def test_create_lease(django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts):
-    url = reverse('lease-list')
+def test_create_lease(
+    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
+):
+    url = reverse("lease-list")
 
     response = admin_client.post(
-        url, data=json.dumps(lease_data_dict_with_contacts, cls=DjangoJSONEncoder), content_type='application/json')
+        url,
+        data=json.dumps(lease_data_dict_with_contacts, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
 
-    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
 
-    lease = Lease.objects.get(pk=response.data['id'])
+    lease = Lease.objects.get(pk=response.data["id"])
 
     assert lease.identifier is not None
     assert lease.identifier.type == lease.type
@@ -37,25 +42,27 @@ def test_create_lease(django_db_setup, admin_client, contact_factory, lease_data
 
 
 @pytest.mark.django_db
-def test_create_lease_relate_to_with_permission(django_db_setup, client, lease_test_data, user_factory):
-    user = user_factory(username='test_user')
-    user.set_password('test_password')
+def test_create_lease_relate_to_with_permission(
+    django_db_setup, client, lease_test_data, user_factory
+):
+    user = user_factory(username="test_user")
+    user.set_password("test_password")
     user.save()
 
     permission_names = [
-        'add_lease',
-        'view_lease_id',
-        'change_lease_identifier',
-        'change_lease_type',
-        'change_lease_municipality',
-        'change_lease_district',
-        'change_lease_related_leases',
+        "add_lease",
+        "view_lease_id",
+        "change_lease_identifier",
+        "change_lease_type",
+        "change_lease_municipality",
+        "change_lease_district",
+        "change_lease_related_leases",
     ]
 
     for permission_name in permission_names:
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
-    client.login(username='test_user', password='test_password')
+    client.login(username="test_user", password="test_password")
 
     data = {
         "type": 1,
@@ -65,13 +72,17 @@ def test_create_lease_relate_to_with_permission(django_db_setup, client, lease_t
         "relation_type": "transfer",
     }
 
-    url = reverse('lease-list')
+    url = reverse("lease-list")
 
-    response = client.post(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+    response = client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
 
-    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
 
-    lease = Lease.objects.get(pk=response.data['id'])
+    lease = Lease.objects.get(pk=response.data["id"])
 
     assert len(response.data["related_leases"]["related_from"]) == 1
     assert lease_test_data["lease"].related_leases.count() == 1
@@ -79,24 +90,26 @@ def test_create_lease_relate_to_with_permission(django_db_setup, client, lease_t
 
 
 @pytest.mark.django_db
-def test_create_lease_relate_to_without_permission(django_db_setup, client, lease_test_data, user_factory):
-    user = user_factory(username='test_user')
-    user.set_password('test_password')
+def test_create_lease_relate_to_without_permission(
+    django_db_setup, client, lease_test_data, user_factory
+):
+    user = user_factory(username="test_user")
+    user.set_password("test_password")
     user.save()
 
     permission_names = [
-        'add_lease',
-        'view_lease_id',
-        'change_lease_identifier',
-        'change_lease_type',
-        'change_lease_municipality',
-        'change_lease_district',
+        "add_lease",
+        "view_lease_id",
+        "change_lease_identifier",
+        "change_lease_type",
+        "change_lease_municipality",
+        "change_lease_district",
     ]
 
     for permission_name in permission_names:
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
-    client.login(username='test_user', password='test_password')
+    client.login(username="test_user", password="test_password")
 
     data = {
         "type": 1,
@@ -106,11 +119,15 @@ def test_create_lease_relate_to_without_permission(django_db_setup, client, leas
         "relation_type": "transfer",
     }
 
-    url = reverse('lease-list')
+    url = reverse("lease-list")
 
-    response = client.post(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+    response = client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
 
-    assert response.status_code == 201, '%s %s' % (response.status_code, response.data)
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
 
     assert "related_leases" not in response.data
     assert lease_test_data["lease"].related_leases.count() == 0

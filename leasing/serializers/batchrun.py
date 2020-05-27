@@ -8,13 +8,13 @@ from batchrun import models
 class CommandSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Command
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TimeZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Timezone
-        fields = '__all__'
+        fields = "__all__"
 
 
 class JobSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class JobSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Job
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ScheduledJobSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
@@ -32,11 +32,14 @@ class ScheduledJobSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
 
     class Meta:
         model = models.ScheduledJob
-        fields = '__all__'
+        fields = "__all__"
 
     def get_next_run(self, obj):
-        queue_item = models.JobRunQueueItem.objects.filter(
-            scheduled_job=obj, assigned_at=None).order_by('run_at').first()
+        queue_item = (
+            models.JobRunQueueItem.objects.filter(scheduled_job=obj, assigned_at=None)
+            .order_by("run_at")
+            .first()
+        )
 
         if queue_item:
             return queue_item.run_at
@@ -47,10 +50,10 @@ class JobRunSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.JobRun
-        fields = '__all__'
+        fields = "__all__"
 
 
 class JobRunLogEntrySerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = models.JobRunLogEntry
-        fields = '__all__'
+        fields = "__all__"

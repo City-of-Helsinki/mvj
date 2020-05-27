@@ -13,13 +13,16 @@ class AreaNote(TimeStampedSafeDeleteModel):
     """
     In Finnish: Muistettava ehto
     """
+
     # In Finnish: Alue
     # geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
     geometry = models.MultiPolygonField(srid=4326, null=True, blank=True)
 
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
-    user = models.ForeignKey(User, verbose_name=_("User"), related_name='+', on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        User, verbose_name=_("User"), related_name="+", on_delete=models.PROTECT
+    )
 
     recursive_get_related_skip_relations = ["user"]
 

@@ -5,14 +5,15 @@ class MvjDjangoModelPermissions(permissions.DjangoModelPermissions):
     """Customized Django REST Framework DjangoModelPermissions
     class that includes checking for the "view" permissions too.
     """
+
     perms_map = {
-        'GET': ['%(app_label)s.view_%(model_name)s'],
-        'OPTIONS': [],
-        'HEAD': ['%(app_label)s.view_%(model_name)s'],
-        'POST': ['%(app_label)s.add_%(model_name)s'],
-        'PUT': ['%(app_label)s.change_%(model_name)s'],
-        'PATCH': ['%(app_label)s.change_%(model_name)s'],
-        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+        "GET": ["%(app_label)s.view_%(model_name)s"],
+        "OPTIONS": [],
+        "HEAD": ["%(app_label)s.view_%(model_name)s"],
+        "POST": ["%(app_label)s.add_%(model_name)s"],
+        "PUT": ["%(app_label)s.change_%(model_name)s"],
+        "PATCH": ["%(app_label)s.change_%(model_name)s"],
+        "DELETE": ["%(app_label)s.delete_%(model_name)s"],
     }
 
 
@@ -25,12 +26,12 @@ class PerMethodPermission(permissions.BasePermission):
     the permissions."""
 
     perms_map = {
-        'GET': [],
-        'POST': [],
-        'PUT': [],
-        'PATCH': [],
-        'DELETE': [],
-        'OPTIONS': [],
+        "GET": [],
+        "POST": [],
+        "PUT": [],
+        "PATCH": [],
+        "DELETE": [],
+        "OPTIONS": [],
     }
 
     def get_required_permissions(self, method, view):
@@ -41,7 +42,7 @@ class PerMethodPermission(permissions.BasePermission):
         """
         perms_map = self.perms_map.copy()
 
-        if hasattr(view, 'perms_map'):
+        if hasattr(view, "perms_map"):
             perms_map.update(view.perms_map)
 
         if method not in perms_map:
@@ -60,7 +61,7 @@ class PerMethodPermission(permissions.BasePermission):
 
 class IsSameUser(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if not hasattr(obj, 'user') or not obj.user:
+        if not hasattr(obj, "user") or not obj.user:
             return True
 
         return obj.user == request.user

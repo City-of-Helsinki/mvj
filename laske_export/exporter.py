@@ -33,8 +33,9 @@ class LaskeExporter:
     def _check_export_directory(self):
         if not os.path.isdir(settings.LASKE_EXPORT_ROOT):
             raise LaskeExporterException(
-                _('Directory "{}" does not exist. Please create it.')
-                .format(settings.LASKE_EXPORT_ROOT)
+                _('Directory "{}" does not exist. Please create it.').format(
+                    settings.LASKE_EXPORT_ROOT
+                )
             )
 
         try:
@@ -42,47 +43,63 @@ class LaskeExporter:
             fp.close()
         except PermissionError:
             raise LaskeExporterException(
-                _('Can not create file in directory "{}".')
-                .format(settings.LASKE_EXPORT_ROOT)
+                _('Can not create file in directory "{}".').format(
+                    settings.LASKE_EXPORT_ROOT
+                )
             )
 
     def _check_settings(self):
-        if (not hasattr(settings, 'LASKE_SERVERS') or
-                'export' not in settings.LASKE_SERVERS or
-                not settings.LASKE_SERVERS.get('export') or
-                not settings.LASKE_SERVERS['export'].get('host') or
-                not settings.LASKE_SERVERS['export'].get('username') or
-                not settings.LASKE_SERVERS['export'].get('password')):
+        if (
+            not hasattr(settings, "LASKE_SERVERS")
+            or "export" not in settings.LASKE_SERVERS
+            or not settings.LASKE_SERVERS.get("export")
+            or not settings.LASKE_SERVERS["export"].get("host")
+            or not settings.LASKE_SERVERS["export"].get("username")
+            or not settings.LASKE_SERVERS["export"].get("password")
+        ):
             raise LaskeExporterException(_('LASKE_SERVERS["export"] settings missing'))
 
     def save_to_file(self, xml_string, filename):
         full_path = os.path.join(settings.LASKE_EXPORT_ROOT, filename)
 
-        with open(full_path, 'wb') as fp:
+        with open(full_path, "wb") as fp:
             fp.write(xml_string)
 
     def send(self, filename):
         # Add destination server host key
-        if settings.LASKE_SERVERS['export']['key_type'] == 'ssh-ed25519':
-            key = paramiko.ed25519key.Ed25519Key(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
-        elif 'ecdsa' in settings.LASKE_SERVERS['export']['key_type']:
-            key = paramiko.ecdsakey.ECDSAKey(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
+        if settings.LASKE_SERVERS["export"]["key_type"] == "ssh-ed25519":
+            key = paramiko.ed25519key.Ed25519Key(
+                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
+            )
+        elif "ecdsa" in settings.LASKE_SERVERS["export"]["key_type"]:
+            key = paramiko.ecdsakey.ECDSAKey(
+                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
+            )
         else:
-            key = paramiko.rsakey.RSAKey(data=decodebytes(settings.LASKE_SERVERS['export']['key']))
+            key = paramiko.rsakey.RSAKey(
+                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
+            )
 
         hostkeys = paramiko.hostkeys.HostKeys()
-        hostkeys.add(settings.LASKE_SERVERS['export']['host'], settings.LASKE_SERVERS['export']['key_type'], key)
+        hostkeys.add(
+            settings.LASKE_SERVERS["export"]["host"],
+            settings.LASKE_SERVERS["export"]["key_type"],
+            key,
+        )
 
         cnopts = pysftp.CnOpts()
         cnopts.hostkeys = hostkeys
         # Or Disable key check:
         # cnopts.hostkeys = None
 
-        with pysftp.Connection(settings.LASKE_SERVERS['export']['host'], port=settings.LASKE_SERVERS['export']['port'],
-                               username=settings.LASKE_SERVERS['export']['username'],
-                               password=settings.LASKE_SERVERS['export']['password'],
-                               cnopts=cnopts) as sftp:
-            with sftp.cd(settings.LASKE_SERVERS['export']['directory']):
+        with pysftp.Connection(
+            settings.LASKE_SERVERS["export"]["host"],
+            port=settings.LASKE_SERVERS["export"]["port"],
+            username=settings.LASKE_SERVERS["export"]["username"],
+            password=settings.LASKE_SERVERS["export"]["password"],
+            cnopts=cnopts,
+        ) as sftp:
+            with sftp.cd(settings.LASKE_SERVERS["export"]["directory"]):
                 sftp.put(os.path.join(settings.LASKE_EXPORT_ROOT, filename))
 
     def write_to_output(self, message):
@@ -110,25 +127,32 @@ class LaskeExporter:
         log_invoices = []
         invoice_count = 0
 
-        self.write_to_output('Going through {} invoices'.format(len(invoices)))
+        self.write_to_output("Going through {} invoices".format(len(invoices)))
 
         for invoice in invoices:
-            self.write_to_output(' Invoice id {}'.format(invoice.id))
+            self.write_to_output(" Invoice id {}".format(invoice.id))
 
             # If this invoice is a credit note, but the credited invoice has
             # not been sent to SAP, don't send the credit invoice either.
             # TODO This doesn't check if the credited invoice would be sent
             #   in this same export. Need to check if the SAP can handle it.
             if invoice.type == InvoiceType.CREDIT_NOTE and (
-                not invoice.credited_invoice or not invoice.credited_invoice.sent_to_sap_at
+                not invoice.credited_invoice
+                or not invoice.credited_invoice.sent_to_sap_at
             ):
                 if invoice.credited_invoice:
                     self.write_to_output(
-                        ' Not sending invoice id {} because the credited invoice (id {}) '
-                        'has not been sent to SAP.'.format(invoice.id, invoice.credited_invoice.id))
+                        " Not sending invoice id {} because the credited invoice (id {}) "
+                        "has not been sent to SAP.".format(
+                            invoice.id, invoice.credited_invoice.id
+                        )
+                    )
                 else:
                     self.write_to_output(
-                        ' Not sending invoice id {} because the credited invoice is unknown.'.format(invoice.id))
+                        " Not sending invoice id {} because the credited invoice is unknown.".format(
+                            invoice.id
+                        )
+                    )
 
                 continue
 
@@ -148,7 +172,7 @@ class LaskeExporter:
                 invoice=invoice,
                 sales_order=sales_order,
                 receivable_type_rent=receivable_type_rent,
-                receivable_type_collateral=receivable_type_collateral
+                receivable_type_collateral=receivable_type_collateral,
             )
             adapter.set_values()
 
@@ -158,32 +182,41 @@ class LaskeExporter:
 
             invoice_count += 1
 
-            self.write_to_output(' Added invoice id {} as invoice number {}'.format(invoice.id, invoice.number))
+            self.write_to_output(
+                " Added invoice id {} as invoice number {}".format(
+                    invoice.id, invoice.number
+                )
+            )
 
         if invoice_count > 0:
-            self.write_to_output('Added {} invoices to the export'.format(invoice_count))
+            self.write_to_output(
+                "Added {} invoices to the export".format(invoice_count)
+            )
 
             sales_order_container = SalesOrderContainer()
             sales_order_container.sales_orders = sales_orders
 
             laske_export_log_entry.invoices.set(log_invoices)
 
-            export_filename = 'MTIL_IN_{}_{:08}.xml'.format(
-                settings.LASKE_VALUES['sender_id'], laske_export_log_entry.id)
+            export_filename = "MTIL_IN_{}_{:08}.xml".format(
+                settings.LASKE_VALUES["sender_id"], laske_export_log_entry.id
+            )
 
-            self.write_to_output('Export filename: {}'.format(export_filename))
+            self.write_to_output("Export filename: {}".format(export_filename))
 
             xml_string = sales_order_container.to_xml_string()
 
             self.save_to_file(xml_string, export_filename)
 
-            self.write_to_output('Sending...')
+            self.write_to_output("Sending...")
 
             self.send(export_filename)
 
-            self.write_to_output('Done.')
+            self.write_to_output("Done.")
 
-            Invoice.objects.filter(id__in=[o.id for o in invoices]).update(sent_to_sap_at=now)
+            Invoice.objects.filter(id__in=[o.id for o in invoices]).update(
+                sent_to_sap_at=now
+            )
 
         # TODO: Log errors
         laske_export_log_entry.ended_at = timezone.now()

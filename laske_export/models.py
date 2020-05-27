@@ -12,6 +12,7 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vientiloki
     """
+
     # In Finnish: Aloitusaika
     started_at = models.DateTimeField(verbose_name=_("Time started"))
 
@@ -26,13 +27,14 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Laske export log")
         verbose_name_plural = pgettext_lazy("Model name", "Laske export logs")
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 class LaskePaymentsLog(TimeStampedSafeDeleteModel):
     """
     In Finnish: Varjoreskontraloki
     """
+
     # In Finnish: Aloitusaika
     filename = models.CharField(max_length=255, verbose_name=_("Filename"))
 
@@ -50,7 +52,7 @@ class LaskePaymentsLog(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Laske payments log")
         verbose_name_plural = pgettext_lazy("Model name", "Laske payments logs")
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 auditlog.register(LaskeExportLog)

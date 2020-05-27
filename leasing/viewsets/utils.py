@@ -34,7 +34,9 @@ class AtomicTransactionModelViewSet(AtomicTransactionMixin, viewsets.ModelViewSe
 
 class MultiPartJsonParser(parsers.MultiPartParser):
     def parse(self, stream, media_type=None, parser_context=None):
-        result = super().parse(stream, media_type=media_type, parser_context=parser_context)
+        result = super().parse(
+            stream, media_type=media_type, parser_context=parser_context
+        )
 
         data = json.loads(result.data["data"])
 
@@ -60,10 +62,14 @@ class FileMixin:
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        read_serializer = self.serializer_class(serializer.instance, context=serializer.context)
+        read_serializer = self.serializer_class(
+            serializer.instance, context=serializer.context
+        )
 
         headers = self.get_success_headers(read_serializer.data)
-        return Response(read_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            read_serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         """Use the Class.serializer_class after update for returning the saved data.
@@ -71,32 +77,36 @@ class FileMixin:
         if not self.serializer_class:
             return super().create(request, *args, **kwargs)
 
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        if getattr(instance, '_prefetched_objects_cache', None):
+        if getattr(instance, "_prefetched_objects_cache", None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        read_serializer = self.serializer_class(serializer.instance, context=serializer.context)
+        read_serializer = self.serializer_class(
+            serializer.instance, context=serializer.context
+        )
 
         return Response(read_serializer.data)
 
-    @action(methods=['get'], detail=True)
+    @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
         obj = self.get_object()
 
-        filename = '/'.join([settings.MEDIA_ROOT, obj.file.name])
+        filename = "/".join([settings.MEDIA_ROOT, obj.file.name])
         base_filename = os.path.basename(obj.file.name)
 
-        with open(filename, 'rb') as fp:
+        with open(filename, "rb") as fp:
             # TODO: detect file MIME type
-            response = HttpResponse(File(fp), content_type='application/octet-stream')
-            response['Content-Disposition'] = 'attachment; filename="{}"'.format(base_filename)
+            response = HttpResponse(File(fp), content_type="application/octet-stream")
+            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
+                base_filename
+            )
 
             return response
 
@@ -106,10 +116,7 @@ def integrityerror_exception_handler(exc, context):
 
     if isinstance(exc, IntegrityError) and not response:
         response = Response(
-            {
-                'detail': _("Data integrity error")
-            },
-            status=status.HTTP_400_BAD_REQUEST
+            {"detail": _("Data integrity error")}, status=status.HTTP_400_BAD_REQUEST
         )
 
     return response

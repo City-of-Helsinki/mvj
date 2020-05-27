@@ -11,7 +11,9 @@ from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class AreaSource(NameModel):
-    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255, unique=True)
+    identifier = models.CharField(
+        verbose_name=_("Identifier"), max_length=255, unique=True
+    )
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Area source")
@@ -22,13 +24,24 @@ class Area(TimeStampedSafeDeleteModel):
     """
     In Finnish: Alue
     """
+
     type = EnumField(AreaType, verbose_name=_("Area type"), max_length=30)
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
     external_id = models.CharField(verbose_name=_("External ID"), max_length=255)
-    geometry = models.MultiPolygonField(srid=4326, verbose_name=_("Geometry"), null=True, blank=True)
-    metadata = JSONField(verbose_name=_("Metadata"), encoder=DjangoJSONEncoder, null=True, blank=True)
-    source = models.ForeignKey(AreaSource, verbose_name=_("Source"), related_name='areas', null=True, blank=True,
-                               on_delete=models.PROTECT)
+    geometry = models.MultiPolygonField(
+        srid=4326, verbose_name=_("Geometry"), null=True, blank=True
+    )
+    metadata = JSONField(
+        verbose_name=_("Metadata"), encoder=DjangoJSONEncoder, null=True, blank=True
+    )
+    source = models.ForeignKey(
+        AreaSource,
+        verbose_name=_("Source"),
+        related_name="areas",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Area")

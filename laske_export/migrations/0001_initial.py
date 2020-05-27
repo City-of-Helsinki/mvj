@@ -7,43 +7,90 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='LaskeExportLog',
+            name="LaskeExportLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('started_at', models.DateTimeField(verbose_name='Time started')),
-                ('ended_at', models.DateTimeField(blank=True, null=True, verbose_name='Time ended')),
-                ('is_finished', models.BooleanField(default=False, verbose_name='Finished?')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("started_at", models.DateTimeField(verbose_name="Time started")),
+                (
+                    "ended_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Time ended"
+                    ),
+                ),
+                (
+                    "is_finished",
+                    models.BooleanField(default=False, verbose_name="Finished?"),
+                ),
             ],
             options={
-                'verbose_name': 'Laske export log',
-                'verbose_name_plural': 'Laske export logs',
-                'ordering': ['-created_at'],
+                "verbose_name": "Laske export log",
+                "verbose_name_plural": "Laske export logs",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='LaskePaymentsLog',
+            name="LaskePaymentsLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted', models.DateTimeField(editable=False, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Time created')),
-                ('modified_at', models.DateTimeField(auto_now=True, verbose_name='Time modified')),
-                ('filename', models.CharField(max_length=255, verbose_name='Filename')),
-                ('started_at', models.DateTimeField(verbose_name='Time started')),
-                ('ended_at', models.DateTimeField(blank=True, null=True, verbose_name='Time ended')),
-                ('is_finished', models.BooleanField(default=False, verbose_name='Finished?')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted", models.DateTimeField(editable=False, null=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Time created"
+                    ),
+                ),
+                (
+                    "modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Time modified"),
+                ),
+                ("filename", models.CharField(max_length=255, verbose_name="Filename")),
+                ("started_at", models.DateTimeField(verbose_name="Time started")),
+                (
+                    "ended_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Time ended"
+                    ),
+                ),
+                (
+                    "is_finished",
+                    models.BooleanField(default=False, verbose_name="Finished?"),
+                ),
             ],
             options={
-                'verbose_name': 'Laske payments log',
-                'verbose_name_plural': 'Laske payments logs',
-                'ordering': ['-created_at'],
+                "verbose_name": "Laske payments log",
+                "verbose_name_plural": "Laske payments logs",
+                "ordering": ["-created_at"],
             },
         ),
     ]

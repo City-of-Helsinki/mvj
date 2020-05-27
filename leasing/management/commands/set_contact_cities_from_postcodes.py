@@ -19,15 +19,18 @@ def read_post_codes(file):
 
 
 class Command(BaseCommand):
-    help = 'Sets contact city from the postcode'
+    help = "Sets contact city from the postcode"
 
     def add_arguments(self, parser):
-        parser.add_argument('pcf_file', type=argparse.FileType('r', encoding='iso8859-1'),
-                            help='File with all the Finnish post codes. Can be obtained from '
-                                 'https://support.posti.fi/fi/postinumeropalvelut/postinumerotiedostot.html')
+        parser.add_argument(
+            "pcf_file",
+            type=argparse.FileType("r", encoding="iso8859-1"),
+            help="File with all the Finnish post codes. Can be obtained from "
+            "https://support.posti.fi/fi/postinumeropalvelut/postinumerotiedostot.html",
+        )
 
     def handle(self, *args, **options):
-        code_to_city_name = read_post_codes(options['pcf_file'])
+        code_to_city_name = read_post_codes(options["pcf_file"])
 
         from auditlog.registry import auditlog
 
@@ -35,16 +38,21 @@ class Command(BaseCommand):
         auditlog.unregister(Contact)
 
         contacts = Contact.objects.filter(city__isnull=True)
-        self.stdout.write('{} contacts without city'.format(contacts.count()))
+        self.stdout.write("{} contacts without city".format(contacts.count()))
 
         for contact in contacts:
             if not contact.postal_code:
-                self.stdout.write('Contact id {} has no postal code. Skipping.'.format(contact.id))
+                self.stdout.write(
+                    "Contact id {} has no postal code. Skipping.".format(contact.id)
+                )
                 continue
 
             if contact.postal_code not in code_to_city_name.keys():
-                self.stdout.write('Contact id {} has an unknown postal code "{}". Skipping.'.format(
-                    contact.id, contact.postal_code))
+                self.stdout.write(
+                    'Contact id {} has an unknown postal code "{}". Skipping.'.format(
+                        contact.id, contact.postal_code
+                    )
+                )
                 continue
 
             contact.city = code_to_city_name[contact.postal_code]

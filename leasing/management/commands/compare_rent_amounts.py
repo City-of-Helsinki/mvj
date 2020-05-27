@@ -12,22 +12,24 @@ from leasing.enums import LeaseState, RentCycle, RentType
 from leasing.models import Lease, PayableRent
 
 known_errors = {
-    ('A1154-878', Decimal('19364.80')): 'known error in the old system',
-    ('A1154-878', Decimal('11830.54')): 'known error in the old system',
+    ("A1154-878", Decimal("19364.80")): "known error in the old system",
+    ("A1154-878", Decimal("11830.54")): "known error in the old system",
 }
 
 
 class Command(BaseCommand):
-    help = 'Import data from the old MVJ'
+    help = "Import data from the old MVJ"
 
     def handle(self, *args, **options):  # NOQA
         today = timezone.now().date()
 
-        leases = Lease.objects.filter(state=LeaseState.LEASE).filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=today)
-        ).order_by('start_date')
+        leases = (
+            Lease.objects.filter(state=LeaseState.LEASE)
+            .filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+            .order_by("start_date")
+        )
 
-        workbook = xlsxwriter.Workbook('compare_payable_rents.xlsx')
+        workbook = xlsxwriter.Workbook("compare_payable_rents.xlsx")
         worksheet = workbook.add_worksheet()
 
         worksheet.freeze_panes(1, 0)
@@ -36,11 +38,15 @@ class Command(BaseCommand):
         worksheet.set_column(3, 3, 13)
         worksheet.set_column(4, 4, 13)
 
-        number = workbook.add_format({'num_format': '0.00'})
-        red = workbook.add_format({'font_color': '#ff0000'})
-        green = workbook.add_format({'font_color': '#008000'})
-        red_number = workbook.add_format({'num_format': '0.00', 'font_color': '#ff0000'})
-        green_number = workbook.add_format({'num_format': '0.00', 'font_color': '#008000'})
+        number = workbook.add_format({"num_format": "0.00"})
+        red = workbook.add_format({"font_color": "#ff0000"})
+        green = workbook.add_format({"font_color": "#008000"})
+        red_number = workbook.add_format(
+            {"num_format": "0.00", "font_color": "#ff0000"}
+        )
+        green_number = workbook.add_format(
+            {"num_format": "0.00", "font_color": "#008000"}
+        )
 
         row = 0
         worksheet.write(row, 0, "Lease")
@@ -53,11 +59,11 @@ class Command(BaseCommand):
         row += 1
 
         for lease in leases:
-            self.stdout.write('Lease #{} {} '.format(lease.id, lease))
+            self.stdout.write("Lease #{} {} ".format(lease.id, lease))
 
             rent = lease.rents.first()
             if not rent:
-                self.stdout.write(' No rent. Skipping')
+                self.stdout.write(" No rent. Skipping")
                 continue
 
             if rent.type == RentType.MANUAL:
@@ -65,9 +71,11 @@ class Command(BaseCommand):
                 continue
 
             # Year rent...
-            payable_rents = PayableRent.objects.filter(rent=rent, start_date__year=2019).order_by('start_date')
+            payable_rents = PayableRent.objects.filter(
+                rent=rent, start_date__year=2019
+            ).order_by("start_date")
             if not payable_rents:
-                self.stdout.write(' No payable rents. Skipping')
+                self.stdout.write(" No payable rents. Skipping")
                 continue
 
             for payable_rent in payable_rents:
@@ -84,8 +92,9 @@ class Command(BaseCommand):
                 #     continue
 
                 try:
-                    calculated_amount = rent.get_amount_for_date_range(year_start, year_end).quantize(
-                        Decimal('.01'), rounding=ROUND_HALF_UP)
+                    calculated_amount = rent.get_amount_for_date_range(
+                        year_start, year_end
+                    ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
                 except AssertionError:
                     self.stdout.write(" Assertion error")
                     worksheet.write(row, 0, lease.get_identifier_string())
@@ -118,13 +127,21 @@ class Command(BaseCommand):
 
                 difference = calculated_amount - payable_rent.amount
 
-                if abs(difference) > Decimal('0.05'):
+                if abs(difference) > Decimal("0.05"):
                     color = red_number
-                    self.stdout.write(' Payable rent amount year {}: {}'.format(year, payable_rent.amount))
-                    self.stdout.write(' Calculated amount            : {} {}'.format(
-                        calculated_amount,
-                        ' matches' if payable_rent.amount == calculated_amount else ' MISMATCH'
-                    ))
+                    self.stdout.write(
+                        " Payable rent amount year {}: {}".format(
+                            year, payable_rent.amount
+                        )
+                    )
+                    self.stdout.write(
+                        " Calculated amount            : {} {}".format(
+                            calculated_amount,
+                            " matches"
+                            if payable_rent.amount == calculated_amount
+                            else " MISMATCH",
+                        )
+                    )
                     worksheet.write(row, 6, "x", red)
                 else:
                     worksheet.write(row, 5, "x", green)
@@ -137,16 +154,16 @@ class Command(BaseCommand):
                 row += 1
 
         row += 1
-        worksheet.write(row, 0, 'Total count')
-        worksheet.write(row, 1, '=COUNTA(A2:A{})'.format(row-1))
+        worksheet.write(row, 0, "Total count")
+        worksheet.write(row, 1, "=COUNTA(A2:A{})".format(row - 1))
 
         row += 1
-        worksheet.write(row, 0, 'Correct')
-        worksheet.write(row, 1, '=COUNTA(F2:F{})'.format(row - 1))
+        worksheet.write(row, 0, "Correct")
+        worksheet.write(row, 1, "=COUNTA(F2:F{})".format(row - 1))
 
         row += 1
-        worksheet.write(row, 0, 'Wrong')
-        worksheet.write(row, 1, '=COUNTA(G2:G{})'.format(row - 1))
+        worksheet.write(row, 0, "Wrong")
+        worksheet.write(row, 1, "=COUNTA(G2:G{})".format(row - 1))
         workbook.close()
 
         # Invoices...

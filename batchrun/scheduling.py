@@ -20,16 +20,16 @@ class RecurrenceRule:
 
     @classmethod
     def create(
-            cls,
-            timezone: str,
-            years: str = '*',
-            months: str = '*',
-            days_of_month: str = '*',
-            *,
-            weekdays: str = '*',
-            hours: str = '*',
-            minutes: str = '*',
-    ) -> 'RecurrenceRule':
+        cls,
+        timezone: str,
+        years: str = "*",
+        months: str = "*",
+        days_of_month: str = "*",
+        *,
+        weekdays: str = "*",
+        hours: str = "*",
+        minutes: str = "*",
+    ) -> "RecurrenceRule":
         return cls(
             timezone=pytz.timezone(timezone),
             years=IntegerSetSpecifier(years, 1970, 2200),
@@ -41,32 +41,32 @@ class RecurrenceRule:
         )
 
     def matches_datetime(self, dt: datetime) -> bool:
-        return (self.matches_date(dt) and self.matches_time(dt.time()))
+        return self.matches_date(dt) and self.matches_time(dt.time())
 
     def matches_date(self, d: date) -> bool:
         return (
-            d.year in self.years and
-            d.month in self.months and
-            d.day in self.days_of_month and
-            self.matches_weekday(d))
+            d.year in self.years
+            and d.month in self.months
+            and d.day in self.days_of_month
+            and self.matches_weekday(d)
+        )
 
     def matches_weekday(self, dt: Union[date, datetime]) -> bool:
         if self.weekdays.is_total():
             return True
         python_weekday = dt.weekday()  # Monday = 0, Sunday = 6
         weekday = (python_weekday + 1) % 7  # Monday = 1, Sunday = 0
-        return (weekday in self.weekdays)
+        return weekday in self.weekdays
 
     def matches_time(self, t: time) -> bool:
-        return (t.hour in self.hours and t.minute in self.minutes)
+        return t.hour in self.hours and t.minute in self.minutes
 
     def get_next_events(self, start_time: datetime) -> Iterable[AwareDateTime]:
         return get_next_events(self, start_time)
 
 
 def get_next_events(
-        rule: RecurrenceRule,
-        start_time: datetime,
+    rule: RecurrenceRule, start_time: datetime
 ) -> Iterable[AwareDateTime]:
     check_is_aware(start_time)
 
@@ -117,17 +117,13 @@ def _iter_times(rule: RecurrenceRule) -> Iterable[time]:
 
 
 def _get_possible_times(
-        rule: RecurrenceRule,
-        naive_datetime: datetime,
-        tz: tzinfo,
+    rule: RecurrenceRule, naive_datetime: datetime, tz: tzinfo
 ) -> Iterable[AwareDateTime]:
     try:
         return [make_aware(naive_datetime, tz)]
     except pytz.AmbiguousTimeError:
-        dsts = ([True, False] if len(rule.hours) > 1 else [True])
-        timestamps = (
-            make_aware(naive_datetime, tz, is_dst=dst)
-            for dst in dsts)
+        dsts = [True, False] if len(rule.hours) > 1 else [True]
+        timestamps = (make_aware(naive_datetime, tz, is_dst=dst) for dst in dsts)
         return [x for x in timestamps if rule.matches_datetime(x)]
     except pytz.NonExistentTimeError:
         return [make_aware(naive_datetime, tz, is_dst=True)]

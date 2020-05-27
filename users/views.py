@@ -27,9 +27,8 @@ class UsersPermissions(APIView):
         return Response(
             {
                 "groups": groups,
-                "permissions": [{
-                    "name": p.name,
-                    "codename": p.codename
-                } for p in permissions]
+                "permissions": [
+                    {"name": p.name, "codename": p.codename} for p in permissions
+                ],
             }
         )

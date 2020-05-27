@@ -14,6 +14,7 @@ class DecisionMaker(NameModel):
     """
     In Finnish: Päättäjä
     """
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Decision maker")
         verbose_name_plural = pgettext_lazy("Model name", "Decision makers")
@@ -23,7 +24,14 @@ class DecisionType(NameModel):
     """
     In Finnish: Päätöksen tyyppi
     """
-    kind = EnumField(DecisionTypeKind, verbose_name=_("Decision type kind"), null=True, blank=True, max_length=30)
+
+    kind = EnumField(
+        DecisionTypeKind,
+        verbose_name=_("Decision type kind"),
+        null=True,
+        blank=True,
+        max_length=30,
+    )
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Decision type")
@@ -34,25 +42,48 @@ class Decision(TimeStampedSafeDeleteModel):
     """
     In Finnish: Päätös
     """
-    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='decisions',
-                              on_delete=models.PROTECT)
+
+    lease = models.ForeignKey(
+        "leasing.Lease",
+        verbose_name=_("Lease"),
+        related_name="decisions",
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Diaarinumero
-    reference_number = models.CharField(verbose_name=_("Reference number"), null=True, blank=True, max_length=255)
+    reference_number = models.CharField(
+        verbose_name=_("Reference number"), null=True, blank=True, max_length=255
+    )
 
     # In Finnish: Päättäjä
-    decision_maker = models.ForeignKey(DecisionMaker, verbose_name=_("Decision maker"), related_name="+",
-                                       null=True, blank=True, on_delete=models.PROTECT)
+    decision_maker = models.ForeignKey(
+        DecisionMaker,
+        verbose_name=_("Decision maker"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Päätöspäivämäärä
-    decision_date = models.DateField(verbose_name=_("Decision date"), null=True, blank=True)
+    decision_date = models.DateField(
+        verbose_name=_("Decision date"), null=True, blank=True
+    )
 
     # In Finnish: Pykälä
-    section = models.CharField(verbose_name=_("Section"), null=True, blank=True, max_length=255)
+    section = models.CharField(
+        verbose_name=_("Section"), null=True, blank=True, max_length=255
+    )
 
     # In Finnish: Päätöksen tyyppi
-    type = models.ForeignKey(DecisionType, verbose_name=_("Type"), related_name="+", null=True, blank=True,
-                             on_delete=models.PROTECT)
+    type = models.ForeignKey(
+        DecisionType,
+        verbose_name=_("Type"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
@@ -68,6 +99,7 @@ class ConditionType(NameModel):
     """
     In Finnish: Ehtotyyppi
     """
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Condition type")
         verbose_name_plural = pgettext_lazy("Model name", "Condition types")
@@ -77,19 +109,34 @@ class Condition(TimeStampedSafeDeleteModel):
     """
     In Finnish: Ehto
     """
+
     # In Finnish: Päätös
-    decision = models.ForeignKey(Decision, verbose_name=_("Decision"), related_name="conditions",
-                                 on_delete=models.PROTECT)
+    decision = models.ForeignKey(
+        Decision,
+        verbose_name=_("Decision"),
+        related_name="conditions",
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Ehtotyyppi
-    type = models.ForeignKey(ConditionType, verbose_name=_("Type"), related_name="+", null=True,
-                             blank=True, on_delete=models.PROTECT)
+    type = models.ForeignKey(
+        ConditionType,
+        verbose_name=_("Type"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Valvontapäivämäärä
-    supervision_date = models.DateField(verbose_name=_("Supervision date"), null=True, blank=True)
+    supervision_date = models.DateField(
+        verbose_name=_("Supervision date"), null=True, blank=True
+    )
 
     # In Finnish: Valvottu päivämäärä
-    supervised_date = models.DateField(verbose_name=_("Supervised date"), null=True, blank=True)
+    supervised_date = models.DateField(
+        verbose_name=_("Supervised date"), null=True, blank=True
+    )
 
     # In Finnish: Selite
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
@@ -104,6 +151,14 @@ class Condition(TimeStampedSafeDeleteModel):
 auditlog.register(Decision)
 auditlog.register(Condition)
 
-field_permissions.register(Decision, exclude_fields=['lease', 'rentadjustment', 'contract', 'contractchange',
-                                                     'leasearea'])
-field_permissions.register(Condition, exclude_fields=['decision'])
+field_permissions.register(
+    Decision,
+    exclude_fields=[
+        "lease",
+        "rentadjustment",
+        "contract",
+        "contractchange",
+        "leasearea",
+    ],
+)
+field_permissions.register(Condition, exclude_fields=["decision"])

@@ -30,6 +30,7 @@ before_script:
   - psql -U postgres -c "create extension if not exists postgis;"
 
 script:
+  - black --check .
   - flake8
   - isort --check-only --diff
   - pytest -ra -vvv --doctest-modules --cov=.
