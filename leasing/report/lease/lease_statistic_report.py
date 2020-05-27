@@ -274,12 +274,13 @@ def get_total_rent_amount_for_year(obj):
 def get_average_amount_per_area_residential(obj):
     volumes = defaultdict(list)
     for basis_of_rent in obj.basis_of_rents.all():
-        if basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS:
+        if (
+            basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS
+            or not basis_of_rent.amount_per_area
+        ):
             continue
 
         volumes[basis_of_rent.area_unit].append(basis_of_rent.amount_per_area)
-
-    formats.number_format(12.34, decimal_pos=2, use_l10n=True)
 
     return " / ".join(
         [
@@ -299,7 +300,10 @@ def get_average_amount_per_area_residential(obj):
 def get_average_amount_per_area_business(obj):
     volumes = defaultdict(list)
     for basis_of_rent in obj.basis_of_rents.all():
-        if basis_of_rent.intended_use_id in RESIDENTIAL_INTENDED_USE_IDS:
+        if (
+            basis_of_rent.intended_use_id in RESIDENTIAL_INTENDED_USE_IDS
+            or not basis_of_rent.amount_per_area
+        ):
             continue
 
         volumes[basis_of_rent.area_unit].append(basis_of_rent.amount_per_area)
@@ -322,12 +326,11 @@ def get_average_amount_per_area_business(obj):
 class LeaseStatisticReport(AsyncReportBase):
     name = _("Lease statistics report")
     description = _(
-        "Shows information about leases that have started or ended between the supplied dates"
+        "Shows information about all leases or if start date is provided the leases that have started on or after it"
     )
     slug = "lease_statistic"
     input_fields = {
-        "start_date": forms.DateField(label=_("Start date"), required=True),
-        "end_date": forms.DateField(label=_("End date"), required=True),
+        "start_date": forms.DateField(label=_("Start date"), required=False),
         "state": forms.ChoiceField(
             label=_("State"), required=False, choices=LeaseState.choices()
         ),
@@ -470,17 +473,13 @@ class LeaseStatisticReport(AsyncReportBase):
     }
 
     def get_data(self, input_data):
+        if input_data["start_date"]:
+            date_query = Q(start_date__gte=input_data["start_date"])
+        else:
+            date_query = Q()
+
         qs = (
-            Lease.objects.filter(
-                (
-                    Q(start_date__gte=input_data["start_date"])
-                    & Q(start_date__lte=input_data["end_date"])
-                )
-                | (
-                    Q(end_date__gte=input_data["start_date"])
-                    & Q(end_date__lte=input_data["end_date"])
-                )
-            )
+            Lease.objects.filter(date_query)
             .select_related(
                 "identifier__type",
                 "identifier__district",
