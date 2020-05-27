@@ -8,10 +8,10 @@ from rest_framework.reverse import reverse
 from rest_framework.viewsets import ViewSet
 
 from leasing.renderers import BrowsableAPIRendererWithoutForms
+from leasing.report.invoice.collaterals_report import CollateralsReport
 from leasing.report.invoice.invoice_payments import InvoicePaymentsReport
 from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
-from leasing.report.invoice.money_collaterals_report import MoneyCollateralsReport
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
 from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.extra_city_rent import ExtraCityRentReport
@@ -25,7 +25,7 @@ from leasing.report.renderers import XLSXRenderer
 ENABLED_REPORTS = [
     DecisionConditionsReport,
     ExtraCityRentReport,
-    MoneyCollateralsReport,
+    CollateralsReport,
     OpenInvoicesReport,
     InvoicePaymentsReport,
     InvoicesInPeriodReport,

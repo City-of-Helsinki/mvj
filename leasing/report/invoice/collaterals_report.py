@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from leasing.models import Collateral
+from leasing.models import Collateral, CollateralType
 from leasing.report.report_base import ReportBase
 
 
@@ -9,11 +9,17 @@ def get_lease_id(obj):
     return obj.contract.lease.get_identifier_string()
 
 
-class MoneyCollateralsReport(ReportBase):
-    name = _("Money collaterals")
-    description = _("Show all money collaterals")
-    slug = "money_collaterals"
+class CollateralsReport(ReportBase):
+    name = _("Collaterals")
+    description = _("Show all collaterals")
+    slug = "collaterals"
     input_fields = {
+        "collateral_type": forms.ModelChoiceField(
+            label=_("Type"),
+            queryset=CollateralType.objects.all(),
+            empty_label=None,
+            required=False,
+        ),
         "paid": forms.NullBooleanField(label=_("Paid"), required=False),
         "returned": forms.NullBooleanField(label=_("Returned"), required=False),
     }
@@ -43,6 +49,9 @@ class MoneyCollateralsReport(ReportBase):
                 "contract__lease__identifier__sequence",
             )
         )
+
+        if input_data["collateral_type"]:
+            qs = qs.filter(type=input_data["collateral_type"])
 
         if input_data["paid"] is not None:
             qs = qs.filter(paid_date__isnull=not input_data["paid"])

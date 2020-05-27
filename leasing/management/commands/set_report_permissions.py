@@ -14,7 +14,7 @@ DEFAULT_REPORT_PERMS = {
     "invoice_payments": [5, 6, 7],
     "invoices_in_period": [5, 6, 7],
     "laske_invoice_count": [5, 6, 7],
-    "money_collaterals": [5, 6, 7],
+    "collaterals": [5, 6, 7],
     "open_invoices": [5, 6, 7],
     "decision_conditions": [2, 3, 4, 5, 6, 7],
     "extra_city_rent": [2, 3, 4, 5, 6, 7],
