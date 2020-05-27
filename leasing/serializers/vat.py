@@ -6,4 +6,4 @@ from ..models import Vat
 class VatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vat
-        fields = '__all__'
+        fields = "__all__"

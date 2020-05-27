@@ -34,7 +34,7 @@ INDEX_IMPORTS = [
 
 
 def get_values_from_row(row):
-    matches = re.match(r'(?P<year>\d+)(?:M(?P<month>\d+))?', row["key"][0])
+    matches = re.match(r"(?P<year>\d+)(?:M(?P<month>\d+))?", row["key"][0])
 
     year = int(matches.group("year"))
 
@@ -44,7 +44,7 @@ def get_values_from_row(row):
 
     number = row["values"][0]
 
-    if number == '.':
+    if number == ".":
         number = None
     else:
         number = int(number)
@@ -58,19 +58,19 @@ def get_data(url):
     r = requests.post(url, data=query_string)
 
     if r.status_code != 200:
-        raise CommandError('Failed to download index')
+        raise CommandError("Failed to download index")
 
     return r.json().get("data")
 
 
 class Command(BaseCommand):
-    help = 'Import index from stat.fi'
+    help = "Import index from stat.fi"
 
     def handle(self, *args, **options):
         for index_import in INDEX_IMPORTS:
-            self.stdout.write(index_import['name'])
+            self.stdout.write(index_import["name"])
 
-            data = get_data(index_import['url'])
+            data = get_data(index_import["url"])
 
             for row in data:
                 (year, month, number) = get_values_from_row(row)
@@ -79,9 +79,9 @@ class Command(BaseCommand):
                     continue
 
                 if "legacy" not in index_import:
-                    Index.objects.update_or_create(year=year, month=month, defaults={
-                        'number': number,
-                    })
+                    Index.objects.update_or_create(
+                        year=year, month=month, defaults={"number": number}
+                    )
 
                 else:
                     try:
@@ -90,8 +90,8 @@ class Command(BaseCommand):
                         # No index for this month/year, add a dummy entry
                         index = Index.objects.create(year=year, month=month, number=0)
 
-                    LegacyIndex.objects.update_or_create(index=index, defaults={
-                        index_import["legacy"]: number,
-                    })
+                    LegacyIndex.objects.update_or_create(
+                        index=index, defaults={index_import["legacy"]: number}
+                    )
 
-                self.stdout.write(' {}:{} = {}'.format(year, month, number))
+                self.stdout.write(" {}:{} = {}".format(year, month, number))

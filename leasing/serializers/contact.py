@@ -7,10 +7,14 @@ from field_permissions.serializers import FieldPermissionsSerializerMixin
 from ..models import Contact
 
 
-class ContactSerializer(EnumSupportSerializerMixin, CountryFieldMixin, FieldPermissionsSerializerMixin,
-                        serializers.ModelSerializer):
+class ContactSerializer(
+    EnumSupportSerializerMixin,
+    CountryFieldMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Contact
-        fields = '__all__'
+        fields = "__all__"

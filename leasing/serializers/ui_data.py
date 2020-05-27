@@ -11,7 +11,7 @@ class UiDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UiData
-        fields = '__all__'
+        fields = "__all__"
 
 
 class UiDataCreateUpdateSerializer(serializers.ModelSerializer):
@@ -19,4 +19,4 @@ class UiDataCreateUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UiData
-        fields = '__all__'
+        fields = "__all__"

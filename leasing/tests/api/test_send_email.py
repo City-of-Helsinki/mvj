@@ -12,35 +12,37 @@ from leasing.models import EmailLog
 
 @pytest.mark.django_db
 def test_send_email(django_db_setup, client, lease_test_data, user_factory):
-    user = user_factory(username='test_user', email="test_user@example.com")
-    user.set_password('test_password')
+    user = user_factory(username="test_user", email="test_user@example.com")
+    user.set_password("test_password")
     user.save()
 
-    user2 = user_factory(username='test_user2', email="test_user2@example.com")
+    user2 = user_factory(username="test_user2", email="test_user2@example.com")
     # User without email address. Shouldn't try to send email to them.
-    user3 = user_factory(username='test_user3')
+    user3 = user_factory(username="test_user3")
 
-    permission_names = [
-        'view_lease',
-    ]
+    permission_names = ["view_lease"]
 
     for permission_name in permission_names:
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     data = {
         "type": "constructability",
         "lease": lease.id,
         "recipients": [user2.id, user3.id],
-        "text": "Test mail text"
+        "text": "Test mail text",
     }
 
-    client.login(username='test_user', password='test_password')
-    url = reverse('send-email')
-    response = client.post(url, data=json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
+    client.login(username="test_user", password="test_password")
+    url = reverse("send-email")
+    response = client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
 
-    assert response.status_code == 200, '%s %s' % (response.status_code, response.data)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert len(mail.outbox) == 1
     assert EmailLog.objects.count() == 1
 

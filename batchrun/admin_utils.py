@@ -9,29 +9,23 @@ from django.utils import timezone
 
 class ReadOnlyAdmin(admin.ModelAdmin):
     def has_add_permission(
-            self,
-            request: HttpRequest,
-            obj: Optional[Model] = None,
+        self, request: HttpRequest, obj: Optional[Model] = None
     ) -> bool:
         return False
 
     def has_change_permission(
-            self,
-            request: HttpRequest,
-            obj: Optional[Model] = None,
+        self, request: HttpRequest, obj: Optional[Model] = None
     ) -> bool:
         return False
 
     def has_delete_permission(
-            self,
-            request: HttpRequest,
-            obj: Optional[Model] = None,
+        self, request: HttpRequest, obj: Optional[Model] = None
     ) -> bool:
         return False
 
 
 class PreciseTimeFormatter:
-    _format_string = '%Y-%m-%d %H:%M:%S.%f'
+    _format_string = "%Y-%m-%d %H:%M:%S.%f"
 
     def __init__(self, model: Type[Model], field_name: str) -> None:
         self._model = model

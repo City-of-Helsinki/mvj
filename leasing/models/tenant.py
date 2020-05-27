@@ -15,8 +15,13 @@ class Tenant(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokralainen
     """
-    lease = models.ForeignKey('leasing.Lease', verbose_name=_("Lease"), related_name='tenants',
-                              on_delete=models.PROTECT)
+
+    lease = models.ForeignKey(
+        "leasing.Lease",
+        verbose_name=_("Lease"),
+        related_name="tenants",
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Jaettava / Osoittaja
     share_numerator = models.PositiveIntegerField(verbose_name=_("Numerator"))
@@ -25,9 +30,13 @@ class Tenant(TimeStampedSafeDeleteModel):
     share_denominator = models.PositiveIntegerField(verbose_name=_("Denominator"))
 
     # In Finnish: Viite
-    reference = models.CharField(verbose_name=_("Reference"), null=True, blank=True, max_length=35)
+    reference = models.CharField(
+        verbose_name=_("Reference"), null=True, blank=True, max_length=35
+    )
 
-    contacts = models.ManyToManyField(Contact, through='leasing.TenantContact', related_name='tenants')
+    contacts = models.ManyToManyField(
+        Contact, through="leasing.TenantContact", related_name="tenants"
+    )
 
     # TODO: Add start and end dates?
 
@@ -38,23 +47,33 @@ class Tenant(TimeStampedSafeDeleteModel):
         verbose_name_plural = pgettext_lazy("Model name", "Tenants")
 
     def __str__(self):
-        return 'Tenant id: {} share: {}/{}'.format(self.id, self.share_numerator, self.share_denominator)
+        return "Tenant id: {} share: {}/{}".format(
+            self.id, self.share_numerator, self.share_denominator
+        )
 
     def get_tenantcontacts_for_period(self, contact_type, start_date, end_date):
         range_filter = Q(
-            Q(Q(end_date=None) | Q(end_date__gte=start_date)) &
-            Q(Q(start_date=None) | Q(start_date__lte=end_date))
+            Q(Q(end_date=None) | Q(end_date__gte=start_date))
+            & Q(Q(start_date=None) | Q(start_date__lte=end_date))
         )
 
-        tenantcontacts = self.tenantcontact_set.filter(type=contact_type).filter(range_filter).order_by('-start_date')
+        tenantcontacts = (
+            self.tenantcontact_set.filter(type=contact_type)
+            .filter(range_filter)
+            .order_by("-start_date")
+        )
 
         return tenantcontacts
 
     def get_tenant_tenantcontacts(self, start_date, end_date):
-        return self.get_tenantcontacts_for_period(TenantContactType.TENANT, start_date, end_date)
+        return self.get_tenantcontacts_for_period(
+            TenantContactType.TENANT, start_date, end_date
+        )
 
     def get_billing_tenantcontacts(self, start_date, end_date):
-        billing_contacts = self.get_tenantcontacts_for_period(TenantContactType.BILLING, start_date, end_date)
+        billing_contacts = self.get_tenantcontacts_for_period(
+            TenantContactType.BILLING, start_date, end_date
+        )
 
         if billing_contacts.count() > 0:
             return billing_contacts
@@ -71,8 +90,12 @@ class Tenant(TimeStampedSafeDeleteModel):
 
 class TenantContact(TimeStampedSafeDeleteModel):
     type = EnumField(TenantContactType, max_length=255)
-    tenant = models.ForeignKey(Tenant, verbose_name=_("Tenant"), on_delete=models.PROTECT)
-    contact = models.ForeignKey(Contact, verbose_name=_("Contact"), on_delete=models.PROTECT)
+    tenant = models.ForeignKey(
+        Tenant, verbose_name=_("Tenant"), on_delete=models.PROTECT
+    )
+    contact = models.ForeignKey(
+        Contact, verbose_name=_("Contact"), on_delete=models.PROTECT
+    )
 
     # In Finnish: Alkupvm
     start_date = models.DateField(verbose_name=_("Start date"))
@@ -87,8 +110,9 @@ class TenantContact(TimeStampedSafeDeleteModel):
         verbose_name_plural = pgettext_lazy("Model name", "Tenant contacts")
 
     def __str__(self):
-        return 'TenantContact id: {} contact: {} period: {} - {}'.format(self.id, self.contact, self.start_date,
-                                                                         self.end_date)
+        return "TenantContact id: {} contact: {} period: {} - {}".format(
+            self.id, self.contact, self.start_date, self.end_date
+        )
 
     @property
     def date_range(self):
@@ -99,17 +123,31 @@ class TenantRentShare(TimeStampedSafeDeleteModel):
     """
     In Finnish: Laskuosuus
     """
-    tenant = models.ForeignKey(Tenant, verbose_name=_("Tenant"), related_name='rent_shares', on_delete=models.PROTECT)
+
+    tenant = models.ForeignKey(
+        Tenant,
+        verbose_name=_("Tenant"),
+        related_name="rent_shares",
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Käyttötarkoitus
-    intended_use = models.ForeignKey(RentIntendedUse, verbose_name=_("Intended use"), related_name='+',
-                                     on_delete=models.PROTECT)
+    intended_use = models.ForeignKey(
+        RentIntendedUse,
+        verbose_name=_("Intended use"),
+        related_name="+",
+        on_delete=models.PROTECT,
+    )
 
     # In Finnish: Jaettava / Osoittaja (Laskuosuus)
-    share_numerator = models.PositiveIntegerField(verbose_name=_("Rent share numerator"))
+    share_numerator = models.PositiveIntegerField(
+        verbose_name=_("Rent share numerator")
+    )
 
     # In Finnish: Jakaja / Nimittäjä (Laskuosuus)
-    share_denominator = models.PositiveIntegerField(verbose_name=_("Rent share denominator"))
+    share_denominator = models.PositiveIntegerField(
+        verbose_name=_("Rent share denominator")
+    )
 
     recursive_get_related_skip_relations = ["tenant"]
 
@@ -122,6 +160,6 @@ auditlog.register(Tenant)
 auditlog.register(TenantContact)
 auditlog.register(TenantRentShare)
 
-field_permissions.register(Tenant, exclude_fields=['lease', 'invoicerow'])
-field_permissions.register(TenantContact, exclude_fields=['tenant'])
-field_permissions.register(TenantRentShare, exclude_fields=['tenant'])
+field_permissions.register(Tenant, exclude_fields=["lease", "invoicerow"])
+field_permissions.register(TenantContact, exclude_fields=["tenant"])
+field_permissions.register(TenantRentShare, exclude_fields=["tenant"])

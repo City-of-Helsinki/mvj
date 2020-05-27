@@ -1,9 +1,19 @@
 from rest_framework import serializers
 
-from leasing.models import ContractRent, FixedInitialYearRent, Index, Rent, RentAdjustment
+from leasing.models import (
+    ContractRent,
+    FixedInitialYearRent,
+    Index,
+    Rent,
+    RentAdjustment,
+)
 from leasing.serializers.rent import (
-    ContractRentSerializer, FixedInitialYearRentSerializer, IndexSerializer, RentAdjustmentSerializer,
-    RentSimpleSerializer)
+    ContractRentSerializer,
+    FixedInitialYearRentSerializer,
+    IndexSerializer,
+    RentAdjustmentSerializer,
+    RentSimpleSerializer,
+)
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -27,7 +37,7 @@ class SubjectSerializer(serializers.Serializer):
             if isinstance(instance, model_class):
                 s = serializer_class()
                 data = s.to_representation(instance)
-                data['subject_type'] = model_class._meta.model_name
+                data["subject_type"] = model_class._meta.model_name
 
                 return data
 
@@ -39,10 +49,7 @@ class DateRangeField(serializers.Field):
         pass
 
     def to_representation(self, instance):
-        return {
-            'start_date': instance[0],
-            'end_date': instance[1],
-        }
+        return {"start_date": instance[0], "end_date": instance[1]}
 
 
 class ExplanationItemSerializer(serializers.Serializer):

@@ -28,13 +28,15 @@ class CoalesceOrderingFilter(OrderingFilter):
         ordering = self.get_ordering(request, queryset, view)
 
         if ordering:
-            if hasattr(view, 'coalesce_ordering'):
+            if hasattr(view, "coalesce_ordering"):
                 for ordering_term in ordering:
-                    ordering_term = ordering_term.lstrip('-')
+                    ordering_term = ordering_term.lstrip("-")
 
                     if ordering_term in view.coalesce_ordering:
                         kwargs = {
-                            ordering_term: Coalesce(*view.coalesce_ordering[ordering_term])
+                            ordering_term: Coalesce(
+                                *view.coalesce_ordering[ordering_term]
+                            )
                         }
                         queryset = queryset.annotate(**kwargs)
 
@@ -48,7 +50,7 @@ class CollectionCourtDecisionFilter(FilterSet):
 
     class Meta:
         model = CollectionCourtDecision
-        fields = ['lease']
+        fields = ["lease"]
 
 
 class CollectionLetterFilter(FilterSet):
@@ -56,7 +58,7 @@ class CollectionLetterFilter(FilterSet):
 
     class Meta:
         model = CollectionLetter
-        fields = ['lease']
+        fields = ["lease"]
 
 
 class CollectionNoteFilter(FilterSet):
@@ -64,7 +66,7 @@ class CollectionNoteFilter(FilterSet):
 
     class Meta:
         model = CollectionNote
-        fields = ['lease', 'user']
+        fields = ["lease", "user"]
 
 
 class CommentFilter(FilterSet):
@@ -72,14 +74,24 @@ class CommentFilter(FilterSet):
 
     class Meta:
         model = Comment
-        fields = ['lease', 'user', 'topic']
+        fields = ["lease", "user", "topic"]
 
 
 class ContactFilter(FilterSet):
     class Meta:
         model = Contact
-        fields = ['id', 'type', 'first_name', 'last_name', 'name', 'business_id', 'national_identification_number',
-                  'sap_customer_number', 'partner_code', 'is_lessor']
+        fields = [
+            "id",
+            "type",
+            "first_name",
+            "last_name",
+            "name",
+            "business_id",
+            "national_identification_number",
+            "sap_customer_number",
+            "partner_code",
+            "is_lessor",
+        ]
 
 
 class DecisionFilter(FilterSet):
@@ -87,34 +99,41 @@ class DecisionFilter(FilterSet):
 
     class Meta:
         model = Decision
-        fields = ['lease', 'reference_number', 'decision_maker', 'decision_date', 'type']
+        fields = [
+            "lease",
+            "reference_number",
+            "decision_maker",
+            "decision_date",
+            "type",
+        ]
 
 
 class DistrictFilter(FilterSet):
     class Meta:
         model = District
-        fields = ['municipality', 'identifier']
+        fields = ["municipality", "identifier"]
 
 
 class IndexFilter(FilterSet):
     class Meta:
         model = Index
-        fields = ['year', 'month']
+        fields = ["year", "month"]
 
 
 class InvoiceFilter(FilterSet):
     lease = filters.NumberFilter()
-    going_to_sap = filters.BooleanFilter(method='filter_going_to_sap', label=_('Going to SAP'))
+    going_to_sap = filters.BooleanFilter(
+        method="filter_going_to_sap", label=_("Going to SAP")
+    )
 
     class Meta:
         model = Invoice
-        fields = ['lease', 'state', 'type']
+        fields = ["lease", "state", "type"]
 
     def filter_going_to_sap(self, queryset, name, value):
         if value:
             return queryset.filter(
-                due_date__gte=datetime.date.today(),
-                sent_to_sap_at__isnull=True
+                due_date__gte=datetime.date.today(), sent_to_sap_at__isnull=True
             )
         return queryset
 
@@ -124,7 +143,7 @@ class InvoiceNoteFilter(FilterSet):
 
     class Meta:
         model = InvoiceNote
-        fields = ['lease']
+        fields = ["lease"]
 
 
 class InvoiceSetFilter(FilterSet):
@@ -132,7 +151,7 @@ class InvoiceSetFilter(FilterSet):
 
     class Meta:
         model = InvoiceSet
-        fields = ['lease']
+        fields = ["lease"]
 
 
 class InvoiceRowFilter(FilterSet):
@@ -140,10 +159,10 @@ class InvoiceRowFilter(FilterSet):
 
     class Meta:
         model = InvoiceRow
-        fields = ['invoice']
+        fields = ["invoice"]
 
 
 class LeaseFilter(FilterSet):
     class Meta:
         model = Lease
-        fields = ['type', 'municipality', 'district']
+        fields = ["type", "municipality", "district"]

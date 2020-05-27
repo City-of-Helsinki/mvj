@@ -5,7 +5,10 @@ from .receivers import create_permissions
 
 
 class FieldPermissionsConfig(AppConfig):
-    name = 'field_permissions'
+    name = "field_permissions"
 
     def ready(self):
-        post_migrate.connect(create_permissions, dispatch_uid="field_permissions.management.create_permissions")
+        post_migrate.connect(
+            create_permissions,
+            dispatch_uid="field_permissions.management.create_permissions",
+        )

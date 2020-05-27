@@ -7,20 +7,17 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('laske_export', '0001_initial'),
-        ('leasing', '0001_initial'),
-    ]
+    dependencies = [("laske_export", "0001_initial"), ("leasing", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='laskepaymentslog',
-            name='payments',
-            field=models.ManyToManyField(to='leasing.InvoicePayment'),
+            model_name="laskepaymentslog",
+            name="payments",
+            field=models.ManyToManyField(to="leasing.InvoicePayment"),
         ),
         migrations.AddField(
-            model_name='laskeexportlog',
-            name='invoices',
-            field=models.ManyToManyField(to='leasing.Invoice'),
+            model_name="laskeexportlog",
+            name="invoices",
+            field=models.ManyToManyField(to="leasing.Invoice"),
         ),
     ]

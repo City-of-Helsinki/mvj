@@ -8,12 +8,18 @@ from .utils import rows_to_dict_list
 
 
 class LeaseRelationsImporter(BaseImporter):
-    type_name = 'lease_relations'
+    type_name = "lease_relations"
 
     def __init__(self, stdout=None, stderr=None):
         import cx_Oracle
-        connection = cx_Oracle.connect(user='mvj', password='mvjpass', dsn='localhost:1521/ORCLPDB1', encoding="UTF-8",
-                                       nencoding="UTF-8")
+
+        connection = cx_Oracle.connect(
+            user="mvj",
+            password="mvjpass",
+            dsn="localhost:1521/ORCLPDB1",
+            encoding="UTF-8",
+            nencoding="UTF-8",
+        )
 
         self.cursor = connection.cursor()
         self.stdout = stdout
@@ -35,7 +41,8 @@ class LeaseRelationsImporter(BaseImporter):
 
         lease_identifier_to_id = {}
         with connection.cursor() as django_cursor:
-            django_cursor.execute("""
+            django_cursor.execute(
+                """
             SELECT l.id, lt.identifier leasetype, lm.identifier municipality, ld.identifier district, li.sequence
             FROM leasing_lease l
             JOIN leasing_leaseidentifier li ON l.identifier_id = li.id
@@ -43,10 +50,11 @@ class LeaseRelationsImporter(BaseImporter):
             JOIN leasing_municipality lm on li.municipality_id = lm.id
             JOIN leasing_district ld on li.district_id = ld.id
             ORDER BY lt.identifier, lm.identifier, ld.identifier, li.sequence
-            """)
+            """
+            )
 
             for row in django_cursor.fetchall():
-                identifier = '{}{}{:02}-{}'.format(row[1], row[2], int(row[3]), row[4])
+                identifier = "{}{}{:02}-{}".format(row[1], row[2], int(row[3]), row[4])
                 lease_identifier_to_id[identifier] = row[0]
 
         cursor = self.cursor
@@ -60,22 +68,26 @@ class LeaseRelationsImporter(BaseImporter):
                 ORDER BY ALKUOSA, JUOKSU
             ) t
             WHERE rn >= {}
-            """.format(self.offset)
+            """.format(
+            self.offset
+        )
 
         cursor.execute(query)
 
         vuokraus_rows = rows_to_dict_list(cursor)
         vuokraus_count = len(vuokraus_rows)
 
-        self.stdout.write('{} relations'.format(vuokraus_count))
+        self.stdout.write("{} relations".format(vuokraus_count))
 
         count = 0
         found = 0
         for lease_row in vuokraus_rows:
             count += 1
 
-            from_lease = "{}-{}".format(lease_row['LIITTYY_ALKUOSA'], lease_row['LIITTYY_JUOKSU'])
-            to_lease = "{}-{}".format(lease_row['ALKUOSA'], lease_row['JUOKSU'])
+            from_lease = "{}-{}".format(
+                lease_row["LIITTYY_ALKUOSA"], lease_row["LIITTYY_JUOKSU"]
+            )
+            to_lease = "{}-{}".format(lease_row["ALKUOSA"], lease_row["JUOKSU"])
 
             try:
                 from_lease_id = lease_identifier_to_id[from_lease]
@@ -89,7 +101,11 @@ class LeaseRelationsImporter(BaseImporter):
                 self.stderr.write('To lease "{}" not found.'.format(to_lease))
                 continue
 
-            self.stdout.write(' {} #{} -> {} #{}'.format(from_lease, from_lease_id, to_lease, to_lease_id))
+            self.stdout.write(
+                " {} #{} -> {} #{}".format(
+                    from_lease, from_lease_id, to_lease, to_lease_id
+                )
+            )
 
             found += 1
             (related_lease, related_lease_created) = RelatedLease.objects.get_or_create(
@@ -98,4 +114,4 @@ class LeaseRelationsImporter(BaseImporter):
                 type=LeaseRelationType.OTHER,
             )
 
-        self.stdout.write('{}/{} found'.format(found, count))
+        self.stdout.write("{}/{} found".format(found, count))

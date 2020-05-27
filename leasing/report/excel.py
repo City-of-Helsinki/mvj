@@ -4,10 +4,10 @@ from xlsxwriter.utility import xl_range, xl_rowcol_to_cell
 
 
 class FormatType(Enum):
-    BOLD = 'bold'
-    DATE = 'date'
-    MONEY = 'money'
-    BOLD_MONEY = 'bold_money'
+    BOLD = "bold"
+    DATE = "date"
+    MONEY = "money"
+    BOLD_MONEY = "bold_money"
 
 
 class ExcelRow:
@@ -46,7 +46,7 @@ class PreviousRowsSumCell(ExcelCell):
         self.count = count
 
     def get_value(self):
-        return '=SUM({}:{})'.format(
+        return "=SUM({}:{})".format(
             xl_rowcol_to_cell(self.row - self.count, self.column),
             xl_rowcol_to_cell(self.row - 1, self.column),
         )
@@ -65,7 +65,16 @@ class SumCell(ExcelCell):
         self.target_ranges.append(range)
 
     def get_value(self):
-        return '=SUM({})'.format(','.join([xl_range(
-            i[0] + self.first_data_row_num, i[1],
-            i[2] + self.first_data_row_num, i[3]
-        ) for i in self.target_ranges]))
+        return "=SUM({})".format(
+            ",".join(
+                [
+                    xl_range(
+                        i[0] + self.first_data_row_num,
+                        i[1],
+                        i[2] + self.first_data_row_num,
+                        i[3],
+                    )
+                    for i in self.target_ranges
+                ]
+            )
+        )

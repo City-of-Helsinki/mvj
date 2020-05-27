@@ -8,13 +8,13 @@ from ...models import JobRun
 
 
 class Command(BaseCommand):
-    help = 'Job Run Executor'
+    help = "Job Run Executor"
 
     @classmethod
     def add_arguments(cls, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument('job_run_id', type=int)
+        parser.add_argument("job_run_id", type=int)
 
     def handle(self, *args: Any, **options: Any) -> None:
-        job_run_id = options.get('job_run_id')
+        job_run_id = options.get("job_run_id")
         job_run = JobRun.objects.get(pk=job_run_id)  # type: ignore
         execute_job_run(job_run)

@@ -75,11 +75,11 @@ class ReportBase:
     def get_output_fields_metadata(cls):
         metadata = {}
         for field_name, output_field in cls.output_fields.items():
-            metadata[field_name] = {k: v for k, v in output_field.items() if k not in [
-                'source',
-                'width',
-                'serializer_field',
-            ]}
+            metadata[field_name] = {
+                k: v
+                for k, v in output_field.items()
+                if k not in ["source", "width", "serializer_field"]
+            }
 
         return metadata
 
@@ -95,18 +95,20 @@ class ReportBase:
         input_form = self.get_form(request.query_params)
 
         if not input_form.is_valid():
-            raise ValidationError({'detail': input_form.errors})
+            raise ValidationError({"detail": input_form.errors})
 
         return input_form.cleaned_data
 
     def serialize_data(self, report_data):
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(report_data, output_fields=self.output_fields, many=True)
+        serializer = serializer_class(
+            report_data, output_fields=self.output_fields, many=True
+        )
 
         return serializer.data
 
     def get_response(self, request):
-        codename = 'leasing.can_generate_report_{}'.format(self.slug)
+        codename = "leasing.can_generate_report_{}".format(self.slug)
         if not request.user.has_perm(codename):
             raise PermissionDenied()
 
@@ -119,17 +121,26 @@ class ReportBase:
         return ReportOutputSerializer
 
     def get_filename(self, format):
-        return '{}_{}.{}'.format(timezone.localtime(timezone.now()).strftime('%Y-%m-%d_%H-%M'), self.slug, format)
+        return "{}_{}.{}".format(
+            timezone.localtime(timezone.now()).strftime("%Y-%m-%d_%H-%M"),
+            self.slug,
+            format,
+        )
 
     def get_output_field_attr(self, field_name, attr_name, default=None):
         """Returns the value of [`field_name`][`attr_name`] attribute from output_fields"""
         value = default
-        if field_name in self.output_fields and attr_name in self.output_fields[field_name]:
+        if (
+            field_name in self.output_fields
+            and attr_name in self.output_fields[field_name]
+        ):
             value = self.output_fields[field_name][attr_name]
 
         return value
 
-    def data_as_excel(self, data):  # NOQA C901 'ReportBase.data_as_excel' is too complex
+    def data_as_excel(  # NOQA C901 'ReportBase.data_as_excel' is too complex
+        self, data
+    ):
         report = self
 
         output = BytesIO()
@@ -137,10 +148,12 @@ class ReportBase:
         worksheet = workbook.add_worksheet()
 
         formats = {
-            FormatType.BOLD: workbook.add_format({'bold': True}),
-            FormatType.DATE: workbook.add_format({'num_format': 'dd.mm.yyyy'}),
-            FormatType.MONEY: workbook.add_format({'num_format': '#,##0.00 €'}),
-            FormatType.BOLD_MONEY: workbook.add_format({'bold': True, 'num_format': '#,##0.00 €'}),
+            FormatType.BOLD: workbook.add_format({"bold": True}),
+            FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
+            FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
+            FormatType.BOLD_MONEY: workbook.add_format(
+                {"bold": True, "num_format": "#,##0.00 €"}
+            ),
         }
 
         row_num = 0
@@ -155,13 +168,15 @@ class ReportBase:
         # On the fourth row forwards print the input fields and their values
         row_num += 2
         for input_field_name, input_field in report.form.fields.items():
-            worksheet.write(row_num, 0, '{}:'.format(input_field.label), formats[FormatType.BOLD])
+            worksheet.write(
+                row_num, 0, "{}:".format(input_field.label), formats[FormatType.BOLD]
+            )
             field_format = None
-            if input_field.__class__.__name__ == 'DateField':
+            if input_field.__class__.__name__ == "DateField":
                 field_format = formats[FormatType.DATE]
 
             input_value = report.form.cleaned_data[input_field_name]
-            if hasattr(input_field, 'choices'):
+            if hasattr(input_field, "choices"):
                 for choice_value, choice_label in input_field.choices:
                     if choice_value == input_value:
                         input_value = str(choice_label)
@@ -172,30 +187,42 @@ class ReportBase:
 
             if isinstance(input_value, bool):
                 if input_value:
-                    input_value = ugettext('Yes')
+                    input_value = ugettext("Yes")
                 else:
-                    input_value = ugettext('No')
+                    input_value = ugettext("No")
 
             worksheet.write(row_num, 1, input_value, field_format)
             row_num += 1
 
         # Set column widths
         for index, field_name in enumerate(report.output_fields.keys()):
-            worksheet.set_column(index, index, report.get_output_field_attr(field_name, 'width', default=10))
+            worksheet.set_column(
+                index,
+                index,
+                report.get_output_field_attr(field_name, "width", default=10),
+            )
 
         # Labels from the first non-ExcelRow row
         if report.automatic_excel_column_labels:
             row_num += 1
 
             lookup_row_num = 0
-            while lookup_row_num < len(data) and lookup_row_num in data and isinstance(data[lookup_row_num], ExcelRow):
+            while (
+                lookup_row_num < len(data)
+                and lookup_row_num in data
+                and isinstance(data[lookup_row_num], ExcelRow)
+            ):
                 lookup_row_num += 1
 
             if len(data) > lookup_row_num:
                 for index, field_name in enumerate(data[lookup_row_num].keys()):
-                    field_label = report.get_output_field_attr(field_name, 'label', default=field_name)
+                    field_label = report.get_output_field_attr(
+                        field_name, "label", default=field_name
+                    )
 
-                    worksheet.write(row_num, index, str(field_label), formats[FormatType.BOLD])
+                    worksheet.write(
+                        row_num, index, str(field_label), formats[FormatType.BOLD]
+                    )
 
         # The data itself
         row_num += 1
@@ -206,20 +233,24 @@ class ReportBase:
                 for field_name, field_value in row.items():
                     field_format = None
 
-                    field_format_name = report.get_output_field_attr(field_name, 'format')
+                    field_format_name = report.get_output_field_attr(
+                        field_name, "format"
+                    )
 
-                    if field_format_name == 'date':
+                    if field_format_name == "date":
                         field_format = formats[FormatType.DATE]
-                    elif field_format_name == 'money':
+                    elif field_format_name == "money":
                         if field_value != 0:
                             field_format = formats[FormatType.MONEY]
-                    elif field_format_name == 'boolean':
+                    elif field_format_name == "boolean":
                         if field_value:
-                            field_value = str(_('Yes'))
+                            field_value = str(_("Yes"))
                         else:
-                            field_value = str(_('No'))
+                            field_value = str(_("No"))
 
-                    field_serializer_field = report.get_output_field_attr(field_name, 'serializer_field')
+                    field_serializer_field = report.get_output_field_attr(
+                        field_name, "serializer_field"
+                    )
                     if isinstance(field_serializer_field, ChoiceField):
                         field_value = str(field_serializer_field.choices[field_value])
 
@@ -229,8 +260,14 @@ class ReportBase:
                 for cell in row.cells:
                     cell.set_row(row_num)
                     cell.set_first_data_row_num(first_data_row_num)
-                    worksheet.write(row_num, cell.column, cell.get_value(),
-                                    formats[cell.get_format_type()] if cell.get_format_type() in formats else None)
+                    worksheet.write(
+                        row_num,
+                        cell.column,
+                        cell.get_value(),
+                        formats[cell.get_format_type()]
+                        if cell.get_format_type() in formats
+                        else None,
+                    )
 
             row_num += 1
 
@@ -244,11 +281,7 @@ class AsyncReportBase(ReportBase):
 
     @classmethod
     def get_output_fields_metadata(cls):
-        return {
-            'message': {
-                'label': _('Message')
-            }
-        }
+        return {"message": {"label": _("Message")}}
 
     def generate_report(self, user, input_data):
         report_data = self.get_data(input_data)
@@ -256,24 +289,21 @@ class AsyncReportBase(ReportBase):
         return self.data_as_excel(report_data)
 
     def send_report(self, task):
-        user = task.kwargs['user']
+        user = task.kwargs["user"]
 
-        message = EmailMessage(
-            from_email=settings.MVJ_EMAIL_FROM,
-            to=[user.email],
-        )
+        message = EmailMessage(from_email=settings.MVJ_EMAIL_FROM, to=[user.email])
 
         if task.success:
             message.subject = _('Report "{}" successfully generated').format(self.name)
-            message.body = _('Generated report attached')
+            message.body = _("Generated report attached")
             message.attach(
-                self.get_filename('xlsx'),
+                self.get_filename("xlsx"),
                 task.result,
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
         else:
             message.subject = _('Failed to generate report "{}"').format(self.name)
-            message.body = _('Please try again')
+            message.body = _("Please try again")
 
         message.send()
 
@@ -286,9 +316,9 @@ class AsyncReportBase(ReportBase):
             user=user,
             input_data=input_data,
             hook=self.send_report,
-            timeout=self.async_task_timeout
+            timeout=self.async_task_timeout,
         )
 
-        return Response({
-            'message': _('Results will be sent by email to {}').format(user.email),
-        })
+        return Response(
+            {"message": _("Results will be sent by email to {}").format(user.email)}
+        )

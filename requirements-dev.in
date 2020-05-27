@@ -6,6 +6,7 @@ django-stubs
 # or mypy >= 0.730. When It supports, this can be uncommented and the
 # "type: ignore" can be removed from couple of files in the batchrun.
 #djangorestframework-stubs
+black
 flake8
 flake8-print
 ipython

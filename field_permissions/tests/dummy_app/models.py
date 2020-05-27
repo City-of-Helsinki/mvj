@@ -13,7 +13,9 @@ class Dummy(models.Model):
     field1 = models.CharField(max_length=255)
     field2 = models.BooleanField(default=False)
     field3 = models.BooleanField(default=False)
-    second_sub = models.ForeignKey(DummySecondSub, verbose_name="Second sub", null=True, on_delete=models.PROTECT)
+    second_sub = models.ForeignKey(
+        DummySecondSub, verbose_name="Second sub", null=True, on_delete=models.PROTECT
+    )
 
     class Meta:
         verbose_name = "Dummy"

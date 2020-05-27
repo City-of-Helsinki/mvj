@@ -29,7 +29,7 @@ def get_date_from_value(date_value):
     if isinstance(date_value, datetime.date):
         return date_value
 
-    date = re.search(r'\d+\.\d+\.\d+', date_value, re.IGNORECASE)
+    date = re.search(r"\d+\.\d+\.\d+", date_value, re.IGNORECASE)
     if date:
         return parse(date.group(0), parserinfo=parserinfo(dayfirst=True)).date()
 
@@ -37,11 +37,14 @@ def get_date_from_value(date_value):
 
 
 class Command(BaseCommand):
-    help = 'Import collaterals from excel (xlsx) file'
+    help = "Import collaterals from excel (xlsx) file"
 
     def add_arguments(self, parser):
-        parser.add_argument('excel_file', type=argparse.FileType('rb'),
-                            help='Excel (xlsx) file with the collaterals')
+        parser.add_argument(
+            "excel_file",
+            type=argparse.FileType("rb"),
+            help="Excel (xlsx) file with the collaterals",
+        )
 
     def handle(self, *args, **options):  # noqa
         from auditlog.registry import auditlog
@@ -49,12 +52,14 @@ class Command(BaseCommand):
         # Unregister models from auditlog
         auditlog.unregister(Collateral)
 
-        wb = load_workbook(filename=options['excel_file'])
+        wb = load_workbook(filename=options["excel_file"])
         sheet = wb.active
 
         max_row = sheet.max_row
         for row_num in range(2, max_row):
-            lease_identifier_cell = sheet.cell(row=row_num, column=LEASE_IDENTIFIER_COLUMN)
+            lease_identifier_cell = sheet.cell(
+                row=row_num, column=LEASE_IDENTIFIER_COLUMN
+            )
             amount_cell = sheet.cell(row=row_num, column=AMOUNT_COLUMN)
             paid_date_cell = sheet.cell(row=row_num, column=PAID_DATE_COLUMN)
             returned_date_cell = sheet.cell(row=row_num, column=RETURNED_DATE_COLUMN)
@@ -73,13 +78,15 @@ class Command(BaseCommand):
 
             lease_identifier_cell_value = lease_identifier_cell.value.strip()
             # Fix typos in excel
-            if lease_identifier_cell_value.startswith('S120-'):
-                lease_identifier_cell_value = 'S0' + lease_identifier_cell_value[1:]
+            if lease_identifier_cell_value.startswith("S120-"):
+                lease_identifier_cell_value = "S0" + lease_identifier_cell_value[1:]
 
-            if lease_identifier_cell_value[0:2] == 'So':
-                lease_identifier_cell_value = 'S0' + lease_identifier_cell_value[2:]
+            if lease_identifier_cell_value[0:2] == "So":
+                lease_identifier_cell_value = "S0" + lease_identifier_cell_value[2:]
 
-            lease_identifiers = re.findall(r'[A-Z]\d{4}-\d+', lease_identifier_cell_value, re.IGNORECASE)
+            lease_identifiers = re.findall(
+                r"[A-Z]\d{4}-\d+", lease_identifier_cell_value, re.IGNORECASE
+            )
             if not lease_identifiers:
                 continue
 
@@ -97,13 +104,19 @@ class Command(BaseCommand):
                     self.stderr.write('Lease "{}" not found'.format(lease_identifier))
                     continue
 
-                lease_contract = lease.contracts.filter(type=1).first()  # 1 = Vuokrasopimus
+                lease_contract = lease.contracts.filter(
+                    type=1
+                ).first()  # 1 = Vuokrasopimus
                 if not lease_contract:
-                    self.stdout.write('Lease "{}" no lease contract found. Creating.'.format(lease_identifier))
+                    self.stdout.write(
+                        'Lease "{}" no lease contract found. Creating.'.format(
+                            lease_identifier
+                        )
+                    )
                     lease_contract = Contract.objects.create(
                         lease=lease,
                         type_id=1,
-                        signing_note='Vakuuksien tuontia varten luotu tyhjä sopimus'
+                        signing_note="Vakuuksien tuontia varten luotu tyhjä sopimus",
                     )
 
                 (collateral, collateral_created) = Collateral.objects.get_or_create(
@@ -112,5 +125,5 @@ class Command(BaseCommand):
                     total_amount=amount,
                     paid_date=paid_date,
                     returned_date=returned_date,
-                    note=note_cell.value
+                    note=note_cell.value,
                 )

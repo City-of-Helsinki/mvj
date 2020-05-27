@@ -1,1 +1,1 @@
-default_app_config = 'leasing.apps.LeasingConfig'
+default_app_config = "leasing.apps.LeasingConfig"

@@ -14,9 +14,7 @@ from leasing.serializers.email import SendEmailSerializer
 class SendEmailView(APIView):
     permission_classes = (PerMethodPermission,)
     metadata_class = FieldsMetadata
-    perms_map = {
-        'POST': ['leasing.view_lease'],
-    }
+    perms_map = {"POST": ["leasing.view_lease"]}
 
     def get_view_name(self):
         return _("Send email")
@@ -29,10 +27,10 @@ class SendEmailView(APIView):
         serializer.is_valid(raise_exception=True)
 
         email_log = EmailLog.objects.create(
-            type=serializer.validated_data['type'],
+            type=serializer.validated_data["type"],
             user=request.user,
-            text=serializer.validated_data['text'],
-            content_object=serializer.validated_data['lease'],
+            text=serializer.validated_data["text"],
+            content_object=serializer.validated_data["lease"],
         )
 
         if request.user.email:
@@ -40,14 +38,16 @@ class SendEmailView(APIView):
         else:
             from_email = settings.MVJ_EMAIL_FROM
 
-        for recipient in serializer.validated_data['recipients']:
+        for recipient in serializer.validated_data["recipients"]:
             if not recipient.email:
                 continue
 
             send_mail(
-                _('MVJ lease {} {}').format(serializer.validated_data['lease'].identifier,
-                                            serializer.validated_data['type']),
-                serializer.validated_data['text'],
+                _("MVJ lease {} {}").format(
+                    serializer.validated_data["lease"].identifier,
+                    serializer.validated_data["type"],
+                ),
+                serializer.validated_data["text"],
                 from_email,
                 [recipient.email],
                 fail_silently=False,
@@ -55,9 +55,7 @@ class SendEmailView(APIView):
 
             email_log.recipients.add(recipient)
 
-        result = {
-            "sent": True,
-        }
+        result = {"sent": True}
 
         return Response(result, status=status.HTTP_200_OK)
 
@@ -65,6 +63,8 @@ class SendEmailView(APIView):
         if self.metadata_class is None:
             return self.http_method_not_allowed(request, *args, **kwargs)
 
-        data = self.metadata_class().determine_metadata(request, self, serializer=SendEmailSerializer())
+        data = self.metadata_class().determine_metadata(
+            request, self, serializer=SendEmailSerializer()
+        )
 
         return Response(data, status=status.HTTP_200_OK)

@@ -9,46 +9,49 @@ from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import DecisionFilter
 from leasing.models import Decision, Lease
 from leasing.permissions import PerMethodPermission
-from leasing.serializers.decision import DecisionCreateUpdateSerializer, DecisionSerializer
+from leasing.serializers.decision import (
+    DecisionCreateUpdateSerializer,
+    DecisionSerializer,
+)
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
-class DecisionViewSet(AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
+class DecisionViewSet(
+    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
     filterset_class = DecisionFilter
 
     def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
+        if self.action in ("create", "update", "partial_update"):
             return DecisionCreateUpdateSerializer
 
         return DecisionSerializer
 
 
 def get_decision_from_query_params(query_params):
-    if not query_params.get('decision'):
-        raise APIException('decision parameter is mandatory')
+    if not query_params.get("decision"):
+        raise APIException("decision parameter is mandatory")
 
     try:
-        return Decision.objects.get(pk=int(query_params.get('decision')))
+        return Decision.objects.get(pk=int(query_params.get("decision")))
     except Decision.DoesNotExist:
-        raise APIException('Decision does not exist')
+        raise APIException("Decision does not exist")
     except ValueError:
-        raise APIException('Invalid decision id')
+        raise APIException("Invalid decision id")
 
 
 class DecisionCopyToLeasesView(APIView):
     permission_classes = (PerMethodPermission,)
-    perms_map = {
-        'POST': ['leasing.add_decision'],
-    }
+    perms_map = {"POST": ["leasing.add_decision"]}
 
     def get_view_name(self):
         return _("Copy decision to leases")
 
     def get_view_description(self, html=False):
-        return _('Duplicates chosen decision to chosen leases')
+        return _("Duplicates chosen decision to chosen leases")
 
     def post(self, request, format=None):
         """
@@ -59,10 +62,12 @@ class DecisionCopyToLeasesView(APIView):
         """
         decision = get_decision_from_query_params(request.query_params)
 
-        target_leases = request.query_params.getlist('leases')
+        target_leases = request.query_params.getlist("leases")
 
         if not target_leases:
-            raise APIException('Please provide target lease ids with "leases" parameter')
+            raise APIException(
+                'Please provide target lease ids with "leases" parameter'
+            )
 
         for target_lease_id in target_leases:
             try:
@@ -78,11 +83,11 @@ class DecisionCopyToLeasesView(APIView):
             copied_decision.lease = lease
             copied_decision.save()
 
-            if request.query_params.get('copy_conditions'):
+            if request.query_params.get("copy_conditions"):
                 for condition in decision.conditions.all():
                     copied_condition = condition
                     copied_condition.pk = None
                     copied_condition.decision = copied_decision
                     copied_condition.save()
 
-        return Response({'success': True})
+        return Response({"success": True})

@@ -16,12 +16,16 @@ class EmailLogSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer
 
     class Meta:
         model = EmailLog
-        exclude = ('object_id', 'content_type')
+        exclude = ("object_id", "content_type")
 
 
 class SendEmailSerializer(EnumSupportSerializerMixin, serializers.Serializer):
     type = EnumField(enum=EmailLogType, required=True)
     recipients = PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
     text = serializers.CharField()
-    lease = InstanceDictPrimaryKeyRelatedField(instance_class=Lease, queryset=Lease.objects.all(),
-                                               related_serializer=LeaseSuccinctSerializer, required=False)
+    lease = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Lease,
+        queryset=Lease.objects.all(),
+        related_serializer=LeaseSuccinctSerializer,
+        required=False,
+    )

@@ -21,7 +21,7 @@ class NameModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -29,9 +29,13 @@ class NameModel(models.Model):
 
 class ArchivableModel(models.Model):
     # In Finnish: Arkistoitu
-    archived_at = models.DateTimeField(verbose_name=_("Time archived"), null=True, blank=True)
+    archived_at = models.DateTimeField(
+        verbose_name=_("Time archived"), null=True, blank=True
+    )
     # In Finnish: Huomautus (arkistointi)
-    archived_note = models.TextField(verbose_name=_("Archived note"), null=True, blank=True)
+    archived_note = models.TextField(
+        verbose_name=_("Archived note"), null=True, blank=True
+    )
 
     def is_archived(self):
         return bool(self.archived_at)

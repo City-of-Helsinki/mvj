@@ -20,14 +20,19 @@ AD_GROUP_MAP = {
 
 
 class Command(BaseCommand):
-    help = 'Sets predefined AD group mappings for the predefined MVJ groups'
+    help = "Sets predefined AD group mappings for the predefined MVJ groups"
 
     def handle(self, *args, **options):
-        ad_groups = {ad_group.name: ad_group for ad_group in ADGroup.objects.filter(name__in=AD_GROUP_MAP.keys())}
+        ad_groups = {
+            ad_group.name: ad_group
+            for ad_group in ADGroup.objects.filter(name__in=AD_GROUP_MAP.keys())
+        }
 
         for ad_group_name, group_ids in AD_GROUP_MAP.items():
             if ad_group_name not in ad_groups or not group_ids:
                 continue
 
             for group_id in group_ids:
-                ADGroupMapping.objects.get_or_create(ad_group_id=ad_groups[ad_group_name].id, group_id=group_id)
+                ADGroupMapping.objects.get_or_create(
+                    ad_group_id=ad_groups[ad_group_name].id, group_id=group_id
+                )

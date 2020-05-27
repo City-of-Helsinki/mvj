@@ -15,7 +15,9 @@ def get_lease_id(obj):
 
 
 def get_area(obj):
-    return ', '.join([la.identifier for la in obj.lease_areas.all() if la.archived_at is None])
+    return ", ".join(
+        [la.identifier for la in obj.lease_areas.all() if la.archived_at is None]
+    )
 
 
 def get_address(obj):
@@ -26,7 +28,7 @@ def get_address(obj):
 
         addresses.update([la.address for la in lease_area.addresses.all()])
 
-    return ' / '.join(addresses)
+    return " / ".join(addresses)
 
 
 def get_reservation_procedure(obj):
@@ -34,79 +36,78 @@ def get_reservation_procedure(obj):
 
 
 class ReservationsReport(ReportBase):
-    name = _('Reservations')
-    description = _('Show reservations')
-    slug = 'reservations'
+    name = _("Reservations")
+    description = _("Show reservations")
+    slug = "reservations"
     input_fields = {
-        'start_date_start': forms.DateField(label=_('Start date start'), required=False),
-        'start_date_end': forms.DateField(label=_('Start date end'), required=False),
-        'end_date_start': forms.DateField(label=_('End date start'), required=False),
-        'end_date_end': forms.DateField(label=_('End date end'), required=False),
-        'exclude_leases': forms.BooleanField(label=_('Exclude ones that are related to a lease'),
-                                             initial=False, required=False),
-        'exclude_sold': forms.NullBooleanField(label=_('Exclude sold'), initial=False, required=False),
+        "start_date_start": forms.DateField(
+            label=_("Start date start"), required=False
+        ),
+        "start_date_end": forms.DateField(label=_("Start date end"), required=False),
+        "end_date_start": forms.DateField(label=_("End date start"), required=False),
+        "end_date_end": forms.DateField(label=_("End date end"), required=False),
+        "exclude_leases": forms.BooleanField(
+            label=_("Exclude ones that are related to a lease"),
+            initial=False,
+            required=False,
+        ),
+        "exclude_sold": forms.NullBooleanField(
+            label=_("Exclude sold"), initial=False, required=False
+        ),
     }
     output_fields = {
-        'reservation_id': {
-            'source': get_lease_id,
-            'label': _('Reservation id'),
+        "reservation_id": {"source": get_lease_id, "label": _("Reservation id")},
+        "area": {"source": get_area, "label": _("Lease area"), "width": 30},
+        "address": {"source": get_address, "label": _("Address"), "width": 50},
+        "reservee_name": {"label": _("Reservee name"), "width": 50},
+        "reservation_procedure": {
+            "source": get_reservation_procedure,
+            "label": _("Reservation procedure"),
+            "width": 50,
         },
-        'area': {
-            'source': get_area,
-            'label': _('Lease area'),
-            'width': 30,
-        },
-        'address': {
-            'source': get_address,
-            'label': _('Address'),
-            'width': 50,
-        },
-        'reservee_name': {
-            'label': _('Reservee name'),
-            'width': 50,
-        },
-        'reservation_procedure': {
-            'source': get_reservation_procedure,
-            'label': _('Reservation procedure'),
-            'width': 50,
-        },
-        'start_date': {
-            'label': _('Start date'),
-            'format': 'date',
-        },
-        'end_date': {
-            'label': _('End date'),
-            'format': 'date',
-        },
+        "start_date": {"label": _("Start date"), "format": "date"},
+        "end_date": {"label": _("End date"), "format": "date"},
     }
 
-    def get_data(self, input_data):  # NOQA C901 'ReservationsReport.get_data' is too complex
+    def get_data(self, input_data):  # NOQA C901
         lease_ids = []
 
-        if input_data['exclude_leases'] is True:
+        if input_data["exclude_leases"] is True:
             dates_where_parts = []
             # The date where clause is generated here by hand including user input,
             # but it shouldn't be a problem because the input is validated
             # to be a valid date.
-            if input_data['start_date_start']:
-                dates_where_parts.append("(l.start_date IS NULL OR l.start_date >= '{}'::date)".format(
-                    input_data['start_date_start']))
+            if input_data["start_date_start"]:
+                dates_where_parts.append(
+                    "(l.start_date IS NULL OR l.start_date >= '{}'::date)".format(
+                        input_data["start_date_start"]
+                    )
+                )
 
-            if input_data['start_date_end']:
-                dates_where_parts.append("(l.start_date IS NULL OR l.start_date <= '{}'::date)".format(
-                    input_data['start_date_end']))
+            if input_data["start_date_end"]:
+                dates_where_parts.append(
+                    "(l.start_date IS NULL OR l.start_date <= '{}'::date)".format(
+                        input_data["start_date_end"]
+                    )
+                )
 
-            if input_data['end_date_start']:
-                dates_where_parts.append("(l.end_date IS NULL OR l.end_date >= '{}'::date)".format(
-                    input_data['end_date_start']))
+            if input_data["end_date_start"]:
+                dates_where_parts.append(
+                    "(l.end_date IS NULL OR l.end_date >= '{}'::date)".format(
+                        input_data["end_date_start"]
+                    )
+                )
 
-            if input_data['end_date_end']:
-                dates_where_parts.append("(l.end_date IS NULL OR l.end_date <= '{}'::date)".format(
-                    input_data['end_date_end']))
+            if input_data["end_date_end"]:
+                dates_where_parts.append(
+                    "(l.end_date IS NULL OR l.end_date <= '{}'::date)".format(
+                        input_data["end_date_end"]
+                    )
+                )
 
-            dates_where = ''
+            dates_where = ""
             if dates_where_parts:
-                dates_where = ' AND ' + ' AND '.join(dates_where_parts)
+                dates_where = " AND " + " AND ".join(dates_where_parts)
 
             with connection.cursor() as cursor:
                 # This query creates a Common Table Expression (CTE) which
@@ -115,7 +116,8 @@ class ReservationsReport(ReportBase):
                 #
                 # That is because reservations can be chained, but we need
                 # to find if there eventually is a lease in the end of the chain.
-                cursor.execute('''
+                cursor.execute(
+                    """
                     WITH RECURSIVE relations(from_lease, last_to_lease) AS (
                        SELECT
                           rl.from_lease_id,
@@ -143,63 +145,66 @@ class ReservationsReport(ReportBase):
                     {conveyance_where}
                     {dates_where}
                     AND (l2.id IS NULL OR l2.state = 'reservation');
-                '''.format(
-                    conveyance_where='AND l.conveyance_number IS NULL' if input_data['exclude_sold'] else '',
-                    dates_where=dates_where
-                ))
+                """.format(
+                        conveyance_where="AND l.conveyance_number IS NULL"
+                        if input_data["exclude_sold"]
+                        else "",
+                        dates_where=dates_where,
+                    )
+                )
 
                 # Flatten list of tuples to a list
                 lease_ids.extend(itertools.chain.from_iterable(cursor))
         else:
             qs = Lease.objects.filter(state=LeaseState.RESERVATION)
 
-            if input_data['start_date_start']:
+            if input_data["start_date_start"]:
                 qs = qs.filter(
-                    Q(start_date__isnull=True) |
-                    Q(start_date__gte=input_data['start_date_start'])
+                    Q(start_date__isnull=True)
+                    | Q(start_date__gte=input_data["start_date_start"])
                 )
 
-            if input_data['start_date_end']:
+            if input_data["start_date_end"]:
                 qs = qs.filter(
-                    Q(start_date__isnull=True) |
-                    Q(start_date__lte=input_data['start_date_end'])
+                    Q(start_date__isnull=True)
+                    | Q(start_date__lte=input_data["start_date_end"])
                 )
 
-            if input_data['end_date_start']:
+            if input_data["end_date_start"]:
                 qs = qs.filter(
-                    Q(end_date__isnull=True) |
-                    Q(end_date__gte=input_data['end_date_start'])
+                    Q(end_date__isnull=True)
+                    | Q(end_date__gte=input_data["end_date_start"])
                 )
 
-            if input_data['end_date_end']:
+            if input_data["end_date_end"]:
                 qs = qs.filter(
-                    Q(end_date__isnull=True) |
-                    Q(end_date__lte=input_data['end_date_end'])
+                    Q(end_date__isnull=True)
+                    | Q(end_date__lte=input_data["end_date_end"])
                 )
 
-            if input_data['exclude_sold'] is True:
+            if input_data["exclude_sold"] is True:
                 qs = qs.filter(conveyance_number__isnull=True)
 
-            lease_ids = qs.values_list('id', flat=True)
+            lease_ids = qs.values_list("id", flat=True)
 
         # Gather data about the leases
-        leases = Lease.objects.filter(
-            id__in=lease_ids,
-        ).select_related(
-            'identifier',
-            'identifier__type',
-            'identifier__district',
-            'identifier__municipality',
-            'reservation_procedure'
-        ).prefetch_related(
-            'tenants',
-            'tenants__tenantcontact_set',
-            'tenants__tenantcontact_set__contact',
-            'lease_areas',
-            'lease_areas__addresses'
-        ).order_by(
-            'start_date',
-            'end_date'
+        leases = (
+            Lease.objects.filter(id__in=lease_ids)
+            .select_related(
+                "identifier",
+                "identifier__type",
+                "identifier__district",
+                "identifier__municipality",
+                "reservation_procedure",
+            )
+            .prefetch_related(
+                "tenants",
+                "tenants__tenantcontact_set",
+                "tenants__tenantcontact_set__contact",
+                "lease_areas",
+                "lease_areas__addresses",
+            )
+            .order_by("start_date", "end_date")
         )
 
         for lease in leases:
@@ -213,6 +218,6 @@ class ReservationsReport(ReportBase):
 
                     contacts.add(tc.contact)
 
-            lease.reservee_name = ', '.join([c.get_name() for c in contacts])
+            lease.reservee_name = ", ".join([c.get_name() for c in contacts])
 
         return leases

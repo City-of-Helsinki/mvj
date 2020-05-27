@@ -39,13 +39,9 @@ ENABLED_REPORTS = [
 
 
 class ReportViewSet(ViewSet):
-    permission_classes = (IsAuthenticated, )
-    renderer_classes = [
-        JSONRenderer,
-        BrowsableAPIRendererWithoutForms,
-        XLSXRenderer
-    ]
-    lookup_field = 'report_type'
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [JSONRenderer, BrowsableAPIRendererWithoutForms, XLSXRenderer]
+    lookup_field = "report_type"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -63,9 +59,13 @@ class ReportViewSet(ViewSet):
 
         for report_class in ENABLED_REPORTS:
             reports[report_class.slug] = {
-                'name': report_class.name,
-                'description': report_class.description,
-                'url': reverse('report-detail', request=request, kwargs={'report_type': report_class.slug}),
+                "name": report_class.name,
+                "description": report_class.description,
+                "url": reverse(
+                    "report-detail",
+                    request=request,
+                    kwargs={"report_type": report_class.slug},
+                ),
             }
 
         return Response(reports)
@@ -74,7 +74,7 @@ class ReportViewSet(ViewSet):
     # the ".format" suffix.
     def retrieve(self, request, report_type=None, format=None):
         if report_type not in self.report_classes_by_slug.keys():
-            raise NotFound(_('Report type not found'))
+            raise NotFound(_("Report type not found"))
 
         self.report = self.report_classes_by_slug[report_type]()
 
@@ -83,41 +83,43 @@ class ReportViewSet(ViewSet):
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
 
-        if isinstance(response, Response) and response.accepted_renderer.format == "xlsx" and self.report:
+        if (
+            isinstance(response, Response)
+            and response.accepted_renderer.format == "xlsx"
+            and self.report
+        ):
             response["content-disposition"] = "attachment; filename={}".format(
-                self.report.get_filename(response.accepted_renderer.format))
+                self.report.get_filename(response.accepted_renderer.format)
+            )
 
         return response
 
     def options(self, request, *args, **kwargs):
         metadata_class = self.metadata_class()
         metadata = metadata_class.determine_metadata(request, self)
-        metadata['actions'] = {
-            'GET': {
-            }
-        }
+        metadata["actions"] = {"GET": {}}
 
-        if 'report_type' in kwargs and kwargs['report_type'] in self.report_classes_by_slug:
-            report_class = self.report_classes_by_slug[kwargs['report_type']]
-            metadata['name'] = report_class.name
-            metadata['description'] = report_class.description
+        if (
+            "report_type" in kwargs
+            and kwargs["report_type"] in self.report_classes_by_slug
+        ):
+            report_class = self.report_classes_by_slug[kwargs["report_type"]]
+            metadata["name"] = report_class.name
+            metadata["description"] = report_class.description
 
             for field_name, field in report_class.input_fields.items():
-                metadata['actions']['GET'][field_name] = {
+                metadata["actions"]["GET"][field_name] = {
                     "type": field.__class__.__name__,
                     "required": field.required,
                     "read_only": False,
                     "label": field.label,
                 }
 
-                if hasattr(field, 'choices'):
-                    metadata['actions']['GET'][field_name]["choices"] = [
-                        {
-                            "value": c[0],
-                            "display_name": c[1],
-                        } for c in field.choices
+                if hasattr(field, "choices"):
+                    metadata["actions"]["GET"][field_name]["choices"] = [
+                        {"value": c[0], "display_name": c[1]} for c in field.choices
                     ]
 
-            metadata['output_fields'] = report_class.get_output_fields_metadata()
+            metadata["output_fields"] = report_class.get_output_fields_metadata()
 
         return Response(metadata, status=status.HTTP_200_OK)

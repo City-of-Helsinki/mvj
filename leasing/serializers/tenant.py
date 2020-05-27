@@ -11,62 +11,106 @@ from .contact import ContactSerializer
 from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
-class TenantContactSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class TenantContactSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.IntegerField(required=False)
     contact = ContactSerializer()
 
     class Meta:
         model = TenantContact
-        fields = ('id', 'type', 'contact', 'start_date', 'end_date')
+        fields = ("id", "type", "contact", "start_date", "end_date")
 
 
-class TenantContactCreateUpdateSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin,
-                                          serializers.ModelSerializer):
+class TenantContactCreateUpdateSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.IntegerField(required=False)
-    contact = InstanceDictPrimaryKeyRelatedField(instance_class=Contact, queryset=Contact.objects.all(),
-                                                 related_serializer=ContactSerializer)
+    contact = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Contact,
+        queryset=Contact.objects.all(),
+        related_serializer=ContactSerializer,
+    )
 
     class Meta:
         model = TenantContact
-        fields = ('id', 'type', 'contact', 'start_date', 'end_date')
+        fields = ("id", "type", "contact", "start_date", "end_date")
 
 
-class TenantRentShareSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class TenantRentShareSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
     id = serializers.IntegerField(required=False)
     intended_use = RentIntendedUseSerializer()
 
     class Meta:
         model = TenantRentShare
-        fields = ('id', 'intended_use', 'share_numerator', 'share_denominator')
+        fields = ("id", "intended_use", "share_numerator", "share_denominator")
 
 
-class TenantRentShareCreateUpdateSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class TenantRentShareCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
     id = serializers.IntegerField(required=False)
-    intended_use = InstanceDictPrimaryKeyRelatedField(instance_class=RentIntendedUse,
-                                                      queryset=RentIntendedUse.objects.all(),
-                                                      related_serializer=RentIntendedUseSerializer)
+    intended_use = InstanceDictPrimaryKeyRelatedField(
+        instance_class=RentIntendedUse,
+        queryset=RentIntendedUse.objects.all(),
+        related_serializer=RentIntendedUseSerializer,
+    )
 
     class Meta:
         model = TenantRentShare
-        fields = ('id', 'intended_use', 'share_numerator', 'share_denominator')
+        fields = ("id", "intended_use", "share_numerator", "share_denominator")
 
 
-class TenantSerializer(EnumSupportSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class TenantSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.IntegerField(required=False)
-    tenantcontact_set = TenantContactSerializer(many=True, required=False, allow_null=True)
+    tenantcontact_set = TenantContactSerializer(
+        many=True, required=False, allow_null=True
+    )
     rent_shares = TenantRentShareSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Tenant
-        fields = ('id', 'share_numerator', 'share_denominator', 'reference', 'tenantcontact_set', 'rent_shares')
+        fields = (
+            "id",
+            "share_numerator",
+            "share_denominator",
+            "reference",
+            "tenantcontact_set",
+            "rent_shares",
+        )
 
 
-class TenantCreateUpdateSerializer(UpdateNestedMixin, EnumSupportSerializerMixin,
-                                   FieldPermissionsSerializerMixin, serializers.ModelSerializer):
+class TenantCreateUpdateSerializer(
+    UpdateNestedMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
     id = serializers.IntegerField(required=False)
-    tenantcontact_set = TenantContactCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    rent_shares = TenantRentShareCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    tenantcontact_set = TenantContactCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    rent_shares = TenantRentShareCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = Tenant
-        fields = ('id', 'share_numerator', 'share_denominator', 'reference', 'tenantcontact_set', 'rent_shares')
+        fields = (
+            "id",
+            "share_numerator",
+            "share_denominator",
+            "reference",
+            "tenantcontact_set",
+            "rent_shares",
+        )

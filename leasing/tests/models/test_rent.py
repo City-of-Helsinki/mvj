@@ -4,56 +4,36 @@ from decimal import Decimal
 
 import pytest
 
-from leasing.enums import DueDatesType, PeriodType, RentAdjustmentAmountType, RentAdjustmentType, RentCycle, RentType
+from leasing.enums import (
+    DueDatesType,
+    PeriodType,
+    RentAdjustmentAmountType,
+    RentAdjustmentType,
+    RentCycle,
+    RentType,
+)
 from leasing.models import Index, RentAdjustment, RentDueDate
 from leasing.models.utils import DayMonth
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_type, due_dates_per_year, expected", [
-    (
-        RentType.INDEX,
-        0,
-        []
-    ),
-    (
-        RentType.INDEX,
-        3,
-        []
-    ),
-    (
-        RentType.INDEX,
-        1,
-        [DayMonth(day=30, month=6)]
-    ),
-    (
-        RentType.INDEX,
-        2,
-        [DayMonth(day=15, month=3), DayMonth(day=30, month=9)]
-    ),
-    (
-        RentType.FIXED,
-        0,
-        []
-    ),
-    (
-        RentType.FIXED,
-        3,
-        []
-    ),
-    (
-        RentType.FIXED,
-        1,
-        [DayMonth(day=2, month=1)]
-    ),
-    (
-        RentType.FIXED,
-        2,
-        [DayMonth(day=2, month=1), DayMonth(day=1, month=7)]
-    ),
-])
-def test_fixed_get_due_dates_as_daymonths(lease_test_data, rent_factory, rent_type, due_dates_per_year, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_type, due_dates_per_year, expected",
+    [
+        (RentType.INDEX, 0, []),
+        (RentType.INDEX, 3, []),
+        (RentType.INDEX, 1, [DayMonth(day=30, month=6)]),
+        (RentType.INDEX, 2, [DayMonth(day=15, month=3), DayMonth(day=30, month=9)]),
+        (RentType.FIXED, 0, []),
+        (RentType.FIXED, 3, []),
+        (RentType.FIXED, 1, [DayMonth(day=2, month=1)]),
+        (RentType.FIXED, 2, [DayMonth(day=2, month=1), DayMonth(day=1, month=7)]),
+    ],
+)
+def test_fixed_get_due_dates_as_daymonths(
+    lease_test_data, rent_factory, rent_type, due_dates_per_year, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.type = rent_type
@@ -67,62 +47,76 @@ def test_fixed_get_due_dates_as_daymonths(lease_test_data, rent_factory, rent_ty
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("due_dates_type, due_dates_per_year, start_date, end_date, expected", [
-    (
-        DueDatesType.FIXED,
-        1,
-        date(year=1990, month=1, day=1),
-        date(year=1990, month=12, day=31),
-        [date(year=1990, month=6, day=30)]
-    ),
-    (
-        DueDatesType.FIXED,
-        1,
-        date(year=2030, month=1, day=1),
-        date(year=2030, month=12, day=31),
-        [date(year=2030, month=6, day=30)]
-    ),
-    # Full year
-    (
-        DueDatesType.FIXED,
-        1,
-        date(year=2017, month=1, day=1),
-        date(year=2017, month=12, day=31),
-        [date(year=2017, month=6, day=30)]
-    ),
-    (
-        DueDatesType.FIXED,
-        2,
-        date(year=2017, month=1, day=1),
-        date(year=2017, month=12, day=31),
-        [date(year=2017, month=3, day=15), date(year=2017, month=9, day=30)]
-    ),
-    (
-        DueDatesType.FIXED,
-        3,
-        date(year=2017, month=1, day=1),
-        date(year=2017, month=12, day=31),
-        []  # TODO
-    ),
-    (
-        DueDatesType.FIXED,
-        4,
-        date(year=2017, month=1, day=1),
-        date(year=2017, month=12, day=31),
-        [date(year=2017, month=3, day=1), date(year=2017, month=4, day=15), date(year=2017, month=7, day=15),
-            date(year=2017, month=10, day=15)]
-    ),
-    (
-        DueDatesType.FIXED,
-        12,
-        date(year=2017, month=1, day=1),
-        date(year=2017, month=12, day=31),
-        [date(year=2017, month=i, day=1) for i in range(1, 13)]
-    ),
-])
-def test_get_due_dates_for_period_fixed_middle(lease_test_data, rent_factory, due_dates_type, due_dates_per_year,
-                                               start_date, end_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "due_dates_type, due_dates_per_year, start_date, end_date, expected",
+    [
+        (
+            DueDatesType.FIXED,
+            1,
+            date(year=1990, month=1, day=1),
+            date(year=1990, month=12, day=31),
+            [date(year=1990, month=6, day=30)],
+        ),
+        (
+            DueDatesType.FIXED,
+            1,
+            date(year=2030, month=1, day=1),
+            date(year=2030, month=12, day=31),
+            [date(year=2030, month=6, day=30)],
+        ),
+        # Full year
+        (
+            DueDatesType.FIXED,
+            1,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            [date(year=2017, month=6, day=30)],
+        ),
+        (
+            DueDatesType.FIXED,
+            2,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            [date(year=2017, month=3, day=15), date(year=2017, month=9, day=30)],
+        ),
+        (
+            DueDatesType.FIXED,
+            3,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            [],  # TODO
+        ),
+        (
+            DueDatesType.FIXED,
+            4,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            [
+                date(year=2017, month=3, day=1),
+                date(year=2017, month=4, day=15),
+                date(year=2017, month=7, day=15),
+                date(year=2017, month=10, day=15),
+            ],
+        ),
+        (
+            DueDatesType.FIXED,
+            12,
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+            [date(year=2017, month=i, day=1) for i in range(1, 13)],
+        ),
+    ],
+)
+def test_get_due_dates_for_period_fixed_middle(
+    lease_test_data,
+    rent_factory,
+    due_dates_type,
+    due_dates_per_year,
+    start_date,
+    end_date,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -135,76 +129,64 @@ def test_get_due_dates_for_period_fixed_middle(lease_test_data, rent_factory, du
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("due_dates_per_year, due_date, expected", [
-    (
-        0,
-        date(year=2017, month=6, day=30),
-        None
-    ),
-    (
-        1,
-        date(year=2017, month=6, day=30),
-        (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31))
-    ),
-    (
-        1,
-        date(year=2017, month=1, day=1),
-        None
-    ),
-    (
-        2,
-        date(year=2017, month=3, day=15),
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30))
-    ),
-    (
-        2,
-        date(year=2017, month=9, day=30),
-        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31))
-    ),
-    (
-        4,
-        date(year=2017, month=3, day=1),
-        (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31))
-    ),
-    (
-        4,
-        date(year=2017, month=4, day=15),
-        (date(year=2017, month=4, day=1), date(year=2017, month=6, day=30))
-    ),
-    (
-        4,
-        date(year=2017, month=1, day=1),
-        None
-    ),
-    (
-        12,
-        date(year=2017, month=1, day=1),
-        (date(year=2017, month=1, day=1), date(year=2017, month=1, day=31))
-    ),
-    (
-        12,
-        date(year=2017, month=2, day=1),
-        (date(year=2017, month=2, day=1), date(year=2017, month=2, day=28))
-    ),
-    (
-        12,
-        date(year=2017, month=6, day=1),
-        (date(year=2017, month=6, day=1), date(year=2017, month=6, day=30))
-    ),
-    (
-        12,
-        date(year=2017, month=12, day=1),
-        (date(year=2017, month=12, day=1), date(year=2017, month=12, day=31))
-    ),
-    (
-        12,
-        date(year=2017, month=1, day=10),
-        None
-    ),
-])
-def test_get_billing_period_from_due_date(lease_test_data, rent_factory, due_dates_per_year, due_date,
-                                          expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "due_dates_per_year, due_date, expected",
+    [
+        (0, date(year=2017, month=6, day=30), None),
+        (
+            1,
+            date(year=2017, month=6, day=30),
+            (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+        ),
+        (1, date(year=2017, month=1, day=1), None),
+        (
+            2,
+            date(year=2017, month=3, day=15),
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+        ),
+        (
+            2,
+            date(year=2017, month=9, day=30),
+            (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+        ),
+        (
+            4,
+            date(year=2017, month=3, day=1),
+            (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31)),
+        ),
+        (
+            4,
+            date(year=2017, month=4, day=15),
+            (date(year=2017, month=4, day=1), date(year=2017, month=6, day=30)),
+        ),
+        (4, date(year=2017, month=1, day=1), None),
+        (
+            12,
+            date(year=2017, month=1, day=1),
+            (date(year=2017, month=1, day=1), date(year=2017, month=1, day=31)),
+        ),
+        (
+            12,
+            date(year=2017, month=2, day=1),
+            (date(year=2017, month=2, day=1), date(year=2017, month=2, day=28)),
+        ),
+        (
+            12,
+            date(year=2017, month=6, day=1),
+            (date(year=2017, month=6, day=1), date(year=2017, month=6, day=30)),
+        ),
+        (
+            12,
+            date(year=2017, month=12, day=1),
+            (date(year=2017, month=12, day=1), date(year=2017, month=12, day=31)),
+        ),
+        (12, date(year=2017, month=1, day=10), None),
+    ],
+)
+def test_get_billing_period_from_due_date(
+    lease_test_data, rent_factory, due_dates_per_year, due_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -217,35 +199,28 @@ def test_get_billing_period_from_due_date(lease_test_data, rent_factory, due_dat
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_due_dates, due_date, expected", [
-    (
-        [],
-        None,
-        None
-    ),
-    (
-        [],
-        date(year=2017, month=1, day=1),
-        None
-    ),
-    (
-        [(1, 1), (1, 10)],
-        date(year=2017, month=5, day=1),
-        None
-    ),
-    (
-        [(1, 1), (1, 10)],
-        date(year=2017, month=1, day=1),
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30))
-    ),
-    (
-        [(1, 1), (1, 10)],
-        date(year=2017, month=10, day=1),
-        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31))
-    ),
-])
-def test_get_billing_period_from_due_date_custom(lease_test_data, rent_factory, rent_due_dates, due_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_due_dates, due_date, expected",
+    [
+        ([], None, None),
+        ([], date(year=2017, month=1, day=1), None),
+        ([(1, 1), (1, 10)], date(year=2017, month=5, day=1), None),
+        (
+            [(1, 1), (1, 10)],
+            date(year=2017, month=1, day=1),
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+        ),
+        (
+            [(1, 1), (1, 10)],
+            date(year=2017, month=10, day=1),
+            (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+        ),
+    ],
+)
+def test_get_billing_period_from_due_date_custom(
+    lease_test_data, rent_factory, rent_due_dates, due_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -254,28 +229,31 @@ def test_get_billing_period_from_due_date_custom(lease_test_data, rent_factory, 
     rent.save()
 
     for rent_due_date in rent_due_dates:
-        rent.due_dates.add(RentDueDate.objects.create(rent=rent, day=rent_due_date[0], month=rent_due_date[1]))
+        rent.due_dates.add(
+            RentDueDate.objects.create(
+                rent=rent, day=rent_due_date[0], month=rent_due_date[1]
+            )
+        )
 
     assert rent.get_billing_period_from_due_date(due_date) == expected
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("due_date, expected", [
-    (
-        None,
-        None
-    ),
-    (
-        date(year=2017, month=2, day=1),
-        None
-    ),
-    (
-        date(year=2017, month=1, day=1),
-        (date(year=2017, month=1, day=1), date(year=2017, month=4, day=30))
-    ),
-])
-def test_get_billing_period_from_due_date_seasonal(lease_test_data, rent_factory, due_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "due_date, expected",
+    [
+        (None, None),
+        (date(year=2017, month=2, day=1), None),
+        (
+            date(year=2017, month=1, day=1),
+            (date(year=2017, month=1, day=1), date(year=2017, month=4, day=30)),
+        ),
+    ],
+)
+def test_get_billing_period_from_due_date_seasonal(
+    lease_test_data, rent_factory, due_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -293,8 +271,10 @@ def test_get_billing_period_from_due_date_seasonal(lease_test_data, rent_factory
 
 
 @pytest.mark.django_db
-def test_get_billing_period_from_due_date_seasonal_fixed_due_date(lease_test_data, rent_factory):
-    lease = lease_test_data['lease']
+def test_get_billing_period_from_due_date_seasonal_fixed_due_date(
+    lease_test_data, rent_factory
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -307,26 +287,27 @@ def test_get_billing_period_from_due_date_seasonal_fixed_due_date(lease_test_dat
     rent.due_dates_per_year = 4
     rent.save()
 
-    assert rent.get_billing_period_from_due_date(date(year=2017, month=5, day=1)) is None
+    assert (
+        rent.get_billing_period_from_due_date(date(year=2017, month=5, day=1)) is None
+    )
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("due_date, expected", [
-    (
-        None,
-        None
-    ),
-    (
-        date(year=2017, month=2, day=1),
-        None
-    ),
-    (
-        date(year=2017, month=7, day=1),
-        (date(year=2017, month=6, day=1), date(year=2017, month=12, day=31))
-    ),
-])
-def test_get_billing_period_from_due_date_seasonal_two_rents(lease_test_data, rent_factory, due_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "due_date, expected",
+    [
+        (None, None),
+        (date(year=2017, month=2, day=1), None),
+        (
+            date(year=2017, month=7, day=1),
+            (date(year=2017, month=6, day=1), date(year=2017, month=12, day=31)),
+        ),
+    ],
+)
+def test_get_billing_period_from_due_date_seasonal_two_rents(
+    lease_test_data, rent_factory, due_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.start_date = date(year=2000, month=1, day=1)
@@ -356,12 +337,15 @@ def test_get_billing_period_from_due_date_seasonal_two_rents(lease_test_data, re
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("the_date, expected", [
-    (None, 1927),  # the latest index in the fixtures
-    (date(year=1000, month=1, day=1), None),
-    (date(year=2016, month=12, day=1), 1906),
-    (date(year=2017, month=1, day=1), 1913),
-])
+@pytest.mark.parametrize(
+    "the_date, expected",
+    [
+        (None, 1927),  # the latest index in the fixtures
+        (date(year=1000, month=1, day=1), None),
+        (date(year=2016, month=12, day=1), 1906),
+        (date(year=2017, month=1, day=1), 1913),
+    ],
+)
 def test_index_get_latest_for_date(the_date, expected):
     index = Index.objects.get_latest_for_date(the_date)
 
@@ -373,13 +357,16 @@ def test_index_get_latest_for_date(the_date, expected):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("year, expected", [
-    (None, 1927),  # the latest index in the fixtures
-    (1000, None),
-    (2016, 1906),
-    (2017, 1913),
-    (2018, 1927),
-])
+@pytest.mark.parametrize(
+    "year, expected",
+    [
+        (None, 1927),  # the latest index in the fixtures
+        (1000, None),
+        (2016, 1906),
+        (2017, 1913),
+        (2018, 1927),
+    ],
+)
 def test_index_get_latest_for_year(year, expected):
     index = Index.objects.get_latest_for_year(year)
 
@@ -392,7 +379,7 @@ def test_index_get_latest_for_year(year, expected):
 
 @pytest.mark.django_db
 def test_get_amount_for_date_range_empty(lease_test_data, rent_factory):
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -414,15 +401,16 @@ def test_get_amount_for_date_range_empty(lease_test_data, rent_factory):
     [
         (Decimal(0), PeriodType.PER_YEAR, Decimal(0)),
         (Decimal(-100), PeriodType.PER_YEAR, Decimal(0)),
-        (Decimal(10), PeriodType.PER_YEAR, Decimal('192.7')),
+        (Decimal(10), PeriodType.PER_YEAR, Decimal("192.7")),
         (Decimal(100), PeriodType.PER_YEAR, Decimal(1927)),
         (Decimal(0), PeriodType.PER_MONTH, Decimal(0)),
-        (Decimal(10), PeriodType.PER_MONTH, Decimal('2312.40')),
-    ]
+        (Decimal(10), PeriodType.PER_MONTH, Decimal("2312.40")),
+    ],
 )
-def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory, contract_rent_factory, amount,
-                                                   period, expected):
-    lease = lease_test_data['lease']
+def test_get_amount_for_date_range_simple_contract(
+    lease_test_data, rent_factory, contract_rent_factory, amount, period, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -457,7 +445,7 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
             [
                 (date(year=2017, month=1, day=1), date(year=2017, month=3, day=31)),
                 (date(year=2017, month=4, day=1), date(year=2018, month=1, day=1)),
-            ]
+            ],
         ),
         (
             date(year=2017, month=1, day=1),
@@ -467,27 +455,27 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
                 (date(year=2017, month=4, day=1), date(year=2018, month=3, day=31)),
                 (date(year=2018, month=4, day=1), date(year=2019, month=3, day=31)),
                 (date(year=2019, month=4, day=1), date(year=2019, month=12, day=31)),
-            ]
+            ],
         ),
         (
             date(year=2018, month=1, day=1),
             date(year=2018, month=1, day=31),
-            [(date(year=2018, month=1, day=1), date(year=2018, month=1, day=31))]
+            [(date(year=2018, month=1, day=1), date(year=2018, month=1, day=31))],
         ),
         (
             date(year=2018, month=1, day=1),
             date(year=2018, month=3, day=31),
-            [(date(year=2018, month=1, day=1), date(year=2018, month=3, day=31))]
+            [(date(year=2018, month=1, day=1), date(year=2018, month=3, day=31))],
         ),
         (
             date(year=2018, month=4, day=1),
             date(year=2018, month=12, day=31),
-            [(date(year=2018, month=4, day=1), date(year=2018, month=12, day=31))]
+            [(date(year=2018, month=4, day=1), date(year=2018, month=12, day=31))],
         ),
         (
             date(year=2018, month=3, day=31),
             date(year=2018, month=4, day=1),
-            [(date(year=2018, month=3, day=31), date(year=2018, month=4, day=1))]
+            [(date(year=2018, month=3, day=31), date(year=2018, month=4, day=1))],
         ),
         (
             date(year=2018, month=1, day=1),
@@ -495,7 +483,7 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
             [
                 (date(year=2018, month=1, day=1), date(year=2018, month=3, day=31)),
                 (date(year=2018, month=4, day=1), date(year=2018, month=12, day=31)),
-            ]
+            ],
         ),
         (
             date(year=2018, month=3, day=1),
@@ -503,12 +491,14 @@ def test_get_amount_for_date_range_simple_contract(lease_test_data, rent_factory
             [
                 (date(year=2018, month=3, day=1), date(year=2018, month=3, day=31)),
                 (date(year=2018, month=4, day=1), date(year=2018, month=6, day=15)),
-            ]
+            ],
         ),
-    ]
+    ],
 )
-def test_split_range_by_cycle(lease_test_data, rent_factory, range_start, range_end, expected):
-    lease = lease_test_data['lease']
+def test_split_range_by_cycle(
+    lease_test_data, rent_factory, range_start, range_end, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -532,17 +522,13 @@ def test_split_range_by_cycle(lease_test_data, rent_factory, range_start, range_
             RentCycle.JANUARY_TO_DECEMBER,
             date(year=2017, month=1, day=1),
             date(year=2017, month=12, day=31),
-            [
-                (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
-            ]
+            [(date(year=2017, month=1, day=1), date(year=2017, month=12, day=31))],
         ),
         (
             RentCycle.JANUARY_TO_DECEMBER,
             date(year=2017, month=5, day=1),
             date(year=2017, month=8, day=31),
-            [
-                (date(year=2017, month=5, day=1), date(year=2017, month=8, day=31)),
-            ]
+            [(date(year=2017, month=5, day=1), date(year=2017, month=8, day=31))],
         ),
         (
             RentCycle.JANUARY_TO_DECEMBER,
@@ -551,15 +537,13 @@ def test_split_range_by_cycle(lease_test_data, rent_factory, range_start, range_
             [
                 (date(year=2017, month=6, day=1), date(year=2017, month=12, day=31)),
                 (date(year=2018, month=1, day=1), date(year=2018, month=5, day=31)),
-            ]
+            ],
         ),
         (
             RentCycle.APRIL_TO_MARCH,
             date(year=2017, month=4, day=1),
             date(year=2018, month=3, day=31),
-            [
-                (date(year=2017, month=4, day=1), date(year=2018, month=3, day=31)),
-            ]
+            [(date(year=2017, month=4, day=1), date(year=2018, month=3, day=31))],
         ),
         (
             RentCycle.APRIL_TO_MARCH,
@@ -571,11 +555,12 @@ def test_split_range_by_cycle(lease_test_data, rent_factory, range_start, range_
                 (date(year=2018, month=4, day=1), date(year=2018, month=12, day=31)),
             ],
         ),
-    ]
+    ],
 )
-def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, cycle, range_start, range_end,
-                                                 expected):
-    lease = lease_test_data['lease']
+def test_split_range_by_cycle_span_year_boundary(
+    lease_test_data, rent_factory, cycle, range_start, range_end, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -596,10 +581,8 @@ def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, 
     "ranges, expected",
     [
         (
-            [
-                (date(year=2018, month=1, day=1), date(year=2018, month=1, day=31)),
-            ],
-            [(date(year=2018, month=1, day=1), date(year=2018, month=1, day=31))]
+            [(date(year=2018, month=1, day=1), date(year=2018, month=1, day=31))],
+            [(date(year=2018, month=1, day=1), date(year=2018, month=1, day=31))],
         ),
         (
             [
@@ -609,7 +592,7 @@ def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, 
             [
                 (date(year=2018, month=1, day=1), date(year=2018, month=1, day=31)),
                 (date(year=2018, month=1, day=1), date(year=2018, month=1, day=31)),
-            ]
+            ],
         ),
         (
             [
@@ -620,7 +603,7 @@ def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, 
                 (date(year=2018, month=1, day=1), date(year=2018, month=1, day=31)),
                 (date(year=2018, month=1, day=1), date(year=2018, month=3, day=31)),
                 (date(year=2018, month=4, day=1), date(year=2018, month=12, day=31)),
-            ]
+            ],
         ),
         (
             [
@@ -632,12 +615,12 @@ def test_split_range_by_cycle_span_year_boundary(lease_test_data, rent_factory, 
                 (date(year=2018, month=4, day=1), date(year=2018, month=6, day=30)),
                 (date(year=2018, month=3, day=1), date(year=2018, month=3, day=31)),
                 (date(year=2018, month=4, day=1), date(year=2018, month=10, day=31)),
-            ]
+            ],
         ),
-    ]
+    ],
 )
 def test_split_ranges_by_cycle(lease_test_data, rent_factory, ranges, expected):
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -654,25 +637,30 @@ def test_split_ranges_by_cycle(lease_test_data, rent_factory, ranges, expected):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_cycle, the_date, expected", [
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 2016),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 2017),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=1, day=1), 2018),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=6, day=1), 2018),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=12, day=31), 2018),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), 2019),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), 2020),
-    (RentCycle.APRIL_TO_MARCH, date(year=2016, month=1, day=1), 2015),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), 2016),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=1, day=1), 2017),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=6, day=1), 2018),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=12, day=31), 2018),
-    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), 2018),
-    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), 2019),
-    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), 2020),
-])
-def test_get_rent_year_for_date(lease_test_data, rent_factory, rent_cycle, the_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_cycle, the_date, expected",
+    [
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 2016),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 2017),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=1, day=1), 2018),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=6, day=1), 2018),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=12, day=31), 2018),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), 2019),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), 2020),
+        (RentCycle.APRIL_TO_MARCH, date(year=2016, month=1, day=1), 2015),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), 2016),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=1, day=1), 2017),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=6, day=1), 2018),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=12, day=31), 2018),
+        (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), 2018),
+        (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), 2019),
+        (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), 2020),
+    ],
+)
+def test_get_rent_year_for_date(
+    lease_test_data, rent_factory, rent_cycle, the_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -687,25 +675,30 @@ def test_get_rent_year_for_date(lease_test_data, rent_factory, rent_cycle, the_d
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_cycle, the_date, expected", [
-    # Index numbers are from the fixtures. 2017 index number (1927) is the latest.
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 1906),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 1913),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=1, day=1), 1927),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=6, day=1), 1927),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=12, day=31), 1927),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), 1927),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), 1927),
-    (RentCycle.APRIL_TO_MARCH, date(year=2016, month=1, day=1), 1910),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), 1906),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=1, day=1), 1913),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=6, day=1), 1927),
-    (RentCycle.APRIL_TO_MARCH, date(year=2018, month=12, day=31), 1927),
-    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), 1927),
-    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), 1927),
-])
-def test_get_index_for_date(lease_test_data, rent_factory, rent_cycle, the_date, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_cycle, the_date, expected",
+    [
+        # Index numbers are from the fixtures. 2017 index number (1927) is the latest.
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2016, month=1, day=1), 1906),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), 1913),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=1, day=1), 1927),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=6, day=1), 1927),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2018, month=12, day=31), 1927),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), 1927),
+        (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), 1927),
+        (RentCycle.APRIL_TO_MARCH, date(year=2016, month=1, day=1), 1910),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), 1906),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=1, day=1), 1913),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=6, day=1), 1927),
+        (RentCycle.APRIL_TO_MARCH, date(year=2018, month=12, day=31), 1927),
+        (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), 1927),
+        (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), 1927),
+    ],
+)
+def test_get_index_for_date(
+    lease_test_data, rent_factory, rent_cycle, the_date, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -720,28 +713,93 @@ def test_get_index_for_date(lease_test_data, rent_factory, rent_cycle, the_date,
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_cycle, the_date, index_year_month, expected", [
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2015, None), False),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, None), True),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, 1), False),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=1, day=1), (2016, 12), False),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=6, day=1), (2016, None), True),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2017, month=12, day=31), (2016, None), True),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2019, month=1, day=1), (2018, None), True),
-    (RentCycle.JANUARY_TO_DECEMBER, date(year=2020, month=1, day=1), (2019, None), True),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2015, None), True),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, None), False),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 1), False),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 12), False),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=6, day=1), (2016, None), True),
-    (RentCycle.APRIL_TO_MARCH, date(year=2017, month=12, day=31), (2016, None), True),
-    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=1, day=1), (2018, None), False),
-    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=1, day=1), (2019, None), False),
-    (RentCycle.APRIL_TO_MARCH, date(year=2019, month=4, day=1), (2018, None), True),
-    (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), (2019, None), True),
-])
-def test_is_correct_index_for_date(lease_test_data, rent_factory, rent_cycle, the_date, index_year_month, expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_cycle, the_date, index_year_month, expected",
+    [
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=1, day=1),
+            (2015, None),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=1, day=1),
+            (2016, None),
+            True,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=1, day=1),
+            (2016, 1),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=1, day=1),
+            (2016, 12),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=6, day=1),
+            (2016, None),
+            True,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2017, month=12, day=31),
+            (2016, None),
+            True,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2019, month=1, day=1),
+            (2018, None),
+            True,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            date(year=2020, month=1, day=1),
+            (2019, None),
+            True,
+        ),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2015, None), True),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2017, month=1, day=1),
+            (2016, None),
+            False,
+        ),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 1), False),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=1, day=1), (2016, 12), False),
+        (RentCycle.APRIL_TO_MARCH, date(year=2017, month=6, day=1), (2016, None), True),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2017, month=12, day=31),
+            (2016, None),
+            True,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2019, month=1, day=1),
+            (2018, None),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            date(year=2020, month=1, day=1),
+            (2019, None),
+            False,
+        ),
+        (RentCycle.APRIL_TO_MARCH, date(year=2019, month=4, day=1), (2018, None), True),
+        (RentCycle.APRIL_TO_MARCH, date(year=2020, month=4, day=1), (2019, None), True),
+    ],
+)
+def test_is_correct_index_for_date(
+    lease_test_data, rent_factory, rent_cycle, the_date, index_year_month, expected
+):
+    lease = lease_test_data["lease"]
 
     index = Index(year=index_year_month[0], month=index_year_month[1], number=12345)
 
@@ -763,14 +821,15 @@ def test_is_correct_index_for_date(lease_test_data, rent_factory, rent_cycle, th
     [
         (Decimal(0), PeriodType.PER_YEAR, Decimal(0)),
         (Decimal(-100), PeriodType.PER_YEAR, Decimal(0)),
-        (Decimal(10), PeriodType.PER_YEAR, Decimal('192.35')),
-        (Decimal(100), PeriodType.PER_YEAR, Decimal('1923.5')),
+        (Decimal(10), PeriodType.PER_YEAR, Decimal("192.35")),
+        (Decimal(100), PeriodType.PER_YEAR, Decimal("1923.5")),
         (Decimal(0), PeriodType.PER_MONTH, Decimal(0)),
-    ]
+    ],
 )
-def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_data, rent_factory, contract_rent_factory,
-                                                                  amount, period, expected):
-    lease = lease_test_data['lease']
+def test_get_amount_for_date_range_simple_contract_april_to_march(
+    lease_test_data, rent_factory, contract_rent_factory, amount, period, expected
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -807,7 +866,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             None,
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             27,
-            Decimal(73)
+            Decimal(73),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -815,7 +874,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             0,
-            Decimal(100)
+            Decimal(100),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -823,7 +882,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             100,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -831,7 +890,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             2000,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -839,7 +898,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             -100,
-            Decimal(200)
+            Decimal(200),
         ),
         # Percent per year
         (
@@ -848,7 +907,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             0,
-            Decimal(100)
+            Decimal(100),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -856,7 +915,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             -100,
-            Decimal(200)
+            Decimal(200),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -864,7 +923,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             100,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -872,7 +931,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             120,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -880,7 +939,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(50)
+            Decimal(50),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -888,7 +947,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(50)
+            Decimal(50),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -896,7 +955,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(75)
+            Decimal(75),
         ),
         (
             RentAdjustmentType.DISCOUNT,
@@ -904,7 +963,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=6, day=30),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(75)
+            Decimal(75),
         ),
         # Increase
         # Amount per year
@@ -914,7 +973,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             None,
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             100,
-            Decimal(200)
+            Decimal(200),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -922,7 +981,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             0,
-            Decimal(100)
+            Decimal(100),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -930,7 +989,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             -10,
-            Decimal(90)
+            Decimal(90),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -938,7 +997,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             -200,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -946,7 +1005,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             200,
-            Decimal(300)
+            Decimal(300),
         ),
         # Percent per year
         (
@@ -955,7 +1014,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             0,
-            Decimal(100)
+            Decimal(100),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -963,7 +1022,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2019, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(150)
+            Decimal(150),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -971,7 +1030,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(150)
+            Decimal(150),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -979,7 +1038,7 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=12, day=31),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(125)
+            Decimal(125),
         ),
         (
             RentAdjustmentType.INCREASE,
@@ -987,15 +1046,23 @@ def test_get_amount_for_date_range_simple_contract_april_to_march(lease_test_dat
             date(year=2018, month=6, day=30),
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             50,
-            Decimal(125)
+            Decimal(125),
         ),
-    ]
+    ],
 )
-def test_get_amount_for_date_range_contract_with_adjustment(lease_test_data, rent_factory, contract_rent_factory,
-                                                            rent_adjustment_factory, adjustment_type,
-                                                            adjustment_start_date, adjustment_end_date,
-                                                            adjustment_amount_type, adjustment_amount, expected):
-    lease = lease_test_data['lease']
+def test_get_amount_for_date_range_contract_with_adjustment(
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    rent_adjustment_factory,
+    adjustment_type,
+    adjustment_start_date,
+    adjustment_end_date,
+    adjustment_amount_type,
+    adjustment_amount,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -1033,8 +1100,9 @@ def test_get_amount_for_date_range_contract_with_adjustment(lease_test_data, ren
 
 @pytest.mark.django_db
 def test_get_amount_for_date_range_contract_with_adjustment_different_intended_use(
-        lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory):
-    lease = lease_test_data['lease']
+    lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -1077,7 +1145,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_different_intended_u
             0,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            Decimal(0)
+            Decimal(0),
         ),
         (
             -100,
@@ -1085,45 +1153,52 @@ def test_get_amount_for_date_range_contract_with_adjustment_different_intended_u
             date(year=2019, month=12, day=31),
             # TODO: Is negative fixed initial year rent allowed?
             # Decimal(-100)
-            Decimal(0)
+            Decimal(0),
         ),
         (
             100,
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            Decimal(100)
+            Decimal(100),
         ),
         (
             100,
             date(year=2017, month=1, day=1),
             date(year=2018, month=6, day=30),
-            Decimal('1013.5')
+            Decimal("1013.5"),
         ),
         (
             100,
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             100,
             date(year=2019, month=1, day=1),
             date(year=2019, month=1, day=1),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             1200,
             date(year=2018, month=3, day=1),
             date(year=2018, month=3, day=31),
-            pytest.approx(Decimal('1866.416'))
+            pytest.approx(Decimal("1866.416")),
         ),
-    ]
+    ],
 )
 def test_get_amount_for_date_range_contract_with_fixed_initial(
-        lease_test_data, rent_factory, contract_rent_factory, fixed_initial_year_rent_factory, fixed_initial_amount,
-        fixed_initial_start_date, fixed_initial_end_date, expected):
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    fixed_initial_year_rent_factory,
+    fixed_initial_amount,
+    fixed_initial_start_date,
+    fixed_initial_end_date,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -1172,7 +1247,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             0,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(0)
+            Decimal(0),
         ),
         (
             # Rent adjustment
@@ -1185,7 +1260,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             0,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(0)
+            Decimal(0),
         ),
         (
             # Rent adjustment
@@ -1198,7 +1273,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             0,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(0)
+            Decimal(0),
         ),
         (
             # Rent adjustment
@@ -1211,7 +1286,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             0,
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             # Rent adjustment
@@ -1224,7 +1299,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             # Rent adjustment
@@ -1237,7 +1312,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2017, month=1, day=1),
             date(year=2018, month=3, day=31),
-            Decimal('1470.25')
+            Decimal("1470.25"),
         ),
         (
             # Rent adjustment
@@ -1250,7 +1325,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(50)
+            Decimal(50),
         ),
         (
             # Rent adjustment
@@ -1263,7 +1338,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(50)
+            Decimal(50),
         ),
         (
             # Rent adjustment
@@ -1276,7 +1351,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2018, month=7, day=1),
             date(year=2018, month=12, day=31),
-            Decimal('531.75')
+            Decimal("531.75"),
         ),
         (
             # Rent adjustment
@@ -1289,7 +1364,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2018, month=7, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(50)
+            Decimal(50),
         ),
         (
             # Rent adjustment
@@ -1302,7 +1377,7 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            pytest.approx(Decimal('91.6666'))
+            pytest.approx(Decimal("91.6666")),
         ),
         (
             # Rent adjustment
@@ -1315,17 +1390,28 @@ def test_get_amount_for_date_range_contract_with_fixed_initial(
             100,
             date(year=2017, month=1, day=1),
             date(year=2017, month=12, day=31),
-            pytest.approx(Decimal('1846.708'))
+            pytest.approx(Decimal("1846.708")),
         ),
-    ]
+    ],
 )
 def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
-        lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory, adjustment_type,
-        adjustment_start_date, adjustment_end_date, adjustment_amount_type, adjustment_amount,
-        fixed_initial_year_rent_factory, fixed_initial_amount, fixed_initial_start_date, fixed_initial_end_date,
-        expected):
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    rent_adjustment_factory,
+    adjustment_type,
+    adjustment_start_date,
+    adjustment_end_date,
+    adjustment_amount_type,
+    adjustment_amount,
+    fixed_initial_year_rent_factory,
+    fixed_initial_amount,
+    fixed_initial_start_date,
+    fixed_initial_end_date,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -1381,7 +1467,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             None,
             None,
-            Decimal(0)
+            Decimal(0),
         ),
         (
             Decimal(0),
@@ -1392,7 +1478,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             date(year=2020, month=1, day=1),
             date(year=2020, month=12, day=31),
-            Decimal(0)
+            Decimal(0),
         ),
         (
             Decimal(100),
@@ -1403,7 +1489,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             None,
             None,
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             Decimal(100),
@@ -1414,7 +1500,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             None,
             None,
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             Decimal(100),
@@ -1425,7 +1511,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             date(year=2020, month=1, day=1),
             date(year=2020, month=12, day=31),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             Decimal(100),
@@ -1436,7 +1522,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             date(year=2017, month=1, day=1),
             date(year=2017, month=12, day=31),
-            Decimal(1927)
+            Decimal(1927),
         ),
         (
             Decimal(100),
@@ -1447,7 +1533,7 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             date(year=2018, month=1, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(3854)
+            Decimal(3854),
         ),
         (
             Decimal(100),
@@ -1458,14 +1544,25 @@ def test_get_amount_for_date_range_contract_with_adjustment_and_fixed_initial(
             PeriodType.PER_YEAR,
             date(year=2018, month=7, day=1),
             date(year=2018, month=12, day=31),
-            Decimal(1927)
+            Decimal(1927),
         ),
-    ]
+    ],
 )
-def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, contract_rent_factory, amount1,
-                                                 period1, start_date1, end_date1, amount2, period2, start_date2,
-                                                 end_date2, expected):
-    lease = lease_test_data['lease']
+def test_get_amount_for_date_range_two_contracts(
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    amount1,
+    period1,
+    start_date1,
+    end_date1,
+    amount2,
+    period2,
+    start_date2,
+    end_date2,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -1482,7 +1579,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
         base_amount=amount1,
         base_amount_period=period1,
         start_date=start_date1,
-        end_date=end_date1
+        end_date=end_date1,
     )
 
     contract_rent_factory(
@@ -1493,7 +1590,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
         base_amount=amount2,
         base_amount_period=period2,
         start_date=start_date2,
-        end_date=end_date2
+        end_date=end_date2,
     )
 
     range_start = date(year=2018, month=1, day=1)
@@ -1783,7 +1880,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('2890.5'),
+            Decimal("2890.5"),
         ),
         (
             # Contract rent 1
@@ -1806,7 +1903,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('4817.5'),
+            Decimal("4817.5"),
         ),
         (
             # Contract rent 1
@@ -1829,7 +1926,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('2890.5'),
+            Decimal("2890.5"),
         ),
         (
             # Contract rent 1
@@ -1852,7 +1949,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('4817.5'),
+            Decimal("4817.5"),
         ),
         (
             # Contract rent 1
@@ -1875,7 +1972,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('963.5'),
+            Decimal("963.5"),
         ),
         (
             # Contract rent 1
@@ -1898,7 +1995,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(50),
             # Expected
-            Decimal('2890.5'),
+            Decimal("2890.5"),
         ),
         (
             # Contract rent 1
@@ -1921,7 +2018,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(100),
             # Expected
-            Decimal('1204.375'),
+            Decimal("1204.375"),
         ),
         (
             # Contract rent 1
@@ -1944,7 +2041,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.PERCENT_PER_YEAR,
             Decimal(100),
             # Expected
-            Decimal('2649.625'),
+            Decimal("2649.625"),
         ),
         (
             # Contract rent 1
@@ -1967,7 +2064,7 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             Decimal(1200),
             # Expected
-            Decimal('1627'),
+            Decimal("1627"),
         ),
         (
             # Contract rent 1
@@ -1990,18 +2087,34 @@ def test_get_amount_for_date_range_two_contracts(lease_test_data, rent_factory, 
             RentAdjustmentAmountType.AMOUNT_PER_YEAR,
             Decimal(1200),
             # Expected
-            Decimal('2227'),
+            Decimal("2227"),
         ),
-    ]
+    ],
 )
 def test_get_amount_for_date_range_two_contracts_with_adjustment(
-        lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory,
-        intended_use1, amount1, period1, start_date1, end_date1,
-        intended_use2, amount2, period2, start_date2, end_date2,
-        adjustment_type, adjustment_intended_use, adjustment_start_date, adjustment_end_date,
-        adjustment_amount_type, adjustment_amount,
-        expected):
-    lease = lease_test_data['lease']
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    rent_adjustment_factory,
+    intended_use1,
+    amount1,
+    period1,
+    start_date1,
+    end_date1,
+    intended_use2,
+    amount2,
+    period2,
+    start_date2,
+    end_date2,
+    adjustment_type,
+    adjustment_intended_use,
+    adjustment_start_date,
+    adjustment_end_date,
+    adjustment_amount_type,
+    adjustment_amount,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2018,7 +2131,7 @@ def test_get_amount_for_date_range_two_contracts_with_adjustment(
         base_amount=amount1,
         base_amount_period=period1,
         start_date=start_date1,
-        end_date=end_date1
+        end_date=end_date1,
     )
 
     contract_rent_factory(
@@ -2029,7 +2142,7 @@ def test_get_amount_for_date_range_two_contracts_with_adjustment(
         base_amount=amount2,
         base_amount_period=period2,
         start_date=start_date2,
-        end_date=end_date2
+        end_date=end_date2,
     )
 
     rent_adjustment_factory(
@@ -2055,71 +2168,32 @@ def test_get_amount_for_date_range_two_contracts_with_adjustment(
     [
         # Save amount left
         # Discount
-        (
-            False,
-            RentAdjustmentType.DISCOUNT,
-            100,
-            Decimal(1827),
-            Decimal(0),
-        ),
-        (
-            False,
-            RentAdjustmentType.DISCOUNT,
-            10000,
-            Decimal(0),
-            Decimal(8073),
-        ),
+        (False, RentAdjustmentType.DISCOUNT, 100, Decimal(1827), Decimal(0)),
+        (False, RentAdjustmentType.DISCOUNT, 10000, Decimal(0), Decimal(8073)),
         # Increase
-        (
-            False,
-            RentAdjustmentType.INCREASE,
-            100,
-            Decimal(2027),
-            Decimal(0),
-        ),
-        (
-            False,
-            RentAdjustmentType.INCREASE,
-            10000,
-            Decimal(11927),
-            Decimal(0),
-        ),
+        (False, RentAdjustmentType.INCREASE, 100, Decimal(2027), Decimal(0)),
+        (False, RentAdjustmentType.INCREASE, 10000, Decimal(11927), Decimal(0)),
         # Don't save amount left
         # Discount
-        (
-            True,
-            RentAdjustmentType.DISCOUNT,
-            100,
-            Decimal(1827),
-            Decimal(100),
-        ),
-        (
-            True,
-            RentAdjustmentType.DISCOUNT,
-            10000,
-            Decimal(0),
-            Decimal(10000),
-        ),
+        (True, RentAdjustmentType.DISCOUNT, 100, Decimal(1827), Decimal(100)),
+        (True, RentAdjustmentType.DISCOUNT, 10000, Decimal(0), Decimal(10000)),
         # Increase
-        (
-            True,
-            RentAdjustmentType.INCREASE,
-            100,
-            Decimal(2027),
-            Decimal(100),
-        ),
-        (
-            True,
-            RentAdjustmentType.INCREASE,
-            10000,
-            Decimal(11927),
-            Decimal(10000),
-        ),
-    ]
+        (True, RentAdjustmentType.INCREASE, 100, Decimal(2027), Decimal(100)),
+        (True, RentAdjustmentType.INCREASE, 10000, Decimal(11927), Decimal(10000)),
+    ],
 )
-def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory,
-                                      dry_run, adjustment_type, adjustment_amount, expected_rent, expected_amount_left):
-    lease = lease_test_data['lease']
+def test_adjustment_type_amount_total(
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    rent_adjustment_factory,
+    dry_run,
+    adjustment_type,
+    adjustment_amount,
+    expected_rent,
+    expected_amount_left,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2151,7 +2225,9 @@ def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_re
     range_start = date(year=2018, month=1, day=1)
     range_end = date(year=2018, month=12, day=31)
 
-    calculation_result = rent.get_amount_for_date_range(range_start, range_end, dry_run=dry_run)
+    calculation_result = rent.get_amount_for_date_range(
+        range_start, range_end, dry_run=dry_run
+    )
     assert calculation_result.get_total_amount() == expected_rent
 
     rent_adjustment = RentAdjustment.objects.get(pk=rent_adjustment.id)
@@ -2196,14 +2272,25 @@ def test_adjustment_type_amount_total(lease_test_data, rent_factory, contract_re
             50,  # Adjustment 2 amount
             Decimal(700),
         ),
-    ]
+    ],
 )
 def test_get_amount_for_date_range_adjustments_two_in_series(
-        lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory, adjustment_start_date1,
-        adjustment_end_date1, adjustment_type1, adjustment_amount1, adjustment_start_date2, adjustment_end_date2,
-        adjustment_type2, adjustment_amount2, expected):
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    rent_adjustment_factory,
+    adjustment_start_date1,
+    adjustment_end_date1,
+    adjustment_type1,
+    adjustment_amount1,
+    adjustment_start_date2,
+    adjustment_end_date2,
+    adjustment_type2,
+    adjustment_amount2,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2287,14 +2374,26 @@ def test_get_amount_for_date_range_adjustments_two_in_series(
             50,  # Adjustment 2 amount
             Decimal(700),
         ),
-    ]
+    ],
 )
 def test_get_amount_for_date_range_adjustments_two_in_series_fixed_initial_year_rent(
-        lease_test_data, rent_factory, contract_rent_factory, fixed_initial_year_rent_factory, rent_adjustment_factory,
-        adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, adjustment_start_date2,
-        adjustment_end_date2, adjustment_type2, adjustment_amount2, expected):
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    fixed_initial_year_rent_factory,
+    rent_adjustment_factory,
+    adjustment_start_date1,
+    adjustment_end_date1,
+    adjustment_type1,
+    adjustment_amount1,
+    adjustment_start_date2,
+    adjustment_end_date2,
+    adjustment_type2,
+    adjustment_amount2,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2305,9 +2404,7 @@ def test_get_amount_for_date_range_adjustments_two_in_series_fixed_initial_year_
     )
 
     fixed_initial_year_rent = fixed_initial_year_rent_factory(
-        rent=rent,
-        intended_use_id=1,
-        amount=Decimal(1200),
+        rent=rent, intended_use_id=1, amount=Decimal(1200)
     )
 
     rent_adjustment_factory(
@@ -2347,14 +2444,22 @@ def test_get_amount_for_date_range_adjustments_two_in_series_fixed_initial_year_
             RentAdjustmentType.DISCOUNT,
             50,
             Decimal(900),
-        ),
-    ]
+        )
+    ],
 )
 def test_fixed_initial_year_rent_amount_for_date_range(
-        lease_test_data, rent_factory, fixed_initial_year_rent_factory, rent_adjustment_factory,
-        adjustment_start_date1, adjustment_end_date1, adjustment_type1, adjustment_amount1, expected):
+    lease_test_data,
+    rent_factory,
+    fixed_initial_year_rent_factory,
+    rent_adjustment_factory,
+    adjustment_start_date1,
+    adjustment_end_date1,
+    adjustment_type1,
+    adjustment_amount1,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2386,7 +2491,8 @@ def test_fixed_initial_year_rent_amount_for_date_range(
     range_end = date(year=2018, month=12, day=31)
 
     calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(
-        fixed_initial_year_rent.intended_use, range_start, range_end)
+        fixed_initial_year_rent.intended_use, range_start, range_end
+    )
     assert calculation_result.get_total_amount() == expected
 
 
@@ -2394,13 +2500,7 @@ def test_fixed_initial_year_rent_amount_for_date_range(
 @pytest.mark.parametrize(
     "rent_start_date, rent_end_date, period_start_date, period_end_date, expected",
     [
-        (
-            None,
-            None,
-            None,
-            None,
-            True,
-        ),
+        (None, None, None, None, True),
         (
             None,
             None,
@@ -2420,62 +2520,69 @@ def test_fixed_initial_year_rent_amount_for_date_range(
             date(year=2019, month=12, day=31),
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            True
+            True,
         ),
         (
             date(year=2000, month=1, day=1),
             date(year=2000, month=12, day=31),
             date(year=1990, month=1, day=1),
             date(year=2020, month=1, day=1),
-            True
+            True,
         ),
         (
             date(year=1990, month=1, day=1),
             date(year=2020, month=1, day=1),
             date(year=2000, month=1, day=1),
             date(year=2000, month=12, day=31),
-            True
+            True,
         ),
         (
             date(year=2000, month=1, day=1),
             date(year=2000, month=12, day=31),
             date(year=1999, month=12, day=15),
             date(year=2000, month=1, day=15),
-            True
+            True,
         ),
         (
             date(year=2000, month=1, day=1),
             date(year=2000, month=12, day=31),
             date(year=2000, month=1, day=15),
             date(year=2000, month=2, day=15),
-            True
+            True,
         ),
         (
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
             date(year=2020, month=1, day=1),
             date(year=2020, month=12, day=31),
-            False
+            False,
         ),
         (
             date(year=1990, month=1, day=1),
             date(year=1990, month=1, day=1),
             date(year=2020, month=1, day=1),
             date(year=2020, month=12, day=31),
-            False
+            False,
         ),
         (
             date(year=1990, month=1, day=1),
             date(year=1990, month=1, day=1),
             date(year=1990, month=1, day=2),
             date(year=1990, month=1, day=2),
-            False
+            False,
         ),
-    ]
+    ],
 )
-def test_is_active_on_period(lease_test_data, rent_factory, rent_start_date, rent_end_date, period_start_date,
-                             period_end_date, expected):
-    lease = lease_test_data['lease']
+def test_is_active_on_period(
+    lease_test_data,
+    rent_factory,
+    rent_start_date,
+    rent_end_date,
+    period_start_date,
+    period_end_date,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2498,57 +2605,65 @@ def test_is_active_on_period(lease_test_data, rent_factory, rent_start_date, ren
             date(year=2019, month=12, day=31),
             date(year=2017, month=1, day=1),
             date(year=2019, month=12, day=31),
-            []
+            [],
         ),
         (
             date(year=2017, month=1, day=1),
             date(year=2017, month=12, day=31),
             date(year=2018, month=1, day=1),
             date(year=2018, month=3, day=31),
-            [(date(2018, 4, 1), date(2018, 8, 31))]
+            [(date(2018, 4, 1), date(2018, 8, 31))],
         ),
         (
             date(year=2018, month=1, day=1),
             date(year=2018, month=3, day=31),
             date(year=2018, month=8, day=1),
             date(year=2018, month=12, day=31),
-            [(date(2018, 4, 1), date(2018, 7, 31))]
+            [(date(2018, 4, 1), date(2018, 7, 31))],
         ),
         (
             date(year=2017, month=1, day=1),
             date(year=2018, month=6, day=30),
             date(year=2017, month=1, day=1),
             date(year=2018, month=6, day=30),
-            [(date(2018, 7, 1), date(2018, 8, 31))]
+            [(date(2018, 7, 1), date(2018, 8, 31))],
         ),
         (
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
             date(year=2017, month=1, day=1),
-            []
+            [],
         ),
         (
             date(year=2019, month=1, day=1),
             date(year=2019, month=1, day=1),
             date(year=2019, month=1, day=1),
             date(year=2019, month=1, day=1),
-            []
+            [],
         ),
         (
             date(year=2018, month=3, day=1),
             date(year=2018, month=3, day=31),
             date(year=2018, month=3, day=1),
             date(year=2018, month=3, day=31),
-            [(date(2018, 4, 1), date(2018, 8, 31))]
+            [(date(2018, 4, 1), date(2018, 8, 31))],
         ),
-    ]
+    ],
 )
 def test_fixed_initial_year_rent_for_date_range_remaining_ranges(
-        lease_test_data, rent_factory, contract_rent_factory, fixed_initial_year_rent_factory,
-        start_date1, end_date1, start_date2, end_date2, expected):
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    fixed_initial_year_rent_factory,
+    start_date1,
+    end_date1,
+    start_date2,
+    end_date2,
+    expected,
+):
 
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(
         lease=lease,
@@ -2585,101 +2700,111 @@ def test_fixed_initial_year_rent_for_date_range_remaining_ranges(
     range_start = date(year=2018, month=3, day=1)
     range_end = date(year=2018, month=8, day=31)
 
-    calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(contract_rent.intended_use, range_start,
-                                                                            range_end)
+    calculation_result = rent.fixed_initial_year_rent_amount_for_date_range(
+        contract_rent.intended_use, range_start, range_end
+    )
     assert calculation_result.remaining_ranges == expected
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("rent_cycle, due_dates_per_year, billing_period, expected", [
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        0,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        1,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        4,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        12,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        1,
-        (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
-        True
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        2,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
-        False
-    ),
-    (
-        RentCycle.JANUARY_TO_DECEMBER,
-        2,
-        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
-        True
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        0,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        1,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        4,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        12,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
-        False
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        1,
-        (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
-        True
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        2,
-        (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
-        False
-    ),
-    (
-        RentCycle.APRIL_TO_MARCH,
-        2,
-        (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
-        True
-    ),
-])
-def test_is_the_last_billing_period(lease_test_data, rent_factory, rent_cycle, due_dates_per_year, billing_period,
-                                    expected):
-    lease = lease_test_data['lease']
+@pytest.mark.parametrize(
+    "rent_cycle, due_dates_per_year, billing_period, expected",
+    [
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            0,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            1,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            4,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            12,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            1,
+            (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+            True,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            2,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+            False,
+        ),
+        (
+            RentCycle.JANUARY_TO_DECEMBER,
+            2,
+            (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+            True,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            0,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            1,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            4,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            12,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=1)),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            1,
+            (date(year=2017, month=1, day=1), date(year=2017, month=12, day=31)),
+            True,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            2,
+            (date(year=2017, month=1, day=1), date(year=2017, month=6, day=30)),
+            False,
+        ),
+        (
+            RentCycle.APRIL_TO_MARCH,
+            2,
+            (date(year=2017, month=7, day=1), date(year=2017, month=12, day=31)),
+            True,
+        ),
+    ],
+)
+def test_is_the_last_billing_period(
+    lease_test_data,
+    rent_factory,
+    rent_cycle,
+    due_dates_per_year,
+    billing_period,
+    expected,
+):
+    lease = lease_test_data["lease"]
 
     rent = rent_factory(lease=lease)
     rent.cycle = rent_cycle

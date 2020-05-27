@@ -32,7 +32,10 @@ def get_range_overlap_and_remainder(start1, end1, start2, end2):
     if max_start == start1 and min_end == end1:
         remainder = []
     elif max_start > start1 and min_end < end1:
-        remainder = [(start1, start2 - relativedelta(days=1)), (end2 + relativedelta(days=1), end1)]
+        remainder = [
+            (start1, start2 - relativedelta(days=1)),
+            (end2 + relativedelta(days=1), end1),
+        ]
     elif max_start == start1 and min_end <= end1:
         remainder = [(end2 + relativedelta(days=1), end1)]
     elif max_start == start2 and min_end >= end1:
@@ -55,14 +58,17 @@ def get_spanned_months(start_date, end_date):
     return months
 
 
-def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, date_range_end,
-                                              real_month_lengths=True):
+def get_date_range_amount_from_monthly_amount(
+    monthly_amount, date_range_start, date_range_end, real_month_lengths=True
+):
     total = 0
 
     spanned_months = get_spanned_months(date_range_start, date_range_end)
     total += monthly_amount * spanned_months
 
-    start_month_last_day = get_last_date_of_month(date_range_start.year, date_range_start.month)
+    start_month_last_day = get_last_date_of_month(
+        date_range_start.year, date_range_start.month
+    )
     start_missing_days = date_range_start.day - 1
 
     if not real_month_lengths and start_missing_days in (14, 15, 16):
@@ -70,7 +76,9 @@ def get_date_range_amount_from_monthly_amount(monthly_amount, date_range_start, 
     divisor = Decimal(start_month_last_day.day) if real_month_lengths else Decimal(30)
     total -= Decimal(start_missing_days) / divisor * monthly_amount
 
-    end_month_last_day = get_last_date_of_month(date_range_end.year, date_range_end.month)
+    end_month_last_day = get_last_date_of_month(
+        date_range_end.year, date_range_end.month
+    )
     end_missing_days = end_month_last_day.day - date_range_end.day
 
     if not real_month_lengths and end_missing_days in (14, 15, 16):
@@ -92,7 +100,9 @@ def fix_amount_for_overlap(amount, overlap, remainders):
     remainder_months = 0
     remainder_days = 0
     for remainder in remainders:
-        remainder_delta = relativedelta(remainder[1] + relativedelta(days=1), remainder[0])
+        remainder_delta = relativedelta(
+            remainder[1] + relativedelta(days=1), remainder[0]
+        )
         remainder_months += remainder_delta.months
         remainder_days += remainder_delta.days
 
@@ -104,7 +114,9 @@ def fix_amount_for_overlap(amount, overlap, remainders):
     full_overlap_days = (overlap[1] + relativedelta(days=1) - overlap[0]).days
     full_remainder_days = 0
     for remainder in remainders:
-        full_remainder_days += (remainder[1] + relativedelta(days=1) - remainder[0]).days
+        full_remainder_days += (
+            remainder[1] + relativedelta(days=1) - remainder[0]
+        ).days
 
     return amount / (full_overlap_days + full_remainder_days) * full_overlap_days
 
@@ -210,8 +222,11 @@ def split_date_range(date_range, count):
     days_between = (end_date - start_date).days
     # TODO: error if can't split as many times as requested?
     if days_between < count:
-        raise RuntimeError("Can't split date range {} - {} ({} days) into {} parts".format(
-            start_date, end_date, days_between, count))
+        raise RuntimeError(
+            "Can't split date range {} - {} ({} days) into {} parts".format(
+                start_date, end_date, days_between, count
+            )
+        )
 
     days_per_period = days_between // count
 
@@ -234,7 +249,7 @@ def split_date_range(date_range, count):
 
 def _get_date_range_from_item(item):
     if isinstance(item, dict):
-        return item['date_range']
+        return item["date_range"]
     else:
         if callable(item.date_range):
             return item.date_range()
@@ -249,8 +264,10 @@ def group_items_in_period_by_date_range(items, min_date, max_date):
         return grouped_items
 
     for item in items:
-        if (isinstance(item, dict) and 'date_range' not in item) and not hasattr(item, 'date_range'):
-            raise ValueError('Item has no date_range attribute or key')
+        if (isinstance(item, dict) and "date_range" not in item) and not hasattr(
+            item, "date_range"
+        ):
+            raise ValueError("Item has no date_range attribute or key")
 
     sorted_items = sorted(items, key=_get_date_range_from_item)
 
@@ -263,15 +280,18 @@ def group_items_in_period_by_date_range(items, min_date, max_date):
         current_items = []
         for item in sorted_items:
             item_range = _get_date_range_from_item(item)
-            if (item_range[0] is None or item_range[0] <= current_date) and (item_range[1] is None or current_date <=
-                                                                             item_range[1]):
+            if (item_range[0] is None or item_range[0] <= current_date) and (
+                item_range[1] is None or current_date <= item_range[1]
+            ):
                 current_items.append(item)
 
         if previous_items is None:
             previous_items = current_items
 
         if current_items != previous_items:
-            grouped_items[(start_date, current_date - relativedelta(days=1))] = previous_items
+            grouped_items[
+                (start_date, current_date - relativedelta(days=1))
+            ] = previous_items
 
             previous_items = current_items
             start_date = current_date
@@ -289,12 +309,14 @@ def get_monthly_amount_by_period_type(amount, period_type):
     elif period_type == PeriodType.PER_YEAR:
         return amount / 12
     else:
-        raise NotImplementedError('Cannot calculate monthly amount for PeriodType {}'.format(period_type))
+        raise NotImplementedError(
+            "Cannot calculate monthly amount for PeriodType {}".format(period_type)
+        )
 
 
 def is_business_day(the_date):
     if not the_date or not isinstance(the_date, datetime.date):
-        raise ValueError('the_date must be an instance of datetime.date')
+        raise ValueError("the_date must be an instance of datetime.date")
 
     if the_date.weekday() > 4:
         return False
@@ -311,7 +333,7 @@ def is_business_day(the_date):
 
 def get_next_business_day(the_date):
     if not the_date or not isinstance(the_date, datetime.date):
-        raise ValueError('the_date must be an instance of datetime.date')
+        raise ValueError("the_date must be an instance of datetime.date")
 
     next_day = the_date + relativedelta(days=1)
 
@@ -323,7 +345,7 @@ def get_next_business_day(the_date):
 
 def is_date_on_first_quarter(the_date):
     if not the_date or not isinstance(the_date, datetime.date):
-        raise ValueError('the_date must be an instance of datetime.date')
+        raise ValueError("the_date must be an instance of datetime.date")
 
     first_quarter_start = datetime.date(year=the_date.year, month=1, day=1)
     first_quarter_end = datetime.date(year=the_date.year, month=3, day=31)
@@ -331,21 +353,28 @@ def is_date_on_first_quarter(the_date):
     return first_quarter_start <= the_date <= first_quarter_end
 
 
-class DayMonth(namedtuple('DayMonthBase', ['day', 'month'])):
+class DayMonth(namedtuple("DayMonthBase", ["day", "month"])):
     @classmethod
     def from_date(cls, date_instance):
         if not isinstance(date_instance, datetime.date):
-            raise ValueError('date_instance should be an instance of datetime.date')
+            raise ValueError("date_instance should be an instance of datetime.date")
 
         return cls(day=date_instance.day, month=date_instance.month)
 
     @classmethod
     def from_datetime(cls, datetime_instance):
         if not isinstance(datetime_instance, datetime.datetime):
-            raise ValueError('datetime_instance should be an instance of datetime.datetime')
+            raise ValueError(
+                "datetime_instance should be an instance of datetime.datetime"
+            )
 
-        return cls.from_date(datetime.date(year=datetime_instance.year, day=datetime_instance.day,
-                                           month=datetime_instance.month))
+        return cls.from_date(
+            datetime.date(
+                year=datetime_instance.year,
+                day=datetime_instance.day,
+                month=datetime_instance.month,
+            )
+        )
 
     def asdict(self):
         return OrderedDict(zip(self._fields, self))
@@ -369,7 +398,7 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
 
     # Go through every relation (except the ones marked as skip) and collect
     # all of the referenced items.
-    skip_relations = getattr(model, 'recursive_get_related_skip_relations', [])
+    skip_relations = getattr(model, "recursive_get_related_skip_relations", [])
 
     # relations = (
     #     f for f in model._meta.get_fields(include_hidden=True)
@@ -377,15 +406,19 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
     # )
     #
     for relation in model._meta.get_fields(include_hidden=True):
-        if not relation.is_relation or not relation.name or relation.name in skip_relations:
+        if (
+            not relation.is_relation
+            or not relation.name
+            or relation.name in skip_relations
+        ):
             continue
 
         accessor_name = relation.name
-        if hasattr(relation, 'get_accessor_name'):
+        if hasattr(relation, "get_accessor_name"):
             accessor_name = relation.get_accessor_name()
 
         # Skip relations that don't have backwards reference
-        if accessor_name.endswith('+'):
+        if accessor_name.endswith("+"):
             continue
 
         # Skip relations to a parent model
@@ -402,18 +435,20 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
             # Otherwise get all instances from the related manager
             related_manager = getattr(obj, accessor_name)
 
-            if not hasattr(related_manager, 'all'):
+            if not hasattr(related_manager, "all"):
                 continue
 
             # Include soft deleted objects
-            if hasattr(related_manager, 'all_with_deleted'):
+            if hasattr(related_manager, "all_with_deleted"):
                 all_items = related_manager.all_with_deleted()
             else:
                 all_items = related_manager.all()
 
         # Model permission check
         has_permission = False
-        permission_name = '{}.view_{}'.format(relation.model._meta.app_label, relation.model._meta.model_name)
+        permission_name = "{}.view_{}".format(
+            relation.model._meta.app_label, relation.model._meta.model_name
+        )
         if user.has_perm(permission_name):
             has_permission = True
 
@@ -435,16 +470,22 @@ def normalize_property_identifier(identifier):
 
     identifier = identifier.strip()
 
-    match = re.match(r'(\d+)-(\d+)-(\d+(?:[A-Za-z]+)?)-(\d+)(?:-([PM])?(\d+))?', identifier)
+    match = re.match(
+        r"(\d+)-(\d+)-(\d+(?:[A-Za-z]+)?)-(\d+)(?:-([PM])?(\d+))?", identifier
+    )
 
     if not match:
-        match = re.match(r'(\d{3})(\d{3})(\d{4})(\d{4})([PM])?(\d+)?', identifier)
+        match = re.match(r"(\d{3})(\d{3})(\d{4})(\d{4})([PM])?(\d+)?", identifier)
 
     if match:
-        normalized_identifier = '{}-{}-{}-{}'.format(*[m.lstrip('0') for m in match.group(1, 2, 3, 4)])
+        normalized_identifier = "{}-{}-{}-{}".format(
+            *[m.lstrip("0") for m in match.group(1, 2, 3, 4)]
+        )
 
         if match.group(5):
-            normalized_identifier += '-{}{}'.format(match.group(5), match.group(6).lstrip('0'))
+            normalized_identifier += "-{}{}".format(
+                match.group(5), match.group(6).lstrip("0")
+            )
 
         return normalized_identifier
 
@@ -453,7 +494,9 @@ def normalize_property_identifier(identifier):
 
 def is_instance_empty(instance, skip_fields=None):
     """Check if all of the fields in the model instance are empty"""
-    assert isinstance(instance, Model), "is_instance_empty expects a django.db.models.Model instance"
+    assert isinstance(
+        instance, Model
+    ), "is_instance_empty expects a django.db.models.Model instance"
 
     if skip_fields is None:
         skip_fields = []
@@ -464,7 +507,7 @@ def is_instance_empty(instance, skip_fields=None):
 
         if field.is_relation:
             accessor_name = field.name
-            if hasattr(field, 'get_accessor_name'):
+            if hasattr(field, "get_accessor_name"):
                 accessor_name = field.get_accessor_name()
 
             val = getattr(instance, accessor_name)

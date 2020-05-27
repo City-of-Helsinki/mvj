@@ -39,7 +39,8 @@ def run_scheduler_loop() -> NoReturn:
             locked_item = (
                 queue_items.filter(pk=first_item.pk)
                 .select_for_update(skip_locked=True)
-                .first())
+                .first()
+            )
 
             if not locked_item:
                 # Someone else picked it up already
@@ -48,7 +49,7 @@ def run_scheduler_loop() -> NoReturn:
             # Assign the item for us
             locked_item.assigned_at = utc_now()
             locked_item.assignee_pid = os.getpid()
-            locked_item.save(update_fields=['assigned_at', 'assignee_pid'])
+            locked_item.save(update_fields=["assigned_at", "assignee_pid"])
 
         run_job(first_item.scheduled_job.job)
 

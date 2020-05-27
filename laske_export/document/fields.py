@@ -21,7 +21,14 @@ class FieldError(Exception):
 
 
 class Field:
-    def __init__(self, name=None, field_type='string', validators=None, many=False, required=False):
+    def __init__(
+        self,
+        name=None,
+        field_type="string",
+        validators=None,
+        many=False,
+        required=False,
+    ):
         self.element_name = name
         self.field_type = field_type
         self.validators = validators
@@ -31,10 +38,14 @@ class Field:
 
     def validate_value(self, value):
         for one_value in value:
-            if self.field_type == 'string' and not isinstance(one_value, str):
+            if self.field_type == "string" and not isinstance(one_value, str):
                 self._validation_errors.append(_("Value should be a string"))
-            elif inspect.isclass(self.field_type) and not isinstance(one_value, self.field_type):
-                self._validation_errors.append(_("Value should be of type {}".format(self.field_type)))
+            elif inspect.isclass(self.field_type) and not isinstance(
+                one_value, self.field_type
+            ):
+                self._validation_errors.append(
+                    _("Value should be of type {}".format(self.field_type))
+                )
 
             if not self.validators:
                 continue
@@ -72,7 +83,7 @@ class FieldGroup:
         self._fields = self.get_fields()
 
     def get_fields(self):
-        if hasattr(self, '_fields'):
+        if hasattr(self, "_fields"):
             return self._fields
 
         fields = OrderedDict()
@@ -97,7 +108,11 @@ class FieldGroup:
             field_value = getattr(self, field_name)
 
             if not field.is_valid(field_value):
-                raise FieldError('Value ({}) of field {} is not valid'.format(field_value, field_name))
+                raise FieldError(
+                    "Value ({}) of field {} is not valid".format(
+                        field_value, field_name
+                    )
+                )
 
             if not field_value:
                 el = etree.Element(field.element_name)
@@ -108,7 +123,7 @@ class FieldGroup:
                 field_value = [field_value]
 
             for one_value in field_value:
-                if field.field_type == 'string':
+                if field.field_type == "string":
                     el = etree.Element(field.element_name)
                     el.text = one_value
                     elements.append(el)
@@ -128,10 +143,12 @@ class FieldGroup:
 
         return root
 
-    def to_xml_string(self, encoding='utf-8'):
+    def to_xml_string(self, encoding="utf-8"):
         root = self.to_etree()
 
-        return etree.tostring(root, encoding=encoding, xml_declaration=True, pretty_print=True)
+        return etree.tostring(
+            root, encoding=encoding, xml_declaration=True, pretty_print=True
+        )
 
     def __str__(self):
         return self.to_xml_string()

@@ -6,29 +6,56 @@ from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
 
 from leasing.calculation.result import CalculationAmount, CalculationResult
-from leasing.enums import ContactType, DueDatesType, PeriodType, RentCycle, RentType, TenantContactType
+from leasing.enums import (
+    ContactType,
+    DueDatesType,
+    PeriodType,
+    RentCycle,
+    RentType,
+    TenantContactType,
+)
 from leasing.models import RentDueDate
 
 
 @pytest.mark.django_db
 def test_calculate_invoices_no_rents(django_db_setup, lease_test_data):
-    lease = lease_test_data['lease']
+    lease = lease_test_data["lease"]
 
     assert lease.calculate_invoices({}) == []
 
 
 @pytest.mark.django_db
-def test_calculate_invoices_one_tenant(django_db_setup, lease_factory, tenant_factory, contact_factory,
-                                       tenant_contact_factory, tenant_rent_share_factory, rent_factory,
-                                       contract_rent_factory):
-    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
-                          start_date=date(year=2000, month=1, day=1))
+def test_calculate_invoices_one_tenant(
+    django_db_setup,
+    lease_factory,
+    tenant_factory,
+    contact_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    rent_factory,
+    contract_rent_factory,
+):
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
-    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1)
-    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
+    )
+    contact1 = contact_factory(
+        first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant1,
+        contact=contact1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     rent = rent_factory(
         lease=lease,
@@ -47,21 +74,26 @@ def test_calculate_invoices_one_tenant(django_db_setup, lease_factory, tenant_fa
         base_amount_period=PeriodType.PER_YEAR,
     )
 
-    billing_period = (date(year=2017, month=1, day=1),  date(year=2017, month=12, day=31))
+    billing_period = (
+        date(year=2017, month=1, day=1),
+        date(year=2017, month=12, day=31),
+    )
 
     calculation_result = CalculationResult(*billing_period)
-    calculation_result.add_amount(CalculationAmount(
-        item=contract_rent,
-        amount=Decimal(1000),
-        date_range_start=billing_period[0],
-        date_range_end=billing_period[1],
-    ))
+    calculation_result.add_amount(
+        CalculationAmount(
+            item=contract_rent,
+            amount=Decimal(1000),
+            date_range_start=billing_period[0],
+            date_range_end=billing_period[1],
+        )
+    )
 
     period_rents = {
         billing_period: {
-            'due_date': date(year=2017, month=6, day=1),
-            'calculation_result': calculation_result,
-            'last_billing_period': False,
+            "due_date": date(year=2017, month=6, day=1),
+            "calculation_result": calculation_result,
+            "last_billing_period": False,
         }
     }
 
@@ -69,29 +101,57 @@ def test_calculate_invoices_one_tenant(django_db_setup, lease_factory, tenant_fa
 
     assert len(invoice_data) == 1
     assert len(invoice_data[0]) == 1
-    assert invoice_data[0][0]['billed_amount'] == Decimal(1000)
-    assert len(invoice_data[0][0]['rows']) == 1
-    assert invoice_data[0][0]['rows'][0]['tenant'] == tenant1
+    assert invoice_data[0][0]["billed_amount"] == Decimal(1000)
+    assert len(invoice_data[0][0]["rows"]) == 1
+    assert invoice_data[0][0]["rows"][0]["tenant"] == tenant1
 
 
 @pytest.mark.django_db
-def test_calculate_invoices_two_tenants(django_db_setup, lease_factory, tenant_factory, contact_factory,
-                                        tenant_contact_factory, tenant_rent_share_factory, rent_factory,
-                                        contract_rent_factory):
-    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
-                          start_date=date(year=2000, month=1, day=1))
+def test_calculate_invoices_two_tenants(
+    django_db_setup,
+    lease_factory,
+    tenant_factory,
+    contact_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    rent_factory,
+    contract_rent_factory,
+):
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=2)
-    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=2
+    )
+    contact1 = contact_factory(
+        first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant1,
+        contact=contact1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-    tenant_rent_share_factory(tenant=tenant2, intended_use_id=1, share_numerator=1, share_denominator=2)
-    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant2, contact=contact2,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant2, intended_use_id=1, share_numerator=1, share_denominator=2
+    )
+    contact2 = contact_factory(
+        first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant2,
+        contact=contact2,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     rent = rent_factory(
         lease=lease,
@@ -110,21 +170,26 @@ def test_calculate_invoices_two_tenants(django_db_setup, lease_factory, tenant_f
         base_amount_period=PeriodType.PER_YEAR,
     )
 
-    billing_period = (date(year=2017, month=1, day=1),  date(year=2017, month=12, day=31))
+    billing_period = (
+        date(year=2017, month=1, day=1),
+        date(year=2017, month=12, day=31),
+    )
 
     calculation_result = CalculationResult(*billing_period)
-    calculation_result.add_amount(CalculationAmount(
-        item=contract_rent,
-        amount=Decimal(1000),
-        date_range_start=billing_period[0],
-        date_range_end=billing_period[1],
-    ))
+    calculation_result.add_amount(
+        CalculationAmount(
+            item=contract_rent,
+            amount=Decimal(1000),
+            date_range_start=billing_period[0],
+            date_range_end=billing_period[1],
+        )
+    )
 
     period_rents = {
         billing_period: {
-            'due_date': date(year=2017, month=6, day=1),
-            'calculation_result': calculation_result,
-            'last_billing_period': False,
+            "due_date": date(year=2017, month=6, day=1),
+            "calculation_result": calculation_result,
+            "last_billing_period": False,
         }
     }
 
@@ -132,39 +197,79 @@ def test_calculate_invoices_two_tenants(django_db_setup, lease_factory, tenant_f
 
     assert len(invoice_data) == 1
     assert len(invoice_data[0]) == 2
-    assert invoice_data[0][0]['billed_amount'] == Decimal(500)
-    assert invoice_data[0][1]['billed_amount'] == Decimal(500)
-    assert len(invoice_data[0][0]['rows']) == 1
-    assert len(invoice_data[0][1]['rows']) == 1
+    assert invoice_data[0][0]["billed_amount"] == Decimal(500)
+    assert invoice_data[0][1]["billed_amount"] == Decimal(500)
+    assert len(invoice_data[0][0]["rows"]) == 1
+    assert len(invoice_data[0][1]["rows"]) == 1
 
-    tenants = {invoice_data[0][0]['rows'][0]['tenant'], invoice_data[0][1]['rows'][0]['tenant']}
+    tenants = {
+        invoice_data[0][0]["rows"][0]["tenant"],
+        invoice_data[0][1]["rows"][0]["tenant"],
+    }
     assert tenants == {tenant1, tenant2}
 
 
 @pytest.mark.django_db
-def test_calculate_invoices_three_tenants(django_db_setup, assert_count_equal, lease_factory, tenant_factory,
-                                          contact_factory, tenant_contact_factory, tenant_rent_share_factory,
-                                          rent_factory, contract_rent_factory):
-    lease = lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1,
-                          start_date=date(year=2000, month=1, day=1))
+def test_calculate_invoices_three_tenants(
+    django_db_setup,
+    assert_count_equal,
+    lease_factory,
+    tenant_factory,
+    contact_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    rent_factory,
+    contract_rent_factory,
+):
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=3)
-    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=3)
-    contact1 = contact_factory(first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant1, contact=contact1,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=3
+    )
+    contact1 = contact_factory(
+        first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant1,
+        contact=contact1,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=3)
-    tenant_rent_share_factory(tenant=tenant2, intended_use_id=1, share_numerator=1, share_denominator=3)
-    contact2 = contact_factory(first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant2, contact=contact2,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant2, intended_use_id=1, share_numerator=1, share_denominator=3
+    )
+    contact2 = contact_factory(
+        first_name="First name 2", last_name="Last name 2", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant2,
+        contact=contact2,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     tenant3 = tenant_factory(lease=lease, share_numerator=1, share_denominator=3)
-    tenant_rent_share_factory(tenant=tenant3, intended_use_id=1, share_numerator=1, share_denominator=3)
-    contact3 = contact_factory(first_name="First name 3", last_name="Last name 3", type=ContactType.PERSON)
-    tenant_contact_factory(type=TenantContactType.TENANT, tenant=tenant3, contact=contact3,
-                           start_date=date(year=2000, month=1, day=1))
+    tenant_rent_share_factory(
+        tenant=tenant3, intended_use_id=1, share_numerator=1, share_denominator=3
+    )
+    contact3 = contact_factory(
+        first_name="First name 3", last_name="Last name 3", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant3,
+        contact=contact3,
+        start_date=date(year=2000, month=1, day=1),
+    )
 
     rent = rent_factory(
         lease=lease,
@@ -183,21 +288,26 @@ def test_calculate_invoices_three_tenants(django_db_setup, assert_count_equal, l
         base_amount_period=PeriodType.PER_YEAR,
     )
 
-    billing_period = (date(year=2017, month=1, day=1),  date(year=2017, month=12, day=31))
+    billing_period = (
+        date(year=2017, month=1, day=1),
+        date(year=2017, month=12, day=31),
+    )
 
     calculation_result = CalculationResult(*billing_period)
-    calculation_result.add_amount(CalculationAmount(
-        item=contract_rent,
-        amount=Decimal(1000),
-        date_range_start=billing_period[0],
-        date_range_end=billing_period[1],
-    ))
+    calculation_result.add_amount(
+        CalculationAmount(
+            item=contract_rent,
+            amount=Decimal(1000),
+            date_range_start=billing_period[0],
+            date_range_end=billing_period[1],
+        )
+    )
 
     period_rents = {
         billing_period: {
-            'due_date': date(year=2017, month=6, day=1),
-            'calculation_result': calculation_result,
-            'last_billing_period': False,
+            "due_date": date(year=2017, month=6, day=1),
+            "calculation_result": calculation_result,
+            "last_billing_period": False,
         }
     }
 
@@ -205,32 +315,38 @@ def test_calculate_invoices_three_tenants(django_db_setup, assert_count_equal, l
 
     assert len(invoice_data) == 1
     assert len(invoice_data[0]) == 3
-    assert len(invoice_data[0][0]['rows']) == 1
-    assert len(invoice_data[0][1]['rows']) == 1
-    assert len(invoice_data[0][2]['rows']) == 1
+    assert len(invoice_data[0][0]["rows"]) == 1
+    assert len(invoice_data[0][1]["rows"]) == 1
+    assert len(invoice_data[0][2]["rows"]) == 1
 
     amounts = [
-        invoice_data[0][0]['billed_amount'],
-        invoice_data[0][1]['billed_amount'],
-        invoice_data[0][2]['billed_amount']
+        invoice_data[0][0]["billed_amount"],
+        invoice_data[0][1]["billed_amount"],
+        invoice_data[0][2]["billed_amount"],
     ]
 
-    assert_count_equal(amounts, [Decimal('333.33'), Decimal('333.33'), Decimal('333.34')])
+    assert_count_equal(
+        amounts, [Decimal("333.33"), Decimal("333.33"), Decimal("333.34")]
+    )
 
     tenants = {
-        invoice_data[0][0]['rows'][0]['tenant'],
-        invoice_data[0][1]['rows'][0]['tenant'],
-        invoice_data[0][2]['rows'][0]['tenant']
+        invoice_data[0][0]["rows"][0]["tenant"],
+        invoice_data[0][1]["rows"][0]["tenant"],
+        invoice_data[0][2]["rows"][0]["tenant"],
     }
 
     assert tenants == {tenant1, tenant2, tenant3}
 
 
 @pytest.mark.django_db
-def test_calculate_invoices_seasonal(lease_test_data, tenant_rent_share_factory, rent_factory, contract_rent_factory):
-    lease = lease_test_data['lease']
-    tenant1 = lease_test_data['tenants'][0]
-    tenant_rent_share_factory(tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1)
+def test_calculate_invoices_seasonal(
+    lease_test_data, tenant_rent_share_factory, rent_factory, contract_rent_factory
+):
+    lease = lease_test_data["lease"]
+    tenant1 = lease_test_data["tenants"][0]
+    tenant_rent_share_factory(
+        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
+    )
 
     rent1 = rent_factory(
         lease=lease,
@@ -276,10 +392,7 @@ def test_calculate_invoices_seasonal(lease_test_data, tenant_rent_share_factory,
     rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=6, day=1))
 
     contract_rent_factory(
-        rent=rent2,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
+        rent=rent2, intended_use_id=1, amount=80, period=PeriodType.PER_MONTH
     )
 
     rent3 = rent_factory(
@@ -296,10 +409,7 @@ def test_calculate_invoices_seasonal(lease_test_data, tenant_rent_share_factory,
     rent3.due_dates.add(RentDueDate.objects.create(rent=rent3, month=7, day=1))
 
     contract_rent_factory(
-        rent=rent3,
-        intended_use_id=1,
-        amount=120,
-        period=PeriodType.PER_MONTH,
+        rent=rent3, intended_use_id=1, amount=120, period=PeriodType.PER_MONTH
     )
 
     rent4 = rent_factory(
@@ -318,14 +428,13 @@ def test_calculate_invoices_seasonal(lease_test_data, tenant_rent_share_factory,
     rent4.due_dates.add(RentDueDate.objects.create(rent=rent4, month=12, day=1))
 
     contract_rent_factory(
-        rent=rent4,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
+        rent=rent4, intended_use_id=1, amount=80, period=PeriodType.PER_MONTH
     )
 
     first_day_of_year = date(year=2020, month=1, day=1)
-    first_day_of_every_month = [dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)]
+    first_day_of_every_month = [
+        dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)
+    ]
 
     total_invoice_amount = Decimal(0)
     total_invoice_row_amount = Decimal(0)
@@ -333,12 +442,16 @@ def test_calculate_invoices_seasonal(lease_test_data, tenant_rent_share_factory,
     for first_day in first_day_of_every_month:
         last_day = first_day + relativedelta(day=31)
 
-        rents = lease.determine_payable_rents_and_periods(first_day, last_day, dry_run=True)
+        rents = lease.determine_payable_rents_and_periods(
+            first_day, last_day, dry_run=True
+        )
 
         for period_invoice_data in lease.calculate_invoices(rents):
             for invoice_data in period_invoice_data:
-                total_invoice_amount += invoice_data['billed_amount']
-                total_invoice_row_amount += sum([row['amount'] for row in invoice_data['rows']])
+                total_invoice_amount += invoice_data["billed_amount"]
+                total_invoice_row_amount += sum(
+                    [row["amount"] for row in invoice_data["rows"]]
+                )
 
     assert total_invoice_amount == total_invoice_row_amount
     assert total_invoice_amount == Decimal(1080)

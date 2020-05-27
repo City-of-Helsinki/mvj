@@ -13,15 +13,13 @@ def forwards_func(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('leasing', '0001_initial'),
-    ]
+    dependencies = [("leasing", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='receivabletype',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='Is active?'),
+            model_name="receivabletype",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="Is active?"),
         ),
         migrations.RunPython(forwards_func, migrations.RunPython.noop),
     ]

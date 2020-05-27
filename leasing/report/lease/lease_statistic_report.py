@@ -9,12 +9,21 @@ from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField
 
-from leasing.enums import LeaseAreaAttachmentType, LeaseState, SubventionType, TenantContactType
+from leasing.enums import (
+    LeaseAreaAttachmentType,
+    LeaseState,
+    SubventionType,
+    TenantContactType,
+)
 from leasing.models import Lease
 from leasing.report.report_base import AsyncReportBase
 
 # TODO: Can we get rid of static ids
-RESIDENTIAL_INTENDED_USE_IDS = [1, 12, 13]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
+RESIDENTIAL_INTENDED_USE_IDS = [
+    1,
+    12,
+    13,
+]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
 
 
@@ -36,10 +45,12 @@ def get_tenants(obj):
             if tc.type != TenantContactType.TENANT:
                 continue
 
-            if (tc.end_date is None or tc.end_date >= today) and (tc.start_date is None or tc.start_date <= today):
+            if (tc.end_date is None or tc.end_date >= today) and (
+                tc.start_date is None or tc.start_date <= today
+            ):
                 contacts.add(tc.contact)
 
-    return ', '.join([c.get_name() for c in contacts])
+    return ", ".join([c.get_name() for c in contacts])
 
 
 def get_address(obj):
@@ -55,7 +66,7 @@ def get_address(obj):
 
             addresses.append(area_address.address)
 
-    return ' / '.join(addresses)
+    return " / ".join(addresses)
 
 
 def get_supportive_housing(obj):
@@ -73,13 +84,13 @@ def get_notice_period(obj):
 def get_district(obj):
     if not obj.district:
         return
-    return '{} {}'.format(obj.district.identifier, obj.district.name)
+    return "{} {}".format(obj.district.identifier, obj.district.name)
 
 
 def get_preparer(obj):
     if not obj.preparer:
         return
-    return '{} {}'.format(obj.preparer.last_name, obj.preparer.first_name)
+    return "{} {}".format(obj.preparer.last_name, obj.preparer.first_name)
 
 
 def get_form_of_management(obj):
@@ -108,7 +119,7 @@ def get_contract_number(obj):
 
         contract_numbers.append(contract.contract_number)
 
-    return ' / '.join(contract_numbers)
+    return " / ".join(contract_numbers)
 
 
 def get_matti_report(obj):
@@ -141,7 +152,7 @@ def get_lease_area_identifier(obj):
 
         lease_area_identifiers.extend([lease_area.identifier])
 
-    return ' / '.join(lease_area_identifiers)
+    return " / ".join(lease_area_identifiers)
 
 
 def get_total_area(obj):
@@ -162,7 +173,8 @@ def get_re_lease(obj):
 
     for rent in obj.rents.all():
         if (rent.end_date is None or rent.end_date >= year_start) and (
-                rent.start_date is None or rent.start_date <= year_end):
+            rent.start_date is None or rent.start_date <= year_end
+        ):
             for ra in rent.rent_adjustments.all():
                 if ra.subvention_type == SubventionType.RE_LEASE:
                     return True
@@ -178,8 +190,14 @@ def get_permitted_building_volume_residential(obj):
 
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
 
-    return ' / '.join(['{} {}'.format(
-        formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit) for area_unit, area in volumes.items()])
+    return " / ".join(
+        [
+            "{} {}".format(
+                formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit
+            )
+            for area_unit, area in volumes.items()
+        ]
+    )
 
 
 def get_permitted_building_volume_business(obj):
@@ -190,8 +208,14 @@ def get_permitted_building_volume_business(obj):
 
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
 
-    return ' / '.join(['{} {}'.format(
-        formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit) for area_unit, area in volumes.items()])
+    return " / ".join(
+        [
+            "{} {}".format(
+                formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit
+            )
+            for area_unit, area in volumes.items()
+        ]
+    )
 
 
 def get_permitted_building_volume_total(obj):
@@ -199,8 +223,14 @@ def get_permitted_building_volume_total(obj):
     for basis_of_rent in obj.basis_of_rents.all():
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
 
-    return ' / '.join(['{} {}'.format(
-        formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit) for area_unit, area in volumes.items()])
+    return " / ".join(
+        [
+            "{} {}".format(
+                formats.number_format(area, decimal_pos=2, use_l10n=True), area_unit
+            )
+            for area_unit, area in volumes.items()
+        ]
+    )
 
 
 @lru_cache(maxsize=1)
@@ -211,7 +241,11 @@ def _get_rent_amount_for_year(obj, year):
 def get_rent_amount_residential(obj):
     year = datetime.date.today().year
     total_amount = Decimal(0)
-    for intended_use, amount in _get_rent_amount_for_year(obj, year).get_total_amounts_by_intended_uses().items():
+    for intended_use, amount in (
+        _get_rent_amount_for_year(obj, year)
+        .get_total_amounts_by_intended_uses()
+        .items()
+    ):
         if intended_use.id in RESIDENTIAL_INTENDED_USE_IDS:
             total_amount += amount
 
@@ -221,7 +255,11 @@ def get_rent_amount_residential(obj):
 def get_rent_amount_business(obj):
     year = datetime.date.today().year
     total_amount = Decimal(0)
-    for intended_use, amount in _get_rent_amount_for_year(obj, year).get_total_amounts_by_intended_uses().items():
+    for intended_use, amount in (
+        _get_rent_amount_for_year(obj, year)
+        .get_total_amounts_by_intended_uses()
+        .items()
+    ):
         if intended_use.id not in RESIDENTIAL_INTENDED_USE_IDS:
             total_amount += amount
 
@@ -243,10 +281,19 @@ def get_average_amount_per_area_residential(obj):
 
     formats.number_format(12.34, decimal_pos=2, use_l10n=True)
 
-    return ' / '.join(['{} {}'.format(
-        formats.number_format(sum(amounts_per_area) / len(amounts_per_area), decimal_pos=2, use_l10n=True),
-        area_unit
-    ) for area_unit, amounts_per_area in volumes.items()])
+    return " / ".join(
+        [
+            "{} {}".format(
+                formats.number_format(
+                    sum(amounts_per_area) / len(amounts_per_area),
+                    decimal_pos=2,
+                    use_l10n=True,
+                ),
+                area_unit,
+            )
+            for area_unit, amounts_per_area in volumes.items()
+        ]
+    )
 
 
 def get_average_amount_per_area_business(obj):
@@ -257,235 +304,217 @@ def get_average_amount_per_area_business(obj):
 
         volumes[basis_of_rent.area_unit].append(basis_of_rent.amount_per_area)
 
-    return ' / '.join(['{} {}'.format(
-        formats.number_format(sum(amounts_per_area) / len(amounts_per_area), decimal_pos=2, use_l10n=True),
-        area_unit
-    ) for area_unit, amounts_per_area in volumes.items()])
+    return " / ".join(
+        [
+            "{} {}".format(
+                formats.number_format(
+                    sum(amounts_per_area) / len(amounts_per_area),
+                    decimal_pos=2,
+                    use_l10n=True,
+                ),
+                area_unit,
+            )
+            for area_unit, amounts_per_area in volumes.items()
+        ]
+    )
 
 
 class LeaseStatisticReport(AsyncReportBase):
-    name = _('Lease statistics report')
-    description = _('Shows information about leases that have started or ended between the supplied dates')
-    slug = 'lease_statistic'
+    name = _("Lease statistics report")
+    description = _(
+        "Shows information about leases that have started or ended between the supplied dates"
+    )
+    slug = "lease_statistic"
     input_fields = {
-        'start_date': forms.DateField(label=_('Start date'), required=True),
-        'end_date': forms.DateField(label=_('End date'), required=True),
-        'state': forms.ChoiceField(label=_('State'), required=False, choices=LeaseState.choices()),
-        'only_active_leases': forms.BooleanField(label=_('Only active leases'), required=False)
-
+        "start_date": forms.DateField(label=_("Start date"), required=True),
+        "end_date": forms.DateField(label=_("End date"), required=True),
+        "state": forms.ChoiceField(
+            label=_("State"), required=False, choices=LeaseState.choices()
+        ),
+        "only_active_leases": forms.BooleanField(
+            label=_("Only active leases"), required=False
+        ),
     }
     output_fields = {
-        'lease_id': {
-            'label': _('Lease id'),
-            'source': get_lease_id,
-        },
+        "lease_id": {"label": _("Lease id"), "source": get_lease_id},
         # Sopimusnumero
-        'contract_number': {
-            'label': _('Contract number'),
-            'source': get_contract_number,
+        "contract_number": {
+            "label": _("Contract number"),
+            "source": get_contract_number,
         },
         # Vuokrauksen tyyppi
-        'type': {
-            'label': _('Lease type'),
-            'source': get_type,
-            'width': 5,
-        },
+        "type": {"label": _("Lease type"), "source": get_type, "width": 5},
         # Vuokrauksen tila
-        'state': {
-            'label': _('Lease state'),
-            'serializer_field': EnumField(enum=LeaseState),
-            'width': 20,
+        "state": {
+            "label": _("Lease state"),
+            "serializer_field": EnumField(enum=LeaseState),
+            "width": 20,
         },
         # Valmistelija
-        'preparer': {
-            'label': _('Preparer'),
-            'source': get_preparer,
-            'width': 20,
-        },
+        "preparer": {"label": _("Preparer"), "source": get_preparer, "width": 20},
         # Kaupunginosa
-        'district': {
-            'label': _('District'),
-            'source': get_district,
-            'width': 20,
-        },
+        "district": {"label": _("District"), "source": get_district, "width": 20},
         # Kohteen tunnus
-        'lease_area_identifier': {
-            'label': _('Lease area identifier'),
-            'source': get_lease_area_identifier,
-            'width': 20,
+        "lease_area_identifier": {
+            "label": _("Lease area identifier"),
+            "source": get_lease_area_identifier,
+            "width": 20,
         },
         # Osoite
-        'address': {
-            'label': _('Address'),
-            'source': get_address,
-            'width': 20,
-        },
+        "address": {"label": _("Address"), "source": get_address, "width": 20},
         # Vuokranantaja
-        'lessor': {
-            'label': _("Lessor"),
-            'source': get_lessor,
-            'width': 30,
-        },
+        "lessor": {"label": _("Lessor"), "source": get_lessor, "width": 30},
         # Rakennuttaja
-        'real_estate_developer': {
-            'label': _("Real estate developer"),
-            'width': 20,
-        },
+        "real_estate_developer": {"label": _("Real estate developer"), "width": 20},
         # Vuokralaiset
-        'tenants': {
-            'label': _('Tenants'),
-            'source': get_tenants,
-            'width': 40,
-        },
+        "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
         # Start date
-        'start_date': {
-            'label': _("Start date"),
-            'format': 'date',
-        },
+        "start_date": {"label": _("Start date"), "format": "date"},
         # End date
-        'end_date': {
-            'label': _("End date"),
-            'format': 'date',
-        },
+        "end_date": {"label": _("End date"), "format": "date"},
         # Kokonaispinta-ala
-        'total_area': {
-            'label': _('Total area'),
-            'source': get_total_area,
-        },
+        "total_area": {"label": _("Total area"), "source": get_total_area},
         # Rakennus-oikeus (asuminen)
-        'permitted_building_volume_residential': {
-            'label': _('Permitted building volume (Residential)'),
-            'source': get_permitted_building_volume_residential,
-            'width': 20,
+        "permitted_building_volume_residential": {
+            "label": _("Permitted building volume (Residential)"),
+            "source": get_permitted_building_volume_residential,
+            "width": 20,
         },
         # Vuosivuokra (asuminen)
-        'rent_amount_residential': {
-            'label': _('Rent amount (Residential)'),
-            'source': get_rent_amount_residential,
-            'format': 'money',
-            'width': 13,
+        "rent_amount_residential": {
+            "label": _("Rent amount (Residential)"),
+            "source": get_rent_amount_residential,
+            "format": "money",
+            "width": 13,
         },
         # Rakennusoikeus (yritystila)
-        'get_permitted_building_volume_business': {
-            'label': _('Permitted building volume (Business)'),
-            'source': get_permitted_building_volume_business,
-            'width': 20,
+        "get_permitted_building_volume_business": {
+            "label": _("Permitted building volume (Business)"),
+            "source": get_permitted_building_volume_business,
+            "width": 20,
         },
         # Vuosivuokra (yritystila)
-        'rent_amount_business': {
-            'label': _('Rent amount (Business)'),
-            'source': get_rent_amount_business,
-            'format': 'money',
-            'width': 13,
+        "rent_amount_business": {
+            "label": _("Rent amount (Business)"),
+            "source": get_rent_amount_business,
+            "format": "money",
+            "width": 13,
         },
         # Kokonaisrakennusoikeus
-        'get_permitted_building_volume_total': {
-            'label': _('Permitted building volume total'),
-            'source': get_permitted_building_volume_total,
-            'width': 20,
+        "get_permitted_building_volume_total": {
+            "label": _("Permitted building volume total"),
+            "source": get_permitted_building_volume_total,
+            "width": 20,
         },
         # Vuosivuokra yhteensä
-        'total_rent_amount_for_year': {
-            'label': _('Total rent amount for year'),
-            'source': get_total_rent_amount_for_year,
-            'format': 'money',
-            'width': 13,
+        "total_rent_amount_for_year": {
+            "label": _("Total rent amount for year"),
+            "source": get_total_rent_amount_for_year,
+            "format": "money",
+            "width": 13,
         },
         # €/k-m2 Asuminen
-        'average_amount_per_area_residential': {
-            'label': _('Average amount per area (Residential)'),
-            'source': get_average_amount_per_area_residential,
-            'width': 20,
+        "average_amount_per_area_residential": {
+            "label": _("Average amount per area (Residential)"),
+            "source": get_average_amount_per_area_residential,
+            "width": 20,
         },
         # €/k-m2 Yritystila
-        'get_average_amount_per_area_business': {
-            'label': _('Average amount per area (Business)'),
-            'source': get_average_amount_per_area_business,
-            'width': 20,
+        "get_average_amount_per_area_business": {
+            "label": _("Average amount per area (Business)"),
+            "source": get_average_amount_per_area_business,
+            "width": 20,
         },
         # Hallintamuoto
-        'form_of_management': {
-            'label': _('Form of management'),
-            'source': get_form_of_management,
-            'width': 13,
+        "form_of_management": {
+            "label": _("Form of management"),
+            "source": get_form_of_management,
+            "width": 13,
         },
         # Erityisasunnot
-        'supportive_housing': {
-            'label': _('Supportive housing'),
-            'source': get_supportive_housing,
-            'width': 13,
+        "supportive_housing": {
+            "label": _("Supportive housing"),
+            "source": get_supportive_housing,
+            "width": 13,
         },
         # Sääntelymuoto
-        'form_of_regulation': {
-            'label': _('Form of regulation'),
-            'source': get_form_of_regulation,
-            'width': 13,
+        "form_of_regulation": {
+            "label": _("Form of regulation"),
+            "source": get_form_of_regulation,
+            "width": 13,
         },
         # Uudelleenvuokraus
-        're_lease': {
-            'label': _('Re-lease'),
-            'source': get_re_lease,
-            'format': 'boolean',
+        "re_lease": {
+            "label": _("Re-lease"),
+            "source": get_re_lease,
+            "format": "boolean",
         },
         # Osto-oikeus
-        'option_to_purchase': {
-            'label': _('Option to purchase'),
-            'source': get_option_to_purchase,
-            'format': 'boolean',
+        "option_to_purchase": {
+            "label": _("Option to purchase"),
+            "source": get_option_to_purchase,
+            "format": "boolean",
         },
         # Matti-raportti
-        'matti_report': {
-            'label': _('Matti report'),
-            'source': get_matti_report,
-            'format': 'boolean',
+        "matti_report": {
+            "label": _("Matti report"),
+            "source": get_matti_report,
+            "format": "boolean",
         },
         # Irtisanomisaika
-        'notice_period': {
-            'label': _('Notice period'),
-            'source': get_notice_period,
-            'width': 20,
+        "notice_period": {
+            "label": _("Notice period"),
+            "source": get_notice_period,
+            "width": 20,
         },
     }
 
     def get_data(self, input_data):
-        qs = Lease.objects.filter(
-            (
-                Q(start_date__gte=input_data['start_date']) &
-                Q(start_date__lte=input_data['end_date'])
-            ) | (
-                Q(end_date__gte=input_data['start_date']) &
-                Q(end_date__lte=input_data['end_date'])
+        qs = (
+            Lease.objects.filter(
+                (
+                    Q(start_date__gte=input_data["start_date"])
+                    & Q(start_date__lte=input_data["end_date"])
+                )
+                | (
+                    Q(end_date__gte=input_data["start_date"])
+                    & Q(end_date__lte=input_data["end_date"])
+                )
             )
-        ).select_related(
-            'identifier__type',
-            'identifier__district',
-            'identifier__municipality',
-            'lessor',
-            'management',
-            'district',
-            'supportive_housing',
-            'type',
-            'notice_period',
-        ).prefetch_related(
-            'rents',
-            'rents__rent_adjustments',
-            'contracts',
-            'lease_areas',
-            'lease_areas__addresses',
-            'lease_areas__attachments',
-            'decisions',
-            'decisions__conditions',
-            'tenants',
-            'tenants__tenantcontact_set',
-            'tenants__tenantcontact_set__contact',
-            'basis_of_rents',
+            .select_related(
+                "identifier__type",
+                "identifier__district",
+                "identifier__municipality",
+                "lessor",
+                "management",
+                "district",
+                "supportive_housing",
+                "type",
+                "notice_period",
+            )
+            .prefetch_related(
+                "rents",
+                "rents__rent_adjustments",
+                "contracts",
+                "lease_areas",
+                "lease_areas__addresses",
+                "lease_areas__attachments",
+                "decisions",
+                "decisions__conditions",
+                "tenants",
+                "tenants__tenantcontact_set",
+                "tenants__tenantcontact_set__contact",
+                "basis_of_rents",
+            )
         )
 
-        if input_data['state']:
-            qs = qs.filter(state=input_data['state'])
+        if input_data["state"]:
+            qs = qs.filter(state=input_data["state"])
 
-        if input_data['only_active_leases']:
-            qs = qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today()))
+        if input_data["only_active_leases"]:
+            qs = qs.filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today())
+            )
 
         return qs
 

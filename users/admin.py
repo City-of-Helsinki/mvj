@@ -6,9 +6,9 @@ User = get_user_model()
 
 
 class UserAdmin(DjangoUserAdmin):
-    fieldsets = DjangoUserAdmin.fieldsets + ((None, {
-        'fields': ('department_name', 'uuid')
-    }),)
+    fieldsets = DjangoUserAdmin.fieldsets + (
+        (None, {"fields": ("department_name", "uuid")}),
+    )
 
 
 admin.site.register(User, UserAdmin)

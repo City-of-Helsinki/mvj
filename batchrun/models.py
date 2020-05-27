@@ -25,10 +25,14 @@ class Command(SafeDeleteModel):
     type = EnumField(CommandType, max_length=30)
 
     name = models.CharField(
-        max_length=1000, verbose_name=_('name'), help_text=_(
-            'Name of the command to run e.g. '
-            'name of a program in PATH or a full path to an executable, or '
-            'name of a management command.'))
+        max_length=1000,
+        verbose_name=_("name"),
+        help_text=_(
+            "Name of the command to run e.g. "
+            "name of a program in PATH or a full path to an executable, or "
+            "name of a management command."
+        ),
+    )
 
     # type definition for each parameter, e.g.:
     #   {
@@ -43,27 +47,32 @@ class Command(SafeDeleteModel):
     #     "time_range_start": {"type": "datetime", "required": true},
     #     "time_range_end": ...
     #   }
-    parameters = JSONField(
-        default=dict, blank=True, verbose_name=_('parameters'))
+    parameters = JSONField(default=dict, blank=True, verbose_name=_("parameters"))
     parameter_format_string = models.CharField(
-        max_length=1000, default='', blank=True,
-        verbose_name=_('parameter format string'), help_text=_(
-            'String that defines how the parameters are formatted '
-            'when calling the command. E.g. if this is '
+        max_length=1000,
+        default="",
+        blank=True,
+        verbose_name=_("parameter format string"),
+        help_text=_(
+            "String that defines how the parameters are formatted "
+            "when calling the command. E.g. if this is "
             '"--rent-id {rent_id}" and value 123 is passed as '
-            'an argument to the rent_id parameter, then the command '
-            'will be called as "COMMAND --rent-id 123".'))
+            "an argument to the rent_id parameter, then the command "
+            'will be called as "COMMAND --rent-id 123".'
+        ),
+    )
 
     class Meta:
-        verbose_name = _('command')
-        verbose_name_plural = _('commands')
+        verbose_name = _("command")
+        verbose_name_plural = _("commands")
 
     def __str__(self) -> str:
-        return '{type}: {name}{space}{params}'.format(
+        return "{type}: {name}{space}{params}".format(
             type=self.type,
             name=self.name,
-            space=' ' if self.parameter_format_string else '',
-            params=self.parameter_format_string)
+            space=" " if self.parameter_format_string else "",
+            params=self.parameter_format_string,
+        )
 
     def get_command_line(self, arguments: Dict[str, Any]) -> List[str]:
         if self.type == CommandType.EXECUTABLE:
@@ -71,7 +80,7 @@ class Command(SafeDeleteModel):
         elif self.type == CommandType.DJANGO_MANAGE:
             base_command = [sys.executable, get_django_manage_py(), self.name]
         else:
-            raise ValueError('Unknown command type: {}'.format(self.type))
+            raise ValueError("Unknown command type: {}".format(self.type))
         formatted_args = [
             param_template.format(arguments)
             for param_template in shlex.split(self.parameter_format_string)
@@ -88,24 +97,32 @@ class Job(TimeStampedSafeDeleteModel):
     "migrate" management command and a job could then be "Migrate app1"
     which passes in the "app1" argument as "app_label" parameter.
     """
+
     name = models.CharField(
-        max_length=200, verbose_name=_('name'), help_text=_(
-            'Descriptive name for the job'))
-    comment = models.CharField(
-        max_length=500, blank=True, verbose_name=_('comment'))
+        max_length=200,
+        verbose_name=_("name"),
+        help_text=_("Descriptive name for the job"),
+    )
+    comment = models.CharField(max_length=500, blank=True, verbose_name=_("comment"))
 
     command = models.ForeignKey(
-        Command, on_delete=models.PROTECT, verbose_name=_('command'))
+        Command, on_delete=models.PROTECT, verbose_name=_("command")
+    )
     arguments = JSONField(
-        default=dict, blank=True, verbose_name=_('arguments'), help_text=_(
-            'Argument for the command as a JSON object. These will be '
-            'formatted with the parameter format string of the command. '
-            'E.g. to pass value 123 as an argument to the rent_id '
-            'parameter, set this to {"rent_id": 123}.'))
+        default=dict,
+        blank=True,
+        verbose_name=_("arguments"),
+        help_text=_(
+            "Argument for the command as a JSON object. These will be "
+            "formatted with the parameter format string of the command. "
+            "E.g. to pass value 123 as an argument to the rent_id "
+            'parameter, set this to {"rent_id": 123}.'
+        ),
+    )
 
     class Meta:
-        verbose_name = _('job')
-        verbose_name_plural = _('jobs')
+        verbose_name = _("job")
+        verbose_name_plural = _("jobs")
 
     def __str__(self) -> str:
         return self.name
@@ -116,23 +133,28 @@ class Job(TimeStampedSafeDeleteModel):
 
 class Timezone(CleansOnSave, models.Model):
     name = models.CharField(
-        max_length=200, unique=True, verbose_name=_('name'), help_text=_(
+        max_length=200,
+        unique=True,
+        verbose_name=_("name"),
+        help_text=_(
             'Name of the timezone, e.g. "Europe/Helsinki" or "UTC". See '
-            'https://en.wikipedia.org/wiki/List_of_tz_database_time_zones '
-            'for a list of possible values.'))
+            "https://en.wikipedia.org/wiki/List_of_tz_database_time_zones "
+            "for a list of possible values."
+        ),
+    )
 
     class Meta:
-        verbose_name = _('timezone')
-        verbose_name_plural = _('timezones')
+        verbose_name = _("timezone")
+        verbose_name_plural = _("timezones")
 
     def __str__(self) -> str:
         return self.name
 
     def clean(self) -> None:
         try:
-            pytz.timezone(self.name or '')
+            pytz.timezone(self.name or "")
         except KeyError:
-            raise ValidationError({'name': _('Invalid timezone name')})
+            raise ValidationError({"name": _("Invalid timezone name")})
         super().clean()
 
 
@@ -143,49 +165,56 @@ class ScheduledJob(TimeStampedSafeDeleteModel):
     The scheduling can define the job to be run just once or as a series
     of recurring events.
     """
-    job = models.ForeignKey(
-        Job, on_delete=models.PROTECT, verbose_name=_('job'))
 
-    comment = models.CharField(
-        max_length=500, blank=True, verbose_name=_('comment'))
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, verbose_name=_("job"))
+
+    comment = models.CharField(max_length=500, blank=True, verbose_name=_("comment"))
 
     enabled = models.BooleanField(
-        default=True, db_index=True, verbose_name=_('enabled'))
+        default=True, db_index=True, verbose_name=_("enabled")
+    )
 
     timezone = models.ForeignKey(
-        Timezone, on_delete=models.PROTECT, verbose_name=_('timezone'))
-    years = IntegerSetSpecifierField(
-        value_range=(1970, 2200), verbose_name=_('years'))
-    months = IntegerSetSpecifierField(
-        value_range=(1, 12), verbose_name=_('months'))
+        Timezone, on_delete=models.PROTECT, verbose_name=_("timezone")
+    )
+    years = IntegerSetSpecifierField(value_range=(1970, 2200), verbose_name=_("years"))
+    months = IntegerSetSpecifierField(value_range=(1, 12), verbose_name=_("months"))
     days_of_month = IntegerSetSpecifierField(
-        value_range=(1, 31), verbose_name=_('days of month'))
+        value_range=(1, 31), verbose_name=_("days of month")
+    )
     weekdays = IntegerSetSpecifierField(
-        value_range=(0, 6), verbose_name=_('weekdays'), help_text=_(
-            'Limit execution to specified weekdays. Use integer values '
-            'to represent the weekdays with the following mapping: '
-            '0=Sunday, 1=Monday, 2=Tuesday, ..., 6=Saturday.'))
-    hours = IntegerSetSpecifierField(
-        value_range=(0, 23), verbose_name=_('hours'))
-    minutes = IntegerSetSpecifierField(
-        value_range=(0, 59), verbose_name=_('minutes'))
+        value_range=(0, 6),
+        verbose_name=_("weekdays"),
+        help_text=_(
+            "Limit execution to specified weekdays. Use integer values "
+            "to represent the weekdays with the following mapping: "
+            "0=Sunday, 1=Monday, 2=Tuesday, ..., 6=Saturday."
+        ),
+    )
+    hours = IntegerSetSpecifierField(value_range=(0, 23), verbose_name=_("hours"))
+    minutes = IntegerSetSpecifierField(value_range=(0, 59), verbose_name=_("minutes"))
 
     class Meta:
-        verbose_name = _('scheduled job')
-        verbose_name_plural = _('scheduled jobs')
+        verbose_name = _("scheduled job")
+        verbose_name_plural = _("scheduled jobs")
 
     def __str__(self) -> str:
         time_fields = [
-            'years', 'months', 'days_of_month', 'weekdays',
-            'hours', 'minutes']
+            "years",
+            "months",
+            "days_of_month",
+            "weekdays",
+            "hours",
+            "minutes",
+        ]
         schedule_items = []
         for field in time_fields:
             value = getattr(self, field)
-            key = (field[0] if field not in ['hours', 'minutes'] else
-                   field[0].upper())
-            schedule_items.append(f'{key}={value}')
+            key = field[0] if field not in ["hours", "minutes"] else field[0].upper()
+            schedule_items.append(f"{key}={value}")
         return ugettext('Scheduled job "{job}" @ {schedule}').format(
-            job=self.job, schedule=' '.join(schedule_items))
+            job=self.job, schedule=" ".join(schedule_items)
+        )
 
     @property
     def recurrence_rule(self) -> RecurrenceRule:
@@ -225,25 +254,30 @@ class JobRun(models.Model):
     """
     Instance of a job currently running or ran in the past.
     """
-    job = models.ForeignKey(
-        Job, on_delete=models.PROTECT, verbose_name=_('job'))
+
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, verbose_name=_("job"))
     pid = models.IntegerField(
-        null=True, blank=True, verbose_name=_('PID'), help_text=_(
-            'Records the process id of the process, '
-            'which is/was executing this job'))
+        null=True,
+        blank=True,
+        verbose_name=_("PID"),
+        help_text=_(
+            "Records the process id of the process, " "which is/was executing this job"
+        ),
+    )
     started_at = models.DateTimeField(
-        auto_now_add=True, db_index=True, verbose_name=_('start time'))
+        auto_now_add=True, db_index=True, verbose_name=_("start time")
+    )
     stopped_at = models.DateTimeField(
-        null=True, blank=True, verbose_name=_('stop time'))
-    exit_code = models.IntegerField(
-        null=True, blank=True, verbose_name=_('exit code'))
+        null=True, blank=True, verbose_name=_("stop time")
+    )
+    exit_code = models.IntegerField(null=True, blank=True, verbose_name=_("exit code"))
 
     class Meta:
-        verbose_name = _('job run')
-        verbose_name_plural = _('job runs')
+        verbose_name = _("job run")
+        verbose_name_plural = _("job runs")
 
     def __str__(self) -> str:
-        return f'{self.job} [{self.pid}] ({self.started_at:%Y-%m-%dT%H:%M})'
+        return f"{self.job} [{self.pid}] ({self.started_at:%Y-%m-%dT%H:%M})"
 
 
 class JobRunLogEntry(models.Model):
@@ -256,24 +290,30 @@ class JobRunLogEntry(models.Model):
     stream.  The source stream is stored into the "kind" field.
     Additionally a creation timestamp is recorded to the "time" field.
     """
+
     run = models.ForeignKey(
-        JobRun, on_delete=models.PROTECT, related_name='log_entries',
-        verbose_name=_('run'))
-    kind = EnumField(LogEntryKind, max_length=30, verbose_name=_('kind'))
-    line_number = models.IntegerField(verbose_name=_('line number'))
-    number = models.IntegerField(verbose_name=_('number'))  # within line
+        JobRun,
+        on_delete=models.PROTECT,
+        related_name="log_entries",
+        verbose_name=_("run"),
+    )
+    kind = EnumField(LogEntryKind, max_length=30, verbose_name=_("kind"))
+    line_number = models.IntegerField(verbose_name=_("line number"))
+    number = models.IntegerField(verbose_name=_("number"))  # within line
     time = models.DateTimeField(
-        auto_now_add=True, db_index=True, verbose_name=_('time'))
-    text = models.TextField(null=False, blank=True, verbose_name=_('text'))
+        auto_now_add=True, db_index=True, verbose_name=_("time")
+    )
+    text = models.TextField(null=False, blank=True, verbose_name=_("text"))
 
     class Meta:
-        ordering = ['run__started_at', 'run', 'time']
-        verbose_name = _('log entry of a job run')
-        verbose_name_plural = _('log entries of job runs')
+        ordering = ["run__started_at", "run", "time"]
+        verbose_name = _("log entry of a job run")
+        verbose_name_plural = _("log entries of job runs")
 
     def __str__(self) -> str:
-        return ugettext('{run_name}: {kind} entry {number}').format(
-            run_name=self.run, kind=self.kind, number=self.number)
+        return ugettext("{run_name}: {kind} entry {number}").format(
+            run_name=self.run, kind=self.kind, number=self.number
+        )
 
 
 if TYPE_CHECKING:
@@ -283,7 +323,7 @@ else:
 
 
 class JobRunQueueItemQuerySet(BaseQueryset):
-    def to_run(self) -> 'models.QuerySet[JobRunQueueItem]':
+    def to_run(self) -> "models.QuerySet[JobRunQueueItem]":
         return self.filter(scheduled_job__enabled=True, assigned_at=None)
 
     def remove_old_items(self, limit: Optional[datetime] = None) -> None:
@@ -300,21 +340,25 @@ class JobRunQueueItemQuerySet(BaseQueryset):
 
 
 class JobRunQueueItem(models.Model):
-    run_at = models.DateTimeField(
-        db_index=True, verbose_name=_('scheduled run time'))
+    run_at = models.DateTimeField(db_index=True, verbose_name=_("scheduled run time"))
     scheduled_job = models.ForeignKey(
-        ScheduledJob, on_delete=models.CASCADE,
-        related_name='run_queue_items', verbose_name=_('scheduled job'))
+        ScheduledJob,
+        on_delete=models.CASCADE,
+        related_name="run_queue_items",
+        verbose_name=_("scheduled job"),
+    )
 
     assigned_at = models.DateTimeField(
-        null=True, blank=True, verbose_name=_('assignment time'))
+        null=True, blank=True, verbose_name=_("assignment time")
+    )
     assignee_pid = models.IntegerField(
-        null=True, blank=True, verbose_name=_('assignee process id (PID)'))
+        null=True, blank=True, verbose_name=_("assignee process id (PID)")
+    )
 
     objects = JobRunQueueItemQuerySet.as_manager()
 
     class Meta:
-        ordering = ['run_at']
+        ordering = ["run_at"]
 
     def __str__(self) -> str:
-        return f'{self.run_at}: {self.scheduled_job}'
+        return f"{self.run_at}: {self.scheduled_job}"
