@@ -999,7 +999,7 @@ msgstr "Alue"
 #: leasing/models/infill_development_compensation.py:108
 #: leasing/models/lease.py:557 leasing/models/rent.py:174
 #: leasing/models/rent.py:1070
-#: leasing/report/invoice/money_collaterals_report.py:25
+#: leasing/report/invoice/collaterals_report.py:25
 msgid "Note"
 msgstr "Kommentti"
 
@@ -1442,7 +1442,7 @@ msgstr "Panttikirjan pvm"
 
 #: leasing/models/contract.py:159 leasing/models/invoice.py:255
 #: leasing/report/invoice/invoices_in_period.py:61
-#: leasing/report/invoice/money_collaterals_report.py:22
+#: leasing/report/invoice/collaterals_report.py:22
 #: leasing/report/invoice/open_invoices_report.py:48
 msgid "Total amount"
 msgstr "Pääoma"
@@ -1450,12 +1450,12 @@ msgstr "Pääoma"
 #: leasing/models/contract.py:167
 #: leasing/models/infill_development_compensation.py:166
 #: leasing/models/invoice.py:776 leasing/report/invoice/invoice_payments.py:32
-#: leasing/report/invoice/money_collaterals_report.py:23
+#: leasing/report/invoice/collaterals_report.py:23
 msgid "Paid date"
 msgstr "Maksettu pvm"
 
 #: leasing/models/contract.py:171
-#: leasing/report/invoice/money_collaterals_report.py:24
+#: leasing/report/invoice/collaterals_report.py:24
 msgid "Returned date"
 msgstr "Palautettu pvm"
 
@@ -3049,7 +3049,7 @@ msgstr "Laskun numero"
 
 #: leasing/report/invoice/invoice_payments.py:31
 #: leasing/report/invoice/invoices_in_period.py:55
-#: leasing/report/invoice/money_collaterals_report.py:21
+#: leasing/report/invoice/collaterals_report.py:21
 #: leasing/report/invoice/open_invoices_report.py:46
 #: leasing/report/lease/decision_conditions_report.py:55
 #: leasing/report/lease/extra_city_rent.py:108
@@ -3122,19 +3122,19 @@ msgstr "Laskujen määrä"
 msgid "Estimate"
 msgstr "Arvio"
 
-#: leasing/report/invoice/money_collaterals_report.py:13
-msgid "Money collaterals"
-msgstr "Rahavakuudet"
+#: leasing/report/invoice/collaterals_report.py:13
+msgid "Collaterals"
+msgstr "Vakuudet"
 
-#: leasing/report/invoice/money_collaterals_report.py:14
-msgid "Show all money collaterals"
-msgstr "Näyttää kaikki rahavakuudet"
+#: leasing/report/invoice/collaterals_report.py:14
+msgid "Show all collaterals"
+msgstr "Näyttää kaikki vakuudet"
 
-#: leasing/report/invoice/money_collaterals_report.py:17
+#: leasing/report/invoice/collaterals_report.py:17
 msgid "Paid"
 msgstr "Maksettu"
 
-#: leasing/report/invoice/money_collaterals_report.py:18
+#: leasing/report/invoice/collaterals_report.py:18
 msgid "Returned"
 msgstr "Palautettu"
 
