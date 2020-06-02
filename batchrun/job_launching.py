@@ -43,4 +43,6 @@ class JobRunLauncher(multiprocessing.Process):
         name = batchrun_execute_job_run.__name__.rsplit(".", 1)[-1]
         command = [sys.executable, self._manage_py, name, str(self.job_run.pk)]
         with daemon.DaemonContext(umask=0o022, detach_process=True):
-            subprocess.run(command)
+            subprocess.run(
+                command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
