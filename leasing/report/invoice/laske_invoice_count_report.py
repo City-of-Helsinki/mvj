@@ -3,6 +3,7 @@ from collections import Counter
 
 from dateutil.relativedelta import relativedelta
 from django import forms
+from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.db.models.functions.datetime import TruncDate
 from django.utils.timezone import make_aware
@@ -28,7 +29,7 @@ class LaskeInvoiceCountReport(ReportBase):
         "is_estimate": {"label": _("Estimate"), "format": "boolean"},
     }
 
-    def get_data(self, input_data):
+    def get_data(self, input_data):  # noqa: C901 TODO
         today = datetime.date.today()
         query_start_date = min(input_data["start_date"], input_data["end_date"])
         query_end_date = max(input_data["end_date"], input_data["start_date"])
@@ -73,9 +74,13 @@ class LaskeInvoiceCountReport(ReportBase):
             due_dates_start = estimate_start_date + relativedelta(months=1)
             due_dates_end = estimate_end_date + relativedelta(months=1)
 
-            rents = Rent.objects.filter(
-                lease__end_date__gte=today, lease__is_invoicing_enabled=True
-            ).select_related("lease", "lease__type")[:5000]
+            rents = (
+                Rent.objects.filter(
+                    (Q(end_date__isnull=True) | Q(end_date__gte=estimate_start_date))
+                )
+                .filter(lease__end_date__gte=today, lease__is_invoicing_enabled=True)
+                .select_related("lease", "lease__type")
+            )
 
             for rent in rents:
                 due_dates = rent.get_due_dates_for_period(
@@ -85,7 +90,24 @@ class LaskeInvoiceCountReport(ReportBase):
                 for due_date in due_dates:
                     data[due_date - relativedelta(months=1)] += 1
 
-        return [
-            {"send_date": i[0], "invoice_count": i[1], "is_estimate": i[0] >= today}
-            for i in data.items()
-        ]
+            invoices = Invoice.objects.filter(
+                due_date__lte=due_dates_end,
+                due_date__gte=due_dates_start,
+                sent_to_sap_at__isnull=True,
+            )
+            for invoice in invoices:
+                data[invoice.due_date - relativedelta(months=1)] += 1
+
+        send_dates = []
+        for send_date, invoice_count in data.items():
+            if invoice_count == 0:
+                continue
+
+            send_dates.append(
+                {
+                    "send_date": send_date,
+                    "invoice_count": invoice_count,
+                    "is_estimate": send_date >= today,
+                }
+            )
+        return send_dates
