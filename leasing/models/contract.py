@@ -27,6 +27,15 @@ class Contract(TimeStampedSafeDeleteModel):
         "leasing.Lease",
         verbose_name=_("Lease"),
         related_name="contracts",
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    land_use_agreement = models.ForeignKey(
+        "leasing.LandUseAgreement",
+        verbose_name=_("Land use agreement"),
+        related_name="contracts",
+        null=True,
         on_delete=models.PROTECT,
     )
 

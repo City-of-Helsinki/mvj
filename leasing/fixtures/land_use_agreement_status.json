@@ -1,0 +1,9 @@
+[
+    {
+        "model": "leasing.LandUseAgreementStatus",
+        "pk": 1,
+        "fields": {
+            "name": "Lorem"
+        }
+    }
+]

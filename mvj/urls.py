@@ -47,6 +47,7 @@ from leasing.viewsets.invoice_additional_views import (
     InvoiceSetCreditView,
 )
 from leasing.viewsets.land_area import LeaseAreaAttachmentViewSet
+from leasing.viewsets.land_use_agreement import LandUseAgreementViewSet
 from leasing.viewsets.lease import (
     DistrictViewSet,
     FinancingViewSet,
@@ -135,6 +136,8 @@ router.register(r"supportive_housing", SupportiveHousingViewSet)
 router.register(r"ui_data", UiDataViewSet, basename="ui_data")
 router.register(r"user", UserViewSet)
 router.register(r"vat", VatViewSet)
+
+router.register(r"land_use_agreement", LandUseAgreementViewSet)
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)

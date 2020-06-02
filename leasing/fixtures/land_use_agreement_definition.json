@@ -1,0 +1,9 @@
+[
+    {
+        "model": "leasing.LandUseAgreementDefinition",
+        "pk": 1,
+        "fields": {
+            "name": "Kiinteistö"
+        }
+    }
+]
