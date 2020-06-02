@@ -25,7 +25,7 @@ class Area(TimeStampedSafeDeleteModel):
     In Finnish: Alue
     """
 
-    type = EnumField(AreaType, verbose_name=_("Area type"), max_length=30)
+    type = EnumField(AreaType, verbose_name=_("Area type"), max_length=31)
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
     external_id = models.CharField(verbose_name=_("External ID"), max_length=255)
     geometry = models.MultiPolygonField(
