@@ -23,6 +23,7 @@ DEFAULT_REPORT_PERMS = {
     "lease_count": [2, 3, 4, 5, 6, 7],
     "rent_forecast": [2, 3, 4, 5, 6, 7],
     "reservations": [2, 3, 4, 5, 6, 7],
+    "lease_lists": [2, 3, 4, 5, 6, 7],
 }
 
 
