@@ -58,6 +58,10 @@ class ReportViewSet(ViewSet):
         reports = {}
 
         for report_class in ENABLED_REPORTS:
+            codename = "leasing.can_generate_report_{}".format(report_class.slug)
+            if not request.user.has_perm(codename):
+                continue
+
             reports[report_class.slug] = {
                 "name": report_class.name,
                 "description": report_class.description,
