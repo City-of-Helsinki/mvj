@@ -543,3 +543,31 @@ class BasisOfRentZone(Enum):
         ZONE_1 = pgettext_lazy("Basis of rent zone", "Zone 1")
         ZONE_2 = pgettext_lazy("Basis of rent zone", "Zone 2")
         ZONE_3 = pgettext_lazy("Basis of rent zone", "Zone 3")
+
+
+class LeaseListType(Enum):
+
+    INVOICING_NOT_ENABLED = "invoicing_not_enabled"
+    RENT_INFO_NOT_COMPLETE = "rent_info_not_complete"
+    NO_RENTS = "no_rents"
+    NO_DUE_DATE = "no_due_date"
+    ONE_TIME_RENTS_WITH_NO_INVOICE = "one_time_rents_with_no_invoice"
+    INCORRECT_RENT_SHARES = "incorrect_rent_shares"
+    INCORRECT_MANAGEMENT_SHARES = "incorrect_management_shares"
+    NO_TENANT_CONTACT = "no_tenant_contact"
+    NO_LEASE_AREA = "no_lease_area"
+
+    class Labels:
+        INVOICING_NOT_ENABLED = pgettext_lazy("Lease lists", "Invoicing not enabled")
+        RENT_INFO_NOT_COMPLETE = pgettext_lazy("Lease lists", "Rent info not complete")
+        NO_RENTS = pgettext_lazy("Lease lists", "No rents")
+        NO_DUE_DATE = pgettext_lazy("Lease lists", "No due date")
+        ONE_TIME_RENTS_WITH_NO_INVOICE = pgettext_lazy(
+            "Lease lists", "One time rents with no invoice"
+        )
+        INCORRECT_RENT_SHARES = pgettext_lazy("Lease lists", "Incorrect rent shares")
+        INCORRECT_MANAGEMENT_SHARES = pgettext_lazy(
+            "Lease lists", "Incorrect management shares"
+        )
+        NO_TENANT_CONTACT = pgettext_lazy("Lease lists", "No tenant contact")
+        NO_LEASE_AREA = pgettext_lazy("Lease lists", "No lease area")
