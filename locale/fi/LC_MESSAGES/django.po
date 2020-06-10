@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-03 12:46+0300\n"
+"POT-Creation-Date: 2020-06-10 16:45+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -1104,8 +1104,8 @@ msgstr "Tonttityyppi"
 #: leasing/report/lease/extra_city_rent.py:104
 #: leasing/report/lease/extra_city_rent.py:118
 #: leasing/report/lease/invoicing_disabled_report.py:20
-#: leasing/report/lease/lease_lists_report.py:26
-#: leasing/report/lease/lease_lists_report.py:31
+#: leasing/report/lease/lease_lists_report.py:16
+#: leasing/report/lease/lease_lists_report.py:21
 #: leasing/report/lease/lease_statistic_report.py:333
 #: leasing/report/lease/lease_statistic_report.py:375
 #: leasing/report/lease/reservations.py:68
@@ -1127,8 +1127,8 @@ msgstr "Alkupvm"
 #: leasing/report/lease/extra_city_rent.py:105
 #: leasing/report/lease/extra_city_rent.py:119
 #: leasing/report/lease/invoicing_disabled_report.py:21
-#: leasing/report/lease/lease_lists_report.py:27
-#: leasing/report/lease/lease_lists_report.py:32
+#: leasing/report/lease/lease_lists_report.py:17
+#: leasing/report/lease/lease_lists_report.py:22
 #: leasing/report/lease/lease_statistic_report.py:377
 #: leasing/report/lease/reservations.py:69
 msgid "End date"
@@ -3106,7 +3106,7 @@ msgstr "Palautettu"
 #: leasing/report/lease/decision_conditions_report.py:55
 #: leasing/report/lease/extra_city_rent.py:108
 #: leasing/report/lease/invoicing_disabled_report.py:19
-#: leasing/report/lease/lease_lists_report.py:30
+#: leasing/report/lease/lease_lists_report.py:20
 #: leasing/report/lease/lease_statistic_report.py:342
 msgid "Lease id"
 msgstr "Vuokraus"
@@ -3271,10 +3271,13 @@ msgstr "Näyttää vuokrausten lukumäärän per vuokrauslaji"
 msgid "Count"
 msgstr "Lukumäärä"
 
-#: leasing/report/lease/lease_lists_report.py:22
-#: leasing/report/lease/lease_lists_report.py:23
+#: leasing/report/lease/lease_lists_report.py:12
 msgid "Lease lists"
 msgstr "Listoja vuokrauksista"
+
+#: leasing/report/lease/lease_lists_report.py:13
+msgid "Lists of leases that satisfy different criteria"
+msgstr "Erilaisia kriteerejä täyttävien vuokrausten listoja"
 
 #: leasing/report/lease/lease_statistic_report.py:327
 msgid "Lease statistics report"
@@ -3575,19 +3578,19 @@ msgstr "MVJ vuokraus {} {}"
 msgid "Can't create invoices if invoicing is not enabled."
 msgstr "Ei voi luoda laskuja jos laskutusta ei ole käynnistetty"
 
-#: leasing/viewsets/invoice.py:108
-msgid "Can't edit invoices that have been sent to SAP"
-msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
-
-#: leasing/viewsets/invoice.py:111
+#: leasing/viewsets/invoice.py:112
 msgid "Can't edit fully refunded invoices"
 msgstr "Ei voi muokata kokonaan hyvitettyä laskua"
 
 #: leasing/viewsets/invoice.py:119
+msgid "Can't edit invoices that have been sent to SAP"
+msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
+
+#: leasing/viewsets/invoice.py:127
 msgid "Can't delete numbered invoices"
 msgstr "Numeroitua laskua ei voi poistaa"
 
-#: leasing/viewsets/invoice.py:122
+#: leasing/viewsets/invoice.py:130
 msgid "Can't delete invoices that have been sent to SAP"
 msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
 
