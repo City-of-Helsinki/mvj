@@ -1,0 +1,1024 @@
+config:
+  addons: []
+strategy:
+  auditlog_logentry:
+    action: null
+    actor_id: null
+    additional_data: null
+    changes: constant.empty_json_dict
+    content_type_id: null
+    id: null
+    object_id: null
+    object_pk: null
+    object_repr: null
+    remote_addr: null
+    timestamp: null
+  auth_group:
+    id: null
+    name: null
+  auth_group_permissions:
+    group_id: null
+    id: null
+    permission_id: null
+  auth_permission:
+    codename: null
+    content_type_id: null
+    id: null
+    name: null
+  authtoken_token:
+    created: null
+    key: null
+    user_id: null
+  batchrun_command:
+    deleted: null
+    id: null
+    name: null
+    parameter_format_string: null
+    parameters: null
+    type: null
+  batchrun_job:
+    arguments: null
+    command_id: null
+    comment: null
+    created_at: null
+    deleted: null
+    id: null
+    modified_at: null
+    name: null
+  batchrun_jobrun:
+    exit_code: null
+    id: null
+    job_id: null
+    pid: null
+    started_at: null
+    stopped_at: null
+  batchrun_jobrunlogentry:
+    id: null
+    kind: null
+    line_number: null
+    number: null
+    run_id: null
+    text: null
+    time: null
+  batchrun_jobrunqueueitem:
+    assigned_at: null
+    assignee_pid: null
+    id: null
+    run_at: null
+    scheduled_job_id: null
+  batchrun_scheduledjob:
+    comment: null
+    created_at: null
+    days_of_month: null
+    deleted: null
+    enabled: null
+    hours: null
+    id: null
+    job_id: null
+    minutes: null
+    modified_at: null
+    months: null
+    timezone_id: null
+    weekdays: null
+    years: null
+  batchrun_timezone:
+    id: null
+    name: null
+  django_admin_log:
+    action_flag: null
+    action_time: null
+    change_message: constant.empty_json_list
+    content_type_id: null
+    id: null
+    object_id: null
+    object_repr: string.empty
+    user_id: null
+  django_content_type:
+    app_label: null
+    id: null
+    model: null
+  django_q_ormq:
+    id: null
+    key: null
+    lock: null
+    payload: null
+  django_q_schedule:
+    args: null
+    func: null
+    hook: null
+    id: null
+    kwargs: null
+    minutes: null
+    name: null
+    next_run: null
+    repeats: null
+    schedule_type: null
+    task: null
+  django_q_task: {}
+  django_session: skip_rows
+  geometry_columns:
+    coord_dimension: null
+    f_geometry_column: null
+    f_table_catalog: null
+    f_table_name: null
+    f_table_schema: null
+    srid: null
+    type: null
+  helusers_adgroup:
+    display_name: null
+    id: null
+    name: null
+  helusers_adgroupmapping:
+    ad_group_id: null
+    group_id: null
+    id: null
+  laske_export_laskeexportlog:
+    created_at: null
+    deleted: null
+    ended_at: null
+    id: null
+    is_finished: null
+    modified_at: null
+    started_at: null
+  laske_export_laskeexportlog_invoices:
+    id: null
+    invoice_id: null
+    laskeexportlog_id: null
+  laske_export_laskepaymentslog:
+    created_at: null
+    deleted: null
+    ended_at: null
+    filename: null
+    id: null
+    is_finished: null
+    modified_at: null
+    started_at: null
+  laske_export_laskepaymentslog_payments:
+    id: null
+    invoicepayment_id: null
+    laskepaymentslog_id: null
+  leasing_area:
+    created_at: null
+    deleted: null
+    external_id: null
+    geometry: null
+    id: null
+    identifier: null
+    metadata: null
+    modified_at: null
+    source_id: null
+    type: null
+  leasing_areanote:
+    created_at: null
+    deleted: null
+    geometry: null
+    id: null
+    modified_at: null
+    note: null
+    user_id: null
+  leasing_areasource:
+    id: null
+    identifier: null
+    name: null
+  leasing_bankholiday:
+    day: null
+    id: null
+  leasing_basisofrent:
+    created_at: null
+    deleted: null
+    detailed_plan_identifier: null
+    end_date: null
+    financing_id: null
+    geometry: null
+    id: null
+    index_id: null
+    lease_rights_end_date: null
+    management_id: null
+    modified_at: null
+    note: null
+    plot_type_id: null
+    start_date: null
+  leasing_basisofrentbuildpermissiontype:
+    id: null
+    name: null
+  leasing_basisofrentdecision:
+    basis_of_rent_id: null
+    decision_date: null
+    decision_maker_id: null
+    id: null
+    reference_number: null
+    section: null
+  leasing_basisofrentplottype:
+    id: null
+    name: null
+  leasing_basisofrentpropertyidentifier:
+    basis_of_rent_id: null
+    geometry: null
+    id: null
+    identifier: null
+  leasing_basisofrentrate:
+    amount: null
+    area_unit: null
+    basis_of_rent_id: null
+    build_permission_type_id: null
+    created_at: null
+    deleted: null
+    id: null
+    modified_at: null
+  leasing_collateral:
+    contract_id: null
+    deed_date: null
+    end_date: null
+    id: null
+    note: null
+    number: null
+    other_type: null
+    paid_date: null
+    returned_date: null
+    start_date: null
+    total_amount: null
+    type_id: null
+  leasing_collateraltype:
+    id: null
+    name: null
+  leasing_collectioncourtdecision:
+    created_at: null
+    decision_date: null
+    deleted: null
+    file: null
+    id: null
+    lease_id: null
+    modified_at: null
+    note: null
+    uploaded_at: null
+    uploader_id: null
+  leasing_collectionletter:
+    created_at: null
+    deleted: null
+    file: null
+    id: null
+    lease_id: null
+    modified_at: null
+    uploaded_at: null
+    uploader_id: null
+  leasing_collectionlettertemplate:
+    created_at: null
+    deleted: null
+    file: null
+    id: null
+    modified_at: null
+    name: null
+  leasing_collectionnote:
+    created_at: null
+    deleted: null
+    id: null
+    lease_id: null
+    modified_at: null
+    note: null
+    user_id: null
+  leasing_comment:
+    created_at: null
+    deleted: null
+    id: null
+    lease_id: null
+    modified_at: null
+    text: mvj.paragraph
+    topic_id: null
+    user_id: null
+  leasing_commenttopic:
+    id: null
+    name: null
+  leasing_condition:
+    created_at: null
+    decision_id: null
+    deleted: null
+    description: null
+    id: null
+    modified_at: null
+    supervised_date: null
+    supervision_date: null
+    type_id: null
+  leasing_conditiontype:
+    id: null
+    name: null
+  leasing_constructabilitydescription:
+    ahjo_reference_number: null
+    created_at: null
+    deleted: null
+    id: null
+    is_static: null
+    lease_area_id: null
+    modified_at: null
+    text: null
+    type: null
+    user_id: null
+  leasing_contact:
+    address: mvj.address_if_exist
+    address_protection: null
+    business_id: mvj.business_id_if_exist
+    care_of: null
+    city: mvj.city_if_exist
+    country: null
+    created_at: null
+    deleted: null
+    electronic_billing_address: mvj.generate_random_numbers_if_exist
+    email: mvj.email_if_exist
+    first_name: mvj.first_name_if_exist
+    id: null
+    is_lessor: null
+    language: null
+    last_name: mvj.last_name_if_exist
+    modified_at: null
+    name: mvj.company_if_exist
+    national_identification_number: mvj.national_identification_number_if_exist
+    note: mvj.paragraph_if_exist
+    partner_code: mvj.generate_random_numbers_if_exist
+    phone: mvj.phone_number_if_exist
+    postal_code: mvj.postcode_if_exist
+    sap_customer_number: mvj.generate_random_numbers_if_exist
+    sap_sales_office: mvj.generate_random_numbers_if_exist
+    type: null
+  leasing_contract:
+    contract_number: null
+    created_at: null
+    decision_id: null
+    deleted: null
+    first_call_sent: null
+    id: null
+    institution_identifier: null
+    is_readjustment_decision: null
+    ktj_link: null
+    lease_id: null
+    modified_at: null
+    second_call_sent: null
+    sign_by_date: null
+    signing_date: null
+    signing_note: null
+    third_call_sent: null
+    type_id: null
+  leasing_contractchange:
+    contract_id: null
+    decision_id: null
+    description: null
+    first_call_sent: null
+    id: null
+    second_call_sent: null
+    sign_by_date: null
+    signing_date: null
+    third_call_sent: null
+  leasing_contractrent:
+    amount: null
+    base_amount: null
+    base_amount_period: null
+    base_year_rent: null
+    created_at: null
+    deleted: null
+    end_date: null
+    id: null
+    intended_use_id: null
+    modified_at: null
+    period: null
+    rent_id: null
+    start_date: null
+  leasing_contracttype:
+    id: null
+    name: null
+  leasing_decision:
+    created_at: null
+    decision_date: null
+    decision_maker_id: null
+    deleted: null
+    description: null
+    id: null
+    lease_id: null
+    modified_at: null
+    reference_number: null
+    section: null
+    type_id: null
+  leasing_decisionmaker:
+    id: null
+    name: null
+  leasing_decisiontype:
+    id: null
+    kind: null
+    name: null
+  leasing_district:
+    id: null
+    identifier: null
+    municipality_id: null
+    name: null
+  leasing_emaillog:
+    content_type_id: null
+    created_at: null
+    deleted: null
+    id: null
+    modified_at: null
+    object_id: null
+    sent_at: null
+    text: mvj.paragraph
+    type: null
+    user_id: null
+  leasing_emaillog_recipients:
+    emaillog_id: null
+    id: null
+    user_id: null
+  leasing_equalizedrent:
+    end_date: null
+    equalization_factor: null
+    equalized_payable_amount: null
+    id: null
+    payable_amount: null
+    rent_id: null
+    start_date: null
+  leasing_financing:
+    id: null
+    name: null
+  leasing_fixedinitialyearrent:
+    amount: null
+    created_at: null
+    deleted: null
+    end_date: null
+    id: null
+    intended_use_id: null
+    modified_at: null
+    rent_id: null
+    start_date: null
+  leasing_hitas:
+    id: null
+    name: null
+  leasing_index:
+    id: null
+    month: null
+    number: null
+    year: null
+  leasing_indexadjustedrent:
+    amount: null
+    end_date: null
+    factor: null
+    id: null
+    intended_use_id: null
+    rent_id: null
+    start_date: null
+  leasing_infilldevelopmentcompensation:
+    created_at: null
+    deleted: null
+    detailed_plan_identifier: null
+    geometry: null
+    id: null
+    lease_contract_change_date: null
+    modified_at: null
+    name: null
+    note: null
+    reference_number: null
+    state: null
+    user_id: null
+  leasing_infilldevelopmentcompensationattachment:
+    created_at: null
+    deleted: null
+    file: null
+    id: null
+    infill_development_compensation_lease_id: null
+    modified_at: null
+    uploaded_at: null
+    uploader_id: null
+  leasing_infilldevelopmentcompensationdecision:
+    created_at: null
+    decision_date: null
+    decision_maker_id: null
+    deleted: null
+    id: null
+    infill_development_compensation_lease_id: null
+    modified_at: null
+    reference_number: null
+    section: null
+  leasing_infilldevelopmentcompensationintendeduse:
+    amount_per_floor_m2: null
+    created_at: null
+    deleted: null
+    floor_m2: null
+    id: null
+    infill_development_compensation_lease_id: null
+    intended_use_id: null
+    modified_at: null
+  leasing_infilldevelopmentcompensationlease:
+    compensation_investment_amount: null
+    created_at: null
+    deleted: null
+    discount_in_rent: null
+    id: null
+    increase_in_value: null
+    infill_development_compensation_id: null
+    lease_id: null
+    modified_at: null
+    monetary_compensation_amount: null
+    note: null
+    paid_date: null
+    part_of_the_increase_in_value: null
+    sent_to_sap_date: null
+    year: null
+  leasing_inspection:
+    description: mvj.paragraph
+    id: null
+    inspector: string.random
+    lease_id: null
+    supervised_date: null
+    supervision_date: null
+  leasing_inspectionattachment:
+    created_at: null
+    deleted: null
+    file: null
+    id: null
+    inspection_id: null
+    modified_at: null
+    uploaded_at: null
+    uploader_id: null
+  leasing_intendeduse:
+    id: null
+    name: null
+  leasing_interestrate:
+    end_date: null
+    id: null
+    penalty_rate: null
+    reference_rate: null
+    start_date: null
+  leasing_invoice:
+    adjusted_due_date: null
+    billed_amount: null
+    billing_period_end_date: null
+    billing_period_start_date: null
+    collection_charge: null
+    created_at: null
+    credited_invoice_id: null
+    deleted: null
+    delivery_method: null
+    description: null
+    due_date: null
+    generated: null
+    id: null
+    interest_invoice_for_id: null
+    invoiceset_id: null
+    invoicing_date: null
+    lease_id: null
+    modified_at: null
+    notes: null
+    number: null
+    outstanding_amount: null
+    payment_notification_catalog_date: null
+    payment_notification_date: null
+    postpone_date: null
+    recipient_id: null
+    sap_id: null
+    sent_to_sap_at: null
+    state: null
+    total_amount: null
+    type: null
+  leasing_invoicenote:
+    billing_period_end_date: null
+    billing_period_start_date: null
+    created_at: null
+    deleted: null
+    id: null
+    lease_id: null
+    modified_at: null
+    notes: null
+  leasing_invoicepayment:
+    created_at: null
+    deleted: null
+    filing_code: null
+    id: null
+    invoice_id: null
+    modified_at: null
+    paid_amount: null
+    paid_date: null
+  leasing_invoicerow:
+    amount: null
+    billing_period_end_date: null
+    billing_period_start_date: null
+    created_at: null
+    deleted: null
+    description: null
+    id: null
+    intended_use_id: null
+    invoice_id: null
+    modified_at: null
+    receivable_type_id: null
+    tenant_id: null
+  leasing_invoiceset:
+    billing_period_end_date: null
+    billing_period_start_date: null
+    id: null
+    lease_id: null
+  leasing_lease:
+    building_selling_price: null
+    classification: null
+    conveyance_number: null
+    created_at: null
+    deleted: null
+    district_id: null
+    end_date: null
+    financing_id: null
+    hitas_id: null
+    id: null
+    identifier_id: null
+    intended_use_id: null
+    intended_use_note: null
+    is_invoicing_enabled: null
+    is_rent_info_complete: null
+    is_subject_to_vat: null
+    lessor_id: null
+    management_id: null
+    modified_at: null
+    municipality_id: null
+    note: null
+    notice_note: null
+    notice_period_id: null
+    preparer_id: null
+    real_estate_developer: null
+    reference_number: null
+    regulated: null
+    regulation_id: null
+    reservation_procedure_id: null
+    special_project_id: null
+    start_date: null
+    state: null
+    statistical_use_id: null
+    supportive_housing_id: null
+    transferable: null
+    type_id: null
+  leasing_leasearea:
+    archived_at: null
+    archived_decision_id: null
+    archived_note: null
+    area: null
+    constructability_report_investigation_state: null
+    constructability_report_signer: null
+    constructability_report_signing_date: null
+    constructability_report_state: null
+    created_at: null
+    deleted: null
+    demolition_state: null
+    geometry: null
+    id: null
+    identifier: null
+    lease_id: null
+    location: null
+    modified_at: null
+    other_state: null
+    polluted_land_planner_id: null
+    polluted_land_projectwise_number: null
+    polluted_land_rent_condition_date: null
+    polluted_land_rent_condition_state: null
+    polluted_land_state: null
+    preconstruction_estimated_construction_readiness_moment: null
+    preconstruction_inspection_moment: null
+    preconstruction_state: null
+    section_area: null
+    type: null
+  leasing_leaseareaaddress:
+    address: null
+    city: null
+    created_at: null
+    id: null
+    is_primary: null
+    lease_area_id: null
+    modified_at: null
+    postal_code: null
+  leasing_leaseareaattachment:
+    created_at: null
+    deleted: null
+    file: null
+    id: null
+    lease_area_id: null
+    modified_at: null
+    type: null
+    uploaded_at: null
+    uploader_id: null
+  leasing_leasebasisofrent:
+    amount_per_area: null
+    archived_at: null
+    archived_note: null
+    area: null
+    area_unit: null
+    created_at: null
+    deleted: null
+    discount_percentage: null
+    id: null
+    index_id: null
+    intended_use_id: null
+    lease_id: null
+    locked_at: null
+    locked_by_id: null
+    modified_at: null
+    parent_id: null
+    plans_inspected_at: null
+    plans_inspected_by_id: null
+    profit_margin_percentage: null
+    subvention_base_percent: null
+    subvention_graduated_percent: null
+    subvention_type: null
+    type: null
+    zone: null
+  leasing_leasebasisofrentmanagementsubvention:
+    id: null
+    lease_basis_of_rent_id: null
+    management_id: null
+    subvention_amount: null
+  leasing_leasebasisofrenttemporarysubvention:
+    description: null
+    id: null
+    lease_basis_of_rent_id: null
+    subvention_percent: null
+  leasing_leaseholdtransfer:
+    created_at: null
+    decision_date: null
+    deleted: null
+    id: null
+    institution_identifier: null
+    modified_at: null
+  leasing_leaseholdtransferimportlog:
+    created_at: null
+    deleted: null
+    file_name: null
+    id: null
+    modified_at: null
+  leasing_leaseholdtransferparty:
+    business_id: null
+    id: null
+    name: null
+    national_identification_number: null
+    share_denominator: null
+    share_numerator: null
+    transfer_id: null
+    type: null
+  leasing_leaseholdtransferproperty:
+    id: null
+    identifier: null
+    transfer_id: null
+  leasing_leaseidentifier:
+    created_at: null
+    deleted: null
+    district_id: null
+    id: null
+    modified_at: null
+    municipality_id: null
+    sequence: null
+    type_id: null
+  leasing_leasestatelog:
+    created_at: null
+    id: null
+    lease_id: null
+    modified_at: null
+    state: null
+  leasing_leasetype:
+    due_dates_position: null
+    id: null
+    identifier: null
+    name: null
+    sap_material_code: null
+    sap_order_item_number: null
+  leasing_legacyindex:
+    id: null
+    index_id: null
+    number_1914: null
+    number_1938: null
+  leasing_management:
+    id: null
+    name: null
+  leasing_managementsubvention:
+    id: null
+    management_id: null
+    rent_adjustment_id: null
+    subvention_amount: null
+  leasing_managementsubventionformofmanagement:
+    id: null
+    name: null
+  leasing_municipality:
+    id: null
+    identifier: null
+    name: null
+  leasing_noticeperiod:
+    duration: null
+    id: null
+    name: null
+    type: null
+  leasing_payablerent:
+    amount: null
+    calendar_year_rent: null
+    difference_percent: null
+    end_date: null
+    id: null
+    rent_id: null
+    start_date: null
+  leasing_planunit:
+    area: null
+    created_at: null
+    detailed_plan_identifier: null
+    detailed_plan_latest_processing_date: null
+    detailed_plan_latest_processing_date_note: null
+    geometry: null
+    id: null
+    identifier: null
+    in_contract: null
+    lease_area_id: null
+    modified_at: null
+    plan_unit_intended_use_id: null
+    plan_unit_state_id: null
+    plan_unit_type_id: null
+    plot_division_date_of_approval: null
+    plot_division_effective_date: null
+    plot_division_identifier: null
+    plot_division_state_id: null
+    section_area: null
+  leasing_planunitintendeduse:
+    id: null
+    name: null
+  leasing_planunitstate:
+    id: null
+    name: null
+  leasing_planunittype:
+    id: null
+    name: null
+  leasing_plot:
+    area: null
+    created_at: null
+    geometry: null
+    id: null
+    identifier: null
+    in_contract: null
+    lease_area_id: null
+    modified_at: null
+    registration_date: null
+    repeal_date: null
+    section_area: null
+    type: null
+  leasing_plotdivisionstate:
+    id: null
+    name: null
+  leasing_receivabletype:
+    id: null
+    is_active: null
+    name: null
+    sap_material_code: null
+    sap_order_item_number: null
+  leasing_regulation:
+    id: null
+    name: null
+  leasing_relatedlease:
+    created_at: null
+    deleted: null
+    end_date: null
+    from_lease_id: null
+    id: null
+    modified_at: null
+    start_date: null
+    to_lease_id: null
+    type: null
+  leasing_rent:
+    amount: null
+    created_at: null
+    cycle: null
+    deleted: null
+    due_dates_per_year: null
+    due_dates_type: null
+    elementary_index: null
+    end_date: null
+    equalization_end_date: null
+    equalization_start_date: null
+    id: null
+    index_rounding: null
+    index_type: null
+    lease_id: null
+    manual_ratio: null
+    manual_ratio_previous: null
+    modified_at: null
+    note: null
+    seasonal_end_day: null
+    seasonal_end_month: null
+    seasonal_start_day: null
+    seasonal_start_month: null
+    start_date: null
+    type: null
+    x_value: null
+    y_value: null
+    y_value_start: null
+  leasing_rentadjustment:
+    amount_left: null
+    amount_type: null
+    created_at: null
+    decision_id: null
+    deleted: null
+    end_date: null
+    full_amount: null
+    id: null
+    intended_use_id: null
+    modified_at: null
+    note: null
+    rent_id: null
+    start_date: null
+    subvention_base_percent: null
+    subvention_graduated_percent: null
+    subvention_type: null
+    type: null
+  leasing_rentduedate:
+    created_at: null
+    day: null
+    deleted: null
+    id: null
+    modified_at: null
+    month: null
+    rent_id: null
+  leasing_rentintendeduse:
+    id: null
+    name: null
+  leasing_reservationprocedure:
+    id: null
+    name: null
+  leasing_specialproject:
+    id: null
+    name: null
+  leasing_statisticaluse:
+    id: null
+    name: null
+  leasing_supportivehousing:
+    id: null
+    name: null
+  leasing_temporarysubvention:
+    description: null
+    id: null
+    rent_adjustment_id: null
+    subvention_percent: null
+  leasing_tenant:
+    created_at: null
+    deleted: null
+    id: null
+    lease_id: null
+    modified_at: null
+    reference: null
+    share_denominator: null
+    share_numerator: null
+  leasing_tenantcontact:
+    contact_id: null
+    created_at: null
+    deleted: null
+    end_date: null
+    id: null
+    modified_at: null
+    start_date: null
+    tenant_id: null
+    type: null
+  leasing_tenantrentshare:
+    created_at: null
+    deleted: null
+    id: null
+    intended_use_id: null
+    modified_at: null
+    share_denominator: null
+    share_numerator: null
+    tenant_id: null
+  leasing_uidata:
+    created_at: null
+    id: null
+    key: null
+    modified_at: null
+    user_id: null
+    value: null
+  leasing_vat:
+    end_date: null
+    id: null
+    percent: null
+    start_date: null
+  sequences_sequence:
+    last: null
+    name: null
+  spatial_ref_sys:
+    auth_name: null
+    auth_srid: null
+    proj4text: null
+    srid: null
+    srtext: null
+  users_user:
+    date_joined: null
+    department_name: null
+    email: user.email
+    first_name: mvj.first_name
+    id: null
+    is_active: null
+    is_staff: null
+    is_superuser: null
+    last_login: null
+    last_name: mvj.last_name
+    password: constant.invalid_django_password
+    username: user.username
+    uuid: null
+  users_user_ad_groups:
+    adgroup_id: null
+    id: null
+    user_id: null
+  users_user_groups:
+    group_id: null
+    id: null
+    user_id: null
+  users_user_user_permissions:
+    id: null
+    permission_id: null
+    user_id: null

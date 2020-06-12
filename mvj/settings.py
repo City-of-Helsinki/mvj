@@ -6,6 +6,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 project_root = environ.Path(__file__) - 2
+BASE_DIR = project_root
 
 # Location of the fallback version file, used when no repository is available.
 # This is hardcoded as reading it from configuration does not really make
@@ -137,6 +138,7 @@ INSTALLED_APPS = [
     "field_permissions",
     "batchrun",
     "django_q",
+    "sanitized_dump",
 ]
 
 if DEBUG:
