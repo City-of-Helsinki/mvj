@@ -8,6 +8,7 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.enums import ContactType
+from leasing.validators import validate_business_id
 
 from .mixins import TimeStampedSafeDeleteModel
 
@@ -41,7 +42,11 @@ class Contact(TimeStampedSafeDeleteModel):
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(
-        verbose_name=_("Business ID"), null=True, blank=True, max_length=255
+        verbose_name=_("Business ID"),
+        null=True,
+        blank=True,
+        max_length=255,
+        validators=[validate_business_id],
     )
 
     # In Finnish: Osoite

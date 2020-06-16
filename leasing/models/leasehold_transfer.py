@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
+from leasing.validators import validate_business_id
 
 from ..enums import LeaseholdTransferPartyType
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -90,7 +91,11 @@ class LeaseholdTransferParty(NameModel):
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(
-        verbose_name=_("Business ID"), max_length=255, null=True, blank=True
+        verbose_name=_("Business ID"),
+        max_length=255,
+        null=True,
+        blank=True,
+        validators=[validate_business_id],
     )
 
     # In Finnish: Henkilötunnus

@@ -8,6 +8,7 @@ from leasing.enums import (
     TenantContactType,
 )
 from leasing.models import Contact, DecisionMaker, District, LeaseType, Municipality
+from leasing.validators import validate_business_id
 
 
 class CommaSeparatedChoiceField(forms.ChoiceField):
@@ -85,7 +86,11 @@ class LeaseSearchForm(forms.Form):
         choices=tuple((x.value, str(x)) for x in LeaseState),
     )
     business_id = forms.CharField(
-        label="Business id", max_length=255, required=False, empty_value=None
+        label="Business id",
+        max_length=255,
+        required=False,
+        empty_value=None,
+        validators=[validate_business_id],
     )
     national_identification_number = forms.CharField(
         label="National identification number",
