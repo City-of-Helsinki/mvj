@@ -10,6 +10,25 @@ def test_lease_search_form_no_fields_required():
 
 
 @pytest.mark.parametrize(
+    "business_id, expected",
+    [
+        (None, True),
+        ("", True),
+        ("0", False),
+        (123, False),
+        ("something", True),
+        ("1234567-8", True),
+        ("123456", False),
+        ("1234567-89", False),
+    ],
+)
+def test_lease_search_form_business_id(business_id, expected):
+    form = LeaseSearchForm({"business_id": business_id})
+
+    assert expected == form.is_valid()
+
+
+@pytest.mark.parametrize(
     "tenantcontact_type, expected",
     [
         (None, True),
