@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-27 15:51+0300\n"
+"POT-Creation-Date: 2020-06-16 15:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -955,7 +955,7 @@ msgstr "Lähdössä SAP:iin"
 #: leasing/models/area.py:15 leasing/models/area.py:29
 #: leasing/models/basis_of_rent.py:164 leasing/models/land_area.py:56
 #: leasing/models/lease.py:52 leasing/models/lease.py:81
-#: leasing/models/lease.py:106 leasing/models/leasehold_transfer.py:57
+#: leasing/models/lease.py:106 leasing/models/leasehold_transfer.py:58
 msgid "Identifier"
 msgstr "Tunnus"
 
@@ -993,13 +993,12 @@ msgid "Area"
 msgstr "Alue"
 
 #: leasing/models/area_note.py:22 leasing/models/basis_of_rent.py:102
-#: leasing/models/contact.py:124 leasing/models/contract.py:175
+#: leasing/models/contact.py:129 leasing/models/contract.py:175
 #: leasing/models/debt_collection.py:98 leasing/models/debt_collection.py:142
 #: leasing/models/infill_development_compensation.py:59
 #: leasing/models/infill_development_compensation.py:108
 #: leasing/models/lease.py:557 leasing/models/rent.py:174
-#: leasing/models/rent.py:1070
-#: leasing/report/invoice/collaterals_report.py:25
+#: leasing/models/rent.py:1070 leasing/report/invoice/collaterals_report.py:31
 msgid "Note"
 msgstr "Kommentti"
 
@@ -1054,7 +1053,7 @@ msgstr "Tonttityyppi"
 #: leasing/models/tenant.py:101 leasing/models/vat.py:40
 #: leasing/report/invoice/invoice_payments.py:26
 #: leasing/report/invoice/invoices_in_period.py:40
-#: leasing/report/invoice/laske_invoice_count_report.py:22
+#: leasing/report/invoice/laske_invoice_count_report.py:23
 #: leasing/report/invoice/open_invoices_report.py:40
 #: leasing/report/lease/decision_conditions_report.py:45
 #: leasing/report/lease/extra_city_rent.py:104
@@ -1075,7 +1074,7 @@ msgstr "Alkupvm"
 #: leasing/models/tenant.py:104 leasing/models/vat.py:43
 #: leasing/report/invoice/invoice_payments.py:27
 #: leasing/report/invoice/invoices_in_period.py:41
-#: leasing/report/invoice/laske_invoice_count_report.py:23
+#: leasing/report/invoice/laske_invoice_count_report.py:24
 #: leasing/report/invoice/open_invoices_report.py:41
 #: leasing/report/lease/decision_conditions_report.py:46
 #: leasing/report/lease/extra_city_rent.py:105
@@ -1175,7 +1174,7 @@ msgstr "Päättäjä"
 #: leasing/models/basis_of_rent.py:206 leasing/models/debt_collection.py:138
 #: leasing/models/decision.py:70
 #: leasing/models/infill_development_compensation.py:208
-#: leasing/models/leasehold_transfer.py:41
+#: leasing/models/leasehold_transfer.py:42
 msgid "Decision date"
 msgstr "Päätöspäivämäärä"
 
@@ -1223,41 +1222,41 @@ msgctxt "Model name"
 msgid "Comments"
 msgstr "Kommentit"
 
-#: leasing/models/contact.py:20 leasing/models/decision.py:81
+#: leasing/models/contact.py:21 leasing/models/decision.py:81
 #: leasing/models/decision.py:124 leasing/models/invoice.py:301
 #: leasing/models/land_area.py:83 leasing/models/land_area.py:249
 #: leasing/models/land_area.py:283 leasing/models/land_area.py:310
 #: leasing/models/rent.py:107 leasing/models/rent.py:1020
-#: leasing/models/rent.py:1411
+#: leasing/models/rent.py:1411 leasing/report/invoice/collaterals_report.py:18
 #: leasing/report/lease/decision_conditions_report.py:48
 #: leasing/report/lease/decision_conditions_report.py:58
 msgid "Type"
 msgstr "Tyyppi"
 
-#: leasing/models/contact.py:24
+#: leasing/models/contact.py:25
 msgid "First name"
 msgstr "Etunimi"
 
-#: leasing/models/contact.py:29
+#: leasing/models/contact.py:30
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: leasing/models/contact.py:34 leasing/models/debt_collection.py:61
+#: leasing/models/contact.py:35 leasing/models/debt_collection.py:61
 #: leasing/models/infill_development_compensation.py:23
 #: leasing/models/invoice.py:26 leasing/models/invoice.py:780
 #: leasing/models/mixins.py:20
 msgid "Name"
 msgstr "Nimi"
 
-#: leasing/models/contact.py:39
+#: leasing/models/contact.py:40
 msgid "c/o"
 msgstr "c/o"
 
-#: leasing/models/contact.py:44 leasing/models/leasehold_transfer.py:93
+#: leasing/models/contact.py:45 leasing/models/leasehold_transfer.py:94
 msgid "Business ID"
 msgstr "Y-tunnus"
 
-#: leasing/models/contact.py:49 leasing/models/land_area.py:32
+#: leasing/models/contact.py:54 leasing/models/land_area.py:32
 #: leasing/report/lease/decision_conditions_report.py:57
 #: leasing/report/lease/extra_city_rent.py:112
 #: leasing/report/lease/extra_city_rent.py:116
@@ -1266,74 +1265,74 @@ msgstr "Y-tunnus"
 msgid "Address"
 msgstr "Osoite"
 
-#: leasing/models/contact.py:54 leasing/models/land_area.py:36
+#: leasing/models/contact.py:59 leasing/models/land_area.py:36
 msgid "Postal code"
 msgstr "Postinumero"
 
-#: leasing/models/contact.py:59 leasing/models/land_area.py:41
+#: leasing/models/contact.py:64 leasing/models/land_area.py:41
 msgid "City"
 msgstr "Kaupunki"
 
-#: leasing/models/contact.py:63
+#: leasing/models/contact.py:68
 msgid "Country"
 msgstr "Maa"
 
-#: leasing/models/contact.py:67
+#: leasing/models/contact.py:72
 msgid "Email"
 msgstr "Sähköposti"
 
-#: leasing/models/contact.py:72
+#: leasing/models/contact.py:77
 msgid "Phone"
 msgstr "Puhelin"
 
-#: leasing/models/contact.py:77
+#: leasing/models/contact.py:82
 msgid "Language"
 msgstr "Kieli"
 
-#: leasing/models/contact.py:86 leasing/models/leasehold_transfer.py:98
+#: leasing/models/contact.py:91 leasing/models/leasehold_transfer.py:103
 msgid "National identification number"
 msgstr "Henkilötunnus"
 
-#: leasing/models/contact.py:94
+#: leasing/models/contact.py:99
 msgid "Address protection"
 msgstr "Turvakielto"
 
-#: leasing/models/contact.py:99
+#: leasing/models/contact.py:104
 msgid "SAP customer number"
 msgstr "SAP asiakasnumero"
 
-#: leasing/models/contact.py:104
+#: leasing/models/contact.py:109
 msgid "Electronic billing address"
 msgstr "Verkkolaskutusosoite"
 
-#: leasing/models/contact.py:112
+#: leasing/models/contact.py:117
 msgid "Partner code"
 msgstr "Kumppanitunnus"
 
-#: leasing/models/contact.py:116
+#: leasing/models/contact.py:121
 msgid "Is a lessor"
 msgstr "Onko vuokranantaja"
 
-#: leasing/models/contact.py:120
+#: leasing/models/contact.py:125
 msgid "SAP sales office"
 msgstr "SAP myyntitoimisto"
 
-#: leasing/models/contact.py:129
+#: leasing/models/contact.py:134
 msgctxt "Model name"
 msgid "Contact"
 msgstr "Yhteystieto"
 
-#: leasing/models/contact.py:130
+#: leasing/models/contact.py:135
 msgctxt "Model name"
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: leasing/models/contact.py:159
+#: leasing/models/contact.py:164
 #, python-brace-format
 msgid "{name} (National Identification Number {id})"
 msgstr "{name} (Henkilötunnus {id})"
 
-#: leasing/models/contact.py:167
+#: leasing/models/contact.py:172
 #, python-brace-format
 msgid "{name} (Business ID {id})"
 msgstr "{name} (Y-tunnus {id})"
@@ -1394,7 +1393,7 @@ msgstr "Päätös"
 msgid "KTJ link"
 msgstr "KTJ vuokraoikeustodistuksen linkki"
 
-#: leasing/models/contract.py:98 leasing/models/leasehold_transfer.py:37
+#: leasing/models/contract.py:98 leasing/models/leasehold_transfer.py:38
 msgid "Institution identifier"
 msgstr "Laitostunnus"
 
@@ -1441,21 +1440,22 @@ msgid "Deed date"
 msgstr "Panttikirjan pvm"
 
 #: leasing/models/contract.py:159 leasing/models/invoice.py:255
+#: leasing/report/invoice/collaterals_report.py:28
 #: leasing/report/invoice/invoices_in_period.py:61
-#: leasing/report/invoice/collaterals_report.py:22
 #: leasing/report/invoice/open_invoices_report.py:48
 msgid "Total amount"
 msgstr "Pääoma"
 
 #: leasing/models/contract.py:167
 #: leasing/models/infill_development_compensation.py:166
-#: leasing/models/invoice.py:776 leasing/report/invoice/invoice_payments.py:32
-#: leasing/report/invoice/collaterals_report.py:23
+#: leasing/models/invoice.py:776
+#: leasing/report/invoice/collaterals_report.py:29
+#: leasing/report/invoice/invoice_payments.py:32
 msgid "Paid date"
 msgstr "Maksettu pvm"
 
 #: leasing/models/contract.py:171
-#: leasing/report/invoice/collaterals_report.py:24
+#: leasing/report/invoice/collaterals_report.py:30
 msgid "Returned date"
 msgstr "Palautettu pvm"
 
@@ -2502,59 +2502,59 @@ msgctxt "Model name"
 msgid "Related leases"
 msgstr "Liittyvät vuokraukset"
 
-#: leasing/models/leasehold_transfer.py:18
+#: leasing/models/leasehold_transfer.py:19
 msgid "File name"
 msgstr "Tiedostonimi"
 
-#: leasing/models/leasehold_transfer.py:21
+#: leasing/models/leasehold_transfer.py:22
 msgctxt "Model name"
 msgid "Leasehold transfer import log"
 msgstr "Vuokraoikeuden siirtojen tuonnin loki"
 
-#: leasing/models/leasehold_transfer.py:23
+#: leasing/models/leasehold_transfer.py:24
 msgctxt "Model name"
 msgid "Leasehold transfer import logs"
 msgstr "Vuokraoikeuden siirtojen tuonnin lokit"
 
-#: leasing/models/leasehold_transfer.py:44
+#: leasing/models/leasehold_transfer.py:45
 msgctxt "Model name"
 msgid "Leasehold transfer"
 msgstr "Vuokraoikeuden siirto"
 
-#: leasing/models/leasehold_transfer.py:45
+#: leasing/models/leasehold_transfer.py:46
 msgctxt "Model name"
 msgid "Leasehold transfers"
 msgstr "Vuokraoikeuden siirrot"
 
-#: leasing/models/leasehold_transfer.py:61
-#: leasing/models/leasehold_transfer.py:86
+#: leasing/models/leasehold_transfer.py:62
+#: leasing/models/leasehold_transfer.py:87
 msgid "Leasehold transfer"
 msgstr "Vuokraoikeuden siirto"
 
-#: leasing/models/leasehold_transfer.py:67
+#: leasing/models/leasehold_transfer.py:68
 msgctxt "Model name"
 msgid "Leasehold transfer property"
 msgstr "Vuokraoikeuden siirron kohde"
 
-#: leasing/models/leasehold_transfer.py:69
+#: leasing/models/leasehold_transfer.py:70
 msgctxt "Model name"
 msgid "Leasehold transfer properties"
 msgstr "Vuokraoikeuden siirron kohteet"
 
-#: leasing/models/leasehold_transfer.py:106 leasing/models/tenant.py:27
+#: leasing/models/leasehold_transfer.py:111 leasing/models/tenant.py:27
 msgid "Numerator"
 msgstr "Jaettava"
 
-#: leasing/models/leasehold_transfer.py:111 leasing/models/tenant.py:30
+#: leasing/models/leasehold_transfer.py:116 leasing/models/tenant.py:30
 msgid "Denominator"
 msgstr "Jakaja"
 
-#: leasing/models/leasehold_transfer.py:115
+#: leasing/models/leasehold_transfer.py:120
 msgctxt "Model name"
 msgid "Leasehold transfer party"
 msgstr "Vuokraoikeuden siirron osapuoli"
 
-#: leasing/models/leasehold_transfer.py:116
+#: leasing/models/leasehold_transfer.py:121
 msgctxt "Model name"
 msgid "Leasehold transfer parties"
 msgstr "Vuokraoikeuden siirtojen osapuolet"
@@ -3034,6 +3034,33 @@ msgstr "ALV {}% {} - {}"
 msgid "Only one VAT can be active at a time"
 msgstr "Vain yksi ALV voi olla voimassa kerrallaan"
 
+#: leasing/report/invoice/collaterals_report.py:13
+msgid "Collaterals"
+msgstr "Vakuudet"
+
+#: leasing/report/invoice/collaterals_report.py:14
+msgid "Show all collaterals"
+msgstr "Näyttää kaikki vakuudet"
+
+#: leasing/report/invoice/collaterals_report.py:23
+msgid "Paid"
+msgstr "Maksettu"
+
+#: leasing/report/invoice/collaterals_report.py:24
+msgid "Returned"
+msgstr "Palautettu"
+
+#: leasing/report/invoice/collaterals_report.py:27
+#: leasing/report/invoice/invoice_payments.py:31
+#: leasing/report/invoice/invoices_in_period.py:55
+#: leasing/report/invoice/open_invoices_report.py:46
+#: leasing/report/lease/decision_conditions_report.py:55
+#: leasing/report/lease/extra_city_rent.py:108
+#: leasing/report/lease/invoicing_disabled_report.py:19
+#: leasing/report/lease/lease_statistic_report.py:342
+msgid "Lease id"
+msgstr "Vuokraus"
+
 #: leasing/report/invoice/invoice_payments.py:20
 msgid "Invoice payments"
 msgstr "Maksusuoritukset"
@@ -3046,17 +3073,6 @@ msgstr "Näytä maksusuoritukset, jotka on maksettu alkupvm ja loppupvm välill�
 #: leasing/report/invoice/invoice_payments.py:30
 msgid "Invoice number"
 msgstr "Laskun numero"
-
-#: leasing/report/invoice/invoice_payments.py:31
-#: leasing/report/invoice/invoices_in_period.py:55
-#: leasing/report/invoice/collaterals_report.py:21
-#: leasing/report/invoice/open_invoices_report.py:46
-#: leasing/report/lease/decision_conditions_report.py:55
-#: leasing/report/lease/extra_city_rent.py:108
-#: leasing/report/lease/invoicing_disabled_report.py:19
-#: leasing/report/lease/lease_statistic_report.py:342
-msgid "Lease id"
-msgstr "Vuokraus"
 
 #: leasing/report/invoice/invoice_payments.py:34
 msgid "Filing code"
@@ -3098,11 +3114,11 @@ msgstr "Laskunsaaja"
 msgid "Recipient address"
 msgstr "Laskunsaajan osoite"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:16
+#: leasing/report/invoice/laske_invoice_count_report.py:17
 msgid "Count of Invoices sent to Laske per day"
 msgstr "Laske-järjestelmään lähetettyjen laskujen määrä per päivä"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:18
+#: leasing/report/invoice/laske_invoice_count_report.py:19
 msgid ""
 "Shows actual sent invoice counts until yesterday, and estimated counts for "
 "today and beyond"
@@ -3110,33 +3126,17 @@ msgstr ""
 "Näyttää lähetettyjen laskujen määrän eiliseen asti. Kuluvalle päivälle ja "
 "siitä eteenpäin määrä on arvio."
 
-#: leasing/report/invoice/laske_invoice_count_report.py:26
+#: leasing/report/invoice/laske_invoice_count_report.py:27
 msgid "Send date"
 msgstr "Lähetyspvm"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:27
+#: leasing/report/invoice/laske_invoice_count_report.py:28
 msgid "Invoice count"
 msgstr "Laskujen määrä"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:28
+#: leasing/report/invoice/laske_invoice_count_report.py:29
 msgid "Estimate"
 msgstr "Arvio"
-
-#: leasing/report/invoice/collaterals_report.py:13
-msgid "Collaterals"
-msgstr "Vakuudet"
-
-#: leasing/report/invoice/collaterals_report.py:14
-msgid "Show all collaterals"
-msgstr "Näyttää kaikki vakuudet"
-
-#: leasing/report/invoice/collaterals_report.py:17
-msgid "Paid"
-msgstr "Maksettu"
-
-#: leasing/report/invoice/collaterals_report.py:18
-msgid "Returned"
-msgstr "Palautettu"
 
 #: leasing/report/invoice/open_invoices_report.py:36
 msgid "Open invoices"
@@ -3390,7 +3390,7 @@ msgstr "Ole hyvä ja yritä uudelleen"
 msgid "Results will be sent by email to {}"
 msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
-#: leasing/report/viewset.py:77
+#: leasing/report/viewset.py:81
 msgid "Report type not found"
 msgstr "Raporttityyppiä ei löytynyt"
 
@@ -3449,6 +3449,10 @@ msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"
 #: leasing/serializers/rent.py:645
 msgid "Can't edit locked basis of rent item"
 msgstr "Lukittua vuokrausperiaatetta ei voi muokata"
+
+#: leasing/validators.py:6
+msgid "Enter a valid business id."
+msgstr "Anna kelvollinen Y-tunnus."
 
 #: leasing/views.py:97 leasing/views.py:148
 msgid "Error in upstream service"
@@ -3520,19 +3524,19 @@ msgstr "MVJ vuokraus {} {}"
 msgid "Can't create invoices if invoicing is not enabled."
 msgstr "Ei voi luoda laskuja jos laskutusta ei ole käynnistetty"
 
-#: leasing/viewsets/invoice.py:112
+#: leasing/viewsets/invoice.py:108
+msgid "Can't edit invoices that have been sent to SAP"
+msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
+
+#: leasing/viewsets/invoice.py:111
 msgid "Can't edit fully refunded invoices"
 msgstr "Ei voi muokata kokonaan hyvitettyä laskua"
 
 #: leasing/viewsets/invoice.py:119
-msgid "Can't edit invoices that have been sent to SAP"
-msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
-
-#: leasing/viewsets/invoice.py:127
 msgid "Can't delete numbered invoices"
 msgstr "Numeroitua laskua ei voi poistaa"
 
-#: leasing/viewsets/invoice.py:130
+#: leasing/viewsets/invoice.py:122
 msgid "Can't delete invoices that have been sent to SAP"
 msgstr "Ei voi muokata laskuja jotka on lähetetty SAP:iin"
 
