@@ -34,16 +34,16 @@ class Field:
         self.validators = validators
         self.many = many
         self.required = required
-        self._validation_errors = []
+        self.validation_errors = []
 
-    def validate_value(self, value):
+    def _validate_value(self, value):
         for one_value in value:
             if self.field_type == "string" and not isinstance(one_value, str):
-                self._validation_errors.append(_("Value should be a string"))
+                self.validation_errors.append(_("Value should be a string"))
             elif inspect.isclass(self.field_type) and not isinstance(
                 one_value, self.field_type
             ):
-                self._validation_errors.append(
+                self.validation_errors.append(
                     _("Value should be of type {}".format(self.field_type))
                 )
 
@@ -53,26 +53,28 @@ class Field:
             for validator in self.validators:
                 try:
                     validator(one_value)
-                except ValidationError as e:
-                    self._validation_errors.append(e.message)
+                except ValidationError as err:
+                    self.validation_errors.append(err.messages)
 
     def is_valid(self, value):
+        self.validation_errors = []
+
         if self.required and not value:
-            self._validation_errors.append(_("Value is required"))
+            self.validation_errors.append(_("Value is required"))
 
         if not value:
             return True
 
         if self.many:
             if isinstance(value, str) or not isinstance(value, Iterable):
-                self._validation_errors.append(_("Value should be an Iterable"))
+                self.validation_errors.append(_("Value should be an Iterable"))
                 return False
         else:
             value = [value]
 
-        self.validate_value(value)
+        self._validate_value(value)
 
-        if len(self._validation_errors):
+        if len(self.validation_errors):
             return False
 
         return True
@@ -81,6 +83,32 @@ class Field:
 class FieldGroup:
     def __init__(self):
         self._fields = self.get_fields()
+        self.validation_errors = []
+
+    def _validate_fields(self):
+        self.validation_errors = []
+        error_list = {}
+
+        for field_name, field in self.get_fields().items():
+            field_value = getattr(self, field_name)
+
+            if not field.is_valid(field_value):
+                error_list[field_name] = field.validation_errors
+
+            if not field_value:
+                continue
+
+            if not field.many:
+                field_value = [field_value]
+
+            for one_value in field_value:
+                if field.field_type == "string":
+                    continue
+                elif issubclass(field.field_type, FieldGroup):
+                    one_value.validate()
+
+        if len(error_list) > 0:
+            raise ValidationError(error_list)
 
     def get_fields(self):
         if hasattr(self, "_fields"):
@@ -149,6 +177,9 @@ class FieldGroup:
         return etree.tostring(
             root, encoding=encoding, xml_declaration=True, pretty_print=True
         )
+
+    def validate(self):
+        self._validate_fields()
 
     def __str__(self):
         return self.to_xml_string()
