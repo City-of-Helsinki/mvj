@@ -3,6 +3,7 @@ import subprocess
 
 import environ
 import sentry_sdk
+from django.utils.translation import ugettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
 project_root = environ.Path(__file__) - 2
@@ -44,6 +45,7 @@ env = environ.Env(
     ADMINS=(list, []),
     DATABASE_URL=(str, "postgis://mvj:mvj@localhost/mvj"),
     CACHE_URL=(str, "locmemcache://"),
+    CONSTANCE_DATABASE_CACHE_BACKEND=(str, ""),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
@@ -69,6 +71,8 @@ env = environ.Env(
     # See http://initd.org/psycopg/docs/module.html#psycopg2.connect for DSN format
     AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
+    LASKE_EXPORT_FROM_EMAIL=(str, ""),
+    LASKE_EXPORT_ANNOUNCE_EMAIL=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -138,6 +142,8 @@ INSTALLED_APPS = [
     "field_permissions",
     "batchrun",
     "django_q",
+    "constance",
+    "constance.backends.database",
     "sanitized_dump",
 ]
 
@@ -173,6 +179,22 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+CONSTANCE_DATABASE_CACHE_BACKEND = env.str("CONSTANCE_DATABASE_CACHE_BACKEND")
+CONSTANCE_CONFIG = {
+    "LASKE_EXPORT_FROM_EMAIL": (
+        env.str("LASKE_EXPORT_FROM_EMAIL"),
+        _("Sender email address. Example: john@example.com"),
+    ),
+    "LASKE_EXPORT_ANNOUNCE_EMAIL": (
+        env.str("LASKE_EXPORT_ANNOUNCE_EMAIL"),
+        _("Recipients of announce emails. Example: john@example.com,jane@example.com"),
+    ),
+}
+CONSTANCE_CONFIG_FIELDSETS = {
+    "Laske Export": ("LASKE_EXPORT_FROM_EMAIL", "LASKE_EXPORT_ANNOUNCE_EMAIL"),
+}
 
 # Required by django-helusers
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
@@ -276,9 +298,6 @@ LASKE_SERVERS = {
         "key": b"",
     },
 }
-
-LASKE_EXPORT_FROM_EMAIL = "from@example.com"
-LASKE_EXPORT_ANNOUNCE_EMAIL = ["recipient@example.com", "recipient2@example.com"]
 
 # See: https://github.com/jjkester/django-auditlog/pull/81
 USE_NATIVE_JSONFIELD = True
