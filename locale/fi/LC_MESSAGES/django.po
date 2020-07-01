@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-16 15:10+0300\n"
+"POT-Creation-Date: 2020-06-30 12:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -296,68 +296,92 @@ msgstr "Arvon pitää olla merkkijono"
 msgid "Value should be of type {}"
 msgstr "Arvon pitää olla tyyppiä {}"
 
-#: laske_export/document/fields.py:61
+#: laske_export/document/fields.py:63
 msgid "Value is required"
 msgstr "Arvo on pakollinen"
 
-#: laske_export/document/fields.py:68
+#: laske_export/document/fields.py:70
 msgid "Value should be an Iterable"
 msgstr "Arvon pitää olla \"Iterable\""
 
-#: laske_export/exporter.py:36
+#: laske_export/enums.py:14
+msgctxt "Laske export log invoice status"
+msgid "Sent"
+msgstr "Lähetetty"
+
+#: laske_export/enums.py:15
+msgctxt "Laske export log invoice status"
+msgid "Failed"
+msgstr "Epäonnistui"
+
+#: laske_export/exporter.py:39
 msgid "Directory \"{}\" does not exist. Please create it."
 msgstr ""
 
-#: laske_export/exporter.py:46
+#: laske_export/exporter.py:49
 msgid "Can not create file in directory \"{}\"."
 msgstr ""
 
-#: laske_export/exporter.py:60
+#: laske_export/exporter.py:63
 msgid "LASKE_SERVERS[\"export\"] settings missing"
 msgstr ""
 
-#: laske_export/management/commands/send_invoices_to_laske.py:69
-msgid "MVJ ({}) sent {} invoices to Laske on {}"
+#: laske_export/management/commands/send_invoices_to_laske.py:74
+msgid ""
+"MVJ ({}) processed a total of {} invoices to Laske system on {}. Of the "
+"invoices, {} succeeded and {} failed."
 msgstr ""
-"Maanvuokrausjärjestelmä ({}) lähetti {} laskua Laske-järjestelmään. "
-"Lähetysaika {}"
+"Maanvuokrausjärjestelmä ({}) käsitteli yhteensä {} laskua Laske-"
+"järjestelmään {}. Laskuista {} onnistui ja {} epäonnistui."
 
-#: laske_export/management/commands/send_invoices_to_laske.py:84
+#: laske_export/management/commands/send_invoices_to_laske.py:87
+msgid "Failed invoice numbers:"
+msgstr "Epäonnistuneet laskunumerot:"
+
+#: laske_export/management/commands/send_invoices_to_laske.py:99
 msgid "MVJ ({}) transfer"
 msgstr "MVJ ({}) siirto"
 
-#: laske_export/models.py:17 laske_export/models.py:42
+#: laske_export/models.py:19 laske_export/models.py:55
 msgid "Time started"
 msgstr "Aloitusaika"
 
-#: laske_export/models.py:20 laske_export/models.py:45
+#: laske_export/models.py:22 laske_export/models.py:58
 msgid "Time ended"
 msgstr "Lopetusaika"
 
-#: laske_export/models.py:23 laske_export/models.py:48
+#: laske_export/models.py:25 laske_export/models.py:61
 msgid "Finished?"
 msgstr "Valmis?"
 
-#: laske_export/models.py:28
+#: laske_export/models.py:30
 msgctxt "Model name"
 msgid "Laske export log"
 msgstr "Laske-viennin loki"
 
-#: laske_export/models.py:29
+#: laske_export/models.py:31
 msgctxt "Model name"
 msgid "Laske export logs"
 msgstr "Laske-viennin lokit"
 
-#: laske_export/models.py:39
+#: laske_export/models.py:40
+msgid "status"
+msgstr "tila"
+
+#: laske_export/models.py:43
+msgid "information"
+msgstr "tiedot"
+
+#: laske_export/models.py:52
 msgid "Filename"
 msgstr "Tiedostonimi"
 
-#: laske_export/models.py:53
+#: laske_export/models.py:66
 msgctxt "Model name"
 msgid "Laske payments log"
 msgstr "Laske-maksujen loki"
 
-#: laske_export/models.py:54
+#: laske_export/models.py:67
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Laske-maksujen lokit"

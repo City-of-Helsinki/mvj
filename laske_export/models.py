@@ -2,7 +2,9 @@ from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
+from laske_export.enums import LaskeExportLogInvoiceStatus
 from leasing.models import Invoice
 from leasing.models.invoice import InvoicePayment
 from leasing.models.mixins import TimeStampedSafeDeleteModel
@@ -22,12 +24,29 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     # In Finnish: Valmis?
     is_finished = models.BooleanField(verbose_name=_("Finished?"), default=False)
 
-    invoices = models.ManyToManyField(Invoice)
+    invoices = models.ManyToManyField(Invoice, through="LaskeExportLogInvoiceItem")
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Laske export log")
         verbose_name_plural = pgettext_lazy("Model name", "Laske export logs")
         ordering = ["-created_at"]
+
+
+class LaskeExportLogInvoiceItem(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    laskeexportlog = models.ForeignKey(LaskeExportLog, on_delete=models.CASCADE)
+
+    # In Finnish: Tila
+    status = EnumField(
+        LaskeExportLogInvoiceStatus,
+        null=True,
+        blank=True,
+        max_length=255,
+        verbose_name=_("status"),
+    )
+
+    # In Finnish: Informaatio
+    information = models.TextField(blank=True, verbose_name=_("information"))
 
 
 class LaskePaymentsLog(TimeStampedSafeDeleteModel):

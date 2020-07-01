@@ -16,7 +16,7 @@ class NoDeleteInlineFormSet(BaseInlineFormSet):
 
 class InvoiceInline(admin.TabularInline):
     model = LaskeExportLog.invoices.through
-    readonly_fields = ("laskeexportlog", "invoice_number", "due_date", "lease")
+    readonly_fields = ("invoice_number", "due_date", "lease", "status", "information")
     exclude = ("invoice",)
     raw_id_fields = ("invoice",)
     formset = NoDeleteInlineFormSet

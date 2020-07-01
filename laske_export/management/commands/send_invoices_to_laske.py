@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone, translation
 from django.utils.translation import ugettext_lazy as _
 
+from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from leasing.models import Invoice
 
@@ -66,13 +67,36 @@ class Command(BaseCommand):
                 )
             )
 
-            email_content = _("MVJ ({}) sent {} invoices to Laske on {}").format(
+            export_invoice_log_items = (
+                laske_export_log_entry.laskeexportloginvoiceitem_set
+            )
+            sent_count = export_invoice_log_items.filter(
+                status=LaskeExportLogInvoiceStatus.SENT
+            ).count()
+            failed_count = export_invoice_log_items.filter(
+                status=LaskeExportLogInvoiceStatus.FAILED
+            ).count()
+
+            email_content = _(
+                "MVJ ({}) processed a total of {} invoices to Laske system on {}. "
+                "Of the invoices, {} succeeded and {} failed."
+            ).format(
                 settings.LASKE_VALUES["sender_id"],
                 laske_export_log_entry.invoices.count(),
                 laske_export_log_entry.ended_at.astimezone(
                     timezone.get_current_timezone()
                 ).strftime("%d.%m.%Y %H.%M %Z"),
+                sent_count,
+                failed_count,
             )
+
+            if failed_count > 0:
+                email_content += "\n\n"
+                email_content += _("Failed invoice numbers:") + ""
+                for invoice in laske_export_log_entry.invoices.filter(
+                    laskeexportloginvoiceitem__status=LaskeExportLogInvoiceStatus.FAILED
+                ):
+                    email_content += "\n* #{} ({})".format(invoice.number, invoice.lease.identifier)
 
             from_email = settings.DEFAULT_FROM_EMAIL
             if hasattr(settings, "MVJ_EMAIL_FROM"):
