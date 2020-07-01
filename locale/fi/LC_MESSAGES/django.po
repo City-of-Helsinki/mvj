@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-30 12:05+0300\n"
+"POT-Creation-Date: 2020-07-01 11:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -314,19 +314,38 @@ msgctxt "Laske export log invoice status"
 msgid "Failed"
 msgstr "Epäonnistui"
 
-#: laske_export/exporter.py:39
+#: laske_export/exporter.py:42
 msgid "Directory \"{}\" does not exist. Please create it."
 msgstr ""
 
-#: laske_export/exporter.py:49
+#: laske_export/exporter.py:52
 msgid "Can not create file in directory \"{}\"."
 msgstr ""
 
-#: laske_export/exporter.py:63
+#: laske_export/exporter.py:66
 msgid "LASKE_SERVERS[\"export\"] settings missing"
 msgstr ""
 
-#: laske_export/management/commands/send_invoices_to_laske.py:74
+#: laske_export/management/commands/send_invoices_to_laske.py:92
+msgid "MVJ ({}) transfer failed!"
+msgstr "MVJ ({}) siirto epäonnistui!"
+
+#: laske_export/management/commands/send_invoices_to_laske.py:96
+msgid ""
+"Sending invoices to the Laske system has been crashed during the processing. "
+"Please contact your administrator.\n"
+"\n"
+"Error message: {}"
+msgstr "Laskujen lähetys Laske-järjestelmään kaatui prosessin aikana. "
+"Ota yhteys järjestelmänvalvojaan.\n"
+"\n"
+"Virheviesti: {}"
+
+#: laske_export/management/commands/send_invoices_to_laske.py:116
+msgid "MVJ ({}) transfer"
+msgstr "MVJ ({}) siirto"
+
+#: laske_export/management/commands/send_invoices_to_laske.py:121
 msgid ""
 "MVJ ({}) processed a total of {} invoices to Laske system on {}. Of the "
 "invoices, {} succeeded and {} failed."
@@ -334,23 +353,19 @@ msgstr ""
 "Maanvuokrausjärjestelmä ({}) käsitteli yhteensä {} laskua Laske-"
 "järjestelmään {}. Laskuista {} onnistui ja {} epäonnistui."
 
-#: laske_export/management/commands/send_invoices_to_laske.py:87
+#: laske_export/management/commands/send_invoices_to_laske.py:135
 msgid "Failed invoice numbers:"
 msgstr "Epäonnistuneet laskunumerot:"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:99
-msgid "MVJ ({}) transfer"
-msgstr "MVJ ({}) siirto"
-
-#: laske_export/models.py:19 laske_export/models.py:55
+#: laske_export/models.py:19 laske_export/models.py:61
 msgid "Time started"
 msgstr "Aloitusaika"
 
-#: laske_export/models.py:22 laske_export/models.py:58
+#: laske_export/models.py:22 laske_export/models.py:64
 msgid "Time ended"
 msgstr "Lopetusaika"
 
-#: laske_export/models.py:25 laske_export/models.py:61
+#: laske_export/models.py:25 laske_export/models.py:67
 msgid "Finished?"
 msgstr "Valmis?"
 
@@ -364,24 +379,24 @@ msgctxt "Model name"
 msgid "Laske export logs"
 msgstr "Laske-viennin lokit"
 
-#: laske_export/models.py:40
+#: laske_export/models.py:45
 msgid "status"
 msgstr "tila"
 
-#: laske_export/models.py:43
+#: laske_export/models.py:49
 msgid "information"
 msgstr "tiedot"
 
-#: laske_export/models.py:52
+#: laske_export/models.py:58
 msgid "Filename"
 msgstr "Tiedostonimi"
 
-#: laske_export/models.py:66
+#: laske_export/models.py:72
 msgctxt "Model name"
 msgid "Laske payments log"
 msgstr "Laske-maksujen loki"
 
-#: laske_export/models.py:67
+#: laske_export/models.py:73
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Laske-maksujen lokit"
