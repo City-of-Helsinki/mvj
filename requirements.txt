@@ -38,7 +38,7 @@ django-rest-swagger==2.2.0  # via -r requirements.in
 django-safedelete==0.5.4  # via -r requirements.in
 django-sanitized-dump==1.2.0  # via -r requirements.in
 django-sequences==2.4     # via -r requirements.in
-django==2.2.12            # via -r requirements.in, django-anymail, django-cors-headers, django-filter, django-helusers, django-jsonfield, django-picklefield, django-q, django-safedelete, djangorestframework, drf-oidc-auth
+django==2.2.13            # via -r requirements.in, django-anymail, django-cors-headers, django-filter, django-helusers, django-jsonfield, django-picklefield, django-q, django-safedelete, djangorestframework, drf-oidc-auth
 djangorestframework-gis==0.15  # via -r requirements.in
 djangorestframework==3.11.0  # via -r requirements.in, django-rest-swagger, djangorestframework-gis, drf-oidc-auth
 docutils==0.16            # via python-daemon

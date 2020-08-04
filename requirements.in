@@ -1,6 +1,6 @@
 beautifulsoup4
 dataclasses
-Django~=2.2.0
+Django~=2.2.13
 django-anymail
 django-auditlog
 django-jsonfield-compat
