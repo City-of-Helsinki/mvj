@@ -22,6 +22,7 @@ dataclasses==0.6          # via -r requirements.in
 defusedxml==0.6.0         # via zeep
 django-anymail==7.0.0     # via -r requirements.in
 django-auditlog==0.4.7    # via -r requirements.in
+django-constance[database]==2.7.0  # via -r requirements.in
 django-cors-headers==3.2.1  # via -r requirements.in
 django-countries==6.1.2   # via -r requirements.in
 django-crispy-forms==1.9.0  # via -r requirements.in
@@ -31,7 +32,7 @@ django-filter==2.2.0      # via -r requirements.in
 django-helusers==0.5.6    # via -r requirements.in
 django-jsonfield-compat==0.4.4  # via -r requirements.in
 django-jsonfield==1.4.0   # via django-auditlog
-django-picklefield==2.1.1  # via django-q
+django-picklefield==2.1.1  # via django-constance, django-q
 django-q==1.2.1           # via -r requirements.in
 django-rest-swagger==2.2.0  # via -r requirements.in
 django-safedelete==0.5.4  # via -r requirements.in

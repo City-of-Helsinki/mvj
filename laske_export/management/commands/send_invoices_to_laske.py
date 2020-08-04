@@ -1,6 +1,8 @@
 import datetime
 import logging
+import re
 
+from constance import config
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -79,7 +81,7 @@ class Command(BaseCommand):
             )
             logging.exception(err)
 
-        if settings.LASKE_EXPORT_ANNOUNCE_EMAIL:
+        if config.LASKE_EXPORT_ANNOUNCE_EMAIL:
             email_subject = ""
             email_body = ""
             email_headers = None
@@ -87,7 +89,7 @@ class Command(BaseCommand):
             if error_flag:
                 self.stdout.write(
                     "Sending error email to {}".format(
-                        settings.LASKE_EXPORT_ANNOUNCE_EMAIL
+                        config.LASKE_EXPORT_ANNOUNCE_EMAIL
                     )
                 )
                 email_headers = {"X-Priority": "1"}  # High
@@ -101,7 +103,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(
                     "Sending announce email to {}".format(
-                        settings.LASKE_EXPORT_ANNOUNCE_EMAIL
+                        config.LASKE_EXPORT_ANNOUNCE_EMAIL
                     )
                 )
 
@@ -146,13 +148,13 @@ class Command(BaseCommand):
             if hasattr(settings, "MVJ_EMAIL_FROM"):
                 from_email = settings.MVJ_EMAIL_FROM
             if hasattr(settings, "LASKE_EXPORT_FROM_EMAIL"):
-                from_email = settings.LASKE_EXPORT_FROM_EMAIL
+                from_email = config.LASKE_EXPORT_FROM_EMAIL
 
             msg = EmailMultiAlternatives(
                 email_subject,
                 email_body,
                 from_email,
-                settings.LASKE_EXPORT_ANNOUNCE_EMAIL,
+                re.split(";|,", config.LASKE_EXPORT_ANNOUNCE_EMAIL),
                 headers=email_headers,
             )
             msg.send(fail_silently=False)

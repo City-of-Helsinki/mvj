@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-01 11:23+0300\n"
+"POT-Creation-Date: 2020-07-01 16:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -326,26 +326,27 @@ msgstr ""
 msgid "LASKE_SERVERS[\"export\"] settings missing"
 msgstr ""
 
-#: laske_export/management/commands/send_invoices_to_laske.py:92
+#: laske_export/management/commands/send_invoices_to_laske.py:96
 msgid "MVJ ({}) transfer failed!"
 msgstr "MVJ ({}) siirto epäonnistui!"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:96
+#: laske_export/management/commands/send_invoices_to_laske.py:100
 msgid ""
 "Sending invoices to the Laske system has been crashed during the processing. "
 "Please contact your administrator.\n"
 "\n"
 "Error message: {}"
-msgstr "Laskujen lähetys Laske-järjestelmään kaatui prosessin aikana. "
-"Ota yhteys järjestelmänvalvojaan.\n"
+msgstr ""
+"Laskujen lähetys Laske-järjestelmään kaatui prosessin aikana. Ota yhteys "
+"järjestelmänvalvojaan.\n"
 "\n"
 "Virheviesti: {}"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:116
+#: laske_export/management/commands/send_invoices_to_laske.py:120
 msgid "MVJ ({}) transfer"
 msgstr "MVJ ({}) siirto"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:121
+#: laske_export/management/commands/send_invoices_to_laske.py:125
 msgid ""
 "MVJ ({}) processed a total of {} invoices to Laske system on {}. Of the "
 "invoices, {} succeeded and {} failed."
@@ -353,7 +354,7 @@ msgstr ""
 "Maanvuokrausjärjestelmä ({}) käsitteli yhteensä {} laskua Laske-"
 "järjestelmään {}. Laskuista {} onnistui ja {} epäonnistui."
 
-#: laske_export/management/commands/send_invoices_to_laske.py:135
+#: laske_export/management/commands/send_invoices_to_laske.py:139
 msgid "Failed invoice numbers:"
 msgstr "Epäonnistuneet laskunumerot:"
 
@@ -3753,6 +3754,17 @@ msgstr "Ei oikeutta lisätä muiden käyttäjien ui dataa"
 #: leasing/viewsets/utils.py:119
 msgid "Data integrity error"
 msgstr "Tietoeheysvirhe"
+
+#: mvj/settings.py:186
+msgid "Sender email address. Example: john@example.com"
+msgstr "Lähettäjän sähköpostiosoite. Esimerkki: matti@example.com"
+
+#: mvj/settings.py:190
+msgid ""
+"Recipients of announce emails. Example: john@example.com,jane@example.com"
+msgstr ""
+"Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
+"com"
 
 #: users/views.py:13
 msgid "Users permissions"

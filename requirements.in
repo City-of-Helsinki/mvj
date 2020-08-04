@@ -4,6 +4,7 @@ Django~=2.2.0
 django-anymail
 django-auditlog
 django-jsonfield-compat
+django-constance[database]
 django-cors-headers
 django-countries
 django-crispy-forms
