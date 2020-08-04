@@ -30,6 +30,17 @@ def monkeypatch_laske_exporter_send(monkeypatch_session):
     monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
 
 
+laske_exporter_send_with_error__error_message = "Unexpected error!"
+
+
+@pytest.fixture
+def monkeypatch_laske_exporter_send_with_error(monkeypatch_session):
+    def laske_exporter_send(self, filename):
+        raise Exception(laske_exporter_send_with_error__error_message)
+
+    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
+
+
 @pytest.fixture
 def billing_period():
     billing_period_start_date = datetime.date(year=2017, month=7, day=1)
@@ -50,9 +61,7 @@ def invoice(contact_factory, invoice_factory, lease, billing_period):
     billing_period_start_date, billing_period_end_date = billing_period
 
     contact = contact_factory(
-        name="Company",
-        type=ContactType.BUSINESS,
-        business_id="1234567-8",
+        name="Company", type=ContactType.BUSINESS, business_id="1234567-8",
     )
 
     invoice = invoice_factory(
@@ -91,6 +100,34 @@ def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
     return broken_invoice
 
 
+@pytest.fixture
+def send_invoices_to_laske_command():
+    command = send_invoices_to_laske.Command()
+    return command
+
+
+@pytest.fixture
+def send_invoices_to_laske_command_handle(
+    broken_invoice,
+    invoice,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+):
+    command = send_invoices_to_laske_command
+    command.handle()
+
+
+@pytest.fixture
+def send_invoices_to_laske_command_handle_with_unexpected_error(
+    broken_invoice,
+    invoice,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send_with_error,
+):
+    command = send_invoices_to_laske_command
+    command.handle()
+
+
 @pytest.mark.django_db
 def test_invalid_export_invoice(
     broken_invoice, invoice, monkeypatch_laske_exporter_send
@@ -119,16 +156,28 @@ def test_invalid_export_invoice(
 
 
 @pytest.mark.django_db
-def test_send_invoices_to_laske_command(
-    broken_invoice, invoice, monkeypatch_laske_exporter_send
+def test_send_invoices_to_laske_command_handle(
+    broken_invoice, send_invoices_to_laske_command_handle
 ):
-    command = send_invoices_to_laske.Command()
-    command.handle()
-
     broken_invoice.refresh_from_db()
 
     assert len(mail.outbox) == 1
 
     export_mail = mail.outbox[0]
     assert "Failed" in export_mail.body
-    assert "#{} ({})".format(broken_invoice.number, broken_invoice.lease.identifier) in export_mail.body
+    assert (
+        "#{} ({})".format(broken_invoice.number, broken_invoice.lease.identifier)
+        in export_mail.body
+    )
+
+
+@pytest.mark.django_db
+def test_send_invoices_to_laske_command_handle_with_unexpected_error(
+    send_invoices_to_laske_command_handle_with_unexpected_error,
+):
+    assert len(mail.outbox) == 1
+
+    export_mail = mail.outbox[0]
+    assert "X-Priority" in export_mail.extra_headers
+    assert export_mail.extra_headers["X-Priority"] == "1"  # High
+    assert laske_exporter_send_with_error__error_message in export_mail.body
