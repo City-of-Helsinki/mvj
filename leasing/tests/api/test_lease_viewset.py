@@ -1,4 +1,5 @@
 import json
+from datetime import date, datetime
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
@@ -89,3 +90,32 @@ def test_set_rent_info_completion_state(
     lease = Lease.objects.get(pk=lease.id)
 
     assert lease.is_rent_info_complete is expected_value
+
+
+@pytest.mark.django_db
+def test_lease_details_contains_future_tenants(
+    django_db_setup, admin_client, lease_test_data
+):
+    """ Related user stories:
+    - As a user, I want to send an invoice for the tenant which are not yet actives
+    """
+
+    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+
+    response = admin_client.get(url, content_type="application/json",)
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data,)
+
+    found = False
+    for tenant in response.data["tenants"]:
+        for tenantcontact in tenant["tenantcontact_set"]:
+            if (
+                datetime.strptime(tenantcontact["start_date"], "%Y-%m-%d").date()
+                > date.today()
+            ):
+                found = True
+                break
+            if found:
+                break
+
+    assert found is True
