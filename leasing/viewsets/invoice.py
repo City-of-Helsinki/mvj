@@ -27,6 +27,7 @@ from leasing.serializers.invoice import (
     InvoiceSetSerializer,
     InvoiceUpdateSerializer,
     ReceivableTypeSerializer,
+    SentToSapInvoiceUpdateSerializer,
 )
 
 from .utils import AtomicTransactionModelViewSet
@@ -73,6 +74,9 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
             if "pk" in self.kwargs:
                 instance = self.get_object()
                 if instance:
+                    if instance.sent_to_sap_at:
+                        return SentToSapInvoiceUpdateSerializer
+
                     if instance.type == InvoiceType.CREDIT_NOTE:
                         return CreditNoteUpdateSerializer
 
@@ -104,7 +108,10 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        if instance.sent_to_sap_at:
+        if (
+            instance.sent_to_sap_at
+            and self.get_serializer_class() is not SentToSapInvoiceUpdateSerializer
+        ):
             raise ValidationError(_("Can't edit invoices that have been sent to SAP"))
 
         if instance.state == InvoiceState.REFUNDED:
