@@ -263,7 +263,7 @@ def lease_test_data(
             type=ContactType.PERSON,
         )
     ]
-    for i in range(3):
+    for i in range(4):
         contacts.append(
             contact_factory(
                 first_name="First name " + str(i),
@@ -295,6 +295,13 @@ def lease_test_data(
             tenant=tenant2,
             contact=contacts[3],
             start_date=timezone.now().replace(year=2019).date(),
+        ),
+        tenant_contact_factory(
+            type=TenantContactType.TENANT,
+            tenant=tenant2,
+            contact=contacts[4],
+            start_date=timezone.now().date()
+            + datetime.timedelta(days=30),  # Future tenant
         ),
     ]
 
