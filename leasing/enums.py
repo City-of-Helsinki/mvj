@@ -543,3 +543,35 @@ class BasisOfRentZone(Enum):
         ZONE_1 = pgettext_lazy("Basis of rent zone", "Zone 1")
         ZONE_2 = pgettext_lazy("Basis of rent zone", "Zone 2")
         ZONE_3 = pgettext_lazy("Basis of rent zone", "Zone 3")
+
+
+class LandUseContractType(Enum):
+    """
+    In Finnish: Maankäyttösopimus tyyppi
+    """
+
+    LAND_USE_AGREEMENT = "Land use agreement"
+    AGREEMENT_ON_APPRECIATION = "Agreement on appreciation"
+    NO_AGREEMENT = "No agreement"
+
+    class Labels:
+        LAND_USE_AGREEMENT = pgettext_lazy(
+            "Land Use Contract Type", "Land use agreement"
+        )
+        AGREEMENT_ON_APPRECIATION = pgettext_lazy(
+            "Land Use Contract Type", "Agreement on appreciation"
+        )
+        NO_AGREEMENT = pgettext_lazy("Land Use Contract Type", "No agreement")
+
+
+class LandUseAgreementLitigantContactType(Enum):
+    """
+    In Finnish: Maankäyttösopimuksen osapuolen yhteystiedon tyyppi
+    """
+
+    TENANT = "tenant"
+    BILLING = "billing"
+
+    class Labels:
+        TENANT = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Tenant")
+        BILLING = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Billing")

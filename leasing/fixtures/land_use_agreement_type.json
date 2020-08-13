@@ -1,0 +1,13 @@
+[
+    {
+        "model": "leasing.LandUseAgreementType",
+        "pk": 1,
+        "fields": {
+            "name": "Asuntotontit",
+            "identifier": "A1",
+            "due_dates_position": "middle_of_month",
+            "sap_material_code": "20002009",
+            "sap_order_item_number": "2813101001"
+        }
+    }
+]

@@ -15,6 +15,7 @@ from leasing.enums import (
     IndexType,
     InvoiceState,
     InvoiceType,
+    LandUseContractType,
     LeaseAreaType,
     LocationType,
     RentAdjustmentType,
@@ -25,8 +26,10 @@ from leasing.enums import (
 from leasing.models import (
     Condition,
     Contact,
+    Contract,
     ContractRent,
     Decision,
+    DecisionMaker,
     District,
     FixedInitialYearRent,
     Invoice,
@@ -51,6 +54,14 @@ from leasing.models.invoice import (
     ReceivableType,
 )
 from leasing.models.land_area import LeaseAreaAddress
+from leasing.models.land_use_agreement import (
+    LandUseAgreement,
+    LandUseAgreementAddress,
+    LandUseAgreementDefinition,
+    LandUseAgreementIdentifier,
+    LandUseAgreementStatus,
+    LandUseAgreementType,
+)
 from leasing.models.tenant import TenantRentShare
 from users.models import User
 
@@ -241,6 +252,54 @@ class UiDataFactory(factory.DjangoModelFactory):
 class LeaseBasisOfRentFactory(factory.DjangoModelFactory):
     class Meta:
         model = LeaseBasisOfRent
+
+
+@register
+class LandUseAgreementFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreement
+
+
+@register
+class LandUseAgreementTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementType
+
+
+@register
+class LandUseAgreementStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementStatus
+
+
+@register
+class LandUseAgreementDefinitionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementDefinition
+
+
+@register
+class LandUseAgreementIdentifierFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementIdentifier
+
+
+@register
+class LandUseAgreementAddressFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementAddress
+
+
+@register
+class ContractFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Contract
+
+
+@register
+class DecisionMakerFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = DecisionMaker
 
 
 @pytest.fixture
@@ -485,3 +544,50 @@ def lease_data_dict_with_contacts(contact_factory):
         ],
     }
     return data
+
+
+@pytest.fixture
+def land_use_agreement_test_data(
+    land_use_agreement_factory,
+    land_use_agreement_identifier_factory,
+    land_use_agreement_type_factory,
+    land_use_agreement_status_factory,
+    land_use_agreement_definition_factory,
+    land_use_agreement_address_factory,
+    user_factory,
+    decision_maker_factory,
+    contract_factory,
+):
+    identifier = land_use_agreement_identifier_factory(
+        sequence=1, district_id=1, municipality_id=1, type_id=1
+    )
+    land_use_agreement_type = land_use_agreement_type_factory(name="Test type")
+    land_use_agreement_status = land_use_agreement_status_factory(name="Test status")
+    land_use_agreement_definition = land_use_agreement_definition_factory(
+        name="Test definition"
+    )
+    preparer = user_factory(username="test_preparer")
+    plan_acceptor = decision_maker_factory(name="test_plan_acceptor")
+    land_use_agreement = land_use_agreement_factory(
+        type_id=land_use_agreement_type.id,
+        preparer=preparer,
+        land_use_contract_type=LandUseContractType.LAND_USE_AGREEMENT,
+        identifier=identifier,
+        status_id=land_use_agreement_status.id,
+        definition_id=land_use_agreement_definition.id,
+        estimated_completion_year=2021,
+        estimated_introduction_year=2020,
+        project_area="test project area",
+        plan_reference_number="TESTREFNUM",
+        plan_number="TESTPLANNUM",
+        plan_lawfulness_date=datetime.date(year=2021, month=1, day=1),
+        plan_acceptor=plan_acceptor,
+    )
+    land_use_agreement_address_factory(
+        land_use_agreement=land_use_agreement, address="Testikatu 1"
+    )
+    contract_factory(
+        land_use_agreement=land_use_agreement, type_id=1, contract_number="A123"
+    )
+
+    return land_use_agreement
