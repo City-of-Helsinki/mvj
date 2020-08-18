@@ -35,11 +35,6 @@ def test_lease_manager_get_by_identifier_does_not_exist(
 
 
 @pytest.mark.django_db
-def test_lease_manager_get_by_identifier_district_00(django_db_setup, lease_test_data):
-    assert Lease.objects.get_by_identifier("A1100-1")
-
-
-@pytest.mark.django_db
 def test_lease_manager_get_by_identifier(django_db_setup, lease_factory):
     lease = lease_factory(
         type_id=1, municipality_id=1, district_id=5, notice_period_id=1
