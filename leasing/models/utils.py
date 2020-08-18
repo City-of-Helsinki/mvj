@@ -161,6 +161,52 @@ def combine_ranges(ranges):
     return result
 
 
+CODE_MAP = {
+    "E": 9908,
+    "G": 9902,
+    "K": 9901,
+    "L": 9906,
+    "P": 9903,
+    "R": 9905,
+    "T": 9902,
+    "U": 9904,
+    "V": 9909,
+    "W": 9909,
+    "VE": 9909,
+}
+
+
+def normalize_identifier(identifier):
+    identifier = identifier.strip()
+    match = re.match(r"(\d+)-(\d+)-(\d+)([A-Za-z]+)?-(\d+)-P?(\d+)", identifier)
+
+    if match:
+        groups = list(match.groups())
+        code = groups.pop(3)
+        if code in CODE_MAP.keys():
+            groups[2] = CODE_MAP[code]
+
+        return "{:03d}{:03d}{:04d}{:04d}{:03d}".format(*[int(i) for i in groups])
+
+    match = re.match(r"(\d+)-(\d+)-(\d+)-(\d+)", identifier)
+    if match:
+        return "{:03d}{:03d}{:04d}{:04d}000".format(*[int(i) for i in match.groups()])
+
+    return identifier
+
+
+def denormalize_identifier(identifier):
+    if len(identifier) == 14:
+        return "{}-{}-{}-{}".format(
+            int(identifier[0:3]),
+            int(identifier[3:6]),
+            int(identifier[6:10]),
+            int(identifier[10:]),
+        )
+
+    return identifier
+
+
 def subtract_range_from_range(the_range, subtract_range):
     # TODO: check argument validity
     (range1_start, range1_end) = the_range

@@ -1,5 +1,3 @@
-import re
-
 from django.contrib.gis.geos import GEOSException
 from django.core.management.base import BaseCommand
 from django.db import InternalError
@@ -14,51 +12,6 @@ from leasing.models.land_area import (
     Plot,
     PlotDivisionState,
 )
-
-CODE_MAP = {
-    "E": 9908,
-    "G": 9902,
-    "K": 9901,
-    "L": 9906,
-    "P": 9903,
-    "R": 9905,
-    "T": 9902,
-    "U": 9904,
-    "V": 9909,
-    "W": 9909,
-    "VE": 9909,
-}
-
-
-def normalize_identifier(identifier):
-    identifier = identifier.strip()
-    match = re.match(r"(\d+)-(\d+)-(\d+)([A-Za-z]+)?-(\d+)-P?(\d+)", identifier)
-
-    if match:
-        groups = list(match.groups())
-        code = groups.pop(3)
-        if code in CODE_MAP.keys():
-            groups[2] = CODE_MAP[code]
-
-        return "{:03d}{:03d}{:04d}{:04d}{:03d}".format(*[int(i) for i in groups])
-
-    match = re.match(r"(\d+)-(\d+)-(\d+)-(\d+)", identifier)
-    if match:
-        return "{:03d}{:03d}{:04d}{:04d}000".format(*[int(i) for i in match.groups()])
-
-    return identifier
-
-
-def denormalize_identifier(identifier):
-    if len(identifier) == 14:
-        return "{}-{}-{}-{}".format(
-            int(identifier[0:3]),
-            int(identifier[3:6]),
-            int(identifier[6:10]),
-            int(identifier[10:]),
-        )
-
-    return identifier
 
 
 class Command(BaseCommand):
@@ -77,8 +30,7 @@ class Command(BaseCommand):
             self.stdout.write("Lease #{} {}:".format(lease.id, lease.identifier))
 
             lease_areas = {
-                normalize_identifier(la.identifier): la
-                for la in lease.lease_areas.all()
+                la.get_normalized_identifier(): la for la in lease.lease_areas.all()
             }
             self.stdout.write(
                 " Existing lease areas: {}".format(", ".join(lease_areas.keys()))
@@ -96,27 +48,7 @@ class Command(BaseCommand):
                 )
 
             for area in areas:
-                property_identifier = "{}-{}-{}-{}{}".format(
-                    area.metadata.get("municipality", "0")
-                    if area.metadata.get("municipality")
-                    else "0",
-                    area.metadata.get("district", "0")
-                    if area.metadata.get("district")
-                    else "0",
-                    area.metadata.get("group", "0")
-                    if area.metadata.get("group")
-                    else "0",
-                    area.metadata.get("unit", "0")
-                    if area.metadata.get("unit")
-                    else "0",
-                    "-{}".format(area.metadata.get("mvj_unit", "0"))
-                    if "mvj_unit" in area.metadata
-                    else "",
-                )
-                area_identifier = normalize_identifier(property_identifier)
-                self.stdout.write(
-                    " {} -> {}".format(property_identifier, area_identifier)
-                )
+                area_identifier = area.get_normalized_identifier()
 
                 if area_identifier not in lease_areas.keys():
                     self.stdout.write(
@@ -199,7 +131,7 @@ class Command(BaseCommand):
                         match_data = {
                             "lease_area": lease_areas[area_identifier],
                             "type": PlotType[other_area.type.value.upper()],
-                            "identifier": denormalize_identifier(other_area.identifier),
+                            "identifier": other_area.get_denormalized_identifier(),
                             "in_contract": False,
                         }
                         rest_data = {
@@ -282,9 +214,7 @@ class Command(BaseCommand):
 
                             match_data = {
                                 "lease_area": lease_areas[area_identifier],
-                                "identifier": denormalize_identifier(
-                                    other_area.identifier
-                                ),
+                                "identifier": other_area.get_denormalized_identifier(),
                                 "in_contract": False,
                             }
                             rest_data = {

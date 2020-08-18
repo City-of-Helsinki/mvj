@@ -17,6 +17,7 @@ from leasing.enums import (
     PollutedLandRentConditionState,
 )
 from leasing.models.lease import Lease
+from leasing.models.utils import normalize_identifier
 from users.models import User
 
 from .mixins import (
@@ -70,6 +71,9 @@ class Land(TimeStampedModel):
 
     class Meta:
         abstract = True
+
+    def get_normalized_identifier(self):
+        return normalize_identifier(self.identifier)
 
 
 class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
