@@ -38,6 +38,7 @@ from .land_area import (
     PlanUnitType,
     Plot,
 )
+from .land_use_agreement import LandUseAgreement
 from .lease import (
     District,
     Financing,
@@ -129,6 +130,7 @@ __all__ = [
     "InterestRate",
     "Invoice",
     "InvoiceNote",
+    "LandUseAgreement",
     "Lease",
     "LeaseArea",
     "LeaseAreaAttachment",
