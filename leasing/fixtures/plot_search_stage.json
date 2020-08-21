@@ -1,0 +1,37 @@
+[
+  {
+    "model": "leasing.PlotSearchStage",
+    "pk": 1,
+    "fields": {
+        "name": "Valmistella"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchStage",
+    "pk": 2,
+    "fields": {
+        "name": "Käynnissä"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchStage",
+    "pk": 3,
+    "fields": {
+        "name": "Käsittelyssä"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchStage",
+    "pk": 4,
+    "fields": {
+        "name": "Päätöksenteossa"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchStage",
+    "pk": 5,
+    "fields": {
+        "name": "Päätetty"
+    }
+  }
+]

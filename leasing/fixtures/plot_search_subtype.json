@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 1,
+    "fields": {
+        "name": "Hinta- ja laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 2,
+    "fields": {
+        "name": "Tontti- ja korkeus"
+    }
+  }
+]

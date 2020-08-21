@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-01 16:16+0300\n"
+"POT-Creation-Date: 2020-08-26 13:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -1300,8 +1300,9 @@ msgstr "Kommentit"
 #: leasing/models/decision.py:124 leasing/models/invoice.py:301
 #: leasing/models/land_area.py:83 leasing/models/land_area.py:249
 #: leasing/models/land_area.py:283 leasing/models/land_area.py:310
-#: leasing/models/rent.py:107 leasing/models/rent.py:1020
-#: leasing/models/rent.py:1411 leasing/report/invoice/collaterals_report.py:18
+#: leasing/models/plot_search.py:57 leasing/models/rent.py:107
+#: leasing/models/rent.py:1020 leasing/models/rent.py:1411
+#: leasing/report/invoice/collaterals_report.py:18
 #: leasing/report/lease/decision_conditions_report.py:48
 #: leasing/report/lease/decision_conditions_report.py:58
 msgid "Type"
@@ -2352,6 +2353,7 @@ msgid "Land use agreement status"
 msgstr "Maankäyttösopimuksen tila"
 
 #: leasing/models/land_use_agreement.py:182 leasing/models/lease.py:562
+#: leasing/models/plot_search.py:47
 #: leasing/report/lease/lease_statistic_report.py:357
 msgid "Preparer"
 msgstr "Valmistelija"
@@ -2791,6 +2793,62 @@ msgstr "Arkistointiaika"
 #: leasing/models/mixins.py:37
 msgid "Archived note"
 msgstr "Arkistointihuomautus"
+
+#: leasing/models/plot_search.py:15
+msgctxt "Model name"
+msgid "Plot search type"
+msgstr "Tonttihaun tyyppi"
+
+#: leasing/models/plot_search.py:16
+msgctxt "Model name"
+msgid "Plot search types"
+msgstr "Tonttihaun tyypit"
+
+#: leasing/models/plot_search.py:25
+msgctxt "Model name"
+msgid "Plot search subtype"
+msgstr "Tonttihaun alityyppi"
+
+#: leasing/models/plot_search.py:26
+msgctxt "Model name"
+msgid "Plot search subtypes"
+msgstr "Tonttihaun alityypit"
+
+#: leasing/models/plot_search.py:35
+msgctxt "Model name"
+msgid "Plot search stage"
+msgstr "Tonttihaun vaihe"
+
+#: leasing/models/plot_search.py:36
+msgctxt "Model name"
+msgid "Plot search stages"
+msgstr "Tonttihaun vaiheet"
+
+#: leasing/models/plot_search.py:67
+msgid "Subtype"
+msgstr "Alityyppi"
+
+#: leasing/models/plot_search.py:75
+msgid "Begin at"
+msgstr "Alkaa"
+
+#: leasing/models/plot_search.py:78
+msgid "End at"
+msgstr "Loppuu"
+
+#: leasing/models/plot_search.py:83
+msgid "Stage"
+msgstr "Vaihe"
+
+#: leasing/models/plot_search.py:91
+msgctxt "Model name"
+msgid "Plot search"
+msgstr "Tonttihaku"
+
+#: leasing/models/plot_search.py:92
+msgctxt "Model name"
+msgid "Plot searches"
+msgstr "Tonttihaut"
 
 #: leasing/models/rent.py:90
 msgctxt "Model name"
@@ -3928,11 +3986,11 @@ msgstr "Ei oikeutta lisätä muiden käyttäjien ui dataa"
 msgid "Data integrity error"
 msgstr "Tietoeheysvirhe"
 
-#: mvj/settings.py:186
+#: mvj/settings.py:188
 msgid "Sender email address. Example: john@example.com"
 msgstr "Lähettäjän sähköpostiosoite. Esimerkki: matti@example.com"
 
-#: mvj/settings.py:190
+#: mvj/settings.py:192
 msgid ""
 "Recipients of announce emails. Example: john@example.com,jane@example.com"
 msgstr ""
