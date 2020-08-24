@@ -128,17 +128,38 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     command.handle()
 
 
+@pytest.fixture
+def land_use_agreement_invoice(
+    contact_factory, land_use_agreement_invoice_factory, land_use_agreement_test_data
+):
+
+    contact = contact_factory(
+        name="Company", type=ContactType.BUSINESS, business_id="1234567-8",
+    )
+
+    invoice = land_use_agreement_invoice_factory(
+        land_use_agreement=land_use_agreement_test_data,
+        amount=Decimal("123.45"),
+        compensation_amount=Decimal("123.45"),
+        compensation_amount_percentage=Decimal("123.45"),
+        recipient=contact,
+    )
+
+    return invoice
+
+
 @pytest.mark.django_db
 def test_invalid_export_invoice(
-    broken_invoice, invoice, monkeypatch_laske_exporter_send
+    broken_invoice, invoice, land_use_agreement_invoice, monkeypatch_laske_exporter_send
 ):
     exporter = LaskeExporter()
     exporter.export_invoices([broken_invoice, invoice])
+    exporter.export_land_use_agreement_invoices([land_use_agreement_invoice])
 
     logs = LaskeExportLog.objects.all()
-    assert logs.count() == 1
+    assert logs.count() == 2
 
-    log = logs[0]
+    log = logs[1]
     assert log.invoices.count() == 2
 
     log_items = log.laskeexportloginvoiceitem_set.all()

@@ -59,6 +59,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementAddress,
     LandUseAgreementDefinition,
     LandUseAgreementIdentifier,
+    LandUseAgreementInvoice,
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
@@ -288,6 +289,14 @@ class LandUseAgreementIdentifierFactory(factory.DjangoModelFactory):
 class LandUseAgreementAddressFactory(factory.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementAddress
+
+
+@register
+class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
+    due_date = timezone.now().date()
+
+    class Meta:
+        model = LandUseAgreementInvoice
 
 
 @register
