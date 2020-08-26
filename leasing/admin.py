@@ -87,6 +87,12 @@ from leasing.models.land_area import (
     PlanUnitIntendedUse,
     PlotDivisionState,
 )
+from leasing.models.land_use_agreement import (
+    LandUseAgreementConditionType,
+    LandUseAgreementDefinition,
+    LandUseAgreementStatus,
+    LandUseAgreementType,
+)
 from leasing.models.lease import ReservationProcedure
 
 
@@ -743,3 +749,8 @@ admin.site.register(BasisOfRentPlotType, NameAdmin)
 admin.site.register(BasisOfRentBuildPermissionType, NameAdmin)
 admin.site.register(UiData, UiDataAdmin)
 admin.site.register(Vat, VatAdmin)
+
+admin.site.register(LandUseAgreementType, NameAdmin)
+admin.site.register(LandUseAgreementStatus, NameAdmin)
+admin.site.register(LandUseAgreementDefinition, NameAdmin)
+admin.site.register(LandUseAgreementConditionType, NameAdmin)
