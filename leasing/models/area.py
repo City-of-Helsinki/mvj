@@ -39,12 +39,16 @@ class Area(TimeStampedSafeDeleteModel):
         AreaSource,
         verbose_name=_("Source"),
         related_name="areas",
-        null=True,
-        blank=True,
         on_delete=models.PROTECT,
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["type", "identifier", "external_id", "source"],
+                name="leasing_area_type_identifier_externalid_source_key",
+            )
+        ]
         verbose_name = pgettext_lazy("Model name", "Area")
         verbose_name_plural = pgettext_lazy("Model name", "Area")
 

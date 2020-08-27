@@ -104,20 +104,6 @@ AREA_IMPORT_TYPES = {
         AND geom IS NOT NULL
         """,
     },
-    # 'lease_area': {
-    #     'source_dsn_setting_name': 'AREA_DATABASE_DSN',
-    #     'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
-    #     'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',
-    #     'area_type': AreaType.LEASE_AREA,
-    #     'identifier_field_name': 'vuokraustunnus',
-    #     'metadata_columns': ['kiinteistotunnus', 'vuokraustunnus', 'pinta_ala_sopimuksessa', 'osoite'],
-    #     'query': '''
-    #     SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-    #         AS geom_text
-    #     FROM tonttiosasto.to_vuokrausalueet_julkinen AS a
-    #     WHERE vuokraustunnus IS NOT NULL
-    #     ''',
-    # },
     # Kiinteistöt
     "real_property": {
         "source_dsn_setting_name": "AREA_DATABASE_DSN",
@@ -304,6 +290,7 @@ class AreaImporter(BaseImporter):
 
                 match_data = {
                     "type": area_import["area_type"],
+                    "external_id": row.id,
                     "identifier": getattr(row, area_import["identifier_field_name"]),
                     "source": source,
                 }
@@ -340,7 +327,6 @@ class AreaImporter(BaseImporter):
                 other_data = {
                     "geometry": geom,
                     "metadata": metadata,
-                    "external_id": row.id,
                 }
 
                 try:
