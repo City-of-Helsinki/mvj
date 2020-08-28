@@ -1,0 +1,16 @@
+[
+  {
+    "model": "leasing.PlotSearchType",
+    "pk": 1,
+    "fields": {
+        "name": "Asuntorakentaminen"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchType",
+    "pk": 2,
+    "fields": {
+        "name": "Tonttirakentaminen"
+    }
+  }
+]

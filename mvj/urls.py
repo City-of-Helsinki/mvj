@@ -76,6 +76,7 @@ from leasing.viewsets.lease_additional_views import (
     LeaseSetRentInfoCompletionStateView,
 )
 from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
+from leasing.viewsets.plot_search import PlotSearchViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
@@ -125,6 +126,7 @@ router.register(r"leasehold_transfer", LeaseholdTransferViewSet)
 router.register(r"management", ManagementViewSet)
 router.register(r"municipality", MunicipalityViewSet)
 router.register(r"notice_period", NoticePeriodViewSet)
+router.register(r"plot_search", PlotSearchViewSet)
 router.register(r"regulation", RegulationViewSet)
 router.register(r"receivable_type", ReceivableTypeViewSet)
 router.register(r"related_lease", RelatedLeaseViewSet)
