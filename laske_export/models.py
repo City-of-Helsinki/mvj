@@ -7,6 +7,7 @@ from enumfields import EnumField
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from leasing.models import Invoice
 from leasing.models.invoice import InvoicePayment
+from leasing.models.land_use_agreement import LandUseAgreementInvoice
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 
 
@@ -25,6 +26,8 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     is_finished = models.BooleanField(verbose_name=_("Finished?"), default=False)
 
     invoices = models.ManyToManyField(Invoice, through="LaskeExportLogInvoiceItem")
+
+    land_use_agreement_invoices = models.ManyToManyField(LandUseAgreementInvoice)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Laske export log")

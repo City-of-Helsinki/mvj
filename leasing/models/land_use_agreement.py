@@ -1,7 +1,9 @@
 from django.contrib.gis.db import models
+from django.db import transaction
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from sequences import get_next_value
 
 from leasing.enums import (
     DueDatesPosition,
@@ -441,3 +443,75 @@ class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Land use agreement litigant")
         verbose_name_plural = pgettext_lazy("Model name", "Land use agreement litigant")
+
+
+class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Lasku
+    """
+
+    land_use_agreement = models.ForeignKey(
+        LandUseAgreement,
+        verbose_name=_("Land use agreement"),
+        related_name="invoices",
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Laskun numero
+    number = models.PositiveIntegerField(
+        verbose_name=_("Number"), unique=True, null=True, blank=True
+    )
+
+    # In Finnish: Laskunsaaja
+    recipient = models.ForeignKey(
+        Contact, verbose_name=_("Recipient"), related_name="+", on_delete=models.PROTECT
+    )
+
+    # In Finnish: Korvauksen määrä €
+    compensation_amount = models.DecimalField(
+        verbose_name=_("Compensation amount"), decimal_places=2, max_digits=12
+    )
+
+    # In Finnish: Korvauksen määrä %
+    compensation_amount_percentage = models.DecimalField(
+        verbose_name=_("Compensation amount percentage"),
+        decimal_places=2,
+        max_digits=12,
+    )
+
+    # In Finnish: Euroa
+    amount = models.DecimalField(
+        verbose_name=_("Amount"), decimal_places=2, max_digits=12
+    )
+
+    # In Finnish: Allekirjoituspvm
+    sign_date = models.DateField(verbose_name=_("Sign date"), null=True, blank=True)
+
+    # In Finnish: Asemakaavan lainvoimaisuuspvm
+    plan_lawfulness_date = models.DateField(
+        verbose_name=_("Plan lawfulness date"), null=True, blank=True
+    )
+
+    # In Finnish: Eräpäivä
+    due_date = models.DateField(verbose_name=_(" date"), null=True, blank=True)
+
+    # In Finnish: Lähetyspäivä
+    sent_date = models.DateField(verbose_name=_("Sent date"), null=True, blank=True)
+
+    # In Finnish: Maksupäivä
+    paid_date = models.DateField(verbose_name=_("Paid date"), null=True, blank=True)
+
+    # In Finnish: Lähetetty SAP:iin
+    sent_to_sap_at = models.DateTimeField(
+        verbose_name=_("Sent to SAP at"), null=True, blank=True
+    )
+
+    def generate_number(self):
+        if self.number:
+            return self.number
+
+        with transaction.atomic():
+            self.number = get_next_value("invoice_numbers", initial_value=1000000)
+            self.save()
+
+        return self.number
