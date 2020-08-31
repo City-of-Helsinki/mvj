@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0010_landuseagreementinvoice"),
+        ("leasing", "0011_landuseagreementinvoice"),
         ("laske_export", "0005_add_fields_to_laske_export_log_invoice_item"),
     ]
 

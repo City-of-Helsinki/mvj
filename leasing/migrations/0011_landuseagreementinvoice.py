@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0009_fix_land_use_agreement"),
+        ("leasing", "0010_add_plot_search_base"),
     ]
 
     operations = [
