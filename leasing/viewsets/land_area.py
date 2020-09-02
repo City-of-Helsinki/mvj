@@ -1,8 +1,13 @@
+from rest_framework import filters, mixins
+from rest_framework.viewsets import GenericViewSet
+
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import LeaseAreaAttachment
+from leasing.models.land_area import PlanUnit
 from leasing.serializers.land_area import (
     LeaseAreaAttachmentCreateUpdateSerializer,
     LeaseAreaAttachmentSerializer,
+    PlanUnitListWithIdentifiersSerializer,
 )
 
 from .utils import (
@@ -28,3 +33,28 @@ class LeaseAreaAttachmentViewSet(
             return LeaseAreaAttachmentCreateUpdateSerializer
 
         return LeaseAreaAttachmentSerializer
+
+
+class PlanUnitListWithIdentifiersViewSet(mixins.ListModelMixin, GenericViewSet):
+    search_fields = [
+        "^lease_area__lease__identifier__identifier",
+        "^lease_area__identifier",
+        "^identifier",
+    ]
+    filter_backends = (filters.SearchFilter,)
+    queryset = PlanUnit.objects.all()
+    serializer_class = PlanUnitListWithIdentifiersSerializer
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("lease_area")
+            .only(
+                "id",
+                "identifier",
+                "plan_unit_status",
+                "lease_area__identifier",
+                "lease_area__lease__identifier__identifier",
+            )
+        )
