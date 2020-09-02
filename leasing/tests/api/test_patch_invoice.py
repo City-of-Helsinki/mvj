@@ -357,7 +357,7 @@ def test_delete_invoice_invoice_in_invoiceset(
 
 
 @pytest.mark.django_db
-def test_patch_invoice_cant_change_if_sent_to_sap(
+def test_patch_invoice_change_if_sent_to_sap(
     django_db_setup,
     admin_client,
     lease_test_data,
@@ -379,6 +379,7 @@ def test_patch_invoice_cant_change_if_sent_to_sap(
         outstanding_amount=Decimal("123.45"),
         recipient=contact,
         due_date=datetime.date(year=2017, month=6, day=1),
+        postpone_date=None,
         sent_to_sap_at=timezone.now(),
     )
 
@@ -389,6 +390,7 @@ def test_patch_invoice_cant_change_if_sent_to_sap(
     data = {
         "id": invoice.id,
         "due_date": datetime.date(year=2017, month=6, day=2),
+        "postpone_date": datetime.date(year=2018, month=6, day=2),
         "rows": [
             {
                 "id": invoice_row.id,
@@ -405,7 +407,7 @@ def test_patch_invoice_cant_change_if_sent_to_sap(
         content_type="application/json",
     )
 
-    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     invoice_row = InvoiceRow.objects.get(pk=invoice_row.id)
 
@@ -416,6 +418,7 @@ def test_patch_invoice_cant_change_if_sent_to_sap(
     assert invoice.billed_amount == Decimal("123.45")
     assert invoice.outstanding_amount == Decimal("123.45")
     assert invoice.total_amount == Decimal("123.45")
+    assert invoice.postpone_date == datetime.date(year=2018, month=6, day=2)
 
 
 @pytest.mark.django_db
@@ -750,7 +753,7 @@ def test_patch_invoice_cannot_add_payment_if_sent_to_sap(
         content_type="application/json",
     )
 
-    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     invoice = Invoice.objects.get(pk=invoice.id)
 

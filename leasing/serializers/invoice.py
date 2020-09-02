@@ -416,7 +416,6 @@ class GeneratedInvoiceUpdateSerializer(InvoiceUpdateSerializer):
             "state",
             "billing_period_start_date",
             "billing_period_end_date",
-            "postpone_date",
             "total_amount",
             "billed_amount",
             "outstanding_amount",
@@ -431,6 +430,46 @@ class GeneratedInvoiceUpdateSerializer(InvoiceUpdateSerializer):
             "credited_invoices",
             "interest_invoices",
             "rows",
+        )
+
+
+class SentToSapInvoiceUpdateSerializer(InvoiceUpdateSerializer):
+    """Invoice serializer where all but "postpone_date" is read only"""
+
+    rows = InvoiceRowCreateUpdateSerializer(many=True, read_only=True)
+    payments = InvoicePaymentCreateUpdateSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Invoice
+        exclude = ("deleted",)
+        read_only_fields = (
+            "lease",
+            "invoiceset",
+            "number",
+            "recipient",
+            "sent_to_sap_at",
+            "sap_id",
+            "adjusted_due_date",
+            "due_date",
+            "invoicing_date",
+            "state",
+            "billing_period_start_date",
+            "billing_period_end_date",
+            "total_amount",
+            "billed_amount",
+            "outstanding_amount",
+            "payment_notification_date",
+            "collection_charge",
+            "payment_notification_catalog_date",
+            "delivery_method",
+            "type",
+            "notes",
+            "generated",
+            "description",
+            "credited_invoices",
+            "interest_invoices",
+            "rows",
+            "payments",
         )
 
 
