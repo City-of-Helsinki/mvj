@@ -229,6 +229,11 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
     In Finnish: Vuokraustunnus
     """
 
+    # In Finnish: Tunnus
+    identifier = models.CharField(
+        verbose_name=_("Identifier"), max_length=255, blank=True, null=True
+    )
+
     # In Finnish: Laji
     type = models.ForeignKey(
         LeaseType,
@@ -257,6 +262,10 @@ class LeaseIdentifier(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Lease identifier")
         verbose_name_plural = pgettext_lazy("Model name", "Lease identifiers")
         unique_together = ("type", "municipality", "district", "sequence")
+
+    def save(self, *args, **kwargs):
+        self.identifier = str(self)
+        super(LeaseIdentifier, self).save(*args, **kwargs)
 
     def __str__(self):
         """Returns the lease identifier as a string
