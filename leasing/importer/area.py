@@ -1,3 +1,5 @@
+from time import perf_counter
+
 import psycopg2
 from django.conf import settings
 from django.contrib.gis import geos
@@ -102,22 +104,13 @@ AREA_IMPORT_TYPES = {
         FROM tonttiosasto.vuokrausalue_paa AS a
         WHERE vuokratunnus IS NOT NULL
         AND geom IS NOT NULL
+        AND olotila LIKE "Voimassa"
+        AND kunta IS NOT NULL
+        AND sijaintialue IS NOT NULL
+        AND ryhma IS NOT NULL
+        AND yksikko IS NOT NULL
         """,
     },
-    # 'lease_area': {
-    #     'source_dsn_setting_name': 'AREA_DATABASE_DSN',
-    #     'source_name': 'Tonttiosasto: vuokrausalueet_julkinen',
-    #     'source_identifier': 'tonttiosasto.to_vuokrausalueet_julkinen',
-    #     'area_type': AreaType.LEASE_AREA,
-    #     'identifier_field_name': 'vuokraustunnus',
-    #     'metadata_columns': ['kiinteistotunnus', 'vuokraustunnus', 'pinta_ala_sopimuksessa', 'osoite'],
-    #     'query': '''
-    #     SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
-    #         AS geom_text
-    #     FROM tonttiosasto.to_vuokrausalueet_julkinen AS a
-    #     WHERE vuokraustunnus IS NOT NULL
-    #     ''',
-    # },
     # Kiinteistöt
     "real_property": {
         "source_dsn_setting_name": "AREA_DATABASE_DSN",
@@ -248,12 +241,20 @@ class AreaImporter(BaseImporter):
                 self.area_types.append(area_type)
 
     def execute(self):  # NOQA C901
+        func_start = perf_counter()
+
         if not self.area_types:
             self.area_types = AREA_IMPORT_TYPES.keys()
 
         errors = []
 
         for area_import_type in self.area_types:
+            type_start = perf_counter()
+
+            self.stdout.write(
+                'Starting to import the area type "{}"...\n'.format(area_import_type,)
+            )
+
             area_import = AREA_IMPORT_TYPES[area_import_type]
 
             try:
@@ -282,7 +283,11 @@ class AreaImporter(BaseImporter):
 
             imported_identifiers = []
             count = 0
+            sum_row_time, avg_row_time, min_row_time, max_row_time = (0,) * 4
+            self.stdout.write("Starting to update areas...\n")
             for row in cursor:
+                row_start = perf_counter()
+
                 try:
                     metadata = {
                         METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name)
@@ -304,6 +309,7 @@ class AreaImporter(BaseImporter):
 
                 match_data = {
                     "type": area_import["area_type"],
+                    "external_id": row.id,
                     "identifier": getattr(row, area_import["identifier_field_name"]),
                     "source": source,
                 }
@@ -340,7 +346,6 @@ class AreaImporter(BaseImporter):
                 other_data = {
                     "geometry": geom,
                     "metadata": metadata,
-                    "external_id": row.id,
                 }
 
                 try:
@@ -363,16 +368,55 @@ class AreaImporter(BaseImporter):
                     self.stdout.write(" {}".format(count))
                     self.stdout.flush()
 
+                row_end = perf_counter()
+                row_time = row_end - row_start
+                sum_row_time += row_time
+                min_row_time = (
+                    row_time
+                    if min_row_time == 0 or row_time < min_row_time
+                    else min_row_time
+                )
+                max_row_time = row_time if row_time > max_row_time else max_row_time
+
+            if count > 0:
+                avg_row_time = sum_row_time / count
+
+            self.stdout.write(
+                "Updated area count {}. Execution time: {0:.2f}s "
+                "(Row time avg: {0:.2f}s, min: {0:.2f}s, max: {0:.2f}s)\n".format(
+                    count, sum_row_time, avg_row_time, min_row_time, max_row_time
+                )
+            )
+
+            self.stdout.write("Starting to remove stales...\n")
+            stale_time_start = perf_counter()
             stale = Area.objects.filter(
                 type=area_import["area_type"], source=source
             ).exclude(identifier__in=imported_identifiers)
+            stale_count = stale.count()
+            stale.delete()
+            stale_time_end = perf_counter()
             self.stdout.write(
-                " Imported count {}, to be deleted / stale count {}\n".format(
-                    count, stale.count()
+                "Removed stale count {}. Execution time: {0:.2f}s\n".format(
+                    stale_count, stale_time_end - stale_time_start
                 )
             )
-            stale.delete()
+
             if errors:
                 self.stdout.write(" {} errors:\n".format(len(errors)))
                 for error in errors:
                     self.stdout.write(error)
+
+            type_end = perf_counter()
+            self.stdout.write(
+                'The area import of type "{}" is completed. Execution time: {0:.2f}s\n'.format(
+                    area_import_type, (type_end - type_start)
+                )
+            )
+
+        func_end = perf_counter()
+        self.stdout.write(
+            "The area import is completed. Execution time: {0:.2f}s\n".format(
+                func_end - func_start
+            )
+        )
