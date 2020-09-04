@@ -13,6 +13,7 @@ from leasing.enums import (
     LeaseAreaAttachmentType,
     LeaseAreaType,
     LocationType,
+    PlanUnitStatus,
     PlotType,
     PollutedLandRentConditionState,
 )
@@ -467,6 +468,14 @@ class PlanUnit(Land):
         null=True,
         blank=True,
         on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Kaavayksikön tila
+    plan_unit_status = EnumField(
+        PlanUnitStatus,
+        verbose_name=_("Plan unit status"),
+        max_length=30,
+        default=PlanUnitStatus.PRESENT,
     )
 
     recursive_get_related_skip_relations = ["lease_area"]

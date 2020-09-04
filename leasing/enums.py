@@ -575,3 +575,14 @@ class LandUseAgreementLitigantContactType(Enum):
     class Labels:
         TENANT = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Tenant")
         BILLING = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Billing")
+
+
+class PlanUnitStatus(Enum):
+    """
+    In Finnish: Kaavayksikön tila
+    """
+
+    PRESENT = "present"
+
+    class Labels:
+        PRESENT = pgettext_lazy("Plan Unit Status", "Present")
