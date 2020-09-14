@@ -8,6 +8,7 @@ from leasing.serializers.land_area import (
     LeaseAreaAttachmentCreateUpdateSerializer,
     LeaseAreaAttachmentSerializer,
     PlanUnitListWithIdentifiersSerializer,
+    PlanUnitSerializer,
 )
 
 from .utils import (
@@ -33,6 +34,11 @@ class LeaseAreaAttachmentViewSet(
             return LeaseAreaAttachmentCreateUpdateSerializer
 
         return LeaseAreaAttachmentSerializer
+
+
+class PlanUnitViewSet(mixins.RetrieveModelMixin, GenericViewSet):
+    queryset = PlanUnit.objects.all()
+    serializer_class = PlanUnitSerializer
 
 
 class PlanUnitListWithIdentifiersViewSet(mixins.ListModelMixin, GenericViewSet):
