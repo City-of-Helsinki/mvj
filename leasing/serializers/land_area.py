@@ -129,6 +129,30 @@ class PlanUnitCreateUpdateSerializer(
         )
 
 
+class PlanUnitListWithIdentifiersSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    lease_identifier = serializers.CharField(
+        read_only=True, source="lease_area.lease.identifier.identifier"
+    )
+
+    lease_area_identifier = serializers.CharField(
+        read_only=True, source="lease_area.identifier"
+    )
+
+    class Meta:
+        model = PlanUnit
+        fields = (
+            "id",
+            "identifier",
+            "plan_unit_status",
+            "lease_area_identifier",
+            "lease_identifier",
+        )
+
+
 class PlotSerializer(
     EnumSupportSerializerMixin,
     UpdateNestedMixin,
