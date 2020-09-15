@@ -49,6 +49,7 @@ from leasing.viewsets.invoice_additional_views import (
 from leasing.viewsets.land_area import (
     LeaseAreaAttachmentViewSet,
     PlanUnitListWithIdentifiersViewSet,
+    PlanUnitViewSet,
 )
 from leasing.viewsets.land_use_agreement import LandUseAgreementViewSet
 from leasing.viewsets.lease import (
@@ -129,6 +130,7 @@ router.register(r"leasehold_transfer", LeaseholdTransferViewSet)
 router.register(r"management", ManagementViewSet)
 router.register(r"municipality", MunicipalityViewSet)
 router.register(r"notice_period", NoticePeriodViewSet)
+router.register(r"plan_unit", PlanUnitViewSet)
 router.register(
     r"plan_unit_list_with_identifiers",
     PlanUnitListWithIdentifiersViewSet,
