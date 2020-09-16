@@ -386,9 +386,11 @@ class PlanUnit(Land):
     In Finnish: Kaavayksikkö
     """
 
+    # In Finnish: Vuokra-alue
     lease_area = models.ForeignKey(
         LeaseArea, related_name="plan_units", on_delete=models.CASCADE
     )
+
     # In Finnish: Sopimushetkellä
     in_contract = models.BooleanField(
         verbose_name=_("At time of contract"), default=False

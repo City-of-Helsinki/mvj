@@ -29,7 +29,7 @@ def test_lease_area_type_area_attaching_to_lease_area(lease_test_data):
 
     # Extra plot and plan unit has removed as they are not in contracts
     assert (
-        "Cleared existing current Plots ((1, {'leasing.Plot': 1})) and PlanUnits ((1, {'leasing.PlanUnit': 1})) not in contract"  # noqa: E501
+        "Cleared existing current Plots ((1, {'leasing.Plot': 1})) and PlanUnits ((1, {'leasing.PlotSearchTarget': 0, 'leasing.PlanUnit': 1})) not in contract"  # noqa: E501
         in out.getvalue()
     )
     assert lease_area.plots.filter(pk=lease_test_data["extra_plot"].id).count() == 0
