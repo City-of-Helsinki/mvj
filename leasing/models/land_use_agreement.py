@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
-from django.db import transaction
+from django.db import connection, transaction
+from django.db.models import Max
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -154,6 +155,19 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Kaupunki
+    municipality = models.ForeignKey(
+        Municipality,
+        verbose_name=_("Municipality"),
+        related_name="+",
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Kaupunginosa
+    district = models.ForeignKey(
+        District, verbose_name=_("District"), related_name="+", on_delete=models.PROTECT
+    )
+
     # In Finnish: Määritelmä
     definition = models.ForeignKey(
         LandUseAgreementDefinition,
@@ -246,21 +260,45 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
         max_length=30,
     )
 
-    # In Finnish: Sopimuksen tyyppi
-    land_use_contract_type = EnumField(
-        LandUseContractType,
-        verbose_name=_("Contract type"),
-        null=True,
-        blank=True,
-        max_length=30,
-    )
-
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Land use agreement")
         verbose_name_plural = pgettext_lazy("Model name", "Land use agreements")
 
     def __str__(self):
         return "Land use agreement #{}".format(self.id)
+
+    @transaction.atomic
+    def create_identifier(self):
+        if self.identifier_id:
+            return
+
+        if not self.type or not self.municipality or not self.district:
+            return
+
+        # lock LandUseAgreementIdentifier table to prevent a (theoretically) possible
+        # race condition when increasing the sequence
+        with connection.cursor() as cursor:
+            cursor.execute("LOCK TABLE %s" % self._meta.db_table)
+
+        max_sequence = LandUseAgreementIdentifier.objects.filter(
+            type=self.type, municipality=self.municipality, district=self.district
+        ).aggregate(Max("sequence"))["sequence__max"]
+
+        if not max_sequence:
+            max_sequence = 0
+
+        identifier = LandUseAgreementIdentifier.objects.create(
+            type=self.type,
+            municipality=self.municipality,
+            district=self.district,
+            sequence=max_sequence + 1,
+        )
+
+        self.identifier = identifier
+
+    def save(self, *args, **kwargs):
+        self.create_identifier()
+        super().save(*args, **kwargs)
 
 
 class LandUseAgreementEstate(NameModel):
