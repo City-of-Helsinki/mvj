@@ -29,13 +29,24 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
 @pytest.mark.django_db
 def test_plot_search_create(
-    django_db_setup, admin_client, plot_search_test_data, lease_test_data, user_factory
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    user_factory,
+    plan_unit_factory,
 ):
     url = reverse("plotsearch-list")  # list == create
 
+    # Add preparer
     user = user_factory(username="test_user")
-    selected_planunit = (
-        lease_test_data["lease_area"].plan_units.filter(in_contract=True).first()
+
+    # Add plan unit to contract
+    selected_plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        in_contract=True,
     )
 
     data = {
@@ -48,7 +59,7 @@ def test_plot_search_create(
         "end_at": timezone.now() + timezone.timedelta(days=7),
         "targets": [
             {
-                "plan_unit": selected_planunit.id,
+                "plan_unit": selected_plan_unit.id,
                 "target_type": PlotSearchTargetType.SEARCHABLE.value,
             },
         ],
@@ -63,16 +74,28 @@ def test_plot_search_create(
 
 @pytest.mark.django_db
 def test_plot_search_update(
-    django_db_setup, admin_client, plot_search_test_data, lease_test_data, user_factory
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    user_factory,
+    plan_unit_factory,
 ):
     url = reverse(
         "plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
     )  # detail == update
 
+    # Add preparer
     user = user_factory(username="test_user")
-    selected_planunit = (
-        lease_test_data["lease_area"].plan_units.filter(in_contract=True).first()
+
+    # Add plan unit to contract
+    selected_plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        in_contract=True,
     )
+
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
 
     data = {
@@ -85,7 +108,7 @@ def test_plot_search_update(
         "end_at": updated_end_at,
         "targets": [
             {
-                "plan_unit": selected_planunit.id,
+                "plan_unit": selected_plan_unit.id,
                 "target_type": PlotSearchTargetType.SEARCHABLE.value,
             },
         ],
