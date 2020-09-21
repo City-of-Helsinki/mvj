@@ -128,6 +128,13 @@ class PlotSearchUpdateSerializer(
         instance.save()
         return instance
 
+    def validate(self, attrs):
+        targets = attrs.get("plotsearchtarget_set")
+        for target in targets:
+            instance = PlotSearchTarget(**target)
+            instance.clean()
+        return attrs
+
 
 class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
     class Meta:

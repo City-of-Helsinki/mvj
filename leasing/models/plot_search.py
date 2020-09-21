@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -123,3 +124,11 @@ class PlotSearchTarget(models.Model):
         default=PlotSearchTargetType.SEARCHABLE,
         max_length=30,
     )
+
+    def clean(self):
+        super(PlotSearchTarget, self).clean()
+
+        if not self.plan_unit.in_contract:
+            raise ValidationError(
+                _("Cannot add to plan unit which is not in the contract.")
+            )

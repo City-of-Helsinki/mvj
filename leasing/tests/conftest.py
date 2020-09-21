@@ -626,12 +626,17 @@ def lease_test_data(
         section_area=1000,
     )
 
+    # Add plan unit to contract
+    plan_unit_factory(
+        identifier="PU1", area=1000, lease_area=lease_area, in_contract=True
+    )
+
     # Extra plot and plan unit which are not in contracts
     extra_plot = plot_factory(
-        identifier="123", area=1000, type=PlotType.REAL_PROPERTY, lease_area=lease_area
+        identifier="P1", area=1000, type=PlotType.REAL_PROPERTY, lease_area=lease_area
     )
     extra_plan_unit = plan_unit_factory(
-        identifier="123", area=1000, lease_area=lease_area
+        identifier="PU2", area=1000, lease_area=lease_area
     )
 
     return {

@@ -34,7 +34,9 @@ def test_plot_search_create(
     url = reverse("plotsearch-list")  # list == create
 
     user = user_factory(username="test_user")
-    selected_planunit = lease_test_data["extra_plan_unit"]
+    selected_planunit = (
+        lease_test_data["lease_area"].plan_units.filter(in_contract=True).first()
+    )
 
     data = {
         "name": plot_search_test_data.type.name,
@@ -68,7 +70,9 @@ def test_plot_search_update(
     )  # detail == update
 
     user = user_factory(username="test_user")
-    selected_planunit = lease_test_data["extra_plan_unit"]
+    selected_planunit = (
+        lease_test_data["lease_area"].plan_units.filter(in_contract=True).first()
+    )
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
 
     data = {
