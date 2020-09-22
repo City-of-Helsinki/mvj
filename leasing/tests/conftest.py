@@ -821,7 +821,6 @@ def lease_data_dict_with_contacts(contact_factory):
 @pytest.fixture
 def land_use_agreement_test_data(
     land_use_agreement_factory,
-    land_use_agreement_identifier_factory,
     land_use_agreement_type_factory,
     land_use_agreement_status_factory,
     land_use_agreement_definition_factory,
@@ -829,9 +828,12 @@ def land_use_agreement_test_data(
     user_factory,
     decision_maker_factory,
     contract_factory,
+    municipality_factory,
+    district_factory,
 ):
-    identifier = land_use_agreement_identifier_factory(
-        sequence=1, district_id=1, municipality_id=1, type_id=1
+    municipality = municipality_factory(name="Helsinki", identifier=10)
+    district = district_factory(
+        name="Alppila", identifier=22, municipality=municipality
     )
     land_use_agreement_type = land_use_agreement_type_factory(name="Test type")
     land_use_agreement_status = land_use_agreement_status_factory(name="Test status")
@@ -844,7 +846,8 @@ def land_use_agreement_test_data(
         type_id=land_use_agreement_type.id,
         preparer=preparer,
         land_use_contract_type=LandUseContractType.LAND_USE_AGREEMENT,
-        identifier=identifier,
+        municipality=municipality,
+        district=district,
         status_id=land_use_agreement_status.id,
         definition_id=land_use_agreement_definition.id,
         estimated_completion_year=2021,

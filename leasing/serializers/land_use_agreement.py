@@ -6,6 +6,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
     LandUseAgreementDecision,
+    LandUseAgreementEstate,
     LandUseAgreementIdentifier,
     LandUseAgreementType,
 )
@@ -65,6 +66,14 @@ class LandUseAgreementDecisionSerializer(
         )
 
 
+class LandUseAgreementEstateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    class Meta:
+        model = LandUseAgreementEstate
+        fields = ("estate_id",)
+
+
 class LandUseAgreementListSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -75,6 +84,9 @@ class LandUseAgreementListSerializer(
     identifier = LandUseAgreementIdentifierSerializer(read_only=True)
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = LandUseAgreementDecisionSerializer(
+        many=True, required=False, allow_null=True
+    )
+    estate_ids = LandUseAgreementEstateSerializer(
         many=True, required=False, allow_null=True
     )
 
@@ -96,7 +108,8 @@ class LandUseAgreementRetrieveSerializer(
         many=True, required=False, allow_null=True
     )
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
-    decisions = LandUseAgreementDecisionSerializer()
+    decisions = LandUseAgreementDecisionSerializer(many=True)
+    estate_ids = LandUseAgreementEstateSerializer(many=True)
 
     class Meta:
         model = LandUseAgreement
@@ -117,6 +130,7 @@ class LandUseAgreementRetrieveSerializer(
             "state",
             "land_use_contract_type",
             "decisions",
+            "estate_ids",
         )
 
 
@@ -137,6 +151,9 @@ class LandUseAgreementUpdateSerializer(
         related_serializer=UserSerializer,
         required=False,
         allow_null=True,
+    )
+    estate_ids = LandUseAgreementEstateSerializer(
+        many=True, required=False, allow_null=True
     )
 
     class Meta:

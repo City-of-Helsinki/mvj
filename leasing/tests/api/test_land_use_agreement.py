@@ -64,7 +64,7 @@ def test_get_land_use_agreement(
 
 @pytest.mark.django_db
 def test_update_land_use_agreement(
-    django_db_setup, admin_client, land_use_agreement_test_data, user_factory
+    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
 ):
 
     url = reverse(
@@ -79,6 +79,8 @@ def test_update_land_use_agreement(
         "definition": land_use_agreement_test_data.definition.id,
         "preparer": user.id,
         "estates": ["TEST"],
+        "municipality": land_use_agreement_test_data.municipality.id,
+        "district": land_use_agreement_test_data.district.id,
     }
     response = admin_client.put(url, data=data, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -86,7 +88,7 @@ def test_update_land_use_agreement(
 
 @pytest.mark.django_db
 def test_create_land_use_agreement(
-    django_db_setup, admin_client, land_use_agreement_test_data, user_factory
+    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
 ):
 
     url = reverse("landuseagreement-list")
@@ -97,6 +99,8 @@ def test_create_land_use_agreement(
         "status": land_use_agreement_test_data.status.id,
         "definition": land_use_agreement_test_data.definition.id,
         "preparer": user.id,
+        "municipality": land_use_agreement_test_data.municipality.id,
+        "district": land_use_agreement_test_data.district.id,
     }
     response = admin_client.post(url, data=data, content_type="application/json")
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
