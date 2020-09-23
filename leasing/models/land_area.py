@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -485,6 +486,21 @@ class PlanUnit(Land):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
+
+    def delete(self, *args, **kwargs):
+        self.validate_delete()
+        super(PlanUnit, self).delete(*args, **kwargs)
+
+    def validate_delete(self):
+        if (
+            self.in_contract
+            and self.plotsearchtarget_set.filter(plan_unit=self).count() > 0
+        ):
+            raise ValidationError(
+                _(
+                    "Cannot remove the plan unit from the contracts because it is attached to plot search."
+                )
+            )
 
 
 auditlog.register(LeaseArea)

@@ -47,6 +47,7 @@ from leasing.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
+    PlotSearchTarget,
     PlotSearchType,
     RelatedLease,
     Rent,
@@ -76,7 +77,7 @@ from leasing.models.tenant import TenantRentShare
 from users.models import User
 
 
-@pytest.fixture()
+@pytest.fixture
 def assert_count_equal():
     def do_test(a, b):
         tc = unittest.TestCase()
@@ -117,6 +118,12 @@ class ContactFactory(factory.DjangoModelFactory):
 class PlotSearchFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlotSearch
+
+
+@register
+class PlotSearchTargetFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PlotSearchTarget
 
 
 @register
@@ -552,7 +559,7 @@ def area_with_intersects_test_data(
     return {**area_test_data, "intersect_areas": intersect_areas}
 
 
-@pytest.fixture()
+@pytest.fixture
 def lease_test_data(
     lease_factory,
     contact_factory,

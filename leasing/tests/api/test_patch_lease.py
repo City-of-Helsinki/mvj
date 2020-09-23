@@ -4,6 +4,7 @@ import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
+from leasing.enums import PlotSearchTargetType
 from leasing.models import Lease
 
 
@@ -235,6 +236,64 @@ def test_patch_lease_basis_of_rents_predefined_area_unit(
             "area": "102.00",
         }
     ]
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_validation_exception_on_planunit_delete_when_attached_to_plotsearch(
+    django_db_setup,
+    admin_client,
+    lease_test_data,
+    plot_search_test_data,
+    plot_search_target_factory,
+    plan_unit_factory,
+    lease_data_dict_with_contacts,
+):
+    lease = lease_test_data["lease"]
+    lease_area = lease_test_data["lease_area"]
+
+    # Add plan unit to contract
+    attached_plan_unit = plan_unit_factory(
+        identifier="PU1", area=1000, lease_area=lease_area, in_contract=True,
+    )
+
+    # Attach plan unit to one of plot search
+    plot_search_target_factory(
+        plan_unit=attached_plan_unit,
+        plot_search=plot_search_test_data,
+        target_type=PlotSearchTargetType.SEARCHABLE,
+    )
+
+    # Add one unattached plan unit
+    unattached_plan_unit = plan_unit_factory(
+        identifier="PU2", area=1000, lease_area=lease_area, in_contract=True,
+    )
+    unattached_plan_unit2 = plan_unit_factory(
+        identifier="PU3", area=1000, lease_area=lease_area, in_contract=True,
+    )
+
+    data = {
+        "lease_areas": [
+            {
+                "id": unattached_plan_unit.id,
+                "identifier": unattached_plan_unit.identifier,
+                "area": unattached_plan_unit.area,
+            },
+            {
+                "id": unattached_plan_unit2.id,
+                "identifier": unattached_plan_unit2.identifier,
+                "area": unattached_plan_unit2.area,
+            },
+        ]
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
