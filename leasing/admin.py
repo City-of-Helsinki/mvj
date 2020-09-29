@@ -92,6 +92,8 @@ from leasing.models.land_area import (
     PlotDivisionState,
 )
 from leasing.models.land_use_agreement import (
+    LandUseAgreement,
+    LandUseAgreementAddress,
     LandUseAgreementConditionType,
     LandUseAgreementDefinition,
     LandUseAgreementStatus,
@@ -697,6 +699,15 @@ class LeaseholdTransferImportLogAdmin(admin.ModelAdmin):
     ordering = ("id",)
 
 
+class LandUseAgreementAddressInline(admin.TabularInline):
+    model = LandUseAgreementAddress
+    extra = 0
+
+
+class LandUseAgreementAdmin(admin.ModelAdmin):
+    inlines = [LandUseAgreementAddressInline]
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -769,3 +780,4 @@ admin.site.register(LandUseAgreementType, NameAdmin)
 admin.site.register(LandUseAgreementStatus, NameAdmin)
 admin.site.register(LandUseAgreementDefinition, NameAdmin)
 admin.site.register(LandUseAgreementConditionType, NameAdmin)
+admin.site.register(LandUseAgreement, LandUseAgreementAdmin)

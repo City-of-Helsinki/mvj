@@ -850,7 +850,10 @@ def land_use_agreement_test_data(
         plan_acceptor=plan_acceptor,
     )
     land_use_agreement_address_factory(
-        land_use_agreement=land_use_agreement, address="Testikatu 1"
+        land_use_agreement=land_use_agreement,
+        address="Testikatu 1",
+        postal_code="00100",
+        city="Helsinki",
     )
     contract_factory(
         land_use_agreement=land_use_agreement, type_id=1, contract_number="A123"

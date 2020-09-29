@@ -81,9 +81,13 @@ def test_update_land_use_agreement(
         "estates": ["TEST"],
         "municipality": land_use_agreement_test_data.municipality.id,
         "district": land_use_agreement_test_data.district.id,
+        "addresses": [
+            {"address": "Testikatu 2", "postal_code": "00100", "city": "Helsinki"}
+        ],
     }
     response = admin_client.put(url, data=data, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.data.get("addresses")[0].get("address") == "Testikatu 2"
 
 
 @pytest.mark.django_db
@@ -101,6 +105,44 @@ def test_create_land_use_agreement(
         "preparer": user.id,
         "municipality": land_use_agreement_test_data.municipality.id,
         "district": land_use_agreement_test_data.district.id,
+        "addresses": [
+            {"address": "Testikatu 1", "postal_code": "00100", "city": "Helsinki"}
+        ],
     }
     response = admin_client.post(url, data=data, content_type="application/json")
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_create_land_use_agreement_w_two_addresses(
+    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
+):
+
+    url = reverse("landuseagreement-list")
+    user = user_factory(username="test_user_2")
+
+    data = {
+        "type": land_use_agreement_test_data.type.id,
+        "status": land_use_agreement_test_data.status.id,
+        "definition": land_use_agreement_test_data.definition.id,
+        "preparer": user.id,
+        "municipality": land_use_agreement_test_data.municipality.id,
+        "district": land_use_agreement_test_data.district.id,
+        "addresses": [
+            {
+                "address": "Testikatu 1",
+                "postal_code": "00100",
+                "city": "Helsinki",
+                "is_primary": True,
+            },
+            {
+                "address": "Testikatu 666",
+                "postal_code": "00100",
+                "city": "Helsinki",
+                "is_primary": False,
+            },
+        ],
+    }
+    response = admin_client.post(url, data=data, content_type="application/json")
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+    assert len(response.data.get("addresses", [])) == 2
