@@ -64,7 +64,13 @@ from .leasehold_transfer import (
     LeaseholdTransferParty,
     LeaseholdTransferProperty,
 )
-from .plot_search import PlotSearch, PlotSearchStage, PlotSearchSubtype, PlotSearchType
+from .plot_search import (
+    PlotSearch,
+    PlotSearchStage,
+    PlotSearchSubtype,
+    PlotSearchTarget,
+    PlotSearchType,
+)
 from .rent import (
     ContractRent,
     EqualizedRent,
@@ -152,6 +158,7 @@ __all__ = [
     "PlanUnitType",
     "Plot",
     "PlotSearch",
+    "PlotSearchTarget",
     "PlotSearchType",
     "PlotSearchSubtype",
     "PlotSearchStage",

@@ -143,6 +143,21 @@ class PlotType(Enum):
         UNSEPARATED_PARCEL = pgettext_lazy("Plot type", "Unseparated parcel")
 
 
+class PlotSearchTargetType(Enum):
+    """
+    In Finnish: Tonttihaun kohdetyypit
+    """
+
+    SEARCHABLE = "searchable"
+    PROCEDURAL_RESERVATION = "procedural_reservation"
+    DIRECT_RESERVATION = "direct_reservation"
+
+    class Labels:
+        SEARCHABLE = pgettext_lazy("Plot type", "Searchable")
+        PROCEDURAL_RESERVATION = pgettext_lazy("Plot type", "Procedural reservation")
+        DIRECT_RESERVATION = pgettext_lazy("Plot type", "Direct reservation")
+
+
 class PeriodType(Enum):
     """
     In Finnish: Yksikkö (aika)

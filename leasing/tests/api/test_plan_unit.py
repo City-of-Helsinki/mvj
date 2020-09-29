@@ -3,7 +3,17 @@ from django.urls import reverse
 
 
 @pytest.mark.django_db
-def test_plan_unit_detail(django_db_setup, admin_client, lease_test_data):
+def test_plan_unit_detail(
+    django_db_setup, admin_client, plan_unit_factory, lease_test_data
+):
+    # Add plan unit for lease area
+    plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        in_contract=True,
+    )
+
     url = reverse("planunitlistwithidentifiers-list")
 
     response = admin_client.get(url, content_type="application/json")

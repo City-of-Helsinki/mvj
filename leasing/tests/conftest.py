@@ -19,7 +19,6 @@ from leasing.enums import (
     LandUseContractType,
     LeaseAreaType,
     LocationType,
-    PlotType,
     RentAdjustmentType,
     RentCycle,
     RentType,
@@ -48,6 +47,7 @@ from leasing.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
+    PlotSearchTarget,
     PlotSearchType,
     RelatedLease,
     Rent,
@@ -77,7 +77,7 @@ from leasing.models.tenant import TenantRentShare
 from users.models import User
 
 
-@pytest.fixture()
+@pytest.fixture
 def assert_count_equal():
     def do_test(a, b):
         tc = unittest.TestCase()
@@ -118,6 +118,12 @@ class ContactFactory(factory.DjangoModelFactory):
 class PlotSearchFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlotSearch
+
+
+@register
+class PlotSearchTargetFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PlotSearchTarget
 
 
 @register
@@ -553,9 +559,8 @@ def area_with_intersects_test_data(
     return {**area_test_data, "intersect_areas": intersect_areas}
 
 
-@pytest.fixture()
+@pytest.fixture
 def lease_test_data(
-    area_with_intersects_test_data,
     lease_factory,
     contact_factory,
     tenant_factory,
@@ -620,18 +625,7 @@ def lease_test_data(
 
     lease.tenants.set(tenants)
     lease_area = lease_area_factory(
-        lease=lease,
-        identifier=area_with_intersects_test_data["area"].get_land_identifier(),
-        area=1000,
-        section_area=1000,
-    )
-
-    # Extra plot and plan unit which are not in contracts
-    extra_plot = plot_factory(
-        identifier="123", area=1000, type=PlotType.REAL_PROPERTY, lease_area=lease_area
-    )
-    extra_plan_unit = plan_unit_factory(
-        identifier="123", area=1000, lease_area=lease_area
+        lease=lease, identifier="12345", area=1000, section_area=1000,
     )
 
     return {
@@ -639,9 +633,6 @@ def lease_test_data(
         "lease_area": lease_area,
         "tenants": tenants,
         "tenantcontacts": tenantcontacts,
-        "extra_plot": extra_plot,
-        "extra_plan_unit": extra_plan_unit,
-        **area_with_intersects_test_data,
     }
 
 

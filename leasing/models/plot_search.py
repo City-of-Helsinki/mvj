@@ -1,7 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
+from leasing.enums import PlotSearchTargetType
+from leasing.models import PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from users.models import User
 
@@ -87,9 +91,44 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Haettavat kohteet, menettelyvaraus ja suoravaraus
+    targets = models.ManyToManyField(PlanUnit, through="PlotSearchTarget")
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot search")
         verbose_name_plural = pgettext_lazy("Model name", "Plot searches")
 
     def __str__(self):
         return "Plot search #{}".format(self.id)
+
+
+class PlotSearchTarget(models.Model):
+
+    """
+    In Finnish: Tonttihaku
+    """
+
+    plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
+
+    """
+    In Finnish: Kaavayksikkö
+    """
+    plan_unit = models.ForeignKey(PlanUnit, on_delete=models.CASCADE)
+
+    """
+    In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
+    """
+    target_type = EnumField(
+        PlotSearchTargetType,
+        verbose_name=_("Target type"),
+        default=PlotSearchTargetType.SEARCHABLE,
+        max_length=30,
+    )
+
+    def clean(self):
+        super(PlotSearchTarget, self).clean()
+
+        if not self.plan_unit.in_contract:
+            raise ValidationError(
+                _("Cannot add to plan unit which is not in the contract.")
+            )
