@@ -89,6 +89,7 @@ class LandUseAgreementListSerializer(
     estate_ids = LandUseAgreementEstateSerializer(
         many=True, required=False, allow_null=True
     )
+    addresses = LandUseAgreementAddressSerializer(many=True)
 
     class Meta:
         model = LandUseAgreement
@@ -131,6 +132,8 @@ class LandUseAgreementRetrieveSerializer(
             "land_use_contract_type",
             "decisions",
             "estate_ids",
+            "definition",
+            "status",
         )
 
 
@@ -153,6 +156,9 @@ class LandUseAgreementUpdateSerializer(
         allow_null=True,
     )
     estate_ids = LandUseAgreementEstateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    addresses = LandUseAgreementAddressSerializer(
         many=True, required=False, allow_null=True
     )
 
