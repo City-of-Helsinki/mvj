@@ -55,6 +55,7 @@ class PlanUnitListWithIdentifiersViewSet(mixins.ListModelMixin, GenericViewSet):
         return (
             super()
             .get_queryset()
+            .filter(in_contract=True)
             .select_related("lease_area")
             .only(
                 "id",
