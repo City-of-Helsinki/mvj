@@ -5,7 +5,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
 from leasing.enums import PlotSearchTargetType
-from leasing.models import Lease
+from leasing.models import Lease, PlanUnit
 
 
 @pytest.mark.django_db
@@ -243,6 +243,43 @@ def test_patch_lease_basis_of_rents_predefined_area_unit(
     )
 
     assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_patch_lease_plan_units(django_db_setup, admin_client, lease_test_data):
+    lease = lease_test_data["lease"]
+    lease_area = lease_test_data["lease_area"]
+
+    data = {
+        "lease_areas": [
+            {
+                "id": lease_area.id,
+                "identifier": lease_area.identifier,
+                "area": lease_area.area,
+                "location": lease_area.location.value,
+                "section_area": lease_area.section_area,
+                "type": lease_area.type.value,
+                "plan_units": [
+                    {
+                        "area": 123,
+                        "identifier": "123",
+                        "in_contract": False,
+                        "section_area": None,
+                    }
+                ],
+            }
+        ]
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert PlanUnit.objects.filter(lease_area=lease_area).count() == 1
 
 
 @pytest.mark.django_db
