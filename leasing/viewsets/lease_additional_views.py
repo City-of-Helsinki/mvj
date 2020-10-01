@@ -412,6 +412,8 @@ class LeaseCopyAreasToContractView(APIView):
                             "created_at",
                             "modified_at",
                             "in_contract",
+                            "plotsearch",
+                            "plotsearchtarget",
                         ]:
                             continue
                         defaults[field.name] = getattr(item, field.name)
