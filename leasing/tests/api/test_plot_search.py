@@ -28,6 +28,25 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
 
 @pytest.mark.django_db
+def test_plot_search_create_simple(
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+):
+    url = reverse("plotsearch-list")  # list == create
+
+    data = {
+        "name": plot_search_test_data.type.name,
+    }
+
+    response = admin_client.post(
+        url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
+    )
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
 def test_plot_search_create(
     django_db_setup,
     admin_client,
