@@ -35,8 +35,8 @@ def test_get_land_use_agreement(
         == land_use_agreement_test_data.land_use_contract_type.value
     )
     assert (
-        response.data.get("plan_acceptor").get("name")
-        == land_use_agreement_test_data.plan_acceptor.name
+        response.data.get("plan_acceptor")
+        == land_use_agreement_test_data.plan_acceptor.id
     )
     assert (
         response.data.get("estimated_completion_year")
