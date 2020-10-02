@@ -5,7 +5,7 @@ import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
-from leasing.models import Lease
+from leasing.models import Lease, PlanUnit
 
 
 @pytest.mark.django_db
@@ -119,3 +119,23 @@ def test_lease_details_contains_future_tenants(
                 break
 
     assert found is True
+
+
+@pytest.mark.django_db
+def test_copy_areas_to_contract(
+    django_db_setup, admin_client, plan_unit_factory, lease_test_data
+):
+    lease = lease_test_data["lease"]
+    lease_area = lease_test_data["lease_area"]
+
+    plan_unit_factory(
+        identifier="PU1", area=1000, lease_area=lease_area, in_contract=False,
+    )
+
+    assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 0
+
+    url = reverse("lease-copy-areas-to-contract") + "?lease={}".format(lease.id)
+    response = admin_client.post(url, content_type="application/json",)
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 1

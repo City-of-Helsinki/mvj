@@ -439,3 +439,5 @@ class LeaseAreaCreateUpdateSerializer(
         )
         for plan_unit in plan_units:
             plan_unit.validate_delete()
+
+        return value
