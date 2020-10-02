@@ -7,10 +7,27 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from leasing.enums import PlotSearchTargetType
+from leasing.models import PlotSearchTarget
 
 
 @pytest.mark.django_db
-def test_plot_search_detail(django_db_setup, admin_client, plot_search_test_data):
+def test_plot_search_detail(
+    django_db_setup,
+    admin_client,
+    plan_unit_factory,
+    plot_search_test_data,
+    lease_test_data,
+):
+    # Attach plan unit for plot search
+    plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        in_contract=True,
+    )
+    PlotSearchTarget.objects.create(
+        plot_search=plot_search_test_data, plan_unit=plan_unit
+    )
 
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
 
@@ -29,10 +46,7 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
 @pytest.mark.django_db
 def test_plot_search_create_simple(
-    django_db_setup,
-    admin_client,
-    plot_search_test_data,
-    lease_test_data,
+    django_db_setup, admin_client, plot_search_test_data, lease_test_data,
 ):
     url = reverse("plotsearch-list")  # list == create
 
