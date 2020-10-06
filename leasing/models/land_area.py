@@ -360,9 +360,20 @@ class PlanUnitState(NameModel):
     In Finnish: Kaavayksikön olotila
     """
 
+    _enum_mapper_dict = {
+        "voimassa": PlanUnitStatus.PRESENT,
+        "vireillä": PlanUnitStatus.PENDING,
+    }
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plan unit state")
         verbose_name_plural = pgettext_lazy("Model name", "Plan unit states")
+
+    def to_enum(self):
+        name = self.name.lower()
+        if name in self._enum_mapper_dict:
+            return self._enum_mapper_dict[name]
+        return None
 
 
 class PlanUnitIntendedUse(NameModel):
