@@ -10,10 +10,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementIdentifier,
     LandUseAgreementType,
 )
-from leasing.serializers.decision import (
-    DecisionCreateUpdateNestedSerializer,
-    DecisionMakerSerializer,
-)
+from leasing.serializers.decision import DecisionCreateUpdateNestedSerializer
 from leasing.serializers.lease import DistrictSerializer, MunicipalitySerializer
 from users.models import User
 from users.serializers import UserSerializer
@@ -104,7 +101,6 @@ class LandUseAgreementRetrieveSerializer(
     id = serializers.ReadOnlyField()
     identifier = LandUseAgreementIdentifierSerializer(read_only=True)
     preparer = UserSerializer()
-    plan_acceptor = DecisionMakerSerializer()
     addresses = LandUseAgreementAddressSerializer(
         many=True, required=False, allow_null=True
     )
