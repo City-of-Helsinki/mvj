@@ -1,6 +1,8 @@
 import pytest
 from django.urls import reverse
 
+from leasing.enums import PlanUnitStatus
+
 
 @pytest.mark.django_db
 def test_plan_unit_list_with_identifiers(
@@ -12,11 +14,21 @@ def test_plan_unit_list_with_identifiers(
         area=1000,
         lease_area=lease_test_data["lease_area"],
         in_contract=True,
+        plan_unit_status=PlanUnitStatus.PRESENT,
+    )
+
+    # Add pending plan unit
+    plan_unit_factory(
+        identifier="PU2",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        in_contract=True,
+        plan_unit_status=PlanUnitStatus.PENDING,
     )
 
     # Add not contracted plan unit
     plan_unit_factory(
-        identifier="PU2",
+        identifier="PU3",
         area=1000,
         lease_area=lease_test_data["lease_area"],
         in_contract=False,
@@ -26,4 +38,6 @@ def test_plan_unit_list_with_identifiers(
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-    assert len(response.data["results"]) == 1
+
+    results = response.data["results"]
+    assert len(results) == 2
