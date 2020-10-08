@@ -598,6 +598,8 @@ class PlanUnitStatus(Enum):
     """
 
     PRESENT = "present"
+    PENDING = "pending"
 
     class Labels:
         PRESENT = pgettext_lazy("Plan Unit Status", "Present")
+        PENDING = pgettext_lazy("Plan Unit Status", "Pending")

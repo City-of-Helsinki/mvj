@@ -253,6 +253,7 @@ class Command(BaseCommand):
                                 "plan_unit_type": plan_unit_type,
                                 "plan_unit_state": plan_unit_state,
                                 "plan_unit_intended_use": plan_unit_intended_use,
+                                "plan_unit_status": plan_unit_state.to_enum(),
                             }
 
                             # Update or create plan unit
