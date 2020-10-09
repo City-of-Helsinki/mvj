@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from model_utils.tracker import FieldTracker
 from safedelete.models import SafeDeleteModel
 
 from field_permissions.registry import field_permissions
@@ -492,6 +493,8 @@ class PlanUnit(Land):
         default=PlanUnitStatus.PRESENT,
     )
 
+    tracker = FieldTracker()
+
     recursive_get_related_skip_relations = ["lease_area"]
 
     class Meta:
@@ -501,6 +504,11 @@ class PlanUnit(Land):
     def delete(self, *args, **kwargs):
         self.validate_delete()
         super(PlanUnit, self).delete(*args, **kwargs)
+
+    def save(self, **kwargs):
+        if self.id and not self.tracker.changed():
+            return
+        super(PlanUnit, self).save(**kwargs)
 
     def validate_delete(self):
         if (

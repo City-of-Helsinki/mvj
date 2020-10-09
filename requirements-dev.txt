@@ -22,6 +22,7 @@ faker==4.0.2              # via factory-boy
 flake8-polyfill==1.0.2    # via pep8-naming
 flake8-print==3.1.4       # via -r requirements-dev.in
 flake8==3.7.9             # via -r requirements-dev.in, flake8-polyfill, flake8-print
+importlib-metadata==2.0.0  # via pluggy, pytest
 inflection==0.3.1         # via pytest-factoryboy
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.13.0           # via -r requirements-dev.in
@@ -65,6 +66,7 @@ typed-ast==1.4.1          # via black, mypy
 typing-extensions==3.7.4.2  # via django-stubs, mypy
 wcwidth==0.1.9            # via -c requirements.txt, prompt-toolkit, pytest
 werkzeug==1.0.1           # via -r requirements-dev.in
+zipp==3.3.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
