@@ -102,21 +102,17 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
 
 
 class PlotSearchTarget(models.Model):
-
     """
-    In Finnish: Tonttihaku
+    In Finnish: Tonttihaun kohde
     """
 
+    # In Finnish: Tonttihaku
     plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
 
-    """
-    In Finnish: Kaavayksikkö
-    """
+    # In Finnish: Kaavayksikkö
     plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
 
-    """
-    In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
-    """
+    # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
         PlotSearchTargetType,
         verbose_name=_("Target type"),
