@@ -426,18 +426,3 @@ class LeaseAreaCreateUpdateSerializer(
             "geometry",
             "attachments",
         )
-
-    def validate_plan_units(self, value):
-        lease_area_id = self.context["view"].kwargs.get("pk")
-
-        # Validate deleted plan units
-        plan_units_ids = []
-        if value:
-            [plan_units_ids.append(plan_unit.get("id")) for plan_unit in value]
-        plan_units = PlanUnit.objects.filter(lease_area_id=lease_area_id).exclude(
-            id__in=plan_units_ids
-        )
-        for plan_unit in plan_units:
-            plan_unit.validate_delete()
-
-        return value
