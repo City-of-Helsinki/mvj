@@ -11,7 +11,7 @@ def test_plan_unit_detail(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
 
     url = reverse("planunitlistwithidentifiers-list")
