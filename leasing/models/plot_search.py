@@ -112,7 +112,7 @@ class PlotSearchTarget(models.Model):
     """
     In Finnish: Kaavayksikkö
     """
-    plan_unit = models.ForeignKey(PlanUnit, on_delete=models.CASCADE)
+    plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
 
     """
     In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
