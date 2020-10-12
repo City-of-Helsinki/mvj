@@ -71,6 +71,9 @@ class Land(TimeStampedModel):
         srid=4326, verbose_name=_("Geometry"), null=True, blank=True
     )
 
+    # In Finnish: Alkuperäiskappale
+    is_master = models.BooleanField(verbose_name=_("Is master?"), default=False)
+
     class Meta:
         abstract = True
 

@@ -412,6 +412,7 @@ class LeaseCopyAreasToContractView(APIView):
                             "created_at",
                             "modified_at",
                             "in_contract",
+                            "is_master",
                             "plotsearch",
                             "plotsearchtarget",
                         ]:
