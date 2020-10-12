@@ -503,10 +503,19 @@ class PlanUnit(Land):
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
 
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
         if self.id and not self.tracker.changed():
             return
-        super(PlanUnit, self).save(**kwargs)
+
+        skip_modified_update = kwargs.pop("skip_modified_update", False)
+        if skip_modified_update:
+            modified_at_field = self._meta.get_field("modified_at")
+            modified_at_field.auto_now = False
+
+        super(PlanUnit, self).save(*args, **kwargs)
+
+        if skip_modified_update:
+            modified_at_field.auto_now = True
 
 
 auditlog.register(LeaseArea)

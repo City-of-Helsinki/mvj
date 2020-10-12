@@ -23,7 +23,7 @@ def test_plot_search_detail(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
     PlotSearchTarget.objects.create(
         plot_search=plot_search_test_data, plan_unit=plan_unit
@@ -79,7 +79,7 @@ def test_plot_search_create(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
 
     data = {
@@ -126,7 +126,7 @@ def test_plot_search_update(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
 
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)

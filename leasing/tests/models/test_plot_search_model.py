@@ -37,3 +37,34 @@ def test_remove_plot_search_target_cascade_plan_unit(
 
     assert PlotSearchTarget.objects.filter(pk=plot_search_target.id).count() == 0
     assert PlanUnit.objects.filter(pk=plan_unit.id).count() == 0
+
+
+@pytest.mark.django_db
+def test_duplicate_plan_unit_on_plot_search_target_save(
+    django_db_setup,
+    plot_search_factory,
+    plot_search_target_factory,
+    lease_factory,
+    lease_area_factory,
+    plan_unit_factory,
+):
+    # Initialize data
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=29, notice_period_id=1
+    )
+    lease_area = lease_area_factory(
+        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+    )
+    plan_unit = plan_unit_factory(
+        identifier="PU1", area=1000, lease_area=lease_area, is_master=True,
+    )
+    original_plan_unit_id = plan_unit.id
+    original_plan_unit_modified_at = plan_unit.modified_at
+
+    plot_search = plot_search_factory()
+    plot_search_target = plot_search_target_factory(
+        plot_search=plot_search, plan_unit=plan_unit
+    )
+
+    assert plot_search_target.plan_unit.id != original_plan_unit_id
+    assert plot_search_target.plan_unit.modified_at == original_plan_unit_modified_at
