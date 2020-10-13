@@ -12,6 +12,7 @@ django-enumfields
 django-environ
 django-filter
 django-helusers
+django-model-utils
 django-q
 django-safedelete
 django-sanitized-dump

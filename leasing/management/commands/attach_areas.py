@@ -48,6 +48,8 @@ class Command(BaseCommand):
                 )
 
             for area in areas:
+                plan_unit_ids_handled = []
+
                 area_identifier = area.get_normalized_identifier()
 
                 if area_identifier not in lease_areas.keys():
@@ -68,14 +70,9 @@ class Command(BaseCommand):
                     .plots.exclude(in_contract=True)
                     .delete()
                 )
-                del_plan_units = (
-                    lease_areas[area_identifier]
-                    .plan_units.exclude(in_contract=True)
-                    .delete()
-                )
                 self.stdout.write(
-                    "  Cleared existing current Plots ({}) and PlanUnits ({}) not in contract".format(
-                        del_plots, del_plan_units
+                    "  Cleared existing current Plots ({}) not in contract".format(
+                        del_plots
                     )
                 )
 
@@ -256,16 +253,26 @@ class Command(BaseCommand):
                                 "plan_unit_status": plan_unit_state.to_enum(),
                             }
 
-                            # Update or create plan unit
+                            # Get or create plan unit
                             (
                                 plan_unit,
                                 plan_unit_created,
-                            ) = PlanUnit.objects.update_or_create(
+                            ) = PlanUnit.objects.get_or_create(
                                 defaults=rest_data, **match_data
                             )
+                            if not plan_unit_created:
+                                for attr, value in rest_data.items():
+                                    setattr(plan_unit, attr, value)
+                                plan_unit.save()
 
                             self.stdout.write(
                                 "Lease #{} {}: PlanUnit #{} saved".format(
                                     lease.id, lease.identifier, plan_unit.id
                                 )
                             )
+
+                            plan_unit_ids_handled.append(plan_unit.id)
+
+                PlanUnit.objects.filter(
+                    lease_area=lease_areas[area_identifier]
+                ).exclude(id__in=plan_unit_ids_handled).delete()
