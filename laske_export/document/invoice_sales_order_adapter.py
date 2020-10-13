@@ -6,7 +6,7 @@ from django.conf import settings
 from leasing.enums import InvoiceType, RentCycle
 from leasing.models.utils import get_next_business_day, is_business_day
 
-from .sales_order import BillingParty1, LineItem, OrderParty
+from .sales_order import BillingParty1, BillingParty2, LineItem, OrderParty
 
 
 class InvoiceSalesOrderAdapter:
@@ -125,28 +125,20 @@ class InvoiceSalesOrderAdapter:
 
             return invoice_row.tenant
 
-    def get_order_party_contact(self):
+    def get_contact_to_bill(self):
         tenant = self.get_first_tenant()
+        # We need a tenant and time period to find the BILLING contact
         if not tenant or not self.invoice.billing_period_start_date:
-            # TODO:
             return self.invoice.recipient
 
-        tenant_tenantcontact = tenant.get_tenant_tenantcontacts(
+        # This method returns the TENANT contact if there's no BILLING contact
+        tenant_billingcontact = tenant.get_billing_tenantcontacts(
             self.invoice.billing_period_start_date, self.invoice.billing_period_end_date
         ).first()
 
-        if tenant_tenantcontact:
-            return tenant_tenantcontact.contact
-
-        # TODO: If no tenants in rows
-
-    def get_billing_party_contact(self):
-        # Returns the billing contact if it exists, otherwise the tenant (order party) contact
-        order_party_contact = self.get_order_party_contact()
-
-        if order_party_contact and order_party_contact != self.invoice.recipient:
+        if not tenant_billingcontact:
             return self.invoice.recipient
-        return order_party_contact
+        return tenant_billingcontact.contact
 
     def get_po_number(self):
         # Simply return the first reference ("viite") we come across
@@ -272,15 +264,19 @@ class InvoiceSalesOrderAdapter:
     def set_values(self):
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
 
-        order_party_contact = self.get_order_party_contact()
+        contact_to_be_billed = self.get_contact_to_bill()
+
         order_party = OrderParty()
-        order_party.from_contact(order_party_contact)
+        order_party.from_contact(contact_to_be_billed)
         self.sales_order.order_party = order_party
 
-        billing_party_contact = self.get_billing_party_contact()
         billing_party1 = BillingParty1()
-        billing_party1.from_contact(billing_party_contact)
+        billing_party1.from_contact(contact_to_be_billed)
         self.sales_order.billing_party1 = billing_party1
+
+        billing_party2 = BillingParty2()
+        billing_party2.from_contact(contact_to_be_billed)
+        self.sales_order.billing_party2 = billing_party2
 
         self.sales_order.sales_office = self.get_sales_office()
         self.sales_order.po_number = self.get_po_number()
