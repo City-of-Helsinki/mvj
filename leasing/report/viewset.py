@@ -15,6 +15,7 @@ from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountR
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
 from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.extra_city_rent import ExtraCityRentReport
+from leasing.report.lease.index_types import IndexTypesReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
 from leasing.report.lease.lease_count_report import LeaseCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
@@ -31,6 +32,7 @@ ENABLED_REPORTS = [
     InvoicesInPeriodReport,
     LaskeInvoiceCountReport,
     LeaseCountReport,
+    IndexTypesReport,
     LeaseInvoicingDisabledReport,
     RentForecastReport,
     ReservationsReport,
