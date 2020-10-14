@@ -13,6 +13,7 @@ from leasing.report.invoice.invoice_payments import InvoicePaymentsReport
 from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
+from leasing.report.invoice.rents_paid_by_contact import RentsPaidByContactReport
 from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.extra_city_rent import ExtraCityRentReport
 from leasing.report.lease.index_types import IndexTypesReport
@@ -30,6 +31,7 @@ ENABLED_REPORTS = [
     OpenInvoicesReport,
     InvoicePaymentsReport,
     InvoicesInPeriodReport,
+    RentsPaidByContactReport,
     LaskeInvoiceCountReport,
     LeaseCountReport,
     IndexTypesReport,

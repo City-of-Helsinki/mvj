@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-13 15:05+0300\n"
+"POT-Creation-Date: 2020-10-14 15:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -286,6 +286,7 @@ msgstr "Vuokratunnus"
 #: leasing/models/land_use_agreement.py:414
 #: leasing/report/invoice/invoices_in_period.py:60
 #: leasing/report/invoice/open_invoices_report.py:47
+#: leasing/report/invoice/rents_paid_by_contact.py:29
 msgid "Due date"
 msgstr "Eräpäivä"
 
@@ -1148,9 +1149,11 @@ msgstr "Tonttityyppi"
 #: leasing/report/invoice/invoices_in_period.py:40
 #: leasing/report/invoice/laske_invoice_count_report.py:23
 #: leasing/report/invoice/open_invoices_report.py:40
+#: leasing/report/invoice/rents_paid_by_contact.py:18
 #: leasing/report/lease/decision_conditions_report.py:45
 #: leasing/report/lease/extra_city_rent.py:104
 #: leasing/report/lease/extra_city_rent.py:118
+#: leasing/report/lease/index_types.py:110
 #: leasing/report/lease/invoicing_disabled_report.py:20
 #: leasing/report/lease/lease_lists_report.py:16
 #: leasing/report/lease/lease_lists_report.py:21
@@ -1172,9 +1175,11 @@ msgstr "Alkupvm"
 #: leasing/report/invoice/invoices_in_period.py:41
 #: leasing/report/invoice/laske_invoice_count_report.py:24
 #: leasing/report/invoice/open_invoices_report.py:41
+#: leasing/report/invoice/rents_paid_by_contact.py:19
 #: leasing/report/lease/decision_conditions_report.py:46
 #: leasing/report/lease/extra_city_rent.py:105
 #: leasing/report/lease/extra_city_rent.py:119
+#: leasing/report/lease/index_types.py:113
 #: leasing/report/lease/invoicing_disabled_report.py:21
 #: leasing/report/lease/lease_lists_report.py:17
 #: leasing/report/lease/lease_lists_report.py:22
@@ -1349,6 +1354,7 @@ msgstr "Sukunimi"
 #: leasing/models/infill_development_compensation.py:23
 #: leasing/models/invoice.py:26 leasing/models/invoice.py:780
 #: leasing/models/mixins.py:20
+#: leasing/report/invoice/rents_paid_by_contact.py:24
 msgid "Name"
 msgstr "Nimi"
 
@@ -1364,6 +1370,7 @@ msgstr "Y-tunnus"
 #: leasing/report/lease/decision_conditions_report.py:57
 #: leasing/report/lease/extra_city_rent.py:112
 #: leasing/report/lease/extra_city_rent.py:116
+#: leasing/report/lease/index_types.py:100
 #: leasing/report/lease/lease_statistic_report.py:367
 #: leasing/report/lease/reservations.py:61
 msgid "Address"
@@ -1465,6 +1472,7 @@ msgid "Contract type"
 msgstr "Sopimuksen tyyppi"
 
 #: leasing/models/contract.py:52 leasing/report/lease/extra_city_rent.py:114
+#: leasing/report/lease/index_types.py:106
 #: leasing/report/lease/lease_statistic_report.py:345
 msgid "Contract number"
 msgstr "Sopimusnumero"
@@ -1557,6 +1565,7 @@ msgstr "Panttikirjan pvm"
 #: leasing/report/invoice/collaterals_report.py:28
 #: leasing/report/invoice/invoices_in_period.py:61
 #: leasing/report/invoice/open_invoices_report.py:48
+#: leasing/report/invoice/rents_paid_by_contact.py:26
 msgid "Total amount"
 msgstr "Pääoma"
 
@@ -1846,6 +1855,7 @@ msgstr "Täydennysrakentamiskorvauspäätökset"
 #: leasing/models/rent.py:984 leasing/models/rent.py:1025
 #: leasing/models/rent.py:1428 leasing/models/tenant.py:137
 #: leasing/report/lease/extra_city_rent.py:120
+#: leasing/report/lease/index_types.py:114
 msgid "Intended use"
 msgstr "Käyttötarkoitus"
 
@@ -1961,6 +1971,7 @@ msgid "Adjusted due date"
 msgstr "Eräpäivä (siirretty)"
 
 #: leasing/models/invoice.py:231
+#: leasing/report/invoice/rents_paid_by_contact.py:28
 msgid "Invoicing date"
 msgstr "Laskutuspvm"
 
@@ -1977,6 +1988,7 @@ msgstr "Laskutettu määrä"
 #: leasing/models/invoice.py:265
 #: leasing/report/invoice/invoices_in_period.py:64
 #: leasing/report/invoice/open_invoices_report.py:51
+#: leasing/report/invoice/rents_paid_by_contact.py:27
 msgid "Outstanding amount"
 msgstr "Maksamaton määrä"
 
@@ -2038,6 +2050,7 @@ msgid "Tenant"
 msgstr "Vuokralainen"
 
 #: leasing/models/invoice.py:718
+#: leasing/report/invoice/rents_paid_by_contact.py:31
 msgid "Receivable type"
 msgstr "Saamislaji"
 
@@ -2330,6 +2343,7 @@ msgstr "Maankäyttösopimuksen tyyppi"
 #: leasing/models/land_use_agreement.py:74
 #: leasing/models/land_use_agreement.py:161 leasing/models/lease.py:102
 #: leasing/models/lease.py:248 leasing/models/lease.py:394
+#: leasing/report/lease/index_types.py:103
 msgid "Municipality"
 msgstr "Kaupunki"
 
@@ -2932,7 +2946,8 @@ msgstr "Vuokran käyttötarkoitus"
 msgid "Cycle"
 msgstr "Vuokrakausi"
 
-#: leasing/models/rent.py:116 leasing/report/lease/index_types.py:33
+#: leasing/models/rent.py:116 leasing/report/lease/index_types.py:84
+#: leasing/report/lease/index_types.py:115
 msgid "Index type"
 msgstr "Indeksin tunnusnumero"
 
@@ -3399,7 +3414,7 @@ msgstr "Palautettu"
 #: leasing/report/invoice/open_invoices_report.py:46
 #: leasing/report/lease/decision_conditions_report.py:55
 #: leasing/report/lease/extra_city_rent.py:108
-#: leasing/report/lease/index_types.py:37
+#: leasing/report/lease/index_types.py:91
 #: leasing/report/lease/invoicing_disabled_report.py:19
 #: leasing/report/lease/lease_lists_report.py:20
 #: leasing/report/lease/lease_statistic_report.py:342
@@ -3416,6 +3431,7 @@ msgid ""
 msgstr "Näytä maksusuoritukset, jotka on maksettu alkupvm ja loppupvm välillä"
 
 #: leasing/report/invoice/invoice_payments.py:30
+#: leasing/report/invoice/rents_paid_by_contact.py:25
 msgid "Invoice number"
 msgstr "Laskun numero"
 
@@ -3496,6 +3512,23 @@ msgstr "Näyttää kaikki laskut joiden tila on \"avoin\""
 msgid "Grand total"
 msgstr "Kaikki yhteensä"
 
+#: leasing/report/invoice/rents_paid_by_contact.py:14
+msgid "Invoices paid by a contact"
+msgstr "Maksetut laskut per asiakasnumero"
+
+#: leasing/report/invoice/rents_paid_by_contact.py:15
+msgid "Show invoices paid by a contact"
+msgstr "Näyttää tietyn asiakkaan maksamat laskut"
+
+#: leasing/report/invoice/rents_paid_by_contact.py:20
+#: leasing/report/invoice/rents_paid_by_contact.py:23
+msgid "Contact identifier"
+msgstr "Asiakasnumero"
+
+#: leasing/report/invoice/rents_paid_by_contact.py:30
+msgid "Number of rows"
+msgstr "Rivien määrä"
+
 #: leasing/report/lease/decision_conditions_report.py:38
 msgid "Decision conditions"
 msgstr "Päätöksen ehdot"
@@ -3524,6 +3557,7 @@ msgstr ""
 "Helsingissä"
 
 #: leasing/report/lease/extra_city_rent.py:109
+#: leasing/report/lease/index_types.py:92
 msgid "Tenant name"
 msgstr "Vuokralaisen nimi"
 
@@ -3532,6 +3566,7 @@ msgid "Area identifier"
 msgstr "Kiinteistötunnus"
 
 #: leasing/report/lease/extra_city_rent.py:115
+#: leasing/report/lease/index_types.py:95
 #: leasing/report/lease/lease_statistic_report.py:362
 msgid "Lease area identifier"
 msgstr "Kohteen tunnus"
@@ -3546,13 +3581,18 @@ msgstr "Vuokralaiset"
 msgid "Total area"
 msgstr "Kokonaispinta-ala"
 
-#: leasing/report/lease/index_types.py:28
+#: leasing/report/lease/index_types.py:79
 msgid "Index type leases"
 msgstr "Indeksin tunnusnumero"
 
-#: leasing/report/lease/index_types.py:29
+#: leasing/report/lease/index_types.py:80
 msgid "Show leases with a certain index type"
 msgstr "Näyttää tietyn indeksitunnusnumeron vuokraukset"
+
+#: leasing/report/lease/index_types.py:87
+#: leasing/report/lease/lease_statistic_report.py:338
+msgid "Only active leases"
+msgstr "Vain voimassa olevat vuokraukset"
 
 #: leasing/report/lease/invoicing_disabled_report.py:15
 msgid "Leases where invoicing is disabled"
@@ -3593,10 +3633,6 @@ msgid ""
 msgstr ""
 "Näyttää tilastoraportin kaikista vuokrauksista tai jos alkupvm on annettu, "
 "niistä vuokrauksista jotka ovat alkaneet alkupäivämääränä tai sen jälkeen"
-
-#: leasing/report/lease/lease_statistic_report.py:338
-msgid "Only active leases"
-msgstr "Vain voimassa olevat vuokraukset"
 
 #: leasing/report/lease/lease_statistic_report.py:352
 msgid "Lease state"
@@ -3747,7 +3783,7 @@ msgstr "Ole hyvä ja yritä uudelleen"
 msgid "Results will be sent by email to {}"
 msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
-#: leasing/report/viewset.py:83
+#: leasing/report/viewset.py:85
 msgid "Report type not found"
 msgstr "Raporttityyppiä ei löytynyt"
 
