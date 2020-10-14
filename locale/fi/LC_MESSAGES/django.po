@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-15 11:22+0300\n"
+"POT-Creation-Date: 2020-10-15 12:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mikko Keskinen <mikko.keskinen@anders.fi>\n"
 "Language: fi\n"
@@ -1851,6 +1851,7 @@ msgstr "Täydennysrakentamiskorvauspäätökset"
 #: leasing/models/rent.py:984 leasing/models/rent.py:1025
 #: leasing/models/rent.py:1428 leasing/models/tenant.py:137
 #: leasing/report/lease/extra_city_rent.py:120
+#: leasing/report/lease/index_adjusted_rents.py:47
 #: leasing/report/lease/index_types.py:114
 msgid "Intended use"
 msgstr "Käyttötarkoitus"
@@ -2936,7 +2937,8 @@ msgstr "Vuokran käyttötarkoitus"
 msgid "Cycle"
 msgstr "Vuokrakausi"
 
-#: leasing/models/rent.py:116 leasing/report/lease/index_types.py:84
+#: leasing/models/rent.py:116 leasing/report/lease/index_adjusted_rents.py:46
+#: leasing/report/lease/index_types.py:84
 #: leasing/report/lease/index_types.py:115
 msgid "Index type"
 msgstr "Indeksin tunnusnumero"
@@ -3404,6 +3406,7 @@ msgstr "Palautettu"
 #: leasing/report/invoice/open_invoices_report.py:46
 #: leasing/report/lease/decision_conditions_report.py:55
 #: leasing/report/lease/extra_city_rent.py:108
+#: leasing/report/lease/index_adjusted_rents.py:45
 #: leasing/report/lease/index_types.py:91
 #: leasing/report/lease/invoicing_disabled_report.py:19
 #: leasing/report/lease/lease_statistic_report.py:342
@@ -3569,6 +3572,58 @@ msgstr "Vuokralaiset"
 #: leasing/report/lease/lease_statistic_report.py:379
 msgid "Total area"
 msgstr "Kokonaispinta-ala"
+
+#: leasing/report/lease/index_adjusted_rents.py:37
+msgid "Index adjusted rent change"
+msgstr "Indeksitarkistettujen vuokrien muutos"
+
+#: leasing/report/lease/index_adjusted_rents.py:38
+msgid "The percentual change of index adjusted rents between specified years"
+msgstr "Näyttää indeksitarkistettujen vuokrien vertailuvuosien välisen prosentuaalisen muutoksen"
+
+#: leasing/report/lease/index_adjusted_rents.py:41
+msgid "Year 1"
+msgstr "1. vertailuvuosi"
+
+#: leasing/report/lease/index_adjusted_rents.py:42
+msgid "Year 2"
+msgstr "2. vertailuvuosi"
+
+#: leasing/report/lease/index_adjusted_rents.py:48
+msgid "Year1 index adjusted rent start date"
+msgstr "1. vuoden vuokran alkupvm"
+
+#: leasing/report/lease/index_adjusted_rents.py:49
+msgid "Year1 index adjusted rent end date"
+msgstr "1. vuoden vuokran loppupvm"
+
+#: leasing/report/lease/index_adjusted_rents.py:50
+msgid "Year 1 rent"
+msgstr "1. vuoden vuokra (€)"
+
+#: leasing/report/lease/index_adjusted_rents.py:51
+msgid "Year 1 factor"
+msgstr "1. vuoden laskentakerroin"
+
+#: leasing/report/lease/index_adjusted_rents.py:52
+msgid "Year2 index adjusted rent start date"
+msgstr "2. vuoden vuokran alkupvm"
+
+#: leasing/report/lease/index_adjusted_rents.py:53
+msgid "Year2 index adjusted rent end date"
+msgstr "2. vuoden vuokran loppupvm"
+
+#: leasing/report/lease/index_adjusted_rents.py:54
+msgid "Year 2 rent"
+msgstr "2. vuoden vuokra (€)"
+
+#: leasing/report/lease/index_adjusted_rents.py:55
+msgid "Year 2 factor"
+msgstr "2. vuoden laskentakerroin"
+
+#: leasing/report/lease/index_adjusted_rents.py:56
+msgid "Percentual change"
+msgstr "Prosentuaalinen muutos"
 
 #: leasing/report/lease/index_types.py:79
 msgid "Index type leases"
@@ -3764,7 +3819,7 @@ msgstr "Ole hyvä ja yritä uudelleen"
 msgid "Results will be sent by email to {}"
 msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
-#: leasing/report/viewset.py:85
+#: leasing/report/viewset.py:87
 msgid "Report type not found"
 msgstr "Raporttityyppiä ei löytynyt"
 
