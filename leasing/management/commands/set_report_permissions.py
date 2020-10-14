@@ -13,6 +13,7 @@ from django.core.management.base import BaseCommand
 DEFAULT_REPORT_PERMS = {
     "invoice_payments": [5, 6, 7],
     "invoices_in_period": [5, 6, 7],
+    "rents_paid_contact": [5, 6, 7],
     "laske_invoice_count": [5, 6, 7],
     "collaterals": [5, 6, 7],
     "open_invoices": [5, 6, 7],
