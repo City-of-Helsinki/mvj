@@ -21,6 +21,7 @@ DEFAULT_REPORT_PERMS = {
     "lease_invoicing_disabled": [5, 6, 7],
     "lease_statistic": [2, 3, 4, 5, 6, 7],
     "lease_count": [2, 3, 4, 5, 6, 7],
+    "index_types": [2, 3, 4, 5, 6, 7],
     "rent_forecast": [2, 3, 4, 5, 6, 7],
     "reservations": [2, 3, 4, 5, 6, 7],
 }
