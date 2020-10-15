@@ -517,6 +517,27 @@ class PlanUnit(Land):
         if skip_modified_update:
             modified_at_field.auto_now = True
 
+    @property
+    def is_master_exist(self):
+        if self.is_master:
+            return True
+        return (
+            PlanUnit.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).count()
+            > 0
+        )
+
+    @property
+    def is_master_newer(self):
+        if not self.is_master:
+            plan_unit = PlanUnit.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).first()
+            if plan_unit:
+                return plan_unit.modified_at > self.modified_at
+        return False
+
 
 auditlog.register(LeaseArea)
 auditlog.register(LeaseAreaAddress)

@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
@@ -32,10 +33,34 @@ class PlotSearchTargetSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.ReadOnlyField()
+    is_master_plan_unit_deleted = serializers.SerializerMethodField()
+    is_master_plan_unit_newer = serializers.ReadOnlyField(
+        source="plan_unit.is_master_newer"
+    )
+    message_label = serializers.SerializerMethodField()
 
     class Meta:
         model = PlotSearchTarget
-        fields = ("id", "plan_unit", "target_type")
+        fields = (
+            "id",
+            "plan_unit",
+            "target_type",
+            "is_master_plan_unit_deleted",
+            "is_master_plan_unit_newer",
+            "message_label",
+        )
+
+    def get_is_master_plan_unit_deleted(self, obj):
+        return not obj.plan_unit.is_master_exist
+
+    def get_message_label(self, obj):
+        if not obj.plan_unit.is_master_exist:
+            return _(
+                "Master plan unit has been deleted. Please change or remove the plan unit."
+            )
+        elif obj.plan_unit.is_master_newer:
+            return _("Master plan unit has been updated. Please update the plan unit.")
+        return None
 
 
 class PlotSearchTypeSerializer(NameModelSerializer):
