@@ -1,6 +1,5 @@
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -71,6 +70,9 @@ class Land(TimeStampedModel):
     geometry = models.MultiPolygonField(
         srid=4326, verbose_name=_("Geometry"), null=True, blank=True
     )
+
+    # In Finnish: Alkuperäiskappale
+    is_master = models.BooleanField(verbose_name=_("Is master?"), default=False)
 
     class Meta:
         abstract = True
@@ -501,25 +503,19 @@ class PlanUnit(Land):
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
 
-    def delete(self, *args, **kwargs):
-        self.validate_delete()
-        super(PlanUnit, self).delete(*args, **kwargs)
-
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
         if self.id and not self.tracker.changed():
             return
-        super(PlanUnit, self).save(**kwargs)
 
-    def validate_delete(self):
-        if (
-            self.in_contract
-            and self.plotsearchtarget_set.filter(plan_unit=self).count() > 0
-        ):
-            raise ValidationError(
-                _(
-                    "Cannot remove the plan unit from the contracts because it is attached to plot search."
-                )
-            )
+        skip_modified_update = kwargs.pop("skip_modified_update", False)
+        if skip_modified_update:
+            modified_at_field = self._meta.get_field("modified_at")
+            modified_at_field.auto_now = False
+
+        super(PlanUnit, self).save(*args, **kwargs)
+
+        if skip_modified_update:
+            modified_at_field.auto_now = True
 
 
 auditlog.register(LeaseArea)

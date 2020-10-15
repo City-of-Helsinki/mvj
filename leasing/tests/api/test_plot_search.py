@@ -23,7 +23,7 @@ def test_plot_search_detail(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
     PlotSearchTarget.objects.create(
         plot_search=plot_search_test_data, plan_unit=plan_unit
@@ -79,7 +79,7 @@ def test_plot_search_create(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
 
     data = {
@@ -126,7 +126,7 @@ def test_plot_search_update(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
     )
 
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
@@ -153,56 +153,3 @@ def test_plot_search_update(
         updated_end_at
     )
     assert len(response.data["targets"]) > 0
-
-
-@pytest.mark.django_db
-def test_cannot_add_non_contracted_plan_unit(
-    django_db_setup,
-    admin_client,
-    plot_search_test_data,
-    lease_test_data,
-    user_factory,
-    plan_unit_factory,
-):
-    # Add preparer
-    user = user_factory(username="test_user")
-
-    # Add plan unit to contract
-    selected_not_in_contract_plan_unit = plan_unit_factory(
-        identifier="PU1",
-        area=1000,
-        lease_area=lease_test_data["lease_area"],
-        in_contract=False,
-    )
-
-    data = {
-        "name": plot_search_test_data.type.name,
-        "type": plot_search_test_data.type.id,
-        "subtype": plot_search_test_data.subtype.id,
-        "stage": plot_search_test_data.stage.id,
-        "preparer": user.id,
-        "begin_at": timezone.now(),
-        "end_at": timezone.now() + timezone.timedelta(days=7),
-        "targets": [
-            {
-                "plan_unit": selected_not_in_contract_plan_unit.id,
-                "target_type": PlotSearchTargetType.SEARCHABLE.value,
-            },
-        ],
-    }
-
-    create_url = reverse("plotsearch-list")
-    response = admin_client.post(
-        create_url,
-        json.dumps(data, cls=DjangoJSONEncoder),
-        content_type="application/json",
-    )
-    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
-
-    update_url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
-    response = admin_client.put(
-        update_url,
-        json.dumps(data, cls=DjangoJSONEncoder),
-        content_type="application/json",
-    )
-    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
