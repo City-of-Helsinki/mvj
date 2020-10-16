@@ -215,3 +215,62 @@ def test_plot_search_master_plan_unit_is_newer(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert response.data["targets"][0]["is_master_plan_unit_newer"]
     assert len(response.data["targets"][0]["message_label"]) > 0
+
+
+@pytest.mark.django_db
+def test_plot_search_master_plan_unit_is_deleted_change_to_new(
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    plan_unit_factory,
+):
+    # Create master plan unit
+    plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+    master_plan_unit_id = plan_unit.id
+
+    # Create second master plan unit
+    plan_unit2 = plan_unit_factory(
+        identifier="PU2",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+
+    # Create plot search target, master plan unit will be duplicated on this
+    PlotSearchTarget.objects.create(
+        plot_search=plot_search_test_data, plan_unit=plan_unit
+    )
+    duplicated_plan_unit_id = plan_unit.id
+
+    # Delete master plan unit which has duplicated to plot search target
+    PlanUnit.objects.get(pk=master_plan_unit_id).delete()
+
+    # Get plot search detail
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response = admin_client.get(url, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    # Confirm that the master plan unit has deleted
+    assert response.data["targets"][0]["is_master_plan_unit_deleted"]
+
+    # Change to new plan unit
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response.data["targets"] = [
+        {
+            "plan_unit": plan_unit2.id,
+            "target_type": PlotSearchTargetType.SEARCHABLE.value,
+        },
+    ]
+    response = admin_client.put(
+        url, data=json.dumps(response.data), content_type="application/json"
+    )
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    # Confirm that the old duplicated plan unit has been deleted
+    assert PlanUnit.objects.filter(id=duplicated_plan_unit_id).count() == 0
