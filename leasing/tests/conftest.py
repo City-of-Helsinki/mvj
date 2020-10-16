@@ -879,6 +879,7 @@ def plot_search_test_data(
     end_at = (timezone.now() + timezone.timedelta(days=7)).replace(microsecond=0)
 
     plot_search = plot_search_factory(
+        name="PS1",
         type=plot_search_type,
         subtype=plot_search_subtype,
         stage=plot_search_stage,
