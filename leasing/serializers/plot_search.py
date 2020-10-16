@@ -110,6 +110,27 @@ class PlotSearchUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
+    type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchType,
+        queryset=PlotSearchType.objects.all(),
+        related_serializer=PlotSearchTypeSerializer,
+        required=False,
+        allow_null=True,
+    )
+    subtype = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchSubtype,
+        queryset=PlotSearchSubtype.objects.all(),
+        related_serializer=PlotSearchSubtypeSerializer,
+        required=False,
+        allow_null=True,
+    )
+    stage = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchStage,
+        queryset=PlotSearchStage.objects.all(),
+        related_serializer=PlotSearchStageSerializer,
+        required=False,
+        allow_null=True,
+    )
     preparer = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
         queryset=User.objects.all(),
@@ -129,11 +150,6 @@ class PlotSearchUpdateSerializer(
         targets = None
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
-
-        for item in validated_data:
-            if PlotSearch._meta.get_field(item):
-                setattr(instance, item, validated_data[item])
-
         PlotSearchTarget.objects.filter(plot_search=instance).delete()
         if targets:
             for target in targets:
@@ -141,7 +157,11 @@ class PlotSearchUpdateSerializer(
                 PlotSearchTarget.objects.create(
                     plot_search=instance, plan_unit=d["plan_unit"]
                 )
-            instance.save()
+
+        instance = super(PlotSearchUpdateSerializer, self).update(
+            instance, validated_data
+        )
+
         return instance
 
     def validate(self, attrs):
