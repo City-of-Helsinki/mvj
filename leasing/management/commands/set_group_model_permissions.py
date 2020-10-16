@@ -676,7 +676,7 @@ DEFAULT_MODEL_PERMS = {
         1: ("view",),
         2: ("view",),
         3: ("view", "delete"),
-        4: ("view",),
+        4: ("view", "delete"),
         5: ("view",),
         6: ("view",),
         7: ("view", "delete"),
