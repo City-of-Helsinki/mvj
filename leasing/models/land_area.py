@@ -517,6 +517,14 @@ class PlanUnit(Land):
         if skip_modified_update:
             modified_at_field.auto_now = True
 
+    def get_master(self):
+        if self.is_master:
+            return self
+        else:
+            return PlanUnit.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).first()
+
     @property
     def is_master_exist(self):
         if self.is_master:
