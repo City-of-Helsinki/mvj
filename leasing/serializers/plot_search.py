@@ -4,12 +4,14 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import (
+    PlanUnit,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
 )
+from leasing.serializers.land_area import PlanUnitSerializer
 from leasing.serializers.utils import NameModelSerializer
 from users.models import User
 from users.serializers import UserSerializer
@@ -38,6 +40,7 @@ class PlotSearchTargetSerializer(
         source="plan_unit.is_master_newer"
     )
     message_label = serializers.SerializerMethodField()
+    plan_unit = PlanUnitSerializer()
 
     class Meta:
         model = PlotSearchTarget
@@ -61,6 +64,25 @@ class PlotSearchTargetSerializer(
         elif obj.plan_unit.is_master_newer:
             return _("Master plan unit has been updated. Please update the plan unit.")
         return None
+
+
+class PlotSearchTargetUpdateSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.ReadOnlyField()
+    plan_unit = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlanUnit,
+        queryset=PlanUnit.objects.all(),
+        related_serializer=PlanUnitSerializer,
+    )
+
+    class Meta:
+        model = PlotSearchTarget
+        fields = (
+            "id",
+            "plan_unit",
+            "target_type",
+        )
 
 
 class PlotSearchTypeSerializer(NameModelSerializer):
@@ -138,7 +160,7 @@ class PlotSearchUpdateSerializer(
         required=False,
         allow_null=True,
     )
-    targets = PlotSearchTargetSerializer(
+    targets = PlotSearchTargetUpdateSerializer(
         source="plotsearchtarget_set", many=True, required=False
     )
 
