@@ -181,6 +181,7 @@ def test_plot_search_master_plan_unit_is_deleted(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert not response.data["targets"][0]["master_plan_unit_id"]
     assert response.data["targets"][0]["is_master_plan_unit_deleted"]
     assert len(response.data["targets"][0]["message_label"]) > 0
 
@@ -213,6 +214,7 @@ def test_plot_search_master_plan_unit_is_newer(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.data["targets"][0]["master_plan_unit_id"] > 0
     assert response.data["targets"][0]["is_master_plan_unit_newer"]
     assert len(response.data["targets"][0]["message_label"]) > 0
 

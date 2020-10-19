@@ -35,6 +35,7 @@ class PlotSearchTargetSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.ReadOnlyField()
+    master_plan_unit_id = serializers.SerializerMethodField()
     is_master_plan_unit_deleted = serializers.SerializerMethodField()
     is_master_plan_unit_newer = serializers.ReadOnlyField(
         source="plan_unit.is_master_newer"
@@ -48,10 +49,17 @@ class PlotSearchTargetSerializer(
             "id",
             "plan_unit",
             "target_type",
+            "master_plan_unit_id",
             "is_master_plan_unit_deleted",
             "is_master_plan_unit_newer",
             "message_label",
         )
+
+    def get_master_plan_unit_id(self, obj):
+        master = obj.plan_unit.get_master()
+        if master:
+            return master.id
+        return None
 
     def get_is_master_plan_unit_deleted(self, obj):
         return not obj.plan_unit.is_master_exist
