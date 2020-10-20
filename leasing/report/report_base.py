@@ -252,7 +252,9 @@ class ReportBase:
                         field_name, "serializer_field"
                     )
                     if isinstance(field_serializer_field, ChoiceField):
-                        field_value = str(field_serializer_field.choices[field_value])
+                        field_value = str(
+                            field_serializer_field.choices.get(field_value)
+                        )
 
                     worksheet.write(row_num, column, field_value, field_format)
                     column += 1
@@ -277,7 +279,7 @@ class ReportBase:
 
 
 class AsyncReportBase(ReportBase):
-    async_task_timeout = 90  # in seconds
+    async_task_timeout = 60 * 30  # 30 min
 
     @classmethod
     def get_output_fields_metadata(cls):
