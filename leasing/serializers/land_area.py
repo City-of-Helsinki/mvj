@@ -139,10 +139,10 @@ class PlanUnitListWithIdentifiersSerializer(
     lease_identifier = serializers.CharField(
         read_only=True, source="lease_area.lease.identifier.identifier"
     )
-
     lease_area_identifier = serializers.CharField(
         read_only=True, source="lease_area.identifier"
     )
+    plan_unit_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = PlanUnit
