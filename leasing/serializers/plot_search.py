@@ -74,7 +74,7 @@ class PlotSearchTargetSerializer(
         return None
 
 
-class PlotSearchTargetUpdateSerializer(
+class PlotSearchTargetCreateUpdateSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.ReadOnlyField()
@@ -105,7 +105,7 @@ class PlotSearchListSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
-    type = PlotSearchTypeSerializer()
+    type = PlotSearchTypeSerializer(source="subtype.plot_search_type")
     subtype = PlotSearchSubtypeSerializer()
     stage = PlotSearchStageSerializer()
 
@@ -120,7 +120,6 @@ class PlotSearchRetrieveSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
-    type = PlotSearchTypeSerializer()
     subtype = PlotSearchSubtypeSerializer()
     stage = PlotSearchStageSerializer()
     preparer = UserSerializer()
@@ -140,13 +139,7 @@ class PlotSearchUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
-    type = InstanceDictPrimaryKeyRelatedField(
-        instance_class=PlotSearchType,
-        queryset=PlotSearchType.objects.all(),
-        related_serializer=PlotSearchTypeSerializer,
-        required=False,
-        allow_null=True,
-    )
+    type = PlotSearchTypeSerializer(source="subtype.plot_search_type", read_only=True)
     subtype = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchSubtype,
         queryset=PlotSearchSubtype.objects.all(),
@@ -168,7 +161,7 @@ class PlotSearchUpdateSerializer(
         required=False,
         allow_null=True,
     )
-    targets = PlotSearchTargetUpdateSerializer(
+    targets = PlotSearchTargetCreateUpdateSerializer(
         source="plotsearchtarget_set", many=True, required=False
     )
 

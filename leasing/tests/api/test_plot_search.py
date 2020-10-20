@@ -4,6 +4,7 @@ import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from rest_framework import serializers
 
 from leasing.enums import PlotSearchTargetType
@@ -51,7 +52,7 @@ def test_plot_search_create_simple(
     url = reverse("plotsearch-list")  # list == create
 
     data = {
-        "name": plot_search_test_data.type.name,
+        "name": get_random_string(),
     }
 
     response = admin_client.post(
@@ -83,8 +84,7 @@ def test_plot_search_create(
     )
 
     data = {
-        "name": plot_search_test_data.type.name,
-        "type": plot_search_test_data.type.id,
+        "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparer": user.id,
@@ -102,6 +102,7 @@ def test_plot_search_create(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
     )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+    assert response.data["type"]
     assert len(response.data["targets"]) > 0
 
 
@@ -132,8 +133,7 @@ def test_plot_search_update(
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
 
     data = {
-        "name": plot_search_test_data.type.name,
-        "type": plot_search_test_data.type.id,
+        "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparer": user.id,
@@ -152,6 +152,7 @@ def test_plot_search_update(
     assert response.data["end_at"] == serializers.DateTimeField().to_representation(
         updated_end_at
     )
+    assert response.data["type"]
     assert len(response.data["targets"]) > 0
 
 
