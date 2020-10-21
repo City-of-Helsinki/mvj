@@ -9,12 +9,7 @@ from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField
 
-from leasing.enums import (
-    LeaseAreaAttachmentType,
-    LeaseState,
-    SubventionType,
-    TenantContactType,
-)
+from leasing.enums import LeaseAreaAttachmentType, LeaseState, TenantContactType
 from leasing.models import Lease
 from leasing.report.report_base import AsyncReportBase
 
@@ -25,6 +20,7 @@ RESIDENTIAL_INTENDED_USE_IDS = [
     13,
 ]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
+RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 
 def get_type(obj):
@@ -167,18 +163,9 @@ def get_total_area(obj):
 
 
 def get_re_lease(obj):
-    year = datetime.date.today().year
-    year_start = datetime.date(year, 1, 1)
-    year_end = datetime.date(year, 12, 31)
-
-    for rent in obj.rents.all():
-        if (rent.end_date is None or rent.end_date >= year_start) and (
-            rent.start_date is None or rent.start_date <= year_end
-        ):
-            for ra in rent.rent_adjustments.all():
-                if ra.subvention_type == SubventionType.RE_LEASE:
-                    return True
-
+    for decision in obj.decisions.all():
+        if decision.type_id == RE_LEASE_DECISION_TYPE_ID:
+            return True
     return False
 
 
