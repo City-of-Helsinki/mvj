@@ -24,6 +24,8 @@ class PlotSearchSubtype(NameModel):
     In Finnish: Haun alatyyppi
     """
 
+    plot_search_type = models.ForeignKey(PlotSearchType, on_delete=models.CASCADE)
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search subtype")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search subtypes")
@@ -54,17 +56,7 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
         on_delete=models.PROTECT,
     )
 
-    # In Finnish: Hakutyyppi
-    type = models.ForeignKey(
-        PlotSearchType,
-        verbose_name=_("Type"),
-        related_name="+",
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
-    )
-
-    # In Finnish: Hakutyyppi
+    # In Finnish: Haun tyyppi
     subtype = models.ForeignKey(
         PlotSearchSubtype,
         verbose_name=_("Subtype"),

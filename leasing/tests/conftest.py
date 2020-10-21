@@ -871,7 +871,9 @@ def plot_search_test_data(
     user_factory,
 ):
     plot_search_type = plot_search_type_factory(name="Test type")
-    plot_search_subtype = plot_search_subtype_factory(name="Test subtype")
+    plot_search_subtype = plot_search_subtype_factory(
+        name="Test subtype", plot_search_type=plot_search_type
+    )
     plot_search_stage = plot_search_stage_factory(name="Test stage")
     preparer = user_factory(username="test_preparer")
 
@@ -880,7 +882,6 @@ def plot_search_test_data(
 
     plot_search = plot_search_factory(
         name="PS1",
-        type=plot_search_type,
         subtype=plot_search_subtype,
         stage=plot_search_stage,
         preparer=preparer,

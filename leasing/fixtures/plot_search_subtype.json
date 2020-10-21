@@ -3,14 +3,208 @@
     "model": "leasing.PlotSearchSubtype",
     "pk": 1,
     "fields": {
-        "name": "Hinta- ja laatukilpailu"
+      "plot_search_type_id": 1,
+      "name": "Yleinen asuntotonttien varauskierros"
     }
   },
   {
     "model": "leasing.PlotSearchSubtype",
     "pk": 2,
     "fields": {
-        "name": "Tontti- ja korkeus"
+      "plot_search_type_id": 1,
+      "name": "Laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 3,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Hintakilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 4,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Hinta- ja laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 5,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Muu kilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 6,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Tonttihaku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 7,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Jatkuva haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 8,
+    "fields": {
+      "plot_search_type_id": 1,
+      "name": "Vapaa haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 9,
+    "fields": {
+      "plot_search_type_id": 2,
+      "name": "Vireillä oleva omakotitonttihaku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 10,
+    "fields": {
+      "plot_search_type_id": 2,
+      "name": "Hintakilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 11,
+    "fields": {
+      "plot_search_type_id": 2,
+      "name": "Jatkuva haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 12,
+    "fields": {
+      "plot_search_type_id": 2,
+      "name": "Vapaa haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 13,
+    "fields": {
+      "plot_search_type_id": 2,
+      "name": "Muu kilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 14,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 15,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Hintakilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 16,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Hinta- ja laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 17,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Muu kilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 18,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Nimetty tonttihaku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 19,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Jatkuva haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 20,
+    "fields": {
+      "plot_search_type_id": 3,
+      "name": "Vapaa haku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 21,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 22,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Hintakilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 23,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Hinta- ja laatukilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 24,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Muu kilpailu"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 25,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Nimetty aluehaku"
+    }
+  },
+  {
+    "model": "leasing.PlotSearchSubtype",
+    "pk": 26,
+    "fields": {
+      "plot_search_type_id": 4,
+      "name": "Jatkuva haku"
     }
   }
 ]
