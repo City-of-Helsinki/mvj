@@ -104,7 +104,7 @@ AREA_IMPORT_TYPES = {
         FROM tonttiosasto.vuokrausalue_paa AS a
         WHERE vuokratunnus IS NOT NULL
         AND geom IS NOT NULL
-        AND olotila LIKE "Voimassa"
+        AND olotila LIKE 'Voimassa'
         AND kunta IS NOT NULL
         AND sijaintialue IS NOT NULL
         AND ryhma IS NOT NULL
@@ -382,8 +382,8 @@ class AreaImporter(BaseImporter):
                 avg_row_time = sum_row_time / count
 
             self.stdout.write(
-                "Updated area count {}. Execution time: {0:.2f}s "
-                "(Row time avg: {0:.2f}s, min: {0:.2f}s, max: {0:.2f}s)\n".format(
+                "Updated area count {}. Execution time: {:.2f}s "
+                "(Row time avg: {:.2f}s, min: {:.2f}s, max: {:.2f}s)\n".format(
                     count, sum_row_time, avg_row_time, min_row_time, max_row_time
                 )
             )
@@ -397,7 +397,7 @@ class AreaImporter(BaseImporter):
             stale.delete()
             stale_time_end = perf_counter()
             self.stdout.write(
-                "Removed stale count {}. Execution time: {0:.2f}s\n".format(
+                "Removed stale count {}. Execution time: {:.2f}s\n".format(
                     stale_count, stale_time_end - stale_time_start
                 )
             )
@@ -409,7 +409,7 @@ class AreaImporter(BaseImporter):
 
             type_end = perf_counter()
             self.stdout.write(
-                'The area import of type "{}" is completed. Execution time: {0:.2f}s\n'.format(
+                'The area import of type "{}" is completed. Execution time: {:.2f}s\n'.format(
                     area_import_type, (type_end - type_start)
                 )
             )
