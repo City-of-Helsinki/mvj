@@ -43,6 +43,7 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.data["count"] > 0
 
 
 @pytest.mark.django_db
@@ -102,7 +103,6 @@ def test_plot_search_create(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
     )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
-    assert response.data["type"]
     assert len(response.data["targets"]) > 0
 
 
@@ -152,7 +152,6 @@ def test_plot_search_update(
     assert response.data["end_at"] == serializers.DateTimeField().to_representation(
         updated_end_at
     )
-    assert response.data["type"]
     assert len(response.data["targets"]) > 0
 
 
@@ -270,6 +269,7 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
             "target_type": PlotSearchTargetType.SEARCHABLE.value,
         },
     ]
+    response.data.pop("type")
     response = admin_client.put(
         url, data=json.dumps(response.data), content_type="application/json"
     )
