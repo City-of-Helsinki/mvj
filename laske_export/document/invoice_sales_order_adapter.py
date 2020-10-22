@@ -6,7 +6,7 @@ from django.conf import settings
 from leasing.enums import InvoiceType, RentCycle
 from leasing.models.utils import get_next_business_day, is_business_day
 
-from .sales_order import BillingParty1, BillingParty2, LineItem, OrderParty
+from .sales_order import BillingParty1, LineItem, OrderParty
 
 
 class InvoiceSalesOrderAdapter:
@@ -273,10 +273,6 @@ class InvoiceSalesOrderAdapter:
         billing_party1 = BillingParty1()
         billing_party1.from_contact(contact_to_be_billed)
         self.sales_order.billing_party1 = billing_party1
-
-        billing_party2 = BillingParty2()
-        billing_party2.from_contact(contact_to_be_billed)
-        self.sales_order.billing_party2 = billing_party2
 
         self.sales_order.sales_office = self.get_sales_office()
         self.sales_order.po_number = self.get_po_number()
