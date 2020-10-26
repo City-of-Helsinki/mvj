@@ -43,6 +43,7 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.data["count"] > 0
 
 
 @pytest.mark.django_db
@@ -92,7 +93,7 @@ def test_plot_search_create(
         "end_at": timezone.now() + timezone.timedelta(days=7),
         "targets": [
             {
-                "plan_unit": plan_unit.id,
+                "plan_unit_id": plan_unit.id,
                 "target_type": PlotSearchTargetType.SEARCHABLE.value,
             },
         ],
@@ -102,7 +103,6 @@ def test_plot_search_create(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
     )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
-    assert response.data["type"]
     assert len(response.data["targets"]) > 0
 
 
@@ -122,9 +122,20 @@ def test_plot_search_update(
     # Add preparer
     user = user_factory(username="test_user")
 
-    # Add master plan unit
+    # Add exist target
     plan_unit = plan_unit_factory(
         identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+    PlotSearchTarget.objects.create(
+        plot_search=plot_search_test_data, plan_unit=plan_unit
+    )
+
+    # Add new master plan unit
+    new_master_plan_unit = plan_unit_factory(
+        identifier="PU2",
         area=1000,
         lease_area=lease_test_data["lease_area"],
         is_master=True,
@@ -141,8 +152,8 @@ def test_plot_search_update(
         "end_at": updated_end_at,
         "targets": [
             {
-                "plan_unit": plan_unit.id,
-                "target_type": PlotSearchTargetType.SEARCHABLE.value,
+                "plan_unit_id": new_master_plan_unit.id,
+                "target_type": PlotSearchTargetType.DIRECT_RESERVATION.value,
             },
         ],
     }
@@ -152,8 +163,7 @@ def test_plot_search_update(
     assert response.data["end_at"] == serializers.DateTimeField().to_representation(
         updated_end_at
     )
-    assert response.data["type"]
-    assert len(response.data["targets"]) > 0
+    assert len(response.data["targets"]) == 1
 
 
 @pytest.mark.django_db
@@ -228,18 +238,24 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
     lease_test_data,
     plan_unit_factory,
 ):
-    # Create master plan unit
-    plan_unit = plan_unit_factory(
+    # Create base master plan units
+    master_plan_unit = plan_unit_factory(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
         is_master=True,
     )
-    master_plan_unit_id = plan_unit.id
-
-    # Create second master plan unit
-    plan_unit2 = plan_unit_factory(
+    master_plan_unit_id = master_plan_unit.id
+    master_plan_unit2 = plan_unit_factory(
         identifier="PU2",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+
+    # Create new master plan unit
+    master_plan_unit3 = plan_unit_factory(
+        identifier="PU3",
         area=1000,
         lease_area=lease_test_data["lease_area"],
         is_master=True,
@@ -247,9 +263,12 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
 
     # Create plot search target, master plan unit will be duplicated on this
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=plan_unit
+        plot_search=plot_search_test_data, plan_unit=master_plan_unit
     )
-    duplicated_plan_unit_id = plan_unit.id
+    duplicated_plan_unit_id = master_plan_unit.id
+    plot_search_target2 = PlotSearchTarget.objects.create(
+        plot_search=plot_search_test_data, plan_unit=master_plan_unit2
+    )
 
     # Delete master plan unit which has duplicated to plot search target
     PlanUnit.objects.get(pk=master_plan_unit_id).delete()
@@ -264,16 +283,25 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
 
     # Change to new plan unit
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response.data.pop("type")
+    response.data.pop("targets")
     response.data["targets"] = [
         {
-            "plan_unit": plan_unit2.id,
+            "id": plot_search_target2.id,
+            "plan_unit_id": plot_search_target2.plan_unit.id,
+            "target_type": plot_search_target2.target_type.value,
+        },
+        {
+            "plan_unit_id": master_plan_unit3.id,
             "target_type": PlotSearchTargetType.SEARCHABLE.value,
         },
     ]
+
     response = admin_client.put(
         url, data=json.dumps(response.data), content_type="application/json"
     )
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert len(response.data["targets"]) == 2
 
     # Confirm that the old duplicated plan unit has been deleted
     assert PlanUnit.objects.filter(id=duplicated_plan_unit_id).count() == 0

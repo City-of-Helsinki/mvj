@@ -77,18 +77,16 @@ class PlotSearchTargetSerializer(
 class PlotSearchTargetCreateUpdateSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
-    id = serializers.ReadOnlyField()
-    plan_unit = InstanceDictPrimaryKeyRelatedField(
-        instance_class=PlanUnit,
-        queryset=PlanUnit.objects.all(),
-        related_serializer=PlanUnitSerializer,
-    )
+    id = serializers.IntegerField(required=False)
+    plan_unit = PlanUnitSerializer(read_only=True)
+    plan_unit_id = serializers.IntegerField()
 
     class Meta:
         model = PlotSearchTarget
         fields = (
             "id",
             "plan_unit",
+            "plan_unit_id",
             "target_type",
         )
 
@@ -99,13 +97,13 @@ class PlotSearchTypeSerializer(NameModelSerializer):
         fields = "__all__"
 
 
-class PlotSearchListSerializer(
+class PlotSearchSerializerBase(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
-    type = PlotSearchTypeSerializer(source="subtype.plot_search_type")
+    type = PlotSearchTypeSerializer(source="subtype.plot_search_type", read_only=True)
     subtype = PlotSearchSubtypeSerializer()
     stage = PlotSearchStageSerializer()
 
@@ -114,14 +112,11 @@ class PlotSearchListSerializer(
         fields = "__all__"
 
 
-class PlotSearchRetrieveSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    serializers.ModelSerializer,
-):
-    id = serializers.ReadOnlyField()
-    subtype = PlotSearchSubtypeSerializer()
-    stage = PlotSearchStageSerializer()
+class PlotSearchListSerializer(PlotSearchSerializerBase):
+    pass
+
+
+class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
     preparer = UserSerializer()
     targets = PlotSearchTargetSerializer(
         source="plotsearchtarget_set", many=True, read_only=True
@@ -139,7 +134,9 @@ class PlotSearchUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
-    type = PlotSearchTypeSerializer(source="subtype.plot_search_type", read_only=True)
+    type = serializers.PrimaryKeyRelatedField(
+        queryset=PlotSearchType.objects.all(), required=False
+    )
     subtype = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchSubtype,
         queryset=PlotSearchSubtype.objects.all(),
@@ -173,27 +170,38 @@ class PlotSearchUpdateSerializer(
         targets = None
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
-        PlotSearchTarget.objects.filter(plot_search=instance).delete()
+
         if targets:
+            exist_target_ids = []
             for target in targets:
-                d = dict(target)
-                PlotSearchTarget.objects.create(
-                    plot_search=instance, plan_unit=d["plan_unit"]
-                )
+                target_type = target.get("target_type")
+
+                target_id = target.get("id")
+                if target_id:
+                    plot_search_target = PlotSearchTarget.objects.get(
+                        id=target_id, plot_search=instance
+                    )
+                    plot_search_target.target_type = target_type
+                    plot_search_target.save()
+                else:
+                    plan_unit_id = target.get("plan_unit_id")
+                    plan_unit = PlanUnit.objects.get(id=plan_unit_id)
+                    plot_search_target = PlotSearchTarget.objects.create(
+                        plot_search=instance,
+                        plan_unit=plan_unit,
+                        target_type=target_type,
+                    )
+
+                exist_target_ids.append(plot_search_target.id)
+            PlotSearchTarget.objects.filter(plot_search=instance).exclude(
+                id__in=exist_target_ids
+            ).delete()
 
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
         )
 
         return instance
-
-    def validate(self, attrs):
-        targets = attrs.get("plotsearchtarget_set")
-        if targets:
-            for target in targets:
-                instance = PlotSearchTarget(**target)
-                instance.clean()
-        return attrs
 
 
 class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
@@ -210,9 +218,10 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
 
         if targets:
             for target in targets:
+                plan_unit = PlanUnit.objects.get(id=target.get("plan_unit_id"))
                 plot_search_target = PlotSearchTarget.objects.create(
                     plot_search=plot_search,
-                    plan_unit=target.get("plan_unit"),
+                    plan_unit=plan_unit,
                     target_type=target.get("target_type"),
                 )
                 plot_search_target.save()
