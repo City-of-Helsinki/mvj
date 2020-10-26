@@ -34,6 +34,10 @@ def test_plot_search_detail(
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert (
+        response.data["targets"][0]["lease_identifier"]
+        == lease_test_data["lease"].identifier.identifier
+    )
 
 
 @pytest.mark.django_db
