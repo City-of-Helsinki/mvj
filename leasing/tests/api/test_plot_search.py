@@ -175,6 +175,52 @@ def test_plot_search_update(
 
 
 @pytest.mark.django_db
+def test_plot_search_delete_target(
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    user_factory,
+    plan_unit_factory,
+):
+    url = reverse(
+        "plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
+    )  # detail == update
+
+    # Add preparer
+    user = user_factory(username="test_user")
+
+    # Add exist target
+    plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+    PlotSearchTarget.objects.create(
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
+    )
+
+    updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
+
+    data = {
+        "name": get_random_string(),
+        "subtype": plot_search_test_data.subtype.id,
+        "stage": plot_search_test_data.stage.id,
+        "preparer": user.id,
+        "begin_at": plot_search_test_data.begin_at,
+        "end_at": updated_end_at,
+        "targets": [],
+    }
+
+    response = admin_client.put(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert len(response.data["targets"]) == 0
+
+
+@pytest.mark.django_db
 def test_plot_search_master_plan_unit_is_deleted(
     django_db_setup,
     admin_client,
