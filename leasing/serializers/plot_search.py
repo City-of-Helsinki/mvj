@@ -171,8 +171,8 @@ class PlotSearchUpdateSerializer(
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
 
+        exist_target_ids = []
         if targets:
-            exist_target_ids = []
             for target in targets:
                 target_type = target.get("target_type")
 
@@ -193,9 +193,9 @@ class PlotSearchUpdateSerializer(
                     )
 
                 exist_target_ids.append(plot_search_target.id)
-            PlotSearchTarget.objects.filter(plot_search=instance).exclude(
-                id__in=exist_target_ids
-            ).delete()
+        PlotSearchTarget.objects.filter(plot_search=instance).exclude(
+            id__in=exist_target_ids
+        ).delete()
 
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
