@@ -566,6 +566,7 @@ def lease_test_data(
     tenant_factory,
     tenant_contact_factory,
     lease_area_factory,
+    lease_area_address_factory,
     plot_factory,
     plan_unit_factory,
 ):
@@ -626,6 +627,11 @@ def lease_test_data(
     lease.tenants.set(tenants)
     lease_area = lease_area_factory(
         lease=lease, identifier="12345", area=1000, section_area=1000,
+    )
+
+    lease_area_address_factory(lease_area=lease_area, address="Test street 1")
+    lease_area_address_factory(
+        lease_area=lease_area, address="Primary street 1", is_primary=True
     )
 
     return {

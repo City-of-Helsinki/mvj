@@ -35,6 +35,21 @@ class PlotSearchTargetSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.ReadOnlyField()
+
+    lease_identifier = serializers.ReadOnlyField(
+        source="plan_unit.lease_area.lease.identifier.identifier"
+    )
+    lease_hitas = serializers.ReadOnlyField(
+        source="plan_unit.lease_area.lease.hitas.name"
+    )
+    lease_address = serializers.SerializerMethodField()
+    lease_financing = serializers.ReadOnlyField(
+        source="plan_unit.lease_area.lease.financing.name"
+    )
+    lease_management = serializers.ReadOnlyField(
+        source="plan_unit.lease_area.lease.management.name"
+    )
+
     master_plan_unit_id = serializers.SerializerMethodField()
     is_master_plan_unit_deleted = serializers.SerializerMethodField()
     is_master_plan_unit_newer = serializers.ReadOnlyField(
@@ -53,7 +68,21 @@ class PlotSearchTargetSerializer(
             "is_master_plan_unit_deleted",
             "is_master_plan_unit_newer",
             "message_label",
+            "lease_identifier",
+            "lease_hitas",
+            "lease_address",
+            "lease_financing",
+            "lease_management",
         )
+
+    def get_lease_address(self, obj):
+        lease_address = (
+            obj.plan_unit.lease_area.addresses.all()
+            .order_by("-is_primary")
+            .values("address")
+            .first()
+        )
+        return lease_address
 
     def get_master_plan_unit_id(self, obj):
         master = obj.plan_unit.get_master()
