@@ -1,6 +1,7 @@
 import pytest
 from django.utils.crypto import get_random_string
 
+from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit, PlotSearchTarget
 
 
@@ -29,7 +30,9 @@ def test_remove_plot_search_target_cascade_plan_unit(
     )
     plot_search = plot_search_factory()
     plot_search_target = plot_search_target_factory(
-        plot_search=plot_search, plan_unit=plan_unit
+        plot_search=plot_search,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     # Remove plot search target
@@ -63,7 +66,9 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
 
     plot_search = plot_search_factory()
     plot_search_target = plot_search_target_factory(
-        plot_search=plot_search, plan_unit=plan_unit
+        plot_search=plot_search,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     assert plot_search_target.plan_unit.id != original_plan_unit_id

@@ -27,7 +27,9 @@ def test_plot_search_detail(
         is_master=True,
     )
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=plan_unit
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
@@ -134,7 +136,9 @@ def test_plot_search_update(
         is_master=True,
     )
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=plan_unit
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     # Add new master plan unit
@@ -187,7 +191,9 @@ def test_plot_search_master_plan_unit_is_deleted(
     )
     master_plan_unit_id = plan_unit.id
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=plan_unit
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     # Delete master plan unit
@@ -218,7 +224,9 @@ def test_plot_search_master_plan_unit_is_newer(
     )
     master_plan_unit_id = plan_unit.id
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=plan_unit
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     # Update master plan unit
@@ -267,11 +275,15 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
 
     # Create plot search target, master plan unit will be duplicated on this
     PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=master_plan_unit
+        plot_search=plot_search_test_data,
+        plan_unit=master_plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
     duplicated_plan_unit_id = master_plan_unit.id
     plot_search_target2 = PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data, plan_unit=master_plan_unit2
+        plot_search=plot_search_test_data,
+        plan_unit=master_plan_unit2,
+        target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
     # Delete master plan unit which has duplicated to plot search target
