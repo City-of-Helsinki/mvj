@@ -106,8 +106,5 @@ class PlotSearchTarget(models.Model):
 
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
-        PlotSearchTargetType,
-        verbose_name=_("Target type"),
-        default=PlotSearchTargetType.SEARCHABLE,
-        max_length=30,
+        PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
