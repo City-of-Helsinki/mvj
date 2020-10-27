@@ -41,7 +41,7 @@ class PlotSearchTargetSerializer(
         source="plan_unit.is_master_newer"
     )
     message_label = serializers.SerializerMethodField()
-    plan_unit = PlanUnitSerializer()
+    plan_unit = PlanUnitSerializer(read_only=True)
 
     class Meta:
         model = PlotSearchTarget
