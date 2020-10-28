@@ -145,6 +145,7 @@ INSTALLED_APPS = [
     "constance",
     "constance.backends.database",
     "sanitized_dump",
+    "utils",
 ]
 
 if DEBUG:

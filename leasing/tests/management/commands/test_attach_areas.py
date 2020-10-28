@@ -108,7 +108,11 @@ def test_plan_unit_updates_modified_at(
     )
 
     plan_unit = plan_unit_factory(
-        area=1000, identifier="91-28-239-3", in_contract=False, lease_area=lease_area,
+        area=1000,
+        identifier="91-28-239-3",
+        in_contract=False,
+        lease_area=lease_area,
+        is_master=True,
     )
 
     # The field modified_at changes on update

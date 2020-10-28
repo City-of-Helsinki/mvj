@@ -61,6 +61,7 @@ class PlanUnitSerializer(
             "area",
             "section_area",
             "in_contract",
+            "is_master",
             "plot_division_identifier",
             "plot_division_date_of_approval",
             "plot_division_effective_date",
@@ -86,24 +87,28 @@ class PlanUnitCreateUpdateSerializer(
         instance_class=PlanUnitType,
         queryset=PlanUnitType.objects.filter(),
         related_serializer=PlanUnitTypeSerializer,
+        allow_null=True,
         required=False,
     )
     plan_unit_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState,
         queryset=PlanUnitState.objects.filter(),
         related_serializer=PlanUnitStateSerializer,
+        allow_null=True,
         required=False,
     )
     plan_unit_intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse,
         queryset=PlanUnitIntendedUse.objects.filter(),
         related_serializer=PlanUnitIntendedUseSerializer,
+        allow_null=True,
         required=False,
     )
     plot_division_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotDivisionState,
         queryset=PlotDivisionState.objects.filter(),
         related_serializer=PlotDivisionStateSerializer,
+        allow_null=True,
         required=False,
     )
 
@@ -115,6 +120,7 @@ class PlanUnitCreateUpdateSerializer(
             "area",
             "section_area",
             "in_contract",
+            "is_master",
             "plot_division_identifier",
             "plot_division_date_of_approval",
             "plot_division_effective_date",
@@ -137,10 +143,10 @@ class PlanUnitListWithIdentifiersSerializer(
     lease_identifier = serializers.CharField(
         read_only=True, source="lease_area.lease.identifier.identifier"
     )
-
     lease_area_identifier = serializers.CharField(
         read_only=True, source="lease_area.identifier"
     )
+    plan_unit_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = PlanUnit
@@ -426,18 +432,3 @@ class LeaseAreaCreateUpdateSerializer(
             "geometry",
             "attachments",
         )
-
-    def validate_plan_units(self, value):
-        lease_area_id = self.context["view"].kwargs.get("pk")
-
-        # Validate deleted plan units
-        plan_units_ids = []
-        if value:
-            [plan_units_ids.append(plan_unit.get("id")) for plan_unit in value]
-        plan_units = PlanUnit.objects.filter(lease_area_id=lease_area_id).exclude(
-            id__in=plan_units_ids
-        )
-        for plan_unit in plan_units:
-            plan_unit.validate_delete()
-
-        return value

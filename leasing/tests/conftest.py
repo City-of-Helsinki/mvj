@@ -566,6 +566,7 @@ def lease_test_data(
     tenant_factory,
     tenant_contact_factory,
     lease_area_factory,
+    lease_area_address_factory,
     plot_factory,
     plan_unit_factory,
 ):
@@ -626,6 +627,11 @@ def lease_test_data(
     lease.tenants.set(tenants)
     lease_area = lease_area_factory(
         lease=lease, identifier="12345", area=1000, section_area=1000,
+    )
+
+    lease_area_address_factory(lease_area=lease_area, address="Test street 1")
+    lease_area_address_factory(
+        lease_area=lease_area, address="Primary street 1", is_primary=True
     )
 
     return {
@@ -871,7 +877,9 @@ def plot_search_test_data(
     user_factory,
 ):
     plot_search_type = plot_search_type_factory(name="Test type")
-    plot_search_subtype = plot_search_subtype_factory(name="Test subtype")
+    plot_search_subtype = plot_search_subtype_factory(
+        name="Test subtype", plot_search_type=plot_search_type
+    )
     plot_search_stage = plot_search_stage_factory(name="Test stage")
     preparer = user_factory(username="test_preparer")
 
@@ -879,7 +887,7 @@ def plot_search_test_data(
     end_at = (timezone.now() + timezone.timedelta(days=7)).replace(microsecond=0)
 
     plot_search = plot_search_factory(
-        type=plot_search_type,
+        name="PS1",
         subtype=plot_search_subtype,
         stage=plot_search_stage,
         preparer=preparer,

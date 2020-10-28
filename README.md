@@ -161,6 +161,8 @@ protected by permission checks on a different URL.
 
 * Run `pytest`
 
+## Update translation files
+* Run `python manage.py app_makemessages`
 
 ## Management commands
 

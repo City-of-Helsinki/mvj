@@ -13,6 +13,7 @@ def test_plan_unit_list_with_identifiers(
         identifier="PU1",
         area=1000,
         lease_area=lease_test_data["lease_area"],
+        is_master=False,
         in_contract=True,
         plan_unit_status=PlanUnitStatus.PRESENT,
     )
@@ -22,7 +23,8 @@ def test_plan_unit_list_with_identifiers(
         identifier="PU2",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=True,
+        is_master=True,
+        in_contract=False,
         plan_unit_status=PlanUnitStatus.PENDING,
     )
 
@@ -31,7 +33,7 @@ def test_plan_unit_list_with_identifiers(
         identifier="PU3",
         area=1000,
         lease_area=lease_test_data["lease_area"],
-        in_contract=False,
+        is_master=False,
     )
 
     url = reverse("planunitlistwithidentifiers-list")
@@ -40,4 +42,4 @@ def test_plan_unit_list_with_identifiers(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     results = response.data["results"]
-    assert len(results) == 2
+    assert len(results) == 1

@@ -13,14 +13,17 @@ from django.core.management.base import BaseCommand
 DEFAULT_REPORT_PERMS = {
     "invoice_payments": [5, 6, 7],
     "invoices_in_period": [5, 6, 7],
+    "rents_paid_contact": [5, 6, 7],
     "laske_invoice_count": [5, 6, 7],
     "collaterals": [5, 6, 7],
     "open_invoices": [5, 6, 7],
     "decision_conditions": [2, 3, 4, 5, 6, 7],
     "extra_city_rent": [2, 3, 4, 5, 6, 7],
+    "index_adjusted_rent_change": [2, 3, 4, 5, 6, 7],
     "lease_invoicing_disabled": [5, 6, 7],
     "lease_statistic": [2, 3, 4, 5, 6, 7],
     "lease_count": [2, 3, 4, 5, 6, 7],
+    "index_types": [2, 3, 4, 5, 6, 7],
     "rent_forecast": [2, 3, 4, 5, 6, 7],
     "reservations": [2, 3, 4, 5, 6, 7],
 }

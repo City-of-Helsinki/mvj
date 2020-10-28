@@ -137,7 +137,7 @@ class Command(BaseCommand):
                             "lease_area": lease_areas[area_identifier],
                             "type": PlotType[intersect_area.type.value.upper()],
                             "identifier": intersect_area.get_denormalized_identifier(),
-                            "in_contract": False,
+                            "is_master": True,
                         }
                         rest_data = {
                             "area": float(intersect_area.metadata.get("area")),
@@ -231,7 +231,7 @@ class Command(BaseCommand):
                             match_data = {
                                 "lease_area": lease_areas[area_identifier],
                                 "identifier": intersect_area.get_denormalized_identifier(),
-                                "in_contract": False,
+                                "is_master": True,
                             }
                             rest_data = {
                                 "area": float(intersect_area.metadata.get("area")),

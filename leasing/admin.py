@@ -654,10 +654,12 @@ class PlanUnitAdmin(FieldPermissionsModelAdmin):
 
 
 class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
+    list_display = ("name",)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        return qs.select_related("type", "subtype", "stage",)
+        return qs.select_related("subtype", "stage",)
 
 
 class VatAdmin(admin.ModelAdmin):

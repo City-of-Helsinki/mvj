@@ -456,7 +456,12 @@ class Rent(TimeStampedSafeDeleteModel):
                     y_value=self.y_value,
                 )
 
-                contract_amount.amount = index_calculation.calculate()
+                # There are some internal, no-cost INDEX rents which have no IndexType.
+                # For them we simply return the amount without index correction.
+                try:
+                    contract_amount.amount = index_calculation.calculate()
+                except NotImplementedError:
+                    pass
 
                 for note in index_calculation.notes:
                     contract_amount.add_note(note)
