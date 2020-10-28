@@ -87,24 +87,28 @@ class PlanUnitCreateUpdateSerializer(
         instance_class=PlanUnitType,
         queryset=PlanUnitType.objects.filter(),
         related_serializer=PlanUnitTypeSerializer,
+        allow_null=True,
         required=False,
     )
     plan_unit_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState,
         queryset=PlanUnitState.objects.filter(),
         related_serializer=PlanUnitStateSerializer,
+        allow_null=True,
         required=False,
     )
     plan_unit_intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse,
         queryset=PlanUnitIntendedUse.objects.filter(),
         related_serializer=PlanUnitIntendedUseSerializer,
+        allow_null=True,
         required=False,
     )
     plot_division_state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotDivisionState,
         queryset=PlotDivisionState.objects.filter(),
         related_serializer=PlotDivisionStateSerializer,
+        allow_null=True,
         required=False,
     )
 
