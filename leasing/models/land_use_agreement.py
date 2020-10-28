@@ -411,16 +411,24 @@ class LandUseAgreementCondition(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Valvontapvm
-    due_date = models.DateField(verbose_name=_("Due date"), null=True, blank=True)
+    supervision_date = models.DateField(
+        verbose_name=_("Supervision date"), null=True, blank=True
+    )
 
     # In Finnish: Valvottu pvm
-    sent_date = models.DateField(verbose_name=_("Sent date"), null=True, blank=True)
+    supervised_date = models.DateField(
+        verbose_name=_("Supervised date"), null=True, blank=True
+    )
 
     # In Finnish: Kommentti
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
 
 class LandUseAgreementLitigant(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Osapuoli
+    """
+
     land_use_agreement = models.ForeignKey(
         LandUseAgreement,
         verbose_name=_("Land use agreement"),
@@ -439,37 +447,38 @@ class LandUseAgreementLitigant(TimeStampedSafeDeleteModel):
         verbose_name=_("Section"), null=True, blank=True, max_length=255
     )
 
+    contacts = models.ManyToManyField(
+        Contact,
+        through="leasing.LandUseAgreementLitigantContact",
+        related_name="litigants",
+    )
+
+    recursive_get_related_skip_relations = ["land_use_agreement", "contacts"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Land use agreement litigant")
-        verbose_name_plural = pgettext_lazy("Model name", "Land use agreement litigant")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement litigants"
+        )
 
 
 class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
-
     land_use_agreement_litigant = models.ForeignKey(
         LandUseAgreementLitigant,
         verbose_name=_("Land use agreement litigant"),
-        related_name="litigant_contacts",
         on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Asiakas
+    contact = models.ForeignKey(
+        Contact, verbose_name=_("Contact"), on_delete=models.PROTECT,
     )
 
     # In Finnish: Kontaktin tyyppi
     type = EnumField(
         LandUseAgreementLitigantContactType,
         verbose_name=_("Contact type"),
-        null=True,
-        blank=True,
         max_length=30,
-    )
-
-    # In Finnish: Asiakas
-    contact = models.ForeignKey(
-        Contact,
-        verbose_name=_("Contact"),
-        related_name="land_use_agreement",
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
     )
 
     # In Finnish: Alkupäivämäärä
@@ -478,9 +487,18 @@ class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
     # In Finnish: Loppupäivämäärä
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
+    recursive_get_related_skip_relations = ["land_use_agreement_litigant"]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Land use agreement litigant")
-        verbose_name_plural = pgettext_lazy("Model name", "Land use agreement litigant")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement litigants"
+        )
+
+    def __str__(self):
+        return "LandUseAgreementLitigantContact id: {} contact: {} period: {} - {}".format(
+            self.id, self.contact, self.start_date, self.end_date
+        )
 
 
 class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):

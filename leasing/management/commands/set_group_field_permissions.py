@@ -491,6 +491,46 @@ CUSTOM_FIELD_PERMS = {
             7: "change",
         }
     },
+    "landuseagreement": {
+        "landuseagreementlitigant": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "change",
+            5: "view",
+            6: "change",
+            7: "change",
+        },
+        "landuseagreementaddress": {
+            1: "change",
+            2: "change",
+            3: "change",
+            4: "change",
+            5: "change",
+            6: "change",
+            7: "change",
+        },
+        "landuseagreementdecision": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "change",
+            5: "view",
+            6: "view",
+            7: "change",
+        },
+    },
+    "landuseagreementlitigant": {
+        "landuseagreementlitigantcontact": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "change",
+            5: "view",
+            6: "change",
+            7: "change",
+        },
+    },
 }
 
 
