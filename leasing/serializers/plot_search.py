@@ -164,7 +164,7 @@ class PlotSearchUpdateSerializer(
 ):
     id = serializers.ReadOnlyField()
     type = serializers.PrimaryKeyRelatedField(
-        queryset=PlotSearchType.objects.all(), required=False
+        queryset=PlotSearchType.objects.all(), required=False, allow_null=True
     )
     subtype = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchSubtype,
@@ -196,6 +196,9 @@ class PlotSearchUpdateSerializer(
         fields = "__all__"
 
     def update(self, instance, validated_data):
+        if "type" in validated_data:
+            validated_data.pop("type")
+
         targets = None
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
@@ -239,6 +242,9 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
+        if "type" in validated_data:
+            validated_data.pop("type")
+
         targets = None
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
