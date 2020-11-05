@@ -8,7 +8,7 @@ from enumfields import EnumField
 from leasing.enums import AreaType
 from leasing.models.utils import denormalize_identifier, normalize_identifier
 
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from .mixins import NameModel, TimeStampedModel
 
 
 class AreaSource(NameModel):
@@ -21,7 +21,7 @@ class AreaSource(NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Area source")
 
 
-class Area(TimeStampedSafeDeleteModel):
+class Area(TimeStampedModel):
     """
     In Finnish: Alue
     """
