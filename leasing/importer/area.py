@@ -104,7 +104,7 @@ AREA_IMPORT_TYPES = {
         FROM tonttiosasto.vuokrausalue_paa AS a
         WHERE vuokratunnus IS NOT NULL
         AND geom IS NOT NULL
-        AND olotila LIKE 'Voimassa'
+        AND NOT UPPER(olotila) LIKE 'PÄÄTTYNYT'
         AND kunta IS NOT NULL
         AND sijaintialue IS NOT NULL
         AND ryhma IS NOT NULL
