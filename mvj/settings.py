@@ -137,6 +137,7 @@ INSTALLED_APPS = [
     "django_countries",
     "anymail",
     "users",
+    "forms",
     "leasing",
     "laske_export",
     "field_permissions",
