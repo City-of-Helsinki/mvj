@@ -13,6 +13,7 @@ django-environ
 django-filter
 django-helusers
 django-model-utils
+django-modeltranslation
 django-q
 django-safedelete
 django-sanitized-dump
