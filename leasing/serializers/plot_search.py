@@ -218,13 +218,16 @@ class PlotSearchUpdateSerializer(
                 else:
                     plan_unit_id = target.get("plan_unit_id")
                     plan_unit = PlanUnit.objects.get(id=plan_unit_id)
-                    plot_search_target = PlotSearchTarget.objects.create(
+                    (
+                        plot_search_target,
+                        created,
+                    ) = PlotSearchTarget.objects.update_or_create(
                         plot_search=instance,
                         plan_unit=plan_unit,
-                        target_type=target_type,
+                        defaults={"target_type": target_type},
                     )
-
                 exist_target_ids.append(plot_search_target.id)
+
         PlotSearchTarget.objects.filter(plot_search=instance).exclude(
             id__in=exist_target_ids
         ).delete()
