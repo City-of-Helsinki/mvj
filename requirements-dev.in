@@ -7,6 +7,7 @@ django-stubs
 # "type: ignore" can be removed from couple of files in the batchrun.
 #djangorestframework-stubs
 black
+debugpy
 flake8
 flake8-print
 ipython
