@@ -19,4 +19,12 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
+
+    if (
+        os.environ.get("RUN_MAIN") or os.environ.get("WERKZEUG_RUN_MAIN")
+    ) and os.environ.get("VSCODE_DEBUGGER", False):
+        import debugpy
+
+        debugpy.listen(("0.0.0.0", 5678))
+
     execute_from_command_line(sys.argv)

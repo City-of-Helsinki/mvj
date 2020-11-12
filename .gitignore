@@ -4,6 +4,7 @@
 .DS_Store
 /local_settings.py
 /.env
+/*.env.yaml
 /.venv
 /.cache/
 /.pytest_cache/
