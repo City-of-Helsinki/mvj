@@ -69,7 +69,7 @@ class Party(FieldGroup):
     info_city = Field(name="InfoCity", validators=[MaxLengthValidator(35)])
     info_postalcode = Field(name="InfoPostalcode", validators=[MaxLengthValidator(9)])
 
-    def from_contact(self, contact):
+    def from_contact(self, contact):  # NOQA C901 'Party.from_contact' is too complex
         if not contact:
             return
 
@@ -93,8 +93,12 @@ class Party(FieldGroup):
             n += 1
         else:
             for i in range(0, len(name), 35):
-                setattr(self, "priority_name{}".format(n), name[i : i + 35])
-                setattr(self, "info_name{}".format(n), name[i : i + 35])
+                name_text_line = name[i : i + 35]
+                # If only one character would be inserted on a line (e.g. len(name) == 36), just skip it
+                if len(name[i : i + 35]) == 1:
+                    name_text_line = ""
+                setattr(self, "priority_name{}".format(n), name_text_line)
+                setattr(self, "info_name{}".format(n), name_text_line)
                 n += 1
 
         # Add care of to the priority name overwriting part of the name if necessary
@@ -105,8 +109,12 @@ class Party(FieldGroup):
                 n = 4
 
             for i in range(0, len(care_of), 35):
-                setattr(self, "priority_name{}".format(n), care_of[i : i + 35])
-                setattr(self, "info_name{}".format(n), care_of[i : i + 35])
+                care_of_text_line = care_of[i : i + 35]
+                # As above, skip one character lines
+                if len(care_of[i : i + 35]) == 1:
+                    care_of_text_line = ""
+                setattr(self, "priority_name{}".format(n), care_of_text_line)
+                setattr(self, "info_name{}".format(n), care_of_text_line)
                 n += 1
                 if n >= 5:
                     break
