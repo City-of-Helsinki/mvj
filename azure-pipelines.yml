@@ -39,6 +39,7 @@ steps:
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
 - script: |
+    apt install libgdal20
     python -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt -r requirements-dev.txt
     pip install unittest-xml-reporting
