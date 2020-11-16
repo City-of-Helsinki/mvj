@@ -52,6 +52,7 @@ class PlanUnitSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
+    plan_unit_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = PlanUnit
@@ -71,6 +72,7 @@ class PlanUnitSerializer(
             "detailed_plan_latest_processing_date_note",
             "plan_unit_type",
             "plan_unit_state",
+            "plan_unit_status",
             "plan_unit_intended_use",
             "geometry",
         )
