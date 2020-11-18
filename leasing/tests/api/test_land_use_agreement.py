@@ -60,6 +60,15 @@ def test_get_land_use_agreement(
     assert response.data.get("state") == land_use_agreement_test_data.state
     assert response.data.get("addresses")[0].get("address") == "Testikatu 1"
     assert response.data.get("contracts")[0].get("contract_number") == "A123"
+    assert (
+        response.data.get("conditions")[0].get("description")
+        == "test_condition_description"
+    )
+    assert response.data.get("decisions")[0].get("reference_number") == "1234"
+    response_litigants = response.data.get("litigants")
+    assert len(response_litigants) == 2
+    contact_set = response_litigants[0].get("landuseagreementlitigantcontact_set")
+    assert "Litigant First" in contact_set[0].get("contact")["first_name"]
 
 
 @pytest.mark.django_db
