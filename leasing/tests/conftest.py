@@ -67,9 +67,14 @@ from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
+    LandUseAgreementCondition,
+    LandUseAgreementConditionType,
+    LandUseAgreementDecision,
     LandUseAgreementDefinition,
     LandUseAgreementIdentifier,
     LandUseAgreementInvoice,
+    LandUseAgreementLitigant,
+    LandUseAgreementLitigantContact,
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
@@ -353,6 +358,36 @@ class LandUseAgreementIdentifierFactory(factory.DjangoModelFactory):
 class LandUseAgreementAddressFactory(factory.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementAddress
+
+
+@register
+class LandUseAgreementDecisionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementDecision
+
+
+@register
+class LandUseAgreementLitigantFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementLitigant
+
+
+@register
+class LandUseAgreementLitigantContactFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementLitigantContact
+
+
+@register
+class LandUseAgreementConditionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementCondition
+
+
+@register
+class LandUseAgreementConditionTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementConditionType
 
 
 @register
@@ -822,11 +857,17 @@ def land_use_agreement_test_data(
     land_use_agreement_status_factory,
     land_use_agreement_definition_factory,
     land_use_agreement_address_factory,
+    land_use_agreement_decision_factory,
+    land_use_agreement_litigant_factory,
+    land_use_agreement_litigant_contact_factory,
+    land_use_agreement_condition_factory,
+    land_use_agreement_condition_type_factory,
     user_factory,
     decision_maker_factory,
     contract_factory,
     municipality_factory,
     district_factory,
+    contact_factory,
 ):
     municipality = municipality_factory(name="Helsinki", identifier=10)
     district = district_factory(
@@ -864,6 +905,56 @@ def land_use_agreement_test_data(
     contract_factory(
         land_use_agreement=land_use_agreement, type_id=1, contract_number="A123"
     )
+    land_use_agreement_decision_factory(
+        land_use_agreement=land_use_agreement,
+        reference_number="1234",
+        decision_maker=decision_maker_factory(name="test_decision_maker"),
+    )
+    land_use_agreement_condition_factory(
+        land_use_agreement=land_use_agreement,
+        type=land_use_agreement_condition_type_factory(name="test_condition"),
+        description="test_condition_description",
+    )
+
+    contacts = [
+        contact_factory(
+            first_name="Litigant First 1",
+            last_name="Litigant Last 1",
+            type=ContactType.PERSON,
+        ),
+        contact_factory(
+            first_name="Litigant First 2",
+            last_name="Litigant Last 2",
+            type=ContactType.PERSON,
+        ),
+    ]
+    litigants = [
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+            share_numerator=1,
+            share_denominator=1,
+        ),
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+            share_numerator=1,
+            share_denominator=1,
+        ),
+    ]
+
+    land_use_agreement_litigant_contact_factory(
+        type=TenantContactType.TENANT,
+        land_use_agreement_litigant=litigants[0],
+        contact=contacts[0],
+        start_date=timezone.now().replace(year=2019).date(),
+    ),
+    land_use_agreement_litigant_contact_factory(
+        type=TenantContactType.TENANT,
+        land_use_agreement_litigant=litigants[1],
+        contact=contacts[1],
+        start_date=timezone.now().replace(year=2019).date(),
+    ),
+
+    land_use_agreement.litigants.set(litigants)
 
     return land_use_agreement
 
