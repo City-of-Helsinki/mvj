@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-28 10:45+0200\n"
+"POT-Creation-Date: 2020-11-23 11:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1797,9 +1797,6 @@ msgctxt "Model name"
 msgid "Land use agreement addresses"
 msgstr "Maankäyttösopimus osoitteet"
 
-msgid "Sent date"
-msgstr "Lähetyspvm"
-
 msgid "Numerator"
 msgstr "Jaettava"
 
@@ -1810,14 +1807,18 @@ msgctxt "Model name"
 msgid "Land use agreement litigant"
 msgstr "Maankäyttösopimuksen osapuolet"
 
+msgctxt "Model name"
+msgid "Land use agreement litigants"
+msgstr "Maankäyttösopimuksen osapuolet"
+
 msgid "Land use agreement litigant"
 msgstr "Maankäyttösopimuksen osapuoli"
 
-msgid "Contact type"
-msgstr "Yhteystiedon tyyppi"
-
 msgid "Contact"
 msgstr "Yhteystieto"
+
+msgid "Contact type"
+msgstr "Yhteystiedon tyyppi"
 
 msgid "Compensation amount"
 msgstr "Korvausinvestoinnit"
@@ -1830,6 +1831,9 @@ msgstr "Allekirjoitettava mennessä"
 
 msgid " date"
 msgstr " päivä"
+
+msgid "Sent date"
+msgstr "Lähetyspvm"
 
 msgctxt "Model name"
 msgid "Lease type"
@@ -2827,13 +2831,11 @@ msgstr ""
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Ei voi olla sama vuokraus"
 
-msgid ""
-"Master plan unit has been deleted. Please change or remove the plan unit."
-msgstr ""
-"Alkuperäinen kaavayksikkö on poistettu. Muuta tai poista tämä kaavayksikkö."
+msgid "The target information has changed!"
+msgstr "Kohteen tiedot ovat muuttuneet!"
 
-msgid "Master plan unit has been updated. Please update the plan unit."
-msgstr "Alkuperäinen kaavayksikkö on päivitetty. Päivitä valittu kaavayksikkö."
+msgid "The target has been removed from the system!"
+msgstr "Kohde on poistunut järjestelmästä!"
 
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr "Alkuvuosivuokran loppu pitää olla sama kuin vuokrakauden loppu"
