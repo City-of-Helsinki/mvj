@@ -95,9 +95,9 @@ class PlotSearchTargetSerializer(
 
     def get_message_label(self, obj):
         if not obj.plan_unit.is_master_exist:
-            return _("The target information has changed!")
-        elif obj.plan_unit.is_master_newer:
             return _("The target has been removed from the system!")
+        elif obj.plan_unit.is_master_newer:
+            return _("The target information has changed!")
         return None
 
 
