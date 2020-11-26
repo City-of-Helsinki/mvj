@@ -68,7 +68,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
     LandUseAgreementCondition,
-    LandUseAgreementConditionType,
+    LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
     LandUseAgreementDefinition,
     LandUseAgreementIdentifier,
@@ -385,9 +385,9 @@ class LandUseAgreementConditionFactory(factory.DjangoModelFactory):
 
 
 @register
-class LandUseAgreementConditionTypeFactory(factory.DjangoModelFactory):
+class LandUseAgreementConditionFormOfManagementFactory(factory.DjangoModelFactory):
     class Meta:
-        model = LandUseAgreementConditionType
+        model = LandUseAgreementConditionFormOfManagement
 
 
 @register
@@ -861,7 +861,7 @@ def land_use_agreement_test_data(
     land_use_agreement_litigant_factory,
     land_use_agreement_litigant_contact_factory,
     land_use_agreement_condition_factory,
-    land_use_agreement_condition_type_factory,
+    land_use_agreement_condition_form_of_management_factory,
     user_factory,
     decision_maker_factory,
     contract_factory,
@@ -912,8 +912,15 @@ def land_use_agreement_test_data(
     )
     land_use_agreement_condition_factory(
         land_use_agreement=land_use_agreement,
-        type=land_use_agreement_condition_type_factory(name="test_condition"),
-        description="test_condition_description",
+        form_of_management=land_use_agreement_condition_form_of_management_factory(
+            name="ARA"
+        ),
+        subvention_amount=115000,
+        compensation_pc=35,
+        obligated_area=1000,
+        actualized_area=800,
+        supervision_date=datetime.date(year=2021, month=1, day=1),
+        supervised_date=datetime.date(year=2020, month=1, day=1),
     )
 
     contacts = [
@@ -929,16 +936,8 @@ def land_use_agreement_test_data(
         ),
     ]
     litigants = [
-        land_use_agreement_litigant_factory(
-            land_use_agreement=land_use_agreement,
-            share_numerator=1,
-            share_denominator=1,
-        ),
-        land_use_agreement_litigant_factory(
-            land_use_agreement=land_use_agreement,
-            share_numerator=1,
-            share_denominator=1,
-        ),
+        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
+        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
     ]
 
     land_use_agreement_litigant_contact_factory(

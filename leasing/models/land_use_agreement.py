@@ -320,6 +320,18 @@ class LandUseAgreementEstate(NameModel):
     )
 
 
+class LandUseAgreementDecisionType(NameModel):
+    """
+    In Finnish: Maankäyttösopimuspäätöksen tyyppi
+    """
+
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Land use agreement decision type")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement decision types"
+        )
+
+
 class LandUseAgreementDecision(TimeStampedSafeDeleteModel):
     """
     In Finnish: Maankäyttösopimuspäätös
@@ -357,10 +369,84 @@ class LandUseAgreementDecision(TimeStampedSafeDeleteModel):
         verbose_name=_("Section"), null=True, blank=True, max_length=255
     )
 
+    # In Finnish: Maankäyttösopimuspäätöksen tyyppi
+    type = models.ForeignKey(
+        LandUseAgreementDecisionType,
+        verbose_name=_("Type"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Selite
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Land use agreement decision")
         verbose_name_plural = pgettext_lazy(
             "Model name", "Land use agreement decisions"
+        )
+
+
+class LandUseAgreementDecisionConditionType(NameModel):
+    """
+    In Finnish: Maankäyttösopimuspäätöksen ehtotyyppi
+    """
+
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy(
+            "Model name", "Land use agreement decision condition type"
+        )
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement decision condition types"
+        )
+
+
+class LandUseAgreementDecisionCondition(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Maankäyttösopimuspäätöksen ehto
+    """
+
+    # In Finnish: Päätös
+    decision = models.ForeignKey(
+        LandUseAgreementDecision,
+        verbose_name=_("Decision"),
+        related_name="conditions",
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Ehtotyyppi
+    type = models.ForeignKey(
+        LandUseAgreementDecisionConditionType,
+        verbose_name=_("Type"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Valvontapäivämäärä
+    supervision_date = models.DateField(
+        verbose_name=_("Supervision date"), null=True, blank=True
+    )
+
+    # In Finnish: Valvottu päivämäärä
+    supervised_date = models.DateField(
+        verbose_name=_("Supervised date"), null=True, blank=True
+    )
+
+    # In Finnish: Selite
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["decision"]
+
+    class Meta:
+        verbose_name = pgettext_lazy(
+            "Model name", "Land use agreement decision condition"
+        )
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement decision conditions"
         )
 
 
@@ -382,9 +468,9 @@ class LandUseAgreementAddress(AbstractAddress):
         )
 
 
-class LandUseAgreementConditionType(NameModel):
+class LandUseAgreementConditionFormOfManagement(NameModel):
     """
-    In Finnish: Maankäyttösopimuksen ehdon tyyppi
+    In Finnish: Maankäyttösopimuksen ehdon hallintamuoto
     """
 
 
@@ -401,27 +487,36 @@ class LandUseAgreementCondition(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Maankäyttösopimuksen ehdon tyyppi
-    type = models.ForeignKey(
-        LandUseAgreementConditionType,
+    form_of_management = models.ForeignKey(
+        LandUseAgreementConditionFormOfManagement,
         verbose_name=_("Form of management"),
         related_name="+",
-        null=True,
-        blank=True,
         on_delete=models.PROTECT,
     )
 
-    # In Finnish: Valvontapvm
-    supervision_date = models.DateField(
-        verbose_name=_("Supervision date"), null=True, blank=True
+    # In Finnish: Velvoite k-m2
+    obligated_area = models.PositiveIntegerField(
+        verbose_name=_("Obligated area (f-m2)")
     )
+
+    # In Finnish: Toteutunut k-m2
+    actualized_area = models.PositiveIntegerField(
+        verbose_name=_("Actualized area (f-m2)")
+    )
+
+    # In Finnish: Subventio
+    subvention_amount = models.PositiveIntegerField(verbose_name=_("Subvention amount"))
+
+    # In Finnish: Korvaus %
+    compensation_pc = models.PositiveSmallIntegerField(
+        verbose_name=_("Compensation percent")
+    )
+
+    # In Finnish: Valvottava pvm
+    supervision_date = models.DateField(verbose_name=_("Supervision date"))
 
     # In Finnish: Valvottu pvm
-    supervised_date = models.DateField(
-        verbose_name=_("Supervised date"), null=True, blank=True
-    )
-
-    # In Finnish: Kommentti
-    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+    supervised_date = models.DateField(verbose_name=_("Supervised date"))
 
 
 class LandUseAgreementLitigant(TimeStampedSafeDeleteModel):
@@ -435,12 +530,6 @@ class LandUseAgreementLitigant(TimeStampedSafeDeleteModel):
         related_name="litigants",
         on_delete=models.CASCADE,
     )
-
-    # In Finnish: Jaettava / Osoittaja
-    share_numerator = models.PositiveIntegerField(verbose_name=_("Numerator"))
-
-    # In Finnish: Jakaja / Nimittäjä
-    share_denominator = models.PositiveIntegerField(verbose_name=_("Denominator"))
 
     # In Finnish: Viite
     reference = models.CharField(
