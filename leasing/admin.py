@@ -94,7 +94,11 @@ from leasing.models.land_area import (
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
-    LandUseAgreementConditionType,
+    LandUseAgreementConditionFormOfManagement,
+    LandUseAgreementDecision,
+    LandUseAgreementDecisionCondition,
+    LandUseAgreementDecisionConditionType,
+    LandUseAgreementDecisionType,
     LandUseAgreementDefinition,
     LandUseAgreementStatus,
     LandUseAgreementType,
@@ -706,6 +710,17 @@ class LandUseAgreementAddressInline(admin.TabularInline):
     extra = 0
 
 
+class LandUseAgreementDecisionConditionInline(
+    FieldPermissionsAdminMixin, admin.StackedInline
+):
+    model = LandUseAgreementDecisionCondition
+    extra = 0
+
+
+class LandUseAgreementDecisionAdmin(admin.ModelAdmin):
+    inlines = [LandUseAgreementDecisionConditionInline]
+
+
 class LandUseAgreementAdmin(admin.ModelAdmin):
     inlines = [LandUseAgreementAddressInline]
 
@@ -781,5 +796,8 @@ admin.site.register(Vat, VatAdmin)
 admin.site.register(LandUseAgreementType, NameAdmin)
 admin.site.register(LandUseAgreementStatus, NameAdmin)
 admin.site.register(LandUseAgreementDefinition, NameAdmin)
-admin.site.register(LandUseAgreementConditionType, NameAdmin)
+admin.site.register(LandUseAgreementDecisionType, NameAdmin)
+admin.site.register(LandUseAgreementConditionFormOfManagement, NameAdmin)
+admin.site.register(LandUseAgreementDecisionConditionType, NameAdmin)
+admin.site.register(LandUseAgreementDecision, LandUseAgreementDecisionAdmin)
 admin.site.register(LandUseAgreement, LandUseAgreementAdmin)

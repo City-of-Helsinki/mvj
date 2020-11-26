@@ -7,8 +7,11 @@ from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
     LandUseAgreementCondition,
-    LandUseAgreementConditionType,
+    LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
+    LandUseAgreementDecisionCondition,
+    LandUseAgreementDecisionConditionType,
+    LandUseAgreementDecisionType,
     LandUseAgreementEstate,
     LandUseAgreementIdentifier,
     LandUseAgreementLitigant,
@@ -25,7 +28,11 @@ from users.models import User
 from users.serializers import UserSerializer
 
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
-from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
+from .utils import (
+    InstanceDictPrimaryKeyRelatedField,
+    NameModelSerializer,
+    UpdateNestedMixin,
+)
 
 
 class LandUseAgreementTypeSerializer(
@@ -36,33 +43,49 @@ class LandUseAgreementTypeSerializer(
         fields = "__all__"
 
 
-class LandUseAgreementConditionTypeSerializer(serializers.ModelSerializer):
+class LandUseAgreementConditionFormOfManagementSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LandUseAgreementConditionType
+        model = LandUseAgreementConditionFormOfManagement
         fields = "__all__"
 
 
 class LandUseAgreementConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandUseAgreementCondition
-        fields = ("id", "type", "supervision_date", "supervised_date", "description")
+        fields = (
+            "id",
+            "form_of_management",
+            "obligated_area",
+            "actualized_area",
+            "subvention_amount",
+            "compensation_pc",
+            "supervision_date",
+            "supervised_date",
+        )
 
 
 class LandUseAgreementConditionCreateUpdateSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
-    type = InstanceDictPrimaryKeyRelatedField(
-        instance_class=LandUseAgreementConditionType,
-        queryset=LandUseAgreementConditionType.objects.all(),
-        related_serializer=LandUseAgreementConditionTypeSerializer,
-        required=False,
-        allow_null=True,
+    form_of_management = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementConditionFormOfManagement,
+        queryset=LandUseAgreementConditionFormOfManagement.objects.all(),
+        related_serializer=LandUseAgreementConditionFormOfManagementSerializer,
     )
 
     class Meta:
         model = LandUseAgreementCondition
-        fields = ("id", "type", "supervision_date", "supervised_date", "description")
+        fields = (
+            "id",
+            "form_of_management",
+            "obligated_area",
+            "actualized_area",
+            "subvention_amount",
+            "compensation_pc",
+            "supervision_date",
+            "supervised_date",
+        )
 
 
 class LandUseAgreementIdentifierSerializer(serializers.ModelSerializer):
@@ -85,10 +108,90 @@ class LandUseAgreementAddressSerializer(
         fields = ("id", "address", "postal_code", "city", "is_primary")
 
 
+class LandUseAgreementDecisionConditionTypeSerializer(NameModelSerializer):
+    class Meta:
+        model = LandUseAgreementDecisionConditionType
+        fields = "__all__"
+
+
+class LandUseAgreementDecisionConditionSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LandUseAgreementDecisionCondition
+        fields = ("id", "type", "supervision_date", "supervised_date", "description")
+
+
+class LandUseAgreementDecisionConditionCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+    type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementDecisionConditionType,
+        queryset=LandUseAgreementDecisionConditionType.objects.all(),
+        related_serializer=LandUseAgreementDecisionConditionTypeSerializer,
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = LandUseAgreementDecisionCondition
+        fields = ("id", "type", "supervision_date", "supervised_date", "description")
+
+
+class LandUseAgreementDecisionTypeSerializer(
+    EnumSupportSerializerMixin, NameModelSerializer
+):
+    class Meta:
+        model = LandUseAgreementDecisionType
+        fields = "__all__"
+
+
 class LandUseAgreementDecisionSerializer(
     UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
+    type = LandUseAgreementDecisionTypeSerializer(required=False, allow_null=True)
+    conditions = LandUseAgreementDecisionConditionSerializer(
+        many=True, required=False, allow_null=True
+    )
+
+    class Meta:
+        model = LandUseAgreementDecision
+        fields = (
+            "id",
+            "reference_number",
+            "decision_maker",
+            "decision_date",
+            "section",
+            "type",
+            "conditions",
+            "description",
+        )
+
+
+class LandUseAgreementDecisionCreateUpdateNestedSerializer(
+    UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    """This is used when the decision is added or updated inside a land use agreement
+
+    The land use agreement is not included here, but set via the UpdateNestedMixin
+    in LandUseAgreementCreateUpdateSerializer.
+    """
+
+    id = serializers.IntegerField(required=False)
+    type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementDecisionType,
+        queryset=LandUseAgreementDecisionType.objects.all(),
+        related_serializer=LandUseAgreementDecisionTypeSerializer,
+        required=False,
+        allow_null=True,
+    )
+    conditions = LandUseAgreementDecisionConditionCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
     decision_maker = InstanceDictPrimaryKeyRelatedField(
         instance_class=DecisionMaker,
         queryset=DecisionMaker.objects.all(),
@@ -105,6 +208,9 @@ class LandUseAgreementDecisionSerializer(
             "decision_maker",
             "decision_date",
             "section",
+            "type",
+            "description",
+            "conditions",
         )
 
 
@@ -160,8 +266,6 @@ class LandUseAgreementLitigantSerializer(
         model = LandUseAgreementLitigant
         fields = (
             "id",
-            "share_numerator",
-            "share_denominator",
             "reference",
             "landuseagreementlitigantcontact_set",
         )
@@ -182,8 +286,6 @@ class LandUseAgreementLitigantCreateUpdateSerializer(
         model = LandUseAgreementLitigant
         fields = (
             "id",
-            "share_numerator",
-            "share_denominator",
             "reference",
             "landuseagreementlitigantcontact_set",
         )
@@ -292,7 +394,7 @@ class LandUseAgreementUpdateSerializer(
 ):
     id = serializers.ReadOnlyField()
     identifier = LandUseAgreementIdentifierSerializer(read_only=True)
-    decisions = LandUseAgreementDecisionSerializer(
+    decisions = LandUseAgreementDecisionCreateUpdateNestedSerializer(
         many=True, required=False, allow_null=True
     )
     contracts = ContractCreateUpdateSerializer(
