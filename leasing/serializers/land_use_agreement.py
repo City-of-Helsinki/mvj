@@ -217,9 +217,21 @@ class LandUseAgreementDecisionCreateUpdateNestedSerializer(
 class LandUseAgreementEstateSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
+    id = serializers.ReadOnlyField()
+
     class Meta:
         model = LandUseAgreementEstate
-        fields = ("estate_id",)
+        fields = ("id", "estate_id")
+
+
+class LandUseAgreementEstateCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LandUseAgreementEstate
+        fields = ("id", "estate_id")
 
 
 class LandUseAgreementLitigantContactSerializer(
@@ -407,7 +419,7 @@ class LandUseAgreementUpdateSerializer(
         required=False,
         allow_null=True,
     )
-    estate_ids = LandUseAgreementEstateSerializer(
+    estate_ids = LandUseAgreementEstateCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
     addresses = LandUseAgreementAddressSerializer(
