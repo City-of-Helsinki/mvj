@@ -108,6 +108,11 @@ ROOT_URLCONF = "mvj.urls"
 WSGI_APPLICATION = "mvj.wsgi.application"
 
 LANGUAGE_CODE = "fi"
+LANGUAGES = [
+    ("fi", _("Finnish")),
+    ("sv", _("Swedish")),
+    ("en", _("English")),
+]
 TIME_ZONE = "Europe/Helsinki"
 USE_I18N = True
 USE_L10N = True
@@ -116,6 +121,7 @@ USE_TZ = True
 LOCALE_PATHS = [project_root("locale")]
 
 INSTALLED_APPS = [
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -137,6 +143,7 @@ INSTALLED_APPS = [
     "django_countries",
     "anymail",
     "users",
+    "forms",
     "leasing",
     "laske_export",
     "field_permissions",
@@ -180,6 +187,8 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+MODELTRANSLATION_TRANSLATION_FILES = ("forms.translation",)
 
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 CONSTANCE_DATABASE_CACHE_BACKEND = env.str("CONSTANCE_DATABASE_CACHE_BACKEND")
