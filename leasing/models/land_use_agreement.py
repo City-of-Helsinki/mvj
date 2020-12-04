@@ -315,9 +315,7 @@ class LandUseAgreementEstate(NameModel):
         on_delete=models.CASCADE,
     )
 
-    estate_id = models.CharField(
-        verbose_name=_("Estate id"), max_length=50, unique=True
-    )
+    estate_id = models.CharField(verbose_name=_("Estate id"), max_length=50)
 
 
 class LandUseAgreementDecisionType(NameModel):
