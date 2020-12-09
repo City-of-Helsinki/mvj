@@ -1,0 +1,58 @@
+[
+    {
+        "model": "forms.FieldType",
+        "pk": 1,
+        "fields": {
+            "name": "Tekstikenttä",
+            "identifier": "textbox"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 2,
+        "fields": {
+            "name": "Tekstialue",
+            "identifier": "textarea"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 3,
+        "fields": {
+            "name": "Alasvetovalikko",
+            "identifier": "dropdown"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 4,
+        "fields": {
+            "name": "Valintaruutu",
+            "identifier": "checkbox"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 5,
+        "fields": {
+            "name": "Radiopainike",
+            "identifier": "radiobutton"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 6,
+        "fields": {
+            "name": "Radiopainike linjassa",
+            "identifier": "radiobuttoninline"
+        }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 7,
+        "fields": {
+            "name": "Lataa tiedosto",
+            "identifier": "uploadfiles"
+        }
+    }
+]
