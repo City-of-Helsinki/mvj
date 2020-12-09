@@ -5,6 +5,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
+from forms.viewsets.form import FormViewSet
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
@@ -100,6 +101,7 @@ router.register(r"contact", ContactViewSet)
 router.register(r"decision", DecisionViewSet)
 router.register(r"district", DistrictViewSet)
 router.register(r"financing", FinancingViewSet)
+router.register(r"form", FormViewSet)
 router.register(r"hitas", HitasViewSet)
 router.register(r"index", IndexViewSet)
 router.register(
