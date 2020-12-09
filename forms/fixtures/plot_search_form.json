@@ -1138,7 +1138,7 @@
         "pk": 1,
         "fields": {
             "text": "Yritys",
-            "value": 0,
+            "value": 1,
             "action": "showSection=2;hideSection=6",
             "field_id": 1
         }
@@ -1148,7 +1148,7 @@
         "pk": 2,
         "fields": {
             "text": "Henkilö",
-            "value": 1,
+            "value": 2,
             "action": "showSection=6;hideSection=2",
             "field_id": 1
         }
@@ -1158,7 +1158,7 @@
         "pk": 3,
         "fields": {
             "text": "Ei",
-            "value": 0,
+            "value": 1,
             "field_id": 68
         }
     },
@@ -1167,7 +1167,7 @@
         "pk": 4,
         "fields": {
             "text": "Kyllä, vuonna",
-            "value": 1,
+            "value": 2,
             "field_id": 68,
             "has_text_input": true
         }
@@ -1378,7 +1378,7 @@
         "pk": 27,
         "fields": {
             "text": "Haluan pöytäkirjaotteet postitse",
-            "value": 1,
+            "value": 2,
             "field_id": 84
         }
     },
