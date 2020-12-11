@@ -385,11 +385,13 @@ class Invoice(TimeStampedSafeDeleteModel):
         if not payments_total:
             payments_total = Decimal(0)
 
-        total_credited_amount = self.credit_invoices.aggregate(sum=Sum("rows__amount"))[
-            "sum"
-        ]
-        if not total_credited_amount:
-            total_credited_amount = Decimal(0)
+        # Aggregating like this ignores the manager (i.e. includes deleted rows which we don't want):
+        # total_credited_amount = self.credit_invoices.aggregate(sum=Sum("rows__amount"))["sum"]
+        # ... so we have to iterate the rows and tally the sum by hand
+        total_credited_amount = Decimal(0)
+        for credit_inv in self.credit_invoices.all():
+            for row in credit_inv.rows.all():
+                total_credited_amount += row.amount
 
         collection_charge = Decimal(0)
         if self.collection_charge:
