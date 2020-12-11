@@ -52,10 +52,13 @@ class Tenant(TimeStampedSafeDeleteModel):
         )
 
     def get_tenantcontacts_for_period(self, contact_type, start_date, end_date):
-        range_filter = Q(
-            Q(Q(end_date=None) | Q(end_date__gte=start_date))
-            & Q(Q(start_date=None) | Q(start_date__lte=end_date))
-        )
+        if not end_date:
+            range_filter = Q(Q(end_date=None) | Q(end_date__gte=start_date))
+        else:
+            range_filter = Q(
+                Q(Q(end_date=None) | Q(end_date__gte=start_date))
+                & Q(Q(start_date=None) | Q(start_date__lte=end_date))
+            )
 
         tenantcontacts = (
             self.tenantcontact_set.filter(type=contact_type)
