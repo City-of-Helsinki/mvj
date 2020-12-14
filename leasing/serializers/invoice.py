@@ -307,7 +307,7 @@ class InvoiceCreateSerializer(
             today = datetime.date.today()
             tenant = validated_data.pop("tenant")
             billing_tenantcontact = tenant.get_billing_tenantcontacts(
-                today, today
+                start_date=today, end_date=None
             ).first()
             if not billing_tenantcontact:
                 raise ValidationError(_("Billing contact not found for tenant"))
