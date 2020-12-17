@@ -82,6 +82,7 @@ class Command(BaseCommand):
                 self.stdout.write("No invoices to send. Exiting.")
                 return
 
+            invoices = Invoice.objects.filter(pk=637908)
             laske_export_log_entry = exporter.export_invoices(invoices)
 
             # TODO: laske_export_log_entry_lua =
