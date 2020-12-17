@@ -1,7 +1,9 @@
-import pytz
 import shlex
 import sys
 from datetime import datetime
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
+
+import pytz
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -9,7 +11,6 @@ from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from safedelete.models import SOFT_DELETE_CASCADE, SafeDeleteModel
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ._times import utc_now
 from .constants import GRACE_PERIOD_LENGTH

@@ -1,9 +1,10 @@
 import argparse
-from dateutil.relativedelta import relativedelta
-from django.core.management.base import BaseCommand
 from typing import Any
 
-from ...models import JobRun, JobRunLogEntry
+from dateutil.relativedelta import relativedelta
+from django.core.management.base import BaseCommand
+
+from ...models import JobRun
 
 
 class Command(BaseCommand):

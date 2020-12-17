@@ -1,4 +1,5 @@
 from django.contrib import admin
+from rangefilter.filter import DateRangeFilter
 
 from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin
 from .models import (
@@ -23,14 +24,21 @@ class JobAdmin(admin.ModelAdmin):
     list_display = ["name", "comment", "command"]
 
 
+class JobRunLogEntryInline(admin.TabularInline):
+    model = JobRunLogEntry
+    show_change_link = True
+
+
 @admin.register(JobRun)
 class JobRunAdmin(ReadOnlyAdmin):
     date_hierarchy = "started_at"
+    inlines = [JobRunLogEntryInline]
     list_display = ["started_at_p", "stopped_at_p", "job", "exit_code"]
-    list_filter = ["exit_code"]
+    list_filter = ("started_at", ("started_at", DateRangeFilter), "job", "exit_code")
     # auto_now_add_fields don't show even in readonlyadmin.
     # Therefore we'll add all the fields by hand in a suitable order
     readonly_fields = ("job", "pid", "started_at_p", "stopped_at_p", "exit_code")
+    search_fields = ["log_entries__text"]
     exclude = ["stopped_at"]
 
     started_at_p = PreciseTimeFormatter(JobRun, "started_at")
