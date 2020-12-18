@@ -1,8 +1,7 @@
+import daemon
 import multiprocessing
 import subprocess
 import sys
-
-import daemon
 
 from .management.commands import batchrun_execute_job_run
 from .models import Job, JobRun
@@ -30,7 +29,7 @@ def run_job(job: Job) -> JobRun:
     launcher = JobRunLauncher(job_run)
     launcher.start()
     launcher.join()
-    return job_run
+    return job_run  # type: ignore
 
 
 class JobRunLauncher(multiprocessing.Process):

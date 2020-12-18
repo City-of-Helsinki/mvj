@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rangefilter.filter import DateRangeFilter
+from rangefilter.filter import DateRangeFilter  # type: ignore
 
 from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin
 from .models import (
