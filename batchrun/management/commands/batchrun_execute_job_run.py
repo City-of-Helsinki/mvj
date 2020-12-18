@@ -1,6 +1,7 @@
 import argparse
-from django.core.management.base import BaseCommand
 from typing import Any
+
+from django.core.management.base import BaseCommand
 
 from ...job_running import execute_job_run
 from ...models import JobRun

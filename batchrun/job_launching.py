@@ -1,7 +1,8 @@
-import daemon
 import multiprocessing
 import subprocess
 import sys
+
+import daemon
 
 from .management.commands import batchrun_execute_job_run
 from .models import Job, JobRun
