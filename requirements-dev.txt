@@ -27,7 +27,7 @@ importlib-metadata==2.0.0  # via pluggy, pytest
 inflection==0.3.1         # via pytest-factoryboy
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.13.0           # via -r requirements-dev.in
-isort==4.3.21             # via -r requirements-dev.in
+isort==5.6.4              # via -r requirements-dev.in
 jdcal==1.4.1              # via openpyxl
 jedi==0.16.0              # via ipython
 mccabe==0.6.1             # via flake8

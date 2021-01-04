@@ -4,7 +4,7 @@ from typing import Any
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand
 
-from ...models import JobRun, JobRunLogEntry
+from ...models import JobRun
 
 
 class Command(BaseCommand):
@@ -33,13 +33,6 @@ class Command(BaseCommand):
                 JobRun.objects.count(),
             )
         )
-        log_entries_to_delete = JobRunLogEntry.objects.filter(
-            run__in=runs_before_cutoff
-        )
-        self.stdout.write(
-            "Proceeding to delete {} / {} stored JobRunLogEntries".format(
-                log_entries_to_delete.count(), JobRunLogEntry.objects.count()
-            )
-        )
-        log_entries_to_delete.delete()
+        runs_before_cutoff.delete()
+
         self.stdout.write("Done!")

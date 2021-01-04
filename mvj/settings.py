@@ -129,6 +129,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "rangefilter",
     "helusers",
     "crispy_forms",
     "django_filters",
