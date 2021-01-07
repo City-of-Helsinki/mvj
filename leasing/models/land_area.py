@@ -507,6 +507,25 @@ class PlanUnit(Land):
         if self.id and not self.tracker.changed():
             return
 
+        # There can be only one master plan unit per lease area and identifier
+        if self.is_master:
+            master_plan_unit_count = (
+                PlanUnit.objects.filter(
+                    lease_area=self.lease_area,
+                    identifier=self.identifier,
+                    is_master=True,
+                )
+                .exclude(id=self.id)
+                .count()
+            )
+            if master_plan_unit_count:
+                raise Exception(
+                    _(
+                        "The master plan unit has already created. "
+                        "There can be only one master plan unit per lease area and identifier."
+                    )
+                )
+
         skip_modified_update = kwargs.pop("skip_modified_update", False)
         if skip_modified_update:
             modified_at_field = self._meta.get_field("modified_at")
