@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-23 11:25+0200\n"
+"POT-Creation-Date: 2021-01-07 15:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1693,6 +1693,11 @@ msgctxt "Model name"
 msgid "Plan units"
 msgstr "Kaavayksiköt"
 
+msgid ""
+"The master plan unit has already created. There can be only one master plan "
+"unit per lease area and identifier."
+msgstr "Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla vain yksi per vuokra-alueen kaavayksikön tunnus."
+
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
 
@@ -1782,12 +1787,36 @@ msgid "Estate id"
 msgstr "Kohteen tunniste"
 
 msgctxt "Model name"
+msgid "Land use agreement decision type"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Land use agreement decision types"
+msgstr ""
+
+msgctxt "Model name"
 msgid "Land use agreement decision"
 msgstr "Maankäyttösopimus päätös"
 
 msgctxt "Model name"
 msgid "Land use agreement decisions"
 msgstr "Maankäyttösopimus päätökset"
+
+msgctxt "Model name"
+msgid "Land use agreement decision condition type"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Land use agreement decision condition types"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Land use agreement decision condition"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Land use agreement decision conditions"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Land use agreement address"
@@ -1797,11 +1826,17 @@ msgctxt "Model name"
 msgid "Land use agreement addresses"
 msgstr "Maankäyttösopimus osoitteet"
 
-msgid "Numerator"
-msgstr "Jaettava"
+msgid "Obligated area (f-m2)"
+msgstr ""
 
-msgid "Denominator"
-msgstr "Jakaja"
+msgid "Actualized area (f-m2)"
+msgstr ""
+
+msgid "Subvention amount"
+msgstr "Subvention määrä"
+
+msgid "Compensation percent"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Land use agreement litigant"
@@ -2075,6 +2110,12 @@ msgctxt "Model name"
 msgid "Leasehold transfer properties"
 msgstr "Vuokraoikeuden siirron kohteet"
 
+msgid "Numerator"
+msgstr "Jaettava"
+
+msgid "Denominator"
+msgstr "Jakaja"
+
 msgctxt "Model name"
 msgid "Leasehold transfer party"
 msgstr "Vuokraoikeuden siirron osapuoli"
@@ -2301,9 +2342,6 @@ msgstr "Hallintamuoto (Subventio)"
 
 msgid "Rent adjustment"
 msgstr "Alennus/Korotus"
-
-msgid "Subvention amount"
-msgstr "Subvention määrä"
 
 msgctxt "Model name"
 msgid "Management subvention (Rent adjustment)"
@@ -2831,11 +2869,11 @@ msgstr ""
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Ei voi olla sama vuokraus"
 
-msgid "The target information has changed!"
-msgstr "Kohteen tiedot ovat muuttuneet!"
-
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"
+
+msgid "The target information has changed!"
+msgstr "Kohteen tiedot ovat muuttuneet!"
 
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr "Alkuvuosivuokran loppu pitää olla sama kuin vuokrakauden loppu"
@@ -3053,6 +3091,15 @@ msgstr "Ei oikeutta lisätä muiden käyttäjien ui dataa"
 
 msgid "Data integrity error"
 msgstr "Tietoeheysvirhe"
+
+msgid "Finnish"
+msgstr "Suomi"
+
+msgid "Swedish"
+msgstr "Ruotsi"
+
+msgid "English"
+msgstr "Englanti"
 
 msgid "Sender email address. Example: john@example.com"
 msgstr "Lähettäjän sähköpostiosoite. Esimerkki: matti@example.com"
