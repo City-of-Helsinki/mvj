@@ -62,8 +62,8 @@ class InvoiceNoteCreateUpdateSerializer(
         super().__init__(instance=instance, data=data, **kwargs)
 
         # Lease field must be added dynamically to prevent circular imports
-        from leasing.serializers.lease import LeaseSuccinctSerializer
         from leasing.models.lease import Lease
+        from leasing.serializers.lease import LeaseSuccinctSerializer
 
         self.fields["lease"] = InstanceDictPrimaryKeyRelatedField(
             instance_class=Lease,
@@ -507,8 +507,8 @@ class CreateChargeSerializer(serializers.Serializer):
         super().__init__(instance=instance, data=data, **kwargs)
 
         # Lease field must be added dynamically to prevent circular imports
-        from leasing.serializers.lease import LeaseSuccinctSerializer
         from leasing.models.lease import Lease
+        from leasing.serializers.lease import LeaseSuccinctSerializer
 
         self.fields["lease"] = InstanceDictPrimaryKeyRelatedField(
             instance_class=Lease,

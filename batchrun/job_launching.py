@@ -30,7 +30,7 @@ def run_job(job: Job) -> JobRun:
     launcher = JobRunLauncher(job_run)
     launcher.start()
     launcher.join()
-    return job_run
+    return job_run  # type: ignore
 
 
 class JobRunLauncher(multiprocessing.Process):

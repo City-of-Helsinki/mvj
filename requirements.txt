@@ -20,6 +20,7 @@ cryptography==3.2         # via paramiko
 database-sanitizer==1.1.0  # via django-sanitized-dump
 dataclasses==0.6          # via -r requirements.in
 defusedxml==0.6.0         # via zeep
+django-admin-rangefilter==0.6.3  # via -r requirements.in
 django-anymail==7.0.0     # via -r requirements.in
 django-auditlog==0.4.7    # via -r requirements.in
 django-constance[database]==2.7.0  # via -r requirements.in

@@ -3,6 +3,7 @@ dataclasses
 Django~=2.2.13
 django-anymail
 django-auditlog
+django-admin-rangefilter
 django-jsonfield-compat
 django-constance[database]
 django-cors-headers
