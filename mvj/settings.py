@@ -149,11 +149,11 @@ INSTALLED_APPS = [
     "laske_export",
     "field_permissions",
     "batchrun",
-    "django_q",
     "constance",
     "constance.backends.database",
     "sanitized_dump",
     "utils",
+    "django_q",
 ]
 
 if DEBUG:
