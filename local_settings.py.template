@@ -1,0 +1,11 @@
+Q_CLUSTER = {
+    "name": "DjangORM",
+    "timeout": 90,
+    "retry": 60 * 60,  # 1 hour
+    "orm": "default",
+    "error_reporter": {
+        "sentry": {
+            "dsn": "https://******@sentry.io/<project>"
+        }
+    }
+}
