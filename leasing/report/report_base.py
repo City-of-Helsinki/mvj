@@ -68,8 +68,8 @@ class ReportBase:
     # If the column labels should be automatically added as the first row
     automatic_excel_column_labels = True
 
-    def __init__(self):
-        self.form = None
+    # The query form model of report
+    form = None
 
     @classmethod
     def get_output_fields_metadata(cls):
@@ -87,6 +87,10 @@ class ReportBase:
         """Initializes a form with fields from input_fields, saves the form as
         self.form instance attribute and returns it."""
         self.form = ReportFormBase(data, input_fields=self.input_fields)
+
+        # This has been set to None as the report doesn't require any form rendering
+        # and it causes pickle error in Django Q async tasks.
+        self.form.renderer = None
 
         return self.form
 
