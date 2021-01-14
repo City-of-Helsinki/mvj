@@ -15,7 +15,7 @@ django-filter
 django-helusers
 django-model-utils
 django-modeltranslation
-django-q
+django-q[sentry]
 django-safedelete
 django-sanitized-dump
 django-sequences
