@@ -283,8 +283,6 @@ class ReportBase:
 
 
 class AsyncReportBase(ReportBase):
-    async_task_timeout = 60 * 30  # 30 min
-
     @classmethod
     def get_output_fields_metadata(cls):
         return {"message": {"label": _("Message")}}
@@ -322,7 +320,6 @@ class AsyncReportBase(ReportBase):
             user=user,
             input_data=input_data,
             hook=self.send_report,
-            timeout=self.async_task_timeout,
         )
 
         return Response(
