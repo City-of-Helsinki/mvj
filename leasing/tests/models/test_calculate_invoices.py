@@ -361,6 +361,8 @@ def test_calculate_invoices_seasonal(
         intended_use_id=1,
         amount=80,
         period=PeriodType.PER_MONTH,
+        base_amount=80,
+        base_amount_period=PeriodType.PER_MONTH,
         start_date=date(year=2018, month=10, day=1),
         end_date=date(year=2019, month=6, day=30),
     )
@@ -369,6 +371,8 @@ def test_calculate_invoices_seasonal(
         intended_use_id=1,
         amount=80,
         period=PeriodType.PER_MONTH,
+        base_amount=80,
+        base_amount_period=PeriodType.PER_MONTH,
         start_date=date(year=2019, month=10, day=1),
         end_date=date(year=2020, month=6, day=30),
     )
@@ -392,7 +396,12 @@ def test_calculate_invoices_seasonal(
     rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=6, day=1))
 
     contract_rent_factory(
-        rent=rent2, intended_use_id=1, amount=80, period=PeriodType.PER_MONTH
+        rent=rent2,
+        intended_use_id=1,
+        amount=80,
+        period=PeriodType.PER_MONTH,
+        base_amount=80,
+        base_amount_period=PeriodType.PER_MONTH,
     )
 
     rent3 = rent_factory(
@@ -409,7 +418,12 @@ def test_calculate_invoices_seasonal(
     rent3.due_dates.add(RentDueDate.objects.create(rent=rent3, month=7, day=1))
 
     contract_rent_factory(
-        rent=rent3, intended_use_id=1, amount=120, period=PeriodType.PER_MONTH
+        rent=rent3,
+        intended_use_id=1,
+        amount=120,
+        period=PeriodType.PER_MONTH,
+        base_amount=120,
+        base_amount_period=PeriodType.PER_MONTH,
     )
 
     rent4 = rent_factory(
@@ -428,7 +442,12 @@ def test_calculate_invoices_seasonal(
     rent4.due_dates.add(RentDueDate.objects.create(rent=rent4, month=12, day=1))
 
     contract_rent_factory(
-        rent=rent4, intended_use_id=1, amount=80, period=PeriodType.PER_MONTH
+        rent=rent4,
+        intended_use_id=1,
+        amount=80,
+        period=PeriodType.PER_MONTH,
+        base_amount=80,
+        base_amount_period=PeriodType.PER_MONTH,
     )
 
     first_day_of_year = date(year=2020, month=1, day=1)
