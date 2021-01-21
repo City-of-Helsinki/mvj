@@ -1,4 +1,3 @@
-[![Build status](https://travis-ci.org/City-of-Helsinki/mvj.svg?branch=master)](https://travis-ci.org/City-of-Helsinki/mvj)
 [![codecov](https://codecov.io/gh/City-of-Helsinki/mvj/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/mvj)
 
 # mvj
