@@ -198,12 +198,7 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                (
-                    "kind",
-                    enumfields.fields.EnumField(
-                        enum=LogEntryKind, max_length=30, verbose_name="kind"
-                    ),
-                ),
+                ("kind", models.CharField(max_length=30, verbose_name="kind")),
                 ("line_number", models.IntegerField(verbose_name="line number")),
                 ("number", models.IntegerField(verbose_name="number")),
                 (

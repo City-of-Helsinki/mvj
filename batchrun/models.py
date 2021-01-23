@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
-from enumfields import EnumField
+from enumfields import EnumField, EnumIntegerField
 from safedelete import SOFT_DELETE_CASCADE  # type: ignore
 from safedelete.models import SafeDeleteModel
 
@@ -300,7 +300,7 @@ class JobRunLogEntry(SafeDeleteModel):
         related_name="log_entries",
         verbose_name=_("run"),
     )
-    kind = EnumField(LogEntryKind, max_length=30, verbose_name=_("kind"))
+    kind = EnumIntegerField(LogEntryKind, verbose_name=_("kind"))
     line_number = models.IntegerField(verbose_name=_("line number"))
     number = models.IntegerField(verbose_name=_("number"))  # within line
     time = models.DateTimeField(

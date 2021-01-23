@@ -34,6 +34,8 @@ class JobRunViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
 
 
 class JobRunLogEntrySerializer(Serializer):
+    enumfield_options = {"ints_as_names": True}
+
     class Meta:
         model = models.JobRunLogEntry
         fields = "__all__"

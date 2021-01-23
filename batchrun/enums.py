@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
-from enumfields import Enum
+from enumfields import Enum, IntEnum
 
 
 class CommandType(Enum):
@@ -11,9 +11,9 @@ class CommandType(Enum):
         DJANGO_MANAGE = _("Django management command")
 
 
-class LogEntryKind(Enum):
-    STDOUT = "stdout"
-    STDERR = "stderr"
+class LogEntryKind(IntEnum):
+    STDOUT = 1
+    STDERR = 2
 
     class Labels:
         # Labels of stdout and stderr are not translated, because it
