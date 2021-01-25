@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
+from django.utils.translation import ugettext_lazy as _
 
 from leasing.enums import ContactType
 
@@ -71,7 +73,7 @@ class Party(FieldGroup):
 
     def from_contact(self, contact):  # NOQA C901 'Party.from_contact' is too complex
         if not contact:
-            return
+            raise ValidationError(_("Contact information cannot be null."))
 
         self.customer_ovt = contact.electronic_billing_address
         self.info_customer_ovt = contact.electronic_billing_address
