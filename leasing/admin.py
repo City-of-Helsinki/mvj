@@ -508,12 +508,15 @@ class InvoiceRowInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 class InvoiceAdmin(FieldPermissionsModelAdmin):
     list_display = (
+        "number",
         "lease",
         "due_date",
         "billing_period_start_date",
         "billing_period_end_date",
         "total_amount",
+        "sent_to_sap_at",
     )
+    search_fields = ("number", "lease__identifier__identifier")
     inlines = [InvoiceRowInline, InvoicePaymentInline]
     raw_id_fields = ("lease", "invoiceset", "credited_invoice", "interest_invoice_for")
 
