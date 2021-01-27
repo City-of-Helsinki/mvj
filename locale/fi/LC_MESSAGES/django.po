@@ -1751,7 +1751,7 @@ msgid "Land use agreement identifier"
 msgstr "Maankäyttösopimuksen tunnus"
 
 msgid "Land use agreement definition"
-msgstr "Maankäyttösopimus päätös"
+msgstr "Maankäyttösopimuksen määritelmä"
 
 msgid "Land use agreement status"
 msgstr "Maankäyttösopimuksen tila"
