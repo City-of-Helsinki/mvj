@@ -502,17 +502,6 @@ class LeaseStatisticReport(AsyncReportBase):
                 Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today())
             )
 
-        # Skip the leases where have not set the period type of base amount in contact rents
-        # The report fails because contract rents contain items where isn't defined the period type for the base amount
-        # TODO: Review this with the specialist
-        no_period = []
-        for lease in qs:
-            for rent in lease.rents.all():
-                for cr in rent.contract_rents.all():
-                    if not cr.base_amount_period:
-                        no_period.append(lease.id)
-        qs = qs.exclude(id__in=no_period)
-
         return qs
 
     def generate_report(self, user, input_data):
