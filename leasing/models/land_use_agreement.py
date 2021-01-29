@@ -7,7 +7,6 @@ from enumfields import EnumField
 from sequences import get_next_value
 
 from leasing.enums import (
-    DueDatesPosition,
     InfillDevelopmentCompensationState,
     LandUseAgreementLitigantContactType,
     LandUseContractType,
@@ -23,24 +22,10 @@ from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 class LandUseAgreementType(NameModel):
     """
-    In Finnish: Laji
+    In Finnish: Tyyppi
     """
 
-    identifier = models.CharField(
-        verbose_name=_("Identifier"), max_length=255, unique=True
-    )
-    sap_material_code = models.CharField(
-        verbose_name=_("SAP material code"), null=True, blank=True, max_length=255
-    )
-    sap_order_item_number = models.CharField(
-        verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
-    )
-    due_dates_position = EnumField(
-        DueDatesPosition,
-        verbose_name=_("Due dates position"),
-        default=DueDatesPosition.START_OF_MONTH,
-        max_length=30,
-    )
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
 
 
 class LandUseAgreementStatus(NameModel):
@@ -57,10 +42,10 @@ class LandUseAgreementDefinition(NameModel):
 
 class LandUseAgreementIdentifier(TimeStampedSafeDeleteModel):
     """
-    In Finnish: Vuokraustunnus
+    In Finnish: Maankäyttösopimustunnus
     """
 
-    # In Finnish: Laji
+    # In Finnish: Tyyppi
     type = models.ForeignKey(
         LandUseAgreementType,
         verbose_name=_("Land use agreement type"),
@@ -85,17 +70,19 @@ class LandUseAgreementIdentifier(TimeStampedSafeDeleteModel):
     sequence = models.PositiveIntegerField(verbose_name=_("Sequence number"))
 
     class Meta:
-        verbose_name = pgettext_lazy("Model name", "Lease identifier")
-        verbose_name_plural = pgettext_lazy("Model name", "Lease identifiers")
+        verbose_name = pgettext_lazy("Model name", "Land use agreement identifier")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement identifiers"
+        )
         unique_together = ("type", "municipality", "district", "sequence")
 
     def __str__(self):
-        """Returns the lease identifier as a string
+        """Returns the land use agreement identifier as a string
 
-        The Land use agreement identifier is constructed out of type, municipality,
+        The Land use agreement identifier is constructed out of the type identifier, municipality,
         district, and sequence, in that order. For example, the identifier
-        for a residence (A1) in Helsinki (1), Vallila (22), and sequence
-        number 1 would be A1122-1.
+        for a land use agreement (MA) in Helsinki (1), Vallila (22), and sequence
+        number 1 would be MA122-1.
         """
         return "{}{}{:02}-{}".format(
             self.type.identifier,
@@ -184,7 +171,7 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
-    # In Finnish: Laji
+    # In Finnish: Tyyppi
     type = models.ForeignKey(
         LandUseAgreementType,
         verbose_name=_("Land use agreement type"),
