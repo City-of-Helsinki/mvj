@@ -5,5 +5,26 @@
         "fields": {
             "name": "Kiinteistö"
         }
+    },
+    {
+        "model": "leasing.LandUseAgreementDefinition",
+        "pk": 2,
+        "fields": {
+            "name": "Kaavayksikkö"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementDefinition",
+        "pk": 3,
+        "fields": {
+            "name": "Määräala"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementDefinition",
+        "pk": 4,
+        "fields": {
+            "name": "Muu"
+        }
     }
 ]
