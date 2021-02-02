@@ -1,4 +1,5 @@
 import pytest
+from django.core.exceptions import ValidationError
 
 from laske_export.document.sales_order import Party
 from leasing.enums import ContactType
@@ -478,3 +479,11 @@ def test_party_from_contact_person_with_long_care_of(
     assert party.info_name2 == expected2, "info_name2"
     assert party.info_name3 == expected3, "info_name3"
     assert party.info_name4 == expected4, "info_name4"
+
+
+@pytest.mark.django_db
+def test_invalid_party_contact():
+    party = Party()
+
+    with pytest.raises(ValidationError):
+        party.from_contact(None)

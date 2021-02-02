@@ -3,7 +3,21 @@
         "model": "leasing.LandUseAgreementStatus",
         "pk": 1,
         "fields": {
-            "name": "Lorem"
+            "name": "Valmisteilla"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementStatus",
+        "pk": 2,
+        "fields": {
+            "name": "Voimassa"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementStatus",
+        "pk": 3,
+        "fields": {
+            "name": "Päättynyt"
         }
     }
 ]
