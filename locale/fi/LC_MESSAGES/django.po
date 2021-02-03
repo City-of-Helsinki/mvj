@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-25 12:12+0200\n"
+"POT-Creation-Date: 2021-01-29 13:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1703,9 +1703,6 @@ msgstr ""
 "Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla "
 "vain yksi per vuokra-alueen kaavayksikön tunnus."
 
-msgid "Due dates position"
-msgstr "Eräpäivien sijainti"
-
 msgid "Land use agreement type"
 msgstr "Maankäyttösopimuksen tyyppi"
 
@@ -1719,12 +1716,12 @@ msgid "Sequence number"
 msgstr "Juokseva numero"
 
 msgctxt "Model name"
-msgid "Lease identifier"
-msgstr "Vuokratunnus"
+msgid "Land use agreement identifier"
+msgstr "Maankäyttösopimustunnus"
 
 msgctxt "Model name"
-msgid "Lease identifiers"
-msgstr "Vuokratunnukset"
+msgid "Land use agreement identifiers"
+msgstr "Maankäyttösopimustunnukset"
 
 msgid "Cash compensation"
 msgstr "Rahakorvaus"
@@ -1875,6 +1872,9 @@ msgstr " päivä"
 msgid "Sent date"
 msgstr "Lähetyspvm"
 
+msgid "Due dates position"
+msgstr "Eräpäivien sijainti"
+
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Laji"
@@ -1986,6 +1986,14 @@ msgstr "Varauksen menettelyt"
 
 msgid "Lease type"
 msgstr "Laji"
+
+msgctxt "Model name"
+msgid "Lease identifier"
+msgstr "Vuokratunnus"
+
+msgctxt "Model name"
+msgid "Lease identifiers"
+msgstr "Vuokratunnukset"
 
 msgid "Classification"
 msgstr "Julkisuusluokka"
