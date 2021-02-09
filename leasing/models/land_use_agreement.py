@@ -52,6 +52,11 @@ class LandUseAgreementIdentifier(TimeStampedSafeDeleteModel):
     In Finnish: Maankäyttösopimustunnus
     """
 
+    # In Finnish: Tunnus
+    identifier = models.CharField(
+        verbose_name=_("Identifier"), max_length=255, blank=True, null=True
+    )
+
     # In Finnish: Tyyppi
     type = models.ForeignKey(
         LandUseAgreementType,
@@ -82,6 +87,10 @@ class LandUseAgreementIdentifier(TimeStampedSafeDeleteModel):
             "Model name", "Land use agreement identifiers"
         )
         unique_together = ("type", "municipality", "district", "sequence")
+
+    def save(self, *args, **kwargs):
+        self.identifier = str(self)
+        super(LandUseAgreementIdentifier, self).save(*args, **kwargs)
 
     def __str__(self):
         """Returns the land use agreement identifier as a string
