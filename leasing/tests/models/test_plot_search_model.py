@@ -58,18 +58,21 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
     lease_area = lease_area_factory(
         lease=lease, identifier=get_random_string(), area=1000, section_area=1000
     )
-    plan_unit = plan_unit_factory(
+    master_plan_unit = plan_unit_factory(
         identifier="PU1", area=1000, lease_area=lease_area, is_master=True,
     )
-    original_plan_unit_id = plan_unit.id
-    original_plan_unit_modified_at = plan_unit.modified_at
+    master_plan_unit_id = master_plan_unit.id
+    master_plan_unit_master_timestamp = master_plan_unit.master_timestamp
 
     plot_search = plot_search_factory()
     plot_search_target = plot_search_target_factory(
         plot_search=plot_search,
-        plan_unit=plan_unit,
+        plan_unit=master_plan_unit,
         target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
-    assert plot_search_target.plan_unit.id != original_plan_unit_id
-    assert plot_search_target.plan_unit.modified_at == original_plan_unit_modified_at
+    assert plot_search_target.plan_unit.id != master_plan_unit_id
+    assert (
+        plot_search_target.plan_unit.master_timestamp
+        == master_plan_unit_master_timestamp
+    )

@@ -131,4 +131,4 @@ def test_plan_unit_updates_modified_at(
     call_command("attach_areas", stdout=out, *args, **opts)
 
     result_plan_unit = lease_area.plan_units.get(id=plan_unit.id)
-    assert result_plan_unit.modified_at == plan_unit.modified_at
+    assert result_plan_unit.master_timestamp == plan_unit.master_timestamp
