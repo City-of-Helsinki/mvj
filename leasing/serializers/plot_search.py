@@ -91,10 +91,10 @@ class PlotSearchTargetSerializer(
         return None
 
     def get_is_master_plan_unit_deleted(self, obj):
-        return not obj.plan_unit.is_master_exist
+        return not obj.plan_unit.master_exists
 
     def get_message_label(self, obj):
-        if not obj.plan_unit.is_master_exist:
+        if not obj.plan_unit.master_exists:
             return _("The target has been removed from the system!")
         elif obj.plan_unit.is_master_newer:
             return _("The target information has changed!")
