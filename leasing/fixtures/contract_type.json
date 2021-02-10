@@ -19,5 +19,19 @@
     "fields": {
       "name": "Rasitesopimus"
     }
+  },
+  {
+    "model": "leasing.ContractType",
+    "pk": 4,
+    "fields": {
+      "name": "Maankäyttösopimus"
+    }
+  },
+  {
+    "model": "leasing.ContractType",
+    "pk": 5,
+    "fields": {
+      "name": "Maankäyttösopimus ja esisopimus"
+    }
   }
 ]
