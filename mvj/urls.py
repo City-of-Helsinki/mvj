@@ -51,6 +51,7 @@ from leasing.viewsets.land_area import (
     LeaseAreaAttachmentViewSet,
     PlanUnitListWithIdentifiersViewSet,
     PlanUnitViewSet,
+    PlotMasterIdentifierList,
 )
 from leasing.viewsets.land_use_agreement import LandUseAgreementViewSet
 from leasing.viewsets.lease import (
@@ -138,6 +139,7 @@ router.register(
     PlanUnitListWithIdentifiersViewSet,
     basename="planunitlistwithidentifiers",
 )
+router.register(r"plot_master_identifier_list", PlotMasterIdentifierList)
 router.register(r"plot_search", PlotSearchViewSet)
 router.register(r"plot_search_subtype", PlotSearchSubtypeViewSet)
 router.register(r"regulation", RegulationViewSet)

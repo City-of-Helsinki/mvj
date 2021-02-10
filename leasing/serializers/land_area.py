@@ -184,6 +184,15 @@ class PlotSerializer(
         )
 
 
+class PlotIdentifierSerializer(serializers.ModelSerializer,):
+    class Meta:
+        model = Plot
+        fields = (
+            "id",
+            "identifier",
+        )
+
+
 class ConstructabilityDescriptionSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
