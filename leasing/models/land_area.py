@@ -48,6 +48,81 @@ class AbstractAddress(TimeStampedModel):
         abstract = True
 
 
+class MasterLandItemMixin(models.Model):
+
+    # In Finnish: Alkuperäiskappale
+    is_master = models.BooleanField(verbose_name=_("Is master?"), default=False)
+
+    # In Finnish: Alkuperäiskappaleen aikaleima
+    master_timestamp = models.DateTimeField(
+        verbose_name=_("Master timestamp"), null=True, blank=True
+    )
+
+    class Meta:
+        abstract = True
+
+    def get_tracker(self):
+        # Workaround for Tracker issue: https://github.com/jazzband/django-model-utils/pull/80
+        return self.tracker
+
+    def save(self, *args, **kwargs):
+        if self.is_master:
+            # Only one master item can be per lease area and identifier
+            master_item_count = (
+                self._meta.model.objects.filter(
+                    lease_area=self.lease_area,
+                    identifier=self.identifier,
+                    is_master=True,
+                )
+                .exclude(id=self.id)
+                .count()
+            )
+            if master_item_count:
+                raise Exception(
+                    _(
+                        "The master land item has already created. "
+                        "There can be only one master land item per lease area and identifier."
+                    )
+                )
+
+            # If the master item's data has been update, then update the timestamp
+            if self.get_tracker().changed():
+                self.master_timestamp = datetime.now()
+
+        super().save(*args, **kwargs)
+
+    def get_master(self):
+        if self.is_master:
+            return self
+        else:
+            return self._meta.model.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).first()
+
+    @property
+    def master_exists(self):
+        if self.is_master:
+            return True
+        return (
+            self._meta.model.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).count()
+            > 0
+        )
+
+    @property
+    def is_master_newer(self):
+        if self.is_master:
+            return False
+        if not self.is_master:
+            master_item = self._meta.model.objects.filter(
+                lease_area=self.lease_area, identifier=self.identifier, is_master=True
+            ).first()
+            if master_item:
+                return master_item.master_timestamp > self.master_timestamp
+        return False
+
+
 class Land(TimeStampedModel):
     """Land is an abstract class with common fields for leased land,
     real properties, unseparated parcels, and plan units.
@@ -332,6 +407,8 @@ class Plot(Land):
     )
 
     recursive_get_related_skip_relations = ["lease_area"]
+
+    tracker = FieldTracker()
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot")
