@@ -68,9 +68,6 @@ class MasterLandItemMixin(models.Model):
         return self.tracker
 
     def save(self, *args, **kwargs):
-        if self.id and not self.get_tracker().changed():
-            return
-
         if self.is_master:
             # Only one master item can be per lease area and identifier
             master_item_count = (
@@ -89,7 +86,10 @@ class MasterLandItemMixin(models.Model):
                         "There can be only one master land item per lease area and identifier."
                     )
                 )
-            self.master_timestamp = datetime.now()
+
+            # If the master item's data has been update, then update the timestamp
+            if self.get_tracker().changed():
+                self.master_timestamp = datetime.now()
 
         super().save(*args, **kwargs)
 
@@ -406,6 +406,8 @@ class Plot(Land, MasterLandItemMixin):
     )
 
     recursive_get_related_skip_relations = ["lease_area"]
+
+    tracker = FieldTracker()
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot")
