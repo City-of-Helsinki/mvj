@@ -289,6 +289,17 @@ class LeaseAreaAttachmentCreateUpdateSerializer(
         read_only_fields = ("uploaded_at",)
 
 
+class FilterLeaseAreaPlotListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(in_contract=True) | data.filter(is_master=True)
+        return super().to_representation(data)
+
+
+class LeaseAreaPlotSerializer(PlotSerializer):
+    class Meta:
+        list_serializer_class = FilterLeaseAreaPlotListSerializer
+
+
 class LeaseAreaSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -296,7 +307,7 @@ class LeaseAreaSerializer(
 ):
     id = serializers.IntegerField(required=False)
     addresses = LeaseAreaAddressSerializer(many=True, required=False, allow_null=True)
-    plots = PlotSerializer(many=True, required=False, allow_null=True)
+    plots = LeaseAreaPlotSerializer(many=True, required=False, allow_null=True)
     plan_units = PlanUnitSerializer(many=True, required=False, allow_null=True)
     polluted_land_planner = UserSerializer()
     constructability_descriptions = ConstructabilityDescriptionSerializer(
