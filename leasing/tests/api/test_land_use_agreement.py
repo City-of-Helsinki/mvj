@@ -1,6 +1,8 @@
 import pytest
 from django.urls import reverse
 
+from leasing.enums import PlotType
+
 
 @pytest.mark.django_db
 def test_list_land_use_agreements(
@@ -152,3 +154,94 @@ def test_create_land_use_agreement_w_two_addresses(
     response = admin_client.post(url, data=data, content_type="application/json")
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
     assert len(response.data.get("addresses", [])) == 2
+
+
+@pytest.mark.django_db
+def test_land_use_agreement_retrieve_plots(
+    admin_client,
+    land_use_agreement_test_data,
+    lease_factory,
+    lease_area_factory,
+    user_factory,
+    plot_factory,
+):
+    # Initialize test data
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=1, notice_period_id=1
+    )
+    lease_area = lease_area_factory(
+        lease=lease, identifier="12345", area=1000, section_area=1000,
+    )
+    exist_plot_1 = plot_factory(
+        identifier="12345",
+        area=1000,
+        type=PlotType.REAL_PROPERTY,
+        lease_area=lease_area,
+    )
+    exist_plot_2 = plot_factory(
+        identifier="678910",
+        area=1000,
+        type=PlotType.REAL_PROPERTY,
+        lease_area=lease_area,
+    )
+    land_use_agreement_test_data.plots.add(exist_plot_1)
+    land_use_agreement_test_data.plots.add(exist_plot_2)
+
+    url = reverse(
+        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+    )
+
+    response = admin_client.get(url, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert len(response.data.get("plots", [])) == 2
+
+
+@pytest.mark.django_db
+def test_land_use_agreement_update_plots(
+    admin_client,
+    land_use_agreement_test_data,
+    lease_factory,
+    lease_area_factory,
+    user_factory,
+    plot_factory,
+):
+    # Initialize test data
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=1, notice_period_id=1
+    )
+    lease_area = lease_area_factory(
+        lease=lease, identifier="12345", area=1000, section_area=1000,
+    )
+    master_plot = plot_factory(
+        identifier="12345",
+        area=1000,
+        type=PlotType.REAL_PROPERTY,
+        lease_area=lease_area,
+        is_master=True,
+    )
+    exist_plot = plot_factory(
+        identifier="678910",
+        area=1000,
+        type=PlotType.REAL_PROPERTY,
+        lease_area=lease_area,
+    )
+    land_use_agreement_test_data.plots.add(exist_plot)
+
+    url = reverse(
+        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+    )
+
+    data = {
+        "id": land_use_agreement_test_data.id,
+        "type": land_use_agreement_test_data.type.id,
+        "status": land_use_agreement_test_data.status.id,
+        "definition": land_use_agreement_test_data.definition.id,
+        "municipality": land_use_agreement_test_data.municipality.id,
+        "district": land_use_agreement_test_data.district.id,
+        "plots": [{"id": exist_plot.id}, {"id": master_plot.id}],
+    }
+
+    response = admin_client.put(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert len(response.data.get("plots")) == 2
+    assert response.data.get("plots")[1].get("id") != master_plot.id
