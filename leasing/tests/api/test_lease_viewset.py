@@ -129,7 +129,11 @@ def test_copy_areas_to_contract(
     lease_area = lease_test_data["lease_area"]
 
     plan_unit_factory(
-        identifier="PU1", area=1000, lease_area=lease_area, in_contract=False,
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_area,
+        in_contract=False,
+        is_master=True,
     )
 
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 0
