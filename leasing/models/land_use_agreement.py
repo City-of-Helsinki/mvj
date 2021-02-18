@@ -8,6 +8,7 @@ from sequences import get_next_value
 
 from leasing.enums import (
     InfillDevelopmentCompensationState,
+    LandUseAgreementAttachmentType,
     LandUseAgreementLitigantContactType,
     LandUseContractType,
 )
@@ -289,6 +290,52 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
     def save(self, *args, **kwargs):
         self.create_identifier()
         super().save(*args, **kwargs)
+
+
+def get_attachment_file_upload_to(instance, filename):
+    return "/".join(
+        [
+            "land_use_agreement_attachments",
+            str(instance.land_use_agreement.id),
+            filename,
+        ]
+    )
+
+
+class LandUseAgreementAttachment(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Liitetiedosto
+    """
+
+    land_use_agreement = models.ForeignKey(
+        LandUseAgreement, related_name="attachments", on_delete=models.PROTECT
+    )
+
+    # In Finnish: Tyyppi
+    type = EnumField(
+        LandUseAgreementAttachmentType, verbose_name=_("Type"), max_length=30
+    )
+
+    # In Finnish: Tiedosto
+    file = models.FileField(
+        upload_to=get_attachment_file_upload_to, blank=False, null=False
+    )
+
+    # In Finnish: Lataaja
+    uploader = models.ForeignKey(
+        User, verbose_name=_("Uploader"), related_name="+", on_delete=models.PROTECT
+    )
+
+    # In Finnish: Latausaika
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Time uploaded")
+    )
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Land use agreement attachment")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Land use agreement attachments"
+        )
 
 
 class LandUseAgreementEstate(NameModel):
