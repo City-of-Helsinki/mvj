@@ -6,6 +6,7 @@ from leasing.models import Contact, DecisionMaker, Plot
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
+    LandUseAgreementAttachment,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
@@ -30,6 +31,7 @@ from users.serializers import UserSerializer
 
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .utils import (
+    FileSerializerMixin,
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
     UpdateNestedMixin,
@@ -107,6 +109,51 @@ class LandUseAgreementAddressSerializer(
     class Meta:
         model = LandUseAgreementAddress
         fields = ("id", "address", "postal_code", "city", "is_primary")
+
+
+class LandUseAgreementAttachmentSerializer(
+    FileSerializerMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    id = serializers.IntegerField(required=False)
+    uploader = UserSerializer()
+    file = serializers.SerializerMethodField("get_file_url")
+    filename = serializers.SerializerMethodField("get_file_filename")
+
+    class Meta:
+        model = LandUseAgreementAttachment
+        fields = (
+            "id",
+            "type",
+            "file",
+            "filename",
+            "uploader",
+            "uploaded_at",
+            "land_use_agreement",
+        )
+        download_url_name = "landuseagreementattachment-download"
+
+    def override_permission_check_field_name(self, field_name):
+        if field_name == "filename":
+            return "file"
+
+        return field_name
+
+
+class LandUseAgreementAttachmentCreateUpdateSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    id = serializers.IntegerField(required=False)
+    uploader = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = LandUseAgreementAttachment
+        fields = ("id", "type", "file", "uploader", "uploaded_at", "land_use_agreement")
+        read_only_fields = ("uploaded_at",)
 
 
 class LandUseAgreementDecisionConditionTypeSerializer(NameModelSerializer):
@@ -323,6 +370,7 @@ class LandUseAgreementListSerializer(
     litigants = LandUseAgreementLitigantSerializer(
         many=True, required=False, allow_null=True
     )
+    attachments = None
 
     class Meta:
         model = LandUseAgreement
@@ -380,6 +428,9 @@ class LandUseAgreementRetrieveSerializer(
         many=True, required=False, allow_null=True
     )
     plots = PlotSerializer(many=True, required=False, allow_null=True)
+    attachments = LandUseAgreementAttachmentSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = LandUseAgreement
@@ -406,6 +457,7 @@ class LandUseAgreementRetrieveSerializer(
             "litigants",
             "conditions",
             "plots",
+            "attachments",
         )
 
 
@@ -443,6 +495,9 @@ class LandUseAgreementUpdateSerializer(
         many=True, required=False, allow_null=True
     )
     plots = LandUseAgreementPlotCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    attachments = LandUseAgreementAttachmentSerializer(
         many=True, required=False, allow_null=True
     )
 
