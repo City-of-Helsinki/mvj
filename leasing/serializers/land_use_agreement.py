@@ -2,7 +2,7 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models import Contact, DecisionMaker
+from leasing.models import Contact, DecisionMaker, Plot
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
@@ -19,6 +19,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.serializers.decision import DecisionMakerSerializer
+from leasing.serializers.land_area import PlotSerializer
 from leasing.serializers.lease import (
     ContactSerializer,
     DistrictSerializer,
@@ -350,6 +351,14 @@ class LandUseAgreementListSerializer(
         )
 
 
+class LandUseAgreementPlotCreateUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Plot
+        fields = ("id",)
+
+
 class LandUseAgreementRetrieveSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -370,6 +379,7 @@ class LandUseAgreementRetrieveSerializer(
     conditions = LandUseAgreementConditionSerializer(
         many=True, required=False, allow_null=True
     )
+    plots = PlotSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = LandUseAgreement
@@ -395,6 +405,7 @@ class LandUseAgreementRetrieveSerializer(
             "status",
             "litigants",
             "conditions",
+            "plots",
         )
 
 
@@ -431,10 +442,30 @@ class LandUseAgreementUpdateSerializer(
     conditions = LandUseAgreementConditionCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
+    plots = LandUseAgreementPlotCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = LandUseAgreement
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        if "plots" in validated_data:
+            plots = validated_data.pop("plots")
+            plot_ids = []
+            for plot_item in plots:
+                plot = Plot.objects.get(id=plot_item["id"])
+                if plot.is_master:
+                    plot.pk = None
+                    plot.is_master = False
+                    plot.save()
+                    instance.plots.add(plot)
+                plot_ids.append(plot.id)
+            instance.plots.exclude(id__in=plot_ids).delete()
+        instance = super().update(instance, validated_data)
+
+        return instance
 
 
 class LandUseAgreementCreateSerializer(LandUseAgreementUpdateSerializer):

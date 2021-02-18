@@ -13,7 +13,7 @@ from leasing.enums import (
 )
 from leasing.models.contact import Contact
 from leasing.models.decision import DecisionMaker
-from leasing.models.land_area import AbstractAddress
+from leasing.models.land_area import AbstractAddress, Plot
 from leasing.models.lease import District, Municipality
 from users.models import User
 
@@ -237,6 +237,9 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
     plan_lawfulness_date = models.DateField(
         verbose_name=_("Plan lawfulness date"), null=True, blank=True
     )
+
+    # In Finnish: Kiinteistöt
+    plots = models.ManyToManyField(Plot)
 
     # In Finnish: Asemakaavan käsittelyvaihe
     state = EnumField(

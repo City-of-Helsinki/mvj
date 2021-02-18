@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.gis.geos import GEOSException
 from django.core.management.base import BaseCommand
 from django.db import InternalError
@@ -48,6 +50,7 @@ class Command(BaseCommand):
                 )
 
             for area in areas:
+                plot_ids_handled = []
                 plan_unit_ids_handled = []
 
                 area_identifier = area.get_normalized_identifier()
@@ -63,18 +66,6 @@ class Command(BaseCommand):
                 lease_areas[area_identifier].geometry = area.geometry
                 lease_areas[area_identifier].save()
                 self.stdout.write("  Lease area FOUND. SAVED.")
-
-                # Clear all plots and plan units safely which aren't in contracts
-                del_plots = (
-                    lease_areas[area_identifier]
-                    .plots.exclude(in_contract=True)
-                    .delete()
-                )
-                self.stdout.write(
-                    "  Cleared existing current Plots ({}) not in contract".format(
-                        del_plots
-                    )
-                )
 
                 try:
                     # Get intersected areas with lease area's geometry but exclude the type of lease area and plot
@@ -147,10 +138,19 @@ class Command(BaseCommand):
                             ),
                             "repeal_date": intersect_area.metadata.get("repeal_date"),
                             "geometry": intersect_area.geometry,
+                            "master_timestamp": datetime.now(),
                         }
-                        (plot, plot_created) = Plot.objects.update_or_create(
+                        (plot, plot_created) = Plot.objects.get_or_create(
                             defaults=rest_data, **match_data
                         )
+                        if not plot_created:
+                            rest_data.pop("master_timestamp")
+                            for attr, value in rest_data.items():
+                                setattr(plot, attr, value)
+                            plot.save()
+
+                        plot_ids_handled.append(plot.id)
+
                         self.stdout.write(
                             "Lease #{} {}: Plot #{} ({}) saved".format(
                                 lease.id, lease.identifier, plot.id, plot.type
@@ -251,6 +251,7 @@ class Command(BaseCommand):
                                 "plan_unit_state": plan_unit_state,
                                 "plan_unit_intended_use": plan_unit_intended_use,
                                 "plan_unit_status": plan_unit_state.to_enum(),
+                                "master_timestamp": datetime.now(),
                             }
 
                             # Get or create plan unit
@@ -261,9 +262,12 @@ class Command(BaseCommand):
                                 defaults=rest_data, **match_data
                             )
                             if not plan_unit_created:
+                                rest_data.pop("master_timestamp")
                                 for attr, value in rest_data.items():
                                     setattr(plan_unit, attr, value)
                                 plan_unit.save()
+
+                            plan_unit_ids_handled.append(plan_unit.id)
 
                             self.stdout.write(
                                 "Lease #{} {}: PlanUnit #{} saved".format(
@@ -271,7 +275,9 @@ class Command(BaseCommand):
                                 )
                             )
 
-                            plan_unit_ids_handled.append(plan_unit.id)
+                Plot.objects.filter(lease_area=lease_areas[area_identifier]).exclude(
+                    id__in=plot_ids_handled
+                ).delete()
 
                 PlanUnit.objects.filter(
                     lease_area=lease_areas[area_identifier]

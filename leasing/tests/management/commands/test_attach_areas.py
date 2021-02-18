@@ -4,11 +4,11 @@ import pytest
 from django.core.management import call_command
 
 from leasing.enums import PlotType
-from leasing.models import LeaseArea
+from leasing.models import LeaseArea, PlanUnit, Plot
 
 
 @pytest.mark.django_db
-def test_lease_area_type_area_attaching_to_lease_area(
+def test_attach_areas_to_lease_areas(
     lease_area_factory,
     plan_unit_factory,
     plot_factory,
@@ -37,9 +37,14 @@ def test_lease_area_type_area_attaching_to_lease_area(
 
     # Extra plot and plan unit which are not in contracts
     extra_plot = plot_factory(
-        identifier="P1", area=1000, type=PlotType.REAL_PROPERTY, lease_area=lease_area
+        identifier="PLOT_EXTRA",
+        area=1000,
+        type=PlotType.REAL_PROPERTY,
+        lease_area=lease_area,
     )
-    plan_unit_factory(identifier="PU2", area=1000, lease_area=lease_area)
+    extra_plan_unit = plan_unit_factory(
+        identifier="PLAN_UNIT_EXTRA", area=1000, lease_area=lease_area
+    )
 
     # Geometry data is empty
     assert lease_area.geometry is None
@@ -51,13 +56,6 @@ def test_lease_area_type_area_attaching_to_lease_area(
     assert "Lease area FOUND. SAVED" in out.getvalue()
     lease_area = LeaseArea.objects.get(identifier=area.get_land_identifier())
     assert area.geometry == lease_area.geometry
-
-    # Extra plot and plan unit has removed as they are not in contracts
-    assert (
-        "Cleared existing current Plots ((1, {'leasing.Plot': 1})) not in contract"
-        in out.getvalue()
-    )
-    assert lease_area.plots.filter(pk=extra_plot.id).count() == 0
 
     # Plot saved
     assert lease_area.plots.filter(in_contract=False).count() == 1
@@ -84,6 +82,10 @@ def test_lease_area_type_area_attaching_to_lease_area(
 
     # No area value in intersect area's metadata
     assert "no 'area' value in metadata" in out.getvalue()
+
+    # Extra items has been deleted
+    assert not Plot.objects.filter(pk=extra_plot.pk).exists()
+    assert not PlanUnit.objects.filter(pk=extra_plan_unit.pk).exists()
 
 
 @pytest.mark.django_db
@@ -131,4 +133,4 @@ def test_plan_unit_updates_modified_at(
     call_command("attach_areas", stdout=out, *args, **opts)
 
     result_plan_unit = lease_area.plan_units.get(id=plan_unit.id)
-    assert result_plan_unit.modified_at == plan_unit.modified_at
+    assert result_plan_unit.master_timestamp == plan_unit.master_timestamp
