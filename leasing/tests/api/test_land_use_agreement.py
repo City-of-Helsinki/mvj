@@ -1,7 +1,12 @@
+import json
+from io import BytesIO
+
 import pytest
+from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
 from leasing.enums import PlotType
+from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
 
 
 @pytest.mark.django_db
@@ -245,3 +250,90 @@ def test_land_use_agreement_update_plots(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert len(response.data.get("plots")) == 2
     assert response.data.get("plots")[1].get("id") != master_plot.id
+
+
+def test_upload_attachment(
+    django_db_setup, admin_client, land_use_agreement_test_data, user_factory
+):
+    lua = land_use_agreement_test_data
+
+    assert lua.attachments.count() == 0
+
+    url = reverse("landuseagreementattachment-list")
+
+    data = {
+        "type": "general",
+        "land_use_agreement": lua.id,
+    }
+
+    dummy_file = BytesIO(b"dummy data")
+    dummy_file.name = "dummy_file.pdf"
+
+    response = admin_client.post(
+        url, data={"data": json.dumps(data, cls=DjangoJSONEncoder), "file": dummy_file}
+    )
+
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+    assert lua.attachments.count() == 1
+    assert lua.attachments.first().uploader == response.wsgi_request.user
+
+
+@pytest.mark.django_db
+def test_download_attachment(
+    django_db_setup, admin_client, client, land_use_agreement_test_data, user_factory
+):
+    lua = land_use_agreement_test_data
+    user = user_factory(username="test_user")
+    user.set_password("test_password")
+    user.save()
+
+    assert lua.attachments.count() == 0
+
+    # upload a file first
+    upload_url = reverse("landuseagreementattachment-list")
+    data = {
+        "type": "general",
+        "land_use_agreement": lua.id,
+    }
+
+    dummy_file = BytesIO(b"dummy data")
+    dummy_file.name = "dummy_file.pdf"
+
+    response = admin_client.post(
+        upload_url,
+        data={"data": json.dumps(data, cls=DjangoJSONEncoder), "file": dummy_file},
+    )
+    assert response.status_code == 201, "{} {}".format(
+        response.status_code, response.data
+    )
+    assert lua.attachments.count() == 1
+
+    attachment = lua.attachments.first()
+    attachment_serializer = LandUseAgreementAttachmentSerializer(attachment)
+
+    download_url = attachment_serializer.get_file_url(attachment)
+
+    # anonymous user should not be allowed to download the file
+    response = client.get(download_url)
+    assert response.status_code == 401, "{} {}".format(
+        response.status_code, response.data
+    )
+
+    # logged in user without permissions should not be allowed to download the file
+    client.login(username="test_user", password="test_password")
+    response = client.get(download_url)
+    assert response.status_code == 403, "{} {}".format(
+        response.status_code, response.data
+    )
+    assert response.data["detail"].code == "permission_denied"
+
+    # admin user should be allowed to download the file
+    response = admin_client.get(download_url)
+    assert response.status_code == 200, "{} {}".format(
+        response.status_code, response.data
+    )
+    assert response.get("Content-Disposition").startswith(
+        'attachment; filename="dummy_file'
+    )
+    assert response.content == b"dummy data"

@@ -40,6 +40,7 @@ from .land_area import (
 )
 from .land_use_agreement import (
     LandUseAgreement,
+    LandUseAgreementAttachment,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecisionCondition,
@@ -146,6 +147,7 @@ __all__ = [
     "Invoice",
     "InvoiceNote",
     "LandUseAgreement",
+    "LandUseAgreementAttachment",
     "LandUseAgreementCondition",
     "LandUseAgreementConditionFormOfManagement",
     "LandUseAgreementDecisionCondition",

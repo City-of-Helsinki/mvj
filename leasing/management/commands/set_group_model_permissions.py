@@ -852,6 +852,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "landuseagreementattachment": {
+        1: ("view",),
+        2: ("view", "add", "change", "delete"),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view", "add", "change", "delete"),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
     "landuseagreementlitigant": {
         1: ("view",),
         2: ("view",),

@@ -579,6 +579,21 @@ class LandUseContractType(Enum):
         NO_AGREEMENT = pgettext_lazy("Land Use Contract Type", "No agreement")
 
 
+class LandUseAgreementAttachmentType(Enum):
+    """
+    In Finnish: Maankäyttösopimuksen liitetiedoston tyyppi
+    """
+
+    GENERAL = "general"
+    COMPENSATION_CALCULATION = "compensation_calculation"
+
+    class Labels:
+        GENERAL = pgettext_lazy("Land use agreement attachment type", "General")
+        COMPENSATION_CALCULATION = pgettext_lazy(
+            "Land use agreement attachment type", "Compensation calculation"
+        )
+
+
 class LandUseAgreementLitigantContactType(Enum):
     """
     In Finnish: Maankäyttösopimuksen osapuolen yhteystiedon tyyppi
