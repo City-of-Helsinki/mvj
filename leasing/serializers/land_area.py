@@ -297,7 +297,19 @@ class FilterLeaseAreaPlotListSerializer(serializers.ListSerializer):
 
 class LeaseAreaPlotSerializer(PlotSerializer):
     class Meta:
+        model = Plot
         list_serializer_class = FilterLeaseAreaPlotListSerializer
+        fields = (
+            "id",
+            "identifier",
+            "area",
+            "section_area",
+            "type",
+            "registration_date",
+            "repeal_date",
+            "in_contract",
+            "geometry",
+        )
 
 
 class LeaseAreaSerializer(
