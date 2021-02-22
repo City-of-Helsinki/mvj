@@ -4,8 +4,10 @@ from io import BytesIO
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 
-from leasing.enums import PlotType
+from leasing.enums import ContactType, PlotType
+from leasing.models import LandUseAgreementInvoice
 from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
 
 
@@ -337,3 +339,35 @@ def test_download_attachment(
         'attachment; filename="dummy_file'
     )
     assert response.content == b"dummy data"
+def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_data):
+
+    recipient = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    data = {
+        "land_use_agreement": land_use_agreement_test_data.id,
+        "due_date": "2020-07-01",
+        "recipient": recipient.id,
+        "rows": [
+            {
+                "compensation_amount": 123,
+                "increase_percentage": 3,
+                "plan_lawfulness_date": "2020-05-08",
+                "receivable_type": 1,
+                "sign_date": "2020-04-08",
+            }
+        ],
+    }
+
+    url = reverse("landuseagreementinvoice-list")
+    response = admin_client.post(url, data=data, content_type="application/json",)
+
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+    invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
+
+    assert invoice.rows.count() > 0
+    assert invoice.rows.first().amount == 123
+
+    assert invoice.invoicing_date == timezone.now().date()

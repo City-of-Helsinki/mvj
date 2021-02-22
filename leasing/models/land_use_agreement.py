@@ -8,6 +8,8 @@ from sequences import get_next_value
 
 from leasing.enums import (
     InfillDevelopmentCompensationState,
+    InvoiceState,
+    InvoiceType,
     LandUseAgreementAttachmentType,
     LandUseAgreementLitigantContactType,
     LandUseContractType,
@@ -625,6 +627,28 @@ class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
         )
 
 
+class LandUseAgreementReceivableType(models.Model):
+    """
+    In Finnish: Saamislaji
+    """
+
+    name = models.CharField(verbose_name=_("Name"), max_length=255)
+    sap_material_code = models.CharField(
+        verbose_name=_("SAP material code"), null=True, blank=True, max_length=255
+    )
+    sap_order_item_number = models.CharField(
+        verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
+    )
+    is_active = models.BooleanField(verbose_name=_("Is active?"), default=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Receivable type")
+        verbose_name_plural = pgettext_lazy("Model name", "Receivable types")
+
+    def __str__(self):
+        return self.name
+
+
 class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
     """
     In Finnish: Lasku
@@ -637,9 +661,30 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Laskutettu määrä
+    billed_amount = models.DecimalField(
+        verbose_name=_("Billed amount"), max_digits=10, decimal_places=2, default=0
+    )
+
+    # In Finnish: Eräpäivä
+    due_date = models.DateField(verbose_name=_("Due date"), null=True, blank=True)
+
+    # In Finnish: Laskutuspvm
+    invoicing_date = models.DateField(
+        verbose_name=_("Invoicing date"), null=True, blank=True
+    )
+
     # In Finnish: Laskun numero
     number = models.PositiveIntegerField(
         verbose_name=_("Number"), unique=True, null=True, blank=True
+    )
+
+    # In Finnish: Maksamaton määrä
+    outstanding_amount = models.DecimalField(
+        verbose_name=_("Outstanding amount"),
+        max_digits=10,
+        decimal_places=2,
+        default=0,
     )
 
     # In Finnish: Laskunsaaja
@@ -647,43 +692,31 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         Contact, verbose_name=_("Recipient"), related_name="+", on_delete=models.PROTECT
     )
 
-    # In Finnish: Korvauksen määrä €
-    compensation_amount = models.DecimalField(
-        verbose_name=_("Compensation amount"), decimal_places=2, max_digits=12
+    # In Finnish: Laskun tila
+    state = EnumField(
+        InvoiceState, verbose_name=_("State"), max_length=30, default=InvoiceState.OPEN
     )
-
-    # In Finnish: Korvauksen määrä %
-    compensation_amount_percentage = models.DecimalField(
-        verbose_name=_("Compensation amount percentage"),
-        decimal_places=2,
-        max_digits=12,
-    )
-
-    # In Finnish: Euroa
-    amount = models.DecimalField(
-        verbose_name=_("Amount"), decimal_places=2, max_digits=12
-    )
-
-    # In Finnish: Allekirjoituspvm
-    sign_date = models.DateField(verbose_name=_("Sign date"), null=True, blank=True)
-
-    # In Finnish: Asemakaavan lainvoimaisuuspvm
-    plan_lawfulness_date = models.DateField(
-        verbose_name=_("Plan lawfulness date"), null=True, blank=True
-    )
-
-    # In Finnish: Eräpäivä
-    due_date = models.DateField(verbose_name=_(" date"), null=True, blank=True)
-
-    # In Finnish: Lähetyspäivä
-    sent_date = models.DateField(verbose_name=_("Sent date"), null=True, blank=True)
 
     # In Finnish: Maksupäivä
     paid_date = models.DateField(verbose_name=_("Paid date"), null=True, blank=True)
 
+    # In Finnish: Lähetyspäivä
+    sent_date = models.DateField(verbose_name=_("Sent date"), null=True, blank=True)
+
     # In Finnish: Lähetetty SAP:iin
     sent_to_sap_at = models.DateTimeField(
         verbose_name=_("Sent to SAP at"), null=True, blank=True
+    )
+
+    # In Finnish: Laskun pääoma
+    # TODO: Remove column and calculate total on-the-fly
+    total_amount = models.DecimalField(
+        verbose_name=_("Total amount"), max_digits=10, decimal_places=2, default=0
+    )
+
+    # In Finnish: Laskun tyyppi
+    type = EnumField(
+        InvoiceType, verbose_name=_("Type"), max_length=30, default=InvoiceType.CHARGE
     )
 
     def generate_number(self):
@@ -695,3 +728,112 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
             self.save()
 
         return self.number
+
+    def update_amounts(self):
+        pass
+
+
+class LandUseAgreementInvoiceRow(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Rivi laskulla
+    """
+
+    # In Finnish: Lasku
+    invoice = models.ForeignKey(
+        LandUseAgreementInvoice,
+        verbose_name=_("Invoice"),
+        related_name="rows",
+        on_delete=models.CASCADE,
+    )
+
+    # In Finnish: Osapuoli
+    litigant = models.ForeignKey(
+        LandUseAgreementLitigant,
+        verbose_name=_("Litigant"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Saamislaji
+    receivable_type = models.ForeignKey(
+        LandUseAgreementReceivableType,
+        verbose_name=_("Receivable type"),
+        related_name="+",
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Laskutettava määrä
+    amount = models.DecimalField(
+        verbose_name=_("Amount"), max_digits=10, decimal_places=2, default=0
+    )
+
+    # In Finnish: Korvauksen määrä €
+    compensation_amount = models.DecimalField(
+        verbose_name=_("Compensation amount"),
+        decimal_places=2,
+        max_digits=12,
+        default=0,
+    )
+
+    # In Finnish: Selite
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+
+    # In Finnish: Korotuksen määrä %
+    increase_percentage = models.DecimalField(
+        verbose_name=_("Increase percentage"),
+        decimal_places=2,
+        max_digits=12,
+        default=0,
+    )
+
+    # In Finnish: Asemakaavan lainvoimaisuuspvm
+    plan_lawfulness_date = models.DateField(
+        verbose_name=_("Plan lawfulness date"), null=True, blank=True
+    )
+
+    # In Finnish: Allekirjoituspvm
+    sign_date = models.DateField(verbose_name=_("Sign date"), null=True, blank=True)
+
+    recursive_get_related_skip_relations = ["invoice"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice row")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
+
+    def update_amount(self):
+        self.amount = 123
+
+
+class LandUseAgreementInvoicePayment(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Maksusuoritus
+    """
+
+    # In Finnish: Lasku
+    invoice = models.ForeignKey(
+        LandUseAgreementInvoice,
+        verbose_name=_("Invoice"),
+        related_name="payments",
+        on_delete=models.CASCADE,
+    )
+
+    # In Finnish: Maksettu määrä
+    paid_amount = models.DecimalField(
+        verbose_name=_("Paid amount"), max_digits=10, decimal_places=2
+    )
+
+    # In Finnish: Maksettu pvm
+    paid_date = models.DateField(verbose_name=_("Paid date"))
+
+    # In Finnish: Arkistointitunnus
+    filing_code = models.CharField(
+        verbose_name=_("Name"), null=True, blank=True, max_length=35
+    )
+
+    recursive_get_related_skip_relations = ["invoice"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice payment")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice payments")

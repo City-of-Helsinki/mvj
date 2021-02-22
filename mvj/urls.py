@@ -55,6 +55,7 @@ from leasing.viewsets.land_area import (
 )
 from leasing.viewsets.land_use_agreement import (
     LandUseAgreementAttachmentViewSet,
+    LandUseAgreementInvoiceViewSet,
     LandUseAgreementViewSet,
 )
 from leasing.viewsets.lease import (
@@ -159,6 +160,7 @@ router.register(r"vat", VatViewSet)
 
 router.register(r"land_use_agreement", LandUseAgreementViewSet)
 router.register(r"land_use_agreement_attachment", LandUseAgreementAttachmentViewSet)
+router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
