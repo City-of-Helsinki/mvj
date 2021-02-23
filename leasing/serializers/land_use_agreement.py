@@ -14,6 +14,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
     LandUseAgreementAttachment,
+    LandUseAgreementCompensations,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
@@ -55,6 +56,24 @@ class LandUseAgreementTypeSerializer(
     class Meta:
         model = LandUseAgreementType
         fields = "__all__"
+
+
+class LandUseAgreementCompensationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUseAgreementCompensations
+        fields = (
+            "id",
+            "cash_compensation",
+            "land_compensation",
+            "other_compensation",
+            "first_installment_increase",
+            "park_acquisition_value",
+            "street_acquisition_value",
+            "other_acquisition_value",
+            "park_area",
+            "street_area",
+            "other_area",
+        )
 
 
 class LandUseAgreementConditionFormOfManagementSerializer(serializers.ModelSerializer):
@@ -370,6 +389,9 @@ class LandUseAgreementListSerializer(
     id = serializers.ReadOnlyField()
     type = LandUseAgreementTypeSerializer()
     identifier = LandUseAgreementIdentifierSerializer(read_only=True)
+    compensations = LandUseAgreementCompensationsSerializer(
+        required=False, allow_null=True
+    )
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = LandUseAgreementDecisionSerializer(
         many=True, required=False, allow_null=True
@@ -407,6 +429,7 @@ class LandUseAgreementListSerializer(
             "status",
             "litigants",
             "conditions",
+            "compensations",
         )
 
 
@@ -428,6 +451,9 @@ class LandUseAgreementRetrieveSerializer(
     preparer = UserSerializer()
     addresses = LandUseAgreementAddressSerializer(
         many=True, required=False, allow_null=True
+    )
+    compensations = LandUseAgreementCompensationsSerializer(
+        required=False, allow_null=True
     )
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = LandUseAgreementDecisionSerializer(many=True)
@@ -469,6 +495,7 @@ class LandUseAgreementRetrieveSerializer(
             "conditions",
             "plots",
             "attachments",
+            "compensations",
         )
 
 
@@ -502,6 +529,9 @@ class LandUseAgreementUpdateSerializer(
     litigants = LandUseAgreementLitigantCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
+    compensations = LandUseAgreementCompensationsSerializer(
+        required=False, allow_null=True
+    )
     conditions = LandUseAgreementConditionCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
@@ -529,6 +559,12 @@ class LandUseAgreementUpdateSerializer(
                     instance.plots.add(plot)
                 plot_ids.append(plot.id)
             instance.plots.exclude(id__in=plot_ids).delete()
+
+        if "compensations" in validated_data:
+            compensations_data = validated_data.pop("compensations")
+            if compensations_data:
+                instance.update_compensations(compensations_data)
+
         instance = super().update(instance, validated_data)
 
         return instance
