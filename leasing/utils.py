@@ -49,7 +49,9 @@ def calculate_increase_with_360_day_calendar(
     date1, date2, increase_percentage, current_amount
 ):
     day_count = days360(date1, date2, True)
-    increase_multiplier = day_count / 360 * increase_percentage / 100
-    amount = current_amount + (current_amount * increase_multiplier)
+    increase_multiplier = Decimal(day_count) / 360 * Decimal(increase_percentage) / 100
+    amount = Decimal(current_amount) + (
+        Decimal(current_amount) * Decimal(increase_multiplier)
+    )
     rounded_amount = round(amount, -3)
     return rounded_amount

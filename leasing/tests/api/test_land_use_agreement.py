@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
 
-from leasing.enums import ContactType, PlotType
+from leasing.enums import ContactType, InvoiceState, PlotType
 from leasing.models import LandUseAgreementInvoice
 from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
 
@@ -347,6 +347,9 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
 
     plan_lawfulness_date = date(2020, 5, 8)
     sign_date = date(2020, 4, 8)
+    expected_amount = calculate_increase_with_360_day_calendar(
+        sign_date, plan_lawfulness_date, 3, 150000
+    )
 
     data = {
         "land_use_agreement": land_use_agreement_test_data.id,
@@ -354,7 +357,7 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
         "recipient": recipient.id,
         "rows": [
             {
-                "compensation_amount": 123,
+                "compensation_amount": 150000,
                 "increase_percentage": 3,
                 "plan_lawfulness_date": plan_lawfulness_date.isoformat(),
                 "receivable_type": 1,
@@ -371,8 +374,8 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
     invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
 
     assert invoice.rows.count() > 0
-    assert invoice.rows.first().amount == calculate_increase_with_360_day_calendar(
-        sign_date, plan_lawfulness_date, 3, 123
-    )
+    assert invoice.rows.first().amount == expected_amount
 
     assert invoice.invoicing_date == timezone.now().date()
+    assert invoice.outstanding_amount == expected_amount
+    assert invoice.state == InvoiceState.OPEN

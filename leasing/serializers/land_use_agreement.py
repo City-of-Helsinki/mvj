@@ -580,8 +580,7 @@ class LandUseAgreementInvoiceRowCreateUpdateSerializer(
     def create(self, validated_data):
         invoice_row = super().create(validated_data)
 
-        invoice_row.calculate_amount()
-        invoice_row.save()
+        invoice_row.update_amount()
 
         return invoice_row
 
@@ -715,7 +714,6 @@ class LandUseAgreementInvoiceCreateSerializer(
         invoice.invoicing_date = timezone.now().date()
         invoice.outstanding_amount = validated_data["total_amount"]
         invoice.update_amounts()  # 0€ invoice would stay OPEN otherwise
-        invoice.save()
 
         return invoice
 

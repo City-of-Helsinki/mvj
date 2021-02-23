@@ -1,6 +1,8 @@
+from decimal import Decimal
+
 from django.contrib.gis.db import models
 from django.db import connection, transaction
-from django.db.models import Max
+from django.db.models import Max, Sum
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -667,6 +669,16 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         verbose_name=_("Billed amount"), max_digits=10, decimal_places=2, default=0
     )
 
+    # In Finnish: Hyvitetty lasku
+    credited_invoice = models.ForeignKey(
+        "self",
+        verbose_name=_("Credited invoice"),
+        related_name="credit_invoices",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
     # In Finnish: Eräpäivä
     due_date = models.DateField(verbose_name=_("Due date"), null=True, blank=True)
 
@@ -731,7 +743,40 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         return self.number
 
     def update_amounts(self):
-        pass
+        for row in self.rows.all():
+            row.update_amount()
+
+        rows_sum = self.rows.aggregate(sum=Sum("amount"))["sum"]
+        if not rows_sum:
+            rows_sum = Decimal(0)
+
+        self.billed_amount = rows_sum
+        self.total_amount = rows_sum
+
+        payments_total = self.payments.aggregate(sum=Sum("paid_amount"))["sum"]
+        if not payments_total:
+            payments_total = Decimal(0)
+
+        # Aggregating like this ignores the manager (i.e. includes deleted rows which we don't want):
+        # total_credited_amount = self.credit_invoices.aggregate(sum=Sum("rows__amount"))["sum"]
+        # ... so we have to iterate the rows and tally the sum by hand
+        total_credited_amount = Decimal(0)
+        for credit_inv in self.credit_invoices.all():
+            for row in credit_inv.rows.all():
+                total_credited_amount += row.amount
+
+        self.outstanding_amount = max(
+            Decimal(0), self.billed_amount - payments_total - total_credited_amount,
+        )
+        # Don't mark as refunded unless credited amount is nonzero
+        if total_credited_amount != Decimal(0) and total_credited_amount.compare(
+            self.billed_amount
+        ) != Decimal(-1):
+            self.state = InvoiceState.REFUNDED
+        elif self.type == InvoiceType.CHARGE and self.outstanding_amount == Decimal(0):
+            self.state = InvoiceState.PAID
+
+        self.save()
 
 
 class LandUseAgreementInvoiceRow(TimeStampedSafeDeleteModel):
@@ -803,13 +848,14 @@ class LandUseAgreementInvoiceRow(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Invoice row")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
 
-    def calculate_amount(self):
+    def update_amount(self):
         self.amount = calculate_increase_with_360_day_calendar(
             self.sign_date,
             self.plan_lawfulness_date,
             self.increase_percentage,
             self.compensation_amount,
         )
+        self.save()
 
 
 class LandUseAgreementInvoicePayment(TimeStampedSafeDeleteModel):
