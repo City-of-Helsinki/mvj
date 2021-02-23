@@ -98,42 +98,6 @@ class LandUseAgreementIdentifier(TimeStampedSafeDeleteModel):
         )
 
 
-class LandUseAgreementCompensations(NameModel):
-    """
-    In Finnish: Maankäyttökorvaus
-    """
-
-    cash_compensation = models.DecimalField(
-        verbose_name=_("Cash compensation"), decimal_places=2, max_digits=12
-    )
-    land_compensation = models.DecimalField(
-        verbose_name=_("Land compensation"), decimal_places=2, max_digits=12
-    )
-
-    other_compensation = models.DecimalField(
-        verbose_name=_("Other compensation"), decimal_places=2, max_digits=12
-    )
-    first_installment_increase = models.DecimalField(
-        verbose_name=_("First installment increase"), decimal_places=2, max_digits=12
-    )
-
-    street_acquisition_value = models.DecimalField(
-        verbose_name=_("Street acquisition value"), decimal_places=2, max_digits=12
-    )
-
-    street_area = models.PositiveIntegerField()
-    park_acquisition_value = models.DecimalField(
-        verbose_name=_("Park acquisition value"), decimal_places=2, max_digits=12
-    )
-
-    park_area = models.PositiveIntegerField()
-    other_acquisition_value = models.DecimalField(
-        verbose_name=_("Other acquisition value"), decimal_places=2, max_digits=12
-    )
-
-    other_area = models.PositiveIntegerField()
-
-
 class LandUseAgreement(TimeStampedSafeDeleteModel):
     """
     In Finnish: Maankäyttösopimus
@@ -292,6 +256,16 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
 
         self.identifier = identifier
 
+    def update_compensations(self, compensations_data):
+        if hasattr(self, "compensations"):
+            for attr_name, value in compensations_data.items():
+                setattr(self.compensations, attr_name, value)
+            self.compensations.save()
+        else:
+            self.compensations = LandUseAgreementCompensations.objects.create(
+                land_use_agreement=self, **compensations_data
+            )
+
     def save(self, *args, **kwargs):
         self.create_identifier()
         super().save(*args, **kwargs)
@@ -341,6 +315,99 @@ class LandUseAgreementAttachment(TimeStampedSafeDeleteModel):
         verbose_name_plural = pgettext_lazy(
             "Model name", "Land use agreement attachments"
         )
+
+
+class LandUseAgreementCompensations(NameModel):
+    """
+    In Finnish: Maankäyttökorvaus
+    """
+
+    # In Finnish: Maankäyttösopimus
+    land_use_agreement = models.OneToOneField(
+        LandUseAgreement,
+        related_name="compensations",
+        verbose_name=_("Land use agreement"),
+        null=True,
+        on_delete=models.CASCADE,
+    )
+
+    # In Finnish: Rahakorvaus
+    cash_compensation = models.DecimalField(
+        verbose_name=_("Cash compensation"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Maakorvaus
+    land_compensation = models.DecimalField(
+        verbose_name=_("Land compensation"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Muu korvaus
+    other_compensation = models.DecimalField(
+        verbose_name=_("Other compensation"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Ensimmäisen maksuerän korotus
+    first_installment_increase = models.DecimalField(
+        verbose_name=_("First installment increase"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Katualueen hankinta-arvo
+    street_acquisition_value = models.DecimalField(
+        verbose_name=_("Street acquisition value"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Katualueen pinta-ala
+    street_area = models.DecimalField(
+        decimal_places=2, max_digits=12, blank=True, null=True
+    )
+
+    # In Finnish: Puistoalueen hankinta-arvo
+    park_acquisition_value = models.DecimalField(
+        verbose_name=_("Park acquisition value"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Puistoalueen pinta-ala
+    park_area = models.DecimalField(
+        decimal_places=2, max_digits=12, blank=True, null=True
+    )
+
+    # In Finnish: Muun alueen hankinta-arvo
+    other_acquisition_value = models.DecimalField(
+        verbose_name=_("Other acquisition value"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Muun alueen pinta-ala
+    other_area = models.DecimalField(
+        decimal_places=2, max_digits=12, blank=True, null=True
+    )
 
 
 class LandUseAgreementEstate(NameModel):
