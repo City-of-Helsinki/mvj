@@ -580,7 +580,7 @@ class LandUseAgreementInvoiceRowCreateUpdateSerializer(
     def create(self, validated_data):
         invoice_row = super().create(validated_data)
 
-        invoice_row.update_amount()
+        invoice_row.calculate_amount()
         invoice_row.save()
 
         return invoice_row

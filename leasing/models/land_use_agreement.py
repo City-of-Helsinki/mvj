@@ -18,6 +18,7 @@ from leasing.models.contact import Contact
 from leasing.models.decision import DecisionMaker
 from leasing.models.land_area import AbstractAddress, Plot
 from leasing.models.lease import District, Municipality
+from leasing.utils import calculate_increase_with_360_day_calendar
 from users.models import User
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
@@ -802,8 +803,13 @@ class LandUseAgreementInvoiceRow(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Invoice row")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
 
-    def update_amount(self):
-        self.amount = 123
+    def calculate_amount(self):
+        self.amount = calculate_increase_with_360_day_calendar(
+            self.sign_date,
+            self.plan_lawfulness_date,
+            self.increase_percentage,
+            self.compensation_amount,
+        )
 
 
 class LandUseAgreementInvoicePayment(TimeStampedSafeDeleteModel):

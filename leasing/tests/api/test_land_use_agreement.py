@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from io import BytesIO
 
 import pytest
@@ -11,7 +12,6 @@ from leasing.models import LandUseAgreementInvoice
 from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
 
 
-@pytest.mark.django_db
 def test_list_land_use_agreements(
     django_db_setup, admin_client, land_use_agreement_test_data
 ):
@@ -345,6 +345,9 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
         first_name="First name", last_name="Last name", type=ContactType.PERSON
     )
 
+    plan_lawfulness_date = date(2020, 5, 8)
+    sign_date = date(2020, 4, 8)
+
     data = {
         "land_use_agreement": land_use_agreement_test_data.id,
         "due_date": "2020-07-01",
@@ -353,9 +356,9 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
             {
                 "compensation_amount": 123,
                 "increase_percentage": 3,
-                "plan_lawfulness_date": "2020-05-08",
+                "plan_lawfulness_date": plan_lawfulness_date.isoformat(),
                 "receivable_type": 1,
-                "sign_date": "2020-04-08",
+                "sign_date": sign_date.isoformat(),
             }
         ],
     }
@@ -368,6 +371,8 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
     invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
 
     assert invoice.rows.count() > 0
-    assert invoice.rows.first().amount == 123
+    assert invoice.rows.first().amount == calculate_increase_with_360_day_calendar(
+        sign_date, plan_lawfulness_date, 3, 123
+    )
 
     assert invoice.invoicing_date == timezone.now().date()
