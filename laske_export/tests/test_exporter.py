@@ -132,16 +132,13 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
 def land_use_agreement_invoice(
     contact_factory, land_use_agreement_invoice_factory, land_use_agreement_test_data
 ):
-
     contact = contact_factory(
         name="Company", type=ContactType.BUSINESS, business_id="1234567-8",
     )
 
     invoice = land_use_agreement_invoice_factory(
         land_use_agreement=land_use_agreement_test_data,
-        amount=Decimal("123.45"),
-        compensation_amount=Decimal("123.45"),
-        compensation_amount_percentage=Decimal("123.45"),
+        total_amount=Decimal("123.45"),
         recipient=contact,
     )
 
