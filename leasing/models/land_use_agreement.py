@@ -637,10 +637,10 @@ class LandUseAgreementReceivableType(models.Model):
 
     name = models.CharField(verbose_name=_("Name"), max_length=255)
     sap_material_code = models.CharField(
-        verbose_name=_("SAP material code"), null=True, blank=True, max_length=255
+        verbose_name=_("SAP material code"), blank=True, max_length=255
     )
     sap_order_item_number = models.CharField(
-        verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
+        verbose_name=_("SAP order item number"), blank=True, max_length=255
     )
     is_active = models.BooleanField(verbose_name=_("Is active?"), default=True)
 
@@ -880,9 +880,7 @@ class LandUseAgreementInvoicePayment(TimeStampedSafeDeleteModel):
     paid_date = models.DateField(verbose_name=_("Paid date"))
 
     # In Finnish: Arkistointitunnus
-    filing_code = models.CharField(
-        verbose_name=_("Name"), null=True, blank=True, max_length=35
-    )
+    filing_code = models.CharField(verbose_name=_("Name"), blank=True, max_length=35)
 
     recursive_get_related_skip_relations = ["invoice"]
 
