@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from leasing.enums import ContactType, InvoiceState, PlotType
 from leasing.models import LandUseAgreementInvoice
+from leasing.models.land_use_agreement import LandUseAgreement
 from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
 from leasing.utils import calculate_increase_with_360_day_calendar
 
@@ -254,6 +255,99 @@ def test_land_use_agreement_update_plots(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert len(response.data.get("plots")) == 2
     assert response.data.get("plots")[1].get("id") != master_plot.id
+
+
+def test_update_land_use_agreement_compensations_without_existing_data(
+    django_db_setup, admin_client, land_use_agreement_test_data
+):
+    lua = land_use_agreement_test_data
+
+    assert hasattr(lua, "compensations") is False
+
+    url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
+
+    data = {
+        "id": lua.id,
+        "type": lua.type.id,
+        "status": lua.status.id,
+        "definition": lua.definition.id,
+        "municipality": lua.municipality.id,
+        "district": lua.district.id,
+        "compensations": {
+            "cash_compensation": 123,
+            "land_compensation": 123,
+            "other_compensation": 123,
+            "first_installment_increase": 123,
+            "street_acquisition_value": 123,
+            "street_area": 123,
+        },
+    }
+
+    response = admin_client.put(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    lua = LandUseAgreement.objects.get(pk=lua.id)
+    assert lua.compensations.cash_compensation == Decimal(123)
+    assert lua.compensations.land_compensation == Decimal(123)
+    assert lua.compensations.other_compensation == Decimal(123)
+    assert lua.compensations.first_installment_increase == Decimal(123)
+    assert lua.compensations.street_acquisition_value == Decimal(123)
+    assert lua.compensations.street_area == Decimal(123)
+
+
+def test_update_land_use_agreement_compensations(
+    django_db_setup,
+    admin_client,
+    land_use_agreement_test_data,
+    land_use_agreement_compensations_factory,
+):
+    lua = land_use_agreement_test_data
+
+    # set the initial data
+    lua.compensations = land_use_agreement_compensations_factory(
+        land_use_agreement=lua,
+        cash_compensation=100,
+        land_compensation=100,
+        other_compensation=100,
+        first_installment_increase=100,
+        street_acquisition_value=1000,
+        park_acquisition_value=1000,
+        other_acquisition_value=1000,
+        street_area=1000,
+        park_area=1000,
+        other_area=1000,
+    )
+    lua.save()
+
+    url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
+
+    data = {
+        "id": lua.id,
+        "type": lua.type.id,
+        "status": lua.status.id,
+        "definition": lua.definition.id,
+        "municipality": lua.municipality.id,
+        "district": lua.district.id,
+        "compensations": {
+            "cash_compensation": 123,
+            "land_compensation": 123,
+            "other_compensation": 123,
+            "first_installment_increase": 123,
+            "street_acquisition_value": 123,
+            "street_area": 123,
+        },
+    }
+
+    response = admin_client.put(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    lua = LandUseAgreement.objects.get(pk=lua.id)
+    assert lua.compensations.cash_compensation == Decimal(123)
+    assert lua.compensations.land_compensation == Decimal(123)
+    assert lua.compensations.other_compensation == Decimal(123)
+    assert lua.compensations.first_installment_increase == Decimal(123)
+    assert lua.compensations.street_acquisition_value == Decimal(123)
+    assert lua.compensations.street_area == Decimal(123)
 
 
 def test_upload_attachment(
