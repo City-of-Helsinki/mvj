@@ -1,7 +1,14 @@
-from enumfields.drf import EnumSupportSerializerMixin
+from decimal import Decimal
+
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
+from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, DecisionMaker, Plot
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
@@ -15,8 +22,12 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementDecisionType,
     LandUseAgreementEstate,
     LandUseAgreementIdentifier,
+    LandUseAgreementInvoice,
+    LandUseAgreementInvoicePayment,
+    LandUseAgreementInvoiceRow,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
+    LandUseAgreementReceivableType,
     LandUseAgreementType,
 )
 from leasing.serializers.decision import DecisionMakerSerializer
@@ -523,7 +534,374 @@ class LandUseAgreementUpdateSerializer(
         return instance
 
 
+class LandUseAgreementReceivableTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUseAgreementReceivableType
+        fields = "__all__"
+
+
 class LandUseAgreementCreateSerializer(LandUseAgreementUpdateSerializer):
     class Meta:
         model = LandUseAgreement
         fields = "__all__"
+
+
+class LandUseAgreementInvoiceRowCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+    litigant = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementLitigant,
+        queryset=LandUseAgreementLitigant.objects.all(),
+        related_serializer=LandUseAgreementLitigantSerializer,
+        required=False,
+        allow_null=True,
+    )
+    receivable_type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementReceivableType,
+        queryset=LandUseAgreementReceivableType.objects.all(),
+        related_serializer=LandUseAgreementReceivableTypeSerializer,
+    )
+
+    class Meta:
+        model = LandUseAgreementInvoiceRow
+        fields = (
+            "id",
+            "description",
+            "compensation_amount",
+            "increase_percentage",
+            "litigant",
+            "plan_lawfulness_date",
+            "receivable_type",
+            "sign_date",
+            "amount",
+        )
+
+    def create(self, validated_data):
+        invoice_row = super().create(validated_data)
+
+        invoice_row.update_amount()
+
+        return invoice_row
+
+    def validate(self, data):
+        """Validate that rows with an inactive receivable type cannot be created
+
+        Saving an existing row should succeed, but creating
+        new rows or changing a rows receivable type to an inactive type
+        should fail."""
+
+        valid = True
+
+        if not data["receivable_type"].is_active:
+            if self.instance:
+                if self.instance.receivable_type != data["receivable_type"]:
+                    # We have an existing row but the receivable type wasn't the
+                    # same as before
+                    valid = False
+            else:
+                # We have data without an instance.
+                # If there is no id it's a new row.
+                if "id" not in data:
+                    valid = False
+                else:
+                    # Else try to see if the existing row has the same receivable type
+                    try:
+                        existing_row = LandUseAgreementInvoiceRow.objects.get(
+                            pk=data["id"]
+                        )
+
+                        if existing_row.receivable_type != data["receivable_type"]:
+                            valid = False
+                    except ObjectDoesNotExist:
+                        valid = False
+
+        if not valid:
+            raise ValidationError(_("Cannot use an inactive receivable type"))
+
+        return data
+
+
+class LandUseAgreementInvoicePaymentCreateUpdateSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LandUseAgreementInvoicePayment
+        exclude = ("invoice", "deleted")
+
+
+class LandUseAgreementInvoiceCreateSerializer(
+    UpdateNestedMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    id = serializers.ReadOnlyField()
+    recipient = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Contact,
+        queryset=Contact.objects.all(),
+        related_serializer=ContactSerializer,
+        required=False,
+    )
+    rows = LandUseAgreementInvoiceRowCreateUpdateSerializer(many=True)
+    payments = LandUseAgreementInvoicePaymentCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+    # Make total_amount, billed_amount, and type not required in the serializer and set them in create() if needed
+    total_amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, required=False
+    )
+    billed_amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, required=False
+    )
+    type = EnumField(enum=InvoiceType, required=False)
+
+    def override_permission_check_field_name(self, field_name):
+        # if field_name == "tenant":
+        #    return "recipient"
+
+        return field_name
+
+    def validate(self, attrs):
+        if not bool(attrs.get("recipient")) ^ bool(attrs.get("tenant")):
+            raise ValidationError(_("Either recipient or tenant is required."))
+
+        if (
+            attrs.get("tenant")
+            and attrs.get("tenant") not in attrs.get("lease").tenants.all()
+        ):
+            raise ValidationError(_("Tenant not found in lease"))
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data["state"] = InvoiceState.OPEN
+
+        if not validated_data.get("total_amount"):
+            total_amount = Decimal(0)
+            for row in validated_data.get("rows", []):
+                total_amount += row.get("amount", Decimal(0))
+
+            validated_data["total_amount"] = total_amount
+
+        if not validated_data.get("billed_amount"):
+            billed_amount = Decimal(0)
+            for row in validated_data.get("rows", []):
+                billed_amount += row.get("amount", Decimal(0))
+
+            validated_data["billed_amount"] = billed_amount
+
+        if not validated_data.get("type"):
+            validated_data["type"] = InvoiceType.CHARGE
+
+        # if validated_data.get("tenant"):
+        #    today = datetime.date.today()
+        #    tenant = validated_data.pop("tenant")
+        #    billing_tenantcontact = tenant.get_billing_tenantcontacts(
+        #        start_date=today, end_date=None
+        #    ).first()
+        #    if not billing_tenantcontact:
+        #        raise ValidationError(_("Billing contact not found for tenant"))
+
+        #    validated_data["recipient"] = billing_tenantcontact.contact
+        #    for row in validated_data.get("rows", []):
+        #        row["tenant"] = tenant
+
+        invoice = super().create(validated_data)
+
+        invoice.invoicing_date = timezone.now().date()
+        invoice.outstanding_amount = validated_data["total_amount"]
+        invoice.update_amounts()  # 0€ invoice would stay OPEN otherwise
+
+        return invoice
+
+    class Meta:
+        model = LandUseAgreementInvoice
+        exclude = ("deleted",)
+        read_only_fields = (
+            "number",
+            "generated",
+            "sent_to_sap_at",
+            "sap_id",
+            "state",
+            "adjusted_due_date",
+            "credit_invoices",
+            "interest_invoices",
+        )
+
+
+class LandUseAgreementInvoiceUpdateSerializer(
+    UpdateNestedMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    id = serializers.ReadOnlyField()
+    recipient = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Contact,
+        queryset=Contact.objects.all(),
+        related_serializer=ContactSerializer,
+    )
+    rows = LandUseAgreementInvoiceRowCreateUpdateSerializer(many=True)
+    payments = LandUseAgreementInvoicePaymentCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.update_amounts()
+        if instance.credited_invoice:
+            instance.credited_invoice.update_amounts()
+
+        return instance
+
+    class Meta:
+        model = LandUseAgreementInvoice
+        exclude = ("deleted",)
+        read_only_fields = (
+            "generated",
+            "sent_to_sap_at",
+            "sap_id",
+            "state",
+            "adjusted_due_date",
+            "credit_invoices",
+            "interest_invoices",
+        )
+
+
+class LandUseAgreementCreditNoteUpdateSerializer(
+    LandUseAgreementInvoiceUpdateSerializer
+):
+    class Meta:
+        model = LandUseAgreementInvoice
+        exclude = ("deleted",)
+        read_only_fields = (
+            "generated",
+            "sent_to_sap_at",
+            "sap_id",
+            "state",
+            "adjusted_due_date",
+            "due_date",
+            "billing_period_start_date",
+            "billing_period_end_date",
+        )
+
+
+class SentToSapLandUseAgreementInvoiceUpdateSerializer(
+    LandUseAgreementInvoiceUpdateSerializer
+):
+    """Invoice serializer where all but "postpone_date" is read only"""
+
+    rows = LandUseAgreementInvoiceRowCreateUpdateSerializer(many=True, read_only=True)
+    payments = LandUseAgreementInvoicePaymentCreateUpdateSerializer(
+        many=True, read_only=True
+    )
+
+    class Meta:
+        model = LandUseAgreementInvoice
+        exclude = ("deleted",)
+        read_only_fields = (
+            "lease",
+            "invoiceset",
+            "number",
+            "recipient",
+            "sent_to_sap_at",
+            "sap_id",
+            "adjusted_due_date",
+            "due_date",
+            "invoicing_date",
+            "state",
+            "billing_period_start_date",
+            "billing_period_end_date",
+            "total_amount",
+            "billed_amount",
+            "outstanding_amount",
+            "payment_notification_date",
+            "collection_charge",
+            "payment_notification_catalog_date",
+            "delivery_method",
+            "type",
+            "notes",
+            "generated",
+            "description",
+            "credited_invoices",
+            "interest_invoices",
+            "rows",
+            "payments",
+        )
+
+
+class LandUseAgreementInvoicePaymentSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    class Meta:
+        model = LandUseAgreementInvoicePayment
+        exclude = ("deleted",)
+
+
+class LandUseAgreementInvoiceRowSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+    litigant = LandUseAgreementLitigantSerializer()
+
+    class Meta:
+        model = LandUseAgreementInvoiceRow
+        fields = (
+            "id",
+            "description",
+            "compensation_amount",
+            "increase_percentage",
+            "litigant",
+            "plan_lawfulness_date",
+            "receivable_type",
+            "sign_date",
+        )
+
+
+class LandUseAgreementInlineInvoiceSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    class Meta:
+        model = LandUseAgreementInvoice
+        fields = ("id", "number", "due_date", "total_amount")
+
+
+class LandUseAgreementInvoiceSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    recipient = ContactSerializer()
+    rows = LandUseAgreementInvoiceRowSerializer(
+        many=True, required=False, allow_null=True
+    )
+    payments = LandUseAgreementInvoicePaymentSerializer(
+        many=True, required=False, allow_null=True
+    )
+    credit_invoices = LandUseAgreementInlineInvoiceSerializer(
+        many=True, required=False, allow_null=True
+    )
+    interest_invoices = LandUseAgreementInlineInvoiceSerializer(
+        many=True, required=False, allow_null=True
+    )
+
+    class Meta:
+        model = LandUseAgreementInvoice
+        exclude = ("deleted",)
+
+
+class LandUseAgreementInvoiceSerializerWithSuccinctLease(
+    LandUseAgreementInvoiceSerializer
+):
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance=instance, data=data, **kwargs)
+
+        # Lease field must be added dynamically to prevent circular imports
+        from leasing.serializers.lease import LeaseSuccinctSerializer
+
+        self.fields["lease"] = LeaseSuccinctSerializer()

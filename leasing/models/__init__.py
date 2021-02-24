@@ -45,8 +45,10 @@ from .land_use_agreement import (
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecisionCondition,
     LandUseAgreementDecisionConditionType,
+    LandUseAgreementInvoice,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
+    LandUseAgreementReceivableType,
 )
 from .lease import (
     District,
@@ -152,8 +154,10 @@ __all__ = [
     "LandUseAgreementConditionFormOfManagement",
     "LandUseAgreementDecisionCondition",
     "LandUseAgreementDecisionConditionType",
+    "LandUseAgreementInvoice",
     "LandUseAgreementLitigant",
     "LandUseAgreementLitigantContact",
+    "LandUseAgreementReceivableType",
     "Lease",
     "LeaseArea",
     "LeaseAreaAttachment",

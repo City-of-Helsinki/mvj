@@ -1,15 +1,19 @@
 import json
+from datetime import date
+from decimal import Decimal
 from io import BytesIO
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 
-from leasing.enums import PlotType
+from leasing.enums import ContactType, InvoiceState, PlotType
+from leasing.models import LandUseAgreementInvoice
 from leasing.serializers.land_use_agreement import LandUseAgreementAttachmentSerializer
+from leasing.utils import calculate_increase_with_360_day_calendar
 
 
-@pytest.mark.django_db
 def test_list_land_use_agreements(
     django_db_setup, admin_client, land_use_agreement_test_data
 ):
@@ -337,3 +341,88 @@ def test_download_attachment(
         'attachment; filename="dummy_file'
     )
     assert response.content == b"dummy data"
+
+
+def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_data):
+    recipient = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    plan_lawfulness_date = date(2020, 5, 8)
+    sign_date = date(2020, 4, 8)
+    expected_amount = calculate_increase_with_360_day_calendar(
+        sign_date, plan_lawfulness_date, 3, 150000
+    )
+
+    data = {
+        "land_use_agreement": land_use_agreement_test_data.id,
+        "due_date": "2020-07-01",
+        "recipient": recipient.id,
+        "rows": [
+            {
+                "compensation_amount": 150000,
+                "increase_percentage": 3,
+                "plan_lawfulness_date": plan_lawfulness_date.isoformat(),
+                "receivable_type": 1,
+                "sign_date": sign_date.isoformat(),
+            }
+        ],
+    }
+
+    url = reverse("landuseagreementinvoice-list")
+    response = admin_client.post(url, data=data, content_type="application/json",)
+
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+    invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
+
+    assert invoice.rows.count() > 0
+    assert invoice.rows.first().amount == expected_amount
+
+    assert invoice.invoicing_date == timezone.now().date()
+    assert invoice.outstanding_amount == expected_amount
+    assert invoice.state == InvoiceState.OPEN
+
+
+@pytest.mark.django_db
+def test_create_zero_sum_invoice_state_is_paid(
+    contact_factory, admin_client, land_use_agreement_test_data
+):
+    recipient = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    plan_lawfulness_date = date(2020, 5, 8)
+    sign_date = date(2020, 4, 8)
+
+    data = {
+        "land_use_agreement": land_use_agreement_test_data.id,
+        "due_date": "2020-07-01",
+        "recipient": recipient.id,
+        "rows": [
+            {
+                "compensation_amount": 150000,
+                "increase_percentage": 3,
+                "plan_lawfulness_date": plan_lawfulness_date.isoformat(),
+                "receivable_type": 1,
+                "sign_date": sign_date.isoformat(),
+            },
+            {
+                "compensation_amount": -150000,
+                "increase_percentage": 3,
+                "plan_lawfulness_date": plan_lawfulness_date.isoformat(),
+                "receivable_type": 1,
+                "sign_date": sign_date.isoformat(),
+            },
+        ],
+    }
+
+    url = reverse("landuseagreementinvoice-list")
+    response = admin_client.post(url, data=data, content_type="application/json",)
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+
+    invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
+
+    assert invoice.invoicing_date == timezone.now().date()
+    assert invoice.outstanding_amount == Decimal(0)
+    assert invoice.state == InvoiceState.PAID

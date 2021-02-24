@@ -1,0 +1,12 @@
+[
+  {
+    "model": "leasing.LandUseAgreementReceivableType",
+    "pk": 1,
+    "fields": {
+      "name": "Maankäyttösopimus",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true
+    }
+  }
+]
