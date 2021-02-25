@@ -583,3 +583,12 @@ def test_get_invoice_list(admin_client, land_use_agreement_test_data):
     response = admin_client.get(url, content_type="application/json",)
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert len(response.data["results"]) > 0
+
+
+@pytest.mark.django_db
+def test_get_invoice_detail(admin_client, land_use_agreement_test_data):
+    invoice_id = land_use_agreement_test_data.invoices.first().id
+
+    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice_id})
+    response = admin_client.get(url, content_type="application/json",)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
