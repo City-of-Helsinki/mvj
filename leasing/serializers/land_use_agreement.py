@@ -15,6 +15,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementAddress,
     LandUseAgreementAttachment,
     LandUseAgreementCompensations,
+    LandUseAgreementCompensationsUnitPrice,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
@@ -58,7 +59,28 @@ class LandUseAgreementTypeSerializer(
         fields = "__all__"
 
 
+class LandUseAgreementCompensationsUnitPriceSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LandUseAgreementCompensationsUnitPrice
+        fields = (
+            "id",
+            "usage",
+            "management",
+            "protected",
+            "area",
+            "unit_value",
+            "discount",
+            "used_price",
+        )
+
+
 class LandUseAgreementCompensationsSerializer(serializers.ModelSerializer):
+    unit_prices_used_in_calculation = LandUseAgreementCompensationsUnitPriceSerializer(
+        many=True, required=False, allow_null=True
+    )
+
     class Meta:
         model = LandUseAgreementCompensations
         fields = (
@@ -73,6 +95,7 @@ class LandUseAgreementCompensationsSerializer(serializers.ModelSerializer):
             "park_area",
             "street_area",
             "other_area",
+            "unit_prices_used_in_calculation",
         )
 
 
