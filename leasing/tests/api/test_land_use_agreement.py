@@ -280,6 +280,17 @@ def test_update_land_use_agreement_compensations_without_existing_data(
             "first_installment_increase": 123,
             "street_acquisition_value": 123,
             "street_area": 123,
+            "unit_prices_used_in_calculation": [
+                {
+                    "usage": "test",
+                    "management": "test",
+                    "protected": "test",
+                    "area": 1000,
+                    "unit_value": 1000,
+                    "discount": 10,
+                    "used_price": 900,
+                }
+            ],
         },
     }
 
@@ -294,12 +305,19 @@ def test_update_land_use_agreement_compensations_without_existing_data(
     assert lua.compensations.street_acquisition_value == Decimal(123)
     assert lua.compensations.street_area == Decimal(123)
 
+    assert lua.compensations.unit_prices_used_in_calculation.count() == 1
+    assert lua.compensations.unit_prices_used_in_calculation.first().usage == "test"
+    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
+        900
+    )
+
 
 def test_update_land_use_agreement_compensations(
     django_db_setup,
     admin_client,
     land_use_agreement_test_data,
     land_use_agreement_compensations_factory,
+    land_use_agreement_compensations_unit_price_factory,
 ):
     lua = land_use_agreement_test_data
 
@@ -319,6 +337,22 @@ def test_update_land_use_agreement_compensations(
     )
     lua.save()
 
+    unit_prices = land_use_agreement_compensations_unit_price_factory(
+        compensations=lua.compensations,
+        usage="test",
+        management="test",
+        protected="test",
+        area=500,
+        unit_value=500,
+        discount=20,
+        used_price=400,
+    )
+
+    assert lua.compensations.unit_prices_used_in_calculation.count() == 1
+    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
+        400
+    )
+
     url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
 
     data = {
@@ -335,6 +369,18 @@ def test_update_land_use_agreement_compensations(
             "first_installment_increase": 123,
             "street_acquisition_value": 123,
             "street_area": 123,
+            "unit_prices_used_in_calculation": [
+                {
+                    "id": unit_prices.id,
+                    "usage": "test",
+                    "management": "test",
+                    "protected": "test",
+                    "area": 1000,
+                    "unit_value": 1000,
+                    "discount": 10,
+                    "used_price": 900,
+                }
+            ],
         },
     }
 
@@ -342,12 +388,21 @@ def test_update_land_use_agreement_compensations(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     lua = LandUseAgreement.objects.get(pk=lua.id)
+
+    # compensations are updated correctly
     assert lua.compensations.cash_compensation == Decimal(123)
     assert lua.compensations.land_compensation == Decimal(123)
     assert lua.compensations.other_compensation == Decimal(123)
     assert lua.compensations.first_installment_increase == Decimal(123)
     assert lua.compensations.street_acquisition_value == Decimal(123)
     assert lua.compensations.street_area == Decimal(123)
+
+    # unit prices are updated correctly
+    assert lua.compensations.unit_prices_used_in_calculation.count() == 1
+    assert lua.compensations.unit_prices_used_in_calculation.first().usage == "test"
+    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
+        900
+    )
 
 
 def test_upload_attachment(
