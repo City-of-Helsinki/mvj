@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 12:42+0200\n"
+"POT-Creation-Date: 2021-02-23 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1521,14 +1521,24 @@ msgctxt "Model name"
 msgid "Bank holidays"
 msgstr "Yleiset vapaapäivät"
 
+msgid "Is master?"
+msgstr "Onko alkuperäinen?"
+
+msgid "Master timestamp"
+msgstr "Alkuperäiskappaleen aikaleima"
+
+msgid ""
+"The master land item has already created. There can be only one master land "
+"item per lease area and identifier."
+msgstr ""
+"Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla "
+"vain yksi per vuokra-alueen kaavayksikön tunnus."
+
 msgid "Area in square meters"
 msgstr "Kokonaisala neliömetreissä"
 
 msgid "Section area"
 msgstr "Leikkausala"
-
-msgid "Is master?"
-msgstr "Onko alkuperäinen?"
 
 msgid "Location"
 msgstr "Sijainti"
@@ -1704,13 +1714,6 @@ msgctxt "Model name"
 msgid "Plan units"
 msgstr "Kaavayksiköt"
 
-msgid ""
-"The master plan unit has already created. There can be only one master plan "
-"unit per lease area and identifier."
-msgstr ""
-"Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla "
-"vain yksi per vuokra-alueen kaavayksikön tunnus."
-
 msgid "Land use agreement type"
 msgstr "Maankäyttösopimuksen tyyppi"
 
@@ -1784,6 +1787,9 @@ msgstr "Päättäjä"
 
 msgid "Plan lawfulness date"
 msgstr "Asemakaavan lainvoimaisuuspvm"
+
+msgid "Land use agreement compensations"
+msgstr "Maankäyttösopimuksen korvaukset"
 
 msgctxt "Model name"
 msgid "Land use agreement"

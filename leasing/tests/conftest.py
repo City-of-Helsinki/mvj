@@ -67,6 +67,8 @@ from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
+    LandUseAgreementCompensations,
+    LandUseAgreementCompensationsUnitPrice,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
@@ -377,6 +379,18 @@ class LandUseAgreementLitigantFactory(factory.DjangoModelFactory):
 class LandUseAgreementLitigantContactFactory(factory.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementLitigantContact
+
+
+@register
+class LandUseAgreementCompensationsFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementCompensations
+
+
+@register
+class LandUseAgreementCompensationsUnitPriceFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementCompensationsUnitPrice
 
 
 @register
