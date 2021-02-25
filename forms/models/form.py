@@ -1,17 +1,23 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
-from leasing.models.mixins import TimeStampedModel
-
-from ..utils import generate_unique_identifier
+from ..utils import clone_object, generate_unique_identifier
 
 
-class Form(TimeStampedModel):
+class Form(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_template = models.BooleanField(default=False)
 
     title = models.CharField(max_length=255, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+    modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
+
+    def clone(self):
+        assert self.is_template  # Only templates can be clone
+        return clone_object(self)
 
 
 class Section(models.Model):
@@ -41,10 +47,14 @@ class Section(models.Model):
         )
 
     def save(self, *args, **kwargs):
-        if not self.identifier:
+        if not self.id or not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
             self.identifier = generate_unique_identifier(
-                Section, self.title, max_length
+                Section,
+                "identifier",
+                self.title,
+                max_length,
+                filter={"form_id": self.form.id},
             )
         super(Section, self).save(*args, **kwargs)
 
@@ -58,7 +68,7 @@ class FieldType(models.Model):
         if not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
             self.identifier = generate_unique_identifier(
-                FieldType, self.name, max_length
+                FieldType, "identifier", self.name, max_length
             )
         super(FieldType, self).save(*args, **kwargs)
 
@@ -87,7 +97,13 @@ class Field(models.Model):
     def save(self, *args, **kwargs):
         if not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
-            self.identifier = generate_unique_identifier(Field, self.label, max_length)
+            self.identifier = generate_unique_identifier(
+                Field,
+                "identifier",
+                self.label,
+                max_length,
+                filter={"section_id": self.section.id},
+            )
         super(Field, self).save(*args, **kwargs)
 
 
