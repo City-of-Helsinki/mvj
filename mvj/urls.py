@@ -6,6 +6,7 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from forms.viewsets.form import FormViewSet
+from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
@@ -225,6 +226,10 @@ additional_api_paths = [
     ),
     path("send_email/", SendEmailView.as_view(), name="send-email"),
     path("users_permissions/", UsersPermissions.as_view(), name="users-permissions"),
+    path(
+        "functions/calculate_increase_with_360_day_calendar",
+        CalculateIncreaseWith360DayCalendar.as_view(),
+    ),
 ]
 
 urlpatterns = [
