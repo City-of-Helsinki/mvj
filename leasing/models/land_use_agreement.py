@@ -883,6 +883,16 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         InvoiceType, verbose_name=_("Type"), max_length=30, default=InvoiceType.CHARGE
     )
 
+    # In Finnish: Korko laskulle
+    interest_invoice_for = models.ForeignKey(
+        "self",
+        verbose_name=_("Interest invoice for"),
+        related_name="interest_invoices",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
     def generate_number(self):
         if self.number:
             return self.number
