@@ -575,3 +575,20 @@ def test_create_zero_sum_invoice_state_is_paid(
     assert invoice.invoicing_date == timezone.now().date()
     assert invoice.outstanding_amount == Decimal(0)
     assert invoice.state == InvoiceState.PAID
+
+
+@pytest.mark.django_db
+def test_get_invoice_list(admin_client, land_use_agreement_test_data):
+    url = reverse("landuseagreementinvoice-list")
+    response = admin_client.get(url, content_type="application/json",)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert len(response.data["results"]) > 0
+
+
+@pytest.mark.django_db
+def test_get_invoice_detail(admin_client, land_use_agreement_test_data):
+    invoice_id = land_use_agreement_test_data.invoices.first().id
+
+    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice_id})
+    response = admin_client.get(url, content_type="application/json",)
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

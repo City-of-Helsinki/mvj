@@ -109,9 +109,9 @@ class LandUseAgreementInvoiceViewSet(
         ).prefetch_related(
             "rows__receivable_type",
             "rows",
-            "rows__tenant",
-            "rows__tenant__tenantcontact_set",
-            "rows__tenant__tenantcontact_set__contact",
+            "rows__litigant",
+            "rows__litigant__landuseagreementlitigantcontact_set",
+            "rows__litigant__landuseagreementlitigantcontact_set__contact",
             "payments",
             "credit_invoices",
             "interest_invoices",

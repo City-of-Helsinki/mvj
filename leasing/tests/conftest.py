@@ -75,6 +75,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementDefinition,
     LandUseAgreementIdentifier,
     LandUseAgreementInvoice,
+    LandUseAgreementInvoiceRow,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
     LandUseAgreementReceivableType,
@@ -411,6 +412,12 @@ class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = LandUseAgreementInvoice
+
+
+@register
+class LandUseAgreementInvoiceRowFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementInvoiceRow
 
 
 @register
@@ -874,6 +881,8 @@ def lease_data_dict_with_contacts(contact_factory):
 @pytest.fixture
 def land_use_agreement_test_data(
     land_use_agreement_factory,
+    land_use_agreement_invoice_factory,
+    land_use_agreement_invoice_row_factory,
     land_use_agreement_type_factory,
     land_use_agreement_status_factory,
     land_use_agreement_definition_factory,
@@ -945,12 +954,13 @@ def land_use_agreement_test_data(
         supervised_date=datetime.date(year=2020, month=1, day=1),
     )
 
+    contact_1 = contact_factory(
+        first_name="Litigant First 1",
+        last_name="Litigant Last 1",
+        type=ContactType.PERSON,
+    )
     contacts = [
-        contact_factory(
-            first_name="Litigant First 1",
-            last_name="Litigant Last 1",
-            type=ContactType.PERSON,
-        ),
+        contact_1,
         contact_factory(
             first_name="Litigant First 2",
             last_name="Litigant Last 2",
@@ -976,6 +986,24 @@ def land_use_agreement_test_data(
     ),
 
     land_use_agreement.litigants.set(litigants)
+
+    invoice = land_use_agreement_invoice_factory(
+        land_use_agreement=land_use_agreement,
+        total_amount=Decimal("123.45"),
+        recipient=contact_1,
+    )
+
+    land_use_agreement_invoice_row_factory(
+        invoice=invoice,
+        litigant=litigants[0],
+        receivable_type=LandUseAgreementReceivableType.objects.first(),
+        compensation_amount=150000,
+        increase_percentage=3,
+        plan_lawfulness_date=datetime.date(year=2021, month=1, day=1),
+        sign_date=datetime.date(year=2020, month=1, day=1),
+    )
+
+    invoice.update_amounts()
 
     return land_use_agreement
 
