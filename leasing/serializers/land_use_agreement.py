@@ -781,7 +781,6 @@ class LandUseAgreementInvoiceCreateSerializer(
         exclude = ("deleted",)
         read_only_fields = (
             "number",
-            "generated",
             "sent_to_sap_at",
             "sap_id",
             "state",
@@ -810,6 +809,7 @@ class LandUseAgreementInvoiceUpdateSerializer(
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
+        instance.refresh_from_db()
         instance.update_amounts()
         if instance.credited_invoice:
             instance.credited_invoice.update_amounts()
@@ -820,7 +820,6 @@ class LandUseAgreementInvoiceUpdateSerializer(
         model = LandUseAgreementInvoice
         exclude = ("deleted",)
         read_only_fields = (
-            "generated",
             "sent_to_sap_at",
             "sap_id",
             "state",
@@ -837,14 +836,11 @@ class LandUseAgreementCreditNoteUpdateSerializer(
         model = LandUseAgreementInvoice
         exclude = ("deleted",)
         read_only_fields = (
-            "generated",
             "sent_to_sap_at",
             "sap_id",
             "state",
             "adjusted_due_date",
             "due_date",
-            "billing_period_start_date",
-            "billing_period_end_date",
         )
 
 
@@ -872,8 +868,6 @@ class SentToSapLandUseAgreementInvoiceUpdateSerializer(
             "due_date",
             "invoicing_date",
             "state",
-            "billing_period_start_date",
-            "billing_period_end_date",
             "total_amount",
             "billed_amount",
             "outstanding_amount",
@@ -883,7 +877,6 @@ class SentToSapLandUseAgreementInvoiceUpdateSerializer(
             "delivery_method",
             "type",
             "notes",
-            "generated",
             "description",
             "credited_invoices",
             "interest_invoices",
