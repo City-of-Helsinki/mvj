@@ -76,6 +76,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementIdentifier,
     LandUseAgreementInvoice,
     LandUseAgreementInvoiceRow,
+    LandUseAgreementInvoiceSet,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
     LandUseAgreementReceivableType,
@@ -418,6 +419,12 @@ class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
 class LandUseAgreementInvoiceRowFactory(factory.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementInvoiceRow
+
+
+@register
+class LandUseAgreementInvoiceSetFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementInvoiceSet
 
 
 @register

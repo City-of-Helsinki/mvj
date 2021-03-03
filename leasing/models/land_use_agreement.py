@@ -1,4 +1,5 @@
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
+from fractions import Fraction
 
 from django.contrib.gis.db import models
 from django.db import connection, transaction
@@ -803,10 +804,144 @@ class LandUseAgreementReceivableType(models.Model):
         return self.name
 
 
+class LandUseAgreementInvoiceSet(models.Model):
+    land_use_agreement = models.ForeignKey(
+        "leasing.LandUseAgreement",
+        verbose_name=_("Land use agreement"),
+        related_name="invoicesets",
+        on_delete=models.PROTECT,
+    )
+
+    recursive_get_related_skip_relations = ["land_use_agreement"]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Invoice set")
+        verbose_name_plural = pgettext_lazy("Model name", "Invoice set")
+
+    def create_credit_invoiceset(self, receivable_type=None, notes=""):
+        all_invoices = self.invoices.filter(type=InvoiceType.CHARGE)
+
+        if not all_invoices:
+            raise RuntimeError(
+                'No refundable invoices found (no invoices with the type "{}" found)'.format(
+                    InvoiceType.CHARGE.value
+                )
+            )
+
+        credit_invoiceset = LandUseAgreementInvoiceSet.objects.create(
+            land_use_agreement=self.land_use_agreement
+        )
+
+        for invoice in all_invoices:
+            credit_invoice = invoice.create_credit_invoice(
+                receivable_type=receivable_type, notes=notes
+            )
+            if credit_invoice:
+                credit_invoiceset.invoices.add(credit_invoice)
+
+        return credit_invoiceset
+
+    def create_credit_invoiceset_for_amount(
+        self, amount=None, receivable_type=None, notes=""
+    ):
+        if amount and not receivable_type:
+            raise RuntimeError("receivable_type is required if amount is provided.")
+
+        all_invoices = self.invoices.filter(type=InvoiceType.CHARGE)
+
+        if not all_invoices:
+            raise RuntimeError(
+                'No refundable invoices found (no invoices with the type "{}" found)'.format(
+                    InvoiceType.CHARGE.value
+                )
+            )
+
+        shares = {}
+        all_shares = Fraction()
+
+        total_row_count = LandUseAgreementInvoiceRow.objects.filter(
+            invoice__in=all_invoices, receivable_type=receivable_type
+        ).count()
+
+        has_tenants = (
+            LandUseAgreementInvoiceRow.objects.filter(
+                invoice__in=all_invoices,
+                receivable_type=receivable_type,
+                tenant__isnull=False,
+            ).count()
+            == total_row_count
+        )
+
+        total_row_amount = LandUseAgreementInvoiceRow.objects.filter(
+            invoice__in=all_invoices, receivable_type=receivable_type
+        ).aggregate(total_row_amount=Sum("amount"))["total_row_amount"]
+
+        if amount > total_row_amount:
+            raise RuntimeError(
+                'Credit amount "{}" is more that total row amount "{}"!'.format(
+                    amount, total_row_amount
+                )
+            )
+
+        for invoice in all_invoices:
+            if has_tenants:
+                shares[invoice] = invoice.get_fraction_for_receivable_type(
+                    receivable_type
+                )
+            else:
+                shares[invoice] = Fraction(
+                    invoice.rows.filter(receivable_type=receivable_type).count(),
+                    total_row_count,
+                )
+
+            all_shares += shares[invoice]
+
+        if all_shares != 1:
+            raise RuntimeError("Shares together do not equal 1/1")
+
+        credit_invoiceset = LandUseAgreementInvoiceSet.objects.create(
+            lease=self.lease,
+            billing_period_start_date=self.billing_period_start_date,
+            billing_period_end_date=self.billing_period_end_date,
+        )
+
+        total_credited_amount = Decimal(0)
+
+        for i, (invoice, fraction) in enumerate(shares.items()):
+            invoice_credit_amount = Decimal(
+                amount * Decimal(fraction.numerator / fraction.denominator)
+            ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+            total_credited_amount += invoice_credit_amount
+
+            # If this is the last share, check if we need to round
+            if i == len(shares) - 1 and total_credited_amount.compare(
+                amount
+            ) != Decimal("0"):
+                invoice_credit_amount += amount - total_credited_amount
+
+            credit_invoice = invoice.create_credit_invoice(
+                amount=invoice_credit_amount,
+                receivable_type=receivable_type,
+                notes=notes,
+            )
+            credit_invoiceset.invoices.add(credit_invoice)
+
+        return credit_invoiceset
+
+
 class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
     """
     In Finnish: Lasku
     """
+
+    invoiceset = models.ForeignKey(
+        LandUseAgreementInvoiceSet,
+        verbose_name=_("Invoice set"),
+        related_name="invoices",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     land_use_agreement = models.ForeignKey(
         LandUseAgreement,
@@ -838,6 +973,9 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         verbose_name=_("Invoicing date"), null=True, blank=True
     )
 
+    # In Finnish: Tiedote
+    notes = models.TextField(verbose_name=_("Notes"), blank=True)
+
     # In Finnish: Laskun numero
     number = models.PositiveIntegerField(
         verbose_name=_("Number"), unique=True, null=True, blank=True
@@ -849,6 +987,11 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
         max_digits=10,
         decimal_places=2,
         default=0,
+    )
+
+    # In Finnish: Lykkäyspvm
+    postpone_date = models.DateField(
+        verbose_name=_("Postpone date"), null=True, blank=True
     )
 
     # In Finnish: Laskunsaaja
