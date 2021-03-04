@@ -3,7 +3,7 @@ SELECT lease.id AS vuokraus_id,
     l_area.identifier AS kiinteistotunnus,
     concat(ltype.identifier, ( SELECT leasing_municipality.identifier
            FROM leasing_municipality
-          WHERE leasing_municipality.id = lid.municipality_id), ( SELECT RPAD(leasing_district.identifier,2,'0')
+          WHERE leasing_municipality.id = lid.municipality_id), ( SELECT LPAD(leasing_district.identifier,2,'0')
            FROM leasing_district
           WHERE leasing_district.id = lid.district_id), '-', lid.sequence) AS vuokraustunnus,
     ( SELECT leasing_contract.contract_number
