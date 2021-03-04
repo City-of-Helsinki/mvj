@@ -1,12 +1,17 @@
 from django.utils.translation import ugettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
-from rest_framework.exceptions import ValidationError
+from paramiko import SSHException
+from pysftp import ConnectionException, CredentialException, HostKeysException
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from laske_export.exporter import LaskeExporter, LaskeExporterException
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import (
     CoalesceOrderingFilter,
@@ -19,7 +24,9 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementAttachment,
     LandUseAgreementInvoice,
     LandUseAgreementInvoiceRow,
+    LandUseAgreementInvoiceSet,
 )
+from leasing.permissions import PerMethodPermission
 from leasing.serializers.invoice import ReceivableTypeSerializer
 from leasing.serializers.land_use_agreement import (
     LandUseAgreementAttachmentCreateUpdateSerializer,
@@ -43,6 +50,53 @@ from .utils import (
     FileMixin,
     MultiPartJsonParser,
 )
+
+
+def get_object_from_query_params(object_type, query_params):
+    assert object_type in [
+        "land_use_agreement_invoice",
+        "land_use_agreement_invoice_row",
+        "land_use_agreement_invoice_set",
+    ]
+
+    object_type_map = {
+        "land_use_agreement_invoice": {
+            "name": "LandUseAgreementInvoice",
+            "class": LandUseAgreementInvoice,
+            "param_name": "invoice",
+        },
+        "land_use_agreement_invoice_row": {
+            "name": "LandUseAgreementInvoice",
+            "class": LandUseAgreementInvoiceRow,
+            "param_name": "invoice_row",
+        },
+        "land_use_agreement_invoice_set": {
+            "name": "LandUseAgreementInvoice",
+            "class": LandUseAgreementInvoiceSet,
+            "param_name": "invoice_set",
+        },
+    }
+
+    if not query_params.get(object_type_map[object_type]["param_name"]):
+        raise ValidationError(
+            "{} parameter is mandatory".format(
+                object_type_map[object_type]["param_name"]
+            )
+        )
+
+    try:
+
+        return object_type_map[object_type]["class"].objects.get(
+            pk=int(query_params.get(object_type_map[object_type]["param_name"]))
+        )
+    except LandUseAgreementInvoice.DoesNotExist:
+        raise ValidationError(
+            "{} does not exist".format(object_type_map[object_type]["name"])
+        )
+    except ValueError:
+        raise ValidationError(
+            "Invalid {} id".format(object_type_map[object_type]["name"])
+        )
 
 
 class LandUseAgreementViewSet(
@@ -183,3 +237,38 @@ class LandUseAgreementInvoiceRowViewSet(
 class LandUseAgreementReceivableTypeViewSet(ReadOnlyModelViewSet):
     queryset = ReceivableType.objects.all()
     serializer_class = ReceivableTypeSerializer
+
+
+class LandUseAgreementInvoiceExportToLaskeView(APIView):
+    permission_classes = (PerMethodPermission,)
+    perms_map = {"POST": ["land_use_agreement.add_invoice"]}
+
+    def get_view_name(self):
+        return _("Export invoice to Laske")
+
+    def get_view_description(self, html=False):
+        return _("Export chosen invoice to Laske SAP system")
+
+    def post(self, request, format=None):
+        invoice = get_object_from_query_params("invoice", request.query_params)
+        if invoice.sent_to_sap_at:
+            raise ValidationError(_("This invoice has already been sent to SAP"))
+
+        if invoice.number:
+            raise ValidationError(
+                _("Can't send invoices that already have a number to SAP")
+            )
+
+        try:
+            exporter = LaskeExporter()
+            exporter.export_invoices(invoice)
+        except (
+            LaskeExporterException,
+            ConnectionException,
+            CredentialException,
+            SSHException,
+            HostKeysException,
+        ) as e:
+            raise APIException(str(e))
+
+        return Response({"success": True})

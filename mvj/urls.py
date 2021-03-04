@@ -56,6 +56,7 @@ from leasing.viewsets.land_area import (
 )
 from leasing.viewsets.land_use_agreement import (
     LandUseAgreementAttachmentViewSet,
+    LandUseAgreementInvoiceExportToLaskeView,
     LandUseAgreementInvoiceViewSet,
     LandUseAgreementViewSet,
 )
@@ -193,6 +194,11 @@ additional_api_paths = [
     ),
     path(
         "invoice_set_credit/", InvoiceSetCreditView.as_view(), name="invoice-set-credit"
+    ),
+    path(
+        "land_use_agreement_invoice_export_to_laske/",
+        LandUseAgreementInvoiceExportToLaskeView.as_view(),
+        name="land_use_agreement_invoice-export-to-laske",
     ),
     path(
         "lease_billing_periods/",
