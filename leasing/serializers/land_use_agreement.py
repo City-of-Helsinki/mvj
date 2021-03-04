@@ -27,6 +27,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementInvoice,
     LandUseAgreementInvoicePayment,
     LandUseAgreementInvoiceRow,
+    LandUseAgreementInvoiceSet,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
     LandUseAgreementReceivableType,
@@ -957,3 +958,13 @@ class LandUseAgreementInvoiceSerializerWithSuccinctLease(
         from leasing.serializers.lease import LeaseSuccinctSerializer
 
         self.fields["lease"] = LeaseSuccinctSerializer()
+
+
+class LandUseAgreementInvoiceSetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUseAgreementInvoiceSet
+        fields = (
+            "id",
+            "land_use_agreement",
+            "invoices",
+        )
