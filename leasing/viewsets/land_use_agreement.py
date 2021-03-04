@@ -6,7 +6,7 @@ from django_filters.widgets import BooleanWidget
 from paramiko import SSHException
 from pysftp import ConnectionException, CredentialException, HostKeysException
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -136,7 +136,18 @@ class LandUseAgreementViewSet(
 ):
     queryset = LandUseAgreement.objects.all()
     serializer_class = LandUseAgreementRetrieveSerializer
-    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter,
+        InBBoxFilter,
+        SearchFilter,
+    )
+    search_fields = [
+        "^identifier__identifier",
+        "litigants__contacts__first_name",
+        "litigants__contacts__last_name",
+        "^plan_number",
+    ]
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
