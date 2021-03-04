@@ -143,10 +143,13 @@ class LandUseAgreementViewSet(
         SearchFilter,
     )
     search_fields = [
+        "^estate_ids__estate_id",
         "^identifier__identifier",
         "litigants__contacts__first_name",
         "litigants__contacts__last_name",
+        "litigants__contacts__name",
         "^plan_number",
+        "status__name",
     ]
 
     def get_serializer_class(self):
