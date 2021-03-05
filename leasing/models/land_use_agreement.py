@@ -141,6 +141,8 @@ class LandUseAgreement(TimeStampedSafeDeleteModel):
         verbose_name=_("Land use agreement definition"),
         related_name="+",
         on_delete=models.PROTECT,
+        blank=True,
+        null=True,
     )
 
     # In Finnish: Olotila
