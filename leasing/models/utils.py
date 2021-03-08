@@ -293,14 +293,22 @@ def split_date_range(date_range, count):
     return result
 
 
-def _get_date_range_from_item(item):
+def _get_date_range_from_item(item, fill_min_max_values=True):
     if isinstance(item, dict):
-        return item["date_range"]
+        start_date, end_date = item["date_range"]
     else:
         if callable(item.date_range):
-            return item.date_range()
+            start_date, end_date = item.date_range()
         else:
-            return item.date_range
+            start_date, end_date = item.date_range
+
+    if fill_min_max_values:
+        if start_date is None:
+            start_date = datetime.date.min
+        if end_date is None:
+            end_date = datetime.date.max
+
+    return start_date, end_date
 
 
 def group_items_in_period_by_date_range(items, min_date, max_date):
@@ -325,7 +333,7 @@ def group_items_in_period_by_date_range(items, min_date, max_date):
     while current_date < max_date:
         current_items = []
         for item in sorted_items:
-            item_range = _get_date_range_from_item(item)
+            item_range = _get_date_range_from_item(item, fill_min_max_values=False)
             if (item_range[0] is None or item_range[0] <= current_date) and (
                 item_range[1] is None or current_date <= item_range[1]
             ):
