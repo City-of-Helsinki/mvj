@@ -448,6 +448,12 @@ class LandUseAgreementCompensations(NameModel):
     )
 
 
+class LandUseAgreementConditionFormOfManagement(NameModel):
+    """
+    In Finnish: Maankäyttösopimuksen ehdon hallintamuoto
+    """
+
+
 class LandUseAgreementCompensationsUnitPrice(NameModel):
     """
     In Finnish: Maankäyttökorvauslaskelmassa käytetty yksikköhinta
@@ -464,8 +470,11 @@ class LandUseAgreementCompensationsUnitPrice(NameModel):
     usage = models.CharField(verbose_name=_("Usage"), blank=True, max_length=255)
 
     # In Finnish: Hallintamuoto
-    management = models.CharField(
-        verbose_name=_("Management"), blank=True, max_length=255
+    management = models.ForeignKey(
+        LandUseAgreementConditionFormOfManagement,
+        verbose_name=_("Management"),
+        related_name="+",
+        on_delete=models.PROTECT,
     )
 
     # In Finnish: Suojeltu
@@ -669,12 +678,6 @@ class LandUseAgreementAddress(AbstractAddress):
         verbose_name_plural = pgettext_lazy(
             "Model name", "Land use agreement addresses"
         )
-
-
-class LandUseAgreementConditionFormOfManagement(NameModel):
-    """
-    In Finnish: Maankäyttösopimuksen ehdon hallintamuoto
-    """
 
 
 class LandUseAgreementCondition(TimeStampedSafeDeleteModel):

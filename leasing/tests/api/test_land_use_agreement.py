@@ -261,7 +261,10 @@ def test_land_use_agreement_update_plots(
 
 
 def test_update_land_use_agreement_compensations_without_existing_data(
-    django_db_setup, admin_client, land_use_agreement_test_data
+    django_db_setup,
+    admin_client,
+    land_use_agreement_test_data,
+    land_use_agreement_condition_form_of_management_factory,
 ):
     lua = land_use_agreement_test_data
 
@@ -286,7 +289,9 @@ def test_update_land_use_agreement_compensations_without_existing_data(
             "unit_prices_used_in_calculation": [
                 {
                     "usage": "test",
-                    "management": "test",
+                    "management": land_use_agreement_condition_form_of_management_factory(
+                        name="ARA"
+                    ).id,
                     "protected": "test",
                     "area": 1000,
                     "unit_value": 1000,
@@ -321,6 +326,7 @@ def test_update_land_use_agreement_compensations(
     land_use_agreement_test_data,
     land_use_agreement_compensations_factory,
     land_use_agreement_compensations_unit_price_factory,
+    land_use_agreement_condition_form_of_management_factory,
 ):
     lua = land_use_agreement_test_data
 
@@ -340,10 +346,12 @@ def test_update_land_use_agreement_compensations(
     )
     lua.save()
 
+    management = land_use_agreement_condition_form_of_management_factory(name="ARA")
+
     unit_prices = land_use_agreement_compensations_unit_price_factory(
         compensations=lua.compensations,
         usage="test",
-        management="test",
+        management=management,
         protected="test",
         area=500,
         unit_value=500,
@@ -376,7 +384,7 @@ def test_update_land_use_agreement_compensations(
                 {
                     "id": unit_prices.id,
                     "usage": "test",
-                    "management": "test",
+                    "management": management.id,
                     "protected": "test",
                     "area": 1000,
                     "unit_value": 1000,

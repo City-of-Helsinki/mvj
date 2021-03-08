@@ -52,6 +52,12 @@ from .utils import (
 )
 
 
+class LandUseAgreementConditionFormOfManagementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUseAgreementConditionFormOfManagement
+        fields = "__all__"
+
+
 class LandUseAgreementTypeSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
@@ -62,6 +68,30 @@ class LandUseAgreementTypeSerializer(
 
 class LandUseAgreementCompensationsUnitPriceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = LandUseAgreementCompensationsUnitPrice
+        fields = (
+            "id",
+            "usage",
+            "management",
+            "protected",
+            "area",
+            "unit_value",
+            "discount",
+            "used_price",
+        )
+
+
+class LandUseAgreementCompensationsUnitPriceCreateUpdateSerializer(
+    serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+    management = InstanceDictPrimaryKeyRelatedField(
+        instance_class=LandUseAgreementConditionFormOfManagement,
+        queryset=LandUseAgreementConditionFormOfManagement.objects.all(),
+        related_serializer=LandUseAgreementConditionFormOfManagementSerializer,
+    )
 
     class Meta:
         model = LandUseAgreementCompensationsUnitPrice
@@ -100,10 +130,27 @@ class LandUseAgreementCompensationsSerializer(serializers.ModelSerializer):
         )
 
 
-class LandUseAgreementConditionFormOfManagementSerializer(serializers.ModelSerializer):
+class LandUseAgreementCompensationsCreateUpdateSerializer(serializers.ModelSerializer):
+    unit_prices_used_in_calculation = LandUseAgreementCompensationsUnitPriceCreateUpdateSerializer(
+        many=True, required=False, allow_null=True
+    )
+
     class Meta:
-        model = LandUseAgreementConditionFormOfManagement
-        fields = "__all__"
+        model = LandUseAgreementCompensations
+        fields = (
+            "id",
+            "cash_compensation",
+            "land_compensation",
+            "other_compensation",
+            "first_installment_increase",
+            "park_acquisition_value",
+            "street_acquisition_value",
+            "other_acquisition_value",
+            "park_area",
+            "street_area",
+            "other_area",
+            "unit_prices_used_in_calculation",
+        )
 
 
 class LandUseAgreementConditionSerializer(serializers.ModelSerializer):
@@ -553,7 +600,7 @@ class LandUseAgreementUpdateSerializer(
     litigants = LandUseAgreementLitigantCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
-    compensations = LandUseAgreementCompensationsSerializer(
+    compensations = LandUseAgreementCompensationsCreateUpdateSerializer(
         required=False, allow_null=True
     )
     conditions = LandUseAgreementConditionCreateUpdateSerializer(
