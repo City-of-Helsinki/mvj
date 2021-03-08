@@ -3,6 +3,13 @@ from datetime import date
 
 import pytest
 
+from leasing.enums import (
+    DueDatesType,
+    RentAdjustmentAmountType,
+    RentAdjustmentType,
+    RentCycle,
+    RentType,
+)
 from leasing.models.utils import (
     combine_ranges,
     fix_amount_for_overlap,
@@ -723,6 +730,53 @@ def test_group_items_in_period_by_date_range(items, expected):
         group_items_in_period_by_date_range(items, date(2015, 1, 1), date(2015, 12, 31))
         == expected
     )
+
+
+@pytest.mark.django_db
+def test_group_items_in_period_with_nullable_date_model_fields(
+    lease_test_data, rent_factory, decision_factory, rent_adjustment_factory
+):
+
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    decision = decision_factory(lease=lease)
+
+    rent_adjustment = rent_adjustment_factory(
+        rent=rent,
+        type=RentAdjustmentType.DISCOUNT,
+        decision=decision,
+        intended_use_id=1,
+        start_date=None,
+        end_date=date(2021, 1, 1),
+        full_amount=12345,
+        amount_type=RentAdjustmentAmountType.AMOUNT_TOTAL,
+    )
+
+    rent_adjustment_2 = rent_adjustment_factory(
+        rent=rent,
+        type=RentAdjustmentType.DISCOUNT,
+        decision=decision,
+        intended_use_id=1,
+        start_date=date(2021, 1, 1),
+        end_date=None,
+        full_amount=12345,
+        amount_type=RentAdjustmentAmountType.AMOUNT_TOTAL,
+    )
+
+    try:
+        group_items_in_period_by_date_range(
+            [rent_adjustment, rent_adjustment_2], date(2015, 9, 1), date(2015, 10, 31)
+        )
+    except Exception as exc:
+        assert False, f"Function raised an exception {exc}"
 
 
 @pytest.mark.parametrize(
