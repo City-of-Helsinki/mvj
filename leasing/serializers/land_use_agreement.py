@@ -681,7 +681,6 @@ class LandUseAgreementInvoiceRowCreateUpdateSerializer(
             "plan_lawfulness_date",
             "receivable_type",
             "sign_date",
-            "amount",
         )
 
     def create(self, validated_data):
@@ -958,6 +957,7 @@ class LandUseAgreementInvoiceRowSerializer(
             "plan_lawfulness_date",
             "receivable_type",
             "sign_date",
+            "amount",
         )
 
 
