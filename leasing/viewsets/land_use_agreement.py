@@ -285,6 +285,40 @@ class LandUseAgreementReceivableTypeViewSet(ReadOnlyModelViewSet):
     serializer_class = ReceivableTypeSerializer
 
 
+class LandUseAgreementInvoiceCreditView(APIView):
+    permission_classes = (PerMethodPermission,)
+    perms_map = {"POST": ["land_use_agreement.add_invoice"]}
+
+    def get_view_name(self):
+        return _("Credit invoice")
+
+    def get_view_description(self, html=False):
+        return _("Credit invoice or part of it")
+
+    def post(self, request, format=None):
+        invoice = get_object_from_query_params("invoice", request.query_params)
+
+        if not invoice.sent_to_sap_at:
+            raise ValidationError(
+                _("Cannot credit invoices that have not been sent to SAP")
+            )
+
+        amount, receivable_type, notes = get_values_from_credit_request(request.data)
+
+        try:
+            credit_invoice = invoice.create_credit_invoice(
+                amount=amount, receivable_type=receivable_type, notes=notes
+            )
+        except RuntimeError as e:
+            raise APIException(str(e))
+
+        credit_invoice_serializer = LandUseAgreementInvoiceSerializer(credit_invoice)
+
+        result = {"invoice": credit_invoice_serializer.data}
+
+        return Response(result)
+
+
 class LandUseAgreementInvoiceRowCreditView(APIView):
     permission_classes = (PerMethodPermission,)
     perms_map = {"POST": ["land_use_agreement.add_invoice"]}
