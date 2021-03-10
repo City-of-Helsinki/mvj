@@ -296,7 +296,9 @@ class LandUseAgreementInvoiceRowCreditView(APIView):
         return _("Credit invoice row or part of it")
 
     def post(self, request, format=None):
-        invoice_row = get_object_from_query_params("invoice_row", request.query_params)
+        invoice_row = get_object_from_query_params(
+            "land_use_agreement_invoice_row", request.query_params
+        )
 
         amount = request.data.get("amount", None)
 
@@ -334,7 +336,9 @@ class LandUseAgreementInvoiceSetCreditView(APIView):
         return _("Credit invoice row or part of it")
 
     def post(self, request, format=None):
-        invoiceset = get_object_from_query_params("invoice_set", request.query_params)
+        invoiceset = get_object_from_query_params(
+            "land_use_agreement_invoice_set", request.query_params
+        )
 
         amount, receivable_type, notes = get_values_from_credit_request(request.data)
 
@@ -375,7 +379,9 @@ class LandUseAgreementInvoiceExportToLaskeView(APIView):
         return _("Export chosen invoice to Laske SAP system")
 
     def post(self, request, format=None):
-        invoice = get_object_from_query_params("invoice", request.query_params)
+        invoice = get_object_from_query_params(
+            "land_use_agreement_invoice", request.query_params
+        )
         if invoice.sent_to_sap_at:
             raise ValidationError(_("This invoice has already been sent to SAP"))
 
