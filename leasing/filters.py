@@ -10,6 +10,7 @@ from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.models.land_use_agreement import (
     LandUseAgreementInvoice,
     LandUseAgreementInvoiceRow,
+    LandUseAgreementInvoiceSet,
 )
 
 from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
@@ -188,6 +189,14 @@ class LandUseAgreementInvoiceFilter(FilterSet):
                 due_date__gte=datetime.date.today(), sent_to_sap_at__isnull=True
             )
         return queryset
+
+
+class LandUseAgreementInvoiceSetFilter(FilterSet):
+    land_use_agreement = filters.NumberFilter()
+
+    class Meta:
+        model = LandUseAgreementInvoiceSet
+        fields = ["land_use_agreement"]
 
 
 class LandUseAgreementInvoiceRowFilter(FilterSet):

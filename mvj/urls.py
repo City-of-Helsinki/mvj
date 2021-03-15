@@ -59,7 +59,9 @@ from leasing.viewsets.land_use_agreement import (
     LandUseAgreementInvoiceCreditView,
     LandUseAgreementInvoiceExportToLaskeView,
     LandUseAgreementInvoiceRowCreditView,
+    LandUseAgreementInvoiceRowViewSet,
     LandUseAgreementInvoiceSetCreditView,
+    LandUseAgreementInvoiceSetViewSet,
     LandUseAgreementInvoiceViewSet,
     LandUseAgreementViewSet,
 )
@@ -166,6 +168,8 @@ router.register(r"vat", VatViewSet)
 router.register(r"land_use_agreement", LandUseAgreementViewSet)
 router.register(r"land_use_agreement_attachment", LandUseAgreementAttachmentViewSet)
 router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
+router.register(r"land_use_agreement_invoice_row", LandUseAgreementInvoiceRowViewSet)
+router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetViewSet)
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
