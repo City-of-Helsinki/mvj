@@ -123,7 +123,9 @@ class LaskeExporter:
         :type invoices: list of Invoice | Invoice
         :rtype: LaskeExportLog
         """
-        if isinstance(invoices, Invoice):
+        if isinstance(invoices, Invoice) or isinstance(
+            invoices, LandUseAgreementInvoice
+        ):
             invoices = [invoices]
 
         # TODO: Make configurable
