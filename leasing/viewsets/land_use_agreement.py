@@ -19,6 +19,7 @@ from leasing.filters import (
     CoalesceOrderingFilter,
     LandUseAgreementInvoiceFilter,
     LandUseAgreementInvoiceRowFilter,
+    LandUseAgreementInvoiceSetFilter,
 )
 from leasing.models import ReceivableType
 from leasing.models.land_use_agreement import (
@@ -278,6 +279,12 @@ class LandUseAgreementInvoiceRowViewSet(
     queryset = LandUseAgreementInvoiceRow.objects.all()
     serializer_class = LandUseAgreementInvoiceRowSerializer
     filterset_class = LandUseAgreementInvoiceRowFilter
+
+
+class LandUseAgreementInvoiceSetViewSet(ReadOnlyModelViewSet):
+    queryset = LandUseAgreementInvoiceSet.objects.all()
+    serializer_class = LandUseAgreementInvoiceSetSerializer
+    filterset_class = LandUseAgreementInvoiceSetFilter
 
 
 class LandUseAgreementReceivableTypeViewSet(ReadOnlyModelViewSet):
