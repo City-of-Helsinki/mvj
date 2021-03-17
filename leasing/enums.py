@@ -469,7 +469,8 @@ class AreaType(Enum):
         "infill_development_compensation"  # Täydennysrakentamiskorvaus
     )
     LAND_USE_AGREEMENT = "land_use_agreement"  # Maankäyttösopimus
-    DETAILED_PLAN = "detailed_plan"  # Kaava
+    DETAILED_PLAN = "detailed_plan"  # Voimassa oleva asemakaava
+    PRE_DETAILED_PLAN = "pre_detailed_plan" # Vireillä tai tuleva asemakaava
     OTHER = "other"
 
     class Labels:
