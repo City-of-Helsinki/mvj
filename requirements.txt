@@ -116,7 +116,7 @@ docutils==0.16
     # via python-daemon
 docxtpl==0.6.3
     # via -r requirements.in
-drf-oidc-auth==0.9
+drf-oidc-auth==0.10.0
     # via django-helusers
 ecdsa==0.15
     # via python-jose
