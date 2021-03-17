@@ -19,6 +19,7 @@ from .debt_collection import (
     InterestRate,
 )
 from .decision import Condition, ConditionType, Decision, DecisionMaker, DecisionType
+from .detailed_plan import DetailedPlan
 from .email import EmailLog
 from .infill_development_compensation import (
     InfillDevelopmentCompensation,
@@ -131,6 +132,7 @@ __all__ = [
     "Decision",
     "DecisionMaker",
     "DecisionType",
+    "DetailedPlan",
     "District",
     "EmailLog",
     "EqualizedRent",

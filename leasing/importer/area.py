@@ -11,6 +11,9 @@ from leasing.models.area import Area, AreaSource
 from .base import BaseImporter
 
 METADATA_COLUMN_NAME_MAP = {
+    "diaarinumero": "diary_number",
+    "hyvaksyja": "acceptor",
+    "kaavavaihe": "plan_stage",
     "kiinteistotunnus": "property_identifier",
     "vuokraustunnus": "lease_identifier",
     "vuokratunnus": "lease_identifier",
