@@ -469,7 +469,8 @@ class AreaType(Enum):
         "infill_development_compensation"  # Täydennysrakentamiskorvaus
     )
     LAND_USE_AGREEMENT = "land_use_agreement"  # Maankäyttösopimus
-    DETAILED_PLAN = "detailed_plan"  # Kaava
+    DETAILED_PLAN = "detailed_plan"  # Voimassa oleva asemakaava
+    PRE_DETAILED_PLAN = "pre_detailed_plan"  # Vireillä tai tuleva asemakaava
     OTHER = "other"
 
     class Labels:
@@ -524,6 +525,19 @@ class DecisionTypeKind(Enum):
     class Labels:
         LEASE_CANCELLATION = pgettext_lazy("Decision type kind", "Lease cancellation")
         BASIS_OF_RENT = pgettext_lazy("Decision type kind", "Basis of Rent")
+
+
+class DetailedPlanClass(Enum):
+    """
+    In Finnish: Asemakaavan luokka
+    """
+
+    PENDING = "pending"
+    EFFECTIVE = "effective"
+
+    class Labels:
+        PENDING = pgettext_lazy("Detailed plan class", "Pending")
+        EFFECTIVE = pgettext_lazy("Detailed plan class", "Effective")
 
 
 class BasisOfRentType(Enum):
