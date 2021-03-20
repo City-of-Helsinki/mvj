@@ -128,7 +128,7 @@ isodate==0.6.0
     # via zeep
 itypes==1.1.0
     # via coreapi
-jinja2==2.11.1
+jinja2==2.11.3
     # via
     #   coreschema
     #   docxtpl
