@@ -191,7 +191,7 @@ requests==2.23.0
     #   pyjwkest
     #   requests-toolbelt
     #   zeep
-rsa==4.0
+rsa==4.1
     # via python-jose
 sentry-sdk==0.16.5
     # via
