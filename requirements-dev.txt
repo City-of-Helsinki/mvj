@@ -57,10 +57,6 @@ flake8==3.7.9
     #   -r requirements-dev.in
     #   flake8-polyfill
     #   flake8-print
-importlib-metadata==2.0.0
-    # via
-    #   pluggy
-    #   pytest
 inflection==0.3.1
     # via pytest-factoryboy
 ipython-genutils==0.2.0
@@ -113,7 +109,7 @@ pydocstyle==5.0.2
     # via -r requirements-dev.in
 pyflakes==2.1.1
     # via flake8
-pygments==2.6.1
+pygments==2.7.4
     # via ipython
 pyparsing==2.4.6
     # via packaging
@@ -175,8 +171,6 @@ wcwidth==0.1.9
     #   pytest
 werkzeug==1.0.1
     # via -r requirements-dev.in
-zipp==3.3.0
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
