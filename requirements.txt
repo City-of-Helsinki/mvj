@@ -134,7 +134,7 @@ jinja2==2.11.1
     #   docxtpl
 lockfile==0.12.2
     # via python-daemon
-lxml==4.5.0
+lxml==4.6.3
     # via
     #   docxtpl
     #   python-docx
