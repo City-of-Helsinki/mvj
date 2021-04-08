@@ -89,7 +89,7 @@ django-sanitized-dump==1.2.0
     # via -r requirements.in
 django-sequences==2.4
     # via -r requirements.in
-django==2.2.13
+django==2.2.20
     # via
     #   -r requirements.in
     #   django-anymail
