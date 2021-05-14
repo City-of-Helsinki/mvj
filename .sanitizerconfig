@@ -52,6 +52,15 @@ strategy:
     pid: null
     started_at: null
     stopped_at: null
+  batchrun_jobrunlog:
+    content: null
+    end: null
+    entry_count: null
+    entry_data: null
+    error_count: null
+    id: null
+    run_id: null
+    start: null
   batchrun_jobrunlogentry:
     id: null
     kind: null

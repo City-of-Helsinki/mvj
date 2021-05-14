@@ -1,7 +1,8 @@
 import shlex
 import sys
+from collections import defaultdict
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional
 
 import pytz
 from django.contrib.postgres.fields import JSONField
@@ -13,7 +14,8 @@ from enumfields import EnumField, EnumIntegerField
 from safedelete.models import SafeDeleteModel
 
 from ._times import utc_now
-from .constants import GRACE_PERIOD_LENGTH
+from .compactor import CompactLog
+from .constants import GRACE_PERIOD_LENGTH, LINE_END_CHARACTERS
 from .enums import CommandType, LogEntryKind
 from .fields import IntegerSetSpecifierField
 from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
@@ -313,6 +315,86 @@ class JobRunLogEntry(models.Model):
     def __str__(self) -> str:
         return ugettext("{run_name}: {kind} entry {number}").format(
             run_name=self.run, kind=self.kind, number=self.number
+
+
+class JobRunLog(models.Model):
+    run = models.OneToOneField(
+        JobRun, on_delete=models.CASCADE, related_name="log", verbose_name=_("run"),
+    )
+    content = models.TextField(null=False, blank=True, verbose_name=_("content"))
+    entry_data = JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_("log entry metadata"),
+        help_text=(
+            "Data that defines the location, timestamp and "
+            "kind (stdout or stderr) of each log entry "
+            "within the whole log content."
+        ),
+    )
+    start = models.DateTimeField(
+        db_index=True, verbose_name=_("timestamp of the first entry"),
+    )
+    end = models.DateTimeField(
+        db_index=True, verbose_name=_("timestamp of the last entry"),
+    )
+    entry_count = models.IntegerField(verbose_name=_("total count of entries"))
+    error_count = models.IntegerField(verbose_name=_("count of error entries"))
+
+    class Meta:
+        ordering = ("-start",)
+        verbose_name = _("log")
+        verbose_name_plural = _("logs")
+
+    @classmethod
+    def get_or_create_for_run(cls, run: JobRun) -> "JobRunLog":
+        existing = cls.objects.filter(run=run).first()
+        if existing:
+            return existing
+
+        entries = JobRunLogEntry.objects.filter(run=run)
+        log = CompactLog.from_log_entries(entries)  # type: ignore
+        return cls.objects.get_or_create(
+            run=run,
+            defaults=dict(
+                content=log.content,
+                entry_data=log.entry_data,
+                start=(log.first_timestamp or run.started_at),
+                end=(log.last_timestamp or run.stopped_at or run.started_at),
+                entry_count=log.entry_count,
+                error_count=log.error_count,
+            ),
+        )[0]
+
+    def __iter__(self) -> Iterable[JobRunLogEntry]:
+        compact_log = self.to_compact_log()
+        line_number: Dict[LogEntryKind, int] = defaultdict(lambda: 1)
+        number_within_line: Dict[LogEntryKind, int] = defaultdict(lambda: 1)
+        for entry_datum in compact_log.iterate_entries():
+            kind = entry_datum.kind
+            yield JobRunLogEntry(
+                run=self.run,
+                kind=kind,
+                line_number=line_number[kind],
+                number=number_within_line[kind],
+                time=entry_datum.time,
+                text=entry_datum.text,
+            )
+
+            if entry_datum.text.endswith(LINE_END_CHARACTERS):
+                line_number[kind] += 1
+                number_within_line[kind] = 1
+            else:
+                number_within_line[kind] += 1
+
+    def to_compact_log(self) -> CompactLog:
+        return CompactLog(
+            content=self.content,
+            entry_data=self.entry_data,
+            first_timestamp=self.start,
+            last_timestamp=self.end,
+            entry_count=self.entry_count,
+            error_count=self.error_count,
         )
 
 
