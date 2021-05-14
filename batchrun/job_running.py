@@ -1,3 +1,4 @@
+import codecs
 import subprocess
 import threading
 from shutil import copyfileobj
@@ -65,10 +66,12 @@ class LogWriter:
         self.coding = "utf-8"
         self._line_number = 1
         self._number_within_line = 1
+        decoder_class = codecs.getincrementaldecoder(self.coding)
+        self._decoder = decoder_class(errors="backslashreplace")
 
     def write(self, data: bytes) -> int:
         timestamp = utc_now()
-        text = data.decode(self.coding, errors="replace")
+        text = self._decoder.decode(data)
 
         # Split the text to lines and store each in a separate record
         for line in text.splitlines(keepends=True):
