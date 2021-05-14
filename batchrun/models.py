@@ -82,7 +82,7 @@ class Command(SafeDeleteModel):
         else:
             raise ValueError("Unknown command type: {}".format(self.type))
         formatted_args = [
-            param_template.format(arguments)
+            param_template.format(**arguments)
             for param_template in shlex.split(self.parameter_format_string)
         ]
         return base_command + formatted_args
