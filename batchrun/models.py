@@ -10,14 +10,13 @@ from django.db import models
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField, EnumIntegerField
-from safedelete import SOFT_DELETE_CASCADE  # type: ignore
 from safedelete.models import SafeDeleteModel
 
 from ._times import utc_now
 from .constants import GRACE_PERIOD_LENGTH
 from .enums import CommandType, LogEntryKind
 from .fields import IntegerSetSpecifierField
-from .model_mixins import CleansOnSave, TimeStampedSafeDeleteModel
+from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
 
@@ -159,7 +158,7 @@ class Timezone(CleansOnSave, models.Model):
         super().clean()
 
 
-class ScheduledJob(TimeStampedSafeDeleteModel):
+class ScheduledJob(TimeStampedModel):
     """
     Scheduling for a job to be ran at certain moment(s).
 
@@ -251,12 +250,10 @@ class ScheduledJob(TimeStampedSafeDeleteModel):
         items.exclude(pk__in=fresh_ids).delete()
 
 
-class JobRun(SafeDeleteModel):
+class JobRun(models.Model):
     """
     Instance of a job currently running or ran in the past.
     """
-
-    _safedelete_policy = SOFT_DELETE_CASCADE
 
     job = models.ForeignKey(Job, on_delete=models.PROTECT, verbose_name=_("job"))
     pid = models.IntegerField(
@@ -283,7 +280,7 @@ class JobRun(SafeDeleteModel):
         return f"{self.job} [{self.pid}] ({self.started_at:%Y-%m-%dT%H:%M})"
 
 
-class JobRunLogEntry(SafeDeleteModel):
+class JobRunLogEntry(models.Model):
     """
     Entry in a log for a run of a job.
 
@@ -296,7 +293,7 @@ class JobRunLogEntry(SafeDeleteModel):
 
     run = models.ForeignKey(
         JobRun,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="log_entries",
         verbose_name=_("run"),
     )

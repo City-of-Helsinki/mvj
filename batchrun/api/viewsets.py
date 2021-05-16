@@ -28,7 +28,7 @@ class JobRunSerializer(Serializer):
 
 
 class JobRunViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
-    queryset = models.JobRun.objects.all_with_deleted()  # type: ignore
+    queryset = models.JobRun.objects.all()
     serializer_class = JobRunSerializer
     filterset_fields = ["exit_code"]
 
@@ -42,6 +42,6 @@ class JobRunLogEntrySerializer(Serializer):
 
 
 class JobRunLogEntryViewSet(viewsets.ReadOnlyModelViewSet):  # type: ignore
-    queryset = models.JobRunLogEntry.objects.all_with_deleted()  # type: ignore
+    queryset = models.JobRunLogEntry.objects.all()
     serializer_class = JobRunLogEntrySerializer
     filterset_fields = ["run", "kind"]

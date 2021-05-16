@@ -70,7 +70,6 @@ strategy:
     comment: null
     created_at: null
     days_of_month: null
-    deleted: null
     enabled: null
     hours: null
     id: null
