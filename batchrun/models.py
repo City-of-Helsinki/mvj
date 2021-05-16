@@ -306,9 +306,9 @@ class JobRunLogEntry(models.Model):
     text = models.TextField(null=False, blank=True, verbose_name=_("text"))
 
     class Meta:
-        ordering = ["run__started_at", "run", "time"]
-        verbose_name = _("log entry of a job run")
-        verbose_name_plural = _("log entries of job runs")
+        ordering = ("-run", "time", "id")
+        verbose_name = _("log entry")
+        verbose_name_plural = _("log entries")
 
     def __str__(self) -> str:
         return ugettext("{run_name}: {kind} entry {number}").format(

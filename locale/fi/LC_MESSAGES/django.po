@@ -186,11 +186,11 @@ msgstr "Aika"
 msgid "text"
 msgstr "Teksti"
 
-msgid "log entry of a job run"
-msgstr "Ajon lokimerkintä"
+msgid "log entry"
+msgstr "lokimerkintä"
 
-msgid "log entries of job runs"
-msgstr "Ajon lokimerkinnät"
+msgid "log entries"
+msgstr "lokimerkinnät"
 
 #, python-brace-format
 msgid "{run_name}: {kind} entry {number}"
