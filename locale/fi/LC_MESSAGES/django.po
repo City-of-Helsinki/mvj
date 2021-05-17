@@ -193,8 +193,8 @@ msgid "log entries"
 msgstr "lokimerkinnät"
 
 #, python-brace-format
-msgid "{run_name}: {kind} entry {number}"
-msgstr "{run_name}: {kind} merkintä {number}"
+msgid "{run_name}: {kind} entry {linenum}({number})"
+msgstr "{run_name}: {kind} merkintä {linenum}({number})"
 
 msgid "scheduled run time"
 msgstr "Ajoajankohta"

@@ -313,8 +313,12 @@ class JobRunLogEntry(models.Model):
         verbose_name_plural = _("log entries")
 
     def __str__(self) -> str:
-        return ugettext("{run_name}: {kind} entry {number}").format(
-            run_name=self.run, kind=self.kind, number=self.number
+        return ugettext("{run_name}: {kind} entry {linenum}({number})").format(
+            run_name=self.run,
+            kind=self.kind,
+            linenum=self.line_number,
+            number=self.number,
+        )
 
 
 class JobRunLog(models.Model):
