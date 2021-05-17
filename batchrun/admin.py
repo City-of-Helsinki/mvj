@@ -7,6 +7,7 @@ from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin, WithDownloadableCo
 from .models import (
     Command,
     Job,
+    JobHistoryRetentionPolicy,
     JobRun,
     JobRunLog,
     JobRunLogEntry,
@@ -25,6 +26,16 @@ class CommandAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ["name", "comment", "command"]
+
+
+@admin.register(JobHistoryRetentionPolicy)
+class JobHistoryRetentionPolicyAdmin(admin.ModelAdmin):
+    list_display = [
+        "identifier",
+        "compact_logs_delay",
+        "delete_logs_delay",
+        "delete_run_delay",
+    ]
 
 
 class JobRunLogEntryInline(admin.TabularInline):

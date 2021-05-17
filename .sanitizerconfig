@@ -42,9 +42,16 @@ strategy:
     comment: null
     created_at: null
     deleted: null
+    history_retention_policy_id: null
     id: null
     modified_at: null
     name: null
+  batchrun_jobhistoryretentionpolicy:
+    compact_logs_delay: null
+    delete_logs_delay: null
+    delete_run_delay: null
+    id: null
+    identifier: null
   batchrun_jobrun:
     exit_code: null
     id: null

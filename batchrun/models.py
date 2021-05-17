@@ -1,7 +1,7 @@
 import shlex
 import sys
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional
 
 import pytz
@@ -90,6 +90,59 @@ class Command(SafeDeleteModel):
         return base_command + formatted_args
 
 
+class JobHistoryRetentionPolicy(models.Model):
+    identifier = models.CharField(
+        max_length=30, unique=True, verbose_name=_("identifier")
+    )
+    compact_logs_delay = models.DurationField(
+        default=timedelta(days=14),  # 2 weeks
+        verbose_name=_("log compacting delay"),
+        help_text=_(
+            "Days to wait before compacting log entries. "
+            "Calculated from the start time of the job. "
+            "Compacting log entries means that the individual "
+            "log entries are concatenated to a single string and the "
+            "original entries are deleted. This allows PostgreSQL "
+            'to compress the log contents (check "TOAST" from '
+            "PostgreSQL documentation). The metadata information about "
+            "the log entry kinds (stdout/stderr) and timestamps are "
+            "stored separately so that the original contents of the log "
+            "entries are still recoverable."
+        ),
+    )
+    delete_logs_delay = models.DurationField(
+        default=timedelta(days=1461),  # 4 years
+        verbose_name=_("log deleting delay"),
+        help_text=_(
+            "Days to wait before deleting logs. "
+            "Calculated from the start time of the job."
+        ),
+    )
+    delete_run_delay = models.DurationField(
+        default=timedelta(days=3652),  # 10 years
+        verbose_name=_("run inforomation deleting delay"),
+        help_text=_(
+            "Days to wait before deleting all inforomation about the run. "
+            "Calculated from the start time of the job."
+        ),
+    )
+
+    class Meta:
+        verbose_name = _("job history retention policy")
+        verbose_name_plural = _("job history retention policies")
+
+    def __str__(self) -> str:
+        return self.identifier
+
+    @classmethod
+    def get_default(cls) -> "JobHistoryRetentionPolicy":
+        return cls.objects.get_or_create(identifier="default")[0]
+
+
+def _get_default_job_history_retention_policy_pk() -> int:
+    return JobHistoryRetentionPolicy.get_default().pk  # type: ignore
+
+
 class Job(TimeStampedSafeDeleteModel):
     """
     Unit of work that can be ran by the system.
@@ -119,6 +172,16 @@ class Job(TimeStampedSafeDeleteModel):
             "formatted with the parameter format string of the command. "
             "E.g. to pass value 123 as an argument to the rent_id "
             'parameter, set this to {"rent_id": 123}.'
+        ),
+    )
+    history_retention_policy = models.ForeignKey(
+        JobHistoryRetentionPolicy,
+        default=_get_default_job_history_retention_policy_pk,
+        on_delete=models.PROTECT,
+        verbose_name=_("history retention policy"),
+        help_text=_(
+            "Defines how long logs and information about "
+            "completed runs is preserved."
         ),
     )
 
