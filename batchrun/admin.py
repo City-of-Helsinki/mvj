@@ -6,6 +6,7 @@ from .models import (
     Command,
     Job,
     JobRun,
+    JobRunLog,
     JobRunLogEntry,
     JobRunQueueItem,
     ScheduledJob,
@@ -53,6 +54,26 @@ class JobRunLogEntryAdmin(ReadOnlyAdmin):
     readonly_fields = ("time_p", "run", "kind", "line_number", "number", "text")
 
     time_p = PreciseTimeFormatter(JobRunLogEntry, "time")
+
+
+@admin.register(JobRunLog)
+class JobRunLogAdmin(ReadOnlyAdmin):
+    date_hierarchy = "start"
+    list_display = ["run", "start_p", "end_p", "entry_count", "error_count"]
+    list_filter = ["run__job", "run__exit_code"]
+    readonly_fields = [
+        "run",
+        "start_p",
+        "end_p",
+        "entry_count",
+        "error_count",
+        "content",
+    ]
+    search_fields = ["content"]
+    exclude = ["entry_data", "start", "end"]
+
+    start_p = PreciseTimeFormatter(JobRunLog, "start")
+    end_p = PreciseTimeFormatter(JobRunLog, "end")
 
 
 @admin.register(JobRunQueueItem)
