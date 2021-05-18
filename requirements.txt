@@ -221,6 +221,8 @@ soupsieve==2.0
     # via beautifulsoup4
 sqlparse==0.3.1
     # via django
+typing-extensions==3.10.0.0
+    # via -r requirements.in
 uritemplate==3.0.1
     # via coreapi
 urllib3==1.25.8
