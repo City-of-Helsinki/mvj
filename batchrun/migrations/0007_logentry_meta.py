@@ -3,7 +3,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("batchrun", "0004_remove_some_safedeletes"),
+        ("batchrun", "0006_remove_some_safedeletes"),
     ]
 
     operations = [
