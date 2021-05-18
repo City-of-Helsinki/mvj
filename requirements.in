@@ -29,5 +29,6 @@ python-daemon
 python-dateutil
 sentry-sdk
 requests
+typing-extensions
 xlsxwriter
 zeep
