@@ -1,13 +1,14 @@
+import logging
 import shlex
 import sys
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 
 import pytz
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField, EnumIntegerField
@@ -21,6 +22,14 @@ from .fields import IntegerSetSpecifierField
 from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
+
+LOG = logging.getLogger(__name__)
+
+
+if TYPE_CHECKING:
+    QuerySet = models.QuerySet
+else:
+    QuerySet = defaultdict(lambda: models.QuerySet)
 
 
 class Command(SafeDeleteModel):
@@ -315,6 +324,62 @@ class ScheduledJob(TimeStampedModel):
         items.exclude(pk__in=fresh_ids).delete()
 
 
+class JobRunQuerySet(QuerySet["JobRun"]):
+    def has_logs(self) -> "JobRunQuerySet":
+        has_compacted_log = models.Q(pk__in=self.has_compacted_log())
+        has_log_entries = models.Q(pk__in=self.has_log_entries())
+        return self.filter(has_compacted_log | has_log_entries)
+
+    def has_compacted_log(self) -> "JobRunQuerySet":
+        return self.exclude(log=None)
+
+    def has_log_entries(self) -> "JobRunQuerySet":
+        # Note: The self.exclude(log_entries=None) is very slow!
+        return self.filter(pk__in=JobRunLogEntry.objects.values("run_id"))
+
+    def compact_logs(self) -> int:
+        """
+        Compact logs of all job runs in the queryset.
+
+        Return the amount of log entries that were compacted.
+        """
+        deleted_log_entries = 0
+        for run in self:
+            deleted_log_entries += run.compact_logs()
+        return deleted_log_entries
+
+    def delete_logs(self) -> Tuple[int, int]:
+        """
+        Delete logs of all job runs in the queryset.
+
+        Return the amounts of deleted compacted logs and log entries.
+        """
+        (total_deleted_logs, total_deleted_entries) = (0, 0)
+        for run in self:
+            (deleted_logs, deleted_entries) = run.delete_logs()
+            total_deleted_logs += deleted_logs
+            total_deleted_entries += deleted_entries
+        return (total_deleted_logs, total_deleted_entries)
+
+    def delete_with_logs(self) -> Tuple[int, int, int]:
+        """
+        Delete all job runs in the queryset with their logs.
+
+        This effectively does a cascading delete, but still allows the
+        field to be PROTECTed so that the job runs cannot be cascade
+        deleted from Django admin etc.
+
+        Return the amounts of deleted job run objects, compacted logs
+        and log entries.
+        """
+        log_entries = JobRunLogEntry.objects.filter(run_id__in=self)
+        (entries_deleted, _delete_info1) = log_entries.delete()
+        logs = JobRunLog.objects.filter(run_id__in=self)
+        (logs_deleted, _delete_info2) = logs.delete()
+        (runs_deleted, _delete_info3) = self.delete()
+        return (runs_deleted, logs_deleted, entries_deleted)
+
+
 class JobRun(models.Model):
     """
     Instance of a job currently running or ran in the past.
@@ -337,12 +402,39 @@ class JobRun(models.Model):
     )
     exit_code = models.IntegerField(null=True, blank=True, verbose_name=_("exit code"))
 
+    objects = JobRunQuerySet.as_manager()
+
     class Meta:
         verbose_name = _("job run")
         verbose_name_plural = _("job runs")
 
     def __str__(self) -> str:
         return f"{self.job} [{self.pid}] ({self.started_at:%Y-%m-%dT%H:%M})"
+
+    def compact_logs(self) -> int:
+        LOG.info("Compacting logs of %s", f"job run {self.pk} / {self}")
+        with transaction.atomic():
+            JobRunLog.get_or_create_for_run(self)
+            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+        return deleted_entries
+
+    def delete_logs(self) -> Tuple[int, int]:
+        me = f"job run {self.pk} / {self}"
+
+        if self.log_entries.exists():
+            LOG.info("Deleting log entries of %s", me)
+            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+        else:
+            deleted_entries = 0
+
+        if hasattr(self, "log"):
+            LOG.info("Deleting compacted log of %s", me)
+            self.log.delete()
+            deleted_log = 1
+        else:
+            deleted_log = 0
+
+        return (deleted_log, deleted_entries)
 
 
 class JobRunLogEntry(models.Model):
@@ -465,13 +557,7 @@ class JobRunLog(models.Model):
         )
 
 
-if TYPE_CHECKING:
-    BaseQueryset = models.QuerySet[Any]
-else:
-    BaseQueryset = models.QuerySet
-
-
-class JobRunQueueItemQuerySet(BaseQueryset):
+class JobRunQueueItemQuerySet(QuerySet["JobRunQueueItem"]):
     def to_run(self) -> "models.QuerySet[JobRunQueueItem]":
         return self.filter(scheduled_job__enabled=True, assigned_at=None)
 
