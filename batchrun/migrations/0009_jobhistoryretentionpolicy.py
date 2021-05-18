@@ -9,7 +9,7 @@ from ..models import _get_default_job_history_retention_policy_pk
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("batchrun", "0006_jobrunlog"),
+        ("batchrun", "0008_jobrunlog"),
     ]
 
     operations = [

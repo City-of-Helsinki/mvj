@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("batchrun", "0005_logentry_meta"),
+        ("batchrun", "0007_logentry_meta"),
     ]
 
     operations = [
