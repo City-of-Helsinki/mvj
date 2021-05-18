@@ -1,3 +1,4 @@
+import codecs
 import subprocess
 import threading
 from shutil import copyfileobj
@@ -6,6 +7,7 @@ from typing import BinaryIO, cast
 from django import db
 
 from ._times import utc_now
+from .constants import LINE_END_CHARACTERS
 from .enums import LogEntryKind
 from .models import JobRun, JobRunLogEntry
 
@@ -65,10 +67,12 @@ class LogWriter:
         self.coding = "utf-8"
         self._line_number = 1
         self._number_within_line = 1
+        decoder_class = codecs.getincrementaldecoder(self.coding)
+        self._decoder = decoder_class(errors="backslashreplace")
 
     def write(self, data: bytes) -> int:
         timestamp = utc_now()
-        text = data.decode(self.coding, errors="replace")
+        text = self._decoder.decode(data)
 
         # Split the text to lines and store each in a separate record
         for line in text.splitlines(keepends=True):
@@ -80,24 +84,10 @@ class LogWriter:
                 time=timestamp,
                 text=line,
             )
-            if line.endswith(_line_end_characters):
+            if line.endswith(LINE_END_CHARACTERS):
                 self._line_number += 1
                 self._number_within_line = 1
             else:
                 self._number_within_line += 1
 
         return len(data)
-
-
-_line_end_characters = (  # Note: Must be tuple for str.endswith
-    "\n",  # Line Feed
-    "\r",  # Carriage Return
-    "\v",  # Line Tabulation
-    "\f",  # Form Feed
-    "\x1c",  # File Separator
-    "\x1d",  # Group Separator
-    "\x1e",  # Record Separator
-    "\x85",  # Next Line (C1 Control Code)
-    "\u2028",  # Line Separator
-    "\u2029",  # Paragraph Separator
-)

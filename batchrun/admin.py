@@ -1,11 +1,15 @@
 from django.contrib import admin
+from django.utils.html import escape as html_escape
+from django.utils.safestring import mark_safe
 from rangefilter.filter import DateRangeFilter  # type: ignore
 
-from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin
+from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin, WithDownloadableContent
 from .models import (
     Command,
     Job,
+    JobHistoryRetentionPolicy,
     JobRun,
+    JobRunLog,
     JobRunLogEntry,
     JobRunQueueItem,
     ScheduledJob,
@@ -22,6 +26,16 @@ class CommandAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ["name", "comment", "command"]
+
+
+@admin.register(JobHistoryRetentionPolicy)
+class JobHistoryRetentionPolicyAdmin(admin.ModelAdmin):
+    list_display = [
+        "identifier",
+        "compact_logs_delay",
+        "delete_logs_delay",
+        "delete_run_delay",
+    ]
 
 
 class JobRunLogEntryInline(admin.TabularInline):
@@ -53,6 +67,49 @@ class JobRunLogEntryAdmin(ReadOnlyAdmin):
     readonly_fields = ("time_p", "run", "kind", "line_number", "number", "text")
 
     time_p = PreciseTimeFormatter(JobRunLogEntry, "time")
+
+
+@admin.register(JobRunLog)
+class JobRunLogAdmin(WithDownloadableContent, ReadOnlyAdmin):
+    date_hierarchy = "start"
+    list_display = ["run", "start_p", "end_p", "entry_count", "error_count"]
+    list_filter = ["run__job", "run__exit_code"]
+    readonly_fields = [
+        "run",
+        "start_p",
+        "end_p",
+        "entry_count",
+        "error_count",
+        "download_content",
+        "content_preview",
+    ]
+    search_fields = ["content"]
+    exclude = ["content", "entry_data", "start", "end"]
+
+    start_p = PreciseTimeFormatter(JobRunLog, "start")
+    end_p = PreciseTimeFormatter(JobRunLog, "end")
+
+    def content_preview(self, obj: JobRunLog, max_length: int = 20000) -> str:
+        to_elide = len(obj.content) - max_length
+        if to_elide <= 0:
+            return obj.content
+        half_len = max_length // 2
+        lines1 = obj.content[:half_len].splitlines()
+        lines2 = obj.content[-half_len:].splitlines()
+        all_lines = (
+            [f"{html_escape(x)}<br>" for x in lines1]
+            + ["<br><i>... ELIDED ...</i><br><br>"]
+            + [f"{html_escape(x)}<br>" for x in lines2]
+            + [f"<br><b>{to_elide} CHARACTERS ELIDED. DOWNLOAD TO GET ALL</b>"]
+        )
+
+        return mark_safe("".join(all_lines))
+
+    def get_downloadable_content(self, obj: JobRunLog) -> str:
+        return obj.content
+
+    def get_downloadable_content_filename(self, obj: JobRunLog) -> str:
+        return f"{obj.run.started_at:%Y-%m-%d_%H%M_%s}_run{obj.run.id}_log.txt"
 
 
 @admin.register(JobRunQueueItem)

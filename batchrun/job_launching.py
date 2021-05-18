@@ -26,11 +26,11 @@ def run_job(job: Job) -> JobRun:
 
     :return: JobRun object of the stared job.
     """
-    job_run = JobRun.objects.create(job=job)
+    job_run: JobRun = JobRun.objects.create(job=job)
     launcher = JobRunLauncher(job_run)
     launcher.start()
     launcher.join()
-    return job_run  # type: ignore
+    return job_run
 
 
 class JobRunLauncher(multiprocessing.Process):

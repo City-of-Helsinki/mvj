@@ -54,6 +54,8 @@ class JobRunSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
 
 
 class JobRunLogEntrySerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    enumfield_options = {"ints_as_names": True}
+
     class Meta:
         model = models.JobRunLogEntry
         fields = "__all__"
