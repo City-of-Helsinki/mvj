@@ -135,6 +135,15 @@ class ContractRentSerializer(
             "end_date",
         )
 
+    def to_internal_value(self, data):
+        if "amount" in data and "base_amount" not in data:
+            data["base_amount"] = data["amount"]
+
+        if "period" in data and "base_amount_period" not in data:
+            data["base_amount_period"] = data["period"]
+
+        return super().to_internal_value(data)
+
 
 class IndexAdjustedRentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)

@@ -49,7 +49,6 @@ class RentForecastReport(AsyncReportBase):
         "year": {"label": _("Year")},
         "rent": {"label": _("Rent"), "format": "money", "width": 13},
     }
-    async_task_timeout = 60 * 30  # 30 minutes
 
     def get_data(self, input_data):  # NOQA C901
         start_date = datetime.date(year=input_data["start_year"], month=1, day=1)

@@ -5,7 +5,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
 from leasing.enums import PlotSearchTargetType
-from leasing.models import Lease, PlanUnit
+from leasing.models import ContractRent, Lease, PlanUnit
 
 
 @pytest.mark.django_db
@@ -338,3 +338,37 @@ def test_validation_exception_on_planunit_delete_when_attached_to_plotsearch(
     )
 
     assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_patch_lease_has_contract_rent_base_amount_set(
+    django_db_setup, admin_client, lease_test_data
+):
+    lease = lease_test_data["lease"]
+
+    data = {
+        "rents": [
+            {
+                "type": "fixed",
+                "contract_rents": [
+                    {"amount": 1000, "period": "per_year", "intended_use": 1},
+                ],
+            }
+        ],
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    contract_rent = ContractRent.objects.filter(
+        rent__lease__id=response.data["id"]
+    ).first()
+
+    assert contract_rent.amount == contract_rent.base_amount
+    assert contract_rent.period == contract_rent.base_amount_period

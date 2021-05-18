@@ -879,20 +879,12 @@ class ContractRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
     base_amount = models.DecimalField(
-        verbose_name=_("Base amount"),
-        null=True,
-        blank=True,
-        max_digits=10,
-        decimal_places=2,
+        verbose_name=_("Base amount"), max_digits=10, decimal_places=2,
     )
 
     # In Finnish: Yksikkö
     base_amount_period = EnumField(
-        PeriodType,
-        verbose_name=_("Base amount period"),
-        null=True,
-        blank=True,
-        max_length=30,
+        PeriodType, verbose_name=_("Base amount period"), max_length=30,
     )
 
     # In Finnish: Uusi perusvuosi vuokra
