@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.html import escape as html_escape
 from django.utils.safestring import mark_safe
 from rangefilter.filter import DateRangeFilter  # type: ignore
@@ -88,6 +90,10 @@ class JobRunLogAdmin(WithDownloadableContent, ReadOnlyAdmin):
 
     start_p = PreciseTimeFormatter(JobRunLog, "start")
     end_p = PreciseTimeFormatter(JobRunLog, "end")
+
+    def get_queryset(self, request: HttpRequest) -> "QuerySet[JobRunLog]":
+        qs = super().get_queryset(request)
+        return qs.defer("content", "entry_data")
 
     def content_preview(self, obj: JobRunLog, max_length: int = 20000) -> str:
         to_elide = len(obj.content) - max_length
