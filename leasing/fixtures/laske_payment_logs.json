@@ -1,0 +1,44 @@
+[
+  {
+    "model": "laske_export.laskepaymentslog",
+    "pk": 1,
+    "fields": {
+      "deleted": null,
+      "created_at": "2019-10-11T12:10:32.543Z",
+      "modified_at": "2019-10-11T12:10:32.556Z",
+      "filename": "MR_OUT_ID256_8000_20191011_014517.TXT",
+      "started_at": "2019-10-11T12:10:32.541Z",
+      "ended_at": "2019-10-11T12:10:32.553Z",
+      "is_finished": true,
+      "payments": []
+    }
+  },
+  {
+    "model": "laske_export.laskepaymentslog",
+    "pk": 2,
+    "fields": {
+      "deleted": null,
+      "created_at": "2019-10-11T12:10:32.558Z",
+      "modified_at": "2019-10-11T12:10:32.566Z",
+      "filename": "MR_OUT_ID256_8000_20190923_014512.TXT",
+      "started_at": "2019-10-11T12:10:32.557Z",
+      "ended_at": "2019-10-11T12:10:32.563Z",
+      "is_finished": false,
+      "payments": []
+    }
+  },
+  {
+    "model": "laske_export.laskepaymentslog",
+    "pk": 3,
+    "fields": {
+      "deleted": null,
+      "created_at": "2019-10-11T12:10:32.568Z",
+      "modified_at": "2019-10-11T12:10:32.576Z",
+      "filename": "MR_OUT_ID256_8000_20191002_014527.TXT",
+      "started_at": "2019-10-11T12:10:32.567Z",
+      "ended_at": "2019-10-11T12:10:32.573Z",
+      "is_finished": false,
+      "payments": []
+    }
+  }
+]
