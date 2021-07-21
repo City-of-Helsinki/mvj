@@ -767,9 +767,12 @@ class Lease(TimeStampedSafeDeleteModel):
 
             if leftover_ranges:
                 # TODO: Which tenantcontact to use when multiple tenantcontacts
-                if tenant_tenantcontacts[0].contact not in shares:
-                    shares[tenant_tenantcontacts[0].contact] = {tenant: []}
-                shares[tenant_tenantcontacts[0].contact][tenant].extend(leftover_ranges)
+                contact = tenant_tenantcontacts[0].contact
+                if contact not in shares:
+                    shares[contact] = {}
+                if tenant not in shares[contact]:
+                    shares[contact][tenant] = []
+                shares[contact][tenant].extend(leftover_ranges)
 
         return shares
 
