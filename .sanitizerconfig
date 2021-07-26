@@ -42,9 +42,16 @@ strategy:
     comment: null
     created_at: null
     deleted: null
+    history_retention_policy_id: null
     id: null
     modified_at: null
     name: null
+  batchrun_jobhistoryretentionpolicy:
+    compact_logs_delay: null
+    delete_logs_delay: null
+    delete_run_delay: null
+    id: null
+    identifier: null
   batchrun_jobrun:
     exit_code: null
     id: null
@@ -52,6 +59,15 @@ strategy:
     pid: null
     started_at: null
     stopped_at: null
+  batchrun_jobrunlog:
+    content: null
+    end: null
+    entry_count: null
+    entry_data: null
+    error_count: null
+    id: null
+    run_id: null
+    start: null
   batchrun_jobrunlogentry:
     id: null
     kind: null
@@ -70,7 +86,6 @@ strategy:
     comment: null
     created_at: null
     days_of_month: null
-    deleted: null
     enabled: null
     hours: null
     id: null

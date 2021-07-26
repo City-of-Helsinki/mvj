@@ -22,6 +22,15 @@ django-sequences
 djangorestframework
 djangorestframework-gis
 django-rest-swagger
+
+# Use at least 0.10.0 version of drf-oidc-auth.
+#
+# This is not a direct requirement of the project, since django-helusers
+# already requires drf-oidc-auth, but we need at least version 0.10.0,
+# because there's a bug related to "azp" parameter handling of the
+# id_token in the 0.9.0 version.
+drf-oidc-auth>=0.10.0
+
 docxtpl
 psycopg2-binary
 pysftp
@@ -29,5 +38,6 @@ python-daemon
 python-dateutil
 sentry-sdk
 requests
+typing-extensions
 xlsxwriter
 zeep

@@ -1,25 +1,35 @@
+import logging
 import shlex
 import sys
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from collections import defaultdict
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 
 import pytz
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
-from enumfields import EnumField
-from safedelete import SOFT_DELETE_CASCADE  # type: ignore
+from enumfields import EnumField, EnumIntegerField
 from safedelete.models import SafeDeleteModel
 
 from ._times import utc_now
-from .constants import GRACE_PERIOD_LENGTH
+from .compactor import CompactLog
+from .constants import GRACE_PERIOD_LENGTH, LINE_END_CHARACTERS
 from .enums import CommandType, LogEntryKind
 from .fields import IntegerSetSpecifierField
-from .model_mixins import CleansOnSave, TimeStampedSafeDeleteModel
+from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
+
+LOG = logging.getLogger(__name__)
+
+
+if TYPE_CHECKING:
+    QuerySet = models.QuerySet
+else:
+    QuerySet = defaultdict(lambda: models.QuerySet)
 
 
 class Command(SafeDeleteModel):
@@ -83,10 +93,63 @@ class Command(SafeDeleteModel):
         else:
             raise ValueError("Unknown command type: {}".format(self.type))
         formatted_args = [
-            param_template.format(arguments)
+            param_template.format(**arguments)
             for param_template in shlex.split(self.parameter_format_string)
         ]
         return base_command + formatted_args
+
+
+class JobHistoryRetentionPolicy(models.Model):
+    identifier = models.CharField(
+        max_length=30, unique=True, verbose_name=_("identifier")
+    )
+    compact_logs_delay = models.DurationField(
+        default=timedelta(days=14),  # 2 weeks
+        verbose_name=_("log compacting delay"),
+        help_text=_(
+            "Days to wait before compacting log entries. "
+            "Calculated from the start time of the job. "
+            "Compacting log entries means that the individual "
+            "log entries are concatenated to a single string and the "
+            "original entries are deleted. This allows PostgreSQL "
+            'to compress the log contents (check "TOAST" from '
+            "PostgreSQL documentation). The metadata information about "
+            "the log entry kinds (stdout/stderr) and timestamps are "
+            "stored separately so that the original contents of the log "
+            "entries are still recoverable."
+        ),
+    )
+    delete_logs_delay = models.DurationField(
+        default=timedelta(days=1461),  # 4 years
+        verbose_name=_("log deleting delay"),
+        help_text=_(
+            "Days to wait before deleting logs. "
+            "Calculated from the start time of the job."
+        ),
+    )
+    delete_run_delay = models.DurationField(
+        default=timedelta(days=3652),  # 10 years
+        verbose_name=_("run inforomation deleting delay"),
+        help_text=_(
+            "Days to wait before deleting all inforomation about the run. "
+            "Calculated from the start time of the job."
+        ),
+    )
+
+    class Meta:
+        verbose_name = _("job history retention policy")
+        verbose_name_plural = _("job history retention policies")
+
+    def __str__(self) -> str:
+        return self.identifier
+
+    @classmethod
+    def get_default(cls) -> "JobHistoryRetentionPolicy":
+        return cls.objects.get_or_create(identifier="default")[0]
+
+
+def _get_default_job_history_retention_policy_pk() -> int:
+    return JobHistoryRetentionPolicy.get_default().pk  # type: ignore
 
 
 class Job(TimeStampedSafeDeleteModel):
@@ -118,6 +181,16 @@ class Job(TimeStampedSafeDeleteModel):
             "formatted with the parameter format string of the command. "
             "E.g. to pass value 123 as an argument to the rent_id "
             'parameter, set this to {"rent_id": 123}.'
+        ),
+    )
+    history_retention_policy = models.ForeignKey(
+        JobHistoryRetentionPolicy,
+        default=_get_default_job_history_retention_policy_pk,
+        on_delete=models.PROTECT,
+        verbose_name=_("history retention policy"),
+        help_text=_(
+            "Defines how long logs and information about "
+            "completed runs is preserved."
         ),
     )
 
@@ -159,7 +232,7 @@ class Timezone(CleansOnSave, models.Model):
         super().clean()
 
 
-class ScheduledJob(TimeStampedSafeDeleteModel):
+class ScheduledJob(TimeStampedModel):
     """
     Scheduling for a job to be ran at certain moment(s).
 
@@ -251,12 +324,66 @@ class ScheduledJob(TimeStampedSafeDeleteModel):
         items.exclude(pk__in=fresh_ids).delete()
 
 
-class JobRun(SafeDeleteModel):
+class JobRunQuerySet(QuerySet["JobRun"]):
+    def has_logs(self) -> "JobRunQuerySet":
+        has_compacted_log = models.Q(pk__in=self.has_compacted_log())
+        has_log_entries = models.Q(pk__in=self.has_log_entries())
+        return self.filter(has_compacted_log | has_log_entries)
+
+    def has_compacted_log(self) -> "JobRunQuerySet":
+        return self.exclude(log=None)
+
+    def has_log_entries(self) -> "JobRunQuerySet":
+        # Note: The self.exclude(log_entries=None) is very slow!
+        return self.filter(pk__in=JobRunLogEntry.objects.values("run_id"))
+
+    def compact_logs(self) -> int:
+        """
+        Compact logs of all job runs in the queryset.
+
+        Return the amount of log entries that were compacted.
+        """
+        deleted_log_entries = 0
+        for run in self:
+            deleted_log_entries += run.compact_logs()
+        return deleted_log_entries
+
+    def delete_logs(self) -> Tuple[int, int]:
+        """
+        Delete logs of all job runs in the queryset.
+
+        Return the amounts of deleted compacted logs and log entries.
+        """
+        (total_deleted_logs, total_deleted_entries) = (0, 0)
+        for run in self:
+            (deleted_logs, deleted_entries) = run.delete_logs()
+            total_deleted_logs += deleted_logs
+            total_deleted_entries += deleted_entries
+        return (total_deleted_logs, total_deleted_entries)
+
+    def delete_with_logs(self) -> Tuple[int, int, int]:
+        """
+        Delete all job runs in the queryset with their logs.
+
+        This effectively does a cascading delete, but still allows the
+        field to be PROTECTed so that the job runs cannot be cascade
+        deleted from Django admin etc.
+
+        Return the amounts of deleted job run objects, compacted logs
+        and log entries.
+        """
+        log_entries = JobRunLogEntry.objects.filter(run_id__in=self)
+        (entries_deleted, _delete_info1) = log_entries.delete()
+        logs = JobRunLog.objects.filter(run_id__in=self)
+        (logs_deleted, _delete_info2) = logs.delete()
+        (runs_deleted, _delete_info3) = self.delete()
+        return (runs_deleted, logs_deleted, entries_deleted)
+
+
+class JobRun(models.Model):
     """
     Instance of a job currently running or ran in the past.
     """
-
-    _safedelete_policy = SOFT_DELETE_CASCADE
 
     job = models.ForeignKey(Job, on_delete=models.PROTECT, verbose_name=_("job"))
     pid = models.IntegerField(
@@ -275,6 +402,8 @@ class JobRun(SafeDeleteModel):
     )
     exit_code = models.IntegerField(null=True, blank=True, verbose_name=_("exit code"))
 
+    objects = JobRunQuerySet.as_manager()
+
     class Meta:
         verbose_name = _("job run")
         verbose_name_plural = _("job runs")
@@ -282,8 +411,33 @@ class JobRun(SafeDeleteModel):
     def __str__(self) -> str:
         return f"{self.job} [{self.pid}] ({self.started_at:%Y-%m-%dT%H:%M})"
 
+    def compact_logs(self) -> int:
+        LOG.info("Compacting logs of %s", f"job run {self.pk} / {self}")
+        with transaction.atomic():
+            JobRunLog.get_or_create_for_run(self)
+            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+        return deleted_entries
 
-class JobRunLogEntry(SafeDeleteModel):
+    def delete_logs(self) -> Tuple[int, int]:
+        me = f"job run {self.pk} / {self}"
+
+        if self.log_entries.exists():
+            LOG.info("Deleting log entries of %s", me)
+            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+        else:
+            deleted_entries = 0
+
+        if hasattr(self, "log"):
+            LOG.info("Deleting compacted log of %s", me)
+            self.log.delete()
+            deleted_log = 1
+        else:
+            deleted_log = 0
+
+        return (deleted_log, deleted_entries)
+
+
+class JobRunLogEntry(models.Model):
     """
     Entry in a log for a run of a job.
 
@@ -296,11 +450,11 @@ class JobRunLogEntry(SafeDeleteModel):
 
     run = models.ForeignKey(
         JobRun,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="log_entries",
         verbose_name=_("run"),
     )
-    kind = EnumField(LogEntryKind, max_length=30, verbose_name=_("kind"))
+    kind = EnumIntegerField(LogEntryKind, verbose_name=_("kind"))
     line_number = models.IntegerField(verbose_name=_("line number"))
     number = models.IntegerField(verbose_name=_("number"))  # within line
     time = models.DateTimeField(
@@ -309,23 +463,101 @@ class JobRunLogEntry(SafeDeleteModel):
     text = models.TextField(null=False, blank=True, verbose_name=_("text"))
 
     class Meta:
-        ordering = ["run__started_at", "run", "time"]
-        verbose_name = _("log entry of a job run")
-        verbose_name_plural = _("log entries of job runs")
+        ordering = ("-run", "time", "id")
+        verbose_name = _("log entry")
+        verbose_name_plural = _("log entries")
 
     def __str__(self) -> str:
-        return ugettext("{run_name}: {kind} entry {number}").format(
-            run_name=self.run, kind=self.kind, number=self.number
+        return ugettext("{run_name}: {kind} entry {linenum}({number})").format(
+            run_name=self.run,
+            kind=self.kind,
+            linenum=self.line_number,
+            number=self.number,
         )
 
 
-if TYPE_CHECKING:
-    BaseQueryset = models.QuerySet[Any]
-else:
-    BaseQueryset = models.QuerySet
+class JobRunLog(models.Model):
+    run = models.OneToOneField(
+        JobRun, on_delete=models.CASCADE, related_name="log", verbose_name=_("run"),
+    )
+    content = models.TextField(null=False, blank=True, verbose_name=_("content"))
+    entry_data = JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_("log entry metadata"),
+        help_text=(
+            "Data that defines the location, timestamp and "
+            "kind (stdout or stderr) of each log entry "
+            "within the whole log content."
+        ),
+    )
+    start = models.DateTimeField(
+        db_index=True, verbose_name=_("timestamp of the first entry"),
+    )
+    end = models.DateTimeField(
+        db_index=True, verbose_name=_("timestamp of the last entry"),
+    )
+    entry_count = models.IntegerField(verbose_name=_("total count of entries"))
+    error_count = models.IntegerField(verbose_name=_("count of error entries"))
+
+    class Meta:
+        ordering = ("-start",)
+        verbose_name = _("log")
+        verbose_name_plural = _("logs")
+
+    @classmethod
+    def get_or_create_for_run(cls, run: JobRun) -> "JobRunLog":
+        existing = cls.objects.filter(run=run).first()
+        if existing:
+            return existing
+
+        entries = JobRunLogEntry.objects.filter(run=run)
+        log = CompactLog.from_log_entries(entries)  # type: ignore
+        return cls.objects.get_or_create(
+            run=run,
+            defaults=dict(
+                content=log.content,
+                entry_data=log.entry_data,
+                start=(log.first_timestamp or run.started_at),
+                end=(log.last_timestamp or run.stopped_at or run.started_at),
+                entry_count=log.entry_count,
+                error_count=log.error_count,
+            ),
+        )[0]
+
+    def __iter__(self) -> Iterable[JobRunLogEntry]:
+        compact_log = self.to_compact_log()
+        line_number: Dict[LogEntryKind, int] = defaultdict(lambda: 1)
+        number_within_line: Dict[LogEntryKind, int] = defaultdict(lambda: 1)
+        for entry_datum in compact_log.iterate_entries():
+            kind = entry_datum.kind
+            yield JobRunLogEntry(
+                run=self.run,
+                kind=kind,
+                line_number=line_number[kind],
+                number=number_within_line[kind],
+                time=entry_datum.time,
+                text=entry_datum.text,
+            )
+
+            if entry_datum.text.endswith(LINE_END_CHARACTERS):
+                line_number[kind] += 1
+                number_within_line[kind] = 1
+            else:
+                number_within_line[kind] += 1
+
+    def to_compact_log(self) -> CompactLog:
+        return CompactLog(
+            content=self.content,
+            entry_data=self.entry_data,
+            first_timestamp=self.start,
+            last_timestamp=self.end,
+            entry_count=self.entry_count,
+            error_count=self.error_count,
+        )
 
 
-class JobRunQueueItemQuerySet(BaseQueryset):
+class JobRunQueueItemQuerySet(QuerySet["JobRunQueueItem"]):
     def to_run(self) -> "models.QuerySet[JobRunQueueItem]":
         return self.filter(scheduled_job__enabled=True, assigned_at=None)
 

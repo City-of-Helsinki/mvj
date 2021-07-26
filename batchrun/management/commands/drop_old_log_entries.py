@@ -13,9 +13,11 @@ class Command(BaseCommand):
     @classmethod
     def add_arguments(cls, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("retain_n_days", type=int, nargs="?", default=7)
+        parser.add_argument("--dry-run", action="store_true")
 
     def handle(self, *args: Any, **options: Any) -> None:
         retain_n_days = options["retain_n_days"]
+        dry_run = options["dry_run"]
 
         latest_run = JobRun.objects.last()
         if not latest_run:
@@ -33,6 +35,7 @@ class Command(BaseCommand):
                 JobRun.objects.count(),
             )
         )
-        runs_before_cutoff.delete()
+        if not dry_run:
+            runs_before_cutoff.delete()
 
         self.stdout.write("Done!")
