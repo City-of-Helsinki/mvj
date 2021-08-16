@@ -4,9 +4,9 @@
 -- log_run_id) from the log entry table (batchrun_jobrunlogentry) to a
 -- row in the (compacted) log table (batchrun_jobrunlog).
 --
--- NOTE: Before calling this procedure, a row for the specified job run
+-- NOTE: Before calling this function, a row for the specified job run
 -- should be created to the log table with empty content and entry_data
--- fields.  Those fields are then filled with this procedure.  The
+-- fields.  Those fields are then filled with this function.  The
 -- input log entries are not deleted.
 --
 -- What is log compacting and why it is needed?
@@ -35,7 +35,8 @@
 -- There is a Python class CompactLog which can iterate the log entries
 -- (as if they were still separated) of the compacted logs by utilizing
 -- the metadata in the entry_data field.
-create procedure batchrun_compact_log_entries (log_run_id integer)
+create function batchrun_compact_log_entries (log_run_id integer)
+    returns void
     language plpgsql
 as $$
 declare

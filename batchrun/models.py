@@ -525,7 +525,7 @@ class JobRunLog(models.Model):
             return (job_run_log.pk, True)
 
         with connections[cls.objects.db].cursor() as cursor:
-            cursor.execute("CALL batchrun_compact_log_entries(%s)", (run.pk,))
+            cursor.execute("SELECT batchrun_compact_log_entries(%s)", (run.pk,))
 
         return (job_run_log.pk, True)
 
