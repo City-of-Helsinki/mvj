@@ -1,0 +1,1 @@
+drop procedure batchrun_compact_log_entries;
