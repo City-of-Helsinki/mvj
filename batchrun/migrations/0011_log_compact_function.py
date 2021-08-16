@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
 
     operations = [
         RunSQLFromFile(
-            sql_file="./0011_log_compact_procedure.sql",
-            reverse_sql_file="./0011_drop_log_compact_procedure.sql",
+            sql_file="./0011_log_compact_function.sql",
+            reverse_sql_file="./0011_drop_log_compact_function.sql",
         ),
     ]
