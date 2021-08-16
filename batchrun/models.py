@@ -18,7 +18,7 @@ from ._times import utc_now
 from .compactor import CompactLog
 from .constants import GRACE_PERIOD_LENGTH, LINE_END_CHARACTERS
 from .enums import CommandType, LogEntryKind
-from .fields import IntegerSetSpecifierField
+from .fields import IntegerSetSpecifierField, TextJSONField
 from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
@@ -481,7 +481,7 @@ class JobRunLog(models.Model):
         JobRun, on_delete=models.CASCADE, related_name="log", verbose_name=_("run"),
     )
     content = models.TextField(null=False, blank=True, verbose_name=_("content"))
-    entry_data = JSONField(
+    entry_data = TextJSONField(
         null=True,
         blank=True,
         verbose_name=_("log entry metadata"),
