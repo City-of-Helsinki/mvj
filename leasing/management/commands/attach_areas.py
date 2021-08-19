@@ -1,3 +1,5 @@
+import logging
+import sys
 from datetime import datetime
 
 from django.contrib.gis.geos import GEOSException
@@ -15,6 +17,8 @@ from leasing.models.land_area import (
     PlotDivisionState,
 )
 
+LOG = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     help = "Attach areas"
@@ -22,31 +26,39 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  # noqa: C901 TODO
         from auditlog.registry import auditlog
 
+        logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
+
+        verbosity = options.get("verbosity")
+        if verbosity == 0:
+            LOG.setLevel(logging.WARNING)
+        elif verbosity >= 2:
+            LOG.setLevel(logging.DEBUG)
+
         # Unregister all models from auditlog when importing
         for model in list(auditlog._registry.keys()):
             auditlog.unregister(model)
 
         leases = Lease.objects.all()
 
+        LOG.info("Processing %s objects.", leases.count())
+
         for lease in leases:
-            self.stdout.write("Lease #{} {}:".format(lease.id, lease.identifier))
+            LOG.debug("Lease #%s %s:", lease.id, lease.identifier)
 
             lease_areas = {
                 la.get_normalized_identifier(): la for la in lease.lease_areas.all()
             }
-            self.stdout.write(
-                " Existing lease areas: {}".format(", ".join(lease_areas.keys()))
-            )
+            LOG.debug(" Existing lease areas: %s", ", ".join(lease_areas.keys()))
 
             areas = Area.objects.filter(
                 type=AreaType.LEASE_AREA, identifier=str(lease.identifier)
             )
 
             if not areas:
-                self.stdout.write(
-                    "Lease #{} {}: No lease areas found in area table".format(
-                        lease.id, lease.identifier
-                    )
+                LOG.debug(
+                    "Lease #%s %s: No lease areas found in area table",
+                    lease.id,
+                    lease.identifier,
                 )
 
             for area in areas:
@@ -56,16 +68,16 @@ class Command(BaseCommand):
                 area_identifier = area.get_normalized_identifier()
 
                 if area_identifier not in lease_areas.keys():
-                    self.stdout.write(
-                        "Lease #{} {}: Area id {} not in lease areas of lease!".format(
-                            lease.id, lease.identifier, area_identifier
-                        )
+                    LOG.debug(
+                        "Lease #%s %s: Area id %s not in lease areas of lease!",
+                        lease.id,
+                        lease.identifier,
+                        area_identifier,
                     )
                     continue
 
                 lease_areas[area_identifier].geometry = area.geometry
                 lease_areas[area_identifier].save()
-                self.stdout.write("  Lease area FOUND. SAVED.")
 
                 try:
                     # Get intersected areas with lease area's geometry but exclude the type of lease area and plot
@@ -75,17 +87,16 @@ class Command(BaseCommand):
                         .exclude(type__in=[AreaType.LEASE_AREA, AreaType.PLOT_DIVISION])
                         .exclude(geometry__touches=area.geometry)
                     )
-                except InternalError as e:
-                    self.stdout.write(str(e))
+                except InternalError:
+                    LOG.exception("Failed to get intersected areas")
                     continue
 
                 for intersect_area in intersected_areas:
-                    self.stdout.write(
-                        "  #{} {} {}".format(
-                            intersect_area.id,
-                            intersect_area.identifier,
-                            intersect_area.type,
-                        )
+                    LOG.debug(
+                        "  #%s %s %s",
+                        intersect_area.id,
+                        intersect_area.identifier,
+                        intersect_area.type,
                     )
 
                     # As of 21.1.2020, there are about 250 of plan unit area objects that have {'area': None, ...}
@@ -93,10 +104,11 @@ class Command(BaseCommand):
                     # since it seems like there is usually another object with identical metadata and identifier fields
                     # (except also having a value for the 'area' key) to be found, which we want to actually use.
                     if not intersect_area.metadata.get("area"):
-                        self.stdout.write(
-                            "Lease #{} {}: DISCARD area {}: no 'area' value in metadata".format(
-                                lease.id, lease.identifier, intersect_area.id
-                            )
+                        LOG.debug(
+                            "Lease #%s %s: DISCARD area %s: no 'area' value in metadata",
+                            lease.id,
+                            lease.identifier,
+                            intersect_area.id,
                         )
                         continue
 
@@ -108,14 +120,17 @@ class Command(BaseCommand):
                         )
                         intersection.transform(3879)
                         if intersection.area < 1:
-                            self.stdout.write(
-                                "Lease #{} {}: DISCARD area {}: intersection area too small".format(
-                                    lease.id, lease.identifier, intersect_area.id
-                                )
+                            LOG.debug(
+                                "Lease #%s %s: DISCARD area %s: intersection area too small",
+                                lease.id,
+                                lease.identifier,
+                                intersect_area.id,
                             )
                             continue
                     except GEOSException as e:
-                        self.stdout.write(str(e))
+                        LOG.exception(
+                            "Discarding too small intersect area failed %s", e
+                        )
                         continue
 
                     if (
@@ -151,11 +166,14 @@ class Command(BaseCommand):
 
                         plot_ids_handled.append(plot.id)
 
-                        self.stdout.write(
-                            "Lease #{} {}: Plot #{} ({}) saved".format(
-                                lease.id, lease.identifier, plot.id, plot.type
-                            )
+                        LOG.debug(
+                            "Lease #%s %s: Plot #%s (%s) saved",
+                            lease.id,
+                            lease.identifier,
+                            plot.id,
+                            plot.type,
                         )
+
                     elif intersect_area.type == AreaType.PLAN_UNIT:
                         # Find the plot division (tonttijako) that intersects the most
                         plot_division_area = (
@@ -269,10 +287,11 @@ class Command(BaseCommand):
 
                             plan_unit_ids_handled.append(plan_unit.id)
 
-                            self.stdout.write(
-                                "Lease #{} {}: PlanUnit #{} saved".format(
-                                    lease.id, lease.identifier, plan_unit.id
-                                )
+                            LOG.debug(
+                                "Lease #%s %s: PlanUnit #%s saved",
+                                lease.id,
+                                lease.identifier,
+                                plan_unit.id,
                             )
 
                 Plot.objects.filter(lease_area=lease_areas[area_identifier]).exclude(
