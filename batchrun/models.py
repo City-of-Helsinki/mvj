@@ -344,7 +344,7 @@ class JobRunQuerySet(QuerySet["JobRun"]):
         Return the amount of log entries that were compacted.
         """
         deleted_log_entries = 0
-        for run in self:
+        for run in self.iterator(chunk_size=1000):
             deleted_log_entries += run.compact_logs()
         return deleted_log_entries
 
@@ -511,7 +511,7 @@ class JobRunLog(models.Model):
         if existing:
             return existing
 
-        entries = JobRunLogEntry.objects.filter(run=run)
+        entries = JobRunLogEntry.objects.filter(run=run).iterator(chunk_size=1000)
         log = CompactLog.from_log_entries(entries)  # type: ignore
         return cls.objects.get_or_create(
             run=run,
