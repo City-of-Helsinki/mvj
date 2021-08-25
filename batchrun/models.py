@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 import pytz
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import connections, models, transaction
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField, EnumIntegerField
@@ -18,7 +18,7 @@ from ._times import utc_now
 from .compactor import CompactLog
 from .constants import GRACE_PERIOD_LENGTH, LINE_END_CHARACTERS
 from .enums import CommandType, LogEntryKind
-from .fields import IntegerSetSpecifierField
+from .fields import IntegerSetSpecifierField, TextJSONField
 from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
@@ -414,7 +414,7 @@ class JobRun(models.Model):
     def compact_logs(self) -> int:
         LOG.info("Compacting logs of %s", f"job run {self.pk} / {self}")
         with transaction.atomic():
-            JobRunLog.get_or_create_for_run(self)
+            JobRunLog.create_for_run_if_not_exists(self)
             (deleted_entries, _delete_map) = self.log_entries.all().delete()
         return deleted_entries
 
@@ -481,7 +481,7 @@ class JobRunLog(models.Model):
         JobRun, on_delete=models.CASCADE, related_name="log", verbose_name=_("run"),
     )
     content = models.TextField(null=False, blank=True, verbose_name=_("content"))
-    entry_data = JSONField(
+    entry_data = TextJSONField(
         null=True,
         blank=True,
         verbose_name=_("log entry metadata"),
@@ -506,24 +506,28 @@ class JobRunLog(models.Model):
         verbose_name_plural = _("logs")
 
     @classmethod
-    def get_or_create_for_run(cls, run: JobRun) -> "JobRunLog":
-        existing = cls.objects.filter(run=run).first()
-        if existing:
-            return existing
-
-        entries = JobRunLogEntry.objects.filter(run=run).iterator(chunk_size=1000)
-        log = CompactLog.from_log_entries(entries)  # type: ignore
-        return cls.objects.get_or_create(
+    def create_for_run_if_not_exists(cls, run: JobRun) -> Tuple[int, bool]:
+        (job_run_log, created) = cls.objects.get_or_create(
             run=run,
             defaults=dict(
-                content=log.content,
-                entry_data=log.entry_data,
-                start=(log.first_timestamp or run.started_at),
-                end=(log.last_timestamp or run.stopped_at or run.started_at),
-                entry_count=log.entry_count,
-                error_count=log.error_count,
+                start=run.started_at,
+                end=(run.stopped_at or run.started_at),
+                entry_count=0,
+                error_count=0,
             ),
-        )[0]
+        )
+        if not created:
+            # Was already there, just return the pk and False
+            return (job_run_log.pk, False)
+
+        if not run.log_entries.exists():
+            # No entries.  Nothing more to do
+            return (job_run_log.pk, True)
+
+        with connections[cls.objects.db].cursor() as cursor:
+            cursor.execute("SELECT batchrun_compact_log_entries(%s)", (run.pk,))
+
+        return (job_run_log.pk, True)
 
     def __iter__(self) -> Iterable[JobRunLogEntry]:
         compact_log = self.to_compact_log()

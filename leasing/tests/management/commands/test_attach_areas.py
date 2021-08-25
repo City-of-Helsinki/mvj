@@ -53,35 +53,18 @@ def test_attach_areas_to_lease_areas(
     call_command("attach_areas", stdout=out, *args, **opts)
 
     # The geometry data has updated for exist lease area
-    assert "Lease area FOUND. SAVED" in out.getvalue()
     lease_area = LeaseArea.objects.get(identifier=area.get_land_identifier())
     assert area.geometry == lease_area.geometry
 
     # Plot saved
     assert lease_area.plots.filter(in_contract=False).count() == 1
-    plot = lease_area.plots.filter(in_contract=False).first()
-    assert (
-        "Lease #{} {}: Plot #{} ({}) saved".format(
-            lease.id, lease.identifier, plot.id, plot.type
-        )
-        in out.getvalue()
-    )
 
     # Plan unit saved
     assert lease_area.plan_units.filter(in_contract=False).count() == 1
-    plan_unit = lease_area.plan_units.filter(in_contract=False).first()
-    assert (
-        "Lease #{} {}: PlanUnit #{} saved".format(
-            lease.id, lease.identifier, plan_unit.id
-        )
-        in out.getvalue()
-    )
 
-    # Intersection area too small
-    assert "intersection area too small" in out.getvalue()
-
-    # No area value in intersect area's metadata
-    assert "no 'area' value in metadata" in out.getvalue()
+    # Extra items has been deleted
+    assert not Plot.objects.filter(pk=extra_plot.pk).exists()
+    assert not PlanUnit.objects.filter(pk=extra_plan_unit.pk).exists()
 
     # Extra items has been deleted
     assert not Plot.objects.filter(pk=extra_plot.pk).exists()
@@ -133,4 +116,4 @@ def test_plan_unit_updates_modified_at(
     call_command("attach_areas", stdout=out, *args, **opts)
 
     result_plan_unit = lease_area.plan_units.get(id=plan_unit.id)
-    assert result_plan_unit.modified_at == plan_unit.modified_at
+    assert result_plan_unit.master_timestamp == plan_unit.master_timestamp
