@@ -330,12 +330,26 @@ class AreaImporter(BaseImporter):
                         self.stdout.flush()
                     continue
 
+                areas = Area.objects.all()
                 match_data = {
                     "type": area_import["area_type"],
-                    "external_id": row.id,
                     "identifier": getattr(row, area_import["identifier_field_name"]),
                     "source": source,
                 }
+
+                if area_import["area_type"] == AreaType.LEASE_AREA:
+                    match_data["external_id"] = row.id
+
+                if area_import["area_type"] == AreaType.PLAN_UNIT:
+                    dp_id = metadata.get("detailed_plan_identifier")
+                    if not dp_id:
+                        self.stderr.write(
+                            "detailed_plan_identifier not found for area #{}".format(
+                                match_data["identifier"]
+                            )
+                        )
+                        continue
+                    areas = areas.filter(metadata__detailed_plan_identifier=dp_id)
 
                 try:
                     geom = geos.GEOSGeometry(row.geom_text)
@@ -372,7 +386,7 @@ class AreaImporter(BaseImporter):
                 }
 
                 try:
-                    Area.objects.update_or_create(defaults=other_data, **match_data)
+                    areas.objects.update_or_create(defaults=other_data, **match_data)
                 except MultipleObjectsReturned:  # There should only be one object per identifier...
                     ext_id = other_data.pop("external_id")
                     # ...so we delete them all but spare the one with the correct external_id (if it happens to exist)
