@@ -66,10 +66,6 @@ def test_attach_areas_to_lease_areas(
     assert not Plot.objects.filter(pk=extra_plot.pk).exists()
     assert not PlanUnit.objects.filter(pk=extra_plan_unit.pk).exists()
 
-    # Extra items has been deleted
-    assert not Plot.objects.filter(pk=extra_plot.pk).exists()
-    assert not PlanUnit.objects.filter(pk=extra_plan_unit.pk).exists()
-
 
 @pytest.mark.django_db
 def test_plan_unit_updates_modified_at(
