@@ -363,7 +363,7 @@ class AreaImporter(BaseImporter):
                 }
 
                 try:
-                    areas.objects.update_or_create(defaults=other_data, **match_data)
+                    areas.update_or_create(defaults=other_data, **match_data)
                 except MultipleObjectsReturned:  # There should only be one object per identifier...
                     ext_id = other_data.pop("external_id")
                     # ...so we delete them all but spare the one with the correct external_id (if it happens to exist)
