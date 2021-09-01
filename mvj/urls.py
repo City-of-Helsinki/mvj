@@ -93,10 +93,10 @@ from leasing.viewsets.lease_additional_views import (
     LeaseSetRentInfoCompletionStateView,
 )
 from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
-from leasing.viewsets.plot_search import PlotSearchSubtypeViewSet, PlotSearchViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
+from plotsearch.views import PlotSearchSubtypeViewSet, PlotSearchViewSet
 from users.views import UsersPermissions
 from users.viewsets import UserViewSet
 

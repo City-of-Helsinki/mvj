@@ -3,20 +3,22 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models import (
-    PlanUnit,
+from leasing.models import PlanUnit
+from leasing.serializers.land_area import PlanUnitSerializer
+from leasing.serializers.utils import (
+    InstanceDictPrimaryKeyRelatedField,
+    NameModelSerializer,
+    UpdateNestedMixin,
+)
+from plotsearch.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
 )
-from leasing.serializers.land_area import PlanUnitSerializer
-from leasing.serializers.utils import NameModelSerializer
 from users.models import User
 from users.serializers import UserSerializer
-
-from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
 class PlotSearchSubtypeSerializer(NameModelSerializer):

@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     "users",
     "forms",
     "leasing",
+    "plotsearch",
     "laske_export",
     "field_permissions",
     "batchrun",

@@ -2,7 +2,8 @@ import pytest
 from django.utils.crypto import get_random_string
 
 from leasing.enums import PlotSearchTargetType
-from leasing.models import PlanUnit, PlotSearchTarget
+from leasing.models import PlanUnit
+from plotsearch.models import PlotSearchTarget
 
 
 @pytest.mark.django_db

@@ -59,10 +59,6 @@ from leasing.models import (
     PlanUnitState,
     PlanUnitType,
     Plot,
-    PlotSearch,
-    PlotSearchStage,
-    PlotSearchSubtype,
-    PlotSearchType,
     ReceivableType,
     Regulation,
     RelatedLease,
@@ -660,15 +656,6 @@ class PlanUnitAdmin(FieldPermissionsModelAdmin):
         return qs.select_related("lease_area", "lease_area__lease")
 
 
-class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
-    list_display = ("name",)
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-
-        return qs.select_related("subtype", "stage",)
-
-
 class VatAdmin(admin.ModelAdmin):
     list_display = ("percent", "start_date", "end_date")
 
@@ -770,10 +757,6 @@ admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitIntendedUse, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
 admin.site.register(PlotDivisionState, NameAdmin)
-admin.site.register(PlotSearch, PlotSearchAdmin)
-admin.site.register(PlotSearchStage, NameAdmin)
-admin.site.register(PlotSearchSubtype, NameAdmin)
-admin.site.register(PlotSearchType, NameAdmin)
 admin.site.register(ReceivableType)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
