@@ -79,6 +79,13 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.models.tenant import TenantRentShare
+from plotsearch.models import (
+    PlotSearch,
+    PlotSearchStage,
+    PlotSearchSubtype,
+    PlotSearchTarget,
+    PlotSearchType,
+)
 from users.models import User
 
 
@@ -114,30 +121,6 @@ class AreaSourceFactory(factory.DjangoModelFactory):
 
 
 @register
-class ContactFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Contact
-
-
-@register
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = User
-
-
-@register
-class LeaseFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Lease
-
-
-@register
-class PlanUnitFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlanUnit
-
-
-@register
 class PlotFactory(factory.DjangoModelFactory):
     class Meta:
         model = Plot
@@ -147,18 +130,6 @@ class PlotFactory(factory.DjangoModelFactory):
 class RelatedLeaseFactory(factory.DjangoModelFactory):
     class Meta:
         model = RelatedLease
-
-
-@register
-class TenantFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Tenant
-
-
-@register
-class TenantContactFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = TenantContact
 
 
 @register
@@ -219,21 +190,6 @@ class RentAdjustmentFactory(factory.DjangoModelFactory):
 class FixedInitialYearRentFactory(factory.DjangoModelFactory):
     class Meta:
         model = FixedInitialYearRent
-
-
-@register
-class LeaseAreaAddressFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = LeaseAreaAddress
-
-
-@register
-class LeaseAreaFactory(factory.DjangoModelFactory):
-    type = LeaseAreaType.REAL_PROPERTY
-    location = LocationType.SURFACE
-
-    class Meta:
-        model = LeaseArea
 
 
 @register
@@ -592,89 +548,6 @@ def area_with_intersects_test_data(
     ]
 
     return {**area_test_data, "intersect_areas": intersect_areas}
-
-
-@pytest.fixture
-def lease_test_data(
-    lease_factory,
-    contact_factory,
-    tenant_factory,
-    tenant_contact_factory,
-    lease_area_factory,
-    lease_area_address_factory,
-    plot_factory,
-    plan_unit_factory,
-):
-    lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=29, notice_period_id=1
-    )
-
-    contacts = [
-        contact_factory(
-            first_name="Lessor First name",
-            last_name="Lessor Last name",
-            is_lessor=True,
-            type=ContactType.PERSON,
-        )
-    ]
-    for i in range(4):
-        contacts.append(
-            contact_factory(
-                first_name="First name " + str(i),
-                last_name="Last name " + str(i),
-                type=ContactType.PERSON,
-            )
-        )
-
-    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-    tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-
-    tenants = [tenant1, tenant2]
-
-    tenantcontacts = [
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant1,
-            contact=contacts[1],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant2,
-            contact=contacts[2],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.CONTACT,
-            tenant=tenant2,
-            contact=contacts[3],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant2,
-            contact=contacts[4],
-            start_date=timezone.now().date()
-            + datetime.timedelta(days=30),  # Future tenant
-        ),
-    ]
-
-    lease.tenants.set(tenants)
-    lease_area = lease_area_factory(
-        lease=lease, identifier="12345", area=1000, section_area=1000,
-    )
-
-    lease_area_address_factory(lease_area=lease_area, address="Test street 1")
-    lease_area_address_factory(
-        lease_area=lease_area, address="Primary street 1", is_primary=True
-    )
-
-    return {
-        "lease": lease,
-        "lease_area": lease_area,
-        "tenants": tenants,
-        "tenantcontacts": tenantcontacts,
-    }
 
 
 @pytest.fixture
