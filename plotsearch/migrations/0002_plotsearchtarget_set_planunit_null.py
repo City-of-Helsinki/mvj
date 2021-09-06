@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plotsearch', '0001_initial'),
+        ("plotsearch", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='plotsearchtarget',
-            name='plan_unit',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, to='leasing.PlanUnit'),
+            model_name="plotsearchtarget",
+            name="plan_unit",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="leasing.PlanUnit",
+            ),
         ),
     ]

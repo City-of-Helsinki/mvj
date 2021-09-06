@@ -17,8 +17,6 @@ from leasing.enums import (
     InvoiceState,
     InvoiceType,
     LandUseContractType,
-    LeaseAreaType,
-    LocationType,
     RentAdjustmentType,
     RentCycle,
     RentType,
@@ -28,7 +26,6 @@ from leasing.models import (
     Area,
     AreaSource,
     Condition,
-    Contact,
     Contract,
     ContractRent,
     Decision,
@@ -36,19 +33,14 @@ from leasing.models import (
     District,
     FixedInitialYearRent,
     Invoice,
-    Lease,
-    LeaseArea,
     LeaseBasisOfRent,
     LeaseType,
     Municipality,
     NoticePeriod,
-    PlanUnit,
     Plot,
     RelatedLease,
     Rent,
     RentAdjustment,
-    Tenant,
-    TenantContact,
     UiData,
 )
 from leasing.models.invoice import (
@@ -58,7 +50,6 @@ from leasing.models.invoice import (
     InvoiceSet,
     ReceivableType,
 )
-from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
@@ -79,14 +70,6 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.models.tenant import TenantRentShare
-from plotsearch.models import (
-    PlotSearch,
-    PlotSearchStage,
-    PlotSearchSubtype,
-    PlotSearchTarget,
-    PlotSearchType,
-)
-from users.models import User
 
 
 @pytest.fixture
