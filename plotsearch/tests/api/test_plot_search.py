@@ -342,7 +342,7 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     # Confirm that the master plan unit has deleted
-    assert response.data["targets"][0]["is_master_plan_unit_deleted"]
+    assert response.data["targets"][1]["is_master_plan_unit_deleted"]
 
     # Change to new plan unit
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
