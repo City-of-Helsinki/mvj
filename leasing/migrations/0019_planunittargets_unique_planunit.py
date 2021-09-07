@@ -3,15 +3,17 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-from leasing.models import PlotSearchTarget
-
 
 def forwards_func(apps, schema_editor):
+    PlotSearchTarget = apps.get_model("leasing", "PlotSearchTarget")
     PlotSearchTarget.objects.all().delete()
 
 
 def reverse_func(apps, schema_editor):
     pass
+
+
+# noqa: F401
 
 
 class Migration(migrations.Migration):

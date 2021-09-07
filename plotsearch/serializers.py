@@ -3,20 +3,22 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models import (
-    PlanUnit,
+from leasing.models import PlanUnit
+from leasing.serializers.land_area import PlanUnitSerializer
+from leasing.serializers.utils import (
+    InstanceDictPrimaryKeyRelatedField,
+    NameModelSerializer,
+    UpdateNestedMixin,
+)
+from plotsearch.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
 )
-from leasing.serializers.land_area import PlanUnitSerializer
-from leasing.serializers.utils import NameModelSerializer
 from users.models import User
 from users.serializers import UserSerializer
-
-from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
 class PlotSearchSubtypeSerializer(NameModelSerializer):
@@ -76,6 +78,8 @@ class PlotSearchTargetSerializer(
         )
 
     def get_lease_address(self, obj):
+        if obj.plan_unit is None:
+            return None
         lease_address = (
             obj.plan_unit.lease_area.addresses.all()
             .order_by("-is_primary")
@@ -85,15 +89,21 @@ class PlotSearchTargetSerializer(
         return lease_address
 
     def get_master_plan_unit_id(self, obj):
+        if obj.plan_unit is None:
+            return None
         master = obj.plan_unit.get_master()
         if master:
             return master.id
         return None
 
     def get_is_master_plan_unit_deleted(self, obj):
+        if obj.plan_unit is None:
+            return True
         return not obj.plan_unit.master_exists
 
     def get_message_label(self, obj):
+        if obj.plan_unit is None:
+            return _("The target has been removed from the system!")
         if not obj.plan_unit.master_exists:
             return _("The target has been removed from the system!")
         elif obj.plan_unit.is_master_newer:

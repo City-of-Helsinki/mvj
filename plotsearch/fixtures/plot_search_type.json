@@ -1,27 +1,27 @@
 [
   {
-    "model": "leasing.PlotSearchType",
+    "model": "plotsearch.PlotSearchType",
     "pk": 1,
     "fields": {
       "name": "Asuntorakentamisen haut"
     }
   },
   {
-    "model": "leasing.PlotSearchType",
+    "model": "plotsearch.PlotSearchType",
     "pk": 2,
     "fields": {
       "name": "Pientalotonttien haut"
     }
   },
   {
-    "model": "leasing.PlotSearchType",
+    "model": "plotsearch.PlotSearchType",
     "pk": 3,
     "fields": {
       "name": "Yritystonttihaku"
     }
   },
   {
-    "model": "leasing.PlotSearchType",
+    "model": "plotsearch.PlotSearchType",
     "pk": 4,
     "fields": {
       "name": "Muun alueen haku"

@@ -3,16 +3,15 @@ from rest_framework.filters import OrderingFilter
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.models import PlotSearch, PlotSearchSubtype
-from leasing.serializers.plot_search import (
+from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
+from plotsearch.models import PlotSearch, PlotSearchSubtype
+from plotsearch.serializers import (
     PlotSearchCreateSerializer,
     PlotSearchListSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
     PlotSearchUpdateSerializer,
 )
-
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
 class PlotSearchSubtypeViewSet(AtomicTransactionModelViewSet):

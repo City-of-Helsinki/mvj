@@ -102,7 +102,7 @@ class PlotSearchTarget(models.Model):
     plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
 
     # In Finnish: Kaavayksikkö
-    plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
+    plan_unit = models.OneToOneField(PlanUnit, on_delete=models.SET_NULL, null=True)
 
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
