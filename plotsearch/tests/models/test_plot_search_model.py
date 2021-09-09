@@ -2,6 +2,7 @@ import pytest
 from django.utils.crypto import get_random_string
 
 from leasing.enums import PlotSearchTargetType
+from leasing.models import PlanUnit
 from plotsearch.models import PlotSearchTarget
 
 
@@ -39,8 +40,7 @@ def test_remove_plot_search_target_cascade_plan_unit(
     plot_search_target.delete()
 
     assert PlotSearchTarget.objects.filter(pk=plot_search_target.id).count() == 0
-    # TODO next assert should maybe work
-    # assert PlanUnit.objects.filter(pk=plan_unit.id).count() == 0
+    assert PlanUnit.objects.filter(pk=plan_unit.id).count() == 0
 
 
 @pytest.mark.django_db
@@ -62,7 +62,7 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
     master_plan_unit = plan_unit_factory(
         identifier="PU1", area=1000, lease_area=lease_area, is_master=True,
     )
-    # master_plan_unit_id = master_plan_unit.id
+    master_plan_unit_id = master_plan_unit.id
     master_plan_unit_master_timestamp = master_plan_unit.master_timestamp
 
     plot_search = plot_search_factory()
@@ -72,8 +72,7 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
         target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
-    # TODO next assert does not make any sense
-    # assert plot_search_target.plan_unit.id != master_plan_unit_id
+    assert plot_search_target.plan_unit.id != master_plan_unit_id
     assert (
         plot_search_target.plan_unit.master_timestamp
         == master_plan_unit_master_timestamp

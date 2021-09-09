@@ -275,33 +275,17 @@ def test_plot_search_master_plan_unit_is_newer(
         plan_unit=plan_unit,
         target_type=PlotSearchTargetType.SEARCHABLE,
     )
-
-    slave_plan_unit = plan_unit_factory(
-        identifier="PU1",
-        area=1000,
-        lease_area=lease_test_data["lease_area"],
-        is_master=False,
-        master_timestamp=timezone.now(),
-    )
-
-    PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data,
-        plan_unit=slave_plan_unit,
-        target_type=PlotSearchTargetType.SEARCHABLE,
-    )
-
     # Update master plan unit
     master_plan_unit = PlanUnit.objects.get(pk=master_plan_unit_id)
     master_plan_unit.detailed_plan_identifier = "DP1"
-    master_plan_unit.master_timestamp = timezone.now()
     master_plan_unit.save()
 
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert response.data["targets"][0]["master_plan_unit_id"] > 0
-    assert response.data["targets"][1]["is_master_plan_unit_newer"]
-    assert response.data["targets"][0]["message_label"] is not None
+    assert response.data["targets"][0]["is_master_plan_unit_newer"]
+    assert len(response.data["targets"][0]["message_label"]) > 0
 
 
 @pytest.mark.django_db
