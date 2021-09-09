@@ -1,13 +1,7 @@
 # Register your models here.
 from django.contrib.gis import admin, forms
 
-from forms.models import (
-    Field,
-    Form,
-    FieldType,
-    Section,
-    Choice,
-)
+from forms.models import Choice, Field, FieldType, Form, Section
 
 
 class FieldTypeChoiceField(forms.ModelChoiceField):
