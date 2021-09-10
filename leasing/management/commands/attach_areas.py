@@ -268,9 +268,14 @@ class Command(BaseCommand):
                                 "plan_unit_type": plan_unit_type,
                                 "plan_unit_state": plan_unit_state,
                                 "plan_unit_intended_use": plan_unit_intended_use,
-                                "plan_unit_status": plan_unit_state.to_enum(),
                                 "master_timestamp": datetime.now(),
                             }
+
+                            # Set plan unit status
+                            if plan_unit_state.to_enum() is not None:
+                                rest_data[
+                                    "plan_unit_status"
+                                ] = plan_unit_state.to_enum()
 
                             # Get or create plan unit
                             (
