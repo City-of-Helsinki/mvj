@@ -360,6 +360,7 @@ class AreaImporter(BaseImporter):
                 other_data = {
                     "geometry": geom,
                     "metadata": metadata,
+                    "external_id": row.id,
                 }
 
                 try:
