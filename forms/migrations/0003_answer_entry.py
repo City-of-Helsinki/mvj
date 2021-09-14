@@ -9,26 +9,63 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('forms', '0002_add_translations'),
+        ("forms", "0002_add_translations"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Answer',
+            name="Answer",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ready', models.BooleanField(default=False)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='forms.Form')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ready", models.BooleanField(default=False)),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="forms.Form"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Entry',
+            name="Entry",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.TextField()),
-                ('answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forms.Answer')),
-                ('field', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='forms.Field')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.TextField()),
+                (
+                    "answer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forms.Answer"
+                    ),
+                ),
+                (
+                    "field",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="forms.Field"
+                    ),
+                ),
             ],
         ),
     ]

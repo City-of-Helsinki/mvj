@@ -3,7 +3,7 @@ import pytest
 from faker import Faker
 from pytest_factoryboy import register
 
-from forms.models.form import Choice, Field, FieldType, Form, Section, Answer, Entry
+from forms.models.form import Answer, Choice, Entry, Field, FieldType, Form, Section
 
 fake = Faker("fi_FI")
 
