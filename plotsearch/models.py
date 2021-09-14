@@ -3,6 +3,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
+from forms.models import Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
@@ -84,6 +85,9 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
 
     # In Finnish: Haettavat kohteet, menettelyvaraus ja suoravaraus
     targets = models.ManyToManyField(PlanUnit, through="PlotSearchTarget")
+
+    # In Finnish: Lomake
+    form = models.OneToOneField(Form, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot search")

@@ -3,6 +3,8 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from forms.models import Form
+from forms.serializers.form import FormSerializer
 from leasing.models import PlanUnit
 from leasing.serializers.land_area import PlanUnitSerializer
 from leasing.serializers.utils import (
@@ -197,6 +199,13 @@ class PlotSearchUpdateSerializer(
     )
     targets = PlotSearchTargetCreateUpdateSerializer(
         source="plotsearchtarget_set", many=True, required=False
+    )
+    form = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Form,
+        queryset=Form.objects.all(),
+        related_serializer=FormSerializer,
+        required=False,
+        allow_null=True,
     )
 
     class Meta:
