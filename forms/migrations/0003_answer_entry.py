@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='Answer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ready', models.BooleanField()),
+                ('ready', models.BooleanField(default=False)),
                 ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='forms.Form')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
