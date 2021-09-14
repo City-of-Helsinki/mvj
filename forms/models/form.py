@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ..utils import clone_object, generate_unique_identifier
+from users.models import User
 
 
 class Form(models.Model):
@@ -115,3 +116,21 @@ class Choice(models.Model):
     has_text_input = models.BooleanField(default=False)
 
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
+
+
+class Answer(models.Model):
+    """
+    Model for saving form inputs
+    """
+    form = models.ForeignKey(Form, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ready = models.BooleanField(default=False)
+
+
+class Entry(models.Model):
+    """
+    Model for saving Answer entries
+    """
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.PROTECT)
+    value = models.TextField()
