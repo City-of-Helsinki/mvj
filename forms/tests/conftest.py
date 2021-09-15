@@ -51,6 +51,19 @@ class EntryFactory(factory.DjangoModelFactory):
 
 
 @pytest.fixture
+def basic_answer(answer_factory, entry_factory, basic_template_form, user_factory):
+    form = basic_template_form
+    user = user_factory(username=fake.name())
+    answer = answer_factory(form=form, user=user)
+
+    for section in answer.form.sections.all():
+        for field in section.field_set.all():
+            entry = entry_factory(answer=answer, field=field, value=fake.name())
+
+    return answer
+
+
+@pytest.fixture
 def basic_template_form(
     form_factory, section_factory, field_factory, choice_factory, basic_field_types,
 ):
