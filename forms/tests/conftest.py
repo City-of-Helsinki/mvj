@@ -58,7 +58,7 @@ def basic_answer(answer_factory, entry_factory, basic_template_form, user_factor
 
     for section in answer.form.sections.all():
         for field in section.field_set.all():
-            entry = entry_factory(answer=answer, field=field, value=fake.name())
+            entry_factory(answer=answer, field=field, value=fake.name())
 
     return answer
 

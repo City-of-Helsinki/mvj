@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from forms.viewsets.form import FormViewSet, AnswerViewSet
+from forms.viewsets.form import AnswerViewSet, FormViewSet
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
