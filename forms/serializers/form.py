@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Choice, Field, Form, Section
+from ..models import Answer, Choice, Entry, Field, Form, Section
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -71,3 +71,38 @@ class FormSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
         fields = ("id", "name", "is_template", "title", "sections")
+
+
+class EntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entry
+        read_only_fields = ("answer",)
+        fields = ("answer", "field", "value")
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+
+    entries = EntrySerializer(many=True)
+
+    class Meta:
+        model = Answer
+        fields = ("form", "user", "entries", "ready")
+
+    def create(self, validated_data):
+        entries_data = validated_data.pop("entries")
+        answer = Answer.objects.create(**validated_data)
+        for entry in entries_data:
+            Entry.objects.create(answer=answer, **entry)
+        return answer
+
+    def update(self, instance, validated_data):
+        for entry_data in validated_data.pop("entries", []):
+            entry, created = Entry.objects.get_or_create(
+                answer=instance, field=entry_data["field"]
+            )
+            entry.value = entry_data["value"]
+            entry.save()
+        instance.ready = validated_data.get("ready", instance.ready)
+        instance.user = validated_data.get("user", instance.user)
+        instance.save()
+        return instance

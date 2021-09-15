@@ -134,6 +134,6 @@ class Entry(models.Model):
     Model for saving Answer entries
     """
 
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name="entries")
     field = models.ForeignKey(Field, on_delete=models.PROTECT)
     value = models.TextField()

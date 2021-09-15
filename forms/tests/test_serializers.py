@@ -1,6 +1,6 @@
 import pytest
 
-from ..serializers.form import FormSerializer
+from ..serializers.form import AnswerSerializer, FormSerializer
 
 
 def find(key, dictionary):
@@ -22,3 +22,10 @@ def test_form_serializer(basic_template_form):
     assert serializer.data["sections"]
     assert find("fields", serializer.data)
     assert find("choices", serializer.data)
+
+
+@pytest.mark.django_db
+def test_answer_serializer(basic_answer):
+    serializer = AnswerSerializer(basic_answer)
+    assert serializer.data["form"]
+    assert serializer.data["entries"]
