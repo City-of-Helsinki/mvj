@@ -25,7 +25,11 @@ def prepare_template_form_on_plot_search_save(sender, instance, **kwargs):
 
     if instance.id:
         previous_form = PlotSearch.objects.get(pk=instance.id).form
-        if instance.form and instance.form.id != previous_form.id:
+        if (
+            instance.form
+            and previous_form is not None
+            and instance.form.id != previous_form.id
+        ):
             previous_form.delete()
 
     if form is None:

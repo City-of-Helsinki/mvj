@@ -5,6 +5,7 @@ import pytest
 from django.utils import timezone
 from pytest_factoryboy import register
 
+from forms.models import Form
 from leasing.enums import ContactType, LeaseAreaType, LocationType, TenantContactType
 from leasing.models import Contact, Lease, LeaseArea, PlanUnit, Tenant, TenantContact
 from leasing.models.land_area import LeaseAreaAddress
@@ -208,3 +209,9 @@ class LeaseAreaFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = LeaseArea
+
+
+@register
+class FormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Form

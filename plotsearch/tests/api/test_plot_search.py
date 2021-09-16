@@ -5,11 +5,15 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from faker import Faker
 from rest_framework import serializers
 
+from forms.models import Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from plotsearch.models import PlotSearchTarget
+
+fake = Faker("fi_FI")
 
 
 @pytest.mark.django_db
@@ -367,3 +371,46 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
 
     # Confirm that the old duplicated plan unit has been deleted
     assert PlanUnit.objects.filter(id=duplicated_plan_unit_id).count() == 0
+
+
+@pytest.mark.django_db
+def test_attach_form_to_plot_search(
+    django_db_setup, admin_client, plot_search_test_data, lease_test_data, form_factory,
+):
+    form = form_factory(
+        name=fake.name(),
+        description=fake.sentence(),
+        is_template=True,
+        title=fake.name(),
+    )
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response = admin_client.patch(
+        url, data={"form": form.id}, content_type="application/json"
+    )
+    assert response.status_code == 200
+    assert len(Form.objects.all()) == 2
+
+    url = reverse("plotsearch-list")
+    response = admin_client.post(
+        url,
+        data={"name": "Test name", "form": form.id},
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    assert len(Form.objects.all()) == 3
+
+    plot_search_id = response.data["id"]
+
+    new_form = form_factory(
+        name=fake.name(),
+        description=fake.sentence(),
+        is_template=True,
+        title=fake.name(),
+    )
+
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_id})
+    response = admin_client.patch(
+        url, data={"form": new_form.id}, content_type="application/json"
+    )
+    assert response.status_code == 200
+    assert len(Form.objects.all()) == 4
