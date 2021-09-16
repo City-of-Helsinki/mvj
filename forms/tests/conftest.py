@@ -3,7 +3,7 @@ import pytest
 from faker import Faker
 from pytest_factoryboy import register
 
-from forms.models.form import Answer, Choice, Entry, Field, FieldType, Form, Section
+from forms.models.form import Answer, Choice, Entry, Field, FieldType, Section
 
 fake = Faker("fi_FI")
 
@@ -24,12 +24,6 @@ class FieldFactory(factory.DjangoModelFactory):
 class FieldTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = FieldType
-
-
-@register
-class FormFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Form
 
 
 @register
