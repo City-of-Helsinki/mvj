@@ -1,6 +1,7 @@
 *.py[cod]
 *.mo
 *.sql
+*.iml
 .coverage*
 .DS_Store
 .devcontainer
