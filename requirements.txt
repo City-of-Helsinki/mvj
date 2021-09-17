@@ -43,6 +43,21 @@ dataclasses==0.6
     # via -r requirements.in
 defusedxml==0.6.0
     # via zeep
+django==2.2.24
+    # via
+    #   -r requirements.in
+    #   django-anymail
+    #   django-cors-headers
+    #   django-filter
+    #   django-helusers
+    #   django-jsonfield
+    #   django-model-utils
+    #   django-modeltranslation
+    #   django-picklefield
+    #   django-q
+    #   django-safedelete
+    #   djangorestframework
+    #   drf-oidc-auth
 django-admin-rangefilter==0.6.3
     # via -r requirements.in
 django-anymail==7.0.0
@@ -65,10 +80,10 @@ django-filter==2.2.0
     # via -r requirements.in
 django-helusers==0.5.6
     # via -r requirements.in
-django-jsonfield-compat==0.4.4
-    # via -r requirements.in
 django-jsonfield==1.4.0
     # via django-auditlog
+django-jsonfield-compat==0.4.4
+    # via -r requirements.in
 django-model-utils==4.1.1
     # via -r requirements.in
 django-modeltranslation==0.16.1
@@ -77,10 +92,10 @@ django-picklefield==2.1.1
     # via
     #   django-constance
     #   django-q
-django-q-sentry==0.1.4
-    # via django-q
 django-q[sentry]==1.3.4
     # via -r requirements.in
+django-q-sentry==0.1.4
+    # via django-q
 django-rest-swagger==2.2.0
     # via -r requirements.in
 django-safedelete==0.5.4
@@ -89,29 +104,14 @@ django-sanitized-dump==1.2.0
     # via -r requirements.in
 django-sequences==2.4
     # via -r requirements.in
-django==2.2.13
-    # via
-    #   -r requirements.in
-    #   django-anymail
-    #   django-cors-headers
-    #   django-filter
-    #   django-helusers
-    #   django-jsonfield
-    #   django-model-utils
-    #   django-modeltranslation
-    #   django-picklefield
-    #   django-q
-    #   django-safedelete
-    #   djangorestframework
-    #   drf-oidc-auth
-djangorestframework-gis==0.15
-    # via -r requirements.in
 djangorestframework==3.11.2
     # via
     #   -r requirements.in
     #   django-rest-swagger
     #   djangorestframework-gis
     #   drf-oidc-auth
+djangorestframework-gis==0.15
+    # via -r requirements.in
 docutils==0.16
     # via python-daemon
 docxtpl==0.6.3
@@ -182,8 +182,6 @@ pyyaml==5.4
     # via
     #   database-sanitizer
     #   django-sanitized-dump
-requests-toolbelt==0.9.1
-    # via zeep
 requests==2.23.0
     # via
     #   -r requirements.in
@@ -193,6 +191,8 @@ requests==2.23.0
     #   pyjwkest
     #   requests-toolbelt
     #   zeep
+requests-toolbelt==0.9.1
+    # via zeep
 rsa==4.7
     # via python-jose
 sentry-sdk==0.16.5
