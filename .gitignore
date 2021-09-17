@@ -7,6 +7,7 @@
 .devcontainer
 .vscode
 /local_settings.py
+/docker-compose.override.yml
 /.env
 /*.env.yaml
 /.venv
