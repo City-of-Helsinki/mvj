@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from ..models import Answer, Choice, Entry, Field, Form, Section
 
@@ -78,6 +79,7 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         read_only_fields = ("answer",)
         fields = ("answer", "field", "value")
+        validators = [UniqueValidator(queryset=Entry.objects.all())]
 
 
 class AnswerSerializer(serializers.ModelSerializer):
