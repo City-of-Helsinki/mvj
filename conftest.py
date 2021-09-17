@@ -7,7 +7,15 @@ from pytest_factoryboy import register
 
 from forms.models import Form
 from leasing.enums import ContactType, LeaseAreaType, LocationType, TenantContactType
-from leasing.models import Contact, Lease, LeaseArea, PlanUnit, Tenant, TenantContact
+from leasing.models import (
+    Contact,
+    Decision,
+    Lease,
+    LeaseArea,
+    PlanUnit,
+    Tenant,
+    TenantContact,
+)
 from leasing.models.land_area import LeaseAreaAddress
 from plotsearch.models import (
     PlotSearch,
@@ -215,3 +223,9 @@ class LeaseAreaFactory(factory.DjangoModelFactory):
 class FormFactory(factory.DjangoModelFactory):
     class Meta:
         model = Form
+
+
+@register
+class DecisionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Decision
