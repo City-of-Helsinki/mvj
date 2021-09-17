@@ -27,7 +27,7 @@ decorator==4.4.2
     # via
     #   ipython
     #   traitlets
-django==2.2.13
+django==2.2.24
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
