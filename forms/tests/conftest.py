@@ -261,6 +261,19 @@ def basic_template_form(
 
 
 @pytest.fixture
+def basic_template_form_with_required_fields(basic_template_form):
+    sections = basic_template_form.sections.all()
+    for section in sections:
+        if section.identifier != "person-information":
+            continue
+        for field in section.field_set.all():
+            field.required = True
+            field.save()
+
+    return basic_template_form
+
+
+@pytest.fixture
 def basic_field_types(field_type_factory):
     field_types = []
     field = field_type_factory(name="Textbox", identifier="textbox")

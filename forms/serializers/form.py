@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from ..models import Answer, Choice, Entry, Field, Form, Section
+from ..validators.answer import RequiredFormFieldValidator
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -93,6 +94,9 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ("form", "user", "entries", "ready")
+        validators = [
+            RequiredFormFieldValidator()
+        ]
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")

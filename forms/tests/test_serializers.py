@@ -1,8 +1,11 @@
 import pytest
 from rest_framework.exceptions import ValidationError
+from faker import Faker
 
 from ..serializers.form import AnswerSerializer, EntrySerializer, FormSerializer
 
+
+fake = Faker("fi_FI")
 
 def find(key, dictionary):
     for k, v in dictionary.iteritems():
@@ -53,5 +56,26 @@ def test_entry_unique_validators(basic_answer, entry_factory):
 
 
 @pytest.mark.django_db
-def test_all_required_fields_answered_validator(basic_template_form, basic_answer):
-    pass
+def test_all_required_fields_answered_validator(basic_template_form_with_required_fields, admin_user):
+
+    entries = []
+    # Generating answers where required fields are not given
+    for section in basic_template_form_with_required_fields.sections.all():
+        for field in section.field_set.all():
+            if field.section.identifier == "person-information":
+                continue
+            entries.append({
+                "field": field.id,
+                "value": fake.name()
+            })
+
+    answer_data = {
+        "form": basic_template_form_with_required_fields.id,
+        "user": admin_user.id,
+        "entries": entries
+    }
+
+    with pytest.raises(ValidationError) as val_error:
+        answer_serializer = AnswerSerializer(data=answer_data)
+        answer_serializer.is_valid(True)
+    assert val_error.value.args[0]["non_field_errors"][0].code == "required"
