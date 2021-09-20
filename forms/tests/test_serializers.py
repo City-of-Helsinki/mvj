@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.exceptions import ValidationError
 
 from ..serializers.form import AnswerSerializer, EntrySerializer, FormSerializer
 
@@ -32,18 +33,25 @@ def test_answer_serializer(basic_answer):
 
 
 @pytest.mark.django_db
-def test_entry_validators(basic_answer):
-    serializer = AnswerSerializer(basic_answer)
-    entries = serializer.data["entries"]
-    for entry in entries:
-        # Check that all entries are unique
-        assert entries.count(entry) == 1
+def test_entry_unique_validators(basic_answer, entry_factory):
+    field = basic_answer.entries.first().field
+    value = basic_answer.entries.first().value
+    entry = entry_factory(answer=None, field=field, value=value)
 
     not_unique_entry = {
-        "answer": basic_answer,
-        "field": basic_answer.entries.first().field,
-        "value": basic_answer.entries.first().value,
+        "answer": None,
+        "field": entry.field_id,
+        "value": entry.value,
     }
 
-    serializer = EntrySerializer(data=not_unique_entry)
-    assert not serializer.is_valid()
+    # check that validator does not accept non-unique entries
+    with pytest.raises(ValidationError) as val_error:
+        serializer = EntrySerializer(data=not_unique_entry)
+        serializer.is_valid(True)
+    assert hasattr(val_error, "value")
+    assert val_error.value.args[0]["non_field_errors"][0].code == "unique"
+
+
+@pytest.mark.django_db
+def test_all_required_fields_answered_validator(basic_template_form, basic_answer):
+    pass
