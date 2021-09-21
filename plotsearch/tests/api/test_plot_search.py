@@ -11,7 +11,7 @@ from rest_framework import serializers
 from forms.models import Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
-from plotsearch.models import PlotSearchTarget
+from plotsearch.models import PlotSearch, PlotSearchTarget
 
 fake = Faker("fi_FI")
 
@@ -414,3 +414,36 @@ def test_attach_form_to_plot_search(
     )
     assert response.status_code == 200
     assert len(Form.objects.all()) == 4
+
+
+@pytest.mark.django_db
+def test_attach_decision_to_plot_search(
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    decision_factory,
+):
+    lease = lease_test_data["lease"]
+
+    decision = decision_factory(lease=lease)
+
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response = admin_client.patch(
+        url,
+        data={"decisions": [decision.id,]},  # noqa: E231
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    plot_search_test_data = PlotSearch.objects.get(id=plot_search_test_data.id)
+    assert plot_search_test_data.decisions.all()[0].id == decision.id
+
+    url = reverse("plotsearch-list")
+    response = admin_client.post(
+        url,
+        data={"name": "Test name", "decisions": [decision.id,]},  # noqa: E231
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    plot_search_test_data = PlotSearch.objects.get(id=response.data["id"])
+    assert plot_search_test_data.decisions.all()[0].id == decision.id

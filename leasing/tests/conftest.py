@@ -28,7 +28,6 @@ from leasing.models import (
     Condition,
     Contract,
     ContractRent,
-    Decision,
     DecisionMaker,
     District,
     FixedInitialYearRent,
@@ -207,12 +206,6 @@ class InvoiceSetFactory(factory.DjangoModelFactory):
 class InvoicePaymentFactory(factory.DjangoModelFactory):
     class Meta:
         model = InvoicePayment
-
-
-@register
-class DecisionFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Decision
 
 
 @register

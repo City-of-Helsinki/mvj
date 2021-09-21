@@ -5,7 +5,8 @@ from rest_framework import serializers
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
 from forms.serializers.form import FormSerializer
-from leasing.models import PlanUnit
+from leasing.models import Decision, PlanUnit
+from leasing.serializers.decision import DecisionSerializer
 from leasing.serializers.land_area import PlanUnitSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
@@ -146,6 +147,23 @@ class PlotSearchSerializerBase(
     subtype = PlotSearchSubtypeSerializer()
     stage = PlotSearchStageSerializer()
 
+    form = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Form,
+        queryset=Form.objects.all(),
+        related_serializer=FormSerializer,
+        required=False,
+        allow_null=True,
+    )
+
+    decisions = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Decision,
+        queryset=Decision.objects.all(),
+        related_serializer=DecisionSerializer,
+        required=False,
+        allow_null=True,
+        many=True,
+    )
+
     class Meta:
         model = PlotSearch
         fields = "__all__"
@@ -199,13 +217,6 @@ class PlotSearchUpdateSerializer(
     )
     targets = PlotSearchTargetCreateUpdateSerializer(
         source="plotsearchtarget_set", many=True, required=False
-    )
-    form = InstanceDictPrimaryKeyRelatedField(
-        instance_class=Form,
-        queryset=Form.objects.all(),
-        related_serializer=FormSerializer,
-        required=False,
-        allow_null=True,
     )
 
     class Meta:
@@ -268,6 +279,9 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         targets = None
         if "plotsearchtarget_set" in validated_data:
             targets = validated_data.pop("plotsearchtarget_set")
+        decisions = None
+        if "decisions" in validated_data:
+            decisions = validated_data.pop("decisions")
 
         plot_search = PlotSearch.objects.create(**validated_data)
 
@@ -280,5 +294,9 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
                     target_type=target.get("target_type"),
                 )
                 plot_search_target.save()
+        if decisions:
+            for decision in decisions:
+                plot_search.decisions.add(decision)
+            plot_search.save()
 
         return plot_search
