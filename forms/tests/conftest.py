@@ -115,6 +115,11 @@ def basic_template_form(
         section=contact_person_company_applicant_section,
         type=basic_field_types["textbox"],
     )
+    field_factory(
+        label="Henkilötunnus",
+        section=contact_person_company_applicant_section,
+        type=basic_field_types["textbox"],
+    )
 
     # Person applicant
     person_applicant_section = section_factory(
