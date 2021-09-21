@@ -1,11 +1,13 @@
 *.py[cod]
 *.mo
 *.sql
+*.iml
 .coverage*
 .DS_Store
 .devcontainer
 .vscode
 /local_settings.py
+/docker-compose.override.yml
 /.env
 /*.env.yaml
 /.venv

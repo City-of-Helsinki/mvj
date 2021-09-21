@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from ..models import Answer, Choice, Entry, Field, Form, Section
+from ..validators.answer import RequiredFormFieldValidator, SocialSecurityValidator
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -76,8 +78,13 @@ class FormSerializer(serializers.ModelSerializer):
 class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
-        read_only_fields = ("answer",)
         fields = ("answer", "field", "value")
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Entry.objects.all().filter(answer=None),
+                fields=["field", "value"],
+            )
+        ]
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -87,6 +94,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ("form", "user", "entries", "ready")
+        validators = [RequiredFormFieldValidator(), SocialSecurityValidator()]
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
