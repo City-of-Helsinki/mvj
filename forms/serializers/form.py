@@ -72,7 +72,7 @@ class FormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ("id", "name", "is_template", "title", "sections")
+        fields = ("id", "name", "is_template", "title", "sections", "state")
 
 
 class EntrySerializer(serializers.ModelSerializer):
