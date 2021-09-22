@@ -110,3 +110,33 @@ def test_social_security_validator(basic_template_form, admin_user):
     with pytest.raises(ValidationError) as val_error:
         answer_serializer.is_valid(True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_ssn"
+
+
+@pytest.mark.django_db
+def test_company_id_validator(basic_template_form, admin_user):
+
+    company_id_field = None
+    for section in basic_template_form.sections.all():
+        for field in section.field_set.all():
+            if field.identifier == "y-tunnus":
+                company_id_field = field
+
+    entries = [{"field": company_id_field.id, "value": "1234567-8"}]
+
+    answer_data = {
+        "form": basic_template_form.id,
+        "user": admin_user.id,
+        "entries": entries,
+    }
+
+    answer_serializer = AnswerSerializer(data=answer_data)
+    # test that a correctly formatted ssn passes the validator
+    assert answer_serializer.is_valid()
+
+    answer_data["entries"].append({"field": company_id_field.id, "value": "12345A7-8"})
+    answer_serializer = AnswerSerializer(data=answer_data)
+
+    # test that a incorrectly formatted ssn is caught by the validator
+    with pytest.raises(ValidationError) as val_error:
+        answer_serializer.is_valid(True)
+    assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_company_id"
