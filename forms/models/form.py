@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
 from users.models import User
 
+from ..enums import FormState
 from ..utils import clone_object, generate_unique_identifier
 
 
@@ -11,6 +13,7 @@ class Form(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_template = models.BooleanField(default=False)
+    state = EnumField(FormState, max_length=30, default=FormState.WORK_IN_PROGRESS)
 
     title = models.CharField(max_length=255, blank=True)
 
