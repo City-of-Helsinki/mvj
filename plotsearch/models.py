@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from django.conf.global_settings import LANGUAGES
 from enumfields import EnumField
 
 from forms.models import Form
@@ -116,6 +117,26 @@ class PlotSearchTarget(models.Model):
     target_type = EnumField(
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
+
+
+class TargetInfoLink(models.Model):
+    """
+    In Finnish: Lisätietolinkki
+    """
+
+    # In Finnish: Tonttihaun kohde
+    plot_search_target = models.ForeignKey(
+        PlotSearchTarget, on_delete=models.CASCADE, related_name="info_links", null=True
+    )
+
+    # In Finnish: Lisätietolinkki
+    url = models.URLField()
+
+    # In Finnish: Lisätietolinkkiteksti
+    description = models.CharField(max_length=255)
+
+    # In Finnish: Kieli
+    language = models.CharField(max_length=255, choices=LANGUAGES)
 
 
 from plotsearch.signals import *  # noqa: E402 F403 F401

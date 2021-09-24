@@ -19,6 +19,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    TargetInfoLink,
 )
 from users.models import User
 from users.serializers import UserSerializer
@@ -34,6 +35,12 @@ class PlotSearchStageSerializer(NameModelSerializer):
     class Meta:
         model = PlotSearchStage
         fields = "__all__"
+
+
+class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TargetInfoLink
+        fields = ("url", "plot_search_target", "description", "language",)
 
 
 class PlotSearchTargetSerializer(
@@ -62,6 +69,7 @@ class PlotSearchTargetSerializer(
     )
     message_label = serializers.SerializerMethodField()
     plan_unit = PlanUnitSerializer(read_only=True)
+    info_links = PlotSearchTargetInfoLinkSerializer(many=True, read_only=True)
 
     class Meta:
         model = PlotSearchTarget
@@ -78,6 +86,7 @@ class PlotSearchTargetSerializer(
             "lease_address",
             "lease_financing",
             "lease_management",
+            "info_links",
         )
 
     def get_lease_address(self, obj):
