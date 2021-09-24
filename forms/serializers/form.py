@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from ..models import Answer, Choice, Entry, Field, Form, Section
-from ..validators.answer import RequiredFormFieldValidator, SocialSecurityValidator
+from ..validators.answer import FieldRegexValidator, RequiredFormFieldValidator
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -94,7 +94,15 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ("form", "user", "entries", "ready")
-        validators = [RequiredFormFieldValidator(), SocialSecurityValidator()]
+        validators = [
+            RequiredFormFieldValidator(),
+            FieldRegexValidator(
+                "^[0-9]{6}[+Aa-][0-9]{3}[A-z0-9]$", "invalid_ssn", "henkilotunnus"
+            ),
+            FieldRegexValidator(
+                "[0-9]{7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
+            ),
+        ]
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")

@@ -3,12 +3,21 @@ import re
 from rest_framework.serializers import ValidationError
 
 
-class SocialSecurityValidator:
+class FieldRegexValidator:
+    """
+    Do Regex validation for form answer entries
+    """
+
+    def __init__(self, regex, error_code, identifier):
+        self._regex = regex
+        self._error_code = error_code
+        self._identifier = identifier
+
     def __call__(self, value):
         for entry in value["entries"]:
-            if entry["field"].identifier == "henkilotunnus":
-                if not re.search("^[0-9]{6}[+Aa-][0-9]{3}[A-z0-9]$", entry["value"]):
-                    raise ValidationError(code="invalid_ssn")
+            if entry["field"].identifier == self._identifier:
+                if not re.search(self._regex, entry["value"]):
+                    raise ValidationError(code=self._error_code)
 
 
 class RequiredFormFieldValidator:

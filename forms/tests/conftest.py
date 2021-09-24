@@ -95,6 +95,11 @@ def basic_template_form(
         section=company_applicant_section,
         type=basic_field_types["textbox"],
     )
+    field_factory(
+        label="Y-tunnus",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+    )
 
     # Subsection for company's contact person information
     contact_person_company_applicant_section = section_factory(
