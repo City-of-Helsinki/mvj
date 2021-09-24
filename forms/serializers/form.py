@@ -100,7 +100,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                 "^[0-9]{6}[+Aa-][0-9]{3}[A-z0-9]$", "invalid_ssn", "henkilotunnus"
             ),
             FieldRegexValidator(
-                "[0-9]{7}\\-[0-9]{1}", "invalid_company_id", "y-tunnus"
+                "[0-9]{7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
             ),
         ]
 
