@@ -1029,7 +1029,12 @@ class Command(BaseCommand):
 
         all_model_permissions = []
         group_permissions = []
-        app_names = ["leasing", "users", "batchrun"]
+        app_names = [
+            "leasing",
+            "users",
+            "batchrun",
+            "plotsearch",
+        ]
 
         for app_name in app_names:
             for model in apps.get_app_config(app_name).get_models(
