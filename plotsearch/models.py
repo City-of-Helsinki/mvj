@@ -1,7 +1,7 @@
+from django.conf.global_settings import LANGUAGES
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.conf.global_settings import LANGUAGES
 from enumfields import EnumField
 
 from forms.models import Form
@@ -126,7 +126,7 @@ class TargetInfoLink(models.Model):
 
     # In Finnish: Tonttihaun kohde
     plot_search_target = models.ForeignKey(
-        PlotSearchTarget, on_delete=models.CASCADE, related_name="info_links", null=True
+        PlotSearchTarget, on_delete=models.CASCADE, related_name="info_links"
     )
 
     # In Finnish: Lisätietolinkki

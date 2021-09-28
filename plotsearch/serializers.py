@@ -40,7 +40,12 @@ class PlotSearchStageSerializer(NameModelSerializer):
 class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = TargetInfoLink
-        fields = ("url", "plot_search_target", "description", "language",)
+        fields = (
+            "url",
+            "plot_search_target",
+            "description",
+            "language",
+        )
 
 
 class PlotSearchTargetSerializer(

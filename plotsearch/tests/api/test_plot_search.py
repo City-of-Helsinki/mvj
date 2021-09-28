@@ -447,3 +447,38 @@ def test_attach_decision_to_plot_search(
     assert response.status_code == 201
     plot_search_test_data = PlotSearch.objects.get(id=response.data["id"])
     assert plot_search_test_data.decisions.all()[0].id == decision.id
+
+
+@pytest.mark.django_db
+def test_add_target_info_link(
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    plot_search_target_factory,
+    lease_test_data,
+    plan_unit_factory,
+):
+
+    plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+
+    plot_search_target = plot_search_target_factory(
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
+    )
+
+    target_info_link_data = {
+        "url": fake.uri(),
+        "description": fake.sentence(),
+        "language": "fi",
+        "plot_search_target": plot_search_target.id,
+    }
+
+    url = reverse("targetinfolink-list")
+    response = admin_client.post(url, target_info_link_data)
+    assert response.status_code == 201
