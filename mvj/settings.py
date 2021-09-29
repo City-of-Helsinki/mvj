@@ -148,6 +148,7 @@ INSTALLED_APPS = [
     "leasing",
     "plotsearch",
     "laske_export",
+    "credit_integration",
     "field_permissions",
     "batchrun",
     "constance",
