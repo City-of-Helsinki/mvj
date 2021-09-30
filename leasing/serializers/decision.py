@@ -58,6 +58,7 @@ class DecisionSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
     id = serializers.IntegerField(required=False)
     type = DecisionTypeSerializer(required=False, allow_null=True)
     conditions = ConditionSerializer(many=True, required=False, allow_null=True)
+    decision_maker = DecisionMakerSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Decision
