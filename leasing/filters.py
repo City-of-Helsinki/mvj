@@ -101,6 +101,7 @@ class ContactFilter(FilterSet):
 
 class DecisionFilter(FilterSet):
     lease = filters.NumberFilter()
+    reference_number = filters.CharFilter(lookup_expr="in")
 
     class Meta:
         model = Decision
