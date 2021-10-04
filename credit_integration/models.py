@@ -42,7 +42,9 @@ class CreditDecision(TimeStampedModel):
     status = EnumField(CreditDecisionStatus, verbose_name=_("Status"), max_length=30)
 
     # In Finnish: Luottopäätöksen perusteet
-    reasons = models.ManyToManyField(CreditDecisionReason, verbose_name=_("Reasons"))
+    reasons = models.ManyToManyField(
+        CreditDecisionReason, verbose_name=_("Reasons"), blank=True
+    )
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(
