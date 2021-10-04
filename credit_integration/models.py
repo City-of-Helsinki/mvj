@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from credit_integration.enums import CreditDecisionStatus
+from leasing.enums import ContactType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedModel
 from users.models import User
@@ -83,3 +84,20 @@ class CreditDecision(TimeStampedModel):
         related_name="credit_decisions",
         on_delete=models.PROTECT,
     )
+
+    @staticmethod
+    def get_credit_decision_queryset_by_customer(customer_id=None, business_id=None):
+        credit_decision_queryset = None
+
+        if customer_id or business_id:
+            if customer_id:
+                credit_decision_queryset = CreditDecision.objects.filter(
+                    customer_id=customer_id, customer__type=ContactType.BUSINESS
+                )
+            else:
+                credit_decision_queryset = CreditDecision.objects.filter(
+                    business_id=business_id
+                )
+            credit_decision_queryset = credit_decision_queryset.order_by("-created_at")
+
+        return credit_decision_queryset

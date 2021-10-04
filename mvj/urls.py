@@ -5,6 +5,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
+from credit_integration import urls as credit_integration_urls
 from forms.viewsets.form import AnswerViewSet, FormViewSet
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
@@ -270,6 +271,9 @@ additional_api_paths = [
 
 urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
+    path(
+        "v1/", include((credit_integration_urls, "credit_integration"), namespace="v1"),
+    ),
     re_path(r"(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf", ktj_proxy),
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),
     path("contract_file/<contract_id>/<file_id>/", CloudiaProxy.as_view()),
