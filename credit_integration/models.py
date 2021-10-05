@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.db import models
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -111,3 +112,6 @@ class CreditDecision(TimeStampedModel):
             credit_decision_queryset = credit_decision_queryset.order_by("-created_at")
 
         return credit_decision_queryset
+
+
+auditlog.register(CreditDecision)
