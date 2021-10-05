@@ -66,6 +66,12 @@ class PlotSearchTargetSerializer(
     lease_management = serializers.ReadOnlyField(
         source="plan_unit.lease_area.lease.management.name"
     )
+    decisions = DecisionSerializer(
+        many=True,
+        source="plan_unit.lease_area.lease.decisions",
+        required=False,
+        allow_null=True,
+    )
 
     master_plan_unit_id = serializers.SerializerMethodField()
     is_master_plan_unit_deleted = serializers.SerializerMethodField()
@@ -92,6 +98,7 @@ class PlotSearchTargetSerializer(
             "lease_financing",
             "lease_management",
             "info_links",
+            "decisions",
         )
 
     def get_lease_address(self, obj):

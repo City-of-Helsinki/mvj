@@ -53,6 +53,9 @@ class PlanUnitSerializer(
 ):
     id = serializers.IntegerField(required=False)
     plan_unit_status = serializers.CharField(read_only=True)
+    decisions = DecisionSerializer(
+        many=True, source="lease_area.lease.decisions", allow_null=True, required=False
+    )
 
     class Meta:
         model = PlanUnit
@@ -63,6 +66,7 @@ class PlanUnitSerializer(
             "section_area",
             "in_contract",
             "is_master",
+            "decisions",
             "plot_division_identifier",
             "plot_division_date_of_approval",
             "plot_division_effective_date",
