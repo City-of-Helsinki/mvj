@@ -3,12 +3,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from credit_integration.models import CreditDecision
+from credit_integration.permissions import (
+    CreditDecisionViewPermission,
+    SendCreditDecisionInquiryPermission,
+)
 from credit_integration.serializers import CreditDecisionSerializer
-from leasing.permissions import PerMethodPermission
 
 
 @api_view(["POST"])
-@permission_classes((PerMethodPermission,))
+@permission_classes((SendCreditDecisionInquiryPermission,))
 def send_credit_decision_inquiry(request):
     """
     Send credit decision inquiry to credit decision service
@@ -38,7 +41,7 @@ def send_credit_decision_inquiry(request):
 
 
 @api_view(["GET"])
-@permission_classes((PerMethodPermission,))
+@permission_classes((CreditDecisionViewPermission,))
 def get_credit_decisions(request):
     """
     Get credit decisions by customer id or business id

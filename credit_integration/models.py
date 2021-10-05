@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -86,6 +87,13 @@ class CreditDecision(TimeStampedModel):
         related_name="credit_decisions",
         on_delete=models.PROTECT,
     )
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Credit decision")
+        verbose_name_plural = pgettext_lazy("Model name", "Credit decisions")
+        permissions = [
+            ("send_creditdecision_inquiry", "Can send credit decision inquiry",),
+        ]
 
     @staticmethod
     def get_credit_decision_queryset_by_customer(customer_id=None, business_id=None):

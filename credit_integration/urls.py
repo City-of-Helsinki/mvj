@@ -21,5 +21,3 @@ urlpatterns = [
         name="send-credit-decision-inquiry",
     ),
 ]
-
-# urlpatterns = format_suffix_patterns(urlpatterns)
