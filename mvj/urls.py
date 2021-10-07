@@ -6,7 +6,7 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from credit_integration import urls as credit_integration_urls
-from forms.viewsets.form import AnswerViewSet, FormViewSet
+from forms.viewsets.form import AnswerViewSet, FieldViewSet, FormViewSet, SectionViewSet
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
@@ -120,6 +120,8 @@ router.register(r"decision", DecisionViewSet)
 router.register(r"district", DistrictViewSet)
 router.register(r"financing", FinancingViewSet)
 router.register(r"form", FormViewSet)
+router.register(r"section", SectionViewSet)
+router.register(r"field", FieldViewSet)
 router.register(r"answer", AnswerViewSet)
 router.register(r"hitas", HitasViewSet)
 router.register(r"index", IndexViewSet)

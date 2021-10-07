@@ -18,7 +18,8 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 
 class FieldSerializer(serializers.ModelSerializer):
-    type = serializers.ReadOnlyField(source="type.identifier", read_only=True)
+    # type = serializers.ReadOnlyField(source="type.identifier", read_only=True)
+    identifier = serializers.ReadOnlyField(read_only=True)
     choices = ChoiceSerializer(source="choice_set", many=True, read_only=True)
 
     class Meta:
@@ -35,6 +36,7 @@ class FieldSerializer(serializers.ModelSerializer):
             "action",
             "sort_order",
             "choices",
+            "section",
         )
 
 
