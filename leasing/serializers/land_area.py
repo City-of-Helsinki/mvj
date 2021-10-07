@@ -57,6 +57,12 @@ class PlanUnitSerializer(
         many=True, source="lease_area.lease.decisions", allow_null=True, required=False
     )
 
+    def override_permission_check_field_name(self, field_name):
+        if field_name == "decisions":
+            # TODO There are probably some better way to do this
+            return "is_master"
+        return field_name
+
     class Meta:
         model = PlanUnit
         fields = (
