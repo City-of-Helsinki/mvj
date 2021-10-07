@@ -304,3 +304,20 @@ def basic_field_types(field_type_factory):
     field_types.append(field)
 
     return {t.identifier: t for t in field_types}
+
+
+@pytest.fixture
+def basic_form_data():
+    return {
+        "name": fake.name(),
+        "description": fake.sentence(),
+        "is_template": False,
+        "title": fake.sentence(),
+    }
+
+
+@pytest.fixture
+def basic_form(basic_template_form):
+    basic_template_form.is_template = False
+    basic_template_form.save()
+    return basic_template_form
