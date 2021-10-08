@@ -58,9 +58,10 @@ class PlanUnitSerializer(
     )
 
     def override_permission_check_field_name(self, field_name):
-        if field_name == "decisions":
-            # TODO There are probably some better way to do this
-            return "is_master"
+        if field_name == "decisions" and self.context["request"].user.has_perm(
+            "leasing.view_decision"
+        ):
+            return "id"
         return field_name
 
     class Meta:
