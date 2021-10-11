@@ -1,5 +1,6 @@
 import datetime
-from decimal import Decimal
+import logging
+from decimal import ROUND_HALF_UP, Decimal
 
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
@@ -79,6 +80,8 @@ FIXED_DUE_DATES = {
         12: first_day_of_every_month,
     },
 }
+
+logger = logging.getLogger(__name__)
 
 
 class RentIntendedUse(NameModel):
@@ -227,11 +230,61 @@ class Rent(TimeStampedSafeDeleteModel):
         decimal_places=2,
     )
 
+    # In Finnish: Perittävä vuokramäärä
+    payable_rent_amount = models.DecimalField(
+        verbose_name=_("Payable rent amount"),
+        null=True,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    # In Finnish: Perittävän vuokramäärän aloituspäivä
+    payable_rent_start_date = models.DateField(
+        verbose_name=_("Payable rent start date"), null=True, blank=True,
+    )
+
+    # In Finnish: Perittävän vuokramäärän päättymispäivä
+    payable_rent_end_date = models.DateField(
+        verbose_name=_("Payable rent end date"), null=True, blank=True
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Rent")
         verbose_name_plural = pgettext_lazy("Model name", "Rents")
+
+    def calculate_payable_rent(self):
+        if self.cycle is None:
+            return
+
+        current_year = datetime.date.today().year
+        if self.cycle == RentCycle.JANUARY_TO_DECEMBER:
+            start_date = datetime.date(year=current_year, month=1, day=1)
+            end_date = datetime.date(year=current_year, month=12, day=31)
+        elif self.cycle == RentCycle.APRIL_TO_MARCH:
+            start_date = datetime.date(year=current_year, month=4, day=1)
+            end_date = datetime.date(year=current_year + 1, month=3, day=31)
+        else:
+            logger.warning(
+                _(
+                    "Cannot calculate payable rent. The rent cycle '{}' is not defined."
+                ).format(self.cycle)
+            )
+            return
+
+        calculation_result = self.get_amount_for_date_range(
+            start_date, end_date, dry_run=True
+        )
+
+        self.payable_rent_amount = calculation_result.get_total_amount().quantize(
+            Decimal(".01"), rounding=ROUND_HALF_UP
+        )
+        self.payable_rent_start_date = start_date
+        self.payable_rent_end_date = end_date
+
+        self.save()
 
     def is_seasonal(self):
         return (

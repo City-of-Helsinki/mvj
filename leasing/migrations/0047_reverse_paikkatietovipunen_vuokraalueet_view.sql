@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS paikkatietovipunen_vuokraalueet;
 CREATE OR REPLACE VIEW paikkatietovipunen_vuokraalueet AS
 SELECT lease.id AS vuokraus_id,
     l_area.identifier AS kiinteistotunnus,
