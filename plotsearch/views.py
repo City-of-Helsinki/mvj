@@ -4,18 +4,12 @@ from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.models import (
-    PlotSearch,
-    PlotSearchSubtype,
-    PlotSearchTarget,
-    TargetInfoLink,
-)
+from plotsearch.models import PlotSearch, PlotSearchSubtype, PlotSearchTarget
 from plotsearch.serializers import (
     PlotSearchCreateSerializer,
     PlotSearchListSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
-    PlotSearchTargetInfoLinkSerializer,
     PlotSearchTargetSerializer,
     PlotSearchUpdateSerializer,
 )
@@ -46,11 +40,6 @@ class PlotSearchViewSet(
             return PlotSearchListSerializer
 
         return PlotSearchRetrieveSerializer
-
-
-class TargetInfoLinkViewSet(AtomicTransactionModelViewSet):
-    queryset = TargetInfoLink.objects.all()
-    serializer_class = PlotSearchTargetInfoLinkSerializer
 
 
 class PlotSearchTargetViewSet(AtomicTransactionModelViewSet):

@@ -451,34 +451,86 @@ def test_attach_decision_to_plot_search(
 
 @pytest.mark.django_db
 def test_add_target_info_link(
-    django_db_setup,
-    admin_client,
-    plot_search_test_data,
-    plot_search_target_factory,
-    lease_test_data,
-    plan_unit_factory,
+    django_db_setup, admin_client, plot_search_target,
 ):
-
-    plan_unit = plan_unit_factory(
-        identifier="PU1",
-        area=1000,
-        lease_area=lease_test_data["lease_area"],
-        is_master=True,
-    )
-
-    plot_search_target = plot_search_target_factory(
-        plot_search=plot_search_test_data,
-        plan_unit=plan_unit,
-        target_type=PlotSearchTargetType.SEARCHABLE,
-    )
 
     target_info_link_data = {
         "url": fake.uri(),
         "description": fake.sentence(),
         "language": "fi",
-        "plot_search_target": plot_search_target.id,
     }
 
-    url = reverse("targetinfolink-list")
-    response = admin_client.post(url, target_info_link_data)
-    assert response.status_code == 201
+    url = reverse("plotsearchtarget-detail", kwargs={"pk": plot_search_target.id})
+    response = admin_client.patch(
+        url,
+        data={"info_links": [target_info_link_data]},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    link_found = False
+    for info_link in response.data["info_links"]:
+        if "url" in info_link and info_link["url"] == target_info_link_data["url"]:
+            link_found = True
+            break
+
+    assert link_found
+
+
+@pytest.mark.django_db
+def test_getting_and_editing_and_deleting_existing_info_link(
+    django_db_setup, admin_client, plot_search_target, info_link_factory
+):
+    # add some info links into plot_search_target
+    for i in range(3):
+        info_link_factory(
+            plot_search_target=plot_search_target,
+            url=fake.uri(),
+            description=fake.sentence(),
+            language=["fi", "en", "sv"][i],
+        )
+
+    # Fetch info links via api
+    url = reverse("plotsearchtarget-detail", kwargs={"pk": plot_search_target.id})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+
+    # choose one info link for editing
+    reference_info_link = plot_search_target.info_links.first()
+    info_links = response.data["info_links"]
+    new_uri = fake.uri()
+    for link in info_links:
+        if link["id"] == reference_info_link.id:
+            # edit url of chosen link
+            link["url"] = new_uri
+
+    # patch the list of links with one edited link
+    response = admin_client.patch(
+        url, data={"info_links": info_links}, content_type="application/json"
+    )
+    assert response.status_code == 200
+
+    # check if chosen links url has changed and delete from list (for upcoming delete check)
+    has_updated = False
+    info_links = response.data["info_links"]
+    for link in info_links:
+        if link["id"] == reference_info_link.id and link["url"] == new_uri:
+            has_updated = True
+            info_links.pop(link["id"])
+            break
+
+    assert has_updated
+
+    # delete reference info link and check it is removed
+    response = admin_client.patch(
+        url, data={"info_links": info_links}, content_type="application/json"
+    )
+
+    assert response.status_code == 200
+    is_deleted = True
+    for link in response.data["info_links"]:
+        if link["id"] == reference_info_link.id:
+            is_deleted = False
+            break
+
+    assert is_deleted

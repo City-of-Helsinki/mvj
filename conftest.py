@@ -6,7 +6,13 @@ from django.utils import timezone
 from pytest_factoryboy import register
 
 from forms.models import Form
-from leasing.enums import ContactType, LeaseAreaType, LocationType, TenantContactType
+from leasing.enums import (
+    ContactType,
+    LeaseAreaType,
+    LocationType,
+    PlotSearchTargetType,
+    TenantContactType,
+)
 from leasing.models import (
     Contact,
     Decision,
@@ -23,6 +29,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    TargetInfoLink,
 )
 from users.models import User
 
@@ -180,6 +187,29 @@ def lease_test_data(
     }
 
 
+@pytest.fixture
+def plot_search_target(
+    plan_unit_factory,
+    plot_search_target_factory,
+    lease_test_data,
+    plot_search_test_data,
+):
+    plan_unit = plan_unit_factory(
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+
+    plot_search_target = plot_search_target_factory(
+        plot_search=plot_search_test_data,
+        plan_unit=plan_unit,
+        target_type=PlotSearchTargetType.SEARCHABLE,
+    )
+
+    return plot_search_target
+
+
 @register
 class LeaseFactory(factory.DjangoModelFactory):
     class Meta:
@@ -229,3 +259,9 @@ class FormFactory(factory.DjangoModelFactory):
 class DecisionFactory(factory.DjangoModelFactory):
     class Meta:
         model = Decision
+
+
+@register
+class InfoLinkFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = TargetInfoLink
