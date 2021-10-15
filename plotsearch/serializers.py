@@ -212,6 +212,7 @@ class PlotSearchUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
+    name = serializers.CharField(required=True)
     type = serializers.PrimaryKeyRelatedField(
         queryset=PlotSearchType.objects.all(), required=False, allow_null=True
     )
@@ -219,22 +220,19 @@ class PlotSearchUpdateSerializer(
         instance_class=PlotSearchSubtype,
         queryset=PlotSearchSubtype.objects.all(),
         related_serializer=PlotSearchSubtypeSerializer,
-        required=False,
-        allow_null=True,
+        required=True,
     )
     stage = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchStage,
         queryset=PlotSearchStage.objects.all(),
         related_serializer=PlotSearchStageSerializer,
-        required=False,
-        allow_null=True,
+        required=True,
     )
     preparer = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
         queryset=User.objects.all(),
         related_serializer=UserSerializer,
-        required=False,
-        allow_null=True,
+        required=True,
     )
     targets = PlotSearchTargetCreateUpdateSerializer(
         source="plotsearchtarget_set", many=True, required=False
@@ -289,6 +287,25 @@ class PlotSearchUpdateSerializer(
 
 
 class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
+    subtype = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchSubtype,
+        queryset=PlotSearchSubtype.objects.all(),
+        related_serializer=PlotSearchSubtypeSerializer,
+        required=False,
+    )
+    stage = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchStage,
+        queryset=PlotSearchStage.objects.all(),
+        related_serializer=PlotSearchStageSerializer,
+        required=False,
+    )
+    preparer = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+    )
+
     class Meta:
         model = PlotSearch
         fields = "__all__"
