@@ -38,11 +38,13 @@ class PlotSearchStageSerializer(NameModelSerializer):
 
 
 class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=False, required=False, allow_null=True,)
+
     class Meta:
         model = TargetInfoLink
         fields = (
+            "id",
             "url",
-            "plot_search_target",
             "description",
             "language",
         )
@@ -80,7 +82,7 @@ class PlotSearchTargetSerializer(
     )
     message_label = serializers.SerializerMethodField()
     plan_unit = PlanUnitSerializer(read_only=True)
-    info_links = PlotSearchTargetInfoLinkSerializer(many=True, read_only=True)
+    info_links = PlotSearchTargetInfoLinkSerializer(many=True, required=False)
 
     class Meta:
         model = PlotSearchTarget
@@ -100,6 +102,39 @@ class PlotSearchTargetSerializer(
             "info_links",
             "decisions",
         )
+
+    def create(self, validated_data):
+        info_links = validated_data.pop("info_links")
+        plot_search_target = PlotSearchTarget.objects.create(**validated_data)
+        for info_link in info_links:
+            TargetInfoLink.objects.create(
+                plot_search_target=plot_search_target, **info_link
+            )
+        return plot_search_target
+
+    @staticmethod
+    def get_prev_links(instance):
+        links = TargetInfoLink.objects.filter(plot_search_target=instance)
+        return {link.id: link for link in links}
+
+    def update(self, instance, validated_data):
+
+        prev_links = self.get_prev_links(instance)
+        for info_link in validated_data.pop("info_links", []):
+            try:
+                link = TargetInfoLink.objects.get(pk=info_link["id"])
+                for k, v in info_link.items():
+                    setattr(link, k, v)
+                link.save()
+                prev_links.pop(info_link["id"])
+            except KeyError:
+                TargetInfoLink.objects.create(plot_search_target=instance, **info_link)
+
+        # check if any info links are deleted (ie. not found in list) and delete corresponding object
+        for k, link in prev_links.items():
+            link.delete()
+
+        return super().update(instance, validated_data)
 
     def get_lease_address(self, obj):
         if obj.plan_unit is None:
