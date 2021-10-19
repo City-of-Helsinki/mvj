@@ -73,7 +73,7 @@ class CreditDecision(TimeStampedModel):
 
     # In Finnish: Toiminnan käynnistämispäivämäärä
     operation_start_date = models.DateField(
-        verbose_name=_("Date of commencement of operations"), blank=True,
+        verbose_name=_("Date of commencement of operations"), blank=True, null=True
     )
 
     # In Finnish: Toimialakoodi
