@@ -73,6 +73,10 @@ env = environ.Env(
     LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LASKE_EXPORT_FROM_EMAIL=(str, ""),
     LASKE_EXPORT_ANNOUNCE_EMAIL=(str, ""),
+    ASIAKASTIETO_URL=(str, ""),
+    ASIAKASTIETO_USER_ID=(str, ""),
+    ASIAKASTIETO_PASSWORD=(str, ""),
+    ASIAKASTIETO_KEY=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -319,6 +323,12 @@ MVJ_DUE_DATE_OFFSET_DAYS = 17
 
 AREA_DATABASE_DSN = env.str("AREA_DATABASE_DSN")
 LEASE_AREA_DATABASE_DSN = env.str("LEASE_AREA_DATABASE_DSN")
+
+# Asiakastieto
+ASIAKASTIETO_URL = env.str("ASIAKASTIETO_URL")
+ASIAKASTIETO_USER_ID = env.str("ASIAKASTIETO_USER_ID")
+ASIAKASTIETO_PASSWORD = env.str("ASIAKASTIETO_PASSWORD")
+ASIAKASTIETO_KEY = env.str("ASIAKASTIETO_KEY")
 
 local_settings = project_root("local_settings.py")
 if os.path.exists(local_settings):
