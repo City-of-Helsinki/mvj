@@ -1,10 +1,11 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from credit_integration.enums import CreditDecisionStatus
+from credit_integration.mapper import map_credit_decision_status
 from leasing.enums import ContactType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedModel
@@ -95,6 +96,59 @@ class CreditDecision(TimeStampedModel):
         permissions = [
             ("send_creditdecision_inquiry", "Can send credit decision inquiry",),
         ]
+
+    @staticmethod
+    @transaction.atomic
+    def create_credit_decision_by_json(json_data, claimant, customer=None):
+        """
+        Create credit decision object by the Asiakastieto JSON data.
+        """
+
+        customer_data = json_data["companyResponse"]["decisionProposalData"][
+            "customerData"
+        ]
+        official_name = customer_data["name"]
+        business_id = customer_data["businessId"]
+
+        if "companyData" in json_data["companyResponse"]:
+            company_data = json_data["companyResponse"]["companyData"]
+            address = company_data["identificationData"]["address"]["street"]
+            address += ", " + company_data["identificationData"]["address"]["zip"]
+            address += " " + company_data["identificationData"]["address"]["town"]
+            phone_number = company_data["identificationData"]["contactInformation"][
+                "phone"
+            ]
+            industry_code = company_data["identificationData"]["lineOfBusiness"][
+                "lineOfBusinessCode"
+            ]
+            business_entity = company_data["identificationData"]["companyFormText"]
+            operation_start_date = company_data["startDate"]
+
+        proposal_data = json_data["companyResponse"]["decisionProposalData"][
+            "decisionProposal"
+        ]["proposal"]
+        status = map_credit_decision_status(proposal_data["code"])
+
+        credit_decision = CreditDecision.objects.create(
+            customer=customer,
+            status=status,
+            business_id=business_id,
+            official_name=official_name,
+            address=address,
+            phone_number=phone_number,
+            business_entity=business_entity,
+            operation_start_date=operation_start_date,
+            industry_code=industry_code,
+            claimant=claimant,
+        )
+
+        for factor in proposal_data["factorRow"]:
+            reason, _ = CreditDecisionReason.objects.update_or_create(
+                reason_code=factor["code"], defaults={"reason": factor["text"]}
+            )
+            credit_decision.reasons.add(reason)
+
+        return credit_decision
 
     @staticmethod
     def get_credit_decision_queryset_by_customer(customer_id=None, business_id=None):
