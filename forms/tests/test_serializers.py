@@ -63,7 +63,7 @@ def test_all_required_fields_answered_validator(
     entries = []
     # Generating answers where required fields are not given
     for section in basic_template_form_with_required_fields.sections.all():
-        for field in section.field_set.all():
+        for field in section.fields.all():
             if field.section.identifier == "person-information":
                 continue
             entries.append({"field": field.id, "value": fake.name()})
@@ -85,7 +85,7 @@ def test_social_security_validator(basic_template_form, admin_user):
 
     social_security_field = None
     for section in basic_template_form.sections.all():
-        for field in section.field_set.all():
+        for field in section.fields.all():
             if field.identifier == "henkilotunnus":
                 social_security_field = field
 
@@ -117,7 +117,7 @@ def test_company_id_validator(basic_template_form, admin_user):
 
     company_id_field = None
     for section in basic_template_form.sections.all():
-        for field in section.field_set.all():
+        for field in section.fields.all():
             if field.identifier == "y-tunnus":
                 company_id_field = field
 

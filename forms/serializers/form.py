@@ -1,7 +1,9 @@
+from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from ..models import Answer, Choice, Entry, Field, Form, Section
+from ..enums import FormState
+from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
 from ..validators.answer import FieldRegexValidator, RequiredFormFieldValidator
 
 
@@ -10,6 +12,15 @@ class RecursiveSerializer(serializers.Serializer):
         serializer = self.parent.parent.__class__(value, context=self.context)
         return serializer.data
 
+    def to_internal_value(self, data):
+        serializer = self.parent.parent.__class__()
+        """
+        if "update" in self.context["view"].action:
+            instance = serializer.Meta.model.objects.get(pk=data["id"])
+            return serializer.update(instance, data)
+        """
+        return serializer.to_internal_value(data)
+
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,10 +28,21 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = ("text", "value", "action", "has_text_input")
 
 
-class FieldSerializer(serializers.ModelSerializer):
-    # type = serializers.ReadOnlyField(source="type.identifier", read_only=True)
+class FieldTypeSerializer(serializers.ModelSerializer):
     identifier = serializers.ReadOnlyField(read_only=True)
-    choices = ChoiceSerializer(source="choice_set", many=True, read_only=True)
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = FieldType
+        fields = ("name", "identifier", "id")
+
+
+class FieldSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=False, required=False, allow_null=True)
+    type = FieldTypeSerializer()
+    identifier = serializers.ReadOnlyField(read_only=True)
+    choices = ChoiceSerializer(source="choice_set", many=True, read_only=False)
+    section = serializers.PrimaryKeyRelatedField(queryset=Section.objects.all())
 
     class Meta:
         model = Field
@@ -39,10 +61,36 @@ class FieldSerializer(serializers.ModelSerializer):
             "section",
         )
 
+    def create(self, validated_data):
+        ftype = validated_data.pop("type")
+        ftype = FieldType.objects.get(pk=ftype["id"])
+        return Field.objects.create(type=ftype, **validated_data)
+
+    def update(self, instance, validated_data):
+        choices = validated_data.pop("choices", [])
+        prev_choices = Choice.objects.filter(field=instance)
+        prev_choices = {c.id: c for c in prev_choices}
+        c_serializer = ChoiceSerializer()
+
+        for choice in choices:
+            try:
+                c = Choice.objects.get(pk=choice["id"])
+                c_serializer.update(c, choice)
+                prev_choices.pop(choice["id"])
+            except KeyError:
+                choice["field"] = instance
+                c_serializer.create(choice)
+
+        # Check if any choice is deleted
+        for k, choice in prev_choices.items():
+            choice.delete()
+
 
 class SectionSerializer(serializers.ModelSerializer):
-    subsections = RecursiveSerializer(many=True, read_only=True)
-    fields = FieldSerializer(source="field_set", many=True, read_only=True)
+    subsections = RecursiveSerializer(many=True, read_only=False)
+    fields = FieldSerializer(many=True, read_only=False)
+    id = serializers.IntegerField(read_only=False, required=False, allow_null=True)
+    form = serializers.PrimaryKeyRelatedField(queryset=Form.objects.all())
 
     class Meta:
         model = Section
@@ -56,13 +104,75 @@ class SectionSerializer(serializers.ModelSerializer):
             "add_new_text",
             "subsections",
             "fields",
+            "form",
         )
+        validators = []
+
+    @staticmethod
+    def update_fields(instance, fields):
+        # fields
+        prev_fields = Field.objects.filter(section=instance)
+        prev_fields = {f.id: f for f in prev_fields}
+        f_serializer = FieldSerializer(read_only=False)
+
+        for field in fields:
+            try:
+                f = Field.objects.get(pk=field["id"])
+                f_serializer.update(f, field)
+                prev_fields.pop(field["id"])
+            except KeyError:
+                """
+                type = FieldType.objects.get(pk=field["type"]["id"])
+                del field["type"]
+                Field.objects.create(section=instance, type=type, **field)
+                """
+                f_serializer.create(field)
+
+        # Check if any field is deleted
+        for k, field in prev_fields.items():
+            field.delete()
+
+    @staticmethod
+    def update_subsections(instance, subsections):
+        try:
+            prev_s_sections = Section.objects.filter(parent=instance)
+            prev_s_sections = {s.id: s for s in prev_s_sections}
+        except Section.DoesNotExist:
+            prev_s_sections = {}
+
+        s_serializer = SectionSerializer()
+
+        for s_section in subsections:
+            try:
+                s = Section.objects.get(pk=s_section["id"])
+                s_serializer.update(s, s_section)
+                prev_s_sections.pop(s_section["id"])
+            except KeyError:
+                s_section["parent"] = instance
+                s_serializer.create(s_section)
+
+        # Check if any section is deleted
+        for k, s_section in prev_s_sections.items():
+            s_section.delete()
+
+    def update(self, instance, validated_data):
+        subsections = validated_data.pop("subsections", [])
+        self.update_subsections(instance, subsections)
+
+        fields = validated_data.pop("fields", [])
+        self.update_fields(instance, fields)
+
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+        return instance
 
 
 class FormSerializer(serializers.ModelSerializer):
 
-    sections = serializers.SerializerMethodField()
-
+    sections = SectionSerializer(many=True)
+    state = EnumSerializerField(FormState)
+    """
     def get_sections(self, form):
         qs = (
             Section.objects.select_related("parent")
@@ -71,10 +181,39 @@ class FormSerializer(serializers.ModelSerializer):
         )
         serializer = SectionSerializer(instance=qs, many=True)
         return serializer.data
+    """
 
     class Meta:
         model = Form
         fields = ("id", "name", "is_template", "title", "sections", "state")
+
+    @staticmethod
+    def get_sections(instance):
+        sections = Section.objects.filter(form=instance)
+        return {section.id: section for section in sections}
+
+    def update(self, instance, validated_data):
+        prev_sections = self.get_sections(instance)
+
+        for section in validated_data.pop("sections", []):
+            s_serializer = SectionSerializer()
+            try:
+                s = Section.objects.get(pk=section["id"])
+                s_serializer.update(s, section)
+                prev_sections.pop(section["id"])
+
+            except KeyError:
+                section["form"] = instance
+                s_serializer.create(**section)
+
+        # Check if any section is deleted
+        for k, section in prev_sections.items():
+            section.delete()
+
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+        return instance
 
 
 class EntrySerializer(serializers.ModelSerializer):

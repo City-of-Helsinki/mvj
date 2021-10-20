@@ -23,7 +23,7 @@ class FieldRegexValidator:
 class RequiredFormFieldValidator:
     def __call__(self, value):
         for section in value["form"].sections.all():
-            for field in section.field_set.all():
+            for field in section.fields.all():
                 if not field.required:
                     continue
                 found = False

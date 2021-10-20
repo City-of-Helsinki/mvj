@@ -33,7 +33,7 @@ class Section(models.Model):
     sort_order = models.PositiveIntegerField(default=0)
 
     add_new_allowed = models.BooleanField(default=False)
-    add_new_text = models.CharField(max_length=255)
+    add_new_text = models.CharField(max_length=255, null=True, blank=True)
 
     parent = models.ForeignKey(
         "self",
@@ -90,7 +90,9 @@ class Field(models.Model):
     sort_order = models.PositiveIntegerField(default=0)
 
     type = models.ForeignKey(FieldType, on_delete=models.PROTECT)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    section = models.ForeignKey(
+        Section, on_delete=models.CASCADE, related_name="fields"
+    )
 
     class Meta:
         ordering = ["sort_order"]
