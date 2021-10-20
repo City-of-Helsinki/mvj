@@ -1,9 +1,11 @@
 import datetime
 
+from auditlog.middleware import AuditlogMiddleware
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
+from credit_integration.decorators import auditlog_middleware
 from credit_integration.mapper import map_credit_decision_status
 from credit_integration.models import CreditDecision
 from credit_integration.permissions import (
@@ -27,6 +29,8 @@ def send_credit_decision_inquiry(request):
     """
     Send credit decision inquiry to credit decision service
     """
+    AuditlogMiddleware().process_request(request)
+
     customer_id = request.data.get("customer_id")
     business_id = request.data.get("business_id")
     identity_number = request.data.get("identity_number")
