@@ -122,7 +122,10 @@ def _get_company_decision(business_id, user, contact=None):
     json_data = request_company_decision(business_id, user.username)
     json_error = None
 
-    if "errorMessage" in json_data["companyResponse"]:
+    if (
+        "errorMessage" in json_data["companyResponse"]
+        and json_data["companyResponse"]["errorMessage"] is not None
+    ):
         json_error = json_data["companyResponse"]["errorMessage"]
     else:
         CreditDecision.create_credit_decision_by_json(json_data, user, contact)
@@ -134,7 +137,10 @@ def _get_consumer_decision(identity_number, user):
     json_data = request_consumer_decision(identity_number, user.username)
     json_error = None
 
-    if "errorMessage" in json_data["consumerResponse"]:
+    if (
+        "errorMessage" in json_data["consumerResponse"]
+        and json_data["consumerResponse"]["errorMessage"] is not None
+    ):
         json_error = json_data["consumerResponse"]["errorMessage"]
 
     return json_data, json_error
