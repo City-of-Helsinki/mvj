@@ -1,11 +1,11 @@
 import datetime
 
 from auditlog.middleware import AuditlogMiddleware
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from credit_integration.decorators import auditlog_middleware
 from credit_integration.mapper import map_credit_decision_status
 from credit_integration.models import CreditDecision
 from credit_integration.permissions import (
@@ -43,16 +43,43 @@ def send_credit_decision_inquiry(request):
                 business_id = contact.business_id
             if contact.national_identification_number:
                 identity_number = contact.national_identification_number
-
+            if not business_id or not identity_number:
+                return Response(
+                    {
+                        "detail": _(
+                            "Cannot find business id or identity number from customer data."
+                        )
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         json_data = None
+        json_error = None
         if business_id:
             json_data = request_company_decision(business_id, request.user.username)
-            CreditDecision.create_credit_decision_by_json(
-                json_data, request.user, contact
-            )
+
+            if "errorMessage" in json_data["companyResponse"]:
+                json_error = json_data["companyResponse"]["errorMessage"]
+            else:
+                CreditDecision.create_credit_decision_by_json(
+                    json_data, request.user, contact
+                )
+
         if identity_number:
             json_data = request_consumer_decision(
                 identity_number, request.user.username
+            )
+
+            if "errorMessage" in json_data["consumerResponse"]:
+                json_error = json_data["consumerResponse"]["errorMessage"]
+
+        if json_error:
+            return Response(
+                {
+                    "detail": "{0}: {1}".format(
+                        json_error["errorCode"], json_error["errorText"],
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         credit_decision_serializer = CreditDecisionSerializer()
