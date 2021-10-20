@@ -308,6 +308,7 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
     assert result_credit_decision.phone_number
     assert result_credit_decision.industry_code
     assert result_credit_decision.claimant == user
+    assert result_credit_decision.original_data
 
 
 @pytest.mark.django_db

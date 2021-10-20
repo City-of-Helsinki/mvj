@@ -1,4 +1,6 @@
 from auditlog.registry import auditlog
+from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -90,6 +92,14 @@ class CreditDecision(TimeStampedModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Alkuperäinen tieto
+    original_data = JSONField(
+        verbose_name=_("original_data"),
+        encoder=DjangoJSONEncoder,
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Credit decision")
         verbose_name_plural = pgettext_lazy("Model name", "Credit decisions")
@@ -140,6 +150,7 @@ class CreditDecision(TimeStampedModel):
             operation_start_date=operation_start_date,
             industry_code=industry_code,
             claimant=claimant,
+            original_data=json_data,
         )
 
         for factor in proposal_data["factorRow"]:
