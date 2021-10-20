@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -73,6 +75,7 @@ def send_credit_decision_inquiry(request):
                         "decisionProposalData"
                     ]["customerData"]["name"],
                     "claimant": request.user,
+                    "created_at": datetime.datetime.now(),
                     "reasons": [],
                 }
             ]
