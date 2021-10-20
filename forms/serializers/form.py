@@ -14,11 +14,6 @@ class RecursiveSerializer(serializers.Serializer):
 
     def to_internal_value(self, data):
         serializer = self.parent.parent.__class__()
-        """
-        if "update" in self.context["view"].action:
-            instance = serializer.Meta.model.objects.get(pk=data["id"])
-            return serializer.update(instance, data)
-        """
         return serializer.to_internal_value(data)
 
 
@@ -172,16 +167,6 @@ class FormSerializer(serializers.ModelSerializer):
 
     sections = SectionSerializer(many=True)
     state = EnumSerializerField(FormState)
-    """
-    def get_sections(self, form):
-        qs = (
-            Section.objects.select_related("parent")
-            .filter(form=form)
-            .filter(parent=None)
-        )
-        serializer = SectionSerializer(instance=qs, many=True)
-        return serializer.data
-    """
 
     class Meta:
         model = Form

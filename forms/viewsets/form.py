@@ -1,13 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 
-from forms.models import Answer, Field, Form, Section
-from forms.serializers.form import (
-    AnswerSerializer,
-    FieldSerializer,
-    FormSerializer,
-    SectionSerializer,
-)
+from forms.models import Answer, Form
+from forms.serializers.form import AnswerSerializer, FormSerializer
 
 
 class FormViewSet(
@@ -28,13 +23,3 @@ class FormViewSet(
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
-
-
-class SectionViewSet(viewsets.ModelViewSet):
-    queryset = Section.objects.all()
-    serializer_class = SectionSerializer
-
-
-class FieldViewSet(viewsets.ModelViewSet):
-    queryset = Field.objects.all()
-    serializer_class = FieldSerializer
