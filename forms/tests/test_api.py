@@ -1,4 +1,5 @@
 import pytest
+from django.forms.models import model_to_dict
 from django.urls import reverse
 from faker import Faker
 
@@ -35,29 +36,23 @@ def test_delete_form(admin_client, basic_form):
 
 @pytest.mark.django_db
 def test_add_field_to_form(admin_client, basic_form, basic_field_types):
-    section = basic_form.sections.first()
+    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    payload = response.data
     field_data = {
         "label": fake.name(),
         "hint_text": fake.sentence(),
         "validation": fake.sentence(),
         "action": fake.sentence(),
-        "type": basic_field_types["textarea"].id,
-        "section": section.id,
+        "type": model_to_dict(basic_field_types["textarea"]),
+        "section": payload["sections"][0]["id"],
     }
 
-    url = reverse("field-list")
-    response = admin_client.post(url, field_data)
-    created_id = response.data["id"]
-    assert response.status_code == 201
-
-    url = reverse("section-detail", kwargs={"pk": section.id})
+    prev_fields_len = len(payload["sections"][0]["fields"])
+    payload["sections"][0]["fields"].append(field_data)
+    response = admin_client.patch(url, data=payload, content_type="application/json",)
+    assert response.status_code == 200
     response = admin_client.get(url)
     assert response.status_code == 200
-
-    field_in_section = False
-    for field in response.data["fields"]:
-        if "id" in field and field["id"] == created_id:
-            field_in_section = True
-            return
-
-    assert field_in_section
+    assert len(response.data["sections"][0]["fields"]) - 1 == prev_fields_len
