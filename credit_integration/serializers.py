@@ -54,10 +54,11 @@ class CreditDecisionReasonConsumerSerializer(serializers.Serializer):
 
 
 class CreditDecisionConsumerSerializer(serializers.Serializer):
-    status = EnumField(enum=CreditDecisionStatus, required=False)
+    status = EnumField(enum=CreditDecisionStatus)
     official_name = serializers.CharField(max_length=255)
     claimant = ClaimantSerializer()
     reasons = CreditDecisionReasonConsumerSerializer(many=True)
+    created_at = serializers.DateTimeField()
 
     class Meta:
         fields = [
