@@ -1,12 +1,10 @@
-import datetime
-
 from auditlog.middleware import AuditlogMiddleware
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from credit_integration.mapper import map_credit_decision_status
+from credit_integration.mapper import map_consumer_response
 from credit_integration.models import CreditDecision
 from credit_integration.permissions import (
     CreditDecisionViewPermission,
@@ -41,9 +39,9 @@ def send_credit_decision_inquiry(request):
             contact = Contact.objects.get(pk=customer_id)
             if contact.business_id:
                 business_id = contact.business_id
-            if contact.national_identification_number:
+            elif contact.national_identification_number:
                 identity_number = contact.national_identification_number
-            if not business_id or not identity_number:
+            else:
                 return Response(
                     {
                         "detail": _(
@@ -52,72 +50,33 @@ def send_credit_decision_inquiry(request):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
         json_data = None
         json_error = None
         if business_id:
-            json_data = request_company_decision(business_id, request.user.username)
-
-            if "errorMessage" in json_data["companyResponse"]:
-                json_error = json_data["companyResponse"]["errorMessage"]
-            else:
-                CreditDecision.create_credit_decision_by_json(
-                    json_data, request.user, contact
-                )
+            json_data, json_error = _get_company_decision(
+                business_id, request.user, contact
+            )
 
         if identity_number:
-            json_data = request_consumer_decision(
-                identity_number, request.user.username
+            json_data, json_error = _get_consumer_decision(
+                identity_number, request.user
             )
-
-            if "errorMessage" in json_data["consumerResponse"]:
-                json_error = json_data["consumerResponse"]["errorMessage"]
 
         if json_error:
-            return Response(
-                {
-                    "detail": "{0}: {1}".format(
-                        json_error["errorCode"], json_error["errorText"],
-                    )
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return _error_response(json_error)
 
-        credit_decision_serializer = CreditDecisionSerializer()
         if customer_id or business_id:
             credit_decision_queryset = CreditDecision.get_credit_decision_queryset_by_customer(
                 customer_id=customer_id, business_id=business_id
             )
-
             credit_decision_serializer = CreditDecisionSerializer(
                 credit_decision_queryset, many=True
             )
-
             return Response(credit_decision_serializer.data)
 
         if identity_number:
-            serializer_data = [
-                {
-                    "status": map_credit_decision_status(
-                        json_data["consumerResponse"]["decisionProposalData"][
-                            "decisionProposal"
-                        ]["proposal"]["code"]
-                    ),
-                    "official_name": json_data["consumerResponse"][
-                        "decisionProposalData"
-                    ]["customerData"]["name"],
-                    "claimant": request.user,
-                    "created_at": datetime.datetime.now(),
-                    "reasons": [],
-                }
-            ]
-
-            for factor in json_data["consumerResponse"]["decisionProposalData"][
-                "decisionProposal"
-            ]["proposal"]["factorRow"]:
-                serializer_data[0]["reasons"].append(
-                    {"reason_code": factor["code"], "reason": factor["text"]}
-                )
-
+            serializer_data = map_consumer_response(json_data, request)
             serializer = CreditDecisionConsumerSerializer(serializer_data, many=True)
             return Response(serializer.data)
 
@@ -146,3 +105,36 @@ def get_credit_decisions(request):
             return Response(credit_decision_serializer.data)
 
     return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+def _error_response(json_error):
+    return Response(
+        {
+            "detail": "{0}: {1}".format(
+                json_error["errorCode"], json_error["errorText"],
+            )
+        },
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
+def _get_company_decision(business_id, user, contact=None):
+    json_data = request_company_decision(business_id, user.username)
+    json_error = None
+
+    if "errorMessage" in json_data["companyResponse"]:
+        json_error = json_data["companyResponse"]["errorMessage"]
+    else:
+        CreditDecision.create_credit_decision_by_json(json_data, user, contact)
+
+    return json_data, json_error
+
+
+def _get_consumer_decision(identity_number, user):
+    json_data = request_consumer_decision(identity_number, user.username)
+    json_error = None
+
+    if "errorMessage" in json_data["consumerResponse"]:
+        json_error = json_data["consumerResponse"]["errorMessage"]
+
+    return json_data, json_error
