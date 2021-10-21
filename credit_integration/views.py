@@ -44,8 +44,8 @@ def send_credit_decision_inquiry(request):
             else:
                 return Response(
                     {
-                        "detail": _(
-                            "Cannot find business id or identity number from customer data."
+                        "message": _(
+                            "Cannot find business id or national identification number in customer data."
                         )
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -110,7 +110,7 @@ def get_credit_decisions(request):
 def _error_response(json_error):
     return Response(
         {
-            "detail": "{0}: {1}".format(
+            "message": "{0}: {1}".format(
                 json_error["errorCode"], json_error["errorText"],
             )
         },
