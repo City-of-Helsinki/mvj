@@ -66,6 +66,11 @@ def send_credit_decision_inquiry(request):
         if json_error:
             return _error_response(json_error)
 
+        if identity_number:
+            serializer_data = map_consumer_response(json_data, request)
+            serializer = CreditDecisionConsumerSerializer(serializer_data, many=True)
+            return Response(serializer.data)
+
         if customer_id or business_id:
             credit_decision_queryset = CreditDecision.get_credit_decision_queryset_by_customer(
                 customer_id=customer_id, business_id=business_id
@@ -74,11 +79,6 @@ def send_credit_decision_inquiry(request):
                 credit_decision_queryset, many=True
             )
             return Response(credit_decision_serializer.data)
-
-        if identity_number:
-            serializer_data = map_consumer_response(json_data, request)
-            serializer = CreditDecisionConsumerSerializer(serializer_data, many=True)
-            return Response(serializer.data)
 
     return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
