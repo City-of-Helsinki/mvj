@@ -16,8 +16,11 @@ class FormViewSet(
     # TODO: Add permission check for delete and edit functions to prevent deleting template forms (is_template = True)
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["is_template"]
-    queryset = Form.objects.all().prefetch_related("sections")
     serializer_class = FormSerializer
+
+    def get_queryset(self):
+        queryset = Form.objects.all().prefetch_related("sections")
+        return queryset
 
 
 class AnswerViewSet(viewsets.ModelViewSet):

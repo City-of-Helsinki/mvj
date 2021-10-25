@@ -56,3 +56,29 @@ def test_add_field_to_form(admin_client, basic_form, basic_field_types):
     response = admin_client.get(url)
     assert response.status_code == 200
     assert len(response.data["sections"][0]["fields"]) - 1 == prev_fields_len
+
+
+@pytest.mark.django_db
+def test_add_and_delete_section_to_form(admin_client, basic_form):
+    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    payload = response.data
+    sections_count = len(payload["sections"])
+    subsection_data = {"title": fake.name(), "form": basic_form.id}
+    section_data = {
+        "title": fake.name(),
+        "form": basic_form.id,
+        "subsections": [subsection_data],
+    }
+
+    payload["sections"].append(section_data)
+    response = admin_client.patch(url, data=payload, content_type="application/json")
+    assert response.status_code == 200
+    assert len(response.data["sections"]) - 1 == sections_count
+
+    payload = response.data
+    payload["sections"].pop()
+    response = admin_client.patch(url, data=payload, content_type="application/json")
+    assert response.status_code == 200
+    assert len(response.data["sections"]) == sections_count
