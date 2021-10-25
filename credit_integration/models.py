@@ -179,4 +179,29 @@ class CreditDecision(TimeStampedModel):
         return credit_decision_queryset
 
 
+class CreditDecisionLog(TimeStampedModel):
+    """
+    In Finnish: Luottopäätöksen loki
+    """
+
+    # In Finnish: Tunniste (Y-tunnus / Hetu)
+    identification = models.CharField(verbose_name=_("Identification"), max_length=20,)
+
+    # In Finnish: Käyttäjä
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("User"),
+        related_name="credit_decision_logs",
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Teksti
+    text = models.CharField(verbose_name=_("Text"), max_length=255,)
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Credit decision log")
+        verbose_name_plural = pgettext_lazy("Model name", "Credit decision logs")
+        ordering = ["-created_at"]
+
+
 auditlog.register(CreditDecision)

@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from credit_integration.mapper import map_consumer_response
-from credit_integration.models import CreditDecision
+from credit_integration.models import CreditDecision, CreditDecisionLog
 from credit_integration.permissions import (
     CreditDecisionViewPermission,
     SendCreditDecisionInquiryPermission,
@@ -121,14 +121,23 @@ def _error_response(json_error):
 def _get_company_decision(business_id, user, contact=None):
     json_data = request_company_decision(business_id, user.username)
     json_error = None
+    log_text = "The company response received successfully."
 
     if (
         "errorMessage" in json_data["companyResponse"]
         and json_data["companyResponse"]["errorMessage"] is not None
     ):
         json_error = json_data["companyResponse"]["errorMessage"]
+        log_text = "The company response contains error: {0}: {1}".format(
+            json_error["errorCode"], json_error["errorText"]
+        )
     else:
         CreditDecision.create_credit_decision_by_json(json_data, user, contact)
+
+    if log_text:
+        _add_log(
+            business_id, user, log_text,
+        )
 
     return json_data, json_error
 
@@ -136,11 +145,26 @@ def _get_company_decision(business_id, user, contact=None):
 def _get_consumer_decision(identity_number, user):
     json_data = request_consumer_decision(identity_number, user.username)
     json_error = None
+    log_text = "The consumer response received successfully."
 
     if (
         "errorMessage" in json_data["consumerResponse"]
         and json_data["consumerResponse"]["errorMessage"] is not None
     ):
         json_error = json_data["consumerResponse"]["errorMessage"]
+        log_text = "The consumer response contains error: {0}: {1}".format(
+            json_error["errorCode"], json_error["errorText"]
+        )
+
+    if log_text:
+        _add_log(
+            identity_number, user, log_text,
+        )
 
     return json_data, json_error
+
+
+def _add_log(identification, user, text):
+    CreditDecisionLog.objects.create(
+        identification=identification, user=user, text=text
+    )

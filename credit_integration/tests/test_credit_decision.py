@@ -5,7 +5,7 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 
 from credit_integration.enums import CreditDecisionStatus
-from credit_integration.models import CreditDecision
+from credit_integration.models import CreditDecision, CreditDecisionLog
 from leasing.enums import ContactType
 
 
@@ -310,6 +310,7 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
     assert result_credit_decision.industry_code
     assert result_credit_decision.claimant == user
     assert result_credit_decision.original_data
+    assert CreditDecisionLog.objects.count() == 1
 
 
 @pytest.mark.django_db
@@ -353,6 +354,7 @@ def test_send_credit_decision_inquiry_endpoint_with_identity_number(
     assert response.data[0]["status"] == CreditDecisionStatus.NO.value
     assert response.data[0]["claimant"]["first_name"] == "John"
     assert response.data[0]["claimant"]["last_name"] == "Doe"
+    assert CreditDecisionLog.objects.count() == 1
 
 
 @pytest.mark.django_db
@@ -402,6 +404,7 @@ def test_send_credit_decision_inquiry_endpoint_with_person_contact(
     assert response.data[0]["status"] == CreditDecisionStatus.NO.value
     assert response.data[0]["claimant"]["first_name"] == "John"
     assert response.data[0]["claimant"]["last_name"] == "Doe"
+    assert CreditDecisionLog.objects.count() == 1
 
 
 @pytest.mark.django_db
