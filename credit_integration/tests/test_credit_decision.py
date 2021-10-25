@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from credit_integration.enums import CreditDecisionStatus
 from credit_integration.models import CreditDecision
+from leasing.enums import ContactType
 
 
 def mock_return_company_json_data(business_id):
@@ -338,6 +339,55 @@ def test_send_credit_decision_inquiry_endpoint_with_identity_number(
     with patch(
         "credit_integration.views.request_consumer_decision",
         return_value=mock_return_consumer_json_data(identity_number),
+    ):
+        response = client.post(
+            reverse("credit_integration:send-credit-decision-inquiry"),
+            data=data,
+            format="json",
+        )
+
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert "id" not in response.data[0]
+
+    assert response.data[0]["status"] == CreditDecisionStatus.NO.value
+    assert response.data[0]["claimant"]["first_name"] == "John"
+    assert response.data[0]["claimant"]["last_name"] == "Doe"
+
+
+@pytest.mark.django_db
+def test_send_credit_decision_inquiry_endpoint_with_person_contact(
+    client, user_factory, contact_factory
+):
+    user_first_name = "John"
+    user_last_name = "Doe"
+    user = user_factory(first_name=user_first_name, last_name=user_last_name)
+    password = "test"
+    user.set_password(password)
+    user.save()
+
+    permission_names = [
+        "send_creditdecision_inquiry",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.login(username=user.username, password=password)
+
+    contact = contact_factory(
+        first_name="Jane",
+        last_name="Doe",
+        type=ContactType.PERSON,
+        national_identification_number="011213-1234",
+    )
+    data = {"customer_id": contact.id}
+
+    with patch(
+        "credit_integration.views.request_consumer_decision",
+        return_value=mock_return_consumer_json_data(
+            contact.national_identification_number
+        ),
     ):
         response = client.post(
             reverse("credit_integration:send-credit-decision-inquiry"),
