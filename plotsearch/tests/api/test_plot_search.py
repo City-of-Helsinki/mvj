@@ -42,7 +42,7 @@ def test_plot_search_detail(
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert (
-        response.data["targets"][0]["lease_identifier"]
+        response.data["plot_search_targets"][0]["lease_identifier"]
         == lease_test_data["lease"].identifier.identifier
     )
 
@@ -102,7 +102,7 @@ def test_plot_search_create(
         "preparer": user.id,
         "begin_at": timezone.now(),
         "end_at": timezone.now() + timezone.timedelta(days=7),
-        "targets": [
+        "plot_search_targets": [
             {
                 "plan_unit_id": plan_unit.id,
                 "target_type": PlotSearchTargetType.SEARCHABLE.value,
@@ -114,7 +114,7 @@ def test_plot_search_create(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
     )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
-    assert len(response.data["targets"]) > 0
+    assert len(response.data["plot_search_targets"]) > 0
 
 
 @pytest.mark.django_db
@@ -163,7 +163,7 @@ def test_plot_search_update(
         "preparer": user.id,
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
-        "targets": [
+        "plot_search_targets": [
             {
                 "plan_unit_id": new_master_plan_unit.id,
                 "target_type": PlotSearchTargetType.DIRECT_RESERVATION.value,
@@ -176,7 +176,7 @@ def test_plot_search_update(
     assert response.data["end_at"] == serializers.DateTimeField().to_representation(
         updated_end_at
     )
-    assert len(response.data["targets"]) == 1
+    assert len(response.data["plot_search_targets"]) == 1
 
 
 @pytest.mark.django_db
@@ -222,7 +222,7 @@ def test_plot_search_delete_target(
 
     response = admin_client.put(url, data=data, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-    assert len(response.data["targets"]) == 0
+    assert len(response.data["plot_search_targets"]) == 0
 
 
 @pytest.mark.django_db
@@ -253,9 +253,9 @@ def test_plot_search_master_plan_unit_is_deleted(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-    assert not response.data["targets"][0]["master_plan_unit_id"]
-    assert response.data["targets"][0]["is_master_plan_unit_deleted"]
-    assert len(response.data["targets"][0]["message_label"]) > 0
+    assert not response.data["plot_search_targets"][0]["master_plan_unit_id"]
+    assert response.data["plot_search_targets"][0]["is_master_plan_unit_deleted"]
+    assert len(response.data["plot_search_targets"][0]["message_label"]) > 0
 
 
 @pytest.mark.django_db
@@ -287,9 +287,9 @@ def test_plot_search_master_plan_unit_is_newer(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-    assert response.data["targets"][0]["master_plan_unit_id"] > 0
-    assert response.data["targets"][0]["is_master_plan_unit_newer"]
-    assert len(response.data["targets"][0]["message_label"]) > 0
+    assert response.data["plot_search_targets"][0]["master_plan_unit_id"] > 0
+    assert response.data["plot_search_targets"][0]["is_master_plan_unit_newer"]
+    assert len(response.data["plot_search_targets"][0]["message_label"]) > 0
 
 
 @pytest.mark.django_db
@@ -345,13 +345,13 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     # Confirm that the master plan unit has deleted
-    assert response.data["targets"][0]["is_master_plan_unit_deleted"]
+    assert response.data["plot_search_targets"][0]["is_master_plan_unit_deleted"]
 
     # Change to new plan unit
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response.data.pop("type")
-    response.data.pop("targets")
-    response.data["targets"] = [
+    response.data.pop("plot_search_targets")
+    response.data["plot_search_targets"] = [
         {
             "id": plot_search_target2.id,
             "plan_unit_id": plot_search_target2.plan_unit.id,
@@ -367,7 +367,7 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
         url, data=json.dumps(response.data), content_type="application/json"
     )
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-    assert len(response.data["targets"]) == 2
+    assert len(response.data["plot_search_targets"]) == 2
 
     # Confirm that the old duplicated plan unit has been deleted
     assert PlanUnit.objects.filter(id=duplicated_plan_unit_id).count() == 0
@@ -460,16 +460,16 @@ def test_add_target_info_link(
         "language": "fi",
     }
 
-    url = reverse("plotsearchtarget-detail", kwargs={"pk": plot_search_target.id})
-    response = admin_client.patch(
-        url,
-        data={"info_links": [target_info_link_data]},
-        content_type="application/json",
-    )
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    payload = response.data
+    payload["plot_search_targets"][0]["info_links"].append(target_info_link_data)
+    response = admin_client.patch(url, data=payload, content_type="application/json",)
     assert response.status_code == 200
 
     link_found = False
-    for info_link in response.data["info_links"]:
+    for info_link in response.data["plot_search_targets"][0]["info_links"]:
         if "url" in info_link and info_link["url"] == target_info_link_data["url"]:
             link_found = True
             break
@@ -491,13 +491,13 @@ def test_getting_and_editing_and_deleting_existing_info_link(
         )
 
     # Fetch info links via api
-    url = reverse("plotsearchtarget-detail", kwargs={"pk": plot_search_target.id})
+    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id})
     response = admin_client.get(url)
     assert response.status_code == 200
 
     # choose one info link for editing
     reference_info_link = plot_search_target.info_links.first()
-    info_links = response.data["info_links"]
+    info_links = response.data["plot_search_targets"][0]["info_links"]
     new_uri = fake.uri()
     for link in info_links:
         if link["id"] == reference_info_link.id:
@@ -505,30 +505,30 @@ def test_getting_and_editing_and_deleting_existing_info_link(
             link["url"] = new_uri
 
     # patch the list of links with one edited link
-    response = admin_client.patch(
-        url, data={"info_links": info_links}, content_type="application/json"
-    )
+    payload = response.data
+    payload["plot_search_targets"][0]["info_links"] = info_links
+    response = admin_client.patch(url, data=payload, content_type="application/json")
     assert response.status_code == 200
 
     # check if chosen links url has changed and delete from list (for upcoming delete check)
     has_updated = False
-    info_links = response.data["info_links"]
+    info_links = response.data["plot_search_targets"][0]["info_links"]
     for link in info_links:
         if link["id"] == reference_info_link.id and link["url"] == new_uri:
             has_updated = True
-            info_links.pop(link["id"])
+            del info_links[list.index(info_links, link)]
             break
 
     assert has_updated
 
+    payload = response.data
+    payload["plot_search_targets"][0]["info_links"] = info_links
     # delete reference info link and check it is removed
-    response = admin_client.patch(
-        url, data={"info_links": info_links}, content_type="application/json"
-    )
+    response = admin_client.patch(url, data=payload, content_type="application/json")
 
     assert response.status_code == 200
     is_deleted = True
-    for link in response.data["info_links"]:
+    for link in response.data["plot_search_targets"][0]["info_links"]:
         if link["id"] == reference_info_link.id:
             is_deleted = False
             break
