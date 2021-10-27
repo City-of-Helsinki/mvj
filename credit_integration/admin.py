@@ -24,5 +24,5 @@ class CreditDecisionReasonAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
 
 @admin.register(CreditDecisionLog)
 class CreditDecisionLogAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
-    list_display = ("identification", "text", "user")
+    list_display = ("created_at", "identification", "text", "user")
     raw_id_fields = ("user",)
