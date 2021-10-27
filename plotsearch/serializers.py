@@ -53,7 +53,7 @@ class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):
 class PlotSearchTargetSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
-    id = serializers.ReadOnlyField()
+    id = serializers.IntegerField(required=False, allow_null=True)
 
     lease_identifier = serializers.ReadOnlyField(
         source="plan_unit.lease_area.lease.identifier.identifier"
@@ -82,6 +82,7 @@ class PlotSearchTargetSerializer(
     )
     message_label = serializers.SerializerMethodField()
     plan_unit = PlanUnitSerializer(read_only=True)
+    plan_unit_id = serializers.IntegerField(required=False, allow_null=True)
     info_links = PlotSearchTargetInfoLinkSerializer(many=True, required=False)
 
     class Meta:
@@ -89,6 +90,7 @@ class PlotSearchTargetSerializer(
         fields = (
             "id",
             "plan_unit",
+            "plan_unit_id",
             "target_type",
             "master_plan_unit_id",
             "is_master_plan_unit_deleted",
@@ -102,39 +104,6 @@ class PlotSearchTargetSerializer(
             "info_links",
             "decisions",
         )
-
-    def create(self, validated_data):
-        info_links = validated_data.pop("info_links")
-        plot_search_target = PlotSearchTarget.objects.create(**validated_data)
-        for info_link in info_links:
-            TargetInfoLink.objects.create(
-                plot_search_target=plot_search_target, **info_link
-            )
-        return plot_search_target
-
-    @staticmethod
-    def get_prev_links(instance):
-        links = TargetInfoLink.objects.filter(plot_search_target=instance)
-        return {link.id: link for link in links}
-
-    def update(self, instance, validated_data):
-
-        prev_links = self.get_prev_links(instance)
-        for info_link in validated_data.pop("info_links", []):
-            try:
-                link = TargetInfoLink.objects.get(pk=info_link["id"])
-                for k, v in info_link.items():
-                    setattr(link, k, v)
-                link.save()
-                prev_links.pop(info_link["id"])
-            except KeyError:
-                TargetInfoLink.objects.create(plot_search_target=instance, **info_link)
-
-        # check if any info links are deleted (ie. not found in list) and delete corresponding object
-        for k, link in prev_links.items():
-            link.delete()
-
-        return super().update(instance, validated_data)
 
     def get_lease_address(self, obj):
         if obj.plan_unit is None:
@@ -174,17 +143,60 @@ class PlotSearchTargetCreateUpdateSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
-    plan_unit = PlanUnitSerializer(read_only=True)
     plan_unit_id = serializers.IntegerField()
+    info_links = PlotSearchTargetInfoLinkSerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = PlotSearchTarget
         fields = (
             "id",
-            "plan_unit",
             "plan_unit_id",
             "target_type",
+            "info_links",
         )
+
+    def create(self, validated_data):
+        plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
+        plot_search_target = PlotSearchTarget.objects.create(
+            plan_unit=plan_unit, **validated_data
+        )
+
+        info_links = validated_data.pop("info_links", [])
+        for info_link in info_links:
+            TargetInfoLink.objects.create(
+                plot_search_target=plot_search_target, **info_link
+            )
+        return plot_search_target
+
+    @staticmethod
+    def get_prev_links(instance):
+        links = TargetInfoLink.objects.filter(plot_search_target=instance)
+        return {link.id: link for link in links}
+
+    def update(self, instance, validated_data):
+        prev_links = self.get_prev_links(instance)
+        for info_link in validated_data.pop("info_links", []):
+            try:
+                link = TargetInfoLink.objects.get(pk=info_link["id"])
+                for k, v in info_link.items():
+                    setattr(link, k, v)
+                link.save()
+                prev_links.pop(info_link["id"])
+            except KeyError:
+                TargetInfoLink.objects.create(plot_search_target=instance, **info_link)
+
+        # check if any info links are deleted (ie. not found in list) and delete corresponding object
+        for k, link in prev_links.items():
+            link.delete()
+
+        plan_unit_id = validated_data.pop("plan_unit_id", None)
+        if plan_unit_id:
+            pu = PlanUnit.objects.get(id=plan_unit_id)
+            instance.plan_unit = pu
+
+        return super().update(instance, validated_data)
 
 
 class PlotSearchTypeSerializer(NameModelSerializer):
@@ -231,9 +243,7 @@ class PlotSearchListSerializer(PlotSearchSerializerBase):
 
 class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
     preparer = UserSerializer()
-    targets = PlotSearchTargetSerializer(
-        source="plotsearchtarget_set", many=True, read_only=True
-    )
+    plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
 
     class Meta:
         model = PlotSearch
@@ -248,9 +258,7 @@ class PlotSearchUpdateSerializer(
 ):
     id = serializers.ReadOnlyField()
     name = serializers.CharField(required=True)
-    type = serializers.PrimaryKeyRelatedField(
-        queryset=PlotSearchType.objects.all(), required=False, allow_null=True
-    )
+    type = PlotSearchTypeSerializer(read_only=True)
     subtype = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchSubtype,
         queryset=PlotSearchSubtype.objects.all(),
@@ -269,8 +277,8 @@ class PlotSearchUpdateSerializer(
         related_serializer=UserSerializer,
         required=True,
     )
-    targets = PlotSearchTargetCreateUpdateSerializer(
-        source="plotsearchtarget_set", many=True, required=False
+    plot_search_targets = PlotSearchTargetCreateUpdateSerializer(
+        many=True, required=False
     )
 
     class Meta:
@@ -278,35 +286,23 @@ class PlotSearchUpdateSerializer(
         fields = "__all__"
 
     def update(self, instance, validated_data):
-        if "type" in validated_data:
-            validated_data.pop("type")
-
-        targets = None
-        if "plotsearchtarget_set" in validated_data:
-            targets = validated_data.pop("plotsearchtarget_set")
+        targets = validated_data.pop("plot_search_targets", None)
 
         exist_target_ids = []
         if targets:
             for target in targets:
-                target_type = target.get("target_type")
-
                 target_id = target.get("id")
+                target["plot_search"] = instance
                 if target_id:
                     plot_search_target = PlotSearchTarget.objects.get(
                         id=target_id, plot_search=instance
                     )
-                    plot_search_target.target_type = target_type
-                    plot_search_target.save()
+                    PlotSearchTargetCreateUpdateSerializer().update(
+                        plot_search_target, target
+                    )
                 else:
-                    plan_unit_id = target.get("plan_unit_id")
-                    plan_unit = PlanUnit.objects.get(id=plan_unit_id)
-                    (
-                        plot_search_target,
-                        created,
-                    ) = PlotSearchTarget.objects.update_or_create(
-                        plot_search=instance,
-                        plan_unit=plan_unit,
-                        defaults={"target_type": target_type},
+                    plot_search_target = PlotSearchTargetCreateUpdateSerializer().create(
+                        target
                     )
                 exist_target_ids.append(plot_search_target.id)
 
@@ -341,17 +337,17 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         required=False,
     )
 
+    plot_search_targets = PlotSearchTargetSerializer(many=True, required=False)
+    plan_unit = PlanUnitSerializer(read_only=True)
+
     class Meta:
         model = PlotSearch
         fields = "__all__"
 
     def create(self, validated_data):
-        if "type" in validated_data:
-            validated_data.pop("type")
-
         targets = None
-        if "plotsearchtarget_set" in validated_data:
-            targets = validated_data.pop("plotsearchtarget_set")
+        if "plot_search_targets" in validated_data:
+            targets = validated_data.pop("plot_search_targets")
         decisions = None
         if "decisions" in validated_data:
             decisions = validated_data.pop("decisions")
@@ -367,6 +363,12 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
                     target_type=target.get("target_type"),
                 )
                 plot_search_target.save()
+                if "info_links" in target:
+                    for link in target["info_links"]:
+                        link["plot_search_target"] = plot_search_target
+                        plot_search_target.info_links.add(
+                            PlotSearchTargetInfoLinkSerializer().create(link)
+                        )
         if decisions:
             for decision in decisions:
                 plot_search.decisions.add(decision)

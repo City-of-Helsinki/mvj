@@ -108,7 +108,9 @@ class PlotSearchTarget(models.Model):
     """
 
     # In Finnish: Tonttihaku
-    plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
+    plot_search = models.ForeignKey(
+        PlotSearch, on_delete=models.CASCADE, related_name="plot_search_targets"
+    )
 
     # In Finnish: Kaavayksikkö
     plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)

@@ -97,11 +97,7 @@ from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
-from plotsearch.views import (
-    PlotSearchSubtypeViewSet,
-    PlotSearchTargetViewSet,
-    PlotSearchViewSet,
-)
+from plotsearch.views import PlotSearchSubtypeViewSet, PlotSearchViewSet
 from users.views import UsersPermissions
 from users.viewsets import UserViewSet
 
@@ -159,7 +155,6 @@ router.register(
 router.register(r"plot_master_identifier_list", PlotMasterIdentifierList)
 router.register(r"plot_search", PlotSearchViewSet)
 router.register(r"plot_search_subtype", PlotSearchSubtypeViewSet)
-router.register(r"plot_search_target", PlotSearchTargetViewSet)
 router.register(r"regulation", RegulationViewSet)
 router.register(r"receivable_type", ReceivableTypeViewSet)
 router.register(r"related_lease", RelatedLeaseViewSet)
