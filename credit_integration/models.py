@@ -27,6 +27,10 @@ class CreditDecisionReason(TimeStampedModel):
     # In Finnish: Syy
     reason = models.TextField(verbose_name=_("Reason"),)
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Credit decision reason")
+        verbose_name_plural = pgettext_lazy("Model name", "Credit decision reasons")
+
 
 class CreditDecision(TimeStampedModel):
     """

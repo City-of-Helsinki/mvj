@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 08:51+0300\n"
+"POT-Creation-Date: 2021-10-27 09:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -290,6 +290,14 @@ msgstr "Syykoodi"
 
 msgid "Reason"
 msgstr "Syy"
+
+msgctxt "Model name"
+msgid "Credit decision reason"
+msgstr "Luottopäätöksen syy"
+
+msgctxt "Model name"
+msgid "Credit decision reasons"
+msgstr "Luottopäätöksien syyt"
 
 msgid "Customer"
 msgstr "Asiakas"
