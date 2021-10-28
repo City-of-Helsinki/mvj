@@ -21,7 +21,6 @@ from plotsearch.models import (
     PlotSearchType,
     TargetInfoLink,
 )
-from plotsearch.validators import PlotSearchTargetAddValidator
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -145,26 +144,22 @@ class PlotSearchTargetCreateUpdateSerializer(
 ):
     id = serializers.IntegerField(required=False)
     plan_unit_id = serializers.IntegerField()
+    plot_search_id = serializers.IntegerField()
     info_links = PlotSearchTargetInfoLinkSerializer(
         many=True, required=False, allow_null=True
     )
 
     class Meta:
         model = PlotSearchTarget
-        fields = (
-            "id",
-            "plan_unit_id",
-            "target_type",
-            "info_links",
-        )
+        fields = ("id", "plan_unit_id", "target_type", "info_links", "plot_search_id")
 
     def create(self, validated_data):
         plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
+        info_links = validated_data.pop("info_links", [])
         plot_search_target = PlotSearchTarget.objects.create(
             plan_unit=plan_unit, **validated_data
         )
 
-        info_links = validated_data.pop("info_links", [])
         for info_link in info_links:
             TargetInfoLink.objects.create(
                 plot_search_target=plot_search_target, **info_link
@@ -285,15 +280,12 @@ class PlotSearchUpdateSerializer(
     class Meta:
         model = PlotSearch
         fields = "__all__"
-        validators = [
-            PlotSearchTargetAddValidator(),
-        ]
 
     @staticmethod
     def dict_to_instance(dictionary, model):
         if type(dictionary) != "dict":
             return dictionary
-        instance, created = model.objects.get_or_create(id=dict["id"])
+        instance, created = model.objects.get_or_create(id=dictionary["id"])
         if created:
             for k, v in dictionary:
                 setattr(instance, k, v)

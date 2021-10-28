@@ -479,7 +479,12 @@ def test_add_target_info_link(
 
 @pytest.mark.django_db
 def test_getting_and_editing_and_deleting_existing_info_link(
-    django_db_setup, admin_client, plot_search_target, info_link_factory
+    django_db_setup,
+    admin_client,
+    plot_search_target,
+    info_link_factory,
+    plan_unit_factory,
+    lease_test_data,
 ):
     # add some info links into plot_search_target
     for i in range(3):
@@ -534,3 +539,31 @@ def test_getting_and_editing_and_deleting_existing_info_link(
             break
 
     assert is_deleted
+
+    master_plan_unit2 = plan_unit_factory(
+        identifier="PU2",
+        area=1000,
+        lease_area=lease_test_data["lease_area"],
+        is_master=True,
+    )
+
+    # test with simple payload
+    payload = {
+        "plot_search_targets": [
+            {
+                # "plot_search_id": response.data["id"],
+                "plan_unit_id": master_plan_unit2.id,
+                "target_type": response.data["plot_search_targets"][0]["target_type"],
+                "info_links": [
+                    {
+                        "url": "https://google.com",
+                        "description": "foo",
+                        "language": "fi",
+                    }
+                ],
+            }
+        ]
+    }
+
+    response = admin_client.patch(url, data=payload, content_type="application/json")
+    assert response.status_code == 200

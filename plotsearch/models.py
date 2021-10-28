@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from rest_framework.serializers import ValidationError
 
 from forms.models import Form
 from leasing.enums import PlotSearchTargetType
@@ -119,6 +121,12 @@ class PlotSearchTarget(models.Model):
     target_type = EnumField(
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
+
+    def clean(self):
+        plot_search = self.plot_search
+        begin_is_past = timezone.now() > plot_search.begin_at
+        if self.target_type == PlotSearchTargetType.SEARCHABLE and begin_is_past:
+            raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
 
 
 class TargetInfoLink(models.Model):
