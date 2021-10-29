@@ -100,8 +100,8 @@ def test_plot_search_create(
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparer": user.id,
-        "begin_at": timezone.now(),
-        "end_at": timezone.now() + timezone.timedelta(days=7),
+        "begin_at": timezone.now() + timezone.timedelta(days=30),
+        "end_at": timezone.now() + timezone.timedelta(days=60),
         "plot_search_targets": [
             {
                 "plan_unit_id": plan_unit.id,

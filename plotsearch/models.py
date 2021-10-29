@@ -122,11 +122,19 @@ class PlotSearchTarget(models.Model):
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super(PlotSearchTarget, self).save(*args, **kwargs)
+
     def clean(self):
-        plot_search = self.plot_search
-        begin_is_past = timezone.now() > plot_search.begin_at
-        if self.target_type == PlotSearchTargetType.SEARCHABLE and begin_is_past:
-            raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
+        if self.target_type != PlotSearchTargetType.SEARCHABLE:
+            return
+
+        if self.plot_search.begin_at is not None:
+            if timezone.now() < self.plot_search.begin_at:
+                return
+
+        raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
 
 
 class TargetInfoLink(models.Model):
