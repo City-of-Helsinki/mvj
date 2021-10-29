@@ -49,8 +49,8 @@ def plot_search_test_data(
     plot_search_stage = plot_search_stage_factory(name="Test stage")
     preparer = user_factory(username="test_preparer")
 
-    begin_at = timezone.now().replace(microsecond=0)
-    end_at = (timezone.now() + timezone.timedelta(days=7)).replace(microsecond=0)
+    begin_at = (timezone.now() + timezone.timedelta(days=7)).replace(microsecond=0)
+    end_at = (begin_at + timezone.timedelta(days=7)).replace(microsecond=0)
 
     plot_search = plot_search_factory(
         name="PS1",

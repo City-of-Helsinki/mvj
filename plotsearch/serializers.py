@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
@@ -150,20 +151,21 @@ class PlotSearchTargetCreateUpdateSerializer(
 
     class Meta:
         model = PlotSearchTarget
-        fields = (
-            "id",
-            "plan_unit_id",
-            "target_type",
-            "info_links",
-        )
+        fields = ("id", "plan_unit_id", "target_type", "info_links")
 
     def create(self, validated_data):
         plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
+        info_links = validated_data.pop("info_links", [])
         plot_search_target = PlotSearchTarget.objects.create(
             plan_unit=plan_unit, **validated_data
         )
 
-        info_links = validated_data.pop("info_links", [])
+        try:
+            plot_search_target.clean()
+        except ValidationError as err:
+            plot_search_target.delete()
+            raise err
+
         for info_link in info_links:
             TargetInfoLink.objects.create(
                 plot_search_target=plot_search_target, **info_link
@@ -285,34 +287,62 @@ class PlotSearchUpdateSerializer(
         model = PlotSearch
         fields = "__all__"
 
-    def update(self, instance, validated_data):
-        targets = validated_data.pop("plot_search_targets", None)
+    @staticmethod
+    def dict_to_instance(dictionary, model):
+        if isinstance(dictionary, model):
+            return dictionary
+        instance, created = model.objects.get_or_create(id=dictionary["id"])
+        if created:
+            for k, v in dictionary:
+                setattr(instance, k, v)
+            instance.save()
+        return instance
 
+    @staticmethod
+    def handle_targets(targets, instance):
         exist_target_ids = []
-        if targets:
-            for target in targets:
-                target_id = target.get("id")
-                target["plot_search"] = instance
-                if target_id:
-                    plot_search_target = PlotSearchTarget.objects.get(
-                        id=target_id, plot_search=instance
-                    )
-                    PlotSearchTargetCreateUpdateSerializer().update(
-                        plot_search_target, target
-                    )
-                else:
-                    plot_search_target = PlotSearchTargetCreateUpdateSerializer().create(
-                        target
-                    )
-                exist_target_ids.append(plot_search_target.id)
+        for target in targets:
+            target_id = target.get("id")
+            target["plot_search"] = instance
+            if target_id:
+                plot_search_target = PlotSearchTarget.objects.get(
+                    id=target_id, plot_search=instance
+                )
+                PlotSearchTargetCreateUpdateSerializer().update(
+                    plot_search_target, target
+                )
+            else:
+                plot_search_target = PlotSearchTargetCreateUpdateSerializer().create(
+                    target
+                )
+            exist_target_ids.append(plot_search_target.id)
 
         PlotSearchTarget.objects.filter(plot_search=instance).exclude(
             id__in=exist_target_ids
         ).delete()
 
+    def update(self, instance, validated_data):
+
+        targets = validated_data.pop("plot_search_targets", None)
+        subtype = validated_data.pop("subtype", None)
+        stage = validated_data.pop("stage", None)
+        preparer = validated_data.pop("preparer", None)
+        if subtype:
+            validated_data["subtype"] = self.dict_to_instance(
+                subtype, PlotSearchSubtype
+            )
+
+        if stage:
+            validated_data["stage"] = self.dict_to_instance(stage, PlotSearchStage)
+
+        if preparer:
+            validated_data["preparer"] = self.dict_to_instance(preparer, User)
+
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
         )
+        if targets is not None:
+            self.handle_targets(targets, instance)
 
         return instance
 
@@ -344,6 +374,23 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         model = PlotSearch
         fields = "__all__"
 
+    @staticmethod
+    def handle_targets(targets, plot_search):
+        for target in targets:
+            plan_unit = PlanUnit.objects.get(id=target.get("plan_unit_id"))
+            plot_search_target = PlotSearchTarget.objects.create(
+                plot_search=plot_search,
+                plan_unit=plan_unit,
+                target_type=target.get("target_type"),
+            )
+            plot_search_target.save()
+            if "info_links" in target:
+                for link in target["info_links"]:
+                    link["plot_search_target"] = plot_search_target
+                    plot_search_target.info_links.add(
+                        PlotSearchTargetInfoLinkSerializer().create(link)
+                    )
+
     def create(self, validated_data):
         targets = None
         if "plot_search_targets" in validated_data:
@@ -355,20 +402,7 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         plot_search = PlotSearch.objects.create(**validated_data)
 
         if targets:
-            for target in targets:
-                plan_unit = PlanUnit.objects.get(id=target.get("plan_unit_id"))
-                plot_search_target = PlotSearchTarget.objects.create(
-                    plot_search=plot_search,
-                    plan_unit=plan_unit,
-                    target_type=target.get("target_type"),
-                )
-                plot_search_target.save()
-                if "info_links" in target:
-                    for link in target["info_links"]:
-                        link["plot_search_target"] = plot_search_target
-                        plot_search_target.info_links.add(
-                            PlotSearchTargetInfoLinkSerializer().create(link)
-                        )
+            self.handle_targets(targets, plot_search)
         if decisions:
             for decision in decisions:
                 plot_search.decisions.add(decision)
