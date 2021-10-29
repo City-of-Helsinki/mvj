@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
@@ -144,14 +145,13 @@ class PlotSearchTargetCreateUpdateSerializer(
 ):
     id = serializers.IntegerField(required=False)
     plan_unit_id = serializers.IntegerField()
-    plot_search_id = serializers.IntegerField()
     info_links = PlotSearchTargetInfoLinkSerializer(
         many=True, required=False, allow_null=True
     )
 
     class Meta:
         model = PlotSearchTarget
-        fields = ("id", "plan_unit_id", "target_type", "info_links", "plot_search_id")
+        fields = ("id", "plan_unit_id", "target_type", "info_links")
 
     def create(self, validated_data):
         plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
@@ -159,6 +159,12 @@ class PlotSearchTargetCreateUpdateSerializer(
         plot_search_target = PlotSearchTarget.objects.create(
             plan_unit=plan_unit, **validated_data
         )
+
+        try:
+            plot_search_target.clean()
+        except ValidationError as err:
+            plot_search_target.delete()
+            raise err
 
         for info_link in info_links:
             TargetInfoLink.objects.create(
@@ -283,7 +289,7 @@ class PlotSearchUpdateSerializer(
 
     @staticmethod
     def dict_to_instance(dictionary, model):
-        if type(dictionary) != "dict":
+        if isinstance(dictionary, model):
             return dictionary
         instance, created = model.objects.get_or_create(id=dictionary["id"])
         if created:
@@ -310,36 +316,33 @@ class PlotSearchUpdateSerializer(
                     target
                 )
             exist_target_ids.append(plot_search_target.id)
-        return exist_target_ids
-
-    def update(self, instance, validated_data):
-        targets = validated_data.pop("plot_search_targets", None)
-
-        exist_target_ids = []
-        if targets:
-            exist_target_ids = self.handle_targets(targets, instance)
 
         PlotSearchTarget.objects.filter(plot_search=instance).exclude(
             id__in=exist_target_ids
         ).delete()
 
+    def update(self, instance, validated_data):
+
+        targets = validated_data.pop("plot_search_targets", None)
         subtype = validated_data.pop("subtype", None)
+        stage = validated_data.pop("stage", None)
+        preparer = validated_data.pop("preparer", None)
         if subtype:
             validated_data["subtype"] = self.dict_to_instance(
                 subtype, PlotSearchSubtype
             )
 
-        stage = validated_data.pop("stage", None)
         if stage:
             validated_data["stage"] = self.dict_to_instance(stage, PlotSearchStage)
 
-        preparer = validated_data.pop("preparer", None)
         if preparer:
             validated_data["preparer"] = self.dict_to_instance(preparer, User)
 
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
         )
+        if targets is not None:
+            self.handle_targets(targets, instance)
 
         return instance
 

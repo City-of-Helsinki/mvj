@@ -27,18 +27,27 @@ def test_plot_search_validation(
 
     data = PlotSearchRetrieveSerializer(plot_search_test_data).data
     data["plot_search_targets"].append(plot_search_target_data)
-    data["begin_at"] = timezone.now() - timezone.timedelta(days=30)
+    data["begin_at"] = (timezone.now() - timezone.timedelta(days=30)).replace(
+        microsecond=0
+    )
+    data["end_at"] = (data["begin_at"] + timezone.timedelta(days=30)).replace(
+        microsecond=0
+    )
     pl_update_serializer = PlotSearchUpdateSerializer(data=data)
     with pytest.raises(ValidationError) as val_error:
-        pl_update_serializer.is_valid(True)
+        pl_update_serializer.update(plot_search_test_data, data)
     assert (
-        val_error.value.args[0]["non_field_errors"][0].code
-        == "no_adding_searchable_targets_after_begins_at"
+        val_error.value.detail[0].code == "no_adding_searchable_targets_after_begins_at"
     )
 
+    data = PlotSearchRetrieveSerializer(plot_search_test_data).data
     # reverse-test
+    plot_search_target_data = {
+        "plan_unit_id": plan_unit.id,
+        "target_type": PlotSearchTargetType.SEARCHABLE,
+    }
     data["begin_at"] = timezone.now() + timezone.timedelta(days=30)
     data["end_at"] = data["begin_at"] + timezone.timedelta(days=30)
     data["plot_search_targets"].append(plot_search_target_data)
     pl_update_serializer = PlotSearchUpdateSerializer(data=data)
-    assert pl_update_serializer.is_valid()
+    assert pl_update_serializer.update(plot_search_test_data, data)

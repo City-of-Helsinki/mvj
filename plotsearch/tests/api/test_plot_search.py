@@ -217,7 +217,7 @@ def test_plot_search_delete_target(
         "preparer": user.id,
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
-        "targets": [],
+        "plot_search_targets": [],
     }
 
     response = admin_client.put(url, data=data, content_type="application/json")
