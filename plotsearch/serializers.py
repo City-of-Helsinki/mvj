@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
@@ -159,12 +158,6 @@ class PlotSearchTargetCreateUpdateSerializer(
         plot_search_target = PlotSearchTarget.objects.create(
             plan_unit=plan_unit, **validated_data
         )
-
-        try:
-            plot_search_target.clean()
-        except ValidationError as err:
-            plot_search_target.delete()
-            raise err
 
         for info_link in info_links:
             TargetInfoLink.objects.create(
