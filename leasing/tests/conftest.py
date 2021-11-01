@@ -17,8 +17,6 @@ from leasing.enums import (
     InvoiceState,
     InvoiceType,
     LandUseContractType,
-    LeaseAreaType,
-    LocationType,
     RentAdjustmentType,
     RentCycle,
     RentType,
@@ -28,32 +26,20 @@ from leasing.models import (
     Area,
     AreaSource,
     Condition,
-    Contact,
     Contract,
     ContractRent,
-    Decision,
     DecisionMaker,
     District,
     FixedInitialYearRent,
     Invoice,
-    Lease,
-    LeaseArea,
     LeaseBasisOfRent,
     LeaseType,
     Municipality,
     NoticePeriod,
-    PlanUnit,
     Plot,
-    PlotSearch,
-    PlotSearchStage,
-    PlotSearchSubtype,
-    PlotSearchTarget,
-    PlotSearchType,
     RelatedLease,
     Rent,
     RentAdjustment,
-    Tenant,
-    TenantContact,
     UiData,
 )
 from leasing.models.invoice import (
@@ -63,23 +49,26 @@ from leasing.models.invoice import (
     InvoiceSet,
     ReceivableType,
 )
-from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
+    LandUseAgreementCompensations,
+    LandUseAgreementCompensationsUnitPrice,
     LandUseAgreementCondition,
     LandUseAgreementConditionFormOfManagement,
     LandUseAgreementDecision,
     LandUseAgreementDefinition,
     LandUseAgreementIdentifier,
     LandUseAgreementInvoice,
+    LandUseAgreementInvoiceRow,
+    LandUseAgreementInvoiceSet,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
+    LandUseAgreementReceivableType,
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
 from leasing.models.tenant import TenantRentShare
-from users.models import User
 
 
 @pytest.fixture
@@ -114,60 +103,6 @@ class AreaSourceFactory(factory.DjangoModelFactory):
 
 
 @register
-class ContactFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Contact
-
-
-@register
-class PlotSearchFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlotSearch
-
-
-@register
-class PlotSearchTargetFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchTarget
-
-
-@register
-class PlotSearchTypeFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchType
-
-
-@register
-class PlotSearchSubtypeFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchSubtype
-
-
-@register
-class PlotSearchStageFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchStage
-
-
-@register
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = User
-
-
-@register
-class LeaseFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Lease
-
-
-@register
-class PlanUnitFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlanUnit
-
-
-@register
 class PlotFactory(factory.DjangoModelFactory):
     class Meta:
         model = Plot
@@ -177,18 +112,6 @@ class PlotFactory(factory.DjangoModelFactory):
 class RelatedLeaseFactory(factory.DjangoModelFactory):
     class Meta:
         model = RelatedLease
-
-
-@register
-class TenantFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Tenant
-
-
-@register
-class TenantContactFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = TenantContact
 
 
 @register
@@ -252,21 +175,6 @@ class FixedInitialYearRentFactory(factory.DjangoModelFactory):
 
 
 @register
-class LeaseAreaAddressFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = LeaseAreaAddress
-
-
-@register
-class LeaseAreaFactory(factory.DjangoModelFactory):
-    type = LeaseAreaType.REAL_PROPERTY
-    location = LocationType.SURFACE
-
-    class Meta:
-        model = LeaseArea
-
-
-@register
 class InvoiceFactory(factory.DjangoModelFactory):
     state = InvoiceState.OPEN
     due_date = timezone.now().date()
@@ -298,12 +206,6 @@ class InvoiceSetFactory(factory.DjangoModelFactory):
 class InvoicePaymentFactory(factory.DjangoModelFactory):
     class Meta:
         model = InvoicePayment
-
-
-@register
-class DecisionFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Decision
 
 
 @register
@@ -379,6 +281,18 @@ class LandUseAgreementLitigantContactFactory(factory.DjangoModelFactory):
 
 
 @register
+class LandUseAgreementCompensationsFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementCompensations
+
+
+@register
+class LandUseAgreementCompensationsUnitPriceFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementCompensationsUnitPrice
+
+
+@register
 class LandUseAgreementConditionFactory(factory.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementCondition
@@ -396,6 +310,24 @@ class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = LandUseAgreementInvoice
+
+
+@register
+class LandUseAgreementInvoiceRowFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementInvoiceRow
+
+
+@register
+class LandUseAgreementInvoiceSetFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementInvoiceSet
+
+
+@register
+class LandUseAgreementReceivableTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LandUseAgreementReceivableType
 
 
 @register
@@ -595,89 +527,6 @@ def area_with_intersects_test_data(
 
 
 @pytest.fixture
-def lease_test_data(
-    lease_factory,
-    contact_factory,
-    tenant_factory,
-    tenant_contact_factory,
-    lease_area_factory,
-    lease_area_address_factory,
-    plot_factory,
-    plan_unit_factory,
-):
-    lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=29, notice_period_id=1
-    )
-
-    contacts = [
-        contact_factory(
-            first_name="Lessor First name",
-            last_name="Lessor Last name",
-            is_lessor=True,
-            type=ContactType.PERSON,
-        )
-    ]
-    for i in range(4):
-        contacts.append(
-            contact_factory(
-                first_name="First name " + str(i),
-                last_name="Last name " + str(i),
-                type=ContactType.PERSON,
-            )
-        )
-
-    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-    tenant2 = tenant_factory(lease=lease, share_numerator=1, share_denominator=2)
-
-    tenants = [tenant1, tenant2]
-
-    tenantcontacts = [
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant1,
-            contact=contacts[1],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant2,
-            contact=contacts[2],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.CONTACT,
-            tenant=tenant2,
-            contact=contacts[3],
-            start_date=timezone.now().replace(year=2019).date(),
-        ),
-        tenant_contact_factory(
-            type=TenantContactType.TENANT,
-            tenant=tenant2,
-            contact=contacts[4],
-            start_date=timezone.now().date()
-            + datetime.timedelta(days=30),  # Future tenant
-        ),
-    ]
-
-    lease.tenants.set(tenants)
-    lease_area = lease_area_factory(
-        lease=lease, identifier="12345", area=1000, section_area=1000,
-    )
-
-    lease_area_address_factory(lease_area=lease_area, address="Test street 1")
-    lease_area_address_factory(
-        lease_area=lease_area, address="Primary street 1", is_primary=True
-    )
-
-    return {
-        "lease": lease,
-        "lease_area": lease_area,
-        "tenants": tenants,
-        "tenantcontacts": tenantcontacts,
-    }
-
-
-@pytest.fixture
 def invoices_test_data(
     lease_factory, contact_factory, tenant_factory, invoice_factory, invoice_row_factory
 ):
@@ -853,6 +702,8 @@ def lease_data_dict_with_contacts(contact_factory):
 @pytest.fixture
 def land_use_agreement_test_data(
     land_use_agreement_factory,
+    land_use_agreement_invoice_factory,
+    land_use_agreement_invoice_row_factory,
     land_use_agreement_type_factory,
     land_use_agreement_status_factory,
     land_use_agreement_definition_factory,
@@ -862,6 +713,7 @@ def land_use_agreement_test_data(
     land_use_agreement_litigant_contact_factory,
     land_use_agreement_condition_factory,
     land_use_agreement_condition_form_of_management_factory,
+    land_use_agreement_receivable_type_factory,
     user_factory,
     decision_maker_factory,
     contract_factory,
@@ -923,12 +775,13 @@ def land_use_agreement_test_data(
         supervised_date=datetime.date(year=2020, month=1, day=1),
     )
 
+    contact_1 = contact_factory(
+        first_name="Litigant First 1",
+        last_name="Litigant Last 1",
+        type=ContactType.PERSON,
+    )
     contacts = [
-        contact_factory(
-            first_name="Litigant First 1",
-            last_name="Litigant Last 1",
-            type=ContactType.PERSON,
-        ),
+        contact_1,
         contact_factory(
             first_name="Litigant First 2",
             last_name="Litigant Last 2",
@@ -955,34 +808,22 @@ def land_use_agreement_test_data(
 
     land_use_agreement.litigants.set(litigants)
 
+    invoice = land_use_agreement_invoice_factory(
+        land_use_agreement=land_use_agreement,
+        total_amount=Decimal("123.45"),
+        recipient=contact_1,
+    )
+
+    land_use_agreement_invoice_row_factory(
+        invoice=invoice,
+        litigant=litigants[0],
+        receivable_type=LandUseAgreementReceivableType.objects.first(),
+        compensation_amount=150000,
+        increase_percentage=3,
+        plan_lawfulness_date=datetime.date(year=2021, month=1, day=1),
+        sign_date=datetime.date(year=2020, month=1, day=1),
+    )
+
+    invoice.update_amounts()
+
     return land_use_agreement
-
-
-@pytest.fixture
-def plot_search_test_data(
-    plot_search_factory,
-    plot_search_type_factory,
-    plot_search_subtype_factory,
-    plot_search_stage_factory,
-    user_factory,
-):
-    plot_search_type = plot_search_type_factory(name="Test type")
-    plot_search_subtype = plot_search_subtype_factory(
-        name="Test subtype", plot_search_type=plot_search_type
-    )
-    plot_search_stage = plot_search_stage_factory(name="Test stage")
-    preparer = user_factory(username="test_preparer")
-
-    begin_at = timezone.now().replace(microsecond=0)
-    end_at = (timezone.now() + timezone.timedelta(days=7)).replace(microsecond=0)
-
-    plot_search = plot_search_factory(
-        name="PS1",
-        subtype=plot_search_subtype,
-        stage=plot_search_stage,
-        preparer=preparer,
-        begin_at=begin_at,
-        end_at=end_at,
-    )
-
-    return plot_search

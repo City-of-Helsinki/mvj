@@ -1,8 +1,10 @@
 import pytest
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from leasing.enums import PlotSearchTargetType
-from leasing.models import PlanUnit, PlotSearchTarget
+from leasing.models import PlanUnit
+from plotsearch.models import PlotSearchTarget
 
 
 @pytest.mark.django_db
@@ -28,7 +30,10 @@ def test_remove_plot_search_target_cascade_plan_unit(
         in_contract=False,
         is_master=False,
     )
-    plot_search = plot_search_factory()
+    plot_search = plot_search_factory(
+        begin_at=timezone.now() + timezone.timedelta(days=30),
+        end_at=timezone.now() + timezone.timedelta(days=60),
+    )
     plot_search_target = plot_search_target_factory(
         plot_search=plot_search,
         plan_unit=plan_unit,
@@ -64,7 +69,10 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
     master_plan_unit_id = master_plan_unit.id
     master_plan_unit_master_timestamp = master_plan_unit.master_timestamp
 
-    plot_search = plot_search_factory()
+    plot_search = plot_search_factory(
+        begin_at=timezone.now() + timezone.timedelta(days=30),
+        end_at=timezone.now() + timezone.timedelta(days=60),
+    )
     plot_search_target = plot_search_target_factory(
         plot_search=plot_search,
         plan_unit=master_plan_unit,

@@ -35,7 +35,7 @@ coreapi==2.3.3
     #   openapi-codec
 coreschema==0.0.4
     # via coreapi
-cryptography==3.2
+cryptography==3.3.2
     # via paramiko
 database-sanitizer==1.1.0
     # via django-sanitized-dump
@@ -43,6 +43,21 @@ dataclasses==0.6
     # via -r requirements.in
 defusedxml==0.6.0
     # via zeep
+django==2.2.24
+    # via
+    #   -r requirements.in
+    #   django-anymail
+    #   django-cors-headers
+    #   django-filter
+    #   django-helusers
+    #   django-jsonfield
+    #   django-model-utils
+    #   django-modeltranslation
+    #   django-picklefield
+    #   django-q
+    #   django-safedelete
+    #   djangorestframework
+    #   drf-oidc-auth
 django-admin-rangefilter==0.6.3
     # via -r requirements.in
 django-anymail==7.0.0
@@ -65,10 +80,10 @@ django-filter==2.2.0
     # via -r requirements.in
 django-helusers==0.5.6
     # via -r requirements.in
-django-jsonfield-compat==0.4.4
-    # via -r requirements.in
 django-jsonfield==1.4.0
     # via django-auditlog
+django-jsonfield-compat==0.4.4
+    # via -r requirements.in
 django-model-utils==4.1.1
     # via -r requirements.in
 django-modeltranslation==0.16.1
@@ -77,10 +92,10 @@ django-picklefield==2.1.1
     # via
     #   django-constance
     #   django-q
-django-q-sentry==0.1.4
-    # via django-q
 django-q[sentry]==1.3.4
     # via -r requirements.in
+django-q-sentry==0.1.4
+    # via django-q
 django-rest-swagger==2.2.0
     # via -r requirements.in
 django-safedelete==0.5.4
@@ -89,29 +104,14 @@ django-sanitized-dump==1.2.0
     # via -r requirements.in
 django-sequences==2.4
     # via -r requirements.in
-django==2.2.13
-    # via
-    #   -r requirements.in
-    #   django-anymail
-    #   django-cors-headers
-    #   django-filter
-    #   django-helusers
-    #   django-jsonfield
-    #   django-model-utils
-    #   django-modeltranslation
-    #   django-picklefield
-    #   django-q
-    #   django-safedelete
-    #   djangorestframework
-    #   drf-oidc-auth
-djangorestframework-gis==0.15
-    # via -r requirements.in
-djangorestframework==3.11.0
+djangorestframework==3.11.2
     # via
     #   -r requirements.in
     #   django-rest-swagger
     #   djangorestframework-gis
     #   drf-oidc-auth
+djangorestframework-gis==0.15
+    # via -r requirements.in
 docutils==0.16
     # via python-daemon
 docxtpl==0.6.3
@@ -130,13 +130,13 @@ isodate==0.6.0
     # via zeep
 itypes==1.1.0
     # via coreapi
-jinja2==2.11.1
+jinja2==2.11.3
     # via
     #   coreschema
     #   docxtpl
 lockfile==0.12.2
     # via python-daemon
-lxml==4.5.0
+lxml==4.6.3
     # via
     #   docxtpl
     #   python-docx
@@ -178,12 +178,10 @@ pytz==2019.3
     # via
     #   django
     #   zeep
-pyyaml==5.3.1
+pyyaml==5.4
     # via
     #   database-sanitizer
     #   django-sanitized-dump
-requests-toolbelt==0.9.1
-    # via zeep
 requests==2.23.0
     # via
     #   -r requirements.in
@@ -193,7 +191,9 @@ requests==2.23.0
     #   pyjwkest
     #   requests-toolbelt
     #   zeep
-rsa==4.0
+requests-toolbelt==0.9.1
+    # via zeep
+rsa==4.7
     # via python-jose
 sentry-sdk==0.16.5
     # via

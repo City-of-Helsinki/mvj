@@ -53,6 +53,16 @@ class PlanUnitSerializer(
 ):
     id = serializers.IntegerField(required=False)
     plan_unit_status = serializers.CharField(read_only=True)
+    decisions = DecisionSerializer(
+        many=True, source="lease_area.lease.decisions", allow_null=True, required=False
+    )
+
+    def override_permission_check_field_name(self, field_name):
+        if field_name == "decisions" and self.context["request"].user.has_perm(
+            "leasing.view_decision"
+        ):
+            return "id"
+        return field_name
 
     class Meta:
         model = PlanUnit
@@ -63,6 +73,7 @@ class PlanUnitSerializer(
             "section_area",
             "in_contract",
             "is_master",
+            "decisions",
             "plot_division_identifier",
             "plot_division_date_of_approval",
             "plot_division_effective_date",
@@ -184,6 +195,15 @@ class PlotSerializer(
         )
 
 
+class PlotIdentifierSerializer(serializers.ModelSerializer,):
+    class Meta:
+        model = Plot
+        fields = (
+            "id",
+            "identifier",
+        )
+
+
 class ConstructabilityDescriptionSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -280,6 +300,29 @@ class LeaseAreaAttachmentCreateUpdateSerializer(
         read_only_fields = ("uploaded_at",)
 
 
+class FilterLeaseAreaPlotListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(in_contract=True) | data.filter(is_master=True)
+        return super().to_representation(data)
+
+
+class LeaseAreaPlotSerializer(PlotSerializer):
+    class Meta:
+        model = Plot
+        list_serializer_class = FilterLeaseAreaPlotListSerializer
+        fields = (
+            "id",
+            "identifier",
+            "area",
+            "section_area",
+            "type",
+            "registration_date",
+            "repeal_date",
+            "in_contract",
+            "geometry",
+        )
+
+
 class LeaseAreaSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -287,7 +330,7 @@ class LeaseAreaSerializer(
 ):
     id = serializers.IntegerField(required=False)
     addresses = LeaseAreaAddressSerializer(many=True, required=False, allow_null=True)
-    plots = PlotSerializer(many=True, required=False, allow_null=True)
+    plots = LeaseAreaPlotSerializer(many=True, required=False, allow_null=True)
     plan_units = PlanUnitSerializer(many=True, required=False, allow_null=True)
     polluted_land_planner = UserSerializer()
     constructability_descriptions = ConstructabilityDescriptionSerializer(

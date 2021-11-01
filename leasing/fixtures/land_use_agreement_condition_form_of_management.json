@@ -1,0 +1,44 @@
+[
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 1,
+        "fields": {
+            "name": "ARA"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 2,
+        "fields": {
+            "name": "Välimuoto ASO"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 3,
+        "fields": {
+            "name": "Välimuoto Muu"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 4,
+        "fields": {
+            "name": "Sääntelemätön"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 5,
+        "fields": {
+            "name": "Omistus"
+        }
+    },
+    {
+        "model": "leasing.LandUseAgreementConditionFormOfManagement",
+        "pk": 6,
+        "fields": {
+            "name": "Sääntelemätön vuokra"
+        }
+    }
+]

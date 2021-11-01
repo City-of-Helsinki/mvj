@@ -408,10 +408,10 @@ class LeaseViewSet(
 
             if "has_geometry" in search_form.cleaned_data:
                 if search_form.cleaned_data.get("has_geometry") is True:
-                    queryset = queryset.filter(lease_areas__geometry__isnull=False)
+                    queryset = queryset.exclude(lease_areas__geometry__isnull=True)
 
                 if search_form.cleaned_data.get("has_geometry") is False:
-                    queryset = queryset.filter(lease_areas__geometry__isnull=True)
+                    queryset = queryset.exclude(lease_areas__geometry__isnull=False)
 
             if search_form.cleaned_data.get("property_identifier"):
                 property_identifier = search_form.cleaned_data.get(

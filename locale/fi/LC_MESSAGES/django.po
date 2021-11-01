@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-29 13:21+0200\n"
+"POT-Creation-Date: 2021-10-27 09:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -65,6 +65,43 @@ msgstr "Komento"
 msgid "commands"
 msgstr "Komennot"
 
+msgid "identifier"
+msgstr ""
+
+msgid "log compacting delay"
+msgstr ""
+
+msgid ""
+"Days to wait before compacting log entries. Calculated from the start time "
+"of the job. Compacting log entries means that the individual log entries are "
+"concatenated to a single string and the original entries are deleted. This "
+"allows PostgreSQL to compress the log contents (check \"TOAST\" from "
+"PostgreSQL documentation). The metadata information about the log entry "
+"kinds (stdout/stderr) and timestamps are stored separately so that the "
+"original contents of the log entries are still recoverable."
+msgstr ""
+
+msgid "log deleting delay"
+msgstr ""
+
+msgid ""
+"Days to wait before deleting logs. Calculated from the start time of the job."
+msgstr ""
+
+msgid "run inforomation deleting delay"
+msgstr ""
+
+msgid ""
+"Days to wait before deleting all inforomation about the run. Calculated from "
+"the start time of the job."
+msgstr ""
+
+msgid "job history retention policy"
+msgstr ""
+
+msgid "job history retention policies"
+msgstr ""
+
 msgid "Descriptive name for the job"
 msgstr "Työn kuvaava nimi"
 
@@ -82,6 +119,13 @@ msgstr ""
 "Komennon argumentit JSON-muodossa. Argumentit muotoillaan parametrin muoto-"
 "määrittelyn mukaisesti. Esim. jos rent_id-argumentiksi halutaan antaa numero "
 "123, asetetaan tähän {\"rent_id\": 123}."
+
+msgid "history retention policy"
+msgstr ""
+
+msgid ""
+"Defines how long logs and information about completed runs is preserved."
+msgstr ""
 
 msgid "job"
 msgstr "Työ"
@@ -196,6 +240,30 @@ msgstr "lokimerkinnät"
 msgid "{run_name}: {kind} entry {linenum}({number})"
 msgstr "{run_name}: {kind} merkintä {linenum}({number})"
 
+msgid "content"
+msgstr ""
+
+msgid "log entry metadata"
+msgstr ""
+
+msgid "timestamp of the first entry"
+msgstr ""
+
+msgid "timestamp of the last entry"
+msgstr ""
+
+msgid "total count of entries"
+msgstr ""
+
+msgid "count of error entries"
+msgstr ""
+
+msgid "log"
+msgstr ""
+
+msgid "logs"
+msgstr ""
+
 msgid "scheduled run time"
 msgstr "Ajoajankohta"
 
@@ -204,6 +272,115 @@ msgstr "Ajomääräyksen ajankohta"
 
 msgid "assignee process id (PID)"
 msgstr "Ajomääräyksen prosessinumero (PID)"
+
+msgctxt "Credit decision status"
+msgid "Yes"
+msgstr "Kyllä"
+
+msgctxt "Credit decision status"
+msgid "No"
+msgstr "Ei"
+
+msgctxt "Credit decision status"
+msgid "Consideration"
+msgstr "Harkinta"
+
+msgid "Reason code"
+msgstr "Syykoodi"
+
+msgid "Reason"
+msgstr "Syy"
+
+msgctxt "Model name"
+msgid "Credit decision reason"
+msgstr "Luottopäätöksen syy"
+
+msgctxt "Model name"
+msgid "Credit decision reasons"
+msgstr "Luottopäätöksien syyt"
+
+msgid "Customer"
+msgstr "Asiakas"
+
+msgid "Status"
+msgstr "Tila"
+
+msgid "Reasons"
+msgstr "Syyt"
+
+msgid "Business ID"
+msgstr "Y-tunnus"
+
+msgid "Official name"
+msgstr "Virallinen nimi"
+
+msgid "Address"
+msgstr "Osoite"
+
+msgid "Phone number"
+msgstr "Puhelinnumero"
+
+msgid "Business entity"
+msgstr "Yhtiömuoto"
+
+msgid "Date of commencement of operations"
+msgstr "Toiminnan käynnistämispäivämäärä"
+
+msgid "Industry code"
+msgstr "Toimialakoodi"
+
+msgid "Claimant"
+msgstr "Hakija"
+
+msgid "original_data"
+msgstr "Alkuperäinen data"
+
+msgctxt "Model name"
+msgid "Credit decision"
+msgstr "Luottopäätös"
+
+msgctxt "Model name"
+msgid "Credit decisions"
+msgstr "Luottopäätökset"
+
+msgid "Identification"
+msgstr "Tunniste"
+
+msgid "User"
+msgstr "Käyttäjä"
+
+msgid "Text"
+msgstr "Teksti"
+
+msgctxt "Model name"
+msgid "Credit decision log"
+msgstr "Luottopäätöksen loki"
+
+msgctxt "Model name"
+msgid "Credit decision logs"
+msgstr "Luottopäätöksien lokit"
+
+msgid ""
+"Cannot find business id or national identification number in customer data."
+msgstr "Asiakastiedoista ei löydy y-tunnusta tai henkilötunnusta."
+
+msgctxt "Form state"
+msgid "Work in progress"
+msgstr ""
+
+msgctxt "Form state"
+msgid "Ready"
+msgstr ""
+
+msgctxt "Form state"
+msgid "Deleted"
+msgstr ""
+
+msgid "Time created"
+msgstr "Luotu"
+
+msgid "Time modified"
+msgstr "Muokattu"
 
 msgid "Invoice"
 msgstr "Lasku"
@@ -761,6 +938,14 @@ msgctxt "Decision type kind"
 msgid "Basis of Rent"
 msgstr "Vuokrausperiaate"
 
+msgctxt "Detailed plan class"
+msgid "Pending"
+msgstr ""
+
+msgctxt "Detailed plan class"
+msgid "Effective"
+msgstr ""
+
 msgctxt "Basis of rent type"
 msgid "Lease"
 msgstr "Vuokra"
@@ -804,6 +989,14 @@ msgstr "Sopimus arvonnoususta"
 msgctxt "Land Use Contract Type"
 msgid "No agreement"
 msgstr "Ei sopimusta"
+
+msgctxt "Land use agreement attachment type"
+msgid "General"
+msgstr "Yleinen"
+
+msgctxt "Land use agreement attachment type"
+msgid "Compensation calculation"
+msgstr "Korvauslaskelma"
 
 msgctxt "Land Use Agreement Litigant Contact Type"
 msgid "Tenant"
@@ -852,9 +1045,6 @@ msgstr "Alue"
 
 msgid "Note"
 msgstr "Kommentti"
-
-msgid "User"
-msgstr "Käyttäjä"
 
 msgctxt "Model name"
 msgid "Area note"
@@ -971,9 +1161,6 @@ msgstr "Kommentin aiheet"
 msgid "Topic"
 msgstr "Aihe"
 
-msgid "Text"
-msgstr "Teksti"
-
 msgctxt "Model name"
 msgid "Comment"
 msgstr "Kommentti"
@@ -996,12 +1183,6 @@ msgstr "Nimi"
 
 msgid "c/o"
 msgstr "c/o"
-
-msgid "Business ID"
-msgstr "Y-tunnus"
-
-msgid "Address"
-msgstr "Osoite"
 
 msgid "Postal code"
 msgstr "Postinumero"
@@ -1268,11 +1449,31 @@ msgctxt "Model name"
 msgid "Conditions"
 msgstr "Ehdot"
 
+msgid "Accepter"
+msgstr ""
+
+msgid "Class"
+msgstr ""
+
+msgid "Diary number"
+msgstr ""
+
+msgid "Plan stage"
+msgstr ""
+
+msgid "Lawfulness date"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Detailed plan"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Detailed plans"
+msgstr ""
+
 msgid "Email log type"
 msgstr "Sähköpostilokityyppi"
-
-msgid "Time created"
-msgstr "Luotu"
 
 msgctxt "Model name"
 msgid "Email log"
@@ -1513,14 +1714,24 @@ msgctxt "Model name"
 msgid "Bank holidays"
 msgstr "Yleiset vapaapäivät"
 
+msgid "Is master?"
+msgstr "Onko alkuperäinen?"
+
+msgid "Master timestamp"
+msgstr "Alkuperäiskappaleen aikaleima"
+
+msgid ""
+"The master land item has already created. There can be only one master land "
+"item per lease area and identifier."
+msgstr ""
+"Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla "
+"vain yksi per vuokra-alueen kaavayksikön tunnus."
+
 msgid "Area in square meters"
 msgstr "Kokonaisala neliömetreissä"
 
 msgid "Section area"
 msgstr "Leikkausala"
-
-msgid "Is master?"
-msgstr "Onko alkuperäinen?"
 
 msgid "Location"
 msgstr "Sijainti"
@@ -1696,13 +1907,6 @@ msgctxt "Model name"
 msgid "Plan units"
 msgstr "Kaavayksiköt"
 
-msgid ""
-"The master plan unit has already created. There can be only one master plan "
-"unit per lease area and identifier."
-msgstr ""
-"Alkuperäinen kaavayksikkö on jo luotu. Alkuperäisiä kaavayksiköitä voi olla "
-"vain yksi per vuokra-alueen kaavayksikön tunnus."
-
 msgid "Land use agreement type"
 msgstr "Maankäyttösopimuksen tyyppi"
 
@@ -1722,27 +1926,6 @@ msgstr "Maankäyttösopimustunnus"
 msgctxt "Model name"
 msgid "Land use agreement identifiers"
 msgstr "Maankäyttösopimustunnukset"
-
-msgid "Cash compensation"
-msgstr "Rahakorvaus"
-
-msgid "Land compensation"
-msgstr "Täydennysrakentamiskorvaus"
-
-msgid "Other compensation"
-msgstr "Muu korvaus"
-
-msgid "First installment increase"
-msgstr "Ensimmäisen erän nousu"
-
-msgid "Street acquisition value"
-msgstr "Katu hankinta-arvo"
-
-msgid "Park acquisition value"
-msgstr "Puisto hankinta-arvo"
-
-msgid "Other acquisition value"
-msgstr "Muu hankinta-arvo"
 
 msgid "Land use agreement identifier"
 msgstr "Maankäyttösopimuksen tunnus"
@@ -1784,6 +1967,56 @@ msgstr "Maankäyttösopimus"
 msgctxt "Model name"
 msgid "Land use agreements"
 msgstr "Maankäyttösopimukset"
+
+msgctxt "Model name"
+msgid "Land use agreement attachment"
+msgstr "Maankäyttösopimuksen liitetiedosto"
+
+msgctxt "Model name"
+msgid "Land use agreement attachments"
+msgstr "Maankäyttösopimuksen liitetiedostot"
+
+msgid "Cash compensation"
+msgstr "Rahakorvaus"
+
+msgid "Land compensation"
+msgstr "Täydennysrakentamiskorvaus"
+
+msgid "Other compensation"
+msgstr "Muu korvaus"
+
+msgid "First installment increase"
+msgstr "Ensimmäisen erän nousu"
+
+msgid "Street acquisition value"
+msgstr "Katu hankinta-arvo"
+
+msgid "Park acquisition value"
+msgstr "Puisto hankinta-arvo"
+
+msgid "Other acquisition value"
+msgstr "Muu hankinta-arvo"
+
+msgid "Usage"
+msgstr ""
+
+msgid "Management"
+msgstr ""
+
+msgid "Protected"
+msgstr ""
+
+msgid "Area"
+msgstr ""
+
+msgid "Unit value"
+msgstr ""
+
+msgid "Discount"
+msgstr ""
+
+msgid "Used price"
+msgstr ""
 
 msgid "Estate id"
 msgstr "Kohteen tunniste"
@@ -1857,20 +2090,20 @@ msgstr "Yhteystieto"
 msgid "Contact type"
 msgstr "Yhteystiedon tyyppi"
 
+msgid "Sent date"
+msgstr "Lähetyspvm"
+
+msgid "Litigant"
+msgstr ""
+
 msgid "Compensation amount"
 msgstr "Korvausinvestoinnit"
 
-msgid "Compensation amount percentage"
-msgstr "Alennusprosentti"
+msgid "Increase percentage"
+msgstr ""
 
 msgid "Sign date"
 msgstr "Allekirjoitettava mennessä"
-
-msgid " date"
-msgstr " päivä"
-
-msgid "Sent date"
-msgstr "Lähetyspvm"
 
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
@@ -2137,61 +2370,11 @@ msgctxt "Model name"
 msgid "Leasehold transfer parties"
 msgstr "Vuokraoikeuden siirtojen osapuolet"
 
-msgid "Time modified"
-msgstr "Muokattu"
-
 msgid "Time archived"
 msgstr "Arkistointiaika"
 
 msgid "Archived note"
 msgstr "Arkistointihuomautus"
-
-msgctxt "Model name"
-msgid "Plot search type"
-msgstr "Tonttihaun tyyppi"
-
-msgctxt "Model name"
-msgid "Plot search types"
-msgstr "Tonttihaun tyypit"
-
-msgctxt "Model name"
-msgid "Plot search subtype"
-msgstr "Tonttihaun alityyppi"
-
-msgctxt "Model name"
-msgid "Plot search subtypes"
-msgstr "Tonttihaun alityypit"
-
-msgctxt "Model name"
-msgid "Plot search stage"
-msgstr "Tonttihaun vaihe"
-
-msgctxt "Model name"
-msgid "Plot search stages"
-msgstr "Tonttihaun vaiheet"
-
-msgid "Subtype"
-msgstr "Alityyppi"
-
-msgid "Begin at"
-msgstr "Alkaa"
-
-msgid "End at"
-msgstr "Loppuu"
-
-msgid "Stage"
-msgstr "Vaihe"
-
-msgctxt "Model name"
-msgid "Plot search"
-msgstr "Tonttihaku"
-
-msgctxt "Model name"
-msgid "Plot searches"
-msgstr "Tonttihaut"
-
-msgid "Target type"
-msgstr "Kohde tyyppi"
 
 msgctxt "Model name"
 msgid "Rent intended use"
@@ -2252,6 +2435,15 @@ msgstr "Käsinlaskentakerroin"
 msgid "Manual ratio (previous)"
 msgstr "Käsinlaskentakerroin (edellinen)"
 
+msgid "Payable rent amount"
+msgstr ""
+
+msgid "Payable rent start date"
+msgstr ""
+
+msgid "Payable rent end date"
+msgstr ""
+
 msgctxt "Model name"
 msgid "Rent"
 msgstr "Vuokra"
@@ -2259,6 +2451,9 @@ msgstr "Vuokra"
 msgctxt "Model name"
 msgid "Rents"
 msgstr "Vuokrat"
+
+msgid "Cannot calculate payable rent. The rent cycle '{}' is not defined."
+msgstr ""
 
 #, python-brace-format
 msgid "Manual ratio {ratio}"
@@ -2882,12 +3077,6 @@ msgstr ""
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Ei voi olla sama vuokraus"
 
-msgid "The target has been removed from the system!"
-msgstr "Kohde on poistunut järjestelmästä!"
-
-msgid "The target information has changed!"
-msgstr "Kohteen tiedot ovat muuttuneet!"
-
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr "Alkuvuosivuokran loppu pitää olla sama kuin vuokrakauden loppu"
 
@@ -3122,6 +3311,59 @@ msgid ""
 msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
+
+msgctxt "Model name"
+msgid "Plot search type"
+msgstr "Tonttihaun tyyppi"
+
+msgctxt "Model name"
+msgid "Plot search types"
+msgstr "Tonttihaun tyypit"
+
+msgctxt "Model name"
+msgid "Plot search subtype"
+msgstr "Tonttihaun alityyppi"
+
+msgctxt "Model name"
+msgid "Plot search subtypes"
+msgstr "Tonttihaun alityypit"
+
+msgctxt "Model name"
+msgid "Plot search stage"
+msgstr "Tonttihaun vaihe"
+
+msgctxt "Model name"
+msgid "Plot search stages"
+msgstr "Tonttihaun vaiheet"
+
+msgid "Subtype"
+msgstr "Alityyppi"
+
+msgid "Begin at"
+msgstr "Alkaa"
+
+msgid "End at"
+msgstr "Loppuu"
+
+msgid "Stage"
+msgstr "Vaihe"
+
+msgctxt "Model name"
+msgid "Plot search"
+msgstr "Tonttihaku"
+
+msgctxt "Model name"
+msgid "Plot searches"
+msgstr "Tonttihaut"
+
+msgid "Target type"
+msgstr "Kohde tyyppi"
+
+msgid "The target has been removed from the system!"
+msgstr "Kohde on poistunut järjestelmästä!"
+
+msgid "The target information has changed!"
+msgstr "Kohteen tiedot ovat muuttuneet!"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"

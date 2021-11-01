@@ -116,7 +116,8 @@ def integrityerror_exception_handler(exc, context):
 
     if isinstance(exc, IntegrityError) and not response:
         response = Response(
-            {"detail": _("Data integrity error")}, status=status.HTTP_400_BAD_REQUEST
+            {"detail": _("Data integrity error"), "error": str(exc)},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     return response

@@ -49,7 +49,9 @@ class LandUseAgreementInvoiceSalesOrderAdapter:
         line_item = LineItem()
 
         line_item.quantity = "1,00"
-        line_item.net_price = "{:.2f}".format(self.invoice.amount).replace(".", ",")
+        line_item.net_price = "{:.2f}".format(self.invoice.total_amount).replace(
+            ".", ","
+        )
 
         line_item.line_text_l4 = (
             "   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä."

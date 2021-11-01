@@ -5,7 +5,9 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from forms.viewsets.form import FormViewSet
+from credit_integration import urls as credit_integration_urls
+from forms.viewsets.form import AnswerViewSet, FormViewSet
+from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
@@ -51,8 +53,19 @@ from leasing.viewsets.land_area import (
     LeaseAreaAttachmentViewSet,
     PlanUnitListWithIdentifiersViewSet,
     PlanUnitViewSet,
+    PlotMasterIdentifierList,
 )
-from leasing.viewsets.land_use_agreement import LandUseAgreementViewSet
+from leasing.viewsets.land_use_agreement import (
+    LandUseAgreementAttachmentViewSet,
+    LandUseAgreementInvoiceCreditView,
+    LandUseAgreementInvoiceExportToLaskeView,
+    LandUseAgreementInvoiceRowCreditView,
+    LandUseAgreementInvoiceRowViewSet,
+    LandUseAgreementInvoiceSetCreditView,
+    LandUseAgreementInvoiceSetViewSet,
+    LandUseAgreementInvoiceViewSet,
+    LandUseAgreementViewSet,
+)
 from leasing.viewsets.lease import (
     DistrictViewSet,
     FinancingViewSet,
@@ -81,10 +94,10 @@ from leasing.viewsets.lease_additional_views import (
     LeaseSetRentInfoCompletionStateView,
 )
 from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
-from leasing.viewsets.plot_search import PlotSearchSubtypeViewSet, PlotSearchViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
+from plotsearch.views import PlotSearchSubtypeViewSet, PlotSearchViewSet
 from users.views import UsersPermissions
 from users.viewsets import UserViewSet
 
@@ -101,7 +114,8 @@ router.register(r"contact", ContactViewSet)
 router.register(r"decision", DecisionViewSet)
 router.register(r"district", DistrictViewSet)
 router.register(r"financing", FinancingViewSet)
-router.register(r"form", FormViewSet)
+router.register(r"form", FormViewSet, basename="form")
+router.register(r"answer", AnswerViewSet)
 router.register(r"hitas", HitasViewSet)
 router.register(r"index", IndexViewSet)
 router.register(
@@ -138,6 +152,7 @@ router.register(
     PlanUnitListWithIdentifiersViewSet,
     basename="planunitlistwithidentifiers",
 )
+router.register(r"plot_master_identifier_list", PlotMasterIdentifierList)
 router.register(r"plot_search", PlotSearchViewSet)
 router.register(r"plot_search_subtype", PlotSearchSubtypeViewSet)
 router.register(r"regulation", RegulationViewSet)
@@ -153,6 +168,10 @@ router.register(r"user", UserViewSet)
 router.register(r"vat", VatViewSet)
 
 router.register(r"land_use_agreement", LandUseAgreementViewSet)
+router.register(r"land_use_agreement_attachment", LandUseAgreementAttachmentViewSet)
+router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
+router.register(r"land_use_agreement_invoice_row", LandUseAgreementInvoiceRowViewSet)
+router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetViewSet)
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
@@ -186,6 +205,26 @@ additional_api_paths = [
         "invoice_set_credit/", InvoiceSetCreditView.as_view(), name="invoice-set-credit"
     ),
     path(
+        "land_use_agreement_invoice_credit/",
+        LandUseAgreementInvoiceCreditView.as_view(),
+        name="land_use_agreement_invoice-credit",
+    ),
+    path(
+        "land_use_agreement_invoice_export_to_laske/",
+        LandUseAgreementInvoiceExportToLaskeView.as_view(),
+        name="land_use_agreement_invoice-export-to-laske",
+    ),
+    path(
+        "land_use_agreement_invoice_row_credit/",
+        LandUseAgreementInvoiceRowCreditView.as_view(),
+        name="land_use_agreement_invoice-row-credit",
+    ),
+    path(
+        "land_use_agreement_invoice_set_credit/",
+        LandUseAgreementInvoiceSetCreditView.as_view(),
+        name="land_use_agreement_invoice-set-credit",
+    ),
+    path(
         "lease_billing_periods/",
         LeaseBillingPeriodsView.as_view(),
         name="lease-billing-periods",
@@ -217,10 +256,17 @@ additional_api_paths = [
     ),
     path("send_email/", SendEmailView.as_view(), name="send-email"),
     path("users_permissions/", UsersPermissions.as_view(), name="users-permissions"),
+    path(
+        "functions/calculate_increase_with_360_day_calendar",
+        CalculateIncreaseWith360DayCalendar.as_view(),
+    ),
 ]
 
 urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
+    path(
+        "v1/", include((credit_integration_urls, "credit_integration"), namespace="v1"),
+    ),
     re_path(r"(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf", ktj_proxy),
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),
     path("contract_file/<contract_id>/<file_id>/", CloudiaProxy.as_view()),

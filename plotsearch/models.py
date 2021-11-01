@@ -1,10 +1,14 @@
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
+from rest_framework.serializers import ValidationError
 
+from forms.models import Form
 from leasing.enums import PlotSearchTargetType
-from leasing.models import PlanUnit
+from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from users.models import User
 
@@ -85,6 +89,13 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
     # In Finnish: Haettavat kohteet, menettelyvaraus ja suoravaraus
     targets = models.ManyToManyField(PlanUnit, through="PlotSearchTarget")
 
+    # In Finnish: Lomake
+    form = models.OneToOneField(Form, on_delete=models.SET_NULL, null=True)
+
+    decisions = models.ManyToManyField(
+        Decision, related_name="plot_searches", blank=True
+    )
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot search")
         verbose_name_plural = pgettext_lazy("Model name", "Plot searches")
@@ -99,7 +110,9 @@ class PlotSearchTarget(models.Model):
     """
 
     # In Finnish: Tonttihaku
-    plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
+    plot_search = models.ForeignKey(
+        PlotSearch, on_delete=models.CASCADE, related_name="plot_search_targets"
+    )
 
     # In Finnish: Kaavayksikkö
     plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
@@ -108,3 +121,40 @@ class PlotSearchTarget(models.Model):
     target_type = EnumField(
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super(PlotSearchTarget, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.target_type != PlotSearchTargetType.SEARCHABLE:
+            return
+
+        if self.plot_search.begin_at is not None:
+            if timezone.now() < self.plot_search.begin_at:
+                return
+
+        raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
+
+
+class TargetInfoLink(models.Model):
+    """
+    In Finnish: Lisätietolinkki
+    """
+
+    # In Finnish: Tonttihaun kohde
+    plot_search_target = models.ForeignKey(
+        PlotSearchTarget, on_delete=models.CASCADE, related_name="info_links"
+    )
+
+    # In Finnish: Lisätietolinkki
+    url = models.URLField()
+
+    # In Finnish: Lisätietolinkkiteksti
+    description = models.CharField(max_length=255)
+
+    # In Finnish: Kieli
+    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
+
+
+from plotsearch.signals import *  # noqa: E402 F403 F401

@@ -736,6 +736,16 @@ DEFAULT_MODEL_PERMS = {
         7: ("view", "add", "change", "delete"),
     },
     "plotsearch": {
+        1: ("view",),
+        2: ("view", "add", "change", "delete"),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view", "add", "change", "delete"),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
+    # TODO These are copypasted from above
+    "plotsearchsubtype": {
         1: None,
         2: ("view", "add", "change", "delete"),
         3: ("view",),
@@ -852,6 +862,51 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "landuseagreementattachment": {
+        1: ("view",),
+        2: ("view", "add", "change", "delete"),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view", "add", "change", "delete"),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
+    "landuseagreementinvoice": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete"),
+    },
+    "landuseagreementinvoicepayment": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete"),
+    },
+    "landuseagreementinvoicerow": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete"),
+    },
+    "landuseagreementinvoiceset": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view", "add", "change", "delete"),
+        7: ("view", "add", "change", "delete"),
+    },
     "landuseagreementlitigant": {
         1: ("view",),
         2: ("view",),
@@ -893,6 +948,15 @@ DEFAULT_MODEL_PERMS = {
         2: ("view",),
         3: ("view",),
         4: ("view", "add", "change", "delete"),
+        5: ("view",),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
+    "landuseagreementreceivabletype": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
         5: ("view",),
         6: ("view",),
         7: ("view", "add", "change", "delete"),
@@ -975,7 +1039,12 @@ class Command(BaseCommand):
 
         all_model_permissions = []
         group_permissions = []
-        app_names = ["leasing", "users", "batchrun"]
+        app_names = [
+            "leasing",
+            "users",
+            "batchrun",
+            "plotsearch",
+        ]
 
         for app_name in app_names:
             for model in apps.get_app_config(app_name).get_models(

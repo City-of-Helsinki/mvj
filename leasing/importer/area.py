@@ -11,6 +11,9 @@ from leasing.models.area import Area, AreaSource
 from .base import BaseImporter
 
 METADATA_COLUMN_NAME_MAP = {
+    "diaarinumero": "diary_number",
+    "hyvaksyja": "acceptor",
+    "kaavavaihe": "plan_stage",
     "kiinteistotunnus": "property_identifier",
     "vuokraustunnus": "lease_identifier",
     "vuokratunnus": "lease_identifier",
@@ -57,7 +60,7 @@ METADATA_COLUMN_NAME_MAP = {
 
 
 AREA_IMPORT_TYPES = {
-    # Kaava
+    # Kaavat
     "detailed_plan": {
         "source_dsn_setting_name": "AREA_DATABASE_DSN",
         "source_name": "Kaava: Kaavahakemisto",
@@ -78,6 +81,26 @@ AREA_IMPORT_TYPES = {
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
             AS geom_text
         FROM kaava.kaavahakemisto_alueet AS a
+        WHERE kaavatunnus IS NOT NULL
+        """,
+    },
+    # Vireillä ja tulevat asemakaavat
+    "pre_detailed_plan": {
+        "source_dsn_setting_name": "LEASE_AREA_DATABASE_DSN",
+        "source_name": "Maka: Hankerajaus",
+        "source_identifier": "maka.hankerajaus_alue_kaavahanke",
+        "area_type": AreaType.PRE_DETAILED_PLAN,
+        "identifier_field_name": "kaavatunnus",
+        "metadata_columns": [
+            "kaavatunnus",
+            "diaarinumero",
+            "kaavavaihe",
+            "hyvaksyja",
+        ],  # noqa: E231
+        "query": """
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM maka.hankerajaus_alue_kaavahanke AS a
         WHERE kaavatunnus IS NOT NULL
         """,
     },

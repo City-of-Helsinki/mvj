@@ -3,12 +3,13 @@ from rest_framework.viewsets import GenericViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import LeaseAreaAttachment
-from leasing.models.land_area import PlanUnit
+from leasing.models.land_area import PlanUnit, Plot
 from leasing.serializers.land_area import (
     LeaseAreaAttachmentCreateUpdateSerializer,
     LeaseAreaAttachmentSerializer,
     PlanUnitListWithIdentifiersSerializer,
     PlanUnitSerializer,
+    PlotIdentifierSerializer,
 )
 
 from .utils import (
@@ -65,3 +66,15 @@ class PlanUnitListWithIdentifiersViewSet(mixins.ListModelMixin, GenericViewSet):
                 "lease_area__lease__identifier__identifier",
             )
         )
+
+
+class PlotMasterIdentifierList(mixins.ListModelMixin, GenericViewSet):
+    search_fields = [
+        "^identifier",
+    ]
+    filter_backends = (filters.SearchFilter,)
+    queryset = Plot.objects.all()
+    serializer_class = PlotIdentifierSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_master=True).only("id", "identifier",)

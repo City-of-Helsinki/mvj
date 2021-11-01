@@ -1,17 +1,28 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumField
 
-from leasing.models.mixins import TimeStampedModel
+from users.models import User
 
-from ..utils import generate_unique_identifier
+from ..enums import FormState
+from ..utils import clone_object, generate_unique_identifier
 
 
-class Form(TimeStampedModel):
+class Form(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_template = models.BooleanField(default=False)
+    state = EnumField(FormState, max_length=30, default=FormState.WORK_IN_PROGRESS)
 
     title = models.CharField(max_length=255, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+    modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
+
+    def clone(self):
+        assert self.is_template  # Only templates can be clone
+        return clone_object(self)
 
 
 class Section(models.Model):
@@ -22,7 +33,7 @@ class Section(models.Model):
     sort_order = models.PositiveIntegerField(default=0)
 
     add_new_allowed = models.BooleanField(default=False)
-    add_new_text = models.CharField(max_length=255)
+    add_new_text = models.CharField(max_length=255, null=True, blank=True)
 
     parent = models.ForeignKey(
         "self",
@@ -41,10 +52,14 @@ class Section(models.Model):
         )
 
     def save(self, *args, **kwargs):
-        if not self.identifier:
+        if not self.id or not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
             self.identifier = generate_unique_identifier(
-                Section, self.title, max_length
+                Section,
+                "identifier",
+                self.title,
+                max_length,
+                filter={"form_id": self.form.id},
             )
         super(Section, self).save(*args, **kwargs)
 
@@ -58,7 +73,7 @@ class FieldType(models.Model):
         if not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
             self.identifier = generate_unique_identifier(
-                FieldType, self.name, max_length
+                FieldType, "identifier", self.name, max_length
             )
         super(FieldType, self).save(*args, **kwargs)
 
@@ -75,7 +90,9 @@ class Field(models.Model):
     sort_order = models.PositiveIntegerField(default=0)
 
     type = models.ForeignKey(FieldType, on_delete=models.PROTECT)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    section = models.ForeignKey(
+        Section, on_delete=models.CASCADE, related_name="fields"
+    )
 
     class Meta:
         ordering = ["sort_order"]
@@ -87,7 +104,13 @@ class Field(models.Model):
     def save(self, *args, **kwargs):
         if not self.identifier:
             max_length = self._meta.get_field("identifier").max_length
-            self.identifier = generate_unique_identifier(Field, self.label, max_length)
+            self.identifier = generate_unique_identifier(
+                Field,
+                "identifier",
+                self.label,
+                max_length,
+                filter={"section_id": self.section.id},
+            )
         super(Field, self).save(*args, **kwargs)
 
 
@@ -99,3 +122,25 @@ class Choice(models.Model):
     has_text_input = models.BooleanField(default=False)
 
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
+
+
+class Answer(models.Model):
+    """
+    Model for saving form inputs
+    """
+
+    form = models.ForeignKey(Form, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ready = models.BooleanField(default=False)
+
+
+class Entry(models.Model):
+    """
+    Model for saving Answer entries
+    """
+
+    answer = models.ForeignKey(
+        Answer, on_delete=models.CASCADE, related_name="entries", null=True
+    )
+    field = models.ForeignKey(Field, on_delete=models.PROTECT)
+    value = models.TextField()

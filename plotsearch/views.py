@@ -1,10 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins
 from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.models import PlotSearch, PlotSearchSubtype
-from leasing.serializers.plot_search import (
+from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
+from plotsearch.models import PlotSearch, PlotSearchSubtype
+from plotsearch.serializers import (
     PlotSearchCreateSerializer,
     PlotSearchListSerializer,
     PlotSearchRetrieveSerializer,
@@ -12,12 +16,13 @@ from leasing.serializers.plot_search import (
     PlotSearchUpdateSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
-
-class PlotSearchSubtypeViewSet(AtomicTransactionModelViewSet):
+class PlotSearchSubtypeViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+):
     queryset = PlotSearchSubtype.objects.all()
     serializer_class = PlotSearchSubtypeSerializer
+    permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ["plot_search_type"]
 
@@ -25,7 +30,7 @@ class PlotSearchSubtypeViewSet(AtomicTransactionModelViewSet):
 class PlotSearchViewSet(
     AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
-    queryset = PlotSearch.objects.all()
+    queryset = PlotSearch.objects.all().prefetch_related("plot_search_targets")
     serializer_class = PlotSearchRetrieveSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
 

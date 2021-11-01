@@ -396,7 +396,7 @@ class LeaseCopyAreasToContractView(APIView):
         for lease_area in lease.lease_areas.all():
             for item_type in item_types:
                 for item in getattr(lease_area, item_type["manager_name"]).filter(
-                    in_contract=False
+                    in_contract=False, is_master=True
                 ):
                     match_data = {
                         "lease_area": lease_area,

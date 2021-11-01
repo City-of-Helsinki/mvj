@@ -27,17 +27,17 @@ decorator==4.4.2
     # via
     #   ipython
     #   traitlets
-django-debug-toolbar==2.2
+django==2.2.24
+    # via
+    #   -c requirements.txt
+    #   django-debug-toolbar
+    #   django-stubs
+django-debug-toolbar==2.2.1
     # via -r requirements-dev.in
 django-extensions==2.2.9
     # via -r requirements-dev.in
 django-stubs==1.5.0
     # via -r requirements-dev.in
-django==2.2.13
-    # via
-    #   -c requirements.txt
-    #   django-debug-toolbar
-    #   django-stubs
 entrypoints==0.3
     # via flake8
 et-xmlfile==1.0.1
@@ -48,25 +48,21 @@ factory-boy==2.12.0
     #   pytest-factoryboy
 faker==4.0.2
     # via factory-boy
-flake8-polyfill==1.0.2
-    # via pep8-naming
-flake8-print==3.1.4
-    # via -r requirements-dev.in
 flake8==3.7.9
     # via
     #   -r requirements-dev.in
     #   flake8-polyfill
     #   flake8-print
-importlib-metadata==2.0.0
-    # via
-    #   pluggy
-    #   pytest
+flake8-polyfill==1.0.2
+    # via pep8-naming
+flake8-print==3.1.4
+    # via -r requirements-dev.in
 inflection==0.3.1
     # via pytest-factoryboy
-ipython-genutils==0.2.0
-    # via traitlets
 ipython==7.13.0
     # via -r requirements-dev.in
+ipython-genutils==0.2.0
+    # via traitlets
 isort==5.6.4
     # via -r requirements-dev.in
 jdcal==1.4.1
@@ -77,12 +73,12 @@ mccabe==0.6.1
     # via flake8
 more-itertools==8.2.0
     # via pytest
-mypy-extensions==0.4.3
-    # via mypy
 mypy==0.770
     # via
     #   -r requirements-dev.in
     #   django-stubs
+mypy-extensions==0.4.3
+    # via mypy
 openpyxl==3.0.3
     # via -r requirements-dev.in
 packaging==20.3
@@ -103,7 +99,7 @@ prompt-toolkit==3.0.5
     # via ipython
 ptyprocess==0.6.0
     # via pexpect
-py==1.8.1
+py==1.10.0
     # via pytest
 pycodestyle==2.5.0
     # via
@@ -113,22 +109,22 @@ pydocstyle==5.0.2
     # via -r requirements-dev.in
 pyflakes==2.1.1
     # via flake8
-pygments==2.6.1
+pygments==2.7.4
     # via ipython
 pyparsing==2.4.6
     # via packaging
-pytest-cov==2.8.1
-    # via -r requirements-dev.in
-pytest-django==3.9.0
-    # via -r requirements-dev.in
-pytest-factoryboy==2.0.3
-    # via -r requirements-dev.in
 pytest==5.4.1
     # via
     #   -r requirements-dev.in
     #   pytest-cov
     #   pytest-django
     #   pytest-factoryboy
+pytest-cov==2.8.1
+    # via -r requirements-dev.in
+pytest-django==3.9.0
+    # via -r requirements-dev.in
+pytest-factoryboy==2.0.3
+    # via -r requirements-dev.in
 python-dateutil==2.6.0
     # via
     #   -c requirements.txt
@@ -176,8 +172,6 @@ wcwidth==0.1.9
     #   pytest
 werkzeug==1.0.1
     # via -r requirements-dev.in
-zipp==3.3.0
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

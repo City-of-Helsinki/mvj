@@ -3,7 +3,7 @@ import pytest
 from faker import Faker
 from pytest_factoryboy import register
 
-from forms.models.form import Choice, Field, FieldType, Form, Section
+from forms.models.form import Answer, Choice, Entry, Field, FieldType, Section
 
 fake = Faker("fi_FI")
 
@@ -27,15 +27,34 @@ class FieldTypeFactory(factory.DjangoModelFactory):
 
 
 @register
-class FormFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Form
-
-
-@register
 class SectionFactory(factory.DjangoModelFactory):
     class Meta:
         model = Section
+
+
+@register
+class AnswerFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Answer
+
+
+@register
+class EntryFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Entry
+
+
+@pytest.fixture
+def basic_answer(answer_factory, entry_factory, basic_template_form, user_factory):
+    form = basic_template_form
+    user = user_factory(username=fake.name())
+    answer = answer_factory(form=form, user=user)
+
+    for section in answer.form.sections.all():
+        for field in section.fields.all():
+            entry_factory(answer=answer, field=field, value=fake.name())
+
+    return answer
 
 
 @pytest.fixture
@@ -65,16 +84,33 @@ def basic_template_form(
         label="Company name",
         section=company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Business ID",
         section=company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Language",
         section=company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+    )
+    field_factory(
+        label="Y-tunnus",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     # Subsection for company's contact person information
@@ -85,16 +121,33 @@ def basic_template_form(
         label="First name",
         section=contact_person_company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Last name",
         section=contact_person_company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Personal identity code",
         section=contact_person_company_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+    )
+    field_factory(
+        label="Henkilötunnus",
+        section=contact_person_company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     # Person applicant
@@ -105,16 +158,25 @@ def basic_template_form(
         label="First name",
         section=person_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Last name",
         section=person_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Personal identity code",
         section=person_applicant_section,
         type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     # Subsection for person's contact person information
@@ -126,24 +188,35 @@ def basic_template_form(
         section=person_contact_person_section,
         type=basic_field_types["checkbox"],
         action="ToggleEnableInSection=" + person_contact_person_section.identifier,
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
     )
     field_factory(
         label="First name",
         section=person_contact_person_section,
         type=basic_field_types["textbox"],
         enabled=False,
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Last name",
         section=person_contact_person_section,
         type=basic_field_types["textbox"],
         enabled=False,
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Personal identity code",
         section=person_contact_person_section,
         type=basic_field_types["textbox"],
         enabled=False,
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     additional_info_applicant_section = section_factory(
@@ -153,11 +226,19 @@ def basic_template_form(
         label="Additional information",
         section=additional_info_applicant_section,
         type=basic_field_types["textarea"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     # Applicant switcher: Company / Person
     applicant_type_switcher_field = field_factory(
-        section=applicant_section, type=basic_field_types["radiobuttoninline"],
+        section=applicant_section,
+        type=basic_field_types["radiobuttoninline"],
+        label=fake.name(),
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     choice_factory(
         field=applicant_type_switcher_field,
@@ -185,27 +266,43 @@ def basic_template_form(
         label="Have you previously received a plot of land from the city?",
         section=application_target_section,
         type=basic_field_types["radiobuttoninline"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     choice_factory(
-        field=target_previously_received_when_field, text="No", value="1",
+        field=target_previously_received_when_field,
+        text="No",
+        value="1",
+        action=fake.sentence(),
     )
     choice_factory(
         field=target_previously_received_when_field,
         text="Yes",
         value="2",
         has_text_input=True,
+        action=fake.sentence(),
     )
 
     plot_what_application_applies_field = field_factory(
         label="The plot what the application applies",
         section=application_target_section,
         type=basic_field_types["dropdown"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     choice_factory(
-        field=plot_what_application_applies_field, text="Plot A", value="1",
+        field=plot_what_application_applies_field,
+        text="Plot A",
+        value="1",
+        action=fake.sentence(),
     )
     choice_factory(
-        field=plot_what_application_applies_field, text="Plot B", value="2",
+        field=plot_what_application_applies_field,
+        text="Plot B",
+        value="2",
+        action=fake.sentence(),
     )
 
     field_factory(
@@ -213,32 +310,60 @@ def basic_template_form(
         section=application_target_section,
         type=basic_field_types["textbox"],
         hint_text="€/k-m2",
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     field_factory(
         label="Form of financing and management",
         section=application_target_section,
         type=basic_field_types["checkbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
     choice_factory(
-        field=plot_what_application_applies_field, text="Form A", value="1",
+        field=plot_what_application_applies_field,
+        text="Form A",
+        value="1",
+        action=fake.sentence(),
     )
     choice_factory(
-        field=plot_what_application_applies_field, text="Form B", value="2",
+        field=plot_what_application_applies_field,
+        text="Form B",
+        value="2",
+        action=fake.sentence(),
     )
     choice_factory(
         field=plot_what_application_applies_field,
         text="Other:",
         value="3",
         has_text_input=True,
+        action=fake.sentence(),
     )
 
     field_factory(
         label="Reference attachments",
         section=application_target_section,
         type=basic_field_types["uploadfiles"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
     )
 
     return form
+
+
+@pytest.fixture
+def basic_template_form_with_required_fields(basic_template_form):
+    sections = basic_template_form.sections.all()
+    for section in sections:
+        if section.identifier != "person-information":
+            continue
+        for field in section.fields.all():
+            field.required = True
+            field.save()
+
+    return basic_template_form
 
 
 @pytest.fixture
@@ -262,3 +387,20 @@ def basic_field_types(field_type_factory):
     field_types.append(field)
 
     return {t.identifier: t for t in field_types}
+
+
+@pytest.fixture
+def basic_form_data():
+    return {
+        "name": fake.name(),
+        "description": fake.sentence(),
+        "is_template": False,
+        "title": fake.sentence(),
+    }
+
+
+@pytest.fixture
+def basic_form(basic_template_form):
+    basic_template_form.is_template = False
+    basic_template_form.save()
+    return basic_template_form

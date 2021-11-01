@@ -1,6 +1,6 @@
 [
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 1,
     "fields": {
       "plot_search_type_id": 1,
@@ -8,7 +8,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 2,
     "fields": {
       "plot_search_type_id": 1,
@@ -16,7 +16,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 3,
     "fields": {
       "plot_search_type_id": 1,
@@ -24,7 +24,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 4,
     "fields": {
       "plot_search_type_id": 1,
@@ -32,7 +32,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 5,
     "fields": {
       "plot_search_type_id": 1,
@@ -40,7 +40,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 6,
     "fields": {
       "plot_search_type_id": 1,
@@ -48,7 +48,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 7,
     "fields": {
       "plot_search_type_id": 1,
@@ -56,7 +56,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 8,
     "fields": {
       "plot_search_type_id": 1,
@@ -64,7 +64,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 9,
     "fields": {
       "plot_search_type_id": 2,
@@ -72,7 +72,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 10,
     "fields": {
       "plot_search_type_id": 2,
@@ -80,7 +80,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 11,
     "fields": {
       "plot_search_type_id": 2,
@@ -88,7 +88,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 12,
     "fields": {
       "plot_search_type_id": 2,
@@ -96,7 +96,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 13,
     "fields": {
       "plot_search_type_id": 2,
@@ -104,7 +104,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 14,
     "fields": {
       "plot_search_type_id": 3,
@@ -112,7 +112,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 15,
     "fields": {
       "plot_search_type_id": 3,
@@ -120,7 +120,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 16,
     "fields": {
       "plot_search_type_id": 3,
@@ -128,7 +128,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 17,
     "fields": {
       "plot_search_type_id": 3,
@@ -136,7 +136,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 18,
     "fields": {
       "plot_search_type_id": 3,
@@ -144,7 +144,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 19,
     "fields": {
       "plot_search_type_id": 3,
@@ -152,7 +152,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 20,
     "fields": {
       "plot_search_type_id": 3,
@@ -160,7 +160,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 21,
     "fields": {
       "plot_search_type_id": 4,
@@ -168,7 +168,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 22,
     "fields": {
       "plot_search_type_id": 4,
@@ -176,7 +176,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 23,
     "fields": {
       "plot_search_type_id": 4,
@@ -184,7 +184,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 24,
     "fields": {
       "plot_search_type_id": 4,
@@ -192,7 +192,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 25,
     "fields": {
       "plot_search_type_id": 4,
@@ -200,7 +200,7 @@
     }
   },
   {
-    "model": "leasing.PlotSearchSubtype",
+    "model": "plotsearch.PlotSearchSubtype",
     "pk": 26,
     "fields": {
       "plot_search_type_id": 4,

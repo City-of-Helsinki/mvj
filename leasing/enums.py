@@ -469,7 +469,8 @@ class AreaType(Enum):
         "infill_development_compensation"  # Täydennysrakentamiskorvaus
     )
     LAND_USE_AGREEMENT = "land_use_agreement"  # Maankäyttösopimus
-    DETAILED_PLAN = "detailed_plan"  # Kaava
+    DETAILED_PLAN = "detailed_plan"  # Voimassa oleva asemakaava
+    PRE_DETAILED_PLAN = "pre_detailed_plan"  # Vireillä tai tuleva asemakaava
     OTHER = "other"
 
     class Labels:
@@ -526,6 +527,19 @@ class DecisionTypeKind(Enum):
         BASIS_OF_RENT = pgettext_lazy("Decision type kind", "Basis of Rent")
 
 
+class DetailedPlanClass(Enum):
+    """
+    In Finnish: Asemakaavan luokka
+    """
+
+    PENDING = "pending"
+    EFFECTIVE = "effective"
+
+    class Labels:
+        PENDING = pgettext_lazy("Detailed plan class", "Pending")
+        EFFECTIVE = pgettext_lazy("Detailed plan class", "Effective")
+
+
 class BasisOfRentType(Enum):
     """
     In Finnish: Vuokraperusteen tyyppi
@@ -577,6 +591,21 @@ class LandUseContractType(Enum):
             "Land Use Contract Type", "Agreement on appreciation"
         )
         NO_AGREEMENT = pgettext_lazy("Land Use Contract Type", "No agreement")
+
+
+class LandUseAgreementAttachmentType(Enum):
+    """
+    In Finnish: Maankäyttösopimuksen liitetiedoston tyyppi
+    """
+
+    GENERAL = "general"
+    COMPENSATION_CALCULATION = "compensation_calculation"
+
+    class Labels:
+        GENERAL = pgettext_lazy("Land use agreement attachment type", "General")
+        COMPENSATION_CALCULATION = pgettext_lazy(
+            "Land use agreement attachment type", "Compensation calculation"
+        )
 
 
 class LandUseAgreementLitigantContactType(Enum):
