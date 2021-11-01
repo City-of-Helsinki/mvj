@@ -34,7 +34,7 @@ class RunSQLFromFile(migrations.RunSQL):
     def _read_file(self, filename):
         if filename is None:
             return None
-        with open(Path(__file__).parent / filename) as fp:
+        with open(Path(__file__).parent / filename, encoding='utf8') as fp:
             return fp.read()
 
 
