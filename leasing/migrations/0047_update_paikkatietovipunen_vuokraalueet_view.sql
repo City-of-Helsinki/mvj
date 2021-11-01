@@ -6,7 +6,7 @@ SELECT lease.id AS vuokraus_id,
            FROM leasing_municipality
           WHERE leasing_municipality.id = lid.municipality_id), ( SELECT LPAD(leasing_district.identifier,2,'0')
            FROM leasing_district
-          WHERE leasing_district.id = lid.district_id), '-', lid.sequence) AS ‹,
+          WHERE leasing_district.id = lid.district_id), '-', lid.sequence) AS vuokraustunnus,
     ( SELECT leasing_contract.contract_number
            FROM leasing_contract
           WHERE leasing_contract.lease_id = lease.id
