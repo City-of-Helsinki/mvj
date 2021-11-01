@@ -1,6 +1,6 @@
 name: MVJ CI
 
-on: 
+on:
   push:
     branches: [master, develop]
   pull_request:
@@ -10,11 +10,11 @@ jobs:
   build:
     env:
       DATABASE_URL: 'postgis://postgres:postgres@localhost/github_actions'
-    
+
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        python: [3.6, 3.7]
+        python: [3.6, 3.7, 3.8]
 
     services:
       postgres:
@@ -23,7 +23,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
-        ports: 
+        ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -48,18 +48,18 @@ jobs:
       - name: Check and run migrations
         env:
           DATABASE_URL:  ${{ env.DATABASE_URL }}
-        run: | 
+        run: |
           python manage.py makemigrations --dry-run --check
           python manage.py migrate
 
       - name: Run black, flake8 and isort
-        run: | 
+        run: |
           black --check .
           flake8
           isort . --check-only --diff
 
       - name: Run tests
-        run: | 
+        run: |
           pytest -ra -vvv --doctest-modules --cov=.
           ./run-type-checks
 
