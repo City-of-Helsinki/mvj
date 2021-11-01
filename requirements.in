@@ -9,7 +9,7 @@ django-constance[database]
 django-cors-headers
 django-countries
 django-crispy-forms
-django-enumfields
+django-enumfields~=2.1.1
 django-environ
 django-filter
 django-helusers
@@ -32,6 +32,7 @@ django-rest-swagger
 drf-oidc-auth>=0.10.0
 
 docxtpl
+future-annotations~=1.0.0
 psycopg2-binary
 pysftp
 python-daemon
