@@ -309,9 +309,17 @@ class PlotSearchUpdateSerializer(
                 plot_search_target = PlotSearchTarget.objects.get(
                     id=target_id, plot_search=instance
                 )
-                PlotSearchTargetCreateUpdateSerializer().update(
-                    plot_search_target, target
-                )
+
+                # Check if target is changed and update
+                # This is to avoid calling .clean() -function if no changes to targets are made
+                is_updated = False
+                for k, v in target.items():
+                    if getattr(plot_search_target, k) != v:
+                        is_updated = True
+                if is_updated:
+                    PlotSearchTargetCreateUpdateSerializer().update(
+                        plot_search_target, target
+                    )
             else:
                 plot_search_target = PlotSearchTargetCreateUpdateSerializer().create(
                     target
