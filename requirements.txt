@@ -124,8 +124,6 @@ ecdsa==0.15
     # via python-jose
 future==0.18.2
     # via pyjwkest
-future-annotations==1.0.0
-    # via -r requirements.in
 idna==2.9
     # via requests
 isodate==0.6.0

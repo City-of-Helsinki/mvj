@@ -32,7 +32,6 @@ django-rest-swagger
 drf-oidc-auth>=0.10.0
 
 docxtpl
-future-annotations~=1.0.0
 psycopg2-binary
 pysftp
 python-daemon
