@@ -12,6 +12,7 @@ def request_company_decision(business_id, end_user):
     user_id = settings.ASIAKASTIETO_USER_ID
     password = settings.ASIAKASTIETO_PASSWORD
     key = settings.ASIAKASTIETO_KEY
+    target = settings.ASIAKASTIETO_COMPANY_TARGET_KEY
 
     timestamp = _get_timestamp()
     checksum = _calculate_checksum(user_id, end_user, timestamp, key)
@@ -20,7 +21,7 @@ def request_company_decision(business_id, end_user):
     data = (
         f"version=5.01&userid={user_id}&passwd={password}&enduser={end_user}&reqmsg=DECISION"
         f"&qtype=02&model=HEASYR&businessid={business_id}&format=xml&timestamp={timestamp}&checksum={checksum}"
-        f"&target=VAP1"
+        f"&target={target}"
     )
 
     response = requests.post(url, data=data, headers=headers)
@@ -33,6 +34,7 @@ def request_consumer_decision(identity_number, end_user):
     user_id = settings.ASIAKASTIETO_USER_ID
     password = settings.ASIAKASTIETO_PASSWORD
     key = settings.ASIAKASTIETO_KEY
+    target = settings.ASIAKASTIETO_CONSUMER_TARGET_KEY
 
     timestamp = _get_timestamp()
     checksum = _calculate_checksum(user_id, end_user, timestamp, key)
@@ -41,7 +43,7 @@ def request_consumer_decision(identity_number, end_user):
     data = (
         f"version=2018&lang=FI&userid={user_id}&passwd={password}&enduser={end_user}"
         f"&reqmsg=DECISION&qtype=02&model=HEASKU&idnumber={identity_number}&request=H&format=xml"
-        f"&timestamp={timestamp}&checksum={checksum}&target=TAP1"
+        f"&timestamp={timestamp}&checksum={checksum}&target={target}"
     )
 
     response = requests.post(url, data=data, headers=headers)
