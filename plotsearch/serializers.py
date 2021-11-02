@@ -253,7 +253,12 @@ class PlotSearchUpdateSerializer(
 ):
     id = serializers.ReadOnlyField()
     name = serializers.CharField(required=True)
-    type = PlotSearchTypeSerializer(read_only=True)
+    type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchType,
+        queryset=PlotSearchType.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     subtype = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchSubtype,
         queryset=PlotSearchSubtype.objects.all(),
@@ -279,6 +284,9 @@ class PlotSearchUpdateSerializer(
     class Meta:
         model = PlotSearch
         fields = "__all__"
+
+    def to_representation(self, instance):
+        return PlotSearchRetrieveSerializer().to_representation(instance)
 
     @staticmethod
     def dict_to_instance(dictionary, model):
@@ -320,6 +328,7 @@ class PlotSearchUpdateSerializer(
         subtype = validated_data.pop("subtype", None)
         stage = validated_data.pop("stage", None)
         preparer = validated_data.pop("preparer", None)
+
         if subtype:
             validated_data["subtype"] = self.dict_to_instance(
                 subtype, PlotSearchSubtype
@@ -334,6 +343,7 @@ class PlotSearchUpdateSerializer(
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
         )
+
         if targets is not None:
             self.handle_targets(targets, instance)
 

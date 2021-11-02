@@ -1067,6 +1067,7 @@ class Command(BaseCommand):
         all_model_permissions = []
         group_permissions = []
         app_names = [
+            "credit_integration",
             "leasing",
             "users",
             "batchrun",

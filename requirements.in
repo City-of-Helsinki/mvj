@@ -9,7 +9,7 @@ django-constance[database]
 django-cors-headers
 django-countries
 django-crispy-forms
-django-enumfields
+django-enumfields~=2.1.1
 django-environ
 django-filter
 django-helusers
