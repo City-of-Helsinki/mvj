@@ -70,7 +70,7 @@ DEFAULT_MODEL_PERMS = {
         7: ("view", "add", "change", "delete"),
     },
     "creditdecision": {
-        1: ("view",),
+        1: None,
         2: ("view", "send_creditdecision_inquiry",),
         3: ("view", "send_creditdecision_inquiry",),
         4: ("view", "send_creditdecision_inquiry",),
@@ -79,7 +79,7 @@ DEFAULT_MODEL_PERMS = {
         7: ("view", "add", "change", "delete", "send_creditdecision_inquiry",),
     },
     "creditdecisionreason": {
-        1: ("view",),
+        1: None,
         2: ("view",),
         3: ("view",),
         4: ("view",),
@@ -88,7 +88,7 @@ DEFAULT_MODEL_PERMS = {
         7: ("view", "add", "change", "delete"),
     },
     "creditdecisionlog": {
-        1: ("view",),
+        1: None,
         2: ("view",),
         3: ("view",),
         4: ("view",),
