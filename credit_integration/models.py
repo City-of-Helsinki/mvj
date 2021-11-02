@@ -1,5 +1,4 @@
 from auditlog.registry import auditlog
-from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 from django.utils.translation import pgettext_lazy
@@ -97,7 +96,7 @@ class CreditDecision(TimeStampedModel):
     )
 
     # In Finnish: Alkuperäinen tieto
-    original_data = JSONField(
+    original_data = models.JSONField(
         verbose_name=_("original_data"),
         encoder=DjangoJSONEncoder,
         null=True,

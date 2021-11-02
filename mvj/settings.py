@@ -126,7 +126,7 @@ LOCALE_PATHS = [project_root("locale")]
 
 INSTALLED_APPS = [
     "modeltranslation",
-    "django.contrib.admin",
+    "helusers.apps.AdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -134,7 +134,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "rangefilter",
-    "helusers",
+    "helusers.apps.HelusersConfig",
     "crispy_forms",
     "django_filters",
     "rest_framework",
@@ -194,6 +194,8 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MODELTRANSLATION_TRANSLATION_FILES = ("forms.translation",)
 
