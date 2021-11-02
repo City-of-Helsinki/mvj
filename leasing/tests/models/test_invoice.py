@@ -1111,10 +1111,10 @@ def test_create_credit_invoiceset_receivable_type_partly_no_tenants(
     assert credit_note2.billed_amount == Decimal(0)
 
     credit_note_row2 = credit_note2.rows.first()
-    assert credit_note_row2.amount == pytest.approx(Decimal("66.66"))
+    assert credit_note_row2.amount == pytest.approx(Decimal("66.67"))
 
     credit_note_row3 = credit_note2.rows.last()
-    assert credit_note_row3.amount == pytest.approx(Decimal("66.66"))
+    assert credit_note_row3.amount == pytest.approx(Decimal("66.67"))
 
 
 @pytest.mark.django_db

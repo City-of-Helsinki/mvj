@@ -1,8 +1,8 @@
 from typing import Any, Dict, Tuple
 
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.fields.json import JSONField  # type: ignore
 from django.utils.translation import ugettext as _
 
 from .intset import IntegerSetSpecifier
@@ -49,6 +49,6 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
             )
 
 
-class TextJSONField(JSONField):
+class TextJSONField(JSONField):  # type: ignore
     def db_type(self, connection: Any) -> str:
         return "json"

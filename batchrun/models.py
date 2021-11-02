@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 
 import pytz
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import connections, models, transaction
+from django.db.models.fields.json import JSONField  # type: ignore
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField, EnumIntegerField

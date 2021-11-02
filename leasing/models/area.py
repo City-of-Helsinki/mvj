@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
-from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models as djmodels
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
@@ -32,7 +32,7 @@ class Area(TimeStampedModel):
     geometry = models.MultiPolygonField(
         srid=4326, verbose_name=_("Geometry"), null=True, blank=True
     )
-    metadata = JSONField(
+    metadata = djmodels.JSONField(
         verbose_name=_("Metadata"), encoder=DjangoJSONEncoder, null=True, blank=True
     )
     source = models.ForeignKey(
