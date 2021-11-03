@@ -220,7 +220,7 @@ def test_get_credit_decisions_endpoint(
     for permission_name in permission_names:
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
-    business_id = "1234567-8"
+    business_id = "12345678"
     business_credit_decision_factory(
         business_id=business_id,
         reasons=(credit_decision_reason_factory(), credit_decision_reason_factory()),
@@ -247,7 +247,7 @@ def test_get_credit_decisions_without_access_right(
     user.save()
     client.login(username=user.username, password=password)
 
-    business_id = "1234567-8"
+    business_id = "12345678"
     business_credit_decision_factory(
         business_id=business_id,
         reasons=(credit_decision_reason_factory(), credit_decision_reason_factory()),
@@ -281,7 +281,7 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
 
     client.login(username=user.username, password=password)
 
-    business_id = "1234567-8"
+    business_id = "12345678"
 
     data = {"business_id": business_id}
 
@@ -421,7 +421,7 @@ def test_send_credit_decision_inquiry_endpoint_without_access_right(
 
     client.login(username=user.username, password=password)
 
-    business_id = "1234567-8"
+    business_id = "12345678"
     business_credit_decision_factory(
         business_id=business_id,
         reasons=(credit_decision_reason_factory(), credit_decision_reason_factory()),
