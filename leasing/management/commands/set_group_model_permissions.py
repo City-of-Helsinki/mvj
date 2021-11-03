@@ -1052,6 +1052,16 @@ DEFAULT_MODEL_PERMS = {
         6: None,
         7: ("view", "add", "change", "delete"),
     },
+    # TODO These are copypasted from plotsearch
+    "form": {
+        1: None,
+        2: ("view", "add", "change", "delete"),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view", "add", "change", "delete"),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
 }
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
@@ -1072,6 +1082,7 @@ class Command(BaseCommand):
             "users",
             "batchrun",
             "plotsearch",
+            "forms",
         ]
 
         for app_name in app_names:
