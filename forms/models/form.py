@@ -81,12 +81,12 @@ class FieldType(models.Model):
 class Field(models.Model):
 
     label = models.CharField(max_length=255)
-    hint_text = models.CharField(max_length=255)
+    hint_text = models.CharField(max_length=255, null=True, blank=True)
     identifier = models.SlugField()
     enabled = models.BooleanField(default=True)
     required = models.BooleanField(default=False)
-    validation = models.CharField(max_length=255)
-    action = models.CharField(max_length=255)
+    validation = models.CharField(max_length=255, null=True, blank=True)
+    action = models.CharField(max_length=255, null=True, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
 
     type = models.ForeignKey(FieldType, on_delete=models.PROTECT)
