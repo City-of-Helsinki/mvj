@@ -10,7 +10,6 @@ from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.models import PlotSearch, PlotSearchSubtype
 from plotsearch.serializers import (
     PlotSearchCreateSerializer,
-    PlotSearchListSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
     PlotSearchUpdateSerializer,
@@ -41,8 +40,5 @@ class PlotSearchViewSet(
 
         if self.action in ("update", "partial_update"):
             return PlotSearchUpdateSerializer
-
-        if self.action == "list":
-            return PlotSearchListSerializer
 
         return PlotSearchRetrieveSerializer
