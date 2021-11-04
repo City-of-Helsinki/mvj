@@ -232,17 +232,28 @@ class PlotSearchSerializerBase(
         fields = "__all__"
 
 
-class PlotSearchListSerializer(PlotSearchSerializerBase):
-    pass
-
-
 class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
     preparer = UserSerializer()
     plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
 
     class Meta:
         model = PlotSearch
-        fields = "__all__"
+        fields = (
+            "id",
+            "type",
+            "subtype",
+            "stage",
+            "form",
+            "decisions",
+            "preparer",
+            "plot_search_targets",
+            "deleted",
+            "created_at",
+            "modified_at",
+            "name",
+            "begin_at",
+            "end_at",
+        )
 
 
 class PlotSearchUpdateSerializer(
