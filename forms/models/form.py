@@ -118,7 +118,7 @@ class Choice(models.Model):
 
     text = models.CharField(max_length=255)
     value = models.CharField(max_length=50)
-    action = models.CharField(max_length=255)
+    action = models.CharField(max_length=255, null=True, blank=True)
     has_text_input = models.BooleanField(default=False)
 
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
