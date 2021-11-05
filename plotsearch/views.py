@@ -2,12 +2,13 @@ from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import Decision, Lease, LeaseArea, PlanUnit
+from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.models import PlotSearch, PlotSearchSubtype, PlotSearchTarget
 from plotsearch.serializers import (
@@ -62,7 +63,7 @@ class PlotSearchViewSet(
     )
     serializer_class = PlotSearchRetrieveSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
