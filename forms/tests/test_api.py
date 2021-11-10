@@ -2,6 +2,8 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
+from forms.enums import FormState
+
 fake = Faker("fi_FI")
 
 
@@ -24,6 +26,15 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
 
     assert response_filter_true.data["count"] == 1
     assert response_filter_false.data["count"] == 0
+
+
+@pytest.mark.django_db
+def test_edit_form(admin_client, basic_form):
+    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    payload = {"state": FormState.READY}
+    response = admin_client.patch(url, payload, content_type="application/json")
+    assert response.status_code == 200
+    assert response.data["state"] == FormState.READY
 
 
 @pytest.mark.django_db
