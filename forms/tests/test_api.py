@@ -1,7 +1,8 @@
 import pytest
-from django.forms.models import model_to_dict
 from django.urls import reverse
 from faker import Faker
+
+from forms.enums import FormState
 
 fake = Faker("fi_FI")
 
@@ -28,6 +29,15 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
 
 
 @pytest.mark.django_db
+def test_edit_form(admin_client, basic_form):
+    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    payload = {"state": FormState.READY}
+    response = admin_client.patch(url, payload, content_type="application/json")
+    assert response.status_code == 200
+    assert response.data["state"] == FormState.READY
+
+
+@pytest.mark.django_db
 def test_delete_form(admin_client, basic_form):
     url = reverse("form-detail", kwargs={"pk": basic_form.id})
     response = admin_client.delete(url)
@@ -45,7 +55,7 @@ def test_add_field_to_form(admin_client, basic_form, basic_field_types):
         "hint_text": fake.sentence(),
         "validation": fake.sentence(),
         "action": fake.sentence(),
-        "type": model_to_dict(basic_field_types["textarea"]),
+        "type": basic_field_types["textarea"].id,
         "section": payload["sections"][0]["id"],
     }
 

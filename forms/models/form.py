@@ -77,6 +77,9 @@ class FieldType(models.Model):
             )
         super(FieldType, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.identifier
+
 
 class Field(models.Model):
 
@@ -121,7 +124,7 @@ class Choice(models.Model):
     action = models.CharField(max_length=255, null=True, blank=True)
     has_text_input = models.BooleanField(default=False)
 
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="choices")
 
 
 class Answer(models.Model):
