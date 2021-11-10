@@ -1,5 +1,4 @@
 import pytest
-from django.forms.models import model_to_dict
 from django.urls import reverse
 from faker import Faker
 
@@ -45,7 +44,7 @@ def test_add_field_to_form(admin_client, basic_form, basic_field_types):
         "hint_text": fake.sentence(),
         "validation": fake.sentence(),
         "action": fake.sentence(),
-        "type": model_to_dict(basic_field_types["textarea"]),
+        "type": basic_field_types["textarea"].id,
         "section": payload["sections"][0]["id"],
     }
 
