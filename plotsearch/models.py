@@ -10,6 +10,7 @@ from forms.models import Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
+from plotsearch.enums import SearchClass
 from users.models import User
 
 
@@ -75,6 +76,9 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
 
     # In Finnish: Loppuaika
     end_at = models.DateTimeField(verbose_name=_("End at"), null=True, blank=True)
+
+    # In Finnish: Haun luokittelu
+    search_class = EnumField(enum=SearchClass, max_length=30, null=True, blank=True)
 
     # In Finnish: Haun vaihe
     stage = models.ForeignKey(
