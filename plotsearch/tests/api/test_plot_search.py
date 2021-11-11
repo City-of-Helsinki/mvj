@@ -11,6 +11,7 @@ from rest_framework import serializers
 from forms.models import Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
+from plotsearch.enums import SearchClass
 from plotsearch.models import PlotSearch, PlotSearchTarget
 
 fake = Faker("fi_FI")
@@ -102,6 +103,7 @@ def test_plot_search_create(
         "preparer": user.id,
         "begin_at": timezone.now() + timezone.timedelta(days=30),
         "end_at": timezone.now() + timezone.timedelta(days=60),
+        "search_class": SearchClass.PLOT_SEARCH,
         "plot_search_targets": [
             {
                 "plan_unit_id": plan_unit.id,
@@ -163,6 +165,7 @@ def test_plot_search_update(
         "preparer": user.id,
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
+        "search_class": SearchClass.OTHER,
         "plot_search_targets": [
             {
                 "plan_unit_id": new_master_plan_unit.id,
