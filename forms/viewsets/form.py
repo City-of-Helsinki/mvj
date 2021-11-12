@@ -1,7 +1,8 @@
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 
-from forms.models import Answer, Form
+from forms.models import Answer, Choice, Field, Form, Section
 from forms.serializers.form import AnswerSerializer, FormSerializer
 
 
@@ -19,7 +20,23 @@ class FormViewSet(
     serializer_class = FormSerializer
 
     def get_queryset(self):
-        queryset = Form.objects.all().prefetch_related("sections")
+        queryset = Form.objects.prefetch_related(
+            Prefetch(
+                "sections",
+                queryset=Section.objects.prefetch_related(
+                    Prefetch(
+                        "fields",
+                        queryset=Field.objects.prefetch_related(
+                            Prefetch(
+                                "choices",
+                                queryset=Choice.objects.prefetch_related("field"),
+                            )
+                        ),
+                    ),
+                    "subsections",
+                ),
+            )
+        )
         return queryset
 
 
