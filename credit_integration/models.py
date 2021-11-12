@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from auditlog.registry import auditlog
 from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
@@ -138,7 +140,11 @@ class CreditDecision(TimeStampedModel):
                 "lineOfBusinessCode"
             ]
             business_entity = company_data["identificationData"]["companyFormText"]
-            operation_start_date = company_data["startDate"]
+            operation_start_date = None
+            if company_data["startDate"]:
+                operation_start_date = datetime.fromtimestamp(
+                    company_data["startDate"] / 1000.0
+                )
 
         proposal_data = json_data["companyResponse"]["decisionProposalData"][
             "decisionProposal"
