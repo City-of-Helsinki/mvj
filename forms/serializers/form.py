@@ -171,7 +171,7 @@ class SectionSerializer(serializers.ModelSerializer):
         return instance
 
 
-class CreateFormSerializer(serializers.ModelSerializer):
+class UpdateFormSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True)
     state = EnumSerializerField(FormState)
 
@@ -185,7 +185,7 @@ class CreateFormSerializer(serializers.ModelSerializer):
         return {section.id: section for section in sections}
 
     def to_representation(self, instance):
-        data = super(CreateFormSerializer, self).to_representation(instance)
+        data = super(UpdateFormSerializer, self).to_representation(instance)
         return self.filter_subsections(data)
 
     @staticmethod
@@ -214,10 +214,10 @@ class CreateFormSerializer(serializers.ModelSerializer):
         # Check if any section is deleted
         for k, section in prev_sections.items():
             section.delete()
-        return super(CreateFormSerializer, self).update(instance, validated_data)
+        return super(UpdateFormSerializer, self).update(instance, validated_data)
 
 
-class FormSerializer(CreateFormSerializer):
+class FormSerializer(UpdateFormSerializer):
     sections = SerializerMethodField()
 
     @staticmethod

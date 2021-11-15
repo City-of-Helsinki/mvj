@@ -5,8 +5,8 @@ from rest_framework import mixins, viewsets
 from forms.models import Answer, Choice, Field, Form, Section
 from forms.serializers.form import (
     AnswerSerializer,
-    CreateFormSerializer,
     FormSerializer,
+    UpdateFormSerializer,
 )
 
 
@@ -44,8 +44,8 @@ class FormViewSet(
         return queryset
 
     def get_serializer_class(self):
-        if self.action in ("create", "metadata", "update", "partial_update"):
-            return CreateFormSerializer
+        if self.action in ("metadata", "update", "partial_update"):
+            return UpdateFormSerializer
         return super().get_serializer_class()
 
 
