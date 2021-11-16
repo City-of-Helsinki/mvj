@@ -1,13 +1,8 @@
-from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 
-from forms.models import Answer, Choice, Field, Form, Section
-from forms.serializers.form import (
-    AnswerSerializer,
-    FormSerializer,
-    UpdateFormSerializer,
-)
+from forms.models import Answer, Form
+from forms.serializers.form import AnswerSerializer, FormSerializer
 
 
 class FormViewSet(
@@ -25,28 +20,12 @@ class FormViewSet(
 
     def get_queryset(self):
         queryset = Form.objects.prefetch_related(
-            Prefetch(
-                "sections",
-                queryset=Section.objects.prefetch_related(
-                    Prefetch(
-                        "fields",
-                        queryset=Field.objects.prefetch_related(
-                            Prefetch(
-                                "choices",
-                                queryset=Choice.objects.prefetch_related("field"),
-                            )
-                        ),
-                    ),
-                    "subsections",
-                ),
-            )
+            "sections__fields__choices",
+            "sections__subsections__fields__choices",
+            "sections__subsections__subsections__fields__choices",
+            "sections__subsections__subsections__subsections",
         )
         return queryset
-
-    def get_serializer_class(self):
-        if self.action in ("metadata", "update", "partial_update"):
-            return UpdateFormSerializer
-        return super().get_serializer_class()
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
