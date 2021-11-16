@@ -1,6 +1,5 @@
 from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator
 
 from ..enums import FormState
@@ -171,7 +170,7 @@ class SectionSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UpdateFormSerializer(serializers.ModelSerializer):
+class FormSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True)
     state = EnumSerializerField(FormState)
 
@@ -185,7 +184,7 @@ class UpdateFormSerializer(serializers.ModelSerializer):
         return {section.id: section for section in sections}
 
     def to_representation(self, instance):
-        data = super(UpdateFormSerializer, self).to_representation(instance)
+        data = super(FormSerializer, self).to_representation(instance)
         return self.filter_subsections(data)
 
     @staticmethod
@@ -214,20 +213,7 @@ class UpdateFormSerializer(serializers.ModelSerializer):
         # Check if any section is deleted
         for k, section in prev_sections.items():
             section.delete()
-        return super(UpdateFormSerializer, self).update(instance, validated_data)
-
-
-class FormSerializer(UpdateFormSerializer):
-    sections = SerializerMethodField()
-
-    @staticmethod
-    def get_sections(instance):
-        return SectionSerializer(
-            instance.sections.filter(parent__isnull=True).prefetch_related(
-                "subsections", "fields"
-            ),
-            many=True,
-        ).data
+        return super(FormSerializer, self).update(instance, validated_data)
 
 
 class EntrySerializer(serializers.ModelSerializer):
