@@ -131,7 +131,7 @@ class CreditDecision(TimeStampedModel):
             address = company_data["identificationData"]["address"]["street"]
             address += ", " + company_data["identificationData"]["address"]["zip"]
             address += " " + company_data["identificationData"]["address"]["town"]
-            phone_number = None
+            phone_number = ""
             if company_data["identificationData"]["contactInformation"]:
                 phone_number = company_data["identificationData"]["contactInformation"][
                     "phone"
