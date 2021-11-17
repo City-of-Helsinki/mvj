@@ -1,4 +1,3 @@
-from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.filters import OrderingFilter
@@ -7,10 +6,9 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.models import Decision, Lease, LeaseArea, PlanUnit
 from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.models import PlotSearch, PlotSearchSubtype, PlotSearchTarget
+from plotsearch.models import PlotSearch, PlotSearchSubtype
 from plotsearch.serializers import (
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
@@ -32,38 +30,25 @@ class PlotSearchSubtypeViewSet(
 class PlotSearchViewSet(
     AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
-    queryset = PlotSearch.objects.prefetch_related(
-        "decisions",
-        Prefetch(
-            "plot_search_targets",
-            queryset=PlotSearchTarget.objects.prefetch_related(
-                Prefetch(
-                    "plan_unit",
-                    queryset=PlanUnit.objects.prefetch_related(
-                        Prefetch(
-                            "lease_area",
-                            queryset=LeaseArea.objects.prefetch_related(
-                                Prefetch(
-                                    "lease",
-                                    queryset=Lease.objects.prefetch_related(
-                                        Prefetch(
-                                            "decisions",
-                                            queryset=Decision.objects.prefetch_related(
-                                                "decision_maker", "type", "conditions",
-                                            ),
-                                        )
-                                    ),
-                                )
-                            ),
-                        )
-                    ),
-                )
-            ),
-        ),
-    )
+    queryset = PlotSearch.objects.all()
     serializer_class = PlotSearchRetrieveSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related(
+            "decisions",
+            "plot_search_targets__info_links",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__decision_maker",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__type",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__conditions",
+            "plot_search_targets__plan_unit__lease_area__addresses",
+            "form__sections__fields__choices",
+            "form__sections__subsections__fields__choices",
+            "form__sections__subsections__subsections__fields__choices",
+            "form__sections__subsections__subsections__subsections",
+        )
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
