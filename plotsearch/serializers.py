@@ -243,6 +243,7 @@ class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
             "type",
             "subtype",
             "stage",
+            "search_class",
             "form",
             "decisions",
             "preparer",
