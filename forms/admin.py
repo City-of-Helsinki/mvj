@@ -25,6 +25,12 @@ class FormChoiceField(forms.ModelChoiceField):
 
 
 class FieldModelAdmin(admin.ModelAdmin):
+    list_display = (
+        "label",
+        "section",
+    )
+    raw_id_fields = ("section",)
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "type":
             return FieldTypeChoiceField(queryset=FieldType.objects.all())
@@ -34,6 +40,12 @@ class FieldModelAdmin(admin.ModelAdmin):
 
 
 class SectionModelAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "form",
+    )
+    list_filter = ("form",)
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "parent":
             return SectionChoiceField(queryset=Section.objects.all())
@@ -41,16 +53,27 @@ class SectionModelAdmin(admin.ModelAdmin):
             return FormChoiceField(queryset=Form.objects.all())
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related("form")
+
 
 class ChoiceModelAdmin(admin.ModelAdmin):
+    list_display = ("text",)
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "field":
             return FieldChoiceField(queryset=Field.objects.all())
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class FormModelAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+
+
 admin.site.register(Field, FieldModelAdmin)
-admin.site.register(Form, admin.ModelAdmin)
+admin.site.register(Form, FormModelAdmin)
 admin.site.register(FieldType, admin.ModelAdmin)
 admin.site.register(Section, SectionModelAdmin)
 admin.site.register(Choice, ChoiceModelAdmin)

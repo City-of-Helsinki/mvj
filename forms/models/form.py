@@ -24,6 +24,9 @@ class Form(models.Model):
         assert self.is_template  # Only templates can be clone
         return clone_object(self)
 
+    def __str__(self):
+        return self.name
+
 
 class Section(models.Model):
 
@@ -62,6 +65,9 @@ class Section(models.Model):
                 filter={"form_id": self.form.id},
             )
         super(Section, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
 
 
 class FieldType(models.Model):
@@ -115,6 +121,9 @@ class Field(models.Model):
                 filter={"section_id": self.section.id},
             )
         super(Field, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.label
 
 
 class Choice(models.Model):
