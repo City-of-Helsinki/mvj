@@ -5,10 +5,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.text import slugify
 from faker import Faker
 from rest_framework import serializers
 
-from forms.models import Form
+from forms.models import Form, Section
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from plotsearch.enums import SearchClass
@@ -378,7 +379,14 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
 
 @pytest.mark.django_db
 def test_attach_form_to_plot_search(
-    django_db_setup, admin_client, plot_search_test_data, lease_test_data, form_factory,
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
+    form_factory,
+    section_factory,
+    field_factory,
+    field_type_factory,
 ):
     form = form_factory(
         name=fake.name(),
@@ -386,12 +394,31 @@ def test_attach_form_to_plot_search(
         is_template=True,
         title=fake.name(),
     )
+    parent_section = section_factory(form=form,)
+    child_section = section_factory(form=form, parent=parent_section,)
+    field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
+    field_factory(
+        label=fake.name(),
+        hint_text=fake.name(),
+        identifier=slugify(fake.name()),
+        validation=fake.name(),
+        action=fake.name(),
+        section=child_section,
+        type=field_type,
+    )
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.patch(
         url, data={"form": form.id}, content_type="application/json"
     )
     assert response.status_code == 200
     assert len(Form.objects.all()) == 2
+    assert (
+        len(Section.objects.filter(form=Form.objects.exclude(id=form.id).first())) == 2
+    )
+    assert (
+        len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
+    )
+    assert len(Section.objects.all()) == 4
 
     url = reverse("plotsearch-list")
     response = admin_client.post(
@@ -401,6 +428,10 @@ def test_attach_form_to_plot_search(
     )
     assert response.status_code == 201
     assert len(Form.objects.all()) == 3
+    assert (
+        len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
+    )
+    assert len(Section.objects.all()) == 6
 
     plot_search_id = response.data["id"]
 
@@ -410,6 +441,18 @@ def test_attach_form_to_plot_search(
         is_template=True,
         title=fake.name(),
     )
+    parent_section = section_factory(form=new_form,)
+    child_section = section_factory(form=new_form, parent=parent_section,)
+    field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
+    field_factory(
+        label=fake.name(),
+        hint_text=fake.name(),
+        identifier=slugify(fake.name()),
+        validation=fake.name(),
+        action=fake.name(),
+        section=child_section,
+        type=field_type,
+    )
 
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_id})
     response = admin_client.patch(
@@ -417,6 +460,12 @@ def test_attach_form_to_plot_search(
     )
     assert response.status_code == 200
     assert len(Form.objects.all()) == 4
+    assert len(Form.objects.filter(is_template=True)) == 2
+    assert len(Form.objects.filter(is_template=False)) == 2
+    assert (
+        len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
+    )
+    assert len(Section.objects.all()) == 8
 
 
 @pytest.mark.django_db
