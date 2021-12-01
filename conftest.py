@@ -5,7 +5,7 @@ import pytest
 from django.utils import timezone
 from pytest_factoryboy import register
 
-from forms.models import Form
+from forms.models import Field, FieldType, Form, Section
 from leasing.enums import (
     ContactType,
     LeaseAreaType,
@@ -265,3 +265,21 @@ class DecisionFactory(factory.DjangoModelFactory):
 class InfoLinkFactory(factory.DjangoModelFactory):
     class Meta:
         model = TargetInfoLink
+
+
+@register
+class SectionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Section
+
+
+@register
+class FieldFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Field
+
+
+@register
+class FieldTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = FieldType
