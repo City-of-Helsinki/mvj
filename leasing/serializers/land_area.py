@@ -46,10 +46,8 @@ class PlotDivisionStateSerializer(NameModelSerializer):
         fields = "__all__"
 
 
-class PlanUnitSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    serializers.ModelSerializer,
+class PublicPlanUnitSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
     plan_unit_status = serializers.CharField(read_only=True)
@@ -57,6 +55,34 @@ class PlanUnitSerializer(
         many=True, source="lease_area.lease.decisions", allow_null=True, required=False
     )
 
+    class Meta:
+        model = PlanUnit
+        fields = (
+            "id",
+            "identifier",
+            "area",
+            "section_area",
+            "in_contract",
+            "is_master",
+            "decisions",
+            "plot_division_identifier",
+            "plot_division_date_of_approval",
+            "plot_division_effective_date",
+            "detailed_plan_identifier",
+            "detailed_plan_latest_processing_date",
+            "detailed_plan_latest_processing_date_note",
+            "plot_division_state",
+            "plan_unit_type",
+            "plan_unit_state",
+            "plan_unit_status",
+            "plan_unit_intended_use",
+            "geometry",
+        )
+
+
+class PlanUnitSerializer(
+    FieldPermissionsSerializerMixin, PublicPlanUnitSerializer,
+):
     def override_permission_check_field_name(self, field_name):
         if field_name == "decisions" and self.context["request"].user.has_perm(
             "leasing.view_decision"

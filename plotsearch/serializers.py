@@ -7,7 +7,7 @@ from forms.models import Form
 from forms.serializers.form import FormSerializer
 from leasing.models import Decision, PlanUnit
 from leasing.serializers.decision import DecisionSerializer
-from leasing.serializers.land_area import PlanUnitSerializer
+from leasing.serializers.land_area import PlanUnitSerializer, PublicPlanUnitSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
@@ -81,7 +81,7 @@ class PlotSearchTargetSerializer(
         source="plan_unit.is_master_newer"
     )
     message_label = serializers.SerializerMethodField()
-    plan_unit = PlanUnitSerializer(read_only=True)
+    plan_unit = PublicPlanUnitSerializer(read_only=True)
     plan_unit_id = serializers.IntegerField(required=False, allow_null=True)
     info_links = PlotSearchTargetInfoLinkSerializer(many=True, required=False)
 
