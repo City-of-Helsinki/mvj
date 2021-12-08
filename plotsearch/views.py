@@ -8,11 +8,12 @@ from rest_framework_gis.filters import InBBoxFilter
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.models import PlotSearch, PlotSearchSubtype
+from plotsearch.models import PlotSearch, PlotSearchSubtype, PlotSearchType
 from plotsearch.serializers import (
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
+    PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
 )
 
@@ -25,6 +26,18 @@ class PlotSearchSubtypeViewSet(
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ["plot_search_type"]
+
+
+class PlotSearchTypeViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+):
+    queryset = PlotSearchType.objects.all()
+    serializer_class = PlotSearchTypeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related("plotsearchsubtype_set")
 
 
 class PlotSearchViewSet(
