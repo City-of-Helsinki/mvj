@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -33,7 +33,7 @@ class PlotSearchTypeViewSet(
 ):
     queryset = PlotSearchType.objects.all()
     serializer_class = PlotSearchTypeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         qs = super().get_queryset()
