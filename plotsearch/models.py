@@ -19,9 +19,12 @@ class PlotSearchType(NameModel):
     In Finnish: Hakutyyppi
     """
 
+    ordering = models.PositiveSmallIntegerField(default=0, db_index=True)
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search type")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search types")
+        ordering = ["ordering", "name"]
 
 
 class PlotSearchSubtype(NameModel):
@@ -30,6 +33,7 @@ class PlotSearchSubtype(NameModel):
     """
 
     plot_search_type = models.ForeignKey(PlotSearchType, on_delete=models.CASCADE)
+    show_district = models.BooleanField(default=False)
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search subtype")

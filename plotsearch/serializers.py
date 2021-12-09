@@ -25,10 +25,37 @@ from users.models import User
 from users.serializers import UserSerializer
 
 
-class PlotSearchSubtypeSerializer(NameModelSerializer):
+class PlotSearchSubTypeLinkedSerializer(NameModelSerializer):
     class Meta:
         model = PlotSearchSubtype
-        fields = "__all__"
+        fields = (
+            "id",
+            "name",
+            "show_district",
+        )
+
+
+class PlotSearchTypeLinkedSerializer(NameModelSerializer):
+    class Meta:
+        model = PlotSearchType
+        fields = (
+            "id",
+            "name",
+            "ordering",
+        )
+
+
+class PlotSearchSubtypeSerializer(NameModelSerializer):
+    plot_search_type = PlotSearchTypeLinkedSerializer()
+
+    class Meta:
+        model = PlotSearchSubtype
+        fields = (
+            "id",
+            "name",
+            "show_district",
+            "plot_search_type",
+        )
 
 
 class PlotSearchStageSerializer(NameModelSerializer):
@@ -195,9 +222,13 @@ class PlotSearchTargetCreateUpdateSerializer(
 
 
 class PlotSearchTypeSerializer(NameModelSerializer):
+    subtypes = PlotSearchSubTypeLinkedSerializer(
+        many=True, source="plotsearchsubtype_set"
+    )
+
     class Meta:
         model = PlotSearchType
-        fields = "__all__"
+        fields = ("id", "name", "ordering", "subtypes")
 
 
 class PlotSearchSerializerBase(
