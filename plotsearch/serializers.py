@@ -95,6 +95,9 @@ class PlotSearchTargetSerializer(
     lease_management = serializers.ReadOnlyField(
         source="plan_unit.lease_area.lease.management.name"
     )
+    district = serializers.ReadOnlyField(
+        source="plan_unit.lease_area.lease.district.name"
+    )
     decisions = DecisionSerializer(
         many=True,
         source="plan_unit.lease_area.lease.decisions",
@@ -128,6 +131,7 @@ class PlotSearchTargetSerializer(
             "lease_address",
             "lease_financing",
             "lease_management",
+            "district",
             "info_links",
             "decisions",
         )
