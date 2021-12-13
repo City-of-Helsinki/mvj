@@ -34,10 +34,12 @@ class PlotSearchSubtype(NameModel):
 
     plot_search_type = models.ForeignKey(PlotSearchType, on_delete=models.CASCADE)
     show_district = models.BooleanField(default=False)
+    ordering = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search subtype")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search subtypes")
+        ordering = ["ordering", "name"]
 
 
 class PlotSearchStage(NameModel):

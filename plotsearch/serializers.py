@@ -31,6 +31,7 @@ class PlotSearchSubTypeLinkedSerializer(NameModelSerializer):
         fields = (
             "id",
             "name",
+            "ordering",
             "show_district",
         )
 
@@ -54,6 +55,7 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
             "id",
             "name",
             "show_district",
+            "ordering",
             "plot_search_type",
         )
 
