@@ -1,6 +1,6 @@
 beautifulsoup4
 dataclasses
-Django~=3.2.9
+Django~=3.2.10
 django-anymail
 django-auditlog~=1.0a1
 django-admin-rangefilter
