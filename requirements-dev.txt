@@ -85,8 +85,10 @@ mypy-extensions==0.4.3
     # via mypy
 openpyxl==3.0.3
     # via -r requirements-dev.in
-packaging==20.3
-    # via pytest
+packaging==21.3
+    # via
+    #   -c requirements.txt
+    #   pytest
 parso==0.6.2
     # via jedi
 pathspec==0.8.0
@@ -115,8 +117,10 @@ pyflakes==2.1.1
     # via flake8
 pygments==2.7.4
     # via ipython
-pyparsing==2.4.6
-    # via packaging
+pyparsing==3.0.6
+    # via
+    #   -c requirements.txt
+    #   packaging
 pytest==5.4.1
     # via
     #   -r requirements-dev.in
@@ -144,7 +148,6 @@ six==1.14.0
     #   -c requirements.txt
     #   django-extensions
     #   flake8-print
-    #   packaging
     #   python-dateutil
     #   traitlets
 snowballstemmer==2.0.0

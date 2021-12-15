@@ -125,8 +125,9 @@ USE_TZ = True
 LOCALE_PATHS = [project_root("locale")]
 
 INSTALLED_APPS = [
+    "helusers.apps.HelusersConfig",
+    "helusers.apps.HelusersAdminConfig",
     "modeltranslation",
-    "helusers.apps.AdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -134,7 +135,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "rangefilter",
-    "helusers.apps.HelusersConfig",
     "crispy_forms",
     "django_filters",
     "rest_framework",
