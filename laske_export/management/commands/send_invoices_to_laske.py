@@ -13,7 +13,6 @@ from django.utils.translation import gettext_lazy as _
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from leasing.models import Invoice
-from leasing.models.land_use_agreement import LandUseAgreementInvoice
 
 logger = logging.getLogger(__name__)
 
@@ -67,26 +66,11 @@ class Command(BaseCommand):
                 )
             )
 
-            self.stdout.write("Finding unsent land use agreement invoices")
-
-            land_use_agreement_invoices = LandUseAgreementInvoice.objects.filter(
-                sent_to_sap_at__isnull=True,
-            )
-            self.stdout.write(
-                "Found {} unsent land use agreement invoices".format(
-                    land_use_agreement_invoices.count()
-                )
-            )
-
-            if not land_use_agreement_invoices and not invoices:
+            if not invoices:
                 self.stdout.write("No invoices to send. Exiting.")
                 return
 
             laske_export_log_entry = exporter.export_invoices(invoices)
-
-            # TODO: laske_export_log_entry_lua =
-            exporter.export_land_use_agreement_invoices(land_use_agreement_invoices)
-
         except Exception as err:
             error_flag = True
             error_message = str(err)
