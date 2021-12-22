@@ -14,6 +14,8 @@ from leasing.serializers.utils import (
     UpdateNestedMixin,
 )
 from plotsearch.models import (
+    Favourite,
+    FavouriteTarget,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -469,3 +471,17 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
             plot_search.save()
 
         return plot_search
+
+
+class FavouriteTargetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavouriteTarget
+        fields = ("plot_search_target",)
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    targets = FavouriteTargetSerializer(many=True)
+
+    class Meta:
+        model = Favourite
+        fields = ("user", "created_at", "modified_at", "targets")
