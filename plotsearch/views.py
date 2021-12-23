@@ -1,15 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins
+from rest_framework import mixins, viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.viewsets import GenericViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.models import PlotSearch, PlotSearchSubtype, PlotSearchType
+from plotsearch.models import Favourite, PlotSearch, PlotSearchSubtype, PlotSearchType
 from plotsearch.serializers import (
+    FavouriteSerializer,
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
@@ -19,7 +19,7 @@ from plotsearch.serializers import (
 
 
 class PlotSearchSubtypeViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     queryset = PlotSearchSubtype.objects.all()
     serializer_class = PlotSearchSubtypeSerializer
@@ -29,7 +29,7 @@ class PlotSearchSubtypeViewSet(
 
 
 class PlotSearchTypeViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     queryset = PlotSearchType.objects.all()
     serializer_class = PlotSearchTypeSerializer
@@ -72,3 +72,13 @@ class PlotSearchViewSet(
             return PlotSearchUpdateSerializer
 
         return PlotSearchRetrieveSerializer
+
+
+class FavouriteViewSet(viewsets.ModelViewSet):
+    queryset = Favourite.objects.all()
+    serializer_class = FavouriteSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(user=self.request.user).prefetch_related("targets")

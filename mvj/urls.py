@@ -98,6 +98,7 @@ from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from plotsearch.views import (
+    FavouriteViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTypeViewSet,
     PlotSearchViewSet,
@@ -117,6 +118,7 @@ router.register(r"comment_topic", CommentTopicViewSet)
 router.register(r"contact", ContactViewSet)
 router.register(r"decision", DecisionViewSet)
 router.register(r"district", DistrictViewSet)
+router.register(r"favourite", FavouriteViewSet)
 router.register(r"financing", FinancingViewSet)
 router.register(r"form", FormViewSet, basename="form")
 router.register(r"answer", AnswerViewSet)

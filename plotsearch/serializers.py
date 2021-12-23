@@ -14,6 +14,8 @@ from leasing.serializers.utils import (
     UpdateNestedMixin,
 )
 from plotsearch.models import (
+    Favourite,
+    FavouriteTarget,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -469,3 +471,46 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
             plot_search.save()
 
         return plot_search
+
+
+class FavouriteTargetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavouriteTarget
+        fields = ("plot_search_target",)
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    targets = FavouriteTargetSerializer(many=True)
+
+    class Meta:
+        model = Favourite
+        fields = ("user", "created_at", "modified_at", "targets")
+
+    @staticmethod
+    def handle_targets(targets, favourite):
+        for target in targets:
+            FavouriteTarget.objects.create(
+                plot_search_target=target.get("plot_search_target"), favourite=favourite
+            )
+
+    def create(self, validated_data):
+        targets = None
+        if "targets" in validated_data:
+            targets = validated_data.pop("targets")
+
+        favourite = Favourite.objects.create(**validated_data)
+
+        if targets:
+            self.handle_targets(targets, favourite)
+
+        return favourite
+
+    def update(self, instance, validated_data):
+        targets = None
+        if "targets" in validated_data:
+            targets = validated_data.pop("targets")
+        instance = super().update(instance, validated_data)
+        if targets is not None:
+            self.handle_targets(targets, instance)
+            instance.save()
+        return instance

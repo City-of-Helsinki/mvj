@@ -167,4 +167,18 @@ class TargetInfoLink(models.Model):
     language = models.CharField(max_length=255, choices=settings.LANGUAGES)
 
 
+class Favourite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class FavouriteTarget(models.Model):
+    favourite = models.ForeignKey(
+        Favourite, on_delete=models.CASCADE, related_name="targets"
+    )
+    plot_search_target = models.ForeignKey(PlotSearchTarget, on_delete=models.CASCADE)
+
+
 from plotsearch.signals import *  # noqa: E402 F403 F401
