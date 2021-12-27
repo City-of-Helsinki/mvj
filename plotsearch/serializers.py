@@ -474,6 +474,13 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
 
 
 class FavouriteTargetSerializer(serializers.ModelSerializer):
+    plot_search_target = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlotSearchTarget,
+        queryset=PlotSearchTarget.objects.all(),
+        related_serializer=PlotSearchTargetSerializer,
+        required=True,
+    )
+
     class Meta:
         model = FavouriteTarget
         fields = ("plot_search_target",)
