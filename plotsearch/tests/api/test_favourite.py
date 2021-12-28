@@ -77,7 +77,6 @@ def test_favourite_post(
     pls_target["plot_search_target"] = pls.pk
 
     data = {
-        "user": User.objects.get(username="admin").pk,
         "targets": [{"plot_search_target": pls.pk}],
     }
 
