@@ -491,7 +491,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favourite
-        fields = ("user", "created_at", "modified_at", "targets")
+        fields = ("created_at", "modified_at", "targets")
 
     @staticmethod
     def handle_targets(targets, favourite):
@@ -501,11 +501,16 @@ class FavouriteSerializer(serializers.ModelSerializer):
             )
 
     def create(self, validated_data):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+
         targets = None
         if "targets" in validated_data:
             targets = validated_data.pop("targets")
 
-        favourite = Favourite.objects.create(**validated_data)
+        favourite = Favourite.objects.create(user=user, **validated_data)
 
         if targets:
             self.handle_targets(targets, favourite)
