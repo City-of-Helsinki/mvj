@@ -42,19 +42,30 @@ def clone_object(obj, attrs={}):
                 getattr(clone, field.name).add(row)
 
         # Manage 1-N and 1-1 relations by cloning child objects
-        if field.auto_created and field.is_relation:
-            if field.many_to_many:
-                # do nothing
-                pass
-            elif field.name == "parent" or field.name == "subsections":
-                pass
+        if not (field.auto_created and field.is_relation):
+            continue
+        if field.many_to_many or field.name == "parent":
+            # do nothing
+            continue
+        elif field.name == "subsections":
+            attrs = {field.remote_field.name: clone, "form": clone.form}
+            children = field.related_model.objects.filter(
+                **{field.remote_field.name: obj}
+            )
+
+        else:
+            # provide "clone" object to replace "obj" on remote field
+            attrs = {field.remote_field.name: clone}
+            if "parent" in (x.name for x in field.related_model._meta.get_fields()):
+                children = field.related_model.objects.filter(
+                    parent__isnull=True, **{field.remote_field.name: obj}
+                )
             else:
-                # provide "clone" object to replace "obj" on remote field
-                attrs = {field.remote_field.name: clone}
                 children = field.related_model.objects.filter(
                     **{field.remote_field.name: obj}
                 )
-                for child in children:
-                    clone_object(child, attrs)
+
+        for child in children:
+            clone_object(child, attrs)
 
     return clone
