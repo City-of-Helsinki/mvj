@@ -480,10 +480,11 @@ class FavouriteTargetSerializer(serializers.ModelSerializer):
         related_serializer=PlotSearchTargetSerializer,
         required=True,
     )
+    plot_search = serializers.ReadOnlyField(source="plot_search_target.plot_search.id")
 
     class Meta:
         model = FavouriteTarget
-        fields = ("plot_search_target",)
+        fields = ("plot_search_target", "plot_search")
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
