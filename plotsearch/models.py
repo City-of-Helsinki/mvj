@@ -144,17 +144,19 @@ class PlotSearchTarget(models.Model):
             if timezone.now() < self.plot_search.begin_at:
                 return
 
-        if self.pk is not None and self.plot_search.form is None:
-            pls = PlotSearchTarget.objects.get(pk=self.pk)
-            plot_search = PlotSearch.objects.get(pk=self.plot_search.pk)
+        plot_search = PlotSearch.objects.get(pk=self.plot_search.pk)
+        if plot_search.form is None:
+            pls = PlotSearchTarget.objects.filter(pk=self.pk).first()
             for field in self._meta.fields:
-                if getattr(self, field) != getattr(pls, field):
+                if pls is None:
+                    break
+                if getattr(self, field.name) != getattr(pls, field.name):
                     raise ValidationError(
                         code="no_adding_searchable_targets_after_begins_at"
                     )
             for field in self.plot_search._meta.fields:
-                if field.name != "form" and getattr(self, field) != getattr(
-                    plot_search, field
+                if field.name != "form" and getattr(self, field.name) != getattr(
+                    plot_search, field.name
                 ):
                     raise ValidationError(
                         code="no_adding_searchable_targets_after_begins_at"
