@@ -3,6 +3,7 @@ from rest_framework import mixins, viewsets
 
 from forms.models import Answer, Form
 from forms.serializers.form import AnswerSerializer, FormSerializer
+from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 
 
 class FormViewSet(
@@ -17,6 +18,7 @@ class FormViewSet(
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["is_template"]
     serializer_class = FormSerializer
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
     def get_queryset(self):
         queryset = Form.objects.prefetch_related(
