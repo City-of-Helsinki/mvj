@@ -492,7 +492,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favourite
-        fields = ("created_at", "modified_at", "targets")
+        fields = ("id", "created_at", "modified_at", "targets")
 
     @staticmethod
     def handle_targets(targets, favourite):
