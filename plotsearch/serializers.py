@@ -496,6 +496,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def handle_targets(targets, favourite):
+        FavouriteTarget.objects.filter(favourite=favourite).delete()
         for target in targets:
             FavouriteTarget.objects.create(
                 plot_search_target=target.get("plot_search_target"), favourite=favourite
