@@ -21,7 +21,7 @@ django-sanitized-dump
 django-sequences
 djangorestframework
 djangorestframework-gis
-django-rest-swagger
+drf-yasg[validation]
 
 # Use at least 0.10.0 version of drf-oidc-auth.
 #

@@ -2,8 +2,9 @@ import rest_framework.urls
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
-from rest_framework import routers
-from rest_framework_swagger.views import get_swagger_view
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions, routers
 
 from credit_integration import urls as credit_integration_urls
 from forms.viewsets.form import AnswerViewSet, FormViewSet
@@ -269,6 +270,19 @@ additional_api_paths = [
     ),
 ]
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version="v1",
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
     path(
@@ -280,7 +294,19 @@ urlpatterns = [
     path("trade_register/<service>/<business_id>/", VirreProxy.as_view()),
     path("admin/", admin.site.urls),
     path("auth/", include(rest_framework.urls)),
-    path("docs/", get_swagger_view(title="MVJ API")),
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    re_path(
+        r"^docs/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
 ]
 
 if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
