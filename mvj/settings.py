@@ -140,7 +140,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
-    "rest_framework_swagger",
+    "drf_yasg",
     "corsheaders",
     "auditlog",
     "safedelete",
@@ -160,6 +160,7 @@ INSTALLED_APPS = [
     "sanitized_dump",
     "utils",
     "django_q",
+    "debug_toolbar",
 ]
 
 if DEBUG:

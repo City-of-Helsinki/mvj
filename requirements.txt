@@ -11,7 +11,9 @@ arrow==0.15.5
 asgiref==3.4.1
     # via django
 attrs==19.3.0
-    # via zeep
+    # via
+    #   jsonschema
+    #   zeep
 bcrypt==3.1.7
     # via paramiko
 beautifulsoup4==4.8.2
@@ -34,11 +36,11 @@ cffi==1.14.0
 chardet==3.0.4
     # via requests
 coreapi==2.3.3
-    # via
-    #   django-rest-swagger
-    #   openapi-codec
+    # via drf-yasg
 coreschema==0.0.4
-    # via coreapi
+    # via
+    #   coreapi
+    #   drf-yasg
 cryptography==3.3.2
     # via paramiko
 database-sanitizer==1.1.0
@@ -64,6 +66,7 @@ django==3.2.10
     #   django-safedelete
     #   djangorestframework
     #   drf-oidc-auth
+    #   drf-yasg
 django-admin-rangefilter==0.6.3
     # via -r requirements.in
 django-anymail==7.0.0
@@ -102,8 +105,6 @@ django-q[sentry]==1.3.4
     # via -r requirements.in
 django-q-sentry==0.1.4
     # via django-q
-django-rest-swagger==2.2.0
-    # via -r requirements.in
 django-safedelete==0.5.4
     # via -r requirements.in
 django-sanitized-dump==1.2.0
@@ -113,9 +114,9 @@ django-sequences==2.4
 djangorestframework==3.11.2
     # via
     #   -r requirements.in
-    #   django-rest-swagger
     #   djangorestframework-gis
     #   drf-oidc-auth
+    #   drf-yasg
 djangorestframework-gis==0.15
     # via -r requirements.in
 docutils==0.16
@@ -124,12 +125,18 @@ docxtpl==0.6.3
     # via -r requirements.in
 drf-oidc-auth==0.10.0
     # via -r requirements.in
+drf-yasg[validation]==1.20.0
+    # via -r requirements.in
 ecdsa==0.15
     # via python-jose
 future==0.18.2
     # via pyjwkest
 idna==2.9
     # via requests
+importlib-resources==5.4.0
+    # via jsonschema
+inflection==0.5.1
+    # via drf-yasg
 isodate==0.6.0
     # via zeep
 itypes==1.1.0
@@ -138,6 +145,8 @@ jinja2==2.11.3
     # via
     #   coreschema
     #   docxtpl
+jsonschema==4.0.0
+    # via swagger-spec-validator
 lockfile==0.12.2
     # via python-daemon
 lxml==4.6.5
@@ -147,10 +156,10 @@ lxml==4.6.5
     #   zeep
 markupsafe==1.1.1
     # via jinja2
-openapi-codec==1.3.2
-    # via django-rest-swagger
 packaging==21.3
-    # via deprecation
+    # via
+    #   deprecation
+    #   drf-yasg
 paramiko==2.7.1
     # via pysftp
 psycopg2-binary==2.8.4
@@ -169,6 +178,8 @@ pynacl==1.3.0
     # via paramiko
 pyparsing==3.0.6
     # via packaging
+pyrsistent==0.18.0
+    # via jsonschema
 pysftp==0.2.9
     # via -r requirements.in
 python-daemon==2.2.4
@@ -190,6 +201,7 @@ pyyaml==5.4
     # via
     #   database-sanitizer
     #   django-sanitized-dump
+    #   swagger-spec-validator
 requests==2.23.0
     # via
     #   -r requirements.in
@@ -203,12 +215,14 @@ requests-toolbelt==0.9.1
     # via zeep
 rsa==4.7
     # via python-jose
+ruamel.yaml==0.17.20
+    # via drf-yasg
+ruamel.yaml.clib==0.2.6
+    # via ruamel.yaml
 sentry-sdk==0.16.5
     # via
     #   -r requirements.in
     #   django-q-sentry
-simplejson==3.17.0
-    # via django-rest-swagger
 six==1.14.0
     # via
     #   bcrypt
@@ -226,15 +240,20 @@ six==1.14.0
     #   pynacl
     #   python-dateutil
     #   python-jose
+    #   swagger-spec-validator
     #   zeep
 soupsieve==2.0
     # via beautifulsoup4
 sqlparse==0.3.1
     # via django
+swagger-spec-validator==2.7.4
+    # via drf-yasg
 typing-extensions==3.10.0.0
     # via -r requirements.in
 uritemplate==3.0.1
-    # via coreapi
+    # via
+    #   coreapi
+    #   drf-yasg
 urllib3==1.25.8
     # via
     #   requests
@@ -245,6 +264,8 @@ xlsxwriter==1.2.8
     # via -r requirements.in
 zeep==3.4.0
     # via -r requirements.in
+zipp==3.6.0
+    # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
