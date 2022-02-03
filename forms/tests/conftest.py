@@ -56,11 +56,12 @@ def basic_template_form(
         title="Applicant information",
         add_new_allowed=True,
         add_new_text="Add new applicant",
+        identifier="applicant-information"
     )
 
     # Company applicant
     company_applicant_section = section_factory(
-        form=form, parent=applicant_section, title="Company information", visible=False
+        form=form, parent=applicant_section, title="Company information", visible=False, identifier="company-information"
     )
     field_factory(
         label="Company name",
@@ -69,6 +70,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="company-name"
     )
     field_factory(
         label="Business ID",
@@ -77,6 +79,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="business-id"
     )
     field_factory(
         label="Language",
@@ -85,6 +88,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="language"
     )
     field_factory(
         label="Y-tunnus",
@@ -93,11 +97,12 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="y-tunnus"
     )
 
     # Subsection for company's contact person information
     contact_person_company_applicant_section = section_factory(
-        form=form, parent=company_applicant_section, title="Contact person"
+        form=form, parent=company_applicant_section, title="Contact person", identifier="contact-person"
     )
     field_factory(
         label="First name",
@@ -106,6 +111,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="first-name"
     )
     field_factory(
         label="Last name",
@@ -114,6 +120,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="last-name"
     )
     field_factory(
         label="Personal identity code",
@@ -122,6 +129,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="personal-identity-code"
     )
     field_factory(
         label="Henkilötunnus",
@@ -130,11 +138,12 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="henkilotunnus"
     )
 
     # Person applicant
     person_applicant_section = section_factory(
-        form=form, parent=applicant_section, title="Person information", visible=False
+        form=form, parent=applicant_section, title="Person information", visible=False, identifier="person-information"
     )
     field_factory(
         label="First name",
@@ -143,6 +152,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="first-name-1"
     )
     field_factory(
         label="Last name",
@@ -151,6 +161,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="last-name-1"
     )
     field_factory(
         label="Personal identity code",
@@ -159,11 +170,12 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="personal-identity-code-1"
     )
 
     # Subsection for person's contact person information
     person_contact_person_section = section_factory(
-        form=form, parent=person_applicant_section, title="Contact person"
+        form=form, parent=person_applicant_section, title="Contact person", identifier="contact-person"
     )
     field_factory(
         label="Different than applicant",
@@ -172,6 +184,7 @@ def basic_template_form(
         action="ToggleEnableInSection=" + person_contact_person_section.identifier,
         hint_text=fake.sentence(),
         validation=fake.sentence(),
+        identifier="different-than-applicant"
     )
     field_factory(
         label="First name",
@@ -181,6 +194,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="first-name-2"
     )
     field_factory(
         label="Last name",
@@ -190,6 +204,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="last-name-2"
     )
     field_factory(
         label="Personal identity code",
@@ -199,10 +214,11 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="personal-identity-code-2"
     )
 
     additional_info_applicant_section = section_factory(
-        form=form, parent=applicant_section, title="Additional information",
+        form=form, parent=applicant_section, title="Additional information", identifier="additional-information"
     )
     field_factory(
         label="Additional information",
@@ -211,6 +227,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="additional-information"
     )
 
     # Applicant switcher: Company / Person
@@ -221,6 +238,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="applicant-switch"
     )
     choice_factory(
         field=applicant_type_switcher_field,
@@ -242,7 +260,7 @@ def basic_template_form(
     )
 
     # Root application target section
-    application_target_section = section_factory(form=form, title="Application target",)
+    application_target_section = section_factory(form=form, title="Application target", identifier="application-target")
 
     target_previously_received_when_field = field_factory(
         label="Have you previously received a plot of land from the city?",
@@ -251,6 +269,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="have-you-ever"
     )
     choice_factory(
         field=target_previously_received_when_field,
@@ -273,6 +292,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="the-plot-what"
     )
     choice_factory(
         field=plot_what_application_applies_field,
@@ -294,6 +314,7 @@ def basic_template_form(
         hint_text="€/k-m2",
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="percentage-grounds"
     )
     field_factory(
         label="Form of financing and management",
@@ -302,6 +323,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="form-of-financing"
     )
     choice_factory(
         field=plot_what_application_applies_field,
@@ -330,6 +352,7 @@ def basic_template_form(
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
+        identifier="reference-attachments"
     )
 
     return form
