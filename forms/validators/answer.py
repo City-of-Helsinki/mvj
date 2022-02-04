@@ -16,7 +16,9 @@ class FieldRegexValidator:
     def __call__(self, value):
         for entry in value["entries"]:
             if entry == self._identifier:
-                if not re.search(self._regex, list(value["entries"][entry][self._identifier])[0]):
+                if not re.search(
+                    self._regex, list(value["entries"][entry][self._identifier])[0]
+                ):
                     raise ValidationError(code=self._error_code)
             for sub_entry in value["entries"][entry]:
                 if sub_entry == self._identifier:
@@ -31,7 +33,11 @@ class RequiredFormFieldValidator:
                 if not field.required:
                     continue
                 found = False
-                if field.identifier in list(value["entries"][section.identifier].keys()) and value["entries"][section.identifier][field.identifier] != "":
+                if (
+                    field.identifier
+                    in list(value["entries"][section.identifier].keys())
+                    and value["entries"][section.identifier][field.identifier] != ""
+                ):
                     found = True
                     continue
                 if not found:

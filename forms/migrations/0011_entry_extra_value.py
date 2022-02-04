@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forms', '0010_alter_choice_field'),
+        ("forms", "0010_alter_choice_field"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entry',
-            name='extra_value',
+            model_name="entry",
+            name="extra_value",
             field=models.TextField(blank=True, null=True),
         ),
     ]

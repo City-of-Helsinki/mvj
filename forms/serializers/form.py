@@ -1,12 +1,10 @@
 import json
-from collections.abc import Iterable
-
 from collections import OrderedDict
+
 from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
-from rest_framework.validators import UniqueTogetherValidator
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -241,19 +239,27 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def entry_generator(self, entries, sections=None, fields=None):
         if "sections" in entries:
-            yield from self.entry_generator(entries["sections"], sections=[entry for entry in entries["sections"]])
+            yield from self.entry_generator(
+                entries["sections"], sections=[entry for entry in entries["sections"]]
+            )
         if "fields" in entries:
-            yield from self.entry_generator(entries["fields"], sections=sections, fields=[entry for entry in entries["fields"]])
+            yield from self.entry_generator(
+                entries["fields"],
+                sections=sections,
+                fields=[entry for entry in entries["fields"]],
+            )
         if isinstance(entries, list):
             for entry in entries:
                 yield from self.entry_generator(entry, sections=sections, fields=fields)
-        if not isinstance(sections, list) and isinstance(fields, list):
-            for field in fields:
-                value_dict = entries[field]
-                yield field, sections, value_dict
         if isinstance(sections, list):
             for section in sections:
                 yield from self.entry_generator(entries[section], sections=section)
+        if not isinstance(fields, list):
+            return
+
+        for field in fields:
+            value_dict = entries[field]
+            yield field, sections, value_dict
 
     def to_representation(self, instance):
         """
@@ -273,17 +279,21 @@ class AnswerSerializer(serializers.ModelSerializer):
             #
             # For related fields with `use_pk_only_optimization` we need to
             # resolve the pk value.
-            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            check_for_none = (
+                attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            )
             if check_for_none is None:
                 ret[field.field_name] = None
             elif field.label == "Entries":
                 entries_list = list()
                 for entry in attribute.all():
-                    entries_list.append({
-                        "field": entry.field_id,
-                        "value": entry.value,
-                        "extraValue": entry.extra_value,
-                    })
+                    entries_list.append(
+                        {
+                            "field": entry.field_id,
+                            "value": entry.value,
+                            "extraValue": entry.extra_value,
+                        }
+                    )
                 ret[field.field_name] = json.dumps(entries_list)
             else:
                 ret[field.field_name] = field.to_representation(attribute)
@@ -294,24 +304,44 @@ class AnswerSerializer(serializers.ModelSerializer):
         entries_data = validated_data.pop("entries")
         answer = Answer.objects.create(**validated_data)
 
-        for field_identifier, section_identifier, value in self.entry_generator(entries_data):
+        for field_identifier, section_identifier, value in self.entry_generator(
+            entries_data
+        ):
             try:
-                field = Field.objects.get(identifier=field_identifier, section__identifier=section_identifier, section__form=validated_data.get("form"))
+                field = Field.objects.get(
+                    identifier=field_identifier,
+                    section__identifier=section_identifier,
+                    section__form=validated_data.get("form"),
+                )
             except Field.DoesNotExist:
                 raise ValueError
-            Entry.objects.create(answer=answer, field=field, value=value["value"], extra_value=value["extraValue"])
+            Entry.objects.create(
+                answer=answer,
+                field=field,
+                value=value["value"],
+                extra_value=value["extraValue"],
+            )
         return answer
 
     def update(self, instance, validated_data):
         entries_data = validated_data.pop("entries", [])
 
-        for field_identifier, section_identifier, value in self.entry_generator(entries_data):
+        for field_identifier, section_identifier, value in self.entry_generator(
+            entries_data
+        ):
             try:
-                field = Field.objects.get(identifier=field_identifier, section__identifier=section_identifier,
-                                          section__form=validated_data.get("form"))
+                field = Field.objects.get(
+                    identifier=field_identifier,
+                    section__identifier=section_identifier,
+                    section__form=validated_data.get("form"),
+                )
             except Field.DoesNotExist:
                 raise ValueError
-            Entry.objects.update_or_create(answer=instance, field=field, defaults={'value': value["value"], 'extra_value': value["extraValue"]})
+            Entry.objects.update_or_create(
+                answer=instance,
+                field=field,
+                defaults={"value": value["value"], "extra_value": value["extraValue"]},
+            )
 
         instance.ready = validated_data.get("ready", instance.ready)
         instance.user = validated_data.get("user", instance.user)

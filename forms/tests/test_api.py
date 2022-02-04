@@ -64,7 +64,7 @@ def test_add_field_to_form(admin_client, basic_form, basic_field_types):
 
     prev_fields_len = len(payload["sections"][0]["fields"])
     payload["sections"][0]["fields"].append(field_data)
-    response = admin_client.patch(url, data=payload, content_type="application/json", )
+    response = admin_client.patch(url, data=payload, content_type="application/json",)
     assert response.status_code == 200
     response = admin_client.get(url)
     assert response.status_code == 200
@@ -103,52 +103,45 @@ def test_answer_post(admin_client, admin_user, basic_form):
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
-        "entries": json.dumps({
-            "sections": {
-                "company-information": [
-                    {
-                        "sections": {},
-                        "fields": {
-                            "company-name": {
-                                "value": "",
-                                "extraValue": None
-                            }
-                        }
-                    },
-                    {
-                        "sections": {},
-                        "fields": {
-                            "business-id": {
-                                "value": "",
-                                "extraValue": None
-                            }
-                        }
-                    }
-                ],
-                "contact-person": {
-                    "sections": {},
-                    "fields": {
-                        "first-name": {
-                            "value": False,
-                            "extraValue": None
+        "entries": json.dumps(
+            {
+                "sections": {
+                    "company-information": [
+                        {
+                            "sections": {},
+                            "fields": {
+                                "company-name": {"value": "", "extraValue": None}
+                            },
                         },
-                        "last-name": {
-                            "value": 99,
-                            "extraValue": "developers developers developers"
-                        }
-                    }
-                }
-            },
-            "fields": {}
-        }),
-        "ready": True
+                        {
+                            "sections": {},
+                            "fields": {
+                                "business-id": {"value": "", "extraValue": None}
+                            },
+                        },
+                    ],
+                    "contact-person": {
+                        "sections": {},
+                        "fields": {
+                            "first-name": {"value": False, "extraValue": None},
+                            "last-name": {
+                                "value": 99,
+                                "extraValue": "developers developers developers",
+                            },
+                        },
+                    },
+                },
+                "fields": {},
+            }
+        ),
+        "ready": True,
     }
     response = admin_client.post(url, data=payload)
 
     assert response.status_code == 201
     assert len(Entry.objects.all()) == 4
 
-    url = reverse("answer-detail", kwargs={'pk': 1})
+    url = reverse("answer-detail", kwargs={"pk": 1})
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -158,26 +151,26 @@ def test_answer_post(admin_client, admin_user, basic_form):
                     {
                         "sections": {},
                         "fields": {
-                            "company-name": {
-                                "value": "jee",
-                                "extraValue": None
-                            }
-                        }
+                            "company-name": {"value": "jee", "extraValue": None}
+                        },
                     },
                 ],
                 "contact-person": {
-                    "sections": {},
+                    "sections": {},  # fmt:off
                     "fields": {
-                        "first-name": {
-                            "value": "Matti",
-                            "extraValue": None
-                        },
-                    }
-                }
+                        "first-name": {"value": "Matti", "extraValue": None},
+                    },  # Formatting bug
+                },  # fmt: on
             },
-            "fields": {}
+            "fields": {},
         },
-        "ready": True
+        "ready": True,
     }
     response = admin_client.patch(url, data=payload, content_type="application/json")
+    patched_data = json.loads(response.data["entries"])
+    assert response.status_code == 200
+    assert patched_data[-2]["value"] == "Matti"
+
+    url = reverse("answer-list")
+    response = admin_client.get(url)
     assert response.status_code == 200
