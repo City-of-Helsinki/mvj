@@ -5,6 +5,7 @@ from django.urls import reverse
 from faker import Faker
 
 from forms.enums import FormState
+from forms.models import Entry
 
 fake = Faker("fi_FI")
 
@@ -145,3 +146,38 @@ def test_answer_post(admin_client, admin_user, basic_form):
     response = admin_client.post(url, data=payload)
 
     assert response.status_code == 201
+    assert len(Entry.objects.all()) == 4
+
+    url = reverse("answer-detail", kwargs={'pk': 1})
+    payload = {
+        "form": basic_form.id,
+        "user": admin_user.pk,
+        "entries": {
+            "sections": {
+                "company-information": [
+                    {
+                        "sections": {},
+                        "fields": {
+                            "company-name": {
+                                "value": "jee",
+                                "extraValue": None
+                            }
+                        }
+                    },
+                ],
+                "contact-person": {
+                    "sections": {},
+                    "fields": {
+                        "first-name": {
+                            "value": "Matti",
+                            "extraValue": None
+                        },
+                    }
+                }
+            },
+            "fields": {}
+        },
+        "ready": True
+    }
+    response = admin_client.patch(url, data=payload, content_type="application/json")
+    assert response.status_code == 200

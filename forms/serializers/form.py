@@ -244,6 +244,9 @@ class AnswerSerializer(serializers.ModelSerializer):
             yield from self.entry_generator(entries["sections"], sections=[entry for entry in entries["sections"]])
         if "fields" in entries:
             yield from self.entry_generator(entries["fields"], sections=sections, fields=[entry for entry in entries["fields"]])
+        if isinstance(entries, list):
+            for entry in entries:
+                yield from self.entry_generator(entry, sections=sections, fields=fields)
         if not isinstance(sections, list) and isinstance(fields, list):
             for field in fields:
                 value_dict = entries[field]
@@ -305,7 +308,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         for field_identifier, section_identifier, value in self.entry_generator(entries_data):
             try:
                 field = Field.objects.get(identifier=field_identifier, section__identifier=section_identifier,
-                                          form=validated_data.get("form"))
+                                          section__form=validated_data.get("form"))
             except Field.DoesNotExist:
                 raise ValueError
             Entry.objects.update_or_create(answer=instance, field=field, defaults={'value': value["value"], 'extra_value': value["extraValue"]})
