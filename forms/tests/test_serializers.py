@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 from rest_framework.exceptions import ValidationError
 
-from ..serializers.form import AnswerSerializer, EntrySerializer, FormSerializer
+from ..serializers.form import AnswerSerializer, FormSerializer
 
 fake = Faker("fi_FI")
 
@@ -35,6 +35,7 @@ def test_answer_serializer(basic_answer):
     assert serializer.data["entries"]
 
 
+"""
 @pytest.mark.django_db
 def test_entry_unique_validators(basic_answer, entry_factory):
     field = basic_answer.entries.first().field
@@ -53,6 +54,7 @@ def test_entry_unique_validators(basic_answer, entry_factory):
         serializer.is_valid(True)
     assert hasattr(val_error, "value")
     assert val_error.value.args[0]["non_field_errors"][0].code == "unique"
+"""
 
 
 @pytest.mark.django_db
@@ -60,13 +62,14 @@ def test_all_required_fields_answered_validator(
     basic_template_form_with_required_fields, admin_user
 ):
 
-    entries = []
+    entries = {}
     # Generating answers where required fields are not given
     for section in basic_template_form_with_required_fields.sections.all():
+        entries[section.identifier] = dict()
         for field in section.fields.all():
             if field.section.identifier == "person-information":
                 continue
-            entries.append({"field": field.id, "value": fake.name()})
+            entries[section.identifier][field.identifier] = fake.name()
 
     answer_data = {
         "form": basic_template_form_with_required_fields.id,
@@ -88,8 +91,11 @@ def test_social_security_validator(basic_template_form, admin_user):
         for field in section.fields.all():
             if field.identifier == "henkilotunnus":
                 social_security_field = field
-
-    entries = [{"field": social_security_field.id, "value": "010181-900C"}]
+    entries = dict(dict())
+    entries[social_security_field.section.identifier] = dict()
+    entries[social_security_field.section.identifier][
+        social_security_field.identifier
+    ] = "010181-900C"
 
     answer_data = {
         "form": basic_template_form.id,
@@ -101,9 +107,9 @@ def test_social_security_validator(basic_template_form, admin_user):
     # test that a correctly formatted ssn passes the validator
     assert answer_serializer.is_valid()
 
-    answer_data["entries"].append(
-        {"field": social_security_field.id, "value": "010181B900C"}
-    )
+    answer_data["entries"][social_security_field.section.identifier][
+        social_security_field.identifier
+    ] = "010181B900C"
     answer_serializer = AnswerSerializer(data=answer_data)
 
     # test that a incorrectly formatted ssn is caught by the validator
@@ -121,7 +127,11 @@ def test_company_id_validator(basic_template_form, admin_user):
             if field.identifier == "y-tunnus":
                 company_id_field = field
 
-    entries = [{"field": company_id_field.id, "value": "1234567-8"}]
+    entries = dict(dict())
+    entries[company_id_field.section.identifier] = dict()
+    entries[company_id_field.section.identifier][
+        company_id_field.identifier
+    ] = "1234567-8"
 
     answer_data = {
         "form": basic_template_form.id,
@@ -133,7 +143,9 @@ def test_company_id_validator(basic_template_form, admin_user):
     # test that a correctly formatted ssn passes the validator
     assert answer_serializer.is_valid()
 
-    answer_data["entries"].append({"field": company_id_field.id, "value": "12345A7-8"})
+    answer_data["entries"][company_id_field.section.identifier][
+        company_id_field.identifier
+    ] = "12345A7-8"
     answer_serializer = AnswerSerializer(data=answer_data)
 
     # test that a incorrectly formatted ssn is caught by the validator

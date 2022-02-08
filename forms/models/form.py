@@ -156,3 +156,4 @@ class Entry(models.Model):
     )
     field = models.ForeignKey(Field, on_delete=models.PROTECT)
     value = models.TextField()
+    extra_value = models.TextField(blank=True, null=True)
