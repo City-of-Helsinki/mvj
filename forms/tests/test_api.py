@@ -98,7 +98,7 @@ def test_add_and_delete_section_to_form(admin_client, basic_form):
 
 
 @pytest.mark.django_db
-def test_answer_post(admin_client, admin_user, basic_form):
+def test_answer_post(admin_client, admin_user, client, user_factory, basic_form):
     url = reverse("answer-list")
     payload = {
         "form": basic_form.id,
@@ -174,3 +174,13 @@ def test_answer_post(admin_client, admin_user, basic_form):
     url = reverse("answer-list")
     response = admin_client.get(url)
     assert response.status_code == 200
+
+    user = user_factory()
+    password = "test"
+    user.set_password(password)
+    user.save()
+    client.login(username=user.username, password=password)
+
+    url = reverse("answer-list")
+    response = client.get(url)
+    assert response.status_code == 403

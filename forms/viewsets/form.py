@@ -1,9 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from forms.models import Answer, Form
 from forms.serializers.form import AnswerSerializer, FormSerializer
-from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
+from leasing.permissions import (
+    MvjDjangoModelPermissions,
+    MvjDjangoModelPermissionsOrAnonReadOnly,
+)
 
 
 class FormViewSet(
@@ -33,3 +37,11 @@ class FormViewSet(
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
+    permission_classes = (MvjDjangoModelPermissions,)
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [
+                IsAuthenticated(),
+            ]
+        return super().get_permissions()
