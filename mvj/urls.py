@@ -181,6 +181,21 @@ router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
 router.register(r"land_use_agreement_invoice_row", LandUseAgreementInvoiceRowViewSet)
 router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetViewSet)
 
+pub_router = routers.DefaultRouter()
+
+pub_router.register(r"answer", AnswerViewSet, basename="pub_answer")
+pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
+pub_router.register(r"form", FormViewSet, basename="pub_form")
+pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
+pub_router.register(
+    r"plot_search_type", PlotSearchTypeViewSet, basename="pub_plot_search_type"
+)
+pub_router.register(
+    r"plot_search_s1156138-0ubtype",
+    PlotSearchSubtypeViewSet,
+    basename="pub_plot_search_subtype",
+)
+
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
 router.register("job", JobViewSet)
@@ -285,6 +300,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
+    path("v1/pub/", include(pub_router.urls)),
     path(
         "v1/", include((credit_integration_urls, "credit_integration"), namespace="v1"),
     ),
