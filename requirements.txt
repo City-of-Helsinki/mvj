@@ -51,7 +51,7 @@ defusedxml==0.6.0
     # via zeep
 deprecation==2.1.0
     # via django-helusers
-django==3.2.10
+django==3.2.11
     # via
     #   -r requirements.in
     #   django-anymail
@@ -133,8 +133,6 @@ future==0.18.2
     # via pyjwkest
 idna==2.9
     # via requests
-importlib-resources==5.4.0
-    # via jsonschema
 inflection==0.5.1
     # via drf-yasg
 isodate==0.6.0
@@ -264,8 +262,6 @@ xlsxwriter==1.2.8
     # via -r requirements.in
 zeep==3.4.0
     # via -r requirements.in
-zipp==3.6.0
-    # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
