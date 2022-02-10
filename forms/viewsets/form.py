@@ -3,7 +3,12 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from forms.models import Answer, Form
-from forms.serializers.form import AnswerSerializer, FormSerializer
+from forms.models.form import Attachment
+from forms.serializers.form import (
+    AnswerSerializer,
+    AttachmentSerializer,
+    FormSerializer,
+)
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
@@ -45,3 +50,13 @@ class AnswerViewSet(viewsets.ModelViewSet):
                 IsAuthenticated(),
             ]
         return super().get_permissions()
+
+
+class AttachmentViewSet(viewsets.ModelViewSet):
+    queryset = Attachment.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(user=self.request.user)

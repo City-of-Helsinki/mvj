@@ -8,6 +8,7 @@ from rest_framework.relations import PKOnlyObject
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
+from ..models.form import Attachment
 from ..validators.answer import FieldRegexValidator, RequiredFormFieldValidator
 
 
@@ -347,3 +348,21 @@ class AnswerSerializer(serializers.ModelSerializer):
         instance.user = validated_data.get("user", instance.user)
         instance.save()
         return instance
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Attachment
+        fields = (
+            "name",
+            "attachment",
+            "created_at",
+            "answer",
+            "field",
+        )
+
+    def save(self, **kwargs):
+        kwargs["user"] = self.context["request"].user
+        return super().save(**kwargs)
