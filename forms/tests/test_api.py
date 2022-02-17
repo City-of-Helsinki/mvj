@@ -1,11 +1,14 @@
 import json
+import os
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from faker import Faker
 
 from forms.enums import FormState
-from forms.models import Entry
+from forms.models import Entry, Field
+from forms.models.form import Attachment
 
 fake = Faker("fi_FI")
 
@@ -184,3 +187,28 @@ def test_answer_post(admin_client, admin_user, client, user_factory, basic_form)
     url = reverse("answer-list")
     response = client.get(url)
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_attachment_post(admin_client, basic_form):
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    payload = {
+        "field": Field.objects.all().first().id,
+        "name": fake.name(),
+        "attachment": example_file,
+    }
+    url = reverse("attachment-list")
+    response = admin_client.post(url, data=payload)
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_attachment_delete(admin_client, basic_form):
+    test_attachment_post(admin_client, basic_form)
+    attachment = Attachment.objects.all().first()
+    url = reverse("attachment-detail", kwargs={"pk": attachment.pk})
+    file_path = attachment.attachment.path
+    assert os.path.isfile(file_path) is True
+    response = admin_client.delete(url)
+    assert response.status_code == 204
+    assert os.path.isfile(file_path) is False

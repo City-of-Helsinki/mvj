@@ -146,6 +146,16 @@ class Answer(models.Model):
     ready = models.BooleanField(default=False)
 
 
+class Attachment(models.Model):
+    name = models.CharField(max_length=255)
+    attachment = models.FileField(upload_to="uploads/")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class Entry(models.Model):
     """
     Model for saving Answer entries
@@ -157,3 +167,6 @@ class Entry(models.Model):
     field = models.ForeignKey(Field, on_delete=models.PROTECT)
     value = models.TextField()
     extra_value = models.TextField(blank=True, null=True)
+
+
+from forms.signals import *  # noqa: E402 F403 F401

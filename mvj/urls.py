@@ -7,7 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
 
 from credit_integration import urls as credit_integration_urls
-from forms.viewsets.form import AnswerViewSet, FormViewSet
+from forms.viewsets.form import AnswerViewSet, AttachmentViewSet, FormViewSet
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
@@ -109,6 +109,7 @@ from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r"area_note", AreaNoteViewSet)
+router.register(r"attachment", AttachmentViewSet)
 router.register(r"basis_of_rent", BasisOfRentViewSet)
 router.register(r"collection_court_decision", CollectionCourtDecisionViewSet)
 router.register(r"collection_letter", CollectionLetterViewSet)
