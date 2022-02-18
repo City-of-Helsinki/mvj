@@ -146,9 +146,20 @@ class Answer(models.Model):
     ready = models.BooleanField(default=False)
 
 
+def get_attachment_file_upload_to(instance, filename):
+    return "/".join(
+        [
+            "plot_search_attachments",
+            str(instance.field.id),
+            str(instance.user.username),
+            filename,
+        ]
+    )
+
+
 class Attachment(models.Model):
     name = models.CharField(max_length=255)
-    attachment = models.FileField(upload_to="uploads/")
+    attachment = models.FileField(upload_to=get_attachment_file_upload_to)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
 
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
