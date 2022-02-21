@@ -251,7 +251,12 @@ class PlotSearchSerializerBase(
 
     form = InstanceDictPrimaryKeyRelatedField(
         instance_class=Form,
-        queryset=Form.objects.all(),
+        queryset=Form.objects.prefetch_related(
+            "sections__fields__choices",
+            "sections__subsections__fields__choices",
+            "sections__subsections__subsections__fields__choices",
+            "sections__subsections__subsections__subsections",
+        ),
         related_serializer=FormSerializer,
         required=False,
         allow_null=True,
