@@ -2,9 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from forms.filter import AnswerFilterSet
 from forms.models import Answer, Form
 from forms.models.form import Attachment
 from forms.serializers.form import (
+    AnswerListSerializer,
     AnswerSerializer,
     AttachmentSerializer,
     FormSerializer,
@@ -43,6 +45,8 @@ class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = (MvjDjangoModelPermissions,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AnswerFilterSet
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -50,6 +54,11 @@ class AnswerViewSet(viewsets.ModelViewSet):
                 IsAuthenticated(),
             ]
         return super().get_permissions()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AnswerListSerializer
+        return super().get_serializer_class()
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):

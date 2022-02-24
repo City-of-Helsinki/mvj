@@ -59,7 +59,10 @@ def test_entry_unique_validators(basic_answer, entry_factory):
 
 @pytest.mark.django_db
 def test_all_required_fields_answered_validator(
-    basic_template_form_with_required_fields, admin_user
+    django_db_setup,
+    basic_template_form_with_required_fields,
+    plot_search_target,
+    admin_user,
 ):
 
     entries = {}
@@ -75,6 +78,7 @@ def test_all_required_fields_answered_validator(
         "form": basic_template_form_with_required_fields.id,
         "user": admin_user.id,
         "entries": entries,
+        "targets": [plot_search_target.pk,],  # noqa: E231
     }
 
     with pytest.raises(ValidationError) as val_error:
@@ -84,7 +88,9 @@ def test_all_required_fields_answered_validator(
 
 
 @pytest.mark.django_db
-def test_social_security_validator(basic_template_form, admin_user):
+def test_social_security_validator(
+    django_db_setup, basic_template_form, plot_search_target, admin_user
+):
 
     social_security_field = None
     for section in basic_template_form.sections.all():
@@ -101,6 +107,7 @@ def test_social_security_validator(basic_template_form, admin_user):
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
+        "targets": [plot_search_target.pk,],  # noqa: E231
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -119,7 +126,9 @@ def test_social_security_validator(basic_template_form, admin_user):
 
 
 @pytest.mark.django_db
-def test_company_id_validator(basic_template_form, admin_user):
+def test_company_id_validator(
+    django_db_setup, basic_template_form, plot_search_target, admin_user
+):
 
     company_id_field = None
     for section in basic_template_form.sections.all():
@@ -137,6 +146,7 @@ def test_company_id_validator(basic_template_form, admin_user):
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
+        "targets": [plot_search_target.pk,],  # noqa: E231
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)

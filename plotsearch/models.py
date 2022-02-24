@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from rest_framework.serializers import ValidationError
 
-from forms.models import Form
+from forms.models import Answer, Form
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
@@ -127,6 +127,11 @@ class PlotSearchTarget(models.Model):
     # In Finnish: Kaavayksikkö
     plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
 
+    # In finnish: Hakemukset
+    answers = models.ManyToManyField(
+        Answer, related_name="targets", blank=True, through="ApplicationStatus"
+    )
+
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
@@ -164,6 +169,17 @@ class PlotSearchTarget(models.Model):
             return
 
         raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
+
+
+class ApplicationStatus(models.Model):
+    plot_search_target = models.ForeignKey(
+        PlotSearchTarget, related_name="statuses", blank=True, on_delete=models.CASCADE
+    )
+    answer = models.ForeignKey(
+        Answer, related_name="statuses", on_delete=models.CASCADE
+    )
+
+    reserved = models.BooleanField(default=False)
 
 
 class TargetInfoLink(models.Model):
