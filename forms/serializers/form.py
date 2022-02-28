@@ -6,6 +6,9 @@ from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
 
+from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
+from plotsearch.models import PlotSearchTarget
+
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
 from ..models.form import Attachment
@@ -222,12 +225,15 @@ class FormSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-
+    id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField()
+    targets = InstanceDictPrimaryKeyRelatedField(
+        many=True, queryset=PlotSearchTarget.objects.all()
+    )
 
     class Meta:
         model = Answer
-        fields = ("form", "user", "entries", "ready")
+        fields = ("id", "form", "targets", "entries", "ready")
         validators = [
             RequiredFormFieldValidator(),
             FieldRegexValidator(
@@ -303,7 +309,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
-        answer = Answer.objects.create(**validated_data)
+        targets = validated_data.pop("targets")
+        user = self.context["request"].user
+        answer = Answer.objects.create(user=user, **validated_data)
+        for target in targets:
+            answer.targets.add(target)
 
         for field_identifier, section_identifier, value in self.entry_generator(
             entries_data
@@ -345,9 +355,78 @@ class AnswerSerializer(serializers.ModelSerializer):
             )
 
         instance.ready = validated_data.get("ready", instance.ready)
-        instance.user = validated_data.get("user", instance.user)
+        instance.user = self.context["request"].user
         instance.save()
         return instance
+
+
+class PlotSearchTargetAnswerSerializer(serializers.ModelSerializer):
+    identifier = serializers.CharField(source="plan_unit.identifier")
+    address = serializers.SerializerMethodField()
+    reserved = serializers.SerializerMethodField()
+
+    def get_address(self, obj):
+        if obj.plan_unit is None:
+            return None
+        lease_address = (
+            obj.plan_unit.lease_area.addresses.all()
+            .order_by("-is_primary")
+            .values("address")
+            .first()
+        )
+        return lease_address
+
+    def get_reserved(self, obj):
+        if obj.statuses is None:
+            return None
+        status = obj.statuses.get(answer=self.parent.pk)
+
+        return status.reserved
+
+    class Meta:
+        model = PlotSearchTarget
+        fields = (
+            "identifier",
+            "address",
+            "reserved",
+        )
+
+
+class AnswerListSerializer(serializers.ModelSerializer):
+    applicant = serializers.CharField(source="user.username")
+    targets = PlotSearchTargetAnswerSerializer(many=True)
+    plot_search = serializers.SerializerMethodField()
+    plot_search_type = serializers.SerializerMethodField()
+    plot_search_subtype = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Answer
+        fields = (
+            "id",
+            "plot_search",
+            "plot_search_type",
+            "plot_search_subtype",
+            "applicant",
+            "targets",
+        )
+
+    def get_plot_search(self, obj):
+        if obj.form is None or not hasattr(obj.form, "plotsearch"):
+            return None
+        plot_search = obj.form.plotsearch
+        return plot_search.name
+
+    def get_plot_search_type(self, obj):
+        if obj.form is None or not hasattr(obj.form, "plotsearch"):
+            return None
+        plot_search_type = obj.form.plotsearch.subtype.type
+        return plot_search_type.name
+
+    def get_plot_search_subtype(self, obj):
+        if obj.form is None or not hasattr(obj.form, "plotsearch"):
+            return None
+        plot_search_subtype = obj.form.plotsearch.subtype
+        return plot_search_subtype.name
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

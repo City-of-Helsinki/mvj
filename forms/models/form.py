@@ -9,7 +9,6 @@ from ..utils import clone_object, generate_unique_identifier
 
 
 class Form(models.Model):
-
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_template = models.BooleanField(default=False)
@@ -29,7 +28,6 @@ class Form(models.Model):
 
 
 class Section(models.Model):
-
     title = models.CharField(max_length=255)
     identifier = models.SlugField()
     visible = models.BooleanField(default=True)
@@ -71,7 +69,6 @@ class Section(models.Model):
 
 
 class FieldType(models.Model):
-
     name = models.CharField(max_length=255)
     identifier = models.SlugField(unique=True)
 
@@ -88,7 +85,6 @@ class FieldType(models.Model):
 
 
 class Field(models.Model):
-
     label = models.CharField(max_length=255)
     hint_text = models.CharField(max_length=255, null=True, blank=True)
     identifier = models.SlugField()
@@ -127,7 +123,6 @@ class Field(models.Model):
 
 
 class Choice(models.Model):
-
     text = models.CharField(max_length=255)
     value = models.CharField(max_length=50)
     action = models.CharField(max_length=255, null=True, blank=True)
@@ -143,6 +138,9 @@ class Answer(models.Model):
 
     form = models.ForeignKey(Form, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now=True)
+    opened_at = models.DateTimeField(blank=True, null=True)
     ready = models.BooleanField(default=False)
 
 
