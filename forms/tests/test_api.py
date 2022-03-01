@@ -101,11 +101,20 @@ def test_add_and_delete_section_to_form(admin_client, basic_form):
 
 
 @pytest.mark.django_db
-def test_answer_post(admin_client, admin_user, client, user_factory, basic_form):
+def test_answer_post(
+    django_db_setup,
+    admin_client,
+    admin_user,
+    plot_search_target,
+    client,
+    user_factory,
+    basic_form,
+):
     url = reverse("answer-list")
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
+        "targets": [plot_search_target.pk,],  # noqa: E231
         "entries": json.dumps(
             {
                 "sections": {

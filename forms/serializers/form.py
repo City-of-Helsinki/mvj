@@ -379,7 +379,7 @@ class PlotSearchTargetAnswerSerializer(serializers.ModelSerializer):
     def get_reserved(self, obj):
         if obj.statuses is None:
             return None
-        status = obj.statuses.get(answer=self.parent.pk)
+        status = obj.statuses.get(answer=self.parent.parent.instance[0].pk)
 
         return status.reserved
 
