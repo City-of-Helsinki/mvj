@@ -430,11 +430,13 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Attachment
         fields = (
+            "id",
             "name",
             "attachment",
             "created_at",
