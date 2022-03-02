@@ -3,8 +3,7 @@ from django_filters.constants import EMPTY_VALUES
 from django_filters.rest_framework import FilterSet
 
 from forms.models import Answer
-from leasing.models import PlanUnit
-from plotsearch.models import PlotSearch
+from plotsearch.models import PlotSearch, PlotSearchTarget
 
 
 class InitFilter(object):
@@ -20,10 +19,8 @@ class PlotSearchFilter(InitFilter, filters.NumberFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(pk=value)
-        )
-        return super().filter(qs, value)
+        qs = qs.objects.filter(form__plotsearch__in=PlotSearch.objects.filter(pk=value))
+        return qs
 
 
 class PlotSearchTypeFilter(InitFilter, filters.CharFilter):
@@ -32,11 +29,11 @@ class PlotSearchTypeFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(
+            form__plotsearch__in=PlotSearch.objects.filter(
                 subtype__plot_search_type=value
             )
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class PlotSearchSubTypeFilter(InitFilter, filters.CharFilter):
@@ -45,9 +42,9 @@ class PlotSearchSubTypeFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(subtype=value)
+            form__plotsearch__in=PlotSearch.objects.filter(subtype=value)
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class PlotSearchStartDateFilter(InitFilter, filters.CharFilter):
@@ -56,9 +53,9 @@ class PlotSearchStartDateFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(begin_at__lt=value)
+            form__plotsearch__in=PlotSearch.objects.filter(begin_at__lt=value)
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class PlotSearchEndDateFilter(InitFilter, filters.CharFilter):
@@ -67,9 +64,9 @@ class PlotSearchEndDateFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(end_at__gte=value)
+            form__plotsearch__in=PlotSearch.objects.filter(end_at__gte=value)
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class PlotSearchStateFilter(InitFilter, filters.CharFilter):
@@ -78,9 +75,9 @@ class PlotSearchStateFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(stage=value)
+            form__plotsearch__in=PlotSearch.objects.filter(stage=value)
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
@@ -89,11 +86,9 @@ class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.objects.filter(
-            form__plotsearch_set__in=PlotSearch.objects.filter(
-                targets__in=PlanUnit.objects.filter(identifier=value)
-            )
+            targets__in=PlotSearchTarget.objects.filter(plan_unit__identifier=value)
         )
-        return super().filter(qs, value)
+        return qs
 
 
 class AnswerFilterSet(FilterSet):
@@ -104,6 +99,7 @@ class AnswerFilterSet(FilterSet):
     end_at = PlotSearchEndDateFilter()
     state = PlotSearchStateFilter()
     identifier = PlotSearchIdentificationFilter()
+    reserved = filters.BooleanFilter(field_name="statuses__reserved")
 
     class Meta:
         model = Answer
