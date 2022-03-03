@@ -419,7 +419,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
     def get_plot_search_type(self, obj):
         if obj.form is None or not hasattr(obj.form, "plotsearch"):
             return None
-        plot_search_type = obj.form.plotsearch.subtype.type
+        plot_search_type = obj.form.plotsearch.subtype.plot_search_type
         return plot_search_type.name
 
     def get_plot_search_subtype(self, obj):
