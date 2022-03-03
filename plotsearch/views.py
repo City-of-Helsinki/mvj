@@ -58,11 +58,7 @@ class PlotSearchViewSet(
             "plot_search_targets__plan_unit__lease_area__lease__decisions__type",
             "plot_search_targets__plan_unit__lease_area__lease__decisions__conditions",
             "plot_search_targets__plan_unit__lease_area__addresses",
-            "form__sections__fields__choices",
-            "form__sections__subsections__fields__choices",
-            "form__sections__subsections__subsections__fields__choices",
-            "form__sections__subsections__subsections__subsections",
-        )
+        ).select_related("form")
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
