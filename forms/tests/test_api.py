@@ -146,6 +146,7 @@ def test_answer_post(
                 "fields": {},
             }
         ),
+        "attachments": [],
         "ready": True,
     }
     response = admin_client.post(url, data=payload)
@@ -199,7 +200,9 @@ def test_answer_post(
 
 
 @pytest.mark.django_db
-def test_attachment_post(admin_client, basic_form):
+def test_attachment_post(
+    django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+):
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
     payload = {
         "field": Field.objects.all().first().id,
@@ -209,11 +212,54 @@ def test_attachment_post(admin_client, basic_form):
     url = reverse("attachment-list")
     response = admin_client.post(url, data=payload)
     assert response.status_code == 201
+    id = response.json()["id"]
+
+    url = reverse("answer-list")
+    payload = {
+        "form": basic_form.id,
+        "user": admin_user.pk,
+        "targets": [plot_search_target.pk,],  # noqa: E231
+        "entries": {
+            "sections": {
+                "company-information": [
+                    {
+                        "sections": {},
+                        "fields": {"company-name": {"value": "", "extraValue": None}},
+                    },
+                    {
+                        "sections": {},
+                        "fields": {"business-id": {"value": "", "extraValue": None}},
+                    },
+                ],
+                "contact-person": {
+                    "sections": {},
+                    "fields": {
+                        "first-name": {"value": False, "extraValue": None},
+                        "last-name": {
+                            "value": 99,
+                            "extraValue": "developers developers developers",
+                        },
+                    },
+                },
+            },
+            "fields": {},
+        },
+        "attachments": [id,],  # noqa: E231
+        "ready": True,
+    }
+    response = admin_client.post(url, data=payload, content_type="application/json")
+
+    assert response.status_code == 201
+    assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
 
 @pytest.mark.django_db
-def test_attachment_delete(admin_client, basic_form):
-    test_attachment_post(admin_client, basic_form)
+def test_attachment_delete(
+    django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+):
+    test_attachment_post(
+        django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+    )
     attachment = Attachment.objects.all().first()
     url = reverse("attachment-detail", kwargs={"pk": attachment.pk})
     file_path = attachment.attachment.path

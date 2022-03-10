@@ -230,10 +230,13 @@ class AnswerSerializer(serializers.ModelSerializer):
     targets = InstanceDictPrimaryKeyRelatedField(
         many=True, queryset=PlotSearchTarget.objects.all()
     )
+    attachments = serializers.ListSerializer(
+        child=serializers.IntegerField(), write_only=True, required=False
+    )
 
     class Meta:
         model = Answer
-        fields = ("id", "form", "targets", "entries", "ready")
+        fields = ("id", "form", "targets", "entries", "attachments", "ready")
         validators = [
             RequiredFormFieldValidator(),
             FieldRegexValidator(
@@ -310,6 +313,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
         targets = validated_data.pop("targets")
+        attachments = validated_data.pop("attachments", [])
         user = self.context["request"].user
         answer = Answer.objects.create(user=user, **validated_data)
         for target in targets:
@@ -332,6 +336,8 @@ class AnswerSerializer(serializers.ModelSerializer):
                 value=value["value"],
                 extra_value=value["extraValue"],
             )
+        for attachent_id in attachments:
+            Attachment.objects.filter(id=attachent_id).update(answer=answer)
         return answer
 
     def update(self, instance, validated_data):
