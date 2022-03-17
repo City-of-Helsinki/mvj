@@ -7,7 +7,7 @@ from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
 
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
-from plotsearch.models import PlotSearchTarget
+from plotsearch.models import ApplicationStatus, PlotSearchTarget
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -366,31 +366,23 @@ class AnswerSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PlotSearchTargetAnswerSerializer(serializers.ModelSerializer):
-    identifier = serializers.CharField(source="plan_unit.identifier")
+class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
+    identifier = serializers.CharField(source="plot_search_target.plan_unit.identifier")
     address = serializers.SerializerMethodField()
-    reserved = serializers.SerializerMethodField()
 
     def get_address(self, obj):
-        if obj.plan_unit is None:
+        if obj.plot_search_target.plan_unit is None:
             return None
         lease_address = (
-            obj.plan_unit.lease_area.addresses.all()
+            obj.plot_search_target.plan_unit.lease_area.addresses.all()
             .order_by("-is_primary")
             .values("address")
             .first()
         )
         return lease_address
 
-    def get_reserved(self, obj):
-        if obj.statuses is None:
-            return None
-        status = obj.statuses.get(answer=self.parent.parent.instance[0].pk)
-
-        return status.reserved
-
     class Meta:
-        model = PlotSearchTarget
+        model = ApplicationStatus
         fields = (
             "identifier",
             "address",
@@ -400,7 +392,7 @@ class PlotSearchTargetAnswerSerializer(serializers.ModelSerializer):
 
 class AnswerListSerializer(serializers.ModelSerializer):
     applicant = serializers.CharField(source="user.username")
-    targets = PlotSearchTargetAnswerSerializer(many=True)
+    targets = ApplicationStatusSerializer(many=True, source="statuses")
     plot_search = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
     plot_search_subtype = serializers.SerializerMethodField()
