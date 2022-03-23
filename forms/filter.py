@@ -1,8 +1,10 @@
+from django.db.models import Q
 from django_filters import filters
 from django_filters.constants import EMPTY_VALUES
 from django_filters.rest_framework import FilterSet
 
 from forms.models import Answer
+from leasing.models.land_area import LeaseAreaAddress
 from plotsearch.models import PlotSearch, PlotSearchTarget
 
 
@@ -91,6 +93,25 @@ class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
         return qs
 
 
+class SimpleFilter(InitFilter, filters.CharFilter):
+    def filter(self, qs, value):
+        qs, empty = self.init_filter(qs, value)
+        if empty:
+            return qs
+        address_qs = LeaseAreaAddress.objects.filter(address__icontains=value)
+        pst_qs = PlotSearchTarget.objects.filter(
+            Q(plan_unit__identifier__icontains=value)
+            | Q(plan_unit__lease_area__addresses__in=address_qs)
+        )
+        qs = qs.objects.filter(
+            Q(targets__in=pst_qs)
+            | Q(form__plot_search__name__icontains=value)
+            | Q(form__plot_search__subtype__plot_search_type__name__icontains=value)
+            | Q(form__plot_search__subtype__name__icontains=value)
+        )
+        return qs
+
+
 class AnswerFilterSet(FilterSet):
     plot_search = PlotSearchFilter()
     plot_search_type = PlotSearchTypeFilter()
@@ -100,6 +121,7 @@ class AnswerFilterSet(FilterSet):
     state = PlotSearchStateFilter()
     identifier = PlotSearchIdentificationFilter()
     reserved = filters.BooleanFilter(field_name="statuses__reserved")
+    q = SimpleFilter()
 
     class Meta:
         model = Answer
@@ -111,4 +133,5 @@ class AnswerFilterSet(FilterSet):
             "end_at",
             "state",
             "identifier",
+            "q",
         ]
