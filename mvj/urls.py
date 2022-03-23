@@ -99,6 +99,7 @@ from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from plotsearch.views import (
+    AreaSearchViewSet,
     FavouriteViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTypeViewSet,
@@ -109,6 +110,7 @@ from users.viewsets import UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r"area_note", AreaNoteViewSet)
+router.register(r"area_search", AreaSearchViewSet)
 router.register(r"attachment", AttachmentViewSet)
 router.register(r"basis_of_rent", BasisOfRentViewSet)
 router.register(r"collection_court_decision", CollectionCourtDecisionViewSet)
@@ -185,6 +187,7 @@ router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetVie
 pub_router = routers.DefaultRouter()
 
 pub_router.register(r"answer", AnswerViewSet, basename="pub_answer")
+pub_router.register(r"area_search", AreaSearchViewSet, basename="pub_area_search")
 pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
 pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
@@ -192,7 +195,7 @@ pub_router.register(
     r"plot_search_type", PlotSearchTypeViewSet, basename="pub_plot_search_type"
 )
 pub_router.register(
-    r"plot_search_s1156138-0ubtype",
+    r"plot_search_subtype",
     PlotSearchSubtypeViewSet,
     basename="pub_plot_search_subtype",
 )

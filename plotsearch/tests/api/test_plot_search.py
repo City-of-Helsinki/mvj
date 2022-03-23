@@ -619,3 +619,43 @@ def test_getting_and_editing_and_deleting_existing_info_link(
 
     response = admin_client.patch(url, data=payload, content_type="application/json")
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_area_search_detail(
+    django_db_setup, admin_client, area_search_test_data,
+):
+    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+
+    response = admin_client.get(url, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
+
+    url = reverse("areasearch-list")
+
+    response = admin_client.get(url, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.data["count"] > 0
+
+
+@pytest.mark.django_db
+def test_area_search_create_simple(
+    django_db_setup, admin_client, area_search_test_data
+):
+    url = reverse("areasearch-list")  # list == create
+
+    data = {
+        "description_area": get_random_string(),
+        "description_project": get_random_string(),
+        "description_intended_use": get_random_string(),
+        "intended_use": area_search_test_data.intended_use.pk,
+        "geometry": area_search_test_data.geometry.geojson,
+    }
+
+    response = admin_client.post(
+        url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
+    )
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)

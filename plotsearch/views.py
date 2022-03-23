@@ -7,8 +7,15 @@ from rest_framework_gis.filters import InBBoxFilter
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.models import Favourite, PlotSearch, PlotSearchSubtype, PlotSearchType
+from plotsearch.models import (
+    AreaSearch,
+    Favourite,
+    PlotSearch,
+    PlotSearchSubtype,
+    PlotSearchType,
+)
 from plotsearch.serializers import (
+    AreaSearchSerializer,
     FavouriteSerializer,
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
@@ -78,3 +85,9 @@ class FavouriteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user).prefetch_related("targets")
+
+
+class AreaSearchViewSet(viewsets.ModelViewSet):
+    queryset = AreaSearch.objects.all()
+    serializer_class = AreaSearchSerializer
+    permission_classes = (IsAuthenticated,)

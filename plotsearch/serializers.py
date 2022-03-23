@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
@@ -14,6 +15,7 @@ from leasing.serializers.utils import (
     UpdateNestedMixin,
 )
 from plotsearch.models import (
+    AreaSearch,
     Favourite,
     FavouriteTarget,
     PlotSearch,
@@ -533,3 +535,21 @@ class FavouriteSerializer(serializers.ModelSerializer):
             self.handle_targets(targets, instance)
             instance.save()
         return instance
+
+
+class AreaSearchSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    geometry = GeometryField()
+
+    class Meta:
+        model = AreaSearch
+        fields = (
+            "id",
+            "start_date",
+            "end_date",
+            "geometry",
+            "description_area",
+            "description_project",
+            "description_intended_use",
+            "intended_use",
+        )
