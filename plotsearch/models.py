@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.db import models as gmodels
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import pgettext_lazy
@@ -214,6 +215,49 @@ class FavouriteTarget(models.Model):
         Favourite, on_delete=models.CASCADE, related_name="targets"
     )
     plot_search_target = models.ForeignKey(PlotSearchTarget, on_delete=models.CASCADE)
+
+
+class IntendedUse(NameModel):
+    # In Finnish: Käyttötarkoitus
+
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Area search intended use")
+        verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
+        ordering = ["name"]
+
+
+class IntendedSubUse(NameModel):
+    # In finnish: Käyttötarkoituksen alitarkoitus
+
+    intended_use = models.ForeignKey(IntendedUse, on_delete=models.CASCADE)
+
+    class Meta(NameModel.Meta):
+        verbose_name = pgettext_lazy("Model name", "Area search sub intended use")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Area search sub intended uses"
+        )
+        ordering = ["intended_use", "name"]
+
+
+class AreaSearch(models.Model):
+    # In Finnish: aluehaku
+
+    geometry = gmodels.MultiPolygonField(
+        srid=4326, verbose_name=_("Geometry"), null=True, blank=True
+    )
+
+    description_area = models.TextField()
+    description_project = models.TextField()
+
+    intended_use = models.ForeignKey(IntendedSubUse, on_delete=models.CASCADE)
+    description_intended_use = models.TextField()
+
+    start_date = models.DateTimeField(verbose_name=_("Begin at"), null=True, blank=True)
+    end_date = models.DateTimeField(verbose_name=_("End at"), null=True, blank=True)
+
+    form = models.OneToOneField(
+        Form, on_delete=models.SET_NULL, null=True, related_name="area_search"
+    )
 
 
 from plotsearch.signals import *  # noqa: E402 F403 F401
