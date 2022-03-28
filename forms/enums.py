@@ -15,3 +15,16 @@ class FormState(str, Enum):
         WORK_IN_PROGRESS = pgettext_lazy("Form state", "Work in progress")
         READY = pgettext_lazy("Form state", "Ready")
         DELETED = pgettext_lazy("Form state", "Deleted")
+
+
+class SectionType(str, Enum):
+    """
+    In Finnish: Osion tyyppi
+    """
+
+    SHOW_ALWAYS = "show_always"
+    SHOW_IF = "show_if"
+
+    class Labels:
+        SHOW_ALWAYS = pgettext_lazy("Section type", "Show always")
+        SHOW_IF = pgettext_lazy("Section type", "Show if")
