@@ -13,7 +13,7 @@ from forms.models import Form, Section
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from plotsearch.enums import SearchClass
-from plotsearch.models import PlotSearch, PlotSearchTarget
+from plotsearch.models import AreaSearch, PlotSearch, PlotSearchTarget
 
 fake = Faker("fi_FI")
 
@@ -659,3 +659,8 @@ def test_area_search_create_simple(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
     )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+    assert AreaSearch.objects.filter(id=response.data["id"]).exists()
+    assert (
+        AreaSearch.objects.get(id=response.data["id"]).intended_use.id
+        == area_search_test_data.intended_use.pk
+    )
