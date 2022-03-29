@@ -158,7 +158,7 @@ packaging==21.3
     # via
     #   deprecation
     #   drf-yasg
-paramiko==2.7.1
+paramiko==2.10.1
     # via pysftp
 psycopg2-binary==2.8.4
     # via -r requirements.in
@@ -234,6 +234,7 @@ six==1.14.0
     #   docxtpl
     #   ecdsa
     #   isodate
+    #   paramiko
     #   pyjwkest
     #   pynacl
     #   python-dateutil
