@@ -14,6 +14,7 @@ class InitFilter(object):
             return qs, True
         if self.distinct:
             return qs.distinct(), False
+        return qs, False
 
 
 class PlotSearchFilter(InitFilter, filters.NumberFilter):
