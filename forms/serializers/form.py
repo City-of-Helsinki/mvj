@@ -393,7 +393,7 @@ class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
-    applicant = serializers.CharField(source="user.username")
+    applicant = serializers.SerializerMethodField()
     targets = ApplicationStatusSerializer(many=True, source="statuses")
     plot_search = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
@@ -409,6 +409,33 @@ class AnswerListSerializer(serializers.ModelSerializer):
             "applicant",
             "targets",
         )
+
+    @staticmethod
+    def get_applicant(obj):
+        try:
+            applicant_type = obj.entries.get(
+                field__identifier="hakija", field__section__identifier="hakijan-tiedot"
+            ).value
+            if applicant_type == "Yritys":
+                applicant = obj.entries.get(
+                    field__identifier="yrityksen-nimi",
+                    field__section__identifier="yrityksen-tiedot",
+                ).value
+            elif applicant_type == "Henkilö":
+                front_name = obj.entries.get(
+                    field__identifier="etunimi",
+                    field__section__identifier="henkilon-tiedot",
+                ).value
+                last_name = obj.entries.get(
+                    field__identifier="sukunimi",
+                    field__section__identifier="henkilon-tiedot",
+                ).value
+                applicant = " ".join([front_name, last_name])
+            else:
+                applicant = ""
+        except Entry.DoesNotExist:
+            applicant = ""
+        return applicant
 
     def get_plot_search(self, obj):
         if obj.form is None or not hasattr(obj.form, "plotsearch"):
