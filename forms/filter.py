@@ -5,7 +5,7 @@ from django_filters.rest_framework import FilterSet
 
 from forms.models import Answer
 from leasing.models.land_area import LeaseAreaAddress
-from plotsearch.models import PlotSearch, PlotSearchTarget
+from plotsearch.models import PlotSearchTarget
 
 
 class InitFilter(object):
@@ -15,68 +15,6 @@ class InitFilter(object):
         if self.distinct:
             return qs.distinct(), False
         return qs, False
-
-
-class PlotSearchFilter(InitFilter, filters.NumberFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(pk=value))
-        return qs
-
-
-class PlotSearchTypeFilter(InitFilter, filters.CharFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(
-            form__plotsearch__in=PlotSearch.objects.filter(
-                subtype__plot_search_type=value
-            )
-        )
-        return qs
-
-
-class PlotSearchSubTypeFilter(InitFilter, filters.CharFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(subtype=value))
-        return qs
-
-
-class PlotSearchStartDateFilter(InitFilter, filters.CharFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(
-            form__plotsearch__in=PlotSearch.objects.filter(begin_at__lt=value)
-        )
-        return qs
-
-
-class PlotSearchEndDateFilter(InitFilter, filters.CharFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(
-            form__plotsearch__in=PlotSearch.objects.filter(end_at__gte=value)
-        )
-        return qs
-
-
-class PlotSearchStateFilter(InitFilter, filters.CharFilter):
-    def filter(self, qs, value):
-        qs, empty = self.init_filter(qs, value)
-        if empty:
-            return qs
-        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(stage=value))
-        return qs
 
 
 class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
@@ -102,20 +40,24 @@ class SimpleFilter(InitFilter, filters.CharFilter):
         )
         qs = qs.filter(
             Q(targets__in=pst_qs)
-            | Q(form__plot_search__name__icontains=value)
-            | Q(form__plot_search__subtype__plot_search_type__name__icontains=value)
-            | Q(form__plot_search__subtype__name__icontains=value)
+            | Q(form__plotsearch__name__icontains=value)
+            | Q(form__plotsearch__subtype__plot_search_type__name__icontains=value)
+            | Q(form__plotsearch__subtype__name__icontains=value)
         )
         return qs
 
 
 class AnswerFilterSet(FilterSet):
-    plot_search = PlotSearchFilter()
-    plot_search_type = PlotSearchTypeFilter()
-    plot_search_subtype = PlotSearchSubTypeFilter()
-    begin_at = PlotSearchStartDateFilter()
-    end_at = PlotSearchEndDateFilter()
-    state = PlotSearchStateFilter()
+    plot_search = filters.NumberFilter(field_name="form__plotsearch_id")
+    plot_search_type = filters.CharFilter(
+        field_name="form__plotsearch__subtype__plot_search_type__name"
+    )
+    plot_search_subtype = filters.CharFilter(
+        field_name="form__plotsearch__subtype__name"
+    )
+    begin_at = filters.DateFromToRangeFilter(field_name="form__plotsearch__begin_at")
+    end_at = filters.DateFromToRangeFilter(field_name="form__plotsearch__end_at")
+    state = filters.CharFilter(field_name="form__plotsearch__stage__name")
     identifier = PlotSearchIdentificationFilter()
     reserved = filters.BooleanFilter(field_name="statuses__reserved")
     q = SimpleFilter()
