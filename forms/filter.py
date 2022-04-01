@@ -22,7 +22,7 @@ class PlotSearchFilter(InitFilter, filters.NumberFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(form__plotsearch__in=PlotSearch.objects.filter(pk=value))
+        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(pk=value))
         return qs
 
 
@@ -31,7 +31,7 @@ class PlotSearchTypeFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
+        qs = qs.filter(
             form__plotsearch__in=PlotSearch.objects.filter(
                 subtype__plot_search_type=value
             )
@@ -44,9 +44,7 @@ class PlotSearchSubTypeFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
-            form__plotsearch__in=PlotSearch.objects.filter(subtype=value)
-        )
+        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(subtype=value))
         return qs
 
 
@@ -55,7 +53,7 @@ class PlotSearchStartDateFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
+        qs = qs.filter(
             form__plotsearch__in=PlotSearch.objects.filter(begin_at__lt=value)
         )
         return qs
@@ -66,7 +64,7 @@ class PlotSearchEndDateFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
+        qs = qs.filter(
             form__plotsearch__in=PlotSearch.objects.filter(end_at__gte=value)
         )
         return qs
@@ -77,9 +75,7 @@ class PlotSearchStateFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
-            form__plotsearch__in=PlotSearch.objects.filter(stage=value)
-        )
+        qs = qs.filter(form__plotsearch__in=PlotSearch.objects.filter(stage=value))
         return qs
 
 
@@ -88,7 +84,7 @@ class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
         qs, empty = self.init_filter(qs, value)
         if empty:
             return qs
-        qs = qs.objects.filter(
+        qs = qs.filter(
             targets__in=PlotSearchTarget.objects.filter(plan_unit__identifier=value)
         )
         return qs
@@ -104,7 +100,7 @@ class SimpleFilter(InitFilter, filters.CharFilter):
             Q(plan_unit__identifier__icontains=value)
             | Q(plan_unit__lease_area__addresses__in=address_qs)
         )
-        qs = qs.objects.filter(
+        qs = qs.filter(
             Q(targets__in=pst_qs)
             | Q(form__plot_search__name__icontains=value)
             | Q(form__plot_search__subtype__plot_search_type__name__icontains=value)
