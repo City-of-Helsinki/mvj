@@ -48,7 +48,7 @@ class SimpleFilter(InitFilter, filters.CharFilter):
 
 
 class AnswerFilterSet(FilterSet):
-    plot_search = filters.NumberFilter(field_name="form__plotsearch_id")
+    plot_search = filters.NumberFilter(field_name="form__plotsearch__id")
     plot_search_type = filters.CharFilter(
         field_name="form__plotsearch__subtype__plot_search_type__name"
     )
@@ -72,5 +72,6 @@ class AnswerFilterSet(FilterSet):
             "end_at",
             "state",
             "identifier",
+            "reserved",
             "q",
         ]
