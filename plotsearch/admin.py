@@ -6,6 +6,8 @@ from leasing.admin import NameAdmin
 from plotsearch.models import (
     Favourite,
     FavouriteTarget,
+    IntendedSubUse,
+    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -36,3 +38,5 @@ admin.site.register(PlotSearchStage, NameAdmin)
 admin.site.register(Favourite, FavouriteAdmin)
 admin.site.register(PlotSearchSubtype, NameAdmin)
 admin.site.register(PlotSearchType, NameAdmin)
+admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(IntendedSubUse, NameAdmin)

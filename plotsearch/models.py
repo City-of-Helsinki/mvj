@@ -247,7 +247,6 @@ class AreaSearch(models.Model):
     )
 
     description_area = models.TextField()
-    description_project = models.TextField()
 
     intended_use = models.ForeignKey(IntendedSubUse, on_delete=models.CASCADE)
     description_intended_use = models.TextField()

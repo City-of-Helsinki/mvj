@@ -18,6 +18,8 @@ from plotsearch.models import (
     AreaSearch,
     Favourite,
     FavouriteTarget,
+    IntendedSubUse,
+    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -61,6 +63,36 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
             "show_district",
             "ordering",
             "plot_search_type",
+        )
+
+
+class IntendedSubUseLinkedSerializer(NameModelSerializer):
+    class Meta:
+        model = IntendedSubUse
+        fields = (
+            "id",
+            "name",
+        )
+
+
+class IntendedUseLinkedSerializer(NameModelSerializer):
+    class Meta:
+        model = IntendedUse
+        fields = (
+            "id",
+            "name",
+        )
+
+
+class IntendedSubUseSerializer(NameModelSerializer):
+    intended_use = IntendedUseLinkedSerializer()
+
+    class Meta:
+        model = IntendedSubUse
+        fields = (
+            "id",
+            "name",
+            "intended_use",
         )
 
 
@@ -239,6 +271,14 @@ class PlotSearchTypeSerializer(NameModelSerializer):
     class Meta:
         model = PlotSearchType
         fields = ("id", "name", "ordering", "subtypes")
+
+
+class IntendedUseSerializer(NameModelSerializer):
+    subuses = IntendedSubUseLinkedSerializer(many=True, source="intendedsubuse_set")
+
+    class Meta:
+        model = IntendedUse
+        fields = ("id", "name", "subuses")
 
 
 class PlotSearchSerializerBase(
@@ -549,7 +589,6 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             "end_date",
             "geometry",
             "description_area",
-            "description_project",
             "description_intended_use",
             "intended_use",
         )

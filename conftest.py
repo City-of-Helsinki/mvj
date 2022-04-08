@@ -79,7 +79,6 @@ def area_search_test_data(
     intended_sub_use = intended_sub_use_factory(intended_use=intended_use)
     area_search = area_search_factory(
         description_area=fake.name(),
-        description_project=fake.name(),
         description_intended_use=fake.name(),
         intended_use=intended_sub_use,
         geometry=GEOSGeometry(
