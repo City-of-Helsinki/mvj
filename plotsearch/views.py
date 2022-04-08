@@ -10,6 +10,8 @@ from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.models import (
     AreaSearch,
     Favourite,
+    IntendedSubUse,
+    IntendedUse,
     PlotSearch,
     PlotSearchSubtype,
     PlotSearchType,
@@ -17,6 +19,8 @@ from plotsearch.models import (
 from plotsearch.serializers import (
     AreaSearchSerializer,
     FavouriteSerializer,
+    IntendedSubUseSerializer,
+    IntendedUseSerializer,
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchSubtypeSerializer,
@@ -85,6 +89,28 @@ class FavouriteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user).prefetch_related("targets")
+
+
+class IntendedSubUseViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    queryset = IntendedSubUse.objects.all()
+    serializer_class = IntendedSubUseSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ["intended_use"]
+
+
+class IntendedUseViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    queryset = IntendedUse.objects.all()
+    serializer_class = IntendedUseSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related("intendedsubuse_set")
 
 
 class AreaSearchViewSet(viewsets.ModelViewSet):

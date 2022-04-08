@@ -649,7 +649,6 @@ def test_area_search_create_simple(
 
     data = {
         "description_area": get_random_string(),
-        "description_project": get_random_string(),
         "description_intended_use": get_random_string(),
         "intended_use": area_search_test_data.intended_use.pk,
         "geometry": area_search_test_data.geometry.geojson,
