@@ -1,8 +1,11 @@
 import datetime
 import json
+import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
+from glob import glob
 
 import pytest
+from constance.test import override_config
 from django.core import mail
 
 from laske_export.enums import LaskeExportLogInvoiceStatus
@@ -114,7 +117,7 @@ def send_invoices_to_laske_command_handle(
     monkeypatch_laske_exporter_send,
 ):
     command = send_invoices_to_laske_command
-    command.handle()
+    command.handle(service_unit_id=1)
 
 
 @pytest.fixture
@@ -125,7 +128,7 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     monkeypatch_laske_exporter_send_with_error,
 ):
     command = send_invoices_to_laske_command
-    command.handle()
+    command.handle(service_unit_id=1)
 
 
 @pytest.fixture
@@ -149,7 +152,7 @@ def land_use_agreement_invoice(
 def test_invalid_export_invoice(
     broken_invoice, invoice, land_use_agreement_invoice, monkeypatch_laske_exporter_send
 ):
-    exporter = LaskeExporter()
+    exporter = LaskeExporter(service_unit=invoice.service_unit)
     exporter.export_invoices([broken_invoice, invoice])
     exporter.export_land_use_agreement_invoices([land_use_agreement_invoice])
 
@@ -199,3 +202,111 @@ def test_send_invoices_to_laske_command_handle_with_unexpected_error(
     assert "X-Priority" in export_mail.extra_headers
     assert export_mail.extra_headers["X-Priority"] == "1"  # High
     assert laske_exporter_send_with_error__error_message in export_mail.body
+
+
+@pytest.mark.django_db
+@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@pytest.mark.parametrize("service_unit_to_use", [0, 1])
+def test_send_invoices_service_unit(
+    settings,
+    tmp_path,
+    service_unit_factory,
+    lease_factory,
+    contact_factory,
+    invoice_factory,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+    service_unit_to_use,
+):
+    settings.LASKE_EXPORT_ROOT = str(tmp_path)
+
+    service_units = [
+        service_unit_factory(
+            invoice_number_sequence_name="test_sequence",
+            first_invoice_number=1,
+            laske_sender_id="TEST1",
+            laske_sales_org="ORG1",
+        ),
+        service_unit_factory(
+            invoice_number_sequence_name="test_sequence2",
+            first_invoice_number=500,
+            laske_sender_id="TEST2",
+            laske_sales_org="ORG2",
+        ),
+    ]
+
+    leases = [
+        lease_factory(
+            type_id=1,
+            municipality_id=1,
+            district_id=5,
+            notice_period_id=1,
+            service_unit=service_units[0],
+        ),
+        lease_factory(
+            type_id=1,
+            municipality_id=1,
+            district_id=5,
+            notice_period_id=1,
+            service_unit=service_units[1],
+        ),
+    ]
+
+    contacts = [
+        contact_factory(
+            first_name="First name", last_name="Last name", type=ContactType.PERSON
+        ),
+        contact_factory(
+            first_name="First name2", last_name="Last name2", type=ContactType.PERSON
+        ),
+    ]
+
+    invoices = [
+        invoice_factory(
+            lease=leases[0],
+            total_amount=Decimal("123.45"),
+            billed_amount=Decimal("123.45"),
+            outstanding_amount=Decimal("123.45"),
+            recipient=contacts[0],
+            service_unit=service_units[0],
+        ),
+        invoice_factory(
+            lease=leases[1],
+            total_amount=Decimal("123.45"),
+            billed_amount=Decimal("123.45"),
+            outstanding_amount=Decimal("123.45"),
+            recipient=contacts[1],
+            service_unit=service_units[1],
+        ),
+    ]
+
+    service_unit = service_units[service_unit_to_use]
+
+    command = send_invoices_to_laske_command
+    command.handle(service_unit_id=service_unit.id)
+
+    invoice = invoices[service_unit_to_use]
+    invoice.refresh_from_db()
+
+    assert invoice.number == service_unit.first_invoice_number
+
+    other_invoice = invoices[0 if service_unit_to_use == 1 else 1]
+    other_invoice.refresh_from_db()
+
+    # Check that the invoice in the other service unit has not been handled
+    assert other_invoice.number is None
+    assert other_invoice.sent_to_sap_at is None
+
+    # Find the exported xml file and check that there is only one file
+    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
+    assert len(files) == 1
+    exported_file = files[0]
+
+    # Check that the file name has the sender ID in it
+    assert service_unit.laske_sender_id in exported_file
+
+    # Check that the XML has the correct values from the service unit
+    tree = et.parse(exported_file)
+    assert len(tree.findall("./SBO_SalesOrder")) == 1
+    assert tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
+    assert tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
