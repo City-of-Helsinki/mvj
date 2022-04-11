@@ -66,6 +66,7 @@ from leasing.models import (
     RentAdjustment,
     RentDueDate,
     RentIntendedUse,
+    ServiceUnit,
     SpecialProject,
     StatisticalUse,
     SupportiveHousing,
@@ -139,7 +140,8 @@ class AreaSourceAdmin(admin.ModelAdmin):
 
 
 class ContactAdmin(FieldPermissionsModelAdmin):
-    list_display = ("__str__", "type", "is_lessor")
+    list_display = ("__str__", "type", "service_unit", "is_lessor")
+    list_filter = (("type", EnumFieldListFilter), "service_unit", "is_lessor")
     search_fields = ["first_name", "last_name", "name"]
 
 
@@ -225,6 +227,7 @@ class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
 class LeaseAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
     raw_id_fields = ("identifier",)
+    autocomplete_fields = ("lessor",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -715,6 +718,12 @@ class LandUseAgreementAdmin(admin.ModelAdmin):
     inlines = [LandUseAgreementAddressInline]
 
 
+class ServiceUnitAdmin(admin.ModelAdmin):
+    list_display = ("name", "created_at", "modified_at")
+    readonly_fields = ("created_at", "modified_at")
+    ordering = ("name",)
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -762,6 +771,7 @@ admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
 admin.site.register(ReservationProcedure, NameAdmin)
+admin.site.register(ServiceUnit, ServiceUnitAdmin)
 admin.site.register(SpecialProject, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
