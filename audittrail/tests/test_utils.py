@@ -5,19 +5,23 @@ from django.contrib.contenttypes.models import ContentType
 from audittrail.utils import recursive_get_related
 from audittrail.viewsets import TYPE_MAP
 from leasing.enums import ContactType
+from leasing.models import ServiceUnit
 
 
 @pytest.mark.django_db
 def test_recursive_get_related(lease_factory, contact_factory, user_factory):
+    (service_unit, created) = ServiceUnit.objects.get_or_create(id=1)
     contact = contact_factory(
         first_name="Jane",
         last_name="Doe",
         type=ContactType.PERSON,
         national_identification_number="011213-1234",
+        service_unit=service_unit,
     )
-    lease = lease_factory()
+    lease = lease_factory(service_unit=service_unit)
 
     user = user_factory()
+    user.service_units.add(service_unit)
     exclude_apps = TYPE_MAP["lease"].get("exclude_apps", None)
     permissions = Permission.objects.filter(codename__in=["view_lease"])
     user.user_permissions.add(*permissions)

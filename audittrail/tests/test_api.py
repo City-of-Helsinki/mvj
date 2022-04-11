@@ -4,19 +4,23 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from leasing.enums import ContactType
+from leasing.models import ServiceUnit
 
 
 @pytest.mark.django_db
 def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory):
+    (service_unit, created) = ServiceUnit.objects.get_or_create(id=1)
     contact = contact_factory(
         first_name="Jane",
         last_name="Doe",
         type=ContactType.PERSON,
         national_identification_number="011213-1234",
+        service_unit=service_unit,
     )
-    lease = lease_factory()
+    lease = lease_factory(service_unit=service_unit)
 
     user = user_factory()
+    user.service_units.add(service_unit)
     permissions = Permission.objects.filter(codename__in=["view_lease"])
     user.user_permissions.add(*permissions)
     client = APIClient()
@@ -57,13 +61,16 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
 def test_audittrail_get_types(
     user_factory, lease_factory, contact_factory, area_search_factory
 ):
+    (service_unit, created) = ServiceUnit.objects.get_or_create(id=1)
     user = user_factory()
-    lease = lease_factory()
+    user.service_units.add(service_unit)
+    lease = lease_factory(service_unit=service_unit)
     contact = contact_factory(
         first_name="Jane",
         last_name="Doe",
         type=ContactType.PERSON,
         national_identification_number="011213-1234",
+        service_unit=service_unit,
     )
     areasearch = area_search_factory()
     objs = [lease, contact, areasearch]
