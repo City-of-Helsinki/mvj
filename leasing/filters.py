@@ -50,6 +50,10 @@ class CoalesceOrderingFilter(OrderingFilter):
         return queryset
 
 
+class NumberInFilter(filters.BaseInFilter, filters.NumberFilter):
+    """Number filter that accepts multiple values. Look up expr is 'in'"""
+
+
 class CollectionCourtDecisionFilter(FilterSet):
     lease = filters.NumberFilter()
 
@@ -83,6 +87,8 @@ class CommentFilter(FilterSet):
 
 
 class ContactFilter(FilterSet):
+    service_unit = NumberInFilter(field_name="service_unit_id")
+
     class Meta:
         model = Contact
         fields = [
@@ -131,6 +137,7 @@ class InvoiceFilter(FilterSet):
     going_to_sap = filters.BooleanFilter(
         method="filter_going_to_sap", label=_("Going to SAP")
     )
+    service_unit = NumberInFilter(field_name="service_unit_id")
 
     class Meta:
         model = Invoice
