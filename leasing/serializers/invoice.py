@@ -31,6 +31,7 @@ from leasing.serializers.utils import (
 )
 
 from .contact import ContactSerializer
+from .service_unit import ServiceUnitSerializer
 
 
 class ReceivableTypeSerializer(serializers.ModelSerializer):
@@ -202,6 +203,7 @@ class InvoiceSerializer(
     interest_invoices = InlineInvoiceSerializer(
         many=True, required=False, allow_null=True
     )
+    service_unit = ServiceUnitSerializer(read_only=True)
 
     class Meta:
         model = Invoice
@@ -264,6 +266,7 @@ class InvoiceCreateSerializer(
         max_digits=10, decimal_places=2, required=False
     )
     type = EnumField(enum=InvoiceType, required=False)
+    service_unit = ServiceUnitSerializer(read_only=True)
 
     def override_permission_check_field_name(self, field_name):
         if field_name == "tenant":
