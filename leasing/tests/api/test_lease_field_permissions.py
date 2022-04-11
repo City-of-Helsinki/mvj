@@ -86,6 +86,7 @@ def test_user_cannot_modify_field(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     user.user_permissions.add(Permission.objects.get(codename="change_lease"))
     user.user_permissions.add(Permission.objects.get(codename="view_lease_type"))
@@ -113,6 +114,7 @@ def test_user_can_modify_field(django_db_setup, client, lease_test_data, user_fa
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     user.user_permissions.add(Permission.objects.get(codename="change_lease"))
     user.user_permissions.add(Permission.objects.get(codename="change_lease_type"))

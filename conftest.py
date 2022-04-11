@@ -4,6 +4,7 @@ import json
 import factory
 import pytest
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import GEOSGeometry
 from django.urls import reverse
 from django.utils import timezone
@@ -156,6 +157,15 @@ class LeaseFactory(factory.DjangoModelFactory):
     municipality = factory.SubFactory(MunicipalityFactory)
     district = factory.SubFactory(DistrictFactory)
 
+    @factory.lazy_attribute
+    def service_unit(self):
+        from leasing.models import ServiceUnit
+
+        try:
+            return ServiceUnit.objects.get(pk=1)
+        except ServiceUnit.DoesNotExist:
+            return None
+
     class Meta:
         model = Lease
 
@@ -239,6 +249,21 @@ class PlotSearchStageFactory(factory.DjangoModelFactory):
 class UserFactory(factory.DjangoModelFactory):
     class Meta:
         model = User
+
+    @factory.post_generation
+    def service_units(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+
+        for service_unit in extracted:
+            self.service_units.add(service_unit)
+
+    @factory.post_generation
+    def permissions(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+
+        self.user_permissions.set(Permission.objects.filter(codename__in=extracted))
 
 
 @pytest.fixture
@@ -347,6 +372,17 @@ def plot_search_target(
 
 @register
 class ContactFactory(factory.DjangoModelFactory):
+    type = ContactType.PERSON
+
+    @factory.lazy_attribute
+    def service_unit(self):
+        from leasing.models import ServiceUnit
+
+        try:
+            return ServiceUnit.objects.get(pk=1)
+        except ServiceUnit.DoesNotExist:
+            return None
+
     class Meta:
         model = Contact
 

@@ -1,11 +1,12 @@
 import json
 
 import pytest
+from django.contrib.auth.models import Permission
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
-from leasing.enums import PlotSearchTargetType
-from leasing.models import ContractRent, Lease, PlanUnit
+from leasing.enums import ContactType, PlotSearchTargetType
+from leasing.models import ContractRent, Lease, PlanUnit, ServiceUnit
 
 
 @pytest.mark.django_db
@@ -372,3 +373,193 @@ def test_patch_lease_has_contract_rent_base_amount_set(
 
     assert contract_rent.amount == contract_rent.base_amount
     assert contract_rent.period == contract_rent.base_amount_period
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("change_service_unit", [False, True])
+def test_patch_lease_should_validate_service_unit_change(
+    django_db_setup,
+    client,
+    lease_factory,
+    user_factory,
+    service_unit_factory,
+    change_service_unit,
+):
+    # Service unit from the fixtures
+    service_unit = ServiceUnit.objects.get(pk=1)
+
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        service_unit=service_unit,
+    )
+
+    service_unit2 = service_unit_factory()
+
+    permission_names = [
+        "change_lease",
+        "view_lease_id",
+        "change_lease_identifier",
+        "change_lease_type",
+        "change_lease_municipality",
+        "change_lease_district",
+        "change_lease_service_unit",
+    ]
+
+    user = user_factory(
+        username="test_user",
+        service_units=[service_unit, service_unit2],
+        permissions=permission_names,
+    )
+
+    client.force_login(user)
+
+    data = {
+        "service_unit": service_unit2.id if change_service_unit else service_unit.id,
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    if change_service_unit:
+        assert response.status_code == 400, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+    else:
+        assert response.status_code == 200, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("user_has_correct_service_unit", [False, True])
+def test_patch_lease_checks_service_unit(
+    django_db_setup,
+    client,
+    lease_factory,
+    user_factory,
+    service_unit_factory,
+    user_has_correct_service_unit,
+):
+    # Service unit from the fixtures
+    service_unit = ServiceUnit.objects.get(pk=1)
+
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        service_unit=service_unit,
+    )
+
+    service_unit2 = service_unit_factory()
+
+    user = user_factory(username="test_user")
+    if user_has_correct_service_unit:
+        user.service_units.add(service_unit)
+    else:
+        user.service_units.add(service_unit2)
+
+    permission_names = [
+        "change_lease",
+        "view_lease_id",
+        "change_lease_notice_period",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.force_login(user)
+
+    data = {
+        "notice_period": 2,
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    if user_has_correct_service_unit:
+        assert response.status_code == 200, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+    else:
+        assert response.status_code == 403, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+
+
+@pytest.mark.django_db
+def test_patch_lease_checks_service_unit_on_related_contact(
+    django_db_setup,
+    client,
+    lease_factory,
+    user_factory,
+    service_unit_factory,
+    contact_factory,
+):
+    # Service unit from the fixtures
+    service_unit = ServiceUnit.objects.get(pk=1)
+    service_unit2 = service_unit_factory()
+
+    contact1 = contact_factory(
+        name="Eka", type=ContactType.UNIT, service_unit=service_unit, is_lessor=True
+    )
+    contact2 = contact_factory(
+        name="Toka", type=ContactType.UNIT, service_unit=service_unit2, is_lessor=True
+    )
+
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        service_unit=service_unit,
+        lessor=contact1,
+    )
+
+    user = user_factory(username="test_user")
+    user.service_units.add(service_unit)
+
+    permission_names = [
+        "change_lease",
+        "view_lease_id",
+        "change_lease_lessor",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.force_login(user)
+
+    data = {
+        "lessor": {"id": contact2.id},
+    }
+
+    url = reverse("lease-detail", kwargs={"pk": lease.id})
+
+    response = client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    lease.refresh_from_db()
+
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+    assert lease.lessor == contact1
