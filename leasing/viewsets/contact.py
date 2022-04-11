@@ -4,7 +4,7 @@ from rest_framework import filters
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import CoalesceOrderingFilter, ContactFilter
 from leasing.models import Contact
-from leasing.serializers.contact import ContactSerializer
+from leasing.serializers.contact import ContactCreateUpdateSerializer, ContactSerializer
 
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
@@ -43,3 +43,9 @@ class ContactViewSet(
 
     def get_queryset(self):
         return Contact.objects.select_related("service_unit")
+
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update", "metadata"):
+            return ContactCreateUpdateSerializer
+
+        return ContactSerializer

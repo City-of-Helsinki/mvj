@@ -275,6 +275,15 @@ class InvoiceCreateSerializer(
         return field_name
 
     def validate(self, attrs):
+        request = self.context.get("request")
+        if (
+            attrs.get("lease").service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise ValidationError(
+                _("Can only add invoices to service units the user is a member of")
+            )
+
         if not bool(attrs.get("recipient")) ^ bool(attrs.get("tenant")):
             raise ValidationError(_("Either recipient or tenant is required."))
 
@@ -288,6 +297,7 @@ class InvoiceCreateSerializer(
 
     def create(self, validated_data):
         validated_data["state"] = InvoiceState.OPEN
+        validated_data["service_unit"] = validated_data["lease"].service_unit
 
         if not validated_data.get("total_amount"):
             total_amount = Decimal(0)
@@ -613,6 +623,7 @@ class CreateChargeSerializer(serializers.Serializer):
                 {
                     "type": InvoiceType.CHARGE,
                     "lease": lease,
+                    "service_unit": lease.service_unit,
                     "recipient": contact,
                     "due_date": validated_data.get("due_date"),
                     "invoicing_date": today,

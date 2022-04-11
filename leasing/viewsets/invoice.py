@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
@@ -30,6 +31,7 @@ from leasing.serializers.invoice import (
     SentToSapInvoiceUpdateSerializer,
 )
 
+from ..permissions import IsMemberOfSameServiceUnit, MvjDjangoModelPermissions
 from .utils import AtomicTransactionModelViewSet
 
 
@@ -51,6 +53,11 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         "lease__identifier__sequence",
     )
     coalesce_ordering = {"recipient_name": ("recipient__name", "recipient__last_name")}
+    permission_classes = [
+        IsAuthenticated,
+        MvjDjangoModelPermissions,
+        IsMemberOfSameServiceUnit,
+    ]
 
     def get_queryset(self):
         queryset = Invoice.objects.select_related(
