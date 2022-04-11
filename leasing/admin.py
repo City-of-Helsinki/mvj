@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from django.contrib.gis import admin
 from django.utils.translation import gettext_lazy as _
 from enumfields.admin import EnumFieldListFilter
@@ -510,10 +512,15 @@ class InvoiceAdmin(FieldPermissionsModelAdmin):
     actions = ["resend_invoice"]
 
     def resend_invoice(self, request, queryset):
-        exporter = LaskeExporter()
+        invoice_count = 0
+        for service_unit, group in groupby(queryset, lambda i: i.service_unit):
+            invoices = list(group)
+            invoice_count += len(invoices)
 
-        exporter.export_invoices(queryset)
-        self.message_user(request, f"Invoice resent for {queryset.count()} invoices.")
+            exporter = LaskeExporter(service_unit=service_unit)
+            exporter.export_invoices(invoices)
+
+        self.message_user(request, f"Invoice resent for {invoice_count} invoices.")
 
     list_display = (
         "number",

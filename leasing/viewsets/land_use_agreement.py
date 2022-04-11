@@ -432,8 +432,8 @@ class LandUseAgreementInvoiceExportToLaskeView(APIView):
             )
 
         try:
-            exporter = LaskeExporter()
-            exporter.export_invoices(invoice)
+            exporter = LaskeExporter(service_unit=invoice.service_unit)
+            exporter.export_land_use_agreement_invoices(invoice)
         except (
             LaskeExporterException,
             ConnectionException,

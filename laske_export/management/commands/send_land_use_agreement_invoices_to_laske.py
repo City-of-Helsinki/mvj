@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 from django.utils import translation
 
 from laske_export.exporter import LaskeExporter
+from leasing.models import ServiceUnit
 from leasing.models.land_use_agreement import LandUseAgreementInvoice
 
 
@@ -14,9 +15,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
 
+        # TODO: Make configurable
+        land_use_agreement_service_unit = ServiceUnit.objects.get(pk=1)
+
         # noinspection PyBroadException
         try:
-            exporter = LaskeExporter()
+            exporter = LaskeExporter(service_unit=land_use_agreement_service_unit)
             exporter.message_output = self.stdout
 
             self.stdout.write("Finding unsent land use agreement invoices")
