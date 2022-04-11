@@ -93,6 +93,7 @@ from .rent import (
     RentDueDate,
     RentIntendedUse,
 )
+from .service_unit import ServiceUnit
 from .tenant import Tenant, TenantContact
 from .ui_data import UiData
 from .vat import Vat
@@ -188,6 +189,7 @@ __all__ = [
     "RentDueDate",
     "RentIntendedUse",
     "ReservationProcedure",
+    "ServiceUnit",
     "SpecialProject",
     "StatisticalUse",
     "SupportiveHousing",

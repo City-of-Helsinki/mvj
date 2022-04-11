@@ -1,0 +1,15 @@
+[
+    {
+        "model": "leasing.serviceunit",
+        "pk": 1,
+        "fields": {
+            "name": "Maaomaisuuden kehittäminen ja tontit",
+            "description": null,
+            "laske_sender_id": "ID340",
+            "laske_import_id": "ID256",
+            "laske_sales_org": "2800",
+            "created_at": "2021-11-22T08:00:00Z",
+            "modified_at": "2021-11-22T08:00:00Z"
+        }
+    }
+]
