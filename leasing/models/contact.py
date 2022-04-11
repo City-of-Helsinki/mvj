@@ -128,6 +128,14 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
+    # In Finnish: Palvelukokonaisuus
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit",
+        verbose_name=_("Service unit"),
+        related_name="contacts",
+        on_delete=models.PROTECT,
+    )
+
     recursive_get_related_skip_relations = [
         "tenants",
         "tenantcontact",
@@ -180,6 +188,9 @@ class Contact(TimeStampedSafeDeleteModel):
                 )
             else:
                 return name
+
+    def get_service_unit(self):
+        return self.service_unit
 
 
 auditlog.register(Contact)
