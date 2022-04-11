@@ -38,3 +38,6 @@ class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     )
     coalesce_ordering = {"names": ("name", "last_name")}
     ordering = ("names", "first_name")
+
+    def get_queryset(self):
+        return Contact.objects.select_related("service_unit")

@@ -53,7 +53,9 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     coalesce_ordering = {"recipient_name": ("recipient__name", "recipient__last_name")}
 
     def get_queryset(self):
-        queryset = Invoice.objects.select_related("recipient").prefetch_related(
+        queryset = Invoice.objects.select_related(
+            "recipient", "service_unit"
+        ).prefetch_related(
             "rows__receivable_type",
             "rows",
             "rows__tenant",

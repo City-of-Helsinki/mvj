@@ -296,6 +296,7 @@ class LeaseManager(SafeDeleteManager):
                 "identifier__municipality",
                 "identifier__district",
                 "lessor",
+                "lessor__service_unit",
                 "intended_use",
                 "supportive_housing",
                 "statistical_use",
@@ -305,12 +306,15 @@ class LeaseManager(SafeDeleteManager):
                 "hitas",
                 "notice_period",
                 "preparer",
+                "service_unit",
             )
             .prefetch_related(
                 "tenants",
                 "tenants__rent_shares",
+                "tenants__rent_shares__intended_use",
                 "tenants__tenantcontact_set",
                 "tenants__tenantcontact_set__contact",
+                "tenants__tenantcontact_set__contact__service_unit",
                 "lease_areas",
                 "contracts",
                 "decisions",
@@ -344,6 +348,7 @@ class LeaseManager(SafeDeleteManager):
             "identifier__municipality",
             "identifier__district",
             "preparer",
+            "service_unit",
         )
 
     def get_by_identifier(self, identifier):
@@ -619,6 +624,14 @@ class Lease(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Palvelukokonaisuus
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit",
+        verbose_name=_("Service unit"),
+        related_name="leases",
+        on_delete=models.PROTECT,
+    )
+
     objects = LeaseManager()
 
     recursive_get_related_skip_relations = [
@@ -635,6 +648,9 @@ class Lease(TimeStampedSafeDeleteModel):
 
     def __str__(self):
         return self.get_identifier_string()
+
+    def get_service_unit(self):
+        return self.service_unit
 
     def get_identifier_string(self):
         if self.identifier:
@@ -1094,6 +1110,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     "calculation_result": period_rent["calculation_result"],
                     "state": InvoiceState.OPEN,
                     "notes": " ".join(notes),
+                    "service_unit": self.service_unit,
                 }
 
                 billing_period_invoices.append(invoice_datum)
@@ -1342,6 +1359,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
             invoice_data = {
                 "lease": self,
+                "service_unit": self.service_unit,
                 "invoicing_date": today,
                 "billing_period_start_date": billing_period_start_date,
                 "billing_period_end_date": billing_period_end_date,
@@ -1404,6 +1422,8 @@ class Lease(TimeStampedSafeDeleteModel):
             "created_at",
             "modified_at",
             "plot_search_target",
+            "notice_period",
+            "service_unit",
         )
 
         return is_instance_empty(self, skip_fields=skip_fields)
