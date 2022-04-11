@@ -2727,6 +2727,23 @@ msgctxt "Model name"
 msgid "Temporary subventions (Basis of rent)"
 msgstr "Tilapäisalennukset (Vuokrausperiaate)"
 
+msgid "Sender ID in Laske"
+msgstr "Lähettäjätunnus (Sender ID) Laske:ssa"
+
+msgid "Import ID in Laske"
+msgstr "Tuontitunnus (Import ID) Laske:ssa"
+
+msgid "Sales Organisation in Laske"
+msgstr "Myyntiorganisaatio Laske:ssa"
+
+msgctxt "Model name"
+msgid "Service unit"
+msgstr "Palvelukokonaisuus"
+
+msgctxt "Model name"
+msgid "Service units"
+msgstr "Palvelukokonaisuudet"
+
 msgid "Reference"
 msgstr "Viite"
 
