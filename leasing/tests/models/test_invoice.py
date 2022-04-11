@@ -4,12 +4,105 @@ from decimal import Decimal
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
 from django.urls import reverse
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
-from leasing.models import Invoice, ReceivableType
+from leasing.models import Invoice, ReceivableType, ServiceUnit
 from leasing.models.invoice import InvoiceSet
 from leasing.models.tenant import TenantContactType
+
+
+@pytest.mark.django_db
+def test_invoice_number_must_be_unique(
+    service_unit_factory, lease_factory, contact_factory, invoice_factory
+):
+    service_unit = service_unit_factory()
+
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
+    )
+
+    contact = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("123.45"),
+        billed_amount=Decimal("123.45"),
+        outstanding_amount=Decimal("123.45"),
+        recipient=contact,
+        service_unit=service_unit,
+    )
+    invoice2 = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("123.45"),
+        billed_amount=Decimal("123.45"),
+        outstanding_amount=Decimal("123.45"),
+        recipient=contact,
+        service_unit=service_unit,
+    )
+
+    invoice.number = 1
+    invoice.save()
+
+    with pytest.raises(IntegrityError):
+        invoice2.number = 1
+        invoice2.save()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "invoice_number_sequence_name, expected",
+    [
+        ["use_default_service_unit", 1000000],
+        [None, 1000000],
+        ["", 1000000],
+        ["new_name", 1],
+        ["another", 1],
+    ],
+)
+def test_invoice_generate_number(
+    service_unit_factory,
+    lease_factory,
+    contact_factory,
+    invoice_factory,
+    invoice_number_sequence_name,
+    expected,
+):
+    if invoice_number_sequence_name == "use_default_service_unit":
+        service_unit = ServiceUnit.objects.get(pk=1)
+    else:
+        service_unit = service_unit_factory(
+            invoice_number_sequence_name=invoice_number_sequence_name
+        )
+
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
+    )
+
+    contact = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("123.45"),
+        billed_amount=Decimal("123.45"),
+        outstanding_amount=Decimal("123.45"),
+        recipient=contact,
+    )
+
+    assert invoice.generate_number() == expected
 
 
 @pytest.mark.django_db
