@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -56,6 +57,7 @@ from leasing.serializers.lease import (
     SupportiveHousingSerializer,
 )
 
+from ..permissions import IsMemberOfSameServiceUnit, MvjDjangoModelPermissions
 from .utils import AtomicTransactionModelViewSet, AuditLogMixin
 
 
@@ -158,6 +160,11 @@ class LeaseViewSet(
     )
     bbox_filter_field = "lease_areas__geometry"
     bbox_filter_include_overlapping = True
+    permission_classes = [
+        IsAuthenticated,
+        MvjDjangoModelPermissions,
+        IsMemberOfSameServiceUnit,
+    ]
 
     def get_queryset(self):  # noqa: C901
         """Allow filtering leases by various query parameters

@@ -15,6 +15,7 @@ from leasing.models import (
     InfillDevelopmentCompensation,
     RelatedLease,
     ReservationProcedure,
+    ServiceUnit,
 )
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer,
@@ -415,6 +416,29 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
         exclude = None
 
 
+class SameServiceUnitValidator:
+    requires_context = True
+
+    def __init__(self):
+        pass
+
+    def __call__(self, value, serializer_field):
+        if (
+            not hasattr(value, "get_service_unit")
+            or not serializer_field.parent.instance
+            or not hasattr(serializer_field.parent.instance, "get_service_unit")
+        ):
+            return
+
+        if (
+            value.get_service_unit()
+            != serializer_field.parent.instance.get_service_unit()
+        ):
+            raise serializers.ValidationError(
+                "Must be from the same service unit as the parent"
+            )
+
+
 class LeaseUpdateSerializer(
     UpdateNestedMixin,
     EnumSupportSerializerMixin,
@@ -433,6 +457,7 @@ class LeaseUpdateSerializer(
         related_serializer=ContactSerializer,
         required=False,
         allow_null=True,
+        validators=[SameServiceUnitValidator()],
     )
     contracts = ContractCreateUpdateSerializer(
         many=True, required=False, allow_null=True
@@ -463,9 +488,26 @@ class LeaseUpdateSerializer(
     invoice_notes = InvoiceNoteCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
+    service_unit = InstanceDictPrimaryKeyRelatedField(
+        instance_class=ServiceUnit,
+        queryset=ServiceUnit.objects.all(),
+        related_serializer=ServiceUnitSerializer,
+        required=True,
+    )
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
+
+    def validate_service_unit(self, value):
+        request = self.context.get("request")
+        if not request or request.user.is_superuser:
+            return value
+
+        # TODO: Should the users in the admin group have the permission to change the service unit?
+        if value != self.instance.service_unit:
+            raise serializers.ValidationError(_("Cannot change service unit"))
+
+        return value
 
     class Meta:
         model = Lease
@@ -484,6 +526,18 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
             return "related_leases"
 
         return field_name
+
+    def validate_service_unit(self, value):
+        request = self.context.get("request")
+        if not request or request.user.is_superuser:
+            return value
+
+        if value not in request.user.service_units.all():
+            raise serializers.ValidationError(
+                _("Can only add leases to service units the user is a member of")
+            )
+
+        return value
 
     class Meta:
         model = Lease
