@@ -491,6 +491,9 @@ msgstr "Vuokratunnus"
 msgid "Due date"
 msgstr "Eräpäivä"
 
+msgid "Service unit"
+msgstr "Palvelukokonaisuus"
+
 msgid "Value should be a string"
 msgstr "Arvon pitää olla merkkijono"
 

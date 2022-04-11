@@ -26,6 +26,7 @@ class ContactFactory(factory.django.DjangoModelFactory):
     first_name = Faker("first_name")
     last_name = Faker("last_name")
     name = Faker("name")
+    service_unit_id = 1
 
 
 class BusinessContactFactory(ContactFactory):

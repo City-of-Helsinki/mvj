@@ -22,7 +22,7 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         verbose_name=_("Sales Organisation in Laske"), max_length=255
     )
 
-    recursive_get_related_skip_relations = []
+    recursive_get_related_skip_relations = ["contacts", "leases", "invoices"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Service unit")
