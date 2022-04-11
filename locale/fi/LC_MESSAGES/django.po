@@ -2730,6 +2730,12 @@ msgctxt "Model name"
 msgid "Temporary subventions (Basis of rent)"
 msgstr "Tilapäisalennukset (Vuokrausperiaate)"
 
+msgid "Invoice number sequence name"
+msgstr "Laskunumerosarjan nimi"
+
+msgid "First invoice number"
+msgstr "Ensimmäinen laskunumero"
+
 msgid "Sender ID in Laske"
 msgstr "Lähettäjätunnus (Sender ID) Laske:ssa"
 
