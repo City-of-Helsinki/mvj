@@ -22,6 +22,7 @@ def test_lock_lease_basis_of_rent(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     permission_codenames = [
         "view_lease",
@@ -74,6 +75,7 @@ def test_cannot_change_locked_lease_basis_of_rent(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     permission_codenames = [
         "view_lease",
@@ -131,6 +133,7 @@ def test_cannot_unclock_locked_lease_basis_of_rent(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     permission_codenames = [
         "view_lease",
@@ -187,6 +190,7 @@ def test_can_unclock_locked_lease_basis_of_rent(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     permission_codenames = [
         "view_lease",
@@ -244,6 +248,7 @@ def test_cannot_remove_locked_lease_basis_of_rent(
     user = user_factory(username="test_user")
     user.set_password("test_password")
     user.save()
+    user.service_units.add(lease_test_data["lease"].service_unit)
 
     permission_codenames = [
         "view_lease",

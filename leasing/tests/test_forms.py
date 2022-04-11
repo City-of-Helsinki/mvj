@@ -1,10 +1,12 @@
 import pytest
 
 from leasing.enums import LeaseState, TenantContactType
-from leasing.forms import LeaseSearchForm
 
 
+@pytest.mark.django_db
 def test_lease_search_form_no_fields_required():
+    from leasing.forms import LeaseSearchForm
+
     form = LeaseSearchForm({})
     assert form.is_valid()
 
@@ -22,7 +24,10 @@ def test_lease_search_form_no_fields_required():
         ("1234567-89", False),
     ],
 )
+@pytest.mark.django_db
 def test_lease_search_form_business_id(business_id, expected):
+    from leasing.forms import LeaseSearchForm
+
     form = LeaseSearchForm({"business_id": business_id})
 
     assert expected == form.is_valid()
@@ -59,18 +64,23 @@ def test_lease_search_form_business_id(business_id, expected):
         ),
     ],
 )
+@pytest.mark.django_db
 def test_lease_search_form_tenantcontact_type_choices(tenantcontact_type, expected):
+    from leasing.forms import LeaseSearchForm
+
     form = LeaseSearchForm({"tenantcontact_type": tenantcontact_type})
 
     assert expected == form.is_valid()
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "lease_type, expected",
     [(None, True), ("", True), ("0", False), (123, False), (1, True), (2, True)],
 )
+@pytest.mark.django_db
 def test_lease_search_form_lease_type_choices(lease_type, expected):
+    from leasing.forms import LeaseSearchForm
+
     form = LeaseSearchForm({"lease_type": lease_type})
 
     assert expected == form.is_valid()
@@ -92,7 +102,10 @@ def test_lease_search_form_lease_type_choices(lease_type, expected):
         (" ".join([LeaseState.LEASE.value, LeaseState.RESERVATION.value]), False),
     ],
 )
+@pytest.mark.django_db
 def test_lease_search_form_lease_state_choices(lease_state, expected):
+    from leasing.forms import LeaseSearchForm
+
     form = LeaseSearchForm({"lease_state": lease_state})
 
     assert expected == form.is_valid()
