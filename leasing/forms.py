@@ -7,7 +7,14 @@ from leasing.enums import (
     LeaseState,
     TenantContactType,
 )
-from leasing.models import Contact, DecisionMaker, District, LeaseType, Municipality
+from leasing.models import (
+    Contact,
+    DecisionMaker,
+    District,
+    LeaseType,
+    Municipality,
+    ServiceUnit,
+)
 from leasing.validators import validate_business_id
 
 
@@ -116,6 +123,11 @@ class LeaseSearchForm(forms.Form):
     )
     invoice_number = forms.CharField(
         label="Invoice number", max_length=255, required=False, empty_value=None
+    )
+    service_unit = CommaSeparatedChoiceField(
+        label="Service unit",
+        choices=lambda: ((str(x.id), x.name) for x in ServiceUnit.objects.all()),
+        required=False,
     )
 
 
