@@ -234,7 +234,7 @@ class InvoiceExportToLaskeView(APIView):
             )
 
         try:
-            exporter = LaskeExporter()
+            exporter = LaskeExporter(service_unit=invoice.service_unit)
             exporter.export_invoices(invoice)
         except (
             LaskeExporterError,

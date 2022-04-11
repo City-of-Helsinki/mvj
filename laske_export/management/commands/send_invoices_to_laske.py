@@ -12,35 +12,41 @@ from django.utils.translation import gettext_lazy as _
 
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
-from leasing.models import Invoice
-
-logger = logging.getLogger(__name__)
-
-
-def set_constant_laske_values(sales_order):
-    for key, val in settings.LASKE_VALUES.items():
-        setattr(sales_order, key, val)
+from leasing.models import Invoice, ServiceUnit
 
 
 class Command(BaseCommand):
     help = "Send invoices to Laske"
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument("service_unit_id", type=int)
+
+    def handle(self, *args, **options):  # noqa
         translation.activate(settings.LANGUAGE_CODE)
+
+        try:
+            service_unit = ServiceUnit.objects.get(pk=options["service_unit_id"])
+        except ServiceUnit.DoesNotExist:
+            self.stdout.write(
+                "Service unit with id {} not found! Exiting.".format(
+                    options["service_unit_id"]
+                )
+            )
+            return
 
         error_flag = False
         error_message = ""
 
         # noinspection PyBroadException
         try:
-            exporter = LaskeExporter()
+            exporter = LaskeExporter(service_unit=service_unit)
             exporter.message_output = self.stdout
 
             today = datetime.date.today()
             one_month_in_the_future = today + relativedelta(months=1)
 
             self.stdout.write(
-                "Finding unsent invoices with due dates before {}".format(
+                "Finding unsent invoices with due dates on or before {}".format(
                     one_month_in_the_future
                 )
             )
@@ -53,15 +59,17 @@ class Command(BaseCommand):
                 ),
                 due_date__lte=one_month_in_the_future,
                 sent_to_sap_at__isnull=True,
+                service_unit=service_unit,
             ).exclude(
-                # Invoices due before 1.11.2018 are not in SAP so their credit notes shouldn't be be sent there either
+                # Invoices due before 1.11.2018 are not in SAP so their credit notes
+                # shouldn't be sent there either
                 credited_invoice__isnull=False,
                 credited_invoice__due_date__lte=datetime.date(
                     year=2018, month=11, day=1
                 ),
             )
             self.stdout.write(
-                "Found {} unsent invoices with due dates before {}".format(
+                "Found {} unsent invoices with due dates on or before {}".format(
                     invoices.count(), one_month_in_the_future
                 )
             )
@@ -82,8 +90,6 @@ class Command(BaseCommand):
             logging.exception(err)
 
         if config.LASKE_EXPORT_ANNOUNCE_EMAIL:
-            email_subject = ""
-            email_body = ""
             email_headers = None
 
             if error_flag:
@@ -94,12 +100,14 @@ class Command(BaseCommand):
                 )
                 email_headers = {"X-Priority": "1"}  # High
                 email_subject = _("MVJ ({}) transfer failed!").format(
-                    settings.LASKE_VALUES["sender_id"]
+                    service_unit.laske_sender_id
                 )
                 email_body = _(
                     "Sending invoices to the Laske system has been crashed during the processing. "
-                    "Please contact your administrator.\n\nError message: {}"
-                ).format(error_message)
+                    "Please contact your administrator.\n"
+                    "Service unit: {}\n"
+                    "\nError message: {}"
+                ).format(service_unit.name, error_message)
             else:
                 self.stdout.write(
                     "Sending announce email to {}".format(
@@ -118,20 +126,22 @@ class Command(BaseCommand):
                 ).count()
 
                 email_subject = _("MVJ ({}) transfer").format(
-                    settings.LASKE_VALUES["sender_id"]
+                    service_unit.laske_sender_id
                 )
 
                 email_body = _(
                     "MVJ ({}) processed a total of {} invoices to Laske system on {}. "
-                    "Of the invoices, {} succeeded and {} failed."
+                    "Of the invoices, {} succeeded and {} failed.\n"
+                    "Service unit: {}"
                 ).format(
-                    settings.LASKE_VALUES["sender_id"],
+                    service_unit.laske_sender_id,
                     laske_export_log_entry.invoices.count(),
                     laske_export_log_entry.ended_at.astimezone(
                         timezone.get_current_timezone()
                     ).strftime("%d.%m.%Y %H.%M %Z"),
                     sent_count,
                     failed_count,
+                    service_unit.name,
                 )
 
                 if failed_count > 0:
@@ -154,7 +164,7 @@ class Command(BaseCommand):
                 email_subject,
                 email_body,
                 from_email,
-                re.split(";|,", config.LASKE_EXPORT_ANNOUNCE_EMAIL),
+                re.split("[;,]", config.LASKE_EXPORT_ANNOUNCE_EMAIL),
                 headers=email_headers,
             )
             msg.send(fail_silently=False)
