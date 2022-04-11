@@ -25,9 +25,12 @@ from leasing.models.land_use_agreement import LandUseAgreementInvoice
 logger = logging.getLogger(__name__)
 
 
-def set_constant_laske_values(sales_order):
+def set_constant_laske_values(sales_order, service_unit):
     for key, val in settings.LASKE_VALUES.items():
         setattr(sales_order, key, val)
+
+    sales_order.sender_id = service_unit.laske_sender_id
+    sales_order.sales_org = service_unit.laske_sales_org
 
 
 class LaskeExporterException(Exception):
@@ -35,8 +38,9 @@ class LaskeExporterException(Exception):
 
 
 class LaskeExporter:
-    def __init__(self):
+    def __init__(self, service_unit):
         self.message_output = None
+        self.service_unit = service_unit
         self._check_export_directory()
         self._check_settings()
 
@@ -120,12 +124,10 @@ class LaskeExporter:
 
     def export_invoices(self, invoices):
         """
-        :type invoices: list of Invoice | Invoice
+        :type invoices: list[Invoice] | Invoice
         :rtype: LaskeExportLog
         """
-        if isinstance(invoices, Invoice) or isinstance(
-            invoices, LandUseAgreementInvoice
-        ):
+        if isinstance(invoices, Invoice):
             invoices = [invoices]
 
         # TODO: Make configurable
@@ -179,7 +181,7 @@ class LaskeExporter:
                     invoice.save()
 
                 sales_order = SalesOrder()
-                set_constant_laske_values(sales_order)
+                set_constant_laske_values(sales_order, invoice.service_unit)
 
                 adapter = InvoiceSalesOrderAdapter(
                     invoice=invoice,
@@ -223,7 +225,7 @@ class LaskeExporter:
             sales_order_container.sales_orders = sales_orders
 
             export_filename = "MTIL_IN_{}_{:08}.xml".format(
-                settings.LASKE_VALUES["sender_id"], laske_export_log_entry.id
+                self.service_unit.laske_sender_id, laske_export_log_entry.id
             )
 
             self.write_to_output("Export filename: {}".format(export_filename))
@@ -251,10 +253,10 @@ class LaskeExporter:
 
     def export_land_use_agreement_invoices(self, invoices):
         """
-        :type invoices: list of Invoice | Invoice
+        :type invoices: list[LandUseAgreementInvoice] | LandUseAgreementInvoice
         :rtype: LaskeExportLog
         """
-        if isinstance(invoices, Invoice):
+        if isinstance(invoices, LandUseAgreementInvoice):
             invoices = [invoices]
 
         now = timezone.now()
@@ -272,7 +274,7 @@ class LaskeExporter:
             self.write_to_output(" Land use agreement invoice id {}".format(invoice.id))
 
             sales_order = SalesOrder()
-            set_constant_laske_values(sales_order)
+            set_constant_laske_values(sales_order, self.service_unit)
 
             adapter = LandUseAgreementInvoiceSalesOrderAdapter(
                 invoice=invoice, sales_order=sales_order,
@@ -301,7 +303,7 @@ class LaskeExporter:
             laske_export_log_entry.land_use_agreement_invoices.set(log_invoices)
 
             export_filename = "MTIL_IN_{}_{:08}.xml".format(
-                settings.LASKE_VALUES["sender_id"], laske_export_log_entry.id
+                self.service_unit.laske_sender_id, laske_export_log_entry.id,
             )
 
             self.write_to_output("Export filename: {}".format(export_filename))
