@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 
 
 class MvjDjangoModelPermissions(permissions.DjangoModelPermissions):
@@ -83,3 +84,20 @@ class IsSameUser(permissions.BasePermission):
             return True
 
         return obj.user == request.user
+
+
+class IsMemberOfSameServiceUnit(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # Users can read data from other service units
+        if request.method in SAFE_METHODS or not hasattr(obj, "get_service_unit"):
+            return True
+
+        if request.user.is_superuser:
+            return True
+
+        service_unit = obj.get_service_unit()
+
+        if service_unit in request.user.service_units.all():
+            return True
+
+        return False
