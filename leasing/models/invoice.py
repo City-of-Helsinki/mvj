@@ -668,8 +668,24 @@ class Invoice(TimeStampedSafeDeleteModel):
         if self.number:
             return self.number
 
+        # Use the "invoice_numbers" sequence by default, but allow using separate
+        # sequences for invoices in the other service units
+        if self.service_unit.invoice_number_sequence_name:
+            invoice_number_sequence_name = (
+                self.service_unit.invoice_number_sequence_name
+            )
+            if self.service_unit.first_invoice_number is None:
+                initial_value = 1
+            else:
+                initial_value = self.service_unit.first_invoice_number
+        else:
+            invoice_number_sequence_name = "invoice_numbers"
+            initial_value = 1000000
+
         with transaction.atomic():
-            self.number = get_next_value("invoice_numbers", initial_value=1000000)
+            self.number = get_next_value(
+                invoice_number_sequence_name, initial_value=initial_value
+            )
             self.save()
 
         return self.number

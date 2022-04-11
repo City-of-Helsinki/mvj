@@ -5,6 +5,8 @@
         "fields": {
             "name": "Maaomaisuuden kehittäminen ja tontit",
             "description": null,
+            "invoice_number_sequence_name": null,
+            "first_invoice_number": null,
             "laske_sender_id": "ID340",
             "laske_import_id": "ID256",
             "laske_sales_org": "2800",

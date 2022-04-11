@@ -12,6 +12,15 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
 
     name = models.CharField(verbose_name=_("Name"), max_length=255)
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
+    invoice_number_sequence_name = models.CharField(
+        verbose_name=_("Invoice number sequence name"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    first_invoice_number = models.IntegerField(
+        verbose_name=_("First invoice number"), null=True, blank=True
+    )
     laske_sender_id = models.CharField(
         verbose_name=_("Sender ID in Laske"), max_length=255
     )
