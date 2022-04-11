@@ -5,7 +5,7 @@ from django.contrib.auth.models import Permission
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 
 
 @pytest.mark.django_db
@@ -49,6 +49,9 @@ def test_create_lease_relate_to_with_permission(
     user.set_password("test_password")
     user.save()
 
+    service_unit = ServiceUnit.objects.get(pk=1)
+    user.service_units.add(service_unit)
+
     permission_names = [
         "add_lease",
         "view_lease_id",
@@ -57,6 +60,7 @@ def test_create_lease_relate_to_with_permission(
         "change_lease_municipality",
         "change_lease_district",
         "change_lease_related_leases",
+        "change_lease_service_unit",
     ]
 
     for permission_name in permission_names:
@@ -70,6 +74,7 @@ def test_create_lease_relate_to_with_permission(
         "district": 11,
         "relate_to": lease_test_data["lease"].id,
         "relation_type": "transfer",
+        "service_unit": 1,
     }
 
     url = reverse("lease-list")
@@ -97,6 +102,9 @@ def test_create_lease_relate_to_without_permission(
     user.set_password("test_password")
     user.save()
 
+    service_unit = ServiceUnit.objects.get(pk=1)
+    user.service_units.add(service_unit)
+
     permission_names = [
         "add_lease",
         "view_lease_id",
@@ -104,6 +112,7 @@ def test_create_lease_relate_to_without_permission(
         "change_lease_type",
         "change_lease_municipality",
         "change_lease_district",
+        "change_lease_service_unit",
     ]
 
     for permission_name in permission_names:
@@ -117,6 +126,7 @@ def test_create_lease_relate_to_without_permission(
         "district": 11,
         "relate_to": lease_test_data["lease"].id,
         "relation_type": "transfer",
+        "service_unit": 1,
     }
 
     url = reverse("lease-list")
@@ -196,3 +206,72 @@ def test_create_lease_with_basis_of_rents_fail_without_area_unit(
     )
 
     assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("with_request_service_unit", [False, True])
+@pytest.mark.parametrize("with_user_service_unit", [False, True])
+def test_create_lease_should_validate_service_unit(
+    django_db_setup,
+    client,
+    user_factory,
+    with_request_service_unit,
+    with_user_service_unit,
+):
+    # Service unit from the fixtures
+    service_unit = ServiceUnit.objects.get(pk=1)
+
+    user = user_factory(username="test_user")
+    if with_user_service_unit:
+        user.service_units.add(service_unit)
+
+    permission_names = [
+        "add_lease",
+        "view_lease_id",
+        "change_lease_identifier",
+        "change_lease_type",
+        "change_lease_municipality",
+        "change_lease_district",
+        "change_lease_service_unit",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.force_login(user)
+
+    data = {
+        "type": 1,
+        "municipality": 1,
+        "district": 11,
+    }
+
+    if with_request_service_unit:
+        data["service_unit"] = 1
+
+    url = reverse("lease-list")
+
+    response = client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    if not with_request_service_unit:
+        assert response.status_code == 400, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+    else:
+        if with_user_service_unit:
+            assert response.status_code == 201, "%s %s" % (
+                response.status_code,
+                response.data,
+            )
+            lease = Lease.objects.get(pk=response.data["id"])
+            assert lease.service_unit == service_unit
+        else:
+            assert response.status_code == 400, "%s %s" % (
+                response.status_code,
+                response.data,
+            )

@@ -65,6 +65,7 @@ def test_create_invoice(
     assert invoice.invoicing_date == timezone.now().date()
     assert invoice.outstanding_amount == Decimal(10)
     assert invoice.state == InvoiceState.OPEN
+    assert invoice.service_unit_id == 1
 
 
 @pytest.mark.django_db
@@ -419,6 +420,77 @@ def test_create_interest_invoice_fail(
 
     url = reverse("invoice-list")
     response = admin_client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
+
+
+@pytest.mark.django_db
+def test_create_invoice_checks_service_unit(
+    django_db_setup,
+    client,
+    service_unit_factory,
+    user_factory,
+    lease_factory,
+    tenant_factory,
+    tenant_rent_share_factory,
+    contact_factory,
+    tenant_contact_factory,
+):
+    lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=datetime.date(year=2000, month=1, day=1),
+        is_invoicing_enabled=True,
+    )
+
+    service_unit2 = service_unit_factory()
+    permission_names = [
+        "add_invoice",
+        "add_invoicerow",
+        "view_invoice_id",
+        "change_invoice_recipient",
+        "change_invoice_due_date",
+        "change_invoice_rows",
+        "change_invoicerow_receivable_type",
+        "change_invoicerow_amount",
+    ]
+    user = user_factory(
+        username="test_user",
+        service_units=[service_unit2],
+        permissions=permission_names,
+    )
+
+    tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    tenant_rent_share_factory(
+        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
+    )
+    contact1 = contact_factory(
+        first_name="First name 1", last_name="Last name 1", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant1,
+        contact=contact1,
+        start_date=datetime.date(year=2000, month=1, day=1),
+    )
+
+    client.force_login(user)
+
+    data = {
+        "lease": lease.id,
+        "recipient": contact1.id,
+        "due_date": "2019-01-01",
+        "rows": [{"amount": Decimal(10), "receivable_type": 1}],
+    }
+
+    url = reverse("invoice-list")
+    response = client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
         content_type="application/json",
