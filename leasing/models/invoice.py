@@ -330,6 +330,14 @@ class Invoice(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Palvelukokonaisuus
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit",
+        verbose_name=_("Service unit"),
+        related_name="invoices",
+        on_delete=models.PROTECT,
+    )
+
     recursive_get_related_skip_relations = [
         "lease",
         "laskeexportlog",
@@ -342,6 +350,9 @@ class Invoice(TimeStampedSafeDeleteModel):
 
     def __str__(self):
         return str(self.pk)
+
+    def get_service_unit(self):
+        return self.service_unit
 
     def delete(self, force_policy=None, **kwargs):
         super().delete(force_policy=force_policy, **kwargs)
