@@ -177,6 +177,7 @@ class Entry(models.Model):
     field = models.ForeignKey(Field, on_delete=models.PROTECT)
     value = models.TextField()
     extra_value = models.TextField(blank=True, null=True)
+    path = models.TextField()
 
 
 from forms.signals import *  # noqa: E402 F403 F401

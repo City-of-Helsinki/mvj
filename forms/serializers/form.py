@@ -1,4 +1,3 @@
-import json
 from collections import OrderedDict
 
 from enumfields.drf.serializers import EnumSerializerField
@@ -8,6 +7,7 @@ from rest_framework.relations import PKOnlyObject
 
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.models import ApplicationStatus, PlotSearchTarget
+from plotsearch.utils import merge_dicts
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -226,9 +226,18 @@ class FormSerializer(serializers.ModelSerializer):
         return super(FormSerializer, self).update(instance, validated_data)
 
 
+class EntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entry
+        fields = ("path", "value", "extra_value")
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    entries = serializers.JSONField()
+    entries = serializers.JSONField(write_only=True)
+    entries_data = serializers.DictField(
+        read_only=True, child=serializers.CharField(), source="entries"
+    )
     targets = InstanceDictPrimaryKeyRelatedField(
         many=True, queryset=PlotSearchTarget.objects.all()
     )
@@ -238,7 +247,15 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ("id", "form", "targets", "entries", "attachments", "ready")
+        fields = (
+            "id",
+            "form",
+            "targets",
+            "entries",
+            "entries_data",
+            "attachments",
+            "ready",
+        )
         validators = [
             RequiredFormFieldValidator(),
             FieldRegexValidator(
@@ -249,29 +266,44 @@ class AnswerSerializer(serializers.ModelSerializer):
             ),
         ]
 
-    def entry_generator(self, entries, sections=None, fields=None):
+    def entry_generator(self, entries, path="", sections=None, fields=None):
         if "sections" in entries:
             yield from self.entry_generator(
-                entries["sections"], sections=[entry for entry in entries["sections"]]
+                entries["sections"],
+                sections=[entry for entry in entries["sections"]],
+                path=path,
             )
         if "fields" in entries:
             yield from self.entry_generator(
                 entries["fields"],
                 sections=sections,
                 fields=[entry for entry in entries["fields"]],
+                path=path,
             )
+
         if isinstance(entries, list):
-            for entry in entries:
-                yield from self.entry_generator(entry, sections=sections, fields=fields)
+            for i, entry in enumerate(entries):
+                yield from self.entry_generator(
+                    entry,
+                    sections=sections,
+                    fields=fields,
+                    path="{}[{}]".format(path, str(i)),
+                )
         if isinstance(sections, list):
             for section in sections:
-                yield from self.entry_generator(entries[section], sections=section)
+                yield from self.entry_generator(
+                    entries[section],
+                    sections=section,
+                    path="{}.{}".format(path, section),
+                )
         if not isinstance(fields, list):
             return
 
         for field in fields:
             value_dict = entries[field]
-            yield field, sections, value_dict
+
+            # first character is a dot
+            yield field, sections, value_dict, path[1:]
 
     def to_representation(self, instance):
         """
@@ -296,17 +328,28 @@ class AnswerSerializer(serializers.ModelSerializer):
             )
             if check_for_none is None:
                 ret[field.field_name] = None
-            elif field.label == "Entries":
-                entries_list = list()
+            elif field.label == "Entries data":
+                entries_dict = dict()
                 for entry in attribute.all():
-                    entries_list.append(
-                        {
-                            "field": entry.field_id,
-                            "value": entry.value,
-                            "extraValue": entry.extra_value,
-                        }
-                    )
-                ret[field.field_name] = json.dumps(entries_list)
+                    path_parts = entry.path.split(sep=".")
+                    value = True
+                    help_dict = dict()
+                    for part in reversed(path_parts):
+                        if value:
+                            help_dict[part] = {
+                                "fields": {
+                                    entry.field.identifier: {
+                                        "value": entry.value,
+                                        "extra_value": entry.extra_value,
+                                    }
+                                }
+                            }
+                            value = False
+                        else:
+                            help_dict[part].update(help_dict)
+                    entries_dict = merge_dicts(entries_dict, help_dict)
+
+                ret[field.field_name] = entries_dict
             else:
                 ret[field.field_name] = field.to_representation(attribute)
 
@@ -321,7 +364,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         for target in targets:
             answer.targets.add(target)
 
-        for field_identifier, section_identifier, value in self.entry_generator(
+        for field_identifier, section_identifier, value, path in self.entry_generator(
             entries_data
         ):
             try:
@@ -337,6 +380,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                 field=field,
                 value=value["value"],
                 extra_value=value["extraValue"],
+                path=path,
             )
         for attachent_id in attachments:
             Attachment.objects.filter(id=attachent_id).update(answer=answer)
@@ -345,7 +389,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         entries_data = validated_data.pop("entries", [])
 
-        for field_identifier, section_identifier, value in self.entry_generator(
+        for field_identifier, section_identifier, value, path in self.entry_generator(
             entries_data
         ):
             try:
@@ -360,6 +404,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                 answer=instance,
                 field=field,
                 defaults={"value": value["value"], "extra_value": value["extraValue"]},
+                path=path,
             )
 
         instance.ready = validated_data.get("ready", instance.ready)

@@ -32,7 +32,7 @@ def test_form_serializer(basic_template_form):
 def test_answer_serializer(basic_answer):
     serializer = AnswerSerializer(basic_answer)
     assert serializer.data["form"]
-    assert serializer.data["entries"]
+    assert serializer.data["entries_data"]
 
 
 """

@@ -180,9 +180,9 @@ def test_answer_post(
         "ready": True,
     }
     response = admin_client.patch(url, data=payload, content_type="application/json")
-    patched_data = json.loads(response.data["entries"])
+    patched_data = response.data["entries_data"]
     assert response.status_code == 200
-    assert patched_data[-2]["value"] == "Matti"
+    assert patched_data["contact-person"]["fields"]["first-name"]["value"] == "Matti"
 
     url = reverse("answer-list")
     response = admin_client.get(url)
