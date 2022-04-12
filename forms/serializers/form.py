@@ -462,19 +462,31 @@ class AnswerListSerializer(serializers.ModelSerializer):
                 field__identifier="hakija", field__section__identifier="hakijan-tiedot"
             ).value
             if applicant_type == "Yritys":
-                applicant = obj.entries.get(
-                    field__identifier="yrityksen-nimi",
-                    field__section__identifier="yrityksen-tiedot",
-                ).value
+                applicant = (
+                    obj.entries.filter(
+                        field__identifier="yrityksen-nimi",
+                        field__section__identifier="yrityksen-tiedot",
+                    )
+                    .first()
+                    .value
+                )
             elif applicant_type == "Henkilö":
-                front_name = obj.entries.get(
-                    field__identifier="etunimi",
-                    field__section__identifier="henkilon-tiedot",
-                ).value
-                last_name = obj.entries.get(
-                    field__identifier="sukunimi",
-                    field__section__identifier="henkilon-tiedot",
-                ).value
+                front_name = (
+                    obj.entries.filter(
+                        field__identifier="etunimi",
+                        field__section__identifier="henkilon-tiedot",
+                    )
+                    .first()
+                    .value
+                )
+                last_name = (
+                    obj.entries.filter(
+                        field__identifier="sukunimi",
+                        field__section__identifier="henkilon-tiedot",
+                    )
+                    .first()
+                    .value
+                )
                 applicant = " ".join([front_name, last_name])
             else:
                 applicant = ""
