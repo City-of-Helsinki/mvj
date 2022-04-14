@@ -4,6 +4,7 @@ from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
+from rest_framework_gis.fields import GeometryField
 
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.models import ApplicationStatus, PlotSearchTarget
@@ -416,6 +417,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
     identifier = serializers.CharField(source="plot_search_target.plan_unit.identifier")
     address = serializers.SerializerMethodField()
+    geometry = GeometryField(source="plot_search_target.plan_unit.geometry")
 
     def get_address(self, obj):
         if obj.plot_search_target.plan_unit is None:
@@ -434,6 +436,7 @@ class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
             "identifier",
             "address",
             "reserved",
+            "geometry",
         )
 
 
