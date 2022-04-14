@@ -347,7 +347,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                             }
                             value = False
                         else:
-                            help_dict[part].update(help_dict)
+                            help_dict[part] = help_dict
                     entries_dict = merge_dicts(entries_dict, help_dict)
 
                 ret[field.field_name] = entries_dict
