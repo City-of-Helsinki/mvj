@@ -23,7 +23,9 @@ class PlotSearchIdentificationFilter(InitFilter, filters.CharFilter):
         if empty:
             return qs
         qs = qs.filter(
-            targets__in=PlotSearchTarget.objects.filter(plan_unit__identifier=value)
+            targets__in=PlotSearchTarget.objects.filter(
+                plan_unit__identifier__icontains=value
+            )
         )
         return qs
 
