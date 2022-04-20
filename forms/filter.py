@@ -49,11 +49,11 @@ class SimpleFilter(InitFilter, filters.CharFilter):
 
 class AnswerFilterSet(FilterSet):
     plot_search = filters.NumberFilter(field_name="form__plotsearch__id")
-    plot_search_type = filters.CharFilter(
-        field_name="form__plotsearch__subtype__plot_search_type__name"
+    plot_search_type = filters.NumberFilter(
+        field_name="form__plotsearch__subtype__plot_search_type__id"
     )
-    plot_search_subtype = filters.CharFilter(
-        field_name="form__plotsearch__subtype__name"
+    plot_search_subtype = filters.NumberFilter(
+        field_name="form__plotsearch__subtype__id"
     )
     begin_at = filters.DateFromToRangeFilter(field_name="form__plotsearch__begin_at")
     end_at = filters.DateFromToRangeFilter(field_name="form__plotsearch__end_at")
