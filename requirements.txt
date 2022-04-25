@@ -47,6 +47,8 @@ database-sanitizer==1.1.0
     # via django-sanitized-dump
 dataclasses==0.6
     # via -r requirements.in
+deepmerge==1.0.1
+    # via -r requirements.in
 defusedxml==0.6.0
     # via zeep
 deprecation==2.1.0
