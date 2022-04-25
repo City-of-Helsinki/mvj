@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from deepmerge import always_merger
 from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.fields import SkipField
@@ -8,7 +9,6 @@ from rest_framework_gis.fields import GeometryField
 
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.models import ApplicationStatus, PlotSearchTarget
-from plotsearch.utils import merge_dicts
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -336,6 +336,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                     value = True
                     help_dict = dict()
                     for part in reversed(path_parts):
+                        new_dict = {}
                         if value:
                             help_dict[part] = {
                                 "fields": {
@@ -347,8 +348,9 @@ class AnswerSerializer(serializers.ModelSerializer):
                             }
                             value = False
                         else:
-                            help_dict[part] = help_dict
-                    entries_dict = merge_dicts(entries_dict, help_dict)
+                            new_dict[part] = help_dict
+                            help_dict = new_dict
+                    entries_dict = always_merger.merge(entries_dict, help_dict)
 
                 ret[field.field_name] = entries_dict
             else:

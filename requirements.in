@@ -1,5 +1,6 @@
 beautifulsoup4
 dataclasses
+deepmerge
 Django~=3.2.12
 django-anymail
 django-auditlog~=1.0a1
