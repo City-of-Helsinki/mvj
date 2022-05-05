@@ -643,7 +643,7 @@ def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
 
 @pytest.mark.django_db
 def test_area_search_create_simple(
-    django_db_setup, admin_client, area_search_test_data
+    django_db_setup, admin_client, field_type_factory, area_search_test_data
 ):
     url = reverse("areasearch-list")  # list == create
 
@@ -653,6 +653,10 @@ def test_area_search_create_simple(
         "intended_use": area_search_test_data.intended_use.pk,
         "geometry": area_search_test_data.geometry.geojson,
     }
+
+    field_type_factory(id=1, name=fake.name(), identifier=slugify(fake.name()))
+    field_type_factory(id=4, name=fake.name(), identifier=slugify(fake.name()))
+    field_type_factory(id=6, name=fake.name(), identifier=slugify(fake.name()))
 
     response = admin_client.post(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"

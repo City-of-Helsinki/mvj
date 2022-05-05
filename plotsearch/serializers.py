@@ -27,6 +27,7 @@ from plotsearch.models import (
     PlotSearchType,
     TargetInfoLink,
 )
+from plotsearch.utils import initialize_area_search_form
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -592,3 +593,7 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             "description_intended_use",
             "intended_use",
         )
+
+    def create(self, validated_data):
+        validated_data["form"] = initialize_area_search_form()
+        return super().create(validated_data)
