@@ -1,3 +1,4 @@
+from ast import literal_eval
 from collections import OrderedDict
 
 from deepmerge import always_merger
@@ -330,33 +331,42 @@ class AnswerSerializer(serializers.ModelSerializer):
             if check_for_none is None:
                 ret[field.field_name] = None
             elif field.label == "Entries data":
-                entries_dict = dict()
-                for entry in attribute.all():
-                    path_parts = entry.path.split(sep=".")
-                    value = True
-                    help_dict = dict()
-                    for part in reversed(path_parts):
-                        new_dict = {}
-                        if value:
-                            help_dict[part] = {
-                                "fields": {
-                                    entry.field.identifier: {
-                                        "value": entry.value,
-                                        "extra_value": entry.extra_value,
-                                    }
-                                }
-                            }
-                            value = False
-                        else:
-                            new_dict[part] = help_dict
-                            help_dict = new_dict
-                    entries_dict = always_merger.merge(entries_dict, help_dict)
-
-                ret[field.field_name] = entries_dict
+                ret[field.field_name] = self.create_entry(attribute)
             else:
                 ret[field.field_name] = field.to_representation(attribute)
 
         return ret
+
+    @staticmethod
+    def create_entry(attribute):
+        entries_dict = dict()
+        for entry in attribute.all():
+            path_parts = entry.path.split(sep=".")
+            try:
+                entry_value = literal_eval(entry.value)
+            except (SyntaxError, ValueError):
+                entry_value = entry.value
+            value_set = False
+            help_dict = dict()
+            for part in reversed(path_parts):
+                new_dict = {}
+                if value_set:
+                    new_dict[part] = help_dict
+                    help_dict = new_dict
+                    continue
+
+                help_dict[part] = {
+                    "fields": {
+                        entry.field.identifier: {
+                            "value": entry_value,
+                            "extra_value": entry.extra_value,
+                        }
+                    }
+                }
+                value_set = True
+
+            always_merger.merge(entries_dict, help_dict)
+        return entries_dict
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
