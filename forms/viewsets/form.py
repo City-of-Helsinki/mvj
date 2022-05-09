@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_gis.filters import InBBoxFilter
 
 from forms.filter import AnswerFilterSet
 from forms.models import Answer, Form
@@ -46,8 +47,10 @@ class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = (MvjDjangoModelPermissions,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filterset_class = AnswerFilterSet
+    bbox_filter_field = "targets__plot_search_target__plan_unit_geometry"
+    bbox_filter_include_overlapping = True
 
     def get_permissions(self):
         if self.request.method == "POST":
