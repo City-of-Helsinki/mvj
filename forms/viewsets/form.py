@@ -49,7 +49,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
     permission_classes = (MvjDjangoModelPermissions,)
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filterset_class = AnswerFilterSet
-    bbox_filter_field = "targets__plot_search_target__plan_unit_geometry"
+    bbox_filter_field = "targets__plan_unit__geometry"
     bbox_filter_include_overlapping = True
 
     def get_permissions(self):
