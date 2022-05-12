@@ -248,9 +248,15 @@ def test_attachment_post(
         "ready": True,
     }
     response = admin_client.post(url, data=payload, content_type="application/json")
+    id = response.json()["id"]
 
     assert response.status_code == 201
     assert Attachment.objects.filter(answer=response.json()["id"]).exists()
+
+    url = reverse("answer-attachments", kwargs={"pk": id})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert len(response.json()) != 0
 
 
 @pytest.mark.django_db

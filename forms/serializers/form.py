@@ -546,3 +546,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         kwargs["user"] = self.context["request"].user
         return super().save(**kwargs)
+
+
+class ReadAttachmentSerializer(AttachmentSerializer):
+    field = serializers.CharField(source="field.identifier")
