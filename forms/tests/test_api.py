@@ -212,7 +212,7 @@ def test_attachment_post(
     url = reverse("attachment-list")
     response = admin_client.post(url, data=payload)
     assert response.status_code == 201
-    id = response.json()["id"]
+    attachment_id = response.json()["id"]
 
     url = reverse("answer-list")
     payload = {
@@ -244,7 +244,7 @@ def test_attachment_post(
             },
             "fields": {},
         },
-        "attachments": [id,],  # noqa: E231
+        "attachments": [attachment_id,],  # noqa: E231
         "ready": True,
     }
     response = admin_client.post(url, data=payload, content_type="application/json")
@@ -255,8 +255,12 @@ def test_attachment_post(
 
     url = reverse("answer-attachments", kwargs={"pk": id})
     response = admin_client.get(url)
+    url = reverse("attachment-download", kwargs={"pk": attachment_id})
+    file_request = admin_client.get(url)
     assert response.status_code == 200
     assert len(response.json()) != 0
+    assert file_request.status_code == 200
+    assert file_request.content == b"Lorem lipsum"
 
 
 @pytest.mark.django_db

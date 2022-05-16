@@ -1,3 +1,5 @@
+from django.core.files import File
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -101,3 +103,16 @@ class AttachmentViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        obj = self.get_object()
+
+        with obj.attachment.open() as fp:
+            # TODO: detect file MIME type
+            response = HttpResponse(File(fp), content_type="application/octet-stream")
+            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
+                obj.attachment.name
+            )
+
+            return response
