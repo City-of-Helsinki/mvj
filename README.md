@@ -1,6 +1,7 @@
 [![codecov](https://codecov.io/gh/City-of-Helsinki/mvj/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/mvj)
 
 # mvj
+
 City of Helsinki ground rent system
 
 ## Development with Docker
@@ -8,19 +9,59 @@ City of Helsinki ground rent system
 1. Run `docker-compose up`
 
 2. Run migrations if needed:
-    * `docker exec mvj python manage.py migrate`
+
+   - `docker exec mvj python manage.py migrate`
 
 3. Create superuser if needed:
-    * `docker exec -it mvj python manage.py createsuperuser`
+   - `docker exec -it mvj python manage.py createsuperuser`
 
 The project is now running at [localhost:8000](http://localhost:8000)
+
+### Settings for development environment
+
+```bash
+cd mvj
+# copy sanitized.sql to root
+docker-compose exec django bash
+psql -h postgres -U mvj -d mvj < sanitized.sql
+docker-compose exec django python manage.py migrate
+docker-compose exec django python manage.py createsuperuser #(github sähköposti)
+```
+
+- Luo leasing/management/commands/copy_groups.py:
+
+```python
+from django.contrib.auth.models import Group
+from django.core.management.base import BaseCommand
+GROUPS = {
+    1: "Selailija test",
+    2: "Valmistelija test",
+    3: "Sopimusvalmistelija test",
+    4: "Syöttäjä test",
+    5: "Perintälakimies test",
+    6: "Laskuttaja test",
+    7: "Pääkäyttäjä test",
+}
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        for group in Group.objects.filter(id__in=GROUPS.keys()):
+            (new_group, created) = Group.objects.get_or_create(
+id=group.id + 10, defaults={"name": GROUPS[group.id]} )
+            new_group.permissions.set(group.permissions.all())
+```
+
+```bash
+docker-compose exec django python manage.py copy_groups
+```
+
+- Lisää luodulle käyttäjälle "Pääkäyttäjä test"-ryhmä Django adminissa
 
 ### Connecting to Tunnistamo
 
 If you have a Tunnistamo and an mvj-ui instance running with docker in separate docker-compose
 environments, you can set up a network to sync mvj, mvj-ui and tunnistamo together.
 
-1. Add network definition to tunnistamo's `docker-compose`:
+1.  Add network definition to tunnistamo's `docker-compose`:
 
         version: '3'
         services:
@@ -38,7 +79,7 @@ environments, you can set up a network to sync mvj, mvj-ui and tunnistamo togeth
             net:
                 driver: bridge
 
-2. Connect mvj to tunnistamo's network, by adding this to mvj's and mvj-ui's `docker-compose`:
+2.  Connect mvj to tunnistamo's network, by adding this to mvj's and mvj-ui's `docker-compose`:
 
         networks:
             default:
@@ -48,26 +89,55 @@ environments, you can set up a network to sync mvj, mvj-ui and tunnistamo togeth
     The name `tunnistamo_net` comes from the name of the folder, where tunnistamo lives
     combined with the name of the network. Change those according to your setup, if needed.
 
-3. Now you can access tunnistamo from other docker containers with `tunnistamo-backend`,
-i.e. Tunnistamo's `django` container's name. Connect mvj's OIDC logic to that like so:
+3.  Now you can access tunnistamo from other docker containers with `tunnistamo-backend`,
+    i.e. Tunnistamo's `django` container's name. Connect mvj's OIDC logic to that like so:
 
-        OIDC_API_TOKEN_AUTH = {
-            ...
-            'ISSUER': 'http://tunnistamo-backend:8001/openid',
-            ...
-        }
+            OIDC_API_TOKEN_AUTH = {
+                ...
+                'ISSUER': 'http://tunnistamo-backend:8001/openid',
+                ...
+            }
 
-4. Add `tunnistamo-backend` to your computer's localhost aliases. To do this on UNIX-like systems open
-`/etc/hosts` and add it:
+4.  Add `tunnistamo-backend` to your computer's localhost aliases. To do this on UNIX-like systems open
+    `/etc/hosts` and add it:
 
-        127.0.0.1    localhost tunnistamo-backend
+            127.0.0.1    localhost tunnistamo-backend
 
-   This way callbacks to `tunnistamo-backend` URL will work locally.
+    This way callbacks to `tunnistamo-backend` URL will work locally.
 
-5. Configure OIDC settings in Tunnistamo's admin panel. Might require help from other devs.
+5.  Configure OIDC settings in Tunnistamo's admin panel. Might require help from other devs.
 
-6. Configure some social auth application to allow requests from your local tunnistamo by using this
-URL in the settings `http://tunnistamo-backend`
+6.  Configure some social auth application to allow requests from your local tunnistamo by using this
+    URL in the settings `http://tunnistamo-backend`
+
+### Settings for Tunnistamo
+
+```bash
+docker-compose exec django python manage.py createsuperuser
+```
+Django adminissa:
+* Lisää uusi Login Method: yletunnus
+* OpenID Connect Provider / Clients / Lisää client:
+  * Name: mvj
+  * Client Type: public
+  * Response types: id_token token (Implicit Flow)
+  * Redirect URIs: http://localhost:3000/callback <uusi rivi> http://localhost:3000/silent_renew.html
+  * Client ID: https://api.hel.fi/auth/mvj
+  * Site type: Development
+  * Login methods: GitHub
+* Oidc_Apis / APIs / Lisää API:
+  * Domain: https://api.hel.fi/auth
+  * Nimi: mvj
+  * Required scopes: Sähköposti, Profile, Address, AD Groups
+  * OIDC client: mvj
+* Oidc_Apis / API scopes / Lisää API scope:
+  * API: https://api.hel.fi/auth/mvj
+  * Nimi: mvj
+  * Description: lue ja modifioi
+  * Allowed applications: mvj
+
+* Kopioi docker-compose.env.template -> docker-compose.env
+* Lisää docker-compose.env.yaml SOCIAL_AUTH_GITHUB_KEY ja SOCIAL_AUTH_GITHUB_SECRET Githubista
 
 ## Development without Docker
 
@@ -99,19 +169,19 @@ The virtualenv will automatically activate. To activate it in the future, just d
 
 ### Creating Python requirements files
 
-* Run `pip install pip-tools`
-* Run `pip-compile requirements.in`
-* Run `pip-compile requirements-dev.in`
+- Run `pip install pip-tools`
+- Run `pip-compile requirements.in`
+- Run `pip-compile requirements-dev.in`
 
 ### Updating Python requirements files
 
-* Run `pip-compile --upgrade requirements.in`
-* Run `pip-compile --upgrade requirements-dev.in`
+- Run `pip-compile --upgrade requirements.in`
+- Run `pip-compile --upgrade requirements-dev.in`
 
 ### Installing Python requirements
 
-* Run `pip install -r requirements.txt`
-* For development also run `pip install -r requirements-dev.txt`
+- Run `pip install -r requirements.txt`
+- For development also run `pip install -r requirements-dev.txt`
 
 ### Database
 
@@ -151,22 +221,22 @@ protected by permission checks on a different URL.
 
 ### Running development environment
 
-* Enable debug `echo 'DEBUG=True' >> .env`
-* Run `python manage.py migrate`
-* Run `python manage.py loaddata */fixtures/*.json`
-* Run `python manage.py runserver 0.0.0.0:8000`
+- Enable debug `echo 'DEBUG=True' >> .env`
+- Run `python manage.py migrate`
+- Run `python manage.py loaddata */fixtures/*.json`
+- Run `python manage.py runserver 0.0.0.0:8000`
 
 ## Running tests
 
-* Run `pytest`
+- Run `pytest`
 
 ## Update translation files
-* Run `python manage.py app_makemessages`
+
+- Run `python manage.py app_makemessages`
 
 ## Management commands
 
 There are multiple management commands that are required to run. Either when first installing the software or regularly.
-
 
 ### Install time commands
 
@@ -224,12 +294,14 @@ Imports leasehold transfers from National Land Survey of Finland (Maanmittauslai
 
 _Should be run every week_
 
-
 ### Development commands
 
 No need to run.
 
 #### `attach_areas`
+
 #### `compare_rent_amounts`
+
 #### `mvj_import`
+
 #### `set_contact_cities_from_postcodes`
