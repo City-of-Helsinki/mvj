@@ -278,6 +278,7 @@ class IntendedUseSerializer(NameModelSerializer):
     subuses = IntendedSubUseLinkedSerializer(many=True, source="intendedsubuse_set")
 
     class Meta:
+        ref_name = "plot_intended_use"
         model = IntendedUse
         fields = ("id", "name", "subuses")
 

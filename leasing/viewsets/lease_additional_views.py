@@ -433,6 +433,9 @@ class LeaseSetInvoicingStateView(APIView):
     def get_view_name(self):
         return _("Set invoicing state")
 
+    def get_view_description(self):
+        return _("Sets invoicing state for lease to true or false")
+
     def post(self, request, format=None):
         lease = get_lease_from_query_params(request.query_params)
 

@@ -88,6 +88,7 @@ class HitasSerializer(serializers.ModelSerializer):
 
 class IntendedUseSerializer(serializers.ModelSerializer):
     class Meta:
+        ref_name = "lease_intended_use"
         model = IntendedUse
         fields = "__all__"
 
