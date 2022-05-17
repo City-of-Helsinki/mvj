@@ -90,6 +90,9 @@ class AttachmentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        user = self.request.user
+        if user.has_perm("forms.view_attachment"):
+            return qs
         return qs.filter(user=self.request.user)
 
     def list(self, request, *args, **kwargs):
