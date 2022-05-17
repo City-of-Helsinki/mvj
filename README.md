@@ -8,7 +8,7 @@ City of Helsinki ground rent system
 
 1. Run `docker-compose up`
 
-2. Run migrations if needed:
+2. Run migrations if needed (if you have sanitized.sql file then skip 2. and 3. Continue to "Settings for development environment"):
 
    - `docker exec mvj python manage.py migrate`
 
@@ -25,10 +25,10 @@ cd mvj
 docker-compose exec django bash
 psql -h postgres -U mvj -d mvj < sanitized.sql
 docker-compose exec django python manage.py migrate
-docker-compose exec django python manage.py createsuperuser #(github sähköposti)
+docker-compose exec django python manage.py createsuperuser #(github email)
 ```
 
-- Luo leasing/management/commands/copy_groups.py:
+- Create leasing/management/commands/copy_groups.py:
 
 ```python
 from django.contrib.auth.models import Group
@@ -54,7 +54,7 @@ id=group.id + 10, defaults={"name": GROUPS[group.id]} )
 docker-compose exec django python manage.py copy_groups
 ```
 
-- Lisää luodulle käyttäjälle "Pääkäyttäjä test"-ryhmä Django adminissa
+- Add "Pääkäyttäjä test" -group to created user at Django admin.
 
 ### Connecting to Tunnistamo
 
@@ -115,29 +115,33 @@ environments, you can set up a network to sync mvj, mvj-ui and tunnistamo togeth
 ```bash
 docker-compose exec django python manage.py createsuperuser
 ```
-Django adminissa:
-* Lisää uusi Login Method: yletunnus
-* OpenID Connect Provider / Clients / Lisää client:
-  * Name: mvj
-  * Client Type: public
-  * Response types: id_token token (Implicit Flow)
-  * Redirect URIs: http://localhost:3000/callback <uusi rivi> http://localhost:3000/silent_renew.html
-  * Client ID: https://api.hel.fi/auth/mvj
-  * Site type: Development
-  * Login methods: GitHub
-* Oidc_Apis / APIs / Lisää API:
-  * Domain: https://api.hel.fi/auth
-  * Nimi: mvj
-  * Required scopes: Sähköposti, Profile, Address, AD Groups
-  * OIDC client: mvj
-* Oidc_Apis / API scopes / Lisää API scope:
-  * API: https://api.hel.fi/auth/mvj
-  * Nimi: mvj
-  * Description: lue ja modifioi
-  * Allowed applications: mvj
 
-* Kopioi docker-compose.env.template -> docker-compose.env
-* Lisää docker-compose.env.yaml SOCIAL_AUTH_GITHUB_KEY ja SOCIAL_AUTH_GITHUB_SECRET Githubista
+At Django admin:
+
+- Create new Login Method: yletunnus
+- OpenID Connect Provider / Clients / Add client:
+  - Name: mvj
+  - Client Type: public
+  - Response types: id_token token (Implicit Flow)
+  - Redirect URIs: http://localhost:3000/callback <new line> http://localhost:3000/silent_renew.html
+  - Client ID: https://api.hel.fi/auth/mvj
+  - Site type: Development
+  - Login methods: GitHub
+- Oidc_Apis / APIs / Add API:
+  - Domain: https://api.hel.fi/auth
+  - Name: mvj
+  - Required scopes: Sähköposti, Profile, Address, AD Groups
+  - OIDC client: mvj
+- Oidc_Apis / API scopes / Add API scope:
+
+  - API: https://api.hel.fi/auth/mvj
+  - Name: mvj
+  - Description: lue ja modifioi
+  - Allowed applications: mvj
+
+- Copy docker-compose.env.template -> docker-compose.env
+- Create a new OAuth app to Github (use http://tunnistamo-backend:8888/accounts/github/login/callback/ as callback url)
+- Add SOCIAL_AUTH_GITHUB_KEY and SOCIAL_AUTH_GITHUB_SECRET from Github to docker-compose.env.yaml
 
 ## Development without Docker
 
