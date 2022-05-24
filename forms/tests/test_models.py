@@ -27,6 +27,7 @@ def test_linking_answer_to_form(form_factory, answer_factory, user_factory):
 def test_linking_entry_to_answer(
     form_factory,
     answer_factory,
+    entry_section_factory,
     entry_factory,
     user_factory,
     field_factory,
@@ -47,5 +48,6 @@ def test_linking_entry_to_answer(
         type=field_type,
         section=section,
     )
-    entry = entry_factory(answer=answer, field=field, value=fake.name())
-    assert entry.answer_id == answer.id
+    entry_section = entry_section_factory(answer=answer)
+    entry = entry_factory(entry_section=entry_section, field=field, value=fake.name())
+    assert entry.entry_section.answer_id == answer.id

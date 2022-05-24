@@ -6,7 +6,7 @@ from django.core.management import call_command
 from faker import Faker
 from pytest_factoryboy import register
 
-from forms.models.form import Answer, Choice, Entry
+from forms.models.form import Answer, Choice, Entry, EntrySection
 
 fake = Faker("fi_FI")
 
@@ -24,20 +24,35 @@ class AnswerFactory(factory.DjangoModelFactory):
 
 
 @register
+class EntrySectionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = EntrySection
+
+
+@register
 class EntryFactory(factory.DjangoModelFactory):
     class Meta:
         model = Entry
 
 
 @pytest.fixture
-def basic_answer(answer_factory, entry_factory, basic_template_form, user_factory):
+def basic_answer(
+    answer_factory,
+    entry_section_factory,
+    entry_factory,
+    basic_template_form,
+    user_factory,
+):
     form = basic_template_form
     user = user_factory(username=fake.name())
     answer = answer_factory(form=form, user=user)
 
     for section in answer.form.sections.all():
+        entry_section = entry_section_factory(
+            answer=answer, identifier=section.get_root(section)
+        )
         for field in section.fields.all():
-            entry_factory(answer=answer, field=field, value=fake.name())
+            entry_factory(entry_section=entry_section, field=field, value=fake.name())
 
     return answer
 
