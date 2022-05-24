@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.json import JSONField
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
@@ -64,6 +65,12 @@ class Section(models.Model):
                 filter={"form_id": self.form.id},
             )
         super(Section, self).save(*args, **kwargs)
+
+    @staticmethod
+    def get_root(section):
+        if section.parent is not None:
+            return Section.get_root(section.parent)
+        return section
 
     def __str__(self):
         return self.title
@@ -160,10 +167,20 @@ class Attachment(models.Model):
     name = models.CharField(max_length=255)
     attachment = models.FileField(upload_to=get_attachment_file_upload_to)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+    path = models.TextField(null=True, blank=True)
 
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class EntrySection(models.Model):
+    metadata = JSONField(null=True)
+    identifier = models.SlugField()
+
+    answer = models.ForeignKey(
+        Answer, on_delete=models.CASCADE, related_name="entry_sections", null=True
+    )
 
 
 class Entry(models.Model):
@@ -171,8 +188,8 @@ class Entry(models.Model):
     Model for saving Answer entries
     """
 
-    answer = models.ForeignKey(
-        Answer, on_delete=models.CASCADE, related_name="entries", null=True
+    entry_section = models.ForeignKey(
+        EntrySection, on_delete=models.CASCADE, related_name="entries", null=True
     )
     field = models.ForeignKey(Field, on_delete=models.PROTECT)
     value = models.TextField()

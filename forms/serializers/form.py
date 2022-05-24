@@ -13,7 +13,7 @@ from plotsearch.models import ApplicationStatus, PlotSearchTarget
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
-from ..models.form import Attachment
+from ..models.form import Attachment, EntrySection
 from ..validators.answer import FieldRegexValidator, RequiredFormFieldValidator
 
 
@@ -238,7 +238,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField(write_only=True)
     entries_data = serializers.DictField(
-        read_only=True, child=serializers.CharField(), source="entries"
+        read_only=True, child=serializers.CharField(), source="entry_sections"
     )
     targets = InstanceDictPrimaryKeyRelatedField(
         many=True, queryset=PlotSearchTarget.objects.all()
@@ -268,11 +268,16 @@ class AnswerSerializer(serializers.ModelSerializer):
             ),
         ]
 
-    def entry_generator(self, entries, path="", sections=None, fields=None):
+    def entry_generator(
+        self, entries, path="", sections=None, fields=None, metadata={}
+    ):
+        if "metadata" in entries:
+            metadata.update(entries["metadata"])
         if "sections" in entries:
             yield from self.entry_generator(
                 entries["sections"],
                 sections=[entry for entry in entries["sections"]],
+                metadata=metadata,
                 path=path,
             )
         if "fields" in entries:
@@ -280,6 +285,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                 entries["fields"],
                 sections=sections,
                 fields=[entry for entry in entries["fields"]],
+                metadata=metadata,
                 path=path,
             )
 
@@ -289,6 +295,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                     entry,
                     sections=sections,
                     fields=fields,
+                    metadata=metadata,
                     path="{}[{}]".format(path, str(i)),
                 )
         if isinstance(sections, list):
@@ -296,6 +303,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                 yield from self.entry_generator(
                     entries[section],
                     sections=section,
+                    metadata=metadata,
                     path="{}.{}".format(path, section),
                 )
         if not isinstance(fields, list):
@@ -305,7 +313,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             value_dict = entries[field]
 
             # first character is a dot
-            yield field, sections, value_dict, path[1:]
+            yield field, sections, value_dict, metadata, path[1:]
 
     def to_representation(self, instance):
         """
@@ -340,32 +348,37 @@ class AnswerSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_entry(attribute):
         entries_dict = dict()
-        for entry in attribute.all():
-            path_parts = entry.path.split(sep=".")
-            try:
-                entry_value = literal_eval(entry.value)
-            except (SyntaxError, ValueError):
-                entry_value = entry.value
-            value_set = False
-            help_dict = dict()
-            for part in reversed(path_parts):
-                new_dict = {}
-                if value_set:
-                    new_dict[part] = help_dict
-                    help_dict = new_dict
-                    continue
+        for entry_section in attribute.all():
+            for entry in entry_section.entries.all():
+                path_parts = entry.path.split(sep=".")
+                try:
+                    entry_value = literal_eval(entry.value)
+                except (SyntaxError, ValueError):
+                    entry_value = entry.value
+                value_set = False
+                help_dict = dict()
+                for part in reversed(path_parts):
+                    new_dict = {}
+                    if value_set:
+                        new_dict[part] = help_dict
+                        if part == path_parts[0]:
+                            new_dict[part]["metadata"] = entry.entry_section.metadata
+                        help_dict = new_dict
+                        continue
 
-                help_dict[part] = {
-                    "fields": {
-                        entry.field.identifier: {
-                            "value": entry_value,
-                            "extra_value": entry.extra_value,
+                    help_dict[part] = {
+                        "fields": {
+                            entry.field.identifier: {
+                                "value": entry_value,
+                                "extra_value": entry.extra_value,
+                            }
                         }
                     }
-                }
-                value_set = True
+                    value_set = True
+                    if part == path_parts[0]:
+                        help_dict[part]["metadata"] = entry.entry_section.metadata
 
-            always_merger.merge(entries_dict, help_dict)
+                always_merger.merge(entries_dict, help_dict)
         return entries_dict
 
     def create(self, validated_data):
@@ -377,10 +390,19 @@ class AnswerSerializer(serializers.ModelSerializer):
         for target in targets:
             answer.targets.add(target)
 
-        for field_identifier, section_identifier, value, path in self.entry_generator(
-            entries_data
-        ):
+        for (
+            field_identifier,
+            section_identifier,
+            value,
+            metadata,
+            path,
+        ) in self.entry_generator(entries_data):
             try:
+                root_section = Section.get_root(
+                    Section.objects.get(
+                        identifier=section_identifier, form=validated_data.get("form")
+                    )
+                )
                 field = Field.objects.get(
                     identifier=field_identifier,
                     section__identifier=section_identifier,
@@ -388,8 +410,13 @@ class AnswerSerializer(serializers.ModelSerializer):
                 )
             except Field.DoesNotExist:
                 raise ValueError
-            Entry.objects.create(
+            entry_section, unused = EntrySection.objects.get_or_create(
+                identifier=root_section.identifier,
                 answer=answer,
+                defaults={"metadata": metadata},
+            )
+            Entry.objects.create(
+                entry_section=entry_section,
                 field=field,
                 value=value["value"],
                 extra_value=value["extraValue"],
@@ -402,19 +429,33 @@ class AnswerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         entries_data = validated_data.pop("entries", [])
 
-        for field_identifier, section_identifier, value, path in self.entry_generator(
-            entries_data
-        ):
+        for (
+            field_identifier,
+            section_identifier,
+            value,
+            metadata,
+            path,
+        ) in self.entry_generator(entries_data):
             try:
                 field = Field.objects.get(
                     identifier=field_identifier,
                     section__identifier=section_identifier,
                     section__form=validated_data.get("form"),
                 )
+                root_section = Section.get_root(
+                    Section.objects.get(
+                        identifier=section_identifier, form=validated_data.get("form")
+                    )
+                )
             except Field.DoesNotExist:
                 raise ValueError
-            Entry.objects.update_or_create(
+            entry_section, unused = EntrySection.objects.get_or_create(
+                identifier=root_section.identifier,
                 answer=instance,
+                defaults={"metadata": metadata},
+            )
+            Entry.objects.update_or_create(
+                entry_section=entry_section,
                 field=field,
                 defaults={"value": value["value"], "extra_value": value["extraValue"]},
                 path=path,
@@ -473,31 +514,35 @@ class AnswerListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_applicant(obj):
         try:
-            applicant_type = obj.entries.get(
+            applicant_section = obj.entry_sections.get(
+                entries__field__identifier="hakija",
+                entries__field__section__identifier="hakijan-tiedot",
+            )
+            applicant_type = applicant_section.sections.get(
                 field__identifier="hakija", field__section__identifier="hakijan-tiedot"
             ).value
             if applicant_type == "Yritys":
                 applicant = (
-                    obj.entries.filter(
-                        field__identifier="yrityksen-nimi",
-                        field__section__identifier="yrityksen-tiedot",
+                    applicant_section.entries.filter(
+                        entries__field__identifier="yrityksen-nimi",
+                        entries__field__section__identifier="yrityksen-tiedot",
                     )
                     .first()
                     .value
                 )
             elif applicant_type == "Henkilö":
                 front_name = (
-                    obj.entries.filter(
-                        field__identifier="etunimi",
-                        field__section__identifier="henkilon-tiedot",
+                    applicant_section.entries.filter(
+                        entries__field__identifier="etunimi",
+                        entries__field__section__identifier="henkilon-tiedot",
                     )
                     .first()
                     .value
                 )
                 last_name = (
-                    obj.entries.filter(
-                        field__identifier="sukunimi",
-                        field__section__identifier="henkilon-tiedot",
+                    applicant_section.entries.filter(
+                        entries__field__identifier="sukunimi",
+                        entries__field__section__identifier="henkilon-tiedot",
                     )
                     .first()
                     .value
@@ -505,7 +550,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
                 applicant = " ".join([front_name, last_name])
             else:
                 applicant = ""
-        except Entry.DoesNotExist:
+        except EntrySection.DoesNotExist:
             applicant = ""
         return applicant
 

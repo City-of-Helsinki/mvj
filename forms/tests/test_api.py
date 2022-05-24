@@ -144,6 +144,7 @@ def test_answer_post(
                     },
                 },
                 "fields": {},
+                "metadata": {"metaa": "on"},
             }
         ),
         "attachments": [],
@@ -176,6 +177,7 @@ def test_answer_post(
                 },  # fmt: on
             },
             "fields": {},
+            "metadata": {"metaa": "on"},
         },
         "ready": True,
     }
@@ -183,6 +185,7 @@ def test_answer_post(
     patched_data = response.data["entries_data"]
     assert response.status_code == 200
     assert patched_data["contact-person"]["fields"]["first-name"]["value"] == "Matti"
+    assert patched_data["contact-person"]["metadata"] == {"metaa": "on"}
 
     url = reverse("answer-list")
     response = admin_client.get(url)
