@@ -5,11 +5,15 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.permissions import MvjDjangoModelPermissionsOrAnonReadOnly
+from leasing.permissions import (
+    MvjDjangoModelPermissions,
+    MvjDjangoModelPermissionsOrAnonReadOnly,
+)
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.models import (
     AreaSearch,
     Favourite,
+    InformationCheck,
     IntendedSubUse,
     IntendedUse,
     PlotSearch,
@@ -19,6 +23,7 @@ from plotsearch.models import (
 from plotsearch.serializers import (
     AreaSearchSerializer,
     FavouriteSerializer,
+    InformationCheckSerializer,
     IntendedSubUseSerializer,
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
@@ -117,3 +122,9 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     queryset = AreaSearch.objects.all()
     serializer_class = AreaSearchSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class InformationCheckViewSet(viewsets.ModelViewSet):
+    queryset = InformationCheck.objects.all()
+    serializer_class = InformationCheckSerializer
+    permission_classes = (MvjDjangoModelPermissions,)

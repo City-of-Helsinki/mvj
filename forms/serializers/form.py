@@ -398,11 +398,6 @@ class AnswerSerializer(serializers.ModelSerializer):
             path,
         ) in self.entry_generator(entries_data):
             try:
-                root_section = Section.get_root(
-                    Section.objects.get(
-                        identifier=section_identifier, form=validated_data.get("form")
-                    )
-                )
                 field = Field.objects.get(
                     identifier=field_identifier,
                     section__identifier=section_identifier,
@@ -411,7 +406,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             except Field.DoesNotExist:
                 raise ValueError
             entry_section, unused = EntrySection.objects.get_or_create(
-                identifier=root_section.identifier,
+                identifier=path.split(".")[0],
                 answer=answer,
                 defaults={"metadata": metadata},
             )
@@ -442,15 +437,10 @@ class AnswerSerializer(serializers.ModelSerializer):
                     section__identifier=section_identifier,
                     section__form=validated_data.get("form"),
                 )
-                root_section = Section.get_root(
-                    Section.objects.get(
-                        identifier=section_identifier, form=validated_data.get("form")
-                    )
-                )
             except Field.DoesNotExist:
                 raise ValueError
             entry_section, unused = EntrySection.objects.get_or_create(
-                identifier=root_section.identifier,
+                identifier=path.split(".")[0],
                 answer=instance,
                 defaults={"metadata": metadata},
             )

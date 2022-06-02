@@ -98,7 +98,12 @@ from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
-from plotsearch.views import AreaSearchViewSet, FavouriteViewSet, IntendedSubUseViewSet
+from plotsearch.views import (
+    AreaSearchViewSet,
+    FavouriteViewSet,
+    InformationCheckViewSet,
+    IntendedSubUseViewSet,
+)
 from plotsearch.views import IntendedUseViewSet as IntendedUsePSViewSet
 from plotsearch.views import (
     PlotSearchSubtypeViewSet,
@@ -135,6 +140,7 @@ router.register(
     r"infill_development_compensation_attachment",
     InfillDevelopmentCompensationAttachmentViewSet,
 )
+router.register(r"information_check", InformationCheckViewSet)
 router.register(r"inspection_attachment", InspectionAttachmentViewSet)
 router.register(r"invoice", InvoiceViewSet)
 router.register(r"invoice_note", InvoiceNoteViewSet)
