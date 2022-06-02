@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -5,6 +6,7 @@ from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
+from forms.models.form import EntrySection
 from forms.serializers.form import FormSerializer
 from leasing.models import Decision, PlanUnit
 from leasing.serializers.decision import DecisionSerializer
@@ -18,6 +20,7 @@ from plotsearch.models import (
     AreaSearch,
     Favourite,
     FavouriteTarget,
+    InformationCheck,
     IntendedSubUse,
     IntendedUse,
     PlotSearch,
@@ -598,3 +601,42 @@ class AreaSearchSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["form"] = initialize_area_search_form()
         return super().create(validated_data)
+
+
+class InformationCheckSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer
+):
+    mark_all = serializers.BooleanField(write_only=True)
+    answer = serializers.IntegerField(source="entry_section.answer_id")
+    identifier = serializers.CharField(write_only=True)
+    type = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = InformationCheck
+        fields = (
+            "name",
+            "answer",
+            "state",
+            "preparer",
+            "comment",
+            "identifier",
+            "type",
+            "mark_all",
+        )
+
+    def create(self, validated_data):
+        answer_id = validated_data.pop("entry_section")
+        identifier = validated_data.pop("identifier")
+        type = validated_data.pop("type")
+        validated_data.pop("mark_all")
+        try:
+            entry_section = EntrySection.objects.get(
+                answer_id=answer_id["answer_id"],
+                metadata__identifier=identifier,
+                metadata__type=type,
+            )
+        except EntrySection.MultipleObjectsReturned:
+            raise Http404
+        return InformationCheck.objects.create(
+            entry_section=entry_section, **validated_data
+        )

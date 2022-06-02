@@ -8,10 +8,11 @@ from enumfields import EnumField
 from rest_framework.serializers import ValidationError
 
 from forms.models import Answer, Form
+from forms.models.form import EntrySection
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
-from plotsearch.enums import SearchClass
+from plotsearch.enums import InformationState, SearchClass
 from users.models import User
 
 
@@ -170,6 +171,31 @@ class PlotSearchTarget(models.Model):
             return
 
         raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
+
+
+class InformationCheck(NameModel):
+    """
+    In Finnish: Lisätiedon tila
+    """
+
+    # In Finnish: Käsittelijä
+    preparer = models.ForeignKey(
+        User,
+        verbose_name=_("Preparer"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Vastauksen osio
+    entry_section = models.ForeignKey(EntrySection, on_delete=models.PROTECT)
+
+    # In Finnish: Tila
+    state = EnumField(enum=InformationState, max_length=30, null=True, blank=True)
+
+    # In Finnish: Kommentti
+    comment = models.TextField(null=True, blank=True)
 
 
 class ApplicationStatus(models.Model):
