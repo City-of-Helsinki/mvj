@@ -607,36 +607,12 @@ class InformationCheckSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     mark_all = serializers.BooleanField(write_only=True)
-    answer = serializers.IntegerField(source="entry_section.answer_id")
-    identifier = serializers.CharField(write_only=True)
-    type = serializers.CharField(write_only=True)
 
     class Meta:
         model = InformationCheck
         fields = (
-            "name",
-            "answer",
             "state",
             "preparer",
             "comment",
-            "identifier",
-            "type",
             "mark_all",
-        )
-
-    def create(self, validated_data):
-        answer_id = validated_data.pop("entry_section")
-        identifier = validated_data.pop("identifier")
-        type = validated_data.pop("type")
-        validated_data.pop("mark_all")
-        try:
-            entry_section = EntrySection.objects.get(
-                answer_id=answer_id["answer_id"],
-                metadata__identifier=identifier,
-                metadata__type=type,
-            )
-        except EntrySection.MultipleObjectsReturned:
-            raise Http404
-        return InformationCheck.objects.create(
-            entry_section=entry_section, **validated_data
         )

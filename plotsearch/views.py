@@ -124,7 +124,12 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
 
-class InformationCheckViewSet(viewsets.ModelViewSet):
+class InformationCheckViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = InformationCheck.objects.all()
     serializer_class = InformationCheckSerializer
     permission_classes = (MvjDjangoModelPermissions,)

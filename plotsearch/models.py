@@ -12,7 +12,7 @@ from forms.models.form import EntrySection
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
-from plotsearch.enums import InformationState, SearchClass
+from plotsearch.enums import InformationCheckName, InformationState, SearchClass
 from users.models import User
 
 
@@ -173,10 +173,13 @@ class PlotSearchTarget(models.Model):
         raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
 
 
-class InformationCheck(NameModel):
+class InformationCheck(models.Model):
     """
     In Finnish: Lisätiedon tila
     """
+
+    # In Finnish: Nimi
+    name = EnumField(enum=InformationCheckName, max_length=30)
 
     # In Finnish: Käsittelijä
     preparer = models.ForeignKey(
@@ -192,7 +195,9 @@ class InformationCheck(NameModel):
     entry_section = models.ForeignKey(EntrySection, on_delete=models.PROTECT)
 
     # In Finnish: Tila
-    state = EnumField(enum=InformationState, max_length=30, null=True, blank=True)
+    state = EnumField(
+        enum=InformationState, max_length=30, default=InformationState.NOT_CHECKED
+    )
 
     # In Finnish: Kommentti
     comment = models.TextField(null=True, blank=True)

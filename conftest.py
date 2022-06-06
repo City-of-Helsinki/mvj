@@ -338,11 +338,15 @@ def basic_answer(
     form = basic_template_form
     user = user_factory(username=fake.name())
     answer = answer_factory(form=form, user=user)
+    entry_section = None
 
     for section in answer.form.sections.all():
-        entry_section = entry_section_factory(
-            answer=answer, identifier=section.get_root(section)
-        )
+        if not EntrySection.objects.filter(
+            identifier=section.get_root(section).identifier
+        ).exists():
+            entry_section = entry_section_factory(
+                answer=answer, identifier=section.get_root(section).identifier
+            )
         for field in section.fields.all():
             entry_factory(entry_section=entry_section, field=field, value=fake.name())
 
@@ -381,10 +385,10 @@ def basic_template_form(
     # Root applicant section
     applicant_section = section_factory(
         form=form,
-        title="Applicant information",
+        title="Hakijan tiedot",
         add_new_allowed=True,
         add_new_text="Add new applicant",
-        identifier="applicant-information",
+        identifier="hakijan-tiedot",
     )
 
     # Company applicant
