@@ -1,7 +1,10 @@
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
-from plotsearch.models import PlotSearch, PlotSearchTarget
+from forms.models import Answer
+from forms.models.form import EntrySection
+from plotsearch.enums import InformationCheckName
+from plotsearch.models import InformationCheck, PlotSearch, PlotSearchTarget
 
 
 @receiver(pre_save, sender=PlotSearchTarget)
@@ -40,3 +43,12 @@ def prepare_template_form_on_plot_search_save(sender, instance, **kwargs):
         cloned_form.is_template = False
         cloned_form.save()
         instance.form = cloned_form
+
+
+@receiver(post_save, sender=EntrySection)
+def create_information_checks_on_answer_save(sender, instance, **kwargs):
+    if "hakijan-tiedot" in instance.identifier:
+        for entry in InformationCheckName.choices():
+            InformationCheck.objects.create(
+                name=entry[0], preparer=None, entry_section=instance, comment=None
+            )
