@@ -9,7 +9,7 @@ from rest_framework.relations import PKOnlyObject
 from rest_framework_gis.fields import GeometryField
 
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
-from plotsearch.models import ApplicationStatus, PlotSearchTarget
+from plotsearch.models import ApplicationStatus, InformationCheck, PlotSearchTarget
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -234,6 +234,15 @@ class EntrySerializer(serializers.ModelSerializer):
         fields = ("path", "value", "extra_value")
 
 
+class InformationCheckAnswerSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = InformationCheck
+        fields = (
+            "id",
+            "name",
+        )
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField(write_only=True)
@@ -246,6 +255,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     attachments = serializers.ListSerializer(
         child=serializers.IntegerField(), write_only=True, required=False
     )
+    information_checks = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Answer
@@ -255,6 +265,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             "targets",
             "entries",
             "entries_data",
+            "information_checks",
             "attachments",
             "ready",
         )
@@ -267,6 +278,16 @@ class AnswerSerializer(serializers.ModelSerializer):
                 "[0-9]{7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
             ),
         ]
+
+    def get_information_checks(self, obj):
+        entry_sections = obj.entry_sections.filter(identifier="hakijan-tiedot")
+        information_checks = list(dict())
+        for entry_section in entry_sections:
+            for information_check in entry_section.informationcheck_set.all():
+                information_checks.append(
+                    {"id": information_check.id, "name": information_check.name}
+                )
+        return information_checks
 
     def entry_generator(
         self, entries, path="", sections=None, fields=None, metadata={}

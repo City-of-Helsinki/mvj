@@ -132,15 +132,20 @@ def test_answer_post(
                             },
                         },
                     ],
-                    "contact-person": {
-                        "sections": {},
-                        "fields": {
-                            "first-name": {"value": False, "extraValue": None},
-                            "last-name": {
-                                "value": 99,
-                                "extraValue": "developers developers developers",
+                    "hakijan-tiedot": {
+                        "sections": {
+                            "contact-person": {
+                                "sections": {},
+                                "fields": {
+                                    "first-name": {"value": False, "extraValue": None},
+                                    "last-name": {
+                                        "value": 99,
+                                        "extraValue": "developers developers developers",
+                                    },
+                                },
                             },
                         },
+                        "fields": {},
                     },
                 },
                 "fields": {},
@@ -169,12 +174,21 @@ def test_answer_post(
                         },
                     },
                 ],
-                "contact-person": {
-                    "sections": {},  # fmt:off
-                    "fields": {
-                        "first-name": {"value": "Matti", "extraValue": None},
-                    },  # Formatting bug
-                },  # fmt: on
+                "hakijan-tiedot": {
+                    "sections": {
+                        "contact-person": {
+                            "sections": {},
+                            "fields": {
+                                "first-name": {"value": "Matti", "extraValue": None},
+                                "last-name": {
+                                    "value": 99,
+                                    "extraValue": "developers developers developers",
+                                },
+                            },
+                        },
+                    },  # fmt: on
+                    "fields": {},
+                },
             },
             "fields": {},
             "metadata": {"metaa": "on"},
@@ -184,8 +198,13 @@ def test_answer_post(
     response = admin_client.patch(url, data=payload, content_type="application/json")
     patched_data = response.data["entries_data"]
     assert response.status_code == 200
-    assert patched_data["contact-person"]["fields"]["first-name"]["value"] == "Matti"
-    assert patched_data["contact-person"]["metadata"] == {"metaa": "on"}
+    assert (
+        patched_data["hakijan-tiedot"]["contact-person"]["fields"]["first-name"][
+            "value"
+        ]
+        == "Matti"
+    )
+    assert patched_data["hakijan-tiedot"]["metadata"] == {"metaa": "on"}
 
     url = reverse("answer-list")
     response = admin_client.get(url)
