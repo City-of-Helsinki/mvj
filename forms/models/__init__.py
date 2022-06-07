@@ -1,1 +1,10 @@
-from .form import Answer, Choice, Entry, Field, FieldType, Form, Section  # noqa: F401
+from .form import (  # noqa: F401
+    Answer,
+    Choice,
+    Entry,
+    EntrySection,
+    Field,
+    FieldType,
+    Form,
+    Section,
+)
