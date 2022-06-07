@@ -10,6 +10,7 @@ from leasing.permissions import (
     MvjDjangoModelPermissionsOrAnonReadOnly,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
+from plotsearch.filter import InformationCheckListFilterSet
 from plotsearch.models import (
     AreaSearch,
     Favourite,
@@ -133,3 +134,5 @@ class InformationCheckViewSet(
     queryset = InformationCheck.objects.all()
     serializer_class = InformationCheckSerializer
     permission_classes = (MvjDjangoModelPermissions,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = InformationCheckListFilterSet

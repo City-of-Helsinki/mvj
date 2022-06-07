@@ -1,7 +1,6 @@
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
-from forms.models import Answer
 from forms.models.form import EntrySection
 from plotsearch.enums import InformationCheckName
 from plotsearch.models import InformationCheck, PlotSearch, PlotSearchTarget
