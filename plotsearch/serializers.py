@@ -1,4 +1,3 @@
-from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -6,7 +5,6 @@ from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
-from forms.models.form import EntrySection
 from forms.serializers.form import FormSerializer
 from leasing.models import Decision, PlanUnit
 from leasing.serializers.decision import DecisionSerializer
@@ -606,11 +604,13 @@ class AreaSearchSerializer(serializers.ModelSerializer):
 class InformationCheckSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
+    id = serializers.IntegerField(read_only=True)
     mark_all = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = InformationCheck
         fields = (
+            "id",
             "state",
             "preparer",
             "comment",
