@@ -185,10 +185,21 @@ class SectionSerializer(serializers.ModelSerializer):
 class FormSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True)
     state = EnumSerializerField(FormState)
+    plot_search_name = serializers.CharField(read_only=True, source="plotsearch.name")
+    plot_search_id = serializers.IntegerField(read_only=True, source="plotsearch.id")
 
     class Meta:
         model = Form
-        fields = ("id", "name", "is_template", "title", "sections", "state")
+        fields = (
+            "id",
+            "name",
+            "is_template",
+            "title",
+            "sections",
+            "state",
+            "plot_search_name",
+            "plot_search_id",
+        )
 
     @staticmethod
     def get_sections(instance):
