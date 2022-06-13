@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.contrib.gis.db import models as gmodels
 from django.db import models
@@ -288,6 +289,10 @@ class AreaSearch(models.Model):
     form = models.OneToOneField(
         Form, on_delete=models.SET_NULL, null=True, related_name="area_search"
     )
+
+
+auditlog.register(PlotSearch)
+auditlog.register(InformationCheck)
 
 
 from plotsearch.signals import *  # noqa: E402 F403 F401

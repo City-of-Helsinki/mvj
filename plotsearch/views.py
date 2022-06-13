@@ -126,6 +126,7 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
 
 
 class InformationCheckViewSet(
+    AuditLogMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
