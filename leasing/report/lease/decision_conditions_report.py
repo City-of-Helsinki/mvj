@@ -10,7 +10,7 @@ def get_lease_id(obj):
 
 
 def get_condition_type(obj):
-    return obj.type.name
+    return obj.type.name if obj.type else ""
 
 
 def get_area(obj):
@@ -42,13 +42,16 @@ class DecisionConditionsReport(ReportBase):
     )
     slug = "decision_conditions"
     input_fields = {
-        "start_date": forms.DateField(label=_("Start date"), required=True),
-        "end_date": forms.DateField(label=_("End date"), required=True),
+        "start_date": forms.DateField(label=_("Start date"), required=False),
+        "end_date": forms.DateField(label=_("End date"), required=False),
         "condition_type": forms.ModelChoiceField(
             label=_("Type"),
             queryset=ConditionType.objects.all(),
             empty_label=None,
             required=False,
+        ),
+        "supervision_exists": forms.NullBooleanField(
+            label=_("Supervision date exists"), initial=False, required=False
         ),
     }
     output_fields = {
@@ -71,11 +74,7 @@ class DecisionConditionsReport(ReportBase):
 
     def get_data(self, input_data):
         qs = (
-            Condition.objects.filter(
-                supervision_date__gte=input_data["start_date"],
-                supervision_date__lte=input_data["end_date"],
-                supervised_date__isnull=True,
-            )
+            Condition.objects.filter(supervised_date__isnull=True)
             .select_related(
                 "type",
                 "decision",
@@ -97,6 +96,17 @@ class DecisionConditionsReport(ReportBase):
                 "decision__lease__identifier__sequence",
             )
         )
+
+        if input_data["supervision_exists"] is not None:
+            qs = qs.filter(
+                supervision_date__isnull=not input_data["supervision_exists"]
+            )
+        else:
+            if input_data["start_date"]:
+                qs = qs.filter(supervision_date__gte=input_data["start_date"])
+
+            if input_data["end_date"]:
+                qs = qs.filter(supervision_date__lte=input_data["end_date"])
 
         if input_data["condition_type"]:
             qs = qs.filter(type=input_data["condition_type"])
