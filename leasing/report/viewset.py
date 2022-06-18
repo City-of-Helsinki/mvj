@@ -1,3 +1,4 @@
+from django.forms.models import ModelChoiceIteratorValue
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -132,9 +133,17 @@ class ReportViewSet(ViewSet):
                 }
 
                 if hasattr(field, "choices"):
-                    metadata["actions"]["GET"][field_name]["choices"] = [
-                        {"value": c[0], "display_name": c[1]} for c in field.choices
-                    ]
+                    choices = []
+                    for choice_value, choice_label in field.choices:
+                        choices.append(
+                            {
+                                "value": choice_value.value
+                                if isinstance(choice_value, ModelChoiceIteratorValue)
+                                else choice_value,
+                                "display_name": choice_label,
+                            }
+                        )
+                    metadata["actions"]["GET"][field_name]["choices"] = choices
 
             metadata["output_fields"] = report_class.get_output_fields_metadata()
 
