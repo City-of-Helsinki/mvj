@@ -124,6 +124,8 @@ class IndexTypesReport(ReportBase):
                 "lease__identifier__type",
                 "lease__identifier__district",
                 "lease__identifier__municipality",
+                "lease__municipality",
+                "lease__intended_use",
             )
             .prefetch_related(
                 "lease__tenants",
@@ -131,6 +133,7 @@ class IndexTypesReport(ReportBase):
                 "lease__tenants__tenantcontact_set__contact",
                 "lease__lease_areas",
                 "lease__lease_areas__addresses",
+                "lease__contracts",
             )
             .order_by(
                 "lease__identifier__municipality__identifier",
