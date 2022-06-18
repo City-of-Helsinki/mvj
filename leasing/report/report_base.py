@@ -61,8 +61,9 @@ class ReportBase:
     #
     # width and format are used in modify the output of the XLSX renderer.
     # width sets the column width and format sets the cell format. Possible
-    # format values are "date", "money" or "boolean". Any other value leaves
-    # the formatting to xlsxwriter.
+    # format values are "bold", "date", "money", "bold_money", "percentage"
+    # or "boolean". Any other value leaves the formatting to xlsxwriter.
+    # (The percentage format divides the value by 100 when exporting to Excel)
     output_fields = {}
 
     # If the column labels should be automatically added as the first row
@@ -154,6 +155,7 @@ class ReportBase:
             FormatType.BOLD_MONEY: workbook.add_format(
                 {"bold": True, "num_format": "#,##0.00 €"}
             ),
+            FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
         }
 
         row_num = 0
@@ -239,6 +241,10 @@ class ReportBase:
 
                     if field_format_name == "date":
                         field_format = formats[FormatType.DATE]
+                    if field_format_name == "percentage":
+                        field_format = formats[FormatType.PERCENTAGE]
+                        if field_value:
+                            field_value /= 100
                     elif field_format_name == "money":
                         if field_value != 0:
                             field_format = formats[FormatType.MONEY]
