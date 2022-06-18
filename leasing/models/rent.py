@@ -1596,6 +1596,72 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         if self.locked_at is None:
             super().delete(*args, **kwargs)
 
+    def calculate_initial_year_rent(self):
+        if not self.area or not self.amount_per_area:
+            return Decimal(0)
+
+        base_rent = self.area * self.amount_per_area
+        if self.profit_margin_percentage:
+            base_rent *= self.profit_margin_percentage / 100
+
+        if self.index:
+            index_ratio = Decimal(self.index.number / 100)
+        else:
+            index_ratio = Decimal(1)
+
+        initial_year_rent = base_rent * index_ratio
+
+        return initial_year_rent
+
+    def calculate_discounted_rent(self):
+        initial_year_rent = self.calculate_initial_year_rent()
+        if not self.discount_percentage:
+            return initial_year_rent
+
+        discounted_rent = initial_year_rent * (100 - self.discount_percentage) / 100
+
+        return discounted_rent
+
+    def calculate_subsidy(self):
+        subsidy_amount = Decimal(0)
+        if not self.area or not self.amount_per_area:
+            return Decimal(0)
+
+        if self.index:
+            index_ratio = Decimal(self.index.number / 100)
+        else:
+            index_ratio = Decimal(1)
+
+        total_subvention_amount = Decimal(0)
+        if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
+            management_subventions = self.management_subventions.all()
+            if management_subventions:
+                for management_subvention in management_subventions:
+                    total_subvention_amount += management_subvention.subvention_amount
+
+            subsidy_amount = self.area * (
+                self.amount_per_area * index_ratio - total_subvention_amount
+            )
+            if self.profit_margin_percentage:
+                subsidy_amount *= self.profit_margin_percentage / 100
+        elif self.subvention_type == SubventionType.RE_LEASE:
+            initial_year_rent = self.calculate_initial_year_rent()
+            base_percent = (
+                self.subvention_base_percent if self.subvention_base_percent else 0
+            )
+            graduated_percent = (
+                self.subvention_graduated_percent
+                if self.subvention_graduated_percent
+                else 0
+            )
+            subvention_percent = (
+                1
+                - Decimal(1 - base_percent / 100) * Decimal(1 - graduated_percent / 100)
+            ) * 100
+            subsidy_amount = initial_year_rent * (subvention_percent / 100)
+
+        return subsidy_amount
+
 
 class LeaseBasisOfRentManagementSubvention(models.Model):
     lease_basis_of_rent = models.ForeignKey(
