@@ -1,3 +1,4 @@
+import datetime
 import itertools
 
 from django import forms
@@ -5,7 +6,7 @@ from django.db import connection
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from leasing.enums import LeaseState, TenantContactType
+from leasing.enums import ContactType, LeaseState, TenantContactType
 from leasing.models import Lease
 from leasing.report.report_base import ReportBase
 
@@ -29,6 +30,33 @@ def get_address(obj):
         addresses.update([la.address for la in lease_area.addresses.all()])
 
     return " / ".join(addresses)
+
+
+def get_tenants(obj):
+    today = datetime.date.today()
+
+    contacts = set()
+
+    for tenant in obj.tenants.all():
+        for tc in tenant.tenantcontact_set.all():
+            if tc.type != TenantContactType.TENANT:
+                continue
+
+            if (tc.end_date is None or tc.end_date >= today) and (
+                tc.start_date is None or tc.start_date <= today
+            ):
+                contacts.add(tc.contact)
+
+    contact_strings = []
+    for contact in contacts:
+        contact_string = contact.get_name()
+
+        if contact.type == ContactType.BUSINESS and contact.business_id:
+            contact_string += f" ({contact.business_id})"
+
+        contact_strings.append(contact_string)
+
+    return ", ".join(contact_strings)
 
 
 def get_reservation_procedure(obj):
@@ -59,7 +87,11 @@ class ReservationsReport(ReportBase):
         "reservation_id": {"source": get_lease_id, "label": _("Reservation id")},
         "area": {"source": get_area, "label": _("Lease area"), "width": 30},
         "address": {"source": get_address, "label": _("Address"), "width": 50},
-        "reservee_name": {"label": _("Reservee name"), "width": 50},
+        "reservee_name": {
+            "source": get_tenants,
+            "label": _("Reservee name"),
+            "width": 50,
+        },
         "reservation_procedure": {
             "source": get_reservation_procedure,
             "label": _("Reservation procedure"),
@@ -206,18 +238,5 @@ class ReservationsReport(ReportBase):
             )
             .order_by("start_date", "end_date")
         )
-
-        for lease in leases:
-            contacts = set()
-
-            # Do this in code so that the prefetch is used
-            for tenant in lease.tenants.all():
-                for tc in tenant.tenantcontact_set.all():
-                    if tc.type != TenantContactType.TENANT:
-                        continue
-
-                    contacts.add(tc.contact)
-
-            lease.reservee_name = ", ".join([c.get_name() for c in contacts])
 
         return leases
