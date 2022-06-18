@@ -25,6 +25,7 @@ from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
 from leasing.report.lease.rent_forecast import RentForecastReport
 from leasing.report.lease.reservations import ReservationsReport
 from leasing.report.renderers import XLSXRenderer
+from leasing.report.report_base import AsyncReportBase
 
 ENABLED_REPORTS = [
     DecisionConditionsReport,
@@ -146,5 +147,6 @@ class ReportViewSet(ViewSet):
                     metadata["actions"]["GET"][field_name]["choices"] = choices
 
             metadata["output_fields"] = report_class.get_output_fields_metadata()
+            metadata["is_async"] = issubclass(report_class, AsyncReportBase)
 
         return Response(metadata, status=status.HTTP_200_OK)
