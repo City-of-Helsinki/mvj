@@ -4,6 +4,7 @@ import xlsxwriter
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Model
+from django.forms.models import ModelChoiceIteratorValue
 from django.utils import timezone
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
@@ -82,6 +83,21 @@ class ReportBase:
                 for k, v in output_field.items()
                 if k not in ["source", "width", "serializer_field"]
             }
+
+            serializer_field = output_field.get("serializer_field")
+            if serializer_field and hasattr(serializer_field, "choices"):
+                choices = []
+                for choice_value, choice_label in serializer_field.choices.items():
+                    choices.append(
+                        {
+                            "value": choice_value.value
+                            if isinstance(choice_value, ModelChoiceIteratorValue)
+                            else choice_value,
+                            "display_name": choice_label,
+                        }
+                    )
+
+                metadata[field_name]["choices"] = choices
 
         return metadata
 
