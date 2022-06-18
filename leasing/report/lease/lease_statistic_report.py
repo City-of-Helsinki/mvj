@@ -9,8 +9,26 @@ from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumField
 
-from leasing.enums import LeaseAreaAttachmentType, LeaseState, TenantContactType
+from leasing.enums import LeaseAreaAttachmentType, LeaseState
 from leasing.models import Lease
+from leasing.report.lease.common_getters import (
+    get_address,
+    get_contract_number,
+    get_district,
+    get_form_of_management,
+    get_form_of_regulation,
+    get_lease_area_identifier,
+    get_lease_id,
+    get_lease_type,
+    get_lessor,
+    get_notice_period,
+    get_option_to_purchase,
+    get_preparer,
+    get_re_lease,
+    get_supportive_housing,
+    get_tenants,
+    get_total_area,
+)
 from leasing.report.report_base import AsyncReportBase
 
 # TODO: Can we get rid of static ids
@@ -19,103 +37,6 @@ RESIDENTIAL_INTENDED_USE_IDS = [
     12,
     13,
 ]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
-OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
-RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
-
-
-def get_type(obj):
-    return obj.identifier.type.identifier
-
-
-def get_lease_id(obj):
-    return obj.get_identifier_string()
-
-
-def get_tenants(obj):
-    today = datetime.date.today()
-
-    contacts = set()
-
-    for tenant in obj.tenants.all():
-        for tc in tenant.tenantcontact_set.all():
-            if tc.type != TenantContactType.TENANT:
-                continue
-
-            if (tc.end_date is None or tc.end_date >= today) and (
-                tc.start_date is None or tc.start_date <= today
-            ):
-                contacts.add(tc.contact)
-
-    return ", ".join([c.get_name() for c in contacts])
-
-
-def get_address(obj):
-    addresses = []
-
-    for lease_area in obj.lease_areas.all():
-        if lease_area.archived_at:
-            continue
-
-        for area_address in lease_area.addresses.all():
-            if not area_address.is_primary:
-                continue
-
-            addresses.append(area_address.address)
-
-    return " / ".join(addresses)
-
-
-def get_supportive_housing(obj):
-    if not obj.supportive_housing:
-        return
-    return obj.supportive_housing.name
-
-
-def get_notice_period(obj):
-    if not obj.notice_period:
-        return
-    return obj.notice_period.name
-
-
-def get_district(obj):
-    if not obj.district:
-        return
-    return "{} {}".format(obj.district.identifier, obj.district.name)
-
-
-def get_preparer(obj):
-    if not obj.preparer:
-        return
-    return "{} {}".format(obj.preparer.last_name, obj.preparer.first_name)
-
-
-def get_form_of_management(obj):
-    if not obj.management:
-        return
-    return obj.management.name
-
-
-def get_lessor(obj):
-    if not obj.lessor:
-        return
-    return obj.lessor.name
-
-
-def get_form_of_regulation(obj):
-    if not obj.regulation:
-        return
-    return obj.regulation.name
-
-
-def get_contract_number(obj):
-    contract_numbers = []
-    for contract in obj.contracts.all():
-        if not contract.contract_number:
-            continue
-
-        contract_numbers.append(contract.contract_number)
-
-    return " / ".join(contract_numbers)
 
 
 def get_matti_report(obj):
@@ -127,45 +48,6 @@ def get_matti_report(obj):
             if attachment.type == LeaseAreaAttachmentType.MATTI_REPORT:
                 return True
 
-    return False
-
-
-def get_option_to_purchase(obj):
-    for decision in obj.decisions.all():
-        for condition in decision.conditions.all():
-            if condition.type_id == OPTION_TO_PURCHASE_CONDITION_TYPE_ID:
-                return True
-
-    return False
-
-
-def get_lease_area_identifier(obj):
-    lease_area_identifiers = []
-
-    for lease_area in obj.lease_areas.all():
-        if lease_area.archived_at:
-            continue
-
-        lease_area_identifiers.extend([lease_area.identifier])
-
-    return " / ".join(lease_area_identifiers)
-
-
-def get_total_area(obj):
-    total_area = 0
-    for lease_area in obj.lease_areas.all():
-        if lease_area.archived_at:
-            continue
-
-        total_area += lease_area.area
-
-    return total_area
-
-
-def get_re_lease(obj):
-    for decision in obj.decisions.all():
-        if decision.type_id == RE_LEASE_DECISION_TYPE_ID:
-            return True
     return False
 
 
@@ -333,7 +215,7 @@ class LeaseStatisticReport(AsyncReportBase):
             "source": get_contract_number,
         },
         # Vuokrauksen tyyppi
-        "type": {"label": _("Lease type"), "source": get_type, "width": 5},
+        "type": {"label": _("Lease type"), "source": get_lease_type, "width": 5},
         # Vuokrauksen tila
         "state": {
             "label": _("Lease state"),
@@ -460,39 +342,33 @@ class LeaseStatisticReport(AsyncReportBase):
     }
 
     def get_data(self, input_data):
-        if input_data["start_date"]:
-            date_query = Q(start_date__gte=input_data["start_date"])
-        else:
-            date_query = Q()
-
-        qs = (
-            Lease.objects.filter(date_query)
-            .select_related(
-                "identifier__type",
-                "identifier__district",
-                "identifier__municipality",
-                "lessor",
-                "management",
-                "district",
-                "supportive_housing",
-                "type",
-                "notice_period",
-            )
-            .prefetch_related(
-                "rents",
-                "rents__rent_adjustments",
-                "contracts",
-                "lease_areas",
-                "lease_areas__addresses",
-                "lease_areas__attachments",
-                "decisions",
-                "decisions__conditions",
-                "tenants",
-                "tenants__tenantcontact_set",
-                "tenants__tenantcontact_set__contact",
-                "basis_of_rents",
-            )
+        qs = Lease.objects.select_related(
+            "identifier__type",
+            "identifier__district",
+            "identifier__municipality",
+            "lessor",
+            "management",
+            "district",
+            "supportive_housing",
+            "type",
+            "notice_period",
+        ).prefetch_related(
+            "rents",
+            "rents__rent_adjustments",
+            "contracts",
+            "lease_areas",
+            "lease_areas__addresses",
+            "lease_areas__attachments",
+            "decisions",
+            "decisions__conditions",
+            "tenants",
+            "tenants__tenantcontact_set",
+            "tenants__tenantcontact_set__contact",
+            "basis_of_rents",
         )
+
+        if input_data["start_date"]:
+            qs = qs.filter(start_date__gte=input_data["start_date"])
 
         if input_data["state"]:
             qs = qs.filter(state=input_data["state"])
