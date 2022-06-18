@@ -78,6 +78,8 @@ class ReportViewSet(ViewSet):
                 ),
             }
 
+        reports = dict(sorted(reports.items(), key=lambda x: x[1]["name"]))
+
         return Response(reports)
 
     # The "format" parameter is not used here, but is passed by DRF if using
