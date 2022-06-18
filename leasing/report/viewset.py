@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -87,6 +87,10 @@ class ReportViewSet(ViewSet):
             raise NotFound(_("Report type not found"))
 
         self.report = self.report_classes_by_slug[report_type]()
+
+        codename = "leasing.can_generate_report_{}".format(report_type)
+        if not request.user.has_perm(codename) and not request.user.is_superuser:
+            raise PermissionDenied(_("No permission to generate report"))
 
         return self.report.get_response(request)
 

@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django_q.tasks import async_task
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ChoiceField
 from rest_framework.response import Response
 
@@ -112,10 +112,6 @@ class ReportBase:
         return serializer.data
 
     def get_response(self, request):
-        codename = "leasing.can_generate_report_{}".format(self.slug)
-        if not request.user.has_perm(codename):
-            raise PermissionDenied()
-
         report_data = self.get_data(self.get_input_data(request))
         serialized_report_data = self.serialize_data(report_data)
 
