@@ -7,6 +7,7 @@ from django.db.models import Model
 from django.utils import timezone
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+from django_q.conf import Conf
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ChoiceField
@@ -322,6 +323,7 @@ class AsyncReportBase(ReportBase):
             user=user,
             input_data=input_data,
             hook=self.send_report,
+            timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
         )
 
         return Response(
