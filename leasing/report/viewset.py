@@ -12,9 +12,11 @@ from leasing.renderers import BrowsableAPIRendererWithoutForms
 from leasing.report.invoice.collaterals_report import CollateralsReport
 from leasing.report.invoice.invoice_payments import InvoicePaymentsReport
 from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
+from leasing.report.invoice.invoicing_review import InvoicingReviewReport
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.invoice.open_invoices_report import OpenInvoicesReport
 from leasing.report.invoice.rents_paid_by_contact import RentsPaidByContactReport
+from leasing.report.lease.contact_rents import ContactRentsReport
 from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.extra_city_rent import ExtraCityRentReport
 from leasing.report.lease.index_adjusted_rents import IndexAdjustedRentChangeReport
@@ -22,27 +24,35 @@ from leasing.report.lease.index_types import IndexTypesReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
 from leasing.report.lease.lease_count_report import LeaseCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
+from leasing.report.lease.lease_statistic_report2 import LeaseStatisticReport2
+from leasing.report.lease.rent_compare import RentCompareReport
 from leasing.report.lease.rent_forecast import RentForecastReport
+from leasing.report.lease.rent_type import RentTypeReport
 from leasing.report.lease.reservations import ReservationsReport
 from leasing.report.renderers import XLSXRenderer
 from leasing.report.report_base import AsyncReportBase
 
 ENABLED_REPORTS = [
+    CollateralsReport,
+    ContactRentsReport,
     DecisionConditionsReport,
     ExtraCityRentReport,
-    CollateralsReport,
-    OpenInvoicesReport,
-    InvoicePaymentsReport,
-    InvoicesInPeriodReport,
-    RentsPaidByContactReport,
-    LaskeInvoiceCountReport,
-    LeaseCountReport,
     IndexAdjustedRentChangeReport,
     IndexTypesReport,
+    InvoicePaymentsReport,
+    InvoicesInPeriodReport,
+    InvoicingReviewReport,
+    LaskeInvoiceCountReport,
+    LeaseCountReport,
     LeaseInvoicingDisabledReport,
-    RentForecastReport,
-    ReservationsReport,
     LeaseStatisticReport,
+    LeaseStatisticReport2,
+    OpenInvoicesReport,
+    RentCompareReport,
+    RentForecastReport,
+    RentTypeReport,
+    RentsPaidByContactReport,
+    ReservationsReport,
 ]
 
 

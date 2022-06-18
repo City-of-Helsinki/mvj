@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 09:15+0300\n"
+"POT-Creation-Date: 2022-06-18 11:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2786,6 +2786,56 @@ msgstr "Laskunsaaja"
 msgid "Recipient address"
 msgstr "Laskunsaajan osoite"
 
+msgctxt "Invoicing review"
+msgid "Invoicing not enabled"
+msgstr "Vuokraukset, joissa laskutus ei ole käynnissä"
+
+msgctxt "Invoicing review"
+msgid "Rent info not complete"
+msgstr "Vuokraukset, joissa ei ole vuokratiedot kunnossa"
+
+msgctxt "Invoicing review"
+msgid "No rents"
+msgstr "Vuokraukset, joissa ei ole vuokratietoja"
+
+msgctxt "Invoicing review"
+msgid "No due date"
+msgstr "Vuokraukset, joissa ei ole eräpäivää"
+
+msgctxt "Invoicing review"
+msgid "One time rents with no invoice"
+msgstr "Vuokraukset, joilla on kertakaikkinen vuokra mutta ei ole laskuja"
+
+msgctxt "Invoicing review"
+msgid "Incorrect management shares"
+msgstr "Vuokraukset, joissa on virheellinen hallintaosuus"
+
+msgctxt "Invoicing review"
+msgid "Incorrect rent shares"
+msgstr "Vuokraukset, joissa on virheellinen laskutusosuus"
+
+msgctxt "Invoicing review"
+msgid "No tenant contact"
+msgstr "Vuokraukset, joissa ei ole voimassaolevaa vuokraajaa"
+
+msgctxt "Invoicing review"
+msgid "No lease area"
+msgstr "Vuokraukset, joissa ei ole vuokrakohdetta"
+
+msgctxt "Invoicing review"
+msgid "Index type missing"
+msgstr "Indeksilaji puuttuu"
+
+msgid "Invoicing review"
+msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
+
+msgid "Show leases that might have errors in their invoicing"
+msgstr "Vuokrauksia joiden laskutustiedoissa voi olla virheitä"
+
+msgctxt "Invoicing review"
+msgid "Section"
+msgstr "Osio"
+
 msgid "Count of Invoices sent to Laske per day"
 msgstr "Laske-järjestelmään lähetettyjen laskujen määrä per päivä"
 
@@ -2826,6 +2876,24 @@ msgstr "Asiakasnumero"
 msgid "Number of rows"
 msgstr "Rivien määrä"
 
+msgid "Contact rents"
+msgstr "Asiakkaalta perittävät vuokrat"
+
+msgid "Show all rent amounts from all of the leases the contact is a part of"
+msgstr "Kaikkien vuokrausten vuokramäärät joissa asiakas on osallisena"
+
+msgid "Lease area identifier"
+msgstr "Kohteen tunnus"
+
+msgid "Tenants"
+msgstr "Vuokralaiset"
+
+msgid "Rent amount"
+msgstr "Vuokran määrä"
+
+msgid "Contact not found"
+msgstr "Asiakasta ei löytynyt"
+
 msgid "Decision conditions"
 msgstr "Päätöksen ehdot"
 
@@ -2833,8 +2901,11 @@ msgid ""
 "Show decision conditions that have their supervision date between the given "
 "dates. Excluding conditions that have a supervised date."
 msgstr ""
-"Näyttää ehdot joiden valvontapäivämäärä on annettujen päivämäärienvälissä. "
+"Näyttää ehdot joiden valvontapäivämäärä on annettujen päivämäärien välissä. "
 "Lukuunottamatta ehtoja joilla on valvottupäivämäärä."
+
+msgid "Supervision date exists"
+msgstr "Valvontapäivämäärä asetettu"
 
 msgid "Lease area"
 msgstr "Vuokra-alue"
@@ -2852,12 +2923,6 @@ msgstr "Vuokralaisen nimi"
 
 msgid "Area identifier"
 msgstr "Kiinteistötunnus"
-
-msgid "Lease area identifier"
-msgstr "Kohteen tunnus"
-
-msgid "Tenants"
-msgstr "Vuokralaiset"
 
 msgid "Total area"
 msgstr "Kokonaispinta-ala"
@@ -2973,6 +3038,57 @@ msgstr "Osto-oikeus"
 msgid "Matti report"
 msgstr "MATTI-raportti"
 
+msgid "Lease statistics report II"
+msgstr "Vuokrausten tilastoraportti II"
+
+msgid "Shows statistics about leases and their basis of rents"
+msgstr "Lista vuokrauksista ja niiden vuokranperusteista"
+
+msgid "Unit price (index)"
+msgstr "Yksikköhinta (ind)"
+
+msgid "Initial year rent"
+msgstr "Alkuvuosivuokra"
+
+msgid "Subsidised rent"
+msgstr "Subventoitu vuokra"
+
+msgid "Subsidy amount"
+msgstr "Subventio euroina / vuosi"
+
+msgid "Subsidy percent"
+msgstr "Subventio prosentteina"
+
+msgid "Subsidy amount per area"
+msgstr "Subventoitu eur/m^2"
+
+msgid "Temporary discount percent"
+msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
+
+msgid "Temporary discount amount"
+msgstr "Tilapäisalennus euroa/vuosi"
+
+msgid "Form of management (Subvention)"
+msgstr "Hallintamuotosubventio"
+
+msgid "Rent compare"
+msgstr "Vuokrien vertailu"
+
+msgid "Show difference in rent between two years"
+msgstr "Ero kahden eri vuoden vuokrien määrissä"
+
+msgid "First year"
+msgstr "Ensimmäinen vuosi"
+
+msgid "Second year"
+msgstr "Toinen vuosi"
+
+msgid "First year rent"
+msgstr "Ensimmäisen vuoden vuokra"
+
+msgid "Second year rent"
+msgstr "Toisen vuoden vuokra"
+
 msgid "Rent forecast"
 msgstr "Vuokraennuste"
 
@@ -2994,6 +3110,15 @@ msgstr "Ulkoiset"
 #, python-brace-format
 msgid "Total {year} {internal_external_text}"
 msgstr "{internal_external_text} yhteensä vuonna {year}"
+
+msgid "Rent type leases"
+msgstr "Vuokraukset vuokralajin mukaan"
+
+msgid "Show leases with a certain rent type"
+msgstr "Kaikki vuokraukset joissa on valittu vuokralaji"
+
+msgid "Rent type"
+msgstr "Vuokralaji"
 
 msgid "Reservations"
 msgstr "Varaukset"
@@ -3051,6 +3176,9 @@ msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
 msgid "Report type not found"
 msgstr "Raporttityyppiä ei löytynyt"
+
+msgid "No permission to generate report"
+msgstr "Ei oikeutta luoda raporttia"
 
 msgid "Cannot use an inactive receivable type"
 msgstr "Saamislaji ei ole käytettävissä"
@@ -3278,6 +3406,9 @@ msgstr "Kopioi tämän hetkiset alueet ja merkitsee ne \"sopimuksessa\""
 
 msgid "Set invoicing state"
 msgstr "Käynnistä tai keskeytä laskutus"
+
+msgid "Sets invoicing state for lease to true or false"
+msgstr "Käynnistää tai keskeyttää laskutuksen"
 
 msgid "Cannot enable invoicing if rent info is not complete"
 msgstr "Laskutusta ei voi käynnistää jos vuokratiedot ovat keskeneräiset "
