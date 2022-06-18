@@ -275,8 +275,10 @@ class ReportBase:
                         field_name, "serializer_field"
                     )
                     if isinstance(field_serializer_field, ChoiceField):
-                        field_value = str(
-                            field_serializer_field.choices.get(field_value)
+                        field_value = (
+                            str(field_serializer_field.choices.get(field_value))
+                            if field_value
+                            else ""
                         )
 
                     worksheet.write(row_num, column, field_value, field_format)
