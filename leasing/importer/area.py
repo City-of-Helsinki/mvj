@@ -275,7 +275,7 @@ class AreaImporter(BaseImporter):
             type_start = perf_counter()
 
             self.stdout.write(
-                'Starting to import the area type "{}"...\n'.format(area_import_type,)
+                'Starting to import the area type "{}"...\n'.format(area_import_type)
             )
 
             area_import = AREA_IMPORT_TYPES[area_import_type]
@@ -302,7 +302,11 @@ class AreaImporter(BaseImporter):
                 defaults={"name": area_import["source_name"]},
             )
 
-            cursor.execute(area_import["query"])
+            try:
+                cursor.execute(area_import["query"])
+            except psycopg2.ProgrammingError as e:
+                self.stderr.write(str(e))
+                continue
 
             imported_identifiers = []
             count = 0
