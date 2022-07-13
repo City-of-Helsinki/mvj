@@ -4,12 +4,12 @@ from rest_framework import serializers
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
 from leasing.models.land_area import (
-    CustomArea,
+    CustomDetailedPlan,
     LeaseAreaAddress,
     LeaseAreaAttachment,
     PlanUnitIntendedUse,
     PlotDivisionState,
-    UtilDistribution,
+    UsageDistribution,
 )
 from leasing.serializers.decision import DecisionSerializer
 from users.models import User
@@ -351,9 +351,9 @@ class LeaseAreaPlotSerializer(PlotSerializer):
         )
 
 
-class UtilDistributionSerializer(serializers.ModelSerializer):
+class UsageDistributionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UtilDistribution
+        model = UsageDistribution
         fields = (
             "distribution",
             "build_permission",
@@ -361,8 +361,10 @@ class UtilDistributionSerializer(serializers.ModelSerializer):
         )
 
 
-class CustomAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    util_distributions = UtilDistributionSerializer(many=True)
+class CustomDetailedPlanSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer
+):
+    usage_distributions = UsageDistributionSerializer(many=True)
     intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse,
         queryset=PlanUnitIntendedUse.objects.filter(),
@@ -372,7 +374,7 @@ class CustomAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
     )
 
     class Meta:
-        model = CustomArea
+        model = CustomDetailedPlan
         fields = (
             "identifier",
             "intended_use",
@@ -381,10 +383,9 @@ class CustomAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "section_area",
             "detailed_plan",
             "state",
-            "detailed_plan_identifier",
             "detailed_plan_latest_processing_date",
             "detailed_plan_latest_processing_date_note",
-            "util_distributions",
+            "usage_distributions",
         )
 
 
@@ -404,7 +405,7 @@ class LeaseAreaSerializer(
     attachments = LeaseAreaAttachmentSerializer(
         many=True, required=False, allow_null=True
     )
-    custom_area = CustomAreaSerializer(required=False, allow_null=True)
+    custom_detailed_plan = CustomDetailedPlanSerializer(required=False, allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -438,7 +439,7 @@ class LeaseAreaSerializer(
             "archived_decision",
             "geometry",
             "attachments",
-            "custom_area",
+            "custom_detailed_plan",
         )
 
 
@@ -510,7 +511,7 @@ class LeaseAreaCreateUpdateSerializer(
         allow_null=True,
     )
     attachments = LeaseAreaAttachmentSerializer(many=True, read_only=True)
-    custom_area = CustomAreaSerializer(required=False, allow_null=True)
+    custom_detailed_plan = CustomDetailedPlanSerializer(required=False, allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -544,24 +545,24 @@ class LeaseAreaCreateUpdateSerializer(
             "archived_decision",
             "geometry",
             "attachments",
-            "custom_area",
+            "custom_detailed_plan",
         )
 
     def create(self, validated_data):
-        custom_area = validated_data.pop("custom_area", None)
+        custom_detailed_plan = validated_data.pop("custom_detailed_plan", None)
         instance = super().create(validated_data)
-        if custom_area is not None:
-            distributions = custom_area.pop("util_distributions", None)
-            area, created = CustomArea.objects.update_or_create(
-                lease_area=instance, defaults={**custom_area}
+        if custom_detailed_plan is not None:
+            distributions = custom_detailed_plan.pop("usage_distributions", None)
+            area, created = CustomDetailedPlan.objects.update_or_create(
+                lease_area=instance, defaults={**custom_detailed_plan}
             )
             if not created:
                 area.util_distributions.all().delete()
-            for util_distribution in distributions:
-                UtilDistribution.objects.create(
-                    distribution=util_distribution["distribution"],
+            for usage_distributions in distributions:
+                UsageDistribution.objects.create(
+                    distribution=usage_distributions["distribution"],
                     build_permission=["build_permission"],
-                    note=util_distribution["note"],
-                    custom_area=area,
+                    note=usage_distributions["note"],
+                    custom_detailed_plan=area,
                 )
         return instance

@@ -701,19 +701,22 @@ def lease_data_dict_with_contacts(contact_factory):
 
 @pytest.fixture
 def custom_area_in_lease(lease_data_dict_with_contacts):
-    lease_data_dict_with_contacts["lease_areas"][0]["custom_area"] = {
+    lease_data_dict_with_contacts["lease_areas"][0]["custom_detailed_plan"] = {
         "identifier": "54321",
         "intended_use": 1,
         "rent_build_permission": 300,
         "area": 200,
         "section_area": 100,
-        "state": "ongoing",
+        "state": "pending",
         "detailed_plan": "54321",
-        "detailed_plan_identifier": "54321",
         "detailed_plan_latest_processing_date": "2023-07-11",
         "detailed_plan_latest_processing_date_note": "notification",
-        "util_distributions": [
-            {"distribution": 3, "build_permission": "5 m2", "note": "sito tontti",}
+        "usage_distributions": [
+            {
+                "distribution": 3,
+                "build_permission": "5 m2",
+                "note": "sito tontti",
+            }  # noqa: E231
         ],
     }
     return lease_data_dict_with_contacts
