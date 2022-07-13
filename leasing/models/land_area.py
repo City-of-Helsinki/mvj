@@ -13,7 +13,6 @@ from leasing.enums import (
     ConstructabilityReportInvestigationState,
     ConstructabilityState,
     ConstructabilityType,
-    InfillDevelopmentCompensationState,
     LeaseAreaAttachmentType,
     LeaseAreaType,
     LocationType,
@@ -581,30 +580,36 @@ class PlanUnit(Land, MasterLandItemMixin):
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
 
 
-class CustomArea(models.Model):
+class CustomDetailedPlan(TimeStampedSafeDeleteModel):
     """
     In Finnish: Oma muu alue
     """
 
+    # In Finnish: Kohteen tunnus
     identifier = models.CharField(max_length=255)
+    # In Finnish: Kaavayksikön käyttötarkoitus
     intended_use = models.ForeignKey(PlanUnitIntendedUse, on_delete=models.CASCADE)
+    # In Finnish: Kokonaisrakennusoikeus
     rent_build_permission = models.IntegerField()
+    # In Finnish: Kokonaisala
     area = models.IntegerField()
+    # In Finnish: Leikkausala
     section_area = models.IntegerField()
-    detailed_plan = models.CharField(max_length=255)
-    state = EnumField(
-        InfillDevelopmentCompensationState,
-        verbose_name=_("State"),
-        null=True,
-        blank=True,
-        max_length=30,
-    )
-    detailed_plan_identifier = models.CharField(
+    # In Finnish: Asemakaava
+    detailed_plan = models.CharField(
         verbose_name=_("Detailed plan identifier"),
         max_length=255,
         null=True,
         blank=True,
     )
+    # In Finnish: Asemakaavan käsittelyvaihe
+    state = EnumField(
+        PlanUnitStatus,
+        verbose_name=_("Plan unit status"),
+        max_length=30,
+        default=PlanUnitStatus.PRESENT,
+    )
+    # In Finnish: Asemakaavan viimeisin käsittelypäivämäärä
     detailed_plan_latest_processing_date = models.DateField(
         verbose_name=_("Detailed plan latest processing date"), null=True, blank=True
     )
@@ -613,18 +618,27 @@ class CustomArea(models.Model):
         verbose_name=_("Note for latest processing date"), null=True, blank=True
     )
 
+    # In Finnish: Vuokra-alue
     lease_area = models.OneToOneField(
-        LeaseArea, on_delete=models.CASCADE, related_name="custom_area"
+        LeaseArea, on_delete=models.CASCADE, related_name="custom_detailed_plan"
     )
 
 
-class UtilDistribution(models.Model):
+class UsageDistribution(models.Model):
+    """
+    In Finnish: Käyttöjakauma
+    """
+
+    # In Finnish: Jakauma
     distribution = models.IntegerField()
+    # In Finnish: Rakennusoikeus
     build_permission = models.CharField(max_length=255)
+    # In Finnish: Huomio
     note = models.TextField()
 
-    custom_area = models.ForeignKey(
-        CustomArea, on_delete=models.CASCADE, related_name="util_distributions"
+    # In Finnish: Oma muu alue
+    custom_detailed_plan = models.ForeignKey(
+        CustomDetailedPlan, on_delete=models.CASCADE, related_name="usage_distributions"
     )
 
 
