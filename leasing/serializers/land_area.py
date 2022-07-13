@@ -4,10 +4,12 @@ from rest_framework import serializers
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
 from leasing.models.land_area import (
+    CustomArea,
     LeaseAreaAddress,
     LeaseAreaAttachment,
     PlanUnitIntendedUse,
     PlotDivisionState,
+    UtilDistribution,
 )
 from leasing.serializers.decision import DecisionSerializer
 from users.models import User
@@ -349,6 +351,43 @@ class LeaseAreaPlotSerializer(PlotSerializer):
         )
 
 
+class UtilDistributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UtilDistribution
+        fields = (
+            "distribution",
+            "build_permission",
+            "note",
+        )
+
+
+class CustomAreaSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    util_distributions = UtilDistributionSerializer(many=True)
+    intended_use = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlanUnitIntendedUse,
+        queryset=PlanUnitIntendedUse.objects.filter(),
+        related_serializer=PlanUnitIntendedUseSerializer,
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = CustomArea
+        fields = (
+            "identifier",
+            "intended_use",
+            "rent_build_permission",
+            "area",
+            "section_area",
+            "detailed_plan",
+            "state",
+            "detailed_plan_identifier",
+            "detailed_plan_latest_processing_date",
+            "detailed_plan_latest_processing_date_note",
+            "util_distributions",
+        )
+
+
 class LeaseAreaSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -365,6 +404,7 @@ class LeaseAreaSerializer(
     attachments = LeaseAreaAttachmentSerializer(
         many=True, required=False, allow_null=True
     )
+    custom_area = CustomAreaSerializer(required=False, allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -398,6 +438,7 @@ class LeaseAreaSerializer(
             "archived_decision",
             "geometry",
             "attachments",
+            "custom_area",
         )
 
 
@@ -469,6 +510,7 @@ class LeaseAreaCreateUpdateSerializer(
         allow_null=True,
     )
     attachments = LeaseAreaAttachmentSerializer(many=True, read_only=True)
+    custom_area = CustomAreaSerializer(required=False, allow_null=True)
 
     class Meta:
         model = LeaseArea
@@ -502,4 +544,24 @@ class LeaseAreaCreateUpdateSerializer(
             "archived_decision",
             "geometry",
             "attachments",
+            "custom_area",
         )
+
+    def create(self, validated_data):
+        custom_area = validated_data.pop("custom_area", None)
+        instance = super().create(validated_data)
+        if custom_area is not None:
+            distributions = custom_area.pop("util_distributions", None)
+            area, created = CustomArea.objects.update_or_create(
+                lease_area=instance, defaults={**custom_area}
+            )
+            if not created:
+                area.util_distributions.all().delete()
+            for util_distribution in distributions:
+                UtilDistribution.objects.create(
+                    distribution=util_distribution["distribution"],
+                    build_permission=["build_permission"],
+                    note=util_distribution["note"],
+                    custom_area=area,
+                )
+        return instance

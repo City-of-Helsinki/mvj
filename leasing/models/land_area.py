@@ -13,6 +13,7 @@ from leasing.enums import (
     ConstructabilityReportInvestigationState,
     ConstructabilityState,
     ConstructabilityType,
+    InfillDevelopmentCompensationState,
     LeaseAreaAttachmentType,
     LeaseAreaType,
     LocationType,
@@ -578,6 +579,53 @@ class PlanUnit(Land, MasterLandItemMixin):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
+
+
+class CustomArea(models.Model):
+    """
+    In Finnish: Oma muu alue
+    """
+
+    identifier = models.CharField(max_length=255)
+    intended_use = models.ForeignKey(PlanUnitIntendedUse, on_delete=models.CASCADE)
+    rent_build_permission = models.IntegerField()
+    area = models.IntegerField()
+    section_area = models.IntegerField()
+    detailed_plan = models.CharField(max_length=255)
+    state = EnumField(
+        InfillDevelopmentCompensationState,
+        verbose_name=_("State"),
+        null=True,
+        blank=True,
+        max_length=30,
+    )
+    detailed_plan_identifier = models.CharField(
+        verbose_name=_("Detailed plan identifier"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    detailed_plan_latest_processing_date = models.DateField(
+        verbose_name=_("Detailed plan latest processing date"), null=True, blank=True
+    )
+    # In Finnish: Asemakaavan viimeisin käsittelypvm selite
+    detailed_plan_latest_processing_date_note = models.TextField(
+        verbose_name=_("Note for latest processing date"), null=True, blank=True
+    )
+
+    lease_area = models.OneToOneField(
+        LeaseArea, on_delete=models.CASCADE, related_name="custom_area"
+    )
+
+
+class UtilDistribution(models.Model):
+    distribution = models.IntegerField()
+    build_permission = models.CharField(max_length=255)
+    note = models.TextField()
+
+    custom_area = models.ForeignKey(
+        CustomArea, on_delete=models.CASCADE, related_name="util_distributions"
+    )
 
 
 auditlog.register(LeaseArea)
