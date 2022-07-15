@@ -580,7 +580,7 @@ class PlanUnit(Land, MasterLandItemMixin):
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
 
 
-class CustomDetailedPlan(TimeStampedSafeDeleteModel):
+class CustomDetailedPlan(TimeStampedModel):
     """
     In Finnish: Oma muu alue
     """
@@ -589,25 +589,24 @@ class CustomDetailedPlan(TimeStampedSafeDeleteModel):
     identifier = models.CharField(max_length=255)
     # In Finnish: Kaavayksikön käyttötarkoitus
     intended_use = models.ForeignKey(PlanUnitIntendedUse, on_delete=models.CASCADE)
-    # In Finnish: Kokonaisrakennusoikeus
-    rent_build_permission = models.IntegerField()
+    # In Finnish: osoite
+    address = models.CharField(max_length=255)
     # In Finnish: Kokonaisala
     area = models.IntegerField()
-    # In Finnish: Leikkausala
-    section_area = models.IntegerField()
+    # In Finnish: Kaavayksikön olotila
+    state = models.ForeignKey(
+        PlanUnitState, on_delete=models.CASCADE, blank=True, null=True
+    )
+    # In Finnish: Kaavayksikön laji
+    type = models.ForeignKey(
+        PlanUnitType, on_delete=models.CASCADE, blank=True, null=True
+    )
     # In Finnish: Asemakaava
     detailed_plan = models.CharField(
         verbose_name=_("Detailed plan identifier"),
         max_length=255,
         null=True,
         blank=True,
-    )
-    # In Finnish: Asemakaavan käsittelyvaihe
-    state = EnumField(
-        PlanUnitStatus,
-        verbose_name=_("Plan unit status"),
-        max_length=30,
-        default=PlanUnitStatus.PRESENT,
     )
     # In Finnish: Asemakaavan viimeisin käsittelypäivämäärä
     detailed_plan_latest_processing_date = models.DateField(
@@ -616,6 +615,15 @@ class CustomDetailedPlan(TimeStampedSafeDeleteModel):
     # In Finnish: Asemakaavan viimeisin käsittelypvm selite
     detailed_plan_latest_processing_date_note = models.TextField(
         verbose_name=_("Note for latest processing date"), null=True, blank=True
+    )
+    # In Finnish: Kokonaisrakennusoikeus
+    rent_build_permission = models.IntegerField()
+    # In Finnish: Arvioitu rakentamisvalmiusajankohta (Esirakentaminen)
+    preconstruction_estimated_construction_readiness_moment = models.CharField(
+        verbose_name=_("Preconstruction estimated construction readiness"),
+        null=True,
+        blank=True,
+        max_length=255,
     )
 
     # In Finnish: Vuokra-alue
@@ -630,7 +638,7 @@ class UsageDistribution(models.Model):
     """
 
     # In Finnish: Jakauma
-    distribution = models.IntegerField()
+    distribution = models.CharField(max_length=255)
     # In Finnish: Rakennusoikeus
     build_permission = models.CharField(max_length=255)
     # In Finnish: Huomio
@@ -647,9 +655,11 @@ auditlog.register(LeaseAreaAddress)
 auditlog.register(ConstructabilityDescription)
 auditlog.register(Plot)
 auditlog.register(PlanUnit)
+auditlog.register(CustomDetailedPlan)
 
 field_permissions.register(LeaseArea, exclude_fields=["lease"])
 field_permissions.register(LeaseAreaAddress, exclude_fields=["lease_area"])
 field_permissions.register(ConstructabilityDescription, exclude_fields=["lease_area"])
 field_permissions.register(Plot, exclude_fields=["lease_area"])
 field_permissions.register(PlanUnit, exclude_fields=["lease_area"])
+field_permissions.register(CustomDetailedPlan, exclude_fields=["lease_area"])

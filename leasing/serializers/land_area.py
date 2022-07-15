@@ -12,6 +12,7 @@ from leasing.models.land_area import (
     UsageDistribution,
 )
 from leasing.serializers.decision import DecisionSerializer
+from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -365,10 +366,20 @@ class CustomDetailedPlanSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     usage_distributions = UsageDistributionSerializer(many=True)
+    info_links = PlotSearchTargetInfoLinkSerializer(
+        many=True, required=False, allow_null=True
+    )
     intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse,
         queryset=PlanUnitIntendedUse.objects.filter(),
         related_serializer=PlanUnitIntendedUseSerializer,
+        allow_null=True,
+        required=False,
+    )
+    state = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlanUnitState,
+        queryset=PlanUnitState.objects.filter(),
+        related_serializer=PlanUnitStateSerializer,
         allow_null=True,
         required=False,
     )
@@ -378,13 +389,16 @@ class CustomDetailedPlanSerializer(
         fields = (
             "identifier",
             "intended_use",
-            "rent_build_permission",
+            "address",
             "area",
-            "section_area",
-            "detailed_plan",
             "state",
+            "type",
+            "detailed_plan",
             "detailed_plan_latest_processing_date",
             "detailed_plan_latest_processing_date_note",
+            "rent_build_permission",
+            "preconstruction_estimated_construction_readiness_moment",
+            "info_links",
             "usage_distributions",
         )
 
@@ -553,16 +567,24 @@ class LeaseAreaCreateUpdateSerializer(
         instance = super().create(validated_data)
         if custom_detailed_plan is not None:
             distributions = custom_detailed_plan.pop("usage_distributions", None)
-            area, created = CustomDetailedPlan.objects.update_or_create(
-                lease_area=instance, defaults={**custom_detailed_plan}
-            )
-            if not created:
-                area.util_distributions.all().delete()
+            if not CustomDetailedPlan.objects.filter(
+                lease_area__identifier=instance.identifier
+            ).exists():
+                created_custom_detailed_plan = CustomDetailedPlan.objects.create(
+                    lease_area_id=instance.id, **custom_detailed_plan
+                )
+            else:
+                created_custom_detailed_plan_qs = CustomDetailedPlan.objects.filter(
+                    lease_area__identifier=instance.identifier
+                )
+                created_custom_detailed_plan_qs.update(**custom_detailed_plan)
+                created_custom_detailed_plan = created_custom_detailed_plan_qs.get()
+                created_custom_detailed_plan.usage_distributions.all().delete()
             for usage_distributions in distributions:
                 UsageDistribution.objects.create(
                     distribution=usage_distributions["distribution"],
-                    build_permission=["build_permission"],
+                    build_permission=usage_distributions["build_permission"],
                     note=usage_distributions["note"],
-                    custom_detailed_plan=area,
+                    custom_detailed_plan=created_custom_detailed_plan,
                 )
         return instance

@@ -26,8 +26,9 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
-    TargetInfoLink,
 )
+from plotsearch.models.info_links import TargetInfoLink
+from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from plotsearch.utils import initialize_area_search_form
 from users.models import User
 from users.serializers import UserSerializer
@@ -103,19 +104,6 @@ class PlotSearchStageSerializer(NameModelSerializer):
     class Meta:
         model = PlotSearchStage
         fields = ("id", "name", "stage")
-
-
-class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=False, required=False, allow_null=True,)
-
-    class Meta:
-        model = TargetInfoLink
-        fields = (
-            "id",
-            "url",
-            "description",
-            "language",
-        )
 
 
 class PlotSearchTargetSerializer(
