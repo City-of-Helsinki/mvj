@@ -22,7 +22,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchType,
 )
-from plotsearch.serializers import (
+from plotsearch.serializers.plot_search import (
     AreaSearchSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,

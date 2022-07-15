@@ -98,14 +98,14 @@ from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
-from plotsearch.views import (
+from plotsearch.views.plot_search import (
     AreaSearchViewSet,
     FavouriteViewSet,
     InformationCheckViewSet,
     IntendedSubUseViewSet,
 )
-from plotsearch.views import IntendedUseViewSet as IntendedUsePSViewSet
-from plotsearch.views import (
+from plotsearch.views.plot_search import IntendedUseViewSet as IntendedUsePSViewSet
+from plotsearch.views.plot_search import (
     PlotSearchStageViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTypeViewSet,

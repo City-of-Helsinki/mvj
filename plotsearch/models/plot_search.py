@@ -1,5 +1,4 @@
 from auditlog.registry import auditlog
-from django.conf import settings
 from django.contrib.gis.db import models as gmodels
 from django.db import models
 from django.utils import timezone
@@ -11,7 +10,6 @@ from rest_framework.serializers import ValidationError
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from leasing.enums import PlotSearchTargetType
-from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
     InformationCheckName,
@@ -110,13 +108,13 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
     )
 
     # In Finnish: Haettavat kohteet, menettelyvaraus ja suoravaraus
-    targets = models.ManyToManyField(PlanUnit, through="PlotSearchTarget")
+    targets = models.ManyToManyField("leasing.PlanUnit", through="PlotSearchTarget")
 
     # In Finnish: Lomake
     form = models.OneToOneField(Form, on_delete=models.SET_NULL, null=True)
 
     decisions = models.ManyToManyField(
-        Decision, related_name="plot_searches", blank=True
+        "leasing.Decision", related_name="plot_searches", blank=True
     )
 
     class Meta:
@@ -138,7 +136,7 @@ class PlotSearchTarget(models.Model):
     )
 
     # In Finnish: Kaavayksikkö
-    plan_unit = models.OneToOneField(PlanUnit, on_delete=models.CASCADE)
+    plan_unit = models.OneToOneField("leasing.PlanUnit", on_delete=models.CASCADE)
 
     # In finnish: Hakemukset
     answers = models.ManyToManyField(
@@ -230,26 +228,6 @@ class ApplicationStatus(models.Model):
     reserved = models.BooleanField(default=False)
 
 
-class TargetInfoLink(models.Model):
-    """
-    In Finnish: Lisätietolinkki
-    """
-
-    # In Finnish: Tonttihaun kohde
-    plot_search_target = models.ForeignKey(
-        PlotSearchTarget, on_delete=models.CASCADE, related_name="info_links"
-    )
-
-    # In Finnish: Lisätietolinkki
-    url = models.URLField()
-
-    # In Finnish: Lisätietolinkkiteksti
-    description = models.CharField(max_length=255)
-
-    # In Finnish: Kieli
-    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
-
-
 class Favourite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -308,6 +286,3 @@ class AreaSearch(models.Model):
 
 auditlog.register(PlotSearch)
 auditlog.register(InformationCheck)
-
-
-from plotsearch.signals import *  # noqa: E402 F403 F401

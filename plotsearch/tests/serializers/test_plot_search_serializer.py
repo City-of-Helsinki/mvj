@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from leasing.enums import PlotSearchTargetType
-from plotsearch.serializers import (
+from plotsearch.serializers.plot_search import (
     PlotSearchRetrieveSerializer,
     PlotSearchUpdateSerializer,
 )
