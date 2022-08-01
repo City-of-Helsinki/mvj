@@ -1,7 +1,8 @@
 from auditlog.registry import auditlog
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from sequences import get_next_value
 
 from field_permissions.registry import field_permissions
 
@@ -112,6 +113,35 @@ class Contract(TimeStampedSafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contract")
         verbose_name_plural = pgettext_lazy("Model name", "Contracts")
+
+    def get_contract_number_sequence_name(self):
+        if not self.lease:
+            return None
+
+        return self.lease.service_unit.contract_number_sequence_name
+
+    def get_contract_number_sequence_initial_value(self):
+        if not self.lease or not self.lease.service_unit.first_contract_number:
+            return 1
+
+        return self.lease.service_unit.first_contract_number
+
+    def save(self, *args, **kwargs):
+        if (
+            self.pk
+            or self.contract_number
+            or not self.lease
+            or not self.get_contract_number_sequence_name()
+        ):
+            super().save(*args, **kwargs)
+            return
+
+        with transaction.atomic():
+            self.contract_number = get_next_value(
+                self.get_contract_number_sequence_name(),
+                initial_value=self.get_contract_number_sequence_initial_value(),
+            )
+            super().save(*args, **kwargs)
 
 
 class CollateralType(NameModel):
