@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
@@ -39,3 +40,20 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
 
     def __str__(self):
         return self.name
+
+
+class ServiceUnitGroupMapping(models.Model):
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="service_units"
+    )
+    service_unit = models.ForeignKey(
+        ServiceUnit, on_delete=models.CASCADE, related_name="groups"
+    )
+
+    def __str__(self):
+        return f"{self.group} -> {self.service_unit}"
+
+    class Meta:
+        unique_together = ("group", "service_unit")
+        verbose_name = pgettext_lazy("Model name", "Service unit group mapping")
+        verbose_name_plural = pgettext_lazy("Model name", "Service unit group mappings")

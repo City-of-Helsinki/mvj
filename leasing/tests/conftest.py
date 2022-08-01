@@ -70,6 +70,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
+from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
 
 
@@ -361,6 +362,12 @@ class CustomDetailedPlanFactory(factory.DjangoModelFactory):
 class ServiceUnitFactory(factory.DjangoModelFactory):
     class Meta:
         model = ServiceUnit
+
+
+@register
+class ServiceUnitGroupMappingFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ServiceUnitGroupMapping
 
 
 @pytest.fixture
