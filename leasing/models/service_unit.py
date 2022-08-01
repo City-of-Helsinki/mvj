@@ -31,6 +31,15 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
     laske_sales_org = models.CharField(
         verbose_name=_("Sales Organisation in Laske"), max_length=255
     )
+    contract_number_sequence_name = models.CharField(
+        verbose_name=_("Contract number sequence name"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    first_contract_number = models.IntegerField(
+        verbose_name=_("First contract number"), null=True, blank=True
+    )
 
     recursive_get_related_skip_relations = [
         "contacts",
