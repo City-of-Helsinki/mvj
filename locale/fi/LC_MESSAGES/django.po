@@ -2739,6 +2739,14 @@ msgctxt "Model name"
 msgid "Service units"
 msgstr "Palvelukokonaisuudet"
 
+msgctxt "Model name"
+msgid "Service unit group mapping"
+msgstr "Palvelukokonaisuuden ryhmävastaavuus"
+
+msgctxt "Model name"
+msgid "Service unit group mappings"
+msgstr "Palvelukokonaisuuden ryhmävastaavuudet"
+
 msgid "Reference"
 msgstr "Viite"
 
