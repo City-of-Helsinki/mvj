@@ -2731,6 +2731,12 @@ msgstr "Tuontitunnus (Import ID) Laske:ssa"
 msgid "Sales Organisation in Laske"
 msgstr "Myyntiorganisaatio Laske:ssa"
 
+msgid "Contract number sequence name"
+msgstr "Sopimusnumerosarjan nimi"
+
+msgid "First contract number"
+msgstr "Ensimmäinen sopimusnumero"
+
 msgctxt "Model name"
 msgid "Service unit"
 msgstr "Palvelukokonaisuus"
