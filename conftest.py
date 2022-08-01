@@ -4,7 +4,7 @@ import json
 import factory
 import pytest
 from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.contrib.gis.geos import GEOSGeometry
 from django.urls import reverse
 from django.utils import timezone
@@ -264,6 +264,12 @@ class UserFactory(factory.django.DjangoModelFactory):
             return
 
         self.user_permissions.set(Permission.objects.filter(codename__in=extracted))
+
+
+@register
+class GroupFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Group
 
 
 @pytest.fixture

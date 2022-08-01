@@ -70,11 +70,13 @@ flake8==7.0.0
     #   pep8-naming
 flake8-print==5.0.0
     # via -r requirements-dev.in
+httpretty==1.1.4
+    # via -r requirements-dev.in
+inflection==0.5.1
 idna==2.9
     # via
     #   -c requirements.txt
     #   requests
-inflection==0.5.1
     # via
     #   -c requirements.txt
     #   pytest-factoryboy

@@ -7,6 +7,7 @@ black
 debugpy~=1.8.1
 flake8~=7.0.0
 flake8-print~=5.0.0
+httpretty
 isort~=5.13.2
 mypy~=1.7.0
 openpyxl~=3.1.2

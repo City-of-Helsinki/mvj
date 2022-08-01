@@ -232,7 +232,7 @@ REST_FRAMEWORK = {
     "ALLOWED_VERSIONS": ("v1",),
     "DEFAULT_VERSION": "v1",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "helusers.oidc.ApiTokenAuthentication",
+        "users.oidc.MvjApiTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ],
