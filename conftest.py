@@ -2,7 +2,7 @@ import datetime
 
 import factory
 import pytest
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import timezone
 from pytest_factoryboy import register
@@ -158,6 +158,12 @@ class UserFactory(factory.DjangoModelFactory):
 
 
 @register
+class GroupFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Group
+
+
+@register
 class PlanUnitFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlanUnit
@@ -269,6 +275,42 @@ def plot_search_target(
 
 @register
 class LeaseFactory(factory.DjangoModelFactory):
+    @factory.lazy_attribute
+    def type(self):
+        from leasing.models import LeaseType
+
+        try:
+            return LeaseType.objects.get(pk=1)
+        except LeaseType.DoesNotExist:
+            return None
+
+    @factory.lazy_attribute
+    def municipality(self):
+        from leasing.models import Municipality
+
+        try:
+            return Municipality.objects.get(pk=1)
+        except Municipality.DoesNotExist:
+            return None
+
+    @factory.lazy_attribute
+    def district(self):
+        from leasing.models import District
+
+        try:
+            return District.objects.get(pk=5)
+        except District.DoesNotExist:
+            return None
+
+    @factory.lazy_attribute
+    def notice_period(self):
+        from leasing.models import NoticePeriod
+
+        try:
+            return NoticePeriod.objects.get(pk=1)
+        except NoticePeriod.DoesNotExist:
+            return None
+
     @factory.lazy_attribute
     def service_unit(self):
         from leasing.models import ServiceUnit

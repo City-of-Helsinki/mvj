@@ -228,7 +228,7 @@ REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "ALLOWED_VERSIONS": ("v1",),
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "helusers.oidc.ApiTokenAuthentication",
+        "users.oidc.MvjApiTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
