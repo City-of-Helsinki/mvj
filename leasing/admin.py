@@ -104,6 +104,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.models.lease import ReservationProcedure
+from leasing.models.service_unit import ServiceUnitGroupMapping
 
 
 class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
@@ -736,10 +737,20 @@ class LandUseAgreementAdmin(admin.ModelAdmin):
     inlines = [LandUseAgreementAddressInline]
 
 
+class ServiceUnitGroupMappingInline(admin.TabularInline):
+    model = ServiceUnitGroupMapping
+    extra = 0
+
+
 class ServiceUnitAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "modified_at")
+    inlines = [ServiceUnitGroupMappingInline]
     readonly_fields = ("created_at", "modified_at")
     ordering = ("name",)
+
+
+class ServiceUnitGroupMappingAdmin(admin.ModelAdmin):
+    pass
 
 
 admin.site.register(Area, AreaAdmin)
@@ -790,6 +801,7 @@ admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
 admin.site.register(ReservationProcedure, NameAdmin)
 admin.site.register(ServiceUnit, ServiceUnitAdmin)
+admin.site.register(ServiceUnitGroupMapping, ServiceUnitGroupMappingAdmin)
 admin.site.register(SpecialProject, NameAdmin)
 admin.site.register(StatisticalUse, NameAdmin)
 admin.site.register(SupportiveHousing, NameAdmin)
