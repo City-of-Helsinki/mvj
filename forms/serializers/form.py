@@ -516,7 +516,7 @@ class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
-    applicant = serializers.SerializerMethodField()
+    applicants = serializers.SerializerMethodField()
     targets = ApplicationStatusSerializer(many=True, source="statuses")
     plot_search = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
@@ -529,52 +529,41 @@ class AnswerListSerializer(serializers.ModelSerializer):
             "plot_search",
             "plot_search_type",
             "plot_search_subtype",
-            "applicant",
+            "applicants",
             "targets",
         )
 
     @staticmethod
-    def get_applicant(obj):
-        try:
-            applicant_section = obj.entry_sections.get(
-                entries__field__identifier="hakija",
-                entries__field__section__identifier="hakijan-tiedot",
-            )
-            applicant_type = applicant_section.sections.get(
+    def get_applicants(obj):
+        applicant_list = list()
+        applicant_sections = obj.entry_sections.filter(
+            entries__field__identifier="hakija",
+            entries__field__section__identifier="hakijan-tiedot",
+        )
+        for applicant_section in applicant_sections:
+            applicant_type = applicant_section.entries.get(
                 field__identifier="hakija", field__section__identifier="hakijan-tiedot"
             ).value
-            if applicant_type == "Yritys":
-                applicant = (
-                    applicant_section.entries.filter(
-                        entries__field__identifier="yrityksen-nimi",
-                        entries__field__section__identifier="yrityksen-tiedot",
-                    )
-                    .first()
-                    .value
+            if applicant_type == "1":
+                applicants = applicant_section.entries.filter(
+                    field__identifier="yrityksen-nimi",
+                    field__section__identifier="yrityksen-tiedot",
                 )
-            elif applicant_type == "Henkilö":
-                front_name = (
-                    applicant_section.entries.filter(
-                        entries__field__identifier="etunimi",
-                        entries__field__section__identifier="henkilon-tiedot",
-                    )
-                    .first()
-                    .value
-                )
-                last_name = (
-                    applicant_section.entries.filter(
-                        entries__field__identifier="sukunimi",
-                        entries__field__section__identifier="henkilon-tiedot",
-                    )
-                    .first()
-                    .value
-                )
-                applicant = " ".join([front_name, last_name])
-            else:
-                applicant = ""
-        except EntrySection.DoesNotExist:
-            applicant = ""
-        return applicant
+                for applicant in applicants:
+                    applicant_list.append(applicant.value)
+            elif applicant_type == "2":
+                front_names = applicant_section.entries.filter(
+                    field__identifier="etunimi",
+                    field__section__identifier="henkilon-tiedot",
+                ).order_by("entry_section")
+                last_names = applicant_section.entries.filter(
+                    field__identifier="Sukunimi",
+                    field__section__identifier="henkilon-tiedot",
+                ).order_by("entry_section")
+                for idx, front_name in enumerate(front_names):
+                    last_name = last_names[idx]
+                    applicant_list.append(" ".join([front_name.value, last_name.value]))
+        return applicant_list
 
     def get_plot_search(self, obj):
         if obj.form is None or not hasattr(obj.form, "plotsearch"):
