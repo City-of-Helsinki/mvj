@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-18 11:08+0300\n"
+"POT-Creation-Date: 2022-08-16 11:44+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -366,15 +366,23 @@ msgstr "Asiakastiedoista ei löydy y-tunnusta tai henkilötunnusta."
 
 msgctxt "Form state"
 msgid "Work in progress"
-msgstr ""
+msgstr "Kesken"
 
 msgctxt "Form state"
 msgid "Ready"
-msgstr ""
+msgstr "Valmis"
 
 msgctxt "Form state"
 msgid "Deleted"
-msgstr ""
+msgstr "Poistettu"
+
+msgctxt "Section type"
+msgid "Show always"
+msgstr "Näytä aina"
+
+msgctxt "Section type"
+msgid "Show if"
+msgstr "Näytä, jos"
 
 msgid "Time created"
 msgstr "Luotu"
@@ -3443,6 +3451,58 @@ msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
 
+msgctxt "Search class"
+msgid "Plot search"
+msgstr "Tonttihaku tai -kilpailu"
+
+msgctxt "Search class"
+msgid "Other"
+msgstr "Muu kilpailu tai haku"
+
+msgctxt "Information state"
+msgid "Checked"
+msgstr "Tarkistettu"
+
+msgctxt "Information state"
+msgid "Not checked"
+msgstr "Ei tarkistettu"
+
+msgctxt "Information state"
+msgid "Not needed"
+msgstr "Ei tarvetta"
+
+msgctxt "Information state"
+msgid "Requires further action"
+msgstr "Tarvitsee lisätietoja"
+
+msgctxt "Information check name"
+msgid "Trade register extract"
+msgstr "Kaupparekisteriote"
+
+msgctxt "Information check name"
+msgid "Creditworthiness certificate"
+msgstr "Luottokelpoisuustodistus"
+
+msgctxt "Information check name"
+msgid "Statement of payment of earning-related pension contributions"
+msgstr "Selvitys työeläkemaksujen maksamisesta"
+
+msgctxt "Information check name"
+msgid "Certificate of entry in the VAT register"
+msgstr "Todistus arvonlisäverorekisteriin merkitsemisestä"
+
+msgctxt "Information check name"
+msgid "Certificate of entry in the advance payment register"
+msgstr "Todistus ennakkoperintärekisteriin merkitsemisestä"
+
+msgctxt "Information check name"
+msgid "Tax debt certificate"
+msgstr "Verovelkatodistus"
+
+msgctxt "Information check name"
+msgid "Certificate of entry in the register of employers"
+msgstr "Todistus työnantajarekisteriin merkitsemisestä"
+
 msgctxt "Model name"
 msgid "Plot search type"
 msgstr "Tonttihaun tyyppi"
@@ -3489,6 +3549,22 @@ msgstr "Tonttihaut"
 
 msgid "Target type"
 msgstr "Kohde tyyppi"
+
+msgctxt "Model name"
+msgid "Area search intended use"
+msgstr "Aluehaun käyttötarkoitus"
+
+msgctxt "Model name"
+msgid "Area search intended uses"
+msgstr "Aluehaun käyttötarkoitukset"
+
+msgctxt "Model name"
+msgid "Area search sub intended use"
+msgstr "Aluehaun alikäyttötarkoitus"
+
+msgctxt "Model name"
+msgid "Area search sub intended uses"
+msgstr "Aluehaun alikäyttötarkoitukset"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"
