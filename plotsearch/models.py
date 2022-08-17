@@ -193,7 +193,7 @@ class InformationCheck(models.Model):
     )
 
     # In Finnish: Vastauksen osio
-    entry_section = models.ForeignKey(EntrySection, on_delete=models.PROTECT)
+    entry_section = models.ForeignKey(EntrySection, on_delete=models.CASCADE)
 
     # In Finnish: Tila
     state = EnumField(
