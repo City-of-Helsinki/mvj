@@ -1,4 +1,5 @@
 from django.utils.text import slugify
+from rest_framework_gis.filters import InBBoxFilter
 
 
 def generate_unique_identifier(klass, field_name, field_value, max_length, **kwargs):
@@ -69,3 +70,9 @@ def clone_object(obj, attrs={}):
             clone_object(child, attrs)
 
     return clone
+
+
+class AnswerInBBoxFilter(InBBoxFilter):
+    def filter_queryset(self, request, queryset, view):
+        qs = super().filter_queryset(request, queryset, view)
+        return qs.distinct("pk")
