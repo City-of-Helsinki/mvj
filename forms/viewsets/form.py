@@ -5,7 +5,6 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_gis.filters import InBBoxFilter
 
 from forms.filter import AnswerFilterSet
 from forms.models import Answer, Form
@@ -17,6 +16,7 @@ from forms.serializers.form import (
     FormSerializer,
     ReadAttachmentSerializer,
 )
+from forms.utils import AnswerInBBoxFilter
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
@@ -51,7 +51,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = (MvjDjangoModelPermissions,)
-    filter_backends = (DjangoFilterBackend, InBBoxFilter)
+    filter_backends = (DjangoFilterBackend, AnswerInBBoxFilter)
     filterset_class = AnswerFilterSet
     bbox_filter_field = "targets__plan_unit__geometry"
     bbox_filter_include_overlapping = True
