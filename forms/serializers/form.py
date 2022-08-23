@@ -291,12 +291,21 @@ class AnswerSerializer(serializers.ModelSerializer):
         ]
 
     def get_information_checks(self, obj):
-        entry_sections = obj.entry_sections.filter(identifier="hakijan-tiedot")
+        entry_sections = obj.entry_sections.filter(
+            identifier__startswith="hakijan-tiedot["
+        )
         information_checks = list(dict())
         for entry_section in entry_sections:
             for information_check in entry_section.informationcheck_set.all():
                 information_checks.append(
-                    {"id": information_check.id, "name": information_check.name}
+                    {
+                        "id": information_check.id,
+                        "name": information_check.name,
+                        "preparer": information_check.preparer,
+                        "state": information_check.state,
+                        "comment": information_check.comment,
+                        "entry": information_check.entry_section.identifier,
+                    }
                 )
         return information_checks
 
