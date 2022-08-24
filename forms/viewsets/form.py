@@ -1,4 +1,5 @@
 from django.core.files import File
+from django.db.models import Prefetch
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
@@ -7,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from forms.filter import AnswerFilterSet
-from forms.models import Answer, Form
+from forms.models import Answer, Entry, Form
 from forms.models.form import Attachment
 from forms.serializers.form import (
     AnswerListSerializer,
@@ -48,7 +49,18 @@ class FormViewSet(
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
-    queryset = Answer.objects.all()
+    queryset = (
+        Answer.objects.all()
+        .prefetch_related(
+            "entry_sections",
+            "targets",
+            "statuses",
+            Prefetch(
+                "entry_sections__entries", Entry.objects.all().select_related("field")
+            ),
+        )
+        .select_related("form__plotsearch__subtype__plot_search_type",)
+    )
     serializer_class = AnswerSerializer
     permission_classes = (MvjDjangoModelPermissions,)
     filter_backends = (DjangoFilterBackend, AnswerInBBoxFilter)
