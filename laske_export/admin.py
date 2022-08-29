@@ -16,13 +16,34 @@ class NoDeleteInlineFormSet(BaseInlineFormSet):
 
 class InvoiceInline(admin.TabularInline):
     model = LaskeExportLog.invoices.through
-    readonly_fields = ("invoice_number", "due_date", "lease", "status", "information")
+    readonly_fields = (
+        "invoice_number",
+        "due_date",
+        "lease",
+        "status",
+        "service_unit",
+        "information",
+    )
     exclude = ("invoice",)
     raw_id_fields = ("invoice",)
     formset = NoDeleteInlineFormSet
     extra = 0
     verbose_name = _("Invoice")
     verbose_name_plural = _("Invoices")
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related(
+            "invoice__lease__type",
+            "invoice__lease__municipality",
+            "invoice__lease__district",
+            "invoice__lease__identifier",
+            "invoice__lease__identifier__type",
+            "invoice__lease__identifier__municipality",
+            "invoice__lease__identifier__district",
+            "invoice__service_unit",
+        )
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -58,6 +79,11 @@ class InvoiceInline(admin.TabularInline):
         return obj.invoice.due_date
 
     due_date.short_description = _("Due date")
+
+    def service_unit(self, obj):
+        return obj.invoice.service_unit
+
+    service_unit.short_description = _("Service unit")
 
 
 class LaskeExportLogAdmin(admin.ModelAdmin):
