@@ -519,6 +519,7 @@ class InvoiceAdmin(FieldPermissionsModelAdmin):
     search_fields = ("number", "lease__identifier__identifier")
     inlines = [InvoiceRowInline, InvoicePaymentInline]
     raw_id_fields = ("lease", "invoiceset", "credited_invoice", "interest_invoice_for")
+    readonly_fields = ("service_unit",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
