@@ -297,11 +297,21 @@ class AnswerSerializer(serializers.ModelSerializer):
         information_checks = list(dict())
         for entry_section in entry_sections:
             for information_check in entry_section.informationcheck_set.all():
+                if information_check.preparer is not None:
+                    preparer = {
+                        "id": information_check.preparer.id,
+                        "username": information_check.preparer.username,
+                        "first_name": information_check.preparer.first_name,
+                        "last_name": information_check.preparer.last_name,
+                        "is_staff": information_check.preparer.is_staff,
+                    }
+                else:
+                    preparer = None
                 information_checks.append(
                     {
                         "id": information_check.id,
                         "name": information_check.name,
-                        "preparer": information_check.preparer,
+                        "preparer": preparer,
                         "state": information_check.state,
                         "comment": information_check.comment,
                         "entry": information_check.entry_section.identifier,

@@ -606,11 +606,13 @@ class InformationCheckSerializer(
 ):
     id = serializers.IntegerField(read_only=True)
     mark_all = serializers.BooleanField(write_only=True)
+    name = serializers.CharField(read_only=True)
 
     class Meta:
         model = InformationCheck
         fields = (
             "id",
+            "name",
             "state",
             "preparer",
             "comment",
