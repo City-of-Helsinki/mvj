@@ -71,19 +71,29 @@ class Party(FieldGroup):
     info_city = Field(name="InfoCity", validators=[MaxLengthValidator(35)])
     info_postalcode = Field(name="InfoPostalcode", validators=[MaxLengthValidator(9)])
 
+    def __init__(self, fill_priority_and_info=True):
+        super().__init__()
+        self.fill_priority_and_info = fill_priority_and_info
+
     def from_contact(self, contact):  # NOQA C901 'Party.from_contact' is too complex
         if not contact:
             raise ValidationError(_("Contact information cannot be null."))
 
         self.customer_ovt = contact.electronic_billing_address
-        self.info_customer_ovt = contact.electronic_billing_address
 
         self.sap_customer_id = contact.sap_customer_number
         if contact.type == ContactType.PERSON:
             self.customer_id = contact.national_identification_number
-            self.info_customer_id = contact.national_identification_number
         else:
             self.customer_yid = contact.business_id
+
+        if not self.fill_priority_and_info:
+            return
+
+        self.info_customer_ovt = contact.electronic_billing_address
+        if contact.type == ContactType.PERSON:
+            self.info_customer_id = contact.national_identification_number
+        else:
             self.info_customer_yid = contact.business_id
 
         name = contact.get_name()[:140]  # PriorityName1-4 max length = 4 * 35 chars
