@@ -10,6 +10,7 @@
             "laske_sender_id": "ID340",
             "laske_import_id": "ID256",
             "laske_sales_org": "2800",
+            "laske_fill_priority_and_info": true,
             "contract_number_sequence_name": null,
             "first_contract_number": null,
             "created_at": "2021-11-22T08:00:00Z",

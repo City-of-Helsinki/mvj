@@ -188,6 +188,7 @@ class LaskeExporter:
                     sales_order=sales_order,
                     receivable_type_rent=receivable_type_rent,
                     receivable_type_collateral=receivable_type_collateral,
+                    fill_priority_and_info=self.service_unit.laske_fill_priority_and_info,
                 )
                 adapter.set_values()
 
@@ -224,8 +225,10 @@ class LaskeExporter:
             sales_order_container = SalesOrderContainer()
             sales_order_container.sales_orders = sales_orders
 
-            export_filename = "MTIL_IN_{}_{:08}.xml".format(
-                self.service_unit.laske_sender_id, laske_export_log_entry.id
+            export_filename = "MTIL_IN_{}_{}_{:08}.xml".format(
+                self.service_unit.laske_sender_id,
+                self.service_unit.laske_sales_org,
+                laske_export_log_entry.id,
             )
 
             self.write_to_output("Export filename: {}".format(export_filename))
@@ -302,8 +305,10 @@ class LaskeExporter:
 
             laske_export_log_entry.land_use_agreement_invoices.set(log_invoices)
 
-            export_filename = "MTIL_IN_{}_{:08}.xml".format(
-                self.service_unit.laske_sender_id, laske_export_log_entry.id,
+            export_filename = "MTIL_IN_{}_{}_{:08}.xml".format(
+                self.service_unit.laske_sender_id,
+                self.service_unit.laske_sales_org,
+                laske_export_log_entry.id,
             )
 
             self.write_to_output("Export filename: {}".format(export_filename))
