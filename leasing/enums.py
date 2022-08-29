@@ -545,14 +545,16 @@ class BasisOfRentType(Enum):
     In Finnish: Vuokraperusteen tyyppi
     """
 
-    LEASE = "lease"  # In Finnish: Vuokra
+    LEASE2022 = "lease2022"  # In Finnish: Vuokra
+    LEASE = "lease"  # In Finnish: Vuokra (Vanha)
     TEMPORARY = "temporary"  # In Finnish: Tilapäinen
     ADDITIONAL_YARD = "additional_yard"  # In Finnish: Lisäpiha
     FIELD = "field"  # In Finnish: Pelto
     MAST = "mast"  # In Finnish: Masto
 
     class Labels:
-        LEASE = pgettext_lazy("Basis of rent type", "Lease")
+        LEASE2022 = pgettext_lazy("Basis of rent type", "Lease")
+        LEASE = pgettext_lazy("Basis of rent type", "Lease (old)")
         TEMPORARY = pgettext_lazy("Basis of rent type", "Temporary")
         ADDITIONAL_YARD = pgettext_lazy("Basis of rent type", "Additional yard")
         FIELD = pgettext_lazy("Basis of rent type", "Field")

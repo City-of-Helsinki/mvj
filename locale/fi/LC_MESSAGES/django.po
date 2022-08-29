@@ -959,6 +959,10 @@ msgid "Lease"
 msgstr "Vuokra"
 
 msgctxt "Basis of rent type"
+msgid "Lease (old)"
+msgstr "Vuokra (vanha)"
+
+msgctxt "Basis of rent type"
 msgid "Temporary"
 msgstr "Tilapäinen"
 
