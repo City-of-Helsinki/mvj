@@ -153,6 +153,7 @@ class InvoiceFilter(FilterSet):
 
 class InvoiceNoteFilter(FilterSet):
     lease = filters.NumberFilter()
+    service_unit = NumberInFilter(field_name="lease__service_unit")
 
     class Meta:
         model = InvoiceNote
