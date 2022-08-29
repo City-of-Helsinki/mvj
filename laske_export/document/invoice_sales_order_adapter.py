@@ -16,11 +16,13 @@ class InvoiceSalesOrderAdapter:
         sales_order=None,
         receivable_type_rent=None,
         receivable_type_collateral=None,
+        fill_priority_and_info=True,
     ):
         self.invoice = invoice
         self.sales_order = sales_order
         self.receivable_type_rent = receivable_type_rent
         self.receivable_type_collateral = receivable_type_collateral
+        self.fill_priority_and_info = fill_priority_and_info
 
     def get_bill_text(self):
         if (
@@ -266,11 +268,13 @@ class InvoiceSalesOrderAdapter:
 
         contact_to_be_billed = self.get_contact_to_bill()
 
-        order_party = OrderParty()
+        order_party = OrderParty(fill_priority_and_info=self.fill_priority_and_info)
         order_party.from_contact(contact_to_be_billed)
         self.sales_order.order_party = order_party
 
-        billing_party1 = BillingParty1()
+        billing_party1 = BillingParty1(
+            fill_priority_and_info=self.fill_priority_and_info
+        )
         billing_party1.from_contact(contact_to_be_billed)
         self.sales_order.billing_party1 = billing_party1
 
