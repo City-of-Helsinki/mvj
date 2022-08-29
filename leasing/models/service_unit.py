@@ -31,6 +31,14 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
     laske_sales_org = models.CharField(
         verbose_name=_("Sales Organisation in Laske"), max_length=255
     )
+    laske_fill_priority_and_info = models.BooleanField(
+        verbose_name=_("Fill priority and info?"),
+        help_text=_(
+            "Fill Info and Priority data from a contact into OrderParty and"
+            " BillingParty in SalesOrder when creating LASKE XML"
+        ),
+        default=True,
+    )
     contract_number_sequence_name = models.CharField(
         verbose_name=_("Contract number sequence name"),
         max_length=255,

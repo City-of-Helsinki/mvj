@@ -2776,6 +2776,16 @@ msgstr "Tuontitunnus (Import ID) Laske:ssa"
 msgid "Sales Organisation in Laske"
 msgstr "Myyntiorganisaatio Laske:ssa"
 
+msgid "Fill priority and info?"
+msgstr "Täytetäänkö priority- ja info-kentät?"
+
+msgid ""
+"Fill Info and Priority data from a contact into OrderParty and BillingParty "
+"in SalesOrder when creating LASKE XML"
+msgstr ""
+"Jos tämä on valittuna, Laske-viennin XML-tiedostossa täytetään Info- ja "
+"Priority-kentät SalesOrder-tietueen OrderParty- ja BillingParty-tietueissa."
+
 msgid "Contract number sequence name"
 msgstr "Sopimusnumerosarjan nimi"
 
