@@ -2,6 +2,7 @@ import os
 from collections import OrderedDict
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import OneToOneRel
 from django.urls import reverse
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -156,12 +157,66 @@ def instance_create_or_update_related(
     sync_new_items_to_manager(new_items, manager, context)
 
 
+def instance_create_or_update_related_one_to_one(
+    instance=None,
+    related_name=None,
+    remote_name=None,
+    serializer_class=None,
+    validated_data=None,
+    context=None,
+):
+    if hasattr(instance, related_name):
+        related_instance = getattr(instance, related_name)
+    else:
+        related_instance = None
+
+    if not validated_data:
+        if related_instance:
+            # TODO: Permission check when removing?
+            related_instance.delete()
+        return
+
+    serializer_params = {
+        "data": validated_data,
+        "instance": related_instance,
+        "context": context,
+    }
+
+    serializer = serializer_class(**serializer_params)
+
+    if hasattr(serializer, "modify_fields_by_field_permissions"):
+        serializer.modify_fields_by_field_permissions()
+
+    try:
+        serializer.is_valid(raise_exception=True)
+    except ValidationError as e:
+        raise ValidationError({related_name: e.detail})
+
+    if not check_perm(serializer, serializer.instance):
+        # Ignore the new item if the user doesn't have permission to add
+        return
+
+    serializer.save(**{remote_name: instance})
+
+
 class UpdateNestedMixin:
     def extract_nested(self, validated_data):
         nested = {}
         for field_name, field in self.fields.items():
             if field_name not in validated_data:
                 continue
+
+            if isinstance(field, serializers.ModelSerializer):
+                model_class = self.Meta.model
+                related_field = model_class._meta.get_field(field.source)
+
+                if isinstance(related_field, OneToOneRel):
+                    nested[field_name] = {
+                        "data": validated_data.pop(field_name, None),
+                        "remote_name": related_field.remote_field.name,
+                        "one_to_one": True,
+                    }
+                    continue
 
             if not isinstance(field, serializers.ListSerializer):
                 continue
@@ -170,17 +225,31 @@ class UpdateNestedMixin:
                 continue
 
             if field.many and field_name in validated_data:
-                nested[field_name] = validated_data.pop(field_name, None)
+                nested[field_name] = {
+                    "data": validated_data.pop(field_name, None),
+                    "one_to_one": False,
+                }
 
         return nested
 
     def save_nested(self, instance, nested_data, context=None):
         for nested_name, nested_datum in nested_data.items():
+            if nested_datum["one_to_one"]:
+                instance_create_or_update_related_one_to_one(
+                    instance=instance,
+                    related_name=nested_name,
+                    remote_name=nested_datum["remote_name"],
+                    serializer_class=self.fields[nested_name].__class__,
+                    validated_data=nested_datum["data"],
+                    context=context,
+                )
+                continue
+
             instance_create_or_update_related(
                 instance=instance,
                 related_name=nested_name,
                 serializer_class=self.fields[nested_name].child.__class__,
-                validated_data=nested_datum,
+                validated_data=nested_datum["data"],
                 context=context,
             )
 
