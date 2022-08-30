@@ -363,7 +363,10 @@ class UsageDistributionSerializer(serializers.ModelSerializer):
 
 
 class CustomDetailedPlanSerializer(
-    EnumSupportSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    UpdateNestedMixin,
+    serializers.ModelSerializer,
 ):
     usage_distributions = UsageDistributionSerializer(many=True)
     info_links = PlotSearchTargetInfoLinkSerializer(
@@ -561,30 +564,3 @@ class LeaseAreaCreateUpdateSerializer(
             "attachments",
             "custom_detailed_plan",
         )
-
-    def create(self, validated_data):
-        custom_detailed_plan = validated_data.pop("custom_detailed_plan", None)
-        instance = super().create(validated_data)
-        if custom_detailed_plan is not None:
-            distributions = custom_detailed_plan.pop("usage_distributions", None)
-            if not CustomDetailedPlan.objects.filter(
-                lease_area__identifier=instance.identifier
-            ).exists():
-                created_custom_detailed_plan = CustomDetailedPlan.objects.create(
-                    lease_area_id=instance.id, **custom_detailed_plan
-                )
-            else:
-                created_custom_detailed_plan_qs = CustomDetailedPlan.objects.filter(
-                    lease_area__identifier=instance.identifier
-                )
-                created_custom_detailed_plan_qs.update(**custom_detailed_plan)
-                created_custom_detailed_plan = created_custom_detailed_plan_qs.get()
-                created_custom_detailed_plan.usage_distributions.all().delete()
-            for usage_distributions in distributions:
-                UsageDistribution.objects.create(
-                    distribution=usage_distributions["distribution"],
-                    build_permission=usage_distributions["build_permission"],
-                    note=usage_distributions["note"],
-                    custom_detailed_plan=created_custom_detailed_plan,
-                )
-        return instance
