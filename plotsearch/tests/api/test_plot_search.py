@@ -163,7 +163,7 @@ def test_plot_search_update(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparer": user.id,
+        "preparers": [user.id,],  # noqa: E231
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "search_class": SearchClass.OTHER,
@@ -218,7 +218,7 @@ def test_plot_search_delete_target(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparer": user.id,
+        "preparers": [user.id,],  # noqa: E231
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "plot_search_targets": [],

@@ -62,10 +62,10 @@ def plot_search_test_data(
         name="PS1",
         subtype=plot_search_subtype,
         stage=plot_search_stage,
-        preparer=preparer,
         begin_at=begin_at,
         end_at=end_at,
     )
+    plot_search.preparers.add(preparer)
 
     return plot_search
 
