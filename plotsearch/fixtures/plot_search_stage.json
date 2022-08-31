@@ -1,37 +1,42 @@
 [
   {
-    "model": "plotsearch.PlotSearchStage",
+    "model": "plotsearch.plotsearchstage",
     "pk": 1,
     "fields": {
-        "name": "Valmistella"
+      "name": "Valmisteilla",
+      "stage": "in_preparation"
     }
   },
   {
-    "model": "plotsearch.PlotSearchStage",
+    "model": "plotsearch.plotsearchstage",
     "pk": 2,
     "fields": {
-        "name": "Käynnissä"
+      "name": "Käynnissä",
+      "stage": "in_action"
     }
   },
   {
-    "model": "plotsearch.PlotSearchStage",
+    "model": "plotsearch.plotsearchstage",
     "pk": 3,
     "fields": {
-        "name": "Käsittelyssä"
+      "name": "Käsittelyssä",
+      "stage": "processing"
     }
   },
   {
-    "model": "plotsearch.PlotSearchStage",
+    "model": "plotsearch.plotsearchstage",
     "pk": 4,
     "fields": {
-        "name": "Päätöksenteossa"
+      "name": "Päätöksenteossa",
+      "stage": "decision"
     }
   },
   {
-    "model": "plotsearch.PlotSearchStage",
+    "model": "plotsearch.plotsearchstage",
     "pk": 5,
     "fields": {
-        "name": "Päätetty"
+      "name": "Päätetty",
+      "stage": "settled"
     }
   }
 ]

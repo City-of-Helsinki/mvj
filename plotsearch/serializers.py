@@ -63,6 +63,7 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
             "id",
             "name",
             "show_district",
+            "target_selection",
             "ordering",
             "plot_search_type",
         )
@@ -322,7 +323,7 @@ class PlotSearchSerializerBase(
 
 
 class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
-    preparer = UserSerializer()
+    preparers = UserSerializer(many=True)
     plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
 
     class Meta:
@@ -335,7 +336,7 @@ class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
             "search_class",
             "form",
             "decisions",
-            "preparer",
+            "preparers",
             "plot_search_targets",
             "deleted",
             "created_at",
@@ -372,11 +373,12 @@ class PlotSearchUpdateSerializer(
         related_serializer=PlotSearchStageSerializer,
         required=True,
     )
-    preparer = InstanceDictPrimaryKeyRelatedField(
+    preparers = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
         queryset=User.objects.all(),
         related_serializer=UserSerializer,
         required=True,
+        many=True,
     )
     plot_search_targets = PlotSearchTargetCreateUpdateSerializer(
         many=True, required=False
@@ -436,7 +438,7 @@ class PlotSearchUpdateSerializer(
         targets = validated_data.pop("plot_search_targets", None)
         subtype = validated_data.pop("subtype", None)
         stage = validated_data.pop("stage", None)
-        preparer = validated_data.pop("preparer", None)
+        preparers = validated_data.pop("preparers", None)
 
         if subtype:
             validated_data["subtype"] = self.dict_to_instance(
@@ -446,8 +448,12 @@ class PlotSearchUpdateSerializer(
         if stage:
             validated_data["stage"] = self.dict_to_instance(stage, PlotSearchStage)
 
-        if preparer:
-            validated_data["preparer"] = self.dict_to_instance(preparer, User)
+        if preparers:
+            validated_data["preparers"] = list()
+            for preparer in preparers:
+                validated_data["preparers"].append(
+                    self.dict_to_instance(preparer, User)
+                )
 
         instance = super(PlotSearchUpdateSerializer, self).update(
             instance, validated_data
@@ -472,11 +478,12 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         related_serializer=PlotSearchStageSerializer,
         required=False,
     )
-    preparer = InstanceDictPrimaryKeyRelatedField(
+    preparers = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
         queryset=User.objects.all(),
         related_serializer=UserSerializer,
         required=False,
+        many=True,
     )
 
     plot_search_targets = PlotSearchTargetSerializer(many=True, required=False)
@@ -608,6 +615,13 @@ class InformationCheckSerializer(
     mark_all = serializers.BooleanField(write_only=True)
     name = serializers.CharField(read_only=True)
 
+    preparer = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+    )
+    modified_at = serializers.DateTimeField(read_only=True)
+
     class Meta:
         model = InformationCheck
         fields = (
@@ -616,5 +630,6 @@ class InformationCheckSerializer(
             "state",
             "preparer",
             "comment",
+            "modified_at",
             "mark_all",
         )

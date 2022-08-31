@@ -315,6 +315,7 @@ class AnswerSerializer(serializers.ModelSerializer):
                         "state": information_check.state,
                         "comment": information_check.comment,
                         "entry": information_check.entry_section.identifier,
+                        "modified_at": information_check.modified_at,
                     }
                 )
         return information_checks

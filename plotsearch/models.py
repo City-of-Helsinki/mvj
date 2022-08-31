@@ -13,7 +13,12 @@ from forms.models.form import EntrySection
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Decision, PlanUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
-from plotsearch.enums import InformationCheckName, InformationState, SearchClass
+from plotsearch.enums import (
+    InformationCheckName,
+    InformationState,
+    SearchClass,
+    SearchStage,
+)
 from users.models import User
 
 
@@ -37,6 +42,7 @@ class PlotSearchSubtype(NameModel):
 
     plot_search_type = models.ForeignKey(PlotSearchType, on_delete=models.CASCADE)
     show_district = models.BooleanField(default=False)
+    target_selection = models.BooleanField(default=False)
     ordering = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     class Meta(NameModel.Meta):
@@ -50,6 +56,15 @@ class PlotSearchStage(NameModel):
     In Finnish: Haun vaihe
     """
 
+    # In Finnish: Haun vaihe
+    stage = EnumField(
+        enum=SearchStage,
+        default=SearchStage.IN_PREPARATION,
+        max_length=30,
+        null=True,
+        blank=True,
+    )
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search stage")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search stages")
@@ -60,14 +75,9 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
     In Finnish: Tonttihaku
     """
 
-    # In Finnish: Valmistelija
-    preparer = models.ForeignKey(
-        User,
-        verbose_name=_("Preparer"),
-        related_name="+",
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
+    # In Finnish: Valmistelijat
+    preparers = models.ManyToManyField(
+        User, verbose_name=_("Preparer"), related_name="+", blank=True,
     )
 
     # In Finnish: Haun tyyppi
@@ -202,6 +212,11 @@ class InformationCheck(models.Model):
 
     # In Finnish: Kommentti
     comment = models.TextField(null=True, blank=True)
+
+    # In Finnish: Luontiaika
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+    # In Finnish: Muokkausaika
+    modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
 
 
 class ApplicationStatus(models.Model):

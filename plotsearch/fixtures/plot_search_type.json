@@ -1,30 +1,46 @@
 [
   {
-    "model": "plotsearch.PlotSearchType",
+    "model": "plotsearch.plotsearchtype",
     "pk": 1,
     "fields": {
-      "name": "Asuntorakentamisen haut"
+      "name": "Asuntorakentamisen haut",
+      "name_fi": "Asuntorakentamisen haut",
+      "name_sv": null,
+      "name_en": "Asuntorakentamisen haut",
+      "ordering": 0
     }
   },
   {
-    "model": "plotsearch.PlotSearchType",
+    "model": "plotsearch.plotsearchtype",
     "pk": 2,
     "fields": {
-      "name": "Pientalotonttien haut"
+      "name": "Pientalotonttien haut",
+      "name_fi": "Pientalotonttien haut",
+      "name_sv": null,
+      "name_en": "Pientalotonttien haut",
+      "ordering": 0
     }
   },
   {
-    "model": "plotsearch.PlotSearchType",
+    "model": "plotsearch.plotsearchtype",
     "pk": 3,
     "fields": {
-      "name": "Yritystonttihaku"
+      "name": "Yritystonttihaku",
+      "name_fi": "Yritystonttihaku",
+      "name_sv": null,
+      "name_en": "Yritystonttihaku",
+      "ordering": 0
     }
   },
   {
-    "model": "plotsearch.PlotSearchType",
+    "model": "plotsearch.plotsearchtype",
     "pk": 4,
     "fields": {
-      "name": "Muun alueen haku"
+      "name": "Muun alueen haku",
+      "name_fi": "Muun alueen haku",
+      "name_sv": null,
+      "name_en": "Muun alueen haku",
+      "ordering": 0
     }
   }
 ]

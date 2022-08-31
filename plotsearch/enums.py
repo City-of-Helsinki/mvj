@@ -15,6 +15,25 @@ class SearchClass(str, Enum):
         OTHER = pgettext_lazy("Search class", "Other")
 
 
+class SearchStage(str, Enum):
+    """
+    In Finnish: Tonttihaun vaihe
+    """
+
+    IN_PREPARATION = "in_preparation"
+    IN_ACTION = "in_action"
+    PROCESSING = "processing"
+    DECISION = "decision"
+    SETTLED = "settled"
+
+    class Labels:
+        IN_PREPARATION = pgettext_lazy("Search stage", "In preparation")
+        IN_ACTION = pgettext_lazy("Search stage", "In action")
+        PROCESSING = pgettext_lazy("Search stage", "Processing")
+        DECISION = pgettext_lazy("Search stage", "Decision making")
+        SETTLED = pgettext_lazy("Search stage", "Settled")
+
+
 class InformationState(str, Enum):
     """
     In Finnish: Lisätiedon tila
