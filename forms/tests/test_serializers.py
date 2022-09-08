@@ -57,6 +57,16 @@ def test_entry_unique_validators(basic_answer, entry_factory):
 """
 
 
+def generate_entries(section, entries):
+    entries["fields"] = dict()
+    entries["sections"] = dict()
+    for field in section.fields.all():
+        entries["fields"][field.identifier] = fake.name()
+    for subsection in section.subsections.all():
+        entries["sections"][subsection.identifier] = dict()
+        generate_entries(subsection, entries["sections"][subsection.identifier])
+
+
 @pytest.mark.django_db
 def test_all_required_fields_answered_validator(
     django_db_setup,
@@ -67,12 +77,26 @@ def test_all_required_fields_answered_validator(
 
     entries = {}
     # Generating answers where required fields are not given
-    for section in basic_template_form_with_required_fields.sections.all():
+    for section in basic_template_form_with_required_fields.sections.filter(
+        parent__isnull=True
+    ):
         entries[section.identifier] = dict()
-        for field in section.fields.all():
-            if field.section.identifier == "person-information":
-                continue
-            entries[section.identifier][field.identifier] = fake.name()
+        generate_entries(section, entries[section.identifier])
+
+    empty_section = basic_template_form_with_required_fields.sections.filter(
+        parent__isnull=True
+    )[1]
+
+    entries[empty_section.identifier]["sections"]["person-information"] = list()
+    entries[empty_section.identifier]["sections"]["person-information"].append(
+        {
+            "fields": {
+                "first-name-1": {"value": fake.name(), "extraValue": ""},
+                "last-name-1": {"value": fake.name(), "extraValue": ""},
+                "personal-identity-code-1": {"value": "", "extraValue": ""},
+            }
+        }
+    )
 
     answer_data = {
         "form": basic_template_form_with_required_fields.id,

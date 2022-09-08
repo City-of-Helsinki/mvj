@@ -1,6 +1,9 @@
 import re
+from typing import Iterable
 
 from rest_framework.serializers import ValidationError
+
+from forms.models import Field
 
 
 class FieldRegexValidator:
@@ -27,18 +30,42 @@ class FieldRegexValidator:
 
 
 class RequiredFormFieldValidator:
+    EMPTY_VALUES = ["", [], None]
+
     def __call__(self, value):
-        for section in value["form"].sections.all():
-            for field in section.fields.all():
-                if not field.required:
-                    continue
-                found = False
+        self.required_validator(
+            value["entries"],
+            Field.objects.filter(section__form=value["form"], required=True),
+        )
+
+    def required_validator(
+        self, entries, required_fields, section_identifier=None, field_identifier=None
+    ):
+        if not isinstance(entries, Iterable) or isinstance(entries, str):
+            return
+        if "sections" in entries:
+            self.required_validator(entries["sections"], required_fields, None)
+        if "fields" in entries:
+            self.required_validator(
+                entries["fields"], required_fields, section_identifier
+            )
+        if isinstance(entries, list):
+            for i, entry in enumerate(entries):
+                self.required_validator(
+                    entry, required_fields, section_identifier=section_identifier
+                )
+            return
+        if section_identifier is not None:
+            for entry in entries:
                 if (
-                    field.identifier
-                    in list(value["entries"][section.identifier].keys())
-                    and value["entries"][section.identifier][field.identifier] != ""
+                    required_fields.filter(
+                        section__identifier=section_identifier, identifier=entry
+                    ).exists()
+                    and entries[entry]["value"] in self.EMPTY_VALUES
                 ):
-                    found = True
-                    continue
-                if not found:
                     raise ValidationError(code="required")
+        for entry in entries:
+            section_identifier = re.sub(r"\[\d+]", "", entry)
+            self.required_validator(
+                entries[entry], required_fields, section_identifier=section_identifier
+            )
