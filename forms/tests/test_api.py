@@ -121,15 +121,11 @@ def test_answer_post(
                     "company-information": [
                         {
                             "sections": {},
-                            "fields": {
-                                "company-name": {"value": "", "extraValue": None}
-                            },
+                            "fields": {"company-name": {"value": "", "extraValue": ""}},
                         },
                         {
                             "sections": {},
-                            "fields": {
-                                "business-id": {"value": "", "extraValue": None}
-                            },
+                            "fields": {"business-id": {"value": "", "extraValue": ""}},
                         },
                     ],
                     "hakijan-tiedot": {
@@ -137,9 +133,9 @@ def test_answer_post(
                             "contact-person": {
                                 "sections": {},
                                 "fields": {
-                                    "first-name": {"value": False, "extraValue": None},
+                                    "first-name": {"value": "False", "extraValue": ""},
                                     "last-name": {
-                                        "value": 99,
+                                        "value": "99",
                                         "extraValue": "developers developers developers",
                                     },
                                 },
@@ -169,9 +165,7 @@ def test_answer_post(
                 "company-information": [
                     {
                         "sections": {},
-                        "fields": {
-                            "company-name": {"value": "jee", "extraValue": None}
-                        },
+                        "fields": {"company-name": {"value": "jee", "extraValue": ""}},
                     },
                 ],
                 "hakijan-tiedot": {
@@ -179,9 +173,9 @@ def test_answer_post(
                         "contact-person": {
                             "sections": {},
                             "fields": {
-                                "first-name": {"value": "Matti", "extraValue": None},
+                                "first-name": {"value": "Matti", "extraValue": ""},
                                 "last-name": {
-                                    "value": 99,
+                                    "value": "99",
                                     "extraValue": "developers developers developers",
                                 },
                             },
@@ -246,19 +240,19 @@ def test_attachment_post(
                 "company-information": [
                     {
                         "sections": {},
-                        "fields": {"company-name": {"value": "", "extraValue": None}},
+                        "fields": {"company-name": {"value": "", "extraValue": ""}},
                     },
                     {
                         "sections": {},
-                        "fields": {"business-id": {"value": "", "extraValue": None}},
+                        "fields": {"business-id": {"value": "", "extraValue": ""}},
                     },
                 ],
                 "contact-person": {
                     "sections": {},
                     "fields": {
-                        "first-name": {"value": False, "extraValue": None},
+                        "first-name": {"value": "False", "extraValue": ""},
                         "last-name": {
-                            "value": 99,
+                            "value": "99",
                             "extraValue": "developers developers developers",
                         },
                     },

@@ -37,6 +37,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      -   name: Apt-get update
+          run: sudo apt-get update
+
       - name: Install postgis prerequisites
         run: sudo apt-get install gdal-bin
 

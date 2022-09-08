@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y gdal-bin python3-gdal \
+    && apt-get install --no-install-recommends -y gdal-bin=3.5.1 python3-gdal \
     && apt-get install --no-install-recommends -y gettext postgresql-client
 
 RUN mkdir /code
