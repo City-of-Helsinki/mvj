@@ -102,7 +102,7 @@ class IntendedSubUseSerializer(NameModelSerializer):
 class PlotSearchStageSerializer(NameModelSerializer):
     class Meta:
         model = PlotSearchStage
-        fields = "__all__"
+        fields = ("id", "name", "stage")
 
 
 class PlotSearchTargetInfoLinkSerializer(serializers.ModelSerializer):

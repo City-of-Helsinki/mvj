@@ -18,6 +18,7 @@ from plotsearch.models import (
     IntendedSubUse,
     IntendedUse,
     PlotSearch,
+    PlotSearchStage,
     PlotSearchSubtype,
     PlotSearchType,
 )
@@ -29,6 +30,7 @@ from plotsearch.serializers import (
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
+    PlotSearchStageSerializer,
     PlotSearchSubtypeSerializer,
     PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
@@ -55,6 +57,14 @@ class PlotSearchTypeViewSet(
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.prefetch_related("plotsearchsubtype_set")
+
+
+class PlotSearchStageViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    queryset = PlotSearchStage.objects.all()
+    serializer_class = PlotSearchStageSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class PlotSearchViewSet(

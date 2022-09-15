@@ -106,6 +106,7 @@ from plotsearch.views import (
 )
 from plotsearch.views import IntendedUseViewSet as IntendedUsePSViewSet
 from plotsearch.views import (
+    PlotSearchStageViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTypeViewSet,
     PlotSearchViewSet,
@@ -172,6 +173,7 @@ router.register(
 )
 router.register(r"plot_master_identifier_list", PlotMasterIdentifierList)
 router.register(r"plot_search", PlotSearchViewSet)
+router.register(r"plot_search_stage", PlotSearchStageViewSet)
 router.register(r"plot_search_type", PlotSearchTypeViewSet)
 router.register(r"plot_search_subtype", PlotSearchSubtypeViewSet)
 router.register(r"regulation", RegulationViewSet)
