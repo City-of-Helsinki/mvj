@@ -19,6 +19,7 @@ RUN apt-install.sh \
     python3-gdal \
     postgresql-client \
     && pip install --no-cache-dir -r /app/requirements.txt \
+    && pip install --no-cache-dir -r /app/requirements-prod.txt \
     && apt-cleanup.sh build-essential pkg-config
 
 COPY --chown=appuser:appuser deploy/docker-entrypoint.sh /entrypoint/docker-entrypoint.sh
