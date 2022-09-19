@@ -1,0 +1,10 @@
+uwsgi:
+  wsgi-file: mvj/wsgi.py
+  processes: 12
+  threads: 1
+  master: true
+  umask: 022
+  reload-on-rss: 300
+  buffer-size: 32768
+  http: :8000
+  static-map: /static=/app/static
