@@ -160,11 +160,7 @@ INSTALLED_APPS = [
     "sanitized_dump",
     "utils",
     "django_q",
-    # "debug_toolbar",
 ]
-
-if DEBUG:
-    INSTALLED_APPS += ["django_extensions"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
