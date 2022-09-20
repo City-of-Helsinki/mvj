@@ -36,6 +36,7 @@ class Section(models.Model):
 
     add_new_allowed = models.BooleanField(default=False)
     add_new_text = models.CharField(max_length=255, null=True, blank=True)
+    show_duplication_check = models.BooleanField(default=True)
 
     parent = models.ForeignKey(
         "self",
