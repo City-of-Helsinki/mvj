@@ -100,6 +100,7 @@ class SectionSerializer(serializers.ModelSerializer):
             "visible",
             "sort_order",
             "add_new_allowed",
+            "show_duplication_check",
             "add_new_text",
             "subsections",
             "fields",
