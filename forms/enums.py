@@ -28,3 +28,18 @@ class SectionType(str, Enum):
     class Labels:
         SHOW_ALWAYS = pgettext_lazy("Section type", "Show always")
         SHOW_IF = pgettext_lazy("Section type", "Show if")
+
+
+class ApplicantType(str, Enum):
+    """
+    In Finnish: Hakijan tyyppi
+    """
+
+    PERSON = "person"
+    COMPANY = "company"
+    BOTH = "both"
+
+    class Labels:
+        PERSON = pgettext_lazy("Applicant type", "Person")
+        COMPANY = pgettext_lazy("Applicant type", "Company")
+        BOTH = pgettext_lazy("Applicant type", "Both")

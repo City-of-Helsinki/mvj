@@ -5,7 +5,7 @@ from enumfields import EnumField
 
 from users.models import User
 
-from ..enums import FormState, SectionType
+from ..enums import ApplicantType, FormState, SectionType
 from ..utils import clone_object, generate_unique_identifier
 
 
@@ -47,6 +47,7 @@ class Section(models.Model):
     )
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="sections")
     type = EnumField(SectionType, max_length=30, default=SectionType.SHOW_ALWAYS)
+    applicant_type = EnumField(ApplicantType, max_length=30, default=ApplicantType.BOTH)
 
     class Meta:
         ordering = ["sort_order"]
