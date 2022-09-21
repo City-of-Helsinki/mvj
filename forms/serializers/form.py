@@ -90,6 +90,7 @@ class SectionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(read_only=True)
     type = serializers.CharField(read_only=True)
+    applicant_type = serializers.CharField(required=False)
 
     class Meta:
         model = Section
@@ -106,6 +107,7 @@ class SectionSerializer(serializers.ModelSerializer):
             "fields",
             "form_id",
             "parent_id",
+            "applicant_type",
             "type",
         )
         validators = []
