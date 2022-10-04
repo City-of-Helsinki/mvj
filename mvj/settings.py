@@ -136,6 +136,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "rangefilter",
     "crispy_forms",
+    "nested_inline",
     "django_filters",
     "rest_framework",
     "rest_framework.authtoken",
