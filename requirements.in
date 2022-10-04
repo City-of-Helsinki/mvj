@@ -16,6 +16,7 @@ django-filter~=21.1
 django-helusers~=0.7.0
 django-model-utils
 django-modeltranslation
+django-nested-inline~=0.4.5
 django-q[sentry]
 django-safedelete
 django-sanitized-dump

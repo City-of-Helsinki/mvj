@@ -1,5 +1,10 @@
 # Register your models here.
 from django.contrib.gis import admin, forms
+from nested_inline.admin import (
+    NestedModelAdmin,
+    NestedStackedInline,
+    NestedTabularInline,
+)
 
 from forms.models import Choice, Field, FieldType, Form, Section
 
@@ -68,8 +73,30 @@ class ChoiceModelAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class FormModelAdmin(admin.ModelAdmin):
+class ChoiceInline(NestedTabularInline):
+    model = Choice
+    extra = 1
+    fk_name = "field"
+
+
+class FieldInline(NestedStackedInline):
+    model = Field
+    extra = 1
+    fk_name = "section"
+    inlines = [ChoiceInline]
+
+
+class SectionInline(NestedStackedInline):
+    model = Section
+    extra = 1
+    fk_name = "form"
+    inlines = [FieldInline]
+
+
+class FormModelAdmin(NestedModelAdmin):
     list_display = ("name",)
+    model = Form
+    inlines = [SectionInline]
 
 
 admin.site.register(Field, FieldModelAdmin)

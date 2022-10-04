@@ -99,6 +99,8 @@ django-model-utils==4.1.1
     # via -r requirements.in
 django-modeltranslation==0.16.1
     # via -r requirements.in
+django-nested-inline==0.4.5
+    # via -r requirements.in
 django-picklefield==2.1.1
     # via
     #   django-constance
