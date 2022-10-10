@@ -374,15 +374,22 @@ class CustomDetailedPlanSerializer(
     )
     intended_use = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitIntendedUse,
-        queryset=PlanUnitIntendedUse.objects.filter(),
+        queryset=PlanUnitIntendedUse.objects.all(),
         related_serializer=PlanUnitIntendedUseSerializer,
         allow_null=True,
         required=False,
     )
     state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState,
-        queryset=PlanUnitState.objects.filter(),
+        queryset=PlanUnitState.objects.all(),
         related_serializer=PlanUnitStateSerializer,
+        allow_null=True,
+        required=False,
+    )
+    type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=PlanUnitType,
+        queryset=PlanUnitType.objects.all(),
+        related_serializer=PlanUnitTypeSerializer,
         allow_null=True,
         required=False,
     )
