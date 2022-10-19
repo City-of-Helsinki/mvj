@@ -580,6 +580,9 @@ class PlanUnit(Land, MasterLandItemMixin):
         verbose_name = pgettext_lazy("Model name", "Plan unit")
         verbose_name_plural = pgettext_lazy("Model name", "Plan units")
 
+    def identifier_type(self):
+        return "plan_unit"
+
 
 class CustomDetailedPlan(TimeStampedModel):
     """
@@ -631,6 +634,9 @@ class CustomDetailedPlan(TimeStampedModel):
     lease_area = models.OneToOneField(
         LeaseArea, on_delete=models.CASCADE, related_name="custom_detailed_plan"
     )
+
+    def identifier_type(self):
+        return "custom_detailed_plan"
 
 
 class UsageDistribution(models.Model):

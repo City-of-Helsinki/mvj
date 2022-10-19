@@ -1,3 +1,4 @@
+from django.core.exceptions import BadRequest
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -7,8 +8,13 @@ from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
 from forms.serializers.form import FormSerializer
 from leasing.models import Decision, PlanUnit
+from leasing.models.land_area import CustomDetailedPlan
 from leasing.serializers.decision import DecisionSerializer
-from leasing.serializers.land_area import PlanUnitSerializer, PublicPlanUnitSerializer
+from leasing.serializers.land_area import (
+    CustomDetailedPlanSerializer,
+    PlanUnitSerializer,
+    PublicPlanUnitSerializer,
+)
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
@@ -143,6 +149,8 @@ class PlotSearchTargetSerializer(
     plan_unit = PublicPlanUnitSerializer(read_only=True)
     plan_unit_id = serializers.IntegerField(required=False, allow_null=True)
     info_links = PlotSearchTargetInfoLinkSerializer(many=True, required=False)
+    custom_detailed_plan = CustomDetailedPlanSerializer(read_only=True)
+    custom_detailed_plan_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = PlotSearchTarget
@@ -163,6 +171,8 @@ class PlotSearchTargetSerializer(
             "district",
             "info_links",
             "decisions",
+            "custom_detailed_plan",
+            "custom_detailed_plan_id",
         )
 
     def get_lease_address(self, obj):
@@ -185,6 +195,8 @@ class PlotSearchTargetSerializer(
         return None
 
     def get_is_master_plan_unit_deleted(self, obj):
+        if obj.custom_detailed_plan is not None:
+            return False
         if obj.plan_unit is None:
             return True
         return not obj.plan_unit.master_exists
@@ -203,27 +215,59 @@ class PlotSearchTargetCreateUpdateSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
-    plan_unit_id = serializers.IntegerField()
+    plan_unit_id = serializers.IntegerField(required=False, allow_null=True)
     info_links = PlotSearchTargetInfoLinkSerializer(
         many=True, required=False, allow_null=True
     )
+    custom_detailed_plan_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = PlotSearchTarget
-        fields = ("id", "plan_unit_id", "target_type", "info_links")
+        fields = (
+            "id",
+            "plan_unit_id",
+            "custom_detailed_plan_id",
+            "target_type",
+            "info_links",
+        )
 
     def create(self, validated_data):
-        plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
-        info_links = validated_data.pop("info_links", [])
-        plot_search_target = PlotSearchTarget.objects.create(
-            plan_unit=plan_unit, **validated_data
+        custom_detailed_plan, plan_unit = self.get_plan_unit_or_custom_detailed_plan(
+            validated_data
         )
+
+        info_links = validated_data.pop("info_links", [])
+        if plan_unit is not None:
+            plot_search_target = PlotSearchTarget.objects.create(
+                plan_unit=plan_unit, **validated_data
+            )
+        else:
+            plot_search_target = PlotSearchTarget.objects.create(
+                custom_detailed_plan=custom_detailed_plan, **validated_data
+            )
 
         for info_link in info_links:
             TargetInfoLink.objects.create(
                 plot_search_target=plot_search_target, **info_link
             )
         return plot_search_target
+
+    def get_plan_unit_or_custom_detailed_plan(self, validated_data):
+        custom_detailed_plan = None
+        plan_unit = None
+        try:
+            plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
+        except KeyError:
+            try:
+                custom_detailed_plan = CustomDetailedPlan.objects.get(
+                    id=validated_data.pop("custom_detailed_plan_id")
+                )
+            except KeyError:
+                raise BadRequest
+            pass
+        if plan_unit is not None and custom_detailed_plan is not None:
+            raise BadRequest
+        return custom_detailed_plan, plan_unit
 
     @staticmethod
     def get_prev_links(instance):
@@ -246,10 +290,17 @@ class PlotSearchTargetCreateUpdateSerializer(
         for k, link in prev_links.items():
             link.delete()
 
-        plan_unit_id = validated_data.pop("plan_unit_id", None)
-        if plan_unit_id:
-            pu = PlanUnit.objects.get(id=plan_unit_id)
-            instance.plan_unit = pu
+        instance.plan_unit = None
+        instance.custom_detailed_plan = None
+
+        custom_detailed_plan, plan_unit = self.get_plan_unit_or_custom_detailed_plan(
+            validated_data
+        )
+
+        if plan_unit is not None:
+            instance.plan_unit = plan_unit
+        if custom_detailed_plan is not None:
+            instance.custom_detailed_plan = custom_detailed_plan
 
         return super().update(instance, validated_data)
 
