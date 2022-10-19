@@ -9,6 +9,8 @@ from plotsearch.models import InformationCheck, PlotSearch, PlotSearchTarget
 @receiver(pre_save, sender=PlotSearchTarget)
 def prepare_plan_unit_on_plot_search_target_save(sender, instance, **kwargs):
     plan_unit = instance.plan_unit
+    if plan_unit is None:
+        return
     if plan_unit.is_master:
         plan_unit.pk = None
         plan_unit.is_master = False
@@ -18,7 +20,10 @@ def prepare_plan_unit_on_plot_search_target_save(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=PlotSearchTarget)
 def post_delete_plan_unit_on_plot_search_target_delete(sender, instance, **kwargs):
-    instance.plan_unit.delete()
+    plan_unit = instance.plan_unit
+    if plan_unit is None:
+        return
+    plan_unit.delete()
 
 
 @receiver(pre_save, sender=PlotSearch)

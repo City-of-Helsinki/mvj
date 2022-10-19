@@ -110,9 +110,6 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
         on_delete=models.PROTECT,
     )
 
-    # In Finnish: Haettavat kohteet, menettelyvaraus ja suoravaraus
-    targets = models.ManyToManyField("leasing.PlanUnit", through="PlotSearchTarget")
-
     # In Finnish: Lomake
     form = models.OneToOneField(Form, on_delete=models.SET_NULL, null=True)
 
@@ -139,7 +136,13 @@ class PlotSearchTarget(models.Model):
     )
 
     # In Finnish: Kaavayksikkö
-    plan_unit = models.OneToOneField("leasing.PlanUnit", on_delete=models.CASCADE)
+    plan_unit = models.OneToOneField(
+        "leasing.PlanUnit", on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    custom_detailed_plan = models.OneToOneField(
+        "leasing.CustomDetailedPlan", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     # In finnish: Hakemukset
     answers = models.ManyToManyField(
@@ -156,33 +159,10 @@ class PlotSearchTarget(models.Model):
         return super(PlotSearchTarget, self).save(*args, **kwargs)
 
     def clean(self):
-        if self.target_type != PlotSearchTargetType.SEARCHABLE:
-            return
-
-        if self.plot_search.begin_at is not None:
-            if timezone.now() < self.plot_search.begin_at:
-                return
-
-        plot_search = PlotSearch.objects.get(pk=self.plot_search.pk)
-        if plot_search.form is None:
-            pls = PlotSearchTarget.objects.filter(pk=self.pk).first()
-            for field in self._meta.fields:
-                if pls is None:
-                    break
-                if getattr(self, field.name) != getattr(pls, field.name):
-                    raise ValidationError(
-                        code="no_adding_searchable_targets_after_begins_at"
-                    )
-            for field in self.plot_search._meta.fields:
-                if field.name != "form" and getattr(self, field.name) != getattr(
-                    plot_search, field.name
-                ):
-                    raise ValidationError(
-                        code="no_adding_searchable_targets_after_begins_at"
-                    )
-            return
-
-        raise ValidationError(code="no_adding_searchable_targets_after_begins_at")
+        if self.plan_unit is not None and self.custom_detailed_plan is not None:
+            raise ValidationError
+        if self.plan_unit is None and self.custom_detailed_plan is None:
+            raise ValidationError
 
 
 class InformationCheck(models.Model):

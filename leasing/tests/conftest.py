@@ -49,6 +49,7 @@ from leasing.models.invoice import (
     InvoiceSet,
     ReceivableType,
 )
+from leasing.models.land_area import CustomDetailedPlan
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAddress,
@@ -340,6 +341,12 @@ class ContractFactory(factory.DjangoModelFactory):
 class DecisionMakerFactory(factory.DjangoModelFactory):
     class Meta:
         model = DecisionMaker
+
+
+@register
+class CustomDetailedPlanFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = CustomDetailedPlan
 
 
 @pytest.fixture
