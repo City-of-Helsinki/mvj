@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils.text import slugify
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -74,5 +75,20 @@ def clone_object(obj, attrs={}):
 
 class AnswerInBBoxFilter(InBBoxFilter):
     def filter_queryset(self, request, queryset, view):
-        qs = super().filter_queryset(request, queryset, view)
-        return qs.distinct("pk")
+        filter_fields = [
+            "targets__plan_unit__geometry",
+            "targets__custom_detailed_plan__lease_area__geometry",
+        ]
+        include_overlapping = getattr(view, "bbox_filter_include_overlapping", False)
+        if include_overlapping:
+            geo_django_filter = "bboverlaps"
+        else:
+            geo_django_filter = "contained"
+
+        bbox = self.get_filter_bbox(request)
+        if not bbox:
+            return queryset
+        return queryset.filter(
+            Q(**{"%s__%s" % (filter_fields[0], geo_django_filter): bbox})
+            | Q(**{"%s__%s" % (filter_fields[1], geo_django_filter): bbox})
+        ).distinct("pk")

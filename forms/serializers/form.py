@@ -6,7 +6,6 @@ from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
-from rest_framework_gis.fields import GeometryField
 
 from leasing.models import Financing, Hitas, Management
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
@@ -353,9 +352,9 @@ class TargetStatusUpdateSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TargetStatusSerializer(TargetStatusUpdateSerializer):
-    identifier = serializers.CharField(source="plot_search_target.plan_unit.identifier")
+    identifier = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
-    geometry = GeometryField(source="plot_search_target.plan_unit.geometry")
+    geometry = serializers.SerializerMethodField()
 
     def get_address(self, obj):
         if obj.plot_search_target.plan_unit is None:
@@ -367,6 +366,22 @@ class TargetStatusSerializer(TargetStatusUpdateSerializer):
             .first()
         )
         return lease_address
+
+    def get_identifier(self, obj):
+        if obj.plot_search_target.plan_unit is not None:
+            return obj.plot_search_target.plan_unit.identifier
+        elif obj.plot_search_target.custom_detailed_plan is not None:
+            return obj.plot_search_target.custom_detailed_plan.identifier
+        else:
+            return None
+
+    def get_geometry(self, obj):
+        if obj.plot_search_target.plan_unit is not None:
+            return obj.plot_search_target.plan_unit.geometry
+        elif obj.plot_search_target.custom_detailed_plan is not None:
+            return obj.plot_search_target.custom_detailed_plan.lease_area.geometry
+        else:
+            return None
 
     class Meta:
         model = TargetStatus

@@ -1,5 +1,6 @@
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
@@ -47,6 +48,16 @@ class PlotDivisionStateSerializer(NameModelSerializer):
     class Meta:
         model = PlotDivisionState
         fields = "__all__"
+
+
+class UsageDistributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsageDistribution
+        fields = (
+            "distribution",
+            "build_permission",
+            "note",
+        )
 
 
 class PublicPlanUnitSerializer(
@@ -178,9 +189,7 @@ class PlanUnitCreateUpdateSerializer(
 
 
 class PlanUnitListWithIdentifiersSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    serializers.ModelSerializer,
+    EnumSupportSerializerMixin, serializers.ModelSerializer,
 ):
     lease_identifier = serializers.CharField(
         read_only=True, source="lease_area.lease.identifier.identifier"
@@ -189,6 +198,7 @@ class PlanUnitListWithIdentifiersSerializer(
         read_only=True, source="lease_area.identifier"
     )
     plan_unit_status = serializers.CharField(read_only=True)
+    identifier_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = PlanUnit
@@ -198,6 +208,31 @@ class PlanUnitListWithIdentifiersSerializer(
             "plan_unit_status",
             "lease_area_identifier",
             "lease_identifier",
+            "identifier_type",
+        )
+
+
+class CustomDetailedPlanListWithIdentifiersSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer,
+):
+    lease_identifier = serializers.CharField(
+        read_only=True, source="lease_area.lease.identifier.identifier"
+    )
+    lease_area_identifier = serializers.CharField(
+        read_only=True, source="lease_area.identifier"
+    )
+    state = serializers.CharField(read_only=True)
+    identifier_type = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = CustomDetailedPlan
+        fields = (
+            "id",
+            "identifier",
+            "state",
+            "lease_area_identifier",
+            "lease_identifier",
+            "identifier_type",
         )
 
 
@@ -352,16 +387,6 @@ class LeaseAreaPlotSerializer(PlotSerializer):
         )
 
 
-class UsageDistributionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UsageDistribution
-        fields = (
-            "distribution",
-            "build_permission",
-            "note",
-        )
-
-
 class CustomDetailedPlanSerializer(
     EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer,
 ):
@@ -390,6 +415,7 @@ class CustomDetailedPlanSerializer(
         allow_null=True,
         required=False,
     )
+    geometry = GeometryField(source="lease_area.geometry", read_only=True)
 
     class Meta:
         model = CustomDetailedPlan
@@ -407,6 +433,7 @@ class CustomDetailedPlanSerializer(
             "preconstruction_estimated_construction_readiness_moment",
             "info_links",
             "usage_distributions",
+            "geometry",
         )
 
 

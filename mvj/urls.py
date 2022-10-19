@@ -57,6 +57,8 @@ from leasing.viewsets.invoice_additional_views import (
     InvoiceSetCreditView,
 )
 from leasing.viewsets.land_area import (
+    CustomDetailedPlanListWithIdentifiersViewSet,
+    CustomDetailedPlanViewSet,
     LeaseAreaAttachmentViewSet,
     PlanUnitListWithIdentifiersViewSet,
     PlanUnitViewSet,
@@ -132,6 +134,7 @@ router.register(r"collection_note", CollectionNoteViewSet)
 router.register(r"comment", CommentViewSet)
 router.register(r"comment_topic", CommentTopicViewSet)
 router.register(r"contact", ContactViewSet)
+router.register(r"custom_detailed_plan", CustomDetailedPlanViewSet)
 router.register(r"decision", DecisionViewSet)
 router.register(r"district", DistrictViewSet)
 router.register(r"favourite", FavouriteViewSet)
@@ -177,6 +180,11 @@ router.register(
     r"plan_unit_list_with_identifiers",
     PlanUnitListWithIdentifiersViewSet,
     basename="planunitlistwithidentifiers",
+)
+router.register(
+    r"custom_detailed_plan_list_with_identifiers",
+    CustomDetailedPlanListWithIdentifiersViewSet,
+    basename="customdetailedplanlistwithidentifiers",
 )
 router.register(r"plot_master_identifier_list", PlotMasterIdentifierList)
 router.register(r"plot_search", PlotSearchViewSet)
