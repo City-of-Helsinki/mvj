@@ -1,1394 +1,2218 @@
 [
-    {
-        "model": "forms.Form",
-        "pk": 1,
-        "fields": {
-            "name": "Tonttihaun peruslomake",
-            "description": "",
-            "is_template": true,
-            "title": "Tonttihaun peruslomake",
-            "created_at": "2020-12-03T00:00:00.000Z",
-            "modified_at": "2020-12-03T00:00:00.000Z"
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 1,
-        "fields": {
-            "form_id": 1,
-            "title": "Hakijan tiedot",
-            "identifier": "hakijan-tiedot",
-            "visible": false,
-            "sort_order": 0,
-            "add_new_allowed": true,
-            "add_new_text": "Lisää hakija"
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 2,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 1,
-            "title": "Yrityksen tiedot",
-            "identifier": "yrityksen-tiedot",
-            "visible": true,
-            "sort_order": 0
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 3,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 2,
-            "title": "Yhteyshenkilö",
-            "identifier": "yhteyshenkilo",
-            "visible": true,
-            "sort_order": 0
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 4,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 2,
-            "title": "Laskutustiedot",
-            "identifier": "laskutustiedot",
-            "visible": true,
-            "sort_order": 1
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 5,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 2,
-            "title": "Verkkolaskutusosoite ja laskutusviite",
-            "identifier": "verkkolaskutusosoite-ja-laskutusviite",
-            "visible": true,
-            "sort_order": 2
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 6,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 1,
-            "title": "Henkilön tiedot",
-            "identifier": "henkilon-tiedot",
-            "visible": false,
-            "sort_order": 1
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 7,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 6,
-            "title": "Yhteyshenkilö",
-            "identifier": "yhteyshenkilo-1",
-            "visible": true,
-            "sort_order": 0
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 8,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 6,
-            "title": "Laskunsaaja",
-            "visible": true,
-            "sort_order": 1
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 9,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 1,
-            "title": "Lisätieto",
-            "identifier": "lisatiedot",
-            "visible": true,
-            "sort_order": 2
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 10,
-        "fields": {
-            "form_id": 1,
-            "title": "Haettava kohde",
-            "identifier": "haettava-kohde",
-            "visible": true,
-            "sort_order": 1
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 11,
-        "fields": {
-            "form_id": 1,
-            "parent_id": 10,
-            "title": "Hakijan referenssit (kolme parasta)",
-            "identifier": "hakijan-referenssit-kolme-parasta",
-            "visible": true,
-            "sort_order": 0
-        }
-    },
-    {
-        "model": "forms.Section",
-        "pk": 12,
-        "fields": {
-            "form_id": 1,
-            "title": "Vahvistukset",
-            "identifier": "vahvistukset",
-            "visible": true,
-            "sort_order": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 1,
-        "fields": {
-            "label": "Hakija",
-            "identifier": "hakija",
-            "sort_order": 0,
-            "type_id": 6,
-            "section_id": 1
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 2,
-        "fields": {
-            "label": "Yrityksen nimi",
-            "identifier": "yrityksen-nimi",
-            "sort_order": 0,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 3,
-        "fields": {
-            "label": "Y-tunnus",
-            "identifier": "y-tunnus",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 4,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "kieli",
-            "sort_order": 2,
-            "type_id": 6,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 5,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 6,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 7,
-        "fields": {
-            "label": "Katuosoite",
-            "identifier": "katuosoite",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 8,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 9,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 7,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 10,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 8,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 11,
-        "fields": {
-            "label": "Hallintaosuus",
-            "identifier": "hallintaosuus",
-            "sort_order": 9,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 12,
-        "fields": {
-            "label": "Liikevaihto (edellinen vuosi)",
-            "identifier": "liikevaihto-edellinen-vuosi",
-            "sort_order": 10,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 13,
-        "fields": {
-            "label": "Hakijayrityksen perustamisvuosi",
-            "identifier": "hakijayrityksen-perustamisvuosi",
-            "sort_order": 11,
-            "type_id": 1,
-            "section_id": 2
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 14,
-        "fields": {
-            "label": "Etunimi",
-            "identifier": "etunimi",
-            "sort_order": 0,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 15,
-        "fields": {
-            "label": "Sukunimi",
-            "identifier": "sukunimi",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 16,
-        "fields": {
-            "label": "Henkilötunnus",
-            "identifier": "henkilotunnus",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 17,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "Kieli",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 18,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 19,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 20,
-        "fields": {
-            "label": "Katusosoite",
-            "identifier": "katuosoite",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 21,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 7,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 22,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 8,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 23,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 9,
-            "type_id": 1,
-            "section_id": 3
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 24,
-        "fields": {
-            "label": "Yrityksen nimi",
-            "identifier": "yrityksen-nimi",
-            "sort_order": 0,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 25,
-        "fields": {
-            "label": "Y-tunnus",
-            "identifier": "y-tunnus",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 26,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "kieli",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 27,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 28,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 29,
-        "fields": {
-            "label": "Katuosoite",
-            "identifier": "katuosoite",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 30,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 31,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 32,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 4
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 33,
-        "fields": {
-            "label": "Verkkolaskutusosoite",
-            "identifier": "verkkolaskutusosoite",
-            "sort_order": 0,
-            "type_id": 1,
-            "section_id": 5
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 34,
-        "fields": {
-            "label": "Laskutusviite",
-            "identifier": "laskutusviite",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 5
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 35,
-        "fields": {
-            "label": "Etunimi",
-            "identifier": "etunimi",
-            "sort_order": 0,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 36,
-        "fields": {
-            "label": "Sukunimi",
-            "identifier": "Sukunimi",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 37,
-        "fields": {
-            "label": "Henkilötunnus",
-            "identifier": "henkilotunnus",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 38,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "kieli",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 39,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 40,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 41,
-        "fields": {
-            "label": "Katuosoite",
-            "identifier": "katuosoite",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 42,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 7,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 43,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 8,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 44,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 9,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 45,
-        "fields": {
-            "label": "Hallintaosuus",
-            "identifier": "hallintaosuus",
-            "sort_order": 10,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 46,
-        "fields": {
-            "label": "Turvakielto",
-            "identifier": "turvakielto",
-            "sort_order": 10,
-            "type_id": 1,
-            "section_id": 6
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 47,
-        "fields": {
-            "label": "Eri kuin hakija",
-            "identifier": "eri-kuin-hakija",
-            "sort_order": 0,
-            "type_id": 4,
-            "section_id": 7,
-            "action": "toggleOtherSectionInputs=True"
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 48,
-        "fields": {
-            "label": "Etunimi",
-            "identifier": "etunimi",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 49,
-        "fields": {
-            "label": "Sukunimi",
-            "identifier": "sukunimi",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 50,
-        "fields": {
-            "label": "Henkilötunnus",
-            "identifier": "henkilotunnus",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 51,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "kieli",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 52,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 53,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 54,
-        "fields": {
-            "label": "Katuosoite",
-            "identifier": "katuosoite",
-            "sort_order": 7,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 55,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 8,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 56,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 9,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 57,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 10,
-            "type_id": 1,
-            "section_id": 7,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 58,
-        "fields": {
-            "label": "Eri kuin hakija",
-            "identifier": "eri-kuin-hakija",
-            "sort_order": 0,
-            "type_id": 4,
-            "section_id": 8,
-            "action": "toggleOtherSectionInputs=True"
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 59,
-        "fields": {
-            "label": "Etunimi",
-            "identifier": "etunimi",
-            "sort_order": 1,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 60,
-        "fields": {
-            "label": "Sukunimi",
-            "identifier": "sukunimi",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 61,
-        "fields": {
-            "label": "Henkilötunnus",
-            "identifier": "henkilotunnus",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 62,
-        "fields": {
-            "label": "Kieli",
-            "identifier": "kieli",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 63,
-        "fields": {
-            "label": "Puhelinnumero",
-            "identifier": "puhelinnumero",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 64,
-        "fields": {
-            "label": "Sähköposti",
-            "identifier": "sahkoposti",
-            "sort_order": 6,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 65,
-        "fields": {
-            "label": "Katuosoite",
-            "identifier": "katuosoite",
-            "sort_order": 7,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 66,
-        "fields": {
-            "label": "Postinumero",
-            "identifier": "postinumero",
-            "sort_order": 8,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 67,
-        "fields": {
-            "label": "Kaupunki",
-            "identifier": "kaupunki",
-            "sort_order": 9,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 68,
-        "fields": {
-            "label": "Maa",
-            "identifier": "maa",
-            "sort_order": 10,
-            "type_id": 1,
-            "section_id": 8,
-            "enabled": false
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 69,
-        "fields": {
-            "label": "Lisätietoa",
-            "identifier": "lisatietoa",
-            "sort_order": 0,
-            "type_id": 2,
-            "section_id": 9
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 70,
-        "fields": {
-            "label": "Onko aiemmin saanut tonttia kaupungin haussa?",
-            "identifier": "onko-aiemmin-saanut-tonttia",
-            "sort_order": 0,
-            "type_id": 6,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 71,
-        "fields": {
-            "label": "Tontti, jota hakemus koskee",
-            "identifier": "tontti-jota-hakemus-koskee",
-            "sort_order": 1,
-            "type_id": 3,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 72,
-        "fields": {
-            "label": "%-perusteinen",
-            "identifier": "prosentti-perusteinen",
-            "hint_text": "€/k-m2",
-            "sort_order": 2,
-            "type_id": 1,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 73,
-        "fields": {
-            "label": "Hankkeen pääsuunnittelija",
-            "identifier": "hankkeen-paasuunnittelija",
-            "sort_order": 3,
-            "type_id": 1,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 74,
-        "fields": {
-            "label": "Hankkeen arvioitu aikataulu",
-            "identifier": "hankkeen-arvioitu-aikataulu",
-            "sort_order": 4,
-            "type_id": 1,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 75,
-        "fields": {
-            "label": "Hankkeen toivottu laajuus (rakennusoikeus ja asuntojen lkm)",
-            "identifier": "hankkeen-toivottu-laajuus",
-            "sort_order": 5,
-            "type_id": 1,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 76,
-        "fields": {
-            "label": "Rahoitus- ja hallintamuoto",
-            "identifier": "rahoitus-ja-hallintamuoto",
-            "sort_order": 6,
-            "type_id": 4,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 77,
-        "fields": {
-            "label": "Erityisryhmät",
-            "identifier": "erityisryhmat",
-            "sort_order": 7,
-            "type_id": 4,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 78,
-        "fields": {
-            "label": "Muut hankkeen mahdolliset kehitysteemat",
-            "identifier": "muut-hankkeen-mahdolliset-kehitysteemat",
-            "sort_order": 8,
-            "type_id": 4,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 79,
-        "fields": {
-            "label": "Hankkeen yleiskuvaus",
-            "identifier": "hankkeen-yleiskuvaus",
-            "sort_order": 9,
-            "type_id": 2,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 80,
-        "fields": {
-            "label": "Hankkeen mahdolliset erityispiirteet ja mahdolliset kehittämisteemat",
-            "identifier": "hankkeen-mahdolliset-erityispiirteet",
-            "sort_order": 10,
-            "type_id": 2,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 81,
-        "fields": {
-            "label": "Lyhyt kuvaus hankkeen suunnittelusta ja toteutustavasta ja -organisaatiosta sekä hakijan käytössä olevista taloudellisista ja muista resursseista",
-            "identifier": "lyhyt-kuvaus-hankkeen-suunnittelusta",
-            "sort_order": 11,
-            "type_id": 2,
-            "section_id": 10
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 82,
-        "fields": {
-            "label": "Lyhyt kuvaus referensseistä",
-            "identifier": "lyhyt-kuvaus-referensseistä",
-            "sort_order": 0,
-            "type_id": 2,
-            "section_id": 11
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 83,
-        "fields": {
-            "label": "Referenssiliitteet",
-            "identifier": "referenssiliitteet",
-            "sort_order": 1,
-            "type_id": 7,
-            "section_id": 11
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 84,
-        "fields": {
-            "label": "Lähettämällä hakemuksen vakuutan antamani tiedot oikeiksi ja ilmoitan tutustuneeni yleisen asuntotonttien varauskierroksen verkkosivustolla asiaa koskevaan materiaaliin.",
-            "identifier": "lahettamalla-hakemuksen-vakuutan",
-            "sort_order": 0,
-            "type_id": 4,
-            "section_id": 12
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 85,
-        "fields": {
-            "label": "Suostun siihen, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi sähköisenä viestinä ilmoittamaani sähköpostiosoitteeseen siten kuin sähköisestä asioinnista viranomaistoiminnassa annetun lain 19:ssä säädetään.",
-            "identifier": "suostun-siihen-että-helsingin-kaupunki",
-            "sort_order": 1,
-            "type_id": 4,
-            "section_id": 12
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 86,
-        "fields": {
-            "label": "Valitse miten haluat varauspäätöstä koskeva pöytäkirjaotteet",
-            "identifier": "valitse-miten-haluat-varauspaatosta",
-            "sort_order": 2,
-            "type_id": 5,
-            "section_id": 12
-        }
-    },
-    {
-        "model": "forms.Field",
-        "pk": 87,
-        "fields": {
-            "label": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
-            "identifier": "hyvaksyn-tietojeni-talentamisen",
-            "sort_order": 3,
-            "type_id": 4,
-            "section_id": 12
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 1,
-        "fields": {
-            "text": "Yritys",
-            "value": 1,
-            "action": "showSection=2;hideSection=6",
-            "field_id": 1
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 2,
-        "fields": {
-            "text": "Henkilö",
-            "value": 2,
-            "action": "showSection=6;hideSection=2",
-            "field_id": 1
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 3,
-        "fields": {
-            "text": "Ei",
-            "value": 1,
-            "field_id": 68
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 4,
-        "fields": {
-            "text": "Kyllä, vuonna",
-            "value": 2,
-            "field_id": 68,
-            "has_text_input": true
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 5,
-        "fields": {
-            "text": "Sääntelemätön omistus",
-            "value": 1,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 6,
-        "fields": {
-            "text": "Hitas omistus",
-            "value": 2,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 7,
-        "fields": {
-            "text": "Hintakontrolloitu omistus",
-            "value": 3,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 8,
-        "fields": {
-            "text": "Asumisoikeus",
-            "value": 4,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 9,
-        "fields": {
-            "text": "Sääntelemätön vuokra",
-            "value": 5,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 10,
-        "fields": {
-            "text": "Valtion tukema vuokra 10v",
-            "value": 6,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 11,
-        "fields": {
-            "text": "Valtion tukema vuokra pitkä",
-            "value": 7,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 12,
-        "fields": {
-            "text": "Valtion tukema takauslaina",
-            "value": 8,
-            "field_id": 74
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 13,
-        "fields": {
-            "text": "Muu:",
-            "value": 9,
-            "field_id": 74,
-            "has_text_input": true
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 14,
-        "fields": {
-            "text": "Opiskelijat",
-            "value": 1,
-            "field_id": 75
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 15,
-        "fields": {
-            "text": "Nuoret/nuoret aikuiset",
-            "value": 2,
-            "field_id": 75
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 16,
-        "fields": {
-            "text": "Seniorit",
-            "value": 3,
-            "field_id": 75
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 17,
-        "fields": {
-            "text": "Muut erityisryhmät, mitä:",
-            "value": 4,
-            "field_id": 75,
-            "has_text_input": true
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 18,
-        "fields": {
-            "text": "Kohtuuhintaisuus",
-            "value": 1,
-            "field_id": 76
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 19,
-        "fields": {
-            "text": "Asumisen ratkaisut",
-            "value": 2,
-            "field_id": 76
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 20,
-        "fields": {
-            "text": "Elinkaariratkaisut",
-            "value": 3,
-            "field_id": 76
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 21,
-        "fields": {
-            "text": "Tekniset ratkaisut",
-            "value": 4,
-            "field_id": 76
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 22,
-        "fields": {
-            "text": "Hiilineutraali Helsinki",
-            "value": 5,
-            "field_id": 76
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 23,
-        "fields": {
-            "text": "Muu:",
-            "value": 6,
-            "field_id": 76,
-            "has_text_input": true
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 24,
-        "fields": {
-            "text": "Kyllä",
-            "value": 1,
-            "field_id": 82
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 25,
-        "fields": {
-            "text": "Kyllä",
-            "value": 1,
-            "field_id": 83
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 26,
-        "fields": {
-            "text": "Haluan pöytäkirjaotteet sähköpostitse",
-            "value": 1,
-            "field_id": 84
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 27,
-        "fields": {
-            "text": "Haluan pöytäkirjaotteet postitse",
-            "value": 2,
-            "field_id": 84
-        }
-    },
-    {
-        "model": "forms.Choice",
-        "pk": 28,
-        "fields": {
-            "text": "Kyllä, hyväksyn tietojeni tallentamisen ja käsittelyn",
-            "value": 1,
-            "field_id": 85
-        }
+{
+    "model": "forms.form",
+    "pk": 13,
+    "fields": {
+        "name": "Tonttihaun peruslomake",
+        "description": "",
+        "is_template": true,
+        "state": "work_in_progress",
+        "title": "Tonttihaun peruslomake",
+        "title_fi": "Tonttihaun peruslomake",
+        "title_sv": null,
+        "title_en": null,
+        "created_at": "2022-10-17T14:06:14.130Z",
+        "modified_at": "2022-10-20T06:44:54.874Z"
     }
+},
+{
+    "model": "forms.section",
+    "pk": 145,
+    "fields": {
+        "title": "Hakijan tiedot",
+        "title_fi": "Hakijan tiedot",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "hakijan-tiedot",
+        "visible": true,
+        "sort_order": 0,
+        "add_new_allowed": true,
+        "add_new_text": "Lisää hakija",
+        "add_new_text_fi": "Lisää hakija",
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": null,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "both"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 147,
+    "fields": {
+        "title": "Haettava kohde",
+        "title_fi": "Haettava kohde",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "haettava-kohde",
+        "visible": true,
+        "sort_order": 1,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": null,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "both"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 148,
+    "fields": {
+        "title": "Vahvistukset",
+        "title_fi": "Vahvistukset",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "vahvistukset",
+        "visible": true,
+        "sort_order": 2,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": null,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "both"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 149,
+    "fields": {
+        "title": "Yrityksen tiedot",
+        "title_fi": "Yrityksen tiedot",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "yrityksen-tiedot",
+        "visible": true,
+        "sort_order": 0,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 145,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "company"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 150,
+    "fields": {
+        "title": "Lisätiedot",
+        "title_fi": "Lisätiedot",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "lisatiedot",
+        "visible": true,
+        "sort_order": 2,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 145,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "both"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 151,
+    "fields": {
+        "title": "Henkilön tiedot",
+        "title_fi": "Henkilön tiedot",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "henkilon-tiedot",
+        "visible": true,
+        "sort_order": 1,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 145,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "person"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 152,
+    "fields": {
+        "title": "Yhteyshenkilö",
+        "title_fi": "Yhteyshenkilö",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "yhteyshenkilo",
+        "visible": true,
+        "sort_order": 0,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 149,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "company"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 153,
+    "fields": {
+        "title": "Laskutustiedot",
+        "title_fi": "Laskutustiedot",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "laskutustiedot",
+        "visible": true,
+        "sort_order": 2,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 149,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "company"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 154,
+    "fields": {
+        "title": "Laskunsaaja",
+        "title_fi": "Laskunsaaja",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "laskunsaaja",
+        "visible": true,
+        "sort_order": 1,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 151,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "person"
+    }
+},
+{
+    "model": "forms.section",
+    "pk": 155,
+    "fields": {
+        "title": "Hakijan referenssit (kolme parasta)",
+        "title_fi": "Hakijan referenssit (kolme parasta)",
+        "title_sv": null,
+        "title_en": null,
+        "identifier": "hakijan-referenssit-kolme-parasta",
+        "visible": true,
+        "sort_order": 1,
+        "add_new_allowed": false,
+        "add_new_text": null,
+        "add_new_text_fi": null,
+        "add_new_text_sv": null,
+        "add_new_text_en": null,
+        "show_duplication_check": true,
+        "parent": 147,
+        "form": 13,
+        "type": "show_always",
+        "applicant_type": "both"
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 617,
+    "fields": {
+        "text": "Yritys",
+        "text_fi": "Yritys",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 960
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 618,
+    "fields": {
+        "text": "Henkilö",
+        "text_fi": "Henkilö",
+        "text_sv": null,
+        "text_en": null,
+        "value": "2",
+        "action": null,
+        "has_text_input": false,
+        "field": 960
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 619,
+    "fields": {
+        "text": "Sääntelemätön omistus",
+        "text_fi": "Sääntelemätön omistus",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 620,
+    "fields": {
+        "text": "Hitas omistus",
+        "text_fi": "Hitas omistus",
+        "text_sv": null,
+        "text_en": null,
+        "value": "2",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 621,
+    "fields": {
+        "text": "Hintakontrolloitu omistus",
+        "text_fi": "Hintakontrolloitu omistus",
+        "text_sv": null,
+        "text_en": null,
+        "value": "3",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 622,
+    "fields": {
+        "text": "Asumisoikeus",
+        "text_fi": "Asumisoikeus",
+        "text_sv": null,
+        "text_en": null,
+        "value": "4",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 623,
+    "fields": {
+        "text": "Sääntelemätön vuokra",
+        "text_fi": "Sääntelemätön vuokra",
+        "text_sv": null,
+        "text_en": null,
+        "value": "5",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 624,
+    "fields": {
+        "text": "Valtion tukema vuokra 10v",
+        "text_fi": "Valtion tukema vuokra 10v",
+        "text_sv": null,
+        "text_en": null,
+        "value": "6",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 625,
+    "fields": {
+        "text": "Valtion tukema vuokra pitkä",
+        "text_fi": "Valtion tukema vuokra pitkä",
+        "text_sv": null,
+        "text_en": null,
+        "value": "7",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 626,
+    "fields": {
+        "text": "Valtion tukema takauslaina",
+        "text_fi": "Valtion tukema takauslaina",
+        "text_sv": null,
+        "text_en": null,
+        "value": "8",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 627,
+    "fields": {
+        "text": "Muu",
+        "text_fi": "Muu",
+        "text_sv": null,
+        "text_en": null,
+        "value": "9",
+        "action": null,
+        "has_text_input": false,
+        "field": 1020
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 628,
+    "fields": {
+        "text": "Opiskelijat",
+        "text_fi": "Opiskelijat",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1021
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 629,
+    "fields": {
+        "text": "Nuoret/nuoret aikuiset",
+        "text_fi": "Nuoret/nuoret aikuiset",
+        "text_sv": null,
+        "text_en": null,
+        "value": "2",
+        "action": null,
+        "has_text_input": false,
+        "field": 1021
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 630,
+    "fields": {
+        "text": "Seniorit",
+        "text_fi": "Seniorit",
+        "text_sv": null,
+        "text_en": null,
+        "value": "3",
+        "action": null,
+        "has_text_input": false,
+        "field": 1021
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 631,
+    "fields": {
+        "text": "Muut erityisryhmät, mitä:",
+        "text_fi": "Muut erityisryhmät, mitä:",
+        "text_sv": null,
+        "text_en": null,
+        "value": "4",
+        "action": null,
+        "has_text_input": true,
+        "field": 1021
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 632,
+    "fields": {
+        "text": "Kohtuuhintaisuus",
+        "text_fi": "Kohtuuhintaisuus",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 633,
+    "fields": {
+        "text": "Asumisen ratkaisut",
+        "text_fi": "Asumisen ratkaisut",
+        "text_sv": null,
+        "text_en": null,
+        "value": "2",
+        "action": null,
+        "has_text_input": false,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 634,
+    "fields": {
+        "text": "Elinkaariratkaisut",
+        "text_fi": "Elinkaariratkaisut",
+        "text_sv": null,
+        "text_en": null,
+        "value": "3",
+        "action": null,
+        "has_text_input": false,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 635,
+    "fields": {
+        "text": "Tekniset ratkaisut",
+        "text_fi": "Tekniset ratkaisut",
+        "text_sv": null,
+        "text_en": null,
+        "value": "4",
+        "action": null,
+        "has_text_input": false,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 636,
+    "fields": {
+        "text": "Hiilineutraali Helsinki",
+        "text_fi": "Hiilineutraali Helsinki",
+        "text_sv": null,
+        "text_en": null,
+        "value": "5",
+        "action": null,
+        "has_text_input": false,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 637,
+    "fields": {
+        "text": "Muu:",
+        "text_fi": "Muu:",
+        "text_sv": null,
+        "text_en": null,
+        "value": "6",
+        "action": null,
+        "has_text_input": true,
+        "field": 1022
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 638,
+    "fields": {
+        "text": "Kyllä",
+        "text_fi": "Kyllä",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1029
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 639,
+    "fields": {
+        "text": "Kyllä",
+        "text_fi": "Kyllä",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1030
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 640,
+    "fields": {
+        "text": "Haluan pöytäkirjaotteet sähköpostitse",
+        "text_fi": "Haluan pöytäkirjaotteet sähköpostitse",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1031
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 641,
+    "fields": {
+        "text": "Haluan pöytäkirjaotteet postitse",
+        "text_fi": "Haluan pöytäkirjaotteet postitse",
+        "text_sv": null,
+        "text_en": null,
+        "value": "2",
+        "action": null,
+        "has_text_input": false,
+        "field": 1031
+    }
+},
+{
+    "model": "forms.choice",
+    "pk": 642,
+    "fields": {
+        "text": "Kyllä, hyväksyn tietojeni tallentamisen ja käsittelyn",
+        "text_fi": "Kyllä, hyväksyn tietojeni tallentamisen ja käsittelyn",
+        "text_sv": null,
+        "text_en": null,
+        "value": "1",
+        "action": null,
+        "has_text_input": false,
+        "field": 1032
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 960,
+    "fields": {
+        "label": "Hakija",
+        "label_fi": "Hakija",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hakija",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 6,
+        "section": 145
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 961,
+    "fields": {
+        "label": "Etunimi",
+        "label_fi": "Etunimi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "etunimi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 962,
+    "fields": {
+        "label": "Sukunimi",
+        "label_fi": "Sukunimi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sukunimi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 963,
+    "fields": {
+        "label": "Kieli",
+        "label_fi": "Kieli",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "kieli",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 964,
+    "fields": {
+        "label": "Puhelinnumero",
+        "label_fi": "Puhelinnumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "puhelinnumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 965,
+    "fields": {
+        "label": "Sähköposti",
+        "label_fi": "Sähköposti",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sahkoposti",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 966,
+    "fields": {
+        "label": "Katuosoite",
+        "label_fi": "Katuosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "katuosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 967,
+    "fields": {
+        "label": "Postinumero",
+        "label_fi": "Postinumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postinumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 968,
+    "fields": {
+        "label": "Postitoimipaikka",
+        "label_fi": "Postitoimipaikka",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postitoimipaikka",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 969,
+    "fields": {
+        "label": "Maa",
+        "label_fi": "Maa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "maa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 1,
+        "section": 152
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 970,
+    "fields": {
+        "label": "Yrityksen nimi",
+        "label_fi": "Yrityksen nimi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "yrityksen-nimi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 971,
+    "fields": {
+        "label": "Y-tunnus",
+        "label_fi": "Y-tunnus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "y-tunnus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 972,
+    "fields": {
+        "label": "Kieli",
+        "label_fi": "Kieli",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "kieli",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 973,
+    "fields": {
+        "label": "Puhelinnumero",
+        "label_fi": "Puhelinnumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "puhelinnumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 974,
+    "fields": {
+        "label": "Sähköposti",
+        "label_fi": "Sähköposti",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sahkoposti",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 975,
+    "fields": {
+        "label": "Katuosoite",
+        "label_fi": "Katuosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "katuosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 976,
+    "fields": {
+        "label": "Postinumero",
+        "label_fi": "Postinumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postinumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 977,
+    "fields": {
+        "label": "Postitoimipaikka",
+        "label_fi": "Postitoimipaikka",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postitoimipaikka",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 978,
+    "fields": {
+        "label": "Maa",
+        "label_fi": "Maa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "maa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 979,
+    "fields": {
+        "label": "Hallintaosuus",
+        "label_fi": "Hallintaosuus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hallintaosuus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 9,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 980,
+    "fields": {
+        "label": "Liikevaihto (edellinen vuosi)",
+        "label_fi": "Liikevaihto (edellinen vuosi)",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "liikevaihto-edellinen-vuosi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 10,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 981,
+    "fields": {
+        "label": "Hakijayrityksen perustamisvuosi",
+        "label_fi": "Hakijayrityksen perustamisvuosi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hakijayrityksen-perustamisvuosi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 11,
+        "type": 1,
+        "section": 149
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 982,
+    "fields": {
+        "label": "Etunimi",
+        "label_fi": "Etunimi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "etunimi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 983,
+    "fields": {
+        "label": "Sukunimi",
+        "label_fi": "Sukunimi",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sukunimi",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 984,
+    "fields": {
+        "label": "Henkilötunnus",
+        "label_fi": "Henkilötunnus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "henkilotunnus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 985,
+    "fields": {
+        "label": "Kieli",
+        "label_fi": "Kieli",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "kieli",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 986,
+    "fields": {
+        "label": "Puhelinnumero",
+        "label_fi": "Puhelinnumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "puhelinnumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 987,
+    "fields": {
+        "label": "Sähköposti",
+        "label_fi": "Sähköposti",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sahkoposti",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 988,
+    "fields": {
+        "label": "Katuosoite",
+        "label_fi": "Katuosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "katuosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 989,
+    "fields": {
+        "label": "Postinumero",
+        "label_fi": "Postinumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postinumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 990,
+    "fields": {
+        "label": "Postitoimipaikka",
+        "label_fi": "Postitoimipaikka",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postitoimipaikka",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 991,
+    "fields": {
+        "label": "Maa",
+        "label_fi": "Maa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "maa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 9,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 992,
+    "fields": {
+        "label": "Hallintaosuus",
+        "label_fi": "Hallintaosuus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hallintaosuus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 10,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 993,
+    "fields": {
+        "label": "Turvakielto",
+        "label_fi": "Turvakielto",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "turvakielto",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 11,
+        "type": 1,
+        "section": 151
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 994,
+    "fields": {
+        "label": "Lisätietoa",
+        "label_fi": "Lisätietoa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "lisatietoa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 2,
+        "section": 150
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 995,
+    "fields": {
+        "label": "c/o",
+        "label_fi": "c/o",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "c-0",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 996,
+    "fields": {
+        "label": "Kieli",
+        "label_fi": "Kieli",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "kieli",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 997,
+    "fields": {
+        "label": "Puhelinnumero",
+        "label_fi": "Puhelinnumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "puhelinnumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 998,
+    "fields": {
+        "label": "Sähköposti",
+        "label_fi": "Sähköposti",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sahkoposti",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 999,
+    "fields": {
+        "label": "Katuosoite",
+        "label_fi": "Katuosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "katuosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1000,
+    "fields": {
+        "label": "Postinumero",
+        "label_fi": "Postinumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postinumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1001,
+    "fields": {
+        "label": "Postitoimipaikka",
+        "label_fi": "Postitoimipaikka",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postitoimipaikka",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1002,
+    "fields": {
+        "label": "Maa",
+        "label_fi": "Maa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "maa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1003,
+    "fields": {
+        "label": "Verkkolaskutusosoite",
+        "label_fi": "Verkkolaskutusosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "verkkolaskutusosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1004,
+    "fields": {
+        "label": "Välittäjätunnus",
+        "label_fi": "Välittäjätunnus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "valittajatunnus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 9,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1005,
+    "fields": {
+        "label": "Hakijan laskutusviite",
+        "label_fi": "Hakijan laskutusviite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hakijan-laskutusviite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 10,
+        "type": 1,
+        "section": 153
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1006,
+    "fields": {
+        "label": "c/o",
+        "label_fi": "c/o",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "c-o",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1007,
+    "fields": {
+        "label": "Kieli",
+        "label_fi": "Kieli",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "kieli",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1008,
+    "fields": {
+        "label": "Puhelinnumero",
+        "label_fi": "Puhelinnumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "puhelinnumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1009,
+    "fields": {
+        "label": "Sähköposti",
+        "label_fi": "Sähköposti",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "sahkoposti",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1010,
+    "fields": {
+        "label": "Katuosoite",
+        "label_fi": "Katuosoite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "katuosoite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1011,
+    "fields": {
+        "label": "Postinumero",
+        "label_fi": "Postinumero",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postinumero",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1012,
+    "fields": {
+        "label": "Postitoimipaikka",
+        "label_fi": "Postitoimipaikka",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "postitoimipaikka",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1013,
+    "fields": {
+        "label": "Maa",
+        "label_fi": "Maa",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "maa",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1014,
+    "fields": {
+        "label": "Hakijan laskutusviite",
+        "label_fi": "Hakijan laskutusviite",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hakijan-laskutusviite",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 1,
+        "section": 154
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1015,
+    "fields": {
+        "label": "Onko aiemmin saanut tonttia kaupungin haussa?",
+        "label_fi": "Onko aiemmin saanut tonttia kaupungin haussa?",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "onko-aiemmin-saanut-tonttia",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 4,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1016,
+    "fields": {
+        "label": "Tontti, jota hakemus koskee",
+        "label_fi": "Tontti, jota hakemus koskee",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "tontti-jota-hakemus-koskee",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 3,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1017,
+    "fields": {
+        "label": "Hankkeen pääsuunnittelija",
+        "label_fi": "Hankkeen pääsuunnittelija",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hankkeen-paasuunnittelija",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 1,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1018,
+    "fields": {
+        "label": "Hankkeen arvioitu aikataulu",
+        "label_fi": "Hankkeen arvioitu aikataulu",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hankkeen-arvioitu-aikataulu",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 4,
+        "type": 1,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1019,
+    "fields": {
+        "label": "Hankkeen toivottu laajuus (rakennusoikeus ja asuntojen lkm)",
+        "label_fi": "Hankkeen toivottu laajuus (rakennusoikeus ja asuntojen lkm)",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hankkeen-toivottu-laajuus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 5,
+        "type": 2,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1020,
+    "fields": {
+        "label": "Rahoitus- ja hallintamuoto",
+        "label_fi": "Rahoitus- ja hallintamuoto",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "rahoitus-ja-hallintamuoto",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 6,
+        "type": 4,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1021,
+    "fields": {
+        "label": "Erityisryhmät",
+        "label_fi": "Erityisryhmät",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "erityisryhmat",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 7,
+        "type": 4,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1022,
+    "fields": {
+        "label": "Muut hankkeen mahdolliset kehitysteemat",
+        "label_fi": "Muut hankkeen mahdolliset kehitysteemat",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "muut-hankkeen-mahdolliset-kehitysteemat",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 8,
+        "type": 4,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1023,
+    "fields": {
+        "label": "Hankkeen yleiskuvaus",
+        "label_fi": "Hankkeen yleiskuvaus",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hankkeen-yleiskuvaus",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 9,
+        "type": 2,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1024,
+    "fields": {
+        "label": "Hankkeen mahdolliset erityispiirteet",
+        "label_fi": "Hankkeen mahdolliset erityispiirteet",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hankkeen-mahdolliset-erityispiirteet",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 10,
+        "type": 2,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1025,
+    "fields": {
+        "label": "Lyhyt kuvaus hankkeen suunnittelusta ja toteutustavasta ja -organisaatiosta sekä hakijan käytössä olevista taloudellisista ja muista resursseista",
+        "label_fi": "Lyhyt kuvaus hankkeen suunnittelusta ja toteutustavasta ja -organisaatiosta sekä hakijan käytössä olevista taloudellisista ja muista resursseista",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "lyhyt-kuvaus-hankkeen-suunnittelusta",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 11,
+        "type": 2,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1026,
+    "fields": {
+        "label": "Lyhyt kuvaus referensseistä",
+        "label_fi": "Lyhyt kuvaus referensseistä",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "lyhyt-kuvaus-referensseista",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 2,
+        "section": 155
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1027,
+    "fields": {
+        "label": "Referenssiliitteet",
+        "label_fi": "Referenssiliitteet",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "referenssiliitteet",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 7,
+        "section": 155
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1028,
+    "fields": {
+        "label": "Hinta",
+        "label_fi": "Hinta",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": "€/k-m²",
+        "hint_text_fi": "€/k-m²",
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hinta",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 1,
+        "section": 147
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1029,
+    "fields": {
+        "label": "Lähettämällä hakemuksen vakuutan antamani tiedot oikeiksi ja ilmoitan tutustuneeni yleisen asuntotonttien varauskierroksen verkkosivustolla asiaa koskevaan materiaaliin.",
+        "label_fi": "Lähettämällä hakemuksen vakuutan antamani tiedot oikeiksi ja ilmoitan tutustuneeni yleisen asuntotonttien varauskierroksen verkkosivustolla asiaa koskevaan materiaaliin.",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "lahettamalla-hakemuksen-vakuutan",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 0,
+        "type": 4,
+        "section": 148
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1030,
+    "fields": {
+        "label": "Suostun siihen, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi sähköisenä viestinä ilmoittamaani sähköpostiosoitteeseen siten kuin sähköisestä asioinnista viranomaistoiminnassa annetun lain 19:ssä säädetään.",
+        "label_fi": "Suostun siihen, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi sähköisenä viestinä ilmoittamaani sähköpostiosoitteeseen siten kuin sähköisestä asioinnista viranomaistoiminnassa annetun lain 19:ssä säädetään.",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "suostun-siihen-etta-helsingin-kaupunki",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 1,
+        "type": 4,
+        "section": 148
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1031,
+    "fields": {
+        "label": "Valitse miten haluat varauspäätöstä koskeva pöytäkirjaotteet",
+        "label_fi": "Valitse miten haluat varauspäätöstä koskeva pöytäkirjaotteet",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "valitse-miten-haluat-varauspaatosta",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 2,
+        "type": 5,
+        "section": 148
+    }
+},
+{
+    "model": "forms.field",
+    "pk": 1032,
+    "fields": {
+        "label": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+        "label_fi": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+        "label_sv": null,
+        "label_en": null,
+        "hint_text": null,
+        "hint_text_fi": null,
+        "hint_text_sv": null,
+        "hint_text_en": null,
+        "identifier": "hyvaksyn-tietojeni-tallentamisen",
+        "enabled": true,
+        "required": false,
+        "validation": null,
+        "action": null,
+        "sort_order": 3,
+        "type": 4,
+        "section": 148
+    }
+}
 ]
