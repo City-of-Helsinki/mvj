@@ -77,6 +77,8 @@ env = environ.Env(
     ASIAKASTIETO_USER_ID=(str, ""),
     ASIAKASTIETO_PASSWORD=(str, ""),
     ASIAKASTIETO_KEY=(str, ""),
+    ASIAKASTIETO_CONSUMER_TARGET_KEY=(str, ""),
+    ASIAKASTIETO_COMPANY_TARGET_KEY=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -330,6 +332,8 @@ ASIAKASTIETO_URL = env.str("ASIAKASTIETO_URL")
 ASIAKASTIETO_USER_ID = env.str("ASIAKASTIETO_USER_ID")
 ASIAKASTIETO_PASSWORD = env.str("ASIAKASTIETO_PASSWORD")
 ASIAKASTIETO_KEY = env.str("ASIAKASTIETO_KEY")
+ASIAKASTIETO_CONSUMER_TARGET_KEY = env.str("ASIAKASTIETO_CONSUMER_TARGET_KEY")
+ASIAKASTIETO_COMPANY_TARGET_KEY = env.str("ASIAKASTIETO_COMPANY_TARGET_KEY")
 
 local_settings = project_root("local_settings.py")
 if os.path.exists(local_settings):

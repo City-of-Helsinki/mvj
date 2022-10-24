@@ -54,6 +54,8 @@ def send_credit_decision_inquiry(request):
         json_data = None
         json_error = None
         if business_id:
+            business_id = business_id.replace("-", "")
+
             json_data, json_error = _get_company_decision(
                 business_id, request.user, contact
             )
@@ -91,6 +93,9 @@ def get_credit_decisions(request):
     """
     customer_id = request.query_params.get("customer_id")
     business_id = request.query_params.get("business_id")
+
+    if business_id:
+        business_id = business_id.replace("-", "")
 
     if request.method == "GET" and (customer_id or business_id):
         if customer_id or business_id:

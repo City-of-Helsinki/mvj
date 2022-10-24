@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from auditlog.registry import auditlog
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -128,14 +130,20 @@ class CreditDecision(TimeStampedModel):
             address = company_data["identificationData"]["address"]["street"]
             address += ", " + company_data["identificationData"]["address"]["zip"]
             address += " " + company_data["identificationData"]["address"]["town"]
-            phone_number = company_data["identificationData"]["contactInformation"][
-                "phone"
-            ]
+            phone_number = ""
+            if company_data["identificationData"]["contactInformation"]:
+                phone_number = company_data["identificationData"]["contactInformation"][
+                    "phone"
+                ]
             industry_code = company_data["identificationData"]["lineOfBusiness"][
                 "lineOfBusinessCode"
             ]
             business_entity = company_data["identificationData"]["companyFormText"]
-            operation_start_date = company_data["startDate"]
+            operation_start_date = None
+            if company_data["startDate"]:
+                operation_start_date = datetime.fromtimestamp(
+                    company_data["startDate"] / 1000.0
+                )
 
         proposal_data = json_data["companyResponse"]["decisionProposalData"][
             "decisionProposal"
