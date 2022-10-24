@@ -1527,7 +1527,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         null=True,
         blank=True,
         max_digits=10,
-        decimal_places=2,
+        decimal_places=6,
     )
 
     # In Finnish: Piirustukset tarkastettu (Päivämäärä)
