@@ -1,8 +1,13 @@
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 from faker import Faker
 from rest_framework.exceptions import ValidationError
 
-from ..serializers.form import AnswerSerializer, FormSerializer
+from plotsearch.enums import DeclineReason
+from plotsearch.models import TargetStatus
+
+from ..serializers.form import AnswerSerializer, FormSerializer, TargetStatusSerializer
 
 fake = Faker("fi_FI")
 
@@ -186,3 +191,44 @@ def test_company_id_validator(
     with pytest.raises(ValidationError) as val_error:
         answer_serializer.is_valid(True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_company_id"
+
+
+@pytest.mark.django_db
+def test_target_status(
+    django_db_setup,
+    user,
+    area_search_test_data,
+    basic_template_form,
+    plot_search_target,
+    answer_factory,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    assert TargetStatus.objects.all().count() == 1
+
+    target_status_data = {
+        "identifier": "91-21-21-21",
+        "share_of_rental_indicator": 2,
+        "share_of_rental_denominator": 3,
+        "reserved": True,
+        "added_target_to_applicant": True,
+        "counsel_date": timezone.now(),
+        "decline_reason": DeclineReason.APPLICATION_REVOKED,
+        "arguments": "Very good arguments",
+        "proposed_managements": [],
+        "meeting_memos": [
+            {
+                "meeting_memo": SimpleUploadedFile(
+                    name="example.txt", content=b"Lorem lipsum"
+                )
+            }
+        ],
+        "reservation_conditions": ["Very good condition",],  # noqa: E23
+        "geometry": area_search_test_data.geometry.geojson,
+    }
+
+    target_status_serializer = TargetStatusSerializer(data=target_status_data)
+
+    assert target_status_serializer.is_valid()

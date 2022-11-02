@@ -1,6 +1,5 @@
 from .info_links import TargetInfoLink
 from .plot_search import (
-    ApplicationStatus,
     AreaSearch,
     Favourite,
     FavouriteTarget,
@@ -12,10 +11,11 @@ from .plot_search import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    TargetStatus,
 )
 
 __all__ = [
-    "ApplicationStatus",
+    "TargetStatus",
     "AreaSearch",
     "Favourite",
     "FavouriteTarget",

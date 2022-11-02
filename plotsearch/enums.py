@@ -87,3 +87,22 @@ class InformationCheckName(str, Enum):
             "Information check name",
             "Certificate of entry in the register of employers",
         )
+
+
+class DeclineReason(str, Enum):
+    """
+    In Finnish: Hylkäyksen syy
+    """
+
+    APPLICATION_REVOKED = "application_revoked"
+    NOT_IN_CONTROL = "not_in_control"
+    NOT_AVAILABLE_LEASE = "not_available_for_lease"
+    OTHER = "other"
+
+    class Labels:
+        APPLICATION_REVOKED = pgettext_lazy("Decline reason", "Application revoked")
+        NOT_IN_CONTROL = pgettext_lazy("Decline reason", "Area not controlled by city")
+        NOT_AVAILABLE_LEASE = pgettext_lazy(
+            "Decline reason", "Area no available for lease"
+        )
+        OTHER = pgettext_lazy("Decline reason", "Other reason")

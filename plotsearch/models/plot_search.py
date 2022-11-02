@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models as gmodels
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import pgettext_lazy
@@ -10,8 +11,10 @@ from rest_framework.serializers import ValidationError
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from leasing.enums import PlotSearchTargetType
+from leasing.models import Financing, Hitas, Management
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
+    DeclineReason,
     InformationCheckName,
     InformationState,
     SearchClass,
@@ -140,7 +143,7 @@ class PlotSearchTarget(models.Model):
 
     # In finnish: Hakemukset
     answers = models.ManyToManyField(
-        Answer, related_name="targets", blank=True, through="ApplicationStatus"
+        Answer, related_name="targets", blank=True, through="TargetStatus"
     )
 
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
@@ -217,15 +220,109 @@ class InformationCheck(models.Model):
     modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
 
 
-class ApplicationStatus(models.Model):
+class TargetStatus(models.Model):
+    # In Finnish: Tonttihaun kohde
     plot_search_target = models.ForeignKey(
         PlotSearchTarget, related_name="statuses", blank=True, on_delete=models.CASCADE
     )
+    # In Finnish: Hakemus
     answer = models.ForeignKey(
         Answer, related_name="statuses", on_delete=models.CASCADE
     )
 
+    # In Finnish: Vuokrauksen osuuden osoittaja
+    share_of_rental_indicator = models.IntegerField(null=True, blank=True)
+    # In Finnish: Vuokrauksen osuuden nimittäjä
+    share_of_rental_denominator = models.IntegerField(null=True, blank=True)
+
+    # In Finnish: Esitetään varattavaksi
     reserved = models.BooleanField(default=False)
+    # In Finnish: Hakijalle lisätty kohde
+    added_target_to_applicant = models.BooleanField(default=False)
+    # In Finnish: Neuvottelu päivämäärä
+    counsel_date = models.DateTimeField(null=True, blank=True)
+    # In Finnish: Hylkäyksen syy
+    decline_reason = EnumField(DeclineReason, max_length=30, null=True, blank=True)
+
+    reservation_conditions = ArrayField(
+        base_field=models.TextField(), blank=True, null=True
+    )
+
+    # In Finnish: Perustelut
+    arguments = models.TextField(null=True, blank=True)
+
+
+class ProposedFinancingManagement(models.Model):
+    # In Finnish: Ehdotettu rahoitusmuoto
+    proposed_financing = models.ForeignKey(
+        Financing,
+        verbose_name=_("Form of financing"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Ehdotettu hallintamuoto
+    proposed_management = models.ForeignKey(
+        Management,
+        verbose_name=_("Form of management"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    # In Finnish: Hitas
+    hitas = models.ForeignKey(
+        Hitas,
+        verbose_name=_("Hitas"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Hakemuksen käsittelytiedot
+    target_status = models.ForeignKey(
+        TargetStatus, on_delete=models.CASCADE, related_name="proposed_managements"
+    )
+
+
+def get_meeting_memo_file_upload_to(instance, filename):
+    if instance.target_status.counsel_date is not None:
+        return "/".join(
+            [
+                "meeting_memos",
+                str(instance.target_status.counsel_date.date().isoformat()),
+                filename,
+            ]
+        )
+    else:
+        return "/".join(
+            [
+                "meeting_memos",
+                str(timezone.now().date().isoformat()),
+                filename,
+            ]  # noqa: E231
+        )
+
+
+class MeetingMemo(models.Model):
+    # In Finnish: Kokousmuistio
+    name = models.CharField(max_length=255)
+    meeting_memo = models.FileField(
+        upload_to=get_meeting_memo_file_upload_to, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="meeting_memos"
+    )
+
+    # In Finnish: Hakemuksen käsittelytiedot
+    target_status = models.ForeignKey(
+        TargetStatus, on_delete=models.CASCADE, related_name="meeting_memos"
+    )
 
 
 class Favourite(models.Model):

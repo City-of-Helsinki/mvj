@@ -10,18 +10,23 @@ from rest_framework.response import Response
 from forms.filter import AnswerFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import Attachment
+from forms.permissions import TargetStatusPermissions
 from forms.serializers.form import (
     AnswerListSerializer,
     AnswerSerializer,
     AttachmentSerializer,
     FormSerializer,
+    MeetingMemoSerializer,
     ReadAttachmentSerializer,
+    TargetStatusUpdateSerializer,
 )
 from forms.utils import AnswerInBBoxFilter
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
 )
+from plotsearch.models import TargetStatus
+from plotsearch.models.plot_search import MeetingMemo
 
 
 class FormViewSet(
@@ -128,6 +133,33 @@ class AttachmentViewSet(viewsets.ModelViewSet):
             response = HttpResponse(File(fp), content_type="application/octet-stream")
             response["Content-Disposition"] = 'attachment; filename="{}"'.format(
                 obj.attachment.name
+            )
+
+            return response
+
+
+class TargetStatusViewset(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = TargetStatus.objects.all()
+    serializer_class = TargetStatusUpdateSerializer
+    permission_classes = (TargetStatusPermissions,)
+
+
+class MeetingMemoViewset(
+    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
+    queryset = MeetingMemo.objects.all()
+    serializer_class = MeetingMemoSerializer
+    permission_classes = (MvjDjangoModelPermissions,)
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        obj = self.get_object()
+
+        with obj.meeting_memo.open() as fp:
+            # TODO: detect file MIME type
+            response = HttpResponse(File(fp), content_type="application/octet-stream")
+            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
+                obj.meeting_memo.name
             )
 
             return response
