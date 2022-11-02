@@ -7,7 +7,13 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
 
 from credit_integration import urls as credit_integration_urls
-from forms.viewsets.form import AnswerViewSet, AttachmentViewSet, FormViewSet
+from forms.viewsets.form import (
+    AnswerViewSet,
+    AttachmentViewSet,
+    FormViewSet,
+    MeetingMemoViewset,
+    TargetStatusViewset,
+)
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
@@ -163,6 +169,7 @@ router.register(
 router.register(r"lease_type", LeaseTypeViewSet)
 router.register(r"leasehold_transfer", LeaseholdTransferViewSet)
 router.register(r"management", ManagementViewSet)
+router.register(r"meeting_memo", MeetingMemoViewset)
 router.register(r"municipality", MunicipalityViewSet)
 router.register(r"notice_period", NoticePeriodViewSet)
 router.register(r"plan_unit", PlanUnitViewSet)
@@ -184,6 +191,7 @@ router.register(r"special_project", SpecialProjectViewSet)
 router.register(r"reservation_procedure", ReservationProcedureViewSet)
 router.register(r"statistical_use", StatisticalUseViewSet)
 router.register(r"supportive_housing", SupportiveHousingViewSet)
+router.register(r"target_status", TargetStatusViewset)
 router.register(r"ui_data", UiDataViewSet, basename="ui_data")
 router.register(r"user", UserViewSet)
 router.register(r"vat", VatViewSet)

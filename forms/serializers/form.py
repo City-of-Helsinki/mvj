@@ -8,8 +8,12 @@ from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
 from rest_framework_gis.fields import GeometryField
 
+from leasing.models import Financing, Hitas, Management
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
-from plotsearch.models import ApplicationStatus, InformationCheck, PlotSearchTarget
+from plotsearch.enums import DeclineReason
+from plotsearch.models import InformationCheck, PlotSearchTarget, TargetStatus
+from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManagement
+from users.serializers import UserSerializer
 
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
@@ -257,6 +261,133 @@ class InformationCheckAnswerSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class ProposedFinancingManagementSerializer(serializers.HyperlinkedModelSerializer):
+    proposed_financing = serializers.PrimaryKeyRelatedField(
+        queryset=Financing.objects.all()
+    )
+    proposed_management = serializers.PrimaryKeyRelatedField(
+        queryset=Management.objects.all()
+    )
+    hitas = serializers.PrimaryKeyRelatedField(queryset=Hitas.objects.all())
+
+    class Meta:
+        model = ProposedFinancingManagement
+        fields = (
+            "proposed_financing",
+            "proposed_management",
+            "hitas",
+            "target_status_id",
+        )
+
+
+class MeetingMemoSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = MeetingMemo
+        fields = (
+            "id",
+            "user",
+            "name",
+            "target_status",
+            "created_at",
+            "meeting_memo",
+        )
+
+    def create(self, validated_data):
+        memo = MeetingMemo.objects.create(
+            name=validated_data["name"],
+            target_status=validated_data["target_status"],
+            user=self.context["request"].user,
+        )
+        memo.meeting_memo = validated_data["meeting_memo"]
+        memo.save()
+        return memo
+
+
+class TargetStatusUpdateSerializer(serializers.HyperlinkedModelSerializer):
+    proposed_managements = ProposedFinancingManagementSerializer(
+        many=True, required=False
+    )
+    meeting_memos = MeetingMemoSerializer(many=True, required=False, read_only=True)
+    decline_reason = EnumSerializerField(
+        enum=DeclineReason, required=False, allow_null=True
+    )
+
+    class Meta:
+        model = TargetStatus
+        fields = (
+            "id",
+            "share_of_rental_indicator",
+            "share_of_rental_denominator",
+            "reserved",
+            "added_target_to_applicant",
+            "counsel_date",
+            "decline_reason",
+            "arguments",
+            "proposed_managements",
+            "meeting_memos",
+            "reservation_conditions",
+        )
+
+    def update(self, instance, validated_data):
+        proposed_managements = validated_data.pop("proposed_managements", [])
+
+        pf_serializer = ProposedFinancingManagementSerializer()
+
+        if proposed_managements:
+            ProposedFinancingManagement.objects.filter(
+                target_status_id=instance.pk
+            ).delete()
+
+        for proposed_management in proposed_managements:
+            proposed_management["target_status_id"] = instance.pk
+            pf_serializer.create(proposed_management)
+
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+
+        instance.save()
+        return instance
+
+
+class TargetStatusSerializer(TargetStatusUpdateSerializer):
+    identifier = serializers.CharField(source="plot_search_target.plan_unit.identifier")
+    address = serializers.SerializerMethodField()
+    geometry = GeometryField(source="plot_search_target.plan_unit.geometry")
+
+    def get_address(self, obj):
+        if obj.plot_search_target.plan_unit is None:
+            return None
+        lease_address = (
+            obj.plot_search_target.plan_unit.lease_area.addresses.all()
+            .order_by("-is_primary")
+            .values("address")
+            .first()
+        )
+        return lease_address
+
+    class Meta:
+        model = TargetStatus
+        fields = (
+            "id",
+            "identifier",
+            "share_of_rental_indicator",
+            "share_of_rental_denominator",
+            "reserved",
+            "added_target_to_applicant",
+            "counsel_date",
+            "decline_reason",
+            "arguments",
+            "proposed_managements",
+            "meeting_memos",
+            "reservation_conditions",
+            "address",
+            "geometry",
+        )
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField(write_only=True)
@@ -265,6 +396,9 @@ class AnswerSerializer(serializers.ModelSerializer):
     )
     targets = InstanceDictPrimaryKeyRelatedField(
         many=True, queryset=PlotSearchTarget.objects.all()
+    )
+    target_statuses = TargetStatusSerializer(
+        many=True, source="statuses", required=False
     )
     attachments = serializers.ListSerializer(
         child=serializers.IntegerField(), write_only=True, required=False
@@ -277,6 +411,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             "id",
             "form",
             "targets",
+            "target_statuses",
             "entries",
             "entries_data",
             "information_checks",
@@ -523,35 +658,9 @@ class AnswerSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ApplicationStatusSerializer(serializers.HyperlinkedModelSerializer):
-    identifier = serializers.CharField(source="plot_search_target.plan_unit.identifier")
-    address = serializers.SerializerMethodField()
-    geometry = GeometryField(source="plot_search_target.plan_unit.geometry")
-
-    def get_address(self, obj):
-        if obj.plot_search_target.plan_unit is None:
-            return None
-        lease_address = (
-            obj.plot_search_target.plan_unit.lease_area.addresses.all()
-            .order_by("-is_primary")
-            .values("address")
-            .first()
-        )
-        return lease_address
-
-    class Meta:
-        model = ApplicationStatus
-        fields = (
-            "identifier",
-            "address",
-            "reserved",
-            "geometry",
-        )
-
-
 class AnswerListSerializer(serializers.ModelSerializer):
     applicants = serializers.SerializerMethodField()
-    targets = ApplicationStatusSerializer(many=True, source="statuses")
+    targets = TargetStatusSerializer(many=True, source="statuses")
     plot_search = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
     plot_search_subtype = serializers.SerializerMethodField()

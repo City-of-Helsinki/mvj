@@ -4,13 +4,18 @@ import os
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.utils import timezone
 from faker import Faker
 
 from forms.enums import FormState
 from forms.models import Entry, Field
 from forms.models.form import Attachment
+from plotsearch.enums import DeclineReason
+from plotsearch.models import TargetStatus
 
 fake = Faker("fi_FI")
+
+BOUNDARY = "!! test boundary !!"
 
 
 @pytest.mark.django_db
@@ -213,6 +218,83 @@ def test_answer_post(
     url = reverse("answer-list")
     response = client.get(url)
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_target_status_patch(
+    django_db_setup,
+    client,
+    answer_factory,
+    area_search_test_data,
+    basic_template_form,
+    plot_search_target,
+    user,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    target_status_data = {
+        "identifier": "91-21-21-21",
+        "share_of_rental_indicator": 2,
+        "share_of_rental_denominator": 3,
+        "reserved": True,
+        "added_target_to_applicant": True,
+        "counsel_date": timezone.now(),
+        "decline_reason": DeclineReason.APPLICATION_REVOKED,
+        "arguments": "Very good arguments",
+        "proposed_managements": [],
+        "reservation_conditions": ["Very good condition",],  # noqa: E231
+        "geometry": area_search_test_data.geometry.geojson,
+    }
+
+    client.force_login(plot_search_target.plot_search.preparers.first())
+
+    url = reverse(
+        "targetstatus-detail", kwargs={"pk": TargetStatus.objects.all().first().pk}
+    )
+    response = client.patch(
+        url, data=target_status_data, content_type="application/json"
+    )
+
+    assert response.status_code == 200
+    assert TargetStatus.objects.all().first().share_of_rental_indicator == 2
+
+
+def test_meeting_memo_create(
+    django_db_setup,
+    admin_client,
+    answer_factory,
+    area_search_test_data,
+    basic_template_form,
+    plot_search_target,
+    user,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    target_status = TargetStatus.objects.all().first()
+    target_status.counsel_date = timezone.now()
+    target_status.save()
+
+    meeting_memo = {
+        "target_status": target_status.id,
+        "meeting_memo": SimpleUploadedFile(content=b"Lorem Impsum", name="test.txt"),
+        "name": fake.name(),
+    }
+
+    url = reverse("meetingmemo-list",)
+    response = admin_client.post(url, data=meeting_memo)
+
+    assert response.status_code == 201
+
+    url = reverse(
+        "answer-detail", kwargs={"pk": TargetStatus.objects.all().first().answer.pk}
+    )
+    response = admin_client.get(url)
+
+    assert len(response.data["target_statuses"][0]["meeting_memos"]) == 1
 
 
 @pytest.mark.django_db

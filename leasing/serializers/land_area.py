@@ -363,10 +363,7 @@ class UsageDistributionSerializer(serializers.ModelSerializer):
 
 
 class CustomDetailedPlanSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    UpdateNestedMixin,
-    serializers.ModelSerializer,
+    EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer,
 ):
     usage_distributions = UsageDistributionSerializer(many=True)
     info_links = PlotSearchTargetInfoLinkSerializer(
