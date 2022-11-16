@@ -620,6 +620,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
             "created_at",
             "answer",
             "field",
+            "path",
         )
 
     def save(self, **kwargs):
