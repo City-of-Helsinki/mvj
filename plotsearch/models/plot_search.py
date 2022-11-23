@@ -211,10 +211,10 @@ def target_status_id_generator():
     if not latest_target_status_with_id.exists():
         return "{}-00001".format(beginning_str)
 
-    application_id = latest_target_status_with_id[-1].application_identifier
-    identifier = application_id.split("-")[2]
+    application_id = latest_target_status_with_id.last().application_identifier
+    identifier = int(application_id.split("-")[2])
     identifier += 1
-    return "{}-{:05d}}".format(beginning_str, identifier)
+    return "{}-{:05d}".format(beginning_str, identifier)
 
 
 class TargetStatus(models.Model):

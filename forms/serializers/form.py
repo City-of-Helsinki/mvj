@@ -13,6 +13,7 @@ from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.enums import DeclineReason
 from plotsearch.models import InformationCheck, PlotSearchTarget, TargetStatus
 from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManagement
+from plotsearch.utils import get_applicant
 from users.serializers import UserSerializer
 
 from ..enums import FormState
@@ -708,33 +709,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_applicants(obj):
         applicant_list = list()
-        applicant_sections = obj.entry_sections.filter(
-            entries__field__identifier="hakija",
-            entries__field__section__identifier="hakijan-tiedot",
-        )
-        for applicant_section in applicant_sections:
-            applicant_type = applicant_section.entries.get(
-                field__identifier="hakija", field__section__identifier="hakijan-tiedot"
-            ).value
-            if applicant_type == "1":
-                applicants = applicant_section.entries.filter(
-                    field__identifier="yrityksen-nimi",
-                    field__section__identifier="yrityksen-tiedot",
-                )
-                for applicant in applicants:
-                    applicant_list.append(applicant.value)
-            elif applicant_type == "2":
-                front_names = applicant_section.entries.filter(
-                    field__identifier="etunimi",
-                    field__section__identifier="henkilon-tiedot",
-                ).order_by("entry_section")
-                last_names = applicant_section.entries.filter(
-                    field__identifier="Sukunimi",
-                    field__section__identifier="henkilon-tiedot",
-                ).order_by("entry_section")
-                for idx, front_name in enumerate(front_names):
-                    last_name = last_names[idx]
-                    applicant_list.append(" ".join([front_name.value, last_name.value]))
+        get_applicant(obj, applicant_list)
         return applicant_list
 
     def get_plot_search(self, obj):
