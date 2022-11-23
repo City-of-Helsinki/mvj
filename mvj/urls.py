@@ -108,6 +108,7 @@ from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
+    AreaSearchAttachmentViewset,
     AreaSearchViewSet,
     FavouriteViewSet,
     GeneratePDF,
@@ -127,6 +128,7 @@ from users.viewsets import UserViewSet
 router = routers.DefaultRouter()
 router.register(r"area_note", AreaNoteViewSet)
 router.register(r"area_search", AreaSearchViewSet)
+router.register(r"area_search_attachment", AreaSearchAttachmentViewset)
 router.register(r"attachment", AttachmentViewSet)
 router.register(r"basis_of_rent", BasisOfRentViewSet)
 router.register(r"collection_court_decision", CollectionCourtDecisionViewSet)

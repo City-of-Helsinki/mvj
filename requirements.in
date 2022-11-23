@@ -38,6 +38,7 @@ docxtpl
 oracledb
 psycopg2-binary
 pysftp
+pyproj
 python-daemon
 python-dateutil
 sentry-sdk

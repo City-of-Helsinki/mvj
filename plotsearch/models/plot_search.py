@@ -19,7 +19,7 @@ from plotsearch.enums import (
     InformationCheckName,
     InformationState,
     SearchClass,
-    SearchStage,
+    SearchStage, AreaSearchState,
 )
 from users.models import User
 
@@ -374,6 +374,23 @@ class IntendedSubUse(NameModel):
         ordering = ["intended_use", "name"]
 
 
+def areasearch_id_generator():
+    year = str(timezone.now().year)[2:4]
+
+    beginning_str = "MVJ-{}".format(year)
+    latest_area_search_with_id = AreaSearch.objects.filter(
+        identifier__startswith=beginning_str
+    )
+
+    if not latest_area_search_with_id.exists():
+        return "{}-00001".format(beginning_str)
+
+    area_search_id = latest_area_search_with_id.last().application_identifier
+    identifier = int(area_search_id.split("-")[2])
+    identifier += 1
+    return "{}-{:05d}".format(beginning_str, identifier)
+
+
 class AreaSearch(models.Model):
     # In Finnish: aluehaku
 
@@ -383,14 +400,96 @@ class AreaSearch(models.Model):
 
     description_area = models.TextField()
 
+    address = models.CharField(max_length=255, null=True, blank=True)
+    district = models.CharField(max_length=255, null=True, blank=True)
+
     intended_use = models.ForeignKey(IntendedSubUse, on_delete=models.CASCADE)
     description_intended_use = models.TextField()
 
     start_date = models.DateTimeField(verbose_name=_("Begin at"), null=True, blank=True)
     end_date = models.DateTimeField(verbose_name=_("End at"), null=True, blank=True)
 
-    form = models.OneToOneField(
-        Form, on_delete=models.SET_NULL, null=True, related_name="area_search"
+    received_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Time received"))
+
+    identifier = models.CharField(
+        max_length=255, unique=True, default=areasearch_id_generator
+    )
+
+    state = EnumField(AreaSearchState,
+        verbose_name=_("Area search state"),
+        default=AreaSearchState.RECEIVED,
+        max_length=30,)
+
+    form = models.ForeignKey(
+        Form, on_delete=models.SET_NULL, null=True, related_name="area_searches"
+    )
+    answer = models.OneToOneField(
+        Answer, on_delete=models.CASCADE, null=True, related_name="area_search"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+
+def get_area_search_attachment_upload_to(instance, filename):
+    return "/".join(
+        [
+            "area_search_attachments",
+            str(timezone.now().date().isoformat()),
+            filename,
+        ]  # noqa: E231
+    )
+
+
+class AreaSearchAttachment(NameModel):
+    attachment = models.FileField(
+        upload_to=get_area_search_attachment_upload_to, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="area_search_attachments"
+    )
+
+    # In Finnish: Aluehaut
+    area_search = models.ForeignKey(
+        AreaSearch,
+        on_delete=models.CASCADE,
+        related_name="area_search_attachments",
+        null=True,
+        blank=True,
+    )
+    answer = models.OneToOneField(
+        Answer, on_delete=models.CASCADE, null=True, related_name="area_search"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+
+def get_area_search_attachment_upload_to(instance, filename):
+    return "/".join(
+        [
+            "area_search_attachments",
+            str(timezone.now().date().isoformat()),
+            filename,
+        ]  # noqa: E231
+    )
+
+
+class AreaSearchAttachment(NameModel):
+    attachment = models.FileField(
+        upload_to=get_area_search_attachment_upload_to, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="area_search_attachments"
+    )
+
+    # In Finnish: Aluehaut
+    area_search = models.ForeignKey(
+        AreaSearch,
+        on_delete=models.CASCADE,
+        related_name="area_search_attachments",
+        null=True,
+        blank=True,
     )
 
 

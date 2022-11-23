@@ -1,6 +1,8 @@
+import requests
 from django.core.exceptions import BadRequest
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
+from pyproj import Proj, transform
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
@@ -34,6 +36,7 @@ from plotsearch.models import (
     PlotSearchType,
 )
 from plotsearch.models.info_links import TargetInfoLink
+from plotsearch.models.plot_search import AreaSearchAttachment
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from plotsearch.utils import get_applicant, initialize_area_search_form
 from users.models import User
@@ -645,25 +648,142 @@ class FavouriteSerializer(serializers.ModelSerializer):
         return instance
 
 
+class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = AreaSearchAttachment
+        fields = (
+            "id",
+            "user",
+            "name",
+            "area_search",
+            "created_at",
+            "attachment",
+        )
+
+    def create(self, validated_data):
+        attachment = AreaSearchAttachment.objects.create(
+            name=validated_data["name"],
+            area_search=validated_data.pop("area_search", None),
+            user=self.context["request"].user,
+        )
+        attachment.attachment = validated_data["attachment"]
+        attachment.save()
+        return attachment
+
+
 class AreaSearchSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    form = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Form,
+        queryset=Form.objects.prefetch_related(
+            "sections__fields__choices",
+            "sections__subsections__fields__choices",
+            "sections__subsections__subsections__fields__choices",
+            "sections__subsections__subsections__subsections",
+        ),
+        related_serializer=FormSerializer,
+        required=False,
+        allow_null=True,
+    )
     geometry = GeometryField()
+
+    area_search_attachments = InstanceDictPrimaryKeyRelatedField(
+        instance_class=AreaSearchAttachment,
+        queryset=AreaSearchAttachment.objects.all(),
+        related_serializer=AreaSearchAttachmentSerializer,
+        required=False,
+        allow_null=True,
+        many=True,
+    )
+
+    area_search_attachments = InstanceDictPrimaryKeyRelatedField(
+        instance_class=AreaSearchAttachment,
+        queryset=AreaSearchAttachment.objects.all(),
+        related_serializer=AreaSearchAttachmentSerializer,
+        required=False,
+        allow_null=True,
+        many=True,
+    )
 
     class Meta:
         model = AreaSearch
         fields = (
             "id",
+            "form",
             "start_date",
             "end_date",
             "geometry",
             "description_area",
             "description_intended_use",
             "intended_use",
+            "area_search_attachments",
+            "address",
+            "district",
+            "identifier",
+            "state",
+            "received_date",
         )
 
     def create(self, validated_data):
-        validated_data["form"] = initialize_area_search_form()
-        return super().create(validated_data)
+        area_form_qs = Form.objects.filter(is_area_form=True)
+        if area_form_qs.exists():
+            validated_data["form"] = area_form_qs.last()
+        else:
+            validated_data["form"] = initialize_area_search_form()
+        attachments = validated_data.pop("area_search_attachments", [])
+
+        area_search = AreaSearch.objects.create(**validated_data)
+
+        inproj = Proj(init="epsg:4326")
+        outproj = Proj(init="epsg:3879")
+        multipolygon = list()
+
+        for x1, y1 in validated_data["geometry"].coords[0][0]:
+            multipolygon.append(transform(inproj, outproj, x1, y1))
+
+        multipolygon_str = ",".join(["{} {}".format(y1, x1) for x1, y1 in multipolygon])
+
+        url = "https://kartta.hel.fi/ws/geoserver/avoindata/wfs"
+        params = {
+            "service": "wfs",
+            "version": "2.0.0",
+            "request": "getFeature",
+            "typeName": "avoindata:Osoiteluettelo_piste_rekisteritiedot",
+            "srsName": "EPSG:4326",
+            "outputFormat": "application/json",
+            "cql_filter": "intersects(geom,MULTIPOLYGON((({}))))".format(
+                multipolygon_str
+            ),
+        }
+        response = requests.get(url, params=params)
+
+        results = response.json()
+        if results["numberReturned"] == 0:
+            params.update({"typeName": "avoindata:Kaupunginosajako"})
+
+            response = requests.get(url, params=params)
+
+            results = response.json()
+
+        validated_data["address"] = results["features"][0]["properties"].get(
+            "katuosoite", None
+        )
+        validated_data["district"] = results["features"][0]["properties"].get(
+            "kaupunginosa_nimi_fi", None
+        )
+
+        if validated_data["district"] is None:
+            validated_data["district"] = results["features"][0]["properties"].get(
+                "nimi_fi", None
+            )
+
+        for attachment in attachments:
+            attachment.update(area_search=area_search)
+
+        return area_search
 
 
 class InformationCheckSerializer(

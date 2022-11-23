@@ -3,13 +3,13 @@ from forms.models import Choice, Field, Form, Section
 
 def initialize_area_search_form():
     form = Form.objects.create(
-        name="Aluehaun perustietolomake", state="ready", title="Perustietolomake"
+        name="Aluehaun perustietolomake", state="ready", title="Perustietolomake", is_area_form=True
     )
     main_section = Section.objects.create(
         form=form,
         title="Hakijan tiedot",
         identifier="hakijan-tiedot",
-        visible=False,
+        visible=True,
         applicant_type="both",
     )
     applicant_field = Field.objects.create(
@@ -291,7 +291,7 @@ def initialize_area_search_form():
         section=people_section,
         label="Sukunimi",
         type_id=1,
-        identifier="sukunimi",
+        identifier="Sukunimi",
         enabled=True,
         required=False,
         sort_order=1,
@@ -416,7 +416,7 @@ def initialize_area_search_form():
         section=contact_section,
         label="Sukunimi",
         type_id=1,
-        identifier="sukunimi",
+        identifier="Sukunimi",
         enabled=True,
         required=False,
         sort_order=2,
@@ -523,7 +523,7 @@ def initialize_area_search_form():
         section=invoice_section2,
         label="Sukunimi",
         type_id=1,
-        identifier="sukunimi",
+        identifier="Sukunimi",
         enabled=True,
         required=False,
         sort_order=2,
@@ -632,7 +632,7 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="Postitse ilmoittamaani postiosoitteeseeb",
+        label="Postitse ilmoittamaani postiosoitteeseen",
         type_id=4,
         identifier="postitse-ilmoittamaani-postiosoitteeseen",
         enabled=True,

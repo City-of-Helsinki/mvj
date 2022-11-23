@@ -106,3 +106,21 @@ class DeclineReason(str, Enum):
             "Decline reason", "Area no available for lease"
         )
         OTHER = pgettext_lazy("Decline reason", "Other reason")
+
+class AreaSearchState(str, Enum):
+    """
+    In Finnish: Aluehaun tila
+    """
+
+    RECEIVED = "received"
+    IN_ACTION = "in_action"
+    SETTLED = "settled"
+    REVOKED = "revoked"
+    DECLINED = "declined"
+
+    class Labels:
+        RECEIVED = pgettext_lazy("Area search state", "Received")
+        IN_ACTION = pgettext_lazy("Area search state", "In action")
+        SETTLED = pgettext_lazy("Area search state", "Settled")
+        REVOKED = pgettext_lazy("Area search state", "Revoked")
+        DECLINED = pgettext_lazy("Area search state", "Declined")

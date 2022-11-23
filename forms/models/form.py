@@ -13,6 +13,7 @@ class Form(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_template = models.BooleanField(default=False)
+    is_area_form = models.BooleanField(default=False)
     state = EnumField(FormState, max_length=30, default=FormState.WORK_IN_PROGRESS)
 
     title = models.CharField(max_length=255, blank=True)

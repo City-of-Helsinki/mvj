@@ -28,6 +28,7 @@ cachetools==4.2.4
     # via django-helusers
 certifi==2022.12.7
     # via
+    #   pyproj
     #   requests
     #   sentry-sdk
 cffi==1.14.0
@@ -197,6 +198,8 @@ pyparsing==3.0.6
     # via packaging
 pypdf2==3.0.1
     # via xhtml2pdf
+pyproj==3.0.1
+    # via -r requirements.in
 pyrsistent==0.18.0
     # via jsonschema
 pysftp==0.2.9
