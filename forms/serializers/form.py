@@ -436,6 +436,35 @@ class AnswerSerializer(serializers.ModelSerializer):
                 always_merger.merge(entries_dict, help_dict)
         return entries_dict
 
+    @staticmethod
+    def get_entry_section(
+        answer,
+        field_identifier,
+        metadata,
+        path,
+        section_identifier,
+        value,
+        validated_data,
+    ):
+        try:
+            field = Field.objects.get(
+                identifier=field_identifier,
+                section__identifier=section_identifier,
+                section__form=validated_data.get("form"),
+            )
+        except Field.DoesNotExist:
+            raise ValueError
+
+        if field.type.identifier == "uploadfiles":
+            Attachment.objects.filter(id__in=value["value"]).update(path=path)
+
+        entry_section, unused = EntrySection.objects.get_or_create(
+            identifier=path.split(".")[0],
+            answer=answer,
+            defaults={"metadata": metadata},
+        )
+        return entry_section, field
+
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
         targets = validated_data.pop("targets")
@@ -452,18 +481,14 @@ class AnswerSerializer(serializers.ModelSerializer):
             metadata,
             path,
         ) in self.entry_generator(entries_data):
-            try:
-                field = Field.objects.get(
-                    identifier=field_identifier,
-                    section__identifier=section_identifier,
-                    section__form=validated_data.get("form"),
-                )
-            except Field.DoesNotExist:
-                raise ValueError
-            entry_section, unused = EntrySection.objects.get_or_create(
-                identifier=path.split(".")[0],
-                answer=answer,
-                defaults={"metadata": metadata},
+            entry_section, field = self.get_entry_section(
+                answer,
+                field_identifier,
+                metadata,
+                path,
+                section_identifier,
+                value,
+                validated_data,
             )
             Entry.objects.create(
                 entry_section=entry_section,
@@ -486,18 +511,14 @@ class AnswerSerializer(serializers.ModelSerializer):
             metadata,
             path,
         ) in self.entry_generator(entries_data):
-            try:
-                field = Field.objects.get(
-                    identifier=field_identifier,
-                    section__identifier=section_identifier,
-                    section__form=validated_data.get("form"),
-                )
-            except Field.DoesNotExist:
-                raise ValueError
-            entry_section, unused = EntrySection.objects.get_or_create(
-                identifier=path.split(".")[0],
-                answer=instance,
-                defaults={"metadata": metadata},
+            entry_section, field = self.get_entry_section(
+                instance,
+                field_identifier,
+                metadata,
+                path,
+                section_identifier,
+                value,
+                validated_data,
             )
             Entry.objects.update_or_create(
                 entry_section=entry_section,
