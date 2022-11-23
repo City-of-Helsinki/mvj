@@ -35,7 +35,7 @@ from plotsearch.models import (
 )
 from plotsearch.models.info_links import TargetInfoLink
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
-from plotsearch.utils import initialize_area_search_form
+from plotsearch.utils import get_applicant, initialize_area_search_form
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -151,6 +151,7 @@ class PlotSearchTargetSerializer(
     info_links = PlotSearchTargetInfoLinkSerializer(many=True, required=False)
     custom_detailed_plan = CustomDetailedPlanSerializer(read_only=True)
     custom_detailed_plan_id = serializers.IntegerField(required=False, allow_null=True)
+    reservation_recipients = serializers.SerializerMethodField()
 
     class Meta:
         model = PlotSearchTarget
@@ -173,6 +174,7 @@ class PlotSearchTargetSerializer(
             "decisions",
             "custom_detailed_plan",
             "custom_detailed_plan_id",
+            "reservation_recipients",
         )
 
     def get_lease_address(self, obj):
@@ -209,6 +211,23 @@ class PlotSearchTargetSerializer(
         elif obj.plan_unit.is_master_newer:
             return _("The target information has changed!")
         return None
+
+    def get_reservation_recipients(self, instance):
+        target_statuses = instance.statuses.filter(reserved=True)
+        reservation_recipients_with_share = list()
+        for target_status in target_statuses:
+            reservation_recipients = list()
+            get_applicant(target_status.answer, reservation_recipients)
+            reservation_recipients_with_share.append(
+                {
+                    "reservation_recipients": reservation_recipients,
+                    "share_of_rental": "{}/{}".format(
+                        target_status.share_of_rental_indicator,
+                        target_status.share_of_rental_denominator,
+                    ),
+                }
+            )
+        return reservation_recipients_with_share
 
 
 class PlotSearchTargetCreateUpdateSerializer(
