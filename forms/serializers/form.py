@@ -11,7 +11,12 @@ from rest_framework_gis.fields import GeometryField
 from leasing.models import Financing, Hitas, Management
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.enums import DeclineReason
-from plotsearch.models import InformationCheck, PlotSearchTarget, TargetStatus
+from plotsearch.models import (
+    InformationCheck,
+    PlotSearchTarget,
+    TargetStatus,
+    AreaSearch,
+)
 from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManagement
 from plotsearch.utils import get_applicant
 from users.serializers import UserSerializer
@@ -444,13 +449,16 @@ class AnswerSerializer(serializers.ModelSerializer):
         read_only=True, child=serializers.CharField(), source="entry_sections"
     )
     targets = InstanceDictPrimaryKeyRelatedField(
-        many=True, queryset=PlotSearchTarget.objects.all()
+        many=True, queryset=PlotSearchTarget.objects.all(), required=False
     )
     target_statuses = TargetStatusSerializer(
         many=True, source="statuses", required=False
     )
     attachments = serializers.ListSerializer(
         child=serializers.IntegerField(), write_only=True, required=False
+    )
+    area_search = InstanceDictPrimaryKeyRelatedField(
+        queryset=AreaSearch.objects.all(), required=False
     )
     information_checks = serializers.SerializerMethodField(read_only=True)
 
@@ -466,6 +474,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             "information_checks",
             "attachments",
             "ready",
+            "area_search",
         )
         validators = [
             RequiredFormFieldValidator(),
@@ -645,8 +654,9 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
-        targets = validated_data.pop("targets")
+        targets = validated_data.pop("targets", [])
         attachments = validated_data.pop("attachments", [])
+        area_search = validated_data.pop("area_search", None)
         user = self.context["request"].user
         answer = Answer.objects.create(user=user, **validated_data)
         for target in targets:
@@ -674,6 +684,9 @@ class AnswerSerializer(serializers.ModelSerializer):
             )
         for attachent_id in attachments:
             Attachment.objects.filter(id=attachent_id).update(answer=answer)
+
+        if area_search is not None:
+            AreaSearch.objects.filter(id=area_search.id).update(answer=answer.pk)
         return answer
 
     def update(self, instance, validated_data):

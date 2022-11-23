@@ -5,6 +5,7 @@ from zipfile import ZipInfo
 
 import xlsxwriter
 from django import http
+from django.core.files import File
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
@@ -34,7 +35,9 @@ from plotsearch.models import (
     PlotSearchType,
     TargetStatus,
 )
+from plotsearch.models.plot_search import AreaSearchAttachment
 from plotsearch.serializers.plot_search import (
+    AreaSearchAttachmentSerializer,
     AreaSearchSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
@@ -175,6 +178,27 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     queryset = AreaSearch.objects.all()
     serializer_class = AreaSearchSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class AreaSearchAttachmentViewset(
+    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
+    queryset = AreaSearchAttachment.objects.all()
+    serializer_class = AreaSearchAttachmentSerializer
+    permission_classes = (MvjDjangoModelPermissions,)
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        obj = self.get_object()
+
+        with obj.attachment.open() as fp:
+            # TODO: detect file MIME type
+            response = HttpResponse(File(fp), content_type="application/octet-stream")
+            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
+                obj.name
+            )
+
+            return response
 
 
 class InformationCheckViewSet(

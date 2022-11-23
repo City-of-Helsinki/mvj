@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
@@ -668,3 +669,26 @@ def test_area_search_create_simple(
         AreaSearch.objects.get(id=response.data["id"]).intended_use.id
         == area_search_test_data.intended_use.pk
     )
+
+
+def test_area_search_attachment_create(
+    django_db_setup, admin_client, area_search_test_data
+):
+    attachment = {
+        "area_search": area_search_test_data.id,
+        "attachment": SimpleUploadedFile(content=b"Lorem Impsum", name="test.txt"),
+        "name": fake.name(),
+    }
+
+    url = reverse("areasearchattachment-list",)
+    response = admin_client.post(url, data=attachment)
+
+    assert response.status_code == 201
+
+    url = reverse(
+        "areasearch-detail",
+        kwargs={"pk": AreaSearch.objects.get(pk=area_search_test_data.id).pk},
+    )
+    response = admin_client.get(url)
+
+    assert len(response.data["area_search_attachments"]) == 1

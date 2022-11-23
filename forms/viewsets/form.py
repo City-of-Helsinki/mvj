@@ -56,7 +56,7 @@ class FormViewSet(
 
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = (
-        Answer.objects.all()
+        Answer.objects.filter(area_search__isnull=True)
         .prefetch_related(
             "entry_sections",
             "targets",
@@ -87,6 +87,11 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def get_queryset(self):
+        if self.action == "retrieve":
+            return Answer.objects.all()
+        return super().get_queryset()
 
     def get_permissions(self):
         if self.request.method == "POST":
