@@ -6,6 +6,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from model_utils.tracker import FieldTracker
+from rest_framework.exceptions import ValidationError
 from safedelete.models import SafeDeleteModel
 
 from field_permissions.registry import field_permissions
@@ -644,10 +645,33 @@ class UsageDistribution(models.Model):
     # In Finnish: Huomio
     note = models.TextField()
 
+    # In Finnish: Kaavayksikkö
+    plan_unit = models.ForeignKey(
+        PlanUnit,
+        on_delete=models.CASCADE,
+        related_name="usage_distributions",
+        null=True,
+        blank=True,
+    )
+
     # In Finnish: Oma muu alue
     custom_detailed_plan = models.ForeignKey(
-        CustomDetailedPlan, on_delete=models.CASCADE, related_name="usage_distributions"
+        CustomDetailedPlan,
+        on_delete=models.CASCADE,
+        related_name="usage_distributions",
+        null=True,
+        blank=True,
     )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super(UsageDistribution, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.plan_unit is not None and self.custom_detailed_plan is not None:
+            raise ValidationError
+        if self.plan_unit is None and self.custom_detailed_plan is None:
+            raise ValidationError
 
 
 auditlog.register(LeaseArea)
