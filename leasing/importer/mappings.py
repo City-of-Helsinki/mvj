@@ -22,7 +22,6 @@ VUOKRALAJI_MAP = {
 
 TILA_MAP = {
     "V": LeaseState.LEASE,
-    "H": LeaseState.APPLICATION,
     "L": LeaseState.PERMISSION,
     "R": LeaseState.RESERVATION,
     "S": LeaseState.LEASE,
