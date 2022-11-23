@@ -54,5 +54,13 @@
             "name": "Lataa tiedosto",
             "identifier": "uploadfiles"
         }
+    },
+    {
+        "model": "forms.FieldType",
+        "pk": 8,
+        "fields": {
+            "name": "Murtoluku",
+            "identifier": "fractional"
+        }
     }
 ]

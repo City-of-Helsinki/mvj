@@ -6,7 +6,11 @@ def initialize_area_search_form():
         name="Aluehaun perustietolomake", state="ready", title="Perustietolomake"
     )
     main_section = Section.objects.create(
-        form=form, title="Hakijan tiedot", identifier="hakijan-tiedot", visible=False
+        form=form,
+        title="Hakijan tiedot",
+        identifier="hakijan-tiedot",
+        visible=False,
+        applicant_type="both",
     )
     applicant_field = Field.objects.create(
         section=main_section,
@@ -29,6 +33,7 @@ def initialize_area_search_form():
         title="Yrityksen tiedot",
         identifier="yrityksen-tiedot",
         visible=True,
+        applicant_type="company",
     )
     Field.objects.create(
         section=corporate_section,
@@ -114,7 +119,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Hallintaosuus",
-        type_id=1,
+        type_id=8,
         identifier="hallintaosuus",
         enabled=True,
         required=False,
@@ -145,6 +150,7 @@ def initialize_area_search_form():
         title="Laskutustiedot",
         identifier="laskutustiedot",
         visible=True,
+        applicant_type="company",
     )
     Field.objects.create(
         section=invoice_section,
@@ -230,7 +236,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Hallintaosuus",
-        type_id=1,
+        type_id=8,
         identifier="hallintaosuus",
         enabled=True,
         required=False,
@@ -239,10 +245,11 @@ def initialize_area_search_form():
 
     reference_section = Section.objects.create(
         form=form,
-        parent=corporate_section,
+        parent=invoice_section,
         title="Laskutusviite",
         identifier="laskutusviite-1",
         visible=True,
+        applicant_type="company",
     )
     Field.objects.create(
         section=reference_section,
@@ -269,6 +276,7 @@ def initialize_area_search_form():
         title="Henkilön tiedot",
         identifier="henkilon-tiedot",
         visible=True,
+        applicant_type="person",
     )
     Field.objects.create(
         section=people_section,
@@ -372,7 +380,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Hallintaosuus",
-        type_id=1,
+        type_id=8,
         identifier="hallintaosuus",
         enabled=True,
         required=False,
@@ -384,6 +392,7 @@ def initialize_area_search_form():
         parent=people_section,
         title="Yhteyshenkilö",
         identifier="yhteyshenkilo-1",
+        applicant_type="person",
     )
     Field.objects.create(
         section=contact_section,
@@ -486,7 +495,11 @@ def initialize_area_search_form():
     )
 
     invoice_section2 = Section.objects.create(
-        form=form, parent=people_section, title="Laskunsaaja", identifier="laskunsaaja"
+        form=form,
+        parent=people_section,
+        title="Laskunsaaja",
+        identifier="laskunsaaja",
+        applicant_type="person",
     )
     Field.objects.create(
         section=invoice_section2,
@@ -590,9 +603,10 @@ def initialize_area_search_form():
 
     reference_section2 = Section.objects.create(
         form=form,
-        parent=people_section,
+        parent=invoice_section2,
         title="Laskutusviite",
         identifier="laskutusviite",
+        applicant_type="person",
     )
     Field.objects.create(
         section=reference_section2,
