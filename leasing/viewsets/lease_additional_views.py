@@ -415,6 +415,7 @@ class LeaseCopyAreasToContractView(APIView):
                             "is_master",
                             "plotsearch",
                             "plotsearchtarget",
+                            "usage_distributions",
                         ]:
                             continue
                         defaults[field.name] = getattr(item, field.name)

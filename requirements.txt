@@ -42,7 +42,9 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
 cryptography==3.3.2
-    # via paramiko
+    # via
+    #   oracledb
+    #   paramiko
 database-sanitizer==1.1.0
     # via django-sanitized-dump
 dataclasses==0.6
@@ -158,6 +160,8 @@ lxml==4.6.5
     #   zeep
 markupsafe==1.1.1
     # via jinja2
+oracledb==1.2.0
+    # via -r requirements.in
 packaging==21.3
     # via
     #   deprecation
