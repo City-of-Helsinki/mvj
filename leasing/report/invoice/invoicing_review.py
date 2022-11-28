@@ -249,6 +249,7 @@ class InvoicingReviewReport(ReportBase):
         "note": {"label": _("Note")},
     }
     automatic_excel_column_labels = False
+    is_already_sorted = True
 
     def get_incorrect_rent_shares_data(self, cursor):
         today = datetime.date.today()
