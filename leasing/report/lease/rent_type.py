@@ -117,7 +117,9 @@ class RentTypeReport(ReportBase):
 
     def get_data(self, input_data):
         qs = (
-            Rent.objects.filter(type=input_data["rent_type"])
+            Rent.objects.filter(
+                type=input_data["rent_type"], lease__deleted__isnull=True
+            )
             .select_related(
                 "lease",
                 "lease__identifier",
