@@ -19,6 +19,8 @@ from leasing.report.report_base import AsyncReportBase
 
 INTERNAL_LEASE_TYPES = [
     "K0",
+    "V1",
+    "V4",
     "Y0",
     "Y1",
     "Y2",
@@ -78,6 +80,11 @@ class RentForecastReport(AsyncReportBase):
         }
 
         for lease in leases:
+            # Katja:
+            # Y9-alkuisista pitäisi jättää pois ne vuokraukset, joiden tyyppi on RYA.
+            if lease.state == LeaseState.RYA and lease.type.identifier == "Y9":
+                continue
+
             for year in years:
                 try:
                     rent_amount = lease.calculate_rent_amount_for_year(year)
