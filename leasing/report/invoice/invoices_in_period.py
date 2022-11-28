@@ -29,6 +29,11 @@ def get_recipient_address(obj):
     )
 
 
+def get_receivable_types(obj):
+    receivable_types = {str(row.receivable_type) for row in obj.rows.all()}
+    return ", ".join(receivable_types)
+
+
 class InvoicesInPeriodReport(ReportBase):
     name = _("Invoces in period")
     description = _(
@@ -50,6 +55,10 @@ class InvoicesInPeriodReport(ReportBase):
     }
     output_fields = {
         "number": {"label": _("Number")},
+        "receivable_type": {
+            "source": get_receivable_types,
+            "label": _("Receivable type"),
+        },
         "lease_type": {"source": get_lease_type, "label": _("Lease type")},
         "lease_id": {"source": get_lease_id, "label": _("Lease id")},
         "state": {
@@ -90,6 +99,7 @@ class InvoicesInPeriodReport(ReportBase):
                 "lease__identifier__municipality",
                 "recipient",
             )
+            .prefetch_related("rows", "rows__receivable_type")
             .order_by("lease__identifier__type__identifier", "due_date")
         )
 
