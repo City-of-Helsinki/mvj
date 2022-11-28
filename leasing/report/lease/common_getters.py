@@ -15,7 +15,7 @@ def get_lease_id(lease):
     return lease.get_identifier_string()
 
 
-def get_tenants(lease):
+def get_tenants(lease, include_future_tenants=False):
     today = datetime.date.today()
 
     contacts = set()
@@ -26,7 +26,8 @@ def get_tenants(lease):
                 continue
 
             if (tc.end_date is None or tc.end_date >= today) and (
-                tc.start_date is None or tc.start_date <= today
+                include_future_tenants
+                or (tc.start_date is None or tc.start_date <= today)
             ):
                 contacts.add(tc.contact)
 

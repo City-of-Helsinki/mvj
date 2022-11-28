@@ -268,7 +268,11 @@ class LeaseStatisticReport2(AsyncReportBase):
         # Rakennuttaja
         "real_estate_developer": {"label": _("Real estate developer"), "width": 20},
         # Vuokralaiset
-        "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
+        "tenants": {
+            "label": _("Tenants"),
+            "source": lambda x: get_tenants(x, include_future_tenants=True),
+            "width": 40,
+        },
         # Päättäjä
         "decision_maker": {
             "label": _("Decision maker"),
