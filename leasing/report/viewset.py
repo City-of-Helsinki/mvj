@@ -24,6 +24,7 @@ from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisable
 from leasing.report.lease.lease_count_report import LeaseCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
 from leasing.report.lease.lease_statistic_report2 import LeaseStatisticReport2
+from leasing.report.lease.rent_adjustments import RentAdjustmentsReport
 from leasing.report.lease.rent_compare import RentCompareReport
 from leasing.report.lease.rent_forecast import RentForecastReport
 from leasing.report.lease.rent_type import RentTypeReport
@@ -46,6 +47,7 @@ ENABLED_REPORTS = [
     LeaseStatisticReport,
     LeaseStatisticReport2,
     OpenInvoicesReport,
+    RentAdjustmentsReport,
     RentCompareReport,
     RentForecastReport,
     RentTypeReport,
