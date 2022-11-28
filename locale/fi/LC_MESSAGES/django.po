@@ -2939,47 +2939,6 @@ msgstr "Kiinteistötunnus"
 msgid "Total area"
 msgstr "Kokonaispinta-ala"
 
-msgid "Index adjusted rent change"
-msgstr "Indeksitarkistettujen vuokrien muutos"
-
-msgid "The percentual change of index adjusted rents between specified years"
-msgstr ""
-"Näyttää indeksitarkistettujen vuokrien vertailuvuosien välisen "
-"prosentuaalisen muutoksen"
-
-msgid "Year 1"
-msgstr "1. vertailuvuosi"
-
-msgid "Year 2"
-msgstr "2. vertailuvuosi"
-
-msgid "Year1 index adjusted rent start date"
-msgstr "1. vuoden vuokran alkupvm"
-
-msgid "Year1 index adjusted rent end date"
-msgstr "1. vuoden vuokran loppupvm"
-
-msgid "Year 1 rent"
-msgstr "1. vuoden vuokra (€)"
-
-msgid "Year 1 factor"
-msgstr "1. vuoden laskentakerroin"
-
-msgid "Year2 index adjusted rent start date"
-msgstr "2. vuoden vuokran alkupvm"
-
-msgid "Year2 index adjusted rent end date"
-msgstr "2. vuoden vuokran loppupvm"
-
-msgid "Year 2 rent"
-msgstr "2. vuoden vuokra (€)"
-
-msgid "Year 2 factor"
-msgstr "2. vuoden laskentakerroin"
-
-msgid "Percentual change"
-msgstr "Prosentuaalinen muutos"
-
 msgid "Index type leases"
 msgstr "Indeksin tunnusnumero"
 

@@ -19,7 +19,6 @@ from leasing.report.invoice.rents_paid_by_contact import RentsPaidByContactRepor
 from leasing.report.lease.contact_rents import ContactRentsReport
 from leasing.report.lease.decision_conditions_report import DecisionConditionsReport
 from leasing.report.lease.extra_city_rent import ExtraCityRentReport
-from leasing.report.lease.index_adjusted_rents import IndexAdjustedRentChangeReport
 from leasing.report.lease.index_types import IndexTypesReport
 from leasing.report.lease.invoicing_disabled_report import LeaseInvoicingDisabledReport
 from leasing.report.lease.lease_count_report import LeaseCountReport
@@ -37,7 +36,6 @@ ENABLED_REPORTS = [
     ContactRentsReport,
     DecisionConditionsReport,
     ExtraCityRentReport,
-    IndexAdjustedRentChangeReport,
     IndexTypesReport,
     InvoicePaymentsReport,
     InvoicesInPeriodReport,

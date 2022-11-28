@@ -17,7 +17,6 @@ DEFAULT_REPORT_PERMS = {
     "contact_rents": [2, 3, 4, 5, 6, 7],
     "decision_conditions": [2, 3, 4, 5, 6, 7],
     "extra_city_rent": [2, 3, 4, 5, 6, 7],
-    "index_adjusted_rent_change": [2, 3, 4, 5, 6, 7],
     "index_types": [2, 3, 4, 5, 6, 7],
     "invoice_payments": [5, 6, 7],
     "invoices_in_period": [5, 6, 7],
@@ -34,6 +33,10 @@ DEFAULT_REPORT_PERMS = {
     "rents_paid_contact": [5, 6, 7],
     "reservations": [2, 3, 4, 5, 6, 7],
 }
+
+# Reports that are removed can be added here. The permissions for these reports will be
+# then deleted.
+REMOVED_REPORTS = {"index_adjusted_rent_change"}
 
 
 class Command(BaseCommand):
@@ -75,3 +78,14 @@ class Command(BaseCommand):
             for group_id in groups:
                 group = Group.objects.get(pk=group_id)
                 group.permissions.add(permission)
+
+        for report_slug in REMOVED_REPORTS:
+            codename = "can_generate_report_{}".format(report_slug)
+            try:
+                permission = Permission.objects.get(codename=codename)
+            except Permission.DoesNotExist:
+                continue
+
+            Group.permissions.through.objects.filter(permission=permission).delete()
+
+            permission.delete()
