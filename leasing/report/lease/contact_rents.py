@@ -1,4 +1,7 @@
+from decimal import ROUND_HALF_UP, Decimal
+
 from django import forms
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
@@ -34,6 +37,8 @@ class ContactRentsReport(ReportBase):
             "source": get_lease_area_identifier,
             "width": 20,
         },
+        "start_date": {"label": "Start date"},
+        "end_date": {"label": "End date"},
         "address": {"label": _("Address"), "source": get_address, "width": 20},
         "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
         "rent_amount": {
@@ -51,12 +56,18 @@ class ContactRentsReport(ReportBase):
             raise ValidationError(_("Contact not found"))
 
         leases = (
-            Lease.objects.filter(tenants__contacts=contact)
+            Lease.objects.filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=input_data["start_date"]),
+                tenants__contacts=contact,
+            )
             .select_related(
                 "identifier",
                 "identifier__type",
                 "identifier__district",
                 "identifier__municipality",
+            )
+            .prefetch_related(
+                "lease_areas__addresses", "tenants__tenantcontact_set__contact",
             )
             .distinct()
         )
@@ -65,6 +76,8 @@ class ContactRentsReport(ReportBase):
             rent_for_period = lease.calculate_rent_amount_for_period(
                 input_data["start_date"], input_data["end_date"]
             )
-            lease._report__rent_for_period = rent_for_period.get_total_amount()
+            lease._report__rent_for_period = rent_for_period.get_total_amount().quantize(
+                Decimal(".01"), rounding=ROUND_HALF_UP
+            )
 
         return leases
