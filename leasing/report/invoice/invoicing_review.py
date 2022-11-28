@@ -3,7 +3,7 @@ from collections import defaultdict
 from fractions import Fraction
 from operator import itemgetter
 
-from django.db import connection
+from django.db import DataError, connection
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from enumfields import Enum
@@ -265,7 +265,7 @@ class InvoicingReviewReport(ReportBase):
                    INNER JOIN
                    (SELECT t.id,
                            t.lease_id,
-                           array_agg(array [trs.intended_use_id, trs.share_numerator, trs.share_denominator]) AS share
+                           array [trs.intended_use_id, trs.share_numerator, trs.share_denominator] AS share
                       FROM leasing_tenant t
                            INNER JOIN leasing_tenantcontact tc
                            ON t.id = tc.tenant_id
@@ -277,7 +277,6 @@ class InvoicingReviewReport(ReportBase):
                            ON t.id = trs.tenant_id
                               AND trs.deleted IS NULL
                      WHERE t.deleted IS NULL
-                     GROUP BY t.id
                    ) tt ON tt.lease_id = l.id
             WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
               AND l.deleted IS NULL
@@ -290,11 +289,10 @@ class InvoicingReviewReport(ReportBase):
         data = []
         for row in dictfetchall(cursor):
             share_sums = defaultdict(Fraction)
-            for share in row["shares"]:
-                for (intended_use_id, numerator, denominator) in share:
-                    share_sums[intended_use_id] += Fraction(
-                        int(numerator), int(denominator)
-                    )
+            for (intended_use_id, numerator, denominator) in row["shares"]:
+                share_sums[intended_use_id] += Fraction(
+                    int(numerator), int(denominator)
+                )
 
             invalid_shares = []
             for intended_use_id, share_sum in share_sums.items():
@@ -383,15 +381,28 @@ class InvoicingReviewReport(ReportBase):
                 )
 
                 rows = []
-                if lease_list_type.value in INVOICING_REVIEW_QUERIES:
-                    cursor.execute(
-                        INVOICING_REVIEW_QUERIES[lease_list_type.value],
-                        {"today": today},
-                    )
-                    rows = dictfetchall(cursor)
+                try:
+                    if lease_list_type.value in INVOICING_REVIEW_QUERIES:
+                        cursor.execute(
+                            INVOICING_REVIEW_QUERIES[lease_list_type.value],
+                            {"today": today},
+                        )
+                        rows = dictfetchall(cursor)
 
-                if hasattr(self, f"get_{lease_list_type.value}_data"):
-                    rows = getattr(self, f"get_{lease_list_type.value}_data")(cursor)
+                    if hasattr(self, f"get_{lease_list_type.value}_data"):
+                        rows = getattr(self, f"get_{lease_list_type.value}_data")(
+                            cursor
+                        )
+                except DataError as e:
+                    rows = [
+                        {
+                            "section": None,
+                            "lease_id": None,
+                            "start_date": None,
+                            "end_date": None,
+                            "note": f"Query error when generating report: {e}",
+                        }
+                    ]
 
                 rows.sort(key=itemgetter("lease_id"))
                 result.extend(rows)
