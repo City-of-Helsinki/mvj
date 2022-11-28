@@ -74,6 +74,10 @@ class ReportBase:
     # The query form model of report
     form = None
 
+    # Is the data already sorted in the backend? i.e. the UI shouldn't order the data.
+    # This is exposed in the report metadata in the key "is_already_sorted".
+    is_already_sorted = False
+
     @classmethod
     def get_output_fields_metadata(cls):
         metadata = {}

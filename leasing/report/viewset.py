@@ -156,5 +156,6 @@ class ReportViewSet(ViewSet):
 
             metadata["output_fields"] = report_class.get_output_fields_metadata()
             metadata["is_async"] = issubclass(report_class, AsyncReportBase)
+            metadata["is_already_sorted"] = report_class.is_already_sorted
 
         return Response(metadata, status=status.HTTP_200_OK)
