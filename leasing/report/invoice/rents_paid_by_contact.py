@@ -32,11 +32,25 @@ class RentsPaidByContactReport(ReportBase):
     }
 
     def get_data(self, input_data):
-        contact = Contact.objects.get(pk=input_data["contact_id"])
+        try:
+            contact = Contact.objects.get(pk=input_data["contact_id"])
+        except Contact.DoesNotExist:
+            return []
+
         aggregated_data = []
-        for inv in Invoice.objects.filter(
-            recipient=contact.id, type=InvoiceType.CHARGE, total_amount__gt=0
-        ).order_by("-due_date"):
+        invoices = (
+            Invoice.objects.filter(
+                recipient=contact,
+                type=InvoiceType.CHARGE,
+                total_amount__gt=0,
+                invoicing_date__gte=input_data["start_date"],
+                invoicing_date__lte=input_data["end_date"],
+            )
+            .prefetch_related("rows", "rows__receivable_type")
+            .order_by("-due_date")
+        )
+
+        for invoice in invoices:
             name_str = (
                 contact.name
                 if contact.name
@@ -46,15 +60,16 @@ class RentsPaidByContactReport(ReportBase):
                 {
                     "contact_id": contact.id,
                     "name": name_str,
-                    "invoice_number": inv.number,
-                    "total_amount": inv.total_amount,
-                    "outstanding_amount": inv.outstanding_amount,
-                    "invoicing_date": inv.invoicing_date,
-                    "due_date": inv.due_date,
-                    "n_rows": inv.rows.count(),
+                    "invoice_number": invoice.number,
+                    "total_amount": invoice.total_amount,
+                    "outstanding_amount": invoice.outstanding_amount,
+                    "invoicing_date": invoice.invoicing_date,
+                    "due_date": invoice.due_date,
+                    "n_rows": invoice.rows.count(),
                     "receivable_type": ", ".join(
-                        [row.receivable_type.name for row in inv.rows.all()]
+                        {row.receivable_type.name for row in invoice.rows.all()}
                     ),
                 }
             )
+
         return aggregated_data
