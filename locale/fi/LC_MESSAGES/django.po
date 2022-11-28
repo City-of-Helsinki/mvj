@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-16 11:44+0300\n"
+"POT-Creation-Date: 2022-11-28 16:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3042,6 +3042,18 @@ msgstr "Tilapäisalennus euroa/vuosi"
 msgid "Form of management (Subvention)"
 msgstr "Hallintamuotosubventio"
 
+msgid "Rent adjustments"
+msgstr "Alennukset/Korotukset"
+
+msgid "Shows all of the rent adjustments"
+msgstr "Kaikkien voimassa olevien vuokrausten alennukset/korotukset"
+
+msgid "Management subventions"
+msgstr "Hallintamuotosubventiot"
+
+msgid "Temporary subventions"
+msgstr "Tilapäisalennukset"
+
 msgid "Rent compare"
 msgstr "Vuokrien vertailu"
 
@@ -3053,6 +3065,9 @@ msgstr "Ensimmäinen vuosi"
 
 msgid "Second year"
 msgstr "Toinen vuosi"
+
+msgid "Rent type"
+msgstr "Vuokralaji"
 
 msgid "First year rent"
 msgstr "Ensimmäisen vuoden vuokra"
@@ -3087,9 +3102,6 @@ msgstr "Vuokraukset vuokralajin mukaan"
 
 msgid "Show leases with a certain rent type"
 msgstr "Kaikki vuokraukset joissa on valittu vuokralaji"
-
-msgid "Rent type"
-msgstr "Vuokralaji"
 
 msgid "Reservations"
 msgstr "Varaukset"
