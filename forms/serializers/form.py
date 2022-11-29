@@ -438,14 +438,17 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_entry_section(
-        answer,
-        field_identifier,
-        metadata,
-        path,
-        section_identifier,
-        value,
-        validated_data,
+        answer, metadata, path,
     ):
+        entry_section, unused = EntrySection.objects.get_or_create(
+            identifier=path.split(".")[0],
+            answer=answer,
+            defaults={"metadata": metadata},
+        )
+        return entry_section
+
+    @staticmethod
+    def get_field(field_identifier, section_identifier, validated_data):
         try:
             field = Field.objects.get(
                 identifier=field_identifier,
@@ -454,16 +457,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             )
         except Field.DoesNotExist:
             raise ValueError
-
-        if field.type.identifier == "uploadfiles":
-            Attachment.objects.filter(id__in=value["value"]).update(path=path)
-
-        entry_section, unused = EntrySection.objects.get_or_create(
-            identifier=path.split(".")[0],
-            answer=answer,
-            defaults={"metadata": metadata},
-        )
-        return entry_section, field
+        return field
 
     def create(self, validated_data):
         entries_data = validated_data.pop("entries")
@@ -481,15 +475,12 @@ class AnswerSerializer(serializers.ModelSerializer):
             metadata,
             path,
         ) in self.entry_generator(entries_data):
-            entry_section, field = self.get_entry_section(
-                answer,
-                field_identifier,
-                metadata,
-                path,
-                section_identifier,
-                value,
-                validated_data,
-            )
+            field = self.get_field(field_identifier, section_identifier, validated_data)
+
+            if field.type.identifier == "uploadfiles":
+                Attachment.objects.filter(id__in=value["value"]).update(path=path)
+
+            entry_section = self.get_entry_section(answer, metadata, path,)
             Entry.objects.create(
                 entry_section=entry_section,
                 field=field,
@@ -503,7 +494,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         entries_data = validated_data.pop("entries", [])
-
+        Attachment.objects.filter(answer=instance).update(path=None)
         for (
             field_identifier,
             section_identifier,
@@ -511,21 +502,20 @@ class AnswerSerializer(serializers.ModelSerializer):
             metadata,
             path,
         ) in self.entry_generator(entries_data):
-            entry_section, field = self.get_entry_section(
-                instance,
-                field_identifier,
-                metadata,
-                path,
-                section_identifier,
-                value,
-                validated_data,
-            )
+            field = self.get_field(field_identifier, section_identifier, validated_data)
+
+            if field.type.identifier == "uploadfiles":
+                Attachment.objects.filter(id__in=value["value"]).update(path=path)
+
+            entry_section = self.get_entry_section(instance, metadata, path,)
             Entry.objects.update_or_create(
                 entry_section=entry_section,
                 field=field,
                 defaults={"value": value["value"], "extra_value": value["extraValue"]},
                 path=path,
             )
+
+        Attachment.objects.filter(answer=instance, path__isnull=True).delete()
 
         instance.ready = validated_data.get("ready", instance.ready)
         instance.user = self.context["request"].user
