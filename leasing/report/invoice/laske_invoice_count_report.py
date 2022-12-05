@@ -25,7 +25,7 @@ class LaskeInvoiceCountReport(ReportBase):
     }
     output_fields = {
         "send_date": {"label": _("Send date"), "format": "date"},
-        "invoice_count": {"label": _("Invoice count")},
+        "invoice_count": {"label": _("Invoice count"), "is_numeric": True},
         "is_estimate": {"label": _("Estimate"), "format": "boolean"},
     }
 

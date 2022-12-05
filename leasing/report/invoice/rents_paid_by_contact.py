@@ -18,7 +18,7 @@ class RentsPaidByContactReport(ReportBase):
     output_fields = {
         "contact_id": {"label": _("Contact identifier")},
         "name": {"label": _("Name")},
-        "invoice_number": {"label": _("Invoice number")},
+        "invoice_number": {"label": _("Invoice number"), "is_numeric": True},
         "total_amount": {"label": _("Total amount"), "format": "money", "width": 13},
         "outstanding_amount": {
             "label": _("Outstanding amount"),
@@ -27,7 +27,7 @@ class RentsPaidByContactReport(ReportBase):
         },
         "invoicing_date": {"label": _("Invoicing date"), "format": "date"},
         "due_date": {"label": _("Due date"), "format": "date"},
-        "n_rows": {"label": _("Number of rows")},
+        "n_rows": {"label": _("Number of rows"), "is_numeric": True},
         "receivable_type": {"label": _("Receivable type")},
     }
 

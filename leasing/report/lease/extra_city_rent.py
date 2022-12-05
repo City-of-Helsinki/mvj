@@ -111,7 +111,7 @@ class ExtraCityRentReport(ReportBase):
         "area": {"label": _("Area amount"), "format": "area"},
         "area_address": {"label": _("Address"), "width": 50},
         "rent": {"label": _("Rent"), "format": "money", "width": 13},
-        "contract_number": {"label": _("Contract number")},
+        "contract_number": {"label": _("Contract number"), "is_numeric": True},
         "lease_area_identifier": {"label": _("Lease area identifier"), "width": 20},
         "address": {"label": _("Address"), "width": 20},
         "tenants": {"label": _("Tenants"), "width": 40},

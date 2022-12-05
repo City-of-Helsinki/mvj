@@ -42,6 +42,7 @@ class ReportBase:
     #      'serializer_field': None,
     #      'width': None,
     #      'format': '',
+    #      'is_numeric': False,
     #   },
     #
     # label is returned in the metadata
@@ -66,6 +67,9 @@ class ReportBase:
     # format values are "bold", "date", "money", "bold_money", "percentage",
     # "boolean", and "area". Any other value leaves the formatting to xlsxwriter.
     # (The percentage format divides the value by 100 when exporting to Excel)
+    #
+    # is_numeric only viewed in the output metadata. The field can be used
+    # in the UI to allow easier ordering of the data.
     output_fields = {}
 
     # If the column labels should be automatically added as the first row
@@ -87,6 +91,16 @@ class ReportBase:
                 for k, v in output_field.items()
                 if k not in ["source", "width", "serializer_field"]
             }
+            if output_field.get("is_numeric") is None:
+                is_numeric = False
+                if output_field.get("format") in [
+                    "money",
+                    "bold_money",
+                    "percentage",
+                    "area",
+                ]:
+                    is_numeric = True
+                metadata[field_name]["is_numeric"] = is_numeric
 
             serializer_field = output_field.get("serializer_field")
             if serializer_field and hasattr(serializer_field, "choices"):
