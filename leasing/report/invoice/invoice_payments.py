@@ -26,7 +26,11 @@ class InvoicePaymentsReport(ReportBase):
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
     output_fields = {
-        "invoice_number": {"source": get_invoice_number, "label": _("Invoice number")},
+        "invoice_number": {
+            "source": get_invoice_number,
+            "label": _("Invoice number"),
+            "is_numeric": True,
+        },
         "lease_id": {"source": get_lease_id, "label": _("Lease id")},
         "paid_date": {"label": _("Paid date"), "format": "date"},
         "paid_amount": {"label": _("Paid amount"), "format": "money", "width": 13},

@@ -54,7 +54,7 @@ class InvoicesInPeriodReport(ReportBase):
         ),
     }
     output_fields = {
-        "number": {"label": _("Number")},
+        "number": {"label": _("Number"), "is_numeric": True},
         "receivable_type": {
             "source": get_receivable_types,
             "label": _("Receivable type"),

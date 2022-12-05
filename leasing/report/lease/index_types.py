@@ -104,6 +104,7 @@ class IndexTypesReport(ReportBase):
         "contract_number": {
             "source": get_contract_number,
             "label": _("Contract number"),
+            "is_numeric": True,
         },
         "start_date": {
             "source": get_start_date,

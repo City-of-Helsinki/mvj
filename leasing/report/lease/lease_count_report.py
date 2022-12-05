@@ -20,7 +20,7 @@ class LeaseCountReport(ReportBase):
             "label": _("Lease type"),
         },
         "description": {"label": _("Description"), "source": "identifier__type__name"},
-        "count": {"label": _("Count")},
+        "count": {"label": _("Count"), "is_numeric": True},
     }
 
     def get_data(self, input_data):
