@@ -9,6 +9,7 @@ class FormatType(Enum):
     MONEY = "money"
     BOLD_MONEY = "bold_money"
     PERCENTAGE = "percentage"
+    AREA = "area"
 
 
 class ExcelRow:

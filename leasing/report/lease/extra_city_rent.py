@@ -108,7 +108,7 @@ class ExtraCityRentReport(ReportBase):
         "lease_id": {"label": _("Lease id")},
         "tenant_name": {"label": _("Tenant name"), "width": 50},
         "area_identifier": {"label": _("Area identifier"), "width": 50},
-        "area": {"label": _("Area amount")},
+        "area": {"label": _("Area amount"), "format": "area"},
         "area_address": {"label": _("Address"), "width": 50},
         "rent": {"label": _("Rent"), "format": "money", "width": 13},
         "contract_number": {"label": _("Contract number")},
@@ -118,7 +118,7 @@ class ExtraCityRentReport(ReportBase):
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
         "intended_use": {"label": _("Intended use")},
-        "total_area": {"label": _("Total area")},
+        "total_area": {"label": _("Total area"), "format": "area"},
     }
     automatic_excel_column_labels = False
 
@@ -284,7 +284,9 @@ class ExtraCityRentReport(ReportBase):
                         value="{} {}".format(municipality_name, _("Total")),
                         format_type=FormatType.BOLD,
                     ),
-                    PreviousRowsSumCell(column=3, count=row_count),
+                    PreviousRowsSumCell(
+                        column=3, count=row_count, format_type=FormatType.AREA
+                    ),
                     PreviousRowsSumCell(
                         column=5, count=row_count, format_type=FormatType.BOLD_MONEY
                     ),
@@ -304,7 +306,7 @@ class ExtraCityRentReport(ReportBase):
             )
         )
 
-        total_area_sum_cell = SumCell(column=3)
+        total_area_sum_cell = SumCell(column=3, format_type=FormatType.AREA)
         total_rent_sum_cell = SumCell(column=5, format_type=FormatType.BOLD_MONEY)
         for totals_row_num in totals_row_nums:
             total_area_sum_cell.add_target_range((totals_row_num, 3, totals_row_num, 3))
