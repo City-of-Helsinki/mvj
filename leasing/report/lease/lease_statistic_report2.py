@@ -284,7 +284,11 @@ class LeaseStatisticReport2(AsyncReportBase):
         # End date
         "end_date": {"label": _("End date"), "format": "date"},
         # Kokonaispinta-ala
-        "total_area": {"label": _("Total area"), "source": get_total_area},
+        "total_area": {
+            "label": _("Total area"),
+            "source": get_total_area,
+            "format": "area",
+        },
         # Yksikköhinta (ind)
         "amount_per_area_index_adjusted": {
             "label": _("Unit price (index)"),

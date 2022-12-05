@@ -63,8 +63,8 @@ class ReportBase:
     #
     # width and format are used in modify the output of the XLSX renderer.
     # width sets the column width and format sets the cell format. Possible
-    # format values are "bold", "date", "money", "bold_money", "percentage"
-    # or "boolean". Any other value leaves the formatting to xlsxwriter.
+    # format values are "bold", "date", "money", "bold_money", "percentage",
+    # "boolean", and "area". Any other value leaves the formatting to xlsxwriter.
     # (The percentage format divides the value by 100 when exporting to Excel)
     output_fields = {}
 
@@ -177,6 +177,7 @@ class ReportBase:
                 {"bold": True, "num_format": "#,##0.00 €"}
             ),
             FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
+            FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
         }
 
         row_num = 0
@@ -274,6 +275,8 @@ class ReportBase:
                             field_value = str(_("Yes"))
                         else:
                             field_value = str(_("No"))
+                    elif field_format_name == "area":
+                        field_format = formats[FormatType.AREA]
 
                     field_serializer_field = report.get_output_field_attr(
                         field_name, "serializer_field"
