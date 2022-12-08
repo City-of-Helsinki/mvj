@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.db import models
 from django.db.models.fields.json import JSONField
 from django.utils.translation import ugettext_lazy as _
@@ -197,6 +198,12 @@ class Entry(models.Model):
     value = models.TextField()
     extra_value = models.TextField(blank=True, null=True)
     path = models.TextField()
+
+
+auditlog.register(Answer)
+auditlog.register(Attachment)
+auditlog.register(EntrySection)
+auditlog.register(Entry)
 
 
 from forms.signals import *  # noqa: E402 F403 F401
