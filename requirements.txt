@@ -24,7 +24,7 @@ cached-property==1.5.1
     # via zeep
 cachetools==4.2.4
     # via django-helusers
-certifi==2019.11.28
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk
@@ -223,8 +223,6 @@ rsa==4.7
     # via python-jose
 ruamel-yaml==0.17.20
     # via drf-yasg
-ruamel-yaml-clib==0.2.6
-    # via ruamel-yaml
 sentry-sdk==0.16.5
     # via
     #   -r requirements.in
