@@ -9,6 +9,14 @@ def get_lease_id(obj):
     return obj.contract.lease.get_identifier_string()
 
 
+def get_start_date(obj):
+    return obj.contract.lease.start_date
+
+
+def get_end_date(obj):
+    return obj.contract.lease.end_date
+
+
 class CollateralsReport(ReportBase):
     name = _("Collaterals")
     description = _("Show all collaterals")
@@ -25,6 +33,16 @@ class CollateralsReport(ReportBase):
     }
     output_fields = {
         "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "start_date": {
+            "source": get_start_date,
+            "label": _("Lease start date"),
+            "format": "date",
+        },
+        "end_date": {
+            "source": get_end_date,
+            "label": _("Lease end date"),
+            "format": "date",
+        },
         "total_amount": {"label": _("Total amount"), "format": "money", "width": 13},
         "paid_date": {"label": _("Paid date"), "format": "date"},
         "returned_date": {"label": _("Returned date"), "format": "date"},
