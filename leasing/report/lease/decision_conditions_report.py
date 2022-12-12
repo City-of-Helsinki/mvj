@@ -111,4 +111,6 @@ class DecisionConditionsReport(ReportBase):
         if input_data["condition_type"]:
             qs = qs.filter(type=input_data["condition_type"])
 
+        qs = qs.order_by("decision__lease__identifier__type__identifier")
+
         return qs
