@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
-from leasing.calculation.index import IndexCalculation
+from leasing.calculation.index import LegacyIndexCalculation
 from leasing.calculation.result import (
     CalculationAmount,
     CalculationNote,
@@ -500,7 +500,7 @@ class Rent(TimeStampedSafeDeleteModel):
 
                 index = self.get_index_for_date(contract_overlap[0])
 
-                index_calculation = IndexCalculation(
+                index_calculation = LegacyIndexCalculation(
                     amount=contract_amount.amount,
                     index=index,
                     index_type=self.index_type,

@@ -12,7 +12,7 @@ def int_floor(value, precision):
     return value // precision * precision
 
 
-class IndexCalculation:
+class LegacyIndexCalculation:
     def __init__(
         self,
         amount=None,
