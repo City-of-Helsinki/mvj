@@ -40,7 +40,9 @@ class LegacyIndexCalculation:
         )
         self.explanation_items.append(ratio_explanation_item)
         self.notes.append(
-            CalculationNote(type="ratio", description=_("Ratio {}".format(ratio)))
+            CalculationNote(
+                type="ratio", description=_("Ratio {ratio}").format(ratio=ratio)
+            )
         )
 
     def calculate_type_1_2_3_4(self, index_value, precision, base):
