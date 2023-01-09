@@ -109,6 +109,12 @@ class FixedInitialYearRentSerializer(
         return super().update(instance, validated_data)
 
 
+class IndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Index
+        fields = ("id", "number", "year", "month")
+
+
 class ContractRentSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -120,6 +126,13 @@ class ContractRentSerializer(
         queryset=RentIntendedUse.objects.all(),
         related_serializer=RentIntendedUseSerializer,
     )
+    index = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Index,
+        queryset=Index.objects.all(),
+        related_serializer=IndexSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = ContractRent
@@ -128,6 +141,7 @@ class ContractRentSerializer(
             "amount",
             "period",
             "intended_use",
+            "index",
             "base_amount",
             "base_amount_period",
             "base_year_rent",
@@ -503,12 +517,6 @@ class RentCreateUpdateSerializer(
             )
 
         return data
-
-
-class IndexSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Index
-        fields = "__all__"
 
 
 class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer):

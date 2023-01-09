@@ -930,6 +930,16 @@ class ContractRent(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Indeksi
+    index = models.ForeignKey(
+        "leasing.Index",
+        verbose_name=_("Index"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
     base_amount = models.DecimalField(
         verbose_name=_("Base amount"), max_digits=10, decimal_places=2,
