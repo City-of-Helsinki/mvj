@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 13:20+0200\n"
+"POT-Creation-Date: 2023-01-30 12:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -497,6 +497,10 @@ msgstr "Laske-maksujen loki"
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Laske-maksujen lokit"
+
+#, python-brace-format
+msgid "Ratio {ratio}… ({current_index}/{rent_index})"
+msgstr "Laskentakerroin {ratio}… ({current_index}/{rent_index})"
 
 #, python-brace-format
 msgid "Ratio {ratio}"
@@ -3197,6 +3201,9 @@ msgstr "Ei voi olla sama vuokraus"
 
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr "Alkuvuosivuokran loppu pitää olla sama kuin vuokrakauden loppu"
+
+msgid "Index is mandatory if the rent type is Index"
+msgstr "Indeksi on valittava kun vuokralaji on Indeksi"
 
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Alennus-/korotustyypillä \"€ yhteensä\" ei voi olla loppupäivämäärää"

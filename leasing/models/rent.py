@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
-from leasing.calculation.index import LegacyIndexCalculation
+from leasing.calculation.index import IndexCalculation, LegacyIndexCalculation
 from leasing.calculation.result import (
     CalculationAmount,
     CalculationNote,
@@ -493,21 +493,30 @@ class Rent(TimeStampedSafeDeleteModel):
                             type="notice", description=_("Manual ratio not found!")
                         )
                     )
-            elif self.type == RentType.INDEX:
+            elif self.type == RentType.INDEX or self.type == RentType.INDEX2022:
                 contract_amount = contract_rent.get_base_amount_for_date_range(
                     *contract_overlap
                 )
 
                 index = self.get_index_for_date(contract_overlap[0])
 
-                index_calculation = LegacyIndexCalculation(
-                    amount=contract_amount.amount,
-                    index=index,
-                    index_type=self.index_type,
-                    precision=self.index_rounding,
-                    x_value=self.x_value,
-                    y_value=self.y_value,
-                )
+                if self.type == RentType.INDEX:
+                    # Index calculation which is used in rents before November 2022
+                    index_calculation = LegacyIndexCalculation(
+                        amount=contract_amount.amount,
+                        index=index,
+                        index_type=self.index_type,
+                        precision=self.index_rounding,
+                        x_value=self.x_value,
+                        y_value=self.y_value,
+                    )
+                elif self.type == RentType.INDEX2022:
+                    # New Index calculation for rents after November 2022
+                    index_calculation = IndexCalculation(
+                        amount=contract_amount.amount,
+                        current_index=index,
+                        rent_index=contract_rent.index,
+                    )
 
                 # There are some internal, no-cost INDEX rents which have no IndexType.
                 # For them we simply return the amount without index correction.
@@ -914,7 +923,11 @@ class ContractRent(TimeStampedSafeDeleteModel):
         on_delete=models.CASCADE,
     )
 
-    # In Finnish: Sopimusvuokra
+    # If rent.type is INDEX2022:
+    # In Finnish: Alkuvuosivuokra (ind)
+    # (index from the index column)
+    # If rent.type is INDEX:
+    # In Finnish: Sopimusvuokra (ind 100)
     amount = models.DecimalField(
         verbose_name=_("Amount"), max_digits=10, decimal_places=2
     )

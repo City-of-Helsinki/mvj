@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle
+from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle, RentType
 from leasing.models import Index
 from leasing.models.rent import (
     EqualizedRent,
@@ -157,6 +157,32 @@ class ContractRentSerializer(
             data["base_amount_period"] = data["period"]
 
         return super().to_internal_value(data)
+
+    def _is_valid_index(self, rent, index):
+        if rent.type != RentType.INDEX2022:
+            return True
+
+        return bool(index)
+
+    def create(self, validated_data):
+        rent = validated_data.get("rent")
+
+        if rent and not self._is_valid_index(rent, validated_data.get("index")):
+            raise serializers.ValidationError(
+                _("Index is mandatory if the rent type is Index")
+            )
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        rent = validated_data.get("rent")
+
+        if rent and not self._is_valid_index(rent, validated_data.get("index")):
+            raise serializers.ValidationError(
+                _("Index is mandatory if the rent type is Index")
+            )
+
+        return super().update(instance, validated_data)
 
 
 class IndexAdjustedRentSerializer(serializers.ModelSerializer):

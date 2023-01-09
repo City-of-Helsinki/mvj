@@ -436,6 +436,130 @@ def test_get_amount_for_date_range_simple_contract(
 
 
 @pytest.mark.django_db
+def test_get_amount_for_date_range_simple_contract_new_index(
+    lease_test_data, rent_factory, contract_rent_factory
+):
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX2022,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    index = Index.objects.create(year=2020, month=6, number=1969)
+    Index.objects.create(year=2021, month=None, number=2017)
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(420000),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(420000),
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    range_start = date(year=2022, month=1, day=1)
+    range_end = date(year=2022, month=12, day=31)
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+
+    assert calculation_result.get_total_amount() == Decimal("430238.70")
+
+
+@pytest.mark.django_db
+def test_get_amount_for_date_range_with_adjustment_new_index(
+    lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory
+):
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX2022,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    index = Index.objects.create(year=2020, month=8, number=1977)
+    Index.objects.create(year=2021, month=None, number=2017)
+
+    contract_rent = contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(249840),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(249840),
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    rent_adjustment_factory(
+        rent=rent,
+        intended_use=contract_rent.intended_use,
+        type=RentAdjustmentType.DISCOUNT,
+        start_date=date(year=2020, month=1, day=1),
+        end_date=date(year=2025, month=12, day=31),
+        amount_type=RentAdjustmentAmountType.PERCENT_PER_YEAR,
+        full_amount=20,
+    )
+
+    range_start = date(year=2022, month=1, day=1)
+    range_end = date(year=2022, month=12, day=31)
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+
+    assert calculation_result.get_total_amount() == Decimal("203915.9440")
+
+
+@pytest.mark.django_db
+def test_get_amount_for_date_range_two_rents_new_index(
+    lease_test_data, rent_factory, contract_rent_factory, rent_adjustment_factory
+):
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX2022,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    index = Index.objects.create(year=2019, month=3, number=1961)
+    Index.objects.create(year=2021, month=None, number=2017)
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(130000),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(130000),
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=2,
+        amount=Decimal(2720),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(2720),
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    range_start = date(year=2022, month=1, day=1)
+    range_end = date(year=2022, month=12, day=31)
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == Decimal("136510.06")
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "range_start, range_end, expected",
     [

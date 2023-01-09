@@ -12,6 +12,39 @@ def int_floor(value, precision):
     return value // precision * precision
 
 
+class IndexCalculation:
+    def __init__(
+        self, amount=None, current_index=None, rent_index=None,
+    ):
+        self.explanation_items = []
+        self.notes = []
+        self.amount = amount
+        self.current_index = current_index
+        self.rent_index = rent_index
+
+    def calculate(self):
+        if not self.rent_index:
+            return Decimal(0)
+
+        ratio = Decimal(self.current_index.number / self.rent_index.number)
+
+        ratio_description = _("Ratio {ratio}… ({current_index}/{rent_index})").format(
+            ratio=ratio.quantize(Decimal(".00000001")),
+            current_index=self.current_index.number,
+            rent_index=self.rent_index.number,
+        )
+        self.explanation_items.append(
+            ExplanationItem(
+                subject={"subject_type": "ratio", "description": ratio_description}
+            )
+        )
+        self.notes.append(CalculationNote(type="ratio", description=ratio_description))
+
+        return Decimal(ratio * self.amount).quantize(
+            Decimal(".01"), rounding=ROUND_HALF_UP
+        )
+
+
 class LegacyIndexCalculation:
     def __init__(
         self,
