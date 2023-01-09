@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-12 12:04+0200\n"
+"POT-Creation-Date: 2023-01-09 13:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -501,9 +501,6 @@ msgstr "Laske-maksujen lokit"
 #, python-brace-format
 msgid "Ratio {ratio}"
 msgstr "Laskentakerroin {ratio}"
-
-msgid "Ratio {}"
-msgstr "Laskentakerroin {}"
 
 msgid "New base rent"
 msgstr "Uusi perusvuokra"
