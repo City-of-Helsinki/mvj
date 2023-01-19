@@ -135,7 +135,7 @@ drf-yasg[validation]==1.20.0
     # via -r requirements.in
 ecdsa==0.15
     # via python-jose
-future==0.18.2
+future==0.18.3
     # via pyjwkest
 idna==2.9
     # via requests
