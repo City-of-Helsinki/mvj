@@ -109,6 +109,7 @@ from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
     AreaSearchViewSet,
     FavouriteViewSet,
+    GeneratePDF,
     InformationCheckViewSet,
     IntendedSubUseViewSet,
 )
@@ -237,6 +238,7 @@ router.register("job_run", JobRunViewSet)
 router.register("job_run_log_entry", JobRunLogEntryViewSet)
 
 additional_api_paths = [
+    path("target_status_pdf/", GeneratePDF.as_view(), name="target_status-pdf"),
     path("auditlog/", AuditLogView.as_view(), name="auditlog"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(

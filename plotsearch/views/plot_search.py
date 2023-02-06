@@ -1,5 +1,16 @@
+import io
+import zipfile
+from typing import Any, Dict
+from zipfile import ZipInfo
+
+import xlsxwriter
+from django import http
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.views import FilterView
+from django_xhtml2pdf.views import PdfMixin
 from rest_framework import mixins, viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework_gis.filters import InBBoxFilter
@@ -10,7 +21,7 @@ from leasing.permissions import (
     MvjDjangoModelPermissionsOrAnonReadOnly,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.filter import InformationCheckListFilterSet
+from plotsearch.filter import InformationCheckListFilterSet, TargetStatusExportFilterSet
 from plotsearch.models import (
     AreaSearch,
     Favourite,
@@ -20,7 +31,7 @@ from plotsearch.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
-    PlotSearchType,
+    PlotSearchType, TargetStatus,
 )
 from plotsearch.serializers.plot_search import (
     AreaSearchSerializer,
@@ -96,6 +107,32 @@ class PlotSearchViewSet(
 
         return PlotSearchRetrieveSerializer
 
+    @action(methods=["get"], detail=True)
+    def get_answers_xlsx(self, *args, **kwargs):
+        plotsearch = self.get_object()
+        plot_search_targets = plotsearch.plot_search_targets.all()
+
+        output = io.BytesIO()
+
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+
+        row = 0
+
+        for plot_search_target in plot_search_targets:
+            for target_status in plot_search_target.statuses.all():
+                worksheet, row = target_status.target_status_get_xlsx_page(worksheet, row)
+
+        workbook.close()
+
+        output.seek(0)
+
+        response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
+
+        return response
+
+
 
 class FavouriteViewSet(viewsets.ModelViewSet):
     queryset = Favourite.objects.all()
@@ -147,3 +184,30 @@ class InformationCheckViewSet(
     permission_classes = (MvjDjangoModelPermissions,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = InformationCheckListFilterSet
+
+
+class GeneratePDF(PdfMixin, FilterView):
+    template_name = 'target_status/detail.html'
+    model = TargetStatus
+    filterset_class = TargetStatusExportFilterSet
+
+    def render_to_response(self, context: Dict[str, Any], **response_kwargs: Any) -> http.HttpResponse:
+        response_kwargs.setdefault('content_type', self.content_type)
+        response = HttpResponse(content_type='application/zip')
+        with zipfile.PyZipFile(response, mode="w") as zip_file:
+            for object in self.object_list:
+                context.update(object=object)
+                pdf_response = self.response_class(
+                    request=self.request,
+                    template=self.get_template_names(),
+                    context=context,
+                    using=self.template_engine,
+                    **response_kwargs
+                )
+                zip_file.writestr(ZipInfo("{}.pdf".format(object.application_identifier)), pdf_response.render().content)
+
+        response['Content-Disposition'] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
+
+        return response
+
+

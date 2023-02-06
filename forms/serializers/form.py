@@ -416,6 +416,27 @@ class TargetStatusSerializer(TargetStatusUpdateSerializer):
         )
 
 
+class TargetStatusListSerializer(serializers.ModelSerializer):
+    target_identifier = serializers.CharField(source="plot_search_target.identifier")
+    applicants = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TargetStatus
+        fields = (
+            "application_identifier",
+            "target_identifier",
+            "applicants",
+            "id",
+            "answer_id",
+        )
+
+    @staticmethod
+    def get_applicants(obj):
+        applicant_list = list()
+        get_applicant(obj.answer, applicant_list)
+        return applicant_list
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField(write_only=True)

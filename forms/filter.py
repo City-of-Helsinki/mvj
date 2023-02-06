@@ -77,3 +77,12 @@ class AnswerFilterSet(FilterSet):
             "reserved",
             "q",
         ]
+
+
+class TargetStatusFilterSet(FilterSet):
+    plot_search = filters.NumberFilter(field_name="plot_search_target__plot_search__id")
+
+    class Meta:
+        fields = [
+            "plot_search",
+        ]
