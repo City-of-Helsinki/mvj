@@ -10,6 +10,7 @@ from rest_framework.serializers import ValidationError
 
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
+from forms.utils import get_answer_worksheet
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Financing, Hitas, Management
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
@@ -154,6 +155,13 @@ class PlotSearchTarget(models.Model):
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
 
+    def identifier(self):
+        if self.plan_unit is not None:
+            return self.plan_unit.identifier
+        if self.custom_detailed_plan is not None:
+            return self.custom_detailed_plan.identifier
+        return ""
+
     def save(self, *args, **kwargs):
         self.clean()
         return super(PlotSearchTarget, self).save(*args, **kwargs)
@@ -252,6 +260,9 @@ class TargetStatus(models.Model):
     application_identifier = models.CharField(
         max_length=255, unique=True, default=target_status_id_generator
     )
+
+    def target_status_get_xlsx_page(self, worksheet, row):
+        return get_answer_worksheet(self, worksheet, row)
 
 
 class ProposedFinancingManagement(models.Model):

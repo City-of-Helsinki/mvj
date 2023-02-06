@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from forms.filter import AnswerFilterSet
+from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import Attachment
 from forms.permissions import TargetStatusPermissions
@@ -18,6 +18,7 @@ from forms.serializers.form import (
     FormSerializer,
     MeetingMemoSerializer,
     ReadAttachmentSerializer,
+    TargetStatusListSerializer,
     TargetStatusUpdateSerializer,
 )
 from forms.utils import AnswerInBBoxFilter
@@ -138,10 +139,19 @@ class AttachmentViewSet(viewsets.ModelViewSet):
             return response
 
 
-class TargetStatusViewset(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class TargetStatusViewset(
+    mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
     queryset = TargetStatus.objects.all()
     serializer_class = TargetStatusUpdateSerializer
     permission_classes = (TargetStatusPermissions,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TargetStatusFilterSet
+
+    def get_serializer_class(self):
+        if self.action in ("list", "metadata"):
+            return TargetStatusListSerializer
+        return self.serializer_class
 
 
 class MeetingMemoViewset(

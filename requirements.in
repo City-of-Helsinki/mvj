@@ -21,6 +21,7 @@ django-q[sentry]
 django-safedelete
 django-sanitized-dump
 django-sequences
+django-xhtml2pdf
 djangorestframework
 djangorestframework-gis
 drf-yasg[validation]

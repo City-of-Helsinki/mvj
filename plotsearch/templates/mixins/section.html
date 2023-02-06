@@ -1,0 +1,15 @@
+{% load checkapplications %}
+
+{% for subsection in section.subsections.all %}
+    {% include "mixins/section.html" with section=subsection %}
+{% endfor %}
+<thead>{{ section.name }}</thead>
+{% for field in section.fields.all %}
+    <tr>
+        {% for entry in field.entry_set.all %}
+            {% entry_exists entry %}
+        {% endfor %}
+        <td></td>
+    </tr>
+{% endfor %}
+
