@@ -677,6 +677,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
     applicants = serializers.SerializerMethodField()
     targets = TargetStatusSerializer(many=True, source="statuses")
     plot_search = serializers.SerializerMethodField()
+    plot_search_id = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
     plot_search_subtype = serializers.SerializerMethodField()
 
@@ -685,6 +686,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "plot_search",
+            "plot_search_id",
             "plot_search_type",
             "plot_search_subtype",
             "applicants",
@@ -728,6 +730,12 @@ class AnswerListSerializer(serializers.ModelSerializer):
             return None
         plot_search = obj.form.plotsearch
         return plot_search.name
+
+    def get_plot_search_id(self, obj):
+        if obj.form is None or not hasattr(obj.form, "plotsearch"):
+            return None
+        plot_search = obj.form.plotsearch
+        return plot_search.id
 
     def get_plot_search_type(self, obj):
         if obj.form is None or not hasattr(obj.form, "plotsearch"):
