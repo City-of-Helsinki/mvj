@@ -41,7 +41,7 @@ coreschema==0.0.4
     # via
     #   coreapi
     #   drf-yasg
-cryptography==3.3.2
+cryptography==39.0.1
     # via
     #   oracledb
     #   paramiko
@@ -231,7 +231,6 @@ six==1.14.0
     # via
     #   bcrypt
     #   blessed
-    #   cryptography
     #   database-sanitizer
     #   django-anymail
     #   django-jsonfield
