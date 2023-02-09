@@ -6,6 +6,7 @@ from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
+from rest_framework_gis.fields import GeometryField
 
 from leasing.models import Financing, Hitas, Management
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
@@ -383,9 +384,13 @@ class TargetStatusSerializer(TargetStatusUpdateSerializer):
 
     def get_geometry(self, obj):
         if obj.plot_search_target.plan_unit is not None:
-            return obj.plot_search_target.plan_unit.geometry
+            return GeometryField().to_representation(
+                obj.plot_search_target.plan_unit.geometry
+            )
         elif obj.plot_search_target.custom_detailed_plan is not None:
-            return obj.plot_search_target.custom_detailed_plan.lease_area.geometry
+            return GeometryField().to_representation(
+                obj.plot_search_target.custom_detailed_plan.lease_area.geometry
+            )
         else:
             return None
 
