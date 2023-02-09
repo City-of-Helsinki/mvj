@@ -66,7 +66,7 @@ def generate_entries(section, entries):
     entries["fields"] = dict()
     entries["sections"] = dict()
     for field in section.fields.all():
-        entries["fields"][field.identifier] = fake.name()
+        entries["fields"][field.identifier] = {"value": fake.name(), "extraValue": ""}
     for subsection in section.subsections.all():
         entries["sections"][subsection.identifier] = dict()
         generate_entries(subsection, entries["sections"][subsection.identifier])
