@@ -411,6 +411,7 @@ class TargetStatusSerializer(TargetStatusUpdateSerializer):
             "reservation_conditions",
             "address",
             "geometry",
+            "application_identifier",
         )
 
 
