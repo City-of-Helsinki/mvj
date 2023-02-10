@@ -200,6 +200,23 @@ class InformationCheck(models.Model):
     modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
 
 
+def target_status_id_generator():
+    year = str(timezone.now().year)[2:4]
+
+    beginning_str = "MVJ-{}".format(year)
+    latest_target_status_with_id = TargetStatus.objects.filter(
+        application_identifier__startswith=beginning_str
+    )
+
+    if not latest_target_status_with_id.exists():
+        return "{}-00001".format(beginning_str)
+
+    application_id = latest_target_status_with_id[-1].application_identifier
+    identifier = application_id.split("-")[2]
+    identifier += 1
+    return "{}-{:05d}}".format(beginning_str, identifier)
+
+
 class TargetStatus(models.Model):
     # In Finnish: Tonttihaun kohde
     plot_search_target = models.ForeignKey(
@@ -230,6 +247,11 @@ class TargetStatus(models.Model):
 
     # In Finnish: Perustelut
     arguments = models.TextField(null=True, blank=True)
+
+    # In Finnish: Hakmuksen tunniste
+    application_identifier = models.CharField(
+        max_length=255, unique=True, default=target_status_id_generator
+    )
 
 
 class ProposedFinancingManagement(models.Model):
