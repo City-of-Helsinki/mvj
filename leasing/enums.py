@@ -30,6 +30,7 @@ class LeaseState(Enum):
     PERMISSION = "permission"
     TENURE = "tenure"
     RYA = "rya"
+    POWER_OF_ATTORNEY = "power_of_attorney"
 
     class Labels:
         LEASE = pgettext_lazy("Lease state", "Lease")
@@ -40,6 +41,7 @@ class LeaseState(Enum):
         PERMISSION = pgettext_lazy("Lease state", "Permission")
         TENURE = pgettext_lazy("Lease state", "Tenure")
         RYA = pgettext_lazy("Lease state", "Buildings and public areas")
+        POWER_OF_ATTORNEY = pgettext_lazy("Lease state", "Power of attorney")
 
 
 class LeaseRelationType(Enum):
