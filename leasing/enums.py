@@ -28,7 +28,6 @@ class LeaseState(Enum):
     RESERVATION = "reservation"
     RESERVE = "reserve"
     PERMISSION = "permission"
-    APPLICATION = "application"
     TENURE = "tenure"
     RYA = "rya"
 
@@ -39,7 +38,6 @@ class LeaseState(Enum):
         RESERVATION = pgettext_lazy("Lease state", "Reservation")
         RESERVE = pgettext_lazy("Lease state", "Reserve")
         PERMISSION = pgettext_lazy("Lease state", "Permission")
-        APPLICATION = pgettext_lazy("Lease state", "Application")
         TENURE = pgettext_lazy("Lease state", "Tenure")
         RYA = pgettext_lazy("Lease state", "Buildings and public areas")
 
