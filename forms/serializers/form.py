@@ -357,15 +357,21 @@ class TargetStatusSerializer(TargetStatusUpdateSerializer):
     geometry = serializers.SerializerMethodField()
 
     def get_address(self, obj):
-        if obj.plot_search_target.plan_unit is None:
-            return None
-        lease_address = (
-            obj.plot_search_target.plan_unit.lease_area.addresses.all()
-            .order_by("-is_primary")
-            .values("address")
-            .first()
-        )
-        return lease_address
+        target_address = None
+
+        if obj.plot_search_target.plan_unit is not None:
+            target_address = (
+                obj.plot_search_target.plan_unit.lease_area.addresses.all()
+                .order_by("-is_primary")
+                .values("address")
+                .first()
+            )
+        elif obj.plot_search_target.custom_detailed_plan is not None:
+            target_address = {
+                "address": obj.plot_search_target.custom_detailed_plan.address
+            }
+
+        return target_address
 
     def get_identifier(self, obj):
         if obj.plot_search_target.plan_unit is not None:
