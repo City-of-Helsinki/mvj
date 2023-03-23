@@ -6,6 +6,7 @@ from leasing.importer.invoice_relations import InvoiceRelationsImporter
 from leasing.importer.lease import LeaseImporter
 from leasing.importer.lease_area import LeaseAreaImporter
 from leasing.importer.lease_relations import LeaseRelationsImporter
+from leasing.importer.usage_distributions import UsageDistributionImporter
 
 
 class Command(BaseCommand):
@@ -21,6 +22,7 @@ class Command(BaseCommand):
             AreaImporter,
             LeaseAreaImporter,
             InvoiceRelationsImporter,
+            UsageDistributionImporter,
         ]
 
         self._importers = {}
