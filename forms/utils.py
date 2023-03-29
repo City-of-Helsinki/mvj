@@ -78,6 +78,11 @@ def clone_object(obj, attrs={}):
 def _get_plot_search_target_attributes(plot_search_target):
     plan_unit = plot_search_target.plan_unit
     custom_detailed_plan = plot_search_target.custom_detailed_plan
+    reservation_identifier = (
+        plot_search_target.reservation_identifier.identifier.identifier
+        if plot_search_target.reservation_identifier is not None
+        else "-"
+    )
 
     if plan_unit is not None:
         return [
@@ -93,6 +98,7 @@ def _get_plot_search_target_attributes(plot_search_target):
                 "Plot division effective date",
                 plan_unit.plot_division_effective_date.isoformat(),
             ),
+            ("Reservation identifier", reservation_identifier),
             ("Plot division state", plan_unit.plot_division_state.name),
             ("Detailed plan identifier", plan_unit.detailed_plan_identifier),
             (
@@ -116,6 +122,7 @@ def _get_plot_search_target_attributes(plot_search_target):
             ("Plot division identifier", "-"),
             ("Plot division date of approval", "-"),
             ("Plot division effective date", "-"),
+            ("Reservation identifier", reservation_identifier),
             ("Plot division state", "-"),
             ("Detailed plan identifier", custom_detailed_plan.detailed_plan),
             (

@@ -1401,6 +1401,7 @@ class Lease(TimeStampedSafeDeleteModel):
             "note",
             "created_at",
             "modified_at",
+            "plot_search_target",
         )
 
         return is_instance_empty(self, skip_fields=skip_fields)

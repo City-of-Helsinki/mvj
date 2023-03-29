@@ -147,6 +147,14 @@ class PlotSearchTarget(models.Model):
         "leasing.CustomDetailedPlan", on_delete=models.CASCADE, null=True, blank=True
     )
 
+    reservation_identifier = models.OneToOneField(
+        "leasing.Lease",
+        related_name="plot_search_target",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     # In finnish: Hakemukset
     answers = models.ManyToManyField(
         Answer, related_name="targets", blank=True, through="TargetStatus"

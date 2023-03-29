@@ -17,6 +17,7 @@ from leasing.serializers.land_area import (
     PlanUnitSerializer,
     PublicPlanUnitSerializer,
 )
+from leasing.serializers.lease import DistrictSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
@@ -100,24 +101,19 @@ class PlotSearchStageSerializer(NameModelSerializer):
 class PlotSearchTargetSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
+    # TODO clean up SerializerMethodFields. It will need work in user interface also
     id = serializers.IntegerField(required=False, allow_null=True)
 
-    lease_identifier = serializers.ReadOnlyField(
-        source="plan_unit.lease_area.lease.identifier.identifier"
-    )
-    lease_hitas = serializers.ReadOnlyField(
-        source="plan_unit.lease_area.lease.hitas.name"
-    )
+    lease_id = serializers.SerializerMethodField()
+    lease_identifier = serializers.SerializerMethodField()
+    lease_hitas = serializers.SerializerMethodField()
     lease_address = serializers.SerializerMethodField()
-    lease_financing = serializers.ReadOnlyField(
-        source="plan_unit.lease_area.lease.financing.name"
-    )
-    lease_management = serializers.ReadOnlyField(
-        source="plan_unit.lease_area.lease.management.name"
-    )
-    district = serializers.ReadOnlyField(
-        source="plan_unit.lease_area.lease.district.name"
-    )
+    lease_financing = serializers.SerializerMethodField()
+    lease_management = serializers.SerializerMethodField()
+    district = serializers.SerializerMethodField()
+    municipality_id = serializers.SerializerMethodField()
+    lease_type = serializers.SerializerMethodField()
+    lease_state = serializers.SerializerMethodField()
     decisions = DecisionSerializer(
         many=True,
         source="plan_unit.lease_area.lease.decisions",
@@ -137,6 +133,11 @@ class PlotSearchTargetSerializer(
     custom_detailed_plan = CustomDetailedPlanSerializer(read_only=True)
     custom_detailed_plan_id = serializers.IntegerField(required=False, allow_null=True)
     reservation_recipients = serializers.SerializerMethodField()
+    reservation_readable_identifier = serializers.CharField(
+        read_only=True,
+        required=False,
+        source="reservation_identifier.identifier.identifier",
+    )
 
     class Meta:
         model = PlotSearchTarget
@@ -149,29 +150,99 @@ class PlotSearchTargetSerializer(
             "is_master_plan_unit_deleted",
             "is_master_plan_unit_newer",
             "message_label",
+            "lease_id",
             "lease_identifier",
             "lease_hitas",
             "lease_address",
             "lease_financing",
             "lease_management",
             "district",
+            "municipality_id",
+            "lease_type",
+            "lease_state",
             "info_links",
             "decisions",
             "custom_detailed_plan",
             "custom_detailed_plan_id",
             "reservation_recipients",
+            "reservation_identifier",
+            "reservation_readable_identifier",
         )
 
+    @staticmethod
+    def _get_plan_unit_or_custom_detailed_plan(obj):
+        if obj.plan_unit is not None:
+            return obj.plan_unit
+        elif obj.custom_detailed_plan is not None:
+            return obj.custom_detailed_plan
+        else:
+            return None
+
+    def get_lease_id(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
+            return None
+        return target.lease_area.lease.id
+
+    def get_lease_identifier(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
+            return None
+        return target.lease_area.lease.identifier.identifier
+
+    def get_lease_hitas(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None or target.lease_area.lease.hitas is None:
+            return None
+        return target.lease_area.lease.hitas.name
+
     def get_lease_address(self, obj):
-        if obj.plan_unit is None:
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
             return None
         lease_address = (
-            obj.plan_unit.lease_area.addresses.all()
+            target.lease_area.addresses.all()
             .order_by("-is_primary")
             .values("address")
             .first()
         )
         return lease_address
+
+    def get_lease_financing(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None or target.lease_area.lease.financing is None:
+            return None
+        return target.lease_area.lease.financing.name
+
+    def get_lease_management(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None or target.lease_area.lease.management is None:
+            return None
+        return target.lease_area.lease.management.name
+
+    def get_district(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
+            return None
+        return DistrictSerializer().to_representation(target.lease_area.lease.district)
+
+    def get_municipality_id(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
+            return None
+        return target.lease_area.lease.municipality.id
+
+    def get_lease_type(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None:
+            return None
+        return target.lease_area.lease.type.id
+
+    def get_lease_state(self, obj):
+        target = self._get_plan_unit_or_custom_detailed_plan(obj)
+        if target is None or target.lease_area.lease.state is None:
+            return None
+        return target.lease_area.lease.state.value
 
     def get_master_plan_unit_id(self, obj):
         if obj.plan_unit is None:
@@ -210,6 +281,7 @@ class PlotSearchTargetSerializer(
                         target_status.share_of_rental_indicator,
                         target_status.share_of_rental_denominator,
                     ),
+                    "target_status_id": target_status.id,
                 }
             )
         return reservation_recipients_with_share
@@ -233,6 +305,7 @@ class PlotSearchTargetCreateUpdateSerializer(
             "custom_detailed_plan_id",
             "target_type",
             "info_links",
+            "reservation_identifier",
         )
 
     def create(self, validated_data):
