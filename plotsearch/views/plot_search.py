@@ -36,6 +36,7 @@ from plotsearch.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
+    PlotSearchTarget,
     PlotSearchType,
     TargetStatus,
 )
@@ -51,6 +52,7 @@ from plotsearch.serializers.plot_search import (
     PlotSearchRetrieveSerializer,
     PlotSearchStageSerializer,
     PlotSearchSubtypeSerializer,
+    PlotSearchTargetSerializer,
     PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
 )
@@ -144,6 +146,12 @@ class PlotSearchViewSet(
         response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
 
         return response
+
+
+class PlotSearchTargetViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = PlotSearchTarget.objects.all()
+    serializer_class = PlotSearchTargetSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class FavouriteViewSet(viewsets.ModelViewSet):
