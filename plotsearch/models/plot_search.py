@@ -15,11 +15,13 @@ from leasing.enums import PlotSearchTargetType
 from leasing.models import Financing, Hitas, Management
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
+    AreaSearchLessor,
+    AreaSearchState,
     DeclineReason,
     InformationCheckName,
     InformationState,
     SearchClass,
-    SearchStage, AreaSearchState,
+    SearchStage,
 )
 from users.models import User
 
@@ -353,25 +355,10 @@ class FavouriteTarget(models.Model):
 
 
 class IntendedUse(NameModel):
-    # In Finnish: Käyttötarkoitus
-
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Area search intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
         ordering = ["name"]
-
-
-class IntendedSubUse(NameModel):
-    # In finnish: Käyttötarkoituksen alitarkoitus
-
-    intended_use = models.ForeignKey(IntendedUse, on_delete=models.CASCADE)
-
-    class Meta(NameModel.Meta):
-        verbose_name = pgettext_lazy("Model name", "Area search sub intended use")
-        verbose_name_plural = pgettext_lazy(
-            "Model name", "Area search sub intended uses"
-        )
-        ordering = ["intended_use", "name"]
 
 
 def areasearch_id_generator():
@@ -385,7 +372,7 @@ def areasearch_id_generator():
     if not latest_area_search_with_id.exists():
         return "{}-00001".format(beginning_str)
 
-    area_search_id = latest_area_search_with_id.last().application_identifier
+    area_search_id = latest_area_search_with_id.last().identifier
     identifier = int(area_search_id.split("-")[2])
     identifier += 1
     return "{}-{:05d}".format(beginning_str, identifier)
@@ -398,27 +385,35 @@ class AreaSearch(models.Model):
         srid=4326, verbose_name=_("Geometry"), null=True, blank=True
     )
 
+    lessor = EnumField(
+        enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
+    )
+
     description_area = models.TextField()
 
     address = models.CharField(max_length=255, null=True, blank=True)
     district = models.CharField(max_length=255, null=True, blank=True)
 
-    intended_use = models.ForeignKey(IntendedSubUse, on_delete=models.CASCADE)
+    intended_use = models.ForeignKey(IntendedUse, on_delete=models.CASCADE)
     description_intended_use = models.TextField()
 
     start_date = models.DateTimeField(verbose_name=_("Begin at"), null=True, blank=True)
     end_date = models.DateTimeField(verbose_name=_("End at"), null=True, blank=True)
 
-    received_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Time received"))
+    received_date = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Time received")
+    )
 
     identifier = models.CharField(
         max_length=255, unique=True, default=areasearch_id_generator
     )
 
-    state = EnumField(AreaSearchState,
+    state = EnumField(
+        AreaSearchState,
         verbose_name=_("Area search state"),
         default=AreaSearchState.RECEIVED,
-        max_length=30,)
+        max_length=30,
+    )
 
     form = models.ForeignKey(
         Form, on_delete=models.SET_NULL, null=True, related_name="area_searches"
@@ -428,39 +423,15 @@ class AreaSearch(models.Model):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
-
-def get_area_search_attachment_upload_to(instance, filename):
-    return "/".join(
-        [
-            "area_search_attachments",
-            str(timezone.now().date().isoformat()),
-            filename,
-        ]  # noqa: E231
-    )
-
-
-class AreaSearchAttachment(NameModel):
-    attachment = models.FileField(
-        upload_to=get_area_search_attachment_upload_to, null=True, blank=True
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
-
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="area_search_attachments"
-    )
-
-    # In Finnish: Aluehaut
-    area_search = models.ForeignKey(
-        AreaSearch,
-        on_delete=models.CASCADE,
-        related_name="area_search_attachments",
+    # In Finnish: Käsittelijä
+    preparer = models.ForeignKey(
+        User,
+        verbose_name=_("Preparer"),
+        related_name="+",
         null=True,
         blank=True,
+        on_delete=models.PROTECT,
     )
-    answer = models.OneToOneField(
-        Answer, on_delete=models.CASCADE, null=True, related_name="area_search"
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 def get_area_search_attachment_upload_to(instance, filename):
@@ -479,9 +450,7 @@ class AreaSearchAttachment(NameModel):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="area_search_attachments"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
 
     # In Finnish: Aluehaut
     area_search = models.ForeignKey(

@@ -12,10 +12,10 @@ from leasing.models import Financing, Hitas, Management
 from leasing.serializers.utils import InstanceDictPrimaryKeyRelatedField
 from plotsearch.enums import DeclineReason
 from plotsearch.models import (
+    AreaSearch,
     InformationCheck,
     PlotSearchTarget,
     TargetStatus,
-    AreaSearch,
 )
 from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManagement
 from plotsearch.utils import get_applicant

@@ -6,7 +6,6 @@ from leasing.admin import NameAdmin
 from plotsearch.models import (
     Favourite,
     FavouriteTarget,
-    IntendedSubUse,
     IntendedUse,
     PlotSearch,
     PlotSearchStage,
@@ -21,7 +20,7 @@ class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        return qs.select_related("subtype", "stage",)
+        return qs.select_related("stage",)
 
 
 class FavouriteTargetInline(FieldPermissionsAdminMixin, admin.TabularInline):
@@ -36,7 +35,6 @@ class FavouriteAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
 admin.site.register(PlotSearch, PlotSearchAdmin)
 admin.site.register(PlotSearchStage, NameAdmin)
 admin.site.register(Favourite, FavouriteAdmin)
-admin.site.register(PlotSearchSubtype, NameAdmin)
 admin.site.register(PlotSearchType, NameAdmin)
 admin.site.register(IntendedUse, NameAdmin)
-admin.site.register(IntendedSubUse, NameAdmin)
+admin.site.register(PlotSearchSubtype, NameAdmin)

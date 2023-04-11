@@ -2,6 +2,23 @@ from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
 
+class AreaSearchLessor(str, Enum):
+    """
+    In Finnish: Vuokranantaja
+    """
+
+    AKV = "AKV"
+    KUVA = "kuva"
+    MAKE = "make"
+
+    class Labels:
+        AKV = pgettext_lazy("Area search lessor", "Aluekäyttö- ja valvonta")
+        KUVA = pgettext_lazy("Area search lessor", "Kulttuuri ja vapaa-aika")
+        MAKE = pgettext_lazy(
+            "Area search lessor", "Maaomaisuudenkehittäminen ja tontit"
+        )
+
+
 class SearchClass(str, Enum):
     """
     In Finnish: Haun luokitus
@@ -106,6 +123,7 @@ class DeclineReason(str, Enum):
             "Decline reason", "Area no available for lease"
         )
         OTHER = pgettext_lazy("Decline reason", "Other reason")
+
 
 class AreaSearchState(str, Enum):
     """
