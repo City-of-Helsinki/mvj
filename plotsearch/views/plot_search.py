@@ -22,12 +22,15 @@ from leasing.permissions import (
     MvjDjangoModelPermissionsOrAnonReadOnly,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
-from plotsearch.filter import InformationCheckListFilterSet, TargetStatusExportFilterSet
+from plotsearch.filter import (
+    AreaSearchFilterSet,
+    InformationCheckListFilterSet,
+    TargetStatusExportFilterSet,
+)
 from plotsearch.models import (
     AreaSearch,
     Favourite,
     InformationCheck,
-    IntendedSubUse,
     IntendedUse,
     PlotSearch,
     PlotSearchStage,
@@ -41,7 +44,6 @@ from plotsearch.serializers.plot_search import (
     AreaSearchSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
-    IntendedSubUseSerializer,
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
     PlotSearchRetrieveSerializer,
@@ -152,16 +154,6 @@ class FavouriteViewSet(viewsets.ModelViewSet):
         return qs.filter(user=self.request.user).prefetch_related("targets")
 
 
-class IntendedSubUseViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
-    queryset = IntendedSubUse.objects.all()
-    serializer_class = IntendedSubUseSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filterset_fields = ["intended_use"]
-
-
 class IntendedUseViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
@@ -169,15 +161,15 @@ class IntendedUseViewSet(
     serializer_class = IntendedUseSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.prefetch_related("intendedsubuse_set")
-
 
 class AreaSearchViewSet(viewsets.ModelViewSet):
     queryset = AreaSearch.objects.all()
     serializer_class = AreaSearchSerializer
     permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
+    filterset_class = AreaSearchFilterSet
+    bbox_filter_field = "geometry"
+    bbox_filter_include_overlapping = True
 
 
 class AreaSearchAttachmentViewset(
@@ -185,7 +177,14 @@ class AreaSearchAttachmentViewset(
 ):
     queryset = AreaSearchAttachment.objects.all()
     serializer_class = AreaSearchAttachmentSerializer
-    permission_classes = (MvjDjangoModelPermissions,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if user.has_perm("plot_search.area_search_attachment"):
+            return qs
+        return qs.filter(user=self.request.user)
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):

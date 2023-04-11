@@ -113,7 +113,6 @@ from plotsearch.views.plot_search import (
     FavouriteViewSet,
     GeneratePDF,
     InformationCheckViewSet,
-    IntendedSubUseViewSet,
 )
 from plotsearch.views.plot_search import IntendedUseViewSet as IntendedUsePSViewSet
 from plotsearch.views.plot_search import (
@@ -162,7 +161,6 @@ router.register(r"invoice_row", InvoiceRowViewSet)
 router.register(r"invoice_set", InvoiceSetViewSet)
 router.register(r"intended_use", IntendedUseViewSet)
 router.register(r"intended_psuse", IntendedUsePSViewSet)
-router.register(r"intended_subuse", IntendedSubUseViewSet)
 router.register(r"lease", LeaseViewSet, basename="lease")
 router.register(r"lease_area_attachment", LeaseAreaAttachmentViewSet)
 router.register(
@@ -221,9 +219,6 @@ pub_router.register(r"area_search", AreaSearchViewSet, basename="pub_area_search
 pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
 pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(r"intended_use", IntendedUsePSViewSet, basename="pub_intended_use")
-pub_router.register(
-    r"intended_subuse", IntendedSubUseViewSet, basename="pub_intended_sub_use"
-)
 pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
 pub_router.register(
     r"plot_search_type", PlotSearchTypeViewSet, basename="pub_plot_search_type"

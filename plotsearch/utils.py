@@ -1,9 +1,37 @@
 from forms.models import Choice, Field, Form, Section
+from plotsearch.enums import AreaSearchLessor
+
+
+def map_intended_use_to_lessor(intended_use):
+
+    if intended_use is None:
+        return None
+
+    akv_list = [
+        "myynti- ja mainontapaikat",
+        "taide- ja kulttuuripaikat",
+        "varasto- ja jakelualueet",
+        "työmaa tukikohdat ja alueet",
+    ]
+    make_list = ["muu alueen käyttö"]
+    kuva_list = ["veneily ja laiturialueet", "urheilu- ja liikuntapaikat"]
+
+    if intended_use.name.lower() in akv_list:
+        return AreaSearchLessor.AKV
+    elif intended_use.name.lower() in make_list:
+        return AreaSearchLessor.MAKE
+    elif intended_use.name.lower() in kuva_list:
+        return AreaSearchLessor.KUVA
+
+    return None
 
 
 def initialize_area_search_form():
     form = Form.objects.create(
-        name="Aluehaun perustietolomake", state="ready", title="Perustietolomake", is_area_form=True
+        name="Aluehaun perustietolomake",
+        state="ready",
+        title="Perustietolomake",
+        is_area_form=True,
     )
     main_section = Section.objects.create(
         form=form,

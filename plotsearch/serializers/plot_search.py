@@ -27,7 +27,6 @@ from plotsearch.models import (
     Favourite,
     FavouriteTarget,
     InformationCheck,
-    IntendedSubUse,
     IntendedUse,
     PlotSearch,
     PlotSearchStage,
@@ -38,7 +37,11 @@ from plotsearch.models import (
 from plotsearch.models.info_links import TargetInfoLink
 from plotsearch.models.plot_search import AreaSearchAttachment
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
-from plotsearch.utils import get_applicant, initialize_area_search_form
+from plotsearch.utils import (
+    get_applicant,
+    initialize_area_search_form,
+    map_intended_use_to_lessor,
+)
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -79,33 +82,12 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
         )
 
 
-class IntendedSubUseLinkedSerializer(NameModelSerializer):
-    class Meta:
-        model = IntendedSubUse
-        fields = (
-            "id",
-            "name",
-        )
-
-
 class IntendedUseLinkedSerializer(NameModelSerializer):
     class Meta:
         model = IntendedUse
         fields = (
             "id",
             "name",
-        )
-
-
-class IntendedSubUseSerializer(NameModelSerializer):
-    intended_use = IntendedUseLinkedSerializer()
-
-    class Meta:
-        model = IntendedSubUse
-        fields = (
-            "id",
-            "name",
-            "intended_use",
         )
 
 
@@ -338,12 +320,10 @@ class PlotSearchTypeSerializer(NameModelSerializer):
 
 
 class IntendedUseSerializer(NameModelSerializer):
-    subuses = IntendedSubUseLinkedSerializer(many=True, source="intendedsubuse_set")
-
     class Meta:
         ref_name = "plot_intended_use"
         model = IntendedUse
-        fields = ("id", "name", "subuses")
+        fields = ("id", "name")
 
 
 class PlotSearchSerializerBase(
@@ -688,16 +668,8 @@ class AreaSearchSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    applicants = serializers.SerializerMethodField()
     geometry = GeometryField()
-
-    area_search_attachments = InstanceDictPrimaryKeyRelatedField(
-        instance_class=AreaSearchAttachment,
-        queryset=AreaSearchAttachment.objects.all(),
-        related_serializer=AreaSearchAttachmentSerializer,
-        required=False,
-        allow_null=True,
-        many=True,
-    )
 
     area_search_attachments = InstanceDictPrimaryKeyRelatedField(
         instance_class=AreaSearchAttachment,
@@ -713,6 +685,7 @@ class AreaSearchSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "form",
+            "applicants",
             "start_date",
             "end_date",
             "geometry",
@@ -722,6 +695,8 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             "area_search_attachments",
             "address",
             "district",
+            "preparer",
+            "lessor",
             "identifier",
             "state",
             "received_date",
@@ -734,8 +709,6 @@ class AreaSearchSerializer(serializers.ModelSerializer):
         else:
             validated_data["form"] = initialize_area_search_form()
         attachments = validated_data.pop("area_search_attachments", [])
-
-        area_search = AreaSearch.objects.create(**validated_data)
 
         inproj = Proj(init="epsg:4326")
         outproj = Proj(init="epsg:3879")
@@ -780,10 +753,23 @@ class AreaSearchSerializer(serializers.ModelSerializer):
                 "nimi_fi", None
             )
 
+        area_search = AreaSearch.objects.create(**validated_data)
+        area_search.lessor = map_intended_use_to_lessor(
+            validated_data.pop("intended_use", None)
+        )
+        area_search.save()
         for attachment in attachments:
-            attachment.update(area_search=area_search)
+            attachment.area_search = area_search
+            attachment.save()
 
         return area_search
+
+    @staticmethod
+    def get_applicants(obj):
+        applicant_list = list()
+        if obj.answer is not None:
+            get_applicant(obj.answer, applicant_list)
+        return applicant_list
 
 
 class InformationCheckSerializer(
