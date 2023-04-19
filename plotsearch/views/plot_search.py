@@ -13,13 +13,14 @@ from django_xhtml2pdf.views import PdfMixin
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
+    PerMethodPermission,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.filter import (
@@ -39,6 +40,7 @@ from plotsearch.models import (
     TargetStatus,
 )
 from plotsearch.models.plot_search import AreaSearchAttachment
+from plotsearch.permissions import AreaSearchAttachmentPermissions
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
     AreaSearchSerializer,
@@ -59,7 +61,7 @@ class PlotSearchSubtypeViewSet(
 ):
     queryset = PlotSearchSubtype.objects.all()
     serializer_class = PlotSearchSubtypeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ["plot_search_type"]
 
@@ -69,7 +71,7 @@ class PlotSearchTypeViewSet(
 ):
     queryset = PlotSearchType.objects.all()
     serializer_class = PlotSearchTypeSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -81,7 +83,7 @@ class PlotSearchStageViewSet(
 ):
     queryset = PlotSearchStage.objects.all()
     serializer_class = PlotSearchStageSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
 
 class PlotSearchViewSet(
@@ -159,13 +161,20 @@ class IntendedUseViewSet(
 ):
     queryset = IntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
 
 class AreaSearchViewSet(viewsets.ModelViewSet):
     queryset = AreaSearch.objects.all()
     serializer_class = AreaSearchSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (PerMethodPermission,)
+    perms_map = {
+        "GET": ["plotsearch.view_areasearch"],
+        "HEAD": ["plotsearch.view_areasearch"],
+        "PUT": ["plotsearch.change_areasearch"],
+        "PATCH": ["plotsearch.change_areasearch"],
+        "DELETE": ["plotsearch.delete_areasearch"],
+    }
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     filterset_class = AreaSearchFilterSet
     bbox_filter_field = "geometry"
@@ -177,7 +186,14 @@ class AreaSearchAttachmentViewset(
 ):
     queryset = AreaSearchAttachment.objects.all()
     serializer_class = AreaSearchAttachmentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AreaSearchAttachmentPermissions,)
+    perms_map = {
+        "GET": ["plotsearch.view_areasearchattachment"],
+        "HEAD": ["plotsearch.view_areasearchattachment"],
+        "PUT": ["plotsearch.change_areasearchattachment"],
+        "PATCH": ["plotsearch.change_areasearchattachment"],
+        "DELETE": ["plotsearch.delete_areasearchattachment"],
+    }
 
     def get_queryset(self):
         qs = super().get_queryset()
