@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
@@ -248,11 +249,18 @@ def test_target_status_patch(
         "geometry": area_search_test_data.geometry.geojson,
     }
 
-    client.force_login(plot_search_target.plot_search.preparers.first())
+    target_status = TargetStatus.objects.all().first()
 
-    url = reverse(
-        "targetstatus-detail", kwargs={"pk": TargetStatus.objects.all().first().pk}
+    preparer = target_status.plot_search_target.plot_search.preparers.first()
+    preparer.user_permissions.add(
+        Permission.objects.get(
+            content_type__model="targetstatus", name__contains="change"
+        )
     )
+
+    client.force_login(target_status.plot_search_target.plot_search.preparers.first())
+
+    url = reverse("targetstatus-detail", kwargs={"pk": target_status.pk})
     response = client.patch(
         url, data=target_status_data, content_type="application/json"
     )

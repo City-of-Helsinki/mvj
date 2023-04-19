@@ -4,13 +4,16 @@ from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import Attachment
-from forms.permissions import TargetStatusPermissions
+from forms.permissions import (
+    AnswerPermissions,
+    AttachmentPermissions,
+    TargetStatusPermissions,
+)
 from forms.serializers.form import (
     AnswerListSerializer,
     AnswerSerializer,
@@ -68,7 +71,14 @@ class AnswerViewSet(viewsets.ModelViewSet):
         .select_related("form__plotsearch__subtype__plot_search_type",)
     )
     serializer_class = AnswerSerializer
-    permission_classes = (MvjDjangoModelPermissions,)
+    permission_classes = (AnswerPermissions,)
+    perms_map = {
+        "GET": ["forms.view_answer"],
+        "HEAD": ["forms.view_answer"],
+        "PUT": ["forms.change_answer"],
+        "PATCH": ["forms.change_answer"],
+        "DELETE": ["forms.delete_answer"],
+    }
     filter_backends = (DjangoFilterBackend, AnswerInBBoxFilter)
     filterset_class = AnswerFilterSet
     bbox_filter_field = "targets__plan_unit__geometry"
@@ -93,13 +103,6 @@ class AnswerViewSet(viewsets.ModelViewSet):
             return Answer.objects.all()
         return super().get_queryset()
 
-    def get_permissions(self):
-        if self.request.method == "POST":
-            return [
-                IsAuthenticated(),
-            ]
-        return super().get_permissions()
-
     def get_serializer_class(self):
         if self.action == "list":
             return AnswerListSerializer
@@ -109,7 +112,14 @@ class AnswerViewSet(viewsets.ModelViewSet):
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AttachmentPermissions,)
+    perms_map = {
+        "GET": ["forms.view_attachment"],
+        "HEAD": ["forms.view_attachment"],
+        "PUT": ["forms.change_attachment"],
+        "PATCH": ["forms.change_attachment"],
+        "DELETE": ["forms.delete_attachment"],
+    }
 
     def get_queryset(self):
         qs = super().get_queryset()
