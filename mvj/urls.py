@@ -1,6 +1,7 @@
 import rest_framework.urls
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -361,7 +362,9 @@ urlpatterns = [
     ),
 ]
 
-if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
-    import debug_toolbar
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
+    if "debug_toolbar" in settings.INSTALLED_APPS:
+        import debug_toolbar
 
-    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
