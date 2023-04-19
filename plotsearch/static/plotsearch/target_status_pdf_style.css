@@ -1,0 +1,33 @@
+@page {
+  size: letter portrait;
+  margin: 2cm;
+}
+
+body {
+  font-family: 'HelsinkiGrotesk';
+  font-size: small;
+}
+
+h1 {
+  font-size: xx-large;
+}
+
+hr {
+  border-top: 1px solid #cccccc;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th {
+  text-align: left;
+  width: 40%;
+  padding-right: 5%;
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}

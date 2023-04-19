@@ -1,14 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plotsearch/fonts/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'plotsearch/target_status_pdf_style.css' %}">
 </head>
+
 <body>
-<table>
-    {% for section in object.plot_search_target.plot_search.form.sections.all %}
+    <div class="content">
+        <div>
+            <h1>{{ object.application_identifier }}</h1>
+        </div>
+        <div class="divider">&nbsp;</div>
+        {% for section in object.plot_search_target.plot_search.form.sections.all %}
         {% include "mixins/section.html" with section=section %}
-    {% endfor %}
-</table>
+        {% endfor %}
+    </div>
 </body>
+
 </html>

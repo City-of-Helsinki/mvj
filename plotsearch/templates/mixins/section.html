@@ -1,15 +1,29 @@
-{% load checkapplications %}
-
 {% for subsection in section.subsections.all %}
     {% include "mixins/section.html" with section=subsection %}
 {% endfor %}
-<thead>{{ section.name }}</thead>
-{% for field in section.fields.all %}
-    <tr>
-        {% for entry in field.entry_set.all %}
-            {% entry_exists entry %}
-        {% endfor %}
-        <td></td>
-    </tr>
-{% endfor %}
 
+{% if section.fields.all %}
+<div>
+    <h2>{{ section }}</h2>
+    <table>
+        {% for field in section.fields.all %}
+        <tr>
+            <th>
+                {{field}}
+            </th>
+            <td>
+                {% for entry in field.entry_set.all %}
+                    {{ entry.value }}
+                    {% if not entry.value%}
+                        <span> - </span>
+                    {% endif %}
+                {% empty %}
+                    <span> - </span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="divider">&nbsp;</div>
+</div>
+{% endif %}

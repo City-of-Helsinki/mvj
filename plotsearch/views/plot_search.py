@@ -31,7 +31,8 @@ from plotsearch.models import (
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
-    PlotSearchType, TargetStatus,
+    PlotSearchType,
+    TargetStatus,
 )
 from plotsearch.serializers.plot_search import (
     AreaSearchSerializer,
@@ -121,17 +122,21 @@ class PlotSearchViewSet(
 
         for plot_search_target in plot_search_targets:
             for target_status in plot_search_target.statuses.all():
-                worksheet, row = target_status.target_status_get_xlsx_page(worksheet, row)
+                worksheet, row = target_status.target_status_get_xlsx_page(
+                    worksheet, row
+                )
 
         workbook.close()
 
         output.seek(0)
 
-        response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response = HttpResponse(
+            output,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
         response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
 
         return response
-
 
 
 class FavouriteViewSet(viewsets.ModelViewSet):
@@ -187,13 +192,15 @@ class InformationCheckViewSet(
 
 
 class GeneratePDF(PdfMixin, FilterView):
-    template_name = 'target_status/detail.html'
+    template_name = "target_status/detail.html"
     model = TargetStatus
     filterset_class = TargetStatusExportFilterSet
 
-    def render_to_response(self, context: Dict[str, Any], **response_kwargs: Any) -> http.HttpResponse:
-        response_kwargs.setdefault('content_type', self.content_type)
-        response = HttpResponse(content_type='application/zip')
+    def render_to_response(
+        self, context: Dict[str, Any], **response_kwargs: Any
+    ) -> http.HttpResponse:
+        response_kwargs.setdefault("content_type", self.content_type)
+        response = HttpResponse(content_type="application/zip")
         with zipfile.PyZipFile(response, mode="w") as zip_file:
             for object in self.object_list:
                 context.update(object=object)
@@ -202,12 +209,15 @@ class GeneratePDF(PdfMixin, FilterView):
                     template=self.get_template_names(),
                     context=context,
                     using=self.template_engine,
-                    **response_kwargs
+                    **response_kwargs,
                 )
-                zip_file.writestr(ZipInfo("{}.pdf".format(object.application_identifier)), pdf_response.render().content)
+                zip_file.writestr(
+                    ZipInfo("{}.pdf".format(object.application_identifier)),
+                    pdf_response.render().content,
+                )
 
-        response['Content-Disposition'] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
+        response[
+            "Content-Disposition"
+        ] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
 
         return response
-
-
