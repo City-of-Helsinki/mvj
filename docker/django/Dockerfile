@@ -12,6 +12,9 @@ RUN SODIUM_INSTALL=system pip3 install pynacl==1.3.0
 
 RUN apt-get install --no-install-recommends -y gdal-bin python3-gdal \
     && apt-get install --no-install-recommends -y gettext postgresql-client
+# RUN apt-get update \
+# && apt-get install --no-install-recommends -y gdal-bin python3-gdal \
+# && apt-get install --no-install-recommends -y gettext postgresql-client
 
 RUN mkdir /code
 
