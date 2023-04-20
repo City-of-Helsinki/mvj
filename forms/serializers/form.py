@@ -64,6 +64,7 @@ class FieldSerializer(serializers.ModelSerializer):
             "sort_order",
             "choices",
             "section_id",
+            "default_value",
         )
 
     def create(self, validated_data):
