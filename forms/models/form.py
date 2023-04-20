@@ -97,13 +97,14 @@ class FieldType(models.Model):
 
 class Field(models.Model):
     label = models.CharField(max_length=255)
-    hint_text = models.CharField(max_length=255, null=True, blank=True)
+    hint_text = models.CharField(max_length=1024, null=True, blank=True)
     identifier = models.SlugField()
     enabled = models.BooleanField(default=True)
     required = models.BooleanField(default=False)
     validation = models.CharField(max_length=255, null=True, blank=True)
     action = models.CharField(max_length=255, null=True, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
+    default_value = models.CharField(max_length=512, null=True, blank=True)
 
     type = models.ForeignKey(FieldType, on_delete=models.PROTECT)
     section = models.ForeignKey(

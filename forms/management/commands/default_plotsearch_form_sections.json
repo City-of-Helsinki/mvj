@@ -1,0 +1,1211 @@
+{
+  "sections": [
+    {
+      "identifier": "hakijan-tiedot",
+      "title": "Hakijan tiedot",
+      "visible": true,
+      "sort_order": 0,
+      "add_new_allowed": true,
+      "show_duplication_check": true,
+      "add_new_text": "Lisää hakija",
+      "subsections": [
+        {
+          "identifier": "yrityksen-tiedot",
+          "title": "Yrityksen tiedot",
+          "visible": true,
+          "sort_order": 0,
+          "add_new_allowed": false,
+          "show_duplication_check": true,
+          "add_new_text": null,
+          "subsections": [
+            {
+              "identifier": "yhteyshenkilo",
+              "title": "Yhteyshenkilö",
+              "visible": true,
+              "sort_order": 0,
+              "add_new_allowed": false,
+              "show_duplication_check": true,
+              "add_new_text": null,
+              "subsections": [],
+              "fields": [
+                {
+                  "identifier": "etunimi",
+                  "type": "textbox",
+                  "label": "Etunimi",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 0,
+                  "choices": []
+                },
+                {
+                  "identifier": "sukunimi",
+                  "type": "textbox",
+                  "label": "Sukunimi",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 1,
+                  "choices": []
+                },
+                {
+                  "identifier": "kieli",
+                  "type": "textbox",
+                  "label": "Kieli",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 2,
+                  "choices": []
+                },
+                {
+                  "identifier": "puhelinnumero",
+                  "type": "textbox",
+                  "label": "Puhelinnumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 3,
+                  "choices": []
+                },
+                {
+                  "identifier": "sahkoposti",
+                  "type": "textbox",
+                  "label": "Sähköposti",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 4,
+                  "choices": []
+                },
+                {
+                  "identifier": "katuosoite",
+                  "type": "textbox",
+                  "label": "Katuosoite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 5,
+                  "choices": []
+                },
+                {
+                  "identifier": "postinumero",
+                  "type": "textbox",
+                  "label": "Postinumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 6,
+                  "choices": []
+                },
+                {
+                  "identifier": "postitoimipaikka",
+                  "type": "textbox",
+                  "label": "Postitoimipaikka",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 7,
+                  "choices": []
+                },
+                {
+                  "identifier": "maa",
+                  "type": "textbox",
+                  "label": "Maa",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 8,
+                  "choices": []
+                }
+              ],
+              "applicant_type": "Company",
+              "type": "Show always"
+            },
+            {
+              "identifier": "laskutustiedot",
+              "title": "Laskutustiedot",
+              "visible": true,
+              "sort_order": 2,
+              "add_new_allowed": false,
+              "show_duplication_check": true,
+              "add_new_text": null,
+              "subsections": [],
+              "fields": [
+                {
+                  "identifier": "c-0",
+                  "type": "textbox",
+                  "label": "c/o",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 0,
+                  "choices": []
+                },
+                {
+                  "identifier": "kieli",
+                  "type": "textbox",
+                  "label": "Kieli",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 1,
+                  "choices": []
+                },
+                {
+                  "identifier": "puhelinnumero",
+                  "type": "textbox",
+                  "label": "Puhelinnumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 2,
+                  "choices": []
+                },
+                {
+                  "identifier": "sahkoposti",
+                  "type": "textbox",
+                  "label": "Sähköposti",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 3,
+                  "choices": []
+                },
+                {
+                  "identifier": "katuosoite",
+                  "type": "textbox",
+                  "label": "Katuosoite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 4,
+                  "choices": []
+                },
+                {
+                  "identifier": "postinumero",
+                  "type": "textbox",
+                  "label": "Postinumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 5,
+                  "choices": []
+                },
+                {
+                  "identifier": "postitoimipaikka",
+                  "type": "textbox",
+                  "label": "Postitoimipaikka",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 6,
+                  "choices": []
+                },
+                {
+                  "identifier": "maa",
+                  "type": "textbox",
+                  "label": "Maa",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 7,
+                  "choices": []
+                },
+                {
+                  "identifier": "verkkolaskutusosoite",
+                  "type": "textbox",
+                  "label": "Verkkolaskutusosoite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 8,
+                  "choices": []
+                },
+                {
+                  "identifier": "valittajatunnus",
+                  "type": "textbox",
+                  "label": "Välittäjätunnus",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 9,
+                  "choices": []
+                },
+                {
+                  "identifier": "hakijan-laskutusviite",
+                  "type": "textbox",
+                  "label": "Hakijan laskutusviite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 10,
+                  "choices": []
+                }
+              ],
+              "applicant_type": "Company",
+              "type": "Show always"
+            }
+          ],
+          "fields": [
+            {
+              "identifier": "yrityksen-nimi",
+              "type": "textbox",
+              "label": "Yrityksen nimi",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 0,
+              "choices": []
+            },
+            {
+              "identifier": "y-tunnus",
+              "type": "textbox",
+              "label": "Y-tunnus",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 1,
+              "choices": []
+            },
+            {
+              "identifier": "kieli",
+              "type": "textbox",
+              "label": "Kieli",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 2,
+              "choices": []
+            },
+            {
+              "identifier": "puhelinnumero",
+              "type": "textbox",
+              "label": "Puhelinnumero",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 3,
+              "choices": []
+            },
+            {
+              "identifier": "sahkoposti",
+              "type": "textbox",
+              "label": "Sähköposti",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 4,
+              "choices": []
+            },
+            {
+              "identifier": "katuosoite",
+              "type": "textbox",
+              "label": "Katuosoite",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 5,
+              "choices": []
+            },
+            {
+              "identifier": "postinumero",
+              "type": "textbox",
+              "label": "Postinumero",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 6,
+              "choices": []
+            },
+            {
+              "identifier": "postitoimipaikka",
+              "type": "textbox",
+              "label": "Postitoimipaikka",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 7,
+              "choices": []
+            },
+            {
+              "identifier": "maa",
+              "type": "textbox",
+              "label": "Maa",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 8,
+              "choices": []
+            },
+            {
+              "identifier": "hallintaosuus",
+              "type": "fractional",
+              "label": "Hallintaosuus",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 9,
+              "choices": []
+            },
+            {
+              "identifier": "liikevaihto-edellinen-tilikausi",
+              "type": "textbox",
+              "label": "Liikevaihto (edellinen tilikausi)",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 10,
+              "choices": []
+            },
+            {
+              "identifier": "hakijayrityksen-perustamisvuosi",
+              "type": "textbox",
+              "label": "Hakijayrityksen perustamisvuosi",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 11,
+              "choices": []
+            },
+            {
+              "identifier": "hakijayrityksen-kotipaikka",
+              "type": "textbox",
+              "label": "Hakijayrityksen kotipaikka",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 12,
+              "choices": []
+            },
+            {
+              "identifier": "kuvaus-hakijan-harjoittamasta-toiminnasta",
+              "type": "textarea",
+              "label": "Kuvaus hakijan harjoittamasta toiminnasta",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 13,
+              "choices": []
+            },
+            {
+              "identifier": "hakijayrityksen-hlomäärä-helsingissä",
+              "type": "textbox",
+              "label": "Hakijayrityksen työntekijöiden määrä Helsingissä",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 14,
+              "choices": []
+            },
+            {
+              "identifier": "hakijayrityksen-hlomäärä-muualla",
+              "type": "textbox",
+              "label": "Hakijayrityksen työntekijöiden määrä muualla",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 15,
+              "choices": []
+            }
+          ],
+          "applicant_type": "Company",
+          "type": "Show always"
+        },
+        {
+          "identifier": "henkilon-tiedot",
+          "title": "Henkilön tiedot",
+          "visible": true,
+          "sort_order": 1,
+          "add_new_allowed": false,
+          "show_duplication_check": true,
+          "add_new_text": null,
+          "subsections": [
+            {
+              "identifier": "laskunsaaja",
+              "title": "Laskutustiedot",
+              "visible": true,
+              "sort_order": 1,
+              "add_new_allowed": false,
+              "show_duplication_check": true,
+              "add_new_text": null,
+              "subsections": [],
+              "fields": [
+                {
+                  "identifier": "c-o",
+                  "type": "textbox",
+                  "label": "c/o",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 0,
+                  "choices": []
+                },
+                {
+                  "identifier": "kieli",
+                  "type": "textbox",
+                  "label": "Kieli",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 1,
+                  "choices": []
+                },
+                {
+                  "identifier": "puhelinnumero",
+                  "type": "textbox",
+                  "label": "Puhelinnumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 2,
+                  "choices": []
+                },
+                {
+                  "identifier": "sahkoposti",
+                  "type": "textbox",
+                  "label": "Sähköposti",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 3,
+                  "choices": []
+                },
+                {
+                  "identifier": "katuosoite",
+                  "type": "textbox",
+                  "label": "Katuosoite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 4,
+                  "choices": []
+                },
+                {
+                  "identifier": "postinumero",
+                  "type": "textbox",
+                  "label": "Postinumero",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 5,
+                  "choices": []
+                },
+                {
+                  "identifier": "postitoimipaikka",
+                  "type": "textbox",
+                  "label": "Postitoimipaikka",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 6,
+                  "choices": []
+                },
+                {
+                  "identifier": "maa",
+                  "type": "textbox",
+                  "label": "Maa",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 7,
+                  "choices": []
+                },
+                {
+                  "identifier": "hakijan-laskutusviite",
+                  "type": "textbox",
+                  "label": "Hakijan laskutusviite",
+                  "hint_text": null,
+                  "enabled": true,
+                  "required": false,
+                  "validation": null,
+                  "action": null,
+                  "sort_order": 8,
+                  "choices": []
+                }
+              ],
+              "applicant_type": "Person",
+              "type": "Show always"
+            }
+          ],
+          "fields": [
+            {
+              "identifier": "etunimi",
+              "type": "textbox",
+              "label": "Etunimi",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 0,
+              "choices": []
+            },
+            {
+              "identifier": "Sukunimi",
+              "type": "textbox",
+              "label": "Sukunimi",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 1,
+              "choices": []
+            },
+            {
+              "identifier": "henkilotunnus",
+              "type": "textbox",
+              "label": "Henkilötunnus",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 2,
+              "choices": []
+            },
+            {
+              "identifier": "kieli",
+              "type": "textbox",
+              "label": "Kieli",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 3,
+              "choices": []
+            },
+            {
+              "identifier": "puhelinnumero",
+              "type": "textbox",
+              "label": "Puhelinnumero",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 4,
+              "choices": []
+            },
+            {
+              "identifier": "sahkoposti",
+              "type": "textbox",
+              "label": "Sähköposti",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 5,
+              "choices": []
+            },
+            {
+              "identifier": "katuosoite",
+              "type": "textbox",
+              "label": "Katuosoite",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 6,
+              "choices": []
+            },
+            {
+              "identifier": "postinumero",
+              "type": "textbox",
+              "label": "Postinumero",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 7,
+              "choices": []
+            },
+            {
+              "identifier": "postitoimipaikka",
+              "type": "textbox",
+              "label": "Postitoimipaikka",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 8,
+              "choices": []
+            },
+            {
+              "identifier": "maa",
+              "type": "textbox",
+              "label": "Maa",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 9,
+              "choices": []
+            },
+            {
+              "identifier": "hallintaosuus",
+              "type": "fractional",
+              "label": "Hallintaosuus",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 10,
+              "choices": []
+            },
+            {
+              "identifier": "turvakielto",
+              "type": "textbox",
+              "label": "Turvakielto",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 11,
+              "choices": []
+            }
+          ],
+          "applicant_type": "Person",
+          "type": "Show always"
+        },
+        {
+          "identifier": "lisatiedot",
+          "title": "Lisätiedot",
+          "visible": true,
+          "sort_order": 2,
+          "add_new_allowed": false,
+          "show_duplication_check": true,
+          "add_new_text": null,
+          "subsections": [],
+          "fields": [
+            {
+              "identifier": "lisatietoa",
+              "type": "textarea",
+              "label": "Lisätietoa",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 0,
+              "choices": []
+            }
+          ],
+          "applicant_type": "Both",
+          "type": "Show always"
+        }
+      ],
+      "fields": [
+        {
+          "identifier": "hakija",
+          "type": "radiobuttoninline",
+          "label": "Hakija",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 0,
+          "choices": [
+            {
+              "text": "Yritys",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Henkilö",
+              "value": "2",
+              "action": null,
+              "has_text_input": false
+            }
+          ]
+        }
+      ],
+      "applicant_type": "Both",
+      "type": "Show always"
+    },
+    {
+      "identifier": "haettava-kohde",
+      "title": "Haettava kohde",
+      "visible": true,
+      "sort_order": 1,
+      "add_new_allowed": false,
+      "show_duplication_check": true,
+      "add_new_text": null,
+      "subsections": [
+        {
+          "identifier": "hakijan-referenssit-kolme-parasta",
+          "title": "Hakijan referenssit (kolme parasta)",
+          "visible": true,
+          "sort_order": 1,
+          "add_new_allowed": false,
+          "show_duplication_check": true,
+          "add_new_text": null,
+          "subsections": [],
+          "fields": [
+            {
+              "identifier": "lyhyt-kuvaus-referensseista",
+              "type": "textarea",
+              "label": "Lyhyt kuvaus referensseistä",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 0,
+              "choices": []
+            },
+            {
+              "identifier": "referenssiliitteet",
+              "type": "uploadfiles",
+              "label": "Referenssiliitteet",
+              "hint_text": null,
+              "enabled": true,
+              "required": false,
+              "validation": null,
+              "action": null,
+              "sort_order": 1,
+              "choices": []
+            }
+          ],
+          "applicant_type": "Both",
+          "type": "Show always"
+        }
+      ],
+      "fields": [
+        {
+          "identifier": "onko-aiemmin-saanut-tonttia",
+          "type": "checkbox",
+          "label": "Onko aiemmin saanut tonttia kaupungin haussa?",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 0,
+          "choices": []
+        },
+        {
+          "identifier": "tontti-jota-hakemus-koskee",
+          "type": "dropdown",
+          "label": "Tontti, jota hakemus koskee",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 1,
+          "choices": []
+        },
+        {
+          "identifier": "hinta",
+          "type": "textbox",
+          "label": "Hinta",
+          "hint_text": "€/k-m²",
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 2,
+          "choices": []
+        },
+        {
+          "identifier": "hankkeen-paasuunnittelija",
+          "type": "textbox",
+          "label": "Hankkeen pääsuunnittelija",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 3,
+          "choices": []
+        },
+        {
+          "identifier": "hankkeen-arvioitu-aikataulu",
+          "type": "textbox",
+          "label": "Hankkeen arvioitu aikataulu",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 4,
+          "choices": []
+        },
+        {
+          "identifier": "hankkeen-toivottu-laajuus",
+          "type": "textarea",
+          "label": "Hankkeen toivottu laajuus",
+          "hint_text": "Esimerkiksi rakennusoikeuden määrä k-m², käyttötarkoitus (k-m²-jakauma, jos useita käyttötarkoituksia), asuntohankkeissa lisäksi asuntojen lukumäärä (kpl) ja keskipinta-ala (m²).",
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 5,
+          "choices": []
+        },
+        {
+          "identifier": "rahoitus-ja-hallintamuoto",
+          "type": "checkbox",
+          "label": "Rahoitus- ja hallintamuoto",
+          "hint_text": null,
+          "enabled": false,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 6,
+          "choices": [
+            {
+              "text": "Sääntelemätön omistus",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Hitas omistus",
+              "value": "2",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Hintakontrolloitu omistus",
+              "value": "3",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Asumisoikeus",
+              "value": "4",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Sääntelemätön vuokra",
+              "value": "5",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Valtion tukema vuokra 10v",
+              "value": "6",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Valtion tukema vuokra pitkä",
+              "value": "7",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Valtion tukema takauslaina",
+              "value": "8",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Muu",
+              "value": "9",
+              "action": null,
+              "has_text_input": false
+            }
+          ]
+        },
+        {
+          "identifier": "erityisryhmat",
+          "type": "checkbox",
+          "label": "Erityisryhmät",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 7,
+          "choices": [
+            {
+              "text": "Opiskelijat",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Nuoret/nuoret aikuiset",
+              "value": "2",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Seniorit",
+              "value": "3",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Muut erityisryhmät, mitä:",
+              "value": "4",
+              "action": null,
+              "has_text_input": true
+            }
+          ]
+        },
+        {
+          "identifier": "muut-hankkeen-mahdolliset-kehitysteemat",
+          "type": "checkbox",
+          "label": "Muut hankkeen mahdolliset kehitysteemat",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 8,
+          "choices": [
+            {
+              "text": "Kohtuuhintaisuus",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Asumisen ratkaisut",
+              "value": "2",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Elinkaariratkaisut",
+              "value": "3",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Tekniset ratkaisut",
+              "value": "4",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Hiilineutraali Helsinki",
+              "value": "5",
+              "action": null,
+              "has_text_input": false
+            },
+            {
+              "text": "Muu:",
+              "value": "6",
+              "action": null,
+              "has_text_input": true
+            }
+          ]
+        },
+        {
+          "identifier": "hankkeen-yleiskuvaus",
+          "type": "textarea",
+          "label": "Hankkeen yleiskuvaus",
+          "hint_text": "Asuntohankkeet: Kuvaus hankkeen suunnittelusta, toteutustavasta ja organisaatiosta sekä hakijan käytettävissä olevista taloudellisista ja muista resursseista. \nMuut hankkeet: Taloudellinen liiketoimintasuunnitelma, kuvaus suunniteltavasta toiminnasta ja konseptista sekä hankeorganisaatiosta (hankkeen toteuttaja, operaattori, sijoittajataho jne.)",
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 9,
+          "choices": []
+        },
+        {
+          "identifier": "hankkeen-mahdolliset-erityispiirteet",
+          "type": "textarea",
+          "label": "Hankkeen mahdolliset erityispiirteet",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 10,
+          "choices": []
+        },
+        {
+          "identifier": "lyhyt-kuvaus-hankkeen-suunnittelusta",
+          "type": "textarea",
+          "label": "Lyhyt kuvaus hankkeen suunnittelusta ja toteutustavasta ja -organisaatiosta sekä hakijan käytössä olevista taloudellisista ja muista resursseista",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 11,
+          "choices": []
+        }
+      ],
+      "applicant_type": "Both",
+      "type": "Show always"
+    },
+    {
+      "identifier": "vahvistukset",
+      "title": "Vahvistukset",
+      "visible": true,
+      "sort_order": 2,
+      "add_new_allowed": false,
+      "show_duplication_check": true,
+      "add_new_text": null,
+      "subsections": [],
+      "fields": [
+        {
+          "identifier": "lahettamalla-hakemuksen-vakuutan",
+          "type": "checkbox",
+          "label": "Lähettämällä hakemuksen vakuutan antamani tiedot oikeiksi ja ilmoitan tutustuneeni yleisen asuntotonttien varauskierroksen verkkosivustolla asiaa koskevaan materiaaliin.",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 0,
+          "choices": [
+            {
+              "text": "Kyllä",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            }
+          ]
+        },
+        {
+          "identifier": "suostun-siihen-etta-helsingin-kaupunki",
+          "type": "checkbox",
+          "label": "Suostun, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.",
+          "hint_text": null,
+          "enabled": true,
+          "required": false,
+          "validation": null,
+          "action": null,
+          "sort_order": 1,
+          "choices": [
+            {
+              "text": "Kyllä",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            }
+          ]
+        },
+        {
+          "identifier": "hyvaksyn-tietojeni-tallentamisen",
+          "type": "checkbox",
+          "label": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+          "hint_text": null,
+          "enabled": true,
+          "required": true,
+          "validation": null,
+          "action": null,
+          "sort_order": 3,
+          "choices": [
+            {
+              "text": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+              "value": "1",
+              "action": null,
+              "has_text_input": false
+            }
+          ]
+        }
+      ],
+      "applicant_type": "Both",
+      "type": "Show always"
+    }
+  ]
+}
