@@ -1,7 +1,7 @@
 beautifulsoup4
 dataclasses
 deepmerge
-Django~=3.2.13
+Django~=3.2.18
 django-anymail
 django-auditlog~=1.0a1
 django-admin-rangefilter

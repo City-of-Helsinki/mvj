@@ -22,9 +22,7 @@ backcall==0.1.0
 black==19.10b0
     # via -r requirements-dev.in
 click==8.0.1
-    # via
-    #   -c requirements.txt
-    #   black
+    # via black
 coverage==5.0.4
     # via pytest-cov
 debugpy==1.1.0
@@ -33,7 +31,7 @@ decorator==4.4.2
     # via
     #   ipython
     #   traitlets
-django==3.2.13
+django==3.2.18
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
