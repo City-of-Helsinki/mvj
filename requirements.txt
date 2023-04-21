@@ -175,7 +175,7 @@ packaging==21.3
     #   drf-yasg
 paramiko==2.10.1
     # via pysftp
-pillow==8.4.0
+pillow==9.3.0
     # via
     #   reportlab
     #   xhtml2pdf
