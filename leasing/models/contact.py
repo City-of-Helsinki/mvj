@@ -128,7 +128,13 @@ class Contact(TimeStampedSafeDeleteModel):
     # In Finnish: Kommentti
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
-    recursive_get_related_skip_relations = ["tenants", "tenantcontact"]
+    recursive_get_related_skip_relations = [
+        "tenants",
+        "tenantcontact",
+        "litigants",
+        "landuseagreementlitigantcontact",
+        "credit_decisions",
+    ]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contact")

@@ -330,7 +330,11 @@ class Invoice(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
-    recursive_get_related_skip_relations = ["lease"]
+    recursive_get_related_skip_relations = [
+        "lease",
+        "laskeexportlog",
+        "laskeexportloginvoiceitem",
+    ]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice")
@@ -782,7 +786,7 @@ class InvoicePayment(TimeStampedSafeDeleteModel):
         verbose_name=_("Name"), null=True, blank=True, max_length=35
     )
 
-    recursive_get_related_skip_relations = ["invoice"]
+    recursive_get_related_skip_relations = ["invoice", "laskepaymentslog"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice payment")
