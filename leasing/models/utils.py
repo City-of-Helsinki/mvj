@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Manager, Model
+from django.db.models import Manager, Model, OneToOneRel
 
 from leasing.enums import PeriodType
 
@@ -479,8 +479,10 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
         if relation.related_model in (po.__class__ for po in parent_objs):
             continue
 
-        if relation.concrete:
-            # Get value as-is if relation is a foreign key
+        if relation.concrete or isinstance(relation, OneToOneRel):
+            # Get value as-is if relation is a foreign key or a one-to-one relation
+            if not hasattr(obj, accessor_name):
+                continue
             concrete_item = getattr(obj, accessor_name)
             if not concrete_item:
                 continue
@@ -499,12 +501,10 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
                 all_items = related_manager.all()
 
         # Model permission check
-        has_permission = False
         permission_name = "{}.view_{}".format(
             relation.model._meta.app_label, relation.model._meta.model_name
         )
-        if user.has_perm(permission_name):
-            has_permission = True
+        has_permission = user.has_perm(permission_name)
 
         for item in all_items:
             # Include item only if user has permission, but recurse into sub items regardless
