@@ -215,7 +215,13 @@ router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetVie
 pub_router = routers.DefaultRouter()
 
 pub_router.register(r"answer", AnswerViewSet, basename="pub_answer")
+pub_router.register(r"attachment", AttachmentViewSet, basename="pub_attachment")
 pub_router.register(r"area_search", AreaSearchViewSet, basename="pub_area_search")
+pub_router.register(
+    r"area_search_attachment",
+    AreaSearchAttachmentViewset,
+    basename="pub_area_search_attachment",
+)
 pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
 pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(r"intended_use", IntendedUsePSViewSet, basename="pub_intended_use")
