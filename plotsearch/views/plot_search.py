@@ -44,6 +44,7 @@ from plotsearch.models.plot_search import AreaSearchAttachment
 from plotsearch.permissions import AreaSearchAttachmentPermissions
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
+    AreaSearchDetailSerializer,
     AreaSearchSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
@@ -173,7 +174,7 @@ class IntendedUseViewSet(
 
 
 class AreaSearchViewSet(viewsets.ModelViewSet):
-    queryset = AreaSearch.objects.all()
+    queryset = AreaSearch.objects.filter(answer__isnull=False)
     serializer_class = AreaSearchSerializer
     permission_classes = (PerMethodPermission,)
     perms_map = {
@@ -187,6 +188,11 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     filterset_class = AreaSearchFilterSet
     bbox_filter_field = "geometry"
     bbox_filter_include_overlapping = True
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return AreaSearchDetailSerializer
+        return super().get_serializer_class()
 
 
 class AreaSearchAttachmentViewset(
