@@ -70,8 +70,16 @@ def plot_search_test_data(
 
 
 @pytest.fixture
-def area_search_test_data(area_search_factory, intended_use_factory, user_factory):
+def area_search_test_data(
+    area_search_factory,
+    intended_use_factory,
+    answer_factory,
+    form_factory,
+    user_factory,
+):
     intended_use = intended_use_factory()
+    form = form_factory(title=fake.name())
+    user = user_factory(username=fake.name())
     area_search = area_search_factory(
         description_area=fake.name(),
         description_intended_use=fake.name(),
@@ -79,6 +87,7 @@ def area_search_test_data(area_search_factory, intended_use_factory, user_factor
         geometry=GEOSGeometry(
             "MULTIPOLYGON (((24.967535 60.174334, 24.966888 60.173293, 24.970275 60.172791, 24.970922 60.17412, 24.967535 60.174334)))"  # noqa: E501
         ),
+        answer=answer_factory(form=form, user=user),
     )
 
     return area_search

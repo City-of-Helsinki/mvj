@@ -8,7 +8,7 @@ from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
-from forms.serializers.form import FormSerializer
+from forms.serializers.form import AnswerSerializer, FormSerializer
 from leasing.models import Decision, PlanUnit
 from leasing.models.land_area import CustomDetailedPlan
 from leasing.serializers.decision import DecisionSerializer
@@ -773,6 +773,7 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             "identifier",
             "state",
             "received_date",
+            "answer",
         )
 
     def create(self, validated_data):
@@ -843,6 +844,10 @@ class AreaSearchSerializer(serializers.ModelSerializer):
         if obj.answer is not None:
             get_applicant(obj.answer, applicant_list)
         return applicant_list
+
+
+class AreaSearchDetailSerializer(AreaSearchSerializer):
+    answer = AnswerSerializer(read_only=True, required=False)
 
 
 class InformationCheckSerializer(
