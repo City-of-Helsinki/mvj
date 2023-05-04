@@ -827,7 +827,7 @@
       "title": "Haettava kohde",
       "visible": true,
       "sort_order": 1,
-      "add_new_allowed": false,
+      "add_new_allowed": true,
       "show_duplication_check": true,
       "add_new_text": null,
       "subsections": [
