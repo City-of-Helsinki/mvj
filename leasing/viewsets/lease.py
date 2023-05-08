@@ -182,14 +182,14 @@ class LeaseViewSet(
 
         if identifier is not None or search is not None:
             if search is None:
-                search_string = identifier
+                search_string = identifier.strip()
                 search_by_other = False
             else:
-                search_string = search
+                search_string = search.strip()
                 search_by_other = True
 
             looks_like_identifier = bool(
-                re.match(r"[A-Z]\d{4}-\d+$", search_string.strip(), re.IGNORECASE)
+                re.match(r"[A-Z]+\d{3,4}-\d+$", search_string, re.IGNORECASE)
             )
 
             # Search by identifier or parts of it
