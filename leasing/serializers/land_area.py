@@ -63,6 +63,7 @@ class UsageDistributionSerializer(serializers.ModelSerializer):
 class PublicPlanUnitSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer,
 ):
+    usage_distributions = UsageDistributionSerializer(many=True, read_only=True)
     id = serializers.IntegerField(required=False)
     plan_unit_status = serializers.CharField(read_only=True)
     decisions = DecisionSerializer(
@@ -91,6 +92,7 @@ class PublicPlanUnitSerializer(
             "plan_unit_status",
             "plan_unit_intended_use",
             "geometry",
+            "usage_distributions",
         )
 
 
@@ -126,6 +128,7 @@ class PlanUnitSerializer(
             "plan_unit_status",
             "plan_unit_intended_use",
             "geometry",
+            "usage_distributions",
         )
 
 
