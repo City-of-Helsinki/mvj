@@ -138,7 +138,10 @@ def get_billing_periods_for_year(year, periods_per_year):
 
 
 def combine_ranges(ranges):
-    sorted_ranges = sorted(ranges)
+    try:
+        sorted_ranges = sorted(ranges)
+    except TypeError:
+        return []
 
     result = []
 
@@ -156,7 +159,8 @@ def combine_ranges(ranges):
             new_range_start = range_start
             new_range_end = range_end
 
-    result.append((new_range_start, new_range_end))
+    if new_range_start or new_range_end:
+        result.append((new_range_start, new_range_end))
 
     return result
 
