@@ -71,6 +71,8 @@ class UsageDistributionImporter(BaseImporter):
             plan_unit_qs = PlanUnit.objects.filter(identifier=plan_unit_id)
             if pivot_plan_unit is None:
                 pivot_plan_unit = plan_unit_qs.first()
+                if pivot_plan_unit is None:
+                    continue
                 pivot_plan_unit.usage_distributions.all().delete()
 
             for plan_unit in plan_unit_qs:
