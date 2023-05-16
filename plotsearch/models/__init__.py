@@ -1,10 +1,10 @@
 from .info_links import TargetInfoLink
 from .plot_search import (
     AreaSearch,
+    AreaSearchIntendedUse,
     Favourite,
     FavouriteTarget,
     InformationCheck,
-    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -19,7 +19,7 @@ __all__ = [
     "Favourite",
     "FavouriteTarget",
     "InformationCheck",
-    "IntendedUse",
+    "AreaSearchIntendedUse",
     "PlotSearch",
     "PlotSearchStage",
     "PlotSearchTarget",

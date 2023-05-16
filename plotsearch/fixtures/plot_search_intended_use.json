@@ -1,6 +1,6 @@
 [
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 1,
     "fields": {
       "name": "Myynti- ja mainontapaikat",
@@ -10,7 +10,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 2,
     "fields": {
       "name": "Urheilu- ja liikuntapaikat",
@@ -20,7 +20,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 3,
     "fields": {
       "name": "Taide- ja Kulttuuripaikat",
@@ -30,7 +30,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 4,
     "fields": {
       "name": "Veneily ja laiturialueet",
@@ -40,7 +40,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 5,
     "fields": {
       "name": "Varasto- ja jakelualueet",
@@ -50,7 +50,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 6,
     "fields": {
       "name": "Työmaa tukikohdat ja alueet",
@@ -60,7 +60,7 @@
     }
   },
   {
-    "model": "plotsearch.intendeduse",
+    "model": "plotsearch.areasearchintendeduse",
     "pk": 7,
     "fields": {
       "name": "Muu alueen käyttö",

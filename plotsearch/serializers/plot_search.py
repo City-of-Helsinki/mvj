@@ -25,10 +25,10 @@ from leasing.serializers.utils import (
 )
 from plotsearch.models import (
     AreaSearch,
+    AreaSearchIntendedUse,
     Favourite,
     FavouriteTarget,
     InformationCheck,
-    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -85,7 +85,7 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
 
 class IntendedUseLinkedSerializer(NameModelSerializer):
     class Meta:
-        model = IntendedUse
+        model = AreaSearchIntendedUse
         fields = (
             "id",
             "name",
@@ -395,7 +395,7 @@ class PlotSearchTypeSerializer(NameModelSerializer):
 class IntendedUseSerializer(NameModelSerializer):
     class Meta:
         ref_name = "plot_intended_use"
-        model = IntendedUse
+        model = AreaSearchIntendedUse
         fields = ("id", "name")
 
 
