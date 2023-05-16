@@ -28,7 +28,7 @@ from leasing.models import (
 from leasing.models.land_area import LeaseAreaAddress
 from plotsearch.models import (
     AreaSearch,
-    IntendedUse,
+    AreaSearchIntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -93,7 +93,7 @@ class AreaSearchFactory(factory.DjangoModelFactory):
 @register
 class IntendedUseFactory(factory.DjangoModelFactory):
     class Meta:
-        model = IntendedUse
+        model = AreaSearchIntendedUse
 
 
 @register

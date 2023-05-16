@@ -362,7 +362,7 @@ class FavouriteTarget(models.Model):
     plot_search_target = models.ForeignKey(PlotSearchTarget, on_delete=models.CASCADE)
 
 
-class IntendedUse(NameModel):
+class AreaSearchIntendedUse(NameModel):
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Area search intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
@@ -402,7 +402,7 @@ class AreaSearch(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     district = models.CharField(max_length=255, null=True, blank=True)
 
-    intended_use = models.ForeignKey(IntendedUse, on_delete=models.CASCADE)
+    intended_use = models.ForeignKey(AreaSearchIntendedUse, on_delete=models.CASCADE)
     description_intended_use = models.TextField()
 
     start_date = models.DateTimeField(verbose_name=_("Begin at"), null=True, blank=True)

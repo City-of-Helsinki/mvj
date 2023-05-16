@@ -30,9 +30,9 @@ from plotsearch.filter import (
 )
 from plotsearch.models import (
     AreaSearch,
+    AreaSearchIntendedUse,
     Favourite,
     InformationCheck,
-    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -167,7 +167,7 @@ class FavouriteViewSet(viewsets.ModelViewSet):
 class IntendedUseViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    queryset = IntendedUse.objects.all()
+    queryset = AreaSearchIntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 

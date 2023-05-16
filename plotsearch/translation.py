@@ -1,6 +1,6 @@
 from modeltranslation.translator import TranslationOptions, register
 
-from plotsearch.models import IntendedUse, PlotSearchSubtype, PlotSearchType
+from plotsearch.models import AreaSearchIntendedUse, PlotSearchSubtype, PlotSearchType
 
 
 @register(PlotSearchType)
@@ -13,6 +13,6 @@ class PlotSearchSubtypeTranslationOptions(TranslationOptions):
     fields = ("name",)
 
 
-@register(IntendedUse)
+@register(AreaSearchIntendedUse)
 class IntendedUseTranslationOptions(TranslationOptions):
     fields = ("name",)

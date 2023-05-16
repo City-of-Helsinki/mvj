@@ -1181,10 +1181,6 @@ class Command(BaseCommand):
             ):
                 model_name = model._meta.model_name
 
-                # TODO: Can be removed if the IntendedUse model is renamed in plotsearch
-                if app_name == "plotsearch" and model_name == "intendeduse":
-                    continue
-
                 if model_name not in DEFAULT_MODEL_PERMS:
                     self.stdout.write(
                         'Model "{}" not in DEFAULT_MODEL_PERMS. Skipping.'.format(

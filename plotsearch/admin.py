@@ -4,9 +4,9 @@ from django.contrib.gis import admin
 from field_permissions.admin import FieldPermissionsAdminMixin
 from leasing.admin import NameAdmin
 from plotsearch.models import (
+    AreaSearchIntendedUse,
     Favourite,
     FavouriteTarget,
-    IntendedUse,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -36,5 +36,5 @@ admin.site.register(PlotSearch, PlotSearchAdmin)
 admin.site.register(PlotSearchStage, NameAdmin)
 admin.site.register(Favourite, FavouriteAdmin)
 admin.site.register(PlotSearchType, NameAdmin)
-admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(AreaSearchIntendedUse, NameAdmin)
 admin.site.register(PlotSearchSubtype, NameAdmin)
