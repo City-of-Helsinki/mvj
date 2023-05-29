@@ -48,9 +48,10 @@ env = environ.Env(
     CONSTANCE_DATABASE_CACHE_BACKEND=(str, ""),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
-    EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
+    EMAIL_BACKEND=(str, "anymail.backends.mailgun.EmailBackend"),
     DEFAULT_FROM_EMAIL=(str, "mvj@example.com"),
-    SENDGRID_API_KEY=(str, ""),
+    MAILGUN_API_KEY=(str, ""),
+    MAILGUN_API_URL=(str, ""),
     KTJ_PRINT_ROOT_URL=(str, "https://ktjws.nls.fi"),
     KTJ_PRINT_USERNAME=(str, ""),
     KTJ_PRINT_PASSWORD=(str, ""),
@@ -249,7 +250,10 @@ DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 MVJ_EMAIL_FROM = DEFAULT_FROM_EMAIL
 
-ANYMAIL = {"SENDGRID_API_KEY": env.str("SENDGRID_API_KEY")}
+ANYMAIL = {
+    "MAILGUN_API_KEY": env.str("MAILGUN_API_KEY"),
+    "MAILGUN_API_URL": env.str("MAILGUN_API_URL"),
+}
 
 EMAIL_BACKEND = env.str("EMAIL_BACKEND")
 
