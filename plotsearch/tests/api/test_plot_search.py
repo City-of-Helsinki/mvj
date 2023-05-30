@@ -623,13 +623,47 @@ def test_getting_and_editing_and_deleting_existing_info_link(
 
 
 @pytest.mark.django_db
-def test_area_search_detail(
+def test_get_area_search_detail(
     django_db_setup, admin_client, area_search_test_data,
 ):
     url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+
+def test_post_area_search_detail(
+    django_db_setup, admin_client, area_search_test_data,
+):
+    data = {
+        "area_search_status": {"status_notes": [{"note": "Aluetta ei saa vuokrata"}]}
+    }
+    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+
+    response = admin_client.patch(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+
+def test_post_area_search_detail_empty_payload(
+    django_db_setup, admin_client, area_search_test_data,
+):
+    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+    data = {"area_search_status": {}}
+
+    response = admin_client.patch(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    data = {"area_search_status": {"status_notes": []}}
+    response = admin_client.patch(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    data = {"area_search_status": {"status_notes": [{}]}}
+    response = admin_client.patch(url, data=data, content_type="application/json")
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+
+    data = {"area_search_status": {"status_notes": [{"note": ""}]}}
+    response = admin_client.patch(url, data=data, content_type="application/json")
+    assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
 
 
 @pytest.mark.django_db

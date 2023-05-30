@@ -1,5 +1,6 @@
 import requests
 from django.core.exceptions import BadRequest
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from pyproj import Proj, transform
@@ -9,7 +10,7 @@ from rest_framework_gis.fields import GeometryField
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from forms.models import Form
 from forms.serializers.form import AnswerSerializer, FormSerializer
-from leasing.models import Decision, PlanUnit
+from leasing.models import Decision, PlanUnit, Plot
 from leasing.models.land_area import CustomDetailedPlan
 from leasing.serializers.decision import DecisionSerializer
 from leasing.serializers.land_area import (
@@ -36,7 +37,12 @@ from plotsearch.models import (
     PlotSearchType,
 )
 from plotsearch.models.info_links import TargetInfoLink
-from plotsearch.models.plot_search import AreaSearchAttachment, DirectReservationLink
+from plotsearch.models.plot_search import (
+    AreaSearchAttachment,
+    AreaSearchStatus,
+    AreaSearchStatusNote,
+    DirectReservationLink,
+)
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from plotsearch.utils import (
     get_applicant,
@@ -726,7 +732,57 @@ class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
         return attachment
 
 
-class AreaSearchSerializer(serializers.ModelSerializer):
+class AreaSearchStatusNoteSerializer(serializers.ModelSerializer):
+    preparer = UserSerializer(read_only=True)
+    time_stamp = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = AreaSearchStatusNote
+        fields = (
+            "preparer",
+            "note",
+            "time_stamp",
+        )
+
+
+class AreaSearchStatusSerializer(
+    EnumSupportSerializerMixin, serializers.ModelSerializer
+):
+    status_notes = AreaSearchStatusNoteSerializer(required=False, many=True)
+
+    class Meta:
+        model = AreaSearchStatus
+        fields = (
+            "decline_reason",
+            "status_notes",
+            "preparer_note",
+        )
+
+    def create_area_status_note(self, instance, status_note):
+        if isinstance(status_note, list) and len(status_note) != 0:
+            note = status_note[0].get("note", None)
+            if note is not None:
+                AreaSearchStatusNote.objects.create(
+                    preparer=self.context["request"].user,
+                    note=note,
+                    time_stamp=timezone.now(),
+                    area_search_status=instance,
+                )
+
+    def create(self, validated_data):
+        status_note = validated_data.pop("status_notes", None)
+        instance = super().create(validated_data)
+        self.create_area_status_note(instance, status_note)
+        return instance
+
+    def update(self, instance, validated_data):
+        status_note = validated_data.pop("status_notes", None)
+        instance = super().update(instance, validated_data)
+        self.create_area_status_note(instance, status_note)
+        return instance
+
+
+class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     form = InstanceDictPrimaryKeyRelatedField(
         instance_class=Form,
@@ -752,6 +808,14 @@ class AreaSearchSerializer(serializers.ModelSerializer):
         many=True,
     )
 
+    preparer = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+    )
+    area_search_status = AreaSearchStatusSerializer(required=False, allow_null=True)
+
     class Meta:
         model = AreaSearch
         fields = (
@@ -772,11 +836,12 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             "identifier",
             "state",
             "received_date",
-            "answer",
+            "area_search_status",
         )
 
     def create(self, validated_data):
         area_form_qs = Form.objects.filter(is_area_form=True)
+        area_search_status = validated_data.pop("area_search_status", None)
         if area_form_qs.exists():
             validated_data["form"] = area_form_qs.last()
         else:
@@ -835,6 +900,12 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             attachment.area_search = area_search
             attachment.save()
 
+        as_serializer = AreaSearchStatusSerializer(
+            data=area_search_status, context=self.context
+        )
+        if as_serializer.is_valid():
+            as_serializer.save()
+
         return area_search
 
     @staticmethod
@@ -844,9 +915,69 @@ class AreaSearchSerializer(serializers.ModelSerializer):
             get_applicant(obj.answer, applicant_list)
         return applicant_list
 
+    def update(self, instance, validated_data):
+        area_search_status = validated_data.pop("area_search_status", None)
+        instance = super().update(instance, validated_data)
+        area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
+        as_serializer = AreaSearchStatusSerializer(context=self.context)
+
+        if area_search_status_qs.exists():
+            area_search_status = as_serializer.update(
+                area_search_status_qs.get(), area_search_status
+            )
+        else:
+            area_search_status = as_serializer.create(area_search_status)
+
+        instance.area_search_status = area_search_status
+        instance.save()
+
+        return instance
+
 
 class AreaSearchDetailSerializer(AreaSearchSerializer):
     answer = AnswerSerializer(read_only=True, required=False)
+    plot = serializers.ListField(child=serializers.CharField(), read_only=True)
+
+    class Meta:
+        model = AreaSearch
+        fields = (
+            "id",
+            "form",
+            "applicants",
+            "start_date",
+            "end_date",
+            "geometry",
+            "description_area",
+            "description_intended_use",
+            "intended_use",
+            "area_search_attachments",
+            "address",
+            "district",
+            "preparer",
+            "lessor",
+            "identifier",
+            "state",
+            "received_date",
+            "area_search_status",
+            "answer",
+            "plot",
+        )
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        plot_identifiers = (
+            Plot.objects.filter(geometry__intersects=instance.geometry)
+            .values("identifier")
+            .distinct("identifier")
+        )
+        identifiers = list()
+        if plot_identifiers.exists():
+            for plot_identifier in plot_identifiers:
+                identifiers.append(plot_identifier["identifier"])
+            ret.update({"plot": identifiers})
+        else:
+            ret.update({"plot": None})
+        return ret
 
 
 class InformationCheckSerializer(

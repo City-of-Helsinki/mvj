@@ -389,6 +389,11 @@ def areasearch_id_generator():
     return "{}-{:05d}".format(beginning_str, identifier)
 
 
+class AreaSearchStatus(models.Model):
+    decline_reason = EnumField(DeclineReason, max_length=30, null=True, blank=True)
+    preparer_note = models.TextField(blank=True, null=True)
+
+
 class AreaSearch(models.Model):
     # In Finnish: aluehaku
 
@@ -444,6 +449,13 @@ class AreaSearch(models.Model):
         on_delete=models.PROTECT,
     )
 
+    area_search_status = models.OneToOneField(
+        AreaSearchStatus,
+        on_delete=models.CASCADE,
+        related_name="area_search",
+        null=True,
+    )
+
 
 def get_area_search_attachment_upload_to(instance, filename):
     return "/".join(
@@ -470,6 +482,15 @@ class AreaSearchAttachment(NameModel):
         related_name="area_search_attachments",
         null=True,
         blank=True,
+    )
+
+
+class AreaSearchStatusNote(models.Model):
+    note = models.TextField()
+    preparer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    time_stamp = models.DateTimeField(auto_created=True)
+    area_search_status = models.ForeignKey(
+        AreaSearchStatus, on_delete=models.CASCADE, related_name="status_notes"
     )
 
 
