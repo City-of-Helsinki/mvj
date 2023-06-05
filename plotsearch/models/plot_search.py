@@ -1,4 +1,7 @@
+import uuid
+
 from auditlog.registry import auditlog
+from django.conf import settings
 from django.contrib.gis.db import models as gmodels
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -468,6 +471,14 @@ class AreaSearchAttachment(NameModel):
         null=True,
         blank=True,
     )
+
+
+class DirectReservationLink(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
+
+    def get_external_url(self):
+        return "{}/direct-reservation/{}".format(settings.PUBLIC_UI_URL, self.uuid)
 
 
 auditlog.register(PlotSearch)

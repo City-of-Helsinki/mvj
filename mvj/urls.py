@@ -110,6 +110,8 @@ from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentViewset,
     AreaSearchViewSet,
+    DirectReservationLinkViewSet,
+    DirectReservationToFavourite,
     FavouriteViewSet,
     GeneratePDF,
     InformationCheckViewSet,
@@ -140,6 +142,7 @@ router.register(r"comment_topic", CommentTopicViewSet)
 router.register(r"contact", ContactViewSet)
 router.register(r"custom_detailed_plan", CustomDetailedPlanViewSet)
 router.register(r"decision", DecisionViewSet)
+router.register(r"direct_reservation_link", DirectReservationLinkViewSet)
 router.register(r"district", DistrictViewSet)
 router.register(r"favourite", FavouriteViewSet)
 router.register(r"financing", FinancingViewSet)
@@ -236,6 +239,11 @@ pub_router.register(
     PlotSearchSubtypeViewSet,
     basename="pub_plot_search_subtype",
 )
+# pub_router.register(
+#    r"direct_reservation_to_favourite/{uuid: str}",
+#    DirectReservationToFavourite.as_view(),
+#    basename="pub_direct_reservation_to_favourite",
+# )
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
@@ -327,6 +335,14 @@ additional_api_paths = [
     ),
 ]
 
+additional_pub_api_paths = [
+    path(
+        "direct_reservation_to_favourite/<str:uuid>/",
+        DirectReservationToFavourite.as_view(),
+        name="pub_direct_reservation_to_favourite",
+    ),
+]
+
 schema_view = get_schema_view(
     openapi.Info(
         title="MVJ API",
@@ -342,7 +358,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
-    path("v1/pub/", include(pub_router.urls)),
+    path("v1/pub/", include(pub_router.urls + additional_pub_api_paths)),
     path(
         "v1/", include((credit_integration_urls, "credit_integration"), namespace="v1"),
     ),

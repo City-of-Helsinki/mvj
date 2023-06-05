@@ -36,7 +36,7 @@ from plotsearch.models import (
     PlotSearchType,
 )
 from plotsearch.models.info_links import TargetInfoLink
-from plotsearch.models.plot_search import AreaSearchAttachment
+from plotsearch.models.plot_search import AreaSearchAttachment, DirectReservationLink
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from plotsearch.utils import (
     get_applicant,
@@ -875,3 +875,21 @@ class InformationCheckSerializer(
             "modified_at",
             "mark_all",
         )
+
+
+class DirectReservationLinkSerializer(serializers.ModelSerializer):
+
+    uuid = serializers.ReadOnlyField()
+    url = serializers.SerializerMethodField()
+    plot_search = serializers.PrimaryKeyRelatedField(queryset=PlotSearch.objects.all())
+
+    class Meta:
+        model = DirectReservationLink
+        fields = (
+            "uuid",
+            "plot_search",
+            "url",
+        )
+
+    def get_url(self, obj):
+        return obj.get_external_url()

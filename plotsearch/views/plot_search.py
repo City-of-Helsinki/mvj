@@ -14,6 +14,8 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
@@ -32,6 +34,7 @@ from plotsearch.models import (
     AreaSearch,
     AreaSearchIntendedUse,
     Favourite,
+    FavouriteTarget,
     InformationCheck,
     PlotSearch,
     PlotSearchStage,
@@ -40,12 +43,13 @@ from plotsearch.models import (
     PlotSearchType,
     TargetStatus,
 )
-from plotsearch.models.plot_search import AreaSearchAttachment
+from plotsearch.models.plot_search import AreaSearchAttachment, DirectReservationLink
 from plotsearch.permissions import AreaSearchAttachmentPermissions
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
     AreaSearchSerializer,
+    DirectReservationLinkSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
     IntendedUseSerializer,
@@ -244,6 +248,12 @@ class InformationCheckViewSet(
     filterset_class = InformationCheckListFilterSet
 
 
+class DirectReservationLinkViewSet(viewsets.ModelViewSet):
+    queryset = DirectReservationLink.objects.all()
+    serializer_class = DirectReservationLinkSerializer
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+
 class GeneratePDF(PdfMixin, FilterView):
     template_name = "target_status/detail.html"
     model = TargetStatus
@@ -274,3 +284,21 @@ class GeneratePDF(PdfMixin, FilterView):
         ] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
 
         return response
+
+
+class DirectReservationToFavourite(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        Favourite.objects.filter(user=request.user).delete()
+        direct_reservation_link = DirectReservationLink.objects.get(uuid=kwargs["uuid"])
+        favourite = Favourite.objects.create(user=request.user)
+        for (
+            plot_search_target
+        ) in direct_reservation_link.plot_search.plot_search_targets.all():
+            FavouriteTarget.objects.create(
+                favourite=favourite, plot_search_target=plot_search_target
+            )
+
+        return Response(status=200)
