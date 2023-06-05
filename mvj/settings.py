@@ -83,6 +83,7 @@ env = environ.Env(
     FACTA_DATABASE_USERNAME=(str, ""),
     FACTA_DATABASE_PASSWORD=(str, ""),
     FACTA_DATABASE_DSN=(str, ""),
+    PUBLIC_UI_URL=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -345,6 +346,8 @@ ASIAKASTIETO_PASSWORD = env.str("ASIAKASTIETO_PASSWORD")
 ASIAKASTIETO_KEY = env.str("ASIAKASTIETO_KEY")
 ASIAKASTIETO_CONSUMER_TARGET_KEY = env.str("ASIAKASTIETO_CONSUMER_TARGET_KEY")
 ASIAKASTIETO_COMPANY_TARGET_KEY = env.str("ASIAKASTIETO_COMPANY_TARGET_KEY")
+
+PUBLIC_UI_URL = env.str("PUBLIC_UI_URL")
 
 local_settings = project_root("local_settings.py")
 if os.path.exists(local_settings):
