@@ -656,6 +656,7 @@ def test_area_search_create_simple(
     }
 
     field_type_factory(id=1, name=fake.name(), identifier=slugify(fake.name()))
+    field_type_factory(id=3, name=fake.name(), identifier=slugify(fake.name()))
     field_type_factory(id=4, name=fake.name(), identifier=slugify(fake.name()))
     field_type_factory(id=6, name=fake.name(), identifier=slugify(fake.name()))
     field_type_factory(id=8, name=fake.name(), identifier=slugify(fake.name()))
