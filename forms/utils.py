@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext as _
 from django_q.tasks import Conf, Task, async_task
 from django_xhtml2pdf.utils import generate_pdf
 from rest_framework.response import Response
@@ -159,6 +159,24 @@ def _get_plot_search_target_attributes(plot_search_target):
         ]
 
 
+def _write_entry_value(col, entry, field, row, worksheet):
+    if field.type.identifier == "checkbox":
+        choices = entry.value.strip("][").split(", ")
+        try:
+            choices = [int(choice) for choice in choices]
+            from forms.models import Choice
+
+            worksheet.write(
+                row + 1,
+                col,
+                str([choice.value for choice in Choice.objects.filter(id__in=choices)]),
+            )
+        except ValueError:
+            worksheet.write(row + 1, col, "")
+    else:
+        worksheet.write(row + 1, col, entry.value)
+
+
 def _get_subsection_field_entries(  # noqa: C901
     worksheet,
     section,
@@ -177,26 +195,7 @@ def _get_subsection_field_entries(  # noqa: C901
         for entry in field.entry_set.filter(
             entry_section__answer__statuses__in=[target_status,],  # noqa: E231
         ):
-            if field.type.identifier == "checkbox":
-                choices = entry.value.strip("][").split(", ")
-                try:
-                    choices = [int(choice) for choice in choices]
-                    from forms.models import Choice
-
-                    worksheet.write(
-                        row + 1,
-                        col,
-                        str(
-                            [
-                                choice.value
-                                for choice in Choice.objects.filter(id__in=choices)
-                            ]
-                        ),
-                    )
-                except ValueError:
-                    worksheet.write(row + 1, col, "")
-            else:
-                worksheet.write(row + 1, col, entry.value)
+            _write_entry_value(col, entry, field, row, worksheet)
 
             row += 1
         entry_rows = row if entry_rows < row else entry_rows
@@ -225,6 +224,53 @@ def _get_subsection_field_entries(  # noqa: C901
             col,
             target_status,
             last_applicant_section,
+        )
+
+    return worksheet, col, entry_rows - master_row
+
+
+def _get_area_subsection_field_entries(  # noqa: C901
+    worksheet,
+    section,
+    master_row,
+    col,
+    area_search,
+    last_applicant_section,
+    entry_rows=0,
+):
+    for field in section.fields.all():
+        row = master_row
+        if master_row == 0:
+            worksheet.write(
+                master_row, col, "{} - {}".format(field.section.title, field.label)
+            )
+        for entry in field.entry_set.filter(
+            entry_section__answer__area_search=area_search,  # noqa: E231
+        ):
+            _write_entry_value(col, entry, field, row, worksheet)
+
+            row += 1
+        entry_rows = row if entry_rows < row else entry_rows
+        col += 1
+
+    if section == last_applicant_section:
+        for row in range(master_row, entry_rows):
+            from plotsearch.models import InformationCheck
+
+            for information_check in InformationCheck.objects.filter(
+                entry_section__identifier="hakijan-tiiedot[{}]".format(
+                    row - master_row
+                ),
+                entry_section__answer=area_search.answer,
+            ):
+                if master_row == 0:
+                    worksheet.write(master_row, col, information_check.name)
+                worksheet.write(master_row + 1, col, information_check.state)
+                col += 1
+
+    for subsection in section.subsections.all():
+        worksheet, col, entry_rows = _get_area_subsection_field_entries(
+            worksheet, subsection, master_row, col, area_search, last_applicant_section,
         )
 
     return worksheet, col, entry_rows - master_row
@@ -326,6 +372,116 @@ def get_answer_worksheet(
         worksheet.write(master_row + 1, col + 7, target_status.arguments)
 
     master_row += entry_rows
+
+    return worksheet, master_row
+
+
+def _get_answer_search_subsection_field_entries(  # noqa: C901
+    worksheet,
+    section,
+    master_row,
+    col,
+    area_search,
+    last_applicant_section,
+    entry_rows=0,
+):
+    for field in section.fields.all():
+        row = master_row
+        if master_row == 0:
+            worksheet.write(
+                master_row, col, "{} - {}".format(field.section.title, field.label)
+            )
+        for entry in field.entry_set.filter(
+            entry_section__answer__area_search=area_search,  # noqa: E231
+        ):
+            _write_entry_value(col, entry, field, row, worksheet)
+
+            row += 1
+        entry_rows = row if entry_rows < row else entry_rows
+        col += 1
+
+    if section == last_applicant_section:
+        for row in range(master_row, entry_rows):
+            from plotsearch.models import InformationCheck
+
+            for information_check in InformationCheck.objects.filter(
+                entry_section__identifier="hakijan-tiedot[{}]".format(row - master_row),
+                entry_section__answer=area_search.answer,
+            ):
+                if master_row == 0:
+                    worksheet.write(master_row, col, information_check.name)
+                worksheet.write(master_row + 1, col, information_check.state)
+                col += 1
+
+    for subsection in section.subsections.all():
+        worksheet, col, entry_rows = _get_answer_search_subsection_field_entries(
+            worksheet, subsection, master_row, col, area_search, last_applicant_section,
+        )
+
+    return worksheet, col, entry_rows - master_row
+
+
+def get_area_search_answer_worksheet(area_search, worksheet, master_row):
+    col = 0
+
+    form = area_search.answer.form
+
+    preparer = "-"
+    if area_search.preparer is not None:
+        preparer = "{} {}".format(
+            area_search.preparer.first_name, area_search.preparer.last_name
+        )
+
+    area_search_status = area_search.area_search_status
+
+    excel_fields = [
+        (_("Lessor"), area_search.lessor.value),
+        (_("Description area"), area_search.description_area),
+        (_("Address"), area_search.address),
+        (_("District"), area_search.district),
+        (_("Intended use"), area_search.intended_use.name),
+        (_("Description intended use"), area_search.description_intended_use),
+        (_("Start date"), area_search.start_date.isoformat("T")),
+        (_("End date"), area_search.end_date.isoformat("T")),
+        (_("Received date"), area_search.received_date.isoformat("T")),
+        (_("Identifier"), area_search.identifier),
+        (_("State"), area_search.state.value),
+        (_("Preparer"), preparer),
+    ]
+
+    if area_search_status is not None:
+        excel_fields.append((_("Decline reason"), area_search_status.decline_reason)),
+        excel_fields.append((_("Preparer note"), area_search_status.preparer_note)),
+        excel_fields.append(
+            (
+                _("Status notes"),
+                ",".join(
+                    [
+                        status_note.note
+                        for status_note in area_search.area_search_status.status_notes.all()
+                    ]
+                ),
+            )
+        )
+
+    for excel_field in excel_fields:
+        if master_row == 0:
+            worksheet.write(master_row, col, excel_field[0])
+        worksheet.write(master_row + 1, col, excel_field[1])
+        col += 1
+
+    from forms.models import Section
+
+    last_applicant_section = Section.objects.filter(
+        form=form, parent__identifier="hakijan-tiedot"
+    ).last()
+
+    for section in form.sections.all():
+        worksheet, col, entry_rows = _get_answer_search_subsection_field_entries(
+            worksheet, section, master_row, col, area_search, last_applicant_section
+        )
+
+    master_row += 1
 
     return worksheet, master_row
 
