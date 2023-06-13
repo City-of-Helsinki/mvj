@@ -198,6 +198,34 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
             return AreaSearchDetailSerializer
         return super().get_serializer_class()
 
+    @action(methods=["get"], detail=False)
+    def get_answers_xlsx(self, *args, **kwargs):
+        area_search_qs = self.get_queryset()
+
+        output = io.BytesIO()
+
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+
+        row = 0
+
+        for area_search in area_search_qs:
+            worksheet, row = area_search.get_xlsx_page(
+                worksheet, row
+            )
+
+        workbook.close()
+
+        output.seek(0)
+
+        response = HttpResponse(
+            output,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
+
+        return response
+
 
 class AreaSearchAttachmentViewset(
     mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet

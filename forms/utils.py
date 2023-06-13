@@ -140,6 +140,29 @@ def _get_plot_search_target_attributes(plot_search_target):
         ]
 
 
+def _write_entry_value(col, entry, field, row, worksheet):
+    if field.type.identifier == "checkbox":
+        choices = entry.value.strip("][").split(", ")
+        try:
+            choices = [int(choice) for choice in choices]
+            from forms.models import Choice
+
+            worksheet.write(
+                row + 1,
+                col,
+                str(
+                    [
+                        choice.value
+                        for choice in Choice.objects.filter(id__in=choices)
+                    ]
+                ),
+            )
+        except ValueError:
+            worksheet.write(row + 1, col, "")
+    else:
+        worksheet.write(row + 1, col, entry.value)
+
+
 def _get_subsection_field_entries(  # noqa: C901
     worksheet,
     section,
@@ -158,26 +181,7 @@ def _get_subsection_field_entries(  # noqa: C901
         for entry in field.entry_set.filter(
             entry_section__answer__statuses__in=[target_status,],  # noqa: E231
         ):
-            if field.type.identifier == "checkbox":
-                choices = entry.value.strip("][").split(", ")
-                try:
-                    choices = [int(choice) for choice in choices]
-                    from forms.models import Choice
-
-                    worksheet.write(
-                        row + 1,
-                        col,
-                        str(
-                            [
-                                choice.value
-                                for choice in Choice.objects.filter(id__in=choices)
-                            ]
-                        ),
-                    )
-                except ValueError:
-                    worksheet.write(row + 1, col, "")
-            else:
-                worksheet.write(row + 1, col, entry.value)
+            _write_entry_value(col, entry, field, row, worksheet)
 
             row += 1
         entry_rows = row if entry_rows < row else entry_rows
@@ -307,6 +311,103 @@ def get_answer_worksheet(
         worksheet.write(master_row + 1, col + 7, target_status.arguments)
 
     master_row += entry_rows
+
+    return worksheet, master_row
+
+
+def _get_answer_search_subsection_field_entries(  # noqa: C901
+    worksheet,
+    section,
+    master_row,
+    col,
+    area_search,
+    last_applicant_section,
+    entry_rows=0,
+):
+    for field in section.fields.all():
+        row = master_row
+        if master_row == 0:
+            worksheet.write(
+                master_row, col, "{} - {}".format(field.section.title, field.label)
+            )
+        for entry in field.entry_set.filter(
+            entry_section__answer__area_search=area_search,  # noqa: E231
+        ):
+            _write_entry_value(col, entry, field, row, worksheet)
+
+            row += 1
+        entry_rows = row if entry_rows < row else entry_rows
+        col += 1
+
+    if section == last_applicant_section:
+        for row in range(master_row, entry_rows):
+            from plotsearch.models import InformationCheck
+
+            for information_check in InformationCheck.objects.filter(
+                entry_section__identifier="hakijan-tiiedot[{}]".format(
+                    row - master_row
+                ),
+                entry_section__answer=area_search.answer,
+            ):
+                if master_row == 0:
+                    worksheet.write(master_row, col, information_check.name)
+                worksheet.write(master_row + 1, col, information_check.state)
+                col += 1
+
+    for subsection in section.subsections.all():
+        worksheet, col, entry_rows = _get_subsection_field_entries(
+            worksheet,
+            subsection,
+            master_row,
+            col,
+            area_search,
+            last_applicant_section,
+        )
+
+    return worksheet, col, entry_rows - master_row
+
+
+def get_area_search_answer_worksheet(
+    area_search, worksheet, master_row
+):
+    col = 0
+
+    form = area_search.answer.form
+
+    excel_fields = [
+        # TODO Area search fields
+        ("Lessor", area_search.lessor.value),
+        ("Description area", area_search.description_area),
+        ("Address", area_search.address),
+        ("District", area_search.district),
+        ("Intended use", area_search.intended_use.name),
+        ("Description intended use", area_search.description_intended_use),
+        ("Start date", area_search.start_date.isoformat("T")),
+        ("End date", area_search.end_date.isoformat("T")),
+        ("Received date", area_search.received_date.isoformat("T")),
+        ("Identifier", area_search.identifier),
+        ("State", area_search.state.value),
+        ("Preparer", "{} {}".format(area_search.preparer.first_name, area_search.preparer.last_name)),
+    ]
+
+    for excel_field in excel_fields:
+        if master_row == 0:
+            worksheet.write(master_row, col, excel_field[0])
+        worksheet.write(master_row + 1, col, excel_field[1])
+        col += 1
+
+    from forms.models import Section
+
+    last_applicant_section = Section.objects.filter(
+        form=form, parent__identifier="hakijan-tiedot"
+    ).last()
+
+    for section in form.sections.all():
+        worksheet, col, entry_rows = _get_answer_search_subsection_field_entries(
+            worksheet, section, master_row, col, area_search, last_applicant_section
+        )
+
+    master_row += 1
 
     return worksheet, master_row
 

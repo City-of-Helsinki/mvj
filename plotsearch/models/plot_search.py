@@ -13,7 +13,7 @@ from rest_framework.serializers import ValidationError
 
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
-from forms.utils import get_answer_worksheet
+from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Financing, Hitas, Management
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
@@ -455,6 +455,9 @@ class AreaSearch(models.Model):
         related_name="area_search",
         null=True,
     )
+
+    def get_xlsx_page(self, worksheet, row):
+        return get_area_search_answer_worksheet(self, worksheet, row)
 
 
 def get_area_search_attachment_upload_to(instance, filename):
