@@ -8,6 +8,7 @@ import xlsxwriter
 from django import http
 from django.core.files import File
 from django.http import HttpResponse, QueryDict
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
 from django_xhtml2pdf.views import PdfMixin
@@ -267,6 +268,36 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return AreaSearchDetailSerializer
         return super().get_serializer_class()
+
+    @action(methods=["get"], detail=False)
+    def get_answers_xlsx(self, *args, **kwargs):
+        area_search_qs = self.filter_queryset(self.get_queryset())
+
+        output = io.BytesIO()
+
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+
+        row = 0
+
+        for area_search in area_search_qs:
+            worksheet, row = area_search.get_xlsx_page(worksheet, row)
+
+        workbook.close()
+
+        output.seek(0)
+
+        response = HttpResponse(
+            output,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response[
+            "Content-Disposition"
+        ] = 'attachment; filename="Applications-{}.xlsx"'.format(
+            timezone.now().isoformat("T")
+        )
+
+        return response
 
 
 class AreaSearchAttachmentViewset(
