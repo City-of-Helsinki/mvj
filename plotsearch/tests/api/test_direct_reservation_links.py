@@ -22,14 +22,14 @@ def test_direct_reservation_link_create(
         is_master=True,
     )
 
-    PlotSearchTarget.objects.create(
+    target = PlotSearchTarget.objects.create(
         plot_search=plot_search_test_data,
         plan_unit=plan_unit,
         target_type=PlotSearchTargetType.DIRECT_RESERVATION,
     )
 
     data = {
-        "plot_search": plot_search_test_data.id,
+        "targets": [target.id],
     }
 
     url = reverse("directreservationlink-list")
@@ -56,15 +56,15 @@ def test_direct_reservation_link_delete(
         is_master=True,
     )
 
-    PlotSearchTarget.objects.create(
+    target = PlotSearchTarget.objects.create(
         plot_search=plot_search_test_data,
         plan_unit=plan_unit,
         target_type=PlotSearchTargetType.DIRECT_RESERVATION,
     )
 
-    direct_reservation_link = DirectReservationLink.objects.create(
-        plot_search=plot_search_test_data
-    )
+    direct_reservation_link = DirectReservationLink.objects.create()
+    direct_reservation_link.targets.add(target)
+
     url = reverse(
         "directreservationlink-detail", kwargs={"pk": direct_reservation_link.uuid}
     )
@@ -82,23 +82,22 @@ def test_create_favourites_with_link(
     plot_search_test_data,
     plan_unit_factory,
 ):
-    # Attach plan unit for plot search
-    plan_unit = plan_unit_factory(
-        identifier="PU1",
-        area=1000,
-        lease_area=lease_test_data["lease_area"],
-        is_master=True,
-    )
+    # Attach plan units for plot search
+    direct_reservation_link = DirectReservationLink.objects.create()
 
-    PlotSearchTarget.objects.create(
-        plot_search=plot_search_test_data,
-        plan_unit=plan_unit,
-        target_type=PlotSearchTargetType.DIRECT_RESERVATION,
-    )
-
-    direct_reservation_link = DirectReservationLink.objects.create(
-        plot_search=plot_search_test_data
-    )
+    for i in range(3):
+        direct_reservation_link.targets.add(
+            PlotSearchTarget.objects.create(
+                plot_search=plot_search_test_data,
+                plan_unit=plan_unit_factory(
+                    identifier="PU{}".format(i),
+                    area=1000,
+                    lease_area=lease_test_data["lease_area"],
+                    is_master=True,
+                ),
+                target_type=PlotSearchTargetType.DIRECT_RESERVATION,
+            )
+        )
 
     url = reverse(
         "pub_direct_reservation_to_favourite",
@@ -109,4 +108,8 @@ def test_create_favourites_with_link(
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
     favourite = Favourite.objects.get(user=response.wsgi_request.user)
-    assert favourite.targets.all()[0].plot_search_target.id == plot_search_test_data.id
+    assert (
+        favourite.targets.all()[0].plot_search_target.id
+        == plot_search_test_data.plot_search_targets.all()[0].id
+    )
+    assert len(favourite.targets.all()) == 3

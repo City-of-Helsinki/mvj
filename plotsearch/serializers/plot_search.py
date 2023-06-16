@@ -548,7 +548,6 @@ class PlotSearchUpdateSerializer(
         ).delete()
 
     def update(self, instance, validated_data):
-
         targets = validated_data.pop("plot_search_targets", None)
         subtype = validated_data.pop("subtype", None)
         stage = validated_data.pop("stage", None)
@@ -878,17 +877,18 @@ class InformationCheckSerializer(
 
 
 class DirectReservationLinkSerializer(serializers.ModelSerializer):
-
     uuid = serializers.ReadOnlyField()
     url = serializers.SerializerMethodField()
-    plot_search = serializers.PrimaryKeyRelatedField(queryset=PlotSearch.objects.all())
+    targets = InstanceDictPrimaryKeyRelatedField(
+        queryset=PlotSearchTarget.objects.all(), many=True
+    )
 
     class Meta:
         model = DirectReservationLink
         fields = (
             "uuid",
-            "plot_search",
             "url",
+            "targets",
         )
 
     def get_url(self, obj):

@@ -239,11 +239,6 @@ pub_router.register(
     PlotSearchSubtypeViewSet,
     basename="pub_plot_search_subtype",
 )
-# pub_router.register(
-#    r"direct_reservation_to_favourite/{uuid: str}",
-#    DirectReservationToFavourite.as_view(),
-#    basename="pub_direct_reservation_to_favourite",
-# )
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
