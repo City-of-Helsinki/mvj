@@ -475,7 +475,7 @@ class AreaSearchAttachment(NameModel):
 
 class DirectReservationLink(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    plot_search = models.ForeignKey(PlotSearch, on_delete=models.CASCADE)
+    targets = models.ManyToManyField(PlotSearchTarget)
 
     def get_external_url(self):
         return "{}/direct-reservation/{}".format(settings.PUBLIC_UI_URL, self.uuid)

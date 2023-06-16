@@ -251,7 +251,7 @@ class InformationCheckViewSet(
 class DirectReservationLinkViewSet(viewsets.ModelViewSet):
     queryset = DirectReservationLink.objects.all()
     serializer_class = DirectReservationLinkSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
 
 
 class GeneratePDF(PdfMixin, FilterView):
@@ -294,9 +294,7 @@ class DirectReservationToFavourite(APIView):
         Favourite.objects.filter(user=request.user).delete()
         direct_reservation_link = DirectReservationLink.objects.get(uuid=kwargs["uuid"])
         favourite = Favourite.objects.create(user=request.user)
-        for (
-            plot_search_target
-        ) in direct_reservation_link.plot_search.plot_search_targets.all():
+        for plot_search_target in direct_reservation_link.targets.all():
             FavouriteTarget.objects.create(
                 favourite=favourite, plot_search_target=plot_search_target
             )
