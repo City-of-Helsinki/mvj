@@ -2,6 +2,7 @@ from typing import Iterable
 
 from django.db.models import Q
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 from rest_framework_gis.filters import InBBoxFilter
 
 
@@ -375,19 +376,23 @@ def get_area_search_answer_worksheet(
     form = area_search.answer.form
 
     excel_fields = [
-        # TODO Area search fields
-        ("Lessor", area_search.lessor.value),
-        ("Description area", area_search.description_area),
-        ("Address", area_search.address),
-        ("District", area_search.district),
-        ("Intended use", area_search.intended_use.name),
-        ("Description intended use", area_search.description_intended_use),
-        ("Start date", area_search.start_date.isoformat("T")),
-        ("End date", area_search.end_date.isoformat("T")),
-        ("Received date", area_search.received_date.isoformat("T")),
-        ("Identifier", area_search.identifier),
-        ("State", area_search.state.value),
-        ("Preparer", "{} {}".format(area_search.preparer.first_name, area_search.preparer.last_name)),
+        (_("Lessor"), area_search.lessor.value),
+        (_("Description area"), area_search.description_area),
+        (_("Address"), area_search.address),
+        (_("District"), area_search.district),
+        (_("Intended use"), area_search.intended_use.name),
+        (_("Description intended use"), area_search.description_intended_use),
+        (_("Start date"), area_search.start_date.isoformat("T")),
+        (_("End date"), area_search.end_date.isoformat("T")),
+        (_("Received date"), area_search.received_date.isoformat("T")),
+        (_("Identifier"), area_search.identifier),
+        (_("State"), area_search.state.value),
+        (_("Preparer"), "{} {}".format(area_search.preparer.first_name, area_search.preparer.last_name)),
+        (_("Decline reason"), area_search.area_search_status.decline_reason),
+        (_("Preparer note"), area_search.area_search_status.preparer_note),
+        (_("Status notes"), ",".join(
+            [status_note.note for status_note in area_search.area_search_status.status_notes.all()]
+        )),
     ]
 
     for excel_field in excel_fields:
