@@ -12,10 +12,10 @@ class AreaSearchLessor(str, Enum):
     MAKE = "make"
 
     class Labels:
-        AKV = pgettext_lazy("Area search lessor", "Aluekäyttö- ja valvonta")
-        KUVA = pgettext_lazy("Area search lessor", "Kulttuuri ja vapaa-aika")
+        AKV = pgettext_lazy("Area search lessor", "Land usage and supervision")
+        KUVA = pgettext_lazy("Area search lessor", "Culture and leisure")
         MAKE = pgettext_lazy(
-            "Area search lessor", "Maaomaisuudenkehittäminen ja tontit"
+            "Area search lessor", "Land ownership development and plots"
         )
 
 
