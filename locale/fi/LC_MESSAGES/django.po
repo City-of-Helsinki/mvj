@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 13:29+0200\n"
+"POT-Creation-Date: 2023-06-27 15:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -384,11 +384,152 @@ msgctxt "Section type"
 msgid "Show if"
 msgstr "Näytä, jos"
 
+msgctxt "Applicant type"
+msgid "Person"
+msgstr "Henkilö"
+
+msgctxt "Applicant type"
+msgid "Company"
+msgstr "Yritys"
+
+msgctxt "Applicant type"
+msgid "Both"
+msgstr "Molemmat"
+
 msgid "Time created"
 msgstr "Luotu"
 
 msgid "Time modified"
 msgstr "Muokattu"
+
+msgid "Identifier"
+msgstr "Tunnus"
+
+msgid "Area"
+msgstr "Ala"
+
+msgid "Section area"
+msgstr "Leikkausala"
+
+msgid "Plot division identifier"
+msgstr "Tonttijaon tunnus"
+
+msgid "Plot division date of approval"
+msgstr "Tonttijaon hyväksymispvm"
+
+msgid "Plot division effective date"
+msgstr "Tonttijaon Tonttijaon voimaantulopvm"
+
+msgid "Reservation identifier"
+msgstr "Varaustunnus"
+
+msgid "Plot division state"
+msgstr "Tonttijaon olotila"
+
+msgid "Detailed plan identifier"
+msgstr "Asemakaava"
+
+msgid "Detailed plan latest processing date"
+msgstr "Asemakaavan viimeisin käsittelypvm"
+
+msgid "Detailed plan latest processing date note"
+msgstr "Asemakaaan viimeisemmän käsittelypvm huomio"
+
+msgid "Plan unit type"
+msgstr "Kaavayksikön laji"
+
+msgid "Plan unit state"
+msgstr "Kaavayksikön olotila"
+
+msgid "Plan unit intended use"
+msgstr "Kaavayksikön käyttötarkoitus"
+
+msgid "Plan unit status"
+msgstr "Kaavayksikön tila"
+
+msgid "Idenfifier"
+msgstr "Tunniste"
+
+msgid "Share of rental"
+msgstr "Vuokrauksen osuus"
+
+msgid "Reserved"
+msgstr "Varattu"
+
+msgid "Added target to applicant"
+msgstr "Kohde lisätty hakijalle"
+
+msgid "Counsel date"
+msgstr "Neuvottelupäivämäärä"
+
+msgid "Decline reason"
+msgstr "Hylkäyksen syy"
+
+msgid "Reservation conditions"
+msgstr "Varausehdot"
+
+msgid "Proposed management"
+msgstr "Ehdotettu hallinta"
+
+msgid "Arguments"
+msgstr "Perutelut"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "Type"
+msgstr "Tyyppi"
+
+msgid "Subtype"
+msgstr "Alityyppi"
+
+msgid "Begin at"
+msgstr "Alkaa"
+
+msgid "End at"
+msgstr "Loppuu"
+
+msgid "Search class"
+msgstr "Haun tyyppi"
+
+msgid "Stage"
+msgstr "Vaihe"
+
+msgid "Lessor"
+msgstr "Vuokranantaja"
+
+msgid "Description area"
+msgstr "Alueen kuvaus"
+
+msgid "District"
+msgstr "Kaupunginosa"
+
+msgid "Intended use"
+msgstr "Käyttötarkoitus"
+
+msgid "Description intended use"
+msgstr "Käyttötarkoituksen kuvaus"
+
+msgid "Start date"
+msgstr "Alkupvm"
+
+msgid "End date"
+msgstr "Loppupvm"
+
+msgid "Received date"
+msgstr "Vastaanottopäivämäärä"
+
+msgid "State"
+msgstr "Tila"
+
+msgid "Preparer"
+msgstr "Valmistelija"
+
+msgid "Preparer note"
+msgstr "Valmistelijan huomautus"
+
+msgid "Status notes"
+msgstr "Käsittelytiedon huomautus"
 
 msgid "Invoice"
 msgstr "Lasku"
@@ -1034,9 +1175,6 @@ msgstr "Vireillä"
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
-msgid "Identifier"
-msgstr "Tunnus"
-
 msgctxt "Model name"
 msgid "Area source"
 msgstr "Alueen lähde"
@@ -1089,15 +1227,6 @@ msgstr "Rakennusoikeustyypit"
 
 msgid "Plot type"
 msgstr "Tonttityyppi"
-
-msgid "Start date"
-msgstr "Alkupvm"
-
-msgid "End date"
-msgstr "Loppupvm"
-
-msgid "Detailed plan identifier"
-msgstr "Asemakaava"
 
 msgid "Form of management"
 msgstr "Hallintamuoto"
@@ -1186,17 +1315,11 @@ msgctxt "Model name"
 msgid "Comments"
 msgstr "Kommentit"
 
-msgid "Type"
-msgstr "Tyyppi"
-
 msgid "First name"
 msgstr "Etunimi"
 
 msgid "Last name"
 msgstr "Sukunimi"
-
-msgid "Name"
-msgstr "Nimi"
 
 msgid "c/o"
 msgstr "c/o"
@@ -1500,9 +1623,6 @@ msgctxt "Model name"
 msgid "Email logs"
 msgstr "Sähköpostilokit"
 
-msgid "State"
-msgstr "Tila"
-
 msgid "Lease contract change date"
 msgstr "Vuokrasopimuksen muutospäivämäärä"
 
@@ -1556,9 +1676,6 @@ msgstr "Täydennysrakentamiskorvauspäätös"
 msgctxt "Model name"
 msgid "Infill development compensation decisions"
 msgstr "Täydennysrakentamiskorvauspäätökset"
-
-msgid "Intended use"
-msgstr "Käyttötarkoitus"
 
 msgid "Floor m2"
 msgstr "K-m2"
@@ -1747,9 +1864,6 @@ msgstr ""
 msgid "Area in square meters"
 msgstr "Kokonaisala neliömetreissä"
 
-msgid "Section area"
-msgstr "Leikkausala"
-
 msgid "Location"
 msgstr "Sijainti"
 
@@ -1886,35 +2000,8 @@ msgctxt "Model name"
 msgid "Plan unit intended uses"
 msgstr "Kaavayksikön käyttötarkoitukset"
 
-msgid "Plot division identifier"
-msgstr "Tonttijaon tunnus"
-
-msgid "Plot division date of approval"
-msgstr "Tonttijaon hyväksymispvm"
-
-msgid "Plot division effective date"
-msgstr "Tonttijaon Tonttijaon voimaantulopvm"
-
-msgid "Plot division state"
-msgstr "Tonttijaon olotila"
-
-msgid "Detailed plan latest processing date"
-msgstr "Asemakaavan viimeisin käsittelypvm"
-
 msgid "Note for latest processing date"
 msgstr "Asemakaavan viimeisin käsittelypvm. selite"
-
-msgid "Plan unit type"
-msgstr "Kaavayksikön laji"
-
-msgid "Plan unit state"
-msgstr "Kaavayksikön olotila"
-
-msgid "Plan unit intended use"
-msgstr "Kaavayksikön käyttötarkoitus"
-
-msgid "Plan unit status"
-msgstr "Kaavayksikön tila"
 
 msgctxt "Model name"
 msgid "Plan unit"
@@ -1929,9 +2016,6 @@ msgstr "Maankäyttösopimuksen tyyppi"
 
 msgid "Municipality"
 msgstr "Kaupunki"
-
-msgid "District"
-msgstr "Kaupunginosa"
 
 msgid "Sequence number"
 msgstr "Juokseva numero"
@@ -1952,9 +2036,6 @@ msgstr "Maankäyttösopimuksen määritelmä"
 
 msgid "Land use agreement status"
 msgstr "Maankäyttösopimuksen tila"
-
-msgid "Preparer"
-msgstr "Valmistelija"
 
 msgid "Estimated completion year"
 msgstr "Arvioitu toteutumisvuosi"
@@ -2021,9 +2102,6 @@ msgid "Management"
 msgstr ""
 
 msgid "Protected"
-msgstr ""
-
-msgid "Area"
 msgstr ""
 
 msgid "Unit value"
@@ -2259,9 +2337,6 @@ msgstr "Säännelty"
 
 msgid "Notice note"
 msgstr "Irtisanomisilmoituksen selite"
-
-msgid "Lessor"
-msgstr "Vuokranantaja"
 
 msgid "Supportive housing"
 msgstr "Erityisasunnot"
@@ -3440,6 +3515,18 @@ msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
 
+msgctxt "Area search lessor"
+msgid "Aluekäyttö- ja valvonta"
+msgstr ""
+
+msgctxt "Area search lessor"
+msgid "Kulttuuri ja vapaa-aika"
+msgstr ""
+
+msgctxt "Area search lessor"
+msgid "Maaomaisuudenkehittäminen ja tontit"
+msgstr ""
+
 msgctxt "Search class"
 msgid "Plot search"
 msgstr "Tonttihaku tai -kilpailu"
@@ -3447,6 +3534,26 @@ msgstr "Tonttihaku tai -kilpailu"
 msgctxt "Search class"
 msgid "Other"
 msgstr "Muu kilpailu tai haku"
+
+msgctxt "Search stage"
+msgid "In preparation"
+msgstr "Valmistelussa"
+
+msgctxt "Search stage"
+msgid "In action"
+msgstr "Käynnissä"
+
+msgctxt "Search stage"
+msgid "Processing"
+msgstr "Käsittelyssä"
+
+msgctxt "Search stage"
+msgid "Decision making"
+msgstr "Päätöksenteosa"
+
+msgctxt "Search stage"
+msgid "Settled"
+msgstr "Päätetty"
 
 msgctxt "Information state"
 msgid "Checked"
@@ -3492,6 +3599,42 @@ msgctxt "Information check name"
 msgid "Certificate of entry in the register of employers"
 msgstr "Todistus työnantajarekisteriin merkitsemisestä"
 
+msgctxt "Decline reason"
+msgid "Application revoked"
+msgstr "Hakemus on rauennut"
+
+msgctxt "Decline reason"
+msgid "Area not controlled by city"
+msgstr "Alue ei ole kaupungin hallinnassa"
+
+msgctxt "Decline reason"
+msgid "Area no available for lease"
+msgstr "Aluetta ei voi vuokrata"
+
+msgctxt "Decline reason"
+msgid "Other reason"
+msgstr "Muu syy"
+
+msgctxt "Area search state"
+msgid "Received"
+msgstr "Vastaanotettu"
+
+msgctxt "Area search state"
+msgid "In action"
+msgstr "Käsittelyssä"
+
+msgctxt "Area search state"
+msgid "Settled"
+msgstr "Käsitelty"
+
+msgctxt "Area search state"
+msgid "Revoked"
+msgstr "Rauennut"
+
+msgctxt "Area search state"
+msgid "Declined"
+msgstr "Hylätty"
+
 msgctxt "Model name"
 msgid "Plot search type"
 msgstr "Tonttihaun tyyppi"
@@ -3516,18 +3659,6 @@ msgctxt "Model name"
 msgid "Plot search stages"
 msgstr "Tonttihaun vaiheet"
 
-msgid "Subtype"
-msgstr "Alityyppi"
-
-msgid "Begin at"
-msgstr "Alkaa"
-
-msgid "End at"
-msgstr "Loppuu"
-
-msgid "Stage"
-msgstr "Vaihe"
-
 msgctxt "Model name"
 msgid "Plot search"
 msgstr "Tonttihaku"
@@ -3547,13 +3678,11 @@ msgctxt "Model name"
 msgid "Area search intended uses"
 msgstr "Aluehaun käyttötarkoitukset"
 
-msgctxt "Model name"
-msgid "Area search sub intended use"
-msgstr "Aluehaun alikäyttötarkoitus"
+msgid "Time received"
+msgstr "Vastaanottoaika"
 
-msgctxt "Model name"
-msgid "Area search sub intended uses"
-msgstr "Aluehaun alikäyttötarkoitukset"
+msgid "Area search state"
+msgstr "Vuokra-aluehaun tila"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"

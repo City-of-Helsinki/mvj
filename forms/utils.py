@@ -2,7 +2,7 @@ from typing import Iterable
 
 from django.db.models import Q
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from rest_framework_gis.filters import InBBoxFilter
 
 
@@ -76,7 +76,7 @@ def clone_object(obj, attrs={}):
     return clone
 
 
-def _get_plot_search_target_attributes(plot_search_target):
+def _get_plot_search_target_attributes(col, master_row, plot_search_target, worksheet):
     plan_unit = plot_search_target.plan_unit
     custom_detailed_plan = plot_search_target.custom_detailed_plan
     reservation_identifier = (
@@ -85,60 +85,72 @@ def _get_plot_search_target_attributes(plot_search_target):
         else "-"
     )
 
+    excel_fields_pls = []
+
     if plan_unit is not None:
-        return [
-            ("Identifier", plan_unit.identifier),
-            ("Area", plan_unit.area),
-            ("Section area", plan_unit.section_area),
-            ("Plot division identifier", plan_unit.plot_division_identifier),
+        excel_fields_pls = [
+            (_("Identifier"), plan_unit.identifier),
+            (_("Area"), plan_unit.area),
+            (_("Section area"), plan_unit.section_area),
+            (_("Plot division identifier"), plan_unit.plot_division_identifier),
             (
-                "Plot division date of approval",
-                plan_unit.plot_division_date_of_approval.isoformat(),
+                _("Plot division date of approval"),
+                str(plan_unit.plot_division_date_of_approval),
             ),
             (
-                "Plot division effective date",
-                plan_unit.plot_division_effective_date.isoformat(),
+                _("Plot division effective date"),
+                str(plan_unit.plot_division_effective_date),
             ),
-            ("Reservation identifier", reservation_identifier),
-            ("Plot division state", plan_unit.plot_division_state.name),
-            ("Detailed plan identifier", plan_unit.detailed_plan_identifier),
+            (_("Reservation identifier"), reservation_identifier),
+            (_("Plot division state"), plan_unit.plot_division_state.name if plan_unit.plot_division_state is not None else  "-"),
+            (_("Detailed plan identifier"), plan_unit.detailed_plan_identifier),
             (
-                "Detailed plan latest processing date",
+                _("Detailed plan latest processing date"),
                 str(plan_unit.detailed_plan_latest_processing_date),
             ),
             (
-                "Detailed plan latest processing date note",
+                _("Detailed plan latest processing date note"),
                 plan_unit.detailed_plan_latest_processing_date_note,
             ),
-            ("Plan unit type", plan_unit.plan_unit_type.name),
-            ("Plan unit state", plan_unit.plan_unit_state.name),
-            ("Plan unit intended use", plan_unit.plan_unit_intended_use.name),
-            ("Plan unit status", plan_unit.plan_unit_status.name),
+            (_("Plan unit type"), plan_unit.plan_unit_type.name if plan_unit.plan_unit_type is not None else  "-"),
+            (_("Plan unit state"), plan_unit.plan_unit_state.name if plan_unit.plan_unit_state is not None else  "-"),
+            (_("Plan unit intended use"), plan_unit.plan_unit_intended_use.name if plan_unit.plan_unit_intended_use is not None else  "-"),
+            (_("Plan unit status"), plan_unit.plan_unit_status.name),
         ]
     elif custom_detailed_plan is not None:
-        return [
-            ("Idenfifier", custom_detailed_plan.identifier),
-            ("Area", custom_detailed_plan.area),
-            ("Section area", custom_detailed_plan.lease_area.section_area),
-            ("Plot division identifier", "-"),
-            ("Plot division date of approval", "-"),
-            ("Plot division effective date", "-"),
-            ("Reservation identifier", reservation_identifier),
-            ("Plot division state", "-"),
-            ("Detailed plan identifier", custom_detailed_plan.detailed_plan),
+        excel_fields_pls = [
+            (_("Idenfifier"), custom_detailed_plan.identifier),
+            (_("Area"), custom_detailed_plan.area),
+            (_("Section area"), custom_detailed_plan.lease_area.section_area),
+            (_("Plot division identifier"), "-"),
+            (_("Plot division date of approval"), "-"),
+            (_("Plot division effective date"), "-"),
+            (_("Reservation identifier"), reservation_identifier),
+            (_("Plot division state"), "-"),
+            (_("Detailed plan identifier"), custom_detailed_plan.detailed_plan),
             (
-                "Detailed plan latest processing date",
+                _("Detailed plan latest processing date"),
                 str(custom_detailed_plan.detailed_plan_latest_processing_date),
             ),
             (
-                "Detailed plan latest processing date note",
+                _("Detailed plan latest processing date note"),
                 custom_detailed_plan.detailed_plan_latest_processing_date_note,
             ),
-            ("Plan unit type", custom_detailed_plan.type.name),
-            ("Plan unit state", custom_detailed_plan.state.name),
-            ("Plan unit intended use", custom_detailed_plan.intended_use.name),
-            ("Plan unit status", "-"),
+            (_("Plan unit type"), custom_detailed_plan.type.name),
+            (_("Plan unit state"), custom_detailed_plan.state.name),
+            (_("Plan unit intended use"), custom_detailed_plan.intended_use.name),
+            (_("Plan unit status"), "-"),
         ]
+
+    for excel_field in excel_fields_pls:
+        if master_row == 0:
+            worksheet.write(master_row, col, excel_field[0])
+        worksheet.write(master_row + 1, col, excel_field[1])
+        col += 1
+
+    worksheet.write(master_row + 1, col, plot_search_target.target_type.name)
+
+    return col
 
 
 def _write_entry_value(col, entry, field, row, worksheet):
@@ -212,7 +224,11 @@ def _get_subsection_field_entries(  # noqa: C901
             target_status,
             last_applicant_section,
         )
-
+    if entry_rows - master_row > 1:
+        for pre_row in range(master_row, entry_rows):
+            entry_col = 0
+            entry_col = _write_plot_search_info(entry_col, pre_row, target_status.plot_search_target.plot_search, worksheet)
+            _get_plot_search_target_attributes(entry_col, pre_row, target_status.plot_search_target, worksheet)
     return worksheet, col, entry_rows - master_row
 
 
@@ -227,31 +243,9 @@ def get_answer_worksheet(
 
     plot_search = plot_search_target.plot_search
 
-    excel_fields = [
-        ("Name", plot_search.name),
-        ("Type", plot_search.subtype.plot_search_type.name),
-        ("Subtype", plot_search.subtype.name),
-        ("Begin at", plot_search.begin_at.isoformat("T")),
-        ("End at", plot_search.end_at.isoformat("T")),
-        ("Search class", plot_search.search_class),
-        ("Stage", plot_search.stage.name),
-    ]
+    col = _write_plot_search_info(col, master_row, plot_search, worksheet)
 
-    for excel_field in excel_fields:
-        if master_row == 0:
-            worksheet.write(master_row, col, excel_field[0])
-        worksheet.write(master_row + 1, col, excel_field[1])
-        col += 1
-
-    excel_fields_pls = _get_plot_search_target_attributes(plot_search_target)
-
-    for excel_field in excel_fields_pls:
-        if master_row == 0:
-            worksheet.write(master_row, col, excel_field[0])
-        worksheet.write(master_row + 1, col, excel_field[1])
-        col += 1
-
-    worksheet.write(master_row + 1, col, plot_search_target.target_type.name)
+    col = _get_plot_search_target_attributes(col, master_row, plot_search_target, worksheet)
 
     from forms.models import Section
 
@@ -271,14 +265,14 @@ def get_answer_worksheet(
             conditions = target_status.reservation_conditions
 
         if master_row == 0:
-            worksheet.write(master_row, col, "Share of rental")
-            worksheet.write(master_row, col + 1, "Reserved")
-            worksheet.write(master_row, col + 2, "Added target to applicant")
-            worksheet.write(master_row, col + 3, "Counsel date")
-            worksheet.write(master_row, col + 4, "Decline reason")
-            worksheet.write(master_row, col + 5, "Reservation conditions")
-            worksheet.write(master_row, col + 6, "Proposed management")
-            worksheet.write(master_row, col + 7, "Arguments")
+            worksheet.write(master_row, col, _("Share of rental"))
+            worksheet.write(master_row, col + 1, _("Reserved"))
+            worksheet.write(master_row, col + 2, _("Added target to applicant"))
+            worksheet.write(master_row, col + 3, _("Counsel date"))
+            worksheet.write(master_row, col + 4, _("Decline reason"))
+            worksheet.write(master_row, col + 5, _("Reservation conditions"))
+            worksheet.write(master_row, col + 6, _("Proposed management"))
+            worksheet.write(master_row, col + 7, _("Arguments"))
 
         worksheet.write(
             master_row + 1,
@@ -314,6 +308,24 @@ def get_answer_worksheet(
     master_row += entry_rows
 
     return worksheet, master_row
+
+
+def _write_plot_search_info(col, master_row, plot_search, worksheet):
+    excel_fields = [
+        (_("Name"), plot_search.name),
+        (_("Type"), plot_search.subtype.plot_search_type.name),
+        (_("Subtype"), plot_search.subtype.name),
+        (_("Begin at"), plot_search.begin_at.isoformat("T")),
+        (_("End at"), plot_search.end_at.isoformat("T")),
+        (_("Search class"), plot_search.search_class),
+        (_("Stage"), plot_search.stage.name),
+    ]
+    for excel_field in excel_fields:
+        if master_row == 0:
+            worksheet.write(master_row, col, excel_field[0])
+        worksheet.write(master_row + 1, col, excel_field[1])
+        col += 1
+    return col
 
 
 def _get_answer_search_subsection_field_entries(  # noqa: C901
