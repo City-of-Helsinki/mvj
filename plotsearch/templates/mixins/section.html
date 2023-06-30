@@ -5,27 +5,40 @@
 {% endfor %}
 
 {% if section.fields|visible_field:True %}
-<div>
-    <h2>{{ section }}</h2>
-    <table>
-        {% for field in section.fields|visible_field:True %}
-        <tr>
-            <th>
-                {{field}}
-            </th>
-            <td>
-                {% for entry in field.entry_set.all %}
-                    {{ entry.value }}
-                    {% if not entry.value%}
-                        <span> - </span>
+    <div>
+        <h2>{{ section }}</h2>
+        <table>
+            {% for field in section.fields|visible_field:True %}
+                <tr>
+                    <th>
+                        {{ field }}
+                    </th>
+                    {% if field.type.identifier == "checkbox" %}
+                        <td>
+                            {% for entry in field.entry_set.all %}
+                                {% fetch_choice_value entry.value %}
+                                {% if not entry.value %}
+                                    <span> - </span>
+                                {% endif %}
+                            {% empty %}
+                                <span> - </span>
+                            {% endfor %}
+                        </td>
+                    {% else %}
+                        <td>
+                            {% for entry in field.entry_set.all %}
+                                {{ entry.value }}
+                                {% if not entry.value %}
+                                    <span> - </span>
+                                {% endif %}
+                            {% empty %}
+                                <span> - </span>
+                            {% endfor %}
+                        </td>
                     {% endif %}
-                {% empty %}
-                    <span> - </span>
-                {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <div class="divider">&nbsp;</div>
-</div>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="divider">&nbsp;</div>
+    </div>
 {% endif %}
