@@ -1,12 +1,14 @@
-{% for subsection in section.subsections.all %}
+{% load form_visible %}
+
+{% for subsection in section.subsections|visible_section:True %}
     {% include "mixins/section.html" with section=subsection %}
 {% endfor %}
 
-{% if section.fields.all %}
+{% if section.fields|visible_field:True %}
 <div>
     <h2>{{ section }}</h2>
     <table>
-        {% for field in section.fields.all %}
+        {% for field in section.fields|visible_field:True %}
         <tr>
             <th>
                 {{field}}

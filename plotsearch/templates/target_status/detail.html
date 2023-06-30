@@ -1,4 +1,6 @@
 {% load static %}
+{% load form_visible %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +17,7 @@
             <h1>{{ object.application_identifier }}</h1>
         </div>
         <div class="divider">&nbsp;</div>
-        {% for section in object.plot_search_target.plot_search.form.sections.all %}
+        {% for section in object.plot_search_target.plot_search.form.sections|visible_section:True %}
         {% include "mixins/section.html" with section=section %}
         {% endfor %}
     </div>
