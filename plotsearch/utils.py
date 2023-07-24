@@ -1,9 +1,11 @@
+from django.utils.translation import override
+from django.utils.translation import ugettext_lazy as _
+
 from forms.models import Choice, Field, Form, Section
 from plotsearch.enums import AreaSearchLessor
 
 
 def map_intended_use_to_lessor(intended_use):
-
     if intended_use is None:
         return None
 
@@ -752,3 +754,33 @@ def get_applicant(answer, reservation_recipients):
                 reservation_recipients.append(
                     " ".join([front_name.value, last_name.value])
                 )
+
+
+def compose_direct_reservation_mail_subject(language):
+    with override(language):
+        subject = _("You have received a link for a direct reservation plot search")
+    return subject
+
+
+def compose_direct_reservation_mail_body(
+    first_name, last_name, company, url, covering_note, language
+):
+    with override(language):
+        receiver = (
+            company
+            if company
+            else "{first_name} {last_name}".format(
+                first_name=first_name, last_name=last_name
+            )
+        )
+        body = _(
+            "Hi {receiver}! Here is the link for the direct reservation plot search: {url} \n\n{covering_note}"
+        ).format(receiver=receiver, url=url, covering_note=covering_note,)
+    return body
+
+
+def pop_default(validated_data, index, default_value):
+    try:
+        return validated_data.pop(index)
+    except IndexError:
+        return default_value

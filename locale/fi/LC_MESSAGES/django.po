@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 13:29+0200\n"
+"POT-Creation-Date: 2023-07-27 16:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -383,6 +383,18 @@ msgstr "Näytä aina"
 msgctxt "Section type"
 msgid "Show if"
 msgstr "Näytä, jos"
+
+msgctxt "Applicant type"
+msgid "Person"
+msgstr "Henkilö"
+
+msgctxt "Applicant type"
+msgid "Company"
+msgstr ""
+
+msgctxt "Applicant type"
+msgid "Both"
+msgstr ""
 
 msgid "Time created"
 msgstr "Luotu"
@@ -3440,6 +3452,18 @@ msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
 
+msgctxt "Area search lessor"
+msgid "Area use and control"
+msgstr "Aluekäyttö- ja valvonta"
+
+msgctxt "Area search lessor"
+msgid "Culture and leisure"
+msgstr "Kulttuuri ja vapaa-aika"
+
+msgctxt "Area search lessor"
+msgid "Development of land assets"
+msgstr "Maaomaisuudenkehittäminen ja tontit"
+
 msgctxt "Search class"
 msgid "Plot search"
 msgstr "Tonttihaku tai -kilpailu"
@@ -3447,6 +3471,26 @@ msgstr "Tonttihaku tai -kilpailu"
 msgctxt "Search class"
 msgid "Other"
 msgstr "Muu kilpailu tai haku"
+
+msgctxt "Search stage"
+msgid "In preparation"
+msgstr "Tarkastus"
+
+msgctxt "Search stage"
+msgid "In action"
+msgstr "Tarkastus"
+
+msgctxt "Search stage"
+msgid "Processing"
+msgstr ""
+
+msgctxt "Search stage"
+msgid "Decision making"
+msgstr "Päättäjä"
+
+msgctxt "Search stage"
+msgid "Settled"
+msgstr ""
 
 msgctxt "Information state"
 msgid "Checked"
@@ -3491,6 +3535,42 @@ msgstr "Verovelkatodistus"
 msgctxt "Information check name"
 msgid "Certificate of entry in the register of employers"
 msgstr "Todistus työnantajarekisteriin merkitsemisestä"
+
+msgctxt "Decline reason"
+msgid "Application revoked"
+msgstr ""
+
+msgctxt "Decline reason"
+msgid "Area not controlled by city"
+msgstr "Alue ei ole kaupungin hallinnassa"
+
+msgctxt "Decline reason"
+msgid "Area no available for lease"
+msgstr "Tiedostoa ei löydy"
+
+msgctxt "Decline reason"
+msgid "Other reason"
+msgstr "Muu korvaus"
+
+msgctxt "Area search state"
+msgid "Received"
+msgstr "Saamislaji"
+
+msgctxt "Area search state"
+msgid "In action"
+msgstr "Tarkastus"
+
+msgctxt "Area search state"
+msgid "Settled"
+msgstr ""
+
+msgctxt "Area search state"
+msgid "Revoked"
+msgstr ""
+
+msgctxt "Area search state"
+msgid "Declined"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Plot search type"
@@ -3547,19 +3627,31 @@ msgctxt "Model name"
 msgid "Area search intended uses"
 msgstr "Aluehaun käyttötarkoitukset"
 
-msgctxt "Model name"
-msgid "Area search sub intended use"
-msgstr "Aluehaun alikäyttötarkoitus"
+msgid "Time received"
+msgstr "Arkistointiaika"
 
-msgctxt "Model name"
-msgid "Area search sub intended uses"
-msgstr "Aluehaun alikäyttötarkoitukset"
+msgid "Area search state"
+msgstr "Vuokrauksen tila"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"
 
 msgid "The target information has changed!"
 msgstr "Kohteen tiedot ovat muuttuneet!"
+
+msgid "You have received a link for a direct reservation plot search"
+msgstr "Olet vastaanottanut linkin suoravaraushakuun"
+
+#python-brace-format
+msgid ""
+"Hi {receiver}! Here is the link for the direct reservation plot search: "
+"{url} \n"
+"\n"
+"{covering_note}"
+msgstr ""
+"Hei {receiver}! Tässä linkki suoravaraustonttihakuun: {url} \n"
+"\n"
+"{covering_note}"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"

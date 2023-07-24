@@ -1,5 +1,6 @@
 import requests
 from django.core.exceptions import BadRequest
+from django.core.mail import send_mail
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
@@ -45,9 +46,12 @@ from plotsearch.models.plot_search import (
 )
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from plotsearch.utils import (
+    compose_direct_reservation_mail_body,
+    compose_direct_reservation_mail_subject,
     get_applicant,
     initialize_area_search_form,
     map_intended_use_to_lessor,
+    pop_default,
 )
 from users.models import User
 from users.serializers import UserSerializer
@@ -1013,6 +1017,15 @@ class DirectReservationLinkSerializer(serializers.ModelSerializer):
     targets = InstanceDictPrimaryKeyRelatedField(
         queryset=PlotSearchTarget.objects.all(), many=True
     )
+    lang_choices = ("FI", "SE", "EN")
+    language = serializers.ChoiceField(lang_choices, allow_blank=True, required=False)
+    first_name = serializers.CharField(allow_blank=True, required=False)
+    last_name = serializers.CharField(allow_blank=True, required=False)
+    email = serializers.CharField(allow_blank=True, required=False)
+    company = serializers.CharField(allow_blank=True, required=False)
+    covering_note = serializers.CharField(allow_blank=True, required=False)
+    send_copy = serializers.BooleanField(required=False)
+    send_mail = serializers.BooleanField(required=False)
 
     class Meta:
         model = DirectReservationLink
@@ -1020,7 +1033,55 @@ class DirectReservationLinkSerializer(serializers.ModelSerializer):
             "uuid",
             "url",
             "targets",
+            "language",
+            "first_name",
+            "last_name",
+            "email",
+            "company",
+            "covering_note",
+            "send_copy",
+            "send_mail",
         )
 
     def get_url(self, obj):
         return obj.get_external_url()
+
+    def create(self, validated_data):
+
+        language = pop_default(validated_data, "language", "en")
+        first_name = pop_default(validated_data, "first_name", "")
+        last_name = pop_default(validated_data, "last_name", "")
+        email = pop_default(validated_data, "email", None)
+        company = pop_default(validated_data, "company", None)
+        covering_note = pop_default(validated_data, "covering_note", "")
+        send_copy = pop_default(validated_data, "send_copy", False)
+        send_email = pop_default(validated_data, "send_mail", False)
+
+        instance = super().create(validated_data)
+
+        if send_email and email:
+            receivers = [email]
+
+            if send_copy:
+                user = None
+                request = self.context.get("request")
+                if request and hasattr(request, "user"):
+                    user = request.user
+                receivers.append(user.email)
+
+            send_mail(
+                compose_direct_reservation_mail_subject(language),
+                compose_direct_reservation_mail_body(
+                    first_name,
+                    last_name,
+                    company,
+                    instance.get_external_url(),
+                    covering_note,
+                    language,
+                ),
+                None,
+                receivers,
+                False,
+            )
+
+        return instance
