@@ -294,9 +294,14 @@ class DirectReservationToFavourite(APIView):
         Favourite.objects.filter(user=request.user).delete()
         direct_reservation_link = DirectReservationLink.objects.get(uuid=kwargs["uuid"])
         favourite = Favourite.objects.create(user=request.user)
+        targets = []
         for plot_search_target in direct_reservation_link.targets.all():
-            FavouriteTarget.objects.create(
+            target, created = FavouriteTarget.objects.get_or_create(
                 favourite=favourite, plot_search_target=plot_search_target
             )
+            if created:
+                targets.append(target)
+        for target in targets:
+            target.refresh_from_db()
 
-        return Response(status=200)
+        return Response(FavouriteSerializer(favourite).data, status=200)

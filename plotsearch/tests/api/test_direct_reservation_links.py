@@ -6,7 +6,6 @@ from plotsearch.models import PlotSearchTarget
 from plotsearch.models.plot_search import DirectReservationLink, Favourite
 
 
-@pytest.mark.django_db
 def test_direct_reservation_link_create(
     django_db_setup,
     admin_client,
@@ -30,6 +29,14 @@ def test_direct_reservation_link_create(
 
     data = {
         "targets": [target.id],
+        "language": "FI",
+        "first_name": "Pekka",
+        "last_name": "Testaaja",
+        "email": "pekkatestaaja@testimaili.org",
+        "company": "",
+        "covering_note": "Saateteksti",
+        "send_copy": False,
+        "send_mail": True,
     }
 
     url = reverse("directreservationlink-list")
