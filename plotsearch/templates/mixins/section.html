@@ -16,7 +16,7 @@
                     {% if field.type.identifier == "checkbox" %}
                         <td>
                             {% for entry in field.entry_set.all %}
-                                {% fetch_choice_value entry.value %}
+                                {% fetch_choice_value entry.value entry.field.id %}
                                 {% if not entry.value %}
                                     <span> - </span>
                                 {% endif %}
