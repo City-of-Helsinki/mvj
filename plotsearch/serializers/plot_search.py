@@ -39,6 +39,7 @@ from plotsearch.models import (
 )
 from plotsearch.models.info_links import TargetInfoLink
 from plotsearch.models.plot_search import (
+    FAQ,
     AreaSearchAttachment,
     AreaSearchStatus,
     AreaSearchStatusNote,
@@ -1085,3 +1086,12 @@ class DirectReservationLinkSerializer(serializers.ModelSerializer):
             )
 
         return instance
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = (
+            "question",
+            "answer",
+        )

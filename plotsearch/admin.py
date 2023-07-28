@@ -12,6 +12,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchType,
 )
+from plotsearch.models.plot_search import FAQ
 
 
 class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
@@ -32,9 +33,17 @@ class FavouriteAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     inlines = [FavouriteTargetInline]
 
 
+class FAQAdmin(admin.ModelAdmin):
+    list_display = (
+        "answer",
+        "question",
+    )
+
+
 admin.site.register(PlotSearch, PlotSearchAdmin)
 admin.site.register(PlotSearchStage, NameAdmin)
 admin.site.register(Favourite, FavouriteAdmin)
 admin.site.register(PlotSearchType, NameAdmin)
 admin.site.register(AreaSearchIntendedUse, NameAdmin)
 admin.site.register(PlotSearchSubtype, NameAdmin)
+admin.site.register(FAQ, FAQAdmin)
