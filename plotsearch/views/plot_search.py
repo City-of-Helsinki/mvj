@@ -43,13 +43,18 @@ from plotsearch.models import (
     PlotSearchType,
     TargetStatus,
 )
-from plotsearch.models.plot_search import AreaSearchAttachment, DirectReservationLink
+from plotsearch.models.plot_search import (
+    FAQ,
+    AreaSearchAttachment,
+    DirectReservationLink,
+)
 from plotsearch.permissions import AreaSearchAttachmentPermissions
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
     AreaSearchSerializer,
     DirectReservationLinkSerializer,
+    FAQSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
     IntendedUseSerializer,
@@ -287,7 +292,6 @@ class GeneratePDF(PdfMixin, FilterView):
 
 
 class DirectReservationToFavourite(APIView):
-
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -305,3 +309,9 @@ class DirectReservationToFavourite(APIView):
             target.refresh_from_db()
 
         return Response(FavouriteSerializer(favourite).data, status=200)
+
+
+class FAQViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = FAQ.objects.all()
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    serializer_class = FAQSerializer

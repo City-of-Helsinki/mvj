@@ -112,6 +112,7 @@ from plotsearch.views.plot_search import (
     AreaSearchViewSet,
     DirectReservationLinkViewSet,
     DirectReservationToFavourite,
+    FAQViewSet,
     FavouriteViewSet,
     GeneratePDF,
     InformationCheckViewSet,
@@ -227,6 +228,7 @@ pub_router.register(
     AreaSearchAttachmentViewset,
     basename="pub_area_search_attachment",
 )
+pub_router.register(r"faq", FAQViewSet, basename="pub_faq")
 pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
 pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(r"intended_use", IntendedUsePSViewSet, basename="pub_intended_use")

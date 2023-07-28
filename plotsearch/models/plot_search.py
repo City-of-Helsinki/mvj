@@ -502,5 +502,10 @@ class DirectReservationLink(models.Model):
         return "{}/direct-reservation/{}".format(settings.PUBLIC_UI_URL, self.uuid)
 
 
+class FAQ(models.Model):
+    question = models.TextField(unique=True)
+    answer = models.TextField()
+
+
 auditlog.register(PlotSearch)
 auditlog.register(InformationCheck)
