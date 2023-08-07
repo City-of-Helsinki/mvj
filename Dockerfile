@@ -15,7 +15,7 @@ RUN apt-install.sh \
     libpq-dev \
     gettext \
     gdal-bin \
-    netcat \
+    netcat-openbsd \
     python3-gdal \
     postgresql-client \
     && pip install --no-cache-dir -r /app/requirements.txt \
