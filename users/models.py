@@ -1,5 +1,8 @@
+from collections import defaultdict
+from itertools import chain
+
 from django.db import models, transaction
-from helusers.models import AbstractUser
+from helusers.models import AbstractUser, ADGroupMapping
 
 
 class User(AbstractUser):
@@ -15,6 +18,30 @@ class User(AbstractUser):
         "user_permissions",
         "ad_groups",
     ]
+
+    def sync_groups_from_ad(self):
+        """Determine which Django groups to add or remove based on AD groups
+
+        Supports setting multiple Django groups by one AD group"""
+        ad_group_mappings = ADGroupMapping.objects.all()
+        mappings = defaultdict(list)
+        for ad_group_mapping in ad_group_mappings:
+            mappings[ad_group_mapping.ad_group].append(ad_group_mapping.group)
+
+        user_ad_groups = set(self.ad_groups.filter(groups__isnull=False))
+        managed_groups = set(chain(*mappings.values()))
+        old_groups = set(
+            self.groups.filter(id__in=[group.id for group in managed_groups])
+        )
+        new_groups = set(chain(*[mappings[x] for x in user_ad_groups if x in mappings]))
+
+        groups_to_delete = old_groups.difference(new_groups)
+        if groups_to_delete:
+            self.groups.remove(*groups_to_delete)
+
+        groups_to_add = new_groups.difference(old_groups)
+        if groups_to_add:
+            self.groups.add(*groups_to_add)
 
     @transaction.atomic
     def update_service_units(self):
