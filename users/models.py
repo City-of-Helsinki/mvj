@@ -1,7 +1,11 @@
+from collections import defaultdict
+from itertools import chain
+
 from django.contrib import admin
+from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
-from helusers.models import AbstractUser
+from helusers.models import AbstractUser, ADGroupMapping
 from rest_framework.authtoken.models import Token
 
 
@@ -23,6 +27,36 @@ class User(AbstractUser):
     @admin.display(boolean=True, description=_("Token exists"))
     def has_token(self) -> bool:
         return Token.objects.filter(user=self).exists()
+
+    def sync_groups_from_ad(self):
+        """Determine which Django groups to add or remove based on AD groups
+
+        Supports setting multiple Django groups by one AD group"""
+        cache_key = f"sync_groups_from_ad_{self.id}"
+        if cache.get(cache_key):
+            return
+
+        cache.set(cache_key, True, timeout=600)  # 10 minutes
+
+        ad_group_mappings = ADGroupMapping.objects.select_related("ad_group", "group")
+        mappings = defaultdict(list)
+        for ad_group_mapping in ad_group_mappings:
+            mappings[ad_group_mapping.ad_group].append(ad_group_mapping.group)
+
+        user_ad_groups = set(self.ad_groups.filter(groups__isnull=False))
+        managed_groups = set(chain(*mappings.values()))
+        old_groups = set(
+            self.groups.filter(id__in=[group.id for group in managed_groups])
+        )
+        new_groups = set(chain(*[mappings[x] for x in user_ad_groups if x in mappings]))
+
+        groups_to_delete = old_groups.difference(new_groups)
+        if groups_to_delete:
+            self.groups.remove(*groups_to_delete)
+
+        groups_to_add = new_groups.difference(old_groups)
+        if groups_to_add:
+            self.groups.add(*groups_to_add)
 
     @transaction.atomic
     def update_service_units(self):
