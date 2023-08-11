@@ -126,11 +126,19 @@ def test_social_security_validator(
         for field in section.fields.all():
             if field.identifier == "henkilotunnus":
                 social_security_field = field
-    entries = dict(dict())
-    entries[social_security_field.section.identifier] = dict()
-    entries[social_security_field.section.identifier][
-        social_security_field.identifier
-    ] = "010181-900C"
+    entries = {}
+    for section in basic_template_form.sections.filter(parent__isnull=True):
+        entries[section.identifier] = dict()
+        generate_entries(section, entries[section.identifier])
+    entries["hakijan-tiedot"]["sections"]["company-information"]["sections"][
+        "contact-person"
+    ]["fields"][social_security_field.identifier] = {
+        "value": "010181-900C",
+        "extraValue": "",
+    }
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "y-tunnus"
+    ] = {"value": "1234567-8", "extraValue": ""}
 
     answer_data = {
         "form": basic_template_form.id,
@@ -143,9 +151,12 @@ def test_social_security_validator(
     # test that a correctly formatted ssn passes the validator
     assert answer_serializer.is_valid()
 
-    answer_data["entries"][social_security_field.section.identifier][
-        social_security_field.identifier
-    ] = "010181B900C"
+    answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information"][
+        "sections"
+    ]["contact-person"]["fields"][social_security_field.identifier] = {
+        "value": "010181B900C",
+        "extraValue": "",
+    }
     answer_serializer = AnswerSerializer(data=answer_data)
 
     # test that a incorrectly formatted ssn is caught by the validator
@@ -158,18 +169,16 @@ def test_social_security_validator(
 def test_company_id_validator(
     django_db_setup, basic_template_form, plot_search_target, admin_user
 ):
-
-    company_id_field = None
-    for section in basic_template_form.sections.all():
-        for field in section.fields.all():
-            if field.identifier == "y-tunnus":
-                company_id_field = field
-
-    entries = dict(dict())
-    entries[company_id_field.section.identifier] = dict()
-    entries[company_id_field.section.identifier][
-        company_id_field.identifier
-    ] = "1234567-8"
+    entries = {}
+    for section in basic_template_form.sections.filter(parent__isnull=True):
+        entries[section.identifier] = dict()
+        generate_entries(section, entries[section.identifier])
+    entries["hakijan-tiedot"]["sections"]["company-information"]["sections"][
+        "contact-person"
+    ]["fields"]["henkilotunnus"] = {"value": "010181-900C", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "y-tunnus"
+    ] = {"value": "1234567-8", "extraValue": ""}
 
     answer_data = {
         "form": basic_template_form.id,
@@ -182,9 +191,9 @@ def test_company_id_validator(
     # test that a correctly formatted ssn passes the validator
     assert answer_serializer.is_valid()
 
-    answer_data["entries"][company_id_field.section.identifier][
-        company_id_field.identifier
-    ] = "12345A7-8"
+    answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information"][
+        "fields"
+    ]["y-tunnus"] = {"value": "12345A7-8", "extraValue": ""}
     answer_serializer = AnswerSerializer(data=answer_data)
 
     # test that a incorrectly formatted ssn is caught by the validator

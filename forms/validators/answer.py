@@ -17,16 +17,41 @@ class FieldRegexValidator:
         self._identifier = identifier
 
     def __call__(self, value):
-        for entry in value["entries"]:
-            if entry == self._identifier:
-                if not re.search(
-                    self._regex, list(value["entries"][entry][self._identifier])[0]
-                ):
+        self.regex_validator(
+            value["entries"],
+            Field.objects.filter(
+                section__form=value["form"], identifier=self._identifier
+            ),
+        )
+
+    def regex_validator(
+        self, entries, regex_fields, section_identifier=None, field_identifier=None
+    ):
+        if not isinstance(entries, Iterable) or isinstance(entries, str):
+            return
+        if "sections" in entries:
+            self.regex_validator(entries["sections"], regex_fields, None)
+        if "fields" in entries:
+            self.regex_validator(entries["fields"], regex_fields, section_identifier)
+
+        if isinstance(entries, list):
+            for i, entry in enumerate(entries):
+                self.regex_validator(
+                    entry, regex_fields, section_identifier=section_identifier
+                )
+            return
+
+        if section_identifier is not None:
+            for entry in entries:
+                if regex_fields.filter(
+                    section__identifier=section_identifier, identifier=entry
+                ).exists() and not re.search(self._regex, entries[entry]["value"]):
                     raise ValidationError(code=self._error_code)
-            for sub_entry in value["entries"][entry]:
-                if sub_entry == self._identifier:
-                    if not re.search(self._regex, value["entries"][entry][sub_entry]):
-                        raise ValidationError(code=self._error_code)
+        for entry in entries:
+            section_identifier = re.sub(r"\[\d+]", "", entry)
+            self.regex_validator(
+                entries[entry], regex_fields, section_identifier=section_identifier
+            )
 
 
 class RequiredFormFieldValidator:
