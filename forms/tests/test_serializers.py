@@ -92,6 +92,10 @@ def test_all_required_fields_answered_validator(
         parent__isnull=True
     )[1]
 
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "hallintaosuus"
+    ] = {"value": "1/1", "extraValue": ""}
+
     entries[empty_section.identifier]["sections"]["person-information"] = list()
     entries[empty_section.identifier]["sections"]["person-information"].append(
         {
@@ -139,6 +143,9 @@ def test_social_security_validator(
     entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
         "y-tunnus"
     ] = {"value": "1234567-8", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "hallintaosuus"
+    ] = {"value": "1/1", "extraValue": ""}
 
     answer_data = {
         "form": basic_template_form.id,
@@ -179,6 +186,9 @@ def test_company_id_validator(
     entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
         "y-tunnus"
     ] = {"value": "1234567-8", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "hallintaosuus"
+    ] = {"value": "1/1", "extraValue": ""}
 
     answer_data = {
         "form": basic_template_form.id,
@@ -200,6 +210,58 @@ def test_company_id_validator(
     with pytest.raises(ValidationError) as val_error:
         answer_serializer.is_valid(True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_company_id"
+
+
+@pytest.mark.django_db
+def test_control_share(
+    django_db_setup, basic_template_form, plot_search_target, admin_user
+):
+    entries = {}
+    for section in basic_template_form.sections.filter(parent__isnull=True):
+        entries[section.identifier] = dict()
+        generate_entries(section, entries[section.identifier])
+    entries["hakijan-tiedot"]["sections"]["company-information"]["sections"][
+        "contact-person"
+    ]["fields"]["henkilotunnus"] = {"value": "010181-900C", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "y-tunnus"
+    ] = {"value": "1234567-8", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"]["company-information"]["fields"][
+        "hallintaosuus"
+    ] = {"value": "1/3", "extraValue": ""}
+    entries["hakijan-tiedot"]["sections"].update(
+        {
+            "company-information[0]": {
+                "fields": {
+                    "hallintaosuus": {"value": "2/3", "extraValue": "",},  # noqa: E231
+                }
+            }
+        }
+    )
+
+    answer_data = {
+        "form": basic_template_form.id,
+        "user": admin_user.id,
+        "entries": entries,
+        "targets": [plot_search_target.pk,],  # noqa: E231
+    }
+
+    answer_serializer = AnswerSerializer(data=answer_data)
+    # test that a correctly formatted ssn passes the validator
+    assert answer_serializer.is_valid()
+
+    answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information[0]"][
+        "fields"
+    ]["hallintaosuus"] = {"value": "1/3", "extraValue": ""}
+    answer_serializer = AnswerSerializer(data=answer_data)
+
+    # test that a incorrectly formatted ssn is caught by the validator
+    with pytest.raises(ValidationError) as val_error:
+        answer_serializer.is_valid(True)
+    assert (
+        val_error.value.args[0]["non_field_errors"][0].code
+        == "control share is not even"
+    )
 
 
 @pytest.mark.django_db

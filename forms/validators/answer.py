@@ -94,3 +94,25 @@ class RequiredFormFieldValidator:
             self.required_validator(
                 entries[entry], required_fields, section_identifier=section_identifier
             )
+
+
+class ControlShareValidation:
+    def __call__(self, value):
+        result = 0
+        for control_share in self.control_share_finder_generator(value["entries"]):
+            values = control_share.split("/")
+            result += int(values[0]) / int(values[1])
+        if round(result, 10) != 1:
+            raise ValidationError(code="control share is not even")
+
+    def control_share_finder_generator(self, entries):
+        if not isinstance(entries, Iterable) or isinstance(entries, str):
+            return
+        if "hallintaosuus" in entries:
+            yield entries["hallintaosuus"]["value"]
+        if isinstance(entries, list):
+            for entry in entries:
+                yield from self.control_share_finder_generator(entry)
+            return
+        for entry in entries:
+            yield from self.control_share_finder_generator(entries[entry])

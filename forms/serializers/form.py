@@ -24,7 +24,11 @@ from users.serializers import UserSerializer
 from ..enums import FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
 from ..models.form import Attachment, EntrySection
-from ..validators.answer import FieldRegexValidator, RequiredFormFieldValidator
+from ..validators.answer import (
+    ControlShareValidation,
+    FieldRegexValidator,
+    RequiredFormFieldValidator,
+)
 
 
 class RecursiveSerializer(serializers.Serializer):
@@ -485,6 +489,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             FieldRegexValidator(
                 "[0-9]{7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
             ),
+            ControlShareValidation(),
         ]
 
     def get_information_checks(self, obj):

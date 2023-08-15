@@ -131,7 +131,13 @@ def test_answer_post(
                         },
                         {
                             "sections": {},
-                            "fields": {"business-id": {"value": "", "extraValue": ""}},
+                            "fields": {
+                                "business-id": {
+                                    "value": "",
+                                    "extraValue": "",
+                                    "hallintaosuus": {"value": "1/1", "extraValue": ""},
+                                }
+                            },
                         },
                     ],
                     "hakijan-tiedot": {
@@ -171,7 +177,13 @@ def test_answer_post(
                 "company-information": [
                     {
                         "sections": {},
-                        "fields": {"company-name": {"value": "jee", "extraValue": ""}},
+                        "fields": {
+                            "company-name": {
+                                "value": "jee",
+                                "extraValue": "",
+                                "hallintaosuus": {"value": "1/1", "extraValue": ""},
+                            }
+                        },
                     },
                 ],
                 "hakijan-tiedot": {
@@ -334,7 +346,10 @@ def test_attachment_post(
                     },
                     {
                         "sections": {},
-                        "fields": {"business-id": {"value": "", "extraValue": ""}},
+                        "fields": {
+                            "business-id": {"value": "", "extraValue": ""},
+                            "hallintaosuus": {"value": "1/1", "extraValue": ""},
+                        },
                     },
                 ],
                 "contact-person": {
