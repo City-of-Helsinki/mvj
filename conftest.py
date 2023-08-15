@@ -434,6 +434,15 @@ def basic_template_form(
         action=fake.sentence(),
         identifier="y-tunnus",
     )
+    field_factory(
+        label="Hallintaosuus",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="hallintaosuus",
+    )
 
     # Subsection for company's contact person information
     contact_person_company_applicant_section = section_factory(
