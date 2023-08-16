@@ -1,5 +1,6 @@
 from .info_links import TargetInfoLink
 from .plot_search import (
+    FAQ,
     AreaSearch,
     AreaSearchIntendedUse,
     Favourite,
@@ -14,6 +15,7 @@ from .plot_search import (
 )
 
 __all__ = [
+    "FAQ",
     "TargetStatus",
     "AreaSearch",
     "Favourite",
