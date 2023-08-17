@@ -19,7 +19,7 @@ jobs:
           -Dsonar.projectKey=mvj
           -Dsonar.sources=.
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.python.version=3.6,3.7,3.8,3.9
+          -Dsonar.python.version=3.7,3.8,3.9
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
