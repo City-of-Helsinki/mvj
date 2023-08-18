@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                             ),
                         ),
                     ],
-                    options={"db_table": "laske_export_laskeexportlog_invoices",},
+                    options={"db_table": "laske_export_laskeexportlog_invoices", },
                 ),
                 migrations.AlterField(
                     model_name="laskeexportlog",

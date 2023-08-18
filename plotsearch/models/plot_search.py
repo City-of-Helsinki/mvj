@@ -324,13 +324,11 @@ def get_meeting_memo_file_upload_to(instance, filename):
             ]
         )
     else:
-        return "/".join(
-            [
-                "meeting_memos",
-                str(timezone.now().date().isoformat()),
-                filename,
-            ]  # noqa: E231
-        )
+        return "/".join([
+            "meeting_memos",
+            str(timezone.now().date().isoformat()),
+            filename,
+        ])
 
 
 class MeetingMemo(models.Model):
@@ -458,13 +456,11 @@ class AreaSearch(models.Model):
 
 
 def get_area_search_attachment_upload_to(instance, filename):
-    return "/".join(
-        [
-            "area_search_attachments",
-            str(timezone.now().date().isoformat()),
-            filename,
-        ]  # noqa: E231
-    )
+    return "/".join([
+        "area_search_attachments",
+        str(timezone.now().date().isoformat()),
+        filename,
+    ])
 
 
 class AreaSearchAttachment(NameModel):

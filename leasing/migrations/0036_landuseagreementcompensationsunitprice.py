@@ -89,6 +89,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["name"], "abstract": False,},
+            options={"ordering": ["name"], "abstract": False, },
         ),
     ]

@@ -120,7 +120,7 @@ def test_answer_post(
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [plot_search_target.pk, ],
         "entries": json.dumps(
             {
                 "sections": {
@@ -245,7 +245,7 @@ def test_target_status_patch(
         "decline_reason": DeclineReason.APPLICATION_REVOKED,
         "arguments": "Very good arguments",
         "proposed_managements": [],
-        "reservation_conditions": ["Very good condition",],  # noqa: E231
+        "reservation_conditions": ["Very good condition", ],
         "geometry": area_search_test_data.geometry.geojson,
     }
 
@@ -324,7 +324,7 @@ def test_attachment_post(
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [plot_search_target.pk, ],
         "entries": {
             "sections": {
                 "company-information": [
@@ -350,7 +350,7 @@ def test_attachment_post(
             },
             "fields": {},
         },
-        "attachments": [attachment_id,],  # noqa: E231
+        "attachments": [attachment_id, ],
         "ready": True,
     }
     response = admin_client.post(url, data=payload, content_type="application/json")

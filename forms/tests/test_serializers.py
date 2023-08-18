@@ -107,7 +107,7 @@ def test_all_required_fields_answered_validator(
         "form": basic_template_form_with_required_fields.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [plot_search_target.pk, ],
     }
 
     with pytest.raises(ValidationError) as val_error:
@@ -144,7 +144,7 @@ def test_social_security_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [plot_search_target.pk, ],
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -184,7 +184,7 @@ def test_company_id_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [plot_search_target.pk, ],
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)

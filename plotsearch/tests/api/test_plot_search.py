@@ -164,7 +164,7 @@ def test_plot_search_update(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparers": [user.id,],  # noqa: E231
+        "preparers": [user.id, ],
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "search_class": SearchClass.OTHER,
@@ -219,7 +219,7 @@ def test_plot_search_delete_target(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparers": [user.id,],  # noqa: E231
+        "preparers": [user.id, ],
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "plot_search_targets": [],
@@ -484,7 +484,7 @@ def test_attach_decision_to_plot_search(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.patch(
         url,
-        data={"decisions": [decision.id,]},  # noqa: E231
+        data={"decisions": [decision.id, ]},
         content_type="application/json",
     )
     assert response.status_code == 200
@@ -494,7 +494,7 @@ def test_attach_decision_to_plot_search(
     url = reverse("plotsearch-list")
     response = admin_client.post(
         url,
-        data={"name": "Test name", "decisions": [decision.id,]},  # noqa: E231
+        data={"name": "Test name", "decisions": [decision.id, ]},
         content_type="application/json",
     )
     assert response.status_code == 201

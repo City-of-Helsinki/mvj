@@ -156,7 +156,7 @@ def _get_subsection_field_entries(  # noqa: C901
                 master_row, col, "{} - {}".format(field.section.title, field.label)
             )
         for entry in field.entry_set.filter(
-            entry_section__answer__statuses__in=[target_status,],  # noqa: E231
+            entry_section__answer__statuses__in=[target_status, ],
         ):
             if field.type.identifier == "checkbox":
                 choices = entry.value.strip("][").split(", ")

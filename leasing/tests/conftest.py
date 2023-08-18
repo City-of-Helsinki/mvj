@@ -718,13 +718,11 @@ def custom_area_in_lease(lease_data_dict_with_contacts):
         "detailed_plan": "54321",
         "detailed_plan_latest_processing_date": "2023-07-11",
         "detailed_plan_latest_processing_date_note": "notification",
-        "usage_distributions": [
-            {
-                "distribution": 3,
-                "build_permission": "5 m2",
-                "note": "sito tontti",
-            }  # noqa: E231
-        ],
+        "usage_distributions": [{
+            "distribution": 3,
+            "build_permission": "5 m2",
+            "note": "sito tontti",
+        }],
     }
     return lease_data_dict_with_contacts
 

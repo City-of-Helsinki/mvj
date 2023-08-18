@@ -96,7 +96,7 @@ AREA_IMPORT_TYPES = {
             "diaarinumero",
             "kaavavaihe",
             "hyvaksyja",
-        ],  # noqa: E231
+        ],
         "query": """
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
             AS geom_text
