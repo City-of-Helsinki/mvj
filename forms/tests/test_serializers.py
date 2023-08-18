@@ -96,6 +96,13 @@ def test_all_required_fields_answered_validator(
         "hallintaosuus"
     ] = {"value": "1/1", "extraValue": ""}
 
+    entries["hakijan-tiedot"]["sections"]["company-information"]["sections"][
+        "contact-person"
+    ]["fields"]["henkilotunnus"] = {
+        "value": "010181-900C",
+        "extraValue": "",
+    }
+
     entries[empty_section.identifier]["sections"]["person-information"] = list()
     entries[empty_section.identifier]["sections"]["person-information"].append(
         {
@@ -162,6 +169,19 @@ def test_social_security_validator(
         "sections"
     ]["contact-person"]["fields"][social_security_field.identifier] = {
         "value": "010181B900C",
+        "extraValue": "",
+    }
+    answer_serializer = AnswerSerializer(data=answer_data)
+
+    # test that a incorrectly formatted ssn is caught by the validator
+    with pytest.raises(ValidationError) as val_error:
+        answer_serializer.is_valid(True)
+    assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_ssn"
+
+    answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information"][
+        "sections"
+    ]["contact-person"]["fields"][social_security_field.identifier] = {
+        "value": "010181-900D",
         "extraValue": "",
     }
     answer_serializer = AnswerSerializer(data=answer_data)

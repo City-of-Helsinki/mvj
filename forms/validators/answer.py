@@ -5,6 +5,40 @@ from rest_framework.serializers import ValidationError
 
 from forms.models import Field
 
+SSN_CHECK = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "H",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "P",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+]
+
 
 class FieldRegexValidator:
     """
@@ -43,15 +77,27 @@ class FieldRegexValidator:
 
         if section_identifier is not None:
             for entry in entries:
-                if regex_fields.filter(
-                    section__identifier=section_identifier, identifier=entry
-                ).exists() and not re.search(self._regex, entries[entry]["value"]):
-                    raise ValidationError(code=self._error_code)
+                self.regex_checker(entries, entry, regex_fields, section_identifier)
         for entry in entries:
             section_identifier = re.sub(r"\[\d+]", "", entry)
             self.regex_validator(
                 entries[entry], regex_fields, section_identifier=section_identifier
             )
+
+    def regex_checker(self, entries, entry, regex_fields, section_identifier):
+        regex_exists = bool(re.search(self._regex, entries[entry]["value"]))
+        if regex_fields.filter(
+            section__identifier=section_identifier, identifier=entry
+        ).exists():
+            if regex_exists and self._identifier == "henkilotunnus":
+                self.ssn_checker(entries[entry]["value"])
+            if not regex_exists:
+                raise ValidationError(code=self._error_code)
+
+    def ssn_checker(self, ssn_parts):
+        ssn_number = int(ssn_parts[0:6] + ssn_parts[7:-1])
+        if SSN_CHECK[ssn_number % 31] != ssn_parts[-1]:
+            raise ValidationError(code=self._error_code)
 
 
 class RequiredFormFieldValidator:
