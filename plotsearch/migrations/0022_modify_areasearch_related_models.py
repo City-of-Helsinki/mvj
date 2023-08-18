@@ -27,7 +27,6 @@ def add_areasearch_identifier(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("forms", "0020_form_is_area_form"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -63,7 +62,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["name"], "abstract": False, },
+            options={
+                "ordering": ["name"],
+                "abstract": False,
+            },
         ),
         migrations.AddField(
             model_name="areasearch",
@@ -171,7 +173,9 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE, to="plotsearch.intendeduse"
             ),
         ),
-        migrations.DeleteModel(name="IntendedSubUse",),
+        migrations.DeleteModel(
+            name="IntendedSubUse",
+        ),
         migrations.AddField(
             model_name="areasearchattachment",
             name="area_search",

@@ -7,7 +7,6 @@ import leasing.enums
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("leasing", "0049_add_translations"),
     ]
@@ -90,7 +89,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False, },
+            options={
+                "abstract": False,
+            },
         ),
         migrations.CreateModel(
             name="UsageDistribution",

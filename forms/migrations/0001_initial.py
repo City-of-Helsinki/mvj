@@ -3,7 +3,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []
@@ -52,7 +51,9 @@ class Migration(migrations.Migration):
                 ("is_template", models.BooleanField(default=False)),
                 ("title", models.CharField(blank=True, max_length=255)),
             ],
-            options={"abstract": False, },
+            options={
+                "abstract": False,
+            },
         ),
         migrations.CreateModel(
             name="Section",

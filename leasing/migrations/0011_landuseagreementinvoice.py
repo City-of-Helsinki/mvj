@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("leasing", "0010_add_plot_search_base"),
     ]
@@ -109,6 +108,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False, },
+            options={
+                "abstract": False,
+            },
         ),
     ]

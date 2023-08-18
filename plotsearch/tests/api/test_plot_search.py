@@ -52,7 +52,6 @@ def test_plot_search_detail(
 
 @pytest.mark.django_db
 def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
-
     url = reverse("plotsearch-list")
 
     response = admin_client.get(url, content_type="application/json")
@@ -62,7 +61,10 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
 @pytest.mark.django_db
 def test_plot_search_create_simple(
-    django_db_setup, admin_client, plot_search_test_data, lease_test_data,
+    django_db_setup,
+    admin_client,
+    plot_search_test_data,
+    lease_test_data,
 ):
     url = reverse("plotsearch-list")  # list == create
 
@@ -164,7 +166,9 @@ def test_plot_search_update(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparers": [user.id, ],
+        "preparers": [
+            user.id,
+        ],
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "search_class": SearchClass.OTHER,
@@ -219,7 +223,9 @@ def test_plot_search_delete_target(
         "name": get_random_string(),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
-        "preparers": [user.id, ],
+        "preparers": [
+            user.id,
+        ],
         "begin_at": plot_search_test_data.begin_at,
         "end_at": updated_end_at,
         "plot_search_targets": [],
@@ -395,8 +401,13 @@ def test_attach_form_to_plot_search(
         is_template=True,
         title=fake.name(),
     )
-    parent_section = section_factory(form=form,)
-    child_section = section_factory(form=form, parent=parent_section,)
+    parent_section = section_factory(
+        form=form,
+    )
+    child_section = section_factory(
+        form=form,
+        parent=parent_section,
+    )
     field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
     field_factory(
         label=fake.name(),
@@ -442,8 +453,13 @@ def test_attach_form_to_plot_search(
         is_template=True,
         title=fake.name(),
     )
-    parent_section = section_factory(form=new_form,)
-    child_section = section_factory(form=new_form, parent=parent_section,)
+    parent_section = section_factory(
+        form=new_form,
+    )
+    child_section = section_factory(
+        form=new_form,
+        parent=parent_section,
+    )
     field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
     field_factory(
         label=fake.name(),
@@ -484,7 +500,11 @@ def test_attach_decision_to_plot_search(
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.patch(
         url,
-        data={"decisions": [decision.id, ]},
+        data={
+            "decisions": [
+                decision.id,
+            ]
+        },
         content_type="application/json",
     )
     assert response.status_code == 200
@@ -494,7 +514,12 @@ def test_attach_decision_to_plot_search(
     url = reverse("plotsearch-list")
     response = admin_client.post(
         url,
-        data={"name": "Test name", "decisions": [decision.id, ]},
+        data={
+            "name": "Test name",
+            "decisions": [
+                decision.id,
+            ],
+        },
         content_type="application/json",
     )
     assert response.status_code == 201
@@ -504,9 +529,10 @@ def test_attach_decision_to_plot_search(
 
 @pytest.mark.django_db
 def test_add_target_info_link(
-    django_db_setup, admin_client, plot_search_target,
+    django_db_setup,
+    admin_client,
+    plot_search_target,
 ):
-
     target_info_link_data = {
         "url": fake.uri(),
         "description": fake.sentence(),
@@ -518,7 +544,11 @@ def test_add_target_info_link(
     assert response.status_code == 200
     payload = response.data
     payload["plot_search_targets"][0]["info_links"].append(target_info_link_data)
-    response = admin_client.patch(url, data=payload, content_type="application/json",)
+    response = admin_client.patch(
+        url,
+        data=payload,
+        content_type="application/json",
+    )
     assert response.status_code == 200
 
     link_found = False
@@ -624,7 +654,9 @@ def test_getting_and_editing_and_deleting_existing_info_link(
 
 @pytest.mark.django_db
 def test_get_area_search_detail(
-    django_db_setup, admin_client, area_search_test_data,
+    django_db_setup,
+    admin_client,
+    area_search_test_data,
 ):
     url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
 
@@ -633,7 +665,9 @@ def test_get_area_search_detail(
 
 
 def test_post_area_search_detail(
-    django_db_setup, admin_client, area_search_test_data,
+    django_db_setup,
+    admin_client,
+    area_search_test_data,
 ):
     data = {
         "area_search_status": {"status_notes": [{"note": "Aluetta ei saa vuokrata"}]}
@@ -645,7 +679,9 @@ def test_post_area_search_detail(
 
 
 def test_post_area_search_detail_empty_payload(
-    django_db_setup, admin_client, area_search_test_data,
+    django_db_setup,
+    admin_client,
+    area_search_test_data,
 ):
     url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
     data = {"area_search_status": {}}
@@ -668,7 +704,6 @@ def test_post_area_search_detail_empty_payload(
 
 @pytest.mark.django_db
 def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
-
     url = reverse("areasearch-list")
 
     response = admin_client.get(url, content_type="application/json")
@@ -715,7 +750,9 @@ def test_area_search_attachment_create(
         "name": fake.name(),
     }
 
-    url = reverse("areasearchattachment-list",)
+    url = reverse(
+        "areasearchattachment-list",
+    )
     response = admin_client.post(url, data=attachment)
 
     assert response.status_code == 201

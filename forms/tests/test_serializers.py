@@ -79,7 +79,6 @@ def test_all_required_fields_answered_validator(
     plot_search_target,
     admin_user,
 ):
-
     entries = {}
     # Generating answers where required fields are not given
     for section in basic_template_form_with_required_fields.sections.filter(
@@ -107,7 +106,9 @@ def test_all_required_fields_answered_validator(
         "form": basic_template_form_with_required_fields.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk, ],
+        "targets": [
+            plot_search_target.pk,
+        ],
     }
 
     with pytest.raises(ValidationError) as val_error:
@@ -120,7 +121,6 @@ def test_all_required_fields_answered_validator(
 def test_social_security_validator(
     django_db_setup, basic_template_form, plot_search_target, admin_user
 ):
-
     social_security_field = None
     for section in basic_template_form.sections.all():
         for field in section.fields.all():
@@ -144,7 +144,9 @@ def test_social_security_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk, ],
+        "targets": [
+            plot_search_target.pk,
+        ],
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -184,7 +186,9 @@ def test_company_id_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk, ],
+        "targets": [
+            plot_search_target.pk,
+        ],
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -234,7 +238,9 @@ def test_target_status(
                 )
             }
         ],
-        "reservation_conditions": ["Very good condition",],  # noqa: E23
+        "reservation_conditions": [
+            "Very good condition",
+        ],
         "geometry": area_search_test_data.geometry.geojson,
     }
 

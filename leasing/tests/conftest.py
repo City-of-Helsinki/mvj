@@ -351,7 +351,8 @@ class CustomDetailedPlanFactory(factory.DjangoModelFactory):
 
 @pytest.fixture
 def area_test_data(
-    area_factory, area_source_factory,
+    area_factory,
+    area_source_factory,
 ):
     area_source = area_source_factory(
         name="Tonttiosasto: vuokrausalue_paa",
@@ -383,7 +384,8 @@ def area_test_data(
 
 @pytest.fixture
 def area_with_intersects_test_data(
-    area_test_data, area_factory,
+    area_test_data,
+    area_factory,
 ):
     area_source = area_test_data["area_source"]
     intersect_areas = [
@@ -718,11 +720,13 @@ def custom_area_in_lease(lease_data_dict_with_contacts):
         "detailed_plan": "54321",
         "detailed_plan_latest_processing_date": "2023-07-11",
         "detailed_plan_latest_processing_date_note": "notification",
-        "usage_distributions": [{
-            "distribution": 3,
-            "build_permission": "5 m2",
-            "note": "sito tontti",
-        }],
+        "usage_distributions": [
+            {
+                "distribution": 3,
+                "build_permission": "5 m2",
+                "note": "sito tontti",
+            }
+        ],
     }
     return lease_data_dict_with_contacts
 
@@ -817,8 +821,12 @@ def land_use_agreement_test_data(
         ),
     ]
     litigants = [
-        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
-        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+        ),
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+        ),
     ]
 
     land_use_agreement_litigant_contact_factory(

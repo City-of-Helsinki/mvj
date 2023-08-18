@@ -24,7 +24,6 @@ def generate_unique_identifier(klass, field_name, field_value, max_length, **kwa
 
 
 def clone_object(obj, attrs={}):
-
     # we start by building a "flat" clone
     clone = obj._meta.model.objects.get(id=obj.id)
     clone.id = None
@@ -39,7 +38,6 @@ def clone_object(obj, attrs={}):
     # Scan field to further investigate relations
     fields = clone._meta.get_fields()
     for field in fields:
-
         # Manage M2M fields by replicating all related records found on parent "obj" into "clone"
         if not field.auto_created and field.many_to_many:
             for row in getattr(obj, field.name).all():
@@ -156,7 +154,9 @@ def _get_subsection_field_entries(  # noqa: C901
                 master_row, col, "{} - {}".format(field.section.title, field.label)
             )
         for entry in field.entry_set.filter(
-            entry_section__answer__statuses__in=[target_status, ],
+            entry_section__answer__statuses__in=[
+                target_status,
+            ],
         ):
             if field.type.identifier == "checkbox":
                 choices = entry.value.strip("][").split(", ")

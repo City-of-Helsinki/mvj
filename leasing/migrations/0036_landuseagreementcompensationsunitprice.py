@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("leasing", "0035_modify_landuseagreementcompensations"),
     ]
@@ -89,6 +88,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["name"], "abstract": False, },
+            options={
+                "ordering": ["name"],
+                "abstract": False,
+            },
         ),
     ]

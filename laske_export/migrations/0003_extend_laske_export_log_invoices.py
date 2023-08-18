@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("leasing", "0007_add_business_id_validator"),
         ("laske_export", "0002_auto_20191004_0950"),
@@ -34,7 +33,9 @@ class Migration(migrations.Migration):
                             ),
                         ),
                     ],
-                    options={"db_table": "laske_export_laskeexportlog_invoices", },
+                    options={
+                        "db_table": "laske_export_laskeexportlog_invoices",
+                    },
                 ),
                 migrations.AlterField(
                     model_name="laskeexportlog",

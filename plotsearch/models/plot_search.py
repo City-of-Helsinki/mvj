@@ -84,7 +84,10 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
 
     # In Finnish: Valmistelijat
     preparers = models.ManyToManyField(
-        User, verbose_name=_("Preparer"), related_name="+", blank=True,
+        User,
+        verbose_name=_("Preparer"),
+        related_name="+",
+        blank=True,
     )
 
     # In Finnish: Haun tyyppi
@@ -165,7 +168,9 @@ class PlotSearchTarget(models.Model):
 
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
-        PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
+        PlotSearchTargetType,
+        verbose_name=_("Target type"),
+        max_length=30,
     )
 
     def identifier(self):
@@ -324,11 +329,13 @@ def get_meeting_memo_file_upload_to(instance, filename):
             ]
         )
     else:
-        return "/".join([
-            "meeting_memos",
-            str(timezone.now().date().isoformat()),
-            filename,
-        ])
+        return "/".join(
+            [
+                "meeting_memos",
+                str(timezone.now().date().isoformat()),
+                filename,
+            ]
+        )
 
 
 class MeetingMemo(models.Model):
@@ -456,11 +463,13 @@ class AreaSearch(models.Model):
 
 
 def get_area_search_attachment_upload_to(instance, filename):
-    return "/".join([
-        "area_search_attachments",
-        str(timezone.now().date().isoformat()),
-        filename,
-    ])
+    return "/".join(
+        [
+            "area_search_attachments",
+            str(timezone.now().date().isoformat()),
+            filename,
+        ]
+    )
 
 
 class AreaSearchAttachment(NameModel):
