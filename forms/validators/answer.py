@@ -77,6 +77,9 @@ class FieldRegexValidator:
 
         if section_identifier is not None:
             for entry in entries:
+                if isinstance(entries[entry], str) or entry in ("value", "extraValue"):
+                    continue
+
                 self.regex_checker(entries, entry, regex_fields, section_identifier)
         for entry in entries:
             section_identifier = re.sub(r"\[\d+]", "", entry)
@@ -85,10 +88,13 @@ class FieldRegexValidator:
             )
 
     def regex_checker(self, entries, entry, regex_fields, section_identifier):
-        regex_exists = bool(re.search(self._regex, entries[entry]["value"]))
         if regex_fields.filter(
             section__identifier=section_identifier, identifier=entry
         ).exists():
+            if entries[entry]["value"] == "":
+                return
+
+            regex_exists = bool(re.search(self._regex, entries[entry]["value"]))
             if regex_exists and self._identifier == "henkilotunnus":
                 self.ssn_checker(entries[entry]["value"])
             if not regex_exists:
