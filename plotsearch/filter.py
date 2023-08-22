@@ -13,6 +13,10 @@ class TargetFilter(django_filters.BaseInFilter, django_filters.NumberFilter):
     pass
 
 
+class AreaSearchIDFilter(django_filters.BaseInFilter, django_filters.NumberFilter):
+    pass
+
+
 class InformationCheckListFilterSet(django_filters.FilterSet):
     answer = django_filters.NumberFilter(field_name="entry_section__answer")
 
@@ -95,6 +99,7 @@ class ManyCharFilter(django_filters.BaseInFilter, django_filters.CharFilter):
 
 class AreaSearchFilterSet(django_filters.FilterSet):
     identifier = django_filters.CharFilter(lookup_expr="icontains")
+    ids = AreaSearchIDFilter(field_name="id")
     received_date = django_filters.DateFromToRangeFilter()
     intended_use = django_filters.NumberFilter(field_name="intended_use__id")
     district = django_filters.CharFilter(lookup_expr="icontains")
@@ -112,6 +117,7 @@ class AreaSearchFilterSet(django_filters.FilterSet):
         model = AreaSearch
         fields = [
             "identifier",
+            "ids",
             "received_date",
             "intended_use",
             "district",
