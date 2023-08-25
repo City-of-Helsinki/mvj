@@ -35,8 +35,8 @@ class FavouriteAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
 
 class FAQAdmin(admin.ModelAdmin):
     list_display = (
-        "answer",
-        "question",
+        "question_truncate",
+        "answer_truncate",
     )
 
 

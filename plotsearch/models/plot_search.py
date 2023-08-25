@@ -506,6 +506,14 @@ class FAQ(models.Model):
     question = models.TextField(unique=True)
     answer = models.TextField()
 
+    @property
+    def question_truncate(self):
+        return self.question if len(self.question) < 50 else (self.question[:50] + "..")
+
+    @property
+    def answer_truncate(self):
+        return self.answer if len(self.answer) < 50 else (self.answer[:50] + "..")
+
 
 auditlog.register(PlotSearch)
 auditlog.register(InformationCheck)
