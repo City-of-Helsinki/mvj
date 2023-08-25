@@ -499,7 +499,7 @@ class DirectReservationLink(models.Model):
     targets = models.ManyToManyField(PlotSearchTarget)
 
     def get_external_url(self):
-        return "{}/direct-reservation/{}".format(settings.PUBLIC_UI_URL, self.uuid)
+        return "{}/suoravaraus/{}".format(settings.PUBLIC_UI_URL, self.uuid)
 
 
 class FAQ(models.Model):
