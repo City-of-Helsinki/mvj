@@ -1,6 +1,7 @@
 from django.utils.translation import override
 from django.utils.translation import ugettext_lazy as _
 
+from forms.enums import ApplicantType
 from forms.models import Choice, Field, Form, Section
 from plotsearch.enums import AreaSearchLessor
 
@@ -784,3 +785,26 @@ def pop_default(validated_data, index, default_value):
         return validated_data.pop(index)
     except IndexError:
         return default_value
+
+
+def get_applicant_type(answer):
+    applicant_sections = answer.entry_sections.filter(
+        entries__field__identifier="hakija",
+        entries__field__section__identifier="hakijan-tiedot",
+    )
+    applicant_type = (
+        applicant_sections[0]
+        .entries.get(
+            field__identifier="hakija", field__section__identifier="hakijan-tiedot"
+        )
+        .value
+    )
+
+    applicant_type_enum = ApplicantType.BOTH
+
+    if applicant_type == "0":
+        applicant_type_enum = ApplicantType.PERSON
+    if applicant_type == "1":
+        applicant_type_enum = ApplicantType.COMPANY
+
+    return applicant_type_enum

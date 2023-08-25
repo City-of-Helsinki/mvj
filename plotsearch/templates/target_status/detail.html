@@ -1,4 +1,7 @@
 {% load static %}
+{% load form_visible %}
+{% load entry_filter %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,8 +18,8 @@
             <h1>{{ object.application_identifier }}</h1>
         </div>
         <div class="divider">&nbsp;</div>
-        {% for section in object.plot_search_target.plot_search.form.sections.all %}
-        {% include "mixins/section.html" with section=section %}
+        {% for section in object.plot_search_target.plot_search.form.sections.all|filter_only_parent %}
+        {% include "mixins/section.html" with section=section answer=object.answer %}
         {% endfor %}
     </div>
 </body>

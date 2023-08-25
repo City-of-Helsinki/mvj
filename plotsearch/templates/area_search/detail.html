@@ -1,0 +1,100 @@
+{% load static %}
+{% load i18n %}
+{% load entry_filter %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plotsearch/fonts/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'plotsearch/target_status_pdf_style.css' %}">
+</head>
+
+<body>
+<div class="content">
+    <div>
+        <h1>{{ object.identifier }}</h1>
+    </div>
+    <div>
+        <h2>{% trans "Area search information" %}</h2>
+        <table>
+            <tr>
+                <th>{% trans "Lessor" %}</th>
+                <td>{{ object.lessor.value }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Description area" %}</th>
+                <td>{{ object.description_area }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Address" %}</th>
+                <td>{{ object.address }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "District" %}</th>
+                <td>{{ object.district }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Intended use" %}</th>
+                <td>{{ object.intended_use }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Description intended use" %}</th>
+                <td>{{ object.description_intended_use }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Start date" %}</th>
+                <td>{{ object.start_date|date:"G:i j.n.Y" }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "End date" %}</th>
+                <td>{{ object.end_date|date:"G:i j.n.Y" }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Received date" %}</th>
+                <td>{{ object.received_date|date:"G:i j.n.Y" }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="divider">&nbsp;</div>
+    {% for section in object.form.sections.all|filter_only_parent %}
+        {% if section.applicant_type|slugify == applicant_type|slugify or section.applicant_type|slugify == "Both"|slugify %}
+            {% include "mixins/section.html" with section=section answer=object.answer %}
+        {% endif %}
+    {% endfor %}
+    {% if show_information_check %}
+        <div>
+            <h2>{% trans "Area search information" %}</h2>
+            <table>
+                <tr>
+                    <th>{% trans "Lessor" %}</th>
+                    <td>{{ object.area_search_status.decline_reason.value }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Description area" %}</th>
+                    <td>{{ object.area_search_status.preparer_note }}</td>
+                </tr>
+                {% for note in object.area_search_status.status_notes.all %}
+                    <tr>
+                        <th>{% trans "Note" %}</th>
+                        <td>{{ note.note }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans "Preparer" %}</th>
+                        <td>{{ note.preparer }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans "Time stamp" %}</th>
+                        <td>{{ note.time_stamp|date:"G:i j.n.Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="divider">&nbsp;</div>
+        </div>
+    {% endif %}
+</div>
+</body>
+
+</html>

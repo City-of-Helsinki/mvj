@@ -66,6 +66,7 @@ from plotsearch.serializers.plot_search import (
     PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
 )
+from plotsearch.utils import get_applicant_type
 
 
 class PlotSearchSubtypeViewSet(
@@ -259,7 +260,7 @@ class DirectReservationLinkViewSet(viewsets.ModelViewSet):
     permission_classes = (MvjDjangoModelPermissions,)
 
 
-class GeneratePDF(PdfMixin, FilterView):
+class TargetStatusGeneratePDF(PdfMixin, FilterView):
     template_name = "target_status/detail.html"
     model = TargetStatus
     filterset_class = TargetStatusExportFilterSet
@@ -289,6 +290,61 @@ class GeneratePDF(PdfMixin, FilterView):
         ] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
 
         return response
+
+
+class AreaSearchGeneratePDF(PdfMixin, FilterView):
+    template_name = "area_search/detail.html"
+    model = AreaSearch
+    filterset_class = AreaSearchFilterSet
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        show_information_check = self.request.GET.get("show_information_check", False)
+
+        context.update({"show_information_check": show_information_check})
+
+        return context
+
+    def render_to_response(
+        self, context: Dict[str, Any], **response_kwargs: Any
+    ) -> http.HttpResponse:
+        response_kwargs.setdefault("content_type", self.content_type)
+        response = HttpResponse(content_type="application/zip")
+        with zipfile.PyZipFile(response, mode="w") as zip_file:
+            for object in self.object_list:
+                context.update(
+                    object=object, applicant_type=get_applicant_type(object.answer)
+                )
+                pdf_response = self.response_class(
+                    request=self.request,
+                    template=self.get_template_names(),
+                    context=context,
+                    using=self.template_engine,
+                    **response_kwargs,
+                )
+                zip_file.writestr(
+                    ZipInfo("{}.pdf".format(object.identifier)),
+                    pdf_response.render().content,
+                )
+
+        response[
+            "Content-Disposition"
+        ] = f'attachment; filename={"{}.zip".format(self.object_list[0].lessor)}'
+
+        return response
+
+
+"""
+# For PDF debugging purposes
+class DebugAreaSearchPDF(generic.DetailView):
+    model = AreaSearch
+    template_name = "area_search/detail.html"
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context.update(applicant_type=get_applicant_type(context["areasearch"].answer))
+        return context
+"""
 
 
 class DirectReservationToFavourite(APIView):
