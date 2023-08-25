@@ -1,29 +1,45 @@
-{% for subsection in section.subsections.all %}
-    {% include "mixins/section.html" with section=subsection %}
-{% endfor %}
+{% load entry_filter %}
+{% load form_visible %}
 
-{% if section.fields.all %}
-<div>
-    <h2>{{ section }}</h2>
-    <table>
-        {% for field in section.fields.all %}
-        <tr>
-            <th>
-                {{field}}
-            </th>
-            <td>
-                {% for entry in field.entry_set.all %}
-                    {{ entry.value }}
-                    {% if not entry.value%}
-                        <span> - </span>
-                    {% endif %}
-                {% empty %}
-                    <span> - </span>
-                {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+{% if section.fields.all and section.visible == True %}
+    <div>
+        <h2>{{ section }}</h2>
+        <table>
+            {% for field in section.fields.all %}
+                {% if field.enabled == True %}
+                    <tr>
+                        <th>
+                            {{ field }}
+                        </th>
+                        {% for entry in field.entry_set.all|filter_answer:answer %}
+                            <td>
+                                {% if field.type.identifier == "checkbox" or field.type.identifier == "radiobutton" or field.type.identifier == "radiobuttoninline" %}
+                                    {% fetch_choice_value entry.value entry.field.id %}
+                                    {% if not entry.value %}
+                                        <span> - </span>
+                                    {% endif %}
+
+                                {% else %}
+                                    {{ entry.value }}
+                                    {% if not entry.value %}
+                                        <span> - </span>
+                                    {% endif %}
+                                {% endif %}
+                                {% empty %}
+                                <span> - </span>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+
+            {% endfor %}
+        </table>
+    </div>
     <div class="divider">&nbsp;</div>
-</div>
 {% endif %}
+
+{% for subsection in section.subsections.all %}
+    {% if subsection.applicant_type|slugify == applicant_type|slugify or subsection.applicant_type|slugify == "Both"|slugify %}
+        {% include "mixins/section.html" with section=subsection %}
+    {% endif %}
+{% endfor %}

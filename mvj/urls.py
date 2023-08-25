@@ -109,12 +109,12 @@ from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentViewset,
+    AreaSearchGeneratePDF,
     AreaSearchViewSet,
     DirectReservationLinkViewSet,
     DirectReservationToFavourite,
     FAQViewSet,
     FavouriteViewSet,
-    GeneratePDF,
     InformationCheckViewSet,
 )
 from plotsearch.views.plot_search import IntendedUseViewSet as IntendedUsePSViewSet
@@ -124,6 +124,7 @@ from plotsearch.views.plot_search import (
     PlotSearchTargetViewSet,
     PlotSearchTypeViewSet,
     PlotSearchViewSet,
+    TargetStatusGeneratePDF,
 )
 from users.views import UsersPermissions
 from users.viewsets import UserViewSet
@@ -252,7 +253,12 @@ router.register("job_run", JobRunViewSet)
 router.register("job_run_log_entry", JobRunLogEntryViewSet)
 
 additional_api_paths = [
-    path("target_status_pdf/", GeneratePDF.as_view(), name="target_status-pdf"),
+    path(
+        "target_status_pdf/",
+        TargetStatusGeneratePDF.as_view(),
+        name="target_status-pdf",
+    ),
+    path("area_search_pdf/", AreaSearchGeneratePDF.as_view(), name="area-search-pdf"),
     path("auditlog/", AuditLogView.as_view(), name="auditlog"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(

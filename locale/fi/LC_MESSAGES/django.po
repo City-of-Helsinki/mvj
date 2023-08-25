@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-27 16:00+0300\n"
+"POT-Creation-Date: 2023-09-14 14:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3639,10 +3639,26 @@ msgstr "Kohde on poistunut järjestelmästä!"
 msgid "The target information has changed!"
 msgstr "Kohteen tiedot ovat muuttuneet!"
 
+msgid "Area search information"
+msgstr "Aluehaun tiedot"
+
+msgid "Description area"
+msgstr "Tarkempi kuvaus alueesta"
+
+msgid "Description intended use"
+msgstr "Tarkempi kuvaus käyttötarkoituksesta"
+
+msgid "Received date"
+msgstr "Vastaanotettu"
+
+msgid "Time stamp"
+msgstr "Aikaleima"
+
 msgid "You have received a link for a direct reservation plot search"
 msgstr "Olet vastaanottanut linkin suoravaraushakuun"
 
-#python-brace-format
+# python-brace-format
+#, python-brace-format
 msgid ""
 "Hi {receiver}! Here is the link for the direct reservation plot search: "
 "{url} \n"
