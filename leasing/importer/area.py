@@ -101,7 +101,7 @@ AREA_IMPORT_TYPES = {
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
             AS geom_text
         FROM maka.hankerajaus_alue_kaavahanke AS a
-        WHERE kaavatunnus IS NOT NULL
+        WHERE kaavanumero IS NOT NULL
         """,
     },
     # Vuokra-alueet
