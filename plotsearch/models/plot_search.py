@@ -15,7 +15,7 @@ from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet
 from leasing.enums import PlotSearchTargetType
-from leasing.models import Financing, Hitas, Management
+from leasing.models import Financing, Hitas, Lease, Management
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
     AreaSearchLessor,
@@ -274,6 +274,15 @@ class TargetStatus(models.Model):
         max_length=255, unique=True, default=target_status_id_generator
     )
 
+    # In Finnish: Vuokraus
+    lease = models.ForeignKey(
+        Lease,
+        related_name="target_statuses",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     def target_status_get_xlsx_page(self, worksheet, row):
         return get_answer_worksheet(self, worksheet, row)
 
@@ -447,6 +456,14 @@ class AreaSearch(models.Model):
         null=True,
         blank=True,
         on_delete=models.PROTECT,
+    )
+
+    lease = models.ForeignKey(
+        Lease,
+        related_name="area_searches",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     area_search_status = models.OneToOneField(
