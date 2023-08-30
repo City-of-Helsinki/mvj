@@ -405,7 +405,7 @@ class AreaSearch(models.Model):
         enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
     )
 
-    description_area = models.TextField()
+    description_area = models.TextField(blank=True)
 
     address = models.CharField(max_length=255, null=True, blank=True)
     district = models.CharField(max_length=255, null=True, blank=True)
