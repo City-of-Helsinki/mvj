@@ -234,6 +234,9 @@ pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(r"intended_use", IntendedUsePSViewSet, basename="pub_intended_use")
 pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
 pub_router.register(
+    r"plot_search_stage", PlotSearchStageViewSet, basename="pub_plot_search_stage"
+)
+pub_router.register(
     r"plot_search_type", PlotSearchTypeViewSet, basename="pub_plot_search_type"
 )
 pub_router.register(
