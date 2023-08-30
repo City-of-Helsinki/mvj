@@ -25,6 +25,7 @@ from leasing.serializers.invoice import (
     InvoiceNoteCreateUpdateSerializer,
     InvoiceNoteSerializer,
 )
+from plotsearch.models import AreaSearch, TargetStatus
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -151,6 +152,20 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
         fields = ("type", "municipality", "district", "sequence")
 
 
+class TargetStatusSuccintSerializer(serializers.ModelSerializer):
+    received_date = serializers.DateTimeField(source="answer.created_at")
+
+    class Meta:
+        model = TargetStatus
+        fields = ("application_identifier", "received_date")
+
+
+class AreaSearchSuccintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AreaSearch
+        fields = ("identifier", "received_date")
+
+
 class LeaseSuccinctSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -185,6 +200,39 @@ class LeaseSuccinctSerializer(
         )
 
 
+class LeaseSuccintWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
+    target_statuses = TargetStatusSuccintSerializer(
+        read_only=True, many=True, required=False
+    )
+    area_searches = AreaSearchSuccintSerializer(
+        read_only=True, many=True, required=False
+    )
+
+    class Meta:
+        model = Lease
+        fields = (
+            "id",
+            "deleted",
+            "created_at",
+            "modified_at",
+            "type",
+            "municipality",
+            "district",
+            "identifier",
+            "start_date",
+            "end_date",
+            "state",
+            "is_rent_info_complete",
+            "is_invoicing_enabled",
+            "reference_number",
+            "note",
+            "preparer",
+            "is_subject_to_vat",
+            "target_statuses",
+            "area_searches",
+        )
+
+
 class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
     lease_areas = LeaseAreaWithGeometryListSerializer(
         many=True, required=False, allow_null=True
@@ -215,7 +263,7 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
 
 
 class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    to_lease = LeaseSuccinctSerializer()
+    to_lease = LeaseSuccintWithPlotSearchInformationSerializer()
 
     class Meta:
         model = RelatedLease
@@ -239,7 +287,7 @@ class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
 class RelatedFromLeaseSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
-    from_lease = LeaseSuccinctSerializer()
+    from_lease = LeaseSuccintWithPlotSearchInformationSerializer()
 
     class Meta:
         model = RelatedLease
