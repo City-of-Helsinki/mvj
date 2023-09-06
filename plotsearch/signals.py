@@ -9,12 +9,20 @@ from plotsearch.models import InformationCheck, PlotSearch, PlotSearchTarget
 @receiver(pre_save, sender=PlotSearchTarget)
 def prepare_plan_unit_on_plot_search_target_save(sender, instance, **kwargs):
     plan_unit = instance.plan_unit
+
     if plan_unit is None:
         return
     if plan_unit.is_master:
         plan_unit.pk = None
         plan_unit.is_master = False
+        usage_permissions = plan_unit.usage_distributions.all()
         plan_unit.save()
+
+        for usage_permission in usage_permissions:
+            usage_permission.pk = None
+            usage_permission.plan_unit = plan_unit
+            usage_permission.save()
+
         instance.plan_unit = plan_unit
 
 
@@ -23,6 +31,7 @@ def post_delete_plan_unit_on_plot_search_target_delete(sender, instance, **kwarg
     plan_unit = instance.plan_unit
     if plan_unit is None:
         return
+    plan_unit.usage_distributions.all().delete()
     plan_unit.delete()
 
 
