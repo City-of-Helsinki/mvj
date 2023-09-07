@@ -87,7 +87,11 @@ def test_add_and_delete_section_to_form(admin_client, basic_form):
     assert response.status_code == 200
     payload = response.data
     sections_count = len(payload["sections"])
-    subsection_data = {"title": fake.name(), "form": basic_form.id}
+    subsection_data = {
+        "title": fake.name(),
+        "form": basic_form.id,
+        "identifier": "henkilon-tiedot",
+    }
     section_data = {
         "title": fake.name(),
         "form": basic_form.id,

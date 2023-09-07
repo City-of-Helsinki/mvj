@@ -44,13 +44,21 @@ class RecursiveSerializer(serializers.Serializer):
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = ("text", "value", "action", "has_text_input")
+        fields = (
+            "text",
+            "text_fi",
+            "text_en",
+            "text_sv",
+            "value",
+            "action",
+            "has_text_input",
+        )
 
 
 class FieldSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     type = serializers.PrimaryKeyRelatedField(queryset=FieldType.objects.all())
-    identifier = serializers.ReadOnlyField(read_only=True)
+    identifier = serializers.CharField()
     choices = ChoiceSerializer(many=True)
 
     class Meta:
@@ -60,7 +68,13 @@ class FieldSerializer(serializers.ModelSerializer):
             "identifier",
             "type",
             "label",
+            "label_en",
+            "label_fi",
+            "label_sv",
             "hint_text",
+            "hint_text_en",
+            "hint_text_fi",
+            "hint_text_sv",
             "enabled",
             "required",
             "validation",
@@ -73,6 +87,12 @@ class FieldSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         fsection = validated_data.pop("section_id")
+        choices = validated_data.pop("choices", [])
+        c_serializer = ChoiceSerializer()
+
+        for choice in choices:
+            c_serializer.create(choice)
+
         fsection = Section.objects.get(pk=fsection)
         return Field.objects.create(section=fsection, **validated_data)
 
@@ -103,7 +123,6 @@ class SectionSerializer(serializers.ModelSerializer):
     subsections = RecursiveSerializer(many=True, required=False, allow_null=True)
     fields = FieldSerializer(many=True, required=False, allow_null=True)
     id = serializers.IntegerField(required=False, allow_null=True)
-    identifier = serializers.ReadOnlyField(read_only=True)
     type = serializers.CharField(read_only=True)
     applicant_type = EnumSerializerField(enum=ApplicantType, required=False)
 
@@ -113,6 +132,9 @@ class SectionSerializer(serializers.ModelSerializer):
             "id",
             "identifier",
             "title",
+            "title_fi",
+            "title_en",
+            "title_sv",
             "visible",
             "sort_order",
             "add_new_allowed",
