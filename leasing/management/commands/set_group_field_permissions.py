@@ -190,7 +190,7 @@ DEFAULT_FIELD_PERMS = {
         3: "view",
         4: "view",
         5: "change",
-        6: "view",
+        6: "change",
         7: "change",
     },
     "collectioncourtdecision": {
