@@ -393,7 +393,8 @@ class AreaImporter(BaseImporter):
                     ext_id = other_data.pop("external_id", "")
                     # If external id exists, we can continue deleting data.
                     if ext_id:
-                        # ...so we delete them all but spare the one with the correct external_id (if it happens to exist)
+                        # ...so we delete them all but spare the one with the correct
+                        # external_id (if it happens to exist)
                         Area.objects.filter(**match_data).exclude(
                             external_id=ext_id
                         ).delete()
