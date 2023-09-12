@@ -1,9 +1,9 @@
 from time import perf_counter
-from django.db import IntegrityError
 
 import psycopg2
 from django.conf import settings
 from django.contrib.gis import geos
+from django.db import IntegrityError
 
 from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
