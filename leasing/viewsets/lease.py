@@ -496,9 +496,6 @@ class LeaseViewSet(
                     )
                 )
 
-        # filtering all leases with no decisions
-        queryset = queryset.filter(decisions__isnull=False)
-
         return queryset.distinct()
 
     def get_serializer_class(self):
