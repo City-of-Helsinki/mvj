@@ -123,6 +123,7 @@ from plotsearch.views.plot_search import (
     PlotSearchSubtypeViewSet,
     PlotSearchTargetViewSet,
     PlotSearchTypeViewSet,
+    PlotSearchUIDataView,
     PlotSearchViewSet,
     TargetStatusGeneratePDF,
 )
@@ -259,6 +260,9 @@ additional_api_paths = [
         name="target_status-pdf",
     ),
     path("area_search_pdf/", AreaSearchGeneratePDF.as_view(), name="area-search-pdf"),
+    path(
+        "pub/plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"
+    ),
     path("auditlog/", AuditLogView.as_view(), name="auditlog"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(
