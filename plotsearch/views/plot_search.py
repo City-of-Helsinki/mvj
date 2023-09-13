@@ -13,7 +13,7 @@ from django_xhtml2pdf.views import PdfMixin
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_gis.filters import InBBoxFilter
@@ -157,6 +157,22 @@ class PlotSearchViewSet(
         response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
 
         return response
+
+
+class PlotSearchUIDataView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        aggregated_data = {
+            "plot_search": PlotSearch.objects.filter(
+                search_class="plot_search"
+            ).count(),
+            "other_search": PlotSearch.objects.filter(
+                search_class="other_search"
+            ).count(),
+        }
+
+        return Response(aggregated_data)
 
 
 class PlotSearchTargetViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
