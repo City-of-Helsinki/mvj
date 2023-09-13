@@ -351,6 +351,7 @@ additional_pub_api_paths = [
         DirectReservationToFavourite.as_view(),
         name="pub_direct_reservation_to_favourite",
     ),
+    path("plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"),
 ]
 
 schema_view = get_schema_view(
