@@ -391,7 +391,8 @@ class AreaImporter(BaseImporter):
                     areas.update_or_create(defaults=other_data, **match_data)
                 except IntegrityError:  # There should only be one object per identifier...
                     ext_id = other_data.pop("external_id", "")
-                    # If external id exists, we can continue deleting data.
+                    # If external id exists, we can continue deleting data. We should only
+                    # delete duplicate rows, if we have external id available for the new row.
                     if ext_id:
                         # ...so we delete them all but spare the one with the correct
                         # external_id (if it happens to exist)
