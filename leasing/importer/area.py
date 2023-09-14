@@ -3,7 +3,7 @@ from time import perf_counter
 import psycopg2
 from django.conf import settings
 from django.contrib.gis import geos
-from django.core.exceptions import MultipleObjectsReturned
+from django.db import IntegrityError
 
 from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
@@ -37,6 +37,7 @@ METADATA_COLUMN_NAME_MAP = {
     "tyyppi_selite": "type_name",
     "kaavayksikkotunnus": "plan_unit_identifier",
     "kaavatunnus": "detailed_plan_identifier",
+    "kaavanumero": "detailed_plan_identifier",
     "tyyppi": "type_name",
     "luokka": "state_name",
     "kayttotarkoitus": "intended_use_name",
@@ -90,9 +91,9 @@ AREA_IMPORT_TYPES = {
         "source_name": "Maka: Hankerajaus",
         "source_identifier": "maka.hankerajaus_alue_kaavahanke",
         "area_type": AreaType.PRE_DETAILED_PLAN,
-        "identifier_field_name": "kaavatunnus",
+        "identifier_field_name": "kaavanumero",
         "metadata_columns": [
-            "kaavatunnus",
+            "kaavanumero",
             "diaarinumero",
             "kaavavaihe",
             "hyvaksyja",
@@ -388,14 +389,18 @@ class AreaImporter(BaseImporter):
 
                 try:
                     areas.update_or_create(defaults=other_data, **match_data)
-                except MultipleObjectsReturned:  # There should only be one object per identifier...
-                    ext_id = other_data.pop("external_id")
-                    # ...so we delete them all but spare the one with the correct external_id (if it happens to exist)
-                    Area.objects.filter(**match_data).exclude(
-                        external_id=ext_id
-                    ).delete()
-                    match_data["external_id"] = ext_id
-                    Area.objects.update_or_create(defaults=other_data, **match_data)
+                except IntegrityError:  # There should only be one object per identifier...
+                    ext_id = other_data.pop("external_id", "")
+                    # If external id exists, we can continue deleting data. We should only
+                    # delete duplicate rows, if we have external id available for the new row.
+                    if ext_id:
+                        # ...so we delete them all but spare the one with the correct
+                        # external_id (if it happens to exist)
+                        Area.objects.filter(**match_data).exclude(
+                            external_id=ext_id
+                        ).delete()
+                        match_data["external_id"] = ext_id
+                        Area.objects.update_or_create(defaults=other_data, **match_data)
 
                 imported_identifiers.append(match_data["identifier"])
 
