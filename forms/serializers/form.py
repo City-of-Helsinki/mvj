@@ -21,7 +21,7 @@ from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManageme
 from plotsearch.utils import get_applicant
 from users.serializers import UserSerializer
 
-from ..enums import FormState
+from ..enums import ApplicantType, FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
 from ..models.form import Attachment, EntrySection
 from ..validators.answer import (
@@ -105,7 +105,7 @@ class SectionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     identifier = serializers.ReadOnlyField(read_only=True)
     type = serializers.CharField(read_only=True)
-    applicant_type = serializers.CharField(required=False)
+    applicant_type = EnumSerializerField(enum=ApplicantType, required=False)
 
     class Meta:
         model = Section
