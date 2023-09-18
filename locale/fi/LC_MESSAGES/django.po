@@ -390,11 +390,11 @@ msgstr "Henkilö"
 
 msgctxt "Applicant type"
 msgid "Company"
-msgstr ""
+msgstr "Yritys"
 
 msgctxt "Applicant type"
 msgid "Both"
-msgstr ""
+msgstr "Molemmat"
 
 msgid "Time created"
 msgstr "Luotu"
