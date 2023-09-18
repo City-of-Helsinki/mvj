@@ -1,5 +1,6 @@
 import io
 import zipfile
+from datetime import datetime
 from typing import Any, Dict
 from zipfile import ZipInfo
 
@@ -165,10 +166,14 @@ class PlotSearchUIDataView(APIView):
     def get(self, request):
         aggregated_data = {
             "plot_search": PlotSearch.objects.filter(
-                search_class="plot_search"
+                search_class="plot_search",
+                begin_at__lte=datetime.now(),
+                end_at__gte=datetime.now(),
             ).count(),
             "other_search": PlotSearch.objects.filter(
-                search_class="other_search"
+                search_class="other_search",
+                begin_at__lte=datetime.now(),
+                end_at__gte=datetime.now(),
             ).count(),
         }
 
