@@ -1048,7 +1048,6 @@ class DirectReservationLinkSerializer(serializers.ModelSerializer):
         return obj.get_external_url()
 
     def create(self, validated_data):
-
         language = pop_default(validated_data, "language", "en")
         first_name = pop_default(validated_data, "first_name", "")
         last_name = pop_default(validated_data, "last_name", "")

@@ -2,8 +2,18 @@
 {% load form_visible %}
 
 {% if section.fields.all and section.visible == True %}
+    {% if section.parent == None %} 
     <div>
-        <h2>{{ section }}</h2>
+    {% else %}
+    <div class="parent-section">
+    {% endif %}
+        <h2>
+            {% if section.identifier == "hakijan-tiedot" %}
+                {{ section }}, {% get_applicant applicant.entry_section %}
+            {% else %}
+                {{ section }}
+            {% endif %}
+        </h2>
         <table>
             {% for field in section.fields.all %}
                 {% if field.enabled == True %}
@@ -11,7 +21,7 @@
                         <th>
                             {{ field }}
                         </th>
-                        {% for entry in field.entry_set.all|filter_answer:answer %}
+                        {% for entry in field.entry_set.all|filter_answer:answer|filter_applicant:applicant_identifier %}
                             <td>
                                 {% if field.type.identifier == "checkbox" or field.type.identifier == "radiobutton" or field.type.identifier == "radiobuttoninline" %}
                                     {% fetch_choice_value entry.value entry.field.id %}
@@ -39,7 +49,7 @@
 {% endif %}
 
 {% for subsection in section.subsections.all %}
-    {% if subsection.applicant_type|slugify == applicant_type|slugify or subsection.applicant_type|slugify == "Both"|slugify %}
+    {% if subsection.applicant_type.value == applicant_type.value or subsection.applicant_type.value == "both" or applicant_type.value == "both"%}
         {% include "mixins/section.html" with section=subsection %}
     {% endif %}
 {% endfor %}

@@ -67,7 +67,7 @@ from plotsearch.serializers.plot_search import (
     PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
 )
-from plotsearch.utils import get_applicant_type
+from plotsearch.utils import build_pdf_context
 
 
 class PlotSearchSubtypeViewSet(
@@ -297,7 +297,7 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
                 pdf_response = self.response_class(
                     request=self.request,
                     template=self.get_template_names(),
-                    context=context,
+                    context=build_pdf_context(context),
                     using=self.template_engine,
                     **response_kwargs,
                 )
@@ -333,13 +333,16 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView):
         response = HttpResponse(content_type="application/zip")
         with zipfile.PyZipFile(response, mode="w") as zip_file:
             for object in self.object_list:
+                information_checks = InformationCheck.objects.filter(
+                    entry_section__in=object.answer.entry_sections.all()
+                )
                 context.update(
-                    object=object, applicant_type=get_applicant_type(object.answer)
+                    object=object, information_checks=information_checks,
                 )
                 pdf_response = self.response_class(
                     request=self.request,
                     template=self.get_template_names(),
-                    context=context,
+                    context=build_pdf_context(context),
                     using=self.template_engine,
                     **response_kwargs,
                 )
@@ -347,6 +350,17 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView):
                     ZipInfo("{}.pdf".format(object.identifier)),
                     pdf_response.render().content,
                 )
+                if self.request.GET.get("show_attachments", False):
+                    for attachment in object.area_search_attachments.all():
+                        file = attachment.attachment.open()
+                        zip_file.writestr(
+                            ZipInfo(
+                                "{} {}".format(
+                                    object.identifier, attachment.attachment.name
+                                )
+                            ),
+                            file.file.file.read(),
+                        )
 
         response[
             "Content-Disposition"
@@ -356,15 +370,13 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView):
 
 
 """
-# For PDF debugging purposes
 class DebugAreaSearchPDF(generic.DetailView):
     model = AreaSearch
     template_name = "area_search/detail.html"
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update(applicant_type=get_applicant_type(context["areasearch"].answer))
-        return context
+        return build_pdf_context(context)
 """
 
 
