@@ -31,3 +31,7 @@ th {
   width: 100%;
   border-bottom: 1px solid #cccccc;
 }
+
+.parent-section {
+  margin-left: 20px;
+}

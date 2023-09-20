@@ -18,8 +18,16 @@
             <h1>{{ object.application_identifier }}</h1>
         </div>
         <div class="divider">&nbsp;</div>
-        {% for section in object.plot_search_target.plot_search.form.sections.all|filter_only_parent %}
-        {% include "mixins/section.html" with section=section answer=object.answer %}
+        <!--APPLICANT SECTIONS-->
+        {% for applicant in applicants %}
+            {% if applicant.section.applicant_type.value == applicant.applicant_type.value or applicant.section.applicant_type.value == "both" or applicant.applicant_type.value == "both" %}
+                {% include "mixins/section.html" with section=applicant.section answer=object.answer applicant_identifier=applicant.identifier applicant_type=applicant.applicant_type %}
+            {% endif %}
+        {% endfor %}
+        <!--OTHER SECTIONS-->
+
+        {% for section in other_sections.all|filter_only_parent %}
+            {% include "mixins/section.html" with section=section answer=object.answer applicant_identifier=None applicant_type="both" %}
         {% endfor %}
     </div>
 </body>

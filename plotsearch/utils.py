@@ -787,24 +787,44 @@ def pop_default(validated_data, index, default_value):
         return default_value
 
 
-def get_applicant_type(answer):
-    applicant_sections = answer.entry_sections.filter(
+def build_pdf_context(context):
+    applicants = []
+
+    applicant_entry_sections = context["object"].answer.entry_sections.filter(
         entries__field__identifier="hakija",
         entries__field__section__identifier="hakijan-tiedot",
     )
-    applicant_type = (
-        applicant_sections[0]
-        .entries.get(
-            field__identifier="hakija", field__section__identifier="hakijan-tiedot"
+    for applicant_entry_section in applicant_entry_sections:
+
+        applicants.append(
+            {
+                "entry_section": applicant_entry_section,
+                "identifier": applicant_entry_section.metadata["identifier"],
+                "section": context["object"].answer.form.sections.get(
+                    form__id=context["object"].answer.form_id,
+                    identifier="hakijan-tiedot",
+                ),
+                "applicant_type": get_applicant_type(
+                    applicant_entry_section.entries.get(
+                        field__identifier="hakija",
+                        field__section__identifier="hakijan-tiedot",
+                    ).value
+                ),
+            }
         )
-        .value
+
+    context.update(
+        applicants=applicants,
+        other_sections=context["object"].answer.form.sections.exclude(
+            identifier="hakijan-tiedot"
+        ),
     )
+    return context
 
-    applicant_type_enum = ApplicantType.BOTH
 
-    if applicant_type == "0":
-        applicant_type_enum = ApplicantType.PERSON
+def get_applicant_type(applicant_type):
+    if applicant_type == "2":
+        return ApplicantType.PERSON
     if applicant_type == "1":
-        applicant_type_enum = ApplicantType.COMPANY
-
-    return applicant_type_enum
+        return ApplicantType.COMPANY
+    return ApplicantType.BOTH

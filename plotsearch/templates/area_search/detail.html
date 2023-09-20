@@ -59,14 +59,33 @@
         </table>
     </div>
     <div class="divider">&nbsp;</div>
-    {% for section in object.form.sections.all|filter_only_parent %}
-        {% if section.applicant_type|slugify == applicant_type|slugify or section.applicant_type|slugify == "Both"|slugify %}
-            {% include "mixins/section.html" with section=section answer=object.answer %}
+
+
+    <!--APPLICANT SECTIONS-->
+    {% for applicant in applicants %}
+        {% if applicant.section.applicant_type.value == applicant.applicant_type.value or applicant.section.applicant_type.value == "both" or applicant.applicant_type.value == "both" %}
+            {% include "mixins/section.html" with section=applicant.section answer=object.answer applicant_identifier=applicant.identifier applicant_type=applicant.applicant_type %}
         {% endif %}
     {% endfor %}
+    <!--OTHER SECTIONS-->
+
+    {% for section in other_sections.all|filter_only_parent %}
+        {% include "mixins/section.html" with section=section answer=object.answer applicant_identifier=None applicant_type="both" %}
+    {% endfor %}
+
     {% if show_information_check %}
         <div>
-            <h2>{% trans "Area search information" %}</h2>
+            {% for information_check in information_checks %}
+                {% if information_check.name == "trade_register" %}
+                <h2>{% trans "Information check" %}, {% get_applicant information_check.entry_section %}</h2>
+                {% endif %}
+                <table>
+                <tr>
+                    <th>{{ information_check.name }}</th>
+                    <td>{{ information_check.state.label }}</td>
+                </tr>
+            {% endfor %}
+            </table>
             <table>
                 <tr>
                     <th>{% trans "Lessor" %}</th>
