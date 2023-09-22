@@ -3474,23 +3474,23 @@ msgstr "Muu kilpailu tai haku"
 
 msgctxt "Search stage"
 msgid "In preparation"
-msgstr "Tarkastus"
+msgstr "Valmisteilla"
 
 msgctxt "Search stage"
 msgid "In action"
-msgstr "Tarkastus"
+msgstr "Käynnissä"
 
 msgctxt "Search stage"
 msgid "Processing"
-msgstr ""
+msgstr "Käsittelyssä"
 
 msgctxt "Search stage"
 msgid "Decision making"
-msgstr "Päättäjä"
+msgstr "Päätöksenteossa"
 
 msgctxt "Search stage"
 msgid "Settled"
-msgstr ""
+msgstr "Päätetty"
 
 msgctxt "Information state"
 msgid "Checked"
