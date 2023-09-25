@@ -15,5 +15,73 @@
             "created_at": "2021-11-22T08:00:00Z",
             "modified_at": "2021-11-22T08:00:00Z"
         }
+    },
+    {
+        "model": "leasing.serviceunit",
+        "pk": 2,
+        "fields": {
+            "name": "Alueiden käyttö ja -valvonta",
+            "description": null,
+            "invoice_number_sequence_name": "akv_invoice_number_sequence",
+            "first_invoice_number": 5000000,
+            "laske_sender_id": "ID340",
+            "laske_import_id": "ID256",
+            "laske_sales_org": "2800",
+            "contract_number_sequence_name": "akv_contract_number_sequence",
+            "first_contract_number": 100000,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2023-09-04T12:00:00Z"
+        }
+    },
+    {
+        "model": "leasing.serviceunit",
+        "pk": 3,
+        "fields": {
+            "name": "KuVa / Liikuntapaikkapalvelut",
+            "description": null,
+            "invoice_number_sequence_name": "kuva_invoice_number_sequence",
+            "first_invoice_number": 10000000,
+            "laske_sender_id": "ID340",
+            "laske_import_id": "ID256",
+            "laske_sales_org": "2900",
+            "contract_number_sequence_name": "kuva_contract_number_sequence",
+            "first_contract_number": 200000,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2023-09-04T12:00:00Z"
+        }
+    },
+    {
+        "model": "leasing.serviceunit",
+        "pk": 4,
+        "fields": {
+            "name": "KuVa / Ulkoilupalvelut",
+            "description": null,
+            "invoice_number_sequence_name": "kuva_invoice_number_sequence",
+            "first_invoice_number": 10000000,
+            "laske_sender_id": "ID340",
+            "laske_import_id": "ID256",
+            "laske_sales_org": "2900",
+            "contract_number_sequence_name": "kuva_contract_number_sequence",
+            "first_contract_number": 200000,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2023-09-04T12:00:00Z"
+        }
+    },
+    {
+        "model": "leasing.serviceunit",
+        "pk": 5,
+        "fields": {
+            "name": "KuVa / Nuorisopalvelut",
+            "description": null,
+            "invoice_number_sequence_name": "kuva_invoice_number_sequence",
+            "first_invoice_number": 10000000,
+            "laske_sender_id": "ID340",
+            "laske_import_id": "ID256",
+            "laske_sales_org": "2900",
+            "contract_number_sequence_name": "kuva_contract_number_sequence",
+            "first_contract_number": 200000,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2023-09-04T12:00:00Z"
+        }
     }
 ]
