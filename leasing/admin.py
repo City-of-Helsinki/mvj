@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumfields.admin import EnumFieldListFilter
 
 from field_permissions.admin import FieldPermissionsAdminMixin
+from laske_export.exporter import LaskeExporter
 from leasing.models import (
     Area,
     AreaNote,
@@ -503,6 +504,14 @@ class InvoiceRowInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 
 class InvoiceAdmin(FieldPermissionsModelAdmin):
+    actions = ["resend_invoice"]
+
+    def resend_invoice(self, request, queryset):
+        exporter = LaskeExporter()
+
+        exporter.export_invoices(queryset)
+        self.message_user(request, f"Invoice resent for {queryset.count()} invoices.")
+
     list_display = (
         "number",
         "lease",
