@@ -636,3 +636,27 @@ class PlanUnitStatus(Enum):
     class Labels:
         PRESENT = pgettext_lazy("Plan Unit Status", "Present")
         PENDING = pgettext_lazy("Plan Unit Status", "Pending")
+
+class ServiceUnit(Enum):
+    """
+    In Finnish: Palvelukokonaisuus
+
+    Hard-coded version that includes all service units
+    and not only those bound to the user.
+    Used for filtering statistic reports.
+
+    TODO: Replace the hard-coded list with a list fetched from the database.
+    """
+
+    MAKE = 1
+    KYMP = 2
+    LIPA = 3
+    UPA = 4
+    NUP = 5
+
+    class Labels:
+        MAKE = "Maaomaisuuden kehittäminen ja tontit"
+        KYMP = "Alueiden käyttö ja valvonta "
+        LIPA = "Liikuntapaikkapalvelut"
+        UPA = "Ulkoilupalvelut"
+        NUP = "Nuorisopalvelu"
