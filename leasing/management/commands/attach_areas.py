@@ -299,10 +299,15 @@ class Command(BaseCommand):
                                 plan_unit.id,
                             )
 
-                Plot.objects.filter(lease_area=lease_areas[area_identifier]).exclude(
+                # Only delete handled objects that do not belong to contracts.
+                delete_filters = {
+                    "lease_area": lease_areas[area_identifier],
+                    "in_contract": False,
+                }
+                Plot.objects.filter(**delete_filters).exclude(
                     id__in=plot_ids_handled
                 ).delete()
 
-                PlanUnit.objects.filter(
-                    lease_area=lease_areas[area_identifier]
-                ).exclude(id__in=plan_unit_ids_handled).delete()
+                PlanUnit.objects.filter(**delete_filters).exclude(
+                    id__in=plan_unit_ids_handled
+                ).delete()
