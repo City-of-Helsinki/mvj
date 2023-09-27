@@ -364,7 +364,7 @@ class LeasePreviewInvoicesForYearView(APIView):
                 first_day, last_day, dry_run=True
             )
 
-            for period_invoice_data in lease.calculate_invoices(rents):
+            for period_invoice_data in lease.calculate_invoices(rents, dry_run=True):
                 period_invoices = []
                 for invoice_data in period_invoice_data:
                     invoice_serializer = InvoiceSerializerWithExplanations(invoice_data)

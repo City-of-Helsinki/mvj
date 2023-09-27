@@ -850,24 +850,24 @@ class Lease(TimeStampedSafeDeleteModel):
         except ValueError:
             return False
 
-    def calculate_rent_amount_for_period(self, start_date, end_date):
+    def calculate_rent_amount_for_period(self, start_date, end_date, dry_run=False):
         calculation_result = CalculationResult(
             date_range_start=start_date, date_range_end=end_date
         )
 
         for rent in self.get_active_rents_on_period(start_date, end_date):
             calculation_result.combine(
-                rent.get_amount_for_date_range(start_date, end_date)
+                rent.get_amount_for_date_range(start_date, end_date, dry_run=dry_run)
             )
 
         return calculation_result
 
-    def calculate_rent_amount_for_year(self, year):
+    def calculate_rent_amount_for_year(self, year, dry_run=False):
         first_day_of_year = datetime.date(year=year, month=1, day=1)
         last_day_of_year = datetime.date(year=year, month=12, day=31)
 
         return self.calculate_rent_amount_for_period(
-            first_day_of_year, last_day_of_year
+            first_day_of_year, last_day_of_year, dry_run=dry_run
         )
 
     def determine_payable_rents_and_periods(  # noqa: TODO
@@ -950,7 +950,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(self, period_rents):  # noqa: TODO
+    def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
         from leasing.models import ReceivableType
 
         # TODO: Make configurable
@@ -1103,12 +1103,14 @@ class Lease(TimeStampedSafeDeleteModel):
         # Add the cent amounts to the invoice_data that are missing
         # due to roundings during the year.
         if last_billing_period:
-            self._year_rent_rounding_correction(last_billing_period, invoice_data)
+            self._year_rent_rounding_correction(
+                last_billing_period, invoice_data, dry_run=dry_run
+            )
 
         return invoice_data
 
     def _year_rent_rounding_correction(  # noqa C901 TODO
-        self, last_billing_period, invoice_data
+        self, last_billing_period, invoice_data, dry_run=False
     ):
         round_adjust_year = last_billing_period[0].year
         first_day_of_year = datetime.date(year=round_adjust_year, month=1, day=1)
@@ -1152,7 +1154,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     already_billed_amounts[row.intended_use] += row.amount
 
         total_amounts_for_year = self.calculate_rent_amount_for_year(
-            round_adjust_year
+            round_adjust_year, dry_run=dry_run
         ).get_total_amounts_by_intended_uses()
 
         difference_by_intended_use = {}
