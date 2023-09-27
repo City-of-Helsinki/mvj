@@ -1,3 +1,4 @@
+from django import forms
 from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.utils import timezone
@@ -7,13 +8,18 @@ from rest_framework.response import Response
 from leasing.models import Lease
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 class LeaseCountReport(ReportBase):
     name = _("Lease count")
     description = _("Show the count of leases by type")
     slug = "lease_count"
-    input_fields = {}
+    input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        )
+    }
     output_fields = {
         "lease_type": {
             "source": "identifier__type__identifier",
@@ -25,9 +31,14 @@ class LeaseCountReport(ReportBase):
 
     def get_data(self, input_data):
         today = timezone.now().date()
+        filters = Q(end_date__isnull=True) | Q(end_date__gte=today)
+        
+        service_unit = input_data["service_unit"]
+        if service_unit is not None:
+            filters = (Q(end_date__isnull=True) | Q(end_date__gte=today)) & Q(service_unit=service_unit)
 
         return (
-            Lease.objects.filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+            Lease.objects.filter(filters)
             .values("identifier__type__identifier", "identifier__type__name")
             .annotate(count=Count("identifier__type__identifier"))
             .order_by("identifier__type__identifier")
