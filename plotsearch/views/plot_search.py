@@ -7,7 +7,7 @@ from zipfile import ZipInfo
 import xlsxwriter
 from django import http
 from django.core.files import File
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
 from django_xhtml2pdf.views import PdfMixin
@@ -20,6 +20,8 @@ from rest_framework.views import APIView
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from forms.models import Answer
+from forms.serializers.form import AnswerOpeningRecordSerializer
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
@@ -51,7 +53,10 @@ from plotsearch.models.plot_search import (
     AreaSearchAttachment,
     DirectReservationLink,
 )
-from plotsearch.permissions import AreaSearchAttachmentPermissions
+from plotsearch.permissions import (
+    AreaSearchAttachmentPermissions,
+    PlotSearchOpeningRecordPermissions,
+)
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
@@ -169,6 +174,33 @@ class PlotSearchViewSet(
         response["Content-Disposition"] = 'attachment; filename="Applications.xlsx"'
 
         return response
+
+    @action(
+        methods=["post"],
+        detail=True,
+        serializer_class=AnswerOpeningRecordSerializer,
+        permission_classes=(PlotSearchOpeningRecordPermissions,),
+    )
+    def open_answers(self, request, pk=None):
+        plot_search = self.get_object()
+        answer_qs = Answer.objects.filter(
+            targets__in=plot_search.plot_search_targets.all()
+        ).exclude(opening_record__isnull=False)
+
+        serializer = AnswerOpeningRecordSerializer
+        if isinstance(request.data, QueryDict):
+            request_data = request.data.dict()
+        else:
+            request_data = request.data
+
+        for answer in answer_qs:
+            request_data["answer"] = answer.pk
+            aor_serializer = serializer(
+                data=request_data, context=self.get_serializer_context()
+            )
+            aor_serializer.is_valid()
+            aor_serializer.save()
+        return HttpResponse(status=204)
 
 
 class PlotSearchUIDataView(APIView):

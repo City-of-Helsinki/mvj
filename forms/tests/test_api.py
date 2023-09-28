@@ -11,7 +11,7 @@ from faker import Faker
 
 from forms.enums import FormState
 from forms.models import Entry, Field
-from forms.models.form import Attachment
+from forms.models.form import AnswerOpeningRecord, Attachment
 from plotsearch.enums import DeclineReason
 from plotsearch.models import TargetStatus
 
@@ -407,3 +407,170 @@ def test_attachment_delete(
     response = admin_client.delete(url)
     assert response.status_code == 204
     assert os.path.isfile(file_path) is False
+
+
+@pytest.mark.django_db
+def test_opening_record_create(
+    django_db_setup,
+    client,
+    user,
+    user_factory,
+    answer_factory,
+    plot_search_target,
+    basic_template_form,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    not_authorized_user = user_factory()
+
+    opening_record = {
+        "openers": [
+            plot_search_target.plot_search.preparers.all().first().pk,  # noqa: E231
+        ],
+        "answer": answer.pk,
+    }
+
+    url = reverse("answer_opening_record-list")
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 401
+
+    client.force_login(not_authorized_user)
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 403
+
+    client.force_login(plot_search_target.plot_search.preparers.all().first())
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_opening_record_permissions(
+    django_db_setup,
+    client,
+    user,
+    user_factory,
+    answer_factory,
+    plot_search_target,
+    basic_template_form,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    not_authorized_user = user_factory()
+
+    opening_record = {
+        "openers": [
+            plot_search_target.plot_search.preparers.all().first().pk,  # noqa: E231
+        ],
+        "answer": answer.pk,
+    }
+
+    url = reverse("answer_opening_record-list")
+
+    client.force_login(not_authorized_user)
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 403
+
+    not_authorized_user.user_permissions.add(
+        Permission.objects.get(codename="add_answeropeningrecord")
+    )
+
+    client.force_login(not_authorized_user)
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 201
+
+    id = response.data["id"]
+    patch_url = reverse("answer_opening_record-detail", kwargs={"pk": id})
+
+    response = client.patch(
+        patch_url, data=opening_record, content_type="application/json"
+    )
+    assert response.status_code == 403
+
+    not_authorized_user.user_permissions.add(
+        Permission.objects.get(codename="change_answeropeningrecord")
+    )
+
+    client.force_login(not_authorized_user)
+    response = client.patch(
+        patch_url, data=opening_record, content_type="application/json"
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_answer_permissions_when_not_needed_opening_record(
+    django_db_setup,
+    client,
+    user,
+    user_factory,
+    answer_factory,
+    plot_search_target,
+    basic_template_form,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    type = plot_search_target.plot_search.subtype
+    type.require_opening_record = True
+    type.save()
+
+    url = reverse("answer-detail", kwargs={"pk": answer.pk})
+
+    client.force_login(plot_search_target.plot_search.preparers.all().first())
+    response = client.get(url)
+    assert response.status_code == 403
+
+    type.require_opening_record = False
+    type.save()
+
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_opening_record_patch(
+    django_db_setup,
+    client,
+    user,
+    user_factory,
+    answer_factory,
+    plot_search_target,
+    basic_template_form,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    opening_record = {
+        "openers": [
+            plot_search_target.plot_search.preparers.all().first().pk,  # noqa: E231
+        ],
+        "answer": answer.pk,
+    }
+
+    url = reverse("answer_opening_record-list")
+
+    client.force_login(plot_search_target.plot_search.preparers.all().first())
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 201
+
+    id = response.data["id"]
+
+    url = reverse("answer_opening_record-detail", kwargs={"pk": id})
+
+    opening_record = {
+        "openers": [
+            plot_search_target.plot_search.preparers.all().first().pk,  # noqa: E231
+        ],
+        "answer": answer.pk,
+        "note": "Hakijana on Yritys oy",
+    }
+
+    response = client.patch(url, data=opening_record, content_type="application/json")
+    assert response.status_code == 200
+    assert AnswerOpeningRecord.objects.get(id=id).note == "Hakijana on Yritys oy"

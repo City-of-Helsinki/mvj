@@ -11,7 +11,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from forms.models import Form
+from forms.models import Answer, Form
+from forms.models.form import AnswerOpeningRecord
 from forms.serializers.form import AnswerSerializer, FormSerializer
 from leasing.models import Decision, PlanUnit, Plot
 from leasing.models.land_area import CustomDetailedPlan
@@ -70,6 +71,7 @@ class PlotSearchSubTypeLinkedSerializer(NameModelSerializer):
             "name",
             "ordering",
             "show_district",
+            "require_opening_record",
         )
 
 
@@ -95,6 +97,7 @@ class PlotSearchSubtypeSerializer(NameModelSerializer):
             "target_selection",
             "ordering",
             "plot_search_type",
+            "require_opening_record",
         )
 
 
@@ -446,14 +449,37 @@ class PlotSearchSerializerBase(
         many=True,
     )
 
+    opening_record = serializers.SerializerMethodField()
+
     class Meta:
         model = PlotSearch
-        fields = "__all__"
+        fields = ("__all__", "opening_record")
+
+    @staticmethod
+    def get_opening_record(instance):
+        pst_qs = instance.plot_search_targets.all()
+        opening_record = (
+            AnswerOpeningRecord.objects.filter(answer__targets__in=pst_qs)
+            .order_by("time_stamp")
+            .first()
+        )
+        return opening_record.time_stamp if opening_record is not None else "-"
+
+    @staticmethod
+    def get_answers_count(instance):
+        pst_qs = instance.plot_search_targets.all()
+        opening_record_count = (
+            Answer.objects.filter(targets__in=pst_qs)
+            .exclude(opening_record__isnull=False)
+            .count()
+        )
+        return opening_record_count
 
 
 class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
     preparers = UserSerializer(many=True)
     plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
+    opening_record = serializers.SerializerMethodField()
 
     class Meta:
         model = PlotSearch
@@ -473,6 +499,7 @@ class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
             "name",
             "begin_at",
             "end_at",
+            "opening_record",
         )
 
 

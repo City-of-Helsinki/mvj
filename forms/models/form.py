@@ -152,8 +152,21 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now=True)
-    opened_at = models.DateTimeField(blank=True, null=True)
     ready = models.BooleanField(default=False)
+
+
+class AnswerOpeningRecord(models.Model):
+    """
+    In Finnish: Avauspöytäkirja
+    """
+
+    time_stamp = models.DateTimeField(auto_now=True)
+    openers = models.ManyToManyField(User, related_name="+")
+    note = models.TextField(blank=True, null=True)
+
+    answer = models.OneToOneField(
+        Answer, on_delete=models.CASCADE, related_name="opening_record"
+    )
 
 
 def get_attachment_file_upload_to(instance, filename):

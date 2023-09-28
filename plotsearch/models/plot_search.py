@@ -54,6 +54,7 @@ class PlotSearchSubtype(NameModel):
     plot_search_type = models.ForeignKey(PlotSearchType, on_delete=models.CASCADE)
     show_district = models.BooleanField(default=False)
     target_selection = models.BooleanField(default=False)
+    require_opening_record = models.BooleanField(default=False)
     ordering = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     class Meta(NameModel.Meta):

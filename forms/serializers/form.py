@@ -4,6 +4,7 @@ from collections import OrderedDict
 from deepmerge import always_merger
 from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
 from rest_framework_gis.fields import GeometryField
@@ -14,16 +15,18 @@ from plotsearch.enums import DeclineReason
 from plotsearch.models import (
     AreaSearch,
     InformationCheck,
+    PlotSearch,
     PlotSearchTarget,
     TargetStatus,
 )
 from plotsearch.models.plot_search import MeetingMemo, ProposedFinancingManagement
 from plotsearch.utils import get_applicant
+from users.models import User
 from users.serializers import UserSerializer
 
 from ..enums import ApplicantType, FormState
 from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
-from ..models.form import Attachment, EntrySection
+from ..models.form import AnswerOpeningRecord, Attachment, EntrySection
 from ..validators.answer import (
     ControlShareValidation,
     FieldRegexValidator,
@@ -469,6 +472,52 @@ class TargetStatusListSerializer(serializers.ModelSerializer):
         return applicant_list
 
 
+class AnswerOpeningRecordSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    possible_preparers = serializers.SerializerMethodField(read_only=True)
+    openers = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        many=True,
+    )
+    time_stamp = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = AnswerOpeningRecord
+        fields = ("openers", "note", "answer", "id", "possible_preparers", "time_stamp")
+
+    def create(self, validated_data):
+        if "openers" not in validated_data:
+            validated_data["openers"] = list()
+        if not PlotSearch.objects.filter(
+            plot_search_targets__answers=validated_data.get("answer")
+        ).first().preparers.filter(
+            pk=self.context["request"].user.pk
+        ).exists() and not self.context[
+            "request"
+        ].user.has_perm(
+            "forms.add_answeropeningrecord"
+        ):
+            raise PermissionDenied
+        validated_data["openers"].append(self.context["request"].user)
+        return super().create(validated_data)
+
+    @staticmethod
+    def get_possible_preparers(obj):
+        targets_qs = obj.answer.targets.all()
+        plotsearch_qs = PlotSearch.objects.filter(plot_search_targets__in=targets_qs)
+
+        preparers_list = list()
+
+        for plotsearch in plotsearch_qs:
+            for preparer in plotsearch.preparers.all():
+                preparers_list.append(preparer)
+
+        return UserSerializer(many=True).to_representation(preparers_list)
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     entries = serializers.JSONField(write_only=True)
@@ -488,6 +537,8 @@ class AnswerSerializer(serializers.ModelSerializer):
         queryset=AreaSearch.objects.all(), required=False
     )
     information_checks = serializers.SerializerMethodField(read_only=True)
+    opening_record = AnswerOpeningRecordSerializer(required=False)
+    plot_search_opening_time_stamp = serializers.SerializerMethodField()
 
     class Meta:
         model = Answer
@@ -502,6 +553,8 @@ class AnswerSerializer(serializers.ModelSerializer):
             "attachments",
             "ready",
             "area_search",
+            "opening_record",
+            "plot_search_opening_time_stamp",
         )
         validators = [
             RequiredFormFieldValidator(),
@@ -749,6 +802,19 @@ class AnswerSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    @staticmethod
+    def get_plot_search_opening_time_stamp(obj):
+        if not hasattr(obj.form, "plotsearch"):
+            return
+        plotsearch = obj.form.plotsearch
+        pst_qs = plotsearch.plot_search_targets.all()
+        opening_record = (
+            AnswerOpeningRecord.objects.filter(answer__targets__in=pst_qs)
+            .order_by("time_stamp")
+            .first()
+        )
+        return opening_record.time_stamp if opening_record is not None else "-"
+
 
 class AnswerPublicSerializer(AnswerSerializer):
     def create(self, validated_data):
@@ -767,6 +833,8 @@ class AnswerListSerializer(serializers.ModelSerializer):
     plot_search_id = serializers.SerializerMethodField()
     plot_search_type = serializers.SerializerMethodField()
     plot_search_subtype = serializers.SerializerMethodField()
+    opening_record = serializers.BooleanField(read_only=False)
+    plot_search_end_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Answer
@@ -778,6 +846,8 @@ class AnswerListSerializer(serializers.ModelSerializer):
             "plot_search_subtype",
             "applicants",
             "targets",
+            "opening_record",
+            "plot_search_end_date",
         )
 
     @staticmethod
@@ -808,7 +878,18 @@ class AnswerListSerializer(serializers.ModelSerializer):
         if obj.form is None or not hasattr(obj.form, "plotsearch"):
             return None
         plot_search_subtype = obj.form.plotsearch.subtype
-        return plot_search_subtype.name
+        return {
+            "name": plot_search_subtype.name,
+            "id": plot_search_subtype.id,
+            "require_opening_record": plot_search_subtype.require_opening_record,
+        }
+
+    @staticmethod
+    def get_plot_search_end_date(obj):
+        form = obj.form
+        if form is None or not hasattr(form, "plotsearch"):
+            return None
+        return form.plotsearch.end_at.isoformat()
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

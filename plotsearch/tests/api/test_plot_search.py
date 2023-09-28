@@ -11,6 +11,7 @@ from faker import Faker
 from rest_framework import serializers
 
 from forms.models import Form, Section
+from forms.models.form import AnswerOpeningRecord
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from plotsearch.enums import SearchClass
@@ -709,6 +710,7 @@ def test_area_search_create_simple(
     )
 
 
+@pytest.mark.django_db
 def test_area_search_attachment_create(
     django_db_setup, admin_client, area_search_test_data
 ):
@@ -730,3 +732,33 @@ def test_area_search_attachment_create(
     response = admin_client.get(url)
 
     assert len(response.data["area_search_attachments"]) == 1
+
+
+@pytest.mark.django_db
+def test_opening_record_create(
+    django_db_setup,
+    client,
+    user,
+    user_factory,
+    answer_factory,
+    plot_search_target,
+    basic_template_form,
+):
+    answer = answer_factory(form=basic_template_form, user=user)
+    plot_search_target.answers.add(answer)
+    plot_search_target.save()
+
+    opening_record = {
+        "note": "Hakemuset on avattu",
+    }
+
+    url = reverse(
+        "plotsearch-open-answers", kwargs={"pk": plot_search_target.plot_search.pk}
+    )
+
+    assert AnswerOpeningRecord.objects.all().count() == 0
+
+    client.force_login(plot_search_target.plot_search.preparers.all().first())
+    response = client.post(url, data=opening_record)
+    assert response.status_code == 204
+    assert AnswerOpeningRecord.objects.all().count() == 1

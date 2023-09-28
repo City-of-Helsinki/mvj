@@ -8,14 +8,16 @@ from rest_framework.response import Response
 
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
-from forms.models.form import Attachment
+from forms.models.form import AnswerOpeningRecord, Attachment
 from forms.permissions import (
     AnswerPermissions,
     AttachmentPermissions,
+    OpeningRecordPermissions,
     TargetStatusPermissions,
 )
 from forms.serializers.form import (
     AnswerListSerializer,
+    AnswerOpeningRecordSerializer,
     AnswerPublicSerializer,
     AnswerSerializer,
     AttachmentSerializer,
@@ -206,3 +208,28 @@ class MeetingMemoViewset(
             )
 
             return response
+
+
+class AnswerOpeningRecordViewset(
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = AnswerOpeningRecord.objects.all()
+    serializer_class = AnswerOpeningRecordSerializer
+    permission_classes = (OpeningRecordPermissions,)
+    perms_map = {
+        "GET": ["forms.view_answeropeningrecord"],
+        "HEAD": ["forms.view_answeropeningrecord"],
+        "PUT": ["forms.change_answeropeningrecord"],
+        "PATCH": ["forms.change_answeropeningrecord"],
+        "DELETE": ["forms.delete_answeropeningrecord"],
+        "POST": ["forms.add_answeropeningrecord"],
+    }
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def get_object(self):
+        return super().get_object()

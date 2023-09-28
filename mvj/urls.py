@@ -9,6 +9,7 @@ from rest_framework import permissions, routers
 
 from credit_integration import urls as credit_integration_urls
 from forms.viewsets.form import (
+    AnswerOpeningRecordViewset,
     AnswerPublicViewSet,
     AnswerViewSet,
     AttachmentViewSet,
@@ -153,6 +154,11 @@ router.register(r"favourite", FavouriteViewSet)
 router.register(r"financing", FinancingViewSet)
 router.register(r"form", FormViewSet, basename="form")
 router.register(r"answer", AnswerViewSet)
+router.register(
+    r"answer_opening_record",
+    AnswerOpeningRecordViewset,
+    basename="answer_opening_record",
+)
 router.register(r"hitas", HitasViewSet)
 router.register(r"index", IndexViewSet)
 router.register(
