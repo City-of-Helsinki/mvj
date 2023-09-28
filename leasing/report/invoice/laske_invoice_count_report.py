@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import Invoice, Rent
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 class LaskeInvoiceCountReport(ReportBase):
@@ -20,6 +21,9 @@ class LaskeInvoiceCountReport(ReportBase):
     )
     slug = "laske_invoice_count"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -52,18 +56,22 @@ class LaskeInvoiceCountReport(ReportBase):
                 estimate_start_date = today
                 estimate_end_date = query_end_date
                 query_end_date = today - datetime.timedelta(days=1)
+        
+        filters = (Q(sent_to_sap_at__gte=make_aware(
+            datetime.datetime.combine(query_start_date, datetime.time(0, 0))
+            )) & 
+            Q(sent_to_sap_at__lte=make_aware(
+                datetime.datetime.combine(query_end_date, datetime.time(23, 59))
+            )))
+        
+        service_unit = input_data["service_unit"]
+        if service_unit is not None:
+            filters = filters & Q(service_unit=service_unit)
 
         if query_start_date and query_end_date:
             for result in (
                 Invoice.objects.annotate(send_date=TruncDate("sent_to_sap_at"))
-                .filter(
-                    sent_to_sap_at__gte=make_aware(
-                        datetime.datetime.combine(query_start_date, datetime.time(0, 0))
-                    ),
-                    sent_to_sap_at__lte=make_aware(
-                        datetime.datetime.combine(query_end_date, datetime.time(23, 59))
-                    ),
-                )
+                .filter(filters)
                 .values("send_date")
                 .annotate(invoice_count=Count("id"))
                 .order_by("send_date")
