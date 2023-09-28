@@ -18,6 +18,7 @@ from leasing.report.excel import (
     SumCell,
 )
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 def get_recipient_address(obj):
@@ -101,6 +102,9 @@ class ExtraCityRentReport(ReportBase):
     description = _("The invoiced rent of the leases that are not in the main city")
     slug = "extra_city_rent"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -123,17 +127,18 @@ class ExtraCityRentReport(ReportBase):
     automatic_excel_column_labels = False
 
     def get_data(self, input_data):
-        qs = (
-            Invoice.objects.filter(
-                (
+        service_unit = input_data["service_unit"]
+        filters = ((
                     Q(rows__billing_period_start_date__gte=input_data["start_date"])
                     & Q(rows__billing_period_start_date__lte=input_data["end_date"])
-                )
-                | (
+                ) | (
                     Q(rows__billing_period_end_date__gte=input_data["start_date"])
                     & Q(rows__billing_period_end_date__lte=input_data["end_date"])
-                )
-            )
+                ))
+        if service_unit:
+            filters = filters & Q(service_unit=service_unit)
+        qs = (
+            Invoice.objects.filter(filters)
             .exclude(lease__municipality=1)  # Helsinki
             .select_related(
                 "lease",
