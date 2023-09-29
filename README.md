@@ -6,6 +6,15 @@ City of Helsinki ground rent system
 
 ## Development with Docker
 
+If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd64` to `django` service in `docker-compose.yml` file. When you want to run also [Tunnistamo](https://github.com/City-of-Helsinki/tunnistamo) on local environment, see [Connecting to Tunnistamo](###Connecting-to-Tunnistamo).
+
+```bash
+networks:
+    default:
+        name: tunnistamo_net
+        external: true
+```
+
 1. Run `docker-compose up`
 
 2. Run migrations if needed (if you have sanitized.sql file then skip 2. and 3. Continue to "Settings for development environment"):
@@ -15,7 +24,11 @@ City of Helsinki ground rent system
 3. Create superuser if needed:
    - `docker exec -it mvj python manage.py createsuperuser`
 
-The project is now running at [localhost:8000](http://localhost:8000)
+The project is now running at [localhost:8000](http://localhost:8000).
+
+Known issues:
+- runserver_plus not found/not working: replace `command: python manage.py runserver_plus 0:8000` with `command: python manage.py runserver 0:8000` command in `docker-compose.yml`.
+- You can only start Tunnistamo or MVJ in Docker: change port to `command: python manage.py runserver_plus 0:8000` command for example to `8001`.
 
 ### Settings for development environment
 
@@ -83,8 +96,8 @@ environments, you can set up a network to sync mvj, mvj-ui and tunnistamo togeth
 
         networks:
             default:
-                external:
-                    name: tunnistamo_net
+                name: tunnistamo_net
+                external: true
 
     The name `tunnistamo_net` comes from the name of the folder, where tunnistamo lives
     combined with the name of the network. Change those according to your setup, if needed.
@@ -309,3 +322,30 @@ No need to run.
 #### `mvj_import`
 
 #### `set_contact_cities_from_postcodes`
+
+## Other usefull information
+
+### Virre integration
+
+Virre integration requires certificates to be installed to servers. Current certificates are installed using following commands.
+
+```bash
+cd /usr/local/share/ca-certificates/virre # Create folder, if it doesn't exist.
+sudo touch virre_intermediate.crt
+sudo touch virre_root.crt
+sudo touch virre_server_certificate.crt
+* Copy-paste content from the files provided to you to the files you just created.
+sudo update-ca-certificates # This is the actual command that registers certificates.
+```
+
+### Backup database
+
+Most important thing to remember when making a backup is to sanitize the data, when neeeded. Usually we need to take dump from the database only for the development/testing purposes so normally you should sanitize the data. We are using [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands) for sanitizing data so check the most recent instructions from the vendor.
+
+<strong>When running backup for the staging/testing/development purposes, you should exclude few tables to limit the size of the backup.</strong> So remember to add `--exclude-table-data 'public.auditlog_logentry' --exclude-table-data 'public.batchrun_jobrunlog*' --exclude-table-data 'public.django_q_task'` to `pg_dump` command.
+
+```bash
+pg_dump mvj_api_prod | gzip > mvj-api-prod_$(date +%Y%M%d%h%m).sql.gz
+```
+
+To restore dump run `psql -f mvj-api-prod-DATE_HERE.sql ${DATABASE_URL/postgis/postgres}`.
