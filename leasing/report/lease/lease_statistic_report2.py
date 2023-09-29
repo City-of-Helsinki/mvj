@@ -29,6 +29,7 @@ from leasing.report.lease.common_getters import (
     get_total_area,
 )
 from leasing.report.report_base import AsyncReportBase
+from leasing.enums import ServiceUnit
 
 
 def get_decision_makers(lease):
@@ -228,6 +229,9 @@ class LeaseStatisticReport2(AsyncReportBase):
     description = _("Shows statistics about leases and their basis of rents")
     slug = "lease_statistic2"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "state": forms.ChoiceField(
             label=_("State"), required=False, choices=LeaseState.choices()
@@ -429,6 +433,9 @@ class LeaseStatisticReport2(AsyncReportBase):
             "basis_of_rents__management_subventions",
             "basis_of_rents__temporary_subventions",
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(service_unit=input_data["service_unit"])
 
         if input_data["start_date"]:
             qs = qs.filter(start_date__gte=input_data["start_date"])
