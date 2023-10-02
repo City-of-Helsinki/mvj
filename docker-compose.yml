@@ -8,41 +8,31 @@ services:
             POSTGRES_DB: mvj
         expose:
             - "5432"
-        ports:
-            - "5433:5432"
         volumes:
             - mvj-postgres-data-volume:/var/lib/postgresql/data
         container_name: mvj-db
-        # networks:
-        #     - net
 
     django:
         build:
             context: ./
             dockerfile: ./docker/django/Dockerfile
-        command: python manage.py runserver 0:8001
+        command: python manage.py runserver_plus 0:8000
         env_file:
             - docker-compose.env
         volumes:
             - .:/code
             - mvj-django-media-volume:/var/media/
         ports:
-            - "8001:8001"
+            - "8000:8000"
             - "5678:5678"
         depends_on:
             - postgres
         container_name: mvj
         restart: unless-stopped
-        # networks:
-        #     - net
 
 volumes:
         mvj-postgres-data-volume:
         mvj-django-media-volume:
 networks:
     default:
-        external:
-            name: tunnistamo_net
-    net:
-        driver: bridge
-
+        name: helsinki
