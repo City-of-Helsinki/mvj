@@ -325,6 +325,10 @@ No need to run.
 
 ## Other usefull information
 
+### Resend Invoices
+
+You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/) view by selecting the invoices and chosing Resend invoice action from dropdown. 
+
 ### Virre integration
 
 Virre integration requires certificates to be installed to servers. Current certificates are installed using following commands.
