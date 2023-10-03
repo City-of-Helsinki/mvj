@@ -340,7 +340,7 @@ sudo update-ca-certificates # This is the actual command that registers certific
 
 ### Backup database
 
-Most important thing to remember when making a backup is to sanitize the data, when neeeded. Usually we need to take dump from the database only for the development/testing purposes so normally you should sanitize the data. We are using [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands) for sanitizing data so check the most recent instructions from the vendor.
+Most important thing to remember when making a backup is to sanitize the data, when needed. Usually we need to take dump from the database only for the development/testing purposes so normally you should sanitize the data. We are using [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands) for sanitizing data so check the most recent instructions from the vendor.
 
 <strong>When running backup for the staging/testing/development purposes, you should exclude few tables to limit the size of the backup.</strong> So remember to add `--exclude-table-data 'public.auditlog_logentry' --exclude-table-data 'public.batchrun_jobrunlog*' --exclude-table-data 'public.django_q_task'` to `pg_dump` command.
 
