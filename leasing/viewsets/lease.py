@@ -467,7 +467,8 @@ class LeaseViewSet(
                 queryset = queryset.filter(
                     decisions__decision_maker=search_form.cleaned_data.get(
                         "decision_maker"
-                    )
+                    ),
+                    decisions__deleted__isnull=True,
                 )
 
             if search_form.cleaned_data.get("decision_date"):
