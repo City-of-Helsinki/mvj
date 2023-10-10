@@ -2,7 +2,7 @@ from django.utils.translation import override
 from django.utils.translation import ugettext_lazy as _
 
 from forms.enums import ApplicantType
-from forms.models import Choice, Field, Form, Section
+from forms.models import Choice, Field, FieldType, Form, Section
 from plotsearch.enums import AreaSearchLessor
 
 
@@ -29,6 +29,14 @@ def map_intended_use_to_lessor(intended_use):
     return None
 
 
+def _get_field_type(identifier, default_id=None):
+    try:
+        field_type = FieldType.objects.get(identifier=identifier)
+    except FieldType.DoesNotExist:
+        return default_id
+    return field_type.id
+
+
 def initialize_area_search_form():
     form = Form.objects.create(
         name="Aluehaun perustietolomake",
@@ -44,10 +52,20 @@ def initialize_area_search_form():
         applicant_type="both",
         add_new_allowed=True,
     )
+    field_type_field_ids = {
+        "textbox": _get_field_type("textbox", 1),
+        "textarea": _get_field_type("textarea", 2),
+        "dropdown": _get_field_type("dropdown", 3),
+        "checkbox": _get_field_type("checkbox", 4),
+        "radiobutton": _get_field_type("radiobutton", 5),
+        "radiobuttoninline": _get_field_type("radiobuttoninline", 6),
+        "uploadfiles": _get_field_type("uploadfiles", 7),
+        "fractional": _get_field_type("fractional", 8),
+    }
     applicant_field = Field.objects.create(
         section=main_section,
         label="Hakija",
-        type_id=6,
+        type_id=field_type_field_ids.get("radiobuttoninline"),
         identifier="hakija",
         enabled=True,
         required=False,
@@ -71,7 +89,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Yrityksen nimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textarea"),
         identifier="yrityksen-nimi",
         enabled=True,
         required=False,
@@ -80,7 +98,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Y-tunnus",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="y-tunnus",
         enabled=True,
         required=False,
@@ -89,7 +107,7 @@ def initialize_area_search_form():
     corporate_section_language = Field.objects.create(
         section=corporate_section,
         label="Kieli",
-        type_id=3,
+        type_id=field_type_field_ids.get("dropdown"),
         identifier="kieli",
         enabled=True,
         required=False,
@@ -118,7 +136,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Puhelinnumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="puhelinnumero",
         enabled=True,
         required=False,
@@ -127,7 +145,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Sähköposti",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="sahkoposti",
         enabled=True,
         required=False,
@@ -136,7 +154,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Katuosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="katuosoite",
         enabled=True,
         required=False,
@@ -145,7 +163,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Postinumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postinumero",
         enabled=True,
         required=False,
@@ -154,7 +172,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Postitoimipaikka",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postitoimipaikka",
         enabled=True,
         required=False,
@@ -163,7 +181,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Maa, jos ei Suomi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="maa",
         enabled=True,
         required=False,
@@ -172,7 +190,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Hallintaosuus",
-        type_id=8,
+        type_id=field_type_field_ids.get("fractional"),
         identifier="hallintaosuus",
         enabled=True,
         required=False,
@@ -190,7 +208,7 @@ def initialize_area_search_form():
     invoice_section_language = Field.objects.create(
         section=invoice_section,
         label="Kieli",
-        type_id=3,
+        type_id=field_type_field_ids.get("dropdown"),
         identifier="kieli",
         enabled=True,
         required=False,
@@ -219,7 +237,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Puhelinnumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="puhelinnumero",
         enabled=True,
         required=False,
@@ -228,7 +246,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Sähköposti",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="sahkoposti",
         enabled=True,
         required=False,
@@ -237,7 +255,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Katuosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="katuosoite",
         enabled=True,
         required=False,
@@ -246,7 +264,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Maa, jos ei Suomi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="maa",
         enabled=True,
         required=False,
@@ -255,7 +273,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Postitoimipaikka",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postitoimipaikka",
         enabled=True,
         required=False,
@@ -264,7 +282,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Postinumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postinumero",
         enabled=True,
         required=False,
@@ -282,7 +300,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=reference_section,
         label="Verkkolaskutusosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="verkkolaskutusosoite",
         enabled=True,
         required=False,
@@ -291,7 +309,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=reference_section,
         label="Laskutusviite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="laskutusviite",
         enabled=True,
         required=False,
@@ -309,7 +327,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Etunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="etunimi",
         enabled=True,
         required=False,
@@ -318,7 +336,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Sukunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="Sukunimi",
         enabled=True,
         required=False,
@@ -327,7 +345,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Henkilötunnus",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="henkilotunnus",
         enabled=True,
         required=False,
@@ -336,7 +354,7 @@ def initialize_area_search_form():
     people_section_language = Field.objects.create(
         section=people_section,
         label="Kieli",
-        type_id=3,
+        type_id=field_type_field_ids.get("dropdown"),
         identifier="kieli",
         enabled=True,
         required=False,
@@ -362,7 +380,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Puhelinnumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="puhelinnumero",
         enabled=True,
         required=False,
@@ -371,7 +389,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Sähköposti",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="sahkoposti",
         enabled=True,
         required=False,
@@ -380,7 +398,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Katuosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="katuosoite",
         enabled=True,
         required=False,
@@ -389,7 +407,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Postinumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postinumero",
         enabled=True,
         required=False,
@@ -398,7 +416,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Kaupunki",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="kaupunki",
         enabled=True,
         required=False,
@@ -407,7 +425,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Maa, jos ei Suomi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="maa",
         enabled=True,
         required=False,
@@ -416,7 +434,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Turvakielto",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="turvakielto",
         enabled=True,
         required=False,
@@ -425,7 +443,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Hallintaosuus",
-        type_id=8,
+        type_id=field_type_field_ids.get("fractional"),
         identifier="hallintaosuus",
         enabled=True,
         required=False,
@@ -442,7 +460,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Eri kuin hakija",
-        type_id=4,
+        type_id=field_type_field_ids.get("checkbox"),
         identifier="eri-kuin-hakija",
         enabled=True,
         required=False,
@@ -451,7 +469,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Etunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="etunimi",
         enabled=True,
         required=False,
@@ -460,7 +478,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Sukunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="Sukunimi",
         enabled=True,
         required=False,
@@ -469,7 +487,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Henkilötunnus",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="henkilotunnus",
         enabled=True,
         required=False,
@@ -478,7 +496,7 @@ def initialize_area_search_form():
     contact_person_language = Field.objects.create(
         section=contact_section,
         label="Kieli",
-        type_id=3,
+        type_id=field_type_field_ids.get("dropdown"),
         identifier="kieli",
         enabled=True,
         required=False,
@@ -504,7 +522,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Puhelinnumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="puhelinnumero",
         enabled=True,
         required=False,
@@ -513,7 +531,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Sähköposti",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="sahkoposti",
         enabled=True,
         required=False,
@@ -522,7 +540,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Katuosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="katuosoite",
         enabled=True,
         required=False,
@@ -531,7 +549,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Postinumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postinumero",
         enabled=True,
         required=False,
@@ -540,7 +558,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Postitoimipaika",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postitoimipaikka",
         enabled=True,
         required=False,
@@ -549,7 +567,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Maa, jos ei Suomi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="maa",
         enabled=True,
         required=False,
@@ -566,7 +584,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Eri kuin hakija",
-        type_id=4,
+        type_id=field_type_field_ids.get("checkbox"),
         identifier="eri-kuin-hakija",
         enabled=True,
         required=False,
@@ -575,7 +593,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Etunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="etunimi",
         enabled=True,
         required=False,
@@ -584,7 +602,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Sukunimi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="Sukunimi",
         enabled=True,
         required=False,
@@ -593,7 +611,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Henkilötunnus",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="henkilotunnus",
         enabled=True,
         required=False,
@@ -602,7 +620,7 @@ def initialize_area_search_form():
     invoice_section2_language = Field.objects.create(
         section=invoice_section2,
         label="Kieli",
-        type_id=3,
+        type_id=field_type_field_ids.get("dropdown"),
         identifier="kieli",
         enabled=True,
         required=False,
@@ -631,7 +649,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Puhelinnumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="puhelinnumero",
         enabled=True,
         required=False,
@@ -640,7 +658,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Sähköposti",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="sahkoposti",
         enabled=True,
         required=False,
@@ -649,7 +667,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Katuosoite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="katuosoite",
         enabled=True,
         required=False,
@@ -658,7 +676,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Postinumero",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postinumero",
         enabled=True,
         required=False,
@@ -667,7 +685,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Postitoimipaika",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="postitoimipaikka",
         enabled=True,
         required=False,
@@ -676,7 +694,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Maa, jos ei Suomi",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="maa",
         enabled=True,
         required=False,
@@ -693,7 +711,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=reference_section2,
         label="Laskutusviite",
-        type_id=1,
+        type_id=field_type_field_ids.get("textbox"),
         identifier="laskutusviite",
         enabled=True,
         required=False,
@@ -706,7 +724,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=decision_section,
         label="Sähköisesti ilmoittamaani sähköpostiosoitteeseen",
-        type_id=4,
+        type_id=field_type_field_ids.get("checkbox"),
         identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
         enabled=True,
         required=False,
@@ -715,7 +733,7 @@ def initialize_area_search_form():
     Field.objects.create(
         section=decision_section,
         label="Postitse ilmoittamaani postiosoitteeseen",
-        type_id=4,
+        type_id=field_type_field_ids.get("checkbox"),
         identifier="postitse-ilmoittamaani-postiosoitteeseen",
         enabled=True,
         required=False,
@@ -795,7 +813,6 @@ def build_pdf_context(context):
         entries__field__section__identifier="hakijan-tiedot",
     )
     for applicant_entry_section in applicant_entry_sections:
-
         applicants.append(
             {
                 "entry_section": applicant_entry_section,
