@@ -25,7 +25,7 @@ from leasing.serializers.invoice import (
     InvoiceNoteCreateUpdateSerializer,
     InvoiceNoteSerializer,
 )
-from plotsearch.models import AreaSearch, TargetStatus
+from plotsearch.models import AreaSearch, PlotSearch, TargetStatus
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -152,18 +152,51 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
         fields = ("type", "municipality", "district", "sequence")
 
 
-class TargetStatusSuccintSerializer(serializers.ModelSerializer):
-    received_date = serializers.DateTimeField(source="answer.created_at")
+class TargetStatusSuccinctSerializer(serializers.ModelSerializer):
+    received_at = serializers.DateTimeField(source="answer.created_at")
 
     class Meta:
         model = TargetStatus
-        fields = ("application_identifier", "received_date")
+        fields = (
+            "id",
+            "application_identifier",
+            "received_at",
+        )
 
 
-class AreaSearchSuccintSerializer(serializers.ModelSerializer):
+class PlotSearchSuccinctSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    begin_at = serializers.DateTimeField()
+    end_at = serializers.DateTimeField()
+    type = serializers.CharField(source="subtype.plot_search_type.name")
+    subtype = serializers.CharField(source="subtype.name")
+
+    class Meta:
+        model = PlotSearch
+        fields = (
+            "id",
+            "name",
+            "begin_at",
+            "end_at",
+            "type",
+            "subtype",
+        )
+
+
+class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
+    intended_use = serializers.CharField(source="intended_use.name")
+
     class Meta:
         model = AreaSearch
-        fields = ("identifier", "received_date")
+        fields = (
+            "id",
+            "identifier",
+            "received_date",
+            "start_date",
+            "end_date",
+            "intended_use",
+        )
 
 
 class LeaseSuccinctSerializer(
@@ -200,13 +233,26 @@ class LeaseSuccinctSerializer(
         )
 
 
-class LeaseSuccintWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
-    target_statuses = TargetStatusSuccintSerializer(
+class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
+    plot_searches = serializers.SerializerMethodField(read_only=True, required=False)
+    target_statuses = TargetStatusSuccinctSerializer(
         read_only=True, many=True, required=False
     )
-    area_searches = AreaSearchSuccintSerializer(
+    area_searches = AreaSearchSuccinctSerializer(
         read_only=True, many=True, required=False
     )
+
+    def get_plot_searches(self, obj: Lease):
+        """Return the PlotSearches associated with the Lease via
+        PlotSearchTarget->PlanUnit->LeaseArea->Lease, and/or
+        PlotSearchTarget->CustomDetailedPlan->LeaseArea->Lease, if any."""
+        plot_searches = PlotSearch.objects.filter(
+            Q(plot_search_targets__plan_unit__lease_area__lease=obj)
+            | Q(plot_search_targets__custom_detailed_plan__lease_area__lease=obj)
+        )
+
+        serializer = PlotSearchSuccinctSerializer(plot_searches, many=True)
+        return serializer.data
 
     class Meta:
         model = Lease
@@ -229,6 +275,7 @@ class LeaseSuccintWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "preparer",
             "is_subject_to_vat",
             "target_statuses",
+            "plot_searches",
             "area_searches",
         )
 
@@ -263,7 +310,7 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
 
 
 class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    to_lease = LeaseSuccintWithPlotSearchInformationSerializer()
+    to_lease = LeaseSuccinctWithPlotSearchInformationSerializer()
 
     class Meta:
         model = RelatedLease
@@ -287,7 +334,7 @@ class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
 class RelatedFromLeaseSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):
-    from_lease = LeaseSuccintWithPlotSearchInformationSerializer()
+    from_lease = LeaseSuccinctWithPlotSearchInformationSerializer()
 
     class Meta:
         model = RelatedLease
@@ -389,6 +436,13 @@ def get_related_leases(obj):
 
 class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
+    target_statuses = TargetStatusSuccinctSerializer(
+        read_only=True, many=True, required=False
+    )
+    plot_searches = serializers.SerializerMethodField(read_only=True, required=False)
+    area_searches = AreaSearchSuccinctSerializer(
+        read_only=True, many=True, required=False
+    )
     preparer = UserSerializer()
     infill_development_compensations = serializers.SerializerMethodField()
     email_logs = serializers.SerializerMethodField()
@@ -397,6 +451,11 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
 
     def get_related_leases(self, obj):
         return get_related_leases(obj)
+
+    def get_plot_searches(self, obj: Lease):
+        return LeaseSuccinctWithPlotSearchInformationSerializer.get_plot_searches(
+            self, obj
+        )
 
     def override_permission_check_field_name(self, field_name):
         if field_name == "infill_development_compensations":
