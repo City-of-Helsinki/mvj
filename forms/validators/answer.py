@@ -102,7 +102,7 @@ class FieldRegexValidator:
 
     def ssn_checker(self, ssn_parts):
         ssn_number = int(ssn_parts[0:6] + ssn_parts[7:-1])
-        if SSN_CHECK[ssn_number % 31] != ssn_parts[-1]:
+        if SSN_CHECK[ssn_number % 31] != ssn_parts[-1].upper():
             raise ValidationError(code=self._error_code)
 
 
