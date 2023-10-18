@@ -36,6 +36,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    RelatedPlotApplication,
 )
 from plotsearch.models.info_links import TargetInfoLink
 from plotsearch.models.plot_search import (
@@ -1094,3 +1095,15 @@ class FAQSerializer(serializers.ModelSerializer):
             "question",
             "answer",
         )
+
+
+class RelatedPlotApplicationCreateDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RelatedPlotApplication
+        fields = (
+            "id",
+            "lease",
+            "content_type",
+            "object_id",
+        )
+        read_only_fields = ("id",)

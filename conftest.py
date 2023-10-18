@@ -19,8 +19,11 @@ from leasing.enums import (
 from leasing.models import (
     Contact,
     Decision,
+    District,
     Lease,
     LeaseArea,
+    LeaseType,
+    Municipality,
     PlanUnit,
     Tenant,
     TenantContact,
@@ -34,7 +37,9 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    RelatedPlotApplication,
     TargetInfoLink,
+    TargetStatus,
 )
 from users.models import User
 
@@ -65,6 +70,7 @@ def plot_search_test_data(
         end_at=end_at,
     )
     plot_search.preparers.add(preparer)
+    plot_search.save()
 
     return plot_search
 
@@ -72,12 +78,12 @@ def plot_search_test_data(
 @pytest.fixture
 def area_search_test_data(
     area_search_factory,
-    intended_use_factory,
+    area_search_intended_use_factory,
     answer_factory,
     form_factory,
     user_factory,
 ):
-    intended_use = intended_use_factory()
+    intended_use = area_search_intended_use_factory()
     form = form_factory(title=fake.name())
     user = user_factory(username=fake.name())
     area_search = area_search_factory(
@@ -94,15 +100,42 @@ def area_search_test_data(
 
 
 @register
+class AreaSearchIntendedUseFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = AreaSearchIntendedUse
+
+
+@register
 class AreaSearchFactory(factory.DjangoModelFactory):
+    intended_use = factory.SubFactory(AreaSearchIntendedUseFactory)
+
     class Meta:
         model = AreaSearch
 
 
 @register
-class IntendedUseFactory(factory.DjangoModelFactory):
+class LeaseTypeFactory(factory.DjangoModelFactory):
+    identifier = factory.Sequence(lambda n: "A%10d" % n)
+
     class Meta:
-        model = AreaSearchIntendedUse
+        model = LeaseType
+
+
+@register
+class MunicipalityFactory(factory.DjangoModelFactory):
+    identifier = factory.Sequence(lambda n: "1%1d" % n)
+
+    class Meta:
+        model = Municipality
+
+
+@register
+class DistrictFactory(factory.DjangoModelFactory):
+    identifier = factory.Sequence(lambda n: "10%1d" % n)
+    municipality = factory.SubFactory(MunicipalityFactory)
+
+    class Meta:
+        model = District
 
 
 @register
@@ -112,9 +145,49 @@ class PlotSearchFactory(factory.DjangoModelFactory):
 
 
 @register
+class LeaseFactory(factory.DjangoModelFactory):
+    type = factory.SubFactory(LeaseTypeFactory)
+    municipality = factory.SubFactory(MunicipalityFactory)
+    district = factory.SubFactory(DistrictFactory)
+
+    class Meta:
+        model = Lease
+
+
+@register
+class LeaseAreaFactory(factory.DjangoModelFactory):
+    type = LeaseAreaType.REAL_PROPERTY
+    location = LocationType.SURFACE
+    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+    lease = factory.SubFactory(LeaseFactory)
+
+    class Meta:
+        model = LeaseArea
+
+
+@register
+class PlanUnitFactory(factory.DjangoModelFactory):
+    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+    lease_area = factory.SubFactory(LeaseAreaFactory)
+
+    class Meta:
+        model = PlanUnit
+
+
+@register
 class PlotSearchTargetFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlotSearchTarget
+
+
+@register
+class PlotSearchTargetFactoryWithSubFactories(factory.DjangoModelFactory):
+    class Meta:
+        model = PlotSearchTarget
+
+    plot_search = factory.SubFactory(PlotSearchFactory)
+    plan_unit = factory.SubFactory(PlanUnitFactory)
+    target_type = PlotSearchTargetType.SEARCHABLE
 
 
 @register
@@ -139,12 +212,6 @@ class PlotSearchStageFactory(factory.DjangoModelFactory):
 class UserFactory(factory.DjangoModelFactory):
     class Meta:
         model = User
-
-
-@register
-class PlanUnitFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PlanUnit
 
 
 @pytest.fixture
@@ -252,12 +319,6 @@ def plot_search_target(
 
 
 @register
-class LeaseFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Lease
-
-
-@register
 class ContactFactory(factory.DjangoModelFactory):
     class Meta:
         model = Contact
@@ -279,15 +340,6 @@ class TenantContactFactory(factory.DjangoModelFactory):
 class LeaseAreaAddressFactory(factory.DjangoModelFactory):
     class Meta:
         model = LeaseAreaAddress
-
-
-@register
-class LeaseAreaFactory(factory.DjangoModelFactory):
-    type = LeaseAreaType.REAL_PROPERTY
-    location = LocationType.SURFACE
-
-    class Meta:
-        model = LeaseArea
 
 
 @register
@@ -366,6 +418,9 @@ class EntrySectionFactory(factory.DjangoModelFactory):
 
 @register
 class AnswerFactory(factory.DjangoModelFactory):
+    form = factory.SubFactory(FormFactory)
+    user = factory.SubFactory(UserFactory)
+
     class Meta:
         model = Answer
 
@@ -744,3 +799,55 @@ def basic_field_types(field_type_factory):
     field_types.append(field)
 
     return {t.identifier: t for t in field_types}
+
+
+@register
+class TargetStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = TargetStatus
+
+    plot_search_target = factory.SubFactory(PlotSearchTargetFactoryWithSubFactories)
+    answer = factory.SubFactory(AnswerFactory)
+
+
+@register
+class RelatedPlotApplicationFactory(factory.DjangoModelFactory):
+    lease = factory.SubFactory(LeaseFactory)
+    content_object = factory.SubFactory(AreaSearchFactory)
+
+    class Meta:
+        model = RelatedPlotApplication
+
+
+@pytest.fixture
+def related_plot_application_test_data(
+    lease_factory,
+    area_search_factory,
+    area_search_intended_use_factory,
+    target_status_factory,
+    related_plot_application_factory,
+):
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+    )
+    intended_use = area_search_intended_use_factory()
+    area_search = area_search_factory(
+        description_area=fake.name(),
+        description_intended_use=fake.name(),
+        intended_use=intended_use,
+    )
+    target_status = target_status_factory()
+    related_plot_applications = []
+    related_plot_applications.append(
+        related_plot_application_factory(lease=lease, content_object=area_search,)
+    )
+    related_plot_applications.append(
+        related_plot_application_factory(lease=lease, content_object=target_status,)
+    )
+
+    return {
+        "lease": lease,
+        "area_search": area_search,
+        "target_status": target_status,
+        "related_plot_applications": related_plot_applications,
+    }

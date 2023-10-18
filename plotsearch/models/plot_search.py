@@ -2,6 +2,8 @@ import uuid
 
 from auditlog.registry import auditlog
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models as gmodels
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -532,5 +534,31 @@ class FAQ(models.Model):
         return self.answer if len(self.answer) < 50 else (self.answer[:50] + "..")
 
 
+class RelatedPlotApplication(TimeStampedSafeDeleteModel):
+    """
+    In Finnish: Liittyvät (tontti/alue)hakemukset
+    """
+
+    lease = models.ForeignKey(
+        "leasing.Lease",
+        related_name="related_plot_applications",
+        on_delete=models.CASCADE,
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        # Explicitly limits choice to these models, but can be extended to any model
+        limit_choices_to={"model__in": ["targetstatus", "areasearch"]},
+    )
+    object_id = models.PositiveBigIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
+
+
 auditlog.register(PlotSearch)
 auditlog.register(InformationCheck)
+auditlog.register(RelatedPlotApplication)

@@ -125,6 +125,7 @@ from plotsearch.views.plot_search import (
     PlotSearchTypeViewSet,
     PlotSearchUIDataView,
     PlotSearchViewSet,
+    RelatedPlotApplicationViewSet,
     TargetStatusGeneratePDF,
 )
 from users.views import UsersPermissions
@@ -210,6 +211,11 @@ router.register(r"reservation_procedure", ReservationProcedureViewSet)
 router.register(r"statistical_use", StatisticalUseViewSet)
 router.register(r"supportive_housing", SupportiveHousingViewSet)
 router.register(r"target_status", TargetStatusViewset)
+router.register(
+    r"related_plot_applications",
+    RelatedPlotApplicationViewSet,
+    basename="related_plot_application",
+)
 router.register(r"ui_data", UiDataViewSet, basename="ui_data")
 router.register(r"user", UserViewSet)
 router.register(r"vat", VatViewSet)

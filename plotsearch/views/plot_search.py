@@ -42,6 +42,7 @@ from plotsearch.models import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    RelatedPlotApplication,
     TargetStatus,
 )
 from plotsearch.models.plot_search import (
@@ -66,6 +67,7 @@ from plotsearch.serializers.plot_search import (
     PlotSearchTargetSerializer,
     PlotSearchTypeSerializer,
     PlotSearchUpdateSerializer,
+    RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
 
@@ -404,3 +406,9 @@ class FAQViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = FAQ.objects.all()
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
     serializer_class = FAQSerializer
+
+
+class RelatedPlotApplicationViewSet(viewsets.ModelViewSet):
+    queryset = RelatedPlotApplication.objects.all()
+    serializer_class = RelatedPlotApplicationCreateDeleteSerializer
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)

@@ -449,6 +449,9 @@ CUSTOM_FIELD_PERMS = {
         "invoice_notes": {2: "view", 4: "view", 5: "view", 6: "change"},
         "is_invoicing_enabled": {2: "view", 4: "view", 5: "view", 6: "change"},
         "is_rent_info_complete": {2: "view", 5: "view"},
+        "target_statuses": {2: "view", 4: "view"},
+        "area_searches": {2: "view", 4: "view"},
+        "related_plot_applications": {2: "view", 4: "view"},
     },
     "contact": {
         "national_identification_number": {

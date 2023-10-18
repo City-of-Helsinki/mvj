@@ -25,7 +25,12 @@ from leasing.serializers.invoice import (
     InvoiceNoteCreateUpdateSerializer,
     InvoiceNoteSerializer,
 )
-from plotsearch.models import AreaSearch, PlotSearch, TargetStatus
+from plotsearch.models import (
+    AreaSearch,
+    PlotSearch,
+    RelatedPlotApplication,
+    TargetStatus,
+)
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -67,6 +72,12 @@ from .utils import (
     NameModelSerializer,
     UpdateNestedMixin,
 )
+
+
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = ("model",)
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -186,6 +197,16 @@ class PlotSearchSuccinctSerializer(serializers.ModelSerializer):
 
 class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
     intended_use = serializers.CharField(source="intended_use.name")
+    applicant_first_name = serializers.SerializerMethodField()
+    applicant_last_name = serializers.SerializerMethodField()
+
+    def get_applicant_first_name(self, obj):
+        user = getattr(obj.answer, "user", None)
+        return getattr(user, "first_name", None)
+
+    def get_applicant_last_name(self, obj):
+        user = getattr(obj.answer, "user", None)
+        return getattr(user, "last_name", None)
 
     class Meta:
         model = AreaSearch
@@ -196,6 +217,8 @@ class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "intended_use",
+            "applicant_first_name",
+            "applicant_last_name",
         )
 
 
@@ -233,8 +256,38 @@ class LeaseSuccinctSerializer(
         )
 
 
+class RelatedPlotApplicationSerializer(serializers.ModelSerializer):
+    content_type = ContentTypeSerializer(read_only=True)
+    content_type_id = serializers.IntegerField(write_only=True)
+    content_object = serializers.SerializerMethodField()
+
+    def get_content_object(self, obj):
+        content_type = obj.content_type
+        if content_type.model == "areasearch":
+            serializer = AreaSearchSuccinctSerializer(obj.content_object)
+        elif content_type.model == "targetstatus":
+            serializer = TargetStatusSuccinctSerializer(obj.content_object)
+        else:
+            return None
+        return serializer.data
+
+    class Meta:
+        model = RelatedPlotApplication
+        fields = (
+            "id",
+            "lease",
+            "content_type",
+            "content_object",
+            "content_type_id",
+        )
+        read_only_fields = ("content_object",)
+
+
 class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
     plot_searches = serializers.SerializerMethodField(read_only=True, required=False)
+    related_plot_applications = RelatedPlotApplicationSerializer(
+        read_only=True, many=True
+    )
     target_statuses = TargetStatusSuccinctSerializer(
         read_only=True, many=True, required=False
     )
@@ -277,6 +330,7 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "target_statuses",
             "plot_searches",
             "area_searches",
+            "related_plot_applications",
         )
 
 
@@ -436,6 +490,9 @@ def get_related_leases(obj):
 
 class LeaseRetrieveSerializer(LeaseSerializerBase):
     related_leases = serializers.SerializerMethodField()
+    related_plot_applications = RelatedPlotApplicationSerializer(
+        read_only=True, many=True
+    )
     target_statuses = TargetStatusSuccinctSerializer(
         read_only=True, many=True, required=False
     )

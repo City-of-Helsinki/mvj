@@ -11,6 +11,7 @@ from .plot_search import (
     PlotSearchSubtype,
     PlotSearchTarget,
     PlotSearchType,
+    RelatedPlotApplication,
     TargetStatus,
 )
 
@@ -28,5 +29,6 @@ __all__ = [
     "PlotSearchType",
     "PlotSearchStage",
     "PlotSearchSubtype",
+    "RelatedPlotApplication",
     "TargetInfoLink",
 ]
