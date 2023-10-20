@@ -1,4 +1,5 @@
 import datetime
+from django import forms
 from collections import defaultdict
 from fractions import Fraction
 from operator import itemgetter
@@ -12,6 +13,7 @@ from rest_framework.response import Response
 
 from leasing.report.excel import ExcelCell, ExcelRow, FormatType
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 class InvoicingReviewSection(Enum):
@@ -61,18 +63,19 @@ INVOICING_REVIEW_QUERIES = {
                INNER JOIN leasing_rent r
                ON l.id = r.lease_id
                   AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                  AND (r.start_date IS NULL OR r.start_date <= '{today}')
+                  AND (r.end_date IS NULL OR r.end_date >= '{today}')
                   AND r.type != 'free'
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+         WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
            AND l.start_date IS NOT NULL
            AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
            AND l.deleted IS NULL
            AND l.is_invoicing_enabled = FALSE
+           {service_unit_filter}
          GROUP BY l.id,
                   li.identifier
          ORDER BY li.identifier;
-    """,
+        """,
     "rent_info_not_complete": """
         SELECT NULL AS "section",
                li.identifier AS "lease_id",
@@ -81,11 +84,12 @@ INVOICING_REVIEW_QUERIES = {
           FROM leasing_lease l
                INNER JOIN leasing_leaseidentifier li
                ON l.identifier_id = li.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+         WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
            AND l.start_date IS NOT NULL
            AND l.deleted IS NULL
            AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
            AND l.is_rent_info_complete = FALSE
+           {service_unit_filter}
          GROUP BY l.id,
                  li.id
          ORDER BY li.identifier;
@@ -99,12 +103,13 @@ INVOICING_REVIEW_QUERIES = {
                LEFT OUTER JOIN leasing_rent r
                ON l.id = r.lease_id
                   AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                  AND (r.start_date IS NULL OR r.start_date <= '{today}')
+                  AND (r.end_date IS NULL OR r.end_date >= '{today}')
                   INNER JOIN leasing_leaseidentifier li
                   ON (l.identifier_id = li.id)
-        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+        WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
           AND l.deleted IS NULL
+          {service_unit_filter}
         GROUP BY l.id,
                  li.id
         HAVING COUNT(r.id) = 0
@@ -121,7 +126,7 @@ INVOICING_REVIEW_QUERIES = {
                 ON l.id = r.lease_id
                    AND r.due_dates_type = 'custom'
                    AND r.deleted IS NULL
-                   AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                   AND (r.start_date IS NULL OR r.start_date <= '{today}')
                 LEFT OUTER JOIN leasing_rentduedate rdd
                 ON r.id = rdd.rent_id
                    AND rdd.deleted IS NULL
@@ -131,9 +136,10 @@ INVOICING_REVIEW_QUERIES = {
                    AND r2.due_dates_type = 'fixed'
                    AND r2.due_dates_per_year IS NULL
                    AND r2.deleted IS NULL
-                   AND (r2.start_date IS NULL OR r2.start_date <= %(today)s)
-        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+                   AND (r2.start_date IS NULL OR r2.start_date <= '{today}')
+        WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
           AND l.deleted IS NULL
+          {service_unit_filter}
         GROUP BY l.id,
                  li.id
         HAVING (
@@ -151,13 +157,14 @@ INVOICING_REVIEW_QUERIES = {
               INNER JOIN leasing_rent r
               ON l.id = r.lease_id
                  AND r.deleted IS NULL
-                 AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                 AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                 AND (r.start_date IS NULL OR r.start_date <= '{today}')
+                 AND (r.end_date IS NULL OR r.end_date >= '{today}')
                  AND r.type = 'index'
                  AND r.index_type IS NULL
-        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+        WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
           AND l.start_date IS NOT NULL
           AND l.deleted IS NULL
+          {service_unit_filter}
         GROUP BY l.id,
                  li.id
     """,
@@ -170,14 +177,15 @@ INVOICING_REVIEW_QUERIES = {
                INNER JOIN leasing_rent r
                ON l.id = r.lease_id
                   AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                  AND (r.start_date IS NULL OR r.start_date <= '{today}')
                   AND r.type = 'one_time'
                INNER JOIN leasing_leaseidentifier li
                ON l.identifier_id = li.id
                LEFT OUTER JOIN leasing_invoice i
                ON l.id = i.lease_id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+         WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
            AND l.deleted IS NULL
+           {service_unit_filter}
          GROUP BY l.id,
                   li.id
         HAVING COUNT(i.id) = 0
@@ -196,13 +204,14 @@ INVOICING_REVIEW_QUERIES = {
                            INNER JOIN leasing_tenantcontact tc
                            ON t.id = tc.tenant_id
                               AND tc.type = 'tenant'
-                              AND (tc.end_date IS NULL OR tc.end_date > %(today)s)
+                              AND (tc.end_date IS NULL OR tc.end_date > '{today}')
                               AND tc.deleted IS NULL
                      WHERE t.deleted IS NULL
                      GROUP BY t.id
                    ) tt ON tt.lease_id = l.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+         WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
            AND l.deleted IS NULL
+           {service_unit_filter}
          GROUP BY l.id,
                   li.id
         HAVING COUNT(tt.id) = 0
@@ -217,8 +226,9 @@ INVOICING_REVIEW_QUERIES = {
                ON l.id = la.lease_id
                INNER JOIN leasing_leaseidentifier li
                ON l.identifier_id = li.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+         WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
            AND l.deleted IS NULL
+           {service_unit_filter}
         GROUP BY l.id,
                  li.id
         HAVING COUNT(la.id) = 0
@@ -237,7 +247,11 @@ class InvoicingReviewReport(ReportBase):
     name = _("Invoicing review")
     description = _("Show leases that might have errors in their invoicing")
     slug = "invoicing_review"
-    input_fields = {}
+    input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        )
+    }
     output_fields = {
         "section": {
             "label": pgettext_lazy("Invoicing review", "Section"),
@@ -253,6 +267,9 @@ class InvoicingReviewReport(ReportBase):
 
     def get_incorrect_rent_shares_data(self, cursor):
         today = datetime.date.today()
+        service_unit_filter = ""
+        # if input_data["service_unit"]:
+        #     service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
 
         query = """
             SELECT li.identifier as lease_id,
@@ -270,21 +287,22 @@ class InvoicingReviewReport(ReportBase):
                            INNER JOIN leasing_tenantcontact tc
                            ON t.id = tc.tenant_id
                               AND tc.type = 'tenant'
-                              AND tc.start_date <= %(today)s
-                              AND (tc.end_date IS NULL OR tc.end_date >= %(today)s)
+                              AND tc.start_date <= '{today}'
+                              AND (tc.end_date IS NULL OR tc.end_date >= '{today}')
                               AND tc.deleted IS NULL
                            INNER JOIN leasing_tenantrentshare trs
                            ON t.id = trs.tenant_id
                               AND trs.deleted IS NULL
                      WHERE t.deleted IS NULL
                    ) tt ON tt.lease_id = l.id
-            WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+            WHERE (l.end_date IS NULL OR l.end_date >= '{today}')
               AND l.deleted IS NULL
+              {service_unit_filter}
             GROUP BY l.id,
                      li.id;
         """
 
-        cursor.execute(query, {"today": today})
+        cursor.execute(query.format(today=today, service_unit_filter=service_unit_filter))
 
         data = []
         for row in dictfetchall(cursor):
@@ -314,6 +332,9 @@ class InvoicingReviewReport(ReportBase):
 
     def get_incorrect_management_shares_data(self, cursor):
         today = datetime.date.today()
+        service_unit_filter = ""
+        # if input_data["service_unit"]:
+        #     service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
 
         query = """
             SELECT li.identifier as "lease_id",
@@ -331,19 +352,20 @@ class InvoicingReviewReport(ReportBase):
                            INNER JOIN leasing_tenantcontact tc
                            ON t.id = tc.tenant_id
                            AND tc.type = 'tenant'
-                           AND tc.start_date <= %(today)s
-                           AND (tc.end_date IS NULL OR tc.end_date >= %(today)s)
+                           AND tc.start_date <= '{today}'
+                           AND (tc.end_date IS NULL OR tc.end_date >= '{today}')
                            AND tc.deleted IS NULL
                      WHERE t.deleted IS NULL
                      GROUP BY t.id
                    ) tt ON tt.lease_id = l.id
-            WHERE (l."end_date" IS NULL OR l."end_date" >= %(today)s)
+            WHERE (l."end_date" IS NULL OR l."end_date" >= '{today}')
               AND l."deleted" IS NULL
+              {service_unit_filter}
             GROUP BY l."id",
                      li."id"
         """
 
-        cursor.execute(query, {"today": today})
+        cursor.execute(query.format(today=today, service_unit_filter=service_unit_filter))
 
         data = []
         for row in dictfetchall(cursor):
@@ -383,9 +405,11 @@ class InvoicingReviewReport(ReportBase):
                 rows = []
                 try:
                     if lease_list_type.value in INVOICING_REVIEW_QUERIES:
+                        service_unit_filter = ""
+                        if input_data["service_unit"]:
+                            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
                         cursor.execute(
-                            INVOICING_REVIEW_QUERIES[lease_list_type.value],
-                            {"today": today},
+                            INVOICING_REVIEW_QUERIES[lease_list_type.value].format(today=today, service_unit_filter=service_unit_filter)
                         )
                         rows = dictfetchall(cursor)
 
