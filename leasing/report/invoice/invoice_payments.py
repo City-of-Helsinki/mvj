@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from leasing.models.invoice import InvoicePayment
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 def get_invoice_number(obj):
@@ -22,6 +23,9 @@ class InvoicePaymentsReport(ReportBase):
     )
     slug = "invoice_payments"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -53,6 +57,14 @@ class InvoicePaymentsReport(ReportBase):
             )
             .order_by("paid_date")
         )
+
+        if input_data["service_unit"]:
+            # Both leases and invoices have service unit id.
+            # It is worth considering whether invoices should be 
+            # linked to service units separately, or if linking 
+            # to service units should be made only through leases.
+            qs = qs.filter(invoice__lease__service_unit=input_data["service_unit"])
+
 
         return qs
 
