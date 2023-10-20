@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import Collateral, CollateralType
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 def get_lease_id(obj):
@@ -22,6 +23,9 @@ class CollateralsReport(ReportBase):
     description = _("Show all collaterals")
     slug = "collaterals"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "collateral_type": forms.ModelChoiceField(
             label=_("Type"),
             queryset=CollateralType.objects.all(),
@@ -67,6 +71,9 @@ class CollateralsReport(ReportBase):
                 "contract__lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(contract__lease__service_unit=input_data["service_unit"])
 
         if input_data["collateral_type"]:
             qs = qs.filter(type=input_data["collateral_type"])
