@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import Condition, ConditionType
 from leasing.report.report_base import ReportBase
+from leasing.enums import ServiceUnit
 
 
 def get_lease_id(obj):
@@ -42,6 +43,9 @@ class DecisionConditionsReport(ReportBase):
     )
     slug = "decision_conditions"
     input_fields = {
+        "service_unit": forms.ChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "end_date": forms.DateField(label=_("End date"), required=False),
         "condition_type": forms.ModelChoiceField(
@@ -96,6 +100,10 @@ class DecisionConditionsReport(ReportBase):
                 "decision__lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(decision__lease__service_unit=input_data["service_unit"])
+
 
         if input_data["supervision_exists"] is not None:
             qs = qs.filter(
