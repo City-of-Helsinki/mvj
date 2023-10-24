@@ -265,11 +265,11 @@ class InvoicingReviewReport(ReportBase):
     automatic_excel_column_labels = False
     is_already_sorted = True
 
-    def get_incorrect_rent_shares_data(self, cursor):
+    def get_incorrect_rent_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        # if input_data["service_unit"]:
-        #     service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
+        if input_data["service_unit"]:
+            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
 
         query = """
             SELECT li.identifier as lease_id,
@@ -330,11 +330,11 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
-    def get_incorrect_management_shares_data(self, cursor):
+    def get_incorrect_management_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        # if input_data["service_unit"]:
-        #     service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
+        if input_data["service_unit"]:
+            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
 
         query = """
             SELECT li.identifier as "lease_id",
@@ -415,7 +415,7 @@ class InvoicingReviewReport(ReportBase):
 
                     if hasattr(self, f"get_{lease_list_type.value}_data"):
                         rows = getattr(self, f"get_{lease_list_type.value}_data")(
-                            cursor
+                            cursor, input_data
                         )
                 except DataError as e:
                     rows = [
