@@ -349,7 +349,7 @@ Most important thing to remember when making a backup is to sanitize the data, w
 <strong>When running backup for the staging/testing/development purposes, you should exclude few tables to limit the size of the backup.</strong> So remember to add `--exclude-table-data 'public.auditlog_logentry' --exclude-table-data 'public.batchrun_jobrunlog*' --exclude-table-data 'public.django_q_task'` to `pg_dump` command.
 
 ```bash
-pg_dump mvj_api_prod | gzip > mvj-api-prod_$(date +%Y%M%d%h%m).sql.gz
+pg_dump mvj_api_prod | gzip > mvj-api-prod_$(date +%Y%m%d%H%m).sql.gz
 ```
 
 To restore dump run `psql -f mvj-api-prod-DATE_HERE.sql ${DATABASE_URL/postgis/postgres}`.
