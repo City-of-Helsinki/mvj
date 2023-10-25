@@ -168,7 +168,7 @@ def test_social_security_validator(
     answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information"][
         "sections"
     ]["contact-person"]["fields"][social_security_field.identifier] = {
-        "value": "010181B900C",
+        "value": "010181G900C",
         "extraValue": "",
     }
     answer_serializer = AnswerSerializer(data=answer_data)
