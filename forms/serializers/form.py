@@ -506,7 +506,9 @@ class AnswerSerializer(serializers.ModelSerializer):
         validators = [
             RequiredFormFieldValidator(),
             FieldRegexValidator(
-                "^[0-9]{6}[+Aa-][0-9]{3}[A-z0-9]$", "invalid_ssn", "henkilotunnus"
+                "^[0-9]{6}[+AaBbCcDdEeFfYyXxWwVvUu-][0-9]{3}[A-z0-9]$",
+                "invalid_ssn",
+                "henkilotunnus",
             ),
             FieldRegexValidator(
                 "[0-9]{6,7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
