@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from leasing.models import Condition, ConditionType
+from leasing.models import Condition, ConditionType, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
@@ -42,6 +42,9 @@ class DecisionConditionsReport(ReportBase):
     )
     slug = "decision_conditions"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "end_date": forms.DateField(label=_("End date"), required=False),
         "condition_type": forms.ModelChoiceField(
@@ -96,6 +99,9 @@ class DecisionConditionsReport(ReportBase):
                 "decision__lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(decision__lease__service_unit__in=input_data["service_unit"])
 
         if input_data["supervision_exists"] is not None:
             qs = qs.filter(
