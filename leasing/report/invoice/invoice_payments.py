@@ -24,7 +24,7 @@ class InvoicePaymentsReport(ReportBase):
     slug = "invoice_payments"
     input_fields = {
         "service_unit": forms.ModelChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.objects.all()
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
@@ -58,7 +58,7 @@ class InvoicePaymentsReport(ReportBase):
             .order_by("paid_date")
         )
 
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             # Both leases and invoices have service unit id.
             # It is worth considering whether invoices should be 
             # linked to service units separately, or if linking 

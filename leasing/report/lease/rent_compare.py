@@ -8,13 +8,16 @@ from django.utils.translation import ugettext_lazy as _
 from leasing.enums import RentType
 from leasing.models import Lease
 from leasing.report.report_base import AsyncReportBase
-
+from leasing.models import ServiceUnit
 
 class RentCompareReport(AsyncReportBase):
     name = _("Rent compare")
     description = _("Show difference in rent between two years")
     slug = "rent_compare"
     input_fields = {
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
+        ),
         "first_year": forms.IntegerField(
             label=_("First year"), required=True, min_value=1900, max_value=3000
         ),
@@ -42,9 +45,7 @@ class RentCompareReport(AsyncReportBase):
         second_year_start_date = datetime.date(year=second_year, month=1, day=1)
         second_year_end_date = datetime.date(year=second_year, month=12, day=31)
 
-        leases = (
-            Lease.objects.filter(
-                (
+        lease_filters = Q(
                     (
                         Q(start_date__isnull=True)
                         | Q(start_date__lte=first_year_end_date)
@@ -53,8 +54,7 @@ class RentCompareReport(AsyncReportBase):
                         Q(end_date__isnull=True)
                         | Q(end_date__gte=first_year_start_date)
                     )
-                )
-                | (
+                ) | Q(
                     (
                         Q(start_date__isnull=True)
                         | Q(start_date__lte=second_year_end_date)
@@ -64,7 +64,11 @@ class RentCompareReport(AsyncReportBase):
                         | Q(end_date__gte=second_year_start_date)
                     )
                 )
-            )
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            lease_filters = Q(service_unit=input_data["service_unit"].id) & lease_filters
+
+        leases = (
+            Lease.objects.filter(lease_filters)
             .filter(
                 (
                     (

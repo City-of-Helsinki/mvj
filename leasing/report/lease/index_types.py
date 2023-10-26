@@ -148,7 +148,7 @@ class IndexTypesReport(ReportBase):
             )
         )
 
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             qs = qs.filter(lease__service_unit=input_data["service_unit"].id)
 
         if input_data["only_active_leases"]:

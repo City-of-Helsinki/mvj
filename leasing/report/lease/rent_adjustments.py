@@ -1,3 +1,4 @@
+from django import forms
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -6,6 +7,7 @@ from enumfields.drf import EnumField
 from leasing.enums import RentAdjustmentAmountType, RentAdjustmentType, SubventionType
 from leasing.models import RentAdjustment
 from leasing.report.report_base import ReportBase
+from leasing.models import ServiceUnit
 
 
 def get_lease_id(obj):
@@ -40,7 +42,11 @@ class RentAdjustmentsReport(ReportBase):
     name = _("Rent adjustments")
     description = _("Shows all of the rent adjustments")
     slug = "rent_adjustments"
-    input_fields = {}
+    input_fields = {
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
+        )
+    }
     output_fields = {
         "lease_id": {"source": get_lease_id, "label": _("Lease id")},
         "type": {
@@ -112,5 +118,8 @@ class RentAdjustmentsReport(ReportBase):
                 "rent__lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            qs = qs.filter(rent__lease__service_unit=input_data["service_unit"].id)
 
         return qs

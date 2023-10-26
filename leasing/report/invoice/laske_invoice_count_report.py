@@ -64,13 +64,13 @@ class LaskeInvoiceCountReport(ReportBase):
                 datetime.datetime.combine(query_end_date, datetime.time(23, 59))
             )))
         
-        service_unit = input_data["service_unit"].id
-        if service_unit is not None:
-            filters = filters & Q(service_unit=service_unit)
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            filters = filters & Q(lease__service_unit=input_data["service_unit"].id)
 
         if query_start_date and query_end_date:
             for result in (
                 Invoice.objects.annotate(send_date=TruncDate("sent_to_sap_at"))
+                .select_related("lease")
                 .filter(filters)
                 .values("send_date")
                 .annotate(invoice_count=Count("id"))

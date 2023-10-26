@@ -434,7 +434,7 @@ class LeaseStatisticReport2(AsyncReportBase):
             "basis_of_rents__temporary_subventions",
         )
 
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             qs = qs.filter(service_unit=input_data["service_unit"].id)
 
         if input_data["start_date"]:

@@ -127,7 +127,6 @@ class ExtraCityRentReport(ReportBase):
     automatic_excel_column_labels = False
 
     def get_data(self, input_data):
-        service_unit = input_data["service_unit"]
         filters = ((
                     Q(rows__billing_period_start_date__gte=input_data["start_date"])
                     & Q(rows__billing_period_start_date__lte=input_data["end_date"])
@@ -135,8 +134,8 @@ class ExtraCityRentReport(ReportBase):
                     Q(rows__billing_period_end_date__gte=input_data["start_date"])
                     & Q(rows__billing_period_end_date__lte=input_data["end_date"])
                 ))
-        if service_unit:
-            filters = filters & Q(service_unit=service_unit)
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            filters = filters & Q(lease__service_unit=input_data["service_unit"].id)
         qs = (
             Invoice.objects.filter(filters)
             .exclude(lease__municipality=1)  # Helsinki

@@ -53,7 +53,7 @@ class LeaseInvoicingDisabledReport(ReportBase):
             .order_by("start_date", "end_date")
         )
 
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             qs = qs.filter(service_unit=input_data["service_unit"].id)
 
         leases = []

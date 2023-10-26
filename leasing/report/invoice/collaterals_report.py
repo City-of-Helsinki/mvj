@@ -23,7 +23,7 @@ class CollateralsReport(ReportBase):
     slug = "collaterals"
     input_fields = {
         "service_unit": forms.ModelChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.objects.all()
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "collateral_type": forms.ModelChoiceField(
             label=_("Type"),
@@ -71,7 +71,7 @@ class CollateralsReport(ReportBase):
             )
         )
 
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             qs = qs.filter(contract__lease__service_unit=input_data["service_unit"].id)
 
         if input_data["collateral_type"]:

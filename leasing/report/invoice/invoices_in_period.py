@@ -107,8 +107,8 @@ class InvoicesInPeriodReport(ReportBase):
             .order_by("lease__identifier__type__identifier", "due_date")
         )
 
-        if input_data["service_unit"].id:
-            qs = qs.filter(service_unit=input_data["service_unit"].id)
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            qs = qs.filter(lease__service_unit=input_data["service_unit"].id)
 
         if input_data["invoice_state"]:
             qs = qs.filter(state=input_data["invoice_state"])

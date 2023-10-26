@@ -267,7 +267,7 @@ class InvoicingReviewReport(ReportBase):
     def get_incorrect_rent_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
 
         query = """
@@ -332,7 +332,7 @@ class InvoicingReviewReport(ReportBase):
     def get_incorrect_management_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        if input_data["service_unit"].id:
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
             service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
 
         query = """
@@ -406,7 +406,7 @@ class InvoicingReviewReport(ReportBase):
                 try:
                     if lease_list_type.value in INVOICING_REVIEW_QUERIES:
                         service_unit_filter = ""
-                        if input_data["service_unit"].id:
+                        if input_data["service_unit"] is not None and input_data["service_unit"].id:
                             service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
                         cursor.execute(
                             INVOICING_REVIEW_QUERIES[lease_list_type.value].format(today=today, service_unit_filter=service_unit_filter)

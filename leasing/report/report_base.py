@@ -17,7 +17,6 @@ from rest_framework.response import Response
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.forms import ReportFormBase
 from leasing.report.serializers import ReportOutputSerializer
-from leasing.enums import ServiceUnit
 
 
 class ReportBase:
@@ -216,14 +215,10 @@ class ReportBase:
 
             input_value = report.form.cleaned_data[input_field_name]
             if hasattr(input_field, "choices"):
-                if input_field_name == "service_unit":
-                    su = ServiceUnit(int(input_value))
-                    input_value = str(f"{su} ({su.name})")
-                else:
-                    for choice_value, choice_label in input_field.choices:
-                        if choice_value == input_value:
-                            input_value = str(choice_label)
-                            break
+                for choice_value, choice_label in input_field.choices:
+                    if choice_value == input_value:
+                        input_value = str(choice_label)
+                        break
 
             if isinstance(input_value, Model):
                 input_value = str(input_value)

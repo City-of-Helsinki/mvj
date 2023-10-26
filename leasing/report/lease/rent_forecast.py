@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from leasing.enums import LeaseState
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.excel import (
     ExcelCell,
     ExcelRow,
@@ -16,6 +16,7 @@ from leasing.report.excel import (
     SumCell,
 )
 from leasing.report.report_base import AsyncReportBase
+
 
 INTERNAL_LEASE_TYPES = [
     "K0",
@@ -39,6 +40,9 @@ class RentForecastReport(AsyncReportBase):
     description = _("Calculate total yearly rent by lease type")
     slug = "rent_forecast"
     input_fields = {
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
+        ),
         "start_year": forms.IntegerField(
             label=_("Start year"), required=True, min_value=2020, max_value=2050
         ),
@@ -56,11 +60,17 @@ class RentForecastReport(AsyncReportBase):
         start_date = datetime.date(year=input_data["start_year"], month=1, day=1)
         end_date = datetime.date(year=input_data["end_year"], month=12, day=31)
 
-        leases = (
-            Lease.objects.filter(
-                (Q(start_date__isnull=True) | Q(start_date__lte=end_date))
-                & (Q(end_date__isnull=True) | Q(end_date__gte=start_date))
+        first_filters = Q(
+            Q(start_date__isnull=True) | Q(start_date__lte=end_date)
+            ) & Q(
+                Q(end_date__isnull=True) | Q(end_date__gte=start_date)
             )
+        
+        if input_data["service_unit"] is not None and input_data["service_unit"].id:
+            first_filters = Q(service_unit=input_data["service_unit"].id) & lease_filters
+
+        leases = (
+            Lease.objects.filter(first_filters)
             .filter(
                 state__in=[
                     LeaseState.LEASE,
