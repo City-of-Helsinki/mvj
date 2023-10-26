@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from leasing.enums import IndexType, TenantContactType
 from leasing.models import Rent
 from leasing.report.report_base import ReportBase
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 def get_lease_id(obj):
@@ -81,8 +81,8 @@ class IndexTypesReport(ReportBase):
     description = _("Show leases with a certain index type")
     slug = "index_types"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "index_type": forms.ChoiceField(
             label=_("Index type"), required=True, choices=IndexType.choices()
@@ -148,8 +148,8 @@ class IndexTypesReport(ReportBase):
             )
         )
 
-        if input_data["service_unit"]:
-            qs = qs.filter(lease__service_unit=input_data["service_unit"])
+        if input_data["service_unit"].id:
+            qs = qs.filter(lease__service_unit=input_data["service_unit"].id)
 
         if input_data["only_active_leases"]:
             qs = qs.filter(

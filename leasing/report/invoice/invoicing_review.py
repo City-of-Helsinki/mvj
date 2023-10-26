@@ -13,8 +13,7 @@ from rest_framework.response import Response
 
 from leasing.report.excel import ExcelCell, ExcelRow, FormatType
 from leasing.report.report_base import ReportBase
-from leasing.enums import ServiceUnit
-
+from leasing.models import ServiceUnit
 
 class InvoicingReviewSection(Enum):
     INVOICING_NOT_ENABLED = "invoicing_not_enabled"
@@ -248,8 +247,8 @@ class InvoicingReviewReport(ReportBase):
     description = _("Show leases that might have errors in their invoicing")
     slug = "invoicing_review"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         )
     }
     output_fields = {
@@ -268,8 +267,8 @@ class InvoicingReviewReport(ReportBase):
     def get_incorrect_rent_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        if input_data["service_unit"]:
-            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
+        if input_data["service_unit"].id:
+            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
 
         query = """
             SELECT li.identifier as lease_id,
@@ -333,8 +332,8 @@ class InvoicingReviewReport(ReportBase):
     def get_incorrect_management_shares_data(self, cursor, input_data):
         today = datetime.date.today()
         service_unit_filter = ""
-        if input_data["service_unit"]:
-            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
+        if input_data["service_unit"].id:
+            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
 
         query = """
             SELECT li.identifier as "lease_id",
@@ -389,6 +388,7 @@ class InvoicingReviewReport(ReportBase):
 
     def get_data(self, input_data):
         today = datetime.date.today()
+        print(input_data["service_unit"].id)
 
         result = []
         with connection.cursor() as cursor:
@@ -406,8 +406,8 @@ class InvoicingReviewReport(ReportBase):
                 try:
                     if lease_list_type.value in INVOICING_REVIEW_QUERIES:
                         service_unit_filter = ""
-                        if input_data["service_unit"]:
-                            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit']}"
+                        if input_data["service_unit"].id:
+                            service_unit_filter = f"AND l.service_unit_id = {input_data['service_unit'].id}"
                         cursor.execute(
                             INVOICING_REVIEW_QUERIES[lease_list_type.value].format(today=today, service_unit_filter=service_unit_filter)
                         )

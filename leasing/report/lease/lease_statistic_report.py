@@ -30,7 +30,7 @@ from leasing.report.lease.common_getters import (
     get_total_area,
 )
 from leasing.report.report_base import AsyncReportBase
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 # TODO: Can we get rid of static ids
@@ -201,8 +201,8 @@ class LeaseStatisticReport(AsyncReportBase):
     )
     slug = "lease_statistic"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "state": forms.ChoiceField(
@@ -377,8 +377,8 @@ class LeaseStatisticReport(AsyncReportBase):
             "basis_of_rents",
         )
 
-        if input_data["service_unit"]:
-            qs = qs.filter(service_unit=input_data["service_unit"])
+        if input_data["service_unit"].id:
+            qs = qs.filter(service_unit=input_data["service_unit"].id)
 
         if input_data["start_date"]:
             qs = qs.filter(start_date__gte=input_data["start_date"])

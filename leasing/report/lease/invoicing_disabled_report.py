@@ -7,7 +7,7 @@ from leasing.enums import LeaseState, RentType
 from leasing.models import Lease
 from leasing.report.report_base import ReportBase
 
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 def get_lease_id(obj):
@@ -19,8 +19,8 @@ class LeaseInvoicingDisabledReport(ReportBase):
     description = _("Shows active leases where invoicing is not enabled")
     slug = "lease_invoicing_disabled"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
     }
     output_fields = {
@@ -53,8 +53,8 @@ class LeaseInvoicingDisabledReport(ReportBase):
             .order_by("start_date", "end_date")
         )
 
-        if input_data["service_unit"]:
-            qs = qs.filter(service_unit=input_data["service_unit"])
+        if input_data["service_unit"].id:
+            qs = qs.filter(service_unit=input_data["service_unit"].id)
 
         leases = []
         for lease in qs:

@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leasing.models import Invoice, Rent
 from leasing.report.report_base import ReportBase
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 class LaskeInvoiceCountReport(ReportBase):
@@ -21,8 +21,8 @@ class LaskeInvoiceCountReport(ReportBase):
     )
     slug = "laske_invoice_count"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
@@ -64,7 +64,7 @@ class LaskeInvoiceCountReport(ReportBase):
                 datetime.datetime.combine(query_end_date, datetime.time(23, 59))
             )))
         
-        service_unit = input_data["service_unit"]
+        service_unit = input_data["service_unit"].id
         if service_unit is not None:
             filters = filters & Q(service_unit=service_unit)
 

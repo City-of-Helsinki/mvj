@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from leasing.models import Lease
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
 from leasing.report.report_base import ReportBase
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 class LeaseCountReport(ReportBase):
@@ -16,8 +16,8 @@ class LeaseCountReport(ReportBase):
     description = _("Show the count of leases by type")
     slug = "lease_count"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         )
     }
     output_fields = {

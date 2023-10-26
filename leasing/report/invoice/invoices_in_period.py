@@ -7,7 +7,7 @@ from leasing.enums import InvoiceState
 from leasing.models import Invoice, LeaseType
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
 from leasing.report.report_base import ReportBase
-from leasing.enums import ServiceUnit
+from leasing.models import ServiceUnit
 
 
 def get_lease_type(obj):
@@ -42,8 +42,8 @@ class InvoicesInPeriodReport(ReportBase):
     )
     slug = "invoices_in_period"
     input_fields = {
-        "service_unit": forms.ChoiceField(
-            label=_("Palvelukokonaisuus"), required=False, choices=ServiceUnit.choices()
+        "service_unit": forms.ModelChoiceField(
+            label=_("Palvelukokonaisuus"), required=False, queryset=ServiceUnit.objects.all()
         ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
@@ -107,8 +107,8 @@ class InvoicesInPeriodReport(ReportBase):
             .order_by("lease__identifier__type__identifier", "due_date")
         )
 
-        if input_data["service_unit"]:
-            qs = qs.filter(service_unit=input_data["service_unit"])
+        if input_data["service_unit"].id:
+            qs = qs.filter(service_unit=input_data["service_unit"].id)
 
         if input_data["invoice_state"]:
             qs = qs.filter(state=input_data["invoice_state"])
