@@ -273,6 +273,11 @@ Sets field specific permissions (view, change) to the pre-defined groups.
 
 Sets the default mappings for AD groups to user groups.
 
+#### `set_service_unit_group_mappings`
+
+Sets the default user group to Service unit mappings. Creates a group for the Service unit if a group doesn't exist
+already. The `service_unit.json` fixture has to be loaded into the database before running this command.
+
 ### Regularly run commands
 
 #### `create_invoices`
