@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import LeaseState
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.excel import (
     ExcelCell,
     ExcelRow,
@@ -39,6 +39,9 @@ class RentForecastReport(AsyncReportBase):
     description = _("Calculate total yearly rent by lease type")
     slug = "rent_forecast"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_year": forms.IntegerField(
             label=_("Start year"), required=True, min_value=2020, max_value=2050
         ),
@@ -71,6 +74,9 @@ class RentForecastReport(AsyncReportBase):
             )
             .select_related("type")
         )
+
+        if input_data["service_unit"]:
+            leases = leases.filter(service_unit__in=input_data["service_unit"])
 
         years = range(input_data["start_year"], input_data["end_year"] + 1)
 

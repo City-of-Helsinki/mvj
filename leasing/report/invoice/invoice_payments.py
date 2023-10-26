@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
 
+from leasing.models import ServiceUnit
 from leasing.models.invoice import InvoicePayment
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
 from leasing.report.report_base import ReportBase
@@ -22,6 +23,9 @@ class InvoicePaymentsReport(ReportBase):
     )
     slug = "invoice_payments"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -53,6 +57,9 @@ class InvoicePaymentsReport(ReportBase):
             )
             .order_by("paid_date")
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(invoice__service_unit__in=input_data["service_unit"])
 
         return qs
 

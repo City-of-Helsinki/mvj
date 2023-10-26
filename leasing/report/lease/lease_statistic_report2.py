@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
 
 from leasing.enums import LeaseState, SubventionType
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.lease.common_getters import (
     get_address,
     get_contract_number,
@@ -223,11 +223,13 @@ def get_subvention_form_of_management(lease):
 
 
 class LeaseStatisticReport2(AsyncReportBase):
-    # class LeaseStatisticReport2(ReportBase):
     name = _("Lease statistics report II")
     description = _("Shows statistics about leases and their basis of rents")
     slug = "lease_statistic2"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "state": forms.ChoiceField(
             label=_("State"), required=False, choices=LeaseState.choices()
@@ -429,6 +431,9 @@ class LeaseStatisticReport2(AsyncReportBase):
             "basis_of_rents__management_subventions",
             "basis_of_rents__temporary_subventions",
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(service_unit__in=input_data["service_unit"])
 
         if input_data["start_date"]:
             qs = qs.filter(start_date__gte=input_data["start_date"])

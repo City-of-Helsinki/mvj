@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import RentType
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.report_base import AsyncReportBase
 
 
@@ -15,6 +15,9 @@ class RentCompareReport(AsyncReportBase):
     description = _("Show difference in rent between two years")
     slug = "rent_compare"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "first_year": forms.IntegerField(
             label=_("First year"), required=True, min_value=1900, max_value=3000
         ),
@@ -97,6 +100,9 @@ class RentCompareReport(AsyncReportBase):
             )
             .distinct()
         )
+
+        if input_data["service_unit"]:
+            leases = leases.filter(service_unit__in=input_data["service_unit"])
 
         results = []
         for lease in leases:

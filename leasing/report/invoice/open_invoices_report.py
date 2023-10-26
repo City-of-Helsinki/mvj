@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
 
 from leasing.enums import InvoiceState
-from leasing.models import Invoice
+from leasing.models import Invoice, ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, PreviousRowsSumCell, SumCell
 from leasing.report.report_base import ReportBase
 
@@ -36,6 +36,9 @@ class OpenInvoicesReport(ReportBase):
     description = _('Show all the invoices that have their state as "open"')
     slug = "open_invoices"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -64,7 +67,7 @@ class OpenInvoicesReport(ReportBase):
     }
 
     def get_data(self, input_data):
-        return (
+        qs = (
             Invoice.objects.filter(
                 due_date__gte=input_data["start_date"],
                 due_date__lte=input_data["end_date"],
@@ -80,6 +83,11 @@ class OpenInvoicesReport(ReportBase):
             )
             .order_by("lease__identifier__type__identifier", "due_date")
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(service_unit__in=input_data["service_unit"])
+
+        return qs
 
     def get_response(self, request):
         report_data = self.get_data(self.get_input_data(request))

@@ -9,7 +9,7 @@ from django.db.models.functions.datetime import TruncDate
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 
-from leasing.models import Invoice, Rent
+from leasing.models import Invoice, Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
@@ -20,6 +20,9 @@ class LaskeInvoiceCountReport(ReportBase):
     )
     slug = "laske_invoice_count"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -54,7 +57,7 @@ class LaskeInvoiceCountReport(ReportBase):
                 query_end_date = today - datetime.timedelta(days=1)
 
         if query_start_date and query_end_date:
-            for result in (
+            qs = (
                 Invoice.objects.annotate(send_date=TruncDate("sent_to_sap_at"))
                 .filter(
                     sent_to_sap_at__gte=make_aware(
@@ -67,7 +70,12 @@ class LaskeInvoiceCountReport(ReportBase):
                 .values("send_date")
                 .annotate(invoice_count=Count("id"))
                 .order_by("send_date")
-            ):
+            )
+
+            if input_data["service_unit"]:
+                qs = qs.filter(service_unit__in=input_data["service_unit"])
+
+            for result in qs:
                 data[result["send_date"]] = result["invoice_count"]
 
         if estimate_start_date and estimate_end_date:
@@ -82,6 +90,9 @@ class LaskeInvoiceCountReport(ReportBase):
                 .select_related("lease", "lease__type")
             )
 
+            if input_data["service_unit"]:
+                rents = rents.filter(lease__service_unit__in=input_data["service_unit"])
+
             for rent in rents:
                 due_dates = rent.get_due_dates_for_period(
                     due_dates_start, due_dates_end
@@ -95,6 +106,12 @@ class LaskeInvoiceCountReport(ReportBase):
                 due_date__gte=due_dates_start,
                 sent_to_sap_at__isnull=True,
             )
+
+            if input_data["service_unit"]:
+                invoices = invoices.filter(
+                    lease__service_unit__in=input_data["service_unit"]
+                )
+
             for invoice in invoices:
                 data[invoice.due_date - relativedelta(months=1)] += 1
 

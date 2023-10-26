@@ -3,6 +3,7 @@ from collections import defaultdict
 from fractions import Fraction
 from operator import itemgetter
 
+from django import forms
 from django.db import DataError, connection
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
@@ -10,6 +11,7 @@ from enumfields import Enum
 from enumfields.drf import EnumField
 from rest_framework.response import Response
 
+from leasing.models import ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, FormatType
 from leasing.report.report_base import ReportBase
 
@@ -67,6 +69,7 @@ INVOICING_REVIEW_QUERIES = {
          WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
            AND l.start_date IS NOT NULL
            AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
+           AND l.service_unit_id = ANY(%(service_units)s)
            AND l.deleted IS NULL
            AND l.is_invoicing_enabled = FALSE
          GROUP BY l.id,
@@ -83,6 +86,7 @@ INVOICING_REVIEW_QUERIES = {
                ON l.identifier_id = li.id
          WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
            AND l.start_date IS NOT NULL
+           AND l.service_unit_id = ANY(%(service_units)s)
            AND l.deleted IS NULL
            AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
            AND l.is_rent_info_complete = FALSE
@@ -104,6 +108,7 @@ INVOICING_REVIEW_QUERIES = {
                   INNER JOIN leasing_leaseidentifier li
                   ON (l.identifier_id = li.id)
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+          AND l.service_unit_id = ANY(%(service_units)s)
           AND l.deleted IS NULL
         GROUP BY l.id,
                  li.id
@@ -133,6 +138,7 @@ INVOICING_REVIEW_QUERIES = {
                    AND r2.deleted IS NULL
                    AND (r2.start_date IS NULL OR r2.start_date <= %(today)s)
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+          AND l.service_unit_id = ANY(%(service_units)s)
           AND l.deleted IS NULL
         GROUP BY l.id,
                  li.id
@@ -156,6 +162,7 @@ INVOICING_REVIEW_QUERIES = {
                  AND r.type = 'index'
                  AND r.index_type IS NULL
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+          AND l.service_unit_id = ANY(%(service_units)s)
           AND l.start_date IS NOT NULL
           AND l.deleted IS NULL
         GROUP BY l.id,
@@ -177,6 +184,7 @@ INVOICING_REVIEW_QUERIES = {
                LEFT OUTER JOIN leasing_invoice i
                ON l.id = i.lease_id
          WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+           AND l.service_unit_id = ANY(%(service_units)s)
            AND l.deleted IS NULL
          GROUP BY l.id,
                   li.id
@@ -202,6 +210,7 @@ INVOICING_REVIEW_QUERIES = {
                      GROUP BY t.id
                    ) tt ON tt.lease_id = l.id
          WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+           AND l.service_unit_id = ANY(%(service_units)s)
            AND l.deleted IS NULL
          GROUP BY l.id,
                   li.id
@@ -218,6 +227,7 @@ INVOICING_REVIEW_QUERIES = {
                INNER JOIN leasing_leaseidentifier li
                ON l.identifier_id = li.id
          WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+           AND l.service_unit_id = ANY(%(service_units)s)
            AND l.deleted IS NULL
         GROUP BY l.id,
                  li.id
@@ -237,7 +247,11 @@ class InvoicingReviewReport(ReportBase):
     name = _("Invoicing review")
     description = _("Show leases that might have errors in their invoicing")
     slug = "invoicing_review"
-    input_fields = {}
+    input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
+    }
     output_fields = {
         "section": {
             "label": pgettext_lazy("Invoicing review", "Section"),
@@ -251,7 +265,7 @@ class InvoicingReviewReport(ReportBase):
     automatic_excel_column_labels = False
     is_already_sorted = True
 
-    def get_incorrect_rent_shares_data(self, cursor):
+    def get_incorrect_rent_shares_data(self, service_unit_ids, cursor):
         today = datetime.date.today()
 
         query = """
@@ -279,12 +293,13 @@ class InvoicingReviewReport(ReportBase):
                      WHERE t.deleted IS NULL
                    ) tt ON tt.lease_id = l.id
             WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+              AND l.service_unit_id = ANY(%(service_units)s)
               AND l.deleted IS NULL
             GROUP BY l.id,
                      li.id;
         """
 
-        cursor.execute(query, {"today": today})
+        cursor.execute(query, {"service_units": service_unit_ids, "today": today})
 
         data = []
         for row in dictfetchall(cursor):
@@ -312,7 +327,7 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
-    def get_incorrect_management_shares_data(self, cursor):
+    def get_incorrect_management_shares_data(self, service_unit_ids, cursor):
         today = datetime.date.today()
 
         query = """
@@ -338,12 +353,13 @@ class InvoicingReviewReport(ReportBase):
                      GROUP BY t.id
                    ) tt ON tt.lease_id = l.id
             WHERE (l."end_date" IS NULL OR l."end_date" >= %(today)s)
+              AND l.service_unit_id = ANY(%(service_units)s)
               AND l."deleted" IS NULL
             GROUP BY l."id",
                      li."id"
         """
 
-        cursor.execute(query, {"today": today})
+        cursor.execute(query, {"service_units": service_unit_ids, "today": today})
 
         data = []
         for row in dictfetchall(cursor):
@@ -368,6 +384,11 @@ class InvoicingReviewReport(ReportBase):
     def get_data(self, input_data):
         today = datetime.date.today()
 
+        if input_data["service_unit"]:
+            service_unit_ids = [su.id for su in input_data["service_unit"]]
+        else:
+            service_unit_ids = [su.id for su in ServiceUnit.objects.all()]
+
         result = []
         with connection.cursor() as cursor:
             for lease_list_type in InvoicingReviewSection:
@@ -385,13 +406,13 @@ class InvoicingReviewReport(ReportBase):
                     if lease_list_type.value in INVOICING_REVIEW_QUERIES:
                         cursor.execute(
                             INVOICING_REVIEW_QUERIES[lease_list_type.value],
-                            {"today": today},
+                            {"service_units": service_unit_ids, "today": today},
                         )
                         rows = dictfetchall(cursor)
 
                     if hasattr(self, f"get_{lease_list_type.value}_data"):
                         rows = getattr(self, f"get_{lease_list_type.value}_data")(
-                            cursor
+                            service_unit_ids, cursor
                         )
                 except DataError as e:
                     rows = [

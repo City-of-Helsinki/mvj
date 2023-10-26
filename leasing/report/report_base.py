@@ -3,7 +3,7 @@ from io import BytesIO
 import xlsxwriter
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from django.forms.models import ModelChoiceIteratorValue
 from django.utils import timezone
 from django.utils.translation import gettext
@@ -228,6 +228,9 @@ class ReportBase:
                     input_value = gettext("Yes")
                 else:
                     input_value = gettext("No")
+
+            if isinstance(input_value, QuerySet):
+                input_value = ", ".join([str(v) for v in input_value.all()])
 
             worksheet.write(row_num, 1, input_value, field_format)
             row_num += 1
