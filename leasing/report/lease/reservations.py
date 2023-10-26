@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, LeaseState, TenantContactType
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
@@ -68,6 +68,9 @@ class ReservationsReport(ReportBase):
     description = _("Show reservations")
     slug = "reservations"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date_start": forms.DateField(
             label=_("Start date start"), required=False
         ),
@@ -105,6 +108,12 @@ class ReservationsReport(ReportBase):
         lease_ids = []
 
         if input_data["exclude_leases"] is True:
+            service_unit_where = ""
+            if input_data["service_unit"]:
+                service_unit_where = " AND l.service_unit_id IN ({})".format(
+                    ", ".join([str(su.id) for su in input_data["service_unit"]])
+                )
+
             dates_where_parts = []
             # The date where clause is generated here by hand including user input,
             # but it shouldn't be a problem because the input is validated
@@ -174,11 +183,13 @@ class ReservationsReport(ReportBase):
                     LEFT JOIN relations ON relations.from_lease = l.id
                     LEFT JOIN leasing_lease l2 ON l2.id = relations.last_to_lease
                     WHERE l.state = 'reservation'
+                    {service_unit_where}
                     {conveyance_where}
                     {dates_where}
                     AND (l2.id IS NULL OR l2.state = 'reservation');
                 """.format(
-                        conveyance_where="AND l.conveyance_number IS NULL"
+                        service_unit_where=service_unit_where,
+                        conveyance_where=" AND l.conveyance_number IS NULL"
                         if input_data["exclude_sold"]
                         else "",
                         dates_where=dates_where,
@@ -189,6 +200,9 @@ class ReservationsReport(ReportBase):
                 lease_ids.extend(itertools.chain.from_iterable(cursor))
         else:
             qs = Lease.objects.filter(state=LeaseState.RESERVATION)
+
+            if input_data["service_unit"]:
+                qs = qs.filter(service_unit__in=input_data["service_unit"])
 
             if input_data["start_date_start"]:
                 qs = qs.filter(

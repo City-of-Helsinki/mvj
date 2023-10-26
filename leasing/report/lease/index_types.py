@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import IndexType, TenantContactType
-from leasing.models import Rent
+from leasing.models import Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
@@ -80,6 +80,9 @@ class IndexTypesReport(ReportBase):
     description = _("Show leases with a certain index type")
     slug = "index_types"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "index_type": forms.ChoiceField(
             label=_("Index type"), required=True, choices=IndexType.choices()
         ),
@@ -143,6 +146,10 @@ class IndexTypesReport(ReportBase):
                 "lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(lease__service_unit__in=input_data["service_unit"])
+
         if input_data["only_active_leases"]:
             qs = qs.filter(
                 Q(lease__end_date__isnull=True)

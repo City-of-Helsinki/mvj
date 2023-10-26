@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import RentType, TenantContactType
-from leasing.models import Rent
+from leasing.models import Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
@@ -80,6 +80,9 @@ class RentTypeReport(ReportBase):
     description = _("Show leases with a certain rent type")
     slug = "rent_type"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "rent_type": forms.ChoiceField(
             label=_("Rent type"), required=True, choices=RentType.choices()
         ),
@@ -145,6 +148,9 @@ class RentTypeReport(ReportBase):
                 "lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(lease__service_unit__in=input_data["service_unit"])
 
         if input_data["only_active_leases"]:
             qs = qs.filter(

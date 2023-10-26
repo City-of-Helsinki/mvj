@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
 
 from leasing.enums import TenantContactType
-from leasing.models import Invoice
+from leasing.models import Invoice, ServiceUnit
 from leasing.report.excel import (
     ExcelCell,
     ExcelRow,
@@ -101,6 +101,9 @@ class ExtraCityRentReport(ReportBase):
     description = _("The invoiced rent of the leases that are not in the main city")
     slug = "extra_city_rent"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
@@ -157,6 +160,9 @@ class ExtraCityRentReport(ReportBase):
             )
         )
 
+        if input_data["service_unit"]:
+            qs = qs.filter(service_unit__in=input_data["service_unit"])
+
         aggregated_data = []
 
         for lease, invoices in groupby(qs, lambda x: x.lease):
@@ -212,7 +218,9 @@ class ExtraCityRentReport(ReportBase):
                     "tenants": get_tenants(lease),
                     "start_date": lease.start_date,
                     "end_date": lease.end_date,
-                    "intended_use": lease.intended_use.name,
+                    "intended_use": lease.intended_use.name
+                    if lease.intended_use
+                    else None,
                     "total_area": get_total_area(lease),
                 }
             )

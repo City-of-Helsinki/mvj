@@ -1,19 +1,28 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from leasing.models import Collateral, CollateralType
+from leasing.models import Collateral, CollateralType, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
 def get_lease_id(obj):
+    if not obj.contract.lease:
+        return
+
     return obj.contract.lease.get_identifier_string()
 
 
 def get_start_date(obj):
+    if not obj.contract.lease:
+        return
+
     return obj.contract.lease.start_date
 
 
 def get_end_date(obj):
+    if not obj.contract.lease:
+        return
+
     return obj.contract.lease.end_date
 
 
@@ -22,6 +31,9 @@ class CollateralsReport(ReportBase):
     description = _("Show all collaterals")
     slug = "collaterals"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "collateral_type": forms.ModelChoiceField(
             label=_("Type"),
             queryset=CollateralType.objects.all(),
@@ -67,6 +79,9 @@ class CollateralsReport(ReportBase):
                 "contract__lease__identifier__sequence",
             )
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(contract__lease__service_unit__in=input_data["service_unit"])
 
         if input_data["collateral_type"]:
             qs = qs.filter(type=input_data["collateral_type"])

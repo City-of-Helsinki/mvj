@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
 
 from leasing.enums import LeaseAreaAttachmentType, LeaseState
-from leasing.models import Lease
+from leasing.models import Lease, ServiceUnit
 from leasing.report.lease.common_getters import (
     get_address,
     get_contract_number,
@@ -199,6 +199,9 @@ class LeaseStatisticReport(AsyncReportBase):
     )
     slug = "lease_statistic"
     input_fields = {
+        "service_unit": forms.ModelMultipleChoiceField(
+            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+        ),
         "start_date": forms.DateField(label=_("Start date"), required=False),
         "state": forms.ChoiceField(
             label=_("State"), required=False, choices=LeaseState.choices()
@@ -371,6 +374,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "tenants__tenantcontact_set__contact",
             "basis_of_rents",
         )
+
+        if input_data["service_unit"]:
+            qs = qs.filter(service_unit__in=input_data["service_unit"])
 
         if input_data["start_date"]:
             qs = qs.filter(start_date__gte=input_data["start_date"])
