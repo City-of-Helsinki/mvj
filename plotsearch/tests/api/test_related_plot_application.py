@@ -3,7 +3,8 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from rest_framework import status
-from plotsearch.models import RelatedPlotApplication, PlotSearch
+
+from plotsearch.models import PlotSearch, RelatedPlotApplication
 
 
 @pytest.mark.django_db

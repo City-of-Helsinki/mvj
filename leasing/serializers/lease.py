@@ -31,6 +31,7 @@ from plotsearch.models import (
     RelatedPlotApplication,
     TargetStatus,
 )
+from plotsearch.utils import get_applicant
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -77,7 +78,7 @@ from .utils import (
 class ContentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContentType
-        fields = ("model",)
+        fields = ("id", "model",)
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -197,16 +198,16 @@ class PlotSearchSuccinctSerializer(serializers.ModelSerializer):
 
 class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
     intended_use = serializers.CharField(source="intended_use.name")
-    applicant_first_name = serializers.SerializerMethodField()
-    applicant_last_name = serializers.SerializerMethodField()
+    applicant_names = serializers.SerializerMethodField()
 
-    def get_applicant_first_name(self, obj):
-        user = getattr(obj.answer, "user", None)
-        return getattr(user, "first_name", None)
-
-    def get_applicant_last_name(self, obj):
-        user = getattr(obj.answer, "user", None)
-        return getattr(user, "last_name", None)
+    @staticmethod
+    def get_applicant_names(obj):
+        answer = getattr(obj, "answer", None)
+        applicant_list = list()
+        if not answer:
+            return applicant_list
+        get_applicant(answer, applicant_list)
+        return applicant_list
 
     class Meta:
         model = AreaSearch
@@ -217,8 +218,7 @@ class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "intended_use",
-            "applicant_first_name",
-            "applicant_last_name",
+            "applicant_names",
         )
 
 
