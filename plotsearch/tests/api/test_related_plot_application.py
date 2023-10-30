@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from rest_framework import status
 
-from plotsearch.models import PlotSearch, RelatedPlotApplication
+from plotsearch.models import InformationCheck, PlotSearch, RelatedPlotApplication
 
 
 @pytest.mark.django_db
@@ -40,9 +40,9 @@ class TestRelatedPlotApplicationViews:
         url = reverse("related_plot_application-list")
         data = {
             "lease": related_plot_application_test_data["lease"].id,
-            "content_type": ContentType.objects.get_for_model(
+            "content_type_model": ContentType.objects.get_for_model(
                 related_plot_application_test_data["area_search"]
-            ).id,
+            ).model,
             "object_id": related_plot_application_test_data["area_search"].id,
         }
         response = admin_client.post(url, data=data)
@@ -55,9 +55,9 @@ class TestRelatedPlotApplicationViews:
         url = reverse("related_plot_application-list")
         data = {
             "lease": related_plot_application_test_data["lease"].id,
-            "content_type": ContentType.objects.get_for_model(
+            "content_type_model": ContentType.objects.get_for_model(
                 related_plot_application_test_data["area_search"]
-            ).id,
+            ).model,
             "object_id": related_plot_application_test_data["area_search"].id,
         }
 
@@ -75,6 +75,33 @@ class TestRelatedPlotApplicationViews:
             response.status_code == status.HTTP_201_CREATED
         ), "Create permission should allow user to create"
         assert RelatedPlotApplication.objects.filter(id=response.data["id"]).exists()
+
+    def test_create_related_plot_application_validation(
+        self, admin_client, related_plot_application_test_data
+    ):
+        url = reverse("related_plot_application-list")
+        data_incorrect_model = {
+            "lease": related_plot_application_test_data["lease"].id,
+            "content_type_model": ContentType.objects.get_for_model(
+                InformationCheck
+            ).model,
+            "object_id": related_plot_application_test_data["area_search"].id,
+        }
+        data_non_existing_object = {
+            "lease": related_plot_application_test_data["lease"].id,
+            "content_type_model": ContentType.objects.get_for_model(
+                related_plot_application_test_data["area_search"]
+            ).model,
+            "object_id": 12345,
+        }
+
+        response = admin_client.post(url, data=data_incorrect_model)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["content_type_model"][0].code == "invalid_choice"
+
+        response = admin_client.post(url, data=data_non_existing_object)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["non_field_errors"][0].code == "invalid"
 
     def test_delete_related_plot_application(
         self, admin_client, related_plot_application_test_data

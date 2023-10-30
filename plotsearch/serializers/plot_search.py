@@ -1,11 +1,13 @@
 import requests
-from django.core.exceptions import BadRequest
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from pyproj import Proj, transform
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
@@ -25,6 +27,7 @@ from leasing.serializers.utils import (
     NameModelSerializer,
     UpdateNestedMixin,
 )
+from plotsearch.enums import RelatedPlotApplicationContentType
 from plotsearch.models import (
     AreaSearch,
     AreaSearchIntendedUse,
@@ -1098,12 +1101,42 @@ class FAQSerializer(serializers.ModelSerializer):
 
 
 class RelatedPlotApplicationCreateDeleteSerializer(serializers.ModelSerializer):
+    content_type_model = serializers.ChoiceField(
+        write_only=True, choices=RelatedPlotApplicationContentType.choices()
+    )
+
     class Meta:
         model = RelatedPlotApplication
         fields = (
             "id",
             "lease",
             "content_type",
+            "content_type_model",
             "object_id",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "content_type")
+
+    def validate(self, data):
+        super().validate(data)
+        content_type_model = data.get("content_type_model")
+        object_id = data.get("object_id")
+        content_type = ContentType.objects.get(
+            model=content_type_model, app_label="plotsearch"
+        )
+        try:
+            content_type.model_class().objects.get(pk=object_id)
+        except ObjectDoesNotExist:
+            raise ValidationError(
+                "Related object not found with object_id and content_type_model"
+            )
+        return data
+
+    def create(self, validated_data):
+        content_type_model = validated_data.pop("content_type_model")
+        content_type = ContentType.objects.get(
+            model=content_type_model, app_label="plotsearch"
+        )
+        related_plot_application = RelatedPlotApplication.objects.create(
+            content_type=content_type, **validated_data
+        )
+        return related_plot_application

@@ -140,3 +140,21 @@ class AreaSearchState(str, Enum):
         SETTLED = pgettext_lazy("Area search state", "Settled")
         REVOKED = pgettext_lazy("Area search state", "Revoked")
         DECLINED = pgettext_lazy("Area search state", "Declined")
+
+
+class RelatedPlotApplicationContentType(str, Enum):
+    """
+    In Finnish: Liittyvän tontti- tai aluehakemuksen sisältötyyppi
+    """
+
+    AREA_SEARCH = "areasearch"
+    TARGET_STATUS = "targetstatus"
+    PLOT_SEARCH = "plotsearch"
+
+    @classmethod
+    def choices(cls):
+        return [(field.value, field.name) for field in cls]
+
+    @classmethod
+    def values(cls):
+        return [field.value for field in cls]

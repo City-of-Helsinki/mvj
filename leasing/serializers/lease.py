@@ -78,7 +78,10 @@ from .utils import (
 class ContentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContentType
-        fields = ("id", "model",)
+        fields = (
+            "id",
+            "model",
+        )
 
 
 class DistrictSerializer(serializers.ModelSerializer):

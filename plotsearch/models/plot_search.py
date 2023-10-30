@@ -25,6 +25,7 @@ from plotsearch.enums import (
     DeclineReason,
     InformationCheckName,
     InformationState,
+    RelatedPlotApplicationContentType,
     SearchClass,
     SearchStage,
 )
@@ -548,7 +549,7 @@ class RelatedPlotApplication(TimeStampedSafeDeleteModel):
         ContentType,
         on_delete=models.CASCADE,
         # Explicitly limits choice to these models, but can be extended to any model
-        limit_choices_to={"model__in": ["targetstatus", "areasearch"]},
+        limit_choices_to={"model__in": RelatedPlotApplicationContentType.values()},
     )
     object_id = models.PositiveBigIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
