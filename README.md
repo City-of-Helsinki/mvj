@@ -278,6 +278,11 @@ Sets the default mappings for AD groups to user groups.
 Sets the default user group to Service unit mappings. Creates a group for the Service unit if a group doesn't exist
 already. The `service_unit.json` fixture has to be loaded into the database before running this command.
 
+#### `set_default_lessors`
+
+Adds the default lessor contacts for all the Service units. The `service_unit.json` fixture has to be loaded into the
+database before running this command.
+
 ### Regularly run commands
 
 #### `create_invoices`
@@ -332,7 +337,7 @@ No need to run.
 
 ### Resend Invoices
 
-You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/) view by selecting the invoices and chosing Resend invoice action from dropdown. 
+You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/) view by selecting the invoices and chosing Resend invoice action from dropdown.
 
 ### Virre integration
 
