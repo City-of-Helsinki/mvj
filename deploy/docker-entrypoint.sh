@@ -30,5 +30,5 @@ if [[ ! -z "$@" ]]; then
 elif [[ "$DEV_SERVER" = "1" ]]; then
     python ./manage.py runserver_plus 0.0.0.0:8000
 else
-    uwsgi -y deploy/uwsgi.yml
+    uwsgi --ini deploy/uwsgi.ini
 fi
