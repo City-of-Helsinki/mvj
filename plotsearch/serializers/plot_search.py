@@ -658,6 +658,15 @@ class PlotSearchCreateSerializer(PlotSearchUpdateSerializer):
         return plot_search
 
 
+class PlotSearchFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlotSearch
+        fields = (
+            "id",
+            "name",
+        )
+
+
 class FavouriteTargetSerializer(serializers.ModelSerializer):
     plot_search_target = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlotSearchTarget,

@@ -80,6 +80,9 @@ class AnswerFilterSet(FilterSet):
 
 
 class TargetStatusFilterSet(FilterSet):
+    identifier = filters.CharFilter(
+        field_name="application_identifier", lookup_expr="icontains"
+    )
     plot_search = filters.NumberFilter(field_name="plot_search_target__plot_search__id")
 
     class Meta:

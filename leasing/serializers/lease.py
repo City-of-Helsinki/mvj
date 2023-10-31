@@ -207,7 +207,7 @@ class AreaSearchSuccinctSerializer(serializers.ModelSerializer):
     def get_applicant_names(obj):
         answer = getattr(obj, "answer", None)
         applicant_list = list()
-        if not answer:
+        if answer is None:
             return applicant_list
         get_applicant(answer, applicant_list)
         return applicant_list
@@ -270,6 +270,8 @@ class RelatedPlotApplicationSerializer(serializers.ModelSerializer):
             serializer = AreaSearchSuccinctSerializer(obj.content_object)
         elif content_type.model == "targetstatus":
             serializer = TargetStatusSuccinctSerializer(obj.content_object)
+        elif content_type.model == "plotsearch":
+            serializer = PlotSearchSuccinctSerializer(obj.content_object)
         else:
             return None
         return serializer.data

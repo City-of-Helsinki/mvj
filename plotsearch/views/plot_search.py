@@ -29,6 +29,7 @@ from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
 from plotsearch.filter import (
     AreaSearchFilterSet,
     InformationCheckListFilterSet,
+    PlotSearchFilterSet,
     TargetStatusExportFilterSet,
 )
 from plotsearch.models import (
@@ -61,6 +62,7 @@ from plotsearch.serializers.plot_search import (
     InformationCheckSerializer,
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
+    PlotSearchFilterSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchStageSerializer,
     PlotSearchSubtypeSerializer,
@@ -110,6 +112,7 @@ class PlotSearchViewSet(
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
     filterset_fields = ["search_class", "stage"]
+    filterset_class = PlotSearchFilterSet
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -123,6 +126,12 @@ class PlotSearchViewSet(
         ).select_related("form")
 
     def get_serializer_class(self):
+        if (
+            self.action == "list"
+            and self.request.query_params.get("name")
+            and len(self.request.query_params.get("name")) > 1
+        ):
+            return PlotSearchFilterSerializer
         if self.action in ("create", "metadata"):
             return PlotSearchCreateSerializer
 

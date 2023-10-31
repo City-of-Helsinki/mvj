@@ -6,7 +6,7 @@ from django.db.models import Q
 from django_filters.constants import EMPTY_VALUES
 
 from forms.models import Answer, Entry, EntrySection
-from plotsearch.models import AreaSearch, InformationCheck, TargetStatus
+from plotsearch.models import AreaSearch, InformationCheck, PlotSearch, TargetStatus
 
 
 class TargetFilter(django_filters.BaseInFilter, django_filters.NumberFilter):
@@ -139,3 +139,11 @@ class TargetStatusExportFilterSet(django_filters.FilterSet):
     class Meta:
         model = TargetStatus
         fields = ("targets",)
+
+
+class PlotSearchFilterSet(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = PlotSearch
+        fields = ("name",)
