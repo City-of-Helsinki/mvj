@@ -86,6 +86,20 @@ env = environ.Env(
     FACTA_DATABASE_PASSWORD=(str, ""),
     FACTA_DATABASE_DSN=(str, ""),
     PUBLIC_UI_URL=(str, ""),
+    LASKE_EXPORT_HOST=(str, ""),
+    LASKE_EXPORT_PORT=(int, ""),
+    LASKE_EXPORT_USERNAME=(str, ""),
+    LASKE_EXPORT_PASSWORD=(str, ""),
+    LASKE_EXPORT_DIRECTORY=(str, ""),
+    LASKE_EXPORT_KEY_TYPE=(str, ""),
+    LASKE_EXPORT_KEY=(bytes, ""),
+    LASKE_PAYMENTS_HOST=(str, ""),
+    LASKE_PAYMENTS_PORT=(int, ""),
+    LASKE_PAYMENTS_USERNAME=(str, ""),
+    LASKE_PAYMENTS_PASSWORD=(str, ""),
+    LASKE_PAYMENTS_DIRECTORY=(str, ""),
+    LASKE_PAYMENTS_KEY_TYPE=(str, ""),
+    LASKE_PAYMENTS_KEY=(bytes, ""),
 )
 
 env_file = project_root(".env")
@@ -310,22 +324,22 @@ LASKE_DUE_DATE_OFFSET_DAYS = 17
 
 LASKE_SERVERS = {
     "export": {
-        "host": "localhost",
-        "port": 22,
-        "username": "",
-        "password": "",
-        "directory": "./",
-        "key_type": "",
-        "key": b"",
+        "host": env.str("LASKE_EXPORT_HOST"),
+        "port": env.int("LASKE_EXPORT_PORT"),
+        "username": env.str("LASKE_EXPORT_USERNAME"),
+        "password": env.str("LASKE_EXPORT_PASSWORD"),
+        "directory": env.str("LASKE_EXPORT_DIRECTORY"),
+        "key_type": env.str("LASKE_EXPORT_KEY_TYPE"),
+        "key": env.bytes("LASKE_EXPORT_KEY"),
     },
     "payments": {
-        "host": "",
-        "port": 22,
-        "username": "",
-        "password": "",
-        "directory": "",
-        "key_type": "",
-        "key": b"",
+        "host": env.str("LASKE_PAYMENTS_HOST"),
+        "port": env.int("LASKE_PAYMENTS_PORT"),
+        "username": env.str("LASKE_PAYMENTS_USERNAME"),
+        "password": env.str("LASKE_PAYMENTS_PASSWORD"),
+        "directory": env.str("LASKE_PAYMENTS_DIRECTORY"),
+        "key_type": env.str("LASKE_PAYMENTS_KEY_TYPE"),
+        "key": env.bytes("LASKE_PAYMENTS_KEY"),
     },
 }
 
