@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.gis import admin
 from django.forms import BaseInlineFormSet
 from django.urls import reverse
@@ -87,11 +86,18 @@ class InvoiceInline(admin.TabularInline):
 
 
 class LaskeExportLogAdmin(admin.ModelAdmin):
-    list_display = ("id", "started_at", "ended_at", "is_finished")
-    readonly_fields = ("id", "started_at", "ended_at", "is_finished", "export_filename")
+    list_display = ("id", "started_at", "ended_at", "is_finished", "service_unit")
+    readonly_fields = (
+        "id",
+        "started_at",
+        "ended_at",
+        "is_finished",
+        "service_unit",
+        "filename",
+    )
     inlines = [InvoiceInline]
     exclude = ("invoices",)
-    search_fields = ["invoices__number"]
+    search_fields = ["filename", "invoices__number"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -101,9 +107,6 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def export_filename(self, obj):
-        return "MTIL_IN_{}_{:08}.xml".format(settings.LASKE_VALUES["sender_id"], obj.id)
 
 
 admin.site.register(LaskeExportLog, LaskeExportLogAdmin)

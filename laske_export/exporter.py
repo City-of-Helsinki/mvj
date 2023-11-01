@@ -135,7 +135,9 @@ class LaskeExporter:
         receivable_type_collateral = ReceivableType.objects.get(pk=8)
 
         now = timezone.now()
-        laske_export_log_entry = LaskeExportLog.objects.create(started_at=now)
+        laske_export_log_entry = LaskeExportLog.objects.create(
+            started_at=now, filename="", service_unit=self.service_unit
+        )
 
         sales_orders = []
         log_invoices = []
@@ -230,6 +232,7 @@ class LaskeExporter:
                 self.service_unit.laske_sales_org,
                 laske_export_log_entry.id,
             )
+            laske_export_log_entry.filename = export_filename
 
             self.write_to_output("Export filename: {}".format(export_filename))
 
@@ -263,7 +266,9 @@ class LaskeExporter:
             invoices = [invoices]
 
         now = timezone.now()
-        laske_export_log_entry = LaskeExportLog.objects.create(started_at=now)
+        laske_export_log_entry = LaskeExportLog.objects.create(
+            started_at=now, filename="", service_unit=self.service_unit
+        )
 
         sales_orders = []
         log_invoices = []
@@ -310,6 +315,7 @@ class LaskeExporter:
                 self.service_unit.laske_sales_org,
                 laske_export_log_entry.id,
             )
+            laske_export_log_entry.filename = export_filename
 
             self.write_to_output("Export filename: {}".format(export_filename))
 
