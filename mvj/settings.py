@@ -299,7 +299,6 @@ OIDC_API_TOKEN_AUTH = {
 }
 
 LASKE_VALUES = {
-    "import_id": "ID256",
     "distribution_channel": "10",
     "division": "10",
     "pmntterm": "Z100",
