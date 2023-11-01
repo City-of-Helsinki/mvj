@@ -486,7 +486,7 @@ msgid "Lease"
 msgstr "Vuokraus"
 
 msgid "Lease identifier"
-msgstr "Vuokratunnus"
+msgstr "Vuokraustunnus"
 
 msgid "Due date"
 msgstr "Eräpäivä"
@@ -2314,11 +2314,11 @@ msgstr "Laji"
 
 msgctxt "Model name"
 msgid "Lease identifier"
-msgstr "Vuokratunnus"
+msgstr "Vuokraustunnus"
 
 msgctxt "Model name"
 msgid "Lease identifiers"
-msgstr "Vuokratunnukset"
+msgstr "Vuokraustunnukset"
 
 msgid "Classification"
 msgstr "Julkisuusluokka"

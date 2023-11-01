@@ -406,7 +406,7 @@ class Lease(TimeStampedSafeDeleteModel):
         District, verbose_name=_("District"), related_name="+", on_delete=models.PROTECT
     )
 
-    # In Finnish: Vuokratunnus
+    # In Finnish: Vuokraustunnus
     identifier = models.OneToOneField(
         LeaseIdentifier,
         verbose_name=_("Lease identifier"),

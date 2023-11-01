@@ -57,7 +57,7 @@ class LaskePaymentsLog(TimeStampedSafeDeleteModel):
     In Finnish: Varjoreskontraloki
     """
 
-    # In Finnish: Aloitusaika
+    # In Finnish: Tiedostonimi
     filename = models.CharField(max_length=255, verbose_name=_("Filename"))
 
     # In Finnish: Aloitusaika
