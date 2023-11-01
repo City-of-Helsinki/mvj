@@ -1,6 +1,7 @@
 import datetime
 import glob
 import os
+import re
 import sys
 import tempfile
 from decimal import ROUND_HALF_UP, Decimal
@@ -12,7 +13,7 @@ from django.utils import timezone
 from sentry_sdk import capture_exception
 
 from laske_export.models import LaskePaymentsLog
-from leasing.models import Invoice, Vat
+from leasing.models import Invoice, ServiceUnit, Vat
 from leasing.models.invoice import InvoicePayment
 
 
@@ -151,10 +152,18 @@ class Command(BaseCommand):
             )
             sys.exit(-1)
 
+    def _get_service_unit_import_ids(self):
+        return {su.laske_import_id for su in ServiceUnit.objects.all()}
+
     def find_unimported_files(self):
-        all_files = glob.glob(
-            get_import_dir() + "/MR_OUT_{}_*".format(settings.LASKE_VALUES["import_id"])
+        all_files = []
+        import_id_regexp = "MR_OUT_({import_ids})_".format(
+            import_ids="|".join(self._get_service_unit_import_ids())
         )
+        for filename in glob.glob(get_import_dir() + "/MR_OUT_*"):
+            if re.search(import_id_regexp, filename):
+                all_files.append(filename)
+
         already_imported_filenames = LaskePaymentsLog.objects.filter(
             is_finished=True
         ).values_list("filename", flat=True)
@@ -223,9 +232,10 @@ class Command(BaseCommand):
 
             for line in lines:
                 filing_code = line[27:43].strip()
-                if filing_code[:3] != "288":
+                # Filing code series 288 = KYMP, 297 = KuVa
+                if filing_code[:3] not in ["288", "297"]:
                     self.stderr.write(
-                        "  Skipped row: filing code ({}) should start with 288".format(
+                        "  Skipped row: filing code ({}) should start with 288 or 297".format(
                             filing_code
                         )
                     )
