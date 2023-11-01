@@ -25,6 +25,17 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     # In Finnish: Valmis?
     is_finished = models.BooleanField(verbose_name=_("Finished?"), default=False)
 
+    # In Finnish: Tiedostonimi
+    filename = models.CharField(max_length=255, blank=True, verbose_name=_("Filename"))
+
+    # In Finnish: Palvelukokonaisuus
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit",
+        verbose_name=_("Service unit"),
+        related_name="+",
+        on_delete=models.PROTECT,
+    )
+
     invoices = models.ManyToManyField(Invoice, through="LaskeExportLogInvoiceItem")
 
     land_use_agreement_invoices = models.ManyToManyField(LandUseAgreementInvoice)
