@@ -494,6 +494,30 @@ msgstr "Eräpäivä"
 msgid "Service unit"
 msgstr "Palvelukokonaisuus"
 
+msgid "Invoice count"
+msgstr "Laskujen määrä"
+
+msgid "Land use agreement invoice count"
+msgstr "Maankäyttösopimuslaskujen määrä"
+
+msgid "Invoice payment"
+msgstr "Maksusuoritus"
+
+msgid "Invoice payments"
+msgstr "Maksusuoritukset"
+
+msgid "Paid amount"
+msgstr "Maksettu määrä"
+
+msgid "Paid date"
+msgstr "Maksettu pvm"
+
+msgid "Filing code"
+msgstr "Arkistotunnus"
+
+msgid "Payment count"
+msgstr "Maksujen määrä"
+
 msgid "Value should be a string"
 msgstr "Arvon pitää olla merkkijono"
 
@@ -566,6 +590,9 @@ msgstr "Lopetusaika"
 msgid "Finished?"
 msgstr "Valmis?"
 
+msgid "Filename"
+msgstr "Tiedostonimi"
+
 msgctxt "Model name"
 msgid "Laske export log"
 msgstr "Laske-viennin loki"
@@ -579,9 +606,6 @@ msgstr "tila"
 
 msgid "information"
 msgstr "tiedot"
-
-msgid "Filename"
-msgstr "Tiedostonimi"
 
 msgctxt "Model name"
 msgid "Laske payments log"
@@ -1424,9 +1448,6 @@ msgstr "Panttikirjan pvm"
 msgid "Total amount"
 msgstr "Pääoma"
 
-msgid "Paid date"
-msgstr "Maksettu pvm"
-
 msgid "Returned date"
 msgstr "Palautettu pvm"
 
@@ -1789,9 +1810,6 @@ msgstr "Laskun rivi"
 msgctxt "Model name"
 msgid "Invoice rows"
 msgstr "Laskun rivit"
-
-msgid "Paid amount"
-msgstr "Maksettu määrä"
 
 msgctxt "Model name"
 msgid "Invoice payment"
@@ -2893,18 +2911,12 @@ msgstr "Vuokrauksen alkupvm"
 msgid "Lease end date"
 msgstr "Vuokrauksen loppupvm"
 
-msgid "Invoice payments"
-msgstr "Maksusuoritukset"
-
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Näytä maksusuoritukset, jotka on maksettu alkupvm ja loppupvm välillä"
 
 msgid "Invoice number"
 msgstr "Laskun numero"
-
-msgid "Filing code"
-msgstr "Arkistotunnus"
 
 msgid "Total"
 msgstr "Yhteensä"
@@ -2990,9 +3002,6 @@ msgstr ""
 
 msgid "Send date"
 msgstr "Lähetyspvm"
-
-msgid "Invoice count"
-msgstr "Laskujen määrä"
 
 msgid "Estimate"
 msgstr "Arvio"
