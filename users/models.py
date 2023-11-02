@@ -1,4 +1,7 @@
+from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from helusers.models import AbstractUser
+from rest_framework.authtoken.models import Token
 
 
 class User(AbstractUser):
@@ -12,3 +15,7 @@ class User(AbstractUser):
         "user_permissions",
         "ad_groups",
     ]
+
+    @admin.display(boolean=True, description=_("Token exists"))
+    def has_token(self) -> bool:
+        return Token.objects.filter(user=self).exists()
