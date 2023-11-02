@@ -58,7 +58,7 @@ defusedxml==0.6.0
     # via zeep
 deprecation==2.1.0
     # via django-helusers
-django==3.2.18
+django==3.2.23
     # via
     #   -r requirements.in
     #   django-anymail
@@ -243,6 +243,8 @@ rsa==4.7
     # via python-jose
 ruamel-yaml==0.17.20
     # via drf-yasg
+ruamel-yaml-clib==0.2.8
+    # via ruamel-yaml
 sentry-sdk==0.16.5
     # via
     #   -r requirements.in
@@ -276,7 +278,9 @@ sqlparse==0.3.1
 swagger-spec-validator==2.7.4
     # via drf-yasg
 typing-extensions==3.10.0.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   pypdf2
 uritemplate==3.0.1
     # via
     #   coreapi
