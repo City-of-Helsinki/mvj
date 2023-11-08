@@ -6,8 +6,8 @@ from auditlog.registry import auditlog
 from django.db import models, transaction
 from django.db.models import Sum
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from sequences import get_next_value
 

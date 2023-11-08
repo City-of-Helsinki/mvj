@@ -3,7 +3,7 @@ import subprocess
 
 import environ
 import sentry_sdk
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
 project_root = environ.Path(__file__) - 2

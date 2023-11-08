@@ -1,6 +1,6 @@
 from decimal import Decimal, InvalidOperation
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
 from paramiko import SSHException

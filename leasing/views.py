@@ -7,7 +7,7 @@ from django.http import (
     JsonResponse,
     StreamingHttpResponse,
 )
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from rest_framework.decorators import api_view, permission_classes

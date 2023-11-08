@@ -4,8 +4,8 @@ from fractions import Fraction
 from operator import itemgetter
 
 from django.db import DataError, connection
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import Enum
 from enumfields.drf import EnumField
 from rest_framework.response import Response

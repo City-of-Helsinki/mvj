@@ -2,8 +2,8 @@ import io
 
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from docxtpl import DocxTemplate
 
 from field_permissions.registry import field_permissions

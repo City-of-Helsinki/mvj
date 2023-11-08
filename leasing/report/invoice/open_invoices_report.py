@@ -2,7 +2,7 @@ from itertools import groupby
 from operator import itemgetter
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
 
 from leasing.enums import InvoiceState

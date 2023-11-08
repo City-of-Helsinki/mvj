@@ -4,7 +4,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from django import forms
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import LeaseState
 from leasing.models import Lease

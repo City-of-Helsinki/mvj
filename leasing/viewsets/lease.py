@@ -4,7 +4,7 @@ import re
 from dateutil.parser import parse, parserinfo
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied

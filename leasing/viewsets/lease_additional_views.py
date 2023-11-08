@@ -7,7 +7,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
 from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response

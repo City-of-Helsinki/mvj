@@ -3,8 +3,8 @@ from datetime import datetime
 from auditlog.registry import auditlog
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from credit_integration.enums import CreditDecisionStatus

@@ -4,8 +4,8 @@ from fractions import Fraction
 from django.contrib.gis.db import models
 from django.db import connection, transaction
 from django.db.models import Max, Sum
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from sequences import get_next_value
 

@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models as djmodels
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 
 from leasing.enums import AreaType

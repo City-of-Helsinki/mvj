@@ -1,5 +1,5 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Condition, ConditionType
 from leasing.report.report_base import ReportBase

@@ -1,5 +1,5 @@
 from django.contrib.gis import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from enumfields.admin import EnumFieldListFilter
 
 from field_permissions.admin import FieldPermissionsAdminMixin

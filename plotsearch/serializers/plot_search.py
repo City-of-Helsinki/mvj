@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from pyproj import Proj, transform
 from rest_framework import serializers

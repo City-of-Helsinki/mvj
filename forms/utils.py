@@ -2,6 +2,7 @@ from typing import Iterable
 
 from django.db.models import Q
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from rest_framework_gis.filters import InBBoxFilter
 
 

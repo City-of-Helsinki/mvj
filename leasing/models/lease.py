@@ -10,8 +10,8 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import connection, models, transaction
 from django.db.models import Max, Q
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from safedelete.managers import SafeDeleteManager
 

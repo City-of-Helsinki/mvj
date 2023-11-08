@@ -1,8 +1,8 @@
 from auditlog.registry import auditlog
 from django.conf.global_settings import LANGUAGES
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from enumfields import EnumField
 

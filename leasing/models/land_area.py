@@ -2,8 +2,8 @@ from datetime import datetime
 
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.utils.translation import ugettext_lazy as _
 from enumfields import EnumField
 from model_utils.tracker import FieldTracker
 from rest_framework.exceptions import ValidationError

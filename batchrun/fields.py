@@ -3,7 +3,7 @@ from typing import Any, Dict, Tuple
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.fields.json import JSONField  # type: ignore
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .intset import IntegerSetSpecifier
 

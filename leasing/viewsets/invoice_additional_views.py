@@ -2,7 +2,7 @@ import datetime
 from decimal import Decimal, InvalidOperation
 
 from dateutil import parser
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from paramiko import SSHException
 from pysftp import ConnectionException, CredentialException, HostKeysException
 from rest_framework.exceptions import APIException, ValidationError

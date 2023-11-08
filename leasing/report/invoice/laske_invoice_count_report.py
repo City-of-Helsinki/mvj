@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.db.models.functions.datetime import TruncDate
 from django.utils.timezone import make_aware
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Invoice, Rent
 from leasing.report.report_base import ReportBase

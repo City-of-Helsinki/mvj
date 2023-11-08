@@ -1,5 +1,5 @@
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
-from django.utils.translation import ugettext_lazy as _
 
 from forms.enums import ApplicantType
 from forms.models import Choice, Field, FieldType, Form, Section
