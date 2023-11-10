@@ -9,6 +9,7 @@ from rest_framework import permissions, routers
 
 from credit_integration import urls as credit_integration_urls
 from forms.viewsets.form import (
+    AnswerPublicViewSet,
     AnswerViewSet,
     AttachmentViewSet,
     FormViewSet,
@@ -228,7 +229,7 @@ router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetVie
 
 pub_router = routers.DefaultRouter()
 
-pub_router.register(r"answer", AnswerViewSet, basename="pub_answer")
+pub_router.register(r"answer", AnswerPublicViewSet, basename="pub_answer")
 pub_router.register(r"attachment", AttachmentViewSet, basename="pub_attachment")
 pub_router.register(r"area_search", AreaSearchViewSet, basename="pub_area_search")
 pub_router.register(

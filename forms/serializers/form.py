@@ -750,6 +750,25 @@ class AnswerSerializer(serializers.ModelSerializer):
         return instance
 
 
+class AnswerPublicSerializer(AnswerSerializer):
+    def retrieve(self, _instance):
+        raise NotImplementedError("This method is not available.")
+
+    def list(self, _instance):
+        raise NotImplementedError("This method is not available.")
+
+    def update(self, _instance, _validated_data):
+        raise NotImplementedError("This method is not available.")
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        del rep["information_checks"]
+        return rep
+
+
 class AnswerListSerializer(serializers.ModelSerializer):
     applicants = serializers.SerializerMethodField()
     targets = TargetStatusSerializer(many=True, source="statuses")

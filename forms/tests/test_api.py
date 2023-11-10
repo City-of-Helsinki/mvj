@@ -120,7 +120,7 @@ def test_answer_post(
     user_factory,
     basic_form,
 ):
-    url = reverse("answer-list")
+    url = reverse("pub_answer-list") # Use public endpoint for posting answers
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,

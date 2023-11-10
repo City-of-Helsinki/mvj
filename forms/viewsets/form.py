@@ -16,6 +16,7 @@ from forms.permissions import (
 )
 from forms.serializers.form import (
     AnswerListSerializer,
+    AnswerPublicSerializer,
     AnswerSerializer,
     AttachmentSerializer,
     FormSerializer,
@@ -107,6 +108,30 @@ class AnswerViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return AnswerListSerializer
         return super().get_serializer_class()
+
+
+class AnswerPublicViewSet(AnswerViewSet):
+    """Public API for submitting form answers with added restrictions."""
+
+    http_method_names = ["post"]  # In public API, only POST is allowed
+    serializer_class = AnswerPublicSerializer
+    filter_backends = None
+    filterset_class = None
+
+    def get_queryset(self):
+        return super(AnswerViewSet, self).get_queryset()
+
+    def get_serializer_class(self):
+        return super(AnswerViewSet, self).get_serializer_class()
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        async_task(
+            generate_and_queue_answer_emails,
+            input_data=response.data.get("id", None),
+            timeout=Conf.TIMEOUT,
+        )
+        return response
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):
