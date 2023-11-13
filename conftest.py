@@ -1,8 +1,12 @@
 import datetime
+import json
 
 import factory
 import pytest
+from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from django.core.mail.message import EmailMessage
+from django.urls import reverse
 from django.utils import timezone
 from pytest_factoryboy import register
 
@@ -772,6 +776,302 @@ def basic_template_form(
     return form
 
 
+@pytest.fixture
+def area_search_template_form(
+    form_factory, section_factory, field_factory, choice_factory, basic_field_types
+):
+    form = form_factory(
+        name=fake.name(),
+        description=fake.sentence(),
+        is_template=True,
+        title=fake.name(),
+    )
+    # ATTENTION:
+    # When creating (some) these objects, it is good
+    # to know that supplying the `identifier` might not
+    # actually set it, due to some logic in models save().
+    # Seems like the `title` is used to generate an identifier.
+
+    # Root applicant section
+    applicant_section = section_factory(
+        form=form,
+        title="Hakijan tiedot",
+        add_new_allowed=True,
+        add_new_text="Add new applicant",
+        identifier="hakijan-tiedot",  # applicant-information
+    )
+    # Applicant switcher: Company / Person
+    applicant_type_switcher_field = field_factory(
+        section=applicant_section,
+        type=basic_field_types["radiobuttoninline"],
+        label="Hakijan tyyppi",  # Applicant type
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="hakija",  # applicant
+    )
+    choice_factory(
+        field=applicant_type_switcher_field,
+        text="Yritys",  # Company
+        value="1",
+        action=f"ShowSection={applicant_section.identifier}",
+    )
+    choice_factory(
+        field=applicant_type_switcher_field,
+        text="Henkilö",  # Person
+        value="2",
+        action=f"ShowSection={applicant_section.identifier}",
+    )
+
+    # Company applicant
+    company_applicant_section = section_factory(
+        form=form,
+        parent=applicant_section,
+        title="Yrityksen tiedot",
+        # visible=False,
+        identifier="yrityksen-tiedot",  # company-information
+    )
+    field_factory(
+        label="Yrityksen nimi",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="yrityksen-nimi",  # company-name
+    )
+    field_factory(
+        label="Kieli",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="kieli",  # language
+    )
+    field_factory(
+        label="Y-tunnus",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="y-tunnus",  # company-id
+    )
+    field_factory(
+        label="Puhelinnumero",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="puhelinnumero",  # phone-number
+    )
+    field_factory(
+        label="Sähköposti",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="sahkoposti",  # email
+    )
+    field_factory(
+        label="Katuosoite",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="katuosoite",  # address
+    )
+    field_factory(
+        label="Postinumero",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="postinumero",  # postal code
+    )
+    field_factory(
+        label="Postitoimipaikka",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="postitoimipaikka",  # postal-district
+    )
+    field_factory(
+        label="Maa",
+        section=company_applicant_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="maa",  # country
+    )
+    field_factory(
+        label="Hallintaosuus",
+        section=company_applicant_section,
+        type=basic_field_types["fractional"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="hallintaosuus",  # control-share
+    )
+
+    # Subsection for company's billing information
+    billing_information_section = section_factory(
+        form=form,
+        parent=company_applicant_section,
+        title="Laskutustiedot",
+        identifier="laskutustiedot",  # billing-information
+    )
+    # field_factory(
+    #     label="Yrityksen nimi",
+    #     section=billing_information_section,
+    #     type=basic_field_types["textbox"],
+    #     hint_text=fake.sentence(),
+    #     validation=fake.sentence(),
+    #     action=fake.sentence(),
+    #     identifier="yrityksen-nimi",  # company-name
+    # )
+    # field_factory(
+    #     label="Y-tunnus",
+    #     section=billing_information_section,
+    #     type=basic_field_types["textbox"],
+    #     hint_text=fake.sentence(),
+    #     validation=fake.sentence(),
+    #     action=fake.sentence(),
+    #     identifier="y-tunnus",  # company-id
+    # )
+    field_factory(
+        label="Kieli",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="kieli",  # language
+    )
+    field_factory(
+        label="Puhelinnumero",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="puhelinnumero",  # phone-number
+    )
+    field_factory(
+        label="Sähköposti",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="sahkoposti",  # email-address
+    )
+    field_factory(
+        label="Katuosoite",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="katuosoite",  # road-address
+    )
+    field_factory(
+        label="Postinumero",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="postinumero",  # postal-code
+    )
+    field_factory(
+        label="Postitoimipaikka",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="postitoimipaikka",  # postal-district
+    )
+    field_factory(
+        label="Maa",
+        section=billing_information_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="maa",  # country
+    )
+    # Subsection for company's billing reference
+    billing_reference_section = section_factory(
+        form=form,
+        parent=billing_information_section,
+        title="Laskutusviite",
+        identifier="laskutusviite",  # billing-reference
+    )
+    field_factory(
+        label="Verkkolaskutusosoite",
+        section=billing_reference_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="verkkolaskutusosoite",  # online-billin-address
+    )
+    field_factory(
+        label="Laskutusviite",
+        section=billing_reference_section,
+        type=basic_field_types["textbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="laskutusviite",  # billing-reference
+    )
+
+    # Root application target section
+    application_decision_delivery_section = section_factory(
+        form=form,
+        title="Paatoksen toimitus",
+        identifier="paatoksen-toimitus",  # decision-delivery
+    )
+    field_factory(
+        label="Sahkoisesti ilmoittamaani sahkopostiosoitteeseen",
+        section=application_decision_delivery_section,
+        type=basic_field_types["checkbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",  # by-email
+    )
+    field_factory(
+        label="Postitse ilmoittamaani postiosoitteeseen",
+        section=application_decision_delivery_section,
+        type=basic_field_types["checkbox"],
+        hint_text=fake.sentence(),
+        validation=fake.sentence(),
+        action=fake.sentence(),
+        identifier="postitse-ilmoittamaani-postiosoitteeseen",  # by-mail
+    )
+
+    return form
+
+
+@pytest.fixture
+def area_search_form(area_search_template_form):
+    form = area_search_template_form
+    form.is_template = False
+    form.save()
+    return form
+
+
 @register
 class ChoiceFactory(factory.DjangoModelFactory):
     class Meta:
@@ -793,6 +1093,8 @@ def basic_field_types(field_type_factory):
     field_types.append(field)
     field = field_type_factory(name="RadiobuttonInline", identifier="radiobuttoninline")
     field_types.append(field)
+    field_fractional = field_type_factory(name="Fractional", identifier="fractional")
+    field_types.append(field_fractional)
 
     # Special
     field = field_type_factory(name="Upload Files", identifier="uploadfiles")
@@ -851,3 +1153,191 @@ def related_plot_application_test_data(
         "target_status": target_status,
         "related_plot_applications": related_plot_applications,
     }
+@pytest.fixture
+def answer_with_email(
+    admin_client, intended_use_factory, user_factory, area_search_form,
+):
+    user = user_factory(username=fake.name())
+    intended_use = intended_use_factory(name="Urheilu- ja liikuntapaikat")
+
+    area_search_payload = {
+        "area_search_attachments": [],
+        "geometry": '{"coordinates":[[[[24.927311,60.188275],[24.928843,60.188204],[24.929369,60.186652],[24.928722,60.185772],[24.926181,60.185546],[24.924826,60.187116],[24.924482,60.187717],[24.92531,60.188472],[24.926571,60.188589],[24.927311,60.188275]]]],"type":"MultiPolygon"}',
+        "start_date": "2023-11-06T22:00:00.000Z",
+        "description_area": "Olympic stadium area",
+        "description_intended_use": "Want to hold Helsinki Olympics 2028 here",
+        "attachments": [],
+        "intended_use": intended_use.id,
+        "end_date": "2023-11-29T22:00:00.000Z",
+    }
+
+    url = reverse("pub_area_search-list")
+    response = admin_client.post(url, data=area_search_payload)
+    area_search = AreaSearch.objects.get(id=response.data["id"])
+
+    def _get_company_applicants(count=1):
+        if count > 10:
+            count = 10
+        company_applicants = []
+        emails = iter([f"user{i}@example.com" for i in range(1, 11)])
+        company_ids = iter(
+            [
+                "3154053-6",
+                "8527616-0",
+                "7062724-7",
+                "8253184-0",
+                "4388112-7",
+                "6833006-5",
+                "6376250-4",
+                "5281453-2",
+                "8008574-4",
+                "1274040-1",
+                "1150642-9",
+                "1561624-6",
+                "4263272-7",
+                "7720431-9",
+                "4416074-3",
+            ]
+        )
+        company_names = iter(
+            [
+                "Sepposen Betoni Oy",
+                "Hattulan kultakaivos Oy",
+                "Kuusamon bajamajat Ky",
+                "Avaruusolioiden ystävät ry",
+                "Wirren Wirkkuu Tmi",
+                "Helsingin Olympialaiset 2028 Oy",
+                "Oulun alakaupunki ry",
+                "Heikin hiekka Ky",
+                "George's Barbershop Oy",
+                "Kytky-Kauppa Oy",
+            ]
+        )
+        for _ in range(count):
+            email = next(emails)
+            company_id = next(company_ids)
+            company_applicants.append(
+                {
+                    "sections": {
+                        "yrityksen-tiedot": {
+                            "sections": {
+                                "laskutustiedot": {
+                                    "sections": {
+                                        "laskutusviite": {
+                                            "sections": {},
+                                            "fields": {
+                                                "verkkolaskutusosoite": {
+                                                    "value": "1122334455",
+                                                    "extraValue": "",
+                                                },
+                                                "laskutusviite": {
+                                                    "value": "99887766",
+                                                    "extraValue": "",
+                                                },
+                                            },
+                                        }
+                                    },
+                                    "fields": {
+                                        "kieli": {"value": "suomi", "extraValue": "",},
+                                        "puhelinnumero": {
+                                            "value": "+123456789",
+                                            "extraValue": "",
+                                        },
+                                        "sahkoposti": {
+                                            "value": email,
+                                            "extraValue": "",
+                                        },
+                                        "katuosoite": {
+                                            "value": "Paavo Nurmen tie 2",
+                                            "extraValue": "",
+                                        },
+                                        "maa": {"value": "", "extraValue": ""},
+                                        "postitoimipaikka": {
+                                            "value": "Helsinki",
+                                            "extraValue": "",
+                                        },
+                                        "postinumero": {
+                                            "value": "00250",
+                                            "extraValue": "",
+                                        },
+                                    },
+                                }
+                            },
+                            "fields": {
+                                "yrityksen-nimi": {
+                                    "value": next(company_names),
+                                    "extraValue": "",
+                                },
+                                "y-tunnus": {"value": company_id, "extraValue": "",},
+                                "kieli": {"value": "suomi", "extraValue": ""},
+                                "puhelinnumero": {
+                                    "value": "+123456789",
+                                    "extraValue": "",
+                                },
+                                "sahkoposti": {"value": email, "extraValue": "",},
+                                "katuosoite": {
+                                    "value": "Paavo Nurmen tie 2",
+                                    "extraValue": "",
+                                },
+                                "postinumero": {"value": "00250", "extraValue": "",},
+                                "postitoimipaikka": {
+                                    "value": "Helsinki",
+                                    "extraValue": "",
+                                },
+                                "maa": {"value": "", "extraValue": ""},
+                                "hallintaosuus": {
+                                    "value": f"1 / {count}",
+                                    "extraValue": "",
+                                },
+                            },
+                        }
+                    },
+                    "fields": {"hakija": {"value": "1", "extraValue": ""}},
+                    "metadata": {"applicantType": "company", "identifier": company_id,},
+                }
+            )
+
+        return company_applicants
+
+    answer_entries = {
+        "sections": {
+            "hakijan-tiedot": _get_company_applicants(count=3),
+            "paatoksen-toimitus": {
+                "sections": {},
+                "fields": {
+                    "sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen": {
+                        "value": True,
+                        "extraValue": "",
+                    },
+                    "postitse-ilmoittamaani-postiosoitteeseen": {
+                        "value": True,
+                        "extraValue": "",
+                    },
+                },
+            },
+        }
+    }
+
+    answer_payload = {
+        "form": area_search_form.id,
+        "area_search": area_search.id,
+        "user": user.id,
+        "entries": json.dumps(answer_entries),
+        "ready": True,
+    }
+
+    url = reverse("pub_answer-list")
+    response = admin_client.post(url, data=answer_payload)
+
+    return {"answer": response.data, "area_search": area_search}
+
+
+@pytest.fixture
+def answer_email_message():
+    email = EmailMessage(
+        subject="Test email",
+        body="This is a test email",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=["test@example.com"],
+    )
+    return email

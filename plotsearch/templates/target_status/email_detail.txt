@@ -1,0 +1,2 @@
+{% load i18n %}{% trans "This is a copy of your plot search application sent to the City of Helsinki." %}
+{% trans "You can find a detailed copy of your application as an attachment in this email." %}

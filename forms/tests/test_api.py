@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from unittest.mock import patch
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -167,10 +168,14 @@ def test_answer_post(
         "attachments": [],
         "ready": True,
     }
-    response = admin_client.post(url, data=payload)
+    with patch("forms.viewsets.form.async_task") as mock_async_task:
+        response = admin_client.post(url, data=payload)
 
     assert response.status_code == 201
     assert len(Entry.objects.all()) == 4
+    assert mock_async_task.called, "async_task was not called to generate emails"
+    _, async_task_kwargs = mock_async_task.call_args
+    assert async_task_kwargs.get("input_data").get("answer_id") == response.data["id"]
 
     url = reverse("answer-detail", kwargs={"pk": 1})
     payload = {

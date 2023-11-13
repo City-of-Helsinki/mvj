@@ -43,3 +43,12 @@ class ApplicantType(str, Enum):
         PERSON = pgettext_lazy("Applicant type", "Person")
         COMPANY = pgettext_lazy("Applicant type", "Company")
         BOTH = pgettext_lazy("Applicant type", "Both")
+
+
+class AnswerType(str, Enum):
+    """
+    In Finnish: Vastauksen tyyppi
+    """
+
+    AREA_SEARCH = "area_search"
+    TARGET_STATUS = "target_status"

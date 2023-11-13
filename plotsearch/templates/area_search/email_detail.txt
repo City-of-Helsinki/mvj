@@ -1,0 +1,23 @@
+{% load i18n %}{% load entry_filter %}{% trans "This is a copy of your area search application sent to the City of Helsinki." %}
+{% trans "You can find a detailed copy of your application as an attachment in this email." %}
+
+{% trans "Area search information" %}
+---
+{% trans "Identifier" %}: {{ object.identifier }}
+{% trans "Lessor" %}: {% if object.lessor_name %}{{ object.lessor_name }}{% else %} {{ object.lessor.value }}{% endif %}
+{% trans "Description area" %}: {{ object.description_area }}
+{% if object.address %}{% trans "Address" %}: {{ object.address }}{% endif %}
+{% if object.district %}{% trans "District" %}: {{ object.district }}{% endif %}
+{% if object.intended_use %}{% trans "Intended use" %}: {{ object.intended_use }}{% endif %}
+{% trans "Description intended use" %}: {{ object.description_intended_use }}
+{% trans "Start date" %}: {{ object.start_date|date:"G:i j.n.Y" }}
+{% trans "End date" %}: {{ object.end_date|date:"G:i j.n.Y" }}
+{% trans "Received date" %}: {{ object.received_date|date:"G:i j.n.Y" }}
+
+
+{% trans "Applicants" %}
+---{% for applicant in applicants %}
+{% get_applicant applicant.entry_section %}{% endfor %}
+
+
+{% for section in other_sections.all|filter_only_parent %}{% include "area_search/email_other_section.txt" with section=section answer=object.answer %}{% endfor %}

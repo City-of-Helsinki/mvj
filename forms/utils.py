@@ -1,9 +1,26 @@
-from typing import Iterable
+import logging
+from io import BytesIO
+from smtplib import (
+    SMTPDataError,
+    SMTPException,
+    SMTPRecipientsRefused,
+    SMTPSenderRefused,
+)
+from typing import Iterable, List, TypedDict
 
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.db.models import Q
+from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from django_q.tasks import Task, async_task
+from django_xhtml2pdf.utils import generate_pdf
 from rest_framework_gis.filters import InBBoxFilter
+
+from forms.enums import AnswerType
+
+logger = logging.getLogger(__name__)
 
 
 def generate_unique_identifier(klass, field_name, field_value, max_length, **kwargs):
@@ -331,3 +348,118 @@ class AnswerInBBoxFilter(InBBoxFilter):
             Q(**{"%s__%s" % (filter_fields[0], geo_django_filter): bbox})
             | Q(**{"%s__%s" % (filter_fields[1], geo_django_filter): bbox})
         ).distinct("pk")
+
+class AnswerInputData(TypedDict):
+    answer_id: int
+    answer_type: AnswerType
+
+
+def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
+    from forms.models import Answer
+    from plotsearch.utils import build_pdf_context
+
+    email_messages: List[EmailMessage] = []
+    answer_id = input_data.get("answer_id")
+    answer_type = input_data.get("answer_type")
+
+    try:
+        answer = Answer.objects.get(id=answer_id)
+    except Answer.DoesNotExist:
+        logger.error(
+            f"Answer with id {answer_id} does not exist, unable to generate emails."
+        )
+        return
+
+    context = {}
+    attachments = []
+
+    if answer_type == AnswerType.TARGET_STATUS:
+        target_statuses = getattr(answer, "statuses", None)
+        target_status_identifiers = ", ".join(
+            target_statuses.values_list("application_identifier", flat=True)
+        )
+        email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
+        email_body = render_to_string("target_status/email_detail.txt", context)
+
+        for target_status in target_statuses:
+            context["object"] = target_status
+            context = build_pdf_context(context)
+            email_pdf = generate_pdf("target_status/detail.html", context=context)
+            attachment_filename = f"{area_search.application_identifier}.pdf"
+            attachments.append([attachment_filename, email_pdf, "application/pdf"])
+
+    if answer_type == AnswerType.AREA_SEARCH:
+        area_search = getattr(answer, "area_search", None)
+        context["object"] = area_search
+        context = build_pdf_context(context)
+        email_subject = _(f"Copy of area rental application {area_search.identifier}")
+        email_body = render_to_string("area_search/email_detail.txt", context)
+        email_pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
+        attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
+        attachments.append([attachment_filename, email_pdf, "application/pdf"])
+
+    for applicant in context.get("applicants", []):
+        try:
+            email_address = (
+                applicant["entry_section"]
+                .entries.filter(field__identifier="sahkoposti")
+                .first()
+                .value
+            )
+        except AttributeError:
+            continue
+
+        email_messages.append(
+            EmailMessage(
+                from_email=settings.MVJ_EMAIL_FROM,
+                to=[email_address],
+                subject=email_subject,
+                body=email_body,
+                attachments=attachments,
+            )
+        )
+
+    for email_message in email_messages:
+        result = {"answer_id": answer_id, "email_message": email_message}
+        async_task(
+            send_answer_email, input_data=result,
+        )
+
+    return
+
+
+def send_answer_email(task: Task):
+    if hasattr(settings, "DEBUG") and settings.DEBUG is True:
+        logging.info("Not sending email in debug mode.")
+        logging.info(task.result)
+        return
+
+    email_message: EmailMessage = task.result
+    if not isinstance(email_message, EmailMessage):
+        raise ValueError("Task result is not an EmailMessage")
+
+    task_id = getattr(task, "id", None)
+    attempt_count = getattr(task, "attempt_count", None)
+
+    try:
+        email_message.send()
+    except SMTPSenderRefused as e:
+        logging.exception(
+            f"Server refused sender address when sending email for task_id: {task_id}. Attempt: {attempt_count}. Abandoning retrying."
+        )
+        return  # No point retrying
+    except SMTPRecipientsRefused as e:
+        logging.exception(
+            f"Server refused recipient address when sending email task_id: {task_id}. Attempt {attempt_count}. Abandoning retrying."
+        )
+        return  # No point retrying
+    except (SMTPDataError, SMTPException) as e:
+        logging.exception(
+            f"Server responded with unexpected error code when sending email task_id: {task_id}. Attempt {attempt_count}."
+        )
+        raise e
+    except TimeoutError as e:
+        logging.exception(
+            f"Server connection timed out when sending email task_id: {task_id}. Attempt {attempt_count}."
+        )
+        raise e

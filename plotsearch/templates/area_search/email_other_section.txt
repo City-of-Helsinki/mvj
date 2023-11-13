@@ -1,0 +1,4 @@
+{% load entry_filter %}{% load form_visible %}{% if section.fields.all and section.visible == True %}{{ section }}
+---{% for field in section.fields.all %}{% if field.enabled == True %}
+{{ field }}: {% for entry in field.entry_set.all|filter_answer:answer %}{% if field.type.identifier == "checkbox" or field.type.identifier == "radiobutton" or field.type.identifier == "radiobuttoninline" %}{% fetch_choice_value entry.value entry.field.id %}{% if not entry.value %}-{% endif %}{% else %}{{ entry.value }}{% if not entry.value %}-{% endif %}{% endif %}{% empty %}-
+{% endfor %}{% endif %}{% endfor %}{% endif %}

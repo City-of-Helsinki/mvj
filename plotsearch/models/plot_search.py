@@ -29,6 +29,7 @@ from plotsearch.enums import (
     SearchClass,
     SearchStage,
 )
+from plotsearch.utils import map_intended_use_to_lessor
 from users.models import User
 
 
@@ -416,6 +417,12 @@ class AreaSearch(models.Model):
     lessor = EnumField(
         enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
     )
+    @property
+    def lessor_name(self):
+        if self.intended_use is not None:
+            return map_intended_use_to_lessor(self.intended_use)
+        return self.lessor
+        
 
     description_area = models.TextField(blank=True)
 
