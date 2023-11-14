@@ -50,6 +50,8 @@ env = environ.Env(
     SENTRY_ENVIRONMENT=(str, ""),
     EMAIL_BACKEND=(str, "anymail.backends.mailgun.EmailBackend"),
     DEFAULT_FROM_EMAIL=(str, "mvj@example.com"),
+    FROM_EMAIL_PLOT_SEARCH=(str, ""),
+    FROM_EMAIL_AREA_SEARCH=(str, ""),
     MAILGUN_API_KEY=(str, ""),
     MAILGUN_API_URL=(str, ""),
     KTJ_PRINT_ROOT_URL=(str, "https://ktjws.nls.fi"),
@@ -251,6 +253,8 @@ REST_FRAMEWORK = {
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 MVJ_EMAIL_FROM = DEFAULT_FROM_EMAIL
+FROM_EMAIL_PLOT_SEARCH = env.str("FROM_EMAIL_PLOT_SEARCH")
+FROM_EMAIL_AREA_SEARCH = env.str("FROM_EMAIL_AREA_SEARCH")
 
 ANYMAIL = {
     "MAILGUN_API_KEY": env.str("MAILGUN_API_KEY"),

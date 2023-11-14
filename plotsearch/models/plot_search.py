@@ -8,8 +8,8 @@ from django.contrib.gis.db import models as gmodels
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import pgettext_lazy
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
 from rest_framework.serializers import ValidationError
 
@@ -417,12 +417,12 @@ class AreaSearch(models.Model):
     lessor = EnumField(
         enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
     )
+
     @property
     def lessor_name(self):
         if self.intended_use is not None:
             return map_intended_use_to_lessor(self.intended_use)
         return self.lessor
-        
 
     description_area = models.TextField(blank=True)
 

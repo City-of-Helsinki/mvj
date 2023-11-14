@@ -1,16 +1,11 @@
-import logging
-
 from django.core.files import File
 from django.db.models import Prefetch
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from django_q.conf import Conf
-from django_q.tasks import async_task
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from forms.enums import AnswerType
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import Attachment
@@ -30,15 +25,13 @@ from forms.serializers.form import (
     TargetStatusListSerializer,
     TargetStatusUpdateSerializer,
 )
-from forms.utils import AnswerInBBoxFilter, generate_and_queue_answer_emails
+from forms.utils import AnswerInBBoxFilter, handle_email_sending
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
 )
 from plotsearch.models import TargetStatus
 from plotsearch.models.plot_search import MeetingMemo
-
-logger = logging.getLogger(__name__)
 
 
 class FormViewSet(
@@ -117,7 +110,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
 
-class AnswerPublicViewSet(AnswerViewSet):
+class AnswerPublicViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """Public API for submitting form answers with added restrictions."""
 
     http_method_names = ["post"]  # In public API, only POST is allowed
@@ -126,37 +119,11 @@ class AnswerPublicViewSet(AnswerViewSet):
     filterset_class = None
 
     def get_queryset(self):
-        return super(AnswerViewSet, self).get_queryset()
-
-    def get_serializer_class(self):
-        return super(AnswerViewSet, self).get_serializer_class()
+        return Answer.objects.none()
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        answer_id = response.data.get("id")
-        input_data = {
-            "answer_id": answer_id,
-            "answer_type": None,
-        }
-        area_search_id = response.data.get("area_search")
-        if area_search_id:
-            input_data["answer_type"] = AnswerType.AREA_SEARCH
-
-        target_statuses = response.data.get("target_statuses")
-        if target_statuses:
-            input_data["answer_type"] = AnswerType.TARGET_STATUS
-
-        if not area_search_id and not target_statuses:
-            logging.error(
-                f"Could not send email of answer creation: Neither area_search or target_statuses found in answer: {answer_id}"
-            )
-            return response
-
-        async_task(
-            generate_and_queue_answer_emails,
-            input_data=input_data,
-            timeout=Conf.TIMEOUT,
-        )
+        handle_email_sending(response)
         return response
 
 

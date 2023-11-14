@@ -929,24 +929,6 @@ def area_search_template_form(
         title="Laskutustiedot",
         identifier="laskutustiedot",  # billing-information
     )
-    # field_factory(
-    #     label="Yrityksen nimi",
-    #     section=billing_information_section,
-    #     type=basic_field_types["textbox"],
-    #     hint_text=fake.sentence(),
-    #     validation=fake.sentence(),
-    #     action=fake.sentence(),
-    #     identifier="yrityksen-nimi",  # company-name
-    # )
-    # field_factory(
-    #     label="Y-tunnus",
-    #     section=billing_information_section,
-    #     type=basic_field_types["textbox"],
-    #     hint_text=fake.sentence(),
-    #     validation=fake.sentence(),
-    #     action=fake.sentence(),
-    #     identifier="y-tunnus",  # company-id
-    # )
     field_factory(
         label="Kieli",
         section=billing_information_section,
@@ -1153,16 +1135,23 @@ def related_plot_application_test_data(
         "target_status": target_status,
         "related_plot_applications": related_plot_applications,
     }
+
+
 @pytest.fixture
 def answer_with_email(
-    admin_client, intended_use_factory, user_factory, area_search_form,
+    admin_client, area_search_intended_use_factory, user_factory, area_search_form,
 ):
     user = user_factory(username=fake.name())
-    intended_use = intended_use_factory(name="Urheilu- ja liikuntapaikat")
+    intended_use = area_search_intended_use_factory(name="Urheilu- ja liikuntapaikat")
 
     area_search_payload = {
         "area_search_attachments": [],
-        "geometry": '{"coordinates":[[[[24.927311,60.188275],[24.928843,60.188204],[24.929369,60.186652],[24.928722,60.185772],[24.926181,60.185546],[24.924826,60.187116],[24.924482,60.187717],[24.92531,60.188472],[24.926571,60.188589],[24.927311,60.188275]]]],"type":"MultiPolygon"}',
+        "geometry": (
+            '{"coordinates":[[[[24.927311,60.188275],[24.928843,60.188204],[24.929369,60.186652],'
+            "[24.928722,60.185772],[24.926181,60.185546],[24.924826,60.187116],[24.924482,60.187717],"
+            "[24.92531,60.188472],[24.926571,60.188589],[24.927311,60.188275]]]],"
+            '"type":"MultiPolygon"}'
+        ),
         "start_date": "2023-11-06T22:00:00.000Z",
         "description_area": "Olympic stadium area",
         "description_intended_use": "Want to hold Helsinki Olympics 2028 here",
@@ -1238,7 +1227,7 @@ def answer_with_email(
                                         }
                                     },
                                     "fields": {
-                                        "kieli": {"value": "suomi", "extraValue": "",},
+                                        "kieli": {"value": "suomi", "extraValue": ""},
                                         "puhelinnumero": {
                                             "value": "+123456789",
                                             "extraValue": "",
@@ -1268,18 +1257,18 @@ def answer_with_email(
                                     "value": next(company_names),
                                     "extraValue": "",
                                 },
-                                "y-tunnus": {"value": company_id, "extraValue": "",},
+                                "y-tunnus": {"value": company_id, "extraValue": ""},
                                 "kieli": {"value": "suomi", "extraValue": ""},
                                 "puhelinnumero": {
                                     "value": "+123456789",
                                     "extraValue": "",
                                 },
-                                "sahkoposti": {"value": email, "extraValue": "",},
+                                "sahkoposti": {"value": email, "extraValue": ""},
                                 "katuosoite": {
                                     "value": "Paavo Nurmen tie 2",
                                     "extraValue": "",
                                 },
-                                "postinumero": {"value": "00250", "extraValue": "",},
+                                "postinumero": {"value": "00250", "extraValue": ""},
                                 "postitoimipaikka": {
                                     "value": "Helsinki",
                                     "extraValue": "",
@@ -1293,7 +1282,7 @@ def answer_with_email(
                         }
                     },
                     "fields": {"hakija": {"value": "1", "extraValue": ""}},
-                    "metadata": {"applicantType": "company", "identifier": company_id,},
+                    "metadata": {"applicantType": "company", "identifier": company_id},
                 }
             )
 

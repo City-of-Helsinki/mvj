@@ -68,9 +68,12 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         assert email.from_email == settings.DEFAULT_FROM_EMAIL
         assert (
             "Kulttuuri ja vapaa-aika" in email.body
+            or "Culture and leisure" in email.body
         ), "Email body should contain mapped lessor name"
         assert (
             "Tarkempi kuvaus käyttötarkoituksesta: Want to hold Helsinki Olympics 2028 here"
+            in email.body
+            or "Description intended use: Want to hold Helsinki Olympics 2028 here"
             in email.body
         )
 

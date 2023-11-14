@@ -1,8 +1,8 @@
 import json
 import os
+from unittest.mock import patch
 
 import pytest
-from unittest.mock import patch
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -121,7 +121,7 @@ def test_answer_post(
     user_factory,
     basic_form,
 ):
-    url = reverse("pub_answer-list") # Use public endpoint for posting answers
+    url = reverse("pub_answer-list")  # Use public endpoint for posting answers
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -168,7 +168,7 @@ def test_answer_post(
         "attachments": [],
         "ready": True,
     }
-    with patch("forms.viewsets.form.async_task") as mock_async_task:
+    with patch("forms.utils.async_task") as mock_async_task:
         response = admin_client.post(url, data=payload)
 
     assert response.status_code == 201

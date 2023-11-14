@@ -14,8 +14,9 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
-from django_q.tasks import Task, async_task
+from django_q.tasks import Conf, Task, async_task
 from django_xhtml2pdf.utils import generate_pdf
+from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from forms.enums import AnswerType
@@ -349,6 +350,35 @@ class AnswerInBBoxFilter(InBBoxFilter):
             | Q(**{"%s__%s" % (filter_fields[1], geo_django_filter): bbox})
         ).distinct("pk")
 
+
+def handle_email_sending(response: Response) -> None:
+    answer_id = response.data.get("id")
+    input_data = {
+        "answer_id": answer_id,
+        "answer_type": None,
+    }
+    area_search_id = response.data.get("area_search")
+    if area_search_id:
+        input_data["answer_type"] = AnswerType.AREA_SEARCH
+
+    target_statuses = response.data.get("target_statuses")
+    if target_statuses:
+        input_data["answer_type"] = AnswerType.TARGET_STATUS
+
+    if not area_search_id and not target_statuses:
+        logging.error(
+            (
+                "Could not send email of answer creation: "
+                f"Neither area_search or target_statuses found in answer: {answer_id}"
+            )
+        )
+        return response
+
+    async_task(
+        generate_and_queue_answer_emails, input_data=input_data, timeout=Conf.TIMEOUT,
+    )
+
+
 class AnswerInputData(TypedDict):
     answer_id: int
     answer_type: AnswerType
@@ -378,6 +408,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         target_status_identifiers = ", ".join(
             target_statuses.values_list("application_identifier", flat=True)
         )
+        from_email = settings.FROM_EMAIL_PLOT_SEARCH
         email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
         email_body = render_to_string("target_status/email_detail.txt", context)
 
@@ -385,13 +416,14 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
             context["object"] = target_status
             context = build_pdf_context(context)
             email_pdf = generate_pdf("target_status/detail.html", context=context)
-            attachment_filename = f"{area_search.application_identifier}.pdf"
+            attachment_filename = f"{target_status.application_identifier}.pdf"
             attachments.append([attachment_filename, email_pdf, "application/pdf"])
 
     if answer_type == AnswerType.AREA_SEARCH:
         area_search = getattr(answer, "area_search", None)
         context["object"] = area_search
         context = build_pdf_context(context)
+        from_email = settings.FROM_EMAIL_AREA_SEARCH
         email_subject = _(f"Copy of area rental application {area_search.identifier}")
         email_body = render_to_string("area_search/email_detail.txt", context)
         email_pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
@@ -411,7 +443,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
 
         email_messages.append(
             EmailMessage(
-                from_email=settings.MVJ_EMAIL_FROM,
+                from_email=from_email or settings.MVJ_EMAIL_FROM,
                 to=[email_address],
                 subject=email_subject,
                 body=email_body,
@@ -443,19 +475,22 @@ def send_answer_email(task: Task):
 
     try:
         email_message.send()
-    except SMTPSenderRefused as e:
+    except SMTPSenderRefused:
         logging.exception(
-            f"Server refused sender address when sending email for task_id: {task_id}. Attempt: {attempt_count}. Abandoning retrying."
+            f"Server refused sender address when sending email for task_id: {task_id}. Attempt: {attempt_count}. "
+            "Abandoning retrying."
         )
         return  # No point retrying
-    except SMTPRecipientsRefused as e:
+    except SMTPRecipientsRefused:
         logging.exception(
-            f"Server refused recipient address when sending email task_id: {task_id}. Attempt {attempt_count}. Abandoning retrying."
+            f"Server refused recipient address when sending email task_id: {task_id}. Attempt {attempt_count}. "
+            "Abandoning retrying."
         )
         return  # No point retrying
     except (SMTPDataError, SMTPException) as e:
         logging.exception(
-            f"Server responded with unexpected error code when sending email task_id: {task_id}. Attempt {attempt_count}."
+            f"Server responded with unexpected error code when sending email task_id: {task_id}. "
+            f"Attempt {attempt_count}."
         )
         raise e
     except TimeoutError as e:
