@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
@@ -115,13 +116,22 @@ class AnswerViewSet(viewsets.ModelViewSet):
 class AnswerPublicViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """Public API for submitting form answers with added restrictions."""
 
-    http_method_names = ["post"]  # In public API, only POST is allowed
+    http_method_names = ["post", "options"]  # In public API, only POST is allowed
     serializer_class = AnswerPublicSerializer
+    permission_classes = (IsAuthenticated,)
     filter_backends = None
     filterset_class = None
 
     def get_queryset(self):
         return Answer.objects.none()
+
+    def get_permissions(self):
+        if self.request.method in ["POST", "OPTIONS"]:
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = []
+
+        return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
