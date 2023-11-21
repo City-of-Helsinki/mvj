@@ -64,7 +64,7 @@ class ApplicantMixin:
         return answer_qs
 
 
-class SimpleFilter(ApplicantMixin, django_filters.CharFilter):
+class AreaSearchSimpleFilter(ApplicantMixin, django_filters.CharFilter):
     def filter(self, qs, value):
         if value in EMPTY_VALUES:
             return qs
@@ -79,6 +79,21 @@ class SimpleFilter(ApplicantMixin, django_filters.CharFilter):
             | Q(preparer__first_name__icontains=value)
             | Q(preparer__last_name__icontains=value)
             | Q(answer__in=answer_qs)
+        )
+        return qs
+
+
+class PlotSearchSimpleFilter(django_filters.CharFilter):
+    def filter(self, qs, value):
+        if value in EMPTY_VALUES:
+            return qs
+        if self.distinct:
+            qs = qs.distinct()
+        qs = qs.filter(
+            Q(name__icontains=value)
+            | Q(subtype__name__icontains=value)
+            | Q(subtype__plot_search_type__name__icontains=value)
+            | Q(stage__name__icontains=value)
         )
         return qs
 
@@ -111,7 +126,7 @@ class AreaSearchFilterSet(django_filters.FilterSet):
     address = django_filters.CharFilter(lookup_expr="icontains")
     preparer = django_filters.CharFilter(field_name="preparer__username")
     applicant = ApplicantFilter()
-    q = SimpleFilter()
+    q = AreaSearchSimpleFilter()
 
     class Meta:
         model = AreaSearch
@@ -143,7 +158,11 @@ class TargetStatusExportFilterSet(django_filters.FilterSet):
 
 class PlotSearchFilterSet(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr="icontains")
+    type = django_filters.NumberFilter(field_name="subtype__plot_search_type")
+    begin_at = django_filters.DateFromToRangeFilter()
+    end_at = django_filters.DateFromToRangeFilter()
+    q = PlotSearchSimpleFilter()
 
     class Meta:
         model = PlotSearch
-        fields = ("name",)
+        fields = ("q", "name", "search_class", "stage", "type", "subtype")
