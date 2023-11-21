@@ -117,7 +117,6 @@ class PlotSearchViewSet(
     serializer_class = PlotSearchRetrieveSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
-    filterset_fields = ["search_class", "stage"]
     filterset_class = PlotSearchFilterSet
 
     def get_queryset(self):
