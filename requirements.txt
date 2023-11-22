@@ -293,7 +293,7 @@ wcwidth==0.1.9
     # via blessed
 webencodings==0.5.1
     # via html5lib
-xhtml2pdf==0.2.5
+xhtml2pdf==0.2.6
     # via django-xhtml2pdf
 xlsxwriter==1.2.8
     # via -r requirements.in
