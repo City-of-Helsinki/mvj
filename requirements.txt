@@ -228,7 +228,7 @@ pyyaml==5.4
     #   swagger-spec-validator
 reportlab==3.5.55
     # via xhtml2pdf
-requests==2.27.1
+requests==2.31.0
     # via
     #   -r requirements.in
     #   coreapi
