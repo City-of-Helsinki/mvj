@@ -226,7 +226,7 @@ pyyaml==5.4
     #   database-sanitizer
     #   django-sanitized-dump
     #   swagger-spec-validator
-reportlab==3.5.55
+reportlab==3.6.13
     # via xhtml2pdf
 requests==2.31.0
     # via
