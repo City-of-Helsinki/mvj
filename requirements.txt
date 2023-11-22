@@ -26,7 +26,7 @@ cached-property==1.5.1
     # via zeep
 cachetools==4.2.4
     # via django-helusers
-certifi==2022.12.7
+certifi==2023.7.22
     # via
     #   pyproj
     #   requests
