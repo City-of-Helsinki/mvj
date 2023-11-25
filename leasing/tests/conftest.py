@@ -29,12 +29,10 @@ from leasing.models import (
     Contract,
     ContractRent,
     DecisionMaker,
-    District,
     FixedInitialYearRent,
     Invoice,
     LeaseBasisOfRent,
     LeaseType,
-    Municipality,
     NoticePeriod,
     Plot,
     RelatedLease,
@@ -127,18 +125,6 @@ class TenantRentShareFactory(factory.DjangoModelFactory):
 class LeaseTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = LeaseType
-
-
-@register
-class MunicipalityFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Municipality
-
-
-@register
-class DistrictFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = District
 
 
 @register
