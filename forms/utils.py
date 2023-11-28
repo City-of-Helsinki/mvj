@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import ugettext as _
-from django_q.tasks import Conf, Task, async_task
+from django_q.tasks import Conf, async_task
 from django_xhtml2pdf.utils import generate_pdf
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
@@ -616,41 +616,32 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     return
 
 
-def send_answer_email(task: Task):
+def send_answer_email(email_message: EmailMessage) -> None:
     if hasattr(settings, "DEBUG") and settings.DEBUG is True:
         logging.info("Not sending email in debug mode.")
-        logging.info(task.result)
+        logging.info(f"Email message: {email_message}")
         return
 
-    email_message: EmailMessage = task.result
     if not isinstance(email_message, EmailMessage):
         raise ValueError("Task result is not an EmailMessage")
-
-    task_id = getattr(task, "id", None)
-    attempt_count = getattr(task, "attempt_count", None)
 
     try:
         email_message.send()
     except SMTPSenderRefused:
         logging.exception(
-            f"Server refused sender address when sending email for task_id: {task_id}. Attempt: {attempt_count}. "
-            "Abandoning retrying."
+            "Server refused sender address when sending email. Abandoning retrying."
         )
         return  # No point retrying
     except SMTPRecipientsRefused:
         logging.exception(
-            f"Server refused recipient address when sending email task_id: {task_id}. Attempt {attempt_count}. "
-            "Abandoning retrying."
+            "Server refused recipient address when sending email. Abandoning retrying."
         )
         return  # No point retrying
     except (SMTPDataError, SMTPException) as e:
         logging.exception(
-            f"Server responded with unexpected error code when sending email task_id: {task_id}. "
-            f"Attempt {attempt_count}."
+            f"Server responded with unexpected error code when sending email: {e}"
         )
         raise e
     except TimeoutError as e:
-        logging.exception(
-            f"Server connection timed out when sending email task_id: {task_id}. Attempt {attempt_count}."
-        )
+        logging.exception("Server connection timed out when sending email.")
         raise e

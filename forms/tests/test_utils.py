@@ -16,7 +16,6 @@ from unittest.mock import patch
 import pytest
 from django.conf import settings
 from django.core.mail.message import EmailMessage
-from django_q.models import Task
 
 from forms.enums import AnswerType
 from forms.models import Field, FieldType, Section
@@ -117,24 +116,24 @@ def test_generate_and_queue_answer_emails(answer_with_email):
 #         f.write(email.body.encode("utf-8"))
 
 
-def test_send_answer_email(answer_email_message):
+def test_send_answer_email(answer_email_message: EmailMessage):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-        task = Task(result=answer_email_message)
-        send_answer_email(task)
+        send_answer_email(answer_email_message)
         assert mock_send.called
 
 
-def test_send_answer_email_debug(answer_email_message):
+def test_send_answer_email_debug(answer_email_message: EmailMessage):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
         with patch("logging.info") as mock_logging:
             settings.DEBUG = True
-            task = Task(result=answer_email_message)
-            send_answer_email(task)
+            send_answer_email(answer_email_message)
             assert not mock_send.called
             assert mock_logging.call_count == 2
 
 
-def test_send_answer_email_smtp_exceptions_not_raised(answer_email_message):
+def test_send_answer_email_smtp_exceptions_not_raised(
+    answer_email_message: EmailMessage,
+):
     exceptions = (
         (
             SMTPRecipientsRefused,
@@ -150,13 +149,12 @@ def test_send_answer_email_smtp_exceptions_not_raised(answer_email_message):
             with patch("logging.exception") as mock_logging:
                 settings.DEBUG = False
                 mock_send.side_effect = side_effect
-                task = Task(result=answer_email_message)
-                send_answer_email(task)
+                send_answer_email(answer_email_message)
                 assert mock_send.called
                 assert mock_logging.call_count == 1
 
 
-def test_send_answer_email_smtp_exceptions_raised(answer_email_message):
+def test_send_answer_email_smtp_exceptions_raised(answer_email_message: EmailMessage):
     exceptions = (
         (SMTPDataError, SMTPDataError(550, "User unknown"),),
         (SMTPException, SMTPException("Error sending email"),),
@@ -173,8 +171,7 @@ def test_send_answer_email_smtp_exceptions_raised(answer_email_message):
             with patch("logging.exception") as mock_logging:
                 settings.DEBUG = False
                 mock_send.side_effect = side_effect
-                task = Task(result=answer_email_message)
                 with pytest.raises(exception):
-                    send_answer_email(task)
+                    send_answer_email(answer_email_message)
                 assert mock_send.called
                 assert mock_logging.call_count == 1
