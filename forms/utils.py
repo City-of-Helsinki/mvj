@@ -608,9 +608,8 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         )
 
     for email_message in email_messages:
-        result = {"answer_id": answer_id, "email_message": email_message}
         async_task(
-            send_answer_email, input_data=result,
+            send_answer_email, email_message,
         )
 
     return
@@ -623,7 +622,7 @@ def send_answer_email(email_message: EmailMessage) -> None:
         return
 
     if not isinstance(email_message, EmailMessage):
-        raise ValueError("Task result is not an EmailMessage")
+        raise ValueError("`email_message` is not an instance of EmailMessage")
 
     try:
         email_message.send()

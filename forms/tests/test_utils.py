@@ -55,15 +55,12 @@ def test_generate_and_queue_answer_emails(answer_with_email):
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
         }
-        generate_and_queue_answer_emails(input_data)
+        generate_and_queue_answer_emails(input_data=input_data)
 
         assert mock_async_task.called
-        (call_function,), kwargs = mock_async_task.call_args
+        call_function, email_message = mock_async_task.call_args.args
         assert call_function.__name__ == "send_answer_email"
-        data = kwargs.get("input_data")
-        answer_id = data.get("answer_id")
-        assert answer_id == answer.get("id")
-        email: EmailMessage = data.get("email_message")
+        email: EmailMessage = email_message
         assert email.from_email == settings.DEFAULT_FROM_EMAIL
         assert (
             "Kulttuuri ja vapaa-aika" in email.body
