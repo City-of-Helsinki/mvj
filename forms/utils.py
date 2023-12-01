@@ -6,7 +6,7 @@ from smtplib import (
     SMTPRecipientsRefused,
     SMTPSenderRefused,
 )
-from typing import Iterable, List, TypedDict
+from typing import Iterable, List, Tuple, TypedDict, Union
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -540,6 +540,14 @@ class AnswerInputData(TypedDict):
     answer_type: AnswerType
 
 
+class EmailMessageInput(TypedDict):
+    from_email: str
+    to: List[str]
+    subject: str
+    body: str
+    attachments: List[Tuple[str, Union[bytes, BytesIO], str]]
+
+
 def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     from forms.models import Answer
     from plotsearch.utils import build_pdf_context
@@ -557,7 +565,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         return
 
     context = {}
-    attachments = []
+    attachments: List[Tuple[str, bytes, str]] = []
 
     if answer_type == AnswerType.TARGET_STATUS:
         target_statuses = getattr(answer, "statuses", None)
@@ -571,7 +579,8 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         for target_status in target_statuses:
             context["object"] = target_status
             context = build_pdf_context(context)
-            email_pdf = generate_pdf("target_status/detail.html", context=context)
+            pdf: BytesIO = generate_pdf("target_status/detail.html", context=context)
+            email_pdf: bytes = pdf.getvalue()
             attachment_filename = f"{target_status.application_identifier}.pdf"
             attachments.append([attachment_filename, email_pdf, "application/pdf"])
 
@@ -582,7 +591,8 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         from_email = settings.FROM_EMAIL_AREA_SEARCH
         email_subject = _(f"Copy of area rental application {area_search.identifier}")
         email_body = render_to_string("area_search/email_detail.txt", context)
-        email_pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
+        pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
+        email_pdf: bytes = pdf.getvalue()
         attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
         attachments.append([attachment_filename, email_pdf, "application/pdf"])
 
@@ -597,15 +607,15 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         except AttributeError:
             continue
 
-        email_messages.append(
-            EmailMessage(
-                from_email=from_email or settings.MVJ_EMAIL_FROM,
-                to=[email_address],
-                subject=email_subject,
-                body=email_body,
-                attachments=attachments,
-            )
-        )
+        email_message: EmailMessageInput = {
+            "from_email": from_email or settings.MVJ_EMAIL_FROM,
+            "to": [email_address],
+            "subject": email_subject,
+            "body": email_body,
+            "attachments": attachments,
+        }
+
+        email_messages.append(email_message)
 
     for email_message in email_messages:
         async_task(
@@ -615,14 +625,13 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     return
 
 
-def send_answer_email(email_message: EmailMessage) -> None:
+def send_answer_email(email_message_input: EmailMessageInput) -> None:
     if hasattr(settings, "DEBUG") and settings.DEBUG is True:
         logging.info("Not sending email in debug mode.")
-        logging.info(f"Email message: {email_message}")
+        logging.info(f"Email message: {email_message_input}")
         return
 
-    if not isinstance(email_message, EmailMessage):
-        raise ValueError("`email_message` is not an instance of EmailMessage")
+    email_message = EmailMessage(**email_message_input)
 
     try:
         email_message.send()

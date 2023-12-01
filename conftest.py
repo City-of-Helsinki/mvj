@@ -5,7 +5,6 @@ import factory
 import pytest
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
-from django.core.mail.message import EmailMessage
 from django.urls import reverse
 from django.utils import timezone
 from pytest_factoryboy import register
@@ -13,6 +12,7 @@ from pytest_factoryboy import register
 from forms.models import Answer, Choice, Entry, Field, FieldType, Form, Section
 from forms.models.form import EntrySection
 from forms.tests.conftest import fake
+from forms.utils import EmailMessageInput
 from leasing.enums import (
     ContactType,
     LeaseAreaType,
@@ -1323,10 +1323,10 @@ def answer_with_email(
 
 @pytest.fixture
 def answer_email_message():
-    email = EmailMessage(
-        subject="Test email",
-        body="This is a test email",
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=["test@example.com"],
-    )
+    email: EmailMessageInput = {
+        "subject": "Test email",
+        "body": "This is a test email",
+        "from_email": settings.DEFAULT_FROM_EMAIL,
+        "to": ["test@example.com"],
+    }
     return email

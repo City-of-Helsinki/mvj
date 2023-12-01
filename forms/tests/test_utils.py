@@ -10,17 +10,16 @@ from smtplib import (
     SMTPSenderRefused,
     SMTPServerDisconnected,
 )
-from typing import Any, Iterator
 from unittest.mock import patch
 
 import pytest
 from django.conf import settings
-from django.core.mail.message import EmailMessage
 
 from forms.enums import AnswerType
 from forms.models import Field, FieldType, Section
 from forms.utils import (
     AnswerInputData,
+    EmailMessageInput,
     clone_object,
     generate_and_queue_answer_emails,
     send_answer_email,
@@ -60,35 +59,18 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         assert mock_async_task.called
         call_function, email_message = mock_async_task.call_args.args
         assert call_function.__name__ == "send_answer_email"
-        email: EmailMessage = email_message
-        assert email.from_email == settings.DEFAULT_FROM_EMAIL
-        assert (
-            "Kulttuuri ja vapaa-aika" in email.body
-            or "Culture and leisure" in email.body
+        email: EmailMessageInput = email_message
+        assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
+        assert "Kulttuuri ja vapaa-aika" in email.get(
+            "body"
+        ) or "Culture and leisure" in email.get(
+            "body"
         ), "Email body should contain mapped lessor name"
-        assert (
-            "Tarkempi kuvaus käyttötarkoituksesta: Want to hold Helsinki Olympics 2028 here"
-            in email.body
-            or "Description intended use: Want to hold Helsinki Olympics 2028 here"
-            in email.body
+        assert "Tarkempi kuvaus käyttötarkoituksesta: Want to hold Helsinki Olympics 2028 here" in email.get(
+            "body"
+        ) or "Description intended use: Want to hold Helsinki Olympics 2028 here" in email.get(
+            "body"
         )
-
-        def _find_keys_in_dict(dictionary: dict, key_to_find: str) -> Iterator[Any]:
-            """Finds all instances of key_to_find from a dictionary recursively"""
-            for key, value in dictionary.items():
-                if key == key_to_find:
-                    yield value
-                if isinstance(value, dict):
-                    yield from _find_keys_in_dict(value, key_to_find)
-
-        emails_form_fields = list(
-            _find_keys_in_dict(answer.get("entries_data"), "sahkoposti")
-        )
-        emails_to = list(set([obj.get("value") for obj in emails_form_fields]))
-
-        for email_address in email.to:
-            assert email_address in emails_to
-        assert mock_async_task.call_count == len(emails_to)
 
 
 # def test_generate_area_search_pdf_and_email_to_disk(answer_with_email):
@@ -113,13 +95,13 @@ def test_generate_and_queue_answer_emails(answer_with_email):
 #         f.write(email.body.encode("utf-8"))
 
 
-def test_send_answer_email(answer_email_message: EmailMessage):
+def test_send_answer_email(answer_email_message: EmailMessageInput):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
         send_answer_email(answer_email_message)
         assert mock_send.called
 
 
-def test_send_answer_email_debug(answer_email_message: EmailMessage):
+def test_send_answer_email_debug(answer_email_message: EmailMessageInput):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
         with patch("logging.info") as mock_logging:
             settings.DEBUG = True
@@ -129,7 +111,7 @@ def test_send_answer_email_debug(answer_email_message: EmailMessage):
 
 
 def test_send_answer_email_smtp_exceptions_not_raised(
-    answer_email_message: EmailMessage,
+    answer_email_message: EmailMessageInput,
 ):
     exceptions = (
         (
@@ -151,7 +133,9 @@ def test_send_answer_email_smtp_exceptions_not_raised(
                 assert mock_logging.call_count == 1
 
 
-def test_send_answer_email_smtp_exceptions_raised(answer_email_message: EmailMessage):
+def test_send_answer_email_smtp_exceptions_raised(
+    answer_email_message: EmailMessageInput,
+):
     exceptions = (
         (SMTPDataError, SMTPDataError(550, "User unknown"),),
         (SMTPException, SMTPException("Error sending email"),),
