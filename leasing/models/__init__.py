@@ -32,9 +32,11 @@ from .inspection import Inspection, InspectionAttachment
 from .invoice import BankHoliday, Invoice, InvoiceNote, ReceivableType
 from .land_area import (
     ConstructabilityDescription,
+    CustomDetailedPlan,
     LeaseArea,
     LeaseAreaAttachment,
     PlanUnit,
+    PlanUnitIntendedUse,
     PlanUnitState,
     PlanUnitType,
     Plot,
@@ -122,6 +124,7 @@ __all__ = [
     "ContractChange",
     "ContractRent",
     "ContractType",
+    "CustomDetailedPlan",
     "Decision",
     "DecisionMaker",
     "DecisionType",
@@ -173,6 +176,7 @@ __all__ = [
     "NoticePeriod",
     "PayableRent",
     "PlanUnit",
+    "PlanUnitIntendedUse",
     "PlanUnitState",
     "PlanUnitType",
     "Plot",

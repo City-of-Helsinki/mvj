@@ -22,6 +22,7 @@ from leasing.enums import (
 )
 from leasing.models import (
     Contact,
+    CustomDetailedPlan,
     Decision,
     District,
     Lease,
@@ -29,6 +30,7 @@ from leasing.models import (
     LeaseType,
     Municipality,
     PlanUnit,
+    PlanUnitIntendedUse,
     Tenant,
     TenantContact,
 )
@@ -176,6 +178,23 @@ class PlanUnitFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PlanUnit
+
+
+@register
+class PlanUnitIntendedUseFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PlanUnitIntendedUse
+
+
+@register
+class CustomDetailedPlanFactory(factory.DjangoModelFactory):
+    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+    lease_area = factory.SubFactory(LeaseAreaFactory)
+    rent_build_permission = factory.Sequence(lambda n: n)
+    intended_use = factory.SubFactory(PlanUnitIntendedUseFactory)
+
+    class Meta:
+        model = CustomDetailedPlan
 
 
 @register

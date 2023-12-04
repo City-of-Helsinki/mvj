@@ -348,19 +348,19 @@ class PlotSearchTargetCreateUpdateSerializer(
         return plot_search_target
 
     def get_plan_unit_or_custom_detailed_plan(self, validated_data):
-        custom_detailed_plan = None
-        plan_unit = None
         try:
-            plan_unit = PlanUnit.objects.get(id=validated_data.pop("plan_unit_id"))
-        except KeyError:
-            try:
-                custom_detailed_plan = CustomDetailedPlan.objects.get(
-                    id=validated_data.pop("custom_detailed_plan_id")
-                )
-            except KeyError:
-                raise BadRequest
-            pass
-        if plan_unit is not None and custom_detailed_plan is not None:
+            plan_unit = PlanUnit.objects.get(id=validated_data.get("plan_unit_id"))
+        except PlanUnit.DoesNotExist:
+            plan_unit = None
+        try:
+            custom_detailed_plan = CustomDetailedPlan.objects.get(
+                id=validated_data.get("custom_detailed_plan_id")
+            )
+        except CustomDetailedPlan.DoesNotExist:
+            custom_detailed_plan = None
+        if (plan_unit is None and custom_detailed_plan is None) or (
+            plan_unit is not None and custom_detailed_plan is not None
+        ):
             raise BadRequest
         return custom_detailed_plan, plan_unit
 
