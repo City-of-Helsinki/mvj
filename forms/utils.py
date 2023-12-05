@@ -576,7 +576,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
         email_body = render_to_string("target_status/email_detail.txt", context)
 
-        for target_status in target_statuses:
+        for target_status in target_statuses.all():
             context["object"] = target_status
             context = build_pdf_context(context)
             pdf: BytesIO = generate_pdf("target_status/detail.html", context=context)
