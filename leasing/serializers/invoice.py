@@ -176,6 +176,15 @@ class InvoiceRowCreateUpdateSerializer(
         if not valid:
             raise ValidationError(_("Cannot use an inactive receivable type"))
 
+        request = self.context.get("request")
+
+        if data["receivable_type"].service_unit not in request.user.service_units.all():
+            raise ValidationError(
+                _(
+                    "Can only use receivable types from service units the user is a member of"
+                )
+            )
+
         return data
 
 

@@ -3311,6 +3311,10 @@ msgstr "Palvelukokonaisuutta ei voi vaihtaa"
 msgid "Cannot use an inactive receivable type"
 msgstr "Saamislaji ei ole käytettävissä"
 
+msgid ""
+"Can only use receivable types from service units the user is a member of"
+msgstr "Voi käyttää vain oman palvelukokonaisuuden saamislajia"
+
 msgid "Can only add invoices to service units the user is a member of"
 msgstr "Laskuja voi lisätä vain omaan palvelukokonaisuuteen"
 

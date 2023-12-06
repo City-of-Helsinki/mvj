@@ -13,6 +13,7 @@ from leasing.filters import (
     InvoiceNoteFilter,
     InvoiceRowFilter,
     InvoiceSetFilter,
+    ReceivableTypeFilter,
 )
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet, ReceivableType
@@ -167,3 +168,4 @@ class InvoiceSetViewSet(ReadOnlyModelViewSet):
 class ReceivableTypeViewSet(ReadOnlyModelViewSet):
     queryset = ReceivableType.objects.all()
     serializer_class = ReceivableTypeSerializer
+    filterset_class = ReceivableTypeFilter

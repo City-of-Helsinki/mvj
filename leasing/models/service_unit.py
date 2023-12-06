@@ -55,6 +55,7 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         "invoices",
         "users",
         "groups",
+        "receivable_types",
     ]
 
     class Meta:
