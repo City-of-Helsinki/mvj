@@ -283,6 +283,11 @@ already. The `service_unit.json` fixture has to be loaded into the database befo
 Adds the default lessor contacts for all the Service units. The `service_unit.json` fixture has to be loaded into the
 database before running this command.
 
+#### `set_receivable_types_for_service_units`
+
+Adds the default receivable types for all the Service units. The `service_unit.json` should be loaded into the
+database before running this command.
+
 ### Regularly run commands
 
 #### `create_invoices`

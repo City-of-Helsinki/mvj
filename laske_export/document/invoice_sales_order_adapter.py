@@ -173,8 +173,13 @@ class InvoiceSalesOrderAdapter:
             line_item = LineItem()
 
             receivable_type = invoice_row.receivable_type
-            # When dealing with rent invoice rows, we look up the SAP codes from the LeaseType object...
-            if receivable_type == self.receivable_type_rent:
+            # If the receivable type is "rent" and doesn't have its own code and
+            # item number we look up the SAP codes from the LeaseType
+            if (
+                receivable_type == self.receivable_type_rent
+                and not self.receivable_type_rent.sap_material_code
+                and not self.receivable_type_rent.sap_order_item_number
+            ):
                 line_item.material = self.invoice.lease.type.sap_material_code
                 line_item.order_item_number = (
                     self.invoice.lease.type.sap_order_item_number

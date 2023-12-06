@@ -6,7 +6,7 @@ from constance import config
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
@@ -33,6 +33,15 @@ class Command(BaseCommand):
                 )
             )
             return
+
+        if (
+            not service_unit.default_receivable_type_rent
+            or not service_unit.default_receivable_type_collateral
+        ):
+            raise CommandError(
+                "Service unit must have both default_receivable_type_rent and"
+                " default_receivable_type_collateral set"
+            )
 
         error_flag = False
         error_message = ""
