@@ -2783,6 +2783,23 @@ msgstr "Sopimusnumerosarjan nimi"
 msgid "First contract number"
 msgstr "Ensimmäinen sopimusnumero"
 
+msgid "Default receivable type (rent)"
+msgstr "Oletus-saamislaji (vuokra)"
+
+msgid "Receivable type used when creating rent invoices"
+msgstr "Saamislaji kun luodaan vuokralaskuja"
+
+msgid "Default receivable type (collateral)"
+msgstr "Oletus-saamislaji (rahavakuus)"
+
+msgid ""
+"Receivable type which should be used when creating collateral invoices. On "
+"SAP export, the profit center is filled from this receivable type's "
+"sap_order_item_number."
+msgstr ""
+"Saamislaji jota tulee käyttää vakuuslaskuissa. Laske-viennissä tulosyksikkö "
+"täytetään tämän saamislajin SAP tilausnumero-kentästä."
+
 msgctxt "Model name"
 msgid "Service unit"
 msgstr "Palvelukokonaisuus"

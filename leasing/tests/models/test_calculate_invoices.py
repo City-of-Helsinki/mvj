@@ -474,3 +474,100 @@ def test_calculate_invoices_seasonal(
 
     assert total_invoice_amount == total_invoice_row_amount
     assert total_invoice_amount == Decimal(1080)
+
+
+@pytest.mark.django_db
+def test_calculate_invoices_uses_correct_receivable_type(
+    django_db_setup,
+    service_unit_factory,
+    receivable_type_factory,
+    lease_factory,
+    tenant_factory,
+    contact_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    rent_factory,
+    contract_rent_factory,
+):
+    service_units = [
+        service_unit_factory(name="First service unit"),
+        service_unit_factory(name="Second service unit"),
+    ]
+
+    for service_unit in service_units:
+        receivable_type = receivable_type_factory(
+            name="Maanvuokraus", service_unit=service_unit
+        )
+        service_unit.default_receivable_type_rent = receivable_type
+
+        lease = lease_factory(
+            type_id=1,
+            municipality_id=1,
+            district_id=1,
+            notice_period_id=1,
+            start_date=date(year=2000, month=1, day=1),
+            service_unit=service_unit,
+        )
+
+        tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+        tenant_rent_share_factory(
+            tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
+        )
+        contact1 = contact_factory(
+            first_name="First name 1",
+            last_name="Last name 1",
+            type=ContactType.PERSON,
+            service_unit=service_unit,
+        )
+        tenant_contact_factory(
+            type=TenantContactType.TENANT,
+            tenant=tenant1,
+            contact=contact1,
+            start_date=date(year=2000, month=1, day=1),
+        )
+
+        rent = rent_factory(
+            lease=lease,
+            type=RentType.FIXED,
+            cycle=RentCycle.JANUARY_TO_DECEMBER,
+            due_dates_type=DueDatesType.FIXED,
+            due_dates_per_year=1,
+        )
+
+        contract_rent = contract_rent_factory(
+            rent=rent,
+            intended_use_id=1,
+            amount=1000,
+            period=PeriodType.PER_YEAR,
+            base_amount=1000,
+            base_amount_period=PeriodType.PER_YEAR,
+        )
+
+        billing_period = (
+            date(year=2017, month=1, day=1),
+            date(year=2017, month=12, day=31),
+        )
+
+        calculation_result = CalculationResult(*billing_period)
+        calculation_result.add_amount(
+            CalculationAmount(
+                item=contract_rent,
+                amount=Decimal(1000),
+                date_range_start=billing_period[0],
+                date_range_end=billing_period[1],
+            )
+        )
+
+        period_rents = {
+            billing_period: {
+                "due_date": date(year=2017, month=6, day=1),
+                "calculation_result": calculation_result,
+                "last_billing_period": False,
+            }
+        }
+
+        invoice_data = lease.calculate_invoices(period_rents)
+
+        assert len(invoice_data) == 1
+        assert len(invoice_data[0]) == 1
+        assert invoice_data[0][0]["rows"][0]["receivable_type"] == receivable_type
