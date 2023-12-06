@@ -49,6 +49,26 @@ from plotsearch.models import (
 from users.models import User
 
 
+@pytest.fixture()
+def admin_client(db, admin_user):
+    """A Django test client logged in as an admin user.
+
+    Copied from pytest-django and added the default ServiceUnit to admin_users
+    service units."""
+    from django.test.client import Client
+
+    from leasing.models import ServiceUnit
+
+    try:
+        admin_user.service_units.set([ServiceUnit.objects.get(pk=1)])
+    except ServiceUnit.DoesNotExist:
+        pass
+
+    client = Client()
+    client.login(username=admin_user.username, password="password")
+    return client
+
+
 @pytest.fixture
 def plot_search_test_data(
     plot_search_factory,
