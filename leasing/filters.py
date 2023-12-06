@@ -6,7 +6,7 @@ from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
 
 from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionNote
-from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet, ReceivableType
 from leasing.models.land_use_agreement import (
     LandUseAgreementInvoice,
     LandUseAgreementInvoiceRow,
@@ -214,3 +214,16 @@ class LandUseAgreementInvoiceRowFilter(FilterSet):
     class Meta:
         model = LandUseAgreementInvoiceRow
         fields = ["invoice"]
+
+
+class ReceivableTypeFilter(FilterSet):
+    service_unit = NumberInFilter(field_name="service_unit_id")
+
+    class Meta:
+        model = ReceivableType
+        fields = [
+            "id",
+            "name",
+            "is_active",
+            "service_unit__name",
+        ]
