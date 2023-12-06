@@ -632,6 +632,11 @@ class Lease(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Sisäinen tilaus
+    internal_order = models.CharField(
+        verbose_name=_("Internal order"), null=True, blank=True, max_length=12
+    )
+
     objects = LeaseManager()
 
     recursive_get_related_skip_relations = [

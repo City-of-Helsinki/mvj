@@ -313,3 +313,156 @@ def test_send_invoices_service_unit(
     assert len(tree.findall("./SBO_SalesOrder")) == 1
     assert tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
     assert tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
+
+
+@pytest.fixture
+def _order_number_test_setup(
+    settings,
+    tmp_path,
+    service_unit_factory,
+    receivable_type_factory,
+    lease_factory,
+    contact_factory,
+    invoice_factory,
+    invoice_row_factory,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+):
+    settings.LASKE_EXPORT_ROOT = str(tmp_path)
+
+    test_data = {}
+    test_data["service_unit"] = service_unit_factory(
+        name="Test service unit", laske_sender_id="TEST1", laske_sales_org="ORG1",
+    )
+
+    receivable_type_rent = receivable_type_factory(
+        name="Maanvuokraus", service_unit=test_data["service_unit"]
+    )
+    receivable_type_collateral = receivable_type_factory(
+        name="Rahavakuus", service_unit=test_data["service_unit"]
+    )
+    test_data["service_unit"].default_receivable_type_rent = receivable_type_rent
+    test_data[
+        "service_unit"
+    ].default_receivable_type_collateral = receivable_type_collateral
+    test_data["service_unit"].save()
+
+    test_data["lease"] = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=test_data["service_unit"],
+    )
+
+    contact = contact_factory(
+        first_name="First name",
+        last_name="Last name",
+        type=ContactType.PERSON,
+        service_unit=test_data["service_unit"],
+    )
+
+    test_data["invoice"] = invoice_factory(
+        lease=test_data["lease"],
+        total_amount=Decimal("123.45"),
+        billed_amount=Decimal("123.45"),
+        outstanding_amount=Decimal("123.45"),
+        recipient=contact,
+        service_unit=test_data["service_unit"],
+    )
+
+    invoice_row_factory(
+        invoice=test_data["invoice"],
+        receivable_type=receivable_type_rent,
+        amount=Decimal("123.45"),
+    )
+
+    return test_data
+
+
+def _get_exported_file_as_tree(settings):
+    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
+    assert len(files) == 1
+    exported_file = files[0]
+
+    tree = et.parse(exported_file)
+    assert len(tree.findall("./SBO_SalesOrder")) == 1
+    assert len(tree.findall("./SBO_SalesOrder/LineItem")) == 1
+
+    return tree
+
+
+@pytest.mark.django_db
+@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+def test_send_invoices_order_num_from_lease_type(
+    settings,
+    _order_number_test_setup,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+):
+    send_invoices_to_laske_command.handle(
+        service_unit_id=_order_number_test_setup["service_unit"].id
+    )
+
+    tree = _get_exported_file_as_tree(settings)
+    line_item = tree.find("./SBO_SalesOrder/LineItem")
+
+    assert (
+        line_item.find("Material").text
+        == _order_number_test_setup["lease"].type.sap_material_code
+    )
+    assert (
+        line_item.find("OrderItemNumber").text
+        == _order_number_test_setup["lease"].type.sap_order_item_number
+    )
+
+
+@pytest.mark.django_db
+@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+def test_send_invoices_order_num_from_receivable_type(
+    settings,
+    _order_number_test_setup,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+):
+    receivable_type_rent = _order_number_test_setup[
+        "service_unit"
+    ].default_receivable_type_rent
+    receivable_type_rent.sap_material_code = "rt-material-code"
+    receivable_type_rent.sap_order_item_number = "rt-order-num"
+    receivable_type_rent.save()
+
+    send_invoices_to_laske_command.handle(
+        service_unit_id=_order_number_test_setup["service_unit"].id
+    )
+
+    tree = _get_exported_file_as_tree(settings)
+    line_item = tree.find("./SBO_SalesOrder/LineItem")
+
+    assert line_item.find("Material").text == "rt-material-code"
+    assert line_item.find("OrderItemNumber").text == "rt-order-num"
+
+
+@pytest.mark.django_db
+@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+def test_send_invoices_order_num_from_lease(
+    settings,
+    _order_number_test_setup,
+    send_invoices_to_laske_command,
+    monkeypatch_laske_exporter_send,
+):
+    _order_number_test_setup["lease"].internal_order = "lease-ordern"
+    _order_number_test_setup["lease"].save()
+
+    send_invoices_to_laske_command.handle(
+        service_unit_id=_order_number_test_setup["service_unit"].id
+    )
+
+    tree = _get_exported_file_as_tree(settings)
+    line_item = tree.find("./SBO_SalesOrder/LineItem")
+
+    assert (
+        line_item.find("Material").text
+        == _order_number_test_setup["lease"].type.sap_material_code
+    )
+    assert line_item.find("OrderItemNumber").text == "lease-ordern"

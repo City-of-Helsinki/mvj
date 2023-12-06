@@ -194,6 +194,14 @@ class InvoiceSalesOrderAdapter:
                 line_item.material = receivable_type.sap_material_code
                 line_item.order_item_number = receivable_type.sap_order_item_number
 
+            # Finally we'll use internal order from the lease if the receivable type is
+            # "rent" and the internal order is set.
+            if (
+                receivable_type == self.receivable_type_rent
+                and self.invoice.lease.internal_order
+            ):
+                line_item.order_item_number = self.invoice.lease.internal_order
+
             line_item.quantity = "1,00"
             line_item.net_price = "{:.2f}".format(invoice_row.amount).replace(".", ",")
 
