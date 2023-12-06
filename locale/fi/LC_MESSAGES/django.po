@@ -2347,6 +2347,9 @@ msgstr "Erityishanke"
 msgid "Reservation procedure"
 msgstr "Varauksen menettely"
 
+msgid "Internal order"
+msgstr "Sisäinen tilaus"
+
 msgctxt "Model name"
 msgid "Lease"
 msgstr "Vuokraus"
