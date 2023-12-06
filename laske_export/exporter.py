@@ -19,7 +19,7 @@ from laske_export.document.sales_order import SalesOrder, SalesOrderContainer
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
 from leasing.enums import InvoiceType
-from leasing.models import Invoice, ReceivableType
+from leasing.models import Invoice
 from leasing.models.land_use_agreement import LandUseAgreementInvoice
 
 logger = logging.getLogger(__name__)
@@ -130,9 +130,10 @@ class LaskeExporter:
         if isinstance(invoices, Invoice):
             invoices = [invoices]
 
-        # TODO: Make configurable
-        receivable_type_rent = ReceivableType.objects.get(pk=1)
-        receivable_type_collateral = ReceivableType.objects.get(pk=8)
+        receivable_type_rent = self.service_unit.default_receivable_type_rent
+        receivable_type_collateral = (
+            self.service_unit.default_receivable_type_collateral
+        )
 
         now = timezone.now()
         laske_export_log_entry = LaskeExportLog.objects.create(

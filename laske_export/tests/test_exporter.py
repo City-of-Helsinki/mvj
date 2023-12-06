@@ -211,6 +211,7 @@ def test_send_invoices_service_unit(
     settings,
     tmp_path,
     service_unit_factory,
+    receivable_type_factory,
     lease_factory,
     contact_factory,
     invoice_factory,
@@ -220,20 +221,22 @@ def test_send_invoices_service_unit(
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
 
-    service_units = [
-        service_unit_factory(
-            invoice_number_sequence_name="test_sequence",
-            first_invoice_number=1,
-            laske_sender_id="TEST1",
-            laske_sales_org="ORG1",
-        ),
-        service_unit_factory(
-            invoice_number_sequence_name="test_sequence2",
-            first_invoice_number=500,
-            laske_sender_id="TEST2",
-            laske_sales_org="ORG2",
-        ),
-    ]
+    service_units = []
+    for i in range(1, 3):
+        service_unit = service_unit_factory(
+            invoice_number_sequence_name=f"test_sequence{i}",
+            first_invoice_number=1 if i == 1 else 500,
+            laske_sender_id=f"TEST{i}",
+            laske_sales_org=f"ORG{i}",
+        )
+        service_unit.default_receivable_type_rent = receivable_type_factory(
+            name="Maanvuokraus", service_unit=service_unit
+        )
+        service_unit.default_receivable_type_collateral = receivable_type_factory(
+            name="Rahavakuus", service_unit=service_unit
+        )
+        service_unit.save()
+        service_units.append(service_unit)
 
     leases = [
         lease_factory(

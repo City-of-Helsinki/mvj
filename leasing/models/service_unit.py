@@ -48,6 +48,28 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
     first_contract_number = models.IntegerField(
         verbose_name=_("First contract number"), null=True, blank=True
     )
+    default_receivable_type_rent = models.ForeignKey(
+        "leasing.ReceivableType",
+        verbose_name=_("Default receivable type (rent)"),
+        help_text=_("Receivable type used when creating rent invoices"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    default_receivable_type_collateral = models.ForeignKey(
+        "leasing.ReceivableType",
+        verbose_name=_("Default receivable type (collateral)"),
+        help_text=_(
+            "Receivable type which should be used when creating collateral invoices. "
+            "On SAP export, the profit center is filled from this receivable type's "
+            "sap_order_item_number."
+        ),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     recursive_get_related_skip_relations = [
         "contacts",

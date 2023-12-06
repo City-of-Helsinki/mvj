@@ -971,10 +971,7 @@ class Lease(TimeStampedSafeDeleteModel):
         return amounts_for_billing_periods
 
     def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
-        from leasing.models import ReceivableType
-
-        # TODO: Make configurable
-        receivable_type_rent = ReceivableType.objects.get(pk=1)
+        receivable_type_rent = self.service_unit.default_receivable_type_rent
 
         invoice_data = []
         last_billing_period = None
