@@ -31,6 +31,12 @@ class ReceivableType(models.Model):
         verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
     )
     is_active = models.BooleanField(verbose_name=_("Is active?"), default=True)
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit",
+        verbose_name=_("Service unit"),
+        related_name="receivable_types",
+        on_delete=models.PROTECT,
+    )
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Receivable type")

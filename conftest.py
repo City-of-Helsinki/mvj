@@ -30,6 +30,7 @@ from leasing.models import (
     LeaseType,
     Municipality,
     PlanUnit,
+    ReceivableType,
     Tenant,
     TenantContact,
 )
@@ -267,6 +268,21 @@ class UserFactory(factory.DjangoModelFactory):
 class GroupFactory(factory.DjangoModelFactory):
     class Meta:
         model = Group
+
+
+@register
+class ReceivableTypeFactory(factory.DjangoModelFactory):
+    @factory.lazy_attribute
+    def service_unit(self):
+        from leasing.models import ServiceUnit
+
+        try:
+            return ServiceUnit.objects.get(pk=1)
+        except ServiceUnit.DoesNotExist:
+            return None
+
+    class Meta:
+        model = ReceivableType
 
 
 @pytest.fixture

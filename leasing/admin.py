@@ -592,6 +592,21 @@ class InvoiceNoteAdmin(admin.ModelAdmin):
         )
 
 
+class ReceivableTypeAdmin(admin.ModelAdmin):
+    list_display = ("name", "service_unit", "is_active")
+    list_filter = ("service_unit", "is_active")
+    search_fields = [
+        "name",
+        "service_unit__name",
+        "sap_material_code",
+        "sap_order_item_number",
+    ]
+    ordering = (
+        "service_unit",
+        "name",
+    )
+
+
 class ConstructabilityDescriptionInline(
     FieldPermissionsAdminMixin, admin.TabularInline
 ):
@@ -794,7 +809,7 @@ admin.site.register(PlanUnitState, NameAdmin)
 admin.site.register(PlanUnitIntendedUse, NameAdmin)
 admin.site.register(PlanUnitType, NameAdmin)
 admin.site.register(PlotDivisionState, NameAdmin)
-admin.site.register(ReceivableType)
+admin.site.register(ReceivableType, ReceivableTypeAdmin)
 admin.site.register(Regulation, NameAdmin)
 admin.site.register(Rent, RentAdmin)
 admin.site.register(RentIntendedUse, NameAdmin)
