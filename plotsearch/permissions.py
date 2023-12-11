@@ -3,6 +3,15 @@ from plotsearch.models import PlotSearch
 from users.models import User
 
 
+class AreaSearchPublicPermissions(PerMethodPermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.answer is not None:
+            return False
+        if obj.user == request.user:
+            return True
+        return super().has_object_permission(request, view, obj)
+
+
 class AreaSearchAttachmentPermissions(PerMethodPermission):
     def has_object_permission(self, request, view, obj):
         if obj.area_search.user == request.user:

@@ -113,6 +113,7 @@ from plotsearch.views.plot_search import (
     AreaSearchAttachmentViewset,
     AreaSearchGeneratePDF,
     AreaSearchViewSet,
+    AreaSearchPublicViewSet,
     DirectReservationLinkViewSet,
     DirectReservationToFavourite,
     FAQViewSet,
@@ -237,7 +238,7 @@ pub_router = routers.DefaultRouter()
 
 pub_router.register(r"answer", AnswerPublicViewSet, basename="pub_answer")
 pub_router.register(r"attachment", AttachmentViewSet, basename="pub_attachment")
-pub_router.register(r"area_search", AreaSearchViewSet, basename="pub_area_search")
+pub_router.register(r"area_search", AreaSearchPublicViewSet, basename="pub_area_search")
 pub_router.register(
     r"area_search_attachment",
     AreaSearchAttachmentViewset,

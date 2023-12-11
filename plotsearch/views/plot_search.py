@@ -55,6 +55,7 @@ from plotsearch.models.plot_search import (
     DirectReservationLink,
 )
 from plotsearch.permissions import (
+    AreaSearchPublicPermissions,
     AreaSearchAttachmentPermissions,
     PlotSearchOpeningRecordPermissions,
 )
@@ -297,6 +298,22 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
         )
 
         return response
+
+
+class AreaSearchPublicViewSet(
+    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
+    queryset = AreaSearch.objects.all()
+    serializer_class = AreaSearchSerializer
+    permission_classes = (AreaSearchPublicPermissions, IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
+    filterset_class = AreaSearchFilterSet
+    bbox_filter_field = "geometry"
+    bbox_filter_include_overlapping = True
+
+    def get_permissions(self):
+        permission_classes = [AreaSearchPublicPermissions, IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 class AreaSearchAttachmentViewset(
