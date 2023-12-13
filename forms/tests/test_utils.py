@@ -14,6 +14,7 @@ from unittest.mock import patch
 
 import pytest
 from django.conf import settings
+from django.utils.translation import get_language
 
 from forms.enums import AnswerType
 from forms.models import Field, FieldType, Section
@@ -48,11 +49,12 @@ def test_form_cloning(basic_template_form):
 def test_generate_and_queue_answer_emails(answer_with_email):
     answer = answer_with_email.get("answer")
 
+    # Case 1: Test that async_task is called, content language if Finnish
     with patch("forms.utils.async_task") as mock_async_task:
-
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
+            "user_language": "fi",
         }
         generate_and_queue_answer_emails(input_data=input_data)
 
@@ -61,16 +63,80 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         assert call_function.__name__ == "send_answer_email"
         email: EmailMessageInput = email_message
         assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
-        assert "Kulttuuri ja vapaa-aika" in email.get(
+        assert "Tämä on kopio Helsingin kaupungille lähetetystä aluehaun hakemuksesta." in email.get(
             "body"
-        ) or "Culture and leisure" in email.get(
+        ) or "This is a copy of your area search application sent to the City of Helsinki." in email.get(
             "body"
-        ), "Email body should contain mapped lessor name"
-        assert "Tarkempi kuvaus käyttötarkoituksesta: Want to hold Helsinki Olympics 2028 here" in email.get(
-            "body"
-        ) or "Description intended use: Want to hold Helsinki Olympics 2028 here" in email.get(
-            "body"
-        )
+        ), "Should contain Finnish text from the email template"
+
+    # Case 1: Test that async_task is called, content language if English
+    with patch("forms.utils.async_task") as mock_async_task:
+        input_data: AnswerInputData = {
+            "answer_id": answer.get("id"),
+            "answer_type": AnswerType.AREA_SEARCH,
+            "user_language": "en",
+        }
+        generate_and_queue_answer_emails(input_data=input_data)
+
+        assert mock_async_task.called
+        call_function, email_message = mock_async_task.call_args.args
+        assert call_function.__name__ == "send_answer_email"
+        email: EmailMessageInput = email_message
+        assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
+        assert (
+            "This is a copy of your area search application sent to the City of Helsinki."
+            in email.get("body")
+        ), "Should contain English text from the email template"
+
+
+@pytest.mark.django_db
+def test_generate_email_user_language(answer_with_email):
+    answer_id = answer_with_email.get("answer", {}).get("id")
+    default_user_language = "fi"
+
+    # Case 1: User language is set to Finnish
+    with patch("forms.utils.override") as mock_override:
+        user_language = "fi"
+        input_data: AnswerInputData = {
+            "answer_id": answer_id,
+            "answer_type": AnswerType.AREA_SEARCH,
+            "user_language": user_language,
+        }
+        generate_and_queue_answer_emails(input_data=input_data)
+        assert mock_override.called
+        language_code = mock_override.call_args.args[0]
+        assert language_code == user_language
+
+    # Case 2: User language is set to Georgian, should default to Finnish
+    with patch("forms.utils.override") as mock_override:
+        user_language = "ka"  # Georgian
+        input_data: AnswerInputData = {
+            "answer_id": answer_id,
+            "answer_type": AnswerType.AREA_SEARCH,
+            "user_language": user_language,
+        }
+        generate_and_queue_answer_emails(input_data=input_data)
+        assert mock_override.called
+        language_code = mock_override.call_args.args[0]
+        assert language_code == default_user_language
+
+    def get_language_side_effect(*args, **kwargs):
+        # Check the active language when patched function is called
+        assert get_language() == user_language
+
+    # Case 3: User language is set to Swedish
+    # Expecting the current language context to be Swedish
+    with patch(
+        "forms.utils._generate_plotsearch_email", side_effect=get_language_side_effect
+    ) as mock_generate_plotsearch_email:
+        user_language = "sv"
+        input_data: AnswerInputData = {
+            "answer_id": answer_id,
+            "answer_type": AnswerType.AREA_SEARCH,
+            "user_language": user_language,
+        }
+        generate_and_queue_answer_emails(input_data=input_data)
+        assert mock_generate_plotsearch_email.called
 
 
 # def test_generate_area_search_pdf_and_email_to_disk(answer_with_email):

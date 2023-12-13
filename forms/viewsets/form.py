@@ -1,6 +1,7 @@
 from django.core.files import File
 from django.db.models import Prefetch
 from django.http import HttpResponse
+from django.utils.translation import get_language_from_request
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -134,8 +135,9 @@ class AnswerPublicViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
+        user_language = get_language_from_request(request)
         response = super().create(request, *args, **kwargs)
-        handle_email_sending(response)
+        handle_email_sending(response, user_language)
         return response
 
 

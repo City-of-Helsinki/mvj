@@ -13,6 +13,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
+from django.utils.translation import override
 from django.utils.translation import ugettext as _
 from django_q.tasks import Conf, async_task
 from django_xhtml2pdf.utils import generate_pdf
@@ -507,11 +508,12 @@ class AnswerInBBoxFilter(InBBoxFilter):
         ).distinct("pk")
 
 
-def handle_email_sending(response: Response) -> None:
+def handle_email_sending(response: Response, user_language: str) -> None:
     answer_id = response.data.get("id")
-    input_data = {
+    input_data: AnswerInputData = {
         "answer_id": answer_id,
         "answer_type": None,
+        "user_language": user_language,
     }
     area_search_id = response.data.get("area_search")
     if area_search_id:
@@ -538,6 +540,7 @@ def handle_email_sending(response: Response) -> None:
 class AnswerInputData(TypedDict):
     answer_id: int
     answer_type: AnswerType
+    user_language: str  # ISO 639-1 language code, e.g. "fi", "en", "sv"
 
 
 class EmailMessageInput(TypedDict):
@@ -548,13 +551,100 @@ class EmailMessageInput(TypedDict):
     attachments: List[Tuple[str, Union[bytes, BytesIO], str]]
 
 
-def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
-    from forms.models import Answer
+def _get_email_to_address(context) -> str:
+    for applicant in context.get("applicants", []):
+        try:
+            email_address = (
+                applicant["entry_section"]
+                .entries.filter(field__identifier="sahkoposti")
+                .first()
+                .value
+            )
+            return email_address
+        except AttributeError:
+            continue
+
+    return email_address
+
+
+def _generate_target_status_email(answer) -> EmailMessageInput:
     from plotsearch.utils import build_pdf_context
 
-    email_messages: List[EmailMessage] = []
+    context: dict = {}
+    attachments: List[Tuple[str, bytes, str]] = []
+    target_statuses = getattr(answer, "statuses", None)
+    target_status_identifiers = ", ".join(
+        target_statuses.values_list("application_identifier", flat=True)
+    )
+    from_email = settings.FROM_EMAIL_PLOT_SEARCH
+    email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
+    email_body = render_to_string("target_status/email_detail.txt", context)
+
+    for target_status in target_statuses.all():
+        context["object"] = target_status
+        context = build_pdf_context(context)
+        pdf: BytesIO = generate_pdf("target_status/detail.html", context=context)
+        email_pdf: bytes = pdf.getvalue()
+        attachment_filename = f"{target_status.application_identifier}.pdf"
+        attachments.append([attachment_filename, email_pdf, "application/pdf"])
+
+    email_message: EmailMessageInput = {
+        "from_email": from_email or settings.MVJ_EMAIL_FROM,
+        "to": _get_email_to_address(context),
+        "subject": email_subject,
+        "body": email_body,
+        "attachments": attachments,
+    }
+
+    return email_message
+
+
+def _generate_area_search_email(answer) -> EmailMessageInput:
+    from plotsearch.utils import build_pdf_context
+
+    context: dict = {}
+    attachments: List[Tuple[str, bytes, str]] = []
+    area_search = getattr(answer, "area_search", None)
+    context["object"] = area_search
+    context = build_pdf_context(context)
+    from_email = settings.FROM_EMAIL_AREA_SEARCH
+    email_subject = _(f"Copy of area rental application {area_search.identifier}")
+    email_body = render_to_string("area_search/email_detail.txt", context)
+    pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
+    email_pdf: bytes = pdf.getvalue()
+    attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
+    attachments.append([attachment_filename, email_pdf, "application/pdf"])
+
+    email_message: EmailMessageInput = {
+        "from_email": from_email or settings.MVJ_EMAIL_FROM,
+        "to": _get_email_to_address(context),
+        "subject": email_subject,
+        "body": email_body,
+        "attachments": attachments,
+    }
+
+    return email_message
+
+
+def _generate_plotsearch_email(answer_type: AnswerType, answer) -> EmailMessageInput:
+    if answer_type == AnswerType.AREA_SEARCH:
+        return _generate_area_search_email(answer)
+    elif answer_type == AnswerType.TARGET_STATUS:
+        return _generate_target_status_email(answer)
+    raise ValueError(f"Answer type {answer_type} not supported.")
+
+
+def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
+    from forms.models import Answer
+
     answer_id = input_data.get("answer_id")
     answer_type = input_data.get("answer_type")
+    user_preferred_language = input_data.get("user_language", "fi")
+    user_language = (
+        user_preferred_language
+        if user_preferred_language in get_supported_language_codes()
+        else "fi"
+    )
 
     try:
         answer = Answer.objects.get(id=answer_id)
@@ -564,64 +654,14 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         )
         return
 
-    context = {}
-    attachments: List[Tuple[str, bytes, str]] = []
+    # Set the translation language to user's preferred language
+    # The language selection comes from the users browser
+    with override(user_language):
+        email_message_input = _generate_plotsearch_email(answer_type, answer)
 
-    if answer_type == AnswerType.TARGET_STATUS:
-        target_statuses = getattr(answer, "statuses", None)
-        target_status_identifiers = ", ".join(
-            target_statuses.values_list("application_identifier", flat=True)
-        )
-        from_email = settings.FROM_EMAIL_PLOT_SEARCH
-        email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
-        email_body = render_to_string("target_status/email_detail.txt", context)
-
-        for target_status in target_statuses.all():
-            context["object"] = target_status
-            context = build_pdf_context(context)
-            pdf: BytesIO = generate_pdf("target_status/detail.html", context=context)
-            email_pdf: bytes = pdf.getvalue()
-            attachment_filename = f"{target_status.application_identifier}.pdf"
-            attachments.append([attachment_filename, email_pdf, "application/pdf"])
-
-    if answer_type == AnswerType.AREA_SEARCH:
-        area_search = getattr(answer, "area_search", None)
-        context["object"] = area_search
-        context = build_pdf_context(context)
-        from_email = settings.FROM_EMAIL_AREA_SEARCH
-        email_subject = _(f"Copy of area rental application {area_search.identifier}")
-        email_body = render_to_string("area_search/email_detail.txt", context)
-        pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
-        email_pdf: bytes = pdf.getvalue()
-        attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
-        attachments.append([attachment_filename, email_pdf, "application/pdf"])
-
-    for applicant in context.get("applicants", []):
-        try:
-            email_address = (
-                applicant["entry_section"]
-                .entries.filter(field__identifier="sahkoposti")
-                .first()
-                .value
-            )
-        except AttributeError:
-            continue
-
-        email_message: EmailMessageInput = {
-            "from_email": from_email or settings.MVJ_EMAIL_FROM,
-            "to": [email_address],
-            "subject": email_subject,
-            "body": email_body,
-            "attachments": attachments,
-        }
-
-        email_messages.append(email_message)
-
-    for email_message in email_messages:
-        async_task(
-            send_answer_email, email_message,
-        )
-
+    async_task(
+        send_answer_email, email_message_input,
+    )
     return
 
 
@@ -653,3 +693,8 @@ def send_answer_email(email_message_input: EmailMessageInput) -> None:
     except TimeoutError as e:
         logging.exception("Server connection timed out when sending email.")
         raise e
+
+
+def get_supported_language_codes() -> List[str]:
+    """Gets language codes allowed to be translated to."""
+    return [language_code for language_code, _language_name in settings.LANGUAGES]
