@@ -551,20 +551,26 @@ class EmailMessageInput(TypedDict):
     attachments: List[Tuple[str, Union[bytes, BytesIO], str]]
 
 
-def _get_email_to_address(context) -> str:
-    for applicant in context.get("applicants", []):
-        try:
-            email_address = (
-                applicant["entry_section"]
-                .entries.filter(field__identifier="sahkoposti")
-                .first()
-                .value
-            )
-            return email_address
-        except AttributeError:
-            continue
+def _get_email_to_addresses(answer) -> List[str]:
+    from forms.models.form import Entry
 
-    return email_address
+    # The query intends to find email addresses for applicants that are either
+    # a company ("yrityksen-tiedot") or a private person ("henkilon-tiedot")
+    # or a private persons contact person ("henkilon-tiedot[0].yhteyshenkilo").
+    # Duplicates are removed with distinct("value").
+    email_entries = (
+        Entry.objects.filter(
+            entry_section__answer=answer, field__identifier="sahkoposti"
+        )
+        .exclude(path__icontains="laskutustiedot",)
+        .exclude(path__icontains="laskunsaaja",)
+        .exclude(value__isnull=True,)
+        .exclude(value="")
+        .distinct("value")
+        .values_list("value", flat=True)
+    )
+    email_addresses = list(email_entries)
+    return email_addresses
 
 
 def _generate_target_status_email(answer) -> EmailMessageInput:
@@ -590,7 +596,7 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_address(context),
+        "to": _get_email_to_addresses(context),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
@@ -617,7 +623,7 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_address(context),
+        "to": _get_email_to_addresses(context),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
