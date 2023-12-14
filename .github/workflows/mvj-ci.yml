@@ -63,7 +63,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -ra -vvv --doctest-modules --cov=.
+          pytest -ra -vvv --doctest-modules --cov=. --migrations
           ./run-type-checks
 
       - name: Run codecov
