@@ -40,8 +40,8 @@ jobs:
       -   name: Apt-get update
           run: sudo apt-get update
 
-      - name: Install postgis prerequisites
-        run: sudo apt-get install gdal-bin
+      - name: Install postgis & translations prerequisites
+        run: sudo apt-get install gdal-bin gettext
 
       - name: Install dependencies
         run: |
