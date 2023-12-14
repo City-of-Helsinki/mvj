@@ -61,8 +61,9 @@ jobs:
           flake8
           isort . --check-only --diff
 
-      - name: Run tests
+      - name: Run tests, compile translations, run type checks
         run: |
+          python manage.py compilemessages
           pytest -ra -vvv --doctest-modules --cov=. --migrations
           ./run-type-checks
 
