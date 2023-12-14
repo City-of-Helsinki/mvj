@@ -49,7 +49,7 @@ def test_form_cloning(basic_template_form):
 def test_generate_and_queue_answer_emails(answer_with_email):
     answer = answer_with_email.get("answer")
 
-    # Case 1: Test that async_task is called, content language if Finnish
+    # Case 1: Test that async_task is called, content language is Finnish
     with patch("forms.utils.async_task") as mock_async_task:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
@@ -63,13 +63,12 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         assert call_function.__name__ == "send_answer_email"
         email: EmailMessageInput = email_message
         assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
-        assert "Tämä on kopio Helsingin kaupungille lähetetystä aluehaun hakemuksesta." in email.get(
-            "body"
-        ) or "This is a copy of your area search application sent to the City of Helsinki." in email.get(
-            "body"
+        assert (
+            "Tämä on kopio Helsingin kaupungille lähetetystä aluehaun hakemuksesta."
+            in email.get("body")
         ), "Should contain Finnish text from the email template"
 
-    # Case 1: Test that async_task is called, content language if English
+    # Case 1: Test that async_task is called, content language is English
     with patch("forms.utils.async_task") as mock_async_task:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
