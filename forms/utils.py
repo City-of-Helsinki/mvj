@@ -665,9 +665,8 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     with override(user_language):
         email_message_input = _generate_plotsearch_email(answer_type, answer)
 
-    async_task(
-        send_answer_email, email_message_input,
-    )
+    send_answer_email(email_message_input)
+
     return
 
 

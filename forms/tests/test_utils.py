@@ -50,7 +50,7 @@ def test_generate_and_queue_answer_emails(answer_with_email):
     answer = answer_with_email.get("answer")
 
     # Case 1: Test that async_task is called, content language is Finnish
-    with patch("forms.utils.async_task") as mock_async_task:
+    with patch("forms.utils.send_answer_email") as mock_send_answer_email:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
@@ -58,9 +58,8 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         }
         generate_and_queue_answer_emails(input_data=input_data)
 
-        assert mock_async_task.called
-        call_function, email_message = mock_async_task.call_args.args
-        assert call_function.__name__ == "send_answer_email"
+        assert mock_send_answer_email.called
+        (email_message,) = mock_send_answer_email.call_args.args
         email: EmailMessageInput = email_message
         assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
         assert (
@@ -69,7 +68,7 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         ), "Should contain Finnish text from the email template"
 
     # Case 1: Test that async_task is called, content language is English
-    with patch("forms.utils.async_task") as mock_async_task:
+    with patch("forms.utils.send_answer_email") as mock_send_answer_email:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
@@ -77,9 +76,8 @@ def test_generate_and_queue_answer_emails(answer_with_email):
         }
         generate_and_queue_answer_emails(input_data=input_data)
 
-        assert mock_async_task.called
-        call_function, email_message = mock_async_task.call_args.args
-        assert call_function.__name__ == "send_answer_email"
+        assert mock_send_answer_email.called
+        (email_message,) = mock_send_answer_email.call_args.args
         email: EmailMessageInput = email_message
         assert email.get("from_email") == settings.DEFAULT_FROM_EMAIL
         assert (
@@ -134,21 +132,33 @@ def test_generate_email_user_language(answer_with_email):
             "answer_type": AnswerType.AREA_SEARCH,
             "user_language": user_language,
         }
-        generate_and_queue_answer_emails(input_data=input_data)
-        assert mock_generate_plotsearch_email.called
+        with patch("forms.utils.send_answer_email") as mock_send_answer_email:
+            generate_and_queue_answer_emails(input_data=input_data)
+            assert mock_generate_plotsearch_email.called
+            assert mock_send_answer_email.called
 
 
+# @pytest.mark.django_db
 # def test_generate_area_search_pdf_and_email_to_disk(answer_with_email):
 #     """This test is for debugging purposes only. It generates the email and pdf files to disk."""
 #     import os
-#     answer = answer_with_email.get("answer")
+
+#     # answer = answer_with_email.get("answer")
+#     answer_id = answer_with_email.get("answer", {}).get("id")
 #     with patch("forms.utils.async_task") as mock_async_task:
-#         generate_and_queue_answer_emails(answer.get("id"))
+#         input_data: AnswerInputData = {
+#             "answer_id": answer_id,
+#             "answer_type": AnswerType.AREA_SEARCH,
+#             "user_language": "fi",
+#         }
+#         generate_and_queue_answer_emails(input_data=input_data)
 #         _, kwargs = mock_async_task.call_args
 #         data = kwargs.get("input_data")
-#         email: EmailMessage = data.get("email_message")
+#         email = data.get("email_message")
 
-#     directory = "/code/tmp" # Change this to your desired path, this is for devcontainers only
+#     directory = (
+#         "/code/tmp"  # Change this to your desired path, this is for devcontainers only
+#     )
 #     os.makedirs(directory, exist_ok=True)
 #     for i, (filename, content, mimetype) in enumerate(email.attachments):
 #         pdf_file_path = os.path.join(directory, f"{i}_{filename}")
