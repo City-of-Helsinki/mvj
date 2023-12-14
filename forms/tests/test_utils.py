@@ -145,29 +145,27 @@ def test_generate_email_user_language(answer_with_email):
 
 #     # answer = answer_with_email.get("answer")
 #     answer_id = answer_with_email.get("answer", {}).get("id")
-#     with patch("forms.utils.async_task") as mock_async_task:
+#     with patch("forms.utils.send_answer_email") as mock_send_answer_email:
 #         input_data: AnswerInputData = {
 #             "answer_id": answer_id,
 #             "answer_type": AnswerType.AREA_SEARCH,
 #             "user_language": "fi",
 #         }
 #         generate_and_queue_answer_emails(input_data=input_data)
-#         _, kwargs = mock_async_task.call_args
-#         data = kwargs.get("input_data")
-#         email = data.get("email_message")
+#         email: EmailMessageInput = mock_send_answer_email.call_args.args[0]
 
 #     directory = (
 #         "/code/tmp"  # Change this to your desired path, this is for devcontainers only
 #     )
 #     os.makedirs(directory, exist_ok=True)
-#     for i, (filename, content, mimetype) in enumerate(email.attachments):
+#     for i, (filename, content, mimetype) in enumerate(email.get("attachments", [])):
 #         pdf_file_path = os.path.join(directory, f"{i}_{filename}")
 #         with open(pdf_file_path, "wb") as f:
 #             f.write(content)
 
-#     email_file_path = os.path.join(directory, f"{email.to[0]}")
+#     email_file_path = os.path.join(directory, f"{email.get('to')[0]}")
 #     with open(email_file_path, "wb") as f:
-#         f.write(email.body.encode("utf-8"))
+#         f.write(email.get("body").encode("utf-8"))
 
 
 def test_send_answer_email(answer_email_message: EmailMessageInput):
