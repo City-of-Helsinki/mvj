@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 15:48+0200\n"
+"POT-Creation-Date: 2023-12-14 16:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3667,6 +3667,9 @@ msgstr "Kohteen tiedot ovat muuttuneet!"
 
 msgid "Area search information"
 msgstr "Aluehaun tiedot"
+
+msgid "City of Helsinki"
+msgstr "Helsingin kaupunki"
 
 msgid "Information check"
 msgstr "Tietojen tarkistus"
