@@ -596,7 +596,7 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_addresses(context),
+        "to": _get_email_to_addresses(answer),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
@@ -623,7 +623,7 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_addresses(context),
+        "to": _get_email_to_addresses(answer),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
