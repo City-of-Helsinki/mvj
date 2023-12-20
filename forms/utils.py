@@ -582,6 +582,7 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
     target_status_identifiers = ", ".join(
         target_statuses.values_list("application_identifier", flat=True)
     )
+    context.update(target_status_identifiers=target_status_identifiers)
     from_email = settings.FROM_EMAIL_PLOT_SEARCH
     email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
     email_body = render_to_string("target_status/email_detail.txt", context)

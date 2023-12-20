@@ -9,6 +9,7 @@ from django import http
 from django.core.files import File
 from django.http import HttpResponse, QueryDict
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
 from django_xhtml2pdf.views import PdfMixin
@@ -359,6 +360,106 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
     model = TargetStatus
     filterset_class = TargetStatusExportFilterSet
 
+    @staticmethod
+    def get_nested_attr(obj, attrs: str, default=None):
+        """Get nested attribute described with dot separated string from an object.
+        E.g. 'company.address.city'"""
+        for attr in attrs.split("."):
+            try:
+                obj = getattr(obj, attr)
+            except AttributeError:
+                return default
+        return obj
+
+    def _get_plan(self, object: TargetStatus):
+        """Get either PlanUnit or CustomDetailedPlan from TargetStatus's PlotSearchTarget."""
+        plan_unit = self.get_nested_attr(object, "plot_search_target.plan_unit")
+        custom_detailed_plan = self.get_nested_attr(
+            object, "plot_search_target.custom_detailed_plan"
+        )
+        return plan_unit if plan_unit else custom_detailed_plan
+
+    def _get_plan_intended_use(self, object):
+        """Get intended use from either Plan or PlanUnit."""
+        for attr in ("intended_use", "plan_unit_intended_use"):
+            try:
+                return getattr(self._get_plan(object), attr)
+            except AttributeError:
+                continue
+        return None
+
+    def _get_plot_search_information(self, object):
+        """Creates plot search information context for PDF template.
+        Generates a list of objects, excluding those without a value."""
+        plan = self._get_plan(object)
+        plan_intended_use = self._get_plan_intended_use(object)
+
+        plot_identifier = getattr(plan, "identifier", None)
+        try:
+            application_deadline = self.get_nested_attr(
+                object, "plot_search_target.plot_search.end_at"
+            ).strftime("%H:%M %d.%m.%Y")
+        except AttributeError:
+            application_deadline = None
+
+        address = getattr(plan.lease_area.addresses.first(), "address", None)
+        detailed_plan_identifier = getattr(
+            plan, "detailed_plan_identifier", None
+        ) or getattr(plan, "identifier", None)
+        detailed_plan_state = self.get_nested_attr(
+            plan, "state.name"
+        ) or self.get_nested_attr(plan, "plan_unit_state.name")
+        intended_use = getattr(plan_intended_use, "name")
+        # Comes from CustomDetailedPlan only
+        rent_build_permission = getattr(plan, "rent_build_permission", None)
+        area = getattr(plan, "area", None) or self.get_nested_attr(
+            plan, "lease_area.area"
+        )
+        # Unknown where this comes from, but it is used in the UI
+        first_suitable_construction_year = getattr(
+            plan, "first_suitable_construction_year", None
+        )
+        lease_hitas = getattr(plan, "lease_area.lease.hitas.name", None)
+        lease_financing = getattr(plan, "lease_area.lease.financing.name", None)
+        lease_management = getattr(plan, "lease_area.lease.management.name", None)
+
+        plotsearch_info = [
+            {
+                "label": _("The deadline for applications"),
+                "value": application_deadline,
+            },
+            {"label": _("Plot"), "value": plot_identifier},
+            {"label": _("Address"), "value": address},
+            {
+                "label": _("Detailed plan identifier"),
+                "value": detailed_plan_identifier,
+            },
+            {"label": _("Detailed plan state"), "value": detailed_plan_state},
+            {"label": _("Intended use"), "value": intended_use},
+            {
+                "label": _("Permitted build floor area (floor-m²)"),
+                "value": rent_build_permission,
+            },
+            {  # The value is defined in public-ui but not used
+                "label": _("Permitted build residential floor area (floor-m²)"),
+                "value": None,
+            },
+            {  # The value is defined in public-ui but not used
+                "label": _("Permitted build commercial floor area (floor-m²)"),
+                "value": None,
+            },
+            {"label": _("Area (m²)"), "value": area},
+            {
+                "label": _("First suitable construction year"),
+                "value": first_suitable_construction_year,
+            },
+            {"label": _("HITAS"), "value": lease_hitas},
+            {"label": _("Financing method"), "value": lease_financing},
+            {"label": _("Management method"), "value": lease_management},
+        ]
+
+        return [x for x in plotsearch_info if x["value"] is not None]
+
     def render_to_response(
         self, context: Dict[str, Any], **response_kwargs: Any
     ) -> http.HttpResponse:
@@ -367,6 +468,9 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
         with zipfile.PyZipFile(response, mode="w") as zip_file:
             for object in self.object_list:
                 context.update(object=object)
+                context.update(
+                    plotsearch_info=self._get_plot_search_information(object)
+                )
                 pdf_response = self.response_class(
                     request=self.request,
                     template=self.get_template_names(),

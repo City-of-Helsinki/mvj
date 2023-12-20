@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% load form_visible %}
 {% load entry_filter %}
 
@@ -17,17 +18,29 @@
         <div>
             <h1>{{ object.application_identifier }}</h1>
         </div>
+        <div>
+            <h2>{% trans "Plot search information" %}</h2>
+            <h3>{{ plotsearch.name }}</h3>
+            <table>
+                {% for field in plotsearch_info %}
+                <tr>
+                    <th>{{ field.label|default:"" }}</th>
+                    <td>{{ field.value|default:"" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         <div class="divider">&nbsp;</div>
         <!--APPLICANT SECTIONS-->
         {% for applicant in applicants %}
             {% if applicant.section.applicant_type.value == applicant.applicant_type.value or applicant.section.applicant_type.value == "both" or applicant.applicant_type.value == "both" %}
-                {% include "mixins/section.html" with section=applicant.section answer=object.answer applicant_identifier=applicant.identifier applicant_type=applicant.applicant_type %}
+                {% include "mixins/section.html" with section=applicant.section answer=object.answer applicant_identifier=applicant.identifier applicant_type=applicant.applicant_type plot_search_target=None %}
             {% endif %}
         {% endfor %}
         <!--OTHER SECTIONS-->
 
         {% for section in other_sections.all|filter_only_parent %}
-            {% include "mixins/section.html" with section=section answer=object.answer applicant_identifier=None applicant_type="both" %}
+            {% include "mixins/section.html" with section=section answer=object.answer applicant_identifier=None applicant_type="both" plot_search_target=object.plot_search_target %}
         {% endfor %}
     </div>
 </body>

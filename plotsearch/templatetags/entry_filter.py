@@ -50,3 +50,21 @@ def filter_applicant(qs, applicant_identifier):
             entries.append(entry)
 
     return entries
+
+
+@register.filter
+def filter_plot_search_target(qs, plot_search_target):
+    """Exclude entries in section 'haettava-kohde' where `plot_search_target` does not match metadata."""
+    if plot_search_target is None:
+        return qs
+
+    entries = []
+    for entry in qs:
+        if not (
+            "haettava-kohde" in entry.entry_section.identifier
+            and entry.entry_section.metadata.get("identifier") != plot_search_target.id
+        ):
+            # Skip entries that are not the target, otherwise multiple targets are shown
+            entries.append(entry)
+
+    return entries

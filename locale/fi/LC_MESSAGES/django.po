@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-14 16:37+0200\n"
+"POT-Creation-Date: 2023-12-20 16:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3686,9 +3686,34 @@ msgid ""
 "email."
 msgstr "Kopio hakemuksesta löytyy tämän sähköpostin liitetiedostosta."
 
+msgid "Plot search information"
+msgstr "Tonttihaun tiedot"
+
+msgid "The deadline for applications"
+msgstr "Haku päättyy"
+
+msgid "Plot"
+msgstr "Tontti"
+
+msgid "Detailed plan state"
+msgstr "Asemakaavan käsittelyvaihe"
+
+msgid "Permitted build floor area (floor-m²)"
+msgstr "Rakennusoikeus (k-m²)"
+
+msgid "Area (m²)"
+msgstr "Pinta-ala (m²)"
+
 msgid ""
-"This is a copy of your plot search application sent to the City of Helsinki."
+"This is a confirmation that the following plot application sent to the City "
+"of Helsinki were received."
 msgstr ""
+"Helsingin kaupungille lähetetyt tonttihakemukset on vahvistetusti "
+"vastaanotettu seuraavilla tunnuksilla."
+
+msgctxt "list of identifiers in email"
+msgid "Application identifiers"
+msgstr "Hakemustunnukset"
 
 msgid "yes"
 msgstr "kyllä"
@@ -3710,6 +3735,24 @@ msgstr ""
 "Hei {receiver}! Tässä linkki suoravaraustonttihakuun: {url} \n"
 "\n"
 "{covering_note}"
+
+msgid "Permitted build residential floor area (floor-m²)"
+msgstr "Asuinrakennusoikeus (k-m²)"
+
+msgid "Permitted build commercial floor area (floor-m²)"
+msgstr "Liikerakennusoikeus (k-m²)"
+
+msgid "First suitable construction year"
+msgstr "Rakennuskelpoinen"
+
+msgid "HITAS"
+msgstr "HITAS"
+
+msgid "Financing method"
+msgstr "Rahoitusmuoto"
+
+msgid "Management method"
+msgstr "Hallintamuoto"
 
 msgid "Token exists"
 msgstr "Token olemassa"
