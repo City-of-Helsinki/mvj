@@ -24,6 +24,7 @@ from rest_framework_gis.filters import InBBoxFilter
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from forms.models import Answer
 from forms.serializers.form import AnswerOpeningRecordSerializer
+from leasing.models import CustomDetailedPlan
 from leasing.permissions import (
     MvjDjangoModelPermissions,
     MvjDjangoModelPermissionsOrAnonReadOnly,
@@ -390,7 +391,7 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
 
     def _get_plot_search_information(self, object):
         """Creates plot search information context for PDF template.
-        Generates a list of objects, excluding those without a value."""
+        Generates a list of dictionarys, excluding those without a value."""
         plan = self._get_plan(object)
         plan_intended_use = self._get_plan_intended_use(object)
 
@@ -403,9 +404,12 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
             application_deadline = None
 
         address = getattr(plan.lease_area.addresses.first(), "address", None)
-        detailed_plan_identifier = getattr(
-            plan, "detailed_plan_identifier", None
-        ) or getattr(plan, "identifier", None)
+        detailed_plan_identifier = (
+            getattr(plan, "detailed_plan_identifier", None)
+            or getattr(plan, "identifier", None)
+            if isinstance(plan, CustomDetailedPlan)
+            else None
+        )
         detailed_plan_state = self.get_nested_attr(
             plan, "state.name"
         ) or self.get_nested_attr(plan, "plan_unit_state.name")

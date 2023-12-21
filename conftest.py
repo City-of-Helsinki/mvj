@@ -172,18 +172,22 @@ class LeaseAreaFactory(factory.DjangoModelFactory):
 
 
 @register
-class PlanUnitFactory(factory.DjangoModelFactory):
-    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
-    lease_area = factory.SubFactory(LeaseAreaFactory)
-
-    class Meta:
-        model = PlanUnit
-
-
-@register
 class PlanUnitIntendedUseFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlanUnitIntendedUse
+
+
+@register
+class PlanUnitFactory(factory.DjangoModelFactory):
+    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+    lease_area = factory.SubFactory(LeaseAreaFactory)
+    plan_unit_intended_use = factory.SubFactory(PlanUnitIntendedUseFactory)
+    identifier = factory.Iterator(
+        ["91-1-30-1", "91-1-30-2", "91-1-30-3", "91-1-30-4", "91-1-30-5"]
+    )
+
+    class Meta:
+        model = PlanUnit
 
 
 @register
