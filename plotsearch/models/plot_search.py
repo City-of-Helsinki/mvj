@@ -229,7 +229,7 @@ class InformationCheck(models.Model):
 def target_status_id_generator():
     year = str(timezone.now().year)[2:4]
 
-    beginning_str = "MVJ-{}".format(year)
+    beginning_str = "TH-{}".format(year)
     latest_target_status_with_id = TargetStatus.objects.filter(
         application_identifier__startswith=beginning_str
     )
