@@ -9,6 +9,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from sentry_sdk import capture_exception
 
 from laske_export.models import LaskePaymentsLog
 from leasing.models import Invoice, Vat
@@ -68,7 +69,8 @@ class Command(BaseCommand):
                     preserve_mtime=True,
                 )
         except SSHException as e:
-            self.stdout.write("Error with the Laske payments server: {}".format(e))
+            self.stdout.write("Error with the Laske payments server: {}".format(str(e)))
+            capture_exception(e)
 
     def download_payments_ftp(self):
         from ftplib import FTP
@@ -85,13 +87,15 @@ class Command(BaseCommand):
             )
             ftp.cwd(settings.LASKE_SERVERS["payments"]["directory"])
         except Exception as e:
-            self.stderr.write("Could connect to the server. Error: ".format(str(e)))
+            self.stderr.write("Could connect to the server. Error: {}".format(str(e)))
+            capture_exception(e)
             return
 
         try:
             file_list = ftp.nlst()
         except Exception as e:
-            self.stderr.write("Could not get file list. Error: ".format(str(e)))
+            self.stderr.write("Could not get file list. Error: {}".format(str(e)))
+            capture_exception(e)
             return
 
         for file_name in file_list:
@@ -114,8 +118,9 @@ class Command(BaseCommand):
                 self.stdout.write("Done.")
             except Exception as e:
                 self.stderr.write(
-                    'Could not download file "{}". Error: '.format(file_name, str(e))
+                    'Could not download file "{}". Error: {}'.format(file_name, str(e))
                 )
+                capture_exception(e)
 
         ftp.quit()
 
@@ -213,6 +218,7 @@ class Command(BaseCommand):
                 self.stderr.write(
                     "Error: failed to read file {}! Error {}".format(filename, str(e))
                 )
+                capture_exception(e)
                 continue
 
             for line in lines:
