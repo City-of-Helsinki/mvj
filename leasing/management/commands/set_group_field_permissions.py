@@ -446,6 +446,7 @@ CUSTOM_FIELD_PERMS = {
         "rents": {2: "change", 3: "change", 4: "change", 5: "change", 6: "change"},
         "decisions": {3: "change"},
         "contracts": {3: "change", 6: "change"},
+        "internal_order": {2: "view", 5: "view", 6: "change"},
         "invoice_notes": {2: "view", 4: "view", 5: "view", 6: "change"},
         "is_invoicing_enabled": {2: "view", 4: "view", 5: "view", 6: "change"},
         "is_rent_info_complete": {2: "view", 5: "view"},
