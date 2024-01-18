@@ -226,6 +226,8 @@ class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
 class LeaseAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
     raw_id_fields = ("identifier",)
+    search_fields = ("identifier_id__identifier",)
+    search_help_text = _("Search by identifier")  # Will be added in django 4.0
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
