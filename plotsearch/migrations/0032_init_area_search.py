@@ -1,9 +1,11 @@
 from django.db import migrations
+from forms.models import FieldType
 from plotsearch.utils import initialize_area_search_form
 
 
 def init_area_search_form(apps, schema_editor):
-    initialize_area_search_form()
+    if 8 <= FieldType.objects.all().count():
+        initialize_area_search_form()
 
 
 def reverse_func(apps, schema_editor):
