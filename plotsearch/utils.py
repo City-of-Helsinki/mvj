@@ -571,7 +571,8 @@ def initialize_area_search_form():
         enabled=True,
         required=False,
         sort_order=0,
-        hint_text="Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse. Täytä vain, jos laskunsaaja on eri kuin hakija.",
+        hint_text="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
+                     Täytä vain, jos laskunsaaja on eri kuin hakija.""",
     )
     invoice_section2_language = Field.objects.create(
         section=invoice_section2,
@@ -689,8 +690,10 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.",
-        hint_text="Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen. Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.",
+        label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
+                 ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
+        hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
+                     Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
         type_id=field_type_field_ids.get("checkbox"),
         identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
         enabled=True,
@@ -699,7 +702,8 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: www.hel.fi/rekisteriseloste",
+        label="""Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön
+                 asiakasrekisterin selosteen mukaisesti. Lisätiedot: www.hel.fi/rekisteriseloste""",
         type_id=field_type_field_ids.get("checkbox"),
         identifier="hyvaksyn-tietojeni-tallentamisen",
         enabled=True,
