@@ -139,7 +139,7 @@ def initialize_area_search_form():
         enabled=True,
         required=False,
         sort_order=5,
-        default_value="Suomi"
+        default_value="Suomi",
     )
     Field.objects.create(
         section=corporate_section,
@@ -499,10 +499,7 @@ def initialize_area_search_form():
         field=security_ban, text="Ei", value="ei", has_text_input=False
     )
     Choice.objects.create(
-        field=security_ban,
-        text="Kyllä",
-        value="kyllä",
-        has_text_input=False,
+        field=security_ban, text="Kyllä", value="kyllä", has_text_input=False,
     )
 
     contact_section = Section.objects.create(
