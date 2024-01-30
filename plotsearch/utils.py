@@ -693,7 +693,8 @@ def initialize_area_search_form():
         label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
                  ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
         hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
-                     Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
+                     Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään
+                     päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
         type_id=field_type_field_ids.get("checkbox"),
         identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
         enabled=True,
