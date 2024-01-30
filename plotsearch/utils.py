@@ -212,30 +212,23 @@ def initialize_area_search_form():
         visible=True,
         applicant_type="company",
     )
-    invoice_details_field = Field.objects.create(
-        section=invoice_section,
-        label="Laskutusosoite",
-        type_id=field_type_field_ids.get("radiobuttoninline"),
-        identifier="laskutusosoite_default",
-        enabled=True,
-        required=False,
-        default_value="1",
-        sort_order=0
-    )
-    Choice.objects.create(
-        field=invoice_details_field, text="Hakija", value="1", has_text_input=False
-    )
-    Choice.objects.create(
-        field=invoice_details_field, text="Muu laskutusosoite", value="2", has_text_input=False
-    )
     Field.objects.create(
         section=invoice_section,
-        label="Verkkolaskutusosoite",
-        type_id=field_type_field_ids.get("textbox"),
-        identifier="verkkolaskutusosoite",
+        label="Hakijan laskutusosoite",
+        type_id=field_type_field_ids.get("checkbox"),
+        identifier="laskutusosoite-hakija",
         enabled=True,
         required=False,
         sort_order=0,
+    )
+    Field.objects.create(
+        section=invoice_section,
+        label="Verkkolaskuosoite",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="verkkolaskuosoite",
+        enabled=True,
+        required=False,
+        sort_order=1,
     )
     Field.objects.create(
         section=invoice_section,
@@ -244,7 +237,7 @@ def initialize_area_search_form():
         identifier="valittajan-tunnus",
         enabled=True,
         required=False,
-        sort_order=1,
+        sort_order=2,
     )
     Field.objects.create(
         section=invoice_section,
@@ -253,110 +246,128 @@ def initialize_area_search_form():
         identifier="laskutusviite",
         enabled=True,
         required=False,
+        sort_order=3,
+    )
+
+    invoice_other_section = Section.objects.create(
+        form=form,
+        parent=invoice_section,
+        title="Muut laskutustiedot",
+        identifier="muut-laskutustiedot",
+        visible=True,
+        applicant_type="company",
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Muu laskutusosoite",
+        type_id=field_type_field_ids.get("checkbox"),
+        identifier="laskutusosoite-muu",
+        enabled=True,
+        required=False,
+        sort_order=0,
+        hint_text="Täytä vain, jos käytössä on muu laskutusosoite.",
+    )
+    invoice_section_language = Field.objects.create(
+        section=invoice_other_section,
+        label="Kieli",
+        type_id=field_type_field_ids.get("dropdown"),
+        identifier="kieli",
+        enabled=True,
+        required=False,
+        sort_order=1,
+    )
+    Choice.objects.create(
+        field=invoice_section_language,
+        text="suomi",
+        value="suomi",
+        has_text_input=False,
+    )
+    Choice.objects.create(
+        field=invoice_section_language,
+        text="ruotsi",
+        value="ruotsi",
+        has_text_input=False,
+    )
+    Choice.objects.create(
+        field=invoice_section_language,
+        text="englanti",
+        value="englanti",
+        has_text_input=False,
+    )
+
+    Field.objects.create(
+        section=invoice_other_section,
+        label="c/o",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="c_o",
+        enabled=True,
+        required=False,
         sort_order=2,
     )
-    # invoice_section_language = Field.objects.create(
-    #     section=invoice_section,
-    #     label="Kieli",
-    #     type_id=field_type_field_ids.get("dropdown"),
-    #     identifier="kieli",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=0,
-    # )
-
-    # Choice.objects.create(
-    #     field=invoice_section_language,
-    #     text="suomi",
-    #     value="suomi",
-    #     has_text_input=False,
-    # )
-    # Choice.objects.create(
-    #     field=invoice_section_language,
-    #     text="ruotsi",
-    #     value="ruotsi",
-    #     has_text_input=False,
-    # )
-    # Choice.objects.create(
-    #     field=invoice_section_language,
-    #     text="englanti",
-    #     value="englanti",
-    #     has_text_input=False,
-    # )
-
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="c/o",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="c_o",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=1,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Katuosoite",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="katuosoite",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=2,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Postinumero",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="postinumero",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=3,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Postitoimipaikka",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="postitoimipaikka",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=4,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Maa",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="maa",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=5,
-    #     default_value="Suomi",
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Nimi",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="nimi",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=6,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Puhelinnumero",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="puhelinnumero",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=7,
-    # )
-    # Field.objects.create(
-    #     section=invoice_section,
-    #     label="Sähköposti",
-    #     type_id=field_type_field_ids.get("textbox"),
-    #     identifier="sahkoposti",
-    #     enabled=True,
-    #     required=False,
-    #     sort_order=8,
-    # )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Katuosoite",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="katuosoite",
+        enabled=True,
+        required=False,
+        sort_order=3,
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Postinumero",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="postinumero",
+        enabled=True,
+        required=False,
+        sort_order=4,
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Postitoimipaikka",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="postitoimipaikka",
+        enabled=True,
+        required=False,
+        sort_order=5,
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Maa",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="maa",
+        enabled=True,
+        required=False,
+        sort_order=6,
+        default_value="Suomi",
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Nimi",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="nimi",
+        enabled=True,
+        required=False,
+        sort_order=7,
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Puhelinnumero",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="puhelinnumero",
+        enabled=True,
+        required=False,
+        sort_order=8,
+    )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Sähköposti",
+        type_id=field_type_field_ids.get("textbox"),
+        identifier="sahkoposti",
+        enabled=True,
+        required=False,
+        sort_order=9,
+    )
 
     people_section = Section.objects.create(
         form=form,
@@ -509,6 +520,7 @@ def initialize_area_search_form():
         enabled=True,
         required=False,
         sort_order=0,
+        hint_text="Täytä vain, jos yhteyshenkilö on eri kuin hakija.",
     )
     Field.objects.create(
         section=contact_section,
@@ -562,6 +574,7 @@ def initialize_area_search_form():
         enabled=True,
         required=False,
         sort_order=0,
+        hint_text="Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse. Täytä vain, jos laskunsaaja on eri kuin hakija.",
     )
     invoice_section2_language = Field.objects.create(
         section=invoice_section2,
