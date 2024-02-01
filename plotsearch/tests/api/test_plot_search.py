@@ -414,8 +414,8 @@ def test_attach_form_to_plot_search(
     )
     assert response.status_code == 200
     assert len(Form.objects.all()) == 3
-    assert (len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2)
-    assert (len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2)
+    assert len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2
+    assert len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2
     assert len(Section.objects.all()) == 13
 
     url = reverse("plotsearch-list")
