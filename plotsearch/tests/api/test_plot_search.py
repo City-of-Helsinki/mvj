@@ -413,7 +413,7 @@ def test_attach_form_to_plot_search(
         url, data={"form": form.id}, content_type="application/json"
     )
     assert response.status_code == 200
-    assert len(Form.objects.all()) == 2
+    assert len(Form.objects.all()) == 3
     assert (
         len(Section.objects.filter(form=Form.objects.exclude(id=form.id).first())) == 2
     )
@@ -689,15 +689,6 @@ def test_area_search_create_simple(
         "intended_use": area_search_test_data.intended_use.pk,
         "geometry": area_search_test_data.geometry.geojson,
     }
-
-    field_type_factory(id=1, name=fake.name(), identifier="textbox")
-    field_type_factory(id=2, name=fake.name(), identifier="textarea")
-    field_type_factory(id=3, name=fake.name(), identifier="dropdown")
-    field_type_factory(id=4, name=fake.name(), identifier="checkbox")
-    field_type_factory(id=5, name=fake.name(), identifier="radiobutton")
-    field_type_factory(id=6, name=fake.name(), identifier="radiobuttoninline")
-    field_type_factory(id=7, name=fake.name(), identifier="uploadfiles")
-    field_type_factory(id=8, name=fake.name(), identifier="fractional")
 
     response = admin_client.post(
         url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"

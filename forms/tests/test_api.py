@@ -37,8 +37,10 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
         url, content_type="application/json", data={"is_template": False}
     )
 
+    # Should find fake template.
     assert response_filter_true.data["count"] == 1
-    assert response_filter_false.data["count"] == 0
+    # Should find area seach form.
+    assert response_filter_false.data["count"] == 1
 
 
 @pytest.mark.django_db
