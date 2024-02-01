@@ -46,6 +46,11 @@ def django_db_setup(django_db_setup, django_db_blocker):
     fixture_path = Path(__file__).parents[1].parent / "plotsearch/fixtures"
     fixture_filenames = [path for path in fixture_path.glob("*") if not path.is_dir()]
 
+    # Remove field_types.json from fixtures, because it is run in migration.
+    for path in fixture_filenames:
+        if "field_types.json" in path:
+            fixture_filenames.remove(path)
+
     with django_db_blocker.unblock():
         call_command("loaddata", *fixture_filenames)
 
