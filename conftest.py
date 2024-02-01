@@ -1086,11 +1086,6 @@ class ChoiceFactory(factory.DjangoModelFactory):
 @pytest.fixture
 def basic_field_types(field_type_factory):
     field_types = list(FieldType.objects.all())
-
-    # Special
-    field = field_type_factory(name="Upload Files", identifier="uploadfiles")
-    field_types.append(field)
-
     return {t.identifier: t for t in field_types}
 
 
