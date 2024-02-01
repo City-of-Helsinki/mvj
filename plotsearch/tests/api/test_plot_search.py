@@ -425,11 +425,11 @@ def test_attach_form_to_plot_search(
         content_type="application/json",
     )
     assert response.status_code == 201
-    assert len(Form.objects.all()) == 3
+    assert len(Form.objects.all()) == 4
     assert (
         len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
     )
-    assert len(Section.objects.all()) == 6
+    assert len(Section.objects.all()) == 15
 
     plot_search_id = response.data["id"]
 
@@ -457,13 +457,13 @@ def test_attach_form_to_plot_search(
         url, data={"form": new_form.id}, content_type="application/json"
     )
     assert response.status_code == 200
-    assert len(Form.objects.all()) == 4
+    assert len(Form.objects.all()) == 5
     assert len(Form.objects.filter(is_template=True)) == 2
-    assert len(Form.objects.filter(is_template=False)) == 2
+    assert len(Form.objects.filter(is_template=False)) == 3
     assert (
         len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
     )
-    assert len(Section.objects.all()) == 8
+    assert len(Section.objects.all()) == 17
 
 
 @pytest.mark.django_db

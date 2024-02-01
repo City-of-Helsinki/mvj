@@ -48,7 +48,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
     # Remove field_types.json from fixtures, because it is run in migration.
     for path in fixture_filenames:
-        if "field_types.json" in path:
+        if "field_types.json" in path.name:
             fixture_filenames.remove(path)
 
     with django_db_blocker.unblock():
