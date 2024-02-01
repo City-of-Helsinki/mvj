@@ -112,8 +112,8 @@ from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentViewset,
     AreaSearchGeneratePDF,
-    AreaSearchViewSet,
     AreaSearchPublicViewSet,
+    AreaSearchViewSet,
     DirectReservationLinkViewSet,
     DirectReservationToFavourite,
     FAQViewSet,

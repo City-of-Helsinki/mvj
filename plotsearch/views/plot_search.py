@@ -55,8 +55,8 @@ from plotsearch.models.plot_search import (
     DirectReservationLink,
 )
 from plotsearch.permissions import (
-    AreaSearchPublicPermissions,
     AreaSearchAttachmentPermissions,
+    AreaSearchPublicPermissions,
     PlotSearchOpeningRecordPermissions,
 )
 from plotsearch.serializers.plot_search import (
