@@ -305,15 +305,17 @@ class AreaSearchPublicViewSet(
 ):
     queryset = AreaSearch.objects.all()
     serializer_class = AreaSearchSerializer
-    permission_classes = (AreaSearchPublicPermissions, IsAuthenticated,)
+    permission_classes = (
+        AreaSearchPublicPermissions,
+        IsAuthenticated,
+    )
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     filterset_class = AreaSearchFilterSet
     bbox_filter_field = "geometry"
     bbox_filter_include_overlapping = True
 
     def get_permissions(self):
-        permission_classes = [AreaSearchPublicPermissions, IsAuthenticated]
-        return [permission() for permission in permission_classes]
+        return [permission() for permission in self.permission_classes]
 
 
 class AreaSearchAttachmentViewset(
