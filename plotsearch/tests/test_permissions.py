@@ -1,5 +1,6 @@
 import pytest
 from requests import Request
+
 from conftest import UserFactory
 from forms.models import Answer
 from plotsearch.models.plot_search import AreaSearch
