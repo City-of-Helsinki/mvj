@@ -1085,7 +1085,7 @@ class ChoiceFactory(factory.DjangoModelFactory):
 
 @pytest.fixture
 def basic_field_types(field_type_factory):
-    field_types = list(FieldType.objects.all())
+    field_types = FieldType.objects.all()
     return {t.identifier: t for t in field_types}
 
 
