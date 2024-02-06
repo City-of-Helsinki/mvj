@@ -7,7 +7,7 @@ class AreaSearchPublicPermissions(PerMethodPermission):
     def has_object_permission(self, request, view, obj):
         if obj.answer is not None:
             return False
-        if obj.user != request.user:
+        if obj.user and obj.user != request.user:
             return False
         return super().has_object_permission(request, view, obj)
 

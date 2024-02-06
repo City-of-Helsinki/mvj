@@ -940,6 +940,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         area_search.lessor = map_intended_use_to_lessor(
             validated_data.pop("intended_use", None)
         )
+        request = self.context.get("request", None)
+        if request and hasattr(request, "user"):
+            area_search.user = request.user
         area_search.save()
         for attachment in attachments:
             attachment.area_search = area_search

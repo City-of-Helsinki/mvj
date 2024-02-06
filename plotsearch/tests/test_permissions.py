@@ -22,11 +22,15 @@ def test_area_search_public_permissions__user_check():
     request = Request()
     request.user = user
     area_search = AreaSearch()
+    permission = AreaSearchPublicPermissions()
+    has_permission = permission.has_object_permission(request, None, area_search)
+    assert has_permission is True, "AreaSearch without user should be updated"
+
     area_search.user = user
     permission = AreaSearchPublicPermissions()
     has_permission = permission.has_object_permission(request, None, area_search)
-    assert has_permission is True
+    assert has_permission is True, "AreaSearch with same user should be updated"
 
     area_search.user = UserFactory()
     has_permission = permission.has_object_permission(request, None, area_search)
-    assert has_permission is False
+    assert has_permission is False, "AreaSearch with different object should fail"
