@@ -151,10 +151,12 @@ class RequiredFormFieldValidator:
 class ControlShareValidation:
     def __call__(self, value):
         result = 0
+        result_found = False
         for control_share in self.control_share_finder_generator(value["entries"]):
             values = control_share.split("/")
             result += int(values[0]) / int(values[1])
-        if round(result, 10) != 1:
+            result_found = True
+        if result_found and round(result, 10) != 1:
             raise ValidationError(code="control share is not even")
 
     def control_share_finder_generator(self, entries):

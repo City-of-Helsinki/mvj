@@ -1085,26 +1085,7 @@ class ChoiceFactory(factory.DjangoModelFactory):
 
 @pytest.fixture
 def basic_field_types(field_type_factory):
-    field_types = []
-    field = field_type_factory(name="Textbox", identifier="textbox")
-    field_types.append(field)
-    field = field_type_factory(name="Textarea", identifier="textarea")
-    field_types.append(field)
-    field = field_type_factory(name="Checkbox", identifier="checkbox")
-    field_types.append(field)
-    field = field_type_factory(name="Dropdown", identifier="dropdown")
-    field_types.append(field)
-    field = field_type_factory(name="Radiobutton", identifier="radiobutton")
-    field_types.append(field)
-    field = field_type_factory(name="RadiobuttonInline", identifier="radiobuttoninline")
-    field_types.append(field)
-    field_fractional = field_type_factory(name="Fractional", identifier="fractional")
-    field_types.append(field_fractional)
-
-    # Special
-    field = field_type_factory(name="Upload Files", identifier="uploadfiles")
-    field_types.append(field)
-
+    field_types = FieldType.objects.all()
     return {t.identifier: t for t in field_types}
 
 

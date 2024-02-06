@@ -62,18 +62,18 @@ jobs:
           pip install -U pip
           pip install codecov -r requirements.txt -r requirements-dev.txt
 
+      - name: Run black, flake8 and isort
+        run: |
+          black --check .
+          flake8
+          isort . --check-only --diff
+
       - name: Check and run migrations
         env:
           DATABASE_URL:  ${{ env.DATABASE_URL }}
         run: |
           python manage.py makemigrations --dry-run --check
           python manage.py migrate
-
-      - name: Run black, flake8 and isort
-        run: |
-          black --check .
-          flake8
-          isort . --check-only --diff
 
       - name: Run tests, compile translations, run type checks
         env:

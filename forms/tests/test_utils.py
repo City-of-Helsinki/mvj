@@ -26,6 +26,9 @@ from forms.utils import (
     send_answer_email,
 )
 
+BASIC_TEMPLATE_SECTION_COUNT = 7
+BASIC_TEMPLATE_FIELD_COUNT = 23
+
 
 @pytest.mark.django_db
 def test_form_cloning(basic_template_form):
@@ -40,8 +43,12 @@ def test_form_cloning(basic_template_form):
     new_fieldtype_count = FieldType.objects.all().count()
 
     assert new_form.id != basic_template_form
-    assert new_section_count == section_count * 2
-    assert new_field_count == field_count * 2
+    assert (
+        new_section_count == section_count + BASIC_TEMPLATE_SECTION_COUNT
+    ), "Cloning should add 7 sections"
+    assert (
+        new_field_count == field_count + BASIC_TEMPLATE_FIELD_COUNT
+    ), "Cloning should add 23 fields"
     assert new_fieldtype_count == fieldtype_count
 
 
