@@ -26,7 +26,6 @@ from forms.utils import (
     send_answer_email,
 )
 
-
 BASIC_TEMPLATE_SECTION_COUNT = 7
 BASIC_TEMPLATE_FIELD_COUNT = 23
 
