@@ -645,7 +645,7 @@ def test_post_area_search_detail_empty_payload(
     django_db_setup, admin_client, area_search_test_data,
 ):
     url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
-    data = {"area_search_status": {}}
+    data = {}
 
     response = admin_client.patch(url, data=data, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

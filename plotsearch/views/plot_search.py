@@ -58,6 +58,7 @@ from plotsearch.models.plot_search import (
 )
 from plotsearch.permissions import (
     AreaSearchAttachmentPermissions,
+    AreaSearchPublicPermissions,
     PlotSearchOpeningRecordPermissions,
 )
 from plotsearch.serializers.plot_search import (
@@ -299,6 +300,24 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
         )
 
         return response
+
+
+class AreaSearchPublicViewSet(
+    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
+    queryset = AreaSearch.objects.all()
+    serializer_class = AreaSearchSerializer
+    permission_classes = (
+        AreaSearchPublicPermissions,
+        IsAuthenticated,
+    )
+    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
+    filterset_class = AreaSearchFilterSet
+    bbox_filter_field = "geometry"
+    bbox_filter_include_overlapping = True
+
+    def get_permissions(self):
+        return [permission() for permission in self.permission_classes]
 
 
 class AreaSearchAttachmentViewset(
