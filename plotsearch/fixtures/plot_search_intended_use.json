@@ -3,8 +3,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 1,
     "fields": {
-      "name": "Myynti- ja mainontapaikat",
-      "name_fi": "Myynti- ja mainontapaikat",
+      "name": "Ravitsemus, myynti ja mainonta",
+      "name_fi": "Ravitsemus, myynti ja mainonta",
       "name_sv": null,
       "name_en": null
     }
@@ -13,8 +13,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 2,
     "fields": {
-      "name": "Urheilu- ja liikuntapaikat",
-      "name_fi": "Urheilu- ja liikuntapaikat",
+      "name": "Urheilu ja Liikunta",
+      "name_fi": "Urheilu ja Liikunta",
       "name_sv": null,
       "name_en": null
     }
@@ -23,8 +23,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 3,
     "fields": {
-      "name": "Taide- ja Kulttuuripaikat",
-      "name_fi": "Taide- ja Kulttuuripaikat",
+      "name": "Taide ja kulttuuri",
+      "name_fi": "Taide ja kulttuuri",
       "name_sv": null,
       "name_en": null
     }
@@ -33,8 +33,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 4,
     "fields": {
-      "name": "Veneily ja laiturialueet",
-      "name_fi": "Veneily ja laiturialueet",
+      "name": "Veneily ja laiturit",
+      "name_fi": "Veneily ja laiturit",
       "name_sv": null,
       "name_en": null
     }
@@ -43,8 +43,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 5,
     "fields": {
-      "name": "Varasto- ja jakelualueet",
-      "name_fi": "Varasto- ja jakelualueet",
+      "name": "Varastointi ja jakelu",
+      "name_fi": "Varastointi ja jakelu",
       "name_sv": null,
       "name_en": null
     }
@@ -53,8 +53,8 @@
     "model": "plotsearch.areasearchintendeduse",
     "pk": 6,
     "fields": {
-      "name": "Työmaa tukikohdat ja alueet",
-      "name_fi": "Työmaa tukikohdat ja alueet",
+      "name": "Työmaat",
+      "name_fi": "Työmaat",
       "name_sv": null,
       "name_en": null
     }
