@@ -3,7 +3,7 @@ dataclasses
 deepmerge
 Django~=3.2.23
 django-anymail
-django-auditlog~=1.0a1
+django-auditlog~=2.2.2
 django-admin-rangefilter
 django-jsonfield-compat
 django-constance[database]

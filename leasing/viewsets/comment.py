@@ -8,11 +8,11 @@ from leasing.serializers.comment import (
     CommentTopicSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
 class CommentViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = Comment.objects.all().select_related("lease", "user", "topic")
     serializer_class = CommentSerializer
@@ -26,7 +26,7 @@ class CommentViewSet(
 
 
 class CommentTopicViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = CommentTopic.objects.all()
     serializer_class = CommentTopicSerializer

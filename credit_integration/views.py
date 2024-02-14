@@ -1,4 +1,3 @@
-from auditlog.middleware import AuditlogMiddleware
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -27,7 +26,6 @@ def send_credit_decision_inquiry(request):
     """
     Send credit decision inquiry to credit decision service
     """
-    AuditlogMiddleware().process_request(request)
 
     customer_id = request.data.get("customer_id")
     business_id = request.data.get("business_id")

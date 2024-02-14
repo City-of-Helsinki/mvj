@@ -21,7 +21,6 @@ from leasing.serializers.debt_collection import (
 )
 from leasing.viewsets.utils import (
     AtomicTransactionModelViewSet,
-    AuditLogMixin,
     FileMixin,
     MultiPartJsonParser,
 )
@@ -29,7 +28,6 @@ from leasing.viewsets.utils import (
 
 class CollectionCourtDecisionViewSet(
     FileMixin,
-    AuditLogMixin,
     FieldPermissionsViewsetMixin,
     AtomicTransactionModelViewSet,
 ):
@@ -47,7 +45,6 @@ class CollectionCourtDecisionViewSet(
 
 class CollectionLetterViewSet(
     FileMixin,
-    AuditLogMixin,
     FieldPermissionsViewsetMixin,
     AtomicTransactionModelViewSet,
 ):
@@ -63,13 +60,13 @@ class CollectionLetterViewSet(
         return CollectionLetterSerializer
 
 
-class CollectionLetterTemplateViewSet(AuditLogMixin, AtomicTransactionModelViewSet):
+class CollectionLetterTemplateViewSet(AtomicTransactionModelViewSet):
     queryset = CollectionLetterTemplate.objects.all()
     serializer_class = CollectionLetterTemplateSerializer
 
 
 class CollectionNoteViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = CollectionNote.objects.all().select_related("user")
     serializer_class = CollectionNoteSerializer

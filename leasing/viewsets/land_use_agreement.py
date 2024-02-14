@@ -50,7 +50,6 @@ from leasing.serializers.land_use_agreement import (
 
 from .utils import (
     AtomicTransactionModelViewSet,
-    AuditLogMixin,
     FileMixin,
     MultiPartJsonParser,
 )
@@ -133,7 +132,7 @@ def get_values_from_credit_request(data):
 
 
 class LandUseAgreementViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = LandUseAgreement.objects.all()
     serializer_class = LandUseAgreementRetrieveSerializer
@@ -168,7 +167,6 @@ class LandUseAgreementViewSet(
 
 class LandUseAgreementAttachmentViewSet(
     FileMixin,
-    AuditLogMixin,
     FieldPermissionsViewsetMixin,
     AtomicTransactionModelViewSet,
 ):

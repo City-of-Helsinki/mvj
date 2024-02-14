@@ -7,11 +7,11 @@ from leasing.serializers.area_note import (
     AreaNoteSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
 class AreaNoteViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = AreaNote.objects.all()
     serializer_class = AreaNoteSerializer

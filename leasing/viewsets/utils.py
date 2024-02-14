@@ -1,7 +1,6 @@
 import json
 import os
 
-from auditlog.middleware import AuditlogMiddleware
 from django.conf import settings
 from django.core.files import File
 from django.db import IntegrityError, transaction
@@ -11,15 +10,6 @@ from rest_framework import parsers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
-
-
-class AuditLogMixin:
-    def initial(self, request, *args, **kwargs):
-        # We need to process logged in user again because Django Rest
-        # Framework handles authentication after the
-        # AuditLogMiddleware.
-        AuditlogMiddleware().process_request(request)
-        return super().initial(request, *args, **kwargs)
 
 
 class AtomicTransactionMixin:
