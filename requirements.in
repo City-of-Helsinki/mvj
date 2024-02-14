@@ -40,7 +40,7 @@ psycopg2-binary
 pysftp
 pyproj
 python-daemon
-python-dateutil
+python-dateutil~=2.7.0
 sentry-sdk
 requests
 typing-extensions
