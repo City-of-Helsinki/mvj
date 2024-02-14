@@ -69,6 +69,7 @@ from plotsearch.serializers.plot_search import (
     FAQSerializer,
     FavouriteSerializer,
     InformationCheckSerializer,
+    IntendedUsePlotsearchPublicSerializer,
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
     PlotSearchFilterSerializer,
@@ -248,6 +249,14 @@ class IntendedUseViewSet(
     queryset = AreaSearchIntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+
+class IntendedUsePlotsearchPublicViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    queryset = AreaSearchIntendedUse.objects.all()
+    serializer_class = IntendedUsePlotsearchPublicSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class AreaSearchViewSet(viewsets.ModelViewSet):

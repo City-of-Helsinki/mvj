@@ -417,6 +417,13 @@ class IntendedUseSerializer(NameModelSerializer):
         fields = ("id", "name")
 
 
+class IntendedUsePlotsearchPublicSerializer(NameModelSerializer):
+    class Meta:
+        ref_name = "plot_intended_use_public"
+        model = AreaSearchIntendedUse
+        fields = ("id", "name")
+
+
 class PlotSearchSerializerBase(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,

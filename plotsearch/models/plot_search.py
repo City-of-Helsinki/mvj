@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
 from rest_framework.serializers import ValidationError
+from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
@@ -379,7 +380,9 @@ class FavouriteTarget(models.Model):
     plot_search_target = models.ForeignKey(PlotSearchTarget, on_delete=models.CASCADE)
 
 
-class AreaSearchIntendedUse(NameModel):
+class AreaSearchIntendedUse(SafeDeleteModel, NameModel):
+    _safedelete_policy = SOFT_DELETE
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Area search intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
@@ -430,7 +433,7 @@ class AreaSearch(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     district = models.CharField(max_length=255, null=True, blank=True)
 
-    intended_use = models.ForeignKey(AreaSearchIntendedUse, on_delete=models.CASCADE)
+    intended_use = models.ForeignKey(AreaSearchIntendedUse, on_delete=models.PROTECT)
     description_intended_use = models.TextField()
 
     start_date = models.DateTimeField(verbose_name=_("Begin at"), null=True, blank=True)

@@ -2,7 +2,7 @@
 
 # mvj
 
-City of Helsinki ground rent system
+City of Helsinki land lease system
 
 ## Development with Docker
 

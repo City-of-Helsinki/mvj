@@ -119,8 +119,11 @@ from plotsearch.views.plot_search import (
     FAQViewSet,
     FavouriteViewSet,
     InformationCheckViewSet,
+    IntendedUsePlotsearchPublicViewSet,
 )
-from plotsearch.views.plot_search import IntendedUseViewSet as IntendedUsePSViewSet
+from plotsearch.views.plot_search import (
+    IntendedUseViewSet as IntendedUsePlotsearchViewSet,
+)
 from plotsearch.views.plot_search import (
     PlotSearchStageViewSet,
     PlotSearchSubtypeViewSet,
@@ -176,7 +179,7 @@ router.register(r"invoice_note", InvoiceNoteViewSet)
 router.register(r"invoice_row", InvoiceRowViewSet)
 router.register(r"invoice_set", InvoiceSetViewSet)
 router.register(r"intended_use", IntendedUseViewSet)
-router.register(r"intended_psuse", IntendedUsePSViewSet)
+router.register(r"intended_psuse", IntendedUsePlotsearchViewSet)
 router.register(r"lease", LeaseViewSet, basename="lease")
 router.register(r"lease_area_attachment", LeaseAreaAttachmentViewSet)
 router.register(
@@ -247,7 +250,9 @@ pub_router.register(
 pub_router.register(r"faq", FAQViewSet, basename="pub_faq")
 pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
 pub_router.register(r"form", FormViewSet, basename="pub_form")
-pub_router.register(r"intended_use", IntendedUsePSViewSet, basename="pub_intended_use")
+pub_router.register(
+    r"intended_use", IntendedUsePlotsearchPublicViewSet, basename="pub_intended_use"
+)
 pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
 pub_router.register(
     r"plot_search_stage", PlotSearchStageViewSet, basename="pub_plot_search_stage"
