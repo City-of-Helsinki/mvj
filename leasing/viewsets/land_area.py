@@ -17,7 +17,6 @@ from plotsearch.models import PlotSearch, PlotSearchTarget
 
 from .utils import (
     AtomicTransactionModelViewSet,
-    AuditLogMixin,
     FileMixin,
     MultiPartJsonParser,
 )
@@ -25,7 +24,6 @@ from .utils import (
 
 class LeaseAreaAttachmentViewSet(
     FileMixin,
-    AuditLogMixin,
     FieldPermissionsViewsetMixin,
     AtomicTransactionModelViewSet,
 ):

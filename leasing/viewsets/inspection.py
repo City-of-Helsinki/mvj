@@ -7,7 +7,6 @@ from leasing.serializers.inspection import (
 
 from .utils import (
     AtomicTransactionModelViewSet,
-    AuditLogMixin,
     FileMixin,
     MultiPartJsonParser,
 )
@@ -15,7 +14,6 @@ from .utils import (
 
 class InspectionAttachmentViewSet(
     FileMixin,
-    AuditLogMixin,
     FieldPermissionsViewsetMixin,
     AtomicTransactionModelViewSet,
 ):

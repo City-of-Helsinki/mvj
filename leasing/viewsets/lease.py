@@ -58,7 +58,7 @@ from leasing.serializers.lease import (
 )
 
 from ..permissions import IsMemberOfSameServiceUnit, MvjDjangoModelPermissions
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
 class DistrictViewSet(AtomicTransactionModelViewSet):
@@ -137,7 +137,7 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
 
 
 class LeaseViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     serializer_class = LeaseRetrieveSerializer
     filterset_class = LeaseFilter

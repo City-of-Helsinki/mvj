@@ -79,7 +79,7 @@ django-admin-rangefilter==0.6.3
     # via -r requirements.in
 django-anymail==7.0.0
     # via -r requirements.in
-django-auditlog==1.0a1
+django-auditlog==2.2.2
     # via -r requirements.in
 django-constance[database]==2.7.0
     # via -r requirements.in
@@ -208,7 +208,7 @@ python-bidi==0.4.2
     # via xhtml2pdf
 python-daemon==2.2.4
     # via -r requirements.in
-python-dateutil==2.6.0
+python-dateutil
     # via
     #   -r requirements.in
     #   arrow

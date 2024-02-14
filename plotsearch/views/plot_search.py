@@ -28,7 +28,7 @@ from leasing.permissions import (
     MvjDjangoModelPermissionsOrAnonReadOnly,
     PerMethodPermission,
 )
-from leasing.viewsets.utils import AtomicTransactionModelViewSet, AuditLogMixin
+from leasing.viewsets.utils import AtomicTransactionModelViewSet
 from plotsearch.filter import (
     AreaSearchFilterSet,
     InformationCheckListFilterSet,
@@ -111,7 +111,7 @@ class PlotSearchStageViewSet(
 
 
 class PlotSearchViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = PlotSearch.objects.all()
     serializer_class = PlotSearchRetrieveSerializer
@@ -335,7 +335,6 @@ class AreaSearchAttachmentViewset(
 
 
 class InformationCheckViewSet(
-    AuditLogMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
