@@ -208,7 +208,7 @@ python-bidi==0.4.2
     # via xhtml2pdf
 python-daemon==2.2.4
     # via -r requirements.in
-python-dateutil
+python-dateutil~=2.7.0
     # via
     #   -r requirements.in
     #   arrow
