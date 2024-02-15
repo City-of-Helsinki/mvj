@@ -10,12 +10,10 @@ from leasing.serializers.basis_of_rent import (
     BasisOfRentSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
-class BasisOfRentViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
-):
+class BasisOfRentViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = BasisOfRent.objects.all()
     serializer_class = BasisOfRentSerializer
     filter_backends = (

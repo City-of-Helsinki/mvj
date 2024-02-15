@@ -48,12 +48,7 @@ from leasing.serializers.land_use_agreement import (
     SentToSapLandUseAgreementInvoiceUpdateSerializer,
 )
 
-from .utils import (
-    AtomicTransactionModelViewSet,
-    AuditLogMixin,
-    FileMixin,
-    MultiPartJsonParser,
-)
+from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
 
 
 def get_object_from_query_params(object_type, query_params):
@@ -89,7 +84,6 @@ def get_object_from_query_params(object_type, query_params):
         )
 
     try:
-
         return object_type_map[object_type]["class"].objects.get(
             pk=int(query_params.get(object_type_map[object_type]["param_name"]))
         )
@@ -133,7 +127,7 @@ def get_values_from_credit_request(data):
 
 
 class LandUseAgreementViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = LandUseAgreement.objects.all()
     serializer_class = LandUseAgreementRetrieveSerializer
@@ -167,10 +161,7 @@ class LandUseAgreementViewSet(
 
 
 class LandUseAgreementAttachmentViewSet(
-    FileMixin,
-    AuditLogMixin,
-    FieldPermissionsViewsetMixin,
-    AtomicTransactionModelViewSet,
+    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
 ):
     queryset = LandUseAgreementAttachment.objects.all()
     serializer_class = LandUseAgreementAttachmentSerializer

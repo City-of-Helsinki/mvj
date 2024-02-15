@@ -56,7 +56,7 @@ from leasing.serializers.lease import (
     SupportiveHousingSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
 class DistrictViewSet(AtomicTransactionModelViewSet):
@@ -134,9 +134,7 @@ class RelatedLeaseViewSet(AtomicTransactionModelViewSet):
     serializer_class = RelatedLeaseSerializer
 
 
-class LeaseViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
-):
+class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     serializer_class = LeaseRetrieveSerializer
     filterset_class = LeaseFilter
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)

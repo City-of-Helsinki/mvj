@@ -14,12 +14,10 @@ from leasing.serializers.decision import (
     DecisionSerializer,
 )
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
-class DecisionViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
-):
+class DecisionViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
     filterset_class = DecisionFilter

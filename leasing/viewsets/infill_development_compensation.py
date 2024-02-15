@@ -14,16 +14,11 @@ from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationSerializer,
 )
 
-from .utils import (
-    AtomicTransactionModelViewSet,
-    AuditLogMixin,
-    FileMixin,
-    MultiPartJsonParser,
-)
+from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
 
 
 class InfillDevelopmentCompensationViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
+    FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
 ):
     queryset = InfillDevelopmentCompensation.objects.all()
     serializer_class = InfillDevelopmentCompensationSerializer
@@ -111,10 +106,7 @@ class InfillDevelopmentCompensationViewSet(
 
 
 class InfillDevelopmentCompensationAttachmentViewSet(
-    FileMixin,
-    AuditLogMixin,
-    FieldPermissionsViewsetMixin,
-    AtomicTransactionModelViewSet,
+    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
 ):
     queryset = InfillDevelopmentCompensationAttachment.objects.all()
     serializer_class = InfillDevelopmentCompensationAttachmentSerializer

@@ -6,12 +6,10 @@ from leasing.filters import CoalesceOrderingFilter, ContactFilter
 from leasing.models import Contact
 from leasing.serializers.contact import ContactSerializer
 
-from .utils import AtomicTransactionModelViewSet, AuditLogMixin
+from .utils import AtomicTransactionModelViewSet
 
 
-class ContactViewSet(
-    AuditLogMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
-):
+class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     filterset_class = ContactFilter
