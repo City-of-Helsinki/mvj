@@ -7,26 +7,32 @@ from plotsearch.enums import AreaSearchLessor
 
 
 def map_intended_use_to_lessor(intended_use):
-    if intended_use is None:
+    # Keeping these for a transformation period
+    old_intended_uses_with_lessors = {
+        "myynti- ja mainontapaikat": AreaSearchLessor.AKV,
+        "taide- ja kulttuuripaikat": AreaSearchLessor.AKV,
+        "varasto- ja jakelualueet": AreaSearchLessor.AKV,
+        "työmaa tukikohdat ja alueet": AreaSearchLessor.AKV,
+        "veneily ja laiturialueet": AreaSearchLessor.KUVA,
+        "urheilu- ja liikuntapaikat": AreaSearchLessor.KUVA,
+    }
+    intended_uses_with_lessors = {
+        "ravitsemus, myynti ja mainonta": AreaSearchLessor.AKV,
+        "taide ja kulttuuri": AreaSearchLessor.AKV,
+        "varastointi ja jakelu": AreaSearchLessor.AKV,
+        "työmaat": AreaSearchLessor.AKV,
+        "muu alueen käyttö": AreaSearchLessor.MAKE,
+        "veneily ja laiturit": AreaSearchLessor.KUVA,
+        "urheilu ja kiikunta": AreaSearchLessor.KUVA,
+    }
+    try:
+        lessor = {**intended_uses_with_lessors, **old_intended_uses_with_lessors}.get(
+            intended_use.name.lower(), None
+        )
+    except AttributeError:
         return None
 
-    akv_list = [
-        "myynti- ja mainontapaikat",
-        "taide- ja kulttuuripaikat",
-        "varasto- ja jakelualueet",
-        "työmaa tukikohdat ja alueet",
-    ]
-    make_list = ["muu alueen käyttö"]
-    kuva_list = ["veneily ja laiturialueet", "urheilu- ja liikuntapaikat"]
-
-    if intended_use.name.lower() in akv_list:
-        return AreaSearchLessor.AKV
-    elif intended_use.name.lower() in make_list:
-        return AreaSearchLessor.MAKE
-    elif intended_use.name.lower() in kuva_list:
-        return AreaSearchLessor.KUVA
-
-    return None
+    return lessor
 
 
 def _get_field_type(identifier, default_id=None):
