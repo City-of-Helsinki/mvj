@@ -22,7 +22,7 @@ BOUNDARY = "!! test boundary !!"
 
 @pytest.mark.django_db
 def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
-    form_factory(
+    template_form = form_factory(
         name=fake.name(),
         description=fake.sentence(),
         is_template=True,
@@ -37,10 +37,13 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
         url, content_type="application/json", data={"is_template": False}
     )
 
-    # Should find fake template.
-    assert response_filter_true.data["count"] == 1
-    # Should find area seach form.
-    assert response_filter_false.data["count"] == 1
+    template_form_ids = (form["id"] for form in response_filter_true.data["results"])
+    # Should find template form.
+    assert template_form.id in template_form_ids
+
+    form_ids = (form["id"] for form in response_filter_false.data["results"])
+    # Should not find template form.
+    assert template_form.id not in form_ids
 
 
 @pytest.mark.django_db

@@ -1,5 +1,8 @@
+import os
+
 from django.core import management
 from django.db import migrations
+
 from forms.models import FieldType
 from plotsearch.utils import initialize_area_search_form
 
@@ -19,6 +22,12 @@ class Migration(migrations.Migration):
         ("plotsearch", "0031_plotsearchsubtype_require_opening_record"),
     ]
 
-    operations = [
-        migrations.RunPython(init_area_search_form, reverse_func),
-    ]
+    # Attempt to detect whether running a test.
+    # https://docs.pytest.org/en/latest/example/simple.html#pytest-current-test-environment-variable
+    is_test = os.environ.get("PYTEST_CURRENT_TEST") is not None
+
+    # Skip the data migration when running tests.
+    if not is_test:
+        operations = [migrations.RunPython(init_area_search_form, reverse_func)]
+    else:
+        operations = []

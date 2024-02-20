@@ -408,37 +408,66 @@ def test_attach_form_to_plot_search(
         section=child_section,
         type=field_type,
     )
+    section_count_pre_clone = Section.objects.count()
+    assert plot_search_test_data.form is None, "Should not have form attached"
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    # Important: This operation uses pre_save signal on PlotSearch to clone the form
+    # in cases when form is a template
+    # Template form gets cloned by this signal: `prepare_template_form_on_plot_search_save()`
     response = admin_client.patch(
         url, data={"form": form.id}, content_type="application/json"
     )
-    assert response.status_code == 200
-    assert len(Form.objects.all()) == 3
-    assert len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2
-    assert len(Section.objects.filter(form=Form.objects.get(pk=form.id))) == 2
-    assert len(Section.objects.all()) == 13
 
+    assert response.status_code == 200
+    expected_form_count = 2
+    assert (
+        Form.objects.count() == expected_form_count
+    ), "Should have matching form count in total"
+    cloned_form_id = response.data["form"]["id"]
+    assert cloned_form_id != form.id, "Should have cloned form, not the template"
+    assert response.data["form"]["plot_search_id"] == plot_search_test_data.id
+    section_count = Section.objects.filter(form=form).count()
+    assert section_count == 2
+    assert (
+        Section.objects.filter(form_id=cloned_form_id).count() == section_count
+    ), "Cloned form should have same amount of sections as original"
+
+    expected_section_count_after_clone = section_count_pre_clone + section_count
+    assert Section.objects.count() == expected_section_count_after_clone
+
+    form_count_before_create_plotsearch = Form.objects.count()
     url = reverse("plotsearch-list")
     response = admin_client.post(
         url,
         data={"name": "Test name", "form": form.id},
         content_type="application/json",
     )
+
     assert response.status_code == 201
-    assert len(Form.objects.all()) == 4
+    expected_form_count = form_count_before_create_plotsearch + 1
     assert (
-        len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
+        Form.objects.count() == expected_form_count
+    ), "Creating a plotsearch with template form should clone the form"
+    forms_section_count = 2
+    assert (
+        Section.objects.filter(form=response.data["form"]["id"]).count()
+        == forms_section_count
+    ), "Creating a plotsearch with template form should clone the form and its sections"
+    expected_total_section_count = (
+        expected_section_count_after_clone + forms_section_count
     )
-    assert len(Section.objects.all()) == 15
+    assert Section.objects.count() == expected_total_section_count
 
     plot_search_id = response.data["id"]
-
+    form_count_before_factory = Form.objects.count()
     new_form = form_factory(
         name=fake.name(),
         description=fake.sentence(),
         is_template=True,
         title=fake.name(),
     )
+    expected_form_count = form_count_before_factory + 1
+    assert Form.objects.count() == expected_form_count
     parent_section = section_factory(form=new_form,)
     child_section = section_factory(form=new_form, parent=parent_section,)
     field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
@@ -452,18 +481,25 @@ def test_attach_form_to_plot_search(
         type=field_type,
     )
 
+    # This request removes the previous form attached to the plot search
+    # The signal `prepare_template_form_on_plot_search_save` clones the template form
+    # and deletes the previously attached form
     url = reverse("plotsearch-detail", kwargs={"pk": plot_search_id})
     response = admin_client.patch(
         url, data={"form": new_form.id}, content_type="application/json"
     )
     assert response.status_code == 200
-    assert len(Form.objects.all()) == 5
-    assert len(Form.objects.filter(is_template=True)) == 2
-    assert len(Form.objects.filter(is_template=False)) == 3
+    # Form count should remain the same, one form is cloned, but existing form is deleted
     assert (
-        len(Section.objects.filter(form=Form.objects.filter(id=form.id).first())) == 2
-    )
-    assert len(Section.objects.all()) == 17
+        Form.objects.count() == expected_form_count
+    ), "Should have same form count as before, deletes existing attached form"
+    assert (
+        Form.objects.filter(is_template=True).count() == 2
+    ), "Should have x template forms in total"
+    assert (
+        Form.objects.filter(is_template=False).count() == 2
+    ), "Should have x forms in total"
+    assert Section.objects.filter(form=new_form).count() == 2
 
 
 @pytest.mark.django_db
