@@ -79,23 +79,17 @@ class Section(models.Model):
         return self.title
 
 
-class FieldType(models.Model):
-    name = models.CharField(max_length=255)
-    identifier = models.SlugField(unique=True)
-
-    def save(self, *args, **kwargs):
-        if not self.identifier:
-            max_length = self._meta.get_field("identifier").max_length
-            self.identifier = generate_unique_identifier(
-                FieldType, "identifier", self.name, max_length
-            )
-        super(FieldType, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.identifier
-
-
 class Field(models.Model):
+    FIELD_TYPES = (
+        ("textbox", _("Tekstikenttä")),
+        ("textarea", _("Tekstialue")),
+        ("dropdown", _("Alasvetovalikko")),
+        ("checkbox", _("Valintaruutu")),
+        ("radiobutton", _("Radiopainike")),
+        ("radiobuttoninline", _("Radiopainike linjassa")),
+        ("uploadfiles", _("Lataa tiedosto")),
+        ("fractional", _("Murtoluku")),
+    )
     label = models.CharField(max_length=255)
     hint_text = models.CharField(max_length=1024, null=True, blank=True)
     identifier = models.SlugField()
@@ -105,8 +99,7 @@ class Field(models.Model):
     action = models.CharField(max_length=255, null=True, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     default_value = models.CharField(max_length=512, null=True, blank=True)
-
-    type = models.ForeignKey(FieldType, on_delete=models.PROTECT)
+    type = models.CharField(max_length=255, choices=FIELD_TYPES)
     section = models.ForeignKey(
         Section, on_delete=models.CASCADE, related_name="fields"
     )

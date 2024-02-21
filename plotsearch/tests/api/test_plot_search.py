@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from faker import Faker
 from rest_framework import serializers
 
-from forms.models import Form, Section
+from forms.models import Form, Section, Field
 from forms.models.form import AnswerOpeningRecord
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
@@ -388,7 +388,6 @@ def test_attach_form_to_plot_search(
     form_factory,
     section_factory,
     field_factory,
-    field_type_factory,
 ):
     form = form_factory(
         name=fake.name(),
@@ -398,7 +397,7 @@ def test_attach_form_to_plot_search(
     )
     parent_section = section_factory(form=form,)
     child_section = section_factory(form=form, parent=parent_section,)
-    field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
+    field_type = Field.FIELD_TYPES[0][0]
     field_factory(
         label=fake.name(),
         hint_text=fake.name(),
@@ -470,7 +469,7 @@ def test_attach_form_to_plot_search(
     assert Form.objects.count() == expected_form_count
     parent_section = section_factory(form=new_form,)
     child_section = section_factory(form=new_form, parent=parent_section,)
-    field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
+    field_type = Field.FIELD_TYPES[0][0]
     field_factory(
         label=fake.name(),
         hint_text=fake.name(),
@@ -711,7 +710,7 @@ def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
 
 @pytest.mark.django_db
 def test_area_search_create_simple(
-    django_db_setup, admin_client, field_type_factory, area_search_test_data
+    django_db_setup, admin_client, area_search_test_data
 ):
     url = reverse("areasearch-list")  # list == create
 

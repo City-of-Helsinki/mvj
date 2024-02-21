@@ -17,7 +17,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 
 from forms.enums import AnswerType
-from forms.models import Field, FieldType, Section
+from forms.models import Field, Section
 from forms.utils import (
     AnswerInputData,
     EmailMessageInput,
@@ -34,13 +34,11 @@ BASIC_TEMPLATE_FIELD_COUNT = 23
 def test_form_cloning(basic_template_form):
     section_count = Section.objects.all().count()
     field_count = Field.objects.all().count()
-    fieldtype_count = FieldType.objects.all().count()
 
     new_form = clone_object(basic_template_form)
 
     new_section_count = Section.objects.all().count()
     new_field_count = Field.objects.all().count()
-    new_fieldtype_count = FieldType.objects.all().count()
 
     assert new_form.id != basic_template_form
     assert (
@@ -49,7 +47,6 @@ def test_form_cloning(basic_template_form):
     assert (
         new_field_count == field_count + BASIC_TEMPLATE_FIELD_COUNT
     ), "Cloning should add 23 fields"
-    assert new_fieldtype_count == fieldtype_count
 
 
 @pytest.mark.django_db

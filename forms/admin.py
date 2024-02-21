@@ -6,12 +6,7 @@ from nested_inline.admin import (
     NestedTabularInline,
 )
 
-from forms.models import Choice, Field, FieldType, Form, Section
-
-
-class FieldTypeChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.name
+from forms.models import Choice, Field, Form, Section
 
 
 class FieldChoiceField(forms.ModelChoiceField):
@@ -37,9 +32,7 @@ class FieldModelAdmin(admin.ModelAdmin):
     raw_id_fields = ("section",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "type":
-            return FieldTypeChoiceField(queryset=FieldType.objects.all())
-        elif db_field.name == "section":
+        if db_field.name == "section":
             return SectionChoiceField(queryset=Section.objects.all())
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -101,6 +94,5 @@ class FormModelAdmin(NestedModelAdmin):
 
 admin.site.register(Field, FieldModelAdmin)
 admin.site.register(Form, FormModelAdmin)
-admin.site.register(FieldType, admin.ModelAdmin)
 admin.site.register(Section, SectionModelAdmin)
 admin.site.register(Choice, ChoiceModelAdmin)

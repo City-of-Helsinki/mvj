@@ -2,6 +2,8 @@ import pytest
 from django.utils.text import slugify
 from faker import Faker
 
+from forms.models import Field
+
 fake = Faker("fi_FI")
 
 
@@ -31,13 +33,12 @@ def test_linking_entry_to_answer(
     entry_factory,
     user_factory,
     field_factory,
-    field_type_factory,
     section_factory,
 ):
     form = form_factory(title=fake.name())
     user = user_factory(username=fake.name())
     answer = answer_factory(form=form, user=user)
-    field_type = field_type_factory(name=fake.name(), identifier=slugify(fake.name()))
+    field_type = Field.FIELD_TYPES[0][0]
     section = section_factory(form=form, title=fake.name())
     field = field_factory(
         label=fake.name(),

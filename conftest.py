@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from pytest_factoryboy import register
 
-from forms.models import Answer, Choice, Entry, Field, FieldType, Form, Section
+from forms.models import Answer, Choice, Entry, Field, Form, Section
 from forms.models.form import EntrySection
 from forms.tests.conftest import fake
 from forms.utils import EmailMessageInput
@@ -399,12 +399,6 @@ class FieldFactory(factory.DjangoModelFactory):
         model = Field
 
 
-@register
-class FieldTypeFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = FieldType
-
-
 @pytest.fixture
 def basic_answer(
     answer_factory,
@@ -454,7 +448,7 @@ class AnswerFactory(factory.DjangoModelFactory):
 
 @pytest.fixture
 def basic_template_form(
-    form_factory, section_factory, field_factory, choice_factory, basic_field_types,
+    form_factory, section_factory, field_factory, choice_factory,
 ):
     form = form_factory(
         name=fake.name(),
@@ -483,7 +477,7 @@ def basic_template_form(
     field_factory(
         label="Company name",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -492,7 +486,7 @@ def basic_template_form(
     field_factory(
         label="Business ID",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -501,7 +495,7 @@ def basic_template_form(
     field_factory(
         label="Language",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -510,7 +504,7 @@ def basic_template_form(
     field_factory(
         label="Y-tunnus",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -519,7 +513,7 @@ def basic_template_form(
     field_factory(
         label="Hallintaosuus",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -536,7 +530,7 @@ def basic_template_form(
     field_factory(
         label="First name",
         section=contact_person_company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -545,7 +539,7 @@ def basic_template_form(
     field_factory(
         label="Last name",
         section=contact_person_company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -554,7 +548,7 @@ def basic_template_form(
     field_factory(
         label="Personal identity code",
         section=contact_person_company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -563,7 +557,7 @@ def basic_template_form(
     field_factory(
         label="Henkilötunnus",
         section=contact_person_company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -581,7 +575,7 @@ def basic_template_form(
     field_factory(
         label="First name",
         section=person_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -590,7 +584,7 @@ def basic_template_form(
     field_factory(
         label="Last name",
         section=person_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -599,7 +593,7 @@ def basic_template_form(
     field_factory(
         label="Personal identity code",
         section=person_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -616,7 +610,7 @@ def basic_template_form(
     field_factory(
         label="Different than applicant",
         section=person_contact_person_section,
-        type=basic_field_types["checkbox"],
+        type="checkbox",
         action="ToggleEnableInSection=" + person_contact_person_section.identifier,
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -625,7 +619,7 @@ def basic_template_form(
     field_factory(
         label="First name",
         section=person_contact_person_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         enabled=False,
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -635,7 +629,7 @@ def basic_template_form(
     field_factory(
         label="Last name",
         section=person_contact_person_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         enabled=False,
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -645,7 +639,7 @@ def basic_template_form(
     field_factory(
         label="Personal identity code",
         section=person_contact_person_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         enabled=False,
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -662,7 +656,7 @@ def basic_template_form(
     field_factory(
         label="Additional information",
         section=additional_info_applicant_section,
-        type=basic_field_types["textarea"],
+        type="textarea",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -672,7 +666,7 @@ def basic_template_form(
     # Applicant switcher: Company / Person
     applicant_type_switcher_field = field_factory(
         section=applicant_section,
-        type=basic_field_types["radiobuttoninline"],
+        type="radiobuttoninline",
         label=fake.name(),
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -706,7 +700,7 @@ def basic_template_form(
     target_previously_received_when_field = field_factory(
         label="Have you previously received a plot of land from the city?",
         section=application_target_section,
-        type=basic_field_types["radiobuttoninline"],
+        type="radiobuttoninline",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -729,7 +723,7 @@ def basic_template_form(
     plot_what_application_applies_field = field_factory(
         label="The plot what the application applies",
         section=application_target_section,
-        type=basic_field_types["dropdown"],
+        type="dropdown",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -751,7 +745,7 @@ def basic_template_form(
     field_factory(
         label="%-grounds",
         section=application_target_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text="€/k-m2",
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -760,7 +754,7 @@ def basic_template_form(
     field_factory(
         label="Form of financing and management",
         section=application_target_section,
-        type=basic_field_types["checkbox"],
+        type="checkbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -789,7 +783,7 @@ def basic_template_form(
     field_factory(
         label="Reference attachments",
         section=application_target_section,
-        type=basic_field_types["uploadfiles"],
+        type="uploadfiles",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -801,7 +795,7 @@ def basic_template_form(
 
 @pytest.fixture
 def area_search_template_form(
-    form_factory, section_factory, field_factory, choice_factory, basic_field_types
+    form_factory, section_factory, field_factory, choice_factory
 ):
     form = form_factory(
         name=fake.name(),
@@ -826,7 +820,7 @@ def area_search_template_form(
     # Applicant switcher: Company / Person
     applicant_type_switcher_field = field_factory(
         section=applicant_section,
-        type=basic_field_types["radiobuttoninline"],
+        type="radiobuttoninline",
         label="Hakijan tyyppi",  # Applicant type
         hint_text=fake.sentence(),
         validation=fake.sentence(),
@@ -857,7 +851,7 @@ def area_search_template_form(
     field_factory(
         label="Yrityksen nimi",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -866,7 +860,7 @@ def area_search_template_form(
     field_factory(
         label="Kieli",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -875,7 +869,7 @@ def area_search_template_form(
     field_factory(
         label="Y-tunnus",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -884,7 +878,7 @@ def area_search_template_form(
     field_factory(
         label="Puhelinnumero",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -893,7 +887,7 @@ def area_search_template_form(
     field_factory(
         label="Sähköposti",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -902,7 +896,7 @@ def area_search_template_form(
     field_factory(
         label="Katuosoite",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -911,7 +905,7 @@ def area_search_template_form(
     field_factory(
         label="Postinumero",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -920,7 +914,7 @@ def area_search_template_form(
     field_factory(
         label="Postitoimipaikka",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -929,7 +923,7 @@ def area_search_template_form(
     field_factory(
         label="Maa",
         section=company_applicant_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -938,7 +932,7 @@ def area_search_template_form(
     field_factory(
         label="Hallintaosuus",
         section=company_applicant_section,
-        type=basic_field_types["fractional"],
+        type="fractional",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -955,7 +949,7 @@ def area_search_template_form(
     field_factory(
         label="Kieli",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -964,7 +958,7 @@ def area_search_template_form(
     field_factory(
         label="Puhelinnumero",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -973,7 +967,7 @@ def area_search_template_form(
     field_factory(
         label="Sähköposti",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -982,7 +976,7 @@ def area_search_template_form(
     field_factory(
         label="Katuosoite",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -991,7 +985,7 @@ def area_search_template_form(
     field_factory(
         label="Postinumero",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1000,7 +994,7 @@ def area_search_template_form(
     field_factory(
         label="Postitoimipaikka",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1009,7 +1003,7 @@ def area_search_template_form(
     field_factory(
         label="Maa",
         section=billing_information_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1025,7 +1019,7 @@ def area_search_template_form(
     field_factory(
         label="Verkkolaskutusosoite",
         section=billing_reference_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1034,7 +1028,7 @@ def area_search_template_form(
     field_factory(
         label="Laskutusviite",
         section=billing_reference_section,
-        type=basic_field_types["textbox"],
+        type="textbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1050,7 +1044,7 @@ def area_search_template_form(
     field_factory(
         label="Sahkoisesti ilmoittamaani sahkopostiosoitteeseen",
         section=application_decision_delivery_section,
-        type=basic_field_types["checkbox"],
+        type="checkbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1059,7 +1053,7 @@ def area_search_template_form(
     field_factory(
         label="Postitse ilmoittamaani postiosoitteeseen",
         section=application_decision_delivery_section,
-        type=basic_field_types["checkbox"],
+        type="checkbox",
         hint_text=fake.sentence(),
         validation=fake.sentence(),
         action=fake.sentence(),
@@ -1081,24 +1075,6 @@ def area_search_form(area_search_template_form):
 class ChoiceFactory(factory.DjangoModelFactory):
     class Meta:
         model = Choice
-
-
-@pytest.fixture
-def basic_field_types(field_type_factory):
-    field_type_inputs = [
-        {"name": "Textbox", "identifier": "textbox"},
-        {"name": "Textarea", "identifier": "textarea"},
-        {"name": "Checkbox", "identifier": "checkbox"},
-        {"name": "Dropdown", "identifier": "dropdown"},
-        {"name": "Radiobutton", "identifier": "radiobutton"},
-        {"name": "RadiobuttonInline", "identifier": "radiobuttoninline"},
-        {"name": "Fractional", "identifier": "fractional"},
-        # Special field types
-        {"name": "Upload Files", "identifier": "uploadfiles"},
-    ]
-
-    field_types = [field_type_factory(**field_type) for field_type in field_type_inputs]
-    return {t.identifier: t for t in field_types}
 
 
 @register

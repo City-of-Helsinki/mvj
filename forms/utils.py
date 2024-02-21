@@ -161,7 +161,7 @@ def _get_plot_search_target_attributes(plot_search_target):
 
 
 def _write_entry_value(col, entry, field, row, worksheet):
-    if field.type.identifier == "checkbox":
+    if field.type == "checkbox":
         choices = entry.value.strip("][").split(", ")
         try:
             choices = [int(choice) for choice in choices]

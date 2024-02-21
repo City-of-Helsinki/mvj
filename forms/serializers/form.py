@@ -25,7 +25,7 @@ from users.models import User
 from users.serializers import UserSerializer
 
 from ..enums import ApplicantType, FormState
-from ..models import Answer, Choice, Entry, Field, FieldType, Form, Section
+from ..models import Answer, Choice, Entry, Field, Form, Section
 from ..models.form import AnswerOpeningRecord, Attachment, EntrySection
 from ..validators.answer import (
     ControlShareValidation,
@@ -60,7 +60,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 class FieldSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    type = serializers.PrimaryKeyRelatedField(queryset=FieldType.objects.all())
+    type = serializers.ChoiceField(choices=Field.FIELD_TYPES)
     identifier = serializers.CharField()
     choices = ChoiceSerializer(many=True)
 
@@ -754,7 +754,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         ) in self.entry_generator(entries_data):
             field = self.get_field(field_identifier, section_identifier, validated_data)
 
-            if field.type.identifier == "uploadfiles":
+            if field.type == "uploadfiles":
                 Attachment.objects.filter(id__in=value["value"]).update(path=path)
 
             entry_section = self.get_entry_section(answer, metadata, path,)
@@ -784,7 +784,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         ) in self.entry_generator(entries_data):
             field = self.get_field(field_identifier, section_identifier, validated_data)
 
-            if field.type.identifier == "uploadfiles":
+            if field.type == "uploadfiles":
                 Attachment.objects.filter(id__in=value["value"]).update(path=path)
 
             entry_section = self.get_entry_section(instance, metadata, path,)

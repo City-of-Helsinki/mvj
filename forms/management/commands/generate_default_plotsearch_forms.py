@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
 from forms.enums import FormState
-from forms.models import Choice, Field, FieldType, Form, Section
+from forms.models import Choice, Field, Form, Section
 
 
 class Command(BaseCommand):
@@ -62,24 +62,12 @@ class Command(BaseCommand):
 
         self.sections = copy.deepcopy(self.DEFAULT_SECTIONS_AND_FIELDS)
 
-    def generate_field_types(self):
-        for field_type in self.DEFAULT_FIELD_TYPES:
-            obj, created = FieldType.objects.get_or_create(
-                name=field_type["name"], identifier=field_type["identifier"]
-            )
-            self.field_type_map[obj.identifier] = obj
-            if created:
-                self.new_fields_generated += 1
-
     def generate_choice(self, choice, parent_field):
         Choice.objects.create(field=parent_field, **choice)
 
     def generate_field(self, field, parent_section):
-        field_type = field.pop("type")
         choices = field.pop("choices", [])
-        new_field = Field.objects.create(
-            section=parent_section, type=self.field_type_map[field_type], **field
-        )
+        new_field = Field.objects.create(section=parent_section, **field)
         for choice in choices:
             self.generate_choice(choice, new_field)
 
@@ -105,7 +93,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Generating default plot search form templates..")
-        self.generate_field_types()
         self.stdout.write(
             "{} new field types generated.".format(self.new_fields_generated)
         )

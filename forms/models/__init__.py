@@ -4,7 +4,6 @@ from .form import (  # noqa: F401
     Entry,
     EntrySection,
     Field,
-    FieldType,
     Form,
     Section,
 )

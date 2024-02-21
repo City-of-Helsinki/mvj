@@ -63,7 +63,7 @@ def test_delete_form(admin_client, basic_form):
 
 
 @pytest.mark.django_db
-def test_add_field_to_form(admin_client, basic_form, basic_field_types):
+def test_add_field_to_form(admin_client, basic_form):
     url = reverse("form-detail", kwargs={"pk": basic_form.id})
     response = admin_client.get(url)
     assert response.status_code == 200
@@ -73,7 +73,7 @@ def test_add_field_to_form(admin_client, basic_form, basic_field_types):
         "hint_text": fake.sentence(),
         "validation": fake.sentence(),
         "action": fake.sentence(),
-        "type": basic_field_types["textarea"].id,
+        "type": "textarea",
         "section": payload["sections"][0]["id"],
     }
 
