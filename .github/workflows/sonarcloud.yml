@@ -6,10 +6,23 @@ on:
 name: Sonarcloud Scan
 jobs:
   sonarcloud:
+    env:
+      DATABASE_URL: 'postgis://postgres:postgres@localhost/github_actions'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: [3.8]
+    services:
+      postgres:
+        image: postgis/postgis:12-3.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v4
       with:
@@ -18,13 +31,19 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
-    - name: Install pytest & pytest-cov
+    - name: Install gdal
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y gdal-bin gettext
+    - name: Install pypi packages
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
     - name: Generate coverage file
       run: |
-        pytest --cov=. --cov-report xml:coverage.xml
+        python manage.py compilemessages
+        pytest --cov=. --cov-report xml:coverage.xml --migrations
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
