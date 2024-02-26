@@ -17,7 +17,7 @@ from forms.management.commands.generate_areasearch_form import (
 from forms.models import Answer, Form
 from forms.models.form import AnswerOpeningRecord
 from forms.serializers.form import AnswerSerializer, FormSerializer
-from leasing.models import Decision, PlanUnit, Plot
+from leasing.models import Decision, PlanUnit, Plot, ServiceUnit
 from leasing.models.land_area import CustomDetailedPlan
 from leasing.serializers.decision import DecisionSerializer
 from leasing.serializers.land_area import (
@@ -26,6 +26,7 @@ from leasing.serializers.land_area import (
     PublicPlanUnitSerializer,
 )
 from leasing.serializers.lease import DistrictSerializer
+from leasing.serializers.service_unit import ServiceUnitSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
@@ -870,6 +871,13 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         allow_null=True,
     )
     area_search_status = AreaSearchStatusSerializer(required=False, allow_null=True)
+    service_unit = InstanceDictPrimaryKeyRelatedField(
+        instance_class=ServiceUnit,
+        queryset=ServiceUnit.objects.all(),
+        related_serializer=ServiceUnitSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = AreaSearch
@@ -892,6 +900,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "state",
             "received_date",
             "area_search_status",
+            "service_unit",
         )
 
     def create(self, validated_data):
@@ -1020,6 +1029,7 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
             "area_search_status",
             "answer",
             "plot",
+            "service_unit",
         )
 
     def to_representation(self, instance):

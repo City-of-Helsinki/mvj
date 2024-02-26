@@ -18,7 +18,7 @@ from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
 from leasing.enums import PlotSearchTargetType
-from leasing.models import Financing, Hitas, Lease, Management
+from leasing.models import Financing, Hitas, Lease, Management, ServiceUnit
 from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
     AreaSearchLessor,
@@ -551,6 +551,10 @@ class AreaSearch(models.Model):
         on_delete=models.CASCADE,
         related_name="area_search",
         null=True,
+    )
+
+    service_unit = models.ForeignKey(
+        ServiceUnit, related_name="+", on_delete=models.SET_NULL, null=True, blank=True,
     )
 
     recursive_get_related_skip_relations = [
