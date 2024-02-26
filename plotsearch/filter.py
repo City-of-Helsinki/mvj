@@ -126,6 +126,7 @@ class AreaSearchFilterSet(django_filters.FilterSet):
     address = django_filters.CharFilter(lookup_expr="icontains")
     preparer = django_filters.CharFilter(field_name="preparer__username")
     applicant = ApplicantFilter()
+    service_unit = django_filters.NumberFilter(field_name="service_unit__id")
     q = AreaSearchSimpleFilter()
 
     class Meta:
