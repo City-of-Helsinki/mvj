@@ -11,6 +11,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from forms.management.commands.generate_areasearch_form import (
+    initialize_area_search_form,
+)
 from forms.models import Answer, Form
 from forms.models.form import AnswerOpeningRecord
 from forms.serializers.form import AnswerSerializer, FormSerializer
@@ -55,7 +58,6 @@ from plotsearch.utils import (
     compose_direct_reservation_mail_body,
     compose_direct_reservation_mail_subject,
     get_applicant,
-    initialize_area_search_form,
     map_intended_use_to_lessor,
     pop_default,
 )
@@ -894,6 +896,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
     def create(self, validated_data):
         area_form_qs = Form.objects.filter(is_area_form=True)
         area_search_status = validated_data.pop("area_search_status", None)
+        # When areasearch form does not exist it will be initialized
         if area_form_qs.exists():
             validated_data["form"] = area_form_qs.last()
         else:

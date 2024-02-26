@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from faker import Faker
 from rest_framework import serializers
 
-from forms.models import Form, Section, Field
+from forms.models import Field, Form, Section
 from forms.models.form import AnswerOpeningRecord
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
