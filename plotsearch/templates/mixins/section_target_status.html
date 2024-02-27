@@ -23,7 +23,7 @@
                         </th>
                         {% for entry in field.entry_set.all|filter_answer:answer|filter_applicant:applicant_identifier|filter_plot_search_target:plot_search_target %}
                             <td>
-                                {% if field.type.identifier == "checkbox" or field.type.identifier == "radiobutton" or field.type.identifier == "radiobuttoninline" %}
+                                {% if field.type == "checkbox" or field.type == "radiobutton" or field.type == "radiobuttoninline" %}
                                     {% fetch_choice_value entry.value entry.field.id %}
                                     {% if not entry.value %}
                                         <span> - </span>
