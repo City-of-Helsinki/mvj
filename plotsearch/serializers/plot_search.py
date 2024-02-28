@@ -867,6 +867,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         queryset=User.objects.all(),
         related_serializer=UserSerializer,
         required=False,
+        allow_null=True,
     )
     area_search_status = AreaSearchStatusSerializer(required=False, allow_null=True)
 
