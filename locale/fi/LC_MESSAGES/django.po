@@ -3563,20 +3563,20 @@ msgid "Certificate of entry in the register of employers"
 msgstr "Todistus työnantajarekisteriin merkitsemisestä"
 
 msgctxt "Decline reason"
-msgid "Application revoked"
-msgstr ""
+msgid "Application expired"
+msgstr "Hakemus rauennut"
 
 msgctxt "Decline reason"
 msgid "Area not controlled by city"
-msgstr "Alue ei ole kaupungin hallinnassa"
+msgstr "Alue ei ole kaupungin hallinnoima"
 
 msgctxt "Decline reason"
-msgid "Area no available for lease"
-msgstr "Tiedostoa ei löydy"
+msgid "Area not available for lease"
+msgstr "Alue ei ole vuokrattavissa"
 
 msgctxt "Decline reason"
 msgid "Other reason"
-msgstr "Muu korvaus"
+msgstr "Muu syy"
 
 msgctxt "Area search state"
 msgid "Received"

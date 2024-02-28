@@ -109,16 +109,16 @@ class DeclineReason(str, Enum):
     In Finnish: Hylkäyksen syy
     """
 
-    APPLICATION_REVOKED = "application_revoked"
+    APPLICATION_EXPIRED = "application_expired"
     NOT_IN_CONTROL = "not_in_control"
     NOT_AVAILABLE_LEASE = "not_available_for_lease"
     OTHER = "other"
 
     class Labels:
-        APPLICATION_REVOKED = pgettext_lazy("Decline reason", "Application revoked")
+        APPLICATION_EXPIRED = pgettext_lazy("Decline reason", "Application expired")
         NOT_IN_CONTROL = pgettext_lazy("Decline reason", "Area not controlled by city")
         NOT_AVAILABLE_LEASE = pgettext_lazy(
-            "Decline reason", "Area no available for lease"
+            "Decline reason", "Area not available for lease"
         )
         OTHER = pgettext_lazy("Decline reason", "Other reason")
 
