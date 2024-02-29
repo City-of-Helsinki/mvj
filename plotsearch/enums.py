@@ -8,13 +8,19 @@ class AreaSearchLessor(str, Enum):
     """
 
     AKV = "AKV"
-    KUVA = "kuva"
-    MAKE = "make"
+    KUVA = "KUVA"
+    MAKE = "MAKE"
+    LIPA = "LIPA"
+    UPA = "UPA"
+    NUP = "NUP"
 
     class Labels:
         AKV = pgettext_lazy("Area search lessor", "Area use and control")
         KUVA = pgettext_lazy("Area search lessor", "Culture and leisure")
         MAKE = pgettext_lazy("Area search lessor", "Development of land assets")
+        LIPA = pgettext_lazy("Area search lessor", "Sports venue services")
+        UPA = pgettext_lazy("Area search lessor", "Outdoor services")
+        NUP = pgettext_lazy("Area search lessor", "Youth services")
 
 
 class SearchClass(str, Enum):

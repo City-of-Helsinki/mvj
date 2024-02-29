@@ -3480,7 +3480,7 @@ msgstr ""
 
 msgctxt "Area search lessor"
 msgid "Area use and control"
-msgstr "Aluekäyttö- ja valvonta"
+msgstr "Alueiden käyttö ja valvonta"
 
 msgctxt "Area search lessor"
 msgid "Culture and leisure"
@@ -3488,7 +3488,19 @@ msgstr "Kulttuuri ja vapaa-aika"
 
 msgctxt "Area search lessor"
 msgid "Development of land assets"
-msgstr "Maaomaisuudenkehittäminen ja tontit"
+msgstr "Maaomaisuuden kehittäminen ja tontit"
+
+msgctxt "Area search lessor"
+msgid "Sports venue services"
+msgstr "Liikuntapaikkapalvelut"
+
+msgctxt "Area search lessor"
+msgid "Outdoor services"
+msgstr "Ulkoilupalvelut"
+
+msgctxt "Area search lessor"
+msgid "Youth services"
+msgstr "Nuorisopalvelut"
 
 msgctxt "Search class"
 msgid "Plot search"
