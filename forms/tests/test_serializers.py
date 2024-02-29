@@ -306,7 +306,7 @@ def test_target_status(
         "reserved": True,
         "added_target_to_applicant": True,
         "counsel_date": timezone.now(),
-        "decline_reason": DeclineReason.APPLICATION_REVOKED,
+        "decline_reason": DeclineReason.APPLICATION_EXPIRED,
         "arguments": "Very good arguments",
         "proposed_managements": [],
         "meeting_memos": [
