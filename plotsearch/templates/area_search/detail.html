@@ -7,9 +7,46 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="{% static 'plotsearch/fonts/fonts.css' %}">
-    <link rel="stylesheet" href="{% static 'plotsearch/target_status_pdf_style.css' %}">
+    <title>{% trans "Area search application" %} {{ object.identifier }}</title>
+    <style>
+@page {
+  size: letter portrait;
+  margin: 2cm;
+}
+
+body {
+  font-family: 'HelsinkiGrotesk';
+  font-size: small;
+}
+
+h1 {
+  font-size: xx-large;
+}
+
+hr {
+  border-top: 1px solid #cccccc;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th {
+  text-align: left;
+  width: 40%;
+  padding-right: 5%;
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
+
+.parent-section {
+  margin-left: 20px;
+}
+    </style>
 </head>
 
 <body>
