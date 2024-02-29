@@ -827,13 +827,13 @@ def land_use_agreement_test_data(
         type=TenantContactType.TENANT,
         land_use_agreement_litigant=litigants[0],
         contact=contacts[0],
-        start_date=timezone.now().replace(year=2019).date(),
+        start_date=timezone.datetime(year=2019, month=2, day=28).date(),
     ),
     land_use_agreement_litigant_contact_factory(
         type=TenantContactType.TENANT,
         land_use_agreement_litigant=litigants[1],
         contact=contacts[1],
-        start_date=timezone.now().replace(year=2019).date(),
+        start_date=timezone.datetime(year=2019, month=2, day=28).date(),
     ),
 
     land_use_agreement.litigants.set(litigants)
