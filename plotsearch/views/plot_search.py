@@ -270,6 +270,7 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     filterset_class = AreaSearchFilterSet
+    ordering = "-received_date"
     bbox_filter_field = "geometry"
     bbox_filter_include_overlapping = True
 
