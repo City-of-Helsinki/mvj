@@ -21,8 +21,8 @@ def map_intended_use_to_lessor(intended_use):
         "varastointi ja jakelu": AreaSearchLessor.AKV,
         "työmaat": AreaSearchLessor.AKV,
         "muu alueen käyttö": AreaSearchLessor.MAKE,
-        "veneily ja laiturit": AreaSearchLessor.KUVA,
-        "urheilu ja liikunta": AreaSearchLessor.KUVA,
+        "veneily ja laiturit": AreaSearchLessor.UPA,
+        "urheilu ja liikunta": AreaSearchLessor.LIPA,
     }
     try:
         lessor = {**intended_uses_with_lessors, **old_intended_uses_with_lessors}.get(
