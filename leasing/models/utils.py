@@ -438,7 +438,9 @@ class DayMonth(namedtuple("DayMonthBase", ["day", "month"])):
         return OrderedDict(zip(self._fields, self))
 
 
-def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
+def recursive_get_related(  # NOQA C901
+    obj, user, parent_objs=None, acc=None, exclude_apps=None
+):
     """Recursively get objects that relate to `obj`
 
     Returns all items as {content_type: set(instances)} that are
@@ -464,6 +466,10 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
     # )
     #
     for relation in model._meta.get_fields(include_hidden=True):
+        # Exclude apps passed in the first call, to avoid endless recursion
+        if exclude_apps is not None and relation.model._meta.app_label in exclude_apps:
+            continue
+
         if (
             not relation.is_relation
             or not relation.name
@@ -505,8 +511,8 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
                 all_items = related_manager.all()
 
         # Model permission check
-        permission_name = "{}.view_{}".format(
-            relation.model._meta.app_label, relation.model._meta.model_name
+        permission_name = (
+            f"{relation.model._meta.app_label}.view_{relation.model._meta.model_name}"
         )
         has_permission = user.has_perm(permission_name)
 
@@ -516,7 +522,13 @@ def recursive_get_related(obj, user, parent_objs=None, acc=None):  # NOQA C901
                 acc[ContentType.objects.get_for_model(item)].add(item)
 
             parent_objs.append(obj)
-            recursive_get_related(item, user=user, parent_objs=parent_objs, acc=acc)
+            recursive_get_related(
+                item,
+                user=user,
+                parent_objs=parent_objs,
+                acc=acc,
+                exclude_apps=exclude_apps,
+            )
             parent_objs.pop()
 
     return acc
