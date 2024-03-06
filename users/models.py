@@ -14,7 +14,13 @@ class User(AbstractUser):
         "groups",
         "user_permissions",
         "ad_groups",
-        "favourite"
+        "favourite",
+        "answer",
+        "plotsearch",
+        "areasearch",
+        "areasearchstatusnote",
+        "targetstatus",
+        "informationcheck",
     ]
 
     @admin.display(boolean=True, description=_("Token exists"))
