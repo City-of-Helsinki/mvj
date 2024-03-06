@@ -575,5 +575,6 @@ class RelatedPlotApplication(TimeStampedSafeDeleteModel):
 
 
 auditlog.register(PlotSearch)
+auditlog.register(AreaSearch)
 auditlog.register(InformationCheck)
 auditlog.register(RelatedPlotApplication)
