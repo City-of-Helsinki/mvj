@@ -7,6 +7,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
 
+from audittrail.viewsets import AuditTrailView
 from credit_integration import urls as credit_integration_urls
 from forms.viewsets.form import (
     AnswerOpeningRecordViewset,
@@ -21,7 +22,6 @@ from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
-from leasing.viewsets.auditlog import AuditLogView
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.batchrun import (
     JobRunLogEntryViewSet,
@@ -282,7 +282,7 @@ additional_api_paths = [
     path(
         "pub/plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"
     ),
-    path("auditlog/", AuditLogView.as_view(), name="auditlog"),
+    path("auditlog/", AuditTrailView.as_view(), name="auditlog"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(
         "decision_copy_to_leases/",
