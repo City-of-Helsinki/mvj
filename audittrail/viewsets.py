@@ -34,18 +34,9 @@ TYPE_MAP = {
         "model": AreaSearch,
         "permission": "plotsearch.view_areasearch",
         "error_message": "Area search does not exist",
+        "exclude_apps": ["leasing"],
     },
 }
-
-
-def get_object(model, id) -> Union[Lease, Union[Contact, AreaSearch]]:
-    try:
-        if model is Lease:
-            return Lease.objects.full_select_related_and_prefetch_related().get(pk=id)
-        else:
-            return model.objects.get(pk=id)
-    except model.DoesNotExist:
-        raise APIException(f"{model.__name__} does not exist")
 
 
 class AuditTrailView(APIView):
@@ -58,7 +49,7 @@ class AuditTrailView(APIView):
     def get_view_description(self, html=False):
         return _("View auditlog of a lease or a contact")
 
-    def get(self, request, format=None):  # NOQA: C901
+    def get(self, request, format=None):
         search_form = AuditTrailSearchForm(self.request.query_params)
         if not search_form.is_valid():
             return Response(search_form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -74,24 +65,14 @@ class AuditTrailView(APIView):
         model = TYPE_MAP[type_value]["model"]
         id = search_form["id"].value()
 
-        obj = get_object(model, id)
+        obj = self._get_object(model, id)
 
         exclude_apps = TYPE_MAP[type_value].get("exclude_apps", None)
         collected_items = recursive_get_related(
             obj, user=request.user, exclude_apps=exclude_apps
         )
 
-        obj_content_type = ContentType.objects.get_for_model(obj)
-        q = Q(content_type=obj_content_type) & Q(object_id=obj.id)
-        for content_type, items in collected_items.items():
-            q |= Q(content_type=content_type) & Q(object_id__in=[i.pk for i in items])
-
-        queryset = (
-            LogEntry.objects.filter(q)
-            .distinct()
-            .order_by("-timestamp")
-            .select_related("actor")
-        )
+        queryset = self._build_queryset(obj, collected_items)
 
         serializer_context = {"request": request, "format": format, "view": self}
 
@@ -124,3 +105,28 @@ class AuditTrailView(APIView):
                 ]
 
         return Response(metadata, status=status.HTTP_200_OK)
+
+    def _get_object(self, model, id) -> Union[Lease, Union[Contact, AreaSearch]]:
+        try:
+            if model is Lease:
+                return Lease.objects.full_select_related_and_prefetch_related().get(
+                    pk=id
+                )
+            else:
+                return model.objects.get(pk=id)
+        except model.DoesNotExist:
+            raise APIException(f"{model.__name__} does not exist")
+
+    def _build_queryset(self, obj, collected_items):
+        obj_content_type = ContentType.objects.get_for_model(obj)
+        q = Q(content_type=obj_content_type) & Q(object_id=obj.id)
+        for content_type, items in collected_items.items():
+            q |= Q(content_type=content_type) & Q(object_id__in=[i.pk for i in items])
+
+        queryset = (
+            LogEntry.objects.filter(q)
+            .distinct()
+            .order_by("-timestamp")
+            .select_related("actor")
+        )
+        return queryset
