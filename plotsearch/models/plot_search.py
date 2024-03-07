@@ -46,6 +46,10 @@ class PlotSearchType(NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Plot search types")
         ordering = ["ordering", "name"]
 
+    recursive_get_related_skip_relations = [
+        "plotsearch_subtype",
+    ]
+
 
 class PlotSearchSubtype(NameModel):
     """
@@ -62,6 +66,10 @@ class PlotSearchSubtype(NameModel):
         verbose_name = pgettext_lazy("Model name", "Plot search subtype")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search subtypes")
         ordering = ["ordering", "name"]
+
+    recursive_get_related_skip_relations = [
+        "plotsearch",
+    ]
 
 
 class PlotSearchStage(NameModel):
@@ -81,6 +89,10 @@ class PlotSearchStage(NameModel):
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Plot search stage")
         verbose_name_plural = pgettext_lazy("Model name", "Plot search stages")
+
+    recursive_get_related_skip_relations = [
+        "plotsearch",
+    ]
 
 
 class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
@@ -129,6 +141,14 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
         "leasing.Decision", related_name="plot_searches", blank=True
     )
 
+    recursive_get_related_skip_relations = [
+        "plotsearch_decisions",
+        "plotsearchtarget",
+        "plotsearch_preparers",
+        "form",
+        "related_plot_applications",
+    ]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Plot search")
         verbose_name_plural = pgettext_lazy("Model name", "Plot searches")
@@ -173,6 +193,15 @@ class PlotSearchTarget(models.Model):
     target_type = EnumField(
         PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
     )
+
+    recursive_get_related_skip_relations = [
+        "targetstatus",
+        "favouritetarget",
+        "directreservationlink_targets",
+        "targetinfolink" "lease",
+        "planunit",
+        "customdetailedplan",
+    ]
 
     def identifier(self):
         if self.plan_unit is not None:
@@ -225,6 +254,10 @@ class InformationCheck(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
     # In Finnish: Muokkausaika
     modified_at = models.DateTimeField(auto_now=True, verbose_name=_("Time modified"))
+
+    recursive_get_related_skip_relations = [
+        "user",
+    ]
 
 
 def target_status_id_generator():
@@ -289,6 +322,13 @@ class TargetStatus(models.Model):
         blank=True,
     )
 
+    recursive_get_related_skip_relations = [
+        "related_plot_applications",
+        "meetingmemo",
+        "proposedfinancingmanagement",
+        "lease",
+    ]
+
     def target_status_get_xlsx_page(self, worksheet, row):
         return get_answer_worksheet(self, worksheet, row)
 
@@ -328,6 +368,12 @@ class ProposedFinancingManagement(models.Model):
         TargetStatus, on_delete=models.CASCADE, related_name="proposed_managements"
     )
 
+    recursive_get_related_skip_relations = [
+        "hitas",
+        "financing",
+        "management",
+    ]
+
 
 def get_meeting_memo_file_upload_to(instance, filename):
     if instance.target_status.counsel_date is not None:
@@ -365,6 +411,10 @@ class MeetingMemo(models.Model):
         TargetStatus, on_delete=models.CASCADE, related_name="meeting_memos"
     )
 
+    recursive_get_related_skip_relations = [
+        "user",
+    ]
+
 
 class Favourite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -372,12 +422,19 @@ class Favourite(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    recursive_get_related_skip_relations = [
+        "favouritetarget",
+        "user",
+    ]
+
 
 class FavouriteTarget(models.Model):
     favourite = models.ForeignKey(
         Favourite, on_delete=models.CASCADE, related_name="targets"
     )
     plot_search_target = models.ForeignKey(PlotSearchTarget, on_delete=models.CASCADE)
+
+    recursive_get_related_skip_relations = []
 
 
 class AreaSearchIntendedUse(SafeDeleteModel, NameModel):
@@ -387,6 +444,10 @@ class AreaSearchIntendedUse(SafeDeleteModel, NameModel):
         verbose_name = pgettext_lazy("Model name", "Area search intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
         ordering = ["name"]
+
+    recursive_get_related_skip_relations = [
+        "areasearch",
+    ]
 
 
 def areasearch_id_generator():
@@ -409,6 +470,11 @@ def areasearch_id_generator():
 class AreaSearchStatus(models.Model):
     decline_reason = EnumField(DeclineReason, max_length=30, null=True, blank=True)
     preparer_note = models.TextField(blank=True, null=True)
+
+    recursive_get_related_skip_relations = [
+        "areasearch",
+        "areasearchstatusnote",
+    ]
 
 
 class AreaSearch(models.Model):
@@ -487,6 +553,14 @@ class AreaSearch(models.Model):
         null=True,
     )
 
+    recursive_get_related_skip_relations = [
+        "related_plot_applications",
+        "areasearchattachment",
+        "user",
+        "lease",
+        "form",
+    ]
+
     def get_xlsx_page(self, worksheet, row):
         return get_area_search_answer_worksheet(self, worksheet, row)
 
@@ -518,6 +592,10 @@ class AreaSearchAttachment(NameModel):
         blank=True,
     )
 
+    recursive_get_related_skip_relations = [
+        "user",
+    ]
+
 
 class AreaSearchStatusNote(models.Model):
     note = models.TextField()
@@ -527,6 +605,10 @@ class AreaSearchStatusNote(models.Model):
         AreaSearchStatus, on_delete=models.CASCADE, related_name="status_notes"
     )
 
+    recursive_get_related_skip_relations = [
+        "user",
+    ]
+
 
 class DirectReservationLink(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -534,6 +616,10 @@ class DirectReservationLink(models.Model):
 
     def get_external_url(self):
         return "{}/suoravaraus/{}".format(settings.PUBLIC_UI_URL, self.uuid)
+
+    recursive_get_related_skip_relations = [
+        "directreservationlink_targets",
+    ]
 
 
 class FAQ(models.Model):
@@ -547,6 +633,8 @@ class FAQ(models.Model):
     @property
     def answer_truncate(self):
         return self.answer if len(self.answer) < 50 else (self.answer[:50] + "..")
+
+    recursive_get_related_skip_relations = []
 
 
 class RelatedPlotApplication(TimeStampedSafeDeleteModel):
@@ -572,6 +660,11 @@ class RelatedPlotApplication(TimeStampedSafeDeleteModel):
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
         ]
+
+    recursive_get_related_skip_relations = [
+        "lease",
+        "content_type",
+    ]
 
 
 auditlog.register(PlotSearch)

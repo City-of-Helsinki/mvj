@@ -28,6 +28,13 @@ class Form(models.Model):
     def __str__(self):
         return self.name
 
+    recursive_get_related_skip_relations = [
+        "section",
+        "answer",
+        "areasearch",
+        "plotsearch",
+    ]
+
 
 class Section(models.Model):
     title = models.CharField(max_length=255)
@@ -78,6 +85,10 @@ class Section(models.Model):
     def __str__(self):
         return self.title
 
+    recursive_get_related_skip_relations = [
+        "field",
+    ]
+
 
 class Field(models.Model):
     FIELD_TYPES = (
@@ -126,6 +137,12 @@ class Field(models.Model):
     def __str__(self):
         return self.label
 
+    recursive_get_related_skip_relations = [
+        "choice",
+        "attachment",
+        "entry",
+    ]
+
 
 class Choice(models.Model):
     text = models.CharField(max_length=255)
@@ -134,6 +151,8 @@ class Choice(models.Model):
     has_text_input = models.BooleanField(default=False)
 
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="choices")
+
+    recursive_get_related_skip_relations = []
 
 
 class Answer(models.Model):
@@ -146,6 +165,16 @@ class Answer(models.Model):
 
     created_at = models.DateTimeField(auto_now=True)
     ready = models.BooleanField(default=False)
+
+    recursive_get_related_skip_relations = [
+        "form",
+        "user",
+        "attachment",
+        "areasearch",
+        "targetstatus",
+        "entrysection",
+        "answeropeningrecord",
+    ]
 
 
 class AnswerOpeningRecord(models.Model):
@@ -160,6 +189,10 @@ class AnswerOpeningRecord(models.Model):
     answer = models.OneToOneField(
         Answer, on_delete=models.CASCADE, related_name="opening_record"
     )
+
+    recursive_get_related_skip_relations = [
+        "answeropeningrecord_openers",
+    ]
 
 
 def get_attachment_file_upload_to(instance, filename):
@@ -183,6 +216,10 @@ class Attachment(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    recursive_get_related_skip_relations = [
+        "user",
+    ]
+
 
 class EntrySection(models.Model):
     metadata = JSONField(null=True)
@@ -191,6 +228,10 @@ class EntrySection(models.Model):
     answer = models.ForeignKey(
         Answer, on_delete=models.CASCADE, related_name="entry_sections", null=True
     )
+
+    recursive_get_related_skip_relations = [
+        "entry",
+    ]
 
 
 class Entry(models.Model):
@@ -205,6 +246,10 @@ class Entry(models.Model):
     value = models.TextField()
     extra_value = models.TextField(blank=True, null=True)
     path = models.TextField()
+
+    recursive_get_related_skip_relations = [
+        "field",
+    ]
 
 
 from forms.signals import *  # noqa: E402 F403 F401
