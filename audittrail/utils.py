@@ -77,14 +77,19 @@ def recursive_get_related(  # NOQA C901
                 all_items = related_manager.all()
 
         # Model permission check
-        permission_name = (
+        relation_permission_name = (
             f"{relation.model._meta.app_label}.view_{relation.model._meta.model_name}"
         )
-        has_permission = user.has_perm(permission_name)
+        has_relation_permission = user.has_perm(relation_permission_name)
 
         for item in all_items:
+            # Check permissions for the item
+            item_permission_name = (
+                f"{item._meta.app_label}.view_{item._meta.model_name}"
+            )
+            has_item_permission = user.has_perm(item_permission_name)
             # Include item only if user has permission, but recurse into sub items regardless
-            if has_permission:
+            if has_relation_permission and has_item_permission:
                 acc[ContentType.objects.get_for_model(item)].add(item)
 
             parent_objs.append(obj)

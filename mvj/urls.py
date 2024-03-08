@@ -282,7 +282,7 @@ additional_api_paths = [
     path(
         "pub/plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"
     ),
-    path("auditlog/", AuditTrailView.as_view(), name="auditlog"),
+    path("auditlog/", AuditTrailView.as_view(), name="audittrail"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(
         "decision_copy_to_leases/",

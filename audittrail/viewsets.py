@@ -1,4 +1,5 @@
 from typing import Union
+
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
@@ -13,10 +14,9 @@ from rest_framework.views import APIView
 
 from audittrail.forms import AuditTrailSearchForm
 from audittrail.serializers import LogEntrySerializer
-from leasing.models import Contact, Lease
 from audittrail.utils import recursive_get_related
+from leasing.models import Contact, Lease
 from plotsearch.models import AreaSearch
-
 
 TYPE_MAP = {
     "lease": {
