@@ -2207,7 +2207,7 @@
         "hint_text_en": null,
         "identifier": "hyvaksyn-tietojeni-tallentamisen",
         "enabled": true,
-        "required": false,
+        "required": true,
         "validation": null,
         "action": null,
         "sort_order": 3,
