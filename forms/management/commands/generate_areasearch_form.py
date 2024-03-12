@@ -221,7 +221,8 @@ def initialize_area_search_form():
         enabled=True,
         required=False,
         sort_order=0,
-        hint_text="Täytä vain, jos käytössä on muu laskutusosoite.",
+        hint_text="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
+        Täytä vain, jos käytössä on muu laskutusosoite.""",
     )
     invoice_section_language = Field.objects.create(
         section=invoice_other_section,
