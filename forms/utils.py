@@ -704,3 +704,7 @@ def send_answer_email(email_message_input: EmailMessageInput) -> None:
 def get_supported_language_codes() -> List[str]:
     """Gets language codes allowed to be translated to."""
     return [language_code for language_code, _language_name in settings.LANGUAGES]
+
+def optional_fields_are_hidden(entries) -> bool:
+    """Check if an optional section of the application form is closed."""
+    return "show-if" in entries and not entries.get("show-if",{}).get('value')
