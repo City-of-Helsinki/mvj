@@ -3592,23 +3592,23 @@ msgstr "Muu syy"
 
 msgctxt "Area search state"
 msgid "Received"
-msgstr "Saamislaji"
+msgstr "Vastaanotettu"
 
 msgctxt "Area search state"
 msgid "In action"
-msgstr "Tarkastus"
+msgstr "Käynnissä"
 
 msgctxt "Area search state"
 msgid "Settled"
-msgstr ""
+msgstr "Päätetty"
 
 msgctxt "Area search state"
 msgid "Revoked"
-msgstr ""
+msgstr "Peruutettu"
 
 msgctxt "Area search state"
 msgid "Declined"
-msgstr ""
+msgstr "Hylätty"
 
 msgctxt "Model name"
 msgid "Plot search type"
