@@ -203,7 +203,7 @@ pysftp==0.2.9
     # via -r requirements.in
 python-bidi==0.4.2
     # via xhtml2pdf
-python-daemon==2.2.4
+python-daemon==3.0.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via

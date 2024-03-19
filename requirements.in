@@ -39,7 +39,7 @@ oracledb
 psycopg2-binary
 pysftp
 pyproj~=3.5.0
-python-daemon
+python-daemon~=3.0.1
 python-dateutil>=2.7.0
 sentry-sdk
 requests
