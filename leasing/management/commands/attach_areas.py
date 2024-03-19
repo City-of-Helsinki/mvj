@@ -1,10 +1,10 @@
 import logging
 import sys
-from datetime import datetime
 
 from django.contrib.gis.geos import GEOSException
 from django.core.management.base import BaseCommand
 from django.db import InternalError
+from django.utils import timezone
 
 from leasing.enums import AreaType, PlotType
 from leasing.models import Area, Lease
@@ -153,7 +153,7 @@ class Command(BaseCommand):
                             ),
                             "repeal_date": intersect_area.metadata.get("repeal_date"),
                             "geometry": intersect_area.geometry,
-                            "master_timestamp": datetime.now(),
+                            "master_timestamp": timezone.now(),
                         }
                         (plot, plot_created) = Plot.objects.get_or_create(
                             defaults=rest_data, **match_data
@@ -268,7 +268,7 @@ class Command(BaseCommand):
                                 "plan_unit_type": plan_unit_type,
                                 "plan_unit_state": plan_unit_state,
                                 "plan_unit_intended_use": plan_unit_intended_use,
-                                "master_timestamp": datetime.now(),
+                                "master_timestamp": timezone.now(),
                             }
 
                             # Set plan unit status

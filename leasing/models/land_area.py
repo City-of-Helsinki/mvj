@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -90,7 +89,7 @@ class MasterLandItemMixin(models.Model):
 
             # If the master item's data has been update, then update the timestamp
             if self.get_tracker().changed():
-                self.master_timestamp = datetime.now()
+                self.master_timestamp = timezone.now()
 
         super().save(*args, **kwargs)
 
