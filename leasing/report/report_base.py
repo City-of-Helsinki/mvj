@@ -7,7 +7,7 @@ from django.db.models import Model
 from django.forms.models import ModelChoiceIteratorValue
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django_q.conf import Conf
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
@@ -225,9 +225,9 @@ class ReportBase:
 
             if isinstance(input_value, bool):
                 if input_value:
-                    input_value = ugettext("Yes")
+                    input_value = gettext("Yes")
                 else:
-                    input_value = ugettext("No")
+                    input_value = gettext("No")
 
             worksheet.write(row_num, 1, input_value, field_format)
             row_num += 1
