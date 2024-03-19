@@ -325,6 +325,14 @@ class ReportBase:
 
 
 class AsyncReportBase(ReportBase):
+    @property
+    def __name__(self):
+        # Django-Q added some code for version 1.3.6 that requires setting this property for
+        # instances of this class, as django-q tries to access __name__ expecting it being served
+        # with a function and not a class instance.
+        # https://github.com/Koed00/django-q/commit/1eb5cf4b9bbff833d39dc108f1c37bde8caaa1dc
+        return self.__class__.__name__
+
     @classmethod
     def get_output_fields_metadata(cls):
         return {"message": {"label": _("Message")}}
