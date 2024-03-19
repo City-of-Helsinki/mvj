@@ -17,7 +17,7 @@ django-helusers~=0.7.0
 django-model-utils
 django-modeltranslation
 django-nested-inline~=0.4.5
-django-q[sentry]
+django-q[sentry]~=1.3.9
 django-safedelete
 django-sanitized-dump
 django-sequences
@@ -41,7 +41,7 @@ pysftp
 pyproj~=3.5.0
 python-daemon~=3.0.1
 python-dateutil>=2.7.0
-sentry-sdk
+sentry-sdk~=1.42
 requests
 xlsxwriter~=3.2.0
 zeep~=4.2.0
