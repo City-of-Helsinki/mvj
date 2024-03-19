@@ -626,6 +626,10 @@ class Lease(TimeStampedSafeDeleteModel):
         "related_to",
         "from_leases",
         "to_leases",
+        "related_plot_applications",
+        "relatedplotapplication",
+        "plotsearchtarget",
+        "targetstatus",
     ]
 
     class Meta:
