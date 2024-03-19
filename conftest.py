@@ -281,25 +281,25 @@ def lease_test_data(
             type=TenantContactType.TENANT,
             tenant=tenant1,
             contact=contacts[1],
-            start_date=timezone.datetime(year=2019, month=2, day=28).date(),
+            start_date=timezone.datetime(year=2019, month=2, day=28),
         ),
         tenant_contact_factory(
             type=TenantContactType.TENANT,
             tenant=tenant2,
             contact=contacts[2],
-            start_date=timezone.datetime(year=2019, month=2, day=28).date(),
+            start_date=timezone.datetime(year=2019, month=2, day=28),
         ),
         tenant_contact_factory(
             type=TenantContactType.CONTACT,
             tenant=tenant2,
             contact=contacts[3],
-            start_date=timezone.datetime(year=2019, month=2, day=28).date(),
+            start_date=timezone.datetime(year=2019, month=2, day=28),
         ),
         tenant_contact_factory(
             type=TenantContactType.TENANT,
             tenant=tenant2,
             contact=contacts[4],
-            start_date=timezone.datetime(year=2019, month=3, day=1).date()
+            start_date=timezone.datetime(year=2019, month=3, day=1)
             + datetime.timedelta(days=30),  # Future tenant
         ),
     ]

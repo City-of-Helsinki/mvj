@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 import pytest
+from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 
@@ -110,8 +111,8 @@ def test_lease_details_contains_future_tenants(
     for tenant in response.data["tenants"]:
         for tenantcontact in tenant["tenantcontact_set"]:
             if (
-                datetime.strptime(tenantcontact["start_date"], "%Y-%m-%d").date()
-                > datetime(year=2019, month=2, day=28).date()
+                timezone.make_aware(datetime.strptime(tenantcontact["start_date"], "%Y-%m-%d"))
+                > timezone.make_aware(datetime(year=2019, month=2, day=28))
             ):
                 found = True
                 break
