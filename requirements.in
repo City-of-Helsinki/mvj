@@ -44,4 +44,4 @@ python-dateutil>=2.7.0
 sentry-sdk
 requests
 xlsxwriter
-zeep
+zeep~=4.2.0

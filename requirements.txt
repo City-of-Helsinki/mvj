@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements.in
 #
-appdirs==1.4.3
-    # via zeep
 arabic-reshaper==3.0.0
     # via xhtml2pdf
 arrow==0.15.5
@@ -22,8 +20,6 @@ beautifulsoup4==4.8.2
     # via -r requirements.in
 blessed==1.17.4
     # via django-q
-cached-property==1.5.1
-    # via zeep
 cachetools==4.2.4
     # via django-helusers
 certifi==2023.7.22
@@ -56,18 +52,16 @@ dataclasses==0.6
     # via -r requirements.in
 deepmerge==1.0.1
     # via -r requirements.in
-defusedxml==0.6.0
-    # via zeep
 deprecation==2.1.0
     # via django-helusers
 django==3.2.23
     # via
     #   -r requirements.in
     #   django-anymail
+    #   django-auditlog
     #   django-cors-headers
     #   django-filter
     #   django-helusers
-    #   django-jsonfield
     #   django-model-utils
     #   django-modeltranslation
     #   django-picklefield
@@ -99,8 +93,6 @@ django-filter==21.1
     # via -r requirements.in
 django-helusers==0.7.0
     # via -r requirements.in
-django-jsonfield==1.4.0
-    # via django-auditlog
 django-jsonfield-compat==0.4.4
     # via -r requirements.in
 django-model-utils==4.1.1
@@ -183,6 +175,8 @@ pillow==10.0.1
     # via
     #   reportlab
     #   xhtml2pdf
+platformdirs==4.2.0
+    # via zeep
 psycopg2-binary==2.8.4
     # via -r requirements.in
 pyasn1==0.4.8
@@ -240,8 +234,11 @@ requests==2.31.0
     #   django-anymail
     #   django-helusers
     #   pyjwkest
+    #   requests-file
     #   requests-toolbelt
     #   zeep
+requests-file==2.0.0
+    # via zeep
 requests-toolbelt==0.9.1
     # via zeep
 rsa==4.7
@@ -260,7 +257,6 @@ six==1.14.0
     #   blessed
     #   database-sanitizer
     #   django-anymail
-    #   django-jsonfield
     #   django-modeltranslation
     #   django-sanitized-dump
     #   docxtpl
@@ -274,7 +270,6 @@ six==1.14.0
     #   python-dateutil
     #   python-jose
     #   swagger-spec-validator
-    #   zeep
 soupsieve==2.0
     # via beautifulsoup4
 sqlparse==0.4.4
@@ -308,7 +303,7 @@ xhtml2pdf==0.2.6
     # via django-xhtml2pdf
 xlsxwriter==1.2.8
     # via -r requirements.in
-zeep==3.4.0
+zeep==4.2.1
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
