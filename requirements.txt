@@ -301,7 +301,7 @@ webencodings==0.5.1
     #   tinycss2
 xhtml2pdf==0.2.6
     # via django-xhtml2pdf
-xlsxwriter==1.2.8
+xlsxwriter==3.2.0
     # via -r requirements.in
 zeep==4.2.1
     # via -r requirements.in
