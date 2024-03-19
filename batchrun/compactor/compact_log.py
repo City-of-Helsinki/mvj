@@ -3,7 +3,7 @@ from datetime import datetime
 from io import StringIO
 from typing import Any, Dict, Iterable, Optional
 
-from typing_extensions import Protocol
+from typing import Protocol
 
 from ..enums import LogEntryKind
 from .metadata import LogEntryMetadata
