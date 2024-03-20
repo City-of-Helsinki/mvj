@@ -69,7 +69,7 @@ django==3.2.23
     #   djangorestframework
     #   drf-oidc-auth
     #   drf-yasg
-django-admin-rangefilter==0.6.3
+django-admin-rangefilter==0.12.1
     # via -r requirements.in
 django-anymail==10.3
     # via -r requirements.in

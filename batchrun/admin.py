@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.html import escape as html_escape
 from django.utils.safestring import mark_safe
-from rangefilter.filter import DateRangeFilter  # type: ignore
+from rangefilter.filters import DateRangeFilter
 
 from .admin_utils import PreciseTimeFormatter, ReadOnlyAdmin, WithDownloadableContent
 from .models import (
