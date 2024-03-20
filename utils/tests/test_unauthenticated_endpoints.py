@@ -4,7 +4,6 @@ from django_extensions.management.commands import show_urls
 import json
 import requests
 from lxml import html
-import mvj.urls
 
 
 def get_url_paths():
@@ -21,10 +20,11 @@ def get_url_paths():
     return [path for view in views if (path := view.get("url"))]
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("path", get_url_paths())
-def test_urls(path):
+def test_urls(path: json.Any):
     repls = (
-        ("/<pk>\.<format>/", "/1234.json/"),
+        ("/<pk>\\.<format>/", "/1234.json/"),
         ("/<pk>/", "/1234/"),
         ("/<path:object_id>/", "/abc/123/"),
     )
@@ -51,13 +51,14 @@ def test_urls(path):
     if ">" in path:
         pytest.skip()  # This includes lone '\.<format>' and few corner cases
     url = f"http://localhost:8001{path}"
-    response = requests.get(url, headers={"Content-Type": "application/json"})
+    response = requests.get(url, headers={"Accept": "application/json"})
     content_type = response.headers.get("content-type")
     if response.status_code == 200:
+        # This catches the most interesting things like json or zip responses
         assert content_type.startswith(
             "text/html;"
         ), f"Got {content_type} response # curl -L {url}"
-        # We are viewing internal pages so trusting the title should be adequate
+        # We are viewing internal html pages so trusting the title should be adequate
         titles = html.fromstring(response.content).xpath("//title/text()")
         assert (
             titles[0].encode("latin1").decode("utf-8") == loginpagetitle
