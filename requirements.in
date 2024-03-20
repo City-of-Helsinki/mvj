@@ -1,5 +1,4 @@
 beautifulsoup4~=4.11.1
-dataclasses
 deepmerge~=1.1.1
 Django~=3.2.23
 django-anymail

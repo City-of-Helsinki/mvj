@@ -48,8 +48,6 @@ cssselect2==0.7.0
     # via svglib
 database-sanitizer==1.1.0
     # via django-sanitized-dump
-dataclasses==0.6
-    # via -r requirements.in
 deepmerge==1.1.1
     # via -r requirements.in
 deprecation==2.1.0
