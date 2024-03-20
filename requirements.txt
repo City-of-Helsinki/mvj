@@ -75,7 +75,7 @@ django-anymail==10.3
     # via -r requirements.in
 django-auditlog==2.2.2
     # via -r requirements.in
-django-constance[database]==2.7.0
+django-constance==3.1.0
     # via -r requirements.in
 django-cors-headers==3.2.1
     # via -r requirements.in

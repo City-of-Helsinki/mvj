@@ -166,7 +166,6 @@ INSTALLED_APPS = [
     "field_permissions",
     "batchrun",
     "constance",
-    "constance.backends.database",
     "sanitized_dump",
     "utils",
     "django_q",
