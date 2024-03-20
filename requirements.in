@@ -1,7 +1,7 @@
 beautifulsoup4~=4.11.1
 deepmerge~=1.1.1
 Django~=3.2.23
-django-anymail
+django-anymail~=10.3
 django-auditlog~=2.2.2
 django-admin-rangefilter
 django-jsonfield-compat

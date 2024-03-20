@@ -71,7 +71,7 @@ django==3.2.23
     #   drf-yasg
 django-admin-rangefilter==0.6.3
     # via -r requirements.in
-django-anymail==7.0.0
+django-anymail==10.3
     # via -r requirements.in
 django-auditlog==2.2.2
     # via -r requirements.in
@@ -261,7 +261,6 @@ six==1.14.0
     #   bcrypt
     #   blessed
     #   database-sanitizer
-    #   django-anymail
     #   django-modeltranslation
     #   django-sanitized-dump
     #   docxcompose
@@ -298,6 +297,7 @@ uritemplate==3.0.1
     #   drf-yasg
 urllib3==1.26.18
     # via
+    #   django-anymail
     #   requests
     #   sentry-sdk
 wcwidth==0.1.9
