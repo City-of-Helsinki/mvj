@@ -35,7 +35,7 @@ drf-yasg[validation]
 drf-oidc-auth>=0.10.0
 
 docxtpl
-oracledb
+oracledb~=2.1.0
 psycopg2-binary
 pysftp~=0.2.9
 pyproj~=3.5.0
