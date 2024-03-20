@@ -153,7 +153,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "auditlog",
     "safedelete",
-    "sequences",
+    "sequences.apps.SequencesConfig",
     "django_countries",
     "anymail",
     "users",
@@ -228,6 +228,7 @@ SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "ALLOWED_VERSIONS": ("v1",),
+    "DEFAULT_VERSION": "v1",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "helusers.oidc.ApiTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",

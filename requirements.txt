@@ -12,6 +12,7 @@ asgiref==3.7.2
     # via
     #   django
     #   django-cors-headers
+    #   django-countries
 attrs==19.3.0
     # via
     #   jsonschema
@@ -36,12 +37,6 @@ cffi==1.14.0
     #   pynacl
 charset-normalizer==2.0.12
     # via requests
-coreapi==2.3.3
-    # via drf-yasg
-coreschema==0.0.4
-    # via
-    #   coreapi
-    #   drf-yasg
 cryptography==41.0.4
     # via
     #   oracledb
@@ -54,12 +49,13 @@ deepmerge==1.1.1
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==3.2.23
+django==3.2.25
     # via
     #   -r requirements.in
     #   django-anymail
     #   django-auditlog
     #   django-cors-headers
+    #   django-enumfields2
     #   django-filter
     #   django-helusers
     #   django-model-utils
@@ -67,9 +63,9 @@ django==3.2.23
     #   django-picklefield
     #   django-q
     #   django-safedelete
+    #   django-sequences
     #   django-xhtml2pdf
     #   djangorestframework
-    #   drf-oidc-auth
     #   drf-yasg
 django-admin-rangefilter==0.12.1
     # via -r requirements.in
@@ -81,21 +77,21 @@ django-constance==3.1.0
     # via -r requirements.in
 django-cors-headers==4.3.1
     # via -r requirements.in
-django-countries==7.2.1
+django-countries==7.5.1
     # via -r requirements.in
-django-enumfields==2.1.1
+django-enumfields2==3.0.2
     # via -r requirements.in
-django-environ==0.4.5
+django-environ==0.11.2
     # via -r requirements.in
-django-filter==21.1
+django-filter==23.5
     # via -r requirements.in
-django-helusers==0.7.0
+django-helusers==0.11.0
     # via -r requirements.in
-django-model-utils==4.1.1
+django-model-utils==4.4.0
     # via -r requirements.in
-django-modeltranslation==0.16.1
+django-modeltranslation==0.18.11
     # via -r requirements.in
-django-nested-inline==0.4.5
+django-nested-inline==0.4.6
     # via -r requirements.in
 django-picklefield==3.1
     # via
@@ -107,21 +103,20 @@ django-q[sentry]==1.3.9
     #   django-q
 django-q-sentry==0.1.6
     # via django-q
-django-safedelete==0.5.7
+django-safedelete==1.3.3
     # via -r requirements.in
-django-sanitized-dump==1.2.0
+django-sanitized-dump==1.2.2
     # via -r requirements.in
-django-sequences==2.4
+django-sequences==3.0
     # via -r requirements.in
 django-xhtml2pdf==0.0.4
     # via -r requirements.in
-djangorestframework==3.11.2
+djangorestframework==3.14.0
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-    #   drf-oidc-auth
     #   drf-yasg
-djangorestframework-gis==0.15
+djangorestframework-gis==1.0
     # via -r requirements.in
 docutils==0.16
     # via python-daemon
@@ -129,29 +124,25 @@ docxcompose==1.0.2
     # via docxtpl
 docxtpl==0.16.8
     # via -r requirements.in
-drf-oidc-auth==0.10.0
-    # via -r requirements.in
-drf-yasg[validation]==1.20.0
-    # via -r requirements.in
+drf-yasg[validation]==1.21.7
+    # via
+    #   -r requirements.in
+    #   drf-yasg
 ecdsa==0.15
     # via python-jose
-future==0.18.3
-    # via pyjwkest
 html5lib==1.1
     # via xhtml2pdf
 idna==2.9
     # via requests
+importlib-resources==6.3.2
+    # via jsonschema
 inflection==0.5.1
     # via drf-yasg
 isodate==0.6.0
     # via zeep
-itypes==1.1.0
-    # via coreapi
 jinja2==2.11.3
-    # via
-    #   coreschema
-    #   docxtpl
-jsonschema==4.0.0
+    # via docxtpl
+jsonschema==4.17.3
     # via swagger-spec-validator
 lockfile==0.12.2
     # via python-daemon
@@ -176,6 +167,8 @@ pillow==10.0.1
     # via
     #   reportlab
     #   xhtml2pdf
+pkgutil-resolve-name==1.3.10
+    # via jsonschema
 platformdirs==4.2.0
     # via zeep
 psycopg2-binary==2.8.4
@@ -186,10 +179,6 @@ pyasn1==0.4.8
     #   rsa
 pycparser==2.20
     # via cffi
-pycryptodomex==3.9.7
-    # via pyjwkest
-pyjwkest==1.4.2
-    # via drf-oidc-auth
 pynacl==1.3.0
     # via paramiko
 pyparsing==3.0.6
@@ -220,11 +209,14 @@ python-jose==3.1.0
 pytz==2022.7.1
     # via
     #   django
+    #   djangorestframework
+    #   drf-yasg
     #   zeep
 pyyaml==5.4
     # via
     #   database-sanitizer
     #   django-sanitized-dump
+    #   drf-yasg
     #   swagger-spec-validator
 redis==3.5.3
     # via django-q
@@ -235,10 +227,8 @@ reportlab==3.6.13
 requests==2.31.0
     # via
     #   -r requirements.in
-    #   coreapi
     #   django-anymail
     #   django-helusers
-    #   pyjwkest
     #   requests-file
     #   requests-toolbelt
     #   zeep
@@ -248,10 +238,6 @@ requests-toolbelt==0.9.1
     # via zeep
 rsa==4.7
     # via python-jose
-ruamel-yaml==0.17.20
-    # via drf-yasg
-ruamel-yaml-clib==0.2.8
-    # via ruamel-yaml
 sentry-sdk==1.42.0
     # via
     #   -r requirements.in
@@ -261,7 +247,6 @@ six==1.14.0
     #   bcrypt
     #   blessed
     #   database-sanitizer
-    #   django-modeltranslation
     #   django-sanitized-dump
     #   docxcompose
     #   docxtpl
@@ -269,7 +254,6 @@ six==1.14.0
     #   html5lib
     #   isodate
     #   paramiko
-    #   pyjwkest
     #   pynacl
     #   python-bidi
     #   python-dateutil
@@ -292,11 +276,12 @@ tqdm==4.66.2
 types-python-dateutil==2.9.0.20240316
     # via arrow
 typing-extensions==4.10.0
-    # via asgiref
-uritemplate==3.0.1
     # via
-    #   coreapi
-    #   drf-yasg
+    #   asgiref
+    #   django-countries
+    #   django-modeltranslation
+uritemplate==3.0.1
+    # via drf-yasg
 urllib3==1.26.18
     # via
     #   django-anymail
@@ -315,6 +300,8 @@ xlsxwriter==3.2.0
     # via -r requirements.in
 zeep==4.2.1
     # via -r requirements.in
+zipp==3.18.1
+    # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
