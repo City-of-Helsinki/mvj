@@ -4,7 +4,6 @@ Django~=3.2.23
 django-anymail~=10.3
 django-auditlog~=2.2.2
 django-admin-rangefilter~=0.12.1
-django-jsonfield-compat
 django-constance[database]
 django-cors-headers
 django-countries~=7.2.1

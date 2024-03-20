@@ -89,8 +89,6 @@ django-filter==21.1
     # via -r requirements.in
 django-helusers==0.7.0
     # via -r requirements.in
-django-jsonfield-compat==0.4.4
-    # via -r requirements.in
 django-model-utils==4.1.1
     # via -r requirements.in
 django-modeltranslation==0.16.1
