@@ -16,7 +16,7 @@ attrs==19.3.0
     #   zeep
 bcrypt==3.1.7
     # via paramiko
-beautifulsoup4==4.8.2
+beautifulsoup4==4.11.2
     # via -r requirements.in
 blessed==1.20.0
     # via django-q
@@ -50,7 +50,7 @@ database-sanitizer==1.1.0
     # via django-sanitized-dump
 dataclasses==0.6
     # via -r requirements.in
-deepmerge==1.0.1
+deepmerge==1.1.1
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
@@ -129,7 +129,9 @@ djangorestframework-gis==0.15
     # via -r requirements.in
 docutils==0.16
     # via python-daemon
-docxtpl==0.6.3
+docxcompose==1.0.2
+    # via docxtpl
+docxtpl==0.16.8
     # via -r requirements.in
 drf-oidc-auth==0.10.0
     # via -r requirements.in
@@ -159,6 +161,7 @@ lockfile==0.12.2
     # via python-daemon
 lxml==4.6.5
     # via
+    #   docxcompose
     #   docxtpl
     #   python-docx
     #   svglib
@@ -213,7 +216,9 @@ python-dateutil==2.8.2
     #   arrow
     #   django-auditlog
 python-docx==0.8.7
-    # via docxtpl
+    # via
+    #   docxcompose
+    #   docxtpl
 python-jose==3.1.0
     # via django-helusers
 pytz==2022.7.1
@@ -263,6 +268,7 @@ six==1.14.0
     #   django-anymail
     #   django-modeltranslation
     #   django-sanitized-dump
+    #   docxcompose
     #   docxtpl
     #   ecdsa
     #   html5lib
