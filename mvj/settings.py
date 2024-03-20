@@ -144,7 +144,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "rangefilter",
-    "crispy_forms",
     "nested_inline",
     "django_filters",
     "rest_framework",
