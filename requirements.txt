@@ -17,6 +17,8 @@ attrs==19.3.0
     # via
     #   jsonschema
     #   zeep
+backports-zoneinfo==0.2.1
+    # via psycopg
 bcrypt==3.1.7
     # via paramiko
 beautifulsoup4==4.11.2
@@ -171,8 +173,12 @@ pkgutil-resolve-name==1.3.10
     # via jsonschema
 platformdirs==4.2.0
     # via zeep
-psycopg2-binary==2.8.4
-    # via -r requirements.in
+psycopg[binary]==3.1.18
+    # via
+    #   -r requirements.in
+    #   psycopg
+psycopg-binary==3.1.18
+    # via psycopg
 pyasn1==0.4.8
     # via
     #   python-jose
@@ -280,6 +286,7 @@ typing-extensions==4.10.0
     #   asgiref
     #   django-countries
     #   django-modeltranslation
+    #   psycopg
 uritemplate==3.0.1
     # via drf-yasg
 urllib3==1.26.18
