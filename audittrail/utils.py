@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import OneToOneRel
+from django.db.models import ManyToManyField, OneToOneRel
 
 
 def recursive_get_related(  # NOQA C901
@@ -53,6 +53,10 @@ def recursive_get_related(  # NOQA C901
 
         # Skip relations to a parent model
         if relation.related_model in (po.__class__ for po in parent_objs):
+            continue
+
+        # Skip ManyToManyField that could come via a reverse relation
+        if isinstance(relation, ManyToManyField):
             continue
 
         if relation.concrete or isinstance(relation, OneToOneRel):

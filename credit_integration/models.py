@@ -105,6 +105,10 @@ class CreditDecision(TimeStampedModel):
         blank=True,
     )
 
+    recursive_get_related_skip_relations = [
+        "reasons",
+    ]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Credit decision")
         verbose_name_plural = pgettext_lazy("Model name", "Credit decisions")
