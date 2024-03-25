@@ -5,6 +5,8 @@ from rest_framework.serializers import ValidationError
 
 from forms.models import Field
 
+from forms.utils import optional_fields_are_hidden
+
 SSN_CHECK = [
     "0",
     "1",
@@ -119,6 +121,8 @@ class RequiredFormFieldValidator:
         self, entries, required_fields, section_identifier=None, field_identifier=None
     ):
         if not isinstance(entries, Iterable) or isinstance(entries, str):
+            return
+        if optional_fields_are_hidden(entries):
             return
         if "sections" in entries:
             self.required_validator(entries["sections"], required_fields, None)
