@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-import pytest
-from django_extensions.management.commands import show_urls
 import json
+
+import pytest
 import requests
+from django_extensions.management.commands import show_urls
 from lxml import html
 
 
