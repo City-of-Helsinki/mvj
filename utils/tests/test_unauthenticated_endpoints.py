@@ -17,12 +17,18 @@ def get_url_paths():
         unsorted=True,
     )
     views = json.loads(views_str)
-    return [path for view in views if (path := view.get("url"))]
+    # return [path for view in views if (path := view.get("url"))]
+    path = []
+    for view in views:
+        url = view.get("url")
+        if url:
+            path.append(url)
+    return path
 
 
 @pytest.mark.slow
 @pytest.mark.parametrize("path", get_url_paths())
-def test_urls(path: json.Any):
+def test_urls(path):
     repls = (
         ("/<pk>\\.<format>/", "/1234.json/"),
         ("/<pk>/", "/1234/"),
