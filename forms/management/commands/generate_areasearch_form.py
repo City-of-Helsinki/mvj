@@ -647,6 +647,15 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
+        label="""Vakuutan antamani tiedot oikeiksi.*""",
+        type="checkbox",
+        identifier="vakuutan-antamani-tiedot-oikeiksi",
+        enabled=True,
+        required=True,
+        sort_order=0,
+    )
+    Field.objects.create(
+        section=decision_section,
         label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
                  ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
         hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
@@ -656,7 +665,7 @@ def initialize_area_search_form():
         identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
         enabled=True,
         required=False,
-        sort_order=0,
+        sort_order=1,
     )
     Field.objects.create(
         section=decision_section,
@@ -666,7 +675,7 @@ def initialize_area_search_form():
         identifier="hyvaksyn-tietojeni-tallentamisen",
         enabled=True,
         required=False,
-        sort_order=1,
+        sort_order=2,
     )
 
     return form
