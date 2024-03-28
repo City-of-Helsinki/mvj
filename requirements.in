@@ -1,6 +1,6 @@
 beautifulsoup4~=4.11.1
 deepmerge~=1.1.1
-Django~=3.2.25
+Django~=4.2.11
 django-anymail~=10.3
 django-auditlog~=2.2.2
 django-admin-rangefilter~=0.12.1

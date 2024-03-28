@@ -18,7 +18,9 @@ attrs==19.3.0
     #   jsonschema
     #   zeep
 backports-zoneinfo==0.2.1
-    # via psycopg
+    # via
+    #   django
+    #   psycopg
 bcrypt==3.1.7
     # via paramiko
 beautifulsoup4==4.11.2
@@ -51,7 +53,7 @@ deepmerge==1.1.1
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==3.2.25
+django==4.2.11
     # via
     #   -r requirements.in
     #   django-anymail
@@ -214,7 +216,6 @@ python-jose==3.1.0
     # via django-helusers
 pytz==2022.7.1
     # via
-    #   django
     #   djangorestframework
     #   drf-yasg
     #   zeep
