@@ -15,9 +15,9 @@ def prepare_plan_unit_on_plot_search_target_save(sender, instance, **kwargs):
     if plan_unit.is_master:
         plan_unit.pk = None
         plan_unit.is_master = False
-        usage_permissions = plan_unit.usage_distributions.all()
         plan_unit.save()
 
+        usage_permissions = plan_unit.usage_distributions.all()
         for usage_permission in usage_permissions:
             usage_permission.pk = None
             usage_permission.plan_unit = plan_unit

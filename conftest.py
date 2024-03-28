@@ -325,7 +325,7 @@ def lease_test_data(
 @pytest.fixture
 def plot_search_target(
     plan_unit_factory,
-    plot_search_target_factory,
+    plot_search_target_factory_with_sub_factories,
     lease_test_data,
     plot_search_test_data,
 ):
@@ -336,7 +336,7 @@ def plot_search_target(
         is_master=True,
     )
 
-    plot_search_target = plot_search_target_factory(
+    plot_search_target = plot_search_target_factory_with_sub_factories(
         plot_search=plot_search_test_data,
         plan_unit=plan_unit,
         target_type=PlotSearchTargetType.SEARCHABLE,
