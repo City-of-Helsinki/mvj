@@ -5,10 +5,8 @@
 #    pip-compile requirements-dev.in
 #
 appdirs==1.4.3
-    # via
-    #   -c requirements.txt
-    #   black
-asgiref==3.4.1
+    # via black
+asgiref==3.7.2
     # via
     #   -c requirements.txt
     #   django
@@ -19,6 +17,10 @@ attrs==19.3.0
     #   pytest
 backcall==0.1.0
     # via ipython
+backports-zoneinfo==0.2.1
+    # via
+    #   -c requirements.txt
+    #   django
 black==19.10b0
     # via -r requirements-dev.in
 click==8.0.1
@@ -31,14 +33,15 @@ decorator==4.4.2
     # via
     #   ipython
     #   traitlets
-django==3.2.23
+django==4.2.11
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
+    #   django-extensions
     #   django-stubs
-django-debug-toolbar==2.2.1
+django-debug-toolbar==4.3.0
     # via -r requirements-dev.in
-django-extensions==2.2.9
+django-extensions==3.2.3
     # via -r requirements-dev.in
 django-stubs==1.5.0
     # via -r requirements-dev.in
@@ -139,16 +142,11 @@ python-dateutil==2.8.2
     # via
     #   -c requirements.txt
     #   faker
-pytz==2022.7.1
-    # via
-    #   -c requirements.txt
-    #   django
 regex==2020.5.14
     # via black
 six==1.14.0
     # via
     #   -c requirements.txt
-    #   django-extensions
     #   flake8-print
     #   python-dateutil
     #   traitlets
@@ -169,9 +167,10 @@ typed-ast==1.4.1
     # via
     #   black
     #   mypy
-typing-extensions==3.10.0.0
+typing-extensions==4.10.0
     # via
     #   -c requirements.txt
+    #   asgiref
     #   django-stubs
     #   mypy
 wcwidth==0.1.9
@@ -179,7 +178,7 @@ wcwidth==0.1.9
     #   -c requirements.txt
     #   prompt-toolkit
     #   pytest
-werkzeug==1.0.1
+werkzeug==2.1.2
     # via -r requirements-dev.in
 
 # The following packages are considered to be unsafe in a requirements file:

@@ -1,6 +1,6 @@
 -c requirements.txt
-django-debug-toolbar
-django-extensions
+django-debug-toolbar~=4.3.0
+django-extensions~=3.2.3
 django-stubs
 # djangorestframework-stubs doesn't support Django Rest Framework 3.10
 # or mypy >= 0.730. When It supports, this can be uncommented and the
@@ -21,4 +21,4 @@ pytest-cov
 pytest-django
 pytest-factoryboy
 factory-boy
-werkzeug
+werkzeug~=2.1.2
