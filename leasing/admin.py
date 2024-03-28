@@ -103,14 +103,14 @@ from leasing.models.land_use_agreement import (
 from leasing.models.lease import ReservationProcedure
 
 
-class CenterOnHelsinkiOSMGeoAdmin(admin.OSMGeoAdmin):
+class CenterOnHelsinkiGISAdmin(admin.GISModelAdmin):
     # Position 24.945, 60.192 (SRID 4326) transformed to SRID 900913
     default_lon = 2776864.697838209
     default_lat = 8442609.191245062
     default_zoom = 11
 
 
-class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiOSMGeoAdmin):
+class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiGISAdmin):
     pass
 
 
@@ -123,7 +123,7 @@ class NameAdmin(FieldPermissionsModelAdmin):
     search_fields = ["name"]
 
 
-class AreaAdmin(CenterOnHelsinkiOSMGeoAdmin):
+class AreaAdmin(CenterOnHelsinkiGISAdmin):
     list_display = ("identifier", "type", "source")
     list_filter = (("type", EnumFieldListFilter), "source")
     search_fields = ["identifier"]
