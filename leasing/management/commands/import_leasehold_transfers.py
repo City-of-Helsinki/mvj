@@ -9,7 +9,10 @@ import zipfile
 from datetime import datetime
 from xml.etree import ElementTree
 
-import pytz
+try:
+    from zoneinfo import ZoneInfo  # type: ignore
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
 import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -206,7 +209,7 @@ class Command(BaseCommand):
                     decision_date_str = decision_date_el.text  # e.g. '2016-05-15'
                     decision_date = datetime.strptime(
                         decision_date_str, "%Y-%d-%M"
-                    ).replace(tzinfo=pytz.timezone("Europe/Helsinki"))
+                    ).replace(tzinfo=ZoneInfo("Europe/Helsinki"))
 
                 institution_identifier = entry.find(".//y:laitostunnus", NS).text
 

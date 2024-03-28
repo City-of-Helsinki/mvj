@@ -2,7 +2,12 @@ import datetime
 import json
 
 import pytest
-import pytz
+
+try:
+    from zoneinfo import ZoneInfo  # type: ignore
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
 from django.contrib.auth.models import Permission
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
@@ -39,12 +44,7 @@ def test_lock_lease_basis_of_rent(
     )
 
     lock_time = datetime.datetime(
-        year=2010,
-        month=1,
-        day=1,
-        hour=1,
-        minute=1,
-        tzinfo=pytz.timezone("Europe/Helsinki"),
+        year=2010, month=1, day=1, hour=1, minute=1, tzinfo=ZoneInfo("Europe/Helsinki"),
     )
 
     data = {
@@ -92,12 +92,7 @@ def test_cannot_change_locked_lease_basis_of_rent(
     lease = lease_test_data["lease"]
 
     lock_time = datetime.datetime(
-        year=2010,
-        month=1,
-        day=1,
-        hour=1,
-        minute=1,
-        tzinfo=pytz.timezone("Europe/Helsinki"),
+        year=2010, month=1, day=1, hour=1, minute=1, tzinfo=ZoneInfo("Europe/Helsinki"),
     )
 
     lease_basis_of_rent = lease_basis_of_rent_factory(
@@ -153,12 +148,7 @@ def test_cannot_unclock_locked_lease_basis_of_rent(
     lease = lease_test_data["lease"]
 
     lock_time = datetime.datetime(
-        year=2010,
-        month=1,
-        day=1,
-        hour=1,
-        minute=1,
-        tzinfo=pytz.timezone("Europe/Helsinki"),
+        year=2010, month=1, day=1, hour=1, minute=1, tzinfo=ZoneInfo("Europe/Helsinki"),
     )
 
     lease_basis_of_rent = lease_basis_of_rent_factory(
@@ -215,12 +205,7 @@ def test_can_unclock_locked_lease_basis_of_rent(
     lease = lease_test_data["lease"]
 
     lock_time = datetime.datetime(
-        year=2010,
-        month=1,
-        day=1,
-        hour=1,
-        minute=1,
-        tzinfo=pytz.timezone("Europe/Helsinki"),
+        year=2010, month=1, day=1, hour=1, minute=1, tzinfo=ZoneInfo("Europe/Helsinki"),
     )
 
     lease_basis_of_rent = lease_basis_of_rent_factory(
@@ -278,12 +263,7 @@ def test_cannot_remove_locked_lease_basis_of_rent(
     lease = lease_test_data["lease"]
 
     lock_time = datetime.datetime(
-        year=2010,
-        month=1,
-        day=1,
-        hour=1,
-        minute=1,
-        tzinfo=pytz.timezone("Europe/Helsinki"),
+        year=2010, month=1, day=1, hour=1, minute=1, tzinfo=ZoneInfo("Europe/Helsinki"),
     )
 
     lease_basis_of_rent_factory(

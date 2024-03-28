@@ -5,12 +5,16 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 
-import pytz
+try:
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore
+except ImportError:
+    from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore
+
 from django.core.exceptions import ValidationError
 from django.db import connections, models, transaction
 from django.db.models.fields.json import JSONField  # type: ignore
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ugettext
 from enumfields import EnumField, EnumIntegerField
 from safedelete.models import SafeDeleteModel
 
@@ -225,9 +229,11 @@ class Timezone(CleansOnSave, models.Model):
         return self.name
 
     def clean(self) -> None:
+        if not self.name:
+            raise ValidationError({"name": _("Timezone name can't be empty")})
         try:
-            pytz.timezone(self.name or "")
-        except KeyError:
+            ZoneInfo(self.name)
+        except (ZoneInfoNotFoundError, KeyError):
             raise ValidationError({"name": _("Invalid timezone name")})
         super().clean()
 
@@ -286,7 +292,7 @@ class ScheduledJob(TimeStampedModel):
             value = getattr(self, field)
             key = field[0] if field not in ["hours", "minutes"] else field[0].upper()
             schedule_items.append(f"{key}={value}")
-        return ugettext('Scheduled job "{job}" @ {schedule}').format(
+        return gettext('Scheduled job "{job}" @ {schedule}').format(
             job=self.job, schedule=" ".join(schedule_items)
         )
 
@@ -468,7 +474,7 @@ class JobRunLogEntry(models.Model):
         verbose_name_plural = _("log entries")
 
     def __str__(self) -> str:
-        return ugettext("{run_name}: {kind} entry {linenum}({number})").format(
+        return gettext("{run_name}: {kind} entry {linenum}({number})").format(
             run_name=self.run,
             kind=self.kind,
             linenum=self.line_number,

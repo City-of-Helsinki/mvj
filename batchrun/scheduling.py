@@ -1,16 +1,21 @@
 from dataclasses import dataclass
-from datetime import date, datetime, time, tzinfo
+from datetime import date, datetime, time, timedelta
 from typing import Iterable, Set, Union
 
-import pytz
+from dateutil import tz as dateutil_tz
 
-from ._times import AwareDateTime, check_is_aware, make_aware
+try:
+    from zoneinfo import ZoneInfo  # type: ignore
+except ImportError:  # zoneinfo is introduced in python 3.9
+    from backports.zoneinfo import ZoneInfo
+
+from ._times import AwareDateTime, TZAwareDateTime, check_is_aware
 from .intset import IntegerSetSpecifier
 
 
 @dataclass
 class RecurrenceRule:
-    timezone: tzinfo
+    timezone: ZoneInfo
     years: IntegerSetSpecifier
     months: IntegerSetSpecifier
     days_of_month: IntegerSetSpecifier
@@ -31,7 +36,7 @@ class RecurrenceRule:
         minutes: str = "*",
     ) -> "RecurrenceRule":
         return cls(
-            timezone=pytz.timezone(timezone),
+            timezone=ZoneInfo(timezone),
             years=IntegerSetSpecifier(years, 1970, 2200),
             months=IntegerSetSpecifier(months, 1, 12),
             days_of_month=IntegerSetSpecifier(days_of_month, 1, 31),
@@ -79,14 +84,21 @@ def get_next_events(
             dt = datetime.combine(d, t)
             for timestamp in _get_possible_times(rule, dt, tz):
                 if timestamp >= start_time:
-                    timestamps.add(timestamp)
+                    timestamps.add(
+                        # Subclass of datetime that has eq for offset-aware comparison.
+                        # Used so that the same timestamp with different offset values
+                        # are interpret as unique.
+                        TZAwareDateTime.fromtimestamp(
+                            timestamp.timestamp(), tz=timestamp.tzinfo
+                        )
+                    )
 
         # There might be entries in the timestamps set which were
         # already in the previous day's set, if DST change happens on
         # midnight, so remove those.
         timestamps -= last_timestamps
-
-        yield from sorted(timestamps)
+        # Sort the timestamps in UTC in order to preserve the correct time order.
+        yield from sorted(timestamps, key=lambda dt: dt.astimezone(ZoneInfo("UTC")))
 
         last_timestamps = timestamps
 
@@ -117,13 +129,20 @@ def _iter_times(rule: RecurrenceRule) -> Iterable[time]:
 
 
 def _get_possible_times(
-    rule: RecurrenceRule, naive_datetime: datetime, tz: tzinfo
+    rule: RecurrenceRule, naive_datetime: datetime, zoneinfo: ZoneInfo
 ) -> Iterable[AwareDateTime]:
-    try:
-        return [make_aware(naive_datetime, tz)]
-    except pytz.AmbiguousTimeError:
-        dsts = [True, False] if len(rule.hours) > 1 else [True]
-        timestamps = (make_aware(naive_datetime, tz, is_dst=dst) for dst in dsts)
-        return [x for x in timestamps if rule.matches_datetime(x)]
-    except pytz.NonExistentTimeError:
-        return [make_aware(naive_datetime, tz, is_dst=True)]
+    aware_datetime = naive_datetime.replace(tzinfo=zoneinfo)
+
+    if not dateutil_tz.datetime_exists(aware_datetime):
+        # If the datetime does not exist (due to DST transition), adjust it
+        return [aware_datetime + timedelta(hours=1)]
+    elif dateutil_tz.datetime_ambiguous(aware_datetime) and len(rule.hours) > 1:
+        # If the datetime is ambiguous (due to DST transition), return both possibilities
+        standard_time = aware_datetime.replace(fold=0)
+        daylight_time = aware_datetime.replace(fold=1)
+        daylight_and_standard_datetimes = [daylight_time, standard_time]
+        return filter(
+            lambda x: rule.matches_datetime(x), daylight_and_standard_datetimes
+        )
+
+    return [aware_datetime]

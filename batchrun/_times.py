@@ -1,14 +1,8 @@
 import time
-from datetime import datetime, timezone, tzinfo
-from typing import NewType, Optional
+from datetime import datetime, timezone
+from typing import NewType
 
 AwareDateTime = NewType("AwareDateTime", datetime)
-
-
-def make_aware(
-    dt: datetime, tz: tzinfo, *, is_dst: Optional[bool] = None
-) -> AwareDateTime:
-    return tz.localize(dt, is_dst)  # type: ignore
 
 
 def check_is_aware(dt: datetime) -> AwareDateTime:
@@ -19,3 +13,15 @@ def check_is_aware(dt: datetime) -> AwareDateTime:
 
 def utc_now() -> AwareDateTime:
     return datetime.fromtimestamp(time.time(), timezone.utc)  # type: ignore
+
+
+class TZAwareDateTime(datetime):
+    """A datetime subclass that includes timezone offset information in equality checks."""
+
+    def __eq__(self, other):
+        if not isinstance(other, TZAwareDateTime):
+            return NotImplemented
+        return super().__eq__(other) and self.utcoffset() == other.utcoffset()
+
+    def __hash__(self):
+        return hash((super().__hash__(), self.utcoffset()))
