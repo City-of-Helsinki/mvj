@@ -123,7 +123,7 @@ def test_all_required_fields_answered_validator(
 
     with pytest.raises(ValidationError) as val_error:
         answer_serializer = AnswerSerializer(data=answer_data)
-        answer_serializer.is_valid(True)
+        answer_serializer.is_valid(raise_exception=True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "required"
 
 
@@ -175,7 +175,7 @@ def test_social_security_validator(
 
     # test that a incorrectly formatted ssn is caught by the validator
     with pytest.raises(ValidationError) as val_error:
-        answer_serializer.is_valid(True)
+        answer_serializer.is_valid(raise_exception=True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_ssn"
 
     answer_data["entries"]["hakijan-tiedot"]["sections"]["company-information"][
@@ -188,7 +188,7 @@ def test_social_security_validator(
 
     # test that a incorrectly formatted ssn is caught by the validator
     with pytest.raises(ValidationError) as val_error:
-        answer_serializer.is_valid(True)
+        answer_serializer.is_valid(raise_exception=True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_ssn"
 
 
@@ -228,7 +228,7 @@ def test_company_id_validator(
 
     # test that a incorrectly formatted ssn is caught by the validator
     with pytest.raises(ValidationError) as val_error:
-        answer_serializer.is_valid(True)
+        answer_serializer.is_valid(raise_exception=True)
     assert val_error.value.args[0]["non_field_errors"][0].code == "invalid_company_id"
 
 
@@ -277,7 +277,7 @@ def test_control_share(
 
     # test that a incorrectly formatted ssn is caught by the validator
     with pytest.raises(ValidationError) as val_error:
-        answer_serializer.is_valid(True)
+        answer_serializer.is_valid(raise_exception=True)
     assert (
         val_error.value.args[0]["non_field_errors"][0].code
         == "control share is not even"
