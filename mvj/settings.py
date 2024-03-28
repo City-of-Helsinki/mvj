@@ -71,7 +71,7 @@ env = environ.Env(
     TOKEN_AUTH_AUTHSERVER_URL=(str, ""),
     TOKEN_AUTH_FIELD_FOR_CONSENTS=(str, ""),
     TOKEN_AUTH_REQUIRE_SCOPE_PREFIX=(bool, True),
-    # See http://initd.org/psycopg/docs/module.html#psycopg2.connect for DSN format
+    # See https://www.psycopg.org/psycopg3/docs/api/connections.html#psycopg.Connection.connect for DSN format
     AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LASKE_EXPORT_FROM_EMAIL=(str, ""),

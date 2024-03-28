@@ -1,6 +1,7 @@
 from time import perf_counter
 
-import psycopg2
+import psycopg
+from psycopg.rows import namedtuple_row
 from django.conf import settings
 from django.contrib.gis import geos
 from django.db import IntegrityError
@@ -280,13 +281,13 @@ class AreaImporter(BaseImporter):
             )
 
             area_import = AREA_IMPORT_TYPES[area_import_type]
-
+            
             try:
-                conn = psycopg2.connect(
+                conn = psycopg.connect(
                     getattr(settings, area_import["source_dsn_setting_name"]),
-                    cursor_factory=psycopg2.extras.NamedTupleCursor,
+                    cursor_factory=namedtuple_row,
                 )
-            except (psycopg2.ProgrammingError, psycopg2.OperationalError) as e:
+            except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
                 self.stderr.write(str(e))
                 self.stderr.write(
                     'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
@@ -305,7 +306,7 @@ class AreaImporter(BaseImporter):
 
             try:
                 cursor.execute(area_import["query"])
-            except psycopg2.ProgrammingError as e:
+            except psycopg.ProgrammingError as e:
                 self.stderr.write(str(e))
                 continue
 
