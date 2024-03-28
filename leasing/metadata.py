@@ -1,4 +1,4 @@
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
 from rest_framework.fields import ChoiceField, DecimalField
@@ -111,7 +111,7 @@ class FieldsMetadata(FieldPermissionsMetadataMixin, SimpleMetadata):
             field_info["choices"] = [
                 {
                     "value": choice_value,
-                    "display_name": force_text(choice_name, strings_only=True),
+                    "display_name": force_str(choice_name, strings_only=True),
                 }
                 for choice_value, choice_name in field.choices.items()
             ]

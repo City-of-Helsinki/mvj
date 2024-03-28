@@ -68,7 +68,7 @@ def test_plot_search_create_simple(
     url = reverse("plotsearch-list")  # list == create
 
     data = {
-        "name": get_random_string(),
+        "name": get_random_string(length=12),
     }
 
     response = admin_client.post(
@@ -100,7 +100,7 @@ def test_plot_search_create(
     )
 
     data = {
-        "name": get_random_string(),
+        "name": get_random_string(length=12),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparer": user.id,
@@ -162,7 +162,7 @@ def test_plot_search_update(
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
 
     data = {
-        "name": get_random_string(),
+        "name": get_random_string(length=12),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparers": [user.id,],  # noqa: E231
@@ -217,7 +217,7 @@ def test_plot_search_delete_target(
     updated_end_at = plot_search_test_data.end_at + timezone.timedelta(days=30)
 
     data = {
-        "name": get_random_string(),
+        "name": get_random_string(length=12),
         "subtype": plot_search_test_data.subtype.id,
         "stage": plot_search_test_data.stage.id,
         "preparers": [user.id,],  # noqa: E231
@@ -715,8 +715,8 @@ def test_area_search_create_simple(
     url = reverse("areasearch-list")  # list == create
 
     data = {
-        "description_area": get_random_string(),
-        "description_intended_use": get_random_string(),
+        "description_area": get_random_string(length=12),
+        "description_intended_use": get_random_string(length=12),
         "intended_use": area_search_test_data.intended_use.pk,
         "geometry": area_search_test_data.geometry.geojson,
     }

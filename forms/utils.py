@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import override
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django_q.tasks import Conf, async_task
 from django_xhtml2pdf.utils import generate_pdf
 from rest_framework.response import Response

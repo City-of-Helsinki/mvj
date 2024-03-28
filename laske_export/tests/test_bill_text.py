@@ -36,7 +36,7 @@ def test_one_primary_address_in_leasearea(
     )
 
     lease_area = lease_area_factory(
-        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+        lease=lease, identifier=get_random_string(length=12), area=1000, section_area=1000
     )
     lease_area_address_factory(
         lease_area=lease_area,
@@ -123,7 +123,7 @@ def test_one_nonprimary_address_in_leasearea(
     )
 
     lease_area = lease_area_factory(
-        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+        lease=lease, identifier=get_random_string(length=12), area=1000, section_area=1000
     )
     lease_area_address_factory(
         lease_area=lease_area,
@@ -210,7 +210,7 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     )
 
     lease_area = lease_area_factory(
-        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+        lease=lease, identifier=get_random_string(length=12), area=1000, section_area=1000
     )
     lease_area_address_factory(
         lease_area=lease_area,

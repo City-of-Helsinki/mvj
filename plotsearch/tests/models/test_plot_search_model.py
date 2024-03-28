@@ -21,7 +21,7 @@ def test_remove_plot_search_target_cascade_plan_unit(
         type_id=1, municipality_id=1, district_id=29, notice_period_id=1
     )
     lease_area = lease_area_factory(
-        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+        lease=lease, identifier=get_random_string(length=12), area=1000, section_area=1000
     )
     plan_unit = plan_unit_factory(
         identifier="PU1",
@@ -61,7 +61,7 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
         type_id=1, municipality_id=1, district_id=29, notice_period_id=1
     )
     lease_area = lease_area_factory(
-        lease=lease, identifier=get_random_string(), area=1000, section_area=1000
+        lease=lease, identifier=get_random_string(length=12), area=1000, section_area=1000
     )
     master_plan_unit = plan_unit_factory(
         identifier="PU1", area=1000, lease_area=lease_area, is_master=True,
