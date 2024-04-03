@@ -122,11 +122,7 @@ from plotsearch.views.plot_search import (
     FavouriteViewSet,
     InformationCheckViewSet,
     IntendedUsePlotsearchPublicViewSet,
-)
-from plotsearch.views.plot_search import (
-    IntendedUseViewSet as IntendedUsePlotsearchViewSet,
-)
-from plotsearch.views.plot_search import (
+    IntendedUsePlotsearchViewSet,
     PlotSearchStageViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTargetViewSet,

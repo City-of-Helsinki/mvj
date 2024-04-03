@@ -89,7 +89,7 @@ class PlotSearchSubtypeViewSet(
 ):
     queryset = PlotSearchSubtype.objects.all()
     serializer_class = PlotSearchSubtypeSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ["plot_search_type"]
 
@@ -99,7 +99,7 @@ class PlotSearchTypeViewSet(
 ):
     queryset = PlotSearchType.objects.all()
     serializer_class = PlotSearchTypeSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -111,14 +111,14 @@ class PlotSearchStageViewSet(
 ):
     queryset = PlotSearchStage.objects.all()
     serializer_class = PlotSearchStageSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
 
 
 class PlotSearchViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = PlotSearch.objects.all()
     serializer_class = PlotSearchRetrieveSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
     filterset_class = PlotSearchFilterSet
 
     def get_queryset(self):
@@ -247,6 +247,10 @@ class IntendedUseViewSet(
     queryset = AreaSearchIntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+
+class IntendedUsePlotsearchViewSet(IntendedUseViewSet):
+    permission_classes = (MvjDjangoModelPermissions,)
 
 
 class IntendedUsePlotsearchPublicViewSet(
@@ -382,7 +386,8 @@ class DirectReservationLinkViewSet(viewsets.ModelViewSet):
     permission_classes = (MvjDjangoModelPermissions,)
 
 
-class TargetStatusGeneratePDF(PdfMixin, FilterView):
+class TargetStatusGeneratePDF(PdfMixin, FilterView, APIView):
+    permission_classes = (MvjDjangoModelPermissions,)
     template_name = "target_status/detail.html"
     model = TargetStatus
     filterset_class = TargetStatusExportFilterSet
@@ -520,7 +525,8 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView):
         return response
 
 
-class AreaSearchGeneratePDF(PdfMixin, FilterView):
+class AreaSearchGeneratePDF(PdfMixin, FilterView, APIView):
+    permission_classes = (MvjDjangoModelPermissions,)
     template_name = "area_search/detail.html"
     model = AreaSearch
     filterset_class = AreaSearchFilterSet
@@ -616,4 +622,4 @@ class FAQViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class RelatedPlotApplicationViewSet(viewsets.ModelViewSet):
     queryset = RelatedPlotApplication.objects.all()
     serializer_class = RelatedPlotApplicationCreateDeleteSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)

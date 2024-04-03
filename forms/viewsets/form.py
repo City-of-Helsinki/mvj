@@ -30,10 +30,7 @@ from forms.serializers.form import (
     TargetStatusUpdateSerializer,
 )
 from forms.utils import AnswerInBBoxFilter, handle_email_sending
-from leasing.permissions import (
-    MvjDjangoModelPermissions,
-    MvjDjangoModelPermissionsOrAnonReadOnly,
-)
+from leasing.permissions import MvjDjangoModelPermissions
 from plotsearch.models import TargetStatus
 from plotsearch.models.plot_search import MeetingMemo
 
@@ -50,7 +47,7 @@ class FormViewSet(
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["is_template"]
     serializer_class = FormSerializer
-    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (MvjDjangoModelPermissions,)
 
     def get_queryset(self):
         queryset = Form.objects.prefetch_related(
