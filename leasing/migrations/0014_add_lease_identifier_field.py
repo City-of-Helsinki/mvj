@@ -2,12 +2,28 @@
 
 from django.db import migrations, models
 
-from leasing.models import LeaseIdentifier
+
+def _generate_identifier(lease_identifier):
+    """Returns the lease identifier as a string
+    The lease identifier is constructed out of type, municipality,
+    district, and sequence, in that order. For example, the identifier
+    for a residence (A1) in Helsinki (1), Vallila (22), and sequence
+    number 1 would be A1122-1.
+    """
+    return "{}{}{:02}-{}".format(
+        lease_identifier.type.identifier,
+        lease_identifier.municipality.identifier,
+        int(lease_identifier.district.identifier),
+        lease_identifier.sequence,
+    )
 
 
 def forwards_func(apps, schema_editor):
-    for identifier in LeaseIdentifier.objects.all():
-        identifier.save()
+    LeaseIdentifier = apps.get_model("leasing", "LeaseIdentifier")  # NOQA: N806
+
+    for lease_identifier in LeaseIdentifier.objects.all():
+        lease_identifier.identifier = _generate_identifier(lease_identifier)
+        lease_identifier.save()
 
 
 def reverse_func(apps, schema_editor):
