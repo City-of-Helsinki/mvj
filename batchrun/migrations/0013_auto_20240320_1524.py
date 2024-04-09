@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('batchrun', '0012_alter_jsonfields_to_new_jsonfields'),
+        ("batchrun", "0012_alter_jsonfields_to_new_jsonfields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='command',
-            name='deleted_by_cascade',
+            model_name="command",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='job',
-            name='deleted_by_cascade',
+            model_name="job",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AlterField(
-            model_name='command',
-            name='deleted',
+            model_name="command",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='deleted',
+            model_name="job",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
     ]

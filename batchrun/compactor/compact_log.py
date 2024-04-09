@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from io import StringIO
-from typing import Any, Dict, Iterable, Optional
-
-from typing import Protocol
+from typing import Any, Dict, Iterable, Optional, Protocol
 
 from ..enums import LogEntryKind
 from .metadata import LogEntryMetadata

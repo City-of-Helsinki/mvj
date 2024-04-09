@@ -1,10 +1,10 @@
 from time import perf_counter
 
 import psycopg
-from psycopg.rows import namedtuple_row
 from django.conf import settings
 from django.contrib.gis import geos
 from django.db import IntegrityError
+from psycopg.rows import namedtuple_row
 
 from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
@@ -281,7 +281,7 @@ class AreaImporter(BaseImporter):
             )
 
             area_import = AREA_IMPORT_TYPES[area_import_type]
-            
+
             try:
                 conn = psycopg.connect(
                     getattr(settings, area_import["source_dsn_setting_name"]),

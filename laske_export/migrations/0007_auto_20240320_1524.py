@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('laske_export', '0006_laskeexportlog_land_use_agreement_invoices'),
+        ("laske_export", "0006_laskeexportlog_land_use_agreement_invoices"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='laskeexportlog',
-            name='deleted_by_cascade',
+            model_name="laskeexportlog",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='laskepaymentslog',
-            name='deleted_by_cascade',
+            model_name="laskepaymentslog",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AlterField(
-            model_name='laskeexportlog',
-            name='deleted',
+            model_name="laskeexportlog",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='laskepaymentslog',
-            name='deleted',
+            model_name="laskepaymentslog",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
     ]

@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plotsearch', '0033_areasearchintendeduse_deleted'),
+        ("plotsearch", "0033_areasearchintendeduse_deleted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='areasearchintendeduse',
-            name='deleted_by_cascade',
+            model_name="areasearchintendeduse",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='plotsearch',
-            name='deleted_by_cascade',
+            model_name="plotsearch",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='relatedplotapplication',
-            name='deleted_by_cascade',
+            model_name="relatedplotapplication",
+            name="deleted_by_cascade",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AlterField(
-            model_name='areasearchintendeduse',
-            name='deleted',
+            model_name="areasearchintendeduse",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='plotsearch',
-            name='deleted',
+            model_name="plotsearch",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='relatedplotapplication',
-            name='deleted',
+            model_name="relatedplotapplication",
+            name="deleted",
             field=models.DateTimeField(db_index=True, editable=False, null=True),
         ),
     ]
