@@ -66,20 +66,22 @@ class RecurrenceRule:
     def matches_time(self, t: time) -> bool:
         return t.hour in self.hours and t.minute in self.minutes
 
-    def get_next_events(self, start_time: datetime) -> Iterable[AwareDateTime]:
+    def get_next_events(
+        self, start_time: datetime
+    ) -> Iterable[Union[AwareDateTime, TZAwareDateTime]]:
         return get_next_events(self, start_time)
 
 
 def get_next_events(
     rule: RecurrenceRule, start_time: datetime
-) -> Iterable[AwareDateTime]:
+) -> Iterable[Union[AwareDateTime, TZAwareDateTime]]:
     check_is_aware(start_time)
 
     tz = rule.timezone
-    last_timestamps: Set[AwareDateTime] = set()
+    last_timestamps: Set[Union[AwareDateTime, TZAwareDateTime]] = set()
 
     for d in _iter_dates_from(rule, start_time.astimezone(tz).date()):
-        timestamps: Set[AwareDateTime] = set()
+        timestamps: Set[Union[AwareDateTime, TZAwareDateTime]] = set()
         for t in _iter_times(rule):
             dt = datetime.combine(d, t)
             for timestamp in _get_possible_times(rule, dt, tz):
@@ -130,8 +132,8 @@ def _iter_times(rule: RecurrenceRule) -> Iterable[time]:
 
 def _get_possible_times(
     rule: RecurrenceRule, naive_datetime: datetime, zoneinfo: ZoneInfo
-) -> Iterable[AwareDateTime]:
-    aware_datetime = naive_datetime.replace(tzinfo=zoneinfo)
+) -> Iterable[Union[AwareDateTime, TZAwareDateTime]]:
+    aware_datetime = AwareDateTime(naive_datetime.replace(tzinfo=zoneinfo))
 
     if not dateutil_tz.datetime_exists(aware_datetime):
         # If the datetime does not exist (due to DST transition), adjust it

@@ -1,18 +1,15 @@
 -c requirements.txt
 django-debug-toolbar~=4.3.0
 django-extensions~=3.2.3
-django-stubs
-# djangorestframework-stubs doesn't support Django Rest Framework 3.10
-# or mypy >= 0.730. When It supports, this can be uncommented and the
-# "type: ignore" can be removed from couple of files in the batchrun.
-#djangorestframework-stubs
+django-stubs[compatible-mypy]~=4.2.7
+djangorestframework-stubs[compatible-mypy]~=3.14.5
 black
 debugpy
 flake8
 flake8-print
 ipython
 isort
-mypy
+mypy~=1.7.0
 openpyxl
 pep8-naming
 pydocstyle

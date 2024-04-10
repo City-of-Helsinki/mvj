@@ -31,7 +31,7 @@ class Command(BaseCommand):
             self.process_job_run(run_id, dry_run=dry_run)
 
     def process_job_run(self, run_id: int, dry_run: bool = False) -> None:
-        job_run_qs: JobRunQuerySet = JobRun.objects.filter(id=run_id)  # type: ignore
+        job_run_qs: JobRunQuerySet = JobRun.objects.filter(id=run_id)
 
         if not job_run_qs.exists():
             self.stderr.write("No job runs with id {}".format(run_id))

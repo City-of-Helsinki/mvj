@@ -1,4 +1,4 @@
-from rest_framework.routers import DefaultRouter  # type: ignore
+from rest_framework.routers import DefaultRouter
 
 from . import viewsets
 

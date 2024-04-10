@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 try:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore
 except ImportError:
-    from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore
+    from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.core.exceptions import ValidationError
 from django.db import connections, models, transaction
-from django.db.models.fields.json import JSONField  # type: ignore
+from django.db.models.fields.json import JSONField
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumField, EnumIntegerField
@@ -31,7 +31,7 @@ LOG = logging.getLogger(__name__)
 
 
 if TYPE_CHECKING:
-    QuerySet = models.QuerySet
+    from django.db.models import QuerySet
 else:
     QuerySet = defaultdict(lambda: models.QuerySet)
 
@@ -153,7 +153,7 @@ class JobHistoryRetentionPolicy(models.Model):
 
 
 def _get_default_job_history_retention_policy_pk() -> int:
-    return JobHistoryRetentionPolicy.get_default().pk  # type: ignore
+    return JobHistoryRetentionPolicy.get_default().pk
 
 
 class Job(TimeStampedSafeDeleteModel):

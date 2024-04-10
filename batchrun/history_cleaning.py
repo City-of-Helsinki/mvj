@@ -114,7 +114,7 @@ class JobRunHistoryCleaner:
             )
             .filter(delay_elapsed_at__lte=self.clean_time)
         )
-        return result  # type: ignore
+        return result
 
     def _execute_delete_runs(self, run_ids: Iterable[int]) -> None:
         for batch in self._jobrun_batches(run_ids):
@@ -133,17 +133,17 @@ class JobRunHistoryCleaner:
         while ids_left:
             batch = JobRun.objects.filter(pk__in=ids_left[:10])
             ids_left = ids_left[10:]
-            yield batch  # type: ignore
+            yield batch
 
     def _execute_delete_logs(self, run_ids: Iterable[int]) -> None:
-        runs: JobRunQuerySet = JobRun.objects.filter(pk__in=run_ids)  # type: ignore
+        runs: JobRunQuerySet = JobRun.objects.filter(pk__in=run_ids)
         if not self.dry_run:
             (deleted_logs, deleted_entries) = runs.delete_logs()
             self.compact_logs_deleted += deleted_logs
             self.log_entries_deleted += deleted_entries
 
     def _execute_compact_logs(self, run_ids: Iterable[int]) -> None:
-        runs: JobRunQuerySet = JobRun.objects.filter(pk__in=run_ids)  # type: ignore
+        runs: JobRunQuerySet = JobRun.objects.filter(pk__in=run_ids)
         if not self.dry_run:
             entries_deleted = runs.compact_logs()
             self.log_entries_deleted += entries_deleted

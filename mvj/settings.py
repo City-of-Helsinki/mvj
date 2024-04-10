@@ -1,11 +1,13 @@
 import os
 import subprocess
 
+import django_stubs_ext
 import environ
 import sentry_sdk
 from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
+django_stubs_ext.monkeypatch()
 project_root = environ.Path(__file__) - 2
 BASE_DIR = project_root
 

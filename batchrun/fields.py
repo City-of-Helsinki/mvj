@@ -1,8 +1,8 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Sequence, Tuple
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.fields.json import JSONField  # type: ignore
+from django.db.models.fields.json import JSONField
 from django.utils.translation import gettext as _
 
 from .intset import IntegerSetSpecifier
@@ -22,7 +22,7 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
         ]
         super().__init__(default=default, **kwargs)
 
-    def deconstruct(self) -> Tuple[str, str, Tuple[Any], Dict[str, Any]]:
+    def deconstruct(self) -> Tuple[str, str, Sequence[Any], Dict[str, Any]]:
         (name, path, args, kwargs) = super().deconstruct()
 
         kwargs["value_range"] = self.value_range
@@ -49,6 +49,6 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
             )
 
 
-class TextJSONField(JSONField):  # type: ignore
+class TextJSONField(JSONField):
     def db_type(self, connection: Any) -> str:
         return "json"

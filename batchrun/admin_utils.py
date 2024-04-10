@@ -1,18 +1,22 @@
 from datetime import datetime
 from functools import update_wrapper
-from typing import Any, List, Optional, Type
+from typing import Any, List, Optional, Type, TypeVar
 
 from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Model
+from django.db.models import Field, Model
 from django.http import Http404, HttpRequest, HttpResponse
 from django.urls import path, reverse
 from django.urls.resolvers import URLPattern
 from django.utils import timezone
 from django.utils.html import format_html
 
+from batchrun.models import JobRunLog
 
-class ReadOnlyAdmin(admin.ModelAdmin):
+AnyModel = TypeVar("AnyModel", bound=Model)
+
+
+class ReadOnlyAdmin(admin.ModelAdmin[AnyModel]):
     def has_add_permission(
         self, request: HttpRequest, obj: Optional[Model] = None
     ) -> bool:
@@ -40,7 +44,9 @@ class PreciseTimeFormatter:
 
     @property
     def short_description(self) -> str:
-        return str(self._field.verbose_name)
+        if isinstance(self._field, Field):
+            return str(self._field.verbose_name)
+        return ""
 
     def __call__(self, obj: Model) -> Optional[str]:
         value = getattr(obj, self._field_name)
@@ -50,7 +56,7 @@ class PreciseTimeFormatter:
         return timezone.localtime(value).strftime(self._format_string)
 
 
-class WithDownloadableContent(admin.ModelAdmin):
+class WithDownloadableContent(admin.ModelAdmin[JobRunLog]):
     @property
     def download_content_url_name(self) -> str:
         meta = self.model._meta

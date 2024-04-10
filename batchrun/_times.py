@@ -18,10 +18,10 @@ def utc_now() -> AwareDateTime:
 class TZAwareDateTime(datetime):
     """A datetime subclass that includes timezone offset information in equality checks."""
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, TZAwareDateTime):
             return NotImplemented
         return super().__eq__(other) and self.utcoffset() == other.utcoffset()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((super().__hash__(), self.utcoffset()))

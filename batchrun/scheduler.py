@@ -3,6 +3,7 @@ import time
 from typing import NoReturn
 
 from django.db import transaction
+from django.db.models import QuerySet
 
 from ._times import utc_now
 from .job_launching import run_job
@@ -13,10 +14,12 @@ POLL_INTERVAL = 10.0  # seconds
 
 def run_scheduler_loop() -> NoReturn:
     # Make sure that the job run queue is up to date
-    JobRunQueueItem.objects.refresh()  # type: ignore
+    JobRunQueueItem.objects.refresh()
 
     # Get the runnable items ordered by run time
-    queue_items = JobRunQueueItem.objects.to_run().order_by("run_at")  # type: ignore
+    queue_items: QuerySet[JobRunQueueItem] = JobRunQueueItem.objects.to_run().order_by(
+        "run_at"
+    )
 
     while True:
         first_item = queue_items.first()
@@ -54,4 +57,4 @@ def run_scheduler_loop() -> NoReturn:
         run_job(first_item.scheduled_job.job)
 
         first_item.scheduled_job.update_run_queue()
-        queue_items.remove_old_items()
+        queue_items.remove_old_items()  # type: ignore

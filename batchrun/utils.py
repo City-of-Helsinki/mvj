@@ -14,7 +14,7 @@ def get_django_manage_py(max_depth: int = 3) -> str:
 
     # Try to auto detect by searching down from dir containing settings
     settings_mod = sys.modules[settings.SETTINGS_MODULE]
-    directory = os.path.dirname(settings_mod.__file__)
+    directory = os.path.dirname(settings_mod.__file__ or "")
     tries_left = max_depth
     while directory != "/" and tries_left:
         candidate = os.path.join(directory, "manage.py")

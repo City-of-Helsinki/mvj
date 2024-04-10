@@ -1,5 +1,5 @@
 from enumfields.drf.serializers import EnumSupportSerializerMixin
-from rest_framework import serializers, viewsets  # type: ignore
+from rest_framework import serializers, viewsets
 
 from .. import models
 

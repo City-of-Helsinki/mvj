@@ -20,18 +20,18 @@ from .models import (
 
 
 @admin.register(Command)
-class CommandAdmin(admin.ModelAdmin):
+class CommandAdmin(admin.ModelAdmin[Command]):
     list_display = ["type", "name"]
     exclude = ["parameters"]
 
 
 @admin.register(Job)
-class JobAdmin(admin.ModelAdmin):
+class JobAdmin(admin.ModelAdmin[Job]):
     list_display = ["name", "comment", "command"]
 
 
 @admin.register(JobHistoryRetentionPolicy)
-class JobHistoryRetentionPolicyAdmin(admin.ModelAdmin):
+class JobHistoryRetentionPolicyAdmin(admin.ModelAdmin[JobHistoryRetentionPolicy]):
     list_display = [
         "identifier",
         "compact_logs_delay",
@@ -40,13 +40,13 @@ class JobHistoryRetentionPolicyAdmin(admin.ModelAdmin):
     ]
 
 
-class JobRunLogEntryInline(admin.TabularInline):
+class JobRunLogEntryInline(admin.TabularInline[JobRunLogEntry, JobRunLog]):
     model = JobRunLogEntry
     show_change_link = True
 
 
 @admin.register(JobRun)
-class JobRunAdmin(ReadOnlyAdmin):
+class JobRunAdmin(ReadOnlyAdmin[JobRun]):
     date_hierarchy = "started_at"
     inlines = [JobRunLogEntryInline]
     list_display = ["started_at_p", "stopped_at_p", "job", "exit_code"]
@@ -62,7 +62,7 @@ class JobRunAdmin(ReadOnlyAdmin):
 
 
 @admin.register(JobRunLogEntry)
-class JobRunLogEntryAdmin(ReadOnlyAdmin):
+class JobRunLogEntryAdmin(ReadOnlyAdmin[JobRunLogEntry]):
     date_hierarchy = "time"
     list_display = ["time_p", "run", "kind", "line_number", "number", "text"]
     list_filter = ["kind", "run__job"]
@@ -72,7 +72,7 @@ class JobRunLogEntryAdmin(ReadOnlyAdmin):
 
 
 @admin.register(JobRunLog)
-class JobRunLogAdmin(WithDownloadableContent, ReadOnlyAdmin):
+class JobRunLogAdmin(WithDownloadableContent, ReadOnlyAdmin[JobRunLog]):
     date_hierarchy = "start"
     list_display = ["run", "start_p", "end_p", "entry_count", "error_count"]
     list_filter = ["run__job", "run__exit_code"]
@@ -119,13 +119,13 @@ class JobRunLogAdmin(WithDownloadableContent, ReadOnlyAdmin):
 
 
 @admin.register(JobRunQueueItem)
-class JobRunQueueItemAdmin(ReadOnlyAdmin):
+class JobRunQueueItemAdmin(ReadOnlyAdmin[JobRunQueueItem]):
     date_hierarchy = "run_at"
     list_display = ["run_at", "scheduled_job", "assigned_at", "assignee_pid"]
 
 
 @admin.register(ScheduledJob)
-class ScheduledJobAdmin(admin.ModelAdmin):
+class ScheduledJobAdmin(admin.ModelAdmin[ScheduledJob]):
     list_display = [
         "job",
         "enabled",
@@ -142,5 +142,5 @@ class ScheduledJobAdmin(admin.ModelAdmin):
 
 
 @admin.register(Timezone)
-class TimezoneAdmin(admin.ModelAdmin):
+class TimezoneAdmin(admin.ModelAdmin[Timezone]):
     pass
