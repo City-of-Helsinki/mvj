@@ -56,6 +56,6 @@ def django_db_setup(django_db_setup, django_db_blocker):
         call_command("loaddata", *fixture_filenames)
 
 
-class AnswerFactory(factory.DjangoModelFactory):
+class AnswerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Answer

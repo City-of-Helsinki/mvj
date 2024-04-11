@@ -9,7 +9,7 @@ from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from laske_export.exporter import LaskeExporter, LaskeExporterException
+from laske_export.exporter import LaskeExporter, LaskeExporterError
 from leasing.models import Invoice, ReceivableType
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.permissions import PerMethodPermission
@@ -237,7 +237,7 @@ class InvoiceExportToLaskeView(APIView):
             exporter = LaskeExporter()
             exporter.export_invoices(invoice)
         except (
-            LaskeExporterException,
+            LaskeExporterError,
             ConnectionException,
             CredentialException,
             SSHException,

@@ -30,7 +30,7 @@ def set_constant_laske_values(sales_order):
         setattr(sales_order, key, val)
 
 
-class LaskeExporterException(Exception):
+class LaskeExporterError(Exception):
     pass
 
 
@@ -42,7 +42,7 @@ class LaskeExporter:
 
     def _check_export_directory(self):
         if not os.path.isdir(settings.LASKE_EXPORT_ROOT):
-            raise LaskeExporterException(
+            raise LaskeExporterError(
                 _('Directory "{}" does not exist. Please create it.').format(
                     settings.LASKE_EXPORT_ROOT
                 )
@@ -52,7 +52,7 @@ class LaskeExporter:
             fp = tempfile.TemporaryFile(dir=settings.LASKE_EXPORT_ROOT)
             fp.close()
         except PermissionError:
-            raise LaskeExporterException(
+            raise LaskeExporterError(
                 _('Can not create file in directory "{}".').format(
                     settings.LASKE_EXPORT_ROOT
                 )
@@ -67,7 +67,7 @@ class LaskeExporter:
             or not settings.LASKE_SERVERS["export"].get("username")
             or not settings.LASKE_SERVERS["export"].get("password")
         ):
-            raise LaskeExporterException(_('LASKE_SERVERS["export"] settings missing'))
+            raise LaskeExporterError(_('LASKE_SERVERS["export"] settings missing'))
 
     def save_to_file(self, xml_string, filename):
         full_path = os.path.join(settings.LASKE_EXPORT_ROOT, filename)

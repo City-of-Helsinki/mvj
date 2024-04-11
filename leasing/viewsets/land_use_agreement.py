@@ -13,7 +13,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from laske_export.exporter import LaskeExporter, LaskeExporterException
+from laske_export.exporter import LaskeExporter, LaskeExporterError
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import (
     CoalesceOrderingFilter,
@@ -426,7 +426,7 @@ class LandUseAgreementInvoiceExportToLaskeView(APIView):
             exporter = LaskeExporter()
             exporter.export_invoices(invoice)
         except (
-            LaskeExporterException,
+            LaskeExporterError,
             ConnectionException,
             CredentialException,
             SSHException,

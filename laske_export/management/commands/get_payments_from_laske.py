@@ -248,7 +248,7 @@ class Command(BaseCommand):
                     )
                 except ValueError:
                     self.stderr.write(
-                        "  Skipped row: malformed date in payment row: {}.".format(
+                        "  Skipped row: malformed date in payment row: {} {}.".format(
                             invoice_number, line[21:27]
                         )
                     )

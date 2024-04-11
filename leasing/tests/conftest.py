@@ -92,61 +92,61 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 
 @register
-class AreaFactory(factory.DjangoModelFactory):
+class AreaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Area
 
 
 @register
-class AreaSourceFactory(factory.DjangoModelFactory):
+class AreaSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AreaSource
 
 
 @register
-class PlotFactory(factory.DjangoModelFactory):
+class PlotFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Plot
 
 
 @register
-class RelatedLeaseFactory(factory.DjangoModelFactory):
+class RelatedLeaseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RelatedLease
 
 
 @register
-class TenantRentShareFactory(factory.DjangoModelFactory):
+class TenantRentShareFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TenantRentShare
 
 
 @register
-class LeaseTypeFactory(factory.DjangoModelFactory):
+class LeaseTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LeaseType
 
 
 @register
-class MunicipalityFactory(factory.DjangoModelFactory):
+class MunicipalityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Municipality
 
 
 @register
-class DistrictFactory(factory.DjangoModelFactory):
+class DistrictFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = District
 
 
 @register
-class NoticePeriodFactory(factory.DjangoModelFactory):
+class NoticePeriodFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = NoticePeriod
 
 
 @register
-class RentFactory(factory.DjangoModelFactory):
+class RentFactory(factory.django.DjangoModelFactory):
     type = RentType.INDEX
     cycle = RentCycle.JANUARY_TO_DECEMBER
     index_type = IndexType.TYPE_7
@@ -156,13 +156,13 @@ class RentFactory(factory.DjangoModelFactory):
 
 
 @register
-class ContractRentFactory(factory.DjangoModelFactory):
+class ContractRentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ContractRent
 
 
 @register
-class RentAdjustmentFactory(factory.DjangoModelFactory):
+class RentAdjustmentFactory(factory.django.DjangoModelFactory):
     type = RentAdjustmentType.DISCOUNT
 
     class Meta:
@@ -170,13 +170,13 @@ class RentAdjustmentFactory(factory.DjangoModelFactory):
 
 
 @register
-class FixedInitialYearRentFactory(factory.DjangoModelFactory):
+class FixedInitialYearRentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FixedInitialYearRent
 
 
 @register
-class InvoiceFactory(factory.DjangoModelFactory):
+class InvoiceFactory(factory.django.DjangoModelFactory):
     state = InvoiceState.OPEN
     due_date = timezone.now().date()
     type = InvoiceType.CHARGE
@@ -186,127 +186,129 @@ class InvoiceFactory(factory.DjangoModelFactory):
 
 
 @register
-class InvoiceNoteFactory(factory.DjangoModelFactory):
+class InvoiceNoteFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = InvoiceNote
 
 
 @register
-class InvoiceRowFactory(factory.DjangoModelFactory):
+class InvoiceRowFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = InvoiceRow
 
 
 @register
-class InvoiceSetFactory(factory.DjangoModelFactory):
+class InvoiceSetFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = InvoiceSet
 
 
 @register
-class InvoicePaymentFactory(factory.DjangoModelFactory):
+class InvoicePaymentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = InvoicePayment
 
 
 @register
-class ConditionFactory(factory.DjangoModelFactory):
+class ConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Condition
 
 
 @register
-class UiDataFactory(factory.DjangoModelFactory):
+class UiDataFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UiData
 
 
 @register
-class LeaseBasisOfRentFactory(factory.DjangoModelFactory):
+class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LeaseBasisOfRent
 
 
 @register
-class LandUseAgreementFactory(factory.DjangoModelFactory):
+class LandUseAgreementFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreement
 
 
 @register
-class LandUseAgreementTypeFactory(factory.DjangoModelFactory):
+class LandUseAgreementTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementType
 
 
 @register
-class LandUseAgreementStatusFactory(factory.DjangoModelFactory):
+class LandUseAgreementStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementStatus
 
 
 @register
-class LandUseAgreementDefinitionFactory(factory.DjangoModelFactory):
+class LandUseAgreementDefinitionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementDefinition
 
 
 @register
-class LandUseAgreementIdentifierFactory(factory.DjangoModelFactory):
+class LandUseAgreementIdentifierFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementIdentifier
 
 
 @register
-class LandUseAgreementAddressFactory(factory.DjangoModelFactory):
+class LandUseAgreementAddressFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementAddress
 
 
 @register
-class LandUseAgreementDecisionFactory(factory.DjangoModelFactory):
+class LandUseAgreementDecisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementDecision
 
 
 @register
-class LandUseAgreementLitigantFactory(factory.DjangoModelFactory):
+class LandUseAgreementLitigantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementLitigant
 
 
 @register
-class LandUseAgreementLitigantContactFactory(factory.DjangoModelFactory):
+class LandUseAgreementLitigantContactFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementLitigantContact
 
 
 @register
-class LandUseAgreementCompensationsFactory(factory.DjangoModelFactory):
+class LandUseAgreementCompensationsFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementCompensations
 
 
 @register
-class LandUseAgreementCompensationsUnitPriceFactory(factory.DjangoModelFactory):
+class LandUseAgreementCompensationsUnitPriceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementCompensationsUnitPrice
 
 
 @register
-class LandUseAgreementConditionFactory(factory.DjangoModelFactory):
+class LandUseAgreementConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementCondition
 
 
 @register
-class LandUseAgreementConditionFormOfManagementFactory(factory.DjangoModelFactory):
+class LandUseAgreementConditionFormOfManagementFactory(
+    factory.django.DjangoModelFactory
+):
     class Meta:
         model = LandUseAgreementConditionFormOfManagement
 
 
 @register
-class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
+class LandUseAgreementInvoiceFactory(factory.django.DjangoModelFactory):
     due_date = timezone.now().date()
 
     class Meta:
@@ -314,37 +316,37 @@ class LandUseAgreementInvoiceFactory(factory.DjangoModelFactory):
 
 
 @register
-class LandUseAgreementInvoiceRowFactory(factory.DjangoModelFactory):
+class LandUseAgreementInvoiceRowFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementInvoiceRow
 
 
 @register
-class LandUseAgreementInvoiceSetFactory(factory.DjangoModelFactory):
+class LandUseAgreementInvoiceSetFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementInvoiceSet
 
 
 @register
-class LandUseAgreementReceivableTypeFactory(factory.DjangoModelFactory):
+class LandUseAgreementReceivableTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LandUseAgreementReceivableType
 
 
 @register
-class ContractFactory(factory.DjangoModelFactory):
+class ContractFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contract
 
 
 @register
-class DecisionMakerFactory(factory.DjangoModelFactory):
+class DecisionMakerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DecisionMaker
 
 
 @register
-class CustomDetailedPlanFactory(factory.DjangoModelFactory):
+class CustomDetailedPlanFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CustomDetailedPlan
 

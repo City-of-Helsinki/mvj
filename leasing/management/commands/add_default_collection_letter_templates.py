@@ -87,7 +87,9 @@ class Command(BaseCommand):
             Path(settings.MEDIA_ROOT) / CollectionLetterTemplate.file.field.upload_to
         )
         if not self.check_is_directory_writable(destination_path):
-            raise CommandError('Directory "" is not writable'.format(destination_path))
+            raise CommandError(
+                'Directory "{}" is not writable'.format(destination_path)
+            )
 
         source_path = Path(options["source_directory"])
 

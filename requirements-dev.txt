@@ -14,25 +14,26 @@ attrs==19.3.0
     # via
     #   -c requirements.txt
     #   black
-    #   pytest
-backcall==0.1.0
-    # via ipython
 backports-zoneinfo==0.2.1
     # via
     #   -c requirements.txt
     #   django
 black==19.10b0
     # via -r requirements-dev.in
+certifi==2023.7.22
+    # via
+    #   -c requirements.txt
+    #   requests
+charset-normalizer==2.0.12
+    # via
+    #   -c requirements.txt
+    #   requests
 click==8.0.1
     # via black
-coverage==5.0.4
+coverage[toml]==7.4.4
     # via pytest-cov
-debugpy==1.1.0
+debugpy==1.8.1
     # via -r requirements-dev.in
-decorator==4.4.2
-    # via
-    #   ipython
-    #   traitlets
 django==4.2.11
     # via
     #   -c requirements.txt
@@ -52,40 +53,36 @@ django-stubs-ext==4.2.7
     # via django-stubs
 djangorestframework-stubs[compatible-mypy]==3.14.5
     # via -r requirements-dev.in
-entrypoints==0.3
-    # via flake8
 et-xmlfile==1.0.1
     # via openpyxl
-factory-boy==2.12.0
+exceptiongroup==1.2.0
+    # via pytest
+factory-boy==3.3.0
     # via
     #   -r requirements-dev.in
     #   pytest-factoryboy
 faker==4.0.2
     # via factory-boy
-flake8==3.7.9
+flake8==7.0.0
     # via
     #   -r requirements-dev.in
-    #   flake8-polyfill
     #   flake8-print
-flake8-polyfill==1.0.2
-    # via pep8-naming
-flake8-print==3.1.4
+    #   pep8-naming
+flake8-print==5.0.0
     # via -r requirements-dev.in
+idna==2.9
+    # via
+    #   -c requirements.txt
+    #   requests
 inflection==0.5.1
     # via
     #   -c requirements.txt
     #   pytest-factoryboy
-ipython==7.16.3
+iniconfig==2.0.0
+    # via pytest
+isort==5.13.2
     # via -r requirements-dev.in
-ipython-genutils==0.2.0
-    # via traitlets
-isort==5.6.4
-    # via -r requirements-dev.in
-jdcal==1.4.1
-    # via openpyxl
-jedi==0.16.0
-    # via ipython
-mccabe==0.6.1
+mccabe==0.7.0
     # via flake8
 mypy==1.7.1
     # via
@@ -94,55 +91,40 @@ mypy==1.7.1
     #   djangorestframework-stubs
 mypy-extensions==1.0.0
     # via mypy
-openpyxl==3.0.3
+openpyxl==3.1.2
     # via -r requirements-dev.in
 packaging==21.3
     # via
     #   -c requirements.txt
     #   pytest
-parso==0.6.2
-    # via jedi
+    #   pytest-factoryboy
 pathspec==0.8.0
     # via black
-pep8-naming==0.10.0
+pep8-naming==0.13.3
     # via -r requirements-dev.in
-pexpect==4.8.0
-    # via ipython
-pickleshare==0.7.5
-    # via ipython
-pluggy==0.13.1
+pluggy==1.4.0
     # via pytest
-prompt-toolkit==3.0.5
-    # via ipython
-ptyprocess==0.6.0
-    # via pexpect
-py==1.10.0
-    # via pytest
-pycodestyle==2.5.0
+pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
-pydocstyle==5.0.2
-    # via -r requirements-dev.in
-pyflakes==2.1.1
+pyflakes==3.2.0
     # via flake8
-pygments==2.15.0
-    # via ipython
 pyparsing==3.0.6
     # via
     #   -c requirements.txt
     #   packaging
-pytest==5.4.1
+pytest==8.1.1
     # via
     #   -r requirements-dev.in
     #   pytest-cov
     #   pytest-django
     #   pytest-factoryboy
-pytest-cov==2.8.1
+pytest-cov==5.0.0
     # via -r requirements-dev.in
-pytest-django==3.9.0
+pytest-django==4.8.0
     # via -r requirements-dev.in
-pytest-factoryboy==2.0.3
+pytest-factoryboy==2.7.0
     # via -r requirements-dev.in
 python-dateutil==2.8.2
     # via
@@ -150,14 +132,14 @@ python-dateutil==2.8.2
     #   faker
 regex==2020.5.14
     # via black
+requests==2.31.0
+    # via
+    #   -c requirements.txt
+    #   djangorestframework-stubs
 six==1.14.0
     # via
     #   -c requirements.txt
-    #   flake8-print
     #   python-dateutil
-    #   traitlets
-snowballstemmer==2.0.0
-    # via pydocstyle
 sqlparse==0.4.4
     # via
     #   -c requirements.txt
@@ -169,14 +151,22 @@ toml==0.10.1
     # via black
 tomli==2.0.1
     # via
+    #   coverage
     #   django-stubs
     #   mypy
-traitlets==4.3.3
-    # via ipython
+    #   pytest
 typed-ast==1.4.1
+    # via black
+types-pytz==2024.1.0.20240203
+    # via django-stubs
+types-pyyaml==6.0.12.20240311
     # via
-    #   black
-    #   mypy
+    #   django-stubs
+    #   djangorestframework-stubs
+types-requests==2.31.0.6
+    # via djangorestframework-stubs
+types-urllib3==1.26.25.14
+    # via types-requests
 typing-extensions==4.10.0
     # via
     #   -c requirements.txt
@@ -185,13 +175,10 @@ typing-extensions==4.10.0
     #   django-stubs-ext
     #   djangorestframework-stubs
     #   mypy
-wcwidth==0.1.9
+    #   pytest-factoryboy
+urllib3==1.26.18
     # via
     #   -c requirements.txt
-    #   prompt-toolkit
-    #   pytest
+    #   requests
 werkzeug==2.1.2
     # via -r requirements-dev.in
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

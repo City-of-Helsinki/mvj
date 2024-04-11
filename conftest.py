@@ -106,13 +106,13 @@ def area_search_test_data(
 
 
 @register
-class AreaSearchIntendedUseFactory(factory.DjangoModelFactory):
+class AreaSearchIntendedUseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AreaSearchIntendedUse
 
 
 @register
-class AreaSearchFactory(factory.DjangoModelFactory):
+class AreaSearchFactory(factory.django.DjangoModelFactory):
     intended_use = factory.SubFactory(AreaSearchIntendedUseFactory)
 
     class Meta:
@@ -120,7 +120,7 @@ class AreaSearchFactory(factory.DjangoModelFactory):
 
 
 @register
-class LeaseTypeFactory(factory.DjangoModelFactory):
+class LeaseTypeFactory(factory.django.DjangoModelFactory):
     identifier = factory.Sequence(lambda n: "A%10d" % n)
 
     class Meta:
@@ -128,7 +128,7 @@ class LeaseTypeFactory(factory.DjangoModelFactory):
 
 
 @register
-class MunicipalityFactory(factory.DjangoModelFactory):
+class MunicipalityFactory(factory.django.DjangoModelFactory):
     identifier = factory.Sequence(lambda n: "1%1d" % n)
 
     class Meta:
@@ -136,7 +136,7 @@ class MunicipalityFactory(factory.DjangoModelFactory):
 
 
 @register
-class DistrictFactory(factory.DjangoModelFactory):
+class DistrictFactory(factory.django.DjangoModelFactory):
     identifier = factory.Sequence(lambda n: "10%1d" % n)
     municipality = factory.SubFactory(MunicipalityFactory)
 
@@ -145,13 +145,13 @@ class DistrictFactory(factory.DjangoModelFactory):
 
 
 @register
-class PlotSearchFactory(factory.DjangoModelFactory):
+class PlotSearchFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearch
 
 
 @register
-class LeaseFactory(factory.DjangoModelFactory):
+class LeaseFactory(factory.django.DjangoModelFactory):
     type = factory.SubFactory(LeaseTypeFactory)
     municipality = factory.SubFactory(MunicipalityFactory)
     district = factory.SubFactory(DistrictFactory)
@@ -161,7 +161,7 @@ class LeaseFactory(factory.DjangoModelFactory):
 
 
 @register
-class LeaseAreaFactory(factory.DjangoModelFactory):
+class LeaseAreaFactory(factory.django.DjangoModelFactory):
     type = LeaseAreaType.REAL_PROPERTY
     location = LocationType.SURFACE
     area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
@@ -172,13 +172,13 @@ class LeaseAreaFactory(factory.DjangoModelFactory):
 
 
 @register
-class PlanUnitIntendedUseFactory(factory.DjangoModelFactory):
+class PlanUnitIntendedUseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlanUnitIntendedUse
 
 
 @register
-class PlanUnitFactory(factory.DjangoModelFactory):
+class PlanUnitFactory(factory.django.DjangoModelFactory):
     area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
     lease_area = factory.SubFactory(LeaseAreaFactory)
     plan_unit_intended_use = factory.SubFactory(PlanUnitIntendedUseFactory)
@@ -191,7 +191,7 @@ class PlanUnitFactory(factory.DjangoModelFactory):
 
 
 @register
-class CustomDetailedPlanFactory(factory.DjangoModelFactory):
+class CustomDetailedPlanFactory(factory.django.DjangoModelFactory):
     area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
     lease_area = factory.SubFactory(LeaseAreaFactory)
     rent_build_permission = factory.Sequence(lambda n: n)
@@ -202,13 +202,13 @@ class CustomDetailedPlanFactory(factory.DjangoModelFactory):
 
 
 @register
-class PlotSearchTargetFactory(factory.DjangoModelFactory):
+class PlotSearchTargetFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearchTarget
 
 
 @register
-class PlotSearchTargetFactoryWithSubFactories(factory.DjangoModelFactory):
+class PlotSearchTargetFactoryWithSubFactories(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearchTarget
 
@@ -218,25 +218,25 @@ class PlotSearchTargetFactoryWithSubFactories(factory.DjangoModelFactory):
 
 
 @register
-class PlotSearchTypeFactory(factory.DjangoModelFactory):
+class PlotSearchTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearchType
 
 
 @register
-class PlotSearchSubtypeFactory(factory.DjangoModelFactory):
+class PlotSearchSubtypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearchSubtype
 
 
 @register
-class PlotSearchStageFactory(factory.DjangoModelFactory):
+class PlotSearchStageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PlotSearchStage
 
 
 @register
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
@@ -346,55 +346,55 @@ def plot_search_target(
 
 
 @register
-class ContactFactory(factory.DjangoModelFactory):
+class ContactFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contact
 
 
 @register
-class TenantFactory(factory.DjangoModelFactory):
+class TenantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Tenant
 
 
 @register
-class TenantContactFactory(factory.DjangoModelFactory):
+class TenantContactFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TenantContact
 
 
 @register
-class LeaseAreaAddressFactory(factory.DjangoModelFactory):
+class LeaseAreaAddressFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LeaseAreaAddress
 
 
 @register
-class FormFactory(factory.DjangoModelFactory):
+class FormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Form
 
 
 @register
-class DecisionFactory(factory.DjangoModelFactory):
+class DecisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Decision
 
 
 @register
-class InfoLinkFactory(factory.DjangoModelFactory):
+class InfoLinkFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TargetInfoLink
 
 
 @register
-class SectionFactory(factory.DjangoModelFactory):
+class SectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Section
 
 
 @register
-class FieldFactory(factory.DjangoModelFactory):
+class FieldFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Field
 
@@ -426,19 +426,19 @@ def basic_answer(
 
 
 @register
-class EntryFactory(factory.DjangoModelFactory):
+class EntryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Entry
 
 
 @register
-class EntrySectionFactory(factory.DjangoModelFactory):
+class EntrySectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = EntrySection
 
 
 @register
-class AnswerFactory(factory.DjangoModelFactory):
+class AnswerFactory(factory.django.DjangoModelFactory):
     form = factory.SubFactory(FormFactory)
     user = factory.SubFactory(UserFactory)
 
@@ -1072,13 +1072,13 @@ def area_search_form(area_search_template_form):
 
 
 @register
-class ChoiceFactory(factory.DjangoModelFactory):
+class ChoiceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Choice
 
 
 @register
-class TargetStatusFactory(factory.DjangoModelFactory):
+class TargetStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TargetStatus
 
@@ -1087,7 +1087,7 @@ class TargetStatusFactory(factory.DjangoModelFactory):
 
 
 @register
-class RelatedPlotApplicationFactory(factory.DjangoModelFactory):
+class RelatedPlotApplicationFactory(factory.django.DjangoModelFactory):
     lease = factory.SubFactory(LeaseFactory)
     content_object = factory.SubFactory(AreaSearchFactory)
 
