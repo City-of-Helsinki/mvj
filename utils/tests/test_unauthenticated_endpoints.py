@@ -1,9 +1,38 @@
-# -*- coding: utf-8 -*-
 import json
+import re
 
 import pytest
-import requests
 from django_extensions.management.commands import show_urls
+
+PK_REPLACEMENT = "12"
+ID_REPLACEMENT = "34"
+UUID_REPLACEMENT = "001acc16-c45b-4dab-97ee-f79c0292d37b"
+TRADEREGISTER_SERVICE_REPLACEMENT = "trade_register/company_extended"
+
+REPLACEMENTS = (
+    (re.compile("<pk>"), PK_REPLACEMENT),
+    (re.compile(r"<\w+_id>"), ID_REPLACEMENT),  # Replaces `<something_id>` with `34`
+    (re.compile("<str:uuid>"), UUID_REPLACEMENT),
+    (re.compile("trade_register/<service>"), TRADEREGISTER_SERVICE_REPLACEMENT),
+)
+
+# These URLs do not require authentication intentionally
+WHITELIST_PUBLIC_URLS = (
+    "/v1/pub/answer/",
+    "/v1/pub/faq/",
+    "/v1/pub/plot_search_ui/0",
+    "/v1/pub/plot_search_ui/1",
+    "/v1/pub/plot_search_ui/",
+)
+WHITELIST_DJANGO_URLS = (
+    "/admin/",
+    "/auth/",
+    "/docs/",
+    "/redoc/",
+    "/__debug__/",
+)
+
+WHITELIST = WHITELIST_PUBLIC_URLS + WHITELIST_DJANGO_URLS
 
 
 def get_url_paths():
@@ -16,45 +45,36 @@ def get_url_paths():
         urlconf="ROOT_URLCONF",
         unsorted=True,
     )
-    views = json.loads(views_str)
-    whitelist = """
-        /auth/login/
-        /auth/logout/
-        /v1/pub/answer/
-        /v1/pub/faq/
-        /v1/pub/plot_search_ui/0
-        /v1/pub/plot_search_ui/1
-        /v1/pub/plot_search_ui/
-        /docs/
-        /redoc/
-    """.split()
-    repls = (
-        ("/<pk>\\.<format>/", "/1234.json/"),
-        ("/<pk>/", "/1234/"),
-        ("/<path:object_id>/", "/abc/123/"),
-    )
+
+    def _is_valid_route(route):
+        url = route.get("url", "")
+        return (
+            len(url) > 0
+            and not url.startswith(WHITELIST)
+            and url.endswith("/")
+            and "<format>" not in url
+        )
+
+    try:
+        views = filter(_is_valid_route, json.loads(views_str))
+    except json.JSONDecodeError:
+        return []
+
     paths = []
     for view in views:
-        path = view.get("url")
-        if path:
-            if (
-                not path.endswith("/")
-                or path.startswith("/admin/")
-                or path in whitelist
-            ):
-                continue
-            for r in repls:
-                path = path.replace(*r)
-            if ">" in path:
-                continue  # This includes lone '\.<format>' and few corner cases
-            paths.append(path)
+        path = view.get("url", "")
+        for pattern, replacement in REPLACEMENTS:
+            path = re.sub(pattern, replacement, path)
+        paths.append(path)
     return paths
 
 
+@pytest.mark.django_db
 @pytest.mark.parametrize("path", get_url_paths())
-def test_urls(path):
-    url = f"http://localhost:8001{path}"
-    response = requests.get(url, headers={"Accept": "application/json"})
-    assert (
-        response.status_code == 401
-    ), f"Found unauthenticated endpoint # curl -L -v {url}"
+def test_urls(client, path):
+    for method in ["get", "post", "put", "patch", "delete", "options"]:
+        request_method = getattr(client, method)
+        response = request_method(path)
+        assert (
+            response.status_code == 401
+        ), f"Found unauthenticated endpoint: {method.upper()} {path}"
