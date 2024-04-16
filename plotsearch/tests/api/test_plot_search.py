@@ -14,8 +14,9 @@ from forms.models import Field, Form, Section
 from forms.models.form import AnswerOpeningRecord
 from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
-from plotsearch.enums import SearchClass
+from plotsearch.enums import SearchClass, SearchStage
 from plotsearch.models import AreaSearch, PlotSearch, PlotSearchTarget
+from plotsearch.models.plot_search import PlotSearchStage
 
 fake = Faker("fi_FI")
 
@@ -59,6 +60,29 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert response.data["count"] > 0
+
+
+@pytest.mark.django_db
+def test_plot_search_stage_public(client):
+
+    url = reverse("pub_plot_search-list")
+    stage = PlotSearchStage.objects.get(stage=SearchStage.IN_ACTION)
+    params = {"stage": stage.id}
+    response = client.get(url, params, content_type="application/json")
+    assert (
+        response.status_code == 200
+    ), f"Should only allow 'IN_ACTION' stage: {response.status_code} {response.data}"
+
+    for stage in PlotSearchStage.objects.exclude(stage=SearchStage.IN_ACTION):
+        params = {"stage": stage.id}
+        response = client.get(url, params, content_type="application/json")
+        assert (
+            response.status_code == 400
+        ), f"Stage: {stage} Response: {response.status_code} {response.data}"
+
+    params = {"stage": "just_testing"}
+    response = client.get(url, params, content_type="application/json")
+    assert response.status_code == 400, f"{response.status_code} {response.data}"
 
 
 @pytest.mark.django_db

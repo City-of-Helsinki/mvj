@@ -31,10 +31,12 @@ from leasing.permissions import (
     PerMethodPermission,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet
+from plotsearch.enums import SearchStage
 from plotsearch.filter import (
     AreaSearchFilterSet,
     InformationCheckListFilterSet,
     PlotSearchFilterSet,
+    PlotSearchPublicFilterSet,
     TargetStatusExportFilterSet,
 )
 from plotsearch.models import (
@@ -73,6 +75,7 @@ from plotsearch.serializers.plot_search import (
     IntendedUseSerializer,
     PlotSearchCreateSerializer,
     PlotSearchFilterSerializer,
+    PlotSearchPublicSerializer,
     PlotSearchRetrieveSerializer,
     PlotSearchStageSerializer,
     PlotSearchSubtypeSerializer,
@@ -94,6 +97,10 @@ class PlotSearchSubtypeViewSet(
     filterset_fields = ["plot_search_type"]
 
 
+class PlotSearchSubtypePublicViewSet(PlotSearchSubtypeViewSet):
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+
 class PlotSearchTypeViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
@@ -106,12 +113,20 @@ class PlotSearchTypeViewSet(
         return qs.prefetch_related("plotsearchsubtype_set")
 
 
+class PlotSearchTypePublicViewSet(PlotSearchTypeViewSet):
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+
+
 class PlotSearchStageViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     queryset = PlotSearchStage.objects.all()
     serializer_class = PlotSearchStageSerializer
     permission_classes = (MvjDjangoModelPermissions,)
+
+
+class PlotSearchStagePublicViewSet(PlotSearchStageViewSet):
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
 
 
 class PlotSearchViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
@@ -203,6 +218,29 @@ class PlotSearchViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelView
             aor_serializer.is_valid()
             aor_serializer.save()
         return HttpResponse(status=204)
+
+
+class PlotSearchPublicViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PlotSearch.objects.filter(
+        stage__stage=SearchStage.IN_ACTION,  # IMPORTANT: Only active plot searches are public!
+    )
+    serializer_class = PlotSearchPublicSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
+    permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
+    filterset_class = PlotSearchPublicFilterSet
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related(
+            "plot_search_targets__info_links",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__decision_maker",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__type",
+            "plot_search_targets__plan_unit__lease_area__lease__decisions__conditions",
+            "plot_search_targets__plan_unit__lease_area__addresses",
+        ).select_related("form")
+
+    def get_serializer_class(self):
+        return PlotSearchPublicSerializer
 
 
 class PlotSearchUIDataView(APIView):

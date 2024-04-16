@@ -123,9 +123,13 @@ from plotsearch.views.plot_search import (
     InformationCheckViewSet,
     IntendedUsePlotsearchPublicViewSet,
     IntendedUsePlotsearchViewSet,
+    PlotSearchPublicViewSet,
+    PlotSearchStagePublicViewSet,
     PlotSearchStageViewSet,
+    PlotSearchSubtypePublicViewSet,
     PlotSearchSubtypeViewSet,
     PlotSearchTargetViewSet,
+    PlotSearchTypePublicViewSet,
     PlotSearchTypeViewSet,
     PlotSearchUIDataView,
     PlotSearchViewSet,
@@ -252,16 +256,16 @@ pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(
     r"intended_use", IntendedUsePlotsearchPublicViewSet, basename="pub_intended_use"
 )
-pub_router.register(r"plot_search", PlotSearchViewSet, basename="pub_plot_search")
+pub_router.register(r"plot_search", PlotSearchPublicViewSet, basename="pub_plot_search")
 pub_router.register(
-    r"plot_search_stage", PlotSearchStageViewSet, basename="pub_plot_search_stage"
+    r"plot_search_stage", PlotSearchStagePublicViewSet, basename="pub_plot_search_stage"
 )
 pub_router.register(
-    r"plot_search_type", PlotSearchTypeViewSet, basename="pub_plot_search_type"
+    r"plot_search_type", PlotSearchTypePublicViewSet, basename="pub_plot_search_type"
 )
 pub_router.register(
     r"plot_search_subtype",
-    PlotSearchSubtypeViewSet,
+    PlotSearchSubtypePublicViewSet,
     basename="pub_plot_search_subtype",
 )
 

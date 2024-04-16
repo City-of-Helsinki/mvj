@@ -23,6 +23,10 @@ WHITELIST_PUBLIC_URLS = (
     "/v1/pub/plot_search_ui/0",
     "/v1/pub/plot_search_ui/1",
     "/v1/pub/plot_search_ui/",
+    "/v1/pub/plot_search/",
+    "/v1/pub/plot_search_stage/",
+    "/v1/pub/plot_search_type/",
+    "/v1/pub/plot_search_subtype/",
 )
 WHITELIST_DJANGO_URLS = (
     "/admin/",

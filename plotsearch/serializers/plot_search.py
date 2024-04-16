@@ -513,6 +513,59 @@ class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
         )
 
 
+class PlotSearchPublicSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
+):
+    id = serializers.ReadOnlyField()
+    type = PlotSearchTypeSerializer(source="subtype.plot_search_type", read_only=True)
+    subtype = PlotSearchSubtypeSerializer()
+    stage = PlotSearchStageSerializer()
+
+    form = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Form,
+        queryset=Form.objects.prefetch_related(
+            "sections__fields__choices",
+            "sections__subsections__fields__choices",
+            "sections__subsections__subsections__fields__choices",
+            "sections__subsections__subsections__subsections",
+        ),
+        related_serializer=FormSerializer,
+        required=False,
+        allow_null=True,
+    )
+
+    decisions = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Decision,
+        queryset=Decision.objects.all(),
+        related_serializer=DecisionSerializer,
+        required=False,
+        allow_null=True,
+        many=True,
+    )
+
+    plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PlotSearch
+        fields = (
+            "id",
+            "type",
+            "subtype",
+            "stage",
+            "search_class",
+            "form",
+            "decisions",
+            "plot_search_targets",
+            "created_at",
+            "modified_at",
+            "name",
+            "begin_at",
+            "end_at",
+        )
+
+
 class PlotSearchUpdateSerializer(
     UpdateNestedMixin,
     EnumSupportSerializerMixin,

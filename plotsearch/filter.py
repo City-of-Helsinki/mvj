@@ -6,7 +6,9 @@ from django.db.models import Q
 from django_filters.constants import EMPTY_VALUES
 
 from forms.models import Answer, Entry, EntrySection
+from plotsearch.enums import SearchStage
 from plotsearch.models import AreaSearch, InformationCheck, PlotSearch, TargetStatus
+from plotsearch.models.plot_search import PlotSearchStage
 
 
 class TargetFilter(django_filters.BaseInFilter, django_filters.NumberFilter):
@@ -167,3 +169,15 @@ class PlotSearchFilterSet(django_filters.FilterSet):
     class Meta:
         model = PlotSearch
         fields = ("q", "name", "search_class", "stage", "type", "subtype")
+
+
+class PlotSearchPublicFilterSet(django_filters.FilterSet):
+    type = django_filters.NumberFilter(field_name="subtype__plot_search_type")
+    # For public API, only show plot searches that are 'in_action'
+    stage = django_filters.ModelChoiceFilter(
+        queryset=PlotSearchStage.objects.filter(stage=SearchStage.IN_ACTION)
+    )
+
+    class Meta:
+        model = PlotSearch
+        fields = ("search_class", "stage", "type", "subtype")
