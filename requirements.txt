@@ -102,9 +102,7 @@ django-picklefield==3.1
     #   django-constance
     #   django-q
 django-q[sentry]==1.3.9
-    # via
-    #   -r requirements.in
-    #   django-q
+    # via -r requirements.in
 django-q-sentry==0.1.6
     # via django-q
 django-safedelete==1.3.3
@@ -129,9 +127,7 @@ docxcompose==1.0.2
 docxtpl==0.16.8
     # via -r requirements.in
 drf-yasg[validation]==1.21.7
-    # via
-    #   -r requirements.in
-    #   drf-yasg
+    # via -r requirements.in
 ecdsa==0.15
     # via python-jose
 html5lib==1.1
@@ -167,7 +163,7 @@ packaging==21.3
     #   drf-yasg
 paramiko==2.10.1
     # via pysftp
-pillow==10.0.1
+pillow==10.3.0
     # via
     #   reportlab
     #   xhtml2pdf
@@ -176,9 +172,7 @@ pkgutil-resolve-name==1.3.10
 platformdirs==4.2.0
     # via zeep
 psycopg[binary]==3.1.18
-    # via
-    #   -r requirements.in
-    #   psycopg
+    # via -r requirements.in
 psycopg-binary==3.1.18
     # via psycopg
 pyasn1==0.4.8
