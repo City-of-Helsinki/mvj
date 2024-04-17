@@ -8,9 +8,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="jobrun", name="deleted",),
-        migrations.RemoveField(model_name="jobrunlogentry", name="deleted",),
-        migrations.RemoveField(model_name="scheduledjob", name="deleted",),
+        migrations.RemoveField(
+            model_name="jobrun",
+            name="deleted",
+        ),
+        migrations.RemoveField(
+            model_name="jobrunlogentry",
+            name="deleted",
+        ),
+        migrations.RemoveField(
+            model_name="scheduledjob",
+            name="deleted",
+        ),
         migrations.AlterField(
             model_name="jobrunlogentry",
             name="run",

@@ -18,13 +18,16 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RemoveField(
-            model_name="landuseagreementtype", name="due_dates_position",
+            model_name="landuseagreementtype",
+            name="due_dates_position",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementtype", name="sap_material_code",
+            model_name="landuseagreementtype",
+            name="sap_material_code",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementtype", name="sap_order_item_number",
+            model_name="landuseagreementtype",
+            name="sap_order_item_number",
         ),
         migrations.AlterField(
             model_name="landuseagreementtype",

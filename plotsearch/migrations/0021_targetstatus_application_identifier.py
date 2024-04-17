@@ -32,7 +32,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="targetstatus",
             name="application_identifier",
-            field=models.CharField(max_length=255, unique=True,),
+            field=models.CharField(
+                max_length=255,
+                unique=True,
+            ),
         ),
         migrations.RunPython(add_application_identifier),
         migrations.AlterField(

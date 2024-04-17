@@ -15,7 +15,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="plotsearch", name="preparer",),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="preparer",
+        ),
         migrations.AddField(
             model_name="informationcheck",
             name="created_at",

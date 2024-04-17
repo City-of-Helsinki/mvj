@@ -59,14 +59,20 @@ class Migration(migrations.Migration):
             new_name="LandUseAgreementConditionFormOfManagement",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementcondition", name="description",
-        ),
-        migrations.RemoveField(model_name="landuseagreementcondition", name="type",),
-        migrations.RemoveField(
-            model_name="landuseagreementlitigant", name="share_denominator",
+            model_name="landuseagreementcondition",
+            name="description",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementlitigant", name="share_numerator",
+            model_name="landuseagreementcondition",
+            name="type",
+        ),
+        migrations.RemoveField(
+            model_name="landuseagreementlitigant",
+            name="share_denominator",
+        ),
+        migrations.RemoveField(
+            model_name="landuseagreementlitigant",
+            name="share_numerator",
         ),
         migrations.AddField(
             model_name="landuseagreementcondition",

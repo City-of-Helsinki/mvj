@@ -53,17 +53,26 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Receivable types",
             },
         ),
-        migrations.RemoveField(model_name="landuseagreementinvoice", name="amount",),
         migrations.RemoveField(
-            model_name="landuseagreementinvoice", name="compensation_amount",
+            model_name="landuseagreementinvoice",
+            name="amount",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementinvoice", name="compensation_amount_percentage",
+            model_name="landuseagreementinvoice",
+            name="compensation_amount",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementinvoice", name="plan_lawfulness_date",
+            model_name="landuseagreementinvoice",
+            name="compensation_amount_percentage",
         ),
-        migrations.RemoveField(model_name="landuseagreementinvoice", name="sign_date",),
+        migrations.RemoveField(
+            model_name="landuseagreementinvoice",
+            name="plan_lawfulness_date",
+        ),
+        migrations.RemoveField(
+            model_name="landuseagreementinvoice",
+            name="sign_date",
+        ),
         migrations.AddField(
             model_name="landuseagreementinvoice",
             name="billed_amount",

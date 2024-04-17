@@ -20,7 +20,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="leasearea", name="is_master",),
+        migrations.RemoveField(
+            model_name="leasearea",
+            name="is_master",
+        ),
         migrations.AddField(
             model_name="planunit",
             name="master_timestamp",

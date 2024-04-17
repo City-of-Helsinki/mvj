@@ -47,7 +47,9 @@ class Migration(migrations.Migration):
             model_name="field",
             name="type",
             field=models.ForeignKey(
-                to="forms.FieldType", null=True, on_delete=models.CASCADE,
+                to="forms.FieldType",
+                null=True,
+                on_delete=models.CASCADE,
             ),
         ),
         migrations.RunSQL(
@@ -89,9 +91,14 @@ class Migration(migrations.Migration):
             ('fractional', 'Murtoluku');
             """,
         ),
-        migrations.RemoveField(model_name="field", name="type",),
+        migrations.RemoveField(
+            model_name="field",
+            name="type",
+        ),
         migrations.RenameField(
-            model_name="field", old_name="temporary_type", new_name="type",
+            model_name="field",
+            old_name="temporary_type",
+            new_name="type",
         ),
         migrations.AlterField(
             model_name="field",
@@ -110,5 +117,7 @@ class Migration(migrations.Migration):
                 max_length=255,
             ),
         ),
-        migrations.DeleteModel(name="FieldType",),
+        migrations.DeleteModel(
+            name="FieldType",
+        ),
     ]

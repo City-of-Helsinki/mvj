@@ -63,7 +63,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["name"], "abstract": False,},
+            options={
+                "ordering": ["name"],
+                "abstract": False,
+            },
         ),
         migrations.AddField(
             model_name="areasearch",
@@ -171,7 +174,9 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE, to="plotsearch.intendeduse"
             ),
         ),
-        migrations.DeleteModel(name="IntendedSubUse",),
+        migrations.DeleteModel(
+            name="IntendedSubUse",
+        ),
         migrations.AddField(
             model_name="areasearchattachment",
             name="area_search",

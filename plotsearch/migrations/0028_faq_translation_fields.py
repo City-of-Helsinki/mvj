@@ -11,13 +11,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="faq", name="answer_en", field=models.TextField(null=True),
+            model_name="faq",
+            name="answer_en",
+            field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name="faq", name="answer_fi", field=models.TextField(null=True),
+            model_name="faq",
+            name="answer_fi",
+            field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name="faq", name="answer_sv", field=models.TextField(null=True),
+            model_name="faq",
+            name="answer_sv",
+            field=models.TextField(null=True),
         ),
         migrations.AddField(
             model_name="faq",

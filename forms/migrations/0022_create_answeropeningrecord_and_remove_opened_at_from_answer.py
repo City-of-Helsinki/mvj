@@ -13,7 +13,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="answer", name="opened_at",),
+        migrations.RemoveField(
+            model_name="answer",
+            name="opened_at",
+        ),
         migrations.CreateModel(
             name="AnswerOpeningRecord",
             fields=[

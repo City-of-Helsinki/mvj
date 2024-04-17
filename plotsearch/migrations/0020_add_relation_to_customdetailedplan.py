@@ -15,7 +15,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="plotsearch", name="targets",),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="targets",
+        ),
         migrations.AddField(
             model_name="plotsearchtarget",
             name="custom_detailed_plan",

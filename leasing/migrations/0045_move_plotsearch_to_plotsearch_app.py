@@ -10,18 +10,47 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="plotsearch", name="preparer",),
-        migrations.RemoveField(model_name="plotsearch", name="stage",),
-        migrations.RemoveField(model_name="plotsearch", name="subtype",),
-        migrations.RemoveField(model_name="plotsearch", name="targets",),
-        migrations.DeleteModel(name="PlotSearchStage",),
         migrations.RemoveField(
-            model_name="plotsearchsubtype", name="plot_search_type",
+            model_name="plotsearch",
+            name="preparer",
         ),
-        migrations.RemoveField(model_name="plotsearchtarget", name="plan_unit",),
-        migrations.RemoveField(model_name="plotsearchtarget", name="plot_search",),
-        migrations.DeleteModel(name="PlotSearch",),
-        migrations.DeleteModel(name="PlotSearchSubtype",),
-        migrations.DeleteModel(name="PlotSearchTarget",),
-        migrations.DeleteModel(name="PlotSearchType",),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="stage",
+        ),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="subtype",
+        ),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="targets",
+        ),
+        migrations.DeleteModel(
+            name="PlotSearchStage",
+        ),
+        migrations.RemoveField(
+            model_name="plotsearchsubtype",
+            name="plot_search_type",
+        ),
+        migrations.RemoveField(
+            model_name="plotsearchtarget",
+            name="plan_unit",
+        ),
+        migrations.RemoveField(
+            model_name="plotsearchtarget",
+            name="plot_search",
+        ),
+        migrations.DeleteModel(
+            name="PlotSearch",
+        ),
+        migrations.DeleteModel(
+            name="PlotSearchSubtype",
+        ),
+        migrations.DeleteModel(
+            name="PlotSearchTarget",
+        ),
+        migrations.DeleteModel(
+            name="PlotSearchType",
+        ),
     ]

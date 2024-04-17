@@ -10,7 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="areasearch", name="description_project",),
+        migrations.RemoveField(
+            model_name="areasearch",
+            name="description_project",
+        ),
         migrations.AddField(
             model_name="intendedsubuse",
             name="name_en",

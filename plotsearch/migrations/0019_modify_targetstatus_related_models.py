@@ -193,5 +193,7 @@ class Migration(migrations.Migration):
                 to="forms.Answer",
             ),
         ),
-        migrations.DeleteModel(name="ApplicationStatus",),
+        migrations.DeleteModel(
+            name="ApplicationStatus",
+        ),
     ]

@@ -32,10 +32,12 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RemoveField(
-            model_name="landuseagreementcondition", name="due_date",
+            model_name="landuseagreementcondition",
+            name="due_date",
         ),
         migrations.RemoveField(
-            model_name="landuseagreementcondition", name="sent_date",
+            model_name="landuseagreementcondition",
+            name="sent_date",
         ),
         migrations.AddField(
             model_name="landuseagreementcondition",

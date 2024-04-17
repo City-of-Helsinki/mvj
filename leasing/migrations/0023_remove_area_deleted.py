@@ -14,5 +14,8 @@ class Migration(migrations.Migration):
             "DELETE FROM leasing_area WHERE deleted IS NOT NULL",
             reverse_sql=migrations.RunSQL.noop,
         ),
-        migrations.RemoveField(model_name="area", name="deleted",),
+        migrations.RemoveField(
+            model_name="area",
+            name="deleted",
+        ),
     ]

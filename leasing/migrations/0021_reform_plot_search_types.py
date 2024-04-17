@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="plotsearch", name="type",),
+        migrations.RemoveField(
+            model_name="plotsearch",
+            name="type",
+        ),
         migrations.RunSQL(
             "DELETE FROM leasing_plotsearchtype;", reverse_sql=migrations.RunSQL.noop
         ),

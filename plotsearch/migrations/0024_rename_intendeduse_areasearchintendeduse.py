@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameModel(
-            old_name="IntendedUse", new_name="AreaSearchIntendedUse",
+            old_name="IntendedUse",
+            new_name="AreaSearchIntendedUse",
         ),
     ]

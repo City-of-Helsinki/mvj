@@ -10,5 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelTable(name="laskeexportloginvoiceitem", table=None,),
+        migrations.AlterModelTable(
+            name="laskeexportloginvoiceitem",
+            table=None,
+        ),
     ]

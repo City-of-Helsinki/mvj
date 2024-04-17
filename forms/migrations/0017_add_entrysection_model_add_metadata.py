@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="entry", name="answer",),
+        migrations.RemoveField(
+            model_name="entry",
+            name="answer",
+        ),
         migrations.AddField(
             model_name="attachment",
             name="path",

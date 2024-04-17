@@ -45,7 +45,9 @@ class Migration(migrations.Migration):
                 ),
                 ("reason", models.TextField(verbose_name="Reason")),
             ],
-            options={"abstract": False,},
+            options={
+                "abstract": False,
+            },
         ),
         migrations.CreateModel(
             name="CreditDecision",
@@ -147,6 +149,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={
+                "abstract": False,
+            },
         ),
     ]

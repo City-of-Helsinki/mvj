@@ -10,5 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="customdetailedplan", name="deleted",),
+        migrations.RemoveField(
+            model_name="customdetailedplan",
+            name="deleted",
+        ),
     ]
