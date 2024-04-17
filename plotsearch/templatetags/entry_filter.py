@@ -16,7 +16,8 @@ def filter_only_parent(qs):
 @register.simple_tag
 def get_applicant(entry_section):
     first_name = entry_section.entries.filter(
-        field__identifier="etunimi", field__section__identifier="henkilon-tiedot",
+        field__identifier="etunimi",
+        field__section__identifier="henkilon-tiedot",
     ).first()
 
     if first_name is None:

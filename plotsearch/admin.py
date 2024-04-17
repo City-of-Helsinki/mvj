@@ -21,7 +21,9 @@ class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        return qs.select_related("stage",)
+        return qs.select_related(
+            "stage",
+        )
 
 
 class FavouriteTargetInline(FieldPermissionsAdminMixin, admin.TabularInline):

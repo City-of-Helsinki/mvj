@@ -393,7 +393,8 @@ urlpatterns = [
     path("v1/", include(router.urls + additional_api_paths)),
     path("v1/pub/", include(pub_router.urls + additional_pub_api_paths)),
     path(
-        "v1/", include((credit_integration_urls, "credit_integration"), namespace="v1"),
+        "v1/",
+        include((credit_integration_urls, "credit_integration"), namespace="v1"),
     ),
     re_path(r"(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf", ktj_proxy),
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),

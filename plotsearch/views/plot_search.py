@@ -343,10 +343,10 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
             output,
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
-        response[
-            "Content-Disposition"
-        ] = 'attachment; filename="Applications-{}.xlsx"'.format(
-            timezone.now().isoformat("T")
+        response["Content-Disposition"] = (
+            'attachment; filename="Applications-{}.xlsx"'.format(
+                timezone.now().isoformat("T")
+            )
         )
 
         return response
@@ -556,9 +556,9 @@ class TargetStatusGeneratePDF(PdfMixin, FilterView, APIView):
                     pdf_response.render().content,
                 )
 
-        response[
-            "Content-Disposition"
-        ] = f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
+        response["Content-Disposition"] = (
+            f'attachment; filename={"{}.zip".format(self.object_list[0].plot_search_target.plot_search.name)}'
+        )
 
         return response
 
@@ -588,7 +588,8 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView, APIView):
                     entry_section__in=object.answer.entry_sections.all()
                 )
                 context.update(
-                    object=object, information_checks=information_checks,
+                    object=object,
+                    information_checks=information_checks,
                 )
                 pdf_response = self.response_class(
                     request=self.request,
@@ -613,9 +614,9 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView, APIView):
                             file.file.file.read(),
                         )
 
-        response[
-            "Content-Disposition"
-        ] = f'attachment; filename={"{}.zip".format(self.object_list[0].lessor)}'
+        response["Content-Disposition"] = (
+            f'attachment; filename={"{}.zip".format(self.object_list[0].lessor)}'
+        )
 
         return response
 

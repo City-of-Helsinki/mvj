@@ -102,7 +102,10 @@ class PlotSearch(TimeStampedSafeDeleteModel, NameModel):
 
     # In Finnish: Valmistelijat
     preparers = models.ManyToManyField(
-        User, verbose_name=_("Preparer"), related_name="+", blank=True,
+        User,
+        verbose_name=_("Preparer"),
+        related_name="+",
+        blank=True,
     )
 
     # In Finnish: Haun tyyppi
@@ -191,7 +194,9 @@ class PlotSearchTarget(models.Model):
 
     # In Finnish: Tonttihaun kohteet: Haettavat kohteet, menettelyvaraus ja suoravaraus
     target_type = EnumField(
-        PlotSearchTargetType, verbose_name=_("Target type"), max_length=30,
+        PlotSearchTargetType,
+        verbose_name=_("Target type"),
+        max_length=30,
     )
 
     recursive_get_related_skip_relations = [
@@ -554,7 +559,11 @@ class AreaSearch(models.Model):
     )
 
     service_unit = models.ForeignKey(
-        ServiceUnit, related_name="+", on_delete=models.SET_NULL, null=True, blank=True,
+        ServiceUnit,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     recursive_get_related_skip_relations = [

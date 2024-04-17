@@ -85,7 +85,11 @@ def compose_direct_reservation_mail_body(
         )
         body = _(
             "Hi {receiver}! Here is the link for the direct reservation plot search: {url} \n\n{covering_note}"
-        ).format(receiver=receiver, url=url, covering_note=covering_note,)
+        ).format(
+            receiver=receiver,
+            url=url,
+            covering_note=covering_note,
+        )
     return body
 
 
