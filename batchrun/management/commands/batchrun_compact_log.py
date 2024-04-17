@@ -24,7 +24,9 @@ class Command(BaseCommand):
         **kwargs: Any
     ) -> None:
         logging.basicConfig(
-            level=logging.INFO, format="%(message)s", stream=sys.stdout,
+            level=logging.INFO,
+            format="%(message)s",
+            stream=sys.stdout,
         )
 
         for run_id in run_ids or []:
@@ -42,7 +44,9 @@ class Command(BaseCommand):
         if dry_run:
             self.stdout.write(
                 "Would compact {n} log entries of job run {i}: {r}".format(
-                    n=job_run.log_entries.count(), i=job_run.id, r=job_run,
+                    n=job_run.log_entries.count(),
+                    i=job_run.id,
+                    r=job_run,
                 )
             )
         else:

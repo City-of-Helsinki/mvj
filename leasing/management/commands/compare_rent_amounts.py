@@ -137,9 +137,11 @@ class Command(BaseCommand):
                     self.stdout.write(
                         " Calculated amount            : {} {}".format(
                             calculated_amount,
-                            " matches"
-                            if payable_rent.amount == calculated_amount
-                            else " MISMATCH",
+                            (
+                                " matches"
+                                if payable_rent.amount == calculated_amount
+                                else " MISMATCH"
+                            ),
                         )
                     )
                     worksheet.write(row, 6, "x", red)

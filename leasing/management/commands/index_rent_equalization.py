@@ -51,9 +51,9 @@ class Command(BaseCommand):
                 billing_period
                 not in sent_invoice_data[invoice.lease]["billing_periods"]
             ):
-                sent_invoice_data[invoice.lease]["billing_periods"][
-                    billing_period
-                ] = Decimal(0)
+                sent_invoice_data[invoice.lease]["billing_periods"][billing_period] = (
+                    Decimal(0)
+                )
 
             if invoice.type == InvoiceType.CHARGE:
                 sent_invoice_data[invoice.lease]["billing_periods"][

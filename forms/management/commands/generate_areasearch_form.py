@@ -456,7 +456,10 @@ def initialize_area_search_form():
         field=security_ban, text="Ei", value="ei", has_text_input=False
     )
     Choice.objects.create(
-        field=security_ban, text="Kyllä", value="kyllä", has_text_input=False,
+        field=security_ban,
+        text="Kyllä",
+        value="kyllä",
+        has_text_input=False,
     )
 
     contact_section = Section.objects.create(

@@ -273,9 +273,9 @@ class Command(BaseCommand):
 
                             # Set plan unit status
                             if plan_unit_state.to_enum() is not None:
-                                rest_data[
-                                    "plan_unit_status"
-                                ] = plan_unit_state.to_enum()
+                                rest_data["plan_unit_status"] = (
+                                    plan_unit_state.to_enum()
+                                )
 
                             # Get or create plan unit
                             (

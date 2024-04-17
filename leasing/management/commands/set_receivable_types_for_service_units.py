@@ -19,7 +19,8 @@ class Command(BaseCommand):
                 receivable_type,
                 receivable_type_created,
             ) = ReceivableType.objects.get_or_create(
-                service_unit=service_unit, name=RECEIVABLE_TYPE_RENT_NAME,
+                service_unit=service_unit,
+                name=RECEIVABLE_TYPE_RENT_NAME,
             )
             self.stdout.write(
                 " Created.\n" if receivable_type_created else " Already exists.\n"
@@ -31,7 +32,8 @@ class Command(BaseCommand):
                 receivable_type,
                 receivable_type_created,
             ) = ReceivableType.objects.get_or_create(
-                service_unit=service_unit, name=RECEIVABLE_TYPE_COLLATERAL_NAME,
+                service_unit=service_unit,
+                name=RECEIVABLE_TYPE_COLLATERAL_NAME,
             )
             self.stdout.write(
                 "Created.\n" if receivable_type_created else "Already exists.\n"

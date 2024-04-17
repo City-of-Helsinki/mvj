@@ -581,7 +581,7 @@ class Command(BaseCommand):
             perms = field_permissions.get_field_permissions_for_model(model)
 
             field_perms = {}
-            for (codename, name) in sorted(perms):
+            for codename, name in sorted(perms):
                 try:
                     all_field_permissions.append(permissions[codename])
                 except KeyError:

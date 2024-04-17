@@ -71,12 +71,33 @@ DEFAULT_MODEL_PERMS = {
     },
     "creditdecision": {
         1: None,
-        2: ("view", "send_creditdecision_inquiry",),
-        3: ("view", "send_creditdecision_inquiry",),
-        4: ("view", "send_creditdecision_inquiry",),
-        5: ("view", "send_creditdecision_inquiry",),
-        6: ("view", "send_creditdecision_inquiry",),
-        7: ("view", "add", "change", "delete", "send_creditdecision_inquiry",),
+        2: (
+            "view",
+            "send_creditdecision_inquiry",
+        ),
+        3: (
+            "view",
+            "send_creditdecision_inquiry",
+        ),
+        4: (
+            "view",
+            "send_creditdecision_inquiry",
+        ),
+        5: (
+            "view",
+            "send_creditdecision_inquiry",
+        ),
+        6: (
+            "view",
+            "send_creditdecision_inquiry",
+        ),
+        7: (
+            "view",
+            "add",
+            "change",
+            "delete",
+            "send_creditdecision_inquiry",
+        ),
     },
     "creditdecisionreason": {
         1: None,
@@ -1212,7 +1233,7 @@ class Command(BaseCommand):
                         permissions["{}_{}".format(permission_type, model_name)]
                     )
 
-                for (custom_model_permission_name, desc) in model._meta.permissions:
+                for custom_model_permission_name, desc in model._meta.permissions:
                     all_model_permissions.append(
                         permissions[custom_model_permission_name]
                     )

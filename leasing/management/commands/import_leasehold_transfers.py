@@ -1,6 +1,7 @@
 """
 Import lease rights transfers from National Land Survey of Finland (Maanmittauslaitos)
 """
+
 import io
 import os
 import sys

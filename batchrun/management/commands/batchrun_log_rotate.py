@@ -17,6 +17,8 @@ class Command(BaseCommand):
 
     def handle(self, dry_run: bool = False, *args: Any, **kwargs: Any) -> None:
         logging.basicConfig(
-            level=logging.INFO, format="%(message)s", stream=sys.stdout,
+            level=logging.INFO,
+            format="%(message)s",
+            stream=sys.stdout,
         )
         perform_job_run_log_rotate_and_clean_up(dry_run=dry_run)
