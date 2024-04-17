@@ -58,7 +58,7 @@ class CompactLog:
     def iterate_entries(self) -> Iterable[LogEntryDatum]:
         metadata = self.get_metadata()
         position = 0
-        for (time, kind, length) in metadata.items():
+        for time, kind, length in metadata.items():
             text = self.content[position : (position + length)]
             position += length
             yield LogEntryDatum(time, kind, text)

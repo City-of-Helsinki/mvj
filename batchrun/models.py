@@ -320,7 +320,7 @@ class ScheduledJob(TimeStampedModel):
 
         if self.enabled:
             events = self.recurrence_rule.get_next_events(start_from)
-            for (number, time) in enumerate(events):
+            for number, time in enumerate(events):
                 if number >= max_items_to_create:
                     break
                 item = items.get_or_create(run_at=time, scheduled_job=self)[0]
@@ -484,7 +484,10 @@ class JobRunLogEntry(models.Model):
 
 class JobRunLog(models.Model):
     run = models.OneToOneField(
-        JobRun, on_delete=models.CASCADE, related_name="log", verbose_name=_("run"),
+        JobRun,
+        on_delete=models.CASCADE,
+        related_name="log",
+        verbose_name=_("run"),
     )
     content = models.TextField(null=False, blank=True, verbose_name=_("content"))
     entry_data = TextJSONField(
@@ -498,10 +501,12 @@ class JobRunLog(models.Model):
         ),
     )
     start = models.DateTimeField(
-        db_index=True, verbose_name=_("timestamp of the first entry"),
+        db_index=True,
+        verbose_name=_("timestamp of the first entry"),
     )
     end = models.DateTimeField(
-        db_index=True, verbose_name=_("timestamp of the last entry"),
+        db_index=True,
+        verbose_name=_("timestamp of the last entry"),
     )
     entry_count = models.IntegerField(verbose_name=_("total count of entries"))
     error_count = models.IntegerField(verbose_name=_("count of error entries"))

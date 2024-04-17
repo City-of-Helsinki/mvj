@@ -85,7 +85,7 @@ class JobRunHistoryCleaner:
             (CleanAction.COMPACT_LOGS, to_compact),
         ]
 
-        for (action, qs) in action_qs_pairs:
+        for action, qs in action_qs_pairs:
             for run in qs:
                 LOG.info(
                     "Planning clean action %s for run %s (%s + %s -> %s) | %s",

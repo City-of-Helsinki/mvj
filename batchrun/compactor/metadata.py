@@ -86,7 +86,7 @@ class LogEntryMetadata:
             return
 
         total_time = 0
-        for (delta, kind_value, length) in zip(*entry_data):
+        for delta, kind_value, length in zip(*entry_data):
             total_time += delta
             total_delta = total_time * time_precision
             time = first_timestamp + total_delta
@@ -94,7 +94,8 @@ class LogEntryMetadata:
             self.append_item(time, kind, length)
 
     def _get_entry_data(
-        self, time_precision: timedelta = MICROSECOND,
+        self,
+        time_precision: timedelta = MICROSECOND,
     ) -> Tuple[List[int], List[int], List[int]]:
         ts0: Optional[datetime] = None
         total_delta_so_far: int = 0
@@ -103,7 +104,7 @@ class LogEntryMetadata:
         kinds: List[int] = []
         lengths: List[int] = []
 
-        for (ts, kind, length) in self._items:
+        for ts, kind, length in self._items:
             if ts0 is None:
                 ts0 = ts
             delta = int((ts - ts0) / time_precision) - total_delta_so_far
