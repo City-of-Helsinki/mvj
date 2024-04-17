@@ -991,6 +991,8 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             validated_data["address"], validated_data["district"] = self.get_addess_and_district_from_kartta_hel(
                 validated_data["geometry"]
             )
+        else:
+            validated_data["address"], validated_data["district"] = None, None
 
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
