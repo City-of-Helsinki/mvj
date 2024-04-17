@@ -283,8 +283,16 @@ def test_subtract_range_from_range(range1, subtract_range, expected):
 @pytest.mark.parametrize(
     "ranges, subtract_ranges, expected",
     [
-        (None, None, [],),
-        ([], [], [],),
+        (
+            None,
+            None,
+            [],
+        ),
+        (
+            [],
+            [],
+            [],
+        ),
         (
             [(date(2017, 1, 1), date(2017, 12, 31))],
             [],

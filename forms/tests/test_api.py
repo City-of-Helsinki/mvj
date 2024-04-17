@@ -79,7 +79,11 @@ def test_add_field_to_form(admin_client, basic_form):
 
     prev_fields_len = len(payload["sections"][0]["fields"])
     payload["sections"][0]["fields"].append(field_data)
-    response = admin_client.patch(url, data=payload, content_type="application/json",)
+    response = admin_client.patch(
+        url,
+        data=payload,
+        content_type="application/json",
+    )
     assert response.status_code == 200
     response = admin_client.get(url)
     assert response.status_code == 200
@@ -130,7 +134,9 @@ def test_answer_post(
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
         "entries": json.dumps(
             {
                 "sections": {
@@ -271,7 +277,9 @@ def test_target_status_patch(
         "decline_reason": DeclineReason.APPLICATION_EXPIRED,
         "arguments": "Very good arguments",
         "proposed_managements": [],
-        "reservation_conditions": ["Very good condition",],  # noqa: E231
+        "reservation_conditions": [
+            "Very good condition",
+        ],  # noqa: E231
         "geometry": area_search_test_data.geometry.geojson,
     }
 
@@ -318,7 +326,9 @@ def test_meeting_memo_create(
         "name": fake.name(),
     }
 
-    url = reverse("meetingmemo-list",)
+    url = reverse(
+        "meetingmemo-list",
+    )
     response = admin_client.post(url, data=meeting_memo)
 
     assert response.status_code == 201
@@ -350,7 +360,9 @@ def test_attachment_post(
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
         "entries": {
             "sections": {
                 "company-information": [
@@ -379,7 +391,9 @@ def test_attachment_post(
             },
             "fields": {},
         },
-        "attachments": [attachment_id,],  # noqa: E231
+        "attachments": [
+            attachment_id,
+        ],  # noqa: E231
         "ready": True,
     }
     response = admin_client.post(url, data=payload, content_type="application/json")

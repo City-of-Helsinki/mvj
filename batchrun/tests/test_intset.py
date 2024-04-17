@@ -163,7 +163,7 @@ def test_iter_returns_correct_values(spec, minval, maxval, expected_values):
 
 def test_iter_can_do_first_items_of_large_ranges_fast():
     start_time = time.process_time()
-    instance = IntegerSetSpecifier("42-100000000/3", 0, 10 ** 8)
+    instance = IntegerSetSpecifier("42-100000000/3", 0, 10**8)
     iterator = iter(instance)
     first_value = next(iterator)
     second_value = next(iterator)

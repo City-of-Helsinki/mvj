@@ -197,7 +197,11 @@ def test_send_answer_email_smtp_exceptions_not_raised(
         ),
         (
             SMTPSenderRefused,
-            SMTPSenderRefused(550, "User unknown", "test@example.com",),
+            SMTPSenderRefused(
+                550,
+                "User unknown",
+                "test@example.com",
+            ),
         ),
     )
     for _, side_effect in exceptions:
@@ -214,15 +218,42 @@ def test_send_answer_email_smtp_exceptions_raised(
     answer_email_message: EmailMessageInput,
 ):
     exceptions = (
-        (SMTPDataError, SMTPDataError(550, "User unknown"),),
-        (SMTPException, SMTPException("Error sending email"),),
-        (TimeoutError, TimeoutError("Connection timed out"),),
-        (SMTPServerDisconnected, SMTPServerDisconnected("Server disconnected"),),
-        (SMTPResponseException, SMTPResponseException(550, "User unknown"),),
-        (SMTPConnectError, SMTPConnectError(550, "Connection error"),),
-        (SMTPHeloError, SMTPHeloError(550, "User unknown"),),
-        (SMTPAuthenticationError, SMTPAuthenticationError(550, "User unknown"),),
-        (SMTPNotSupportedError, SMTPNotSupportedError("Not supported"),),
+        (
+            SMTPDataError,
+            SMTPDataError(550, "User unknown"),
+        ),
+        (
+            SMTPException,
+            SMTPException("Error sending email"),
+        ),
+        (
+            TimeoutError,
+            TimeoutError("Connection timed out"),
+        ),
+        (
+            SMTPServerDisconnected,
+            SMTPServerDisconnected("Server disconnected"),
+        ),
+        (
+            SMTPResponseException,
+            SMTPResponseException(550, "User unknown"),
+        ),
+        (
+            SMTPConnectError,
+            SMTPConnectError(550, "Connection error"),
+        ),
+        (
+            SMTPHeloError,
+            SMTPHeloError(550, "User unknown"),
+        ),
+        (
+            SMTPAuthenticationError,
+            SMTPAuthenticationError(550, "User unknown"),
+        ),
+        (
+            SMTPNotSupportedError,
+            SMTPNotSupportedError("Not supported"),
+        ),
     )
     for exception, side_effect in exceptions:
         with patch("django.core.mail.message.EmailMessage.send") as mock_send:

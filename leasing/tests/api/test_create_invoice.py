@@ -557,7 +557,8 @@ def test_create_invoice_cannot_add_row_with_receivable_type_from_another_service
 
     service_unit2 = service_unit_factory()
     receivable_type = receivable_type_factory(
-        name="Test receivable type", service_unit=service_unit2,
+        name="Test receivable type",
+        service_unit=service_unit2,
     )
 
     data = {

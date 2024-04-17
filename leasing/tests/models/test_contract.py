@@ -18,7 +18,8 @@ def test_contract_number_should_not_be_generated_if_no_sequence_name(lease):
     service_unit.save()
 
     contract = Contract.objects.create(
-        type=ContractType.objects.get(pk=1), lease=lease,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
     )
 
     assert contract.contract_number is None
@@ -32,7 +33,8 @@ def test_contract_number_should_start_from_first_contract_number(lease):
     service_unit.save()
 
     contract = Contract.objects.create(
-        type=ContractType.objects.get(pk=1), lease=lease,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
     )
 
     assert contract.contract_number == 500
@@ -46,7 +48,8 @@ def test_contract_number_should_start_from_one_if_first_number_not_set(lease):
     service_unit.save()
 
     contract = Contract.objects.create(
-        type=ContractType.objects.get(pk=1), lease=lease,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
     )
 
     assert contract.contract_number == 1
@@ -59,7 +62,10 @@ def test_contract_number_should_not_be_set_on_existing_contract(lease):
     service_unit.save()
 
     contract = Contract.objects.create(
-        id=1, type=ContractType.objects.get(pk=1), lease=lease, contract_number=None,
+        id=1,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
+        contract_number=None,
     )
 
     assert contract.contract_number is None
@@ -68,7 +74,9 @@ def test_contract_number_should_not_be_set_on_existing_contract(lease):
 @pytest.mark.django_db
 def test_contract_number_should_not_change_on_save_if_already_set(lease):
     contract = Contract.objects.create(
-        type=ContractType.objects.get(pk=1), lease=lease, contract_number=123,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
+        contract_number=123,
     )
 
     assert contract.contract_number == 123
@@ -86,7 +94,8 @@ def test_contract_number_should_use_existing_sequence(lease):
         get_next_value(sequence_name)
 
     contract = Contract.objects.create(
-        type=ContractType.objects.get(pk=1), lease=lease,
+        type=ContractType.objects.get(pk=1),
+        lease=lease,
     )
 
     assert contract.contract_number == 6

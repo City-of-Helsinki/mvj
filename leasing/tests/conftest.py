@@ -360,7 +360,8 @@ class ServiceUnitGroupMappingFactory(factory.django.DjangoModelFactory):
 
 @pytest.fixture
 def area_test_data(
-    area_factory, area_source_factory,
+    area_factory,
+    area_source_factory,
 ):
     area_source = area_source_factory(
         name="Tonttiosasto: vuokrausalue_paa",
@@ -392,7 +393,8 @@ def area_test_data(
 
 @pytest.fixture
 def area_with_intersects_test_data(
-    area_test_data, area_factory,
+    area_test_data,
+    area_factory,
 ):
     area_source = area_test_data["area_source"]
     intersect_areas = [
@@ -829,8 +831,12 @@ def land_use_agreement_test_data(
         ),
     ]
     litigants = [
-        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
-        land_use_agreement_litigant_factory(land_use_agreement=land_use_agreement,),
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+        ),
+        land_use_agreement_litigant_factory(
+            land_use_agreement=land_use_agreement,
+        ),
     ]
 
     land_use_agreement_litigant_contact_factory(

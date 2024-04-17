@@ -59,7 +59,9 @@ def test_api_access_updates_service_units(
     jwk["n"] = jwk["n"].decode("utf-8")
 
     httpretty.register_uri(
-        httpretty.GET, JWKS_URI, body=json.dumps({"keys": [jwk]}),
+        httpretty.GET,
+        JWKS_URI,
+        body=json.dumps({"keys": [jwk]}),
     )
 
     time_now = time()

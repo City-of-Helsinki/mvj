@@ -12,7 +12,11 @@ from leasing.models import Contact
 @pytest.mark.django_db
 @pytest.mark.parametrize("change_service_unit", [None, False, True])
 def test_patch_contact_should_validate_service_unit(
-    client, user_factory, service_unit_factory, contact_factory, change_service_unit,
+    client,
+    user_factory,
+    service_unit_factory,
+    contact_factory,
+    change_service_unit,
 ):
     service_unit = service_unit_factory(name="First service unit")
     contact = contact_factory(

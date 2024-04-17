@@ -64,7 +64,9 @@ def invoice(contact_factory, invoice_factory, lease, billing_period):
     billing_period_start_date, billing_period_end_date = billing_period
 
     contact = contact_factory(
-        name="Company", type=ContactType.BUSINESS, business_id="1234567-8",
+        name="Company",
+        type=ContactType.BUSINESS,
+        business_id="1234567-8",
     )
 
     invoice = invoice_factory(
@@ -136,7 +138,9 @@ def land_use_agreement_invoice(
     contact_factory, land_use_agreement_invoice_factory, land_use_agreement_test_data
 ):
     contact = contact_factory(
-        name="Company", type=ContactType.BUSINESS, business_id="1234567-8",
+        name="Company",
+        type=ContactType.BUSINESS,
+        business_id="1234567-8",
     )
 
     invoice = land_use_agreement_invoice_factory(
@@ -332,7 +336,9 @@ def _order_number_test_setup(
 
     test_data = {}
     test_data["service_unit"] = service_unit_factory(
-        name="Test service unit", laske_sender_id="TEST1", laske_sales_org="ORG1",
+        name="Test service unit",
+        laske_sender_id="TEST1",
+        laske_sales_org="ORG1",
     )
 
     receivable_type_rent = receivable_type_factory(
@@ -342,9 +348,9 @@ def _order_number_test_setup(
         name="Rahavakuus", service_unit=test_data["service_unit"]
     )
     test_data["service_unit"].default_receivable_type_rent = receivable_type_rent
-    test_data[
-        "service_unit"
-    ].default_receivable_type_collateral = receivable_type_collateral
+    test_data["service_unit"].default_receivable_type_collateral = (
+        receivable_type_collateral
+    )
     test_data["service_unit"].save()
 
     test_data["lease"] = lease_factory(

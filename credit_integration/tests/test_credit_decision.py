@@ -263,7 +263,8 @@ def test_get_credit_decisions_without_access_right(
 
 @pytest.mark.django_db
 def test_send_credit_decision_inquiry_endpoint_with_business_id(
-    client, user_factory,
+    client,
+    user_factory,
 ):
     user_first_name = "John"
     user_last_name = "Doe"
@@ -315,7 +316,8 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
 
 @pytest.mark.django_db
 def test_send_credit_decision_inquiry_endpoint_with_identity_number(
-    client, user_factory,
+    client,
+    user_factory,
 ):
     user_first_name = "John"
     user_last_name = "Doe"

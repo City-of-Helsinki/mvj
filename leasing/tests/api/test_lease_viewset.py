@@ -97,15 +97,21 @@ def test_set_rent_info_completion_state(
 def test_lease_details_contains_future_tenants(
     django_db_setup, admin_client, lease_test_data
 ):
-    """ Related user stories:
+    """Related user stories:
     - As a user, I want to send an invoice for the tenant which are not yet actives
     """
 
     url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
-    response = admin_client.get(url, content_type="application/json",)
+    response = admin_client.get(
+        url,
+        content_type="application/json",
+    )
 
-    assert response.status_code == 200, "%s %s" % (response.status_code, response.data,)
+    assert response.status_code == 200, "%s %s" % (
+        response.status_code,
+        response.data,
+    )
 
     found = False
     for tenant in response.data["tenants"]:
@@ -139,7 +145,10 @@ def test_copy_areas_to_contract(
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 0
 
     url = reverse("lease-copy-areas-to-contract") + "?lease={}".format(lease.id)
-    response = admin_client.post(url, content_type="application/json",)
+    response = admin_client.post(
+        url,
+        content_type="application/json",
+    )
 
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 1

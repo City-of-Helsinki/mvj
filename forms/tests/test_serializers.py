@@ -118,7 +118,9 @@ def test_all_required_fields_answered_validator(
         "form": basic_template_form_with_required_fields.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
     }
 
     with pytest.raises(ValidationError) as val_error:
@@ -158,7 +160,9 @@ def test_social_security_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -214,7 +218,9 @@ def test_company_id_validator(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -253,7 +259,10 @@ def test_control_share(
         {
             "company-information[0]": {
                 "fields": {
-                    "hallintaosuus": {"value": "2/3", "extraValue": "",},  # noqa: E231
+                    "hallintaosuus": {
+                        "value": "2/3",
+                        "extraValue": "",
+                    },  # noqa: E231
                 }
             }
         }
@@ -263,7 +272,9 @@ def test_control_share(
         "form": basic_template_form.id,
         "user": admin_user.id,
         "entries": entries,
-        "targets": [plot_search_target.pk,],  # noqa: E231
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
     }
 
     answer_serializer = AnswerSerializer(data=answer_data)
@@ -316,7 +327,9 @@ def test_target_status(
                 )
             }
         ],
-        "reservation_conditions": ["Very good condition",],  # noqa: E23
+        "reservation_conditions": [
+            "Very good condition",
+        ],  # noqa: E23
         "geometry": area_search_test_data.geometry.geojson,
     }
 

@@ -373,7 +373,10 @@ def lease_test_data(
 
     lease.tenants.set(tenants)
     lease_area = lease_area_factory(
-        lease=lease, identifier="12345", area=1000, section_area=1000,
+        lease=lease,
+        identifier="12345",
+        area=1000,
+        section_area=1000,
     )
 
     lease_area_address_factory(lease_area=lease_area, address="Test street 1")
@@ -526,7 +529,10 @@ class AnswerFactory(factory.django.DjangoModelFactory):
 
 @pytest.fixture
 def basic_template_form(
-    form_factory, section_factory, field_factory, choice_factory,
+    form_factory,
+    section_factory,
+    field_factory,
+    choice_factory,
 ):
     form = form_factory(
         name=fake.name(),
@@ -1193,10 +1199,16 @@ def related_plot_application_test_data(
     target_status = target_status_factory()
     related_plot_applications = []
     related_plot_applications.append(
-        related_plot_application_factory(lease=lease, content_object=area_search,)
+        related_plot_application_factory(
+            lease=lease,
+            content_object=area_search,
+        )
     )
     related_plot_applications.append(
-        related_plot_application_factory(lease=lease, content_object=target_status,)
+        related_plot_application_factory(
+            lease=lease,
+            content_object=target_status,
+        )
     )
 
     return {
@@ -1209,7 +1221,10 @@ def related_plot_application_test_data(
 
 @pytest.fixture
 def answer_with_email(
-    admin_client, area_search_intended_use_factory, user_factory, area_search_form,
+    admin_client,
+    area_search_intended_use_factory,
+    user_factory,
+    area_search_form,
 ):
     user = user_factory(username=fake.name())
     intended_use = area_search_intended_use_factory(name="Urheilu- ja liikuntapaikat")

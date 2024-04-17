@@ -85,7 +85,10 @@ def test_get_land_use_agreement(
 
 @pytest.mark.django_db
 def test_update_land_use_agreement(
-    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
+    django_db_setup,
+    admin_client,
+    land_use_agreement_test_data,
+    user_factory,
 ):
 
     url = reverse(
@@ -113,7 +116,10 @@ def test_update_land_use_agreement(
 
 @pytest.mark.django_db
 def test_create_land_use_agreement(
-    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
+    django_db_setup,
+    admin_client,
+    land_use_agreement_test_data,
+    user_factory,
 ):
 
     url = reverse("landuseagreement-list")
@@ -136,7 +142,10 @@ def test_create_land_use_agreement(
 
 @pytest.mark.django_db
 def test_create_land_use_agreement_w_two_addresses(
-    django_db_setup, admin_client, land_use_agreement_test_data, user_factory,
+    django_db_setup,
+    admin_client,
+    land_use_agreement_test_data,
+    user_factory,
 ):
 
     url = reverse("landuseagreement-list")
@@ -183,7 +192,10 @@ def test_land_use_agreement_retrieve_plots(
         type_id=1, municipality_id=1, district_id=1, notice_period_id=1
     )
     lease_area = lease_area_factory(
-        lease=lease, identifier="12345", area=1000, section_area=1000,
+        lease=lease,
+        identifier="12345",
+        area=1000,
+        section_area=1000,
     )
     exist_plot_1 = plot_factory(
         identifier="12345",
@@ -223,7 +235,10 @@ def test_land_use_agreement_update_plots(
         type_id=1, municipality_id=1, district_id=1, notice_period_id=1
     )
     lease_area = lease_area_factory(
-        lease=lease, identifier="12345", area=1000, section_area=1000,
+        lease=lease,
+        identifier="12345",
+        area=1000,
+        section_area=1000,
     )
     master_plot = plot_factory(
         identifier="12345",
@@ -315,8 +330,9 @@ def test_update_land_use_agreement_compensations_without_existing_data(
 
     assert lua.compensations.unit_prices_used_in_calculation.count() == 1
     assert lua.compensations.unit_prices_used_in_calculation.first().usage == "test"
-    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
-        900
+    assert (
+        lua.compensations.unit_prices_used_in_calculation.first().used_price
+        == Decimal(900)
     )
 
 
@@ -360,8 +376,9 @@ def test_update_land_use_agreement_compensations(
     )
 
     assert lua.compensations.unit_prices_used_in_calculation.count() == 1
-    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
-        400
+    assert (
+        lua.compensations.unit_prices_used_in_calculation.first().used_price
+        == Decimal(400)
     )
 
     url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
@@ -411,8 +428,9 @@ def test_update_land_use_agreement_compensations(
     # unit prices are updated correctly
     assert lua.compensations.unit_prices_used_in_calculation.count() == 1
     assert lua.compensations.unit_prices_used_in_calculation.first().usage == "test"
-    assert lua.compensations.unit_prices_used_in_calculation.first().used_price == Decimal(
-        900
+    assert (
+        lua.compensations.unit_prices_used_in_calculation.first().used_price
+        == Decimal(900)
     )
 
 
@@ -530,7 +548,11 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
     }
 
     url = reverse("landuseagreementinvoice-list")
-    response = admin_client.post(url, data=data, content_type="application/json",)
+    response = admin_client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
 
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
 
@@ -578,7 +600,11 @@ def test_create_zero_sum_invoice_state_is_paid(
     }
 
     url = reverse("landuseagreementinvoice-list")
-    response = admin_client.post(url, data=data, content_type="application/json",)
+    response = admin_client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
 
     invoice = LandUseAgreementInvoice.objects.get(pk=response.data["id"])
@@ -591,7 +617,10 @@ def test_create_zero_sum_invoice_state_is_paid(
 @pytest.mark.django_db
 def test_get_invoice_list(admin_client, land_use_agreement_test_data):
     url = reverse("landuseagreementinvoice-list")
-    response = admin_client.get(url, content_type="application/json",)
+    response = admin_client.get(
+        url,
+        content_type="application/json",
+    )
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert len(response.data["results"]) > 0
 
@@ -601,7 +630,10 @@ def test_get_invoice_detail(admin_client, land_use_agreement_test_data):
     invoice_id = land_use_agreement_test_data.invoices.first().id
 
     url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice_id})
-    response = admin_client.get(url, content_type="application/json",)
+    response = admin_client.get(
+        url,
+        content_type="application/json",
+    )
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
 

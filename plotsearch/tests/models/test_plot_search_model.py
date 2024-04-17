@@ -70,7 +70,10 @@ def test_duplicate_plan_unit_on_plot_search_target_save(
         section_area=1000,
     )
     master_plan_unit = plan_unit_factory(
-        identifier="PU1", area=1000, lease_area=lease_area, is_master=True,
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_area,
+        is_master=True,
     )
     master_plan_unit_id = master_plan_unit.id
     master_plan_unit_master_timestamp = master_plan_unit.master_timestamp

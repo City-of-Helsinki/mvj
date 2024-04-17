@@ -298,7 +298,10 @@ def test_validation_exception_on_planunit_delete_when_attached_to_plotsearch(
 
     # Add plan unit to contract
     attached_plan_unit = plan_unit_factory(
-        identifier="PU1", area=1000, lease_area=lease_area, in_contract=True,
+        identifier="PU1",
+        area=1000,
+        lease_area=lease_area,
+        in_contract=True,
     )
 
     # Attach plan unit to one of plot search
@@ -310,10 +313,16 @@ def test_validation_exception_on_planunit_delete_when_attached_to_plotsearch(
 
     # Add one unattached plan unit
     unattached_plan_unit = plan_unit_factory(
-        identifier="PU2", area=1000, lease_area=lease_area, in_contract=True,
+        identifier="PU2",
+        area=1000,
+        lease_area=lease_area,
+        in_contract=True,
     )
     unattached_plan_unit2 = plan_unit_factory(
-        identifier="PU3", area=1000, lease_area=lease_area, in_contract=True,
+        identifier="PU3",
+        area=1000,
+        lease_area=lease_area,
+        in_contract=True,
     )
 
     data = {

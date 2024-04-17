@@ -25,7 +25,9 @@ def _add_report_permission(user, reports):
     for report in reports:
         codename = "can_generate_report_{}".format(report.slug)
         permission, created = Permission.objects.get_or_create(
-            name=codename, codename=codename, content_type=report_content_type,
+            name=codename,
+            codename=codename,
+            content_type=report_content_type,
         )
 
         user.user_permissions.add(permission)

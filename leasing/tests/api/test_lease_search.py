@@ -15,7 +15,10 @@ def test_search_finds_one_lease_by_full_identifier(
 
     response = admin_client.get(reverse("lease-list"), data={param_name: value})
 
-    assert response.status_code == 200, "%s %s" % (response.status_code, response.data,)
+    assert response.status_code == 200, "%s %s" % (
+        response.status_code,
+        response.data,
+    )
 
     assert response.data["count"] == 1
     assert response.data["results"][0]["id"] == lease.id
@@ -33,7 +36,10 @@ def test_search_finds_one_lease_by_full_identifier_where_type_has_two_letters(
 
     response = admin_client.get(reverse("lease-list"), data={param_name: "MA100-1"})
 
-    assert response.status_code == 200, "%s %s" % (response.status_code, response.data,)
+    assert response.status_code == 200, "%s %s" % (
+        response.status_code,
+        response.data,
+    )
 
     assert response.data["count"] == 1
     assert response.data["results"][0]["id"] == lease.id
