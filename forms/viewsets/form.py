@@ -70,7 +70,9 @@ class AnswerViewSet(viewsets.ModelViewSet):
                 "entry_sections__entries", Entry.objects.all().select_related("field")
             ),
         )
-        .select_related("form__plotsearch__subtype__plot_search_type",)
+        .select_related(
+            "form__plotsearch__subtype__plot_search_type",
+        )
     )
     serializer_class = AnswerSerializer
     permission_classes = (AnswerPermissions,)

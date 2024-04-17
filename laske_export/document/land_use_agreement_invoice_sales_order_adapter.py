@@ -8,7 +8,9 @@ from .sales_order import BillingParty1, LineItem, OrderParty
 
 class LandUseAgreementInvoiceSalesOrderAdapter:
     def __init__(
-        self, invoice=None, sales_order=None,
+        self,
+        invoice=None,
+        sales_order=None,
     ):
         self.invoice = invoice
         self.sales_order = sales_order

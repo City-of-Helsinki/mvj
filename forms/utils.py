@@ -194,7 +194,9 @@ def _get_subsection_field_entries(  # noqa: C901
                 master_row, col, "{} - {}".format(field.section.title, field.label)
             )
         for entry in field.entry_set.filter(
-            entry_section__answer__statuses__in=[target_status,],  # noqa: E231
+            entry_section__answer__statuses__in=[
+                target_status,
+            ],  # noqa: E231
         ):
             _write_entry_value(col, entry, field, row, worksheet)
 
@@ -271,7 +273,12 @@ def _get_area_subsection_field_entries(  # noqa: C901
 
     for subsection in section.subsections.all():
         worksheet, col, entry_rows = _get_area_subsection_field_entries(
-            worksheet, subsection, master_row, col, area_search, last_applicant_section,
+            worksheet,
+            subsection,
+            master_row,
+            col,
+            area_search,
+            last_applicant_section,
         )
 
     return worksheet, col, entry_rows - master_row
@@ -416,7 +423,12 @@ def _get_answer_search_subsection_field_entries(  # noqa: C901
 
     for subsection in section.subsections.all():
         worksheet, col, entry_rows = _get_answer_search_subsection_field_entries(
-            worksheet, subsection, master_row, col, area_search, last_applicant_section,
+            worksheet,
+            subsection,
+            master_row,
+            col,
+            area_search,
+            last_applicant_section,
         )
 
     return worksheet, col, entry_rows - master_row
@@ -533,7 +545,9 @@ def handle_email_sending(response: Response, user_language: str) -> None:
         return response
 
     async_task(
-        generate_and_queue_answer_emails, input_data=input_data, timeout=Conf.TIMEOUT,
+        generate_and_queue_answer_emails,
+        input_data=input_data,
+        timeout=Conf.TIMEOUT,
     )
 
 
@@ -562,9 +576,15 @@ def _get_email_to_addresses(answer) -> List[str]:
         Entry.objects.filter(
             entry_section__answer=answer, field__identifier="sahkoposti"
         )
-        .exclude(path__icontains="laskutustiedot",)
-        .exclude(path__icontains="laskunsaaja",)
-        .exclude(value__isnull=True,)
+        .exclude(
+            path__icontains="laskutustiedot",
+        )
+        .exclude(
+            path__icontains="laskunsaaja",
+        )
+        .exclude(
+            value__isnull=True,
+        )
         .exclude(value="")
         .distinct("value")
         .values_list("value", flat=True)

@@ -72,8 +72,10 @@ def send_credit_decision_inquiry(request):
             return Response(serializer.data)
 
         if customer_id or business_id:
-            credit_decision_queryset = CreditDecision.get_credit_decision_queryset_by_customer(
-                customer_id=customer_id, business_id=business_id
+            credit_decision_queryset = (
+                CreditDecision.get_credit_decision_queryset_by_customer(
+                    customer_id=customer_id, business_id=business_id
+                )
             )
             credit_decision_serializer = CreditDecisionSerializer(
                 credit_decision_queryset, many=True
@@ -97,8 +99,10 @@ def get_credit_decisions(request):
 
     if request.method == "GET" and (customer_id or business_id):
         if customer_id or business_id:
-            credit_decision_queryset = CreditDecision.get_credit_decision_queryset_by_customer(
-                customer_id=customer_id, business_id=business_id
+            credit_decision_queryset = (
+                CreditDecision.get_credit_decision_queryset_by_customer(
+                    customer_id=customer_id, business_id=business_id
+                )
             )
 
             credit_decision_serializer = CreditDecisionSerializer(
@@ -114,7 +118,8 @@ def _error_response(json_error):
     return Response(
         {
             "message": "{0}: {1}".format(
-                json_error["errorCode"], json_error["errorText"],
+                json_error["errorCode"],
+                json_error["errorText"],
             )
         },
         status=status.HTTP_400_BAD_REQUEST,
@@ -139,7 +144,9 @@ def _get_company_decision(business_id, user, contact=None):
 
     if log_text:
         _add_log(
-            business_id, user, log_text,
+            business_id,
+            user,
+            log_text,
         )
 
     return json_data, json_error
@@ -161,7 +168,9 @@ def _get_consumer_decision(identity_number, user):
 
     if log_text:
         _add_log(
-            identity_number, user, log_text,
+            identity_number,
+            user,
+            log_text,
         )
 
     return json_data, json_error

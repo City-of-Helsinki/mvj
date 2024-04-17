@@ -231,7 +231,9 @@ class LaskePaymentsLogAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        return qs.annotate(payment_count=Count("payments"),)
+        return qs.annotate(
+            payment_count=Count("payments"),
+        )
 
     def has_add_permission(self, request, obj=None):
         return False

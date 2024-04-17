@@ -286,7 +286,8 @@ class LaskeExporter:
             set_constant_laske_values(sales_order, self.service_unit)
 
             adapter = LandUseAgreementInvoiceSalesOrderAdapter(
-                invoice=invoice, sales_order=sales_order,
+                invoice=invoice,
+                sales_order=sales_order,
             )
             adapter.set_values()
 

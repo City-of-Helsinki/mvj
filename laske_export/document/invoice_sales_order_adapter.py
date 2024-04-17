@@ -81,9 +81,11 @@ class InvoiceSalesOrderAdapter:
         bill_texts.append(row1)
 
         row2 = "Päättymispvm: {lease_end_date}  ".format(
-            lease_end_date=self.invoice.lease.end_date.strftime("%d.%m.%Y")
-            if self.invoice.lease.end_date
-            else "-"
+            lease_end_date=(
+                self.invoice.lease.end_date.strftime("%d.%m.%Y")
+                if self.invoice.lease.end_date
+                else "-"
+            )
         )
 
         if self.invoice.lease.intended_use:

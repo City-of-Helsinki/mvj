@@ -714,7 +714,9 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_entry_section(
-        answer, metadata, path,
+        answer,
+        metadata,
+        path,
     ):
         entry_section, unused = EntrySection.objects.get_or_create(
             identifier=path.split(".")[0],
@@ -757,7 +759,11 @@ class AnswerSerializer(serializers.ModelSerializer):
             if field.type == "uploadfiles":
                 Attachment.objects.filter(id__in=value["value"]).update(path=path)
 
-            entry_section = self.get_entry_section(answer, metadata, path,)
+            entry_section = self.get_entry_section(
+                answer,
+                metadata,
+                path,
+            )
             Entry.objects.create(
                 entry_section=entry_section,
                 field=field,
@@ -787,7 +793,11 @@ class AnswerSerializer(serializers.ModelSerializer):
             if field.type == "uploadfiles":
                 Attachment.objects.filter(id__in=value["value"]).update(path=path)
 
-            entry_section = self.get_entry_section(instance, metadata, path,)
+            entry_section = self.get_entry_section(
+                instance,
+                metadata,
+                path,
+            )
             Entry.objects.update_or_create(
                 entry_section=entry_section,
                 field=field,

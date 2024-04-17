@@ -22,11 +22,15 @@ class CreditDecisionReason(TimeStampedModel):
 
     # In Finnish: Syykoodi
     reason_code = models.CharField(
-        verbose_name=_("Reason code"), max_length=3, unique=True,
+        verbose_name=_("Reason code"),
+        max_length=3,
+        unique=True,
     )
 
     # In Finnish: Syy
-    reason = models.TextField(verbose_name=_("Reason"),)
+    reason = models.TextField(
+        verbose_name=_("Reason"),
+    )
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Credit decision reason")
@@ -58,25 +62,37 @@ class CreditDecision(TimeStampedModel):
 
     # In Finnish: Y-tunnus
     business_id = models.CharField(
-        verbose_name=_("Business ID"), blank=True, max_length=9,
+        verbose_name=_("Business ID"),
+        blank=True,
+        max_length=9,
     )
 
     # In Finnish: Virallinen nimi
     official_name = models.CharField(
-        verbose_name=_("Official name"), blank=True, max_length=255,
+        verbose_name=_("Official name"),
+        blank=True,
+        max_length=255,
     )
 
     # In Finnish: Osoite
-    address = models.CharField(verbose_name=_("Address"), blank=True, max_length=255,)
+    address = models.CharField(
+        verbose_name=_("Address"),
+        blank=True,
+        max_length=255,
+    )
 
     # In Finnish: Puhelinnumero
     phone_number = models.CharField(
-        verbose_name=_("Phone number"), blank=True, max_length=50,
+        verbose_name=_("Phone number"),
+        blank=True,
+        max_length=50,
     )
 
     # In Finnish: Yhtiömuoto
     business_entity = models.CharField(
-        verbose_name=_("Business entity"), blank=True, max_length=50,
+        verbose_name=_("Business entity"),
+        blank=True,
+        max_length=50,
     )
 
     # In Finnish: Toiminnan käynnistämispäivämäärä
@@ -86,7 +102,9 @@ class CreditDecision(TimeStampedModel):
 
     # In Finnish: Toimialakoodi
     industry_code = models.CharField(
-        verbose_name=_("Industry code"), blank=True, max_length=10,
+        verbose_name=_("Industry code"),
+        blank=True,
+        max_length=10,
     )
 
     # In Finnish: Luottopäätöksen hakija
@@ -113,7 +131,10 @@ class CreditDecision(TimeStampedModel):
         verbose_name = pgettext_lazy("Model name", "Credit decision")
         verbose_name_plural = pgettext_lazy("Model name", "Credit decisions")
         permissions = [
-            ("send_creditdecision_inquiry", "Can send credit decision inquiry",),
+            (
+                "send_creditdecision_inquiry",
+                "Can send credit decision inquiry",
+            ),
         ]
 
     @staticmethod
@@ -200,7 +221,10 @@ class CreditDecisionLog(TimeStampedModel):
     """
 
     # In Finnish: Tunniste (Y-tunnus / Hetu)
-    identification = models.CharField(verbose_name=_("Identification"), max_length=20,)
+    identification = models.CharField(
+        verbose_name=_("Identification"),
+        max_length=20,
+    )
 
     # In Finnish: Käyttäjä
     user = models.ForeignKey(
@@ -211,7 +235,10 @@ class CreditDecisionLog(TimeStampedModel):
     )
 
     # In Finnish: Teksti
-    text = models.CharField(verbose_name=_("Text"), max_length=255,)
+    text = models.CharField(
+        verbose_name=_("Text"),
+        max_length=255,
+    )
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Credit decision log")
