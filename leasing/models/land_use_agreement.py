@@ -484,7 +484,11 @@ class LandUseAgreementCompensationsUnitPrice(NameModel):
 
     # In Finnish: Pinta-ala
     area = models.DecimalField(
-        verbose_name=_("Area"), decimal_places=2, max_digits=12, blank=True, null=True,
+        verbose_name=_("Area"),
+        decimal_places=2,
+        max_digits=12,
+        blank=True,
+        null=True,
     )
 
     # In Finnish: Yksikköhinta €
@@ -766,7 +770,9 @@ class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
 
     # In Finnish: Asiakas
     contact = models.ForeignKey(
-        Contact, verbose_name=_("Contact"), on_delete=models.PROTECT,
+        Contact,
+        verbose_name=_("Contact"),
+        on_delete=models.PROTECT,
     )
 
     # In Finnish: Kontaktin tyyppi
@@ -791,8 +797,10 @@ class LandUseAgreementLitigantContact(TimeStampedSafeDeleteModel):
         )
 
     def __str__(self):
-        return "LandUseAgreementLitigantContact id: {} contact: {} period: {} - {}".format(
-            self.id, self.contact, self.start_date, self.end_date
+        return (
+            "LandUseAgreementLitigantContact id: {} contact: {} period: {} - {}".format(
+                self.id, self.contact, self.start_date, self.end_date
+            )
         )
 
 
@@ -1084,7 +1092,8 @@ class LandUseAgreementInvoice(TimeStampedSafeDeleteModel):
                 total_credited_amount += row.amount
 
         self.outstanding_amount = max(
-            Decimal(0), self.billed_amount - payments_total - total_credited_amount,
+            Decimal(0),
+            self.billed_amount - payments_total - total_credited_amount,
         )
         # Don't mark as refunded unless credited amount is nonzero
         if total_credited_amount != Decimal(0) and total_credited_amount.compare(

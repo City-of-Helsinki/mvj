@@ -81,7 +81,9 @@ class IndexTypesReport(ReportBase):
     slug = "index_types"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "index_type": forms.ChoiceField(
             label=_("Index type"), required=True, choices=IndexType.choices()

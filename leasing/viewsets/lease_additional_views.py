@@ -129,16 +129,22 @@ class LeaseCreateCollectionLetterDocumentViewSet(
                 "<w:br/>".join(
                     [
                         str(billing_tenantcontact.contact),
-                        billing_tenantcontact.contact.address
-                        if billing_tenantcontact.contact.address
-                        else "",
+                        (
+                            billing_tenantcontact.contact.address
+                            if billing_tenantcontact.contact.address
+                            else ""
+                        ),
                         "{} {}".format(
-                            billing_tenantcontact.contact.postal_code
-                            if billing_tenantcontact.contact.postal_code
-                            else "",
-                            billing_tenantcontact.contact.city
-                            if billing_tenantcontact.contact.city
-                            else "",
+                            (
+                                billing_tenantcontact.contact.postal_code
+                                if billing_tenantcontact.contact.postal_code
+                                else ""
+                            ),
+                            (
+                                billing_tenantcontact.contact.city
+                                if billing_tenantcontact.contact.city
+                                else ""
+                            ),
                         ),
                     ]
                 )

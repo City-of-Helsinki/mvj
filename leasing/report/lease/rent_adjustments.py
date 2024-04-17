@@ -43,7 +43,9 @@ class RentAdjustmentsReport(ReportBase):
     slug = "rent_adjustments"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
     }
     output_fields = {

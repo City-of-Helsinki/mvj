@@ -37,7 +37,9 @@ class OpenInvoicesReport(ReportBase):
     slug = "open_invoices"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "start_date": forms.DateField(label=_("Start date"), required=True),
         "end_date": forms.DateField(label=_("End date"), required=True),

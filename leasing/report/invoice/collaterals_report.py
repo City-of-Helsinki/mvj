@@ -32,7 +32,9 @@ class CollateralsReport(ReportBase):
     slug = "collaterals"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "collateral_type": forms.ModelChoiceField(
             label=_("Type"),

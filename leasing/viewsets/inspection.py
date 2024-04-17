@@ -9,7 +9,9 @@ from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
 
 
 class InspectionAttachmentViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = InspectionAttachment.objects.all()
     serializer_class = InspectionAttachmentSerializer

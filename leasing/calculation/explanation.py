@@ -10,9 +10,11 @@ class ExplanationItem:
             self.subject,
             self.date_ranges,
             self.amount,
-            "\nSub items:\n  " + "\n  ".join([str(item) for item in self.sub_items])
-            if self.sub_items
-            else "",
+            (
+                "\nSub items:\n  " + "\n  ".join([str(item) for item in self.sub_items])
+                if self.sub_items
+                else ""
+            ),
         )
 
 

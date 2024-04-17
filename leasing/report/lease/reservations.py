@@ -69,7 +69,9 @@ class ReservationsReport(ReportBase):
     slug = "reservations"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "start_date_start": forms.DateField(
             label=_("Start date start"), required=False
@@ -189,9 +191,11 @@ class ReservationsReport(ReportBase):
                     AND (l2.id IS NULL OR l2.state = 'reservation');
                 """.format(
                         service_unit_where=service_unit_where,
-                        conveyance_where=" AND l.conveyance_number IS NULL"
-                        if input_data["exclude_sold"]
-                        else "",
+                        conveyance_where=(
+                            " AND l.conveyance_number IS NULL"
+                            if input_data["exclude_sold"]
+                            else ""
+                        ),
                         dates_where=dates_where,
                     )
                 )

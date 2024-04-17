@@ -14,7 +14,10 @@ def int_floor(value, precision):
 
 class IndexCalculation:
     def __init__(
-        self, amount=None, current_index=None, rent_index=None,
+        self,
+        amount=None,
+        current_index=None,
+        rent_index=None,
     ):
         self.explanation_items = []
         self.notes = []

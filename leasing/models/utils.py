@@ -147,7 +147,7 @@ def combine_ranges(ranges):
     new_range_start = None
     new_range_end = None
 
-    for (range_start, range_end) in sorted_ranges:
+    for range_start, range_end in sorted_ranges:
         if new_range_start is None:
             new_range_start = range_start
             new_range_end = range_end
@@ -346,9 +346,9 @@ def group_items_in_period_by_date_range(items, min_date, max_date):
             previous_items = current_items
 
         if current_items != previous_items:
-            grouped_items[
-                (start_date, current_date - relativedelta(days=1))
-            ] = previous_items
+            grouped_items[(start_date, current_date - relativedelta(days=1))] = (
+                previous_items
+            )
 
             previous_items = current_items
             start_date = current_date

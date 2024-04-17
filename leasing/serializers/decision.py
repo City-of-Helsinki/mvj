@@ -119,8 +119,7 @@ class DecisionCreateUpdateNestedSerializer(
 class DecisionCreateUpdateSerializer(
     UpdateNestedMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
-    """This is used when creating a Decision separately on the decision viewset
-    """
+    """This is used when creating a Decision separately on the decision viewset"""
 
     id = serializers.IntegerField(required=False)
     conditions = ConditionCreateUpdateSerializer(

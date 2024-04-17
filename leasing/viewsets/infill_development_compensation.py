@@ -106,7 +106,9 @@ class InfillDevelopmentCompensationViewSet(
 
 
 class InfillDevelopmentCompensationAttachmentViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = InfillDevelopmentCompensationAttachment.objects.all()
     serializer_class = InfillDevelopmentCompensationAttachmentSerializer

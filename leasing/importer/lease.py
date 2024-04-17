@@ -453,9 +453,11 @@ class LeaseImporter(BaseImporter):
                             tenantcontact,
                             tenantcontact_created,
                         ) = TenantContact.objects.get_or_create(
-                            type=TenantContactType.BILLING
-                            if role_row["ROOLI"] == "L"
-                            else TenantContactType.CONTACT,
+                            type=(
+                                TenantContactType.BILLING
+                                if role_row["ROOLI"] == "L"
+                                else TenantContactType.CONTACT
+                            ),
                             tenant=this_tenant,
                             contact=contact,
                             start_date=start_date,
@@ -620,9 +622,9 @@ class LeaseImporter(BaseImporter):
                     ) = FixedInitialYearRent.objects.get_or_create(
                         rent=rent,
                         amount=lease_row["KIINTEA_ALKUVUOSIVUOKRAN_MAARA"],
-                        start_date=lease_row["ALKUPVM"]
-                        if lease_row["ALKUPVM"]
-                        else None,
+                        start_date=(
+                            lease_row["ALKUPVM"] if lease_row["ALKUPVM"] else None
+                        ),
                         end_date=lease_row["KIINTEA_ALKUVUOSIVUOKRAN_LOPPU"],
                     )
 
@@ -678,18 +680,22 @@ class LeaseImporter(BaseImporter):
                         rent=rent,
                         period=contract_rent_period,
                         intended_use=contract_rent_intended_use,
-                        start_date=rent_row["ALKUPVM"].date()
-                        if rent_row["ALKUPVM"]
-                        else None,
-                        end_date=rent_row["LOPPUPVM"].date()
-                        if rent_row["LOPPUPVM"]
-                        else None,
+                        start_date=(
+                            rent_row["ALKUPVM"].date() if rent_row["ALKUPVM"] else None
+                        ),
+                        end_date=(
+                            rent_row["LOPPUPVM"].date()
+                            if rent_row["LOPPUPVM"]
+                            else None
+                        ),
                         base_year_rent=rent_row["UUSI_PERUSVUOKRA"],
                         defaults={
                             "amount": contract_rent_amount,
-                            "base_amount": rent_row["PERUSVUOKRA"]
-                            if rent_row["PERUSVUOKRA"]
-                            else contract_rent_amount,
+                            "base_amount": (
+                                rent_row["PERUSVUOKRA"]
+                                if rent_row["PERUSVUOKRA"]
+                                else contract_rent_amount
+                            ),
                             "base_amount_period": contract_rent_period,
                         },
                     )
@@ -759,12 +765,14 @@ class LeaseImporter(BaseImporter):
                         rent=rent,
                         amount=rent_row["TARKISTETTU_VUOKRA"],
                         intended_use_id=int(rent_row["KAYTTOTARKOITUS"]),
-                        start_date=rent_row["ALKUPVM"].date()
-                        if rent_row["ALKUPVM"]
-                        else None,
-                        end_date=rent_row["LOPPUPVM"].date()
-                        if rent_row["LOPPUPVM"]
-                        else None,
+                        start_date=(
+                            rent_row["ALKUPVM"].date() if rent_row["ALKUPVM"] else None
+                        ),
+                        end_date=(
+                            rent_row["LOPPUPVM"].date()
+                            if rent_row["LOPPUPVM"]
+                            else None
+                        ),
                         factor=rent_row["LASKENTAKERROIN"],
                     )
 
@@ -788,18 +796,24 @@ class LeaseImporter(BaseImporter):
                     ) = PayableRent.objects.get_or_create(
                         rent=rent,
                         amount=rent_row["PERITTAVAVUOKRA"],
-                        calendar_year_rent=rent_row["KALENTERIVUOSIVUOKRA"]
-                        if rent_row["KALENTERIVUOSIVUOKRA"]
-                        else 0,
-                        start_date=rent_row["ALKUPVM"].date()
-                        if rent_row["ALKUPVM"]
-                        else None,
-                        end_date=rent_row["LOPPUPVM"].date()
-                        if rent_row["LOPPUPVM"]
-                        else None,
-                        difference_percent=rent_row["NOUSUPROSENTTI"]
-                        if rent_row["NOUSUPROSENTTI"]
-                        else 0,
+                        calendar_year_rent=(
+                            rent_row["KALENTERIVUOSIVUOKRA"]
+                            if rent_row["KALENTERIVUOSIVUOKRA"]
+                            else 0
+                        ),
+                        start_date=(
+                            rent_row["ALKUPVM"].date() if rent_row["ALKUPVM"] else None
+                        ),
+                        end_date=(
+                            rent_row["LOPPUPVM"].date()
+                            if rent_row["LOPPUPVM"]
+                            else None
+                        ),
+                        difference_percent=(
+                            rent_row["NOUSUPROSENTTI"]
+                            if rent_row["NOUSUPROSENTTI"]
+                            else 0
+                        ),
                     )
 
                 self.stdout.write("Alennus:")
@@ -835,12 +849,16 @@ class LeaseImporter(BaseImporter):
                         rent=rent,
                         type=adjustment_type,
                         intended_use_id=int(adjustment_row["KAYTTOTARKOITUS"]),
-                        start_date=adjustment_row["ALKUPVM"].date()
-                        if adjustment_row["ALKUPVM"]
-                        else None,
-                        end_date=adjustment_row["LOPPUPVM"].date()
-                        if adjustment_row["LOPPUPVM"]
-                        else None,
+                        start_date=(
+                            adjustment_row["ALKUPVM"].date()
+                            if adjustment_row["ALKUPVM"]
+                            else None
+                        ),
+                        end_date=(
+                            adjustment_row["LOPPUPVM"].date()
+                            if adjustment_row["LOPPUPVM"]
+                            else None
+                        ),
                         full_amount=full_amount,
                         amount_type=amount_type,
                         amount_left=None,
@@ -867,12 +885,14 @@ class LeaseImporter(BaseImporter):
                         equalized_rent_created,
                     ) = EqualizedRent.objects.get_or_create(
                         rent=rent,
-                        start_date=rent_row["ALKUPVM"].date()
-                        if rent_row["ALKUPVM"]
-                        else None,
-                        end_date=rent_row["LOPPUPVM"].date()
-                        if rent_row["LOPPUPVM"]
-                        else None,
+                        start_date=(
+                            rent_row["ALKUPVM"].date() if rent_row["ALKUPVM"] else None
+                        ),
+                        end_date=(
+                            rent_row["LOPPUPVM"].date()
+                            if rent_row["LOPPUPVM"]
+                            else None
+                        ),
                         payable_amount=rent_row["PERITTAVAVUOKRA"],
                         equalized_payable_amount=rent_row["TASATTU_PERITTAVAVUOKRA"],
                         equalization_factor=rent_row["TASAUSKERROIN"],
@@ -965,9 +985,11 @@ class LeaseImporter(BaseImporter):
                         invoice_row_created,
                     ) = InvoiceRow.objects.get_or_create(
                         invoice=invoice,
-                        tenant=asiakas_num_to_tenant[invoice_row["ASIAKAS"]]
-                        if invoice_row["ASIAKAS"] in asiakas_num_to_tenant
-                        else None,
+                        tenant=(
+                            asiakas_num_to_tenant[invoice_row["ASIAKAS"]]
+                            if invoice_row["ASIAKAS"] in asiakas_num_to_tenant
+                            else None
+                        ),
                         receivable_type_id=receivable_type_id,
                         billing_period_start_date=period_start_date,
                         billing_period_end_date=period_end_date,
@@ -997,9 +1019,11 @@ class LeaseImporter(BaseImporter):
                         ) = InvoicePayment.objects.get_or_create(
                             invoice=invoice,
                             paid_amount=payment_row["MAARA"],
-                            paid_date=payment_row["MAKSUPVM"].date()
-                            if payment_row["MAKSUPVM"]
-                            else None,
+                            paid_date=(
+                                payment_row["MAKSUPVM"].date()
+                                if payment_row["MAKSUPVM"]
+                                else None
+                            ),
                         )
 
                 self.stdout.write("Vuokra-alue:")
@@ -1023,12 +1047,16 @@ class LeaseImporter(BaseImporter):
                         lease=lease,
                         type=LEASE_AREA_TYPE_MAP[lease_area_row["KIINTEISTOTYYPPI"]],
                         identifier=identifier,
-                        area=lease_area_row["PINTA_ALA_M2"]
-                        if lease_area_row["PINTA_ALA_M2"]
-                        else 0,
-                        section_area=lease_area_row["PINTA_ALA_M2"]
-                        if lease_area_row["PINTA_ALA_M2"]
-                        else 0,
+                        area=(
+                            lease_area_row["PINTA_ALA_M2"]
+                            if lease_area_row["PINTA_ALA_M2"]
+                            else 0
+                        ),
+                        section_area=(
+                            lease_area_row["PINTA_ALA_M2"]
+                            if lease_area_row["PINTA_ALA_M2"]
+                            else 0
+                        ),
                         location=LocationType.SURFACE,
                     )
 
@@ -1096,9 +1124,11 @@ class LeaseImporter(BaseImporter):
                         lease=lease,
                         reference_number=None,
                         decision_maker_id=decision_maker_id,
-                        decision_date=decision_row["PAATOSPVM"].date()
-                        if decision_row["PAATOSPVM"]
-                        else None,
+                        decision_date=(
+                            decision_row["PAATOSPVM"].date()
+                            if decision_row["PAATOSPVM"]
+                            else None
+                        ),
                         section=decision_row["PYKALA"],
                         type_id=decision_row["PAATOSTYYPPI"],
                         description=decision_row["PAATOSTXT"],
@@ -1189,9 +1219,11 @@ class LeaseImporter(BaseImporter):
                         lease=lease,
                         type_id=1,  # Vuokrasopimus
                         contract_number=contract_row["SOPIMUS"],
-                        signing_date=contract_row["ALLEKIRJPVM"].date()
-                        if contract_row["ALLEKIRJPVM"]
-                        else None,
+                        signing_date=(
+                            contract_row["ALLEKIRJPVM"].date()
+                            if contract_row["ALLEKIRJPVM"]
+                            else None
+                        ),
                         signing_note=None,
                         is_readjustment_decision=bool(contract_row["JARJESTELYPAATOS"]),
                         institution_identifier=contract_row["LAITOSTUNNUS"],
@@ -1217,12 +1249,16 @@ class LeaseImporter(BaseImporter):
                             contract=contract,
                             type_id=3,  # Muu vakuus
                             number=contract_row["VUOKRAKIINNITYSPYKALA"],
-                            start_date=contract_row["VUOKRAKIINNITYSPVM"].date()
-                            if contract_row["VUOKRAKIINNITYSPVM"]
-                            else None,
-                            end_date=contract_row["VUOKRAKIINNITYSLOPPUPVM"].date()
-                            if contract_row["VUOKRAKIINNITYSLOPPUPVM"]
-                            else None,
+                            start_date=(
+                                contract_row["VUOKRAKIINNITYSPVM"].date()
+                                if contract_row["VUOKRAKIINNITYSPVM"]
+                                else None
+                            ),
+                            end_date=(
+                                contract_row["VUOKRAKIINNITYSLOPPUPVM"].date()
+                                if contract_row["VUOKRAKIINNITYSLOPPUPVM"]
+                                else None
+                            ),
                             note=note,
                         )
 
@@ -1234,9 +1270,11 @@ class LeaseImporter(BaseImporter):
                             contract=contract,
                             type_id=1,  # Panttikirja
                             number=contract_row["PYSYVYYSKIINNITYSPYKALA"],
-                            start_date=contract_row["PYSYVYYSKIINNITYSPVM"].date()
-                            if contract_row["PYSYVYYSKIINNITYSPVM"]
-                            else None,
+                            start_date=(
+                                contract_row["PYSYVYYSKIINNITYSPVM"].date()
+                                if contract_row["PYSYVYYSKIINNITYSPVM"]
+                                else None
+                            ),
                             note=note,
                         )
 
@@ -1271,29 +1309,31 @@ class LeaseImporter(BaseImporter):
                             contract_change_created,
                         ) = ContractChange.objects.get_or_create(
                             contract=contract,
-                            signing_date=contract_change_row["ALLEKIRJPVM"].date()
-                            if contract_change_row["ALLEKIRJPVM"]
-                            else None,
-                            sign_by_date=contract_change_row[
-                                "ALLEKIRJ_MENNESSAPVM"
-                            ].date()
-                            if contract_change_row["ALLEKIRJ_MENNESSAPVM"]
-                            else None,
-                            first_call_sent=contract_change_row[
-                                "KUTSUN_LAHETYSPVM"
-                            ].date()
-                            if contract_change_row["KUTSUN_LAHETYSPVM"]
-                            else None,
-                            second_call_sent=contract_change_row[
-                                "KUTSUN_LAHETYSPVM2"
-                            ].date()
-                            if contract_change_row["KUTSUN_LAHETYSPVM2"]
-                            else None,
-                            third_call_sent=contract_change_row[
-                                "KUTSUN_LAHETYSPVM3"
-                            ].date()
-                            if contract_change_row["KUTSUN_LAHETYSPVM3"]
-                            else None,
+                            signing_date=(
+                                contract_change_row["ALLEKIRJPVM"].date()
+                                if contract_change_row["ALLEKIRJPVM"]
+                                else None
+                            ),
+                            sign_by_date=(
+                                contract_change_row["ALLEKIRJ_MENNESSAPVM"].date()
+                                if contract_change_row["ALLEKIRJ_MENNESSAPVM"]
+                                else None
+                            ),
+                            first_call_sent=(
+                                contract_change_row["KUTSUN_LAHETYSPVM"].date()
+                                if contract_change_row["KUTSUN_LAHETYSPVM"]
+                                else None
+                            ),
+                            second_call_sent=(
+                                contract_change_row["KUTSUN_LAHETYSPVM2"].date()
+                                if contract_change_row["KUTSUN_LAHETYSPVM2"]
+                                else None
+                            ),
+                            third_call_sent=(
+                                contract_change_row["KUTSUN_LAHETYSPVM3"].date()
+                                if contract_change_row["KUTSUN_LAHETYSPVM3"]
+                                else None
+                            ),
                             description=contract_change_row["KOMMENTTITXT"],
                             decision=decision,
                         )
@@ -1351,12 +1391,16 @@ class LeaseImporter(BaseImporter):
 
                         descriptions.append(
                             " Valvontapvm: {}\n Valvottu pvm: {}\n {}\n".format(
-                                inspection_request_row["VALVONTAPVM"].date()
-                                if inspection_request_row["VALVONTAPVM"]
-                                else "",
-                                inspection_request_row["VALVOTTUPVM"].date()
-                                if inspection_request_row["VALVOTTUPVM"]
-                                else "",
+                                (
+                                    inspection_request_row["VALVONTAPVM"].date()
+                                    if inspection_request_row["VALVONTAPVM"]
+                                    else ""
+                                ),
+                                (
+                                    inspection_request_row["VALVOTTUPVM"].date()
+                                    if inspection_request_row["VALVOTTUPVM"]
+                                    else ""
+                                ),
                                 inspection_request_row["KEHOTUSTXT"],
                             )
                         )
@@ -1384,9 +1428,11 @@ class LeaseImporter(BaseImporter):
 
                         descriptions.append(
                             " Tarkastus pvm: {}\n Tarkastaja: {}\n {}\n".format(
-                                inspection_visit_row["TARKASTUSPVM"].date()
-                                if inspection_visit_row["TARKASTUSPVM"]
-                                else "",
+                                (
+                                    inspection_visit_row["TARKASTUSPVM"].date()
+                                    if inspection_visit_row["TARKASTUSPVM"]
+                                    else ""
+                                ),
                                 inspection_visit_row["TARKASTAJA"],
                                 inspection_visit_row["TARKASTUSKERTOMUSTXT"],
                             )
@@ -1417,9 +1463,11 @@ class LeaseImporter(BaseImporter):
 
                         descriptions.append(
                             " Saapumispvm: {}\n {}\n".format(
-                                inspection_reply_row["SAAPUMISPVM"].date()
-                                if inspection_reply_row["SAAPUMISPVM"]
-                                else "",
+                                (
+                                    inspection_reply_row["SAAPUMISPVM"].date()
+                                    if inspection_reply_row["SAAPUMISPVM"]
+                                    else ""
+                                ),
                                 inspection_reply_row["VASTINETXT"],
                             )
                         )

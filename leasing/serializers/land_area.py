@@ -61,7 +61,8 @@ class UsageDistributionSerializer(serializers.ModelSerializer):
 
 
 class PublicPlanUnitSerializer(
-    EnumSupportSerializerMixin, serializers.ModelSerializer,
+    EnumSupportSerializerMixin,
+    serializers.ModelSerializer,
 ):
     usage_distributions = UsageDistributionSerializer(many=True, read_only=True)
     id = serializers.IntegerField(required=False)
@@ -97,7 +98,8 @@ class PublicPlanUnitSerializer(
 
 
 class PlanUnitSerializer(
-    FieldPermissionsSerializerMixin, PublicPlanUnitSerializer,
+    FieldPermissionsSerializerMixin,
+    PublicPlanUnitSerializer,
 ):
     def override_permission_check_field_name(self, field_name):
         if field_name == "decisions" and self.context["request"].user.has_perm(
@@ -192,7 +194,8 @@ class PlanUnitCreateUpdateSerializer(
 
 
 class PlanUnitListWithIdentifiersSerializer(
-    EnumSupportSerializerMixin, serializers.ModelSerializer,
+    EnumSupportSerializerMixin,
+    serializers.ModelSerializer,
 ):
     lease_identifier = serializers.CharField(
         read_only=True, source="lease_area.lease.identifier.identifier"
@@ -216,7 +219,8 @@ class PlanUnitListWithIdentifiersSerializer(
 
 
 class CustomDetailedPlanListWithIdentifiersSerializer(
-    EnumSupportSerializerMixin, serializers.ModelSerializer,
+    EnumSupportSerializerMixin,
+    serializers.ModelSerializer,
 ):
     lease_identifier = serializers.CharField(
         read_only=True, source="lease_area.lease.identifier.identifier"
@@ -262,7 +266,9 @@ class PlotSerializer(
         )
 
 
-class PlotIdentifierSerializer(serializers.ModelSerializer,):
+class PlotIdentifierSerializer(
+    serializers.ModelSerializer,
+):
     class Meta:
         model = Plot
         fields = (
@@ -391,7 +397,9 @@ class LeaseAreaPlotSerializer(PlotSerializer):
 
 
 class CustomDetailedPlanSerializer(
-    EnumSupportSerializerMixin, UpdateNestedMixin, serializers.ModelSerializer,
+    EnumSupportSerializerMixin,
+    UpdateNestedMixin,
+    serializers.ModelSerializer,
 ):
     usage_distributions = UsageDistributionSerializer(many=True)
     info_links = PlotSearchTargetInfoLinkSerializer(

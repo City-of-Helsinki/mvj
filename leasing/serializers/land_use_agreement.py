@@ -131,8 +131,10 @@ class LandUseAgreementCompensationsSerializer(serializers.ModelSerializer):
 
 
 class LandUseAgreementCompensationsCreateUpdateSerializer(serializers.ModelSerializer):
-    unit_prices_used_in_calculation = LandUseAgreementCompensationsUnitPriceCreateUpdateSerializer(
-        many=True, required=False, allow_null=True
+    unit_prices_used_in_calculation = (
+        LandUseAgreementCompensationsUnitPriceCreateUpdateSerializer(
+            many=True, required=False, allow_null=True
+        )
     )
 
     class Meta:
@@ -439,8 +441,10 @@ class LandUseAgreementLitigantCreateUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
-    landuseagreementlitigantcontact_set = LandUseAgreementLitigantContactCreateUpdateSerializer(
-        many=True, required=False, allow_null=True
+    landuseagreementlitigantcontact_set = (
+        LandUseAgreementLitigantContactCreateUpdateSerializer(
+            many=True, required=False, allow_null=True
+        )
     )
 
     class Meta:

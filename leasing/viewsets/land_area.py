@@ -19,7 +19,9 @@ from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
 
 
 class LeaseAreaAttachmentViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = LeaseAreaAttachment.objects.all()
     serializer_class = LeaseAreaAttachmentSerializer
@@ -114,4 +116,12 @@ class PlotMasterIdentifierList(mixins.ListModelMixin, GenericViewSet):
     serializer_class = PlotIdentifierSerializer
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_master=True).only("id", "identifier",)
+        return (
+            super()
+            .get_queryset()
+            .filter(is_master=True)
+            .only(
+                "id",
+                "identifier",
+            )
+        )

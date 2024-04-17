@@ -27,7 +27,9 @@ from leasing.viewsets.utils import (
 
 
 class CollectionCourtDecisionViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = CollectionCourtDecision.objects.all()
     serializer_class = CollectionCourtDecisionSerializer
@@ -42,7 +44,9 @@ class CollectionCourtDecisionViewSet(
 
 
 class CollectionLetterViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = CollectionLetter.objects.all()
     serializer_class = CollectionLetterSerializer

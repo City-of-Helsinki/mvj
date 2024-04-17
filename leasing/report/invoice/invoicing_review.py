@@ -249,7 +249,9 @@ class InvoicingReviewReport(ReportBase):
     slug = "invoicing_review"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
     }
     output_fields = {
@@ -304,7 +306,7 @@ class InvoicingReviewReport(ReportBase):
         data = []
         for row in dictfetchall(cursor):
             share_sums = defaultdict(Fraction)
-            for (intended_use_id, numerator, denominator) in row["shares"]:
+            for intended_use_id, numerator, denominator in row["shares"]:
                 share_sums[intended_use_id] += Fraction(
                     int(numerator), int(denominator)
                 )

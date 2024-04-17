@@ -81,7 +81,9 @@ class RentTypeReport(ReportBase):
     slug = "rent_type"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "rent_type": forms.ChoiceField(
             label=_("Rent type"), required=True, choices=RentType.choices()

@@ -67,7 +67,8 @@ class ContactRentsReport(ReportBase):
                 "identifier__municipality",
             )
             .prefetch_related(
-                "lease_areas__addresses", "tenants__tenantcontact_set__contact",
+                "lease_areas__addresses",
+                "tenants__tenantcontact_set__contact",
             )
             .distinct()
         )
@@ -76,8 +77,10 @@ class ContactRentsReport(ReportBase):
             rent_for_period = lease.calculate_rent_amount_for_period(
                 input_data["start_date"], input_data["end_date"]
             )
-            lease._report__rent_for_period = rent_for_period.get_total_amount().quantize(
-                Decimal(".01"), rounding=ROUND_HALF_UP
+            lease._report__rent_for_period = (
+                rent_for_period.get_total_amount().quantize(
+                    Decimal(".01"), rounding=ROUND_HALF_UP
+                )
             )
 
         return leases

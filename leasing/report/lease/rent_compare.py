@@ -16,7 +16,9 @@ class RentCompareReport(AsyncReportBase):
     slug = "rent_compare"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "first_year": forms.IntegerField(
             label=_("First year"), required=True, min_value=1900, max_value=3000

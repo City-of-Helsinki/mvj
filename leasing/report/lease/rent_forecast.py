@@ -40,7 +40,9 @@ class RentForecastReport(AsyncReportBase):
     slug = "rent_forecast"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"), queryset=ServiceUnit.objects.all(), required=False,
+            label=_("Service unit"),
+            queryset=ServiceUnit.objects.all(),
+            required=False,
         ),
         "start_year": forms.IntegerField(
             label=_("Start year"), required=True, min_value=2020, max_value=2050

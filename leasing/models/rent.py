@@ -241,7 +241,9 @@ class Rent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Perittävän vuokramäärän aloituspäivä
     payable_rent_start_date = models.DateField(
-        verbose_name=_("Payable rent start date"), null=True, blank=True,
+        verbose_name=_("Payable rent start date"),
+        null=True,
+        blank=True,
     )
 
     # In Finnish: Perittävän vuokramäärän päättymispäivä
@@ -576,11 +578,13 @@ class Rent(TimeStampedSafeDeleteModel):
         for intended_use in self.get_intended_uses_for_date_range(
             clamped_date_range_start, clamped_date_range_end
         ):
-            fixed_initial_year_rent_calculation_result = self.fixed_initial_year_rent_amount_for_date_range(
-                intended_use,
-                clamped_date_range_start,
-                clamped_date_range_end,
-                dry_run=dry_run,
+            fixed_initial_year_rent_calculation_result = (
+                self.fixed_initial_year_rent_amount_for_date_range(
+                    intended_use,
+                    clamped_date_range_start,
+                    clamped_date_range_end,
+                    dry_run=dry_run,
+                )
             )
 
             calculation_result.combine(fixed_initial_year_rent_calculation_result)
@@ -606,9 +610,11 @@ class Rent(TimeStampedSafeDeleteModel):
             if self.type in [RentType.INDEX, RentType.MANUAL]:
                 date_ranges = self.split_ranges_by_cycle(date_ranges)
 
-            for (range_start, range_end) in date_ranges:
-                contract_rent_calculation_result = self.contract_rent_amount_for_date_range(
-                    intended_use, range_start, range_end, dry_run=dry_run
+            for range_start, range_end in date_ranges:
+                contract_rent_calculation_result = (
+                    self.contract_rent_amount_for_date_range(
+                        intended_use, range_start, range_end, dry_run=dry_run
+                    )
                 )
 
                 calculation_result.combine(contract_rent_calculation_result)
@@ -955,12 +961,16 @@ class ContractRent(TimeStampedSafeDeleteModel):
 
     # In Finnish: Vuokranlaskennan perusteena oleva vuokra
     base_amount = models.DecimalField(
-        verbose_name=_("Base amount"), max_digits=10, decimal_places=2,
+        verbose_name=_("Base amount"),
+        max_digits=10,
+        decimal_places=2,
     )
 
     # In Finnish: Yksikkö
     base_amount_period = EnumField(
-        PeriodType, verbose_name=_("Base amount period"), max_length=30,
+        PeriodType,
+        verbose_name=_("Base amount period"),
+        max_length=30,
     )
 
     # In Finnish: Uusi perusvuosi vuokra

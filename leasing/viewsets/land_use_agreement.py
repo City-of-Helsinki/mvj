@@ -161,7 +161,9 @@ class LandUseAgreementViewSet(
 
 
 class LandUseAgreementAttachmentViewSet(
-    FileMixin, FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet,
+    FileMixin,
+    FieldPermissionsViewsetMixin,
+    AtomicTransactionModelViewSet,
 ):
     queryset = LandUseAgreementAttachment.objects.all()
     serializer_class = LandUseAgreementAttachmentSerializer

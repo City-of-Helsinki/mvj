@@ -120,22 +120,32 @@ class BasisOfRentImporter(BaseImporter):
                 plot_type_id=BASIS_OF_RENT_PLOT_TYPE_MAP[
                     basis_of_rent_row["TONTTITYYPPI"]
                 ],
-                start_date=basis_of_rent_row["ALKUPVM"].date()
-                if basis_of_rent_row["ALKUPVM"]
-                else None,
-                end_date=basis_of_rent_row["LOPPUPVM"].date()
-                if basis_of_rent_row["LOPPUPVM"]
-                else None,
+                start_date=(
+                    basis_of_rent_row["ALKUPVM"].date()
+                    if basis_of_rent_row["ALKUPVM"]
+                    else None
+                ),
+                end_date=(
+                    basis_of_rent_row["LOPPUPVM"].date()
+                    if basis_of_rent_row["LOPPUPVM"]
+                    else None
+                ),
                 detailed_plan_identifier=basis_of_rent_row["KAAVANO"],
-                financing_id=FINANCING_MAP[basis_of_rent_row["RAHOITUSMUOTO"]]
-                if basis_of_rent_row["RAHOITUSMUOTO"]
-                else None,
-                management_id=MANAGEMENT_MAP[basis_of_rent_row["HALLINTAMUOTO"]]
-                if basis_of_rent_row["HALLINTAMUOTO"]
-                else None,
-                lease_rights_end_date=basis_of_rent_row["VUOKRAUSOIKEUSPVM"].date()
-                if basis_of_rent_row["VUOKRAUSOIKEUSPVM"]
-                else None,
+                financing_id=(
+                    FINANCING_MAP[basis_of_rent_row["RAHOITUSMUOTO"]]
+                    if basis_of_rent_row["RAHOITUSMUOTO"]
+                    else None
+                ),
+                management_id=(
+                    MANAGEMENT_MAP[basis_of_rent_row["HALLINTAMUOTO"]]
+                    if basis_of_rent_row["HALLINTAMUOTO"]
+                    else None
+                ),
+                lease_rights_end_date=(
+                    basis_of_rent_row["VUOKRAUSOIKEUSPVM"].date()
+                    if basis_of_rent_row["VUOKRAUSOIKEUSPVM"]
+                    else None
+                ),
                 index=index,
                 note="\n\n".join(notes) if notes else None,
             )
@@ -171,15 +181,17 @@ class BasisOfRentImporter(BaseImporter):
                 ) = BasisOfRentDecision.objects.get_or_create(
                     basis_of_rent=basis_of_rent,
                     reference_number=None,  # TODO
-                    decision_maker_id=DECISION_MAKER_MAP[decision_maker_string]
-                    if decision_maker_string
-                    else None,
-                    decision_date=decision_datetime.date()
-                    if decision_datetime
-                    else None,
-                    section=decision_section_string
-                    if decision_section_string
-                    else None,
+                    decision_maker_id=(
+                        DECISION_MAKER_MAP[decision_maker_string]
+                        if decision_maker_string
+                        else None
+                    ),
+                    decision_date=(
+                        decision_datetime.date() if decision_datetime else None
+                    ),
+                    section=(
+                        decision_section_string if decision_section_string else None
+                    ),
                 )
 
             query = """

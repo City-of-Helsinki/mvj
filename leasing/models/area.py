@@ -54,17 +54,23 @@ class Area(TimeStampedModel):
 
     def get_land_identifier(self):
         return "{}-{}-{}-{}{}".format(
-            self.metadata.get("municipality", "0")
-            if self.metadata.get("municipality")
-            else "0",
-            self.metadata.get("district", "0")
-            if self.metadata.get("district")
-            else "0",
+            (
+                self.metadata.get("municipality", "0")
+                if self.metadata.get("municipality")
+                else "0"
+            ),
+            (
+                self.metadata.get("district", "0")
+                if self.metadata.get("district")
+                else "0"
+            ),
             self.metadata.get("group", "0") if self.metadata.get("group") else "0",
             self.metadata.get("unit", "0") if self.metadata.get("unit") else "0",
-            "-{}".format(self.metadata.get("mvj_unit", "0"))
-            if "mvj_unit" in self.metadata
-            else "",
+            (
+                "-{}".format(self.metadata.get("mvj_unit", "0"))
+                if "mvj_unit" in self.metadata
+                else ""
+            ),
         )
 
     def get_normalized_identifier(self):

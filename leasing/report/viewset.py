@@ -148,9 +148,13 @@ class ReportViewSet(ViewSet):
                     for choice_value, choice_label in field.choices:
                         choices.append(
                             {
-                                "value": choice_value.value
-                                if isinstance(choice_value, ModelChoiceIteratorValue)
-                                else choice_value,
+                                "value": (
+                                    choice_value.value
+                                    if isinstance(
+                                        choice_value, ModelChoiceIteratorValue
+                                    )
+                                    else choice_value
+                                ),
                                 "display_name": choice_label,
                             }
                         )

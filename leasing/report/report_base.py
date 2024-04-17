@@ -108,9 +108,11 @@ class ReportBase:
                 for choice_value, choice_label in serializer_field.choices.items():
                     choices.append(
                         {
-                            "value": choice_value.value
-                            if isinstance(choice_value, ModelChoiceIteratorValue)
-                            else choice_value,
+                            "value": (
+                                choice_value.value
+                                if isinstance(choice_value, ModelChoiceIteratorValue)
+                                else choice_value
+                            ),
                             "display_name": choice_label,
                         }
                     )
@@ -315,9 +317,11 @@ class ReportBase:
                         row_num,
                         cell.column,
                         cell.get_value(),
-                        formats[cell.get_format_type()]
-                        if cell.get_format_type() in formats
-                        else None,
+                        (
+                            formats[cell.get_format_type()]
+                            if cell.get_format_type() in formats
+                            else None
+                        ),
                     )
 
             row_num += 1

@@ -215,8 +215,8 @@ class InfillDevelopmentCompensationSerializer(
 ):
     id = serializers.ReadOnlyField()
     user = UserSerializer()
-    infill_development_compensation_leases = InfillDevelopmentCompensationLeaseSerializer(
-        many=True
+    infill_development_compensation_leases = (
+        InfillDevelopmentCompensationLeaseSerializer(many=True)
     )
 
     class Meta:
@@ -247,8 +247,10 @@ class InfillDevelopmentCompensationCreateUpdateSerializer(
         queryset=User.objects.all(),
         related_serializer=UserSerializer,
     )
-    infill_development_compensation_leases = InfillDevelopmentCompensationLeaseCreateUpdateSerializer(
-        many=True, required=False, allow_null=True
+    infill_development_compensation_leases = (
+        InfillDevelopmentCompensationLeaseCreateUpdateSerializer(
+            many=True, required=False, allow_null=True
+        )
     )
 
     class Meta:
