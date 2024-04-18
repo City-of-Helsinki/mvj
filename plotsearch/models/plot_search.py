@@ -568,9 +568,9 @@ class AreaSearch(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        self.full_clean()
+        self.clean()
         return super(AreaSearch, self).save(*args, **kwargs)
-
+        
     def get_xlsx_page(self, worksheet, row):
         return get_area_search_answer_worksheet(self, worksheet, row)
 
