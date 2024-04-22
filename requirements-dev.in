@@ -1,7 +1,6 @@
 -c requirements.txt
 django-debug-toolbar~=4.3.0
 django-extensions~=3.2.3
-django-stubs[compatible-mypy]~=4.2.7
 djangorestframework-stubs[compatible-mypy]~=3.14.5
 black~=24.4.0
 debugpy~=1.8.1

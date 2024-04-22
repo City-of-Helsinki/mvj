@@ -68,6 +68,8 @@ django==4.2.11
     #   django-q
     #   django-safedelete
     #   django-sequences
+    #   django-stubs
+    #   django-stubs-ext
     #   django-xhtml2pdf
     #   djangorestframework
     #   drf-yasg
@@ -111,6 +113,10 @@ django-sanitized-dump==1.2.2
     # via -r requirements.in
 django-sequences==3.0
     # via -r requirements.in
+django-stubs[compatible-mypy]==4.2.7
+    # via -r requirements.in
+django-stubs-ext==4.2.7
+    # via django-stubs
 django-xhtml2pdf==0.0.4
     # via -r requirements.in
 djangorestframework==3.14.0
@@ -155,6 +161,10 @@ lxml==4.6.5
     #   zeep
 markupsafe==1.1.1
     # via jinja2
+mypy==1.7.1
+    # via django-stubs
+mypy-extensions==1.0.0
+    # via mypy
 oracledb==2.1.0
     # via -r requirements.in
 packaging==24.0
@@ -270,15 +280,26 @@ tinycss2==1.2.1
     # via
     #   cssselect2
     #   svglib
+tomli==2.0.1
+    # via
+    #   django-stubs
+    #   mypy
 tqdm==4.66.2
     # via pypdf3
 types-python-dateutil==2.9.0.20240316
     # via arrow
+types-pytz==2024.1.0.20240203
+    # via django-stubs
+types-pyyaml==6.0.12.20240311
+    # via django-stubs
 typing-extensions==4.10.0
     # via
     #   asgiref
     #   django-countries
     #   django-modeltranslation
+    #   django-stubs
+    #   django-stubs-ext
+    #   mypy
     #   psycopg
 uritemplate==3.0.1
     # via drf-yasg
