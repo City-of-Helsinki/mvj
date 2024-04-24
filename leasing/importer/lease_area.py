@@ -40,9 +40,9 @@ class LeaseAreaImporter(BaseImporter):
     type_name = "lease_area"
 
     def __init__(self, stdout=None, stderr=None):
-        import cx_Oracle
+        import oracledb
 
-        connection = cx_Oracle.connect(
+        connection = oracledb.connect(
             user=settings.LEASE_AREA_DATABASE_USER,
             password=settings.LEASE_AREA_DATABASE_PASSWORD,
             dsn=settings.LEASE_AREA_DATABASE_DSN,

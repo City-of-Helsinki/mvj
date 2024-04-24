@@ -87,9 +87,9 @@ class LeaseImporter(BaseImporter):
     type_name = "lease"
 
     def __init__(self, stdout=None, stderr=None):
-        import cx_Oracle
+        import oracledb
 
-        connection = cx_Oracle.connect(
+        connection = oracledb.connect(
             user="mvj",
             password="mvjpass",
             dsn="localhost:1521/ORCLPDB1",

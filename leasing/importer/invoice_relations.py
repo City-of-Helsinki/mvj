@@ -8,9 +8,9 @@ class InvoiceRelationsImporter(BaseImporter):
     type_name = "invoice_relations"
 
     def __init__(self, stdout=None, stderr=None):
-        import cx_Oracle
+        import oracledb
 
-        connection = cx_Oracle.connect(
+        connection = oracledb.connect(
             user="mvj",
             password="mvjpass",
             dsn="localhost:1521/ORCLPDB1",
