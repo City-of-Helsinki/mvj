@@ -6,6 +6,7 @@ import sys
 import tempfile
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
+from typing import List, Union
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -191,6 +192,39 @@ class Command(BaseCommand):
 
         return result
 
+    def parse_date(self, date_str: str) -> Union[datetime.date, None]:
+        if len(date_str) != 6:
+            # Format expects 6 characters long strings
+            return None
+        try:
+            return datetime.date(
+                # Laske uses 2-digit years
+                year=2000 + int(date_str[0:2]),
+                month=int(date_str[2:4]),
+                day=int(date_str[4:6]),
+            )
+        except ValueError:
+            return None
+
+    def get_payment_date(
+        self, value_date_str: str, date_of_entry_str: str, invoice_number: str
+    ) -> Union[datetime.date, None]:
+        """
+        Use either `value date` or `date of entry` as the payment date.
+        `value date` is set to be "000000" when the payment is acknowledged some other way.
+        """
+        # Arvopäivä
+        value_date = self.parse_date(value_date_str)
+        # Kirjauspäivä
+        date_of_entry = self.parse_date(date_of_entry_str)
+        payment_date = value_date or date_of_entry
+        if date_of_entry is None and value_date is not None:
+            self.stdout.write(
+                f"  Using date_of_entry as payment_date, malformed value_date in payment row: "
+                f"{invoice_number} {value_date_str}."
+            )
+        return payment_date
+
     def handle(self, *args, **options):  # NOQA C901 'Command.handle' is too complex
         self.check_import_directory()
 
@@ -222,7 +256,7 @@ class Command(BaseCommand):
             )
 
             try:
-                lines = self.get_payment_lines_from_file(filename)
+                lines: List[str] = self.get_payment_lines_from_file(filename)
             except UnicodeDecodeError as e:
                 self.stderr.write(
                     "Error: failed to read file {}! Error {}".format(filename, str(e))
@@ -250,17 +284,18 @@ class Command(BaseCommand):
                     continue
 
                 amount = Decimal("{}.{}".format(line[77:85], line[85:87]))
-                try:
-                    payment_date = datetime.date(
-                        year=2000 + int(line[21:23]),
-                        month=int(line[23:25]),
-                        day=int(line[25:27]),
-                    )
-                except ValueError:
+
+                # Arvopäivä
+                value_date_str = line[21:27]
+                # Kirjauspäivä
+                date_of_entry_str = line[15:21]
+                payment_date = self.get_payment_date(
+                    value_date_str, date_of_entry_str, invoice_number
+                )
+                if payment_date is None:
                     self.stderr.write(
-                        "  Skipped row: malformed date in payment row: {} {}.".format(
-                            invoice_number, line[21:27]
-                        )
+                        f"  Skipped row: malformed value_date and date_of_entry in payment row: "
+                        f"{invoice_number} {value_date_str} {date_of_entry_str}."
                     )
                     continue
 

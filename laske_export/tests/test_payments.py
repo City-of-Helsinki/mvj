@@ -1,3 +1,4 @@
+import datetime
 import os
 import tempfile
 from pathlib import Path
@@ -82,3 +83,46 @@ def test_handle(monkeypatch, setup_ftp, use_ftp):
             "arch/MR_OUT_ID256_8000_20191002_014527.TXT",
             "arch/MR_OUT_ID256_8000_20191011_014517.TXT",
         ] == archived_files
+
+
+@pytest.mark.django_db
+def test_parse_date():
+    laske_command = get_payments_from_laske.Command()
+    parse_date = laske_command.parse_date
+    assert parse_date("190923") == datetime.date(year=2019, month=9, day=23)
+    assert parse_date("001301") is None, "Should not accept month 13"
+    assert parse_date("") is None
+    assert parse_date("000000") is None, "Should not accept empty dates"
+    assert parse_date("12121211") is None, "Should not accept too long date"
+    assert parse_date("abcabc") is None, "Should not accept characters"
+
+
+@pytest.mark.django_db
+def test_get_payment_date():
+    laske_command = get_payments_from_laske.Command()
+    get_payment_date = laske_command.get_payment_date
+    invoice_number = "74028375984265982364"
+
+    value_date = "190923"
+    date_of_entry = "230301"
+    assert get_payment_date(value_date, date_of_entry, invoice_number) == datetime.date(
+        year=2019, month=9, day=23
+    ), "Should pick value_date"
+
+    value_date = "190923"
+    date_of_entry = "000000"
+    assert get_payment_date(value_date, date_of_entry, invoice_number) == datetime.date(
+        year=2019, month=9, day=23
+    ), "Should pick value_date"
+
+    value_date = "000000"
+    date_of_entry = "230301"
+    assert get_payment_date(value_date, date_of_entry, invoice_number) == datetime.date(
+        year=2023, month=3, day=1
+    ), "Should pick date_of_entry"
+
+    value_date = "000000"
+    date_of_entry = "000000"
+    assert (
+        get_payment_date(value_date, date_of_entry, invoice_number) is None
+    ), "Should pick nothing"
