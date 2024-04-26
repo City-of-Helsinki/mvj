@@ -71,7 +71,7 @@ class Command(BaseCommand):
                     preserve_mtime=True,
                 )
         except SSHException as e:
-            self.stdout.write("Error with the Laske payments server: {}".format(str(e)))
+            self.stdout.write(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
 
     def download_payments_ftp(self):
@@ -89,38 +89,36 @@ class Command(BaseCommand):
             )
             ftp.cwd(settings.LASKE_SERVERS["payments"]["directory"])
         except Exception as e:
-            self.stderr.write("Could connect to the server. Error: {}".format(str(e)))
+            self.stderr.write(f"Could connect to the server. Error: {str(e)}")
             capture_exception(e)
             return
 
         try:
             file_list = ftp.nlst()
         except Exception as e:
-            self.stderr.write("Could not get file list. Error: {}".format(str(e)))
+            self.stderr.write(f"Could not get file list. Error: {str(e)}")
             capture_exception(e)
             return
 
         for file_name in file_list:
             if not file_name.lower().startswith("mr_out_"):
                 self.stderr.write(
-                    'Skipping the file "{}" because its name does not start with "MR_OUT_"'.format(
-                        file_name
-                    )
+                    f'Skipping the file "{file_name}" because its name does not start with "MR_OUT_"'
                 )
                 continue
 
-            self.stdout.write('Downloading file "{}".'.format(file_name))
+            self.stdout.write(f'Downloading file "{file_name}".')
             try:
                 fp = open(os.path.join(get_import_dir(), file_name), "wb")
-                ftp.retrbinary("RETR {}".format(file_name), fp.write)
+                ftp.retrbinary(f"RETR {file_name}", fp.write)
                 self.stdout.write(
                     "Download complete. Moving it to arch directory on the FTP server."
                 )
-                ftp.rename(file_name, "arch/{}".format(file_name))
+                ftp.rename(file_name, f"arch/{file_name}")
                 self.stdout.write("Done.")
             except Exception as e:
                 self.stderr.write(
-                    'Could not download file "{}". Error: {}'.format(file_name, str(e))
+                    f'Could not download file "{file_name}". Error: {str(e)}'
                 )
                 capture_exception(e)
 
@@ -138,9 +136,7 @@ class Command(BaseCommand):
     def check_import_directory(self):
         if not os.path.isdir(get_import_dir()):
             self.stdout.write(
-                'Directory "{}" does not exist. Please create it.'.format(
-                    get_import_dir()
-                )
+                f'Directory "{get_import_dir()}" does not exist. Please create it.'
             )
             sys.exit(-1)
 
@@ -148,9 +144,7 @@ class Command(BaseCommand):
             fp = tempfile.TemporaryFile(dir=get_import_dir())
             fp.close()
         except PermissionError:
-            self.stdout.write(
-                'Can not create file in directory "{}".'.format(get_import_dir())
-            )
+            self.stdout.write(f'Can not create file in directory "{get_import_dir}".')
             sys.exit(-1)
 
     def _get_service_unit_import_ids(self):
@@ -158,10 +152,8 @@ class Command(BaseCommand):
 
     def find_unimported_files(self):
         all_files = []
-        import_id_regexp = "MR_OUT_({import_ids})_".format(
-            import_ids="|".join(self._get_service_unit_import_ids())
-        )
-        for filename in glob.glob(get_import_dir() + "/MR_OUT_*"):
+        import_id_regexp = f"MR_OUT_({'|'.join(self._get_service_unit_import_ids())})_"
+        for filename in glob.glob(f"{get_import_dir()}/MR_OUT_*"):
             if re.search(import_id_regexp, filename):
                 all_files.append(filename)
 
@@ -193,6 +185,10 @@ class Command(BaseCommand):
         return result
 
     def parse_date(self, date_str: str) -> Union[datetime.date, None]:
+        """
+        Parameters:
+        date_str: A date in the format 'YYMMDD'
+        """
         if len(date_str) != 6:
             # Format expects 6 characters long strings
             return None
@@ -240,14 +236,14 @@ class Command(BaseCommand):
             self.stdout.write("No new files found. Exiting.")
             return
 
-        self.stdout.write("{} new file(s) found.".format(len(filenames)))
+        self.stdout.write(f"{len(filenames)} new file(s) found.")
 
         self.stdout.write("Reading files...")
 
         for filename in filenames:
             filepath = Path(filename)
 
-            self.stdout.write("Filename: {}".format(filename))
+            self.stdout.write(f"Filename: {filename}")
             (
                 laske_payments_log_entry,
                 created,
@@ -259,7 +255,7 @@ class Command(BaseCommand):
                 lines: List[str] = self.get_payment_lines_from_file(filename)
             except UnicodeDecodeError as e:
                 self.stderr.write(
-                    "Error: failed to read file {}! Error {}".format(filename, str(e))
+                    f"Error: failed to read file {filename}! Error {str(e)}"
                 )
                 capture_exception(e)
                 continue
@@ -269,9 +265,7 @@ class Command(BaseCommand):
                 # Filing code series 288 = KYMP, 297 = KuVa
                 if filing_code[:3] not in ["288", "297"]:
                     self.stderr.write(
-                        "  Skipped row: filing code ({}) should start with 288 or 297".format(
-                            filing_code
-                        )
+                        f"  Skipped row: filing code ({filing_code}) should start with 288 or 297"
                     )
                     continue
 
@@ -283,7 +277,9 @@ class Command(BaseCommand):
                     )
                     continue
 
-                amount = Decimal("{}.{}".format(line[77:85], line[85:87]))
+                whole_number_part = line[77:85]
+                fractional_part = line[85:87]
+                amount = Decimal(f"{whole_number_part}.{fractional_part}")
 
                 # Arvopäivä
                 value_date_str = line[21:27]
@@ -300,18 +296,14 @@ class Command(BaseCommand):
                     continue
 
                 self.stdout.write(
-                    " Invoice #{} amount: {} date: {} filing code: {}".format(
-                        invoice_number, amount, payment_date, filing_code
-                    )
+                    f" Invoice #{invoice_number} amount: {amount} date: {payment_date} filing code: {filing_code}"
                 )
 
                 try:
                     invoice = Invoice.objects.get(number=invoice_number)
                 except Invoice.DoesNotExist:
                     self.stderr.write(
-                        '  Skipped row: invoice number "{}" does not exist.'.format(
-                            invoice_number
-                        )
+                        f'  Skipped row: invoice number "{invoice_number}" does not exist.'
                     )
                     continue
 
@@ -319,9 +311,7 @@ class Command(BaseCommand):
                     vat = Vat.objects.get_for_date(payment_date)
                     if not vat:
                         self.stdout.write(
-                            "  Lease is subject to VAT but no VAT percent found for payment date {}!".format(
-                                payment_date
-                            )
+                            f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date}!"
                         )
                         continue
 
@@ -330,9 +320,7 @@ class Command(BaseCommand):
                     ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
                     self.stdout.write(
-                        "  Lease is subject to VAT. Amount: {} - VAT {}% = {}".format(
-                            amount, vat.percent, amount_without_vat
-                        )
+                        f"  Lease is subject to VAT. Amount: amount - VAT {vat.percent}% = {amount_without_vat}"
                     )
 
                     amount = amount_without_vat
