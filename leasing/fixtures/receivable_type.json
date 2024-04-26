@@ -97,5 +97,313 @@
       "is_active": true,
       "service_unit": 1
     }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 10,
+    "fields": {
+      "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
+      "sap_material_code": "27100033",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 11,
+    "fields": {
+      "name": "Hiekkasiilo, kaupungin urakkasopimukset",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 12,
+    "fields": {
+      "name": "Hiekkasiilo, muut",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 13,
+    "fields": {
+      "name": "Kaupunkipyörä",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 14,
+    "fields": {
+      "name": "Kaupunkiviljely",
+      "sap_material_code": "27100028",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 15,
+    "fields": {
+      "name": "Kioski, kahvila, myyntitoiminta",
+      "sap_material_code": "27100009",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 16,
+    "fields": {
+      "name": "Laiva ja muu vesialue",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 17,
+    "fields": {
+      "name": "Lasitettu katuterassi ja lasitettu asiakastila",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 18,
+    "fields": {
+      "name": "Leikkipaikan käyttöoikeus",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 19,
+    "fields": {
+      "name": "Liikunta ja ulkoilu",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 20,
+    "fields": {
+      "name": "Lisäpiha, asuntotontit",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 21,
+    "fields": {
+      "name": "Lisäpiha, yksityiset päiväkodit",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 22,
+    "fields": {
+      "name": "Maa-aineksen varastointi",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 23,
+    "fields": {
+      "name": "Mehiläistarhaus",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 24,
+    "fields": {
+      "name": "Metsästysoikeus",
+      "sap_material_code": "27100045",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 25,
+    "fields": {
+      "name": "Muuntamo, laitetila, masto",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 26,
+    "fields": {
+      "name": "Pysäköinti",
+      "sap_material_code": "27100048",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 27,
+    "fields": {
+      "name": "Sähköpotkulauta",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 28,
+    "fields": {
+      "name": "Taide ja kulttuuri",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 29,
+    "fields": {
+      "name": "Tilapäinen käymälä ja taukotila",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 30,
+    "fields": {
+      "name": "Työmaatukitoiminta",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 31,
+    "fields": {
+      "name": "Ulkomainonta, kilpailutettu",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 32,
+    "fields": {
+      "name": "Ulkomainonta, yksityinen",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 33,
+    "fields": {
+      "name": "Varastointi",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 34,
+    "fields": {
+      "name": "Muu yleisen alueen tilapäinen vuokraus",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 35,
+    "fields": {
+      "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 36,
+    "fields": {
+      "name": "Muu tontinosan tilapäinen vuokraus",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 37,
+    "fields": {
+      "name": "Muu tontinosan tilapäinen vuokraus (alv)",
+      "sap_material_code": "",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 2
+    }
   }
 ]
