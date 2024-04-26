@@ -23,7 +23,10 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
     client.force_authenticate(user=user)
     response = client.get(reverse("audittrail"), {"type": "lease", "id": lease.id})
     assert response.status_code == 200
-    (logentry, *_,) = response.json().get("results")
+    (
+        logentry,
+        *_,
+    ) = response.json().get("results")
     assert (
         logentry.get("object_id") == lease.id
         and logentry.get("content_type") == "lease"
@@ -65,9 +68,7 @@ def test_audittrail_get_types(
         type=ContactType.PERSON,
         national_identification_number="011213-1234",
     )
-    areasearch = area_search_factory(
-        description_area="Test"
-    )
+    areasearch = area_search_factory(description_area="Test")
     objs = [lease, contact, areasearch]
     client = APIClient()
     client.force_authenticate(user=user)

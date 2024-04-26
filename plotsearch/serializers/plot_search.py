@@ -931,9 +931,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
             results = response.json()
 
-        address = results["features"][0]["properties"].get(
-            "katuosoite", None
-        )
+        address = results["features"][0]["properties"].get("katuosoite", None)
         district = results["features"][0]["properties"].get(
             "kaupunginosa_nimi_fi", None
         )
@@ -952,9 +950,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             validated_data["form"] = initialize_area_search_form()
         attachments = validated_data.pop("area_search_attachments", [])
 
-        if ("geometry" in validated_data and validated_data["geometry"] is not None):
-            validated_data["address"], validated_data["district"] = self.get_addess_and_district_from_kartta_hel(
-                validated_data["geometry"]
+        if "geometry" in validated_data and validated_data["geometry"] is not None:
+            validated_data["address"], validated_data["district"] = (
+                self.get_addess_and_district_from_kartta_hel(validated_data["geometry"])
             )
 
         area_search = AreaSearch.objects.create(**validated_data)
@@ -987,9 +985,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
     def update(self, instance, validated_data):
         area_search_status = validated_data.pop("area_search_status", None)
 
-        if ("geometry" in validated_data and validated_data["geometry"] is not None):
-            validated_data["address"], validated_data["district"] = self.get_addess_and_district_from_kartta_hel(
-                validated_data["geometry"]
+        if "geometry" in validated_data and validated_data["geometry"] is not None:
+            validated_data["address"], validated_data["district"] = (
+                self.get_addess_and_district_from_kartta_hel(validated_data["geometry"])
             )
         else:
             validated_data["address"], validated_data["district"] = None, None
