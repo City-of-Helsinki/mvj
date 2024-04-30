@@ -9,7 +9,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
 
 from audittrail.viewsets import AuditTrailView
-from credit_integration import urls as credit_integration_urls
+from credit_integration import urls as credit_integration_urlpatterns
 from forms.viewsets.form import (
     AnswerOpeningRecordViewset,
     AnswerPublicViewSet,
@@ -282,9 +282,6 @@ additional_api_paths = [
         name="target_status-pdf",
     ),
     path("area_search_pdf/", AreaSearchGeneratePDF.as_view(), name="area-search-pdf"),
-    path(
-        "pub/plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"
-    ),
     path("auditlog/", AuditTrailView.as_view(), name="audittrail"),
     path("contact_exists/", ContactExistsView.as_view(), name="contact-exists"),
     path(
@@ -376,25 +373,22 @@ additional_pub_api_paths = [
     path("plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"),
 ]
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="MVJ API",
-        default_version="v1",
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
-)
+api_urls = router.urls + additional_api_paths
+# Path: v1/pub/
+pub_api_urls = [path("pub/", include(pub_router.urls + additional_pub_api_paths))]
+credit_integration_urls = [
+    path("", include((credit_integration_urlpatterns, "credit_integration")))
+]
+
+v1_urls = api_urls + credit_integration_urls + pub_api_urls
 
 urlpatterns = [
-    path("v1/", include(router.urls + additional_api_paths)),
-    path("v1/pub/", include(pub_router.urls + additional_pub_api_paths)),
     path(
         "v1/",
-        include((credit_integration_urls, "credit_integration"), namespace="v1"),
+        include(
+            (v1_urls, "v1"),
+            namespace="v1",
+        ),
     ),
     re_path(r"(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf", ktj_proxy),
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),
@@ -402,6 +396,24 @@ urlpatterns = [
     path("trade_register/<service>/<business_id>/", VirreProxy.as_view()),
     path("admin/", admin.site.urls),
     path("auth/", include(rest_framework.urls)),
+]
+
+# Generate a schema
+schema_view = get_schema_view(
+    openapi.Info(
+        title="MVJ API",
+        default_version="v1",
+        description="City of Helsinki land lease system API",
+        terms_of_service="",
+        contact=openapi.Contact(email=""),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
+# Include schema URLs
+urlpatterns += [
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
