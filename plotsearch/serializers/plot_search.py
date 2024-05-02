@@ -895,7 +895,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         )
 
     @staticmethod
-    def get_addess_and_district_from_kartta_hel(geometry):
+    def get_address_and_district_from_kartta_hel(geometry):
         """
         Fetches address and district data from kartta.hel.fi
         Returns tuple with address as first element and district as second
@@ -952,7 +952,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
         if "geometry" in validated_data and validated_data["geometry"] is not None:
             validated_data["address"], validated_data["district"] = (
-                self.get_addess_and_district_from_kartta_hel(validated_data["geometry"])
+                self.get_address_and_district_from_kartta_hel(
+                    validated_data["geometry"]
+                )
             )
 
         area_search = AreaSearch.objects.create(**validated_data)
@@ -987,7 +989,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
         if "geometry" in validated_data and validated_data["geometry"] is not None:
             validated_data["address"], validated_data["district"] = (
-                self.get_addess_and_district_from_kartta_hel(validated_data["geometry"])
+                self.get_address_and_district_from_kartta_hel(
+                    validated_data["geometry"]
+                )
             )
         else:
             validated_data["address"], validated_data["district"] = None, None
