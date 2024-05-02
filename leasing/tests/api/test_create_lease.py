@@ -12,7 +12,7 @@ from leasing.models import Lease, ServiceUnit
 def test_create_lease(
     django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
 
     response = admin_client.post(
         url,
@@ -77,7 +77,7 @@ def test_create_lease_relate_to_with_permission(
         "service_unit": 1,
     }
 
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
 
     response = client.post(
         url,
@@ -129,7 +129,7 @@ def test_create_lease_relate_to_without_permission(
         "service_unit": 1,
     }
 
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
 
     response = client.post(
         url,
@@ -147,7 +147,7 @@ def test_create_lease_relate_to_without_permission(
 def test_create_lease_with_basis_of_rents(
     django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
     lease_data_dict_with_contacts["basis_of_rents"] = [
         {"intended_use": 1, "area": "101.00", "area_unit": "m2"}
     ]
@@ -163,7 +163,7 @@ def test_create_lease_with_basis_of_rents(
 def test_create_lease_with_basis_of_rents_fail_without_intended_use(
     django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
     lease_data_dict_with_contacts["basis_of_rents"] = [
         {"area": "101.00", "area_unit": "m2"}
     ]
@@ -179,7 +179,7 @@ def test_create_lease_with_basis_of_rents_fail_without_intended_use(
 def test_create_lease_with_basis_of_rents_fail_without_area(
     django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
     lease_data_dict_with_contacts["basis_of_rents"] = [
         {"intended_use": 1, "area_unit": "m2"}
     ]
@@ -195,7 +195,7 @@ def test_create_lease_with_basis_of_rents_fail_without_area(
 def test_create_lease_with_basis_of_rents_fail_without_area_unit(
     django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
     lease_data_dict_with_contacts["basis_of_rents"] = [
         {"intended_use": 1, "area": "101.00"}
     ]
@@ -249,7 +249,7 @@ def test_create_lease_should_validate_service_unit(
     if with_request_service_unit:
         data["service_unit"] = 1
 
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
 
     response = client.post(
         url,

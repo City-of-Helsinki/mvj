@@ -1245,7 +1245,7 @@ def answer_with_email(
         "end_date": "2023-11-29T22:00:00.000Z",
     }
 
-    url = reverse("pub_area_search-list")
+    url = reverse("v1:pub_area_search-list")
     response = admin_client.post(url, data=area_search_payload)
     area_search = AreaSearch.objects.get(id=response.data["id"])
 
@@ -1400,7 +1400,7 @@ def answer_with_email(
         "ready": True,
     }
 
-    url = reverse("pub_answer-list")
+    url = reverse("v1:pub_answer-list")
     response = admin_client.post(url, data=answer_payload)
 
     return {"answer": response.data, "area_search": area_search}

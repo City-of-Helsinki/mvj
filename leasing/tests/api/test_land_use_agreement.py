@@ -22,7 +22,7 @@ def test_list_land_use_agreements(
     django_db_setup, admin_client, land_use_agreement_test_data
 ):
 
-    url = reverse("landuseagreement-list")
+    url = reverse("v1:landuseagreement-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -33,7 +33,7 @@ def test_get_land_use_agreement(
     django_db_setup, admin_client, land_use_agreement_test_data
 ):
     url = reverse(
-        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+        "v1:landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
     )
 
     response = admin_client.get(url, content_type="application/json")
@@ -92,7 +92,7 @@ def test_update_land_use_agreement(
 ):
 
     url = reverse(
-        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+        "v1:landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
     )
     user = user_factory(username="test_user_2")
 
@@ -122,7 +122,7 @@ def test_create_land_use_agreement(
     user_factory,
 ):
 
-    url = reverse("landuseagreement-list")
+    url = reverse("v1:landuseagreement-list")
     user = user_factory(username="test_user_2")
 
     data = {
@@ -148,7 +148,7 @@ def test_create_land_use_agreement_w_two_addresses(
     user_factory,
 ):
 
-    url = reverse("landuseagreement-list")
+    url = reverse("v1:landuseagreement-list")
     user = user_factory(username="test_user_2")
 
     data = {
@@ -213,7 +213,7 @@ def test_land_use_agreement_retrieve_plots(
     land_use_agreement_test_data.plots.add(exist_plot_2)
 
     url = reverse(
-        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+        "v1:landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
     )
 
     response = admin_client.get(url, content_type="application/json")
@@ -256,7 +256,7 @@ def test_land_use_agreement_update_plots(
     land_use_agreement_test_data.plots.add(exist_plot)
 
     url = reverse(
-        "landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
+        "v1:landuseagreement-detail", kwargs={"pk": land_use_agreement_test_data.id}
     )
 
     data = {
@@ -285,7 +285,7 @@ def test_update_land_use_agreement_compensations_without_existing_data(
 
     assert hasattr(lua, "compensations") is False
 
-    url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
+    url = reverse("v1:landuseagreement-detail", kwargs={"pk": lua.id})
 
     data = {
         "id": lua.id,
@@ -381,7 +381,7 @@ def test_update_land_use_agreement_compensations(
         == Decimal(400)
     )
 
-    url = reverse("landuseagreement-detail", kwargs={"pk": lua.id})
+    url = reverse("v1:landuseagreement-detail", kwargs={"pk": lua.id})
 
     data = {
         "id": lua.id,
@@ -441,7 +441,7 @@ def test_upload_attachment(
 
     assert lua.attachments.count() == 0
 
-    url = reverse("landuseagreementattachment-list")
+    url = reverse("v1:landuseagreementattachment-list")
 
     data = {
         "type": "general",
@@ -473,7 +473,7 @@ def test_download_attachment(
     assert lua.attachments.count() == 0
 
     # upload a file first
-    upload_url = reverse("landuseagreementattachment-list")
+    upload_url = reverse("v1:landuseagreementattachment-list")
     data = {
         "type": "general",
         "land_use_agreement": lua.id,
@@ -547,7 +547,7 @@ def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_d
         ],
     }
 
-    url = reverse("landuseagreementinvoice-list")
+    url = reverse("v1:landuseagreementinvoice-list")
     response = admin_client.post(
         url,
         data=data,
@@ -599,7 +599,7 @@ def test_create_zero_sum_invoice_state_is_paid(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-list")
+    url = reverse("v1:landuseagreementinvoice-list")
     response = admin_client.post(
         url,
         data=data,
@@ -616,7 +616,7 @@ def test_create_zero_sum_invoice_state_is_paid(
 
 @pytest.mark.django_db
 def test_get_invoice_list(admin_client, land_use_agreement_test_data):
-    url = reverse("landuseagreementinvoice-list")
+    url = reverse("v1:landuseagreementinvoice-list")
     response = admin_client.get(
         url,
         content_type="application/json",
@@ -629,7 +629,7 @@ def test_get_invoice_list(admin_client, land_use_agreement_test_data):
 def test_get_invoice_detail(admin_client, land_use_agreement_test_data):
     invoice_id = land_use_agreement_test_data.invoices.first().id
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice_id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice_id})
     response = admin_client.get(
         url,
         content_type="application/json",
@@ -680,7 +680,7 @@ def test_patch_invoice_change_one_row_amount(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -756,7 +756,7 @@ def test_patch_invoice_change_other_row_amount(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -833,7 +833,7 @@ def test_patch_invoice_change_two_row_amount(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -945,7 +945,7 @@ def test_patch_invoice_with_invoiceset_change_row_amount(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1042,7 +1042,7 @@ def test_delete_invoice_invoice_in_invoiceset(
         sign_date=datetime.date(2020, 4, 8),
     )
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice2.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice2.id})
     response = admin_client.delete(url, content_type="application/json")
 
     assert response.status_code == 204, "%s %s" % (response.status_code, response.data)
@@ -1105,7 +1105,7 @@ def test_patch_invoice_change_if_sent_to_sap(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1191,7 +1191,7 @@ def test_patch_credit_note_credited_invoice_outstanding_amount(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": credit_note.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": credit_note.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1267,7 +1267,7 @@ def test_patch_credit_note_dates_read_only(
         "notes": "Should change",
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": credit_note.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": credit_note.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1319,7 +1319,7 @@ def test_patch_invoice_add_payment(
         "payments": [{"paid_amount": 100000, "paid_date": timezone.now().date()}],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1372,7 +1372,7 @@ def test_patch_invoice_cannot_add_payment_if_sent_to_sap(
         "payments": [{"paid_amount": 100000, "paid_date": timezone.now().date()}],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1438,7 +1438,7 @@ def test_patch_invoice_existing_interest_row_success(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1500,7 +1500,7 @@ def test_patch_invoice_change_interest_row_fail(
         ],
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1547,7 +1547,7 @@ def test_patch_invoice_new_interest_row_fail(
         "rows": [{"receivable_type": 2, "compensation_amount": 100000}],  # Interest
     }
 
-    url = reverse("landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:landuseagreementinvoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

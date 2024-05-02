@@ -34,7 +34,7 @@ def test_favourite_detail(
     fav = Favourite.objects.create(user=User.objects.get(username="admin"))
     FavouriteTarget.objects.create(favourite=fav, plot_search_target=pls)
 
-    url = reverse("favourite-detail", kwargs={"pk": fav.pk})
+    url = reverse("v1:favourite-detail", kwargs={"pk": fav.pk})
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -43,7 +43,7 @@ def test_favourite_detail(
 @pytest.mark.django_db
 def test_favourite_list(django_db_setup, admin_client, plot_search_test_data):
 
-    url = reverse("favourite-list")
+    url = reverse("v1:favourite-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -58,7 +58,7 @@ def test_favourite_post(
     lease_test_data,
 ):
 
-    url = reverse("favourite-list")
+    url = reverse("v1:favourite-list")
 
     plan_unit = plan_unit_factory(
         identifier="PU1",
@@ -85,7 +85,7 @@ def test_favourite_post(
 
     fav = Favourite.objects.first()
 
-    url = reverse("favourite-detail", kwargs={"pk": fav.pk})
+    url = reverse("v1:favourite-detail", kwargs={"pk": fav.pk})
 
     data = {"modified_at": timezone.now()}
     response = admin_client.patch(url, data, content_type="application/json")

@@ -35,7 +35,7 @@ def test_send_email(django_db_setup, client, lease_test_data, user_factory):
     }
 
     client.login(username="test_user", password="test_password")
-    url = reverse("send-email")
+    url = reverse("v1:send-email")
     response = client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

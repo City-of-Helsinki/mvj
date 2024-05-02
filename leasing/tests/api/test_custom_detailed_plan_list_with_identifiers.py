@@ -15,7 +15,7 @@ def test_custom_detailed_plan_list_with_identifiers(
         rent_build_permission=500,
     )
 
-    url = reverse("customdetailedplanlistwithidentifiers-list")
+    url = reverse("v1:customdetailedplanlistwithidentifiers-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

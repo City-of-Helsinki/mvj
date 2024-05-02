@@ -30,7 +30,7 @@ def test_upload_attachment(
 
     data = {"infill_development_compensation_lease": idcl.id}
 
-    url = reverse("infilldevelopmentcompensationattachment-list")
+    url = reverse("v1:infilldevelopmentcompensationattachment-list")
 
     dummy_file = BytesIO(b"dummy data")
     dummy_file.name = "dummy_file.zip"
@@ -63,7 +63,7 @@ def test_download_attachment(
 
     data = {"infill_development_compensation_lease": idcl.id}
 
-    url = reverse("infilldevelopmentcompensationattachment-list")
+    url = reverse("v1:infilldevelopmentcompensationattachment-list")
 
     dummy_file = BytesIO(b"dummy data")
     dummy_file.name = "dummy_file.zip"

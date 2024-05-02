@@ -15,7 +15,7 @@ def test_patch_lease_intended_use_note(django_db_setup, admin_client, lease_test
 
     data = {"intended_use_note": "Updated note"}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -50,7 +50,7 @@ def test_remove_tenant(
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -88,7 +88,7 @@ def test_lease_area_addresses(
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -140,7 +140,7 @@ def test_patch_lease_is_invoicing_enabled_not_possible(
 
     data = {"is_invoicing_enabled": True}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -164,7 +164,7 @@ def test_patch_lease_is_rent_info_complete_not_possible(
 
     data = {"is_rent_info_complete": True}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -186,7 +186,7 @@ def test_patch_lease_basis_of_rents(
         "basis_of_rents": [{"intended_use": 1, "area": "101.00", "area_unit": "m2"}]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = admin_client.patch(
         url,
@@ -203,7 +203,7 @@ def test_patch_lease_basis_of_rents_without_intended_use(
     lease = lease_test_data["lease"]
     data = {"basis_of_rents": [{"area": "101.00", "area_unit": "m2"}]}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = admin_client.patch(
         url,
@@ -222,7 +222,7 @@ def test_patch_lease_basis_of_rents_predefined_area_unit(
         "basis_of_rents": [{"intended_use": 1, "area": "100.00", "area_unit": "m2"}]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = admin_client.patch(
         url,
@@ -272,7 +272,7 @@ def test_patch_lease_plan_units(django_db_setup, admin_client, lease_test_data):
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -340,7 +340,7 @@ def test_validation_exception_on_planunit_delete_when_attached_to_plotsearch(
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -367,7 +367,7 @@ def test_patch_lease_has_contract_rent_base_amount_set(
         ],
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -429,7 +429,7 @@ def test_patch_lease_should_validate_service_unit_change(
         "service_unit": service_unit2.id if change_service_unit else service_unit.id,
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -493,7 +493,7 @@ def test_patch_lease_checks_service_unit(
         "notice_period": 2,
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -560,7 +560,7 @@ def test_patch_lease_checks_service_unit_on_related_contact(
         "lessor": {"id": contact2.id},
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,

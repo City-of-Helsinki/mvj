@@ -36,7 +36,7 @@ def test_plan_unit_list_with_identifiers(
         is_master=False,
     )
 
-    url = reverse("planunitlistwithidentifiers-list")
+    url = reverse("v1:planunitlistwithidentifiers-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

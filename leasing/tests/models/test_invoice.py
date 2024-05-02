@@ -1915,7 +1915,7 @@ def test_create_invoice_zero_amount_is_set_to_status_paid(
         "rows": [{"amount": Decimal(0), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -1982,7 +1982,7 @@ def test_create_invoice_zero_row_sum_is_set_to_status_paid(
         ],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

@@ -12,7 +12,7 @@ from leasing.serializers.land_area import LeaseAreaSerializer
 def test_create_lease_with_custom_detailed_plan(
     django_db_setup, admin_client, custom_area_in_lease
 ):
-    url = reverse("lease-list")
+    url = reverse("v1:lease-list")
 
     response = admin_client.post(
         url,
@@ -48,7 +48,7 @@ def test_change_custom_detailed_plan(django_db_setup, admin_client, lease_test_d
 
     data = {"lease_areas": [lease_area_data]}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -86,7 +86,7 @@ def test_add_custom_detailed_plan(django_db_setup, admin_client, lease_test_data
 
     data = {"lease_areas": [lease_area_data]}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -121,7 +121,7 @@ def test_remove_custom_detailed_plan(django_db_setup, admin_client, lease_test_d
 
     data = {"lease_areas": [lease_area_data]}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

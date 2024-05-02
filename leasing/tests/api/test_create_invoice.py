@@ -51,7 +51,7 @@ def test_create_invoice(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -109,7 +109,7 @@ def test_create_invoice_before_tenant_contract_is_activated(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -168,7 +168,7 @@ def test_create_zero_sum_invoice_state_is_paid(
         ],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -224,7 +224,7 @@ def test_create_invoice_for_tenant(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -290,7 +290,7 @@ def test_create_invoice_for_tenant_with_billing_contact(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -368,7 +368,7 @@ def test_create_invoice_tenant_not_in_lease(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -418,7 +418,7 @@ def test_create_interest_invoice_fail(
         "rows": [{"amount": Decimal(10), "receivable_type": 2}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -489,7 +489,7 @@ def test_create_invoice_checks_service_unit(
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -569,7 +569,7 @@ def test_create_invoice_cannot_add_row_with_receivable_type_from_another_service
         "rows": [{"amount": Decimal(10), "receivable_type": receivable_type.id}],
     }
 
-    url = reverse("invoice-list")
+    url = reverse("v1:invoice-list")
     response = client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

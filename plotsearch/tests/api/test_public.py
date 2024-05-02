@@ -11,7 +11,7 @@ fake = Faker("fi_FI")
 def test_faq_list(client):
     FAQ.objects.create(question=fake.name(), answer=fake.name())
 
-    url = reverse("pub_faq-list")
+    url = reverse("v1:pub_faq-list")
 
     response = client.get(path=url, content_type="application/json")
 

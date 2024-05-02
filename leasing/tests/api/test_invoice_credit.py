@@ -47,7 +47,7 @@ def test_invoice_credit_rounding(
 
     data = {"receivable_type": 1, "amount": "100"}
 
-    url = reverse("invoice-credit") + "?invoice={}".format(invoice.id)
+    url = reverse("v1:invoice-credit") + "?invoice={}".format(invoice.id)
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -108,7 +108,7 @@ def test_invoice_set_credit_rounding(
 
     data = {"receivable_type": 1, "amount": "100"}
 
-    url = reverse("invoice-set-credit") + "?invoice_set={}".format(invoiceset.id)
+    url = reverse("v1:invoice-set-credit") + "?invoice_set={}".format(invoiceset.id)
     response = admin_client.post(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

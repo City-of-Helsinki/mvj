@@ -51,7 +51,7 @@ def test_patch_decision_condition_cannot_change_fields(
     }
 
     client.login(username="test_user", password="test_password")
-    url = reverse("decision-detail", kwargs={"pk": decision.id})
+    url = reverse("v1:decision-detail", kwargs={"pk": decision.id})
     response = client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -113,7 +113,7 @@ def test_patch_decision_condition_can_change_some_fields(
     }
 
     client.login(username="test_user", password="test_password")
-    url = reverse("decision-detail", kwargs={"pk": decision.id})
+    url = reverse("v1:decision-detail", kwargs={"pk": decision.id})
     response = client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -176,7 +176,7 @@ def test_patch_decision_add_decision(
     }
 
     client.login(username="test_user", password="test_password")
-    url = reverse("decision-detail", kwargs={"pk": decision.id})
+    url = reverse("v1:decision-detail", kwargs={"pk": decision.id})
     response = client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -242,7 +242,7 @@ def test_patch_decision_remove_decision(
     data = {"conditions": [{"id": condition.id}]}
 
     client.login(username="test_user", password="test_password")
-    url = reverse("decision-detail", kwargs={"pk": decision.id})
+    url = reverse("v1:decision-detail", kwargs={"pk": decision.id})
     response = client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

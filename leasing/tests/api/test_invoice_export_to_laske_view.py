@@ -57,7 +57,7 @@ def test_export_one_invoice(
 
     monkeypatch.setattr(LaskeExporter, "send", mocked_send)
 
-    url = reverse("invoice-export-to-laske") + "?invoice={}".format(invoice.id)
+    url = reverse("v1:invoice-export-to-laske") + "?invoice={}".format(invoice.id)
     response = admin_client.post(url)
 
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

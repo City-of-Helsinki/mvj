@@ -85,7 +85,7 @@ def test_api_access_updates_service_units(
 
     jwt_token = encode(payload, rsa_key.to_dict(), algorithm="RS256")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
     response = client.get(url, HTTP_AUTHORIZATION=f"Bearer {jwt_token}")
 
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
