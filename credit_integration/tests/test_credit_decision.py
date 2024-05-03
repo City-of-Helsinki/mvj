@@ -228,7 +228,7 @@ def test_get_credit_decisions_endpoint(
 
     data = {"business_id": business_id}
     response = client.get(
-        reverse("credit_integration:get-credit-decisions"), data=data, format="json"
+        reverse("v1:credit_integration:get-credit-decisions"), data=data, format="json"
     )
 
     assert response.status_code == 200
@@ -255,7 +255,7 @@ def test_get_credit_decisions_without_access_right(
 
     data = {"business_id": business_id}
     response = client.get(
-        reverse("credit_integration:get-credit-decisions"), data=data, format="json"
+        reverse("v1:credit_integration:get-credit-decisions"), data=data, format="json"
     )
 
     assert response.status_code == 403
@@ -291,7 +291,7 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
         return_value=mock_return_company_json_data(business_id),
     ):
         response = client.post(
-            reverse("credit_integration:send-credit-decision-inquiry"),
+            reverse("v1:credit_integration:send-credit-decision-inquiry"),
             data=data,
             format="json",
         )
@@ -344,7 +344,7 @@ def test_send_credit_decision_inquiry_endpoint_with_identity_number(
         return_value=mock_return_consumer_json_data(identity_number),
     ):
         response = client.post(
-            reverse("credit_integration:send-credit-decision-inquiry"),
+            reverse("v1:credit_integration:send-credit-decision-inquiry"),
             data=data,
             format="json",
         )
@@ -394,7 +394,7 @@ def test_send_credit_decision_inquiry_endpoint_with_person_contact(
         ),
     ):
         response = client.post(
-            reverse("credit_integration:send-credit-decision-inquiry"),
+            reverse("v1:credit_integration:send-credit-decision-inquiry"),
             data=data,
             format="json",
         )
@@ -431,7 +431,7 @@ def test_send_credit_decision_inquiry_endpoint_without_access_right(
 
     data = {"business_id": business_id}
     response = client.post(
-        reverse("credit_integration:send-credit-decision-inquiry"),
+        reverse("v1:credit_integration:send-credit-decision-inquiry"),
         data=data,
         format="json",
     )

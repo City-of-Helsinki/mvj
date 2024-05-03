@@ -39,7 +39,7 @@ def test_direct_reservation_link_create(
         "send_mail": True,
     }
 
-    url = reverse("directreservationlink-list")
+    url = reverse("v1:directreservationlink-list")
 
     response = admin_client.post(url, data, content_type="application/json")
 
@@ -73,7 +73,7 @@ def test_direct_reservation_link_delete(
     direct_reservation_link.targets.add(target)
 
     url = reverse(
-        "directreservationlink-detail", kwargs={"pk": direct_reservation_link.uuid}
+        "v1:directreservationlink-detail", kwargs={"pk": direct_reservation_link.uuid}
     )
     response = admin_client.delete(url)
 
@@ -107,7 +107,7 @@ def test_create_favourites_with_link(
         )
 
     url = reverse(
-        "pub_direct_reservation_to_favourite",
+        "v1:pub_direct_reservation_to_favourite",
         kwargs={"uuid": direct_reservation_link.uuid},
     )
     response = admin_client.get(url)

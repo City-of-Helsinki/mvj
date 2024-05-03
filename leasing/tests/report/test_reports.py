@@ -83,7 +83,7 @@ def test_simple_async_report_send(rf, admin_user):
 @pytest.mark.django_db
 @pytest.mark.parametrize("report", ENABLED_REPORTS)
 def test_report_options_respond_with_ok(admin_client, report):
-    url = reverse("report-detail", kwargs={"report_type": report.slug})
+    url = reverse("v1:report-detail", kwargs={"report_type": report.slug})
 
     response = admin_client.options(url)
 
@@ -96,7 +96,7 @@ def test_report_options_respond_with_ok(admin_client, report):
 def test_can_generate_report_permission(client, user, report):
     client.force_login(user)
 
-    url = reverse("report-detail", kwargs={"report_type": report.slug})
+    url = reverse("v1:report-detail", kwargs={"report_type": report.slug})
 
     response = client.get(url)
     assert response.status_code == 403
@@ -111,7 +111,7 @@ def test_can_generate_report_permission(client, user, report):
 def test_report_list(client, user):
     client.force_login(user)
 
-    url = reverse("report-list")
+    url = reverse("v1:report-list")
 
     response = client.get(url)
     data = response.json()

@@ -14,11 +14,11 @@ def test_plan_unit_detail(
         is_master=True,
     )
 
-    url = reverse("planunitlistwithidentifiers-list")
+    url = reverse("v1:planunitlistwithidentifiers-list")
 
     response = admin_client.get(url, content_type="application/json")
     plan_unit_id = response.data["results"][0]["id"]
 
-    url = reverse("planunit-detail", kwargs={"pk": plan_unit_id})
+    url = reverse("v1:planunit-detail", kwargs={"pk": plan_unit_id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)

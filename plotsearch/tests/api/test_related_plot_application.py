@@ -13,7 +13,7 @@ class TestRelatedPlotApplicationViews:
         self, admin_client, related_plot_application_factory
     ):
         related_plot_applications = related_plot_application_factory.create_batch(10)
-        url = reverse("related_plot_application-list")
+        url = reverse("v1:related_plot_application-list")
         response = admin_client.get(url)
         assert response.status_code == status.HTTP_200_OK
         response_results_count = len(response.data.get("results", []))
@@ -28,7 +28,7 @@ class TestRelatedPlotApplicationViews:
         ]
         for related_plot_application in related_plot_applications:
             url = reverse(
-                "related_plot_application-detail", args=[related_plot_application.id]
+                "v1:related_plot_application-detail", args=[related_plot_application.id]
             )
             response = admin_client.get(url)
             assert response.status_code == status.HTTP_200_OK
@@ -37,7 +37,7 @@ class TestRelatedPlotApplicationViews:
     def test_create_related_plot_application(
         self, admin_client, related_plot_application_test_data
     ):
-        url = reverse("related_plot_application-list")
+        url = reverse("v1:related_plot_application-list")
         data = {
             "lease": related_plot_application_test_data["lease"].id,
             "content_type_model": ContentType.objects.get_for_model(
@@ -52,7 +52,7 @@ class TestRelatedPlotApplicationViews:
     def test_create_related_plot_application_permissions(
         self, client, user, related_plot_application_test_data
     ):
-        url = reverse("related_plot_application-list")
+        url = reverse("v1:related_plot_application-list")
         data = {
             "lease": related_plot_application_test_data["lease"].id,
             "content_type_model": ContentType.objects.get_for_model(
@@ -79,7 +79,7 @@ class TestRelatedPlotApplicationViews:
     def test_create_related_plot_application_validation(
         self, admin_client, related_plot_application_test_data
     ):
-        url = reverse("related_plot_application-list")
+        url = reverse("v1:related_plot_application-list")
         data_incorrect_model = {
             "lease": related_plot_application_test_data["lease"].id,
             "content_type_model": ContentType.objects.get_for_model(
@@ -110,7 +110,7 @@ class TestRelatedPlotApplicationViews:
             "related_plot_applications"
         ].pop()
         url = reverse(
-            "related_plot_application-detail", args=[related_plot_application.id]
+            "v1:related_plot_application-detail", args=[related_plot_application.id]
         )
         response = admin_client.delete(url)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -125,7 +125,7 @@ class TestRelatedPlotApplicationViews:
             "related_plot_applications"
         ].pop()
         url = reverse(
-            "related_plot_application-detail", args=[related_plot_application.id]
+            "v1:related_plot_application-detail", args=[related_plot_application.id]
         )
 
         client.force_login(user)
@@ -148,7 +148,7 @@ class TestRelatedPlotApplicationViews:
     def test_create_related_plot_application_content_type_choices(
         self, admin_client, lease_factory, plot_search_factory
     ):
-        url = reverse("related_plot_application-list")
+        url = reverse("v1:related_plot_application-list")
         data = {
             "lease": lease_factory().id,
             "content_type": ContentType.objects.get_for_model(PlotSearch).id,

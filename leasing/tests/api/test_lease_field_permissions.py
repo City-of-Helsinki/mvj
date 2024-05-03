@@ -19,7 +19,7 @@ def test_user_cant_view_any_fields(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -40,7 +40,7 @@ def test_superuser_can_view_all_fields(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -69,7 +69,7 @@ def test_user_can_view_some_fields(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -93,7 +93,7 @@ def test_user_cannot_modify_field(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     assert lease_test_data["lease"].type.id != 2
 
@@ -121,7 +121,7 @@ def test_user_can_modify_field(django_db_setup, client, lease_test_data, user_fa
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     assert lease_test_data["lease"].type.id != 2
 

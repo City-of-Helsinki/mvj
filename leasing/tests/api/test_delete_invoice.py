@@ -35,7 +35,7 @@ def test_user_cannot_delete_invoice_from_another_service_unit(
 
     client.force_login(user)
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = client.delete(url)
 
     assert response.status_code == 403, "%s %s" % (response.status_code, response.data)

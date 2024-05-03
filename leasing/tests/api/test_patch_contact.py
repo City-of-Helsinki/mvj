@@ -50,7 +50,7 @@ def test_patch_contact_should_validate_service_unit(
             service_unit2.id if change_service_unit else service_unit.id
         )
 
-    url = reverse("contact-detail", kwargs={"pk": contact.id})
+    url = reverse("v1:contact-detail", kwargs={"pk": contact.id})
 
     response = client.patch(
         url,

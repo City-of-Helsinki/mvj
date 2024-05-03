@@ -13,7 +13,7 @@ def test_search_finds_one_lease_by_full_identifier(
     )
     lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
 
-    response = admin_client.get(reverse("lease-list"), data={param_name: value})
+    response = admin_client.get(reverse("v1:lease-list"), data={param_name: value})
 
     assert response.status_code == 200, "%s %s" % (
         response.status_code,
@@ -34,7 +34,7 @@ def test_search_finds_one_lease_by_full_identifier_where_type_has_two_letters(
     )
     lease_factory(type_id=33, municipality_id=1, district_id=2, notice_period_id=1)
 
-    response = admin_client.get(reverse("lease-list"), data={param_name: "MA100-1"})
+    response = admin_client.get(reverse("v1:lease-list"), data={param_name: "MA100-1"})
 
     assert response.status_code == 200, "%s %s" % (
         response.status_code,

@@ -29,7 +29,7 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
         title=fake.name(),
     )
 
-    url = reverse("form-list")
+    url = reverse("v1:form-list")
     response_filter_true = admin_client.get(
         url, content_type="application/json", data={"is_template": True}
     )
@@ -48,7 +48,7 @@ def test_filter_form_is_template(django_db_setup, form_factory, admin_client):
 
 @pytest.mark.django_db
 def test_edit_form(admin_client, basic_form):
-    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    url = reverse("v1:form-detail", kwargs={"pk": basic_form.id})
     payload = {"state": FormState.READY}
     response = admin_client.patch(url, payload, content_type="application/json")
     assert response.status_code == 200
@@ -57,14 +57,14 @@ def test_edit_form(admin_client, basic_form):
 
 @pytest.mark.django_db
 def test_delete_form(admin_client, basic_form):
-    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    url = reverse("v1:form-detail", kwargs={"pk": basic_form.id})
     response = admin_client.delete(url)
     assert response.status_code == 204
 
 
 @pytest.mark.django_db
 def test_add_field_to_form(admin_client, basic_form):
-    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    url = reverse("v1:form-detail", kwargs={"pk": basic_form.id})
     response = admin_client.get(url)
     assert response.status_code == 200
     payload = response.data
@@ -92,7 +92,7 @@ def test_add_field_to_form(admin_client, basic_form):
 
 @pytest.mark.django_db
 def test_add_and_delete_section_to_form(admin_client, basic_form):
-    url = reverse("form-detail", kwargs={"pk": basic_form.id})
+    url = reverse("v1:form-detail", kwargs={"pk": basic_form.id})
     response = admin_client.get(url)
     assert response.status_code == 200
     payload = response.data
@@ -130,7 +130,7 @@ def test_answer_post(
     user_factory,
     basic_form,
 ):
-    url = reverse("pub_answer-list")  # Use public endpoint for posting answers
+    url = reverse("v1:pub_answer-list")  # Use public endpoint for posting answers
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -188,7 +188,7 @@ def test_answer_post(
     _, async_task_kwargs = mock_async_task.call_args
     assert async_task_kwargs.get("input_data").get("answer_id") == response.data["id"]
 
-    url = reverse("answer-detail", kwargs={"pk": 1})
+    url = reverse("v1:answer-detail", kwargs={"pk": 1})
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -238,7 +238,7 @@ def test_answer_post(
     )
     assert patched_data["hakijan-tiedot"]["metadata"] == {"metaa": "on"}
 
-    url = reverse("answer-list")
+    url = reverse("v1:answer-list")
     response = admin_client.get(url)
     assert response.status_code == 200
 
@@ -248,7 +248,7 @@ def test_answer_post(
     user.save()
     client.login(username=user.username, password=password)
 
-    url = reverse("answer-list")
+    url = reverse("v1:answer-list")
     response = client.get(url)
     assert response.status_code == 403
 
@@ -294,7 +294,7 @@ def test_target_status_patch(
 
     client.force_login(target_status.plot_search_target.plot_search.preparers.first())
 
-    url = reverse("targetstatus-detail", kwargs={"pk": target_status.pk})
+    url = reverse("v1:targetstatus-detail", kwargs={"pk": target_status.pk})
     response = client.patch(
         url, data=target_status_data, content_type="application/json"
     )
@@ -327,14 +327,14 @@ def test_meeting_memo_create(
     }
 
     url = reverse(
-        "meetingmemo-list",
+        "v1:meetingmemo-list",
     )
     response = admin_client.post(url, data=meeting_memo)
 
     assert response.status_code == 201
 
     url = reverse(
-        "answer-detail", kwargs={"pk": TargetStatus.objects.all().first().answer.pk}
+        "v1:answer-detail", kwargs={"pk": TargetStatus.objects.all().first().answer.pk}
     )
     response = admin_client.get(url)
 
@@ -351,12 +351,12 @@ def test_attachment_post(
         "name": fake.name(),
         "attachment": example_file,
     }
-    url = reverse("attachment-list")
+    url = reverse("v1:attachment-list")
     response = admin_client.post(url, data=payload)
     assert response.status_code == 201
     attachment_id = response.json()["id"]
 
-    url = reverse("answer-list")
+    url = reverse("v1:answer-list")
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -402,9 +402,9 @@ def test_attachment_post(
     assert response.status_code == 201
     assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
-    url = reverse("answer-attachments", kwargs={"pk": id})
+    url = reverse("v1:answer-attachments", kwargs={"pk": id})
     response = admin_client.get(url)
-    url = reverse("attachment-download", kwargs={"pk": attachment_id})
+    url = reverse("v1:attachment-download", kwargs={"pk": attachment_id})
     file_request = admin_client.get(url)
     assert response.status_code == 200
     assert len(response.json()) != 0
@@ -420,7 +420,7 @@ def test_attachment_delete(
         django_db_setup, admin_client, admin_user, plot_search_target, basic_form
     )
     attachment = Attachment.objects.all().first()
-    url = reverse("attachment-detail", kwargs={"pk": attachment.pk})
+    url = reverse("v1:attachment-detail", kwargs={"pk": attachment.pk})
     file_path = attachment.attachment.path
     assert os.path.isfile(file_path) is True
     response = admin_client.delete(url)
@@ -451,7 +451,7 @@ def test_opening_record_create(
         "answer": answer.pk,
     }
 
-    url = reverse("answer_opening_record-list")
+    url = reverse("v1:answer_opening_record-list")
     response = client.post(url, data=opening_record)
     assert response.status_code == 401
 
@@ -487,7 +487,7 @@ def test_opening_record_permissions(
         "answer": answer.pk,
     }
 
-    url = reverse("answer_opening_record-list")
+    url = reverse("v1:answer_opening_record-list")
 
     client.force_login(not_authorized_user)
     response = client.post(url, data=opening_record)
@@ -502,7 +502,7 @@ def test_opening_record_permissions(
     assert response.status_code == 201
 
     id = response.data["id"]
-    patch_url = reverse("answer_opening_record-detail", kwargs={"pk": id})
+    patch_url = reverse("v1:answer_opening_record-detail", kwargs={"pk": id})
 
     response = client.patch(
         patch_url, data=opening_record, content_type="application/json"
@@ -538,7 +538,7 @@ def test_answer_permissions_when_not_needed_opening_record(
     type.require_opening_record = True
     type.save()
 
-    url = reverse("answer-detail", kwargs={"pk": answer.pk})
+    url = reverse("v1:answer-detail", kwargs={"pk": answer.pk})
 
     client.force_login(plot_search_target.plot_search.preparers.all().first())
     response = client.get(url)
@@ -572,7 +572,7 @@ def test_opening_record_patch(
         "answer": answer.pk,
     }
 
-    url = reverse("answer_opening_record-list")
+    url = reverse("v1:answer_opening_record-list")
 
     client.force_login(plot_search_target.plot_search.preparers.all().first())
     response = client.post(url, data=opening_record)
@@ -580,7 +580,7 @@ def test_opening_record_patch(
 
     id = response.data["id"]
 
-    url = reverse("answer_opening_record-detail", kwargs={"pk": id})
+    url = reverse("v1:answer_opening_record-detail", kwargs={"pk": id})
 
     opening_record = {
         "openers": [

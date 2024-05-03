@@ -20,7 +20,7 @@ def test_create_own_uidata(django_db_setup, client, user_factory):
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-list")
+    url = reverse("v1:ui_data-list")
 
     data = {"key": "testkey", "value": "testvalue"}
 
@@ -48,7 +48,7 @@ def test_cant_create_others_uidata(django_db_setup, client, user_factory):
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-list")
+    url = reverse("v1:ui_data-list")
 
     user2 = user_factory(username="test_user2", email="test_user2@example.com")
 
@@ -75,7 +75,7 @@ def test_can_create_global_uidata(django_db_setup, client, user_factory):
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-list")
+    url = reverse("v1:ui_data-list")
 
     data = {"user": None, "key": "testkey", "value": "testvalue"}
 
@@ -103,7 +103,7 @@ def test_cant_create_global_uidata(django_db_setup, client, user_factory):
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-list")
+    url = reverse("v1:ui_data-list")
 
     data = {"user": None, "key": "testkey", "value": "testvalue"}
 
@@ -131,7 +131,7 @@ def test_can_edit_own_uidata(django_db_setup, client, user_factory, ui_data_fact
     ui_data = ui_data_factory(user=user, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
 
     data = {"key": "testkey2", "value": "testvalue2"}
 
@@ -165,7 +165,7 @@ def test_cant_edit_others_uidata(
     ui_data = ui_data_factory(user=user2, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
 
     data = {"key": "testkey2", "value": "testvalue2"}
 
@@ -192,7 +192,7 @@ def test_can_edit_global_uidata(django_db_setup, client, user_factory, ui_data_f
     ui_data = ui_data_factory(user=None, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
 
     data = {"key": "testkey2", "value": "testvalue2"}
 
@@ -224,7 +224,7 @@ def test_cant_edit_global_uidata(
     ui_data = ui_data_factory(user=None, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
 
     data = {"key": "testkey2", "value": "testvalue2"}
 
@@ -251,7 +251,7 @@ def test_delete_own_uidata(django_db_setup, client, user_factory, ui_data_factor
     ui_data = ui_data_factory(user=user, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
     response = client.delete(url)
 
     assert response.status_code == 204, "%s %s" % (response.status_code, response.data)
@@ -276,7 +276,7 @@ def test_cant_delete_others_uidata(
     ui_data = ui_data_factory(user=user2, key="testkey", value="testvalue")
 
     client.login(username="test_user", password="test_password")
-    url = reverse("ui_data-detail", kwargs={"pk": ui_data.id})
+    url = reverse("v1:ui_data-detail", kwargs={"pk": ui_data.id})
     response = client.delete(url)
 
     assert response.status_code == 404, "%s %s" % (response.status_code, response.data)

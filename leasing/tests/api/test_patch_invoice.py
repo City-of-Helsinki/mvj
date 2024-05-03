@@ -51,7 +51,7 @@ def test_patch_invoice_change_one_row_amount(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -118,7 +118,7 @@ def test_patch_invoice_change_other_row_amount(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -186,7 +186,7 @@ def test_patch_invoice_change_two_row_amount(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -273,7 +273,7 @@ def test_patch_invoice_with_invoiceset_change_row_amount(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -341,7 +341,7 @@ def test_delete_invoice_invoice_in_invoiceset(
 
     invoice_row_factory(invoice=invoice2, receivable_type_id=1, amount=Decimal(50))
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice2.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice2.id})
     response = admin_client.delete(url, content_type="application/json")
 
     assert response.status_code == 204, "%s %s" % (response.status_code, response.data)
@@ -400,7 +400,7 @@ def test_patch_invoice_change_if_sent_to_sap(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -463,7 +463,7 @@ def test_patch_invoice_cant_change_if_generated(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -531,7 +531,7 @@ def test_patch_credit_note_credited_invoice_outstanding_amount(
         "rows": [{"id": credit_note_row.id, "receivable_type": 1, "amount": 150}],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": credit_note.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": credit_note.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -597,7 +597,7 @@ def test_patch_credit_note_dates_read_only(
         "notes": "Should change",
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": credit_note.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": credit_note.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -649,7 +649,7 @@ def test_patch_invoice_add_payment(
         "payments": [{"paid_amount": 100, "paid_date": timezone.now().date()}],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -698,7 +698,7 @@ def test_patch_generated_invoice_add_payment(
         "payments": [{"paid_amount": 100, "paid_date": timezone.now().date()}],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -746,7 +746,7 @@ def test_patch_invoice_cannot_add_payment_if_sent_to_sap(
         "payments": [{"paid_amount": 100, "paid_date": timezone.now().date()}],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -801,7 +801,7 @@ def test_patch_invoice_existing_interest_row_success(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -855,7 +855,7 @@ def test_patch_invoice_change_interest_row_fail(
         ],
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -898,7 +898,7 @@ def test_patch_invoice_new_interest_row_fail(
         "rows": [{"receivable_type": 2, "amount": 100}],  # Interest
     }
 
-    url = reverse("invoice-detail", kwargs={"pk": invoice.id})
+    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),

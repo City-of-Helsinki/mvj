@@ -25,7 +25,7 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
     user.user_permissions.add(*permissions)
     client = APIClient()
     client.force_authenticate(user=user)
-    response = client.get(reverse("audittrail"), {"type": "lease", "id": lease.id})
+    response = client.get(reverse("v1:audittrail"), {"type": "lease", "id": lease.id})
     assert response.status_code == 200
     (
         logentry,
@@ -40,7 +40,7 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
     lease.lessor = contact
     lease.save()
 
-    response = client.get(reverse("audittrail"), {"type": "lease", "id": lease.id})
+    response = client.get(reverse("v1:audittrail"), {"type": "lease", "id": lease.id})
     assert response.status_code == 200
     data = response.json().get("results")
     assert not any(
@@ -52,7 +52,7 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
     user = user_factory()
     user.user_permissions.add(*permissions)
     client.force_authenticate(user=user)
-    response = client.get(reverse("audittrail"), {"type": "lease", "id": lease.id})
+    response = client.get(reverse("v1:audittrail"), {"type": "lease", "id": lease.id})
     assert response.status_code == 200
     data = response.json().get("results")
     assert any(
@@ -80,7 +80,7 @@ def test_audittrail_get_types(
     client = APIClient()
     client.force_authenticate(user=user)
     for model_name in ["comment", "plotsearch"]:
-        response = client.get(reverse("audittrail"), {"type": model_name, "id": 1})
+        response = client.get(reverse("v1:audittrail"), {"type": model_name, "id": 1})
         assert (
             response.status_code == 400
         ), f"{model_name} should not be a valid option for type"
@@ -94,7 +94,9 @@ def test_audittrail_get_types(
     client.force_authenticate(user=user)
     for obj in objs:
         model_name = obj._meta.model_name
-        response = client.get(reverse("audittrail"), {"type": model_name, "id": obj.id})
+        response = client.get(
+            reverse("v1:audittrail"), {"type": model_name, "id": obj.id}
+        )
         assert (
             response.status_code == 200
         ), f"{model_name} should be a valid option for model_name"

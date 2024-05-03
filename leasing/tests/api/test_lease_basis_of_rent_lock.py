@@ -58,7 +58,7 @@ def test_lock_lease_basis_of_rent(
         "basis_of_rents": [{"id": lease_basis_of_rent.id, "locked_at": lock_time}],
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -121,7 +121,7 @@ def test_cannot_change_locked_lease_basis_of_rent(
         "basis_of_rents": [{"id": lease_basis_of_rent.id, "intended_use_id": 2}],
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -183,7 +183,7 @@ def test_cannot_unclock_locked_lease_basis_of_rent(
         "basis_of_rents": [{"id": lease_basis_of_rent.id, "locked_at": None}],
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -246,7 +246,7 @@ def test_can_unclock_locked_lease_basis_of_rent(
         "basis_of_rents": [{"id": lease_basis_of_rent.id, "locked_at": None}],
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,
@@ -307,7 +307,7 @@ def test_cannot_remove_locked_lease_basis_of_rent(
 
     data = {"id": lease.id, "basis_of_rents": []}
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 
     response = client.patch(
         url,

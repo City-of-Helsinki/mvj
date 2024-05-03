@@ -46,7 +46,7 @@ def test_create_contact_should_validate_service_unit(
     if with_request_service_unit:
         data["service_unit"] = {"id": service_unit.id}
 
-    url = reverse("contact-list")
+    url = reverse("v1:contact-list")
 
     response = client.post(
         url,

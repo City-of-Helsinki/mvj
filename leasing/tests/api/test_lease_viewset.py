@@ -34,7 +34,7 @@ def test_set_invoicing_state(
 
     data = {"invoicing_enabled": value}
 
-    url = reverse("lease-set-invoicing-state") + "?lease={}".format(lease.id)
+    url = reverse("v1:lease-set-invoicing-state") + "?lease={}".format(lease.id)
 
     response = admin_client.post(
         url,
@@ -75,7 +75,9 @@ def test_set_rent_info_completion_state(
 
     data = {"rent_info_complete": value}
 
-    url = reverse("lease-set-rent-info-completion-state") + "?lease={}".format(lease.id)
+    url = reverse("v1:lease-set-rent-info-completion-state") + "?lease={}".format(
+        lease.id
+    )
 
     response = admin_client.post(
         url,
@@ -101,7 +103,7 @@ def test_lease_details_contains_future_tenants(
     - As a user, I want to send an invoice for the tenant which are not yet actives
     """
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = admin_client.get(
         url,
@@ -144,7 +146,7 @@ def test_copy_areas_to_contract(
 
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 0
 
-    url = reverse("lease-copy-areas-to-contract") + "?lease={}".format(lease.id)
+    url = reverse("v1:lease-copy-areas-to-contract") + "?lease={}".format(lease.id)
     response = admin_client.post(
         url,
         content_type="application/json",

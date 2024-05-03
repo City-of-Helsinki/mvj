@@ -5,7 +5,7 @@ from django.urls import reverse
 
 @pytest.mark.django_db
 def test_anonymous_user_cannot_view_lease(django_db_setup, client, lease_test_data):
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -23,7 +23,7 @@ def test_user_without_permission_cant_view_lease(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -44,7 +44,7 @@ def test_user_with_permission_can_view_lease(
 
     client.login(username="test_user", password="test_password")
 
-    url = reverse("lease-detail", kwargs={"pk": lease_test_data["lease"].id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
 
     response = client.get(url)
 
@@ -85,7 +85,7 @@ def test_field_permission(
 
     contact = lease_test_data["tenantcontacts"][0].contact
 
-    url = reverse("contact-detail", kwargs={"pk": contact.id})
+    url = reverse("v1:contact-detail", kwargs={"pk": contact.id})
 
     response = client.get(url)
 

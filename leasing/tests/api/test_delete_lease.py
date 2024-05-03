@@ -32,7 +32,7 @@ def test_user_can_delete_empty_lease(
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.force_login(user)
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = client.delete(url)
 
     assert response.status_code == 204, "%s %s" % (response.status_code, response.data)
@@ -69,7 +69,7 @@ def test_user_can_delete_non_empty_lease_with_permission(
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.force_login(user)
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = client.delete(url)
 
     assert response.status_code == 204, "%s %s" % (response.status_code, response.data)
@@ -106,7 +106,7 @@ def test_user_cannot_delete_empty_lease_from_another_service_unit(
         user.user_permissions.add(Permission.objects.get(codename=permission_name))
 
     client.force_login(user)
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = client.delete(url)
 
     assert response.status_code == 403, "%s %s" % (response.status_code, response.data)

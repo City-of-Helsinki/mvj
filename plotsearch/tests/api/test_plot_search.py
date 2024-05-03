@@ -42,7 +42,7 @@ def test_plot_search_detail(
         target_type=PlotSearchTargetType.SEARCHABLE,
     )
 
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -55,7 +55,7 @@ def test_plot_search_detail(
 @pytest.mark.django_db
 def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 
-    url = reverse("plotsearch-list")
+    url = reverse("v1:plotsearch-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -65,7 +65,7 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
 @pytest.mark.django_db
 def test_plot_search_stage_public(client):
 
-    url = reverse("pub_plot_search-list")
+    url = reverse("v1:pub_plot_search-list")
     stage = PlotSearchStage.objects.get(stage=SearchStage.IN_ACTION)
     params = {"stage": stage.id}
     response = client.get(url, params, content_type="application/json")
@@ -92,7 +92,7 @@ def test_plot_search_create_simple(
     plot_search_test_data,
     lease_test_data,
 ):
-    url = reverse("plotsearch-list")  # list == create
+    url = reverse("v1:plotsearch-list")  # list == create
 
     data = {
         "name": get_random_string(length=12),
@@ -113,7 +113,7 @@ def test_plot_search_create(
     user_factory,
     plan_unit_factory,
 ):
-    url = reverse("plotsearch-list")  # list == create
+    url = reverse("v1:plotsearch-list")  # list == create
 
     # Add preparer
     user = user_factory(username="test_user")
@@ -159,7 +159,7 @@ def test_plot_search_update(
     plan_unit_factory,
 ):
     url = reverse(
-        "plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
+        "v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
     )  # detail == update
 
     # Add preparer
@@ -224,7 +224,7 @@ def test_plot_search_delete_target(
     plan_unit_factory,
 ):
     url = reverse(
-        "plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
+        "v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id}
     )  # detail == update
 
     # Add preparer
@@ -287,7 +287,7 @@ def test_plot_search_master_plan_unit_is_deleted(
     # Delete master plan unit
     PlanUnit.objects.get(pk=master_plan_unit_id).delete()
 
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert not response.data["plot_search_targets"][0]["master_plan_unit_id"]
@@ -321,7 +321,7 @@ def test_plot_search_master_plan_unit_is_newer(
     master_plan_unit.detailed_plan_identifier = "DP1"
     master_plan_unit.save()
 
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert response.data["plot_search_targets"][0]["master_plan_unit_id"] > 0
@@ -377,7 +377,7 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
     PlanUnit.objects.get(pk=master_plan_unit_id).delete()
 
     # Get plot search detail
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
 
@@ -385,7 +385,7 @@ def test_plot_search_master_plan_unit_is_deleted_change_to_new(
     assert response.data["plot_search_targets"][0]["is_master_plan_unit_deleted"]
 
     # Change to new plan unit
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response.data.pop("type")
     response.data.pop("plot_search_targets")
     response.data["plot_search_targets"] = [
@@ -445,7 +445,7 @@ def test_attach_form_to_plot_search(
     )
     section_count_pre_clone = Section.objects.count()
     assert plot_search_test_data.form is None, "Should not have form attached"
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     # Important: This operation uses pre_save signal on PlotSearch to clone the form
     # in cases when form is a template
     # Template form gets cloned by this signal: `prepare_template_form_on_plot_search_save()`
@@ -471,7 +471,7 @@ def test_attach_form_to_plot_search(
     assert Section.objects.count() == expected_section_count_after_clone
 
     form_count_before_create_plotsearch = Form.objects.count()
-    url = reverse("plotsearch-list")
+    url = reverse("v1:plotsearch-list")
     response = admin_client.post(
         url,
         data={"name": "Test name", "form": form.id},
@@ -524,7 +524,7 @@ def test_attach_form_to_plot_search(
     # This request removes the previous form attached to the plot search
     # The signal `prepare_template_form_on_plot_search_save` clones the template form
     # and deletes the previously attached form
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_id})
     response = admin_client.patch(
         url, data={"form": new_form.id}, content_type="application/json"
     )
@@ -554,7 +554,7 @@ def test_attach_decision_to_plot_search(
 
     decision = decision_factory(lease=lease)
 
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
     response = admin_client.patch(
         url,
         data={
@@ -568,7 +568,7 @@ def test_attach_decision_to_plot_search(
     plot_search_test_data = PlotSearch.objects.get(id=plot_search_test_data.id)
     assert plot_search_test_data.decisions.all()[0].id == decision.id
 
-    url = reverse("plotsearch-list")
+    url = reverse("v1:plotsearch-list")
     response = admin_client.post(
         url,
         data={
@@ -597,7 +597,9 @@ def test_add_target_info_link(
         "language": "fi",
     }
 
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id})
+    url = reverse(
+        "v1:plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id}
+    )
     response = admin_client.get(url)
     assert response.status_code == 200
     payload = response.data
@@ -637,7 +639,9 @@ def test_getting_and_editing_and_deleting_existing_info_link(
         )
 
     # Fetch info links via api
-    url = reverse("plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id})
+    url = reverse(
+        "v1:plotsearch-detail", kwargs={"pk": plot_search_target.plot_search.id}
+    )
     response = admin_client.get(url)
     assert response.status_code == 200
 
@@ -716,7 +720,7 @@ def test_get_area_search_detail(
     admin_client,
     area_search_test_data,
 ):
-    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+    url = reverse("v1:areasearch-detail", kwargs={"pk": area_search_test_data.id})
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -730,7 +734,7 @@ def test_post_area_search_detail(
     data = {
         "area_search_status": {"status_notes": [{"note": "Aluetta ei saa vuokrata"}]}
     }
-    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+    url = reverse("v1:areasearch-detail", kwargs={"pk": area_search_test_data.id})
 
     response = admin_client.patch(url, data=data, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -741,7 +745,7 @@ def test_post_area_search_detail_empty_payload(
     admin_client,
     area_search_test_data,
 ):
-    url = reverse("areasearch-detail", kwargs={"pk": area_search_test_data.id})
+    url = reverse("v1:areasearch-detail", kwargs={"pk": area_search_test_data.id})
     data = {}
 
     response = admin_client.patch(url, data=data, content_type="application/json")
@@ -763,7 +767,7 @@ def test_post_area_search_detail_empty_payload(
 @pytest.mark.django_db
 def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
 
-    url = reverse("areasearch-list")
+    url = reverse("v1:areasearch-list")
 
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
@@ -774,7 +778,7 @@ def test_area_search_list(django_db_setup, admin_client, area_search_test_data):
 def test_area_search_create_simple(
     django_db_setup, admin_client, area_search_test_data
 ):
-    url = reverse("areasearch-list")  # list == create
+    url = reverse("v1:areasearch-list")  # list == create
 
     data = {
         "description_area": get_random_string(length=12),
@@ -805,14 +809,14 @@ def test_area_search_attachment_create(
     }
 
     url = reverse(
-        "areasearchattachment-list",
+        "v1:areasearchattachment-list",
     )
     response = admin_client.post(url, data=attachment)
 
     assert response.status_code == 201
 
     url = reverse(
-        "areasearch-detail",
+        "v1:areasearch-detail",
         kwargs={"pk": AreaSearch.objects.get(pk=area_search_test_data.id).pk},
     )
     response = admin_client.get(url)
@@ -839,7 +843,7 @@ def test_opening_record_create(
     }
 
     url = reverse(
-        "plotsearch-open-answers", kwargs={"pk": plot_search_target.plot_search.pk}
+        "v1:plotsearch-open-answers", kwargs={"pk": plot_search_target.plot_search.pk}
     )
 
     assert AnswerOpeningRecord.objects.all().count() == 0

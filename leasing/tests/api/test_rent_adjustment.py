@@ -67,7 +67,7 @@ def test_create_total_amount_adjustment(
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
@@ -148,7 +148,7 @@ def test_update_total_amount_adjustment(
         ]
     }
 
-    url = reverse("lease-detail", kwargs={"pk": lease.id})
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
         url,
         data=json.dumps(data, cls=DjangoJSONEncoder),
