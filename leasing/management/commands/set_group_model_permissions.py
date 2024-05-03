@@ -1183,25 +1183,13 @@ DEFAULT_MODEL_PERMS = {
         7: ("view", "add", "change", "delete"),
     },
     "areasearchattachment": {
-        1: ("view",),
-        2: (
-            "view",
-            "add",
-        ),
-        3: ("view",),
-        4: (
-            "view",
-            "add",
-        ),
-        5: (
-            "view",
-            "add",
-        ),
-        6: ("view",),
-        7: (
-            "view",
-            "add",
-        ),
+        1: ("view"),
+        2: ("view", "add"),
+        3: ("view"),
+        4: ("view", "add"),
+        5: ("view", "add"),
+        6: ("view"),
+        7: ("view", "add"),
     },
     "meetingmemo": {
         1: None,
