@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from leasing.importer.area import AreaImporter
 from leasing.importer.lease import LeaseImporter
 from leasing.importer.lease_area import LeaseAreaImporter
-from leasing.importer.lease_relations import LeaseRelationsImporter
 from leasing.importer.usage_distributions import UsageDistributionImporter
 
 
@@ -15,7 +14,6 @@ class Command(BaseCommand):
 
         self.importers = [
             LeaseImporter,
-            LeaseRelationsImporter,
             AreaImporter,
             LeaseAreaImporter,
             UsageDistributionImporter,
