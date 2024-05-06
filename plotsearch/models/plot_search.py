@@ -574,6 +574,16 @@ class AreaSearch(models.Model):
         "form",
     ]
 
+    def clean(self):
+        if not self.description_area and not self.geometry:
+            raise ValidationError(
+                "Fields description_area and geometry may not be null or blank at the same time."
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super(AreaSearch, self).save(*args, **kwargs)
+
     def get_xlsx_page(self, worksheet, row):
         return get_area_search_answer_worksheet(self, worksheet, row)
 

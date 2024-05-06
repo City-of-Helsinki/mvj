@@ -905,7 +905,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         allow_null=True,
     )
     applicants = serializers.SerializerMethodField()
-    geometry = GeometryField()
+    geometry = GeometryField(required=False, allow_null=True)
 
     area_search_attachments = InstanceDictPrimaryKeyRelatedField(
         instance_class=AreaSearchAttachment,
@@ -956,21 +956,17 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "service_unit",
         )
 
-    def create(self, validated_data):
-        area_form_qs = Form.objects.filter(is_area_form=True)
-        area_search_status = validated_data.pop("area_search_status", None)
-        # When areasearch form does not exist it will be initialized
-        if area_form_qs.exists():
-            validated_data["form"] = area_form_qs.last()
-        else:
-            validated_data["form"] = initialize_area_search_form()
-        attachments = validated_data.pop("area_search_attachments", [])
-
+    @staticmethod
+    def get_address_and_district_from_kartta_hel(geometry):
+        """
+        Fetches address and district data from kartta.hel.fi
+        Returns tuple with address as first element and district as second
+        """
         inproj = Proj(init="epsg:4326")
         outproj = Proj(init="epsg:3879")
         multipolygon = list()
 
-        for x1, y1 in validated_data["geometry"].coords[0][0]:
+        for x1, y1 in geometry.coords[0][0]:
             multipolygon.append(transform(inproj, outproj, x1, y1))
 
         multipolygon_str = ",".join(["{} {}".format(y1, x1) for x1, y1 in multipolygon])
@@ -997,16 +993,30 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
             results = response.json()
 
-        validated_data["address"] = results["features"][0]["properties"].get(
-            "katuosoite", None
-        )
-        validated_data["district"] = results["features"][0]["properties"].get(
+        address = results["features"][0]["properties"].get("katuosoite", None)
+        district = results["features"][0]["properties"].get(
             "kaupunginosa_nimi_fi", None
         )
 
-        if validated_data["district"] is None:
-            validated_data["district"] = results["features"][0]["properties"].get(
-                "nimi_fi", None
+        if district is None:
+            district = results["features"][0]["properties"].get("nimi_fi", None)
+        return (address, district)
+
+    def create(self, validated_data):
+        area_form_qs = Form.objects.filter(is_area_form=True)
+        area_search_status = validated_data.pop("area_search_status", None)
+        # When areasearch form does not exist it will be initialized
+        if area_form_qs.exists():
+            validated_data["form"] = area_form_qs.last()
+        else:
+            validated_data["form"] = initialize_area_search_form()
+        attachments = validated_data.pop("area_search_attachments", [])
+
+        if "geometry" in validated_data and validated_data["geometry"] is not None:
+            validated_data["address"], validated_data["district"] = (
+                self.get_address_and_district_from_kartta_hel(
+                    validated_data["geometry"]
+                )
             )
 
         area_search = AreaSearch.objects.create(**validated_data)
@@ -1038,6 +1048,16 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
     def update(self, instance, validated_data):
         area_search_status = validated_data.pop("area_search_status", None)
+
+        if "geometry" in validated_data and validated_data["geometry"] is not None:
+            validated_data["address"], validated_data["district"] = (
+                self.get_address_and_district_from_kartta_hel(
+                    validated_data["geometry"]
+                )
+            )
+        else:
+            validated_data["address"], validated_data["district"] = None, None
+
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
         as_serializer = AreaSearchStatusSerializer(context=self.context)

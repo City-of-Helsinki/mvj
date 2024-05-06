@@ -1173,7 +1173,7 @@ class TargetStatusFactory(factory.django.DjangoModelFactory):
 @register
 class RelatedPlotApplicationFactory(factory.django.DjangoModelFactory):
     lease = factory.SubFactory(LeaseFactory)
-    content_object = factory.SubFactory(AreaSearchFactory)
+    content_object = factory.SubFactory(AreaSearchFactory, description_area="test")
 
     class Meta:
         model = RelatedPlotApplication
