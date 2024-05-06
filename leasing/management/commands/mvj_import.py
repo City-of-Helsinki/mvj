@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from leasing.importer.area import AreaImporter
-from leasing.importer.basis_of_rent import BasisOfRentImporter
 from leasing.importer.invoice_relations import InvoiceRelationsImporter
 from leasing.importer.lease import LeaseImporter
 from leasing.importer.lease_area import LeaseAreaImporter
@@ -16,7 +15,6 @@ class Command(BaseCommand):
         super().__init__(stdout=stdout, stderr=stderr, no_color=no_color)
 
         self.importers = [
-            BasisOfRentImporter,
             LeaseImporter,
             LeaseRelationsImporter,
             AreaImporter,
