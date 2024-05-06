@@ -308,7 +308,7 @@ class Command(BaseCommand):
                     continue
 
                 if invoice.lease.is_subject_to_vat:
-                    vat = Vat.objects.get_for_date(payment_date)
+                    vat = Vat.objects.get_for_date(invoice.invoicing_date)
                     if not vat:
                         self.stdout.write(
                             f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date}!"
