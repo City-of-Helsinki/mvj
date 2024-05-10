@@ -59,7 +59,6 @@ from plotsearch.models.plot_search import (
     DirectReservationLink,
 )
 from plotsearch.permissions import (
-    AreaSearchAttachmentPermissions,
     AreaSearchPublicPermissions,
     PlotSearchOpeningRecordPermissions,
 )
@@ -375,7 +374,7 @@ class AreaSearchAttachmentViewset(
 ):
     queryset = AreaSearchAttachment.objects.all()
     serializer_class = AreaSearchAttachmentSerializer
-    permission_classes = (AreaSearchAttachmentPermissions,)
+    permission_classes = (PerMethodPermission,)
     perms_map = {
         "GET": ["plotsearch.view_areasearchattachment"],
         "HEAD": ["plotsearch.view_areasearchattachment"],
