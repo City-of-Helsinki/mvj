@@ -386,14 +386,13 @@ class AreaSearchAttachmentViewset(
     def get_queryset(self):
         qs = super().get_queryset()
         user = self.request.user
-        if user.has_perm("plot_search.area_search_attachment"):
+        if user.has_perm("plotsearch.view_areasearchattachment"):
             return qs
         return qs.filter(user=self.request.user)
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
         obj = self.get_object()
-
         with obj.attachment.open() as fp:
             # TODO: detect file MIME type
             response = HttpResponse(File(fp), content_type="application/octet-stream")
