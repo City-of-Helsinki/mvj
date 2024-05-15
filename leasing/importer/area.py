@@ -106,7 +106,7 @@ AREA_IMPORT_TYPES = {
         WHERE kaavanumero IS NOT NULL
         """,
     },
-    # Vuokra-alueet
+    # Vuokra-alueet: MAKE / vuokrausalue_paa
     "lease_area": {
         "source_dsn_setting_name": "LEASE_AREA_DATABASE_DSN",
         "source_name": "Tonttiosasto: vuokrausalue_paa",
@@ -127,6 +127,36 @@ AREA_IMPORT_TYPES = {
         SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
             AS geom_text
         FROM tonttiosasto.vuokrausalue_paa AS a
+        WHERE vuokratunnus IS NOT NULL
+        AND geom IS NOT NULL
+        AND NOT UPPER(olotila) LIKE 'PÄÄTTYNYT'
+        AND kunta IS NOT NULL
+        AND sijaintialue IS NOT NULL
+        AND ryhma IS NOT NULL
+        AND yksikko IS NOT NULL
+        """,
+    },
+    # Vuokra-alueet: AKV & KUVA / vuokrausalue_lyhyt_paa
+    "lease_area_akv_kuva": {
+        "source_dsn_setting_name": "LEASE_AREA_DATABASE_DSN",
+        "source_name": "Tonttiosasto: vuokrausalue_lyhyt_paa",
+        "source_identifier": "tonttiosasto.vuokrausalue_lyhyt_paa",
+        "area_type": AreaType.LEASE_AREA,
+        "identifier_field_name": "vuokratunnus",
+        "metadata_columns": [
+            "vuokratunnus",
+            "sopimusnumero",
+            "olotila",
+            "kunta",
+            "sijaintialue",
+            "ryhma",
+            "yksikko",
+            "mvj_yks",
+        ],
+        "query": """
+        SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+            AS geom_text
+        FROM tonttiosasto.vuokrausalue_lyhyt_paa AS a
         WHERE vuokratunnus IS NOT NULL
         AND geom IS NOT NULL
         AND NOT UPPER(olotila) LIKE 'PÄÄTTYNYT'
