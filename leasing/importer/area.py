@@ -285,7 +285,7 @@ class AreaImporter(BaseImporter):
             try:
                 conn = psycopg.connect(
                     getattr(settings, area_import["source_dsn_setting_name"]),
-                    cursor_factory=namedtuple_row,
+                    row_factory=namedtuple_row,
                 )
             except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
                 self.stderr.write(str(e))
