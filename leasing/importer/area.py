@@ -13,6 +13,38 @@ from leasing.models.area import Area, AreaSource
 
 from .base import BaseImporter
 
+Metadata = Dict[str, str]
+
+
+class AreaImport(TypedDict, total=False):
+    source_dsn_setting_name: str
+    source_name: str
+    source_identifier: str
+    area_type: AreaType
+    identifier_field_name: str
+    metadata_columns: List[str]
+    query: str
+
+
+class MatchData(TypedDict, total=False):
+    type: str
+    identifier: str
+    source: str
+    external_id: Optional[str]
+    detailed_plan_identifier: Optional[str]
+
+
+class OtherData(TypedDict, total=False):
+    geometry: geos.MultiPolygon
+    metadata: Metadata
+    external_id: Optional[str]
+
+
+class NamedTupleUnknown(NamedTuple):
+    def __getattr__(self, name: str) -> Any:
+        pass
+
+
 METADATA_COLUMN_NAME_MAP = {
     "diaarinumero": "diary_number",
     "hyvaksyja": "acceptor",
@@ -63,7 +95,7 @@ METADATA_COLUMN_NAME_MAP = {
 }
 
 
-AREA_IMPORT_TYPES = {
+AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
     # Kaavat
     "detailed_plan": {
         "source_dsn_setting_name": "AREA_DATABASE_DSN",
@@ -267,27 +299,6 @@ AREA_IMPORT_TYPES = {
     },
 }
 
-Metadata = Dict[str, str]
-
-
-class MatchData(TypedDict, total=False):
-    type: str
-    identifier: str
-    source: str
-    external_id: Optional[str]
-    detailed_plan_identifier: Optional[str]
-
-
-class OtherData(TypedDict, total=False):
-    geometry: geos.MultiPolygon
-    metadata: Metadata
-    external_id: Optional[str]
-
-
-class NamedTupleUnknown(NamedTuple):
-    def __getattr__(self, name: str) -> Any:
-        pass
-
 
 class AreaImporter(BaseImporter):
     type_name = "area"
@@ -318,7 +329,9 @@ class AreaImporter(BaseImporter):
 
                 self.area_types.append(area_type)
 
-    def get_database_connection(self, area_import: dict, area_import_type: str):
+    def get_database_connection(
+        self, area_import: AreaImport, area_import_type: AreaType
+    ):
         try:
             conn = psycopg.connect(
                 getattr(settings, area_import["source_dsn_setting_name"]),
@@ -353,8 +366,8 @@ class AreaImporter(BaseImporter):
     def get_metadata(
         self,
         row: NamedTupleUnknown,
-        area_import: dict,
-        errors: list,
+        area_import: AreaImport,
+        errors: List[str],
         error_count: int,
     ) -> Tuple[Optional[Metadata], int]:
         try:
@@ -376,7 +389,11 @@ class AreaImporter(BaseImporter):
             return None, error_count
 
     def get_match_data(
-        self, row: NamedTupleUnknown, area_import: dict, source: str, metadata: dict
+        self,
+        row: NamedTupleUnknown,
+        area_import: AreaImport,
+        source: str,
+        metadata: Metadata,
     ) -> Optional[MatchData]:
         match_data: MatchData = {
             "type": area_import["area_type"],
@@ -398,14 +415,14 @@ class AreaImporter(BaseImporter):
                 return None
         return match_data
 
-    def get_areas(self, match_data: MatchData, metadata: dict) -> QuerySet[Area]:
+    def get_areas(self, match_data: MatchData, metadata: Metadata) -> QuerySet[Area]:
         areas = Area.objects.all()
         if "detailed_plan_identifier" in match_data:
             dp_id = metadata.get("detailed_plan_identifier")
             areas = areas.filter(metadata__detailed_plan_identifier=dp_id)
         return areas
 
-    def get_geometry(self, row: NamedTupleUnknown, errors: list, error_count: int):
+    def get_geometry(self, row: NamedTupleUnknown, errors: List[str], error_count: int):
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
@@ -420,7 +437,11 @@ class AreaImporter(BaseImporter):
             return None, error_count
 
     def handle_geometry(
-        self, geom: geos.MultiPolygon, row: NamedTuple, errors: list, error_count: int
+        self,
+        geom: geos.MultiPolygon,
+        row: NamedTuple,
+        errors: List[str],
+        error_count: int,
     ):
         if geom and isinstance(geom, geos.Polygon):
             geom = geos.MultiPolygon(geom)
@@ -475,9 +496,9 @@ class AreaImporter(BaseImporter):
     def process_rows(
         self,
         cursor: psycopg.Cursor[NamedTuple],
-        area_import: dict,
+        area_import: AreaImport,
         source: str,
-        errors: list,
+        errors: List[str],
     ):
         imported_identifiers: List[str] = []
         error_count = 0
@@ -533,7 +554,7 @@ class AreaImporter(BaseImporter):
         )
         return imported_identifiers
 
-    def process_area_import_type(self, area_import_type: str):
+    def process_area_import_type(self, area_import_type: AreaType):
         type_start = perf_counter()
 
         errors: List[str] = []
@@ -541,7 +562,7 @@ class AreaImporter(BaseImporter):
             'Starting to import the area type "{}"...\n'.format(area_import_type)
         )
 
-        area_import: dict = AREA_IMPORT_TYPES[area_import_type]
+        area_import = AREA_IMPORT_TYPES[area_import_type]
 
         conn = self.get_database_connection(area_import, area_import_type)
         if conn is None:
@@ -577,7 +598,7 @@ class AreaImporter(BaseImporter):
         )
 
     def handle_stale_areas(
-        self, area_import: dict, source: str, imported_identifiers: List[str]
+        self, area_import: AreaImport, source: str, imported_identifiers: List[str]
     ):
         self.stdout.write("Starting to remove stales...\n")
         stale_time_start = perf_counter()
