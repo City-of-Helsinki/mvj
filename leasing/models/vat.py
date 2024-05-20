@@ -31,8 +31,10 @@ class Vat(models.Model):
     """
 
     # In Finnish: Prosentti
-    percent = models.IntegerField(
+    percent = models.DecimalField(
         verbose_name=_("Percent"),
+        max_digits=3,
+        decimal_places=1,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
 
