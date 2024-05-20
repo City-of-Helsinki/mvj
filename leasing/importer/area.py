@@ -367,12 +367,13 @@ class AreaImporter(BaseImporter):
         self,
         row: NamedTupleUnknown,
         area_import: AreaImport,
+        column_name_map: Dict[str, str],
         errors: List[str],
         error_count: int,
     ) -> Tuple[Optional[Metadata], int]:
         try:
             metadata: Metadata = {
-                METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name)
+                column_name_map[column_name]: getattr(row, column_name)
                 for column_name in area_import["metadata_columns"]
             }
             return metadata, error_count
@@ -508,7 +509,7 @@ class AreaImporter(BaseImporter):
             row_start = perf_counter()
 
             metadata, error_count = self.get_metadata(
-                row, area_import, errors, error_count
+                row, area_import, METADATA_COLUMN_NAME_MAP, errors, error_count
             )
             if metadata is None:
                 continue
