@@ -233,7 +233,7 @@ reportlab==3.6.13
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.31.0
+requests==2.32.0
     # via
     #   -r requirements.in
     #   django-anymail

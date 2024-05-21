@@ -133,7 +133,7 @@ python-dateutil==2.8.2
     # via
     #   -c requirements.txt
     #   faker
-requests==2.31.0
+requests==2.32.0
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
