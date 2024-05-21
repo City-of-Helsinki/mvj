@@ -17,9 +17,9 @@ class UsageDistributionImporter(BaseImporter):
         import oracledb
 
         connection = oracledb.connect(
-            user=settings.FACTA_DATABASE_USERNAME,
-            password=settings.FACTA_DATABASE_PASSWORD,
-            dsn=settings.FACTA_DATABASE_DSN,
+            user=getattr(settings, "FACTA_DATABASE_USERNAME", None),
+            password=getattr(settings, "FACTA_DATABASE_PASSWORD", None),
+            dsn=getattr(settings, "FACTA_DATABASE_DSN", None),
             encoding="UTF-8",
             nencoding="UTF-8",
         )
@@ -36,7 +36,7 @@ class UsageDistributionImporter(BaseImporter):
         pass
 
     def execute(self):
-        from auditlog.registry import auditlog
+        from auditlog.registry import auditlog  # type: ignore
 
         # Unregister all models from auditlog when importing
         for model in list(auditlog._registry.keys()):

@@ -1,2 +1,3 @@
 #!/bin/sh
 PYTHONPATH=${PYTHONPATH}:${PWD} MYPYPATH=./stubs mypy --follow-imports error --strict batchrun/
+PYTHONPATH=${PYTHONPATH}:${PWD} mypy --follow-imports=skip leasing/importer/ --check-untyped-defs
