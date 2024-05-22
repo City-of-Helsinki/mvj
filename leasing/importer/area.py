@@ -1,15 +1,49 @@
 from time import perf_counter
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict
 
 import psycopg
 from django.conf import settings
 from django.contrib.gis import geos
 from django.db import IntegrityError
+from django.db.models import QuerySet
 from psycopg.rows import namedtuple_row
 
 from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
 
 from .base import BaseImporter
+
+Metadata = Dict[str, str]
+
+
+class AreaImport(TypedDict, total=False):
+    source_dsn_setting_name: str
+    source_name: str
+    source_identifier: str
+    area_type: AreaType
+    identifier_field_name: str
+    metadata_columns: List[str]
+    query: str
+
+
+class MatchData(TypedDict, total=False):
+    type: str
+    identifier: str
+    source: str
+    external_id: Optional[str]
+    detailed_plan_identifier: Optional[str]
+
+
+class OtherData(TypedDict, total=False):
+    geometry: geos.MultiPolygon
+    metadata: Metadata
+    external_id: Optional[str]
+
+
+class NamedTupleUnknown(NamedTuple):
+    def __getattr__(self, name: str) -> Any:
+        pass
+
 
 METADATA_COLUMN_NAME_MAP = {
     "diaarinumero": "diary_number",
@@ -61,7 +95,7 @@ METADATA_COLUMN_NAME_MAP = {
 }
 
 
-AREA_IMPORT_TYPES = {
+AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
     # Kaavat
     "detailed_plan": {
         "source_dsn_setting_name": "AREA_DATABASE_DSN",
@@ -272,7 +306,7 @@ class AreaImporter(BaseImporter):
     def __init__(self, stdout=None, stderr=None):
         self.stdout = stdout
         self.stderr = stderr
-        self.area_types = None
+        self.area_types: List[AreaType] = []
 
     @classmethod
     def add_arguments(cls, parser):
@@ -295,204 +329,288 @@ class AreaImporter(BaseImporter):
 
                 self.area_types.append(area_type)
 
-    def execute(self):  # NOQA C901
+    def get_database_connection(
+        self, area_import: AreaImport, area_import_type: AreaType
+    ):
+        try:
+            conn = psycopg.connect(
+                getattr(settings, area_import["source_dsn_setting_name"]),
+                row_factory=namedtuple_row,
+            )
+            return conn
+        except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
+            self.stderr.write(str(e))
+            self.stderr.write(
+                'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
+                    area_import_type, area_import["source_dsn_setting_name"]
+                )
+            )
+            return None
+
+    def execute(self):
         func_start = perf_counter()
 
         if not self.area_types:
-            self.area_types = AREA_IMPORT_TYPES.keys()
-
-        errors = []
+            self.area_types = list(AREA_IMPORT_TYPES.keys())
 
         for area_import_type in self.area_types:
-            type_start = perf_counter()
-
-            self.stdout.write(
-                'Starting to import the area type "{}"...\n'.format(area_import_type)
-            )
-
-            area_import = AREA_IMPORT_TYPES[area_import_type]
-
-            try:
-                conn = psycopg.connect(
-                    getattr(settings, area_import["source_dsn_setting_name"]),
-                    row_factory=namedtuple_row,
-                )
-            except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
-                self.stderr.write(str(e))
-                self.stderr.write(
-                    'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
-                        area_import_type, area_import["source_dsn_setting_name"]
-                    )
-                )
-                continue
-
-            cursor = conn.cursor()
-
-            self.stdout.write(area_import["source_name"])
-            (source, source_created) = AreaSource.objects.get_or_create(
-                identifier=area_import["source_identifier"],
-                defaults={"name": area_import["source_name"]},
-            )
-
-            try:
-                cursor.execute(area_import["query"])
-            except psycopg.ProgrammingError as e:
-                self.stderr.write(str(e))
-                continue
-
-            imported_identifiers = []
-            count = 0
-            sum_row_time, avg_row_time, min_row_time, max_row_time = (0,) * 4
-            self.stdout.write("Starting to update areas...\n")
-            for row in cursor:
-                row_start = perf_counter()
-
-                try:
-                    metadata = {
-                        METADATA_COLUMN_NAME_MAP[column_name]: getattr(row, column_name)
-                        for column_name in area_import["metadata_columns"]
-                    }
-                except AttributeError as e:
-                    errors.append(
-                        "id #{}, metadata field missing. Error: {}\n".format(
-                            row.id, str(e)
-                        )
-                    )
-
-                    count += 1
-                    self.stdout.write("E", ending="")
-                    if count % 1000 == 0:
-                        self.stdout.write(" {}".format(count))
-                        self.stdout.flush()
-                    continue
-
-                areas = Area.objects.all()
-                match_data = {
-                    "type": area_import["area_type"],
-                    "identifier": getattr(row, area_import["identifier_field_name"]),
-                    "source": source,
-                }
-
-                if area_import["area_type"] == AreaType.LEASE_AREA:
-                    match_data["external_id"] = row.id
-
-                if area_import["area_type"] == AreaType.PLAN_UNIT:
-                    dp_id = metadata.get("detailed_plan_identifier")
-                    if not dp_id:
-                        self.stderr.write(
-                            "detailed_plan_identifier not found for area #{}".format(
-                                match_data["identifier"]
-                            )
-                        )
-                        continue
-                    areas = areas.filter(metadata__detailed_plan_identifier=dp_id)
-
-                try:
-                    geom = geos.GEOSGeometry(row.geom_text)
-                except geos.error.GEOSException as e:
-                    errors.append("id #{} error: {}\n".format(row.id, str(e)))
-
-                    count += 1
-                    self.stdout.write("E", ending="")
-                    if count % 1000 == 0:
-                        self.stdout.write(" {}".format(count))
-                        self.stdout.flush()
-                    continue
-
-                if geom and isinstance(geom, geos.Polygon):
-                    geom = geos.MultiPolygon(geom)
-
-                if geom and not isinstance(geom, geos.MultiPolygon):
-                    errors.append(
-                        'id #{} Error! Geometry is not a Multipolygon but "{}"\n'.format(
-                            row.id, geom
-                        )
-                    )
-
-                    count += 1
-                    self.stdout.write("E", ending="")
-                    if count % 1000 == 0:
-                        self.stdout.write(" {}".format(count))
-                        self.stdout.flush()
-                    continue
-
-                other_data = {"geometry": geom, "metadata": metadata}
-
-                try:
-                    areas.update_or_create(defaults=other_data, **match_data)
-                except (
-                    IntegrityError
-                ):  # There should only be one object per identifier...
-                    ext_id = other_data.pop("external_id", "")
-                    # If external id exists, we can continue deleting data. We should only
-                    # delete duplicate rows, if we have external id available for the new row.
-                    if ext_id:
-                        # ...so we delete them all but spare the one with the correct
-                        # external_id (if it happens to exist)
-                        Area.objects.filter(**match_data).exclude(
-                            external_id=ext_id
-                        ).delete()
-                        match_data["external_id"] = ext_id
-                        Area.objects.update_or_create(defaults=other_data, **match_data)
-
-                imported_identifiers.append(match_data["identifier"])
-
-                count += 1
-                if count % 100 == 0:
-                    self.stdout.write(".", ending="")
-                if count % 1000 == 0:
-                    self.stdout.write(" {}".format(count))
-                    self.stdout.flush()
-
-                row_end = perf_counter()
-                row_time = row_end - row_start
-                sum_row_time += row_time
-                min_row_time = (
-                    row_time
-                    if min_row_time == 0 or row_time < min_row_time
-                    else min_row_time
-                )
-                max_row_time = row_time if row_time > max_row_time else max_row_time
-
-            if count > 0:
-                avg_row_time = sum_row_time / count
-
-            self.stdout.write(
-                "Updated area count {}. Execution time: {:.2f}s "
-                "(Row time avg: {:.2f}s, min: {:.2f}s, max: {:.2f}s)\n".format(
-                    count, sum_row_time, avg_row_time, min_row_time, max_row_time
-                )
-            )
-
-            self.stdout.write("Starting to remove stales...\n")
-            stale_time_start = perf_counter()
-            stale = Area.objects.filter(
-                type=area_import["area_type"], source=source
-            ).exclude(identifier__in=imported_identifiers)
-            stale_count = stale.count()
-            stale.delete()
-            stale_time_end = perf_counter()
-            self.stdout.write(
-                "Removed stale count {}. Execution time: {:.2f}s\n".format(
-                    stale_count, stale_time_end - stale_time_start
-                )
-            )
-
-            if errors:
-                self.stdout.write(" {} errors:\n".format(len(errors)))
-                for error in errors:
-                    self.stdout.write(error)
-
-            type_end = perf_counter()
-            self.stdout.write(
-                'The area import of type "{}" is completed. Execution time: {:.2f}s\n'.format(
-                    area_import_type, (type_end - type_start)
-                )
-            )
+            self.process_area_import_type(area_import_type)
 
         func_end = perf_counter()
         self.stdout.write(
             "The area import is completed. Execution time: {0:.2f}s\n".format(
                 func_end - func_start
+            )
+        )
+
+    def get_metadata(
+        self,
+        row: NamedTupleUnknown,
+        area_import: AreaImport,
+        column_name_map: Dict[str, str],
+        errors: List[str],
+        error_count: int,
+    ) -> Tuple[Optional[Metadata], int]:
+        try:
+            metadata: Metadata = {
+                column_name_map[column_name]: getattr(row, column_name)
+                for column_name in area_import["metadata_columns"]
+            }
+            return metadata, error_count
+        except AttributeError as e:
+            errors.append(
+                "id #{}, metadata field missing. Error: {}\n".format(row.id, str(e))
+            )
+
+            error_count += 1
+            self.stdout.write("E", ending="")
+            if error_count % 1000 == 0:
+                self.stdout.write(" {}".format(error_count))
+                self.stdout.flush()
+            return None, error_count
+
+    def get_match_data(
+        self,
+        row: NamedTupleUnknown,
+        area_import: AreaImport,
+        source: str,
+        metadata: Metadata,
+    ) -> Optional[MatchData]:
+        match_data: MatchData = {
+            "type": area_import["area_type"],
+            "identifier": getattr(row, area_import["identifier_field_name"]),
+            "source": source,
+        }
+
+        if area_import["area_type"] == AreaType.LEASE_AREA:
+            match_data["external_id"] = row.id
+
+        if area_import["area_type"] == AreaType.PLAN_UNIT:
+            dp_id = metadata.get("detailed_plan_identifier")
+            if not dp_id:
+                self.stderr.write(
+                    "detailed_plan_identifier not found for area #{}".format(
+                        match_data["identifier"]
+                    )
+                )
+                return None
+        return match_data
+
+    def get_areas(self, match_data: MatchData, metadata: Metadata) -> QuerySet[Area]:
+        areas = Area.objects.all()
+        if "detailed_plan_identifier" in match_data:
+            dp_id = metadata.get("detailed_plan_identifier")
+            areas = areas.filter(metadata__detailed_plan_identifier=dp_id)
+        return areas
+
+    def get_geometry(self, row: NamedTupleUnknown, errors: List[str], error_count: int):
+        try:
+            geom = geos.GEOSGeometry(row.geom_text)
+            return geom, error_count
+        except geos.error.GEOSException as e:
+            errors.append("id #{} error: {}\n".format(row.id, str(e)))
+
+            error_count += 1
+            self.stdout.write("E", ending="")
+            if error_count % 1000 == 0:
+                self.stdout.write(" {}".format(error_count))
+                self.stdout.flush()
+            return None, error_count
+
+    def handle_geometry(
+        self,
+        geom: geos.MultiPolygon,
+        row: NamedTuple,
+        errors: List[str],
+        error_count: int,
+    ):
+        if geom and isinstance(geom, geos.Polygon):
+            geom = geos.MultiPolygon(geom)
+
+        if geom and not isinstance(geom, geos.MultiPolygon):
+            errors.append(
+                'id #{} Error! Geometry is not a Multipolygon but "{}"\n'.format(
+                    row.id, geom
+                )
+            )
+
+            error_count += 1
+            self.stdout.write("E", ending="")
+            if error_count % 1000 == 0:
+                self.stdout.write(" {}".format(error_count))
+                self.stdout.flush()
+            return None, error_count
+
+        return geom, error_count
+
+    def update_or_create_areas(
+        self,
+        areas: QuerySet[Area],
+        other_data: OtherData,
+        match_data: MatchData,
+        imported_identifiers: List[str],
+        error_count: int,
+    ) -> Tuple[list, int]:
+        try:
+            areas.update_or_create(defaults=dict(other_data), **match_data)
+        except IntegrityError:  # There should only be one object per identifier...
+            ext_id = other_data.pop("external_id", "")
+            # If external id exists, we can continue deleting data. We should only
+            # delete duplicate rows, if we have external id available for the new row.
+            if ext_id:
+                # ...so we delete them all but spare the one with the correct
+                # external_id (if it happens to exist)
+                Area.objects.filter(**match_data).exclude(external_id=ext_id).delete()
+                match_data["external_id"] = ext_id
+                Area.objects.update_or_create(defaults=other_data, **match_data)
+
+            imported_identifiers.append(match_data["identifier"])
+
+            error_count += 1
+            if error_count % 100 == 0:
+                self.stdout.write(".", ending="")
+            if error_count % 1000 == 0:
+                self.stdout.write(" {}".format(error_count))
+                self.stdout.flush()
+        return imported_identifiers, error_count
+
+    def process_rows(
+        self,
+        cursor: psycopg.Cursor[NamedTuple],
+        area_import: AreaImport,
+        source: str,
+        errors: List[str],
+    ):
+        imported_identifiers: List[str] = []
+        error_count = 0
+        sum_row_time, avg_row_time, min_row_time, max_row_time = (0.0,) * 4
+        self.stdout.write("Starting to update areas...\n")
+        for row in cursor:
+            row_start = perf_counter()
+
+            metadata, error_count = self.get_metadata(
+                row, area_import, METADATA_COLUMN_NAME_MAP, errors, error_count
+            )
+            if metadata is None:
+                continue
+
+            match_data = self.get_match_data(row, area_import, source, metadata)
+            if match_data is None:
+                continue
+
+            areas = self.get_areas(match_data, metadata)
+
+            geom, error_count = self.get_geometry(row, errors, error_count)
+            if geom is None:
+                continue
+
+            geom, error_count = self.handle_geometry(geom, row, errors, error_count)
+            if geom is None:
+                continue
+
+            other_data: OtherData = {"geometry": geom, "metadata": metadata}
+
+            imported_identifiers, error_count = self.update_or_create_areas(
+                areas, other_data, match_data, imported_identifiers, error_count
+            )
+
+            row_end = perf_counter()
+            row_time = row_end - row_start
+            sum_row_time += row_time
+            min_row_time = (
+                row_time
+                if min_row_time == 0 or row_time < min_row_time
+                else min_row_time
+            )
+            max_row_time = row_time if row_time > max_row_time else max_row_time
+
+        if error_count > 0:
+            avg_row_time = sum_row_time / error_count
+
+        self.stdout.write(
+            "Updated area count {}. Execution time: {:.2f}s "
+            "(Row time avg: {:.2f}s, min: {:.2f}s, max: {:.2f}s)\n".format(
+                error_count, sum_row_time, avg_row_time, min_row_time, max_row_time
+            )
+        )
+        return imported_identifiers
+
+    def process_area_import_type(self, area_import_type: AreaType):
+        type_start = perf_counter()
+
+        errors: List[str] = []
+        self.stdout.write(
+            'Starting to import the area type "{}"...\n'.format(area_import_type)
+        )
+
+        area_import = AREA_IMPORT_TYPES[area_import_type]
+
+        conn = self.get_database_connection(area_import, area_import_type)
+        if conn is None:
+            return
+
+        cursor = conn.cursor(row_factory=namedtuple_row)
+
+        self.stdout.write(area_import["source_name"])
+        (source, source_created) = AreaSource.objects.get_or_create(
+            identifier=area_import["source_identifier"],
+            defaults={"name": area_import["source_name"]},
+        )
+
+        try:
+            cursor.execute(area_import["query"])
+        except psycopg.ProgrammingError as e:
+            self.stderr.write(str(e))
+            return
+
+        imported_identifiers = self.process_rows(cursor, area_import, source, errors)
+        self.handle_stale_areas(area_import, source, imported_identifiers)
+
+        if errors:
+            self.stdout.write(" {} errors:\n".format(len(errors)))
+            for error in errors:
+                self.stdout.write(error)
+
+        type_end = perf_counter()
+        self.stdout.write(
+            'The area import of type "{}" is completed. Execution time: {:.2f}s\n'.format(
+                area_import_type, (type_end - type_start)
+            )
+        )
+
+    def handle_stale_areas(
+        self, area_import: AreaImport, source: str, imported_identifiers: List[str]
+    ):
+        self.stdout.write("Starting to remove stales...\n")
+        stale_time_start = perf_counter()
+        stale = Area.objects.filter(
+            type=area_import["area_type"], source=source
+        ).exclude(identifier__in=imported_identifiers)
+        stale_count = stale.count()
+        stale.delete()
+        stale_time_end = perf_counter()
+        self.stdout.write(
+            "Removed stale count {}. Execution time: {:.2f}s\n".format(
+                stale_count, stale_time_end - stale_time_start
             )
         )
