@@ -47,16 +47,22 @@ class UsageDistributionImporter(BaseImporter):
     def import_usage_distributions(self):  # noqa: C901 'Command.handle' is too complex
         self.initialize_importer()
         cursor = self.cursor
-
-        # fmt: off
         query = """
-            SELECT A.kg_kkaavyks , A.c_kaavayksikkotunnus , A.c_kaytjakauma , mv_koodisto0.c_selite AS mv_koodisto0_c_selite , A.c_paasivuk , A.c_rakoikeus
-            FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
-            LEFT OUTER JOIN (select c_koodi, decode('FIN', 'FIN', decode(trim(c_selite), null, c_seliter, c_selite), decode(trim(c_seliter), null, c_selite, c_seliter)) AS c_selite FROM mv_koodisto
-            WHERE c_koodisto='SU_KAYTJAKAUMA') mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi)
-            ORDER BY A.c_kaavayksikkotunnus ASC
-            """
-        # fmt: on
+        SELECT DISTINCT A.kg_kkaavyks,
+            A.c_kaavayksikkotunnus,
+            COALESCE(NULLIF(A.c_kaytjakauma, '1'), mv_kaavayksikko.c_kayttota, A.c_kaytjakauma) AS c_kaytjakauma,
+            CASE
+                WHEN A.c_kaytjakauma = '1' THEN COALESCE(mv_kaavayksikko.c_ktarsel, mv_koodisto0.c_selite)
+                ELSE mv_koodisto0.c_selite
+            END AS mv_koodisto0_c_selite,
+            A.c_paasivuk,
+            A.c_rakoikeus
+        FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
+        LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
+        LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
+        ORDER BY A.c_kaavayksikkotunnus ASC;
+        """
+
         cursor.execute(query)
 
         usage_distribution_rows = rows_to_dict_list(cursor)
