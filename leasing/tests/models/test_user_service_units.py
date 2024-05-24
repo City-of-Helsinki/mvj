@@ -2,7 +2,6 @@ import json
 from time import time
 
 import pytest
-import rsa
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from helusers.models import ADGroup, ADGroupMapping
@@ -10,6 +9,7 @@ from httpretty import httprettified, httpretty
 from jose.backends import RSAKey
 from jose.constants import ALGORITHMS
 from jose.jwt import encode
+from rsa import newkeys as rsa_newkeys
 
 from leasing.models.service_unit import ServiceUnitGroupMapping
 
@@ -34,8 +34,9 @@ def test_api_access_updates_service_units(
     ServiceUnitGroupMapping.objects.create(group=group, service_unit=service_unit)
 
     # Generate JWT and setup httpretty
-    (public_rsa_key, private_rsa_key) = rsa.newkeys(2048)
-    rsa_key = RSAKey(key=private_rsa_key, algorithm=ALGORITHMS.RS256)
+    (_public_rsa_key, private_rsa_key) = rsa_newkeys(2048)
+    private_pem = private_rsa_key.save_pkcs1(format="PEM")
+    rsa_key = RSAKey(key=private_pem, algorithm=ALGORITHMS.RS256)
 
     settings.OIDC_API_TOKEN_AUTH["ISSUER"] = OIDC_ISSUER
     settings.OIDC_API_TOKEN_AUTH["AUDIENCE"] = "test_client_id"
@@ -55,8 +56,6 @@ def test_api_access_updates_service_units(
     )
 
     jwk = rsa_key.public_key().to_dict()
-    jwk["e"] = jwk["e"].decode("utf-8")
-    jwk["n"] = jwk["n"].decode("utf-8")
 
     httpretty.register_uri(
         httpretty.GET,
