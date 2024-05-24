@@ -58,7 +58,7 @@ class UsageDistributionImporter(BaseImporter):
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
         LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
         LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
-        ORDER BY A.c_kaavayksikkotunnus ASC;
+        ORDER BY A.c_kaavayksikkotunnus ASC
         """
 
         cursor.execute(query)
