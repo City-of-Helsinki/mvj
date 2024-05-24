@@ -20,8 +20,6 @@ class UsageDistributionImporter(BaseImporter):
             user=getattr(settings, "FACTA_DATABASE_USERNAME", None),
             password=getattr(settings, "FACTA_DATABASE_PASSWORD", None),
             dsn=getattr(settings, "FACTA_DATABASE_DSN", None),
-            encoding="UTF-8",
-            nencoding="UTF-8",
         )
 
         self.cursor = connection.cursor()
