@@ -20,8 +20,6 @@ class UsageDistributionImporter(BaseImporter):
             user=getattr(settings, "FACTA_DATABASE_USERNAME", None),
             password=getattr(settings, "FACTA_DATABASE_PASSWORD", None),
             dsn=getattr(settings, "FACTA_DATABASE_DSN", None),
-            encoding="UTF-8",
-            nencoding="UTF-8",
         )
 
         self.cursor = connection.cursor()
@@ -60,7 +58,7 @@ class UsageDistributionImporter(BaseImporter):
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
         LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
         LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
-        ORDER BY A.c_kaavayksikkotunnus ASC;
+        ORDER BY A.c_kaavayksikkotunnus ASC
         """
 
         cursor.execute(query)
