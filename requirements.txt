@@ -8,43 +8,57 @@ arabic-reshaper==3.0.0
     # via xhtml2pdf
 arrow==1.3.0
     # via django-q
-asgiref==3.7.2
+asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
     #   django-countries
-attrs==19.3.0
+asn1crypto==1.5.1
+    # via
+    #   oscrypto
+    #   pyhanko
+    #   pyhanko-certvalidator
+attrs==23.2.0
     # via
     #   jsonschema
+    #   referencing
     #   zeep
+babel==2.15.0
+    # via docxcompose
 backports-zoneinfo==0.2.1
     # via
     #   django
     #   psycopg
-bcrypt==3.1.7
+    #   tzlocal
+bcrypt==4.1.3
     # via paramiko
 beautifulsoup4==4.11.2
     # via -r requirements.in
 blessed==1.20.0
     # via django-q
-cachetools==4.2.4
+cachetools==5.3.3
     # via django-helusers
-certifi==2023.7.22
+certifi==2024.2.2
     # via
     #   pyproj
     #   requests
     #   sentry-sdk
-cffi==1.14.0
+cffi==1.16.0
     # via
-    #   bcrypt
     #   cryptography
     #   pynacl
-charset-normalizer==2.0.12
+chardet==5.2.0
+    # via reportlab
+charset-normalizer==3.3.2
     # via requests
-cryptography==41.0.4
+click==8.1.7
+    # via pyhanko
+cryptography==42.0.7
     # via
     #   oracledb
     #   paramiko
+    #   pyhanko
+    #   pyhanko-certvalidator
 cssselect2==0.7.0
     # via svglib
 database-sanitizer==1.1.0
@@ -53,7 +67,7 @@ deepmerge==1.1.1
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==4.2.11
+django==4.2.13
     # via
     #   -r requirements.in
     #   django-anymail
@@ -73,7 +87,7 @@ django==4.2.11
     #   django-xhtml2pdf
     #   djangorestframework
     #   drf-yasg
-django-admin-rangefilter==0.12.1
+django-admin-rangefilter==0.12.5
     # via -r requirements.in
 django-anymail==10.3
     # via -r requirements.in
@@ -91,15 +105,15 @@ django-environ==0.11.2
     # via -r requirements.in
 django-filter==23.5
     # via -r requirements.in
-django-helusers==0.11.0
+django-helusers==0.12.0
     # via -r requirements.in
 django-model-utils==4.4.0
     # via -r requirements.in
-django-modeltranslation==0.18.11
+django-modeltranslation==0.18.13
     # via -r requirements.in
 django-nested-inline==0.4.6
     # via -r requirements.in
-django-picklefield==3.1
+django-picklefield==3.2
     # via
     #   django-constance
     #   django-q
@@ -115,7 +129,7 @@ django-sequences==3.0
     # via -r requirements.in
 django-stubs[compatible-mypy]==4.2.7
     # via -r requirements.in
-django-stubs-ext==4.2.7
+django-stubs-ext==5.0.0
     # via django-stubs
 django-xhtml2pdf==0.0.4
     # via -r requirements.in
@@ -126,79 +140,91 @@ djangorestframework==3.14.0
     #   drf-yasg
 djangorestframework-gis==1.0
     # via -r requirements.in
-docutils==0.16
+docutils==0.20.1
     # via python-daemon
-docxcompose==1.0.2
+docxcompose==1.4.0
     # via docxtpl
 docxtpl==0.16.8
     # via -r requirements.in
 drf-yasg[validation]==1.21.7
     # via -r requirements.in
-ecdsa==0.15
+ecdsa==0.19.0
     # via python-jose
 html5lib==1.1
     # via xhtml2pdf
-idna==2.9
+idna==3.7
     # via requests
-importlib-resources==6.3.2
-    # via jsonschema
+importlib-resources==6.4.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 inflection==0.5.1
     # via drf-yasg
-isodate==0.6.0
+isodate==0.6.1
     # via zeep
-jinja2==2.11.3
+jinja2==3.1.4
     # via docxtpl
-jsonschema==4.17.3
+jsonschema==4.22.0
     # via swagger-spec-validator
+jsonschema-specifications==2023.12.1
+    # via jsonschema
 lockfile==0.12.2
     # via python-daemon
-lxml==4.6.5
+lxml==5.2.2
     # via
     #   docxcompose
     #   docxtpl
     #   python-docx
     #   svglib
     #   zeep
-markupsafe==1.1.1
+markupsafe==2.1.5
     # via jinja2
 mypy==1.7.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
-oracledb==2.1.0
+oracledb==2.1.2
     # via -r requirements.in
+oscrypto==1.3.0
+    # via pyhanko-certvalidator
 packaging==24.0
     # via
     #   deprecation
     #   drf-yasg
-paramiko==2.10.1
+paramiko==3.4.0
     # via pysftp
-pillow==10.0.1
+pillow==10.3.0
     # via
     #   reportlab
     #   xhtml2pdf
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==4.2.0
+platformdirs==4.2.2
     # via zeep
-psycopg[binary]==3.1.18
+psycopg[binary]==3.1.19
     # via -r requirements.in
-psycopg-binary==3.1.18
+psycopg-binary==3.1.19
     # via psycopg
-pyasn1==0.4.8
+pyasn1==0.6.0
     # via
     #   python-jose
     #   rsa
-pycparser==2.20
+pycparser==2.22
     # via cffi
-pynacl==1.3.0
-    # via paramiko
-pypdf3==1.0.6
+pyhanko==0.25.0
     # via xhtml2pdf
+pyhanko-certvalidator==0.26.3
+    # via
+    #   pyhanko
+    #   xhtml2pdf
+pynacl==1.5.0
+    # via paramiko
+pypdf==4.2.0
+    # via xhtml2pdf
+pypng==0.20220715.0
+    # via qrcode
 pyproj==3.5.0
     # via -r requirements.in
-pyrsistent==0.18.0
-    # via jsonschema
 pysftp==0.2.9
     # via -r requirements.in
 python-bidi==0.4.2
@@ -210,26 +236,34 @@ python-dateutil==2.8.2
     #   -r requirements.in
     #   arrow
     #   django-auditlog
-python-docx==0.8.7
+python-docx==1.1.2
     # via
     #   docxcompose
     #   docxtpl
-python-jose==3.1.0
+python-jose==3.3.0
     # via django-helusers
-pytz==2022.7.1
+pytz==2024.1
     # via
+    #   babel
     #   djangorestframework
     #   drf-yasg
     #   zeep
-pyyaml==5.4
+pyyaml==6.0.1
     # via
     #   database-sanitizer
     #   django-sanitized-dump
     #   drf-yasg
+    #   pyhanko
     #   swagger-spec-validator
+qrcode==7.4.2
+    # via pyhanko
 redis==3.5.3
     # via django-q
-reportlab==3.6.13
+referencing==0.35.1
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+reportlab==4.0.9
     # via
     #   svglib
     #   xhtml2pdf
@@ -238,22 +272,27 @@ requests==2.31.0
     #   -r requirements.in
     #   django-anymail
     #   django-helusers
+    #   pyhanko
+    #   pyhanko-certvalidator
     #   requests-file
     #   requests-toolbelt
     #   zeep
-requests-file==2.0.0
+requests-file==2.1.0
     # via zeep
-requests-toolbelt==0.9.1
+requests-toolbelt==1.0.0
     # via zeep
-rsa==4.7
+rpds-py==0.18.1
+    # via
+    #   jsonschema
+    #   referencing
+rsa==4.9
     # via python-jose
-sentry-sdk==1.42.0
+sentry-sdk==1.45.0
     # via
     #   -r requirements.in
     #   django-q-sentry
-six==1.14.0
+six==1.16.0
     # via
-    #   bcrypt
     #   blessed
     #   database-sanitizer
     #   django-sanitized-dump
@@ -262,21 +301,17 @@ six==1.14.0
     #   ecdsa
     #   html5lib
     #   isodate
-    #   paramiko
-    #   pynacl
     #   python-bidi
     #   python-dateutil
-    #   python-jose
-    #   swagger-spec-validator
-soupsieve==2.0
+soupsieve==2.5
     # via beautifulsoup4
-sqlparse==0.4.4
+sqlparse==0.5.0
     # via django
 svglib==1.5.1
     # via xhtml2pdf
-swagger-spec-validator==2.7.4
+swagger-spec-validator==3.0.3
     # via drf-yasg
-tinycss2==1.2.1
+tinycss2==1.3.0
     # via
     #   cssselect2
     #   svglib
@@ -284,15 +319,13 @@ tomli==2.0.1
     # via
     #   django-stubs
     #   mypy
-tqdm==4.66.2
-    # via pypdf3
 types-python-dateutil==2.9.0.20240316
     # via arrow
-types-pytz==2024.1.0.20240203
+types-pytz==2024.1.0.20240417
     # via django-stubs
 types-pyyaml==6.0.12.20240311
     # via django-stubs
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   asgiref
     #   django-countries
@@ -301,27 +334,35 @@ typing-extensions==4.10.0
     #   django-stubs-ext
     #   mypy
     #   psycopg
-uritemplate==3.0.1
+    #   pypdf
+    #   python-docx
+    #   qrcode
+    #   swagger-spec-validator
+tzlocal==5.2
+    # via pyhanko
+uritemplate==4.1.1
     # via drf-yasg
-urllib3==1.26.18
+uritools==4.0.2
+    # via pyhanko-certvalidator
+urllib3==2.2.1
     # via
     #   django-anymail
     #   requests
     #   sentry-sdk
-wcwidth==0.1.9
+wcwidth==0.2.13
     # via blessed
 webencodings==0.5.1
     # via
     #   cssselect2
     #   html5lib
     #   tinycss2
-xhtml2pdf==0.2.6
+xhtml2pdf==0.2.15
     # via django-xhtml2pdf
 xlsxwriter==3.2.0
     # via -r requirements.in
 zeep==4.2.1
     # via -r requirements.in
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
