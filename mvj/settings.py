@@ -76,6 +76,7 @@ env = environ.Env(
     # See https://www.psycopg.org/psycopg3/docs/api/connections.html#psycopg.Connection.connect for DSN format
     AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
+    AKV_KUVA_LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LASKE_EXPORT_FROM_EMAIL=(str, ""),
     LASKE_EXPORT_ANNOUNCE_EMAIL=(str, ""),
     ASIAKASTIETO_URL=(str, ""),
@@ -352,6 +353,7 @@ MVJ_DUE_DATE_OFFSET_DAYS = 17
 
 AREA_DATABASE_DSN = env.str("AREA_DATABASE_DSN")
 LEASE_AREA_DATABASE_DSN = env.str("LEASE_AREA_DATABASE_DSN")
+AKV_KUVA_LEASE_AREA_DATABASE_DSN = env.str("AKV_KUVA_LEASE_AREA_DATABASE_DSN")
 
 FACTA_DATABASE_USERNAME = env.str("FACTA_DATABASE_USERNAME")
 FACTA_DATABASE_PASSWORD = env.str("FACTA_DATABASE_PASSWORD")
