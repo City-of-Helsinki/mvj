@@ -76,6 +76,7 @@ env = environ.Env(
     # See https://www.psycopg.org/psycopg3/docs/api/connections.html#psycopg.Connection.connect for DSN format
     AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
+    AKV_KUVA_LEASE_AREA_DATABASE_DSN=(str, "host= port= user= password= dbname="),
     LASKE_EXPORT_FROM_EMAIL=(str, ""),
     LASKE_EXPORT_ANNOUNCE_EMAIL=(str, ""),
     ASIAKASTIETO_URL=(str, ""),
