@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  django:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: sh -c "sleep infinity"
+    env_file:
+      - docker-compose.env
+    depends_on:
+      - postgres
+    container_name: mvj
+    restart: unless-stopped
+    volumes:
+      - ..:/code:cached
+      - mvj-django-media-volume:/var/media/
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:postgres
+
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: vscode
+  postgres:
+    build:
+      context: ../docker/postgres/
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    volumes:
+      - mvj-postgres-data-volume:/var/lib/postgresql/data
+    container_name: mvj-db
+    environment:
+      POSTGRES_USER: mvj
+      POSTGRES_PASSWORD: mvj
+      POSTGRES_DB: mvj
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    command: -p 5433
+
+volumes:
+  mvj-postgres-data-volume:
+  mvj-django-media-volume:
+
+networks:
+  default:
+    name: tunnistamo_net
+    external: true
