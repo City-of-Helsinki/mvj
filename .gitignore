@@ -5,6 +5,9 @@
 .coverage*
 .DS_Store
 .devcontainer
+!.devcontainer/devcontainer.json
+!.devcontainer/Dockerfile
+!.devcontainer/docker-compose.yml
 .vscode
 /local_settings.py
 /docker-compose.env

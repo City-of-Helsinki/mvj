@@ -1,0 +1,40 @@
+{
+	"name": "MVJ devcontainer",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "django",
+	"workspaceFolder": "/code",
+	"forwardPorts": [5433, 8001],
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"isort.path": ["/usr/local/bin/isort"],
+				"isort.args":["--profile", "black"],
+				"isort.interpreter": ["/usr/bin/python3.11"],
+				"flake8.path": ["/usr/local/bin/flake8"],
+				"black-formatter.path": ["/usr/local/bin/black"],
+				"black-formatter.interpreter": ["/usr/bin/python3.11"],
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": "never"
+				},
+				"[python]": {
+					"editor.defaultFormatter": "ms-python.black-formatter",
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.organizeImports": "always"
+					}
+				}
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter",
+				"ms-python.flake8",
+				"ms-python.isort"
+			]
+			// If you want extra extensions, add them to your local settings.json:
+			// "dev.containers.defaultExtensions": [],
+		}
+	},
+	"remoteUser": "vscode"
+}
