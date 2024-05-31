@@ -14,7 +14,7 @@ from django.utils import timezone
 from sentry_sdk import capture_exception
 
 from laske_export.models import LaskePaymentsLog
-from leasing.models import Invoice, ServiceUnit, Vat
+from leasing.models import Invoice, Lease, ServiceUnit, Vat
 from leasing.models.invoice import InvoicePayment
 
 
@@ -26,10 +26,11 @@ class Command(BaseCommand):
     help = "Get payments from Laske"
 
     def download_payments_sftp(self):
+        from base64 import decodebytes
+
         import paramiko
         import pysftp
         from paramiko import SSHException
-        from paramiko.py3compat import decodebytes
 
         try:
             # Add destination server host key
@@ -214,7 +215,7 @@ class Command(BaseCommand):
         # Kirjauspäivä
         date_of_entry = self.parse_date(date_of_entry_str)
         payment_date = value_date or date_of_entry
-        if date_of_entry is None and value_date is not None:
+        if value_date is None and date_of_entry is not None:
             self.stdout.write(
                 f"  Using date_of_entry as payment_date, malformed value_date in payment row: "
                 f"{invoice_number} {value_date_str}."
@@ -307,7 +308,8 @@ class Command(BaseCommand):
                     )
                     continue
 
-                if invoice.lease.is_subject_to_vat:
+                lease: Lease = invoice.lease
+                if lease.is_subject_to_vat:
                     vat = Vat.objects.get_for_date(invoice.invoicing_date)
                     if not vat:
                         self.stdout.write(
