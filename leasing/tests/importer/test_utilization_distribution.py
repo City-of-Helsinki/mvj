@@ -7,10 +7,24 @@ from leasing.models.land_area import UsageDistribution
 
 
 @pytest.mark.django_db
-def test_utilization_distribution_importer(lease_test_data, plan_unit_factory):
+def test_utilization_distribution_importer(
+    lease_test_data, lease_area_factory, lease_factory, plan_unit_factory
+):
     master_plan_unit = plan_unit_factory(
         area=100,
         lease_area=lease_test_data["lease_area"],
+        identifier="1234",
+        is_master=True,
+    )
+    second_lease_area = lease_area_factory(
+        lease=lease_factory(),
+        identifier="9876",
+        area=2000,
+        section_area=2000,
+    )
+    second_master_plan_unit = plan_unit_factory(
+        area=200,
+        lease_area=second_lease_area,
         identifier="1234",
         is_master=True,
     )
@@ -50,8 +64,9 @@ def test_utilization_distribution_importer(lease_test_data, plan_unit_factory):
     ):
         UsageDistributionImporter.import_usage_distributions(importer)
 
-    assert UsageDistribution.objects.all().count() == 3
+    assert UsageDistribution.objects.all().count() == 6
     assert master_plan_unit.usage_distributions.count() == 3
+    assert second_master_plan_unit.usage_distributions.count() == 3
 
     with patch(
         "leasing.importer.usage_distributions.rows_to_dict_list",
@@ -68,5 +83,6 @@ def test_utilization_distribution_importer(lease_test_data, plan_unit_factory):
     ):
         UsageDistributionImporter.import_usage_distributions(importer)
 
-    assert UsageDistribution.objects.all().count() == 1
+    assert UsageDistribution.objects.all().count() == 2
     assert master_plan_unit.usage_distributions.count() == 1
+    assert second_master_plan_unit.usage_distributions.count() == 1
