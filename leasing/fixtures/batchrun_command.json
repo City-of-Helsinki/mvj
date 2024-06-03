@@ -56,7 +56,7 @@
       "type": "django-manage",
       "name": "send_invoices_to_laske",
       "parameters": {},
-      "parameter_format_string": ""
+      "parameter_format_string": "{service_unit_id}"
     }
   }
 ]
