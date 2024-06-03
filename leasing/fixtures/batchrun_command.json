@@ -56,47 +56,7 @@
       "type": "django-manage",
       "name": "send_invoices_to_laske",
       "parameters": {},
-      "parameter_format_string": "1"
-    }
-  },
-  {
-    "model": "batchrun.command",
-    "pk": 20,
-    "fields": {
-      "type": "django-manage",
-      "name": "send_invoices_to_laske",
-      "parameters": {},
-      "parameter_format_string": "2"
-    }
-  },
-  {
-    "model": "batchrun.command",
-    "pk": 21,
-    "fields": {
-      "type": "django-manage",
-      "name": "send_invoices_to_laske",
-      "parameters": {},
-      "parameter_format_string": "3"
-    }
-  },
-  {
-    "model": "batchrun.command",
-    "pk": 22,
-    "fields": {
-      "type": "django-manage",
-      "name": "send_invoices_to_laske",
-      "parameters": {},
-      "parameter_format_string": "4"
-    }
-  },
-  {
-    "model": "batchrun.command",
-    "pk": 23,
-    "fields": {
-      "type": "django-manage",
-      "name": "send_invoices_to_laske",
-      "parameters": {},
-      "parameter_format_string": "5"
+      "parameter_format_string": "{service_unit_id}"
     }
   }
 ]

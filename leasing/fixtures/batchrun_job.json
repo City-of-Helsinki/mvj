@@ -74,7 +74,9 @@
       "name": "Laskujen lähetys Laske-järjestelmään 'Maaomaisuuden kehittäminen ja tontit'",
       "comment": "",
       "command": 6,
-      "arguments": {}
+      "arguments": {
+        "service_unit_id": 1
+      }
     }
   },
   {
@@ -86,8 +88,10 @@
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'Alueiden käyttö ja -valvonta'",
       "comment": "",
-      "command": 20,
-      "arguments": {}
+      "command": 6,
+      "arguments": {
+        "service_unit_id": 2
+      }
     }
   },
   {
@@ -99,8 +103,10 @@
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Liikuntapaikkapalvelut'",
       "comment": "",
-      "command": 21,
-      "arguments": {}
+      "command": 6,
+      "arguments": {
+        "service_unit_id": 3
+      }
     }
   },
   {
@@ -112,8 +118,10 @@
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Ulkoilupalvelut'",
       "comment": "",
-      "command": 22,
-      "arguments": {}
+      "command": 6,
+      "arguments": {
+        "service_unit_id": 4
+      }
     }
   },
   {
@@ -125,8 +133,10 @@
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Nuorisopalvelut'",
       "comment": "",
-      "command": 23,
-      "arguments": {}
+      "command": 6,
+      "arguments": {
+        "service_unit_id": 5
+      }
     }
   }
 ]
