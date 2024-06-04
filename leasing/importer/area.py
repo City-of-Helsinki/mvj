@@ -484,14 +484,14 @@ class AreaImporter(BaseImporter):
                 match_data["external_id"] = ext_id
                 Area.objects.update_or_create(defaults=other_data, **match_data)
 
-            imported_identifiers.append(match_data["identifier"])
+        imported_identifiers.append(match_data["identifier"])
 
-            error_count += 1
-            if error_count % 100 == 0:
-                self.stdout.write(".", ending="")
-            if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
-                self.stdout.flush()
+        error_count += 1
+        if error_count % 100 == 0:
+            self.stdout.write(".", ending="")
+        if error_count % 1000 == 0:
+            self.stdout.write(" {}".format(error_count))
+            self.stdout.flush()
         return imported_identifiers, error_count
 
     def process_rows(
