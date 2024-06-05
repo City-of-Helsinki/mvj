@@ -507,7 +507,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     service_unit_id__in=search_form.cleaned_data.get("service_unit")
                 )
 
-        return queryset.distinct()
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
