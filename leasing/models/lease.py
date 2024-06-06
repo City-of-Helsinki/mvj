@@ -292,11 +292,6 @@ class LeaseManager(SafeDeleteManager):
                 "municipality",
                 "district",
                 "identifier",
-                "identifier__type",
-                "identifier__municipality",
-                "identifier__district",
-                "lessor",
-                "lessor__service_unit",
                 "intended_use",
                 "supportive_housing",
                 "statistical_use",
@@ -306,9 +301,14 @@ class LeaseManager(SafeDeleteManager):
                 "hitas",
                 "notice_period",
                 "preparer",
-                "service_unit",
             )
             .prefetch_related(
+                "service_unit",
+                "identifier__type",
+                "identifier__municipality",
+                "identifier__district",
+                "lessor",
+                "lessor__service_unit",
                 "tenants",
                 "tenants__rent_shares",
                 "tenants__rent_shares__intended_use",
@@ -316,6 +316,7 @@ class LeaseManager(SafeDeleteManager):
                 "tenants__tenantcontact_set__contact",
                 "tenants__tenantcontact_set__contact__service_unit",
                 "lease_areas",
+                "lease_areas__addresses",
                 "contracts",
                 "decisions",
                 "inspections",
@@ -329,7 +330,6 @@ class LeaseManager(SafeDeleteManager):
                 "rents__payable_rents",
                 "rents__fixed_initial_year_rents",
                 "rents__fixed_initial_year_rents__intended_use",
-                "lease_areas__addresses",
                 "basis_of_rents",
                 "collection_letters",
                 "collection_notes",
@@ -339,16 +339,21 @@ class LeaseManager(SafeDeleteManager):
         )
 
     def succinct_select_related_and_prefetch_related(self):
-        return self.get_queryset().select_related(
-            "type",
-            "municipality",
-            "district",
-            "identifier",
-            "identifier__type",
-            "identifier__municipality",
-            "identifier__district",
-            "preparer",
-            "service_unit",
+        return (
+            self.get_queryset()
+            .select_related(
+                "type",
+                "municipality",
+                "district",
+                "identifier",
+                "preparer",
+            )
+            .prefetch_related(
+                "service_unit",
+                "identifier__type",
+                "identifier__municipality",
+                "identifier__district",
+            )
         )
 
     def get_by_identifier(self, identifier):
