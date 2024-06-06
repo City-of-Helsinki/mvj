@@ -181,6 +181,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
         if self.action != "list":
             return queryset
 
+        # Used for checking were filters added
+        initial_query = str(queryset.query)
+
         # Simple search
         identifier = self.request.query_params.get("identifier")
         search = self.request.query_params.get("search")
@@ -505,7 +508,12 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     service_unit_id__in=search_form.cleaned_data.get("service_unit")
                 )
 
-        return queryset.distinct()
+        final_query = str(queryset.query)
+        queryset_has_filters_applied = initial_query != final_query
+        if queryset_has_filters_applied:
+            return queryset.distinct()
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
