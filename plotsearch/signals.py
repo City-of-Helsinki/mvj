@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -28,8 +29,9 @@ def prepare_plan_unit_on_plot_search_target_save(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=PlotSearchTarget)
 def post_delete_plan_unit_on_plot_search_target_delete(sender, instance, **kwargs):
-    plan_unit = instance.plan_unit
-    if plan_unit is None:
+    try:
+        plan_unit = instance.plan_unit
+    except ObjectDoesNotExist:
         return
     plan_unit.usage_distributions.all().delete()
     plan_unit.delete()
