@@ -141,15 +141,15 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     filterset_class = LeaseFilter
     filter_backends = (DjangoFilterBackend, OrderingFilter, InBBoxFilter)
     ordering = (
-        "identifier__type__identifier",
-        "identifier__municipality__identifier",
-        "identifier__district__identifier",
+        "type__identifier",
+        "municipality__identifier",
+        "district__identifier",
         "identifier__sequence",
     )
     ordering_fields = (
-        "identifier__type__identifier",
-        "identifier__municipality__identifier",
-        "identifier__district__identifier",
+        "type__identifier",
+        "municipality__identifier",
+        "district__identifier",
         "identifier__sequence",
         "lessor__name",
         "state",
@@ -199,21 +199,19 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
             # Search by identifier or parts of it
             if len(search_string) < 3:
-                identifier_q = Q(
-                    identifier__type__identifier__istartswith=search_string
-                )
+                identifier_q = Q(type__identifier__istartswith=search_string)
             elif len(search_string) == 3:
                 identifier_q = Q(
-                    identifier__type__identifier__iexact=search_string[:2],
-                    identifier__municipality__identifier=search_string[2:3],
+                    type__identifier__iexact=search_string[:2],
+                    municipality__identifier=search_string[2:3],
                 )
             elif len(search_string) < 7:
                 district_identifier = search_string[3:5]
                 if district_identifier == "0":
                     identifier_q = Q(
-                        identifier__type__identifier__iexact=search_string[:2],
-                        identifier__municipality__identifier=search_string[2:3],
-                        identifier__district__identifier__in=range(0, 10),
+                        type__identifier__iexact=search_string[:2],
+                        municipality__identifier=search_string[2:3],
+                        district__identifier__in=range(0, 10),
                     )
                 else:
                     if district_identifier == "00":
@@ -222,9 +220,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                         district_identifier = district_identifier.lstrip("0")
 
                     identifier_q = Q(
-                        identifier__type__identifier__iexact=search_string[:2],
-                        identifier__municipality__identifier=search_string[2:3],
-                        identifier__district__identifier__startswith=district_identifier,
+                        type__identifier__iexact=search_string[:2],
+                        municipality__identifier=search_string[2:3],
+                        district__identifier__startswith=district_identifier,
                     )
             elif looks_like_identifier:
                 district_identifier = search_string[3:5]
@@ -234,9 +232,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     district_identifier = district_identifier.lstrip("0")
 
                 identifier_q = Q(
-                    identifier__type__identifier__iexact=search_string[:2],
-                    identifier__municipality__identifier=search_string[2:3],
-                    identifier__district__identifier=district_identifier,
+                    type__identifier__iexact=search_string[:2],
+                    municipality__identifier=search_string[2:3],
+                    district__identifier=district_identifier,
                     identifier__sequence__startswith=search_string[6:],
                 )
             else:
