@@ -120,6 +120,10 @@ class IntendedUse(NameModel):
     In Finnish: Käyttötarkoitus
     """
 
+    service_unit = models.ForeignKey(
+        "leasing.ServiceUnit", on_delete=models.SET_NULL, null=True
+    )
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Intended uses")
