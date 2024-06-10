@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.core.exceptions import ValidationError
 from django.db.models.aggregates import Sum
 
 from leasing.enums import (
@@ -52,6 +53,28 @@ def test_lease_manager_get_by_identifier_zero_padded_sequence(
     )
 
     assert Lease.objects.get_by_identifier("A1104-0001") == lease
+
+
+@pytest.mark.django_db
+def test_lease_intended_use_service_unit_mismatch(
+    django_db_setup, lease_factory, service_unit_factory, intended_use_factory
+):
+    service_unit_correct = service_unit_factory()
+    service_unit_incorrect = service_unit_factory()
+    intended_use_match = intended_use_factory(service_unit=service_unit_correct)
+    intended_use_mismatch = intended_use_factory(service_unit=service_unit_incorrect)
+    with pytest.raises(ValidationError):
+        # Lease.service_unit and Lease.intended_use.service_unit do not match
+        lease_factory(
+            intended_use=intended_use_mismatch, service_unit=service_unit_correct
+        )
+    lease = lease_factory(
+        intended_use=intended_use_match, service_unit=service_unit_correct
+    )
+    lease.intended_use = intended_use_mismatch
+    with pytest.raises(ValidationError):
+        # Lease.service_unit and Lease.intended_use.service_unit do not match
+        lease.save()
 
 
 @pytest.mark.django_db

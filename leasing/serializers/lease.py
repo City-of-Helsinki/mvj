@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models import Union
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -608,6 +609,13 @@ class SameServiceUnitValidator:
             )
 
 
+def validate_intended_use_service_unit(intended_use_service_unit, lease_service_unit):
+    if intended_use_service_unit != lease_service_unit:
+        raise serializers.ValidationError(
+            gettext("Intended use's service unit must match lease's service unit")
+        )
+
+
 class LeaseUpdateSerializer(
     UpdateNestedMixin,
     EnumSupportSerializerMixin,
@@ -678,6 +686,12 @@ class LeaseUpdateSerializer(
 
         return value
 
+    def validate_intended_use(self, value):
+        if self.instance and value.service_unit is not None:
+            validate_intended_use_service_unit(
+                value.service_unit, self.instance.service_unit
+            )
+
     class Meta:
         model = Lease
         fields = "__all__"
@@ -707,6 +721,12 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
             )
 
         return value
+
+    def validate_intended_use(self, value):
+        if self.instance and value.service_unit is not None:
+            validate_intended_use_service_unit(
+                value.service_unit, self.instance.service_unit
+            )
 
     class Meta:
         model = Lease

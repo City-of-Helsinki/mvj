@@ -8,6 +8,7 @@ from random import choice
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import connection, models, transaction
 from django.db.models import Max, Q
 from django.utils.translation import gettext_lazy as _
@@ -711,6 +712,13 @@ class Lease(TimeStampedSafeDeleteModel):
 
     def save(self, *args, **kwargs):
         self.create_identifier()
+
+        if self.intended_use and self.service_unit != self.intended_use.service_unit:
+            raise ValidationError(
+                _(
+                    "The intended use's service unit must match the lease's service_unit."
+                )
+            )
 
         super().save(*args, **kwargs)
 
