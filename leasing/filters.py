@@ -13,7 +13,16 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementInvoiceSet,
 )
 
-from .models import Comment, Contact, Decision, District, Index, Invoice, Lease
+from .models import (
+    Comment,
+    Contact,
+    Decision,
+    District,
+    Index,
+    IntendedUse,
+    Invoice,
+    Lease,
+)
 
 
 class CoalesceOrderingFilter(OrderingFilter):
@@ -130,6 +139,12 @@ class IndexFilter(FilterSet):
     class Meta:
         model = Index
         fields = ["year", "month"]
+
+
+class IntendedUseFilter(FilterSet):
+    class Meta:
+        model = IntendedUse
+        fields = ["service_unit", "name"]
 
 
 class InvoiceFilter(FilterSet):
