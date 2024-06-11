@@ -129,6 +129,9 @@ class IntendedUse(NameModel):
         verbose_name = pgettext_lazy("Model name", "Intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Intended uses")
 
+    def get_service_unit(self):
+        return self.service_unit
+
 
 class StatisticalUse(NameModel):
     """
