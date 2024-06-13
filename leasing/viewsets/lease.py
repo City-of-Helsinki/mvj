@@ -509,6 +509,11 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     service_unit_id__in=search_form.cleaned_data.get("service_unit")
                 )
 
+            if search_form.cleaned_data.get("intended_use"):
+                queryset = queryset.filter(
+                    intended_use=search_form.cleaned_data.get("intended_use")
+                )
+
         final_query = str(queryset.query)
         queryset_has_filters_applied = initial_query != final_query
         if queryset_has_filters_applied:

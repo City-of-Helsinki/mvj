@@ -11,6 +11,7 @@ from leasing.models import (
     Contact,
     DecisionMaker,
     District,
+    IntendedUse,
     LeaseType,
     Municipality,
     ServiceUnit,
@@ -127,6 +128,11 @@ class LeaseSearchForm(forms.Form):
     service_unit = CommaSeparatedChoiceField(
         label="Service unit",
         choices=lambda: ((str(x.id), x.name) for x in ServiceUnit.objects.all()),
+        required=False,
+    )
+    intended_use = forms.ModelChoiceField(
+        label="Intended use",
+        queryset=IntendedUse.objects.all(),
         required=False,
     )
 
