@@ -81,8 +81,8 @@ class LaskeInvoiceCountReport(ReportBase):
 
         return invoice_counter
 
+    @staticmethod
     def _get_estimate_counts(
-        self,
         original_invoice_counter: Counter,
         today: datetime.date,
         estimate_start_date: datetime.date,
