@@ -7,7 +7,7 @@ from django import forms
 from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.db.models.functions.datetime import TruncDate
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, now
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Invoice, Rent, ServiceUnit
@@ -41,17 +41,18 @@ class LaskeInvoiceCountReport(ReportBase):
         "estimate_count": {"label": _("Estimated invoice count"), "is_numeric": True},
     }
 
-    @staticmethod
-    def _generate_invoice_counter_with_date_keys(query_start_date, query_end_date):
-        invoice_counter = Counter()
+    def _generate_invoice_counter_with_date_keys(
+        self, query_start_date: datetime.date, query_end_date: datetime.date
+    ):
+        invoice_counter: Counter = Counter()
         tmp_date = query_start_date
         while tmp_date < query_end_date:
             invoice_counter[tmp_date] = 0
             tmp_date += datetime.timedelta(days=1)
         return invoice_counter
 
-    @staticmethod
     def _get_invoice_counts(
+        self,
         original_invoice_counter: Counter,
         query_start_date: datetime.date,
         query_end_date: datetime.date,
@@ -81,8 +82,8 @@ class LaskeInvoiceCountReport(ReportBase):
 
         return invoice_counter
 
-    @staticmethod
     def _get_estimate_counts(
+        self,
         original_invoice_counter: Counter,
         today: datetime.date,
         estimate_start_date: datetime.date,
@@ -93,6 +94,7 @@ class LaskeInvoiceCountReport(ReportBase):
         due_dates_start = estimate_start_date + relativedelta(months=1)
         due_dates_end = estimate_end_date + relativedelta(months=1)
 
+        # Create estimated counts for upcoming rents
         rents = (
             Rent.objects.filter(
                 (Q(end_date__isnull=True) | Q(end_date__gte=estimate_start_date))
@@ -110,6 +112,7 @@ class LaskeInvoiceCountReport(ReportBase):
             for due_date in due_dates:
                 invoice_counter[due_date - relativedelta(months=1)] += 1
 
+        # Create estimated counts for invoices not yet sent to SAP
         invoices = Invoice.objects.filter(
             due_date__lte=due_dates_end,
             due_date__gte=due_dates_start,
@@ -127,23 +130,31 @@ class LaskeInvoiceCountReport(ReportBase):
         return invoice_counter
 
     def get_data(self, input_data: InputData):
-        today = datetime.date.today()
-        query_start_date = min(input_data["start_date"], input_data["end_date"])
-        query_end_date = max(input_data["end_date"], input_data["start_date"])
+        today = now().date()
+        query_start_date: datetime.date | None = min(
+            input_data["start_date"], input_data["end_date"]
+        )
+        query_end_date: datetime.date | None = max(
+            input_data["end_date"], input_data["start_date"]
+        )
+
+        if query_start_date is not None and query_end_date is not None:
+            invoice_counter = self._generate_invoice_counter_with_date_keys(
+                query_start_date, query_end_date
+            )
+        else:
+            raise ValueError("Start date and end date must be provided")
+
         estimate_start_date = None
         estimate_end_date = None
 
-        invoice_counter = self._generate_invoice_counter_with_date_keys(
-            query_start_date, query_end_date
-        )
-
-        if query_start_date > today:
+        if query_start_date is not None and query_start_date > today:
             # Query is in future, only estimates can be provided
             estimate_start_date = query_start_date
             query_start_date = None
             estimate_end_date = query_end_date
             query_end_date = None
-        elif query_end_date > today:
+        elif query_end_date is not None and query_end_date > today:
             # Query ends in future, provide estimates for dates after today
             estimate_start_date = today
             estimate_end_date = query_end_date
