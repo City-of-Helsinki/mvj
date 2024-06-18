@@ -63,6 +63,76 @@ def get_reservation_procedure(obj):
     return obj.reservation_procedure.name if obj.reservation_procedure else None
 
 
+def get_plan_unit_intended_uses(obj):
+    plan_units_intended_uses = []
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            if plan_unit.plan_unit_intended_use:
+                plan_units_intended_uses.append(plan_unit.plan_unit_intended_use.name)
+
+    return ", ".join(plan_units_intended_uses)
+
+
+def get_plan_unit_detailed_plan_identifier(obj):
+    plan_units_detailed_plan_identifiers = []
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            if plan_unit.detailed_plan_identifier:
+                plan_units_detailed_plan_identifiers.append(
+                    plan_unit.detailed_plan_identifier
+                )
+
+    return ", ".join(plan_units_detailed_plan_identifiers)
+
+
+def get_plan_unit_usage_distribution_main_build_permission(obj):
+    main_build_permission = ""
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            for usage_distribution in plan_unit.usage_distributions.all():
+                if usage_distribution.distribution == "1":
+                    main_build_permission = usage_distribution.build_permission
+    return main_build_permission
+
+
+def get_plan_unit_usage_distribution_other_build_permission(obj):
+    other_build_permission = 0
+    for lease_area in obj.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            for usage_distribution in plan_unit.usage_distributions.all():
+                if (
+                    usage_distribution.distribution != "1"
+                    and usage_distribution.build_permission.isdigit()
+                ):
+                    other_build_permission += int(usage_distribution.build_permission)
+    if other_build_permission != 0:
+        return str(other_build_permission)
+    else:
+        return ""
+
+
+def get_financing(obj):
+    if obj.financing:
+        return obj.financing.name
+    else:
+        return ""
+
+
+def get_management(obj):
+    if obj.management:
+        return obj.management.name
+    else:
+        return ""
+
+
 class ReservationsReport(ReportBase):
     name = _("Reservations")
     description = _("Show reservations")
@@ -104,6 +174,28 @@ class ReservationsReport(ReportBase):
         },
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
+        "plan_unit_intended_uses": {
+            "source": get_plan_unit_intended_uses,
+            "label": "Kaavayksikön käyttötarkoitus",
+            "width": 50,
+        },
+        "plan_unit_detailed_plan_identifier": {
+            "source": get_plan_unit_detailed_plan_identifier,
+            "label": "Asemakaavan nro",
+            "width": 50,
+        },
+        "plan_unit_usage_distribution_main_build_permission": {
+            "source": get_plan_unit_usage_distribution_main_build_permission,
+            "label": "Asuinrakennusoikeus",
+            "width": 50,
+        },
+        "plan_unit_usage_distribution_other_build_permission": {
+            "source": get_plan_unit_usage_distribution_other_build_permission,
+            "label": "Muu rakennusoikeus",
+            "width": 50,
+        },
+        "financing": {"source": get_financing, "label": "Rahoitusmuoto", "width": 50},
+        "management": {"source": get_management, "label": "Hallintamuoto", "width": 50},
     }
 
     def get_data(self, input_data):  # NOQA C901
@@ -246,6 +338,8 @@ class ReservationsReport(ReportBase):
                 "identifier__district",
                 "identifier__municipality",
                 "reservation_procedure",
+                "financing",
+                "management",
             )
             .prefetch_related(
                 "tenants",
@@ -253,6 +347,9 @@ class ReservationsReport(ReportBase):
                 "tenants__tenantcontact_set__contact",
                 "lease_areas",
                 "lease_areas__addresses",
+                "lease_areas__plan_units",
+                "lease_areas__plan_units__plan_unit_intended_use",
+                "lease_areas__plan_units__usage_distributions",
             )
             .order_by("start_date", "end_date")
         )
