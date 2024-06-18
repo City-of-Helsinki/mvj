@@ -37,8 +37,8 @@ class ContactRentsReport(ReportBase):
             "source": get_lease_area_identifier,
             "width": 20,
         },
-        "start_date": {"label": _("Start date")},
-        "end_date": {"label": _("End date")},
+        "start_date": {"label": _("Start date"), "format": "date"},
+        "end_date": {"label": _("End date"), "format": "date"},
         "address": {"label": _("Address"), "source": get_address, "width": 20},
         "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
         "rent_amount": {
