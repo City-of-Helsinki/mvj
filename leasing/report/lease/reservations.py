@@ -90,31 +90,42 @@ def get_plan_unit_detailed_plan_identifier(obj):
 
 
 def get_plan_unit_usage_distribution_main_build_permission(obj):
-    main_build_permission = ""
+    """
+    build permission of usage distribution with highest build permission
+    """
+    main_build_permission = 0
     for lease_area in obj.lease_areas.all():
         if lease_area.archived_at:
             continue
         for plan_unit in lease_area.plan_units.all():
             for usage_distribution in plan_unit.usage_distributions.all():
-                if usage_distribution.distribution == "1":
-                    main_build_permission = usage_distribution.build_permission
-    return main_build_permission
+                if int(usage_distribution.build_permission) > main_build_permission:
+                    main_build_permission = int(usage_distribution.build_permission)
+
+    if main_build_permission != 0:
+        return str(main_build_permission)
+    else:
+        return ""
 
 
 def get_plan_unit_usage_distribution_other_build_permission(obj):
+    """
+    aggregate build permission of all usage distributions except usage distribution with highest build permission
+    """
     other_build_permission = 0
+    highest_build_permission = 0
     for lease_area in obj.lease_areas.all():
         if lease_area.archived_at:
             continue
         for plan_unit in lease_area.plan_units.all():
             for usage_distribution in plan_unit.usage_distributions.all():
-                if (
-                    usage_distribution.distribution != "1"
-                    and usage_distribution.build_permission.isdigit()
-                ):
-                    other_build_permission += int(usage_distribution.build_permission)
+                if usage_distribution.build_permission.isdigit():
+                    current_build_permission = int(usage_distribution.build_permission)
+                    other_build_permission += current_build_permission
+                    if current_build_permission > highest_build_permission:
+                        highest_build_permission = current_build_permission
     if other_build_permission != 0:
-        return str(other_build_permission)
+        return str(other_build_permission - highest_build_permission)
     else:
         return ""
 
