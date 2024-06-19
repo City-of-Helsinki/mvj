@@ -176,26 +176,34 @@ class ReservationsReport(ReportBase):
         "end_date": {"label": _("End date"), "format": "date"},
         "plan_unit_intended_uses": {
             "source": get_plan_unit_intended_uses,
-            "label": "Kaavayksikön käyttötarkoitus",
+            "label": _("Plan unit intended use"),
             "width": 50,
         },
         "plan_unit_detailed_plan_identifier": {
             "source": get_plan_unit_detailed_plan_identifier,
-            "label": "Asemakaavan nro",
+            "label": _("Plan number"),
             "width": 50,
         },
         "plan_unit_usage_distribution_main_build_permission": {
             "source": get_plan_unit_usage_distribution_main_build_permission,
-            "label": "Asuinrakennusoikeus",
+            "label": _("Permitted build residential floor area (floor-m²)"),
             "width": 50,
         },
         "plan_unit_usage_distribution_other_build_permission": {
             "source": get_plan_unit_usage_distribution_other_build_permission,
-            "label": "Muu rakennusoikeus",
+            "label": _("Other permitted build area (floor-m²)"),
             "width": 50,
         },
-        "financing": {"source": get_financing, "label": "Rahoitusmuoto", "width": 50},
-        "management": {"source": get_management, "label": "Hallintamuoto", "width": 50},
+        "financing": {
+            "source": get_financing,
+            "label": _("Financing method"),
+            "width": 50,
+        },
+        "management": {
+            "source": get_management,
+            "label": _("Management method"),
+            "width": 50,
+        },
     }
 
     def get_data(self, input_data):  # NOQA C901
