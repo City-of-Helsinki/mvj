@@ -133,14 +133,14 @@ def get_plan_unit_usage_distribution_other_build_permission(lease):
         return ""
 
 
-def get_financing(lease):
+def get_financing_name(lease):
     if lease.financing:
         return lease.financing.name
     else:
         return ""
 
 
-def get_management(lease):
+def get_management_name(lease):
     if lease.management:
         return lease.management.name
     else:
@@ -209,12 +209,12 @@ class ReservationsReport(ReportBase):
             "width": 50,
         },
         "financing": {
-            "source": get_financing,
+            "source": get_financing_name,
             "label": _("Financing method"),
             "width": 50,
         },
         "management": {
-            "source": get_management,
+            "source": get_management_name,
             "label": _("Management method"),
             "width": 50,
         },
