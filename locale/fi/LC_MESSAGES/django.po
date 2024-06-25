@@ -3909,3 +3909,6 @@ msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
+
+msgid "Other permitted build area (floor-m²)"
+msgstr "Muu rakennusoikeus (k-m²)"

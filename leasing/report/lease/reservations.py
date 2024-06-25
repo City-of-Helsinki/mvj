@@ -11,19 +11,19 @@ from leasing.models import Lease, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
-    return obj.get_identifier_string()
+def get_lease_id(lease):
+    return lease.get_identifier_string()
 
 
-def get_area(obj):
+def get_area(lease):
     return ", ".join(
-        [la.identifier for la in obj.lease_areas.all() if la.archived_at is None]
+        [la.identifier for la in lease.lease_areas.all() if la.archived_at is None]
     )
 
 
-def get_address(obj):
+def get_address(lease):
     addresses = set()
-    for lease_area in obj.lease_areas.all():
+    for lease_area in lease.lease_areas.all():
         if lease_area.archived_at:
             continue
 
@@ -32,12 +32,12 @@ def get_address(obj):
     return " / ".join(addresses)
 
 
-def get_tenants(obj):
+def get_tenants(lease):
     today = datetime.date.today()
 
     contacts = set()
 
-    for tenant in obj.tenants.all():
+    for tenant in lease.tenants.all():
         for tc in tenant.tenantcontact_set.all():
             if tc.type != TenantContactType.TENANT:
                 continue
@@ -59,8 +59,92 @@ def get_tenants(obj):
     return ", ".join(contact_strings)
 
 
-def get_reservation_procedure(obj):
-    return obj.reservation_procedure.name if obj.reservation_procedure else None
+def get_reservation_procedure(lease):
+    return lease.reservation_procedure.name if lease.reservation_procedure else None
+
+
+def get_plan_unit_intended_uses(lease):
+    plan_units_intended_uses = []
+    for lease_area in lease.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            if plan_unit.plan_unit_intended_use:
+                plan_units_intended_uses.append(plan_unit.plan_unit_intended_use.name)
+
+    return ", ".join(plan_units_intended_uses)
+
+
+def get_plan_unit_detailed_plan_identifier(lease):
+    plan_units_detailed_plan_identifiers = []
+    for lease_area in lease.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            if plan_unit.detailed_plan_identifier:
+                plan_units_detailed_plan_identifiers.append(
+                    plan_unit.detailed_plan_identifier
+                )
+
+    return ", ".join(plan_units_detailed_plan_identifiers)
+
+
+def get_plan_unit_usage_distribution_main_build_permission(lease):
+    """
+    build permission of usage distribution with highest build permission
+    """
+    main_build_permission = 0
+    for lease_area in lease.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            for usage_distribution in plan_unit.usage_distributions.all():
+                if (
+                    usage_distribution.build_permission.isdigit()
+                    and int(usage_distribution.build_permission) > main_build_permission
+                ):
+                    main_build_permission = int(usage_distribution.build_permission)
+
+    if main_build_permission != 0:
+        return str(main_build_permission)
+    else:
+        return ""
+
+
+def get_plan_unit_usage_distribution_other_build_permission(lease):
+    """
+    aggregate build permission of all usage distributions except usage distribution with highest build permission
+    """
+    other_build_permission = 0
+    highest_build_permission = 0
+    for lease_area in lease.lease_areas.all():
+        if lease_area.archived_at:
+            continue
+        for plan_unit in lease_area.plan_units.all():
+            for usage_distribution in plan_unit.usage_distributions.all():
+                if usage_distribution.build_permission.isdigit():
+                    current_build_permission = int(usage_distribution.build_permission)
+                    other_build_permission += current_build_permission
+                    if current_build_permission > highest_build_permission:
+                        highest_build_permission = current_build_permission
+    if other_build_permission != 0:
+        return str(other_build_permission - highest_build_permission)
+    else:
+        return ""
+
+
+def get_financing_name(lease):
+    if lease.financing:
+        return lease.financing.name
+    else:
+        return ""
+
+
+def get_management_name(lease):
+    if lease.management:
+        return lease.management.name
+    else:
+        return ""
 
 
 class ReservationsReport(ReportBase):
@@ -104,6 +188,36 @@ class ReservationsReport(ReportBase):
         },
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
+        "plan_unit_intended_uses": {
+            "source": get_plan_unit_intended_uses,
+            "label": _("Plan unit intended use"),
+            "width": 50,
+        },
+        "plan_unit_detailed_plan_identifier": {
+            "source": get_plan_unit_detailed_plan_identifier,
+            "label": _("Plan number"),
+            "width": 50,
+        },
+        "plan_unit_usage_distribution_main_build_permission": {
+            "source": get_plan_unit_usage_distribution_main_build_permission,
+            "label": _("Permitted build residential floor area (floor-m²)"),
+            "width": 50,
+        },
+        "plan_unit_usage_distribution_other_build_permission": {
+            "source": get_plan_unit_usage_distribution_other_build_permission,
+            "label": _("Other permitted build area (floor-m²)"),
+            "width": 50,
+        },
+        "financing": {
+            "source": get_financing_name,
+            "label": _("Financing method"),
+            "width": 50,
+        },
+        "management": {
+            "source": get_management_name,
+            "label": _("Management method"),
+            "width": 50,
+        },
     }
 
     def get_data(self, input_data):  # NOQA C901
@@ -246,6 +360,8 @@ class ReservationsReport(ReportBase):
                 "identifier__district",
                 "identifier__municipality",
                 "reservation_procedure",
+                "financing",
+                "management",
             )
             .prefetch_related(
                 "tenants",
@@ -253,6 +369,9 @@ class ReservationsReport(ReportBase):
                 "tenants__tenantcontact_set__contact",
                 "lease_areas",
                 "lease_areas__addresses",
+                "lease_areas__plan_units",
+                "lease_areas__plan_units__plan_unit_intended_use",
+                "lease_areas__plan_units__usage_distributions",
             )
             .order_by("start_date", "end_date")
         )

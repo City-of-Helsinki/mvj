@@ -3822,3 +3822,6 @@ msgstr "Token existerar"
 
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
+
+msgid "Other permitted build area (floor-m²)"
+msgstr "Annan bostadsbyggsrätt (k-m²)"
