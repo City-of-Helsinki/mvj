@@ -3825,3 +3825,6 @@ msgstr "Användarens rättigheter"
 
 msgid "Other permitted build area (floor-m²)"
 msgstr "Annan bostadsbyggsrätt (k-m²)"
+
+msgid "Main permitted build area (floor-m²)"
+msgstr "Huvudbostadsbyggsrätt (k-m²)"

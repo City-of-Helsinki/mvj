@@ -200,7 +200,7 @@ class ReservationsReport(ReportBase):
         },
         "plan_unit_usage_distribution_main_build_permission": {
             "source": get_plan_unit_usage_distribution_main_build_permission,
-            "label": _("Permitted build residential floor area (floor-m²)"),
+            "label": _("Main permitted build area (floor-m²)"),
             "width": 50,
         },
         "plan_unit_usage_distribution_other_build_permission": {
