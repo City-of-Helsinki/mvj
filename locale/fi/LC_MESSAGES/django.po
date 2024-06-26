@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-12 14:23+0200\n"
+"POT-Creation-Date: 2024-06-14 18:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -15,6 +15,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "View auditlog"
+msgstr "Näytä auditointiloki"
+
+msgid "View auditlog of a lease or a contact"
+msgstr "Näytä valitun vuokrauksen tai asiakkaan auditointiloki"
 
 msgid "executable or script"
 msgstr "Ajettava tiedosto"
@@ -147,6 +153,9 @@ msgstr "Aikavyöhyke"
 
 msgid "timezones"
 msgstr "Aikavyöhykkeet"
+
+msgid "Timezone name can't be empty"
+msgstr ""
 
 msgid "Invalid timezone name"
 msgstr "Epäkelpo aikavyöhykkeen nimi"
@@ -482,11 +491,11 @@ msgstr "Lasku"
 msgid "Invoices"
 msgstr "Laskut"
 
-msgid "Lease"
-msgstr "Vuokraus"
-
 msgid "Lease identifier"
 msgstr "Vuokraustunnus"
+
+msgid "Invoice number"
+msgstr "Laskun numero"
 
 msgid "Due date"
 msgstr "Eräpäivä"
@@ -614,6 +623,9 @@ msgstr "Laske-maksujen loki"
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Laske-maksujen lokit"
+
+msgid "Lease"
+msgstr "Vuokraus"
 
 msgid "Search by identifier"
 msgstr "Etsi tunnisteella"
@@ -2403,6 +2415,9 @@ msgctxt "Model name"
 msgid "Leases"
 msgstr "Vuokraukset"
 
+msgid "The intended use's service unit must match the lease's service_unit."
+msgstr "Käyttötarkoituksen ja vuokrauksen palvelukokonaisuuden pitää olla sama."
+
 #, python-brace-format
 msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
 msgstr "{area_identifier}, {area_addresses}, {area_m2}m2"
@@ -2935,9 +2950,6 @@ msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Näytä maksusuoritukset, jotka on maksettu alkupvm ja loppupvm välillä"
 
-msgid "Invoice number"
-msgstr "Laskun numero"
-
 msgid "Total"
 msgstr "Yhteensä"
 
@@ -3023,8 +3035,8 @@ msgstr ""
 msgid "Send date"
 msgstr "Lähetyspvm"
 
-msgid "Estimate"
-msgstr "Arvio"
+msgid "Estimated invoice count"
+msgstr "Tulevien laskujen arvioitu määrä"
 
 msgid "Open invoices"
 msgstr "Avoimet laskut"
@@ -3410,12 +3422,6 @@ msgstr "Y-tunnus on viallinen"
 
 msgid "File not available"
 msgstr "Tiedostoa ei löydy"
-
-msgid "View auditlog"
-msgstr "Näytä auditointiloki"
-
-msgid "View auditlog of a lease or a contact"
-msgstr "Näytä valitun vuokrauksen tai asiakkaan auditointiloki"
 
 msgid "Check if contact already exist"
 msgstr "Tarkista onko kontakti jo olemassa"

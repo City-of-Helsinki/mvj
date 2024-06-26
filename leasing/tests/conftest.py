@@ -8,6 +8,7 @@ import pytest
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
 from django.utils import timezone
+from faker import Faker
 from pytest_factoryboy import register
 
 from leasing.enums import (
@@ -30,6 +31,7 @@ from leasing.models import (
     ContractRent,
     DecisionMaker,
     FixedInitialYearRent,
+    IntendedUse,
     Invoice,
     LeaseBasisOfRent,
     LeaseType,
@@ -70,6 +72,8 @@ from leasing.models.land_use_agreement import (
 )
 from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
+
+fake = Faker("fi_FI")
 
 
 @pytest.fixture
@@ -356,6 +360,15 @@ class ServiceUnitFactory(factory.django.DjangoModelFactory):
 class ServiceUnitGroupMappingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ServiceUnitGroupMapping
+
+
+@register
+class IntendedUseFactory(factory.django.DjangoModelFactory):
+    name = fake.word()
+    service_unit = factory.SubFactory(ServiceUnitFactory)
+
+    class Meta:
+        model = IntendedUse
 
 
 @pytest.fixture

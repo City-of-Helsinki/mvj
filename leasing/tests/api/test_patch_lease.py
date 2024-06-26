@@ -10,6 +10,49 @@ from leasing.models import ContractRent, Lease, PlanUnit, ServiceUnit
 
 
 @pytest.mark.django_db
+def test_patch_lease_intended_use(
+    django_db_setup,
+    admin_client,
+    lease_test_data,
+    intended_use_factory,
+    service_unit_factory,
+):
+    lease = lease_test_data["lease"]
+
+    mismatching_intended_use = intended_use_factory(
+        name="Intended use with mismatching service_unit",
+        service_unit=service_unit_factory(),
+    )
+    data = {"intended_use": mismatching_intended_use.id}
+
+    url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
+
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert (
+        response.status_code == 400
+    ), "Intended use should not be allowed to have different service_unit than its Lease"
+
+    matching_intended_use = intended_use_factory(
+        name="Intended use with matching service_unit", service_unit=lease.service_unit
+    )
+    data = {"intended_use": matching_intended_use.id}
+    response = admin_client.patch(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    assert (
+        response.status_code == 200
+    ), "Intended use should have same service_unit as its Lease"
+
+
+@pytest.mark.django_db
 def test_patch_lease_intended_use_note(django_db_setup, admin_client, lease_test_data):
     lease = lease_test_data["lease"]
 

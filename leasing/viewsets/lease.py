@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.filters import DistrictFilter, LeaseFilter
+from leasing.filters import DistrictFilter, IntendedUseFilter, LeaseFilter
 from leasing.forms import LeaseSearchForm
 from leasing.models import (
     District,
@@ -80,6 +80,7 @@ class HitasViewSet(AtomicTransactionModelViewSet):
 class IntendedUseViewSet(AtomicTransactionModelViewSet):
     queryset = IntendedUse.objects.all()
     serializer_class = IntendedUseSerializer
+    filterset_class = IntendedUseFilter
 
 
 class LeaseTypeViewSet(AtomicTransactionModelViewSet):
@@ -506,6 +507,11 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             if search_form.cleaned_data.get("service_unit"):
                 queryset = queryset.filter(
                     service_unit_id__in=search_form.cleaned_data.get("service_unit")
+                )
+
+            if search_form.cleaned_data.get("intended_use"):
+                queryset = queryset.filter(
+                    intended_use=search_form.cleaned_data.get("intended_use")
                 )
 
         final_query = str(queryset.query)

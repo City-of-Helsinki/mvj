@@ -417,6 +417,7 @@ class LeaseSerializerBase(
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
     lease_areas = LeaseAreaSerializer(many=True, required=False, allow_null=True)
     lessor = ContactSerializer(required=False, allow_null=True)
+    intended_use = IntendedUseSerializer(required=False, allow_null=True)
     contracts = ContractSerializer(many=True, required=False, allow_null=True)
     decisions = DecisionSerializer(many=True, required=False, allow_null=True)
     inspections = InspectionSerializer(many=True, required=False, allow_null=True)
@@ -624,6 +625,14 @@ class LeaseUpdateSerializer(
         instance_class=Contact,
         queryset=Contact.objects.filter(is_lessor=True),
         related_serializer=ContactSerializer,
+        required=False,
+        allow_null=True,
+        validators=[SameServiceUnitValidator()],
+    )
+    intended_use = InstanceDictPrimaryKeyRelatedField(
+        instance_class=IntendedUse,
+        queryset=IntendedUse.objects.all(),
+        related_serializer=IntendedUseSerializer,
         required=False,
         allow_null=True,
         validators=[SameServiceUnitValidator()],
