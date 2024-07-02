@@ -1158,40 +1158,96 @@
     "model": "leasing.DecisionMaker",
     "pk": 166,
     "fields": {
-      "name": "Kulttuuri- ja vapaa-aikalautakunta"
+      "name": "Make sähköposti"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 167,
     "fields": {
-      "name": "Liikuntajohtaja"
+      "name": "Kiinteistöjen kehittäminen - tiimipäällikkö"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 168,
     "fields": {
-      "name": "Liikuntapaikkapäällikkö"
+      "name": "Maaomaisuuden hallinnan tuki -yksikön päällikkö"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 169,
     "fields": {
-      "name": "Ulkoilupalvelupäällikkö"
+      "name": "Kaupunkiympäristölautakunnan ympäristö- ja lupajaosto"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 170,
     "fields": {
-      "name": "Nuorisoasiainjohtaja"
+      "name": "Ympäristöseuranta ja valvonta - Yksikön päällikkö"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 171,
+    "fields": {
+      "name": "Tapahtumat ja maanvuokraus - tiimipäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 172,
+    "fields": {
+      "name": "Kaupunkiympäristölautakunnan rakennusten ja yleisten alueiden jaosto"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 173,
+    "fields": {
+      "name": "Ympäristöpalvelut, Vesi - tiimipäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 174,
+    "fields": {
+      "name": "Kulttuuri- ja vapaa-aikalautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 175,
+    "fields": {
+      "name": "Liikuntajohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 176,
+    "fields": {
+      "name": "Liikuntapaikkapäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 177,
+    "fields": {
+      "name": "Ulkoilupalvelupäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 178,
+    "fields": {
+      "name": "Nuorisoasiainjohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 179,
     "fields": {
       "name": "Aluepäällikkö"
     }
