@@ -1153,5 +1153,47 @@
     "fields": {
       "name": "Ympäristövalvontapäällikkö"
     }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 166,
+    "fields": {
+      "name": "Kulttuuri- ja vapaa-aikalautakunta"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 167,
+    "fields": {
+      "name": "Liikuntajohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 168,
+    "fields": {
+      "name": "Liikuntapaikkapäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 169,
+    "fields": {
+      "name": "Ulkoilupalvelupäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 170,
+    "fields": {
+      "name": "Nuorisoasiainjohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 171,
+    "fields": {
+      "name": "Aluepäällikkö"
+    }
   }
 ]
