@@ -1214,40 +1214,54 @@
     "model": "leasing.DecisionMaker",
     "pk": 174,
     "fields": {
-      "name": "Kulttuuri- ja vapaa-aikalautakunta"
+      "name": "Oikeuspalvelut"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 175,
     "fields": {
-      "name": "Liikuntajohtaja"
+      "name": "Toimitilatontit ja kiinteistökehitys -tiimipäällikkö"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 176,
     "fields": {
-      "name": "Liikuntapaikkapäällikkö"
+      "name": "Kulttuuri- ja vapaa-aikalautakunta"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 177,
     "fields": {
-      "name": "Ulkoilupalvelupäällikkö"
+      "name": "Liikuntajohtaja"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 178,
     "fields": {
-      "name": "Nuorisoasiainjohtaja"
+      "name": "Liikuntapaikkapäällikkö"
     }
   },
   {
     "model": "leasing.DecisionMaker",
     "pk": 179,
+    "fields": {
+      "name": "Ulkoilupalvelupäällikkö"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 180,
+    "fields": {
+      "name": "Nuorisoasiainjohtaja"
+    }
+  },
+  {
+    "model": "leasing.DecisionMaker",
+    "pk": 181,
     "fields": {
       "name": "Aluepäällikkö"
     }
