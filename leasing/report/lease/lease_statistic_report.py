@@ -29,7 +29,7 @@ from leasing.report.lease.common_getters import (
     get_tenants,
     get_total_area,
 )
-from leasing.report.report_base import AsyncReportBase
+from leasing.report.report_base import ReportBase
 
 # TODO: Can we get rid of static ids
 RESIDENTIAL_INTENDED_USE_IDS = [
@@ -192,7 +192,7 @@ def get_average_amount_per_area_business(obj):
     )
 
 
-class LeaseStatisticReport(AsyncReportBase):
+class LeaseStatisticReport(ReportBase):
     name = _("Lease statistics report")
     description = _(
         "Shows information about all leases or if start date is provided the leases that have started on or after it"
@@ -245,7 +245,13 @@ class LeaseStatisticReport(AsyncReportBase):
         # Rakennuttaja
         "real_estate_developer": {"label": _("Real estate developer"), "width": 20},
         # Vuokralaiset
-        "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
+        "tenants": {
+            "label": _("Tenants"),
+            "source": lambda x: get_tenants(
+                x, include_future_tenants=False, report="Lease statistics report"
+            ),
+            "width": 40,
+        },
         # Start date
         "start_date": {"label": _("Start date"), "format": "date"},
         # End date
