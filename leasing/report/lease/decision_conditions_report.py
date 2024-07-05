@@ -37,7 +37,11 @@ def get_address(obj):
 def get_tenants(obj):
     contacts = []
     for tenant in obj.decision.lease.tenants.all():
-        for contact in tenant.contacts.all():
+        for contact in tenant.contacts.filter(
+            tenantcontact__end_date__isnull=True,
+            tenantcontact__tenant_id=tenant.id,
+            tenantcontact__type="tenant",
+        ):
             if contact.name:
                 contacts.append(contact.name)
             elif contact.first_name and contact.last_name:
