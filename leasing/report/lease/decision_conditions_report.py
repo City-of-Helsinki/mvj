@@ -34,6 +34,20 @@ def get_address(obj):
     return " / ".join(addresses)
 
 
+def get_tenants(obj):
+    contacts = []
+    for tenant in obj.decision.lease.tenants.all():
+        for contact in tenant.contacts.all():
+            if contact.name:
+                contacts.append(contact.name)
+            elif contact.first_name and contact.last_name:
+                contacts.append(contact.first_name + " " + contact.last_name)
+            else:
+                contacts.append("Null")
+
+    return " / ".join(contacts)
+
+
 class DecisionConditionsReport(ReportBase):
     name = _("Decision conditions")
     description = _(
@@ -75,11 +89,13 @@ class DecisionConditionsReport(ReportBase):
         #     'format': 'date',
         # },
         "description": {"label": _("Description"), "width": 100},
+        "tenants": {"source": get_tenants, "label": _("Tenants"), "width": 50},
     }
 
     def get_data(self, input_data):
         qs = (
             Condition.objects.filter(supervised_date__isnull=True)
+            .exclude(deleted__isnull=False)
             .select_related(
                 "type",
                 "decision",
@@ -92,6 +108,8 @@ class DecisionConditionsReport(ReportBase):
             .prefetch_related(
                 "decision__lease__lease_areas",
                 "decision__lease__lease_areas__addresses",
+                "decision__lease__tenants",
+                "decision__lease__tenants__contacts",
             )
             .order_by(
                 "supervision_date",
