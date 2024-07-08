@@ -2206,5 +2206,237 @@
       "name": "Venetel. ja veneilyä palv. liiketoiminta",
       "service_unit": 1
     }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 277,
+    "fields": {
+      "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 278,
+    "fields": {
+      "name": "Hiekkasiilo, kaupungin urakkasopimukset",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 279,
+    "fields": {
+      "name": "Hiekkasiilo, muut",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 280,
+    "fields": {
+      "name": "Kaupunkipyörä",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 281,
+    "fields": {
+      "name": "Kaupunkiviljely",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 282,
+    "fields": {
+      "name": "Kioski, kahvila, myyntipaikat",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 283,
+    "fields": {
+      "name": "Lasitettu katuterassi ja lasitettu asiakastila",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 284,
+    "fields": {
+      "name": "Leikkipaikan käyttöoikeus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 285,
+    "fields": {
+      "name": "Liikunta ja ulkoilupaikat yleisellä alueella",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 286,
+    "fields": {
+      "name": "Lisäpiha, asuntotontit",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 287,
+    "fields": {
+      "name": "Lisäpiha, yksityiset päiväkodit",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 288,
+    "fields": {
+      "name": "Maa-aineksen varastointi",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 289,
+    "fields": {
+      "name": "Mehiläistarhaus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 290,
+    "fields": {
+      "name": "Metsästysoikeus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 291,
+    "fields": {
+      "name": "Muu tontinosan tilapäinen vuokraus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 292,
+    "fields": {
+      "name": "Muu tontinosan tilapäinen vuokraus (alv)",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 293,
+    "fields": {
+      "name": "Muu yleisen alueen tilapäinen vuokraus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 294,
+    "fields": {
+      "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 295,
+    "fields": {
+      "name": "Muuntamo, laitetila, masto",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 296,
+    "fields": {
+      "name": "Pysäköinti",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 297,
+    "fields": {
+      "name": "Sähköautojen latauspaikat",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 298,
+    "fields": {
+      "name": "Sähköpotkulauta",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 299,
+    "fields": {
+      "name": "Taide ja kulttuuri yleisellä alueella (muu kuin tapahtumatoiminta)",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 300,
+    "fields": {
+      "name": "Tilapäinen käymälä ja taukotila",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 301,
+    "fields": {
+      "name": "Työmaatukitoiminta",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 302,
+    "fields": {
+      "name": "Ulkomainonta, muut",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 303,
+    "fields": {
+      "name": "Ulkomainoslaitepaikkasopimus",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 304,
+    "fields": {
+      "name": "Varastointi",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
+    "pk": 305,
+    "fields": {
+      "name": "Vesialueen vuokraaminen laivapaikaksi tai muuhun toimintaan",
+      "service_unit": 2
+    }
   }
 ]
