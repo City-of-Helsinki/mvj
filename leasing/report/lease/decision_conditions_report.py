@@ -131,12 +131,12 @@ class DecisionConditionsReport(ReportBase):
             qs = qs.filter(
                 supervision_date__isnull=not input_data["supervision_exists"]
             )
-        else:
-            if input_data["start_date"]:
-                qs = qs.filter(supervision_date__gte=input_data["start_date"])
 
-            if input_data["end_date"]:
-                qs = qs.filter(supervision_date__lte=input_data["end_date"])
+        if input_data["start_date"]:
+            qs = qs.filter(supervision_date__gte=input_data["start_date"])
+
+        if input_data["end_date"]:
+            qs = qs.filter(supervision_date__lte=input_data["end_date"])
 
         if input_data["condition_type"]:
             qs = qs.filter(type=input_data["condition_type"])
