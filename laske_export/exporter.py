@@ -18,6 +18,7 @@ from laske_export.document.land_use_agreement_invoice_sales_order_adapter import
 from laske_export.document.sales_order import SalesOrder, SalesOrderContainer
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
+from laske_export.utils import get_receivable_type_rent
 from leasing.enums import InvoiceType
 from leasing.models import Invoice
 from leasing.models.land_use_agreement import LandUseAgreementInvoice
@@ -130,7 +131,6 @@ class LaskeExporter:
         if isinstance(invoices, Invoice):
             invoices = [invoices]
 
-        receivable_type_rent = self.service_unit.default_receivable_type_rent
         receivable_type_collateral = (
             self.service_unit.default_receivable_type_collateral
         )
@@ -185,6 +185,8 @@ class LaskeExporter:
 
                 sales_order = SalesOrder()
                 set_constant_laske_values(sales_order, invoice.service_unit)
+
+                receivable_type_rent = get_receivable_type_rent(self, invoice)
 
                 adapter = InvoiceSalesOrderAdapter(
                     invoice=invoice,
