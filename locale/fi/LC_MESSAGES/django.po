@@ -3912,3 +3912,6 @@ msgstr "Käyttäjän oikeudet"
 
 msgid "Other permitted build area (floor-m²)"
 msgstr "Muu rakennusoikeus (k-m²)"
+
+msgid "Main permitted build area (floor-m²)"
+msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"

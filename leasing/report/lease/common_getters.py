@@ -16,19 +16,24 @@ def get_lease_id(lease):
     return lease.get_identifier_string()
 
 
-def get_tenants(lease, include_future_tenants=False):
+def get_tenants(lease, include_future_tenants=False, report=None):
     today = datetime.date.today()
 
     contacts = set()
 
     for tenant in lease.tenants.all():
-        for tc in tenant.tenantcontact_set.all():
+        all_tenantcontacts = tenant.tenantcontact_set.all()
+        for tc in all_tenantcontacts:
+            if report == "Lease statistics report" and len(all_tenantcontacts) == 1:
+                include_future_tenants = True
+
             if tc.type != TenantContactType.TENANT:
                 continue
 
             if (tc.end_date is None or tc.end_date >= today) and (
                 include_future_tenants
-                or (tc.start_date is None or tc.start_date <= today)
+                or tc.start_date is None
+                or tc.start_date <= today
             ):
                 contacts.add(tc.contact)
 
