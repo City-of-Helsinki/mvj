@@ -31,7 +31,7 @@ from leasing.report.lease.common_getters import (
 from leasing.report.report_base import AsyncReportBase
 
 
-def get_decision_makers(lease):
+def get_latest_decision_maker(lease):
     decision_makers = []
 
     for decision in lease.decisions.all():
@@ -43,7 +43,11 @@ def get_decision_makers(lease):
         )
     decision_makers.sort(key=lambda x: x[1] if x[1] else datetime.date.today())
 
-    return ", ".join(["{} ({})".format(dm[0], dm[1]) for dm in decision_makers])
+    if len(decision_makers) > 0:
+        latest_decision_maker = decision_makers[-1]
+        return "{} ({})".format(latest_decision_maker[0], latest_decision_maker[1])
+    else:
+        return ""
 
 
 def get_form_of_financing(lease):
@@ -281,7 +285,7 @@ class LeaseStatisticReport2(AsyncReportBase):
         # Päättäjä
         "decision_maker": {
             "label": _("Decision maker"),
-            "source": get_decision_makers,
+            "source": get_latest_decision_maker,
             "width": 20,
         },
         # Start date
