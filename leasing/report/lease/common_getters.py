@@ -1,4 +1,5 @@
 import datetime
+import functools
 
 from leasing.enums import TenantContactType
 
@@ -51,14 +52,26 @@ def get_address(lease):
 
 
 def get_contract_number(obj):
-    contract_numbers = []
+    contracts = []
     for contract in obj.contracts.all():
         if not contract.contract_number:
             continue
 
-        contract_numbers.append(contract.contract_number)
+        # only accept contracts with lease contract type
+        if not contract.type_id == 1:
+            continue
 
-    return " / ".join(contract_numbers)
+        contracts.append(contract)
+
+    if len(contracts) == 0:
+        return ""
+    else:
+        latest_contract = functools.reduce(
+            lambda a, b: (a if a.signing_date > b.signing_date else b),
+            contracts,
+        )
+
+        return latest_contract.contract_number
 
 
 def get_preparer(obj):
