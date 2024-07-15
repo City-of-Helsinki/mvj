@@ -8,6 +8,8 @@ from leasing.models.utils import get_next_business_day, is_business_day
 
 from .sales_order import BillingParty1, LineItem, OrderParty
 
+KUVA_LASKE_SALES_ORG = "2900"
+
 
 class InvoiceSalesOrderAdapter:
     def __init__(
@@ -200,8 +202,9 @@ class InvoiceSalesOrderAdapter:
             # "rent" and the internal order is set.
             if (
                 receivable_type == self.receivable_type_rent
-                and self.invoice.lease.internal_order
-            ):
+                or self.invoice.lease.service_unit.laske_sales_org
+                == KUVA_LASKE_SALES_ORG
+            ) and self.invoice.lease.internal_order:
                 line_item.order_item_number = self.invoice.lease.internal_order
 
             line_item.quantity = "1,00"
