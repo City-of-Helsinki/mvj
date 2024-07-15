@@ -405,5 +405,71 @@
       "is_active": true,
       "service_unit": 2
     }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 38,
+    "fields": {
+      "name": "KuVa",
+      "sap_material_code": "20000070",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 3
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 39,
+    "fields": {
+      "name": "KuVa (alv)",
+      "sap_material_code": "20000069",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 3
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 40,
+    "fields": {
+      "name": "KuVa",
+      "sap_material_code": "20000070",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 4
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 41,
+    "fields": {
+      "name": "KuVa (alv)",
+      "sap_material_code": "20000069",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 4
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 42,
+    "fields": {
+      "name": "KuVa",
+      "sap_material_code": "20000070",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 5
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 43,
+    "fields": {
+      "name": "KuVa (alv)",
+      "sap_material_code": "20000069",
+      "sap_order_item_number": "",
+      "is_active": true,
+      "service_unit": 5
+    }
   }
 ]
