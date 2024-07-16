@@ -25,7 +25,7 @@ attrs==23.2.0
     #   zeep
 babel==2.15.0
     # via docxcompose
-backports-zoneinfo==0.2.1; python_version < '3.9'
+backports-zoneinfo==0.2.1
     # via
     #   django
     #   psycopg
@@ -362,7 +362,7 @@ xlsxwriter==3.2.0
     # via -r requirements.in
 zeep==4.2.1
     # via -r requirements.in
-zipp==3.18.2
+zipp==3.19.1
     # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
