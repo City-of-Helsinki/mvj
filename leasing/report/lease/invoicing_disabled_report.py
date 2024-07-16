@@ -1,15 +1,34 @@
 from django import forms
-from django.db.models import Q
+from django.db import DataError, connection
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from leasing.enums import LeaseState, RentType
-from leasing.models import Lease, ServiceUnit
+from leasing.models import ServiceUnit
 from leasing.report.report_base import ReportBase
+from leasing.report.utils import dictfetchall
 
-
-def get_lease_id(obj):
-    return obj.get_identifier_string()
+INVOICING_DISABLED_REPORT_SQL = """
+    SELECT NULL AS "section",
+        li.identifier AS "lease_id",
+        l.start_date,
+        l.end_date
+    FROM leasing_lease l
+        INNER JOIN leasing_leaseidentifier li
+        ON l.identifier_id = li.id
+        INNER JOIN leasing_rent r
+        ON l.id = r.lease_id
+            AND r.deleted IS NULL
+            AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+            AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+            AND r.type != 'free'
+    WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+        AND l.start_date IS NOT NULL
+        AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
+        AND l.service_unit_id = ANY(%(service_units)s)
+        AND l.deleted IS NULL
+        AND l.is_invoicing_enabled = FALSE
+    ORDER BY li.identifier;
+"""
 
 
 class LeaseInvoicingDisabledReport(ReportBase):
@@ -24,7 +43,7 @@ class LeaseInvoicingDisabledReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_id": {"label": _("Lease id")},
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
     }
@@ -32,38 +51,20 @@ class LeaseInvoicingDisabledReport(ReportBase):
     def get_data(self, input_data):
         today = timezone.now().date()
 
-        qs = (
-            Lease.objects.filter(
-                Q(end_date__isnull=True) | Q(end_date__gte=today),
-                start_date__isnull=False,
-                state__in=[
-                    LeaseState.LEASE,
-                    LeaseState.SHORT_TERM_LEASE,
-                    LeaseState.LONG_TERM_LEASE,
-                ],
-                is_invoicing_enabled=False,
-            )
-            .select_related(
-                "identifier",
-                "identifier__type",
-                "identifier__district",
-                "identifier__municipality",
-            )
-            .prefetch_related("rents")
-            .order_by("start_date", "end_date")
-        )
-
         if input_data["service_unit"]:
-            qs = qs.filter(service_unit__in=input_data["service_unit"])
+            service_unit_ids = [su.id for su in input_data["service_unit"]]
+        else:
+            service_unit_ids = [su.id for su in ServiceUnit.objects.all()]
 
-        leases = []
-        for lease in qs:
-            free = True
-            for rent in lease.rents.all():
-                if rent.type is not RentType.FREE:
-                    free = False
-                    break
-            if not free:
-                leases.append(lease)
+        rows = []
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(
+                    INVOICING_DISABLED_REPORT_SQL,
+                    {"service_units": service_unit_ids, "today": today},
+                )
+                rows = dictfetchall(cursor)
+            except DataError:
+                pass
 
-        return leases
+        return rows
