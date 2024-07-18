@@ -16,6 +16,10 @@ from django_q.tasks import queue_size
 from leasing.enums import DueDatesType, InvoiceState
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
+from leasing.report.utils import (
+    calculate_invoice_billing_period_days,
+    get_active_rent_period,
+)
 from leasing.report.viewset import ENABLED_REPORTS
 
 
@@ -228,3 +232,172 @@ def test_laske_invoice_count_report(
         "2024-07-01": {"invoice_count": 0, "estimate_count": 1},
         "2024-08-01": {"invoice_count": 0, "estimate_count": 1},
     }
+
+
+def test_get_active_rent_period():
+
+    # Case 1: Set start and end dates.
+
+    row = {
+        "start_date": make_aware(datetime(2024, 1, 1)),
+        "end_date": make_aware(datetime(2024, 12, 31)),
+    }
+    today = make_aware(datetime(2025, 6, 15))
+    start, end = get_active_rent_period(row, today, None, None)
+    assert start == make_aware(datetime(2024, 1, 1))
+    assert end == make_aware(datetime(2024, 12, 31))
+
+    # Case 2: When lease end date is None, use today.
+
+    row = {
+        "start_date": make_aware(datetime(2024, 1, 1)),
+        "end_date": None,
+    }
+
+    today = make_aware(datetime(2025, 6, 15))
+    start, end = get_active_rent_period(row, today, None, None)
+    assert start == make_aware(datetime(2024, 1, 1))
+    assert end == make_aware(datetime(2025, 6, 15))
+
+    # Case 3: When lease end date is in the future, use today.
+
+    row = {
+        "start_date": make_aware(datetime(2024, 1, 1)),
+        "end_date": make_aware(datetime(2024, 12, 31)),
+    }
+
+    today = make_aware(datetime(2024, 6, 15))
+    start, end = get_active_rent_period(row, today, None, None)
+    assert start == make_aware(datetime(2024, 1, 1))
+    assert end == make_aware(datetime(2024, 6, 15))
+
+
+def test_calculate_invoice_billing_period_days():
+
+    # Case 1: Calculate billing period days for one month period.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2024, 1, 1)),
+        "billing_period_end_date": make_aware(datetime(2024, 1, 31)),
+    }
+
+    today = make_aware(datetime(2024, 1, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        == 31
+    )
+
+    # Case 2: Calculate billing period days for a year period.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2023, 1, 1)),
+        "billing_period_end_date": make_aware(datetime(2023, 12, 31)),
+    }
+
+    today = make_aware(datetime(2023, 12, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        == 365
+    )
+
+    # Case 3: Calculate billing period days for a leap year.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2024, 1, 1)),
+        "billing_period_end_date": make_aware(datetime(2024, 12, 31)),
+    }
+
+    today = make_aware(datetime(2024, 12, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        == 366
+    )
+
+    # Case 4: Return None when start date is None.
+
+    row = {
+        "billing_period_start_date": None,
+        "billing_period_end_date": make_aware(datetime(2024, 1, 31)),
+    }
+
+    today = make_aware(datetime(2024, 1, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        is None
+    )
+
+    # Case 5: Return None when end date is None.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2024, 1, 1)),
+        "billing_period_end_date": None,
+    }
+
+    today = make_aware(datetime(2024, 1, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        is None
+    )
+
+    # Case 6: Return None when both start and end dates are None.
+
+    row = {
+        "billing_period_start_date": None,
+        "billing_period_end_date": None,
+    }
+
+    today = make_aware(datetime(2024, 1, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        is None
+    )
+
+    # Case 7: Return 0 when start date is in the future.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2024, 1, 1)),
+        "billing_period_end_date": make_aware(datetime(2024, 3, 31)),
+    }
+
+    today = make_aware(datetime(2023, 12, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        == 0
+    )
+
+    # Case 8: Return part of the days when end date is in the future.
+
+    row = {
+        "billing_period_start_date": make_aware(datetime(2024, 1, 1)),
+        "billing_period_end_date": make_aware(datetime(2024, 3, 31)),
+    }
+
+    today = make_aware(datetime(2024, 1, 31))
+
+    assert (
+        calculate_invoice_billing_period_days(
+            row["billing_period_start_date"], row["billing_period_end_date"], today
+        )
+        == 31
+    )
