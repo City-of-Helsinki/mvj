@@ -25,7 +25,7 @@ attrs==23.2.0
     #   zeep
 babel==2.15.0
     # via docxcompose
-backports-zoneinfo==0.2.1; python_version < '3.9'
+backports-zoneinfo==0.2.1
     # via
     #   django
     #   djangorestframework
@@ -287,7 +287,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via python-jose
-sentry-sdk==1.45.0
+sentry-sdk==2.8.0
     # via
     #   -r requirements.in
     #   django-q-sentry
