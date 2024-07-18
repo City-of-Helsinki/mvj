@@ -97,6 +97,7 @@ class RentAdjustmentsReport(ReportBase):
                 Q(end_date__isnull=True) | Q(end_date__gte=today),
                 Q(rent__lease__end_date__isnull=True)
                 | Q(rent__lease__end_date__gte=today),
+                Q(rent__deleted__isnull=True) & Q(rent__lease__deleted__isnull=True),
             )
             .select_related(
                 "intended_use",
