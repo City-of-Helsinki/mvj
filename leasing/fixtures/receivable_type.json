@@ -410,7 +410,7 @@
     "model": "leasing.ReceivableType",
     "pk": 38,
     "fields": {
-      "name": "KuVa",
+      "name": "Maa- ja vesialueiden vuokratuotot veroton",
       "sap_material_code": "20000070",
       "sap_order_item_number": "",
       "is_active": true,
@@ -443,7 +443,7 @@
     "model": "leasing.ReceivableType",
     "pk": 41,
     "fields": {
-      "name": "KuVa (alv)",
+      "name": "Maa- ja vesialueiden vuokratuotot alv",
       "sap_material_code": "20000069",
       "sap_order_item_number": "",
       "is_active": true,
@@ -454,7 +454,7 @@
     "model": "leasing.ReceivableType",
     "pk": 42,
     "fields": {
-      "name": "KuVa",
+      "name": "Maa- ja vesialueiden vuokratuotot veroton",
       "sap_material_code": "20000070",
       "sap_order_item_number": "",
       "is_active": true,
@@ -465,7 +465,7 @@
     "model": "leasing.ReceivableType",
     "pk": 43,
     "fields": {
-      "name": "KuVa (alv)",
+      "name": "Maa- ja vesialueiden vuokratuotot alv",
       "sap_material_code": "20000069",
       "sap_order_item_number": "",
       "is_active": true,
