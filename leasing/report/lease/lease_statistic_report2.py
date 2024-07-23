@@ -60,7 +60,11 @@ def get_amount_per_area_index_adjusted(obj):
     volumes = defaultdict(Decimal)
 
     for basis_of_rent in obj.basis_of_rents.all():
-        if not basis_of_rent.amount_per_area:
+        if (
+            not basis_of_rent.amount_per_area
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
+        ):
             continue
 
         if basis_of_rent.index:
@@ -88,7 +92,7 @@ def get_amount_per_area_index_adjusted(obj):
 def get_initial_year_rent(lease):
     amount = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at:
+        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
             continue
 
         amount += basis_of_rent.calculate_initial_year_rent()
@@ -100,7 +104,7 @@ def get_subsidised_rent(lease):
     subsidy_amount = Decimal(0)
     initial_year_rent = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at:
+        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
             continue
 
         initial_year_rent += basis_of_rent.calculate_initial_year_rent()
@@ -114,7 +118,7 @@ def get_subsidised_rent(lease):
 def get_subsidy_amount(lease):
     subsidy_amount = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at:
+        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
             continue
 
         subsidy_amount += basis_of_rent.calculate_subsidy()
@@ -147,7 +151,11 @@ def get_subsidy_amount_per_area(lease):
     rent_per_area_index_adjusted = Decimal(0)
     subsidy_amount = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at or not basis_of_rent.amount_per_area:
+        if (
+            basis_of_rent.archived_at
+            or not basis_of_rent.amount_per_area
+            or not basis_of_rent.locked_at
+        ):
             continue
 
         if basis_of_rent.index:
@@ -192,7 +200,7 @@ def get_subsidy_amount_per_area(lease):
 def get_temporary_discount_percentage(lease):
     base = Decimal(1)
     for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at:
+        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
             continue
 
         temporary_subventions = basis_of_rent.temporary_subventions.all()
