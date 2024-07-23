@@ -54,7 +54,11 @@ def get_matti_report(obj):
 def get_permitted_building_volume_residential(obj):
     volumes = defaultdict(Decimal)
     for basis_of_rent in obj.basis_of_rents.all():
-        if basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS:
+        if (
+            basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
+        ):
             continue
 
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
