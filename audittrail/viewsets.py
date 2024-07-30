@@ -63,9 +63,9 @@ class AuditTrailView(APIView):
             raise PermissionDenied()
 
         model = TYPE_MAP[type_value]["model"]
-        id = search_form["id"].value()
+        obj_id = search_form["id"].value()
 
-        obj = self._get_object(model, id)
+        obj = self._get_object(model, obj_id)
 
         exclude_apps = TYPE_MAP[type_value].get("exclude_apps", None)
         collected_items = recursive_get_related(
