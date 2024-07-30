@@ -1,4 +1,5 @@
 from datetime import date
+from math import isclose
 
 from leasing.utils import calculate_increase_with_360_day_calendar, days360
 
@@ -32,4 +33,4 @@ def test_calculate_increase_with_360_day_calendar():
         date1, date2, increase_percentage, current_amount
     )
 
-    assert expected_amount == calculated_amount
+    assert isclose(expected_amount, calculated_amount)

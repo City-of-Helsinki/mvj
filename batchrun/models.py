@@ -397,7 +397,7 @@ class JobRun(models.Model):
         blank=True,
         verbose_name=_("PID"),
         help_text=_(
-            "Records the process id of the process, " "which is/was executing this job"
+            "Records the process id of the process, which is/was executing this job"
         ),
     )
     started_at = models.DateTimeField(
