@@ -56,17 +56,12 @@ def get_form_of_financing(lease):
     return lease.financing.name
 
 
-def get_amount_per_area_index_adjusted(obj):
+def get_amount_per_area_index_adjusted(lease):
     volumes = defaultdict(Decimal)
 
-    for basis_of_rent in obj.basis_of_rents.all():
-        if (
-            not basis_of_rent.amount_per_area
-            or basis_of_rent.archived_at
-            or not basis_of_rent.locked_at
-        ):
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False, amount_per_area__isnull=False
+    ):
         if basis_of_rent.index:
             index_ratio = Decimal(basis_of_rent.index.number / 100)
         else:
@@ -91,10 +86,9 @@ def get_amount_per_area_index_adjusted(obj):
 
 def get_initial_year_rent(lease):
     amount = Decimal(0)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
         amount += basis_of_rent.calculate_initial_year_rent()
 
     return amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
@@ -103,10 +97,9 @@ def get_initial_year_rent(lease):
 def get_subsidised_rent(lease):
     subsidy_amount = Decimal(0)
     initial_year_rent = Decimal(0)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
         initial_year_rent += basis_of_rent.calculate_initial_year_rent()
         subsidy_amount += basis_of_rent.calculate_subsidy()
 
@@ -117,10 +110,9 @@ def get_subsidised_rent(lease):
 
 def get_subsidy_amount(lease):
     subsidy_amount = Decimal(0)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
         subsidy_amount += basis_of_rent.calculate_subsidy()
 
     return subsidy_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
@@ -129,10 +121,9 @@ def get_subsidy_amount(lease):
 def get_subsidy_percent(lease):
     subsidy_amount = Decimal(0)
     initial_year_rent = Decimal(0)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at:
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
         initial_year_rent += basis_of_rent.calculate_initial_year_rent()
         subsidy_amount += basis_of_rent.calculate_subsidy()
 
@@ -150,14 +141,9 @@ def get_subsidy_percent(lease):
 def get_subsidy_amount_per_area(lease):
     rent_per_area_index_adjusted = Decimal(0)
     subsidy_amount = Decimal(0)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if (
-            basis_of_rent.archived_at
-            or not basis_of_rent.amount_per_area
-            or not basis_of_rent.locked_at
-        ):
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False, amount_per_area__isnull=False
+    ):
         if basis_of_rent.index:
             index_ratio = Decimal(basis_of_rent.index.number / 100)
         else:
@@ -199,10 +185,9 @@ def get_subsidy_amount_per_area(lease):
 
 def get_temporary_discount_percentage(lease):
     base = Decimal(1)
-    for basis_of_rent in lease.basis_of_rents.all():
-        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
-            continue
-
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
         temporary_subventions = basis_of_rent.temporary_subventions.all()
         if not temporary_subventions:
             continue
