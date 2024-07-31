@@ -1,8 +1,6 @@
 import io
 from collections import namedtuple
 
-import pytest
-
 from leasing.enums import AreaType
 from leasing.importer.area import AreaImporter
 
