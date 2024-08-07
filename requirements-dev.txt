@@ -8,7 +8,7 @@ asgiref==3.8.1
     # via
     #   -c requirements.txt
     #   django
-backports-zoneinfo==0.2.1; python_version < '3.9'
+backports-zoneinfo==0.2.1
     # via
     #   -c requirements.txt
     #   django
@@ -30,7 +30,7 @@ coverage[toml]==7.5.1
     # via pytest-cov
 debugpy==1.8.1
     # via -r requirements-dev.in
-django==4.2.14
+django==4.2.15
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
