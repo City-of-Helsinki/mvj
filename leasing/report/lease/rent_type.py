@@ -1,4 +1,5 @@
 import datetime
+from typing import Protocol
 
 from django import forms
 from django.db.models import CharField, Q
@@ -10,21 +11,25 @@ from leasing.models import Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
+class RentWithContactNames(Protocol):
+    contact_names: str
+
+
+def get_lease_id(obj: Rent):
     return obj.lease.get_identifier_string()
 
 
-def get_tenants(obj):
+def get_tenants(obj: RentWithContactNames) -> str:
     return obj.contact_names
 
 
-def get_area_id(obj):
+def get_area_id(obj: Rent):
     return ", ".join(
         [la.identifier for la in obj.lease.lease_areas.all() if la.archived_at is None]
     )
 
 
-def get_contract_number(obj):
+def get_contract_number(obj: Rent):
     contract_numbers = []
     for contract in obj.lease.contracts.all():
         if not contract.contract_number:
@@ -33,7 +38,7 @@ def get_contract_number(obj):
     return " / ".join(contract_numbers)
 
 
-def get_area_address(obj):
+def get_area_address(obj: Rent):
     addresses = []
     for lease_area in obj.lease.lease_areas.all():
         if lease_area.archived_at:
@@ -45,24 +50,24 @@ def get_area_address(obj):
     return ", ".join(addresses)
 
 
-def get_municipality(obj):
+def get_municipality(obj: Rent):
     return obj.lease.municipality.name
 
 
-def get_start_date(obj):
+def get_start_date(obj: Rent):
     return obj.lease.start_date
 
 
-def get_end_date(obj):
+def get_end_date(obj: Rent):
     return obj.lease.end_date
 
 
-def get_intended_use(obj):
+def get_intended_use(obj: Rent):
     iu = obj.lease.intended_use
     return iu.name if iu else "-"
 
 
-def get_rent_type(obj):
+def get_rent_type(obj: Rent):
     return str(obj.type.label)
 
 

@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Union
 
 import xlsxwriter
 from django.conf import settings
@@ -6,6 +7,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Model, QuerySet
 from django.forms.models import ModelChoiceIteratorValue
 from django.utils import timezone
+from django.utils.functional import Promise
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django_q.conf import Conf
@@ -21,13 +23,13 @@ from leasing.report.serializers import ReportOutputSerializer
 
 class ReportBase:
     # Name is returned in the report list and in the metadata
-    name = None
+    name: Union[str, Promise, None] = None
 
     # Description is returned in the report list and in the metadata
-    description = None
+    description: Union[str, Promise, None] = None
 
     # Slug is the id of the report
-    slug = None
+    slug: Union[str, None] = None
 
     # Input fields are form fields that are used to validate the input
     # parameters. The form's validated_data is passed to get_data function.
