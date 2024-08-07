@@ -1,10 +1,11 @@
 import datetime
 
 from django import forms
-from django.db.models import Q
+from django.db.models import CharField, Q
+from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 
-from leasing.enums import RentType, TenantContactType
+from leasing.enums import ContactType, RentType, TenantContactType
 from leasing.models import Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
@@ -14,17 +15,7 @@ def get_lease_id(obj):
 
 
 def get_tenants(obj):
-    today = datetime.date.today()
-    contacts = set()
-    for tenant in obj.lease.tenants.all():
-        for tc in tenant.tenantcontact_set.all():
-            if tc.type != TenantContactType.TENANT:
-                continue
-            if (tc.end_date is None or tc.end_date >= today) and (
-                tc.start_date is None or tc.start_date <= today
-            ):
-                contacts.add(tc.contact)
-    return ", ".join([c.get_name() for c in contacts])
+    return obj.contact_names
 
 
 def get_area_id(obj):
@@ -94,7 +85,11 @@ class RentTypeReport(ReportBase):
     }
     output_fields = {
         "lease_id": {"source": get_lease_id, "label": _("Lease id")},
-        "tenant_name": {"source": get_tenants, "label": _("Tenant name"), "width": 50},
+        "tenant_name": {
+            "source": get_tenants,
+            "label": _("Tenant name"),
+            "width": 50,
+        },
         "lease_area_identifier": {
             "source": get_area_id,
             "label": _("Lease area identifier"),
@@ -122,6 +117,29 @@ class RentTypeReport(ReportBase):
     }
 
     def get_data(self, input_data):
+        current_date = datetime.date.today()
+        # RawSQL is used in order to make the report load faster, it was and still is extremely slow with 10k+ entries
+        # This SQL uses PostgreSQL expression STRING_AGG to concatenate contact names into a single string
+        # The CASE statement is used to to select the name in SQL instead of doing it in Django
+        contact_names_concat_sql = """
+        SELECT STRING_AGG(contact_name, ', ' ORDER BY contact_name)
+        FROM (
+            SELECT DISTINCT
+                CASE
+                    WHEN leasing_contact.type = %s
+                        THEN leasing_contact.first_name || ' ' || leasing_contact.last_name
+                    ELSE leasing_contact.name
+                END AS contact_name
+            FROM leasing_contact
+            JOIN leasing_tenantcontact ON leasing_tenantcontact.contact_id = leasing_contact.id
+            JOIN leasing_tenant ON leasing_tenantcontact.tenant_id = leasing_tenant.id
+            WHERE
+                leasing_tenant.lease_id = leasing_rent.lease_id
+                AND leasing_tenantcontact.type = %s
+                AND (leasing_tenantcontact.start_date IS NULL OR leasing_tenantcontact.start_date <= %s)
+                AND (leasing_tenantcontact.end_date IS NULL OR leasing_tenantcontact.end_date >= %s)
+        ) AS distinct_contacts
+        """
         qs = (
             Rent.objects.filter(
                 type=input_data["rent_type"], lease__deleted__isnull=True
@@ -136,12 +154,21 @@ class RentTypeReport(ReportBase):
                 "lease__intended_use",
             )
             .prefetch_related(
-                "lease__tenants",
-                "lease__tenants__tenantcontact_set",
-                "lease__tenants__tenantcontact_set__contact",
                 "lease__lease_areas",
                 "lease__lease_areas__addresses",
                 "lease__contracts",
+            )
+            .annotate(
+                contact_names=RawSQL(
+                    sql=contact_names_concat_sql,
+                    params=(
+                        ContactType.PERSON.value,
+                        TenantContactType.TENANT.value,
+                        current_date,
+                        current_date,
+                    ),
+                    output_field=CharField(),
+                )
             )
             .order_by(
                 "lease__identifier__municipality__identifier",
@@ -156,8 +183,7 @@ class RentTypeReport(ReportBase):
 
         if input_data["only_active_leases"]:
             qs = qs.filter(
-                Q(lease__end_date__isnull=True)
-                | Q(lease__end_date__gte=datetime.date.today())
+                Q(lease__end_date__isnull=True) | Q(lease__end_date__gte=current_date)
             )
 
         return qs
