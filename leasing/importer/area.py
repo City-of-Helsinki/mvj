@@ -383,7 +383,7 @@ class AreaImporter(BaseImporter):
             )
 
             error_count += 1
-            self.stdout.write("E", ending="")
+            self.stdout.write("E")
             if error_count % 1000 == 0:
                 self.stdout.write(" {}".format(error_count))
                 self.stdout.flush()
@@ -431,7 +431,7 @@ class AreaImporter(BaseImporter):
             errors.append("id #{} error: {}\n".format(row.id, str(e)))
 
             error_count += 1
-            self.stdout.write("E", ending="")
+            self.stdout.write("E")
             if error_count % 1000 == 0:
                 self.stdout.write(" {}".format(error_count))
                 self.stdout.flush()
@@ -455,7 +455,7 @@ class AreaImporter(BaseImporter):
             )
 
             error_count += 1
-            self.stdout.write("E", ending="")
+            self.stdout.write("E")
             if error_count % 1000 == 0:
                 self.stdout.write(" {}".format(error_count))
                 self.stdout.flush()
@@ -488,7 +488,7 @@ class AreaImporter(BaseImporter):
 
         error_count += 1
         if error_count % 100 == 0:
-            self.stdout.write(".", ending="")
+            self.stdout.write(".")
         if error_count % 1000 == 0:
             self.stdout.write(" {}".format(error_count))
             self.stdout.flush()

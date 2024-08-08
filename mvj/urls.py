@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse
 from django.urls import include, path, re_path
+from django.views.decorators.http import require_GET
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
@@ -433,10 +434,12 @@ urlpatterns += [
 #
 # Kubernetes liveness & readiness endpoints
 #
+@require_GET
 def healthz(*args, **kwargs):
     return HttpResponse(status=200)
 
 
+@require_GET
 def readiness(*args, **kwargs):
     return HttpResponse(status=200)
 

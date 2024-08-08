@@ -31,9 +31,9 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
         ]
 
         default_kwargs = [("max_length", 200), ("default", "*"), ("validators", [])]
-        for name, default in default_kwargs:
-            if kwargs.get(name) == default:
-                del kwargs[name]
+        for kwarg_name, default in default_kwargs:
+            if kwargs.get(kwarg_name) == default:
+                del kwargs[kwarg_name]
 
         return (name, path, args, kwargs)
 

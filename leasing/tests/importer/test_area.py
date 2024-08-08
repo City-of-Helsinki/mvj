@@ -1,6 +1,5 @@
+import io
 from collections import namedtuple
-
-import pytest
 
 from leasing.enums import AreaType
 from leasing.importer.area import AreaImporter
@@ -36,17 +35,21 @@ COLUMN_NAME_MAP = {
 
 
 def test_get_metadata():
-    area_importer = AreaImporter()
+    stdout = io.StringIO()
+    area_importer = AreaImporter(stdout=stdout)
     AreaRow = namedtuple(
         "Row",
         [
+            "id",
             "first_column",
             "second_column",
         ],
     )
+    id = 5
     first_column_value = "4321"
     second_column_value = "1234"
     row = AreaRow(
+        id=id,
         first_column=first_column_value,
         second_column=second_column_value,
     )
@@ -60,18 +63,21 @@ def test_get_metadata():
     RowIncorrect = namedtuple(
         "RowIncorrect",
         [
+            "id",
             "third_column",
         ],
     )
     row_incorrect = RowIncorrect(
+        id=id,
         third_column="4321",
     )
 
-    with pytest.raises(AttributeError):
-        # Should be missing "first_column"
-        metadata, error_count = area_importer.get_metadata(
-            row_incorrect, AREA_IMPORT, COLUMN_NAME_MAP, [], 0
-        )
-        assert (
-            error_count == 1
-        ), "Should have one error as function exists on first error"
+    # Should be missing "first_column"
+    metadata, error_count = area_importer.get_metadata(
+        row_incorrect, AREA_IMPORT, COLUMN_NAME_MAP, [], 0
+    )
+    assert error_count == 1, "Should have one error as function exists on first error"
+    stdout_value = stdout.getvalue()
+    assert "E" in stdout_value
+
+    stdout.close()

@@ -1,5 +1,5 @@
 # ==============================
-FROM helsinkitest/python:3.8-slim as appbase
+FROM helsinkitest/python:3.8-slim AS appbase
 # ==============================
 
 ENV PYTHONUNBUFFERED 1
@@ -26,7 +26,7 @@ COPY --chown=appuser:appuser deploy/docker-entrypoint.sh /entrypoint/docker-entr
 ENTRYPOINT ["/entrypoint/docker-entrypoint.sh"]
 
 # ==============================
-FROM appbase as staticbuilder
+FROM appbase AS staticbuilder
 # ==============================
 
 ENV VAR_ROOT /app
@@ -37,7 +37,7 @@ RUN python manage.py collectstatic --noinput
 
 
 # ==============================
-FROM appbase as development
+FROM appbase AS development
 # ==============================
 
 COPY --chown=appuser:appuser requirements-dev.txt /app/requirements-dev.txt
@@ -52,7 +52,7 @@ USER appuser
 EXPOSE 8080/tcp
 
 # ==============================
-FROM appbase as production
+FROM appbase AS production
 # ==============================
 
 COPY --from=staticbuilder --chown=appuser:appuser /app/static /app/static
