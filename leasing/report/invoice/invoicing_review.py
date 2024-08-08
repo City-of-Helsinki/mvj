@@ -78,159 +78,166 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "rent_info_not_complete": """
         SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.start_date IS NOT NULL
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
-           AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
-           AND l.is_rent_info_complete = FALSE
-         GROUP BY l.id,
-                 li.id
-         ORDER BY li.identifier;
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
+        FROM leasing_lease l
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+            AND l.start_date IS NOT NULL
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
+            AND l.is_rent_info_complete = FALSE
+        GROUP BY l.id,
+                li.id
+        ORDER BY li.identifier;
     """,
     "no_rents": """
         SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
         FROM leasing_lease l
-               LEFT OUTER JOIN leasing_rent r
-               ON l.id = r.lease_id
-                  AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND (r.end_date IS NULL OR r.end_date >= %(today)s)
-                  INNER JOIN leasing_leaseidentifier li
-                  ON (l.identifier_id = li.id)
+        LEFT OUTER JOIN leasing_rent r
+            ON l.id = r.lease_id
+                AND r.deleted IS NULL
+                AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+        INNER JOIN leasing_leaseidentifier li
+            ON (l.identifier_id = li.id)
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-          AND l.service_unit_id = ANY(%(service_units)s)
-          AND l.deleted IS NULL
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
         GROUP BY l.id,
-                 li.id
+                li.id
         HAVING COUNT(r.id) = 0
     """,
     "no_due_date": """
         SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
         FROM leasing_lease l
-             INNER JOIN leasing_leaseidentifier li
-             ON l.identifier_id = li.id
-                LEFT OUTER JOIN leasing_rent r
-                ON l.id = r.lease_id
-                   AND r.due_dates_type = 'custom'
-                   AND r.deleted IS NULL
-                   AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                LEFT OUTER JOIN leasing_rentduedate rdd
-                ON r.id = rdd.rent_id
-                   AND rdd.deleted IS NULL
-                LEFT OUTER JOIN leasing_rent r2
-                ON l.id = r2.lease_id
-                   AND r2.type IN ('index', 'fixed')
-                   AND r2.due_dates_type = 'fixed'
-                   AND r2.due_dates_per_year IS NULL
-                   AND r2.deleted IS NULL
-                   AND (r2.start_date IS NULL OR r2.start_date <= %(today)s)
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        LEFT OUTER JOIN leasing_rent r
+            ON l.id = r.lease_id
+                AND r.due_dates_type = 'custom'
+                AND r.deleted IS NULL
+                AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+        LEFT OUTER JOIN leasing_rentduedate rdd
+            ON r.id = rdd.rent_id
+                AND rdd.deleted IS NULL
+        LEFT OUTER JOIN leasing_rent r2
+            ON l.id = r2.lease_id
+                AND r2.type IN ('index', 'fixed')
+                AND r2.due_dates_type = 'fixed'
+                AND r2.due_dates_per_year IS NULL
+                AND r2.deleted IS NULL
+                AND (r2.start_date IS NULL OR r2.start_date <= %(today)s)
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-          AND l.service_unit_id = ANY(%(service_units)s)
-          AND l.deleted IS NULL
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
         GROUP BY l.id,
-                 li.id
+                li.id
         HAVING (
                (COUNT(r.id) > 0 AND COUNT(rdd.id) = 0)
                OR COUNT(r2.id) > 0
-               )
+            )
     """,
     "index_type_missing": """
         SELECT NULL as "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-         FROM leasing_lease l
-              INNER JOIN leasing_leaseidentifier li ON l.identifier_id = li.id
-              INNER JOIN leasing_rent r
-              ON l.id = r.lease_id
-                 AND r.deleted IS NULL
-                 AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                 AND (r.end_date IS NULL OR r.end_date >= %(today)s)
-                 AND r.type = 'index'
-                 AND r.index_type IS NULL
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
+        FROM leasing_lease l
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        INNER JOIN leasing_rent r
+            ON l.id = r.lease_id
+                AND r.deleted IS NULL
+                AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                AND r.type = 'index'
+                AND r.index_type IS NULL
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-          AND l.service_unit_id = ANY(%(service_units)s)
-          AND l.start_date IS NOT NULL
-          AND l.deleted IS NULL
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.start_date IS NOT NULL
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
         GROUP BY l.id,
                  li.id
     """,
     "one_time_rents_with_no_invoice": """
         SELECT NULL as "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               INNER JOIN leasing_rent r
-               ON l.id = r.lease_id
-                  AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND r.type = 'one_time'
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-               LEFT OUTER JOIN leasing_invoice i
-               ON l.id = i.lease_id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
-         GROUP BY l.id,
-                  li.id
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
+        FROM leasing_lease l
+        INNER JOIN leasing_rent r
+            ON l.id = r.lease_id
+                AND r.deleted IS NULL
+                AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                AND r.type = 'one_time'
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        LEFT OUTER JOIN leasing_invoice i
+            ON l.id = i.lease_id
+        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
+        GROUP BY l.id,
+                li.id
         HAVING COUNT(i.id) = 0
     """,
     "no_tenant_contact": """
         SELECT NULL as "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-               LEFT OUTER JOIN
-                   (SELECT t.id, t.lease_id
-                      FROM leasing_tenant t
-                           INNER JOIN leasing_tenantcontact tc
-                           ON t.id = tc.tenant_id
-                              AND tc.type = 'tenant'
-                              AND (tc.end_date IS NULL OR tc.end_date > %(today)s)
-                              AND tc.deleted IS NULL
-                     WHERE t.deleted IS NULL
-                     GROUP BY t.id
-                   ) tt ON tt.lease_id = l.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
-         GROUP BY l.id,
-                  li.id
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
+        FROM leasing_lease l
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        LEFT OUTER JOIN
+            (SELECT t.id, t.lease_id
+                FROM leasing_tenant t
+                    INNER JOIN leasing_tenantcontact tc
+                    ON t.id = tc.tenant_id
+                        AND tc.type = 'tenant'
+                        AND (tc.end_date IS NULL OR tc.end_date > %(today)s)
+                        AND tc.deleted IS NULL
+                WHERE t.deleted IS NULL
+                GROUP BY t.id
+            ) tt ON tt.lease_id = l.id
+        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
+        GROUP BY l.id,
+                li.id
         HAVING COUNT(tt.id) = 0
     """,
     "no_lease_area": """
         SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               LEFT OUTER JOIN leasing_leasearea la
-               ON l.id = la.lease_id
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
+            li.identifier AS "lease_id",
+            l.start_date,
+            l.end_date
+        FROM leasing_lease l
+        LEFT OUTER JOIN leasing_leasearea la
+            ON l.id = la.lease_id
+        INNER JOIN leasing_leaseidentifier li
+            ON l.identifier_id = li.id
+        WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+            AND l.service_unit_id = ANY(%(service_units)s)
+            AND l.deleted IS NULL
+            AND l.state NOT IN ('reservation', 'power_of_attorney')
         GROUP BY l.id,
-                 li.id
+                li.id
         HAVING COUNT(la.id) = 0
     """,
 }
