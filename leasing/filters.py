@@ -142,9 +142,12 @@ class IndexFilter(FilterSet):
 
 
 class IntendedUseFilter(FilterSet):
+    # For some reason the field `name` does not work for filtering
+    search = filters.CharFilter(field_name="name_fi", lookup_expr="icontains")
+
     class Meta:
         model = IntendedUse
-        fields = ["service_unit", "name"]
+        fields = ["service_unit"]
 
 
 class InvoiceFilter(FilterSet):
