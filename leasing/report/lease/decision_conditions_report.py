@@ -130,14 +130,11 @@ class DecisionConditionsReport(ReportBase):
         if input_data["service_unit"]:
             qs = qs.filter(decision__lease__service_unit__in=input_data["service_unit"])
 
-        if (
-            input_data["supervision_exists"] is not None
-            and input_data["supervision_exists"]
-        ):
-            supervision_exists = (
-                True if input_data["supervision_exists"] == "True" else False
-            )
-            qs = qs.filter(supervision_date__isnull=not supervision_exists)
+        if input_data["supervision_exists"]:
+            if input_data["supervision_exists"] == "True":
+                qs = qs.filter(supervision_date__isnull=False)
+            else:
+                qs = qs.filter(supervision_date__isnull=True)
 
         if input_data["start_date"]:
             qs = qs.filter(supervision_date__gte=input_data["start_date"])
