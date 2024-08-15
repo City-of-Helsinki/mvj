@@ -471,5 +471,93 @@
       "is_active": true,
       "service_unit": 5
     }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 44,
+    "fields": {
+      "name": "Maanvuokraus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 45,
+    "fields": {
+      "name": "Rahavakuus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 46,
+    "fields": {
+      "name": "Maanvuokraus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 3
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 47,
+    "fields": {
+      "name": "Rahavakuus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 3
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 48,
+    "fields": {
+      "name": "Maanvuokraus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 4
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 49,
+    "fields": {
+      "name": "Rahavakuus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 4
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 50,
+    "fields": {
+      "name": "Maanvuokraus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 5
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 51,
+    "fields": {
+      "name": "Rahavakuus",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "is_active": true,
+      "service_unit": 5
+    }
   }
 ]
