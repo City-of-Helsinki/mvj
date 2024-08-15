@@ -73,8 +73,10 @@ class DecisionConditionsReport(ReportBase):
             empty_label=None,
             required=False,
         ),
-        "supervision_exists": forms.NullBooleanField(
-            label=_("Supervision date exists"), initial=False, required=False
+        "supervision_exists": forms.ChoiceField(
+            choices=[("True", _("Yes")), ("False", _("No"))],
+            label=_("Supervision date exists"),
+            required=False,
         ),
     }
     output_fields = {
@@ -128,10 +130,11 @@ class DecisionConditionsReport(ReportBase):
         if input_data["service_unit"]:
             qs = qs.filter(decision__lease__service_unit__in=input_data["service_unit"])
 
-        if input_data["supervision_exists"] is not None:
-            qs = qs.filter(
-                supervision_date__isnull=not input_data["supervision_exists"]
-            )
+        if input_data["supervision_exists"]:
+            if input_data["supervision_exists"] == "True":
+                qs = qs.filter(supervision_date__isnull=False)
+            else:
+                qs = qs.filter(supervision_date__isnull=True)
 
         if input_data["start_date"]:
             qs = qs.filter(supervision_date__gte=input_data["start_date"])
