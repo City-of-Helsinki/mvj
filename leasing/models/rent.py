@@ -49,7 +49,12 @@ from leasing.models.utils import (
 from users.models import User
 
 from .decision import Decision
-from .mixins import ArchivableModel, NameModel, TimeStampedSafeDeleteModel
+from .mixins import (
+    ArchivableModel,
+    NameModel,
+    TimeStampedModel,
+    TimeStampedSafeDeleteModel,
+)
 
 first_day_of_every_month = []
 
@@ -381,7 +386,7 @@ class Rent(TimeStampedSafeDeleteModel):
                 adjustment_amount = rent_adjustment.get_amount_for_date_range(
                     tmp_amount,
                     *adjustment_range,
-                    update_amount_total=False if dry_run else True
+                    update_amount_total=False if dry_run else True,
                 )
 
                 total_adjustment_amount += adjustment_amount.amount
@@ -1474,6 +1479,119 @@ class LegacyIndex(models.Model):
     number_1938 = models.PositiveIntegerField(
         verbose_name=_("Index 1938:8-1939:7=100"), null=True, blank=True
     )
+
+
+class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
+    """
+    In Finnish: Vanhojen osakeasuntojen hintaindeksi
+
+    From my understanding, a unique price index is identified by the API
+    database table URL and code of the index. A single table can hold multiple
+    indexes, and a single code can be used in multiple tables.
+
+    Members:
+        code: Code for the index's table column. Example: "ketj_P_QA_T". \
+              Same code for different intervals, e.g. yearly or quarterly.
+        name: Name of the index. Example: "Index (2020=100)".
+        comment: Comment for the index's table column.
+        source: Source of the data.
+        source_table_updated: UTC timestamp when the source table was last updated.
+        source_table_label: Label for the source table.
+        url: API endpoint URL.
+    """
+
+    # Maximum lengths are arbitrary, but set to avoid extra large input.
+    CHARFIELD_MAX_LENGTH = 255
+
+    code = models.CharField(
+        verbose_name=_("Index code"),
+        max_length=CHARFIELD_MAX_LENGTH,
+        unique=True,
+    )
+    name = models.CharField(
+        verbose_name=_("Index name"),
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+    comment = models.TextField(verbose_name=_("Region"), blank=True)
+    source = models.CharField(
+        verbose_name=_("Data source"),
+        blank=True,
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+    source_table_updated = models.DateTimeField(
+        verbose_name=_("Source table updated"), null=True
+    )
+    source_table_label = models.TextField(
+        verbose_name=_("Source table label"),
+        blank=True,
+    )
+    url = models.CharField(
+        verbose_name=_("API endpoint URL"),
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+
+    class Meta:
+        verbose_name = pgettext_lazy(
+            "model name", "price index of old dwellings in housing companies"
+        )
+        verbose_name_plural = pgettext_lazy(
+            "model name", "price indexes of old dwellings in housing companies"
+        )
+
+
+class IndexNumber(TimeStampedModel):
+    """
+    In Finnish: Indeksipisteluku
+
+    Holds the index numbers.
+    Currently only used with the newer price indexes related to Periodic Rent
+    Adjustment (Tasotarkistus).
+
+    Members:
+        index: Reference to the index this number is for.
+        number: Index number. Example: 101.5
+        year: Year for the number. Example: 2020.
+        quarter: Quarter number. Example: 4
+        region: Geographical region for index value. Example: "pks" for \
+                Pääkaupunkiseutu / Greater Helsinki area
+        comment: Comment for the number. Example: "* ennakkotieto\r\n"
+    """
+
+    index = models.ForeignKey(
+        OldDwellingsInHousingCompaniesPriceIndex,
+        verbose_name=_("Index"),
+        on_delete=models.PROTECT,
+        related_name="numbers",
+    )
+    # max_digits is arbitrary for the number. No need to limit it, although 7
+    # should be enough if the numbers are at most in the 100s of thousands.
+    # Largest index number in the system at the moment is year 1914's index
+    # with a number around 260 000.
+    number = models.DecimalField(
+        verbose_name=_("Index number"),
+        decimal_places=1,
+        max_digits=8,
+        null=True,
+    )
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
+    quarter = models.PositiveSmallIntegerField(
+        verbose_name=_("Quarter"),
+        validators=[MinValueValidator(1), MaxValueValidator(4)],
+        null=True,
+    )
+    # Max lengths here are arbitrary, but set to avoid extra large input.
+    region = models.CharField(verbose_name=_("Region"), blank=True, max_length=255)
+    comment = models.TextField(verbose_name=_("Comment"), blank=True)
+
+    class Meta:
+        verbose_name = pgettext_lazy("model name", "index number")
+        verbose_name_plural = pgettext_lazy("model name", "index numbers")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["index", "year", "quarter"], name="unique_price_index_number"
+            )
+        ]
+        ordering = ("-index", "-year", "-quarter")
 
 
 class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):

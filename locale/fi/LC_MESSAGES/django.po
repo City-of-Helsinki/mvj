@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-14 18:00+0300\n"
+"POT-Creation-Date: 2024-08-16 17:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2416,7 +2416,8 @@ msgid "Leases"
 msgstr "Vuokraukset"
 
 msgid "The intended use's service unit must match the lease's service_unit."
-msgstr "Käyttötarkoituksen ja vuokrauksen palvelukokonaisuuden pitää olla sama."
+msgstr ""
+"Käyttötarkoituksen ja vuokrauksen palvelukokonaisuuden pitää olla sama."
 
 #, python-brace-format
 msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
@@ -2742,6 +2743,52 @@ msgstr ""
 
 msgid "Index 1938:8-1939:7=100"
 msgstr ""
+
+msgid "Index code"
+msgstr "Indeksin tunniste"
+
+msgid "Index name"
+msgstr "Indeksin nimi"
+
+msgid "Region"
+msgstr "Alue"
+
+msgid "Data source"
+msgstr "Tiedonlähde"
+
+msgid "Source table updated"
+msgstr "Lähdetietokantapöytä päivitetty"
+
+msgid "Source table label"
+msgstr "Lähdetietokantapöydän selite"
+
+msgid "API endpoint URL"
+msgstr "Ohjelmointirajapinnan päätepisteen verkko-osoite"
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksit"
+
+msgid "Index number"
+msgstr "Indeksipisteluku"
+
+msgid "Quarter"
+msgstr "Vuosineljännes"
+
+msgid "Comment"
+msgstr "Kommentti"
+
+msgctxt "model name"
+msgid "index number"
+msgstr "Indeksipisteluku"
+
+msgctxt "model name"
+msgid "index numbers"
+msgstr "Indeksipisteluvut"
 
 msgid "Lease basis of rent"
 msgstr "Vuokrauksen vuokrausperiaate"
@@ -3303,6 +3350,18 @@ msgstr "Varaustunnus"
 
 msgid "Reservee name"
 msgstr "Varauksensaaja"
+
+msgid "Main permitted build area (floor-m²)"
+msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"
+
+msgid "Other permitted build area (floor-m²)"
+msgstr "Muu rakennusoikeus (k-m²)"
+
+msgid "Financing method"
+msgstr "Rahoitusmuoto"
+
+msgid "Management method"
+msgstr "Hallintamuoto"
 
 msgid "Yes"
 msgstr "Kyllä"
@@ -3898,20 +3957,8 @@ msgstr "Rakennuskelpoinen"
 msgid "HITAS"
 msgstr "HITAS"
 
-msgid "Financing method"
-msgstr "Rahoitusmuoto"
-
-msgid "Management method"
-msgstr "Hallintamuoto"
-
 msgid "Token exists"
 msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
-
-msgid "Other permitted build area (floor-m²)"
-msgstr "Muu rakennusoikeus (k-m²)"
-
-msgid "Main permitted build area (floor-m²)"
-msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"
