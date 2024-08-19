@@ -228,7 +228,9 @@ protected by permission checks on a different URL.
 
 ## Update translation files
 
-- Run `python manage.py app_makemessages`
+- Run `python manage.py app_makemessages --locale fi`
+- Run `python manage.py app_makemessages --locale sv`
+- Run `python manage.py compilemessages`
 
 ## Management commands
 
