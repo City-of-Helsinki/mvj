@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
-from leasing.models import Invoice, ReceivableType, ServiceUnit
+from leasing.models import Invoice, ReceivableType, ServiceUnit, Vat
 from leasing.models.invoice import InvoiceSet
 from leasing.models.tenant import TenantContactType
 
@@ -1994,3 +1994,120 @@ def test_create_invoice_zero_row_sum_is_set_to_status_paid(
     assert invoice.total_amount == Decimal(0)
     assert invoice.outstanding_amount == Decimal(0)
     assert invoice.state == InvoiceState.PAID
+
+
+@pytest.mark.django_db
+def test_invoice_get_vat_if_subject_to_vat(lease_factory, invoice_factory):
+    # These tests rely on existing VAT's defined in a fixture.
+    # What is being tested is the switch to new VAT on 2024-09-01.
+    # And the logic to determine which VAT to use in each case.
+    lease_not_subjet_to_vat = lease_factory(is_subject_to_vat=False)
+    total_amount = Decimal(100)
+    invoice_kwargs = {
+        "total_amount": total_amount,
+        "billed_amount": Decimal(0),
+    }
+    invoice_without_vat: Invoice = invoice_factory(
+        lease=lease_not_subjet_to_vat,
+        **invoice_kwargs,
+    )
+    vat = invoice_without_vat.get_vat_if_subject_to_vat(
+        datetime.date(year=2024, month=8, day=30), total_amount
+    )
+    assert vat is None, "Should not return VAT if lease is not subject to VAT"
+
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    billing_period_end_date = datetime.date(year=2024, month=8, day=30)
+    payment_date = datetime.date(year=2024, month=9, day=1)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=billing_period_end_date,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, total_amount)
+    vat_of_billing_period_end = Vat.objects.get_for_date(billing_period_end_date)
+    assert (
+        vat == vat_of_billing_period_end
+    ), "Should return VAT based on billing_period_end_date"
+
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    invoicing_date = datetime.date(year=2024, month=9, day=1)
+    payment_date = datetime.date(year=2024, month=9, day=1)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=None,
+        invoicing_date=invoicing_date,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, total_amount)
+    vat_of_invoicing_date = Vat.objects.get_for_date(invoicing_date)
+    assert vat == vat_of_invoicing_date, "Should return VAT based on invoicing_date"
+
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    payment_date = datetime.date(year=2024, month=9, day=1)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=None,
+        invoicing_date=None,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, total_amount)
+    vat_for_today = Vat.objects.get_for_date(datetime.date.today())
+    assert (
+        vat == vat_for_today
+    ), "Should return VAT of today when no invoicing_date or billing_period_end_date is set"
+
+    # Special case: payment is paid fully in advance before VAT changes.
+    # In this case VAT date is the payment date.
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    billing_period_end_date = datetime.date(year=2024, month=8, day=30)
+    payment_date = datetime.date(year=2024, month=8, day=30)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=billing_period_end_date,
+        invoicing_date=None,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, total_amount)
+    vat_payment_date = Vat.objects.get_for_date(payment_date)
+    assert (
+        vat == vat_payment_date
+    ), "Should return VAT of payment_date when payment is paid fully in advance before VAT change"
+
+    # Payment is not paid fully but in advance before VAT changes.
+    # In this case VAT date is billing_period_end_date.
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    billing_period_end_date = datetime.date(year=2024, month=9, day=1)
+    payment_date = datetime.date(year=2024, month=8, day=30)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=billing_period_end_date,
+        invoicing_date=None,
+        **invoice_kwargs,
+    )
+    payment_not_full = total_amount - Decimal(1)
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, payment_not_full)
+    vat_of_billing_period_end = Vat.objects.get_for_date(billing_period_end_date)
+    assert (
+        vat == vat_of_billing_period_end
+    ), "Should return VAT of billing_period_end_date when payment is NOT paid fully in advance before VAT change"
+
+    # Special case: payment is _overpaid_ (more paid than on invoice) in advance before VAT changes.
+    # In this case VAT date is the payment date.
+    lease_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    billing_period_end_date = datetime.date(year=2024, month=8, day=30)
+    payment_date = datetime.date(year=2024, month=8, day=30)
+    invoice_with_vat: Invoice = invoice_factory(
+        lease=lease_subject_to_vat,
+        billing_period_end_date=billing_period_end_date,
+        invoicing_date=None,
+        **invoice_kwargs,
+    )
+    payment_over_total_amount = total_amount + Decimal(100)
+    vat = invoice_with_vat.get_vat_if_subject_to_vat(
+        payment_date, payment_over_total_amount
+    )
+    vat_payment_date = Vat.objects.get_for_date(payment_date)
+    assert (
+        vat == vat_payment_date
+    ), "Overpayment in advance should not affect the VAT, and paymend date should be used to determine VAT"

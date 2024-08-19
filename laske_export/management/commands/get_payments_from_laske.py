@@ -4,9 +4,9 @@ import os
 import re
 import sys
 import tempfile
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -185,7 +185,7 @@ class Command(BaseCommand):
 
         return result
 
-    def parse_date(self, date_str: str) -> Union[datetime.date, None]:
+    def parse_date(self, date_str: str) -> Optional[datetime.date]:
         """
         Parameters:
         date_str: A date in the format 'YYMMDD'
@@ -205,7 +205,7 @@ class Command(BaseCommand):
 
     def get_payment_date(
         self, value_date_str: str, date_of_entry_str: str, invoice_number: str
-    ) -> Union[datetime.date, None]:
+    ) -> Optional[datetime.date]:
         """
         Use either `value date` or `date of entry` as the payment date.
         `value date` is set to be "000000" when the payment is acknowledged some other way.
@@ -310,16 +310,18 @@ class Command(BaseCommand):
 
                 lease: Lease = invoice.lease
                 if lease.is_subject_to_vat:
-                    vat = Vat.objects.get_for_date(invoice.invoicing_date)
+                    vat: Optional[Vat] = invoice.get_vat_if_subject_to_vat(
+                        payment_date, amount
+                    )
+
                     if not vat:
                         self.stdout.write(
-                            f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date}!"
+                            f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date} or \
+billing_period_end_date {invoice.billing_period_end_date} !"
                         )
                         continue
 
-                    amount_without_vat = Decimal(
-                        100 * amount / (100 + vat.percent)
-                    ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+                    amount_without_vat = vat.calculate_amount_without_vat(amount)
 
                     self.stdout.write(
                         f"  Lease is subject to VAT. Amount: amount - VAT {vat.percent}% = {amount_without_vat}"

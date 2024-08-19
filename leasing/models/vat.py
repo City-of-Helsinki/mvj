@@ -1,4 +1,5 @@
 import datetime
+from decimal import ROUND_HALF_UP, Decimal
 
 from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
@@ -82,6 +83,11 @@ class Vat(models.Model):
             > 0
         ):
             raise ValidationError(_("Only one VAT can be active at a time"))
+
+    def calculate_amount_without_vat(self, amount_with_vat: Decimal) -> Decimal:
+        return Decimal(100 * amount_with_vat / (100 + self.percent)).quantize(
+            Decimal(".01"), rounding=ROUND_HALF_UP
+        )
 
 
 auditlog.register(Vat)
