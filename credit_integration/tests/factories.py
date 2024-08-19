@@ -5,6 +5,7 @@ from credit_integration.enums import CreditDecisionStatus
 from credit_integration.models import CreditDecision, CreditDecisionReason
 from leasing.enums import ContactType
 from leasing.models import Contact
+from leasing.tests.conftest import ServiceUnitFactory
 from users.models import User
 
 
@@ -26,7 +27,7 @@ class ContactFactory(factory.django.DjangoModelFactory):
     first_name = Faker("first_name")
     last_name = Faker("last_name")
     name = Faker("name")
-    service_unit_id = 1
+    service_unit = factory.SubFactory(ServiceUnitFactory)
 
 
 class BusinessContactFactory(ContactFactory):
