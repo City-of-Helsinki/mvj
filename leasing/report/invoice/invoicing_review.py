@@ -13,7 +13,9 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, FormatType
+from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
+from leasing.report.utils import dictfetchall
 
 
 class InvoicingReviewSection(Enum):
@@ -52,30 +54,7 @@ class InvoicingReviewSection(Enum):
 
 
 INVOICING_REVIEW_QUERIES = {
-    "invoicing_not_enabled": """
-        SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-               INNER JOIN leasing_rent r
-               ON l.id = r.lease_id
-                  AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND (r.end_date IS NULL OR r.end_date >= %(today)s)
-                  AND r.type != 'free'
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.start_date IS NOT NULL
-           AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
-           AND l.is_invoicing_enabled = FALSE
-         GROUP BY l.id,
-                  li.identifier
-         ORDER BY li.identifier;
-    """,
+    "invoicing_not_enabled": INVOICING_DISABLED_REPORT_SQL,
     "rent_info_not_complete": """
         SELECT NULL AS "section",
             li.identifier AS "lease_id",
@@ -241,13 +220,6 @@ INVOICING_REVIEW_QUERIES = {
         HAVING COUNT(la.id) = 0
     """,
 }
-
-
-# From Django docs
-def dictfetchall(cursor):
-    """Return all rows from a cursor as a dict"""
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
 class InvoicingReviewReport(ReportBase):
