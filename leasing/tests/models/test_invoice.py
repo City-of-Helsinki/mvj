@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
-from leasing.models import Invoice, ReceivableType, ServiceUnit
+from leasing.models import Invoice, ReceivableType, ServiceUnit, Vat
 from leasing.models.invoice import InvoiceSet
 from leasing.models.tenant import TenantContactType
 
@@ -1994,3 +1994,56 @@ def test_create_invoice_zero_row_sum_is_set_to_status_paid(
     assert invoice.total_amount == Decimal(0)
     assert invoice.outstanding_amount == Decimal(0)
     assert invoice.state == InvoiceState.PAID
+
+
+@pytest.mark.django_db
+def test_invoice_get_vat_if_subject_to_vat(lease_factory, invoice_factory):
+    lease_not_subjet_to_vat = lease_factory(is_subject_to_vat=False)
+    invoice_kwargs = {
+        "total_amount": Decimal(100),
+        "billed_amount": Decimal(0),
+    }
+    invoice_without_vat = invoice_factory(
+        lease=lease_not_subjet_to_vat,
+        **invoice_kwargs,
+    )
+    vat = invoice_without_vat.get_vat_if_subject_to_vat()
+    assert vat is None, "Should not return VAT if lease is not subject to VAT"
+
+    lease_is_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    billing_period_start_date = datetime.date(year=2024, month=8, day=30)
+    invoice_with_vat = invoice_factory(
+        lease=lease_is_subject_to_vat,
+        billing_period_start_date=billing_period_start_date,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat()
+    vat_of_billing_period_start = Vat.objects.get_for_date(billing_period_start_date)
+    assert (
+        vat == vat_of_billing_period_start
+    ), "Should return VAT based on billing_period_start_date"
+
+    lease_is_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    invoicing_date = datetime.date(year=2024, month=9, day=1)
+    invoice_with_vat = invoice_factory(
+        lease=lease_is_subject_to_vat,
+        billing_period_start_date=None,
+        invoicing_date=invoicing_date,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat()
+    vat_of_invoicing_date = Vat.objects.get_for_date(invoicing_date)
+    assert vat == vat_of_invoicing_date, "Should return VAT based on invoicing_date"
+
+    lease_is_subject_to_vat = lease_factory(is_subject_to_vat=True)
+    invoice_with_vat = invoice_factory(
+        lease=lease_is_subject_to_vat,
+        billing_period_start_date=None,
+        invoicing_date=None,
+        **invoice_kwargs,
+    )
+    vat = invoice_with_vat.get_vat_if_subject_to_vat()
+    vat_for_today = Vat.objects.get_for_date(datetime.date.today())
+    assert (
+        vat == vat_for_today
+    ), "Should return VAT of today when no invoicing_date or billing_period_start_date is set"

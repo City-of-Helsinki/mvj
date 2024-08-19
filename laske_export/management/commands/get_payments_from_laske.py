@@ -14,7 +14,7 @@ from django.utils import timezone
 from sentry_sdk import capture_exception
 
 from laske_export.models import LaskePaymentsLog
-from leasing.models import Invoice, Lease, ServiceUnit, Vat
+from leasing.models import Invoice, Lease, ServiceUnit
 from leasing.models.invoice import InvoicePayment
 
 
@@ -310,14 +310,7 @@ class Command(BaseCommand):
 
                 lease: Lease = invoice.lease
                 if lease.is_subject_to_vat:
-                    # Billing period start date determines the date to use for selecting the correct VAT.
-                    # It seems that it is not always available, so we fall back to the invoicing date,
-                    # which is not correct but our best guess. Invoice.get_for_date() will use current date
-                    # if `selected_vat_date` is None.
-                    selected_vat_date = (
-                        invoice.billing_period_start_date or invoice.invoicing_date
-                    )
-                    vat = Vat.objects.get_for_date(selected_vat_date)
+                    vat = invoice.get_vat_if_subject_to_vat()
                     if not vat:
                         self.stdout.write(
                             f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date}!"

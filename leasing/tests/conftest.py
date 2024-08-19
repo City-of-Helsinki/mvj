@@ -11,6 +11,7 @@ from django.utils import timezone
 from faker import Faker
 from pytest_factoryboy import register
 
+from conftest import ContactFactory
 from leasing.enums import (
     AreaType,
     ContactType,
@@ -172,6 +173,7 @@ class InvoiceFactory(factory.django.DjangoModelFactory):
     state = InvoiceState.OPEN
     due_date = timezone.now().date()
     type = InvoiceType.CHARGE
+    recipient = factory.SubFactory(ContactFactory)
 
     @factory.lazy_attribute
     def service_unit(self):
