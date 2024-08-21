@@ -277,22 +277,23 @@ class ReportBase:
 
             field_format_name = self.get_output_field_attr(field_name, "format")
 
-            if field_format_name == "date":
-                field_format = formats[FormatType.DATE]
-            if field_format_name == "percentage":
-                field_format = formats[FormatType.PERCENTAGE]
-                if field_value:
-                    field_value /= 100
-            elif field_format_name == "money":
-                if field_value != 0:
-                    field_format = formats[FormatType.MONEY]
-            elif field_format_name == "boolean":
-                if field_value:
-                    field_value = str(_("Yes"))
-                else:
-                    field_value = str(_("No"))
-            elif field_format_name == "area":
-                field_format = formats[FormatType.AREA]
+            match field_format_name:
+                case "date":
+                    field_format = formats[FormatType.DATE]
+                case "percentage":
+                    field_format = formats[FormatType.PERCENTAGE]
+                    if field_value:
+                        field_value /= 100
+                case "money":
+                    if field_value != 0:
+                        field_format = formats[FormatType.MONEY]
+                case "boolean":
+                    if field_value:
+                        field_value = str(_("Yes"))
+                    else:
+                        field_value = str(_("No"))
+                case "area":
+                    field_format = formats[FormatType.AREA]
 
             field_serializer_field = self.get_output_field_attr(
                 field_name, "serializer_field"
