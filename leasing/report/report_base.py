@@ -248,43 +248,7 @@ class ReportBase:
         first_data_row_num = row_num
         for row in data:
             if isinstance(row, dict):
-                column = 0
-                for field_name, field_value in row.items():
-                    field_format = None
-
-                    field_format_name = report.get_output_field_attr(
-                        field_name, "format"
-                    )
-
-                    if field_format_name == "date":
-                        field_format = formats[FormatType.DATE]
-                    if field_format_name == "percentage":
-                        field_format = formats[FormatType.PERCENTAGE]
-                        if field_value:
-                            field_value /= 100
-                    elif field_format_name == "money":
-                        if field_value != 0:
-                            field_format = formats[FormatType.MONEY]
-                    elif field_format_name == "boolean":
-                        if field_value:
-                            field_value = str(_("Yes"))
-                        else:
-                            field_value = str(_("No"))
-                    elif field_format_name == "area":
-                        field_format = formats[FormatType.AREA]
-
-                    field_serializer_field = report.get_output_field_attr(
-                        field_name, "serializer_field"
-                    )
-                    if isinstance(field_serializer_field, ChoiceField):
-                        field_value = (
-                            str(field_serializer_field.choices.get(field_value))
-                            if field_value
-                            else ""
-                        )
-
-                    worksheet.write(row_num, column, field_value, field_format)
-                    column += 1
+                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:
                     cell.set_row(row_num)
@@ -305,6 +269,43 @@ class ReportBase:
         workbook.close()
 
         return output.getvalue()
+
+    def write_dict_row_to_worksheet(self, worksheet, formats, row_num, row):
+        column = 0
+        for field_name, field_value in row.items():
+            field_format = None
+
+            field_format_name = self.get_output_field_attr(field_name, "format")
+
+            if field_format_name == "date":
+                field_format = formats[FormatType.DATE]
+            if field_format_name == "percentage":
+                field_format = formats[FormatType.PERCENTAGE]
+                if field_value:
+                    field_value /= 100
+            elif field_format_name == "money":
+                if field_value != 0:
+                    field_format = formats[FormatType.MONEY]
+            elif field_format_name == "boolean":
+                if field_value:
+                    field_value = str(_("Yes"))
+                else:
+                    field_value = str(_("No"))
+            elif field_format_name == "area":
+                field_format = formats[FormatType.AREA]
+
+            field_serializer_field = self.get_output_field_attr(
+                field_name, "serializer_field"
+            )
+            if isinstance(field_serializer_field, ChoiceField):
+                field_value = (
+                    str(field_serializer_field.choices.get(field_value))
+                    if field_value
+                    else ""
+                )
+
+            worksheet.write(row_num, column, field_value, field_format)
+            column += 1
 
     def write_input_field_value_rows(
         self, worksheet, report_form, row_num_cursor, formats
