@@ -869,6 +869,8 @@ class Lease(TimeStampedSafeDeleteModel):
         rent_range_filter = Q(
             Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
             & Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+            & Q(Q(lease__end_date=None) | Q(lease__end_date__gte=date_range_start))
+            & Q(Q(lease__start_date=None) | Q(lease__start_date__lte=date_range_end))
         )
 
         return self.rents.filter(rent_range_filter)
