@@ -90,6 +90,9 @@ class ResponseDataError(Exception):
     pass
 
 
+# Inputs for requesting index number details from Tilastokeskus API.
+# The only values necessary for the request are the `url` and `code` values.
+# The keys are arbitrary, and only for internal reference in this file.
 INDEXES_TO_IMPORT: list[IndexInput] = [
     {
         "name": "13mp -- Price index of old dwellings in housing companies (2020=100) \
@@ -347,10 +350,10 @@ def _find_comment_for_value(
                 possible comment.
     """
     for c in comments:
-        target_column = c.get("variable", "")
+        target_column_code = c.get("variable", "")
         target_value = c.get("value", "")
 
-        column_pos = _find_column_position(columns, target_column)
+        column_pos = _find_column_position(columns, target_column_code)
         if column_pos is not None:
             if data_point["key"][column_pos] == target_value:
                 return c.get("comment", None)
