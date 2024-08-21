@@ -178,9 +178,7 @@ class ReportBase:
 
         return value
 
-    def data_as_excel(  # NOQA C901 'ReportBase.data_as_excel' is too complex
-        self, data
-    ):
+    def data_as_excel(self, data):
         report = self
 
         output = BytesIO()
@@ -271,6 +269,9 @@ class ReportBase:
         return output.getvalue()
 
     def write_dict_row_to_worksheet(self, worksheet, formats, row_num, row):
+        """
+        Writes row on worksheet on given row number from dict with relevant formatting.
+        """
         column = 0
         for field_name, field_value in row.items():
             field_format = None

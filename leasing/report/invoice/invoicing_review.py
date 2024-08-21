@@ -484,6 +484,11 @@ class InvoicingReviewReport(ReportBase):
         return output.getvalue()
 
     def write_worksheet_heading(self, worksheet, formats, section):
+        """
+        Sets column width and writes report name, description, section and column labels to worksheet.
+        Returns row number after column labels:
+        """
+
         # set column widths
         worksheet.set_column(0, 0, 10)
         worksheet.set_column(0, 1, 10)
