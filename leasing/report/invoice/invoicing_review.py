@@ -502,14 +502,14 @@ class InvoicingReviewReport(ReportBase):
         # On the second row print the report description
         worksheet.write(1, 0, str(self.description))
 
+        # Write metadata and column labels on excel
         row_num = self.write_input_field_value_rows(worksheet, self.form, 3, formats)
-
+        row_num += 1
         worksheet.write(row_num, 0, section, formats[FormatType.BOLD])
         row_num += 2
-
         self.write_worksheet_labels(row_num, worksheet, formats[FormatType.BOLD])
-
         row_num += 1
+
         return row_num
 
     def write_worksheet_labels(self, row_num, worksheet, format):

@@ -349,7 +349,6 @@ class ReportBase:
             worksheet.write(row_num_cursor, 1, input_value, field_format)
             row_num_cursor += 1
 
-        row_num_cursor += 1
         return row_num_cursor
 
 
