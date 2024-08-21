@@ -209,35 +209,9 @@ class ReportBase:
 
         # On the fourth row forwards print the input fields and their values
         row_num += 2
-        for input_field_name, input_field in report.form.fields.items():
-            worksheet.write(
-                row_num, 0, "{}:".format(input_field.label), formats[FormatType.BOLD]
-            )
-            field_format = None
-            if input_field.__class__.__name__ == "DateField":
-                field_format = formats[FormatType.DATE]
-
-            input_value = report.form.cleaned_data[input_field_name]
-            if hasattr(input_field, "choices"):
-                for choice_value, choice_label in input_field.choices:
-                    if choice_value == input_value:
-                        input_value = str(choice_label)
-                        break
-
-            if isinstance(input_value, Model):
-                input_value = str(input_value)
-
-            if isinstance(input_value, bool):
-                if input_value:
-                    input_value = gettext("Yes")
-                else:
-                    input_value = gettext("No")
-
-            if isinstance(input_value, QuerySet):
-                input_value = ", ".join([str(v) for v in input_value.all()])
-
-            worksheet.write(row_num, 1, input_value, field_format)
-            row_num += 1
+        row_num = self.write_input_field_value_rows(
+            worksheet, report.form, row_num, formats
+        )
 
         # Set column widths
         for index, field_name in enumerate(report.output_fields.keys()):
@@ -331,6 +305,49 @@ class ReportBase:
         workbook.close()
 
         return output.getvalue()
+
+    def write_input_field_value_rows(
+        self, worksheet, report_form, row_num_cursor, formats
+    ):
+        """
+        Writes form input values from report form onto given worksheet at given row number. Requires formats as well.
+        Returns new row num at end of row data written by function.
+        """
+        for input_field_name, input_field in report_form.fields.items():
+            worksheet.write(
+                row_num_cursor,
+                0,
+                "{}:".format(input_field.label),
+                formats[FormatType.BOLD],
+            )
+            field_format = None
+            if input_field.__class__.__name__ == "DateField":
+                field_format = formats[FormatType.DATE]
+
+            input_value = report_form.cleaned_data[input_field_name]
+            if hasattr(input_field, "choices"):
+                for choice_value, choice_label in input_field.choices:
+                    if choice_value == input_value:
+                        input_value = str(choice_label)
+                        break
+
+            if isinstance(input_value, Model):
+                input_value = str(input_value)
+
+            if isinstance(input_value, bool):
+                if input_value:
+                    input_value = gettext("Yes")
+                else:
+                    input_value = gettext("No")
+
+            if isinstance(input_value, QuerySet):
+                input_value = ", ".join([str(v) for v in input_value.all()])
+
+            worksheet.write(row_num_cursor, 1, input_value, field_format)
+            row_num_cursor += 1
+
+        row_num_cursor += 1
+        return row_num_cursor
 
 
 class AsyncReportBase(ReportBase):
