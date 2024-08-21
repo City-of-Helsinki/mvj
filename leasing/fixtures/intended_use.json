@@ -2227,7 +2227,7 @@
     "model": "leasing.IntendedUse",
     "pk": 279,
     "fields": {
-      "name": "Hiekkasiilo, muut",
+      "name": "Hiekkasiilo",
       "service_unit": 2
     }
   },
@@ -2243,7 +2243,7 @@
     "model": "leasing.IntendedUse",
     "pk": 281,
     "fields": {
-      "name": "Kaupunkiviljely",
+      "name": "Kaupunkiviljelypaikat",
       "service_unit": 2
     }
   },
@@ -2259,7 +2259,7 @@
     "model": "leasing.IntendedUse",
     "pk": 283,
     "fields": {
-      "name": "Lasitettu katuterassi ja lasitettu asiakastila",
+      "name": "Lasitettu katuterassi ja asiakastila alv",
       "service_unit": 2
     }
   },
@@ -2299,7 +2299,7 @@
     "model": "leasing.IntendedUse",
     "pk": 288,
     "fields": {
-      "name": "Maa-aineksen varastointi",
+      "name": "Maa-aineksen varastointi (alv)",
       "service_unit": 2
     }
   },
@@ -2411,7 +2411,7 @@
     "model": "leasing.IntendedUse",
     "pk": 302,
     "fields": {
-      "name": "Ulkomainonta, muut",
+      "name": "Ulkomainosvälinepaikkojen vuokraus",
       "service_unit": 2
     }
   },
@@ -2419,7 +2419,7 @@
     "model": "leasing.IntendedUse",
     "pk": 303,
     "fields": {
-      "name": "Ulkomainoslaitepaikkasopimus",
+      "name": "Ulkomainoslaitepaikka",
       "service_unit": 2
     }
   },
@@ -2435,7 +2435,7 @@
     "model": "leasing.IntendedUse",
     "pk": 305,
     "fields": {
-      "name": "Vesialueen vuokraaminen laivapaikaksi tai muuhun toimintaan",
+      "name": "Vesialueen vuokraaminen toimintaan (alv)",
       "service_unit": 2
     }
   },

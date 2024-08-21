@@ -104,7 +104,7 @@
     "fields": {
       "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
       "sap_material_code": "27100033",
-      "sap_order_item_number": "",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -114,8 +114,8 @@
     "pk": 11,
     "fields": {
       "name": "Hiekkasiilo, kaupungin urakkasopimukset",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003613",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -124,9 +124,9 @@
     "model": "leasing.ReceivableType",
     "pk": 12,
     "fields": {
-      "name": "Hiekkasiilo, muut",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Hiekkasiilo",
+      "sap_material_code": "27100049",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -136,8 +136,8 @@
     "pk": 13,
     "fields": {
       "name": "Kaupunkipyörä",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003614",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -146,9 +146,9 @@
     "model": "leasing.ReceivableType",
     "pk": 14,
     "fields": {
-      "name": "Kaupunkiviljely",
+      "name": "Kaupunkiviljelypaikat",
       "sap_material_code": "27100028",
-      "sap_order_item_number": "",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -157,9 +157,9 @@
     "model": "leasing.ReceivableType",
     "pk": 15,
     "fields": {
-      "name": "Kioski, kahvila, myyntitoiminta",
+      "name": "Kioski, kahvila, myyntipaikat",
       "sap_material_code": "27100009",
-      "sap_order_item_number": "",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -168,9 +168,9 @@
     "model": "leasing.ReceivableType",
     "pk": 16,
     "fields": {
-      "name": "Laiva ja muu vesialue",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Vesialueen vuokraaminen toimintaan (alv)",
+      "sap_material_code": "10003628",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -179,9 +179,9 @@
     "model": "leasing.ReceivableType",
     "pk": 17,
     "fields": {
-      "name": "Lasitettu katuterassi ja lasitettu asiakastila",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Lasitettu katuterassi ja asiakastila alv",
+      "sap_material_code": "10003629",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -191,8 +191,8 @@
     "pk": 18,
     "fields": {
       "name": "Leikkipaikan käyttöoikeus",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003624",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -201,9 +201,9 @@
     "model": "leasing.ReceivableType",
     "pk": 19,
     "fields": {
-      "name": "Liikunta ja ulkoilu",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Liikunta ja ulkoilupaikat yleisellä alueella",
+      "sap_material_code": "10003615",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -213,8 +213,8 @@
     "pk": 20,
     "fields": {
       "name": "Lisäpiha, asuntotontit",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003616",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -224,8 +224,8 @@
     "pk": 21,
     "fields": {
       "name": "Lisäpiha, yksityiset päiväkodit",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003630",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -234,9 +234,9 @@
     "model": "leasing.ReceivableType",
     "pk": 22,
     "fields": {
-      "name": "Maa-aineksen varastointi",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Maa-aineksen varastointi (alv)",
+      "sap_material_code": "10003623",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -246,8 +246,8 @@
     "pk": 23,
     "fields": {
       "name": "Mehiläistarhaus",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003622",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -258,7 +258,7 @@
     "fields": {
       "name": "Metsästysoikeus",
       "sap_material_code": "27100045",
-      "sap_order_item_number": "",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -268,8 +268,8 @@
     "pk": 25,
     "fields": {
       "name": "Muuntamo, laitetila, masto",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003625",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -280,7 +280,7 @@
     "fields": {
       "name": "Pysäköinti",
       "sap_material_code": "27100048",
-      "sap_order_item_number": "",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -290,8 +290,8 @@
     "pk": 27,
     "fields": {
       "name": "Sähköpotkulauta",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003620",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -300,9 +300,9 @@
     "model": "leasing.ReceivableType",
     "pk": 28,
     "fields": {
-      "name": "Taide ja kulttuuri",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Taide ja kulttuuri yleisellä alueella (muu kuin tapahtumatoiminta)",
+      "sap_material_code": "27100037",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -312,8 +312,8 @@
     "pk": 29,
     "fields": {
       "name": "Tilapäinen käymälä ja taukotila",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003621",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -323,8 +323,8 @@
     "pk": 30,
     "fields": {
       "name": "Työmaatukitoiminta",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003626",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -333,9 +333,9 @@
     "model": "leasing.ReceivableType",
     "pk": 31,
     "fields": {
-      "name": "Ulkomainonta, kilpailutettu",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Ulkomainoslaitepaikka",
+      "sap_material_code": "27100044",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -344,9 +344,9 @@
     "model": "leasing.ReceivableType",
     "pk": 32,
     "fields": {
-      "name": "Ulkomainonta, yksityinen",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "name": "Ulkomainosvälinepaikkojen vuokraus",
+      "sap_material_code": "27100000",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -356,8 +356,8 @@
     "pk": 33,
     "fields": {
       "name": "Varastointi",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003627",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -367,8 +367,8 @@
     "pk": 34,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "27100046",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -378,8 +378,8 @@
     "pk": 35,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "27100017",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -389,8 +389,8 @@
     "pk": 36,
     "fields": {
       "name": "Muu tontinosan tilapäinen vuokraus",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003617",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -400,8 +400,8 @@
     "pk": 37,
     "fields": {
       "name": "Muu tontinosan tilapäinen vuokraus (alv)",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": "10003618",
+      "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
     }
@@ -558,6 +558,17 @@
       "sap_order_item_number": null,
       "is_active": true,
       "service_unit": 5
+    }
+  },
+  {
+    "model": "leasing.ReceivableType",
+    "pk": 52,
+    "fields": {
+      "name": "Sähköautojen latauspaikat",
+      "sap_material_code": "10003619",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
     }
   }
 ]
