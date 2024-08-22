@@ -1,6 +1,8 @@
 import calendar
+from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
+from typing import TYPE_CHECKING, Optional
 
 from auditlog.registry import auditlog
 from django.db import models, transaction
@@ -16,6 +18,11 @@ from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from leasing.models.utils import get_next_business_day, get_range_overlap
+
+# Avoids circular imports
+if TYPE_CHECKING:
+    from leasing.models import Lease
+    from leasing.models import Vat as VatModel
 
 
 class ReceivableType(models.Model):
@@ -359,6 +366,38 @@ class Invoice(TimeStampedSafeDeleteModel):
 
     def get_service_unit(self):
         return self.service_unit
+
+    def get_vat_if_subject_to_vat(
+        self, payment_date: date, amount: Decimal
+    ) -> Optional["VatModel"]:
+        lease: "Lease" = self.lease
+        if not lease.is_subject_to_vat:
+            return None
+
+        # Billing period end date determines the date to use for selecting the correct VAT.
+        # It seems that it is not always available, so we fall back to the invoicing date,
+        # which is not correct but our best guess. Invoice.get_for_date() will use current date
+        # if `selected_vat_date` is None.
+        selected_vat_date = self.billing_period_end_date or self.invoicing_date
+        from leasing.models import Vat  # Avoids circular import
+
+        vat: Vat = Vat.objects.get_for_date(selected_vat_date)
+
+        # If payment date is before the VAT start date, it needs to checked whether
+        # the payment is an "advance payment" (ennakkomaksu) that pays the invoice in full.
+        # In that case the date for determining correct VAT is the `payment_date`.
+        if payment_date < vat.start_date:
+            vat_for_payment_date: Optional[Vat] = Vat.objects.get_for_date(payment_date)
+            amount_without_vat_for_payment_date = (
+                vat_for_payment_date.calculate_amount_without_vat(amount)
+            )
+
+            if amount_without_vat_for_payment_date >= self.total_amount:
+                # When the payment before the VAT change covers the full amount of the invoice,
+                # we consider it as an "advance payment", and then the VAT for the payment date.
+                vat = vat_for_payment_date
+
+        return vat
 
     def delete(self, force_policy=None, **kwargs):
         super().delete(force_policy=force_policy, **kwargs)
