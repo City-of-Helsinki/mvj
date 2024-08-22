@@ -25,6 +25,7 @@ class LeaseState(Enum):
     LEASE = "lease"
     SHORT_TERM_LEASE = "short_term_lease"
     LONG_TERM_LEASE = "long_term_lease"
+    TEMPORARY_LEASE = "temporary_lease"
     RESERVATION = "reservation"
     RESERVE = "reserve"
     PERMISSION = "permission"
@@ -36,6 +37,7 @@ class LeaseState(Enum):
         LEASE = pgettext_lazy("Lease state", "Lease")
         SHORT_TERM_LEASE = pgettext_lazy("Lease state", "Short term lease")
         LONG_TERM_LEASE = pgettext_lazy("Lease state", "Long term lease")
+        TEMPORARY_LEASE = pgettext_lazy("Lease state", "Temporary lease")
         RESERVATION = pgettext_lazy("Lease state", "Reservation")
         RESERVE = pgettext_lazy("Lease state", "Reserve")
         PERMISSION = pgettext_lazy("Lease state", "Permission")
