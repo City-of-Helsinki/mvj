@@ -9,7 +9,7 @@ from leasing.report.utils import dictfetchall
 
 INVOICING_DISABLED_REPORT_SQL = """
     SELECT NULL AS "section",
-        li.identifier AS "lease_id",
+        li.identifier AS "lease_identifier",
         l.start_date,
         l.end_date
     FROM leasing_lease l
@@ -43,7 +43,7 @@ class LeaseInvoicingDisabledReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"label": _("Lease id")},
+        "lease_identifier": {"label": _("Lease id")},
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
     }

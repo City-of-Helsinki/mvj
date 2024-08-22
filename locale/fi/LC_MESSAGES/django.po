@@ -2420,7 +2420,8 @@ msgid "Leases"
 msgstr "Vuokraukset"
 
 msgid "The intended use's service unit must match the lease's service_unit."
-msgstr "Käyttötarkoituksen ja vuokrauksen palvelukokonaisuuden pitää olla sama."
+msgstr ""
+"Käyttötarkoituksen ja vuokrauksen palvelukokonaisuuden pitää olla sama."
 
 #, python-brace-format
 msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
@@ -3016,6 +3017,10 @@ msgctxt "Invoicing review"
 msgid "Index type missing"
 msgstr "Indeksilaji puuttuu"
 
+msgctxt "Invoicing review"
+msgid "Ongoing rent without rent shares"
+msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
+
 msgid "Invoicing review"
 msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
 
@@ -3090,6 +3095,12 @@ msgid ""
 msgstr ""
 "Näyttää ehdot joiden valvontapäivämäärä on annettujen päivämäärien välissä. "
 "Lukuunottamatta ehtoja joilla on valvottupäivämäärä."
+
+msgid "Yes"
+msgstr "Kyllä"
+
+msgid "No"
+msgstr "Ei"
 
 msgid "Supervision date exists"
 msgstr "Valvontapäivämäärä asetettu"
@@ -3308,11 +3319,17 @@ msgstr "Varaustunnus"
 msgid "Reservee name"
 msgstr "Varauksensaaja"
 
-msgid "Yes"
-msgstr "Kyllä"
+msgid "Main permitted build area (floor-m²)"
+msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"
 
-msgid "No"
-msgstr "Ei"
+msgid "Other permitted build area (floor-m²)"
+msgstr "Muu rakennusoikeus (k-m²)"
+
+msgid "Financing method"
+msgstr "Rahoitusmuoto"
+
+msgid "Management method"
+msgstr "Hallintamuoto"
 
 msgid "Message"
 msgstr "Viesti"
@@ -3902,20 +3919,8 @@ msgstr "Rakennuskelpoinen"
 msgid "HITAS"
 msgstr "HITAS"
 
-msgid "Financing method"
-msgstr "Rahoitusmuoto"
-
-msgid "Management method"
-msgstr "Hallintamuoto"
-
 msgid "Token exists"
 msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
-
-msgid "Other permitted build area (floor-m²)"
-msgstr "Muu rakennusoikeus (k-m²)"
-
-msgid "Main permitted build area (floor-m²)"
-msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"

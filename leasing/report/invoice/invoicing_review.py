@@ -31,6 +31,7 @@ class InvoicingReviewSection(Enum):
     NO_TENANT_CONTACT = "no_tenant_contact"
     NO_LEASE_AREA = "no_lease_area"
     INDEX_TYPE_MISSING = "index_type_missing"
+    ONGOING_RENT_WITHOUT_RENT_SHARES = "ongoing_rent_without_rent_shares"
 
     class Labels:
         INVOICING_NOT_ENABLED = pgettext_lazy(
@@ -53,13 +54,16 @@ class InvoicingReviewSection(Enum):
         NO_TENANT_CONTACT = pgettext_lazy("Invoicing review", "No tenant contact")
         NO_LEASE_AREA = pgettext_lazy("Invoicing review", "No lease area")
         INDEX_TYPE_MISSING = pgettext_lazy("Invoicing review", "Index type missing")
+        ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
+            "Invoicing review", "Ongoing rent without rent shares"
+        )
 
 
 INVOICING_REVIEW_QUERIES = {
     "invoicing_not_enabled": INVOICING_DISABLED_REPORT_SQL,
     "rent_info_not_complete": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -77,7 +81,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_rents": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -98,7 +102,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_due_date": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -132,7 +136,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "index_type_missing": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -155,7 +159,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "one_time_rents_with_no_invoice": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -178,7 +182,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_tenant_contact": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -205,7 +209,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_lease_area": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -240,7 +244,7 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_id": {"label": _("Lease id")},
+        "lease_identifier": {"label": _("Lease id")},
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
         "note": {"label": _("Note")},
@@ -252,7 +256,7 @@ class InvoicingReviewReport(ReportBase):
         today = datetime.date.today()
 
         query = """
-            SELECT li.identifier as lease_id,
+            SELECT li.identifier as lease_identifier,
                    l.start_date,
                    l.end_date,
                    array_agg(share) AS shares
@@ -301,7 +305,7 @@ class InvoicingReviewReport(ReportBase):
                 data.append(
                     {
                         "section": None,
-                        "lease_id": row["lease_id"],
+                        "lease_identifier": row["lease_identifier"],
                         "start_date": row["start_date"],
                         "end_date": row["end_date"],
                         "note": ", ".join(invalid_shares),
@@ -310,11 +314,66 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
+    def get_ongoing_rent_without_rent_shares_data(self, service_unit_ids, cursor):
+        today = datetime.date.today()
+
+        query = """
+            SELECT li.identifier as lease_identifier,
+                   l.start_date,
+                   l.end_date
+              FROM leasing_lease l
+                   INNER JOIN leasing_leaseidentifier li
+                   ON l.identifier_id = li.id
+                   INNER JOIN leasing_rent r
+                        ON l.id = r.lease_id
+                        AND r.deleted IS NULL
+                        AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                        AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                   INNER JOIN
+                   (SELECT t.id,
+                           t.lease_id,
+                           trs.id as trs_id
+                      FROM leasing_tenant t
+                           INNER JOIN leasing_tenantcontact tc
+                           ON t.id = tc.tenant_id
+                              AND tc.type = 'tenant'
+                              AND tc.start_date <= %(today)s
+                              AND (tc.end_date IS NULL OR tc.end_date >= %(today)s)
+                              AND tc.deleted IS NULL
+                           LEFT JOIN leasing_tenantrentshare trs
+                           ON t.id = trs.tenant_id
+                              AND trs.deleted IS NULL
+                     WHERE t.deleted IS NULL
+                   ) tt ON tt.lease_id = l.id
+            WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+              AND l.service_unit_id = ANY(%(service_units)s)
+              AND l.deleted IS NULL
+              AND tt.trs_id IS NULL
+            GROUP BY l.id,
+                     li.id;
+        """
+
+        cursor.execute(query, {"service_units": service_unit_ids, "today": today})
+
+        data = []
+        for row in dictfetchall(cursor):
+            data.append(
+                {
+                    "section": None,
+                    "lease_identifier": row["lease_identifier"],
+                    "start_date": row["start_date"],
+                    "end_date": row["end_date"],
+                    "note": "",
+                }
+            )
+
+        return data
+
     def get_incorrect_management_shares_data(self, service_unit_ids, cursor):
         today = datetime.date.today()
 
         query = """
-            SELECT li.identifier as "lease_id",
+            SELECT li.identifier as "lease_identifier",
                    l."start_date",
                    l."end_date",
                    array_agg(tt.share) AS "shares"
@@ -355,7 +414,7 @@ class InvoicingReviewReport(ReportBase):
                 data.append(
                     {
                         "section": None,
-                        "lease_id": row["lease_id"],
+                        "lease_identifier": row["lease_identifier"],
                         "start_date": row["start_date"],
                         "end_date": row["end_date"],
                         "note": str(shares_total),
@@ -378,7 +437,7 @@ class InvoicingReviewReport(ReportBase):
                 result.append(
                     {
                         "section": lease_list_type.value,
-                        "lease_id": None,
+                        "lease_identifier": None,
                         "start_date": None,
                         "end_date": None,
                     }
@@ -401,14 +460,14 @@ class InvoicingReviewReport(ReportBase):
                     rows = [
                         {
                             "section": None,
-                            "lease_id": None,
+                            "lease_identifier": None,
                             "start_date": None,
                             "end_date": None,
                             "note": f"Query error when generating report: {e}",
                         }
                     ]
 
-                rows.sort(key=itemgetter("lease_id"))
+                rows.sort(key=itemgetter("lease_identifier"))
                 result.extend(rows)
 
         return result
