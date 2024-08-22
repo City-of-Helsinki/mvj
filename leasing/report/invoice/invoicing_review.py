@@ -432,6 +432,9 @@ class InvoicingReviewReport(ReportBase):
         return Response(final_report_data)
 
     def data_as_excel(self, data_sections):
+        """
+        Overrides report base function so that data sections can be put on separate sheets.
+        """
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output)
         formats = {
