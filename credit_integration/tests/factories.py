@@ -4,7 +4,8 @@ from factory import Faker, fuzzy
 from credit_integration.enums import CreditDecisionStatus
 from credit_integration.models import CreditDecision, CreditDecisionReason
 from leasing.enums import ContactType
-from leasing.models import Contact
+from leasing.models import Contact, ServiceUnit
+from leasing.tests.conftest import ServiceUnitFactory
 from users.models import User
 
 
@@ -26,7 +27,12 @@ class ContactFactory(factory.django.DjangoModelFactory):
     first_name = Faker("first_name")
     last_name = Faker("last_name")
     name = Faker("name")
-    service_unit_id = 1
+    # Gets around the issue that service_unit with id 1 exists due to migration
+    # `leasing/migrations/0063_initialize_service_units.py`
+    # when running test with migrations. This works also with `--no-migrations`` flag.
+    service_unit = factory.LazyFunction(
+        lambda: ServiceUnit.objects.first() or ServiceUnitFactory()
+    )
 
 
 class BusinessContactFactory(ContactFactory):

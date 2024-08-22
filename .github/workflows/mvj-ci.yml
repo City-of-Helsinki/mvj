@@ -11,10 +11,10 @@ jobs:
     env:
       DATABASE_URL: 'postgis://postgres:postgres@localhost/github_actions'
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: [3.8]
+        python: ["3.10"]
 
     services:
       postgres:

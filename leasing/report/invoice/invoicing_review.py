@@ -1,8 +1,10 @@
 import datetime
 from collections import defaultdict
 from fractions import Fraction
+from io import BytesIO
 from operator import itemgetter
 
+import xlsxwriter
 from django import forms
 from django.db import DataError, connection
 from django.utils.translation import gettext_lazy as _
@@ -12,7 +14,7 @@ from enumfields.drf import EnumField
 from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
-from leasing.report.excel import ExcelCell, ExcelRow, FormatType
+from leasing.report.excel import FormatType
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import dictfetchall
@@ -477,42 +479,75 @@ class InvoicingReviewReport(ReportBase):
         if request.accepted_renderer.format != "xlsx":
             return Response(serialized_report_data)
 
-        final_report_data = []
+        final_report_data = {}
+        section = ""
         for datum in serialized_report_data:
-            if not datum["section"]:
-                final_report_data.append(datum)
-                continue
-
-            section = InvoicingReviewSection(datum["section"])
-
-            final_report_data.append(ExcelRow())
-
-            # Intermediate heading: name of section
-            final_report_data.append(
-                ExcelRow(
-                    [
-                        ExcelCell(
-                            column=0,
-                            value=str(section.label),
-                            format_type=FormatType.BOLD,
-                        )
-                    ]
-                )
-            )
-
-            # Field labels as reminders under each section heading
-            row = []
-            for i, key in enumerate(self.output_fields):
-                if key == "section":
-                    continue
-                row.append(
-                    ExcelCell(
-                        column=i,
-                        value=str(self.output_fields[key]["label"]),
-                        format_type=FormatType.BOLD,
-                    )
-                )
-
-            final_report_data.append(ExcelRow(row))
+            if datum["section"]:
+                section = str(InvoicingReviewSection(datum["section"]).label)
+                final_report_data[section] = []
+            else:
+                final_report_data[section].append(datum)
 
         return Response(final_report_data)
+
+    def data_as_excel(self, data_sections):
+        """
+        Overrides report base function so that data sections can be put on separate sheets.
+        """
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        formats = {
+            FormatType.BOLD: workbook.add_format({"bold": True}),
+            FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
+            FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
+            FormatType.BOLD_MONEY: workbook.add_format(
+                {"bold": True, "num_format": "#,##0.00 €"}
+            ),
+            FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
+            FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+        }
+
+        for index, (key, rows) in enumerate(data_sections.items()):
+            worksheet = workbook.add_worksheet(key)
+            row_num = self.write_worksheet_heading(worksheet, formats, key)
+            for row in rows:
+                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
+                row_num += 1
+
+        workbook.close()
+        return output.getvalue()
+
+    def write_worksheet_heading(self, worksheet, formats, section):
+        """
+        Sets column width and writes report name, description, section and column labels to worksheet.
+        Returns row number after column labels:
+        """
+
+        # set column widths
+        worksheet.set_column(0, 0, 10)
+        worksheet.set_column(0, 1, 10)
+        worksheet.set_column(0, 2, 10)
+        worksheet.set_column(0, 3, 10)
+        worksheet.set_column(0, 4, 10)
+
+        # On the first row print the report name
+        worksheet.write(0, 0, str(self.name), formats[FormatType.BOLD])
+
+        # On the second row print the report description
+        worksheet.write(1, 0, str(self.description))
+
+        # Write metadata and column labels on excel
+        row_num = self.write_input_field_value_rows(worksheet, self.form, 3, formats)
+        row_num += 1
+        worksheet.write(row_num, 0, section, formats[FormatType.BOLD])
+        row_num += 2
+        self.write_worksheet_labels(row_num, worksheet, formats[FormatType.BOLD])
+        row_num += 1
+
+        return row_num
+
+    def write_worksheet_labels(self, row_num, worksheet, format):
+        worksheet.write(row_num, 1, "Lease id", format)
+        worksheet.write(row_num, 2, "Start date", format)
+        worksheet.write(row_num, 3, "End date", format)
+        worksheet.write(row_num, 4, "Note", format)
