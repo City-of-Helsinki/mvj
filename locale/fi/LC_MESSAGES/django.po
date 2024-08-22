@@ -673,7 +673,7 @@ msgstr "Pitkäaikainen vuokraus"
 
 msgctxt "Lease state"
 msgid "Temporary lease"
-msgstr "Väliaikainen vuokraus"
+msgstr "Tilapäinen vuokraus"
 
 msgctxt "Lease state"
 msgid "Reservation"
