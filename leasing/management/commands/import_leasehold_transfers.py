@@ -14,6 +14,7 @@ try:
     from zoneinfo import ZoneInfo  # type: ignore
 except ImportError:
     from backports.zoneinfo import ZoneInfo
+
 import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -214,10 +215,16 @@ class Command(BaseCommand):
 
                 institution_identifier = entry.find(".//y:laitostunnus", NS).text
 
-                transfer = LeaseholdTransfer.objects.create(
+                transfer = LeaseholdTransfer.objects.filter(
                     institution_identifier=institution_identifier,
                     decision_date=decision_date,
-                )
+                ).last()
+
+                if transfer is None:
+                    transfer = LeaseholdTransfer.objects.create(
+                        institution_identifier=institution_identifier,
+                        decision_date=decision_date,
+                    )
 
                 self._handle_lease_properties(transfer, entry)
 
