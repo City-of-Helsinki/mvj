@@ -70,6 +70,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
+from leasing.models.rent import OldDwellingsInHousingCompaniesPriceIndex
 from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
 
@@ -369,6 +370,12 @@ class IntendedUseFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = IntendedUse
+
+
+@register
+class OldDwellingsPriceIndexFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OldDwellingsInHousingCompaniesPriceIndex
 
 
 @pytest.fixture
