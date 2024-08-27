@@ -3086,7 +3086,7 @@ msgid "Rent amount"
 msgstr "Arrendets belopp"
 
 msgid "Rent amount for contact"
-msgstr ""
+msgstr "Kundens hyra"
 
 msgid "Contact not found"
 msgstr "Klienten hittades inte"
