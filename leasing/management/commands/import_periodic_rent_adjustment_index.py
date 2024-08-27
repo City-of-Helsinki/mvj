@@ -280,8 +280,8 @@ def _update_or_create_index(
 
     index, created = OldDwellingsInHousingCompaniesPriceIndex.objects.update_or_create(
         code=index_column_details.get("code", None),
-        url=index_input["url"],
         defaults={
+            "url": index_input["url"],
             "name": index_column_details.get("text", ""),
             "comment": index_column_details.get("comment", ""),
             "source": metadata.get("source", ""),
@@ -301,7 +301,7 @@ def _update_or_create_index_numbers(
     Tilastokeskus API data.
 
     Returns:
-        Tuple containing number of updated index numbers, and created index numbers.
+        Count of updated index numbers, and count of created index numbers.
     """
     columns = index_data.get("columns", [])
     quarter_key_pos = _find_key_position(columns, "Vuosineljännes")
@@ -318,6 +318,7 @@ def _update_or_create_index_numbers(
         number = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
+        # TODO verify in 5.9. meeting: should we exclude "ennakkotieto" commented values?
         _, created = IndexNumber.objects.update_or_create(
             index=index,
             year=year,
