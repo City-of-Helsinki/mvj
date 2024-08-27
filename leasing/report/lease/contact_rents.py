@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
+from leasing.enums import TenantContactType
 from leasing.models import Contact, Lease
 from leasing.report.lease.common_getters import (
     get_address,
@@ -63,6 +64,7 @@ class ContactRentsReport(ReportBase):
 
         leases = (
             Lease.objects.filter(
+                tenants__tenantcontact__type=TenantContactType.TENANT,
                 tenants__contacts=contact,
                 tenants__deleted__isnull=True,
                 tenants__contacts__deleted__isnull=True,
