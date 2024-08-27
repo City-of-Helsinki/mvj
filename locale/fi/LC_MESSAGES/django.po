@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-21 13:09+0300\n"
+"POT-Creation-Date: 2024-08-26 14:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3082,6 +3082,9 @@ msgstr "Vuokralaiset"
 
 msgid "Rent amount"
 msgstr "Vuokran määrä"
+
+msgid "Rent amount for contact"
+msgstr "Asiakkaan vuokran määrä"
 
 msgid "Contact not found"
 msgstr "Asiakasta ei löytynyt"
