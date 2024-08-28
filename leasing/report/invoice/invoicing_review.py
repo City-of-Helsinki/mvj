@@ -55,7 +55,7 @@ class InvoicingReviewSection(Enum):
         NO_LEASE_AREA = pgettext_lazy("Invoicing review", "No lease area")
         INDEX_TYPE_MISSING = pgettext_lazy("Invoicing review", "Index type missing")
         ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
-            "Invoicing review", "Ongoing rent without rent shares"
+            "Invoicing review", "Ongoing rent without rent share"
         )
 
 
