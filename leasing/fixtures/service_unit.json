@@ -23,7 +23,7 @@
         "model": "leasing.serviceunit",
         "pk": 2,
         "fields": {
-            "name": "Alueiden käyttö ja -valvonta",
+            "name": "Alueiden käyttö ja valvonta",
             "description": null,
             "invoice_number_sequence_name": "akv_invoice_number_sequence",
             "first_invoice_number": 5000000,
