@@ -55,7 +55,7 @@ class InvoicingReviewSection(Enum):
         NO_LEASE_AREA = pgettext_lazy("Invoicing review", "No lease area")
         INDEX_TYPE_MISSING = pgettext_lazy("Invoicing review", "Index type missing")
         ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
-            "Invoicing review", "Ongoing rent without rent share"
+            "Invoicing review", "Ongoing rent without rent shares"
         )
 
 
@@ -508,7 +508,9 @@ class InvoicingReviewReport(ReportBase):
         }
 
         for index, (key, rows) in enumerate(data_sections.items()):
-            worksheet = workbook.add_worksheet(key)
+            # worksheet max length name is 31 so need to truncate
+            worksheet_name = (key[:29] + "..") if len(key) > 31 else key
+            worksheet = workbook.add_worksheet(worksheet_name)
             row_num = self.write_worksheet_heading(worksheet, formats, key)
             for row in rows:
                 self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)

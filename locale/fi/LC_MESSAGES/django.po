@@ -3018,7 +3018,7 @@ msgid "Index type missing"
 msgstr "Indeksilaji puuttuu"
 
 msgctxt "Invoicing review"
-msgid "Ongoing rent without rent share"
+msgid "Ongoing rent without rent shares"
 msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
 
 msgid "Invoicing review"

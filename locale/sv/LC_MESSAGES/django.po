@@ -3020,7 +3020,7 @@ msgid "Index type missing"
 msgstr "Indexarten fattas"
 
 msgctxt "Invoicing review"
-msgid "Ongoing rent without rent share"
+msgid "Ongoing rent without rent shares"
 msgstr "Arrenderingar som har giltig hyra men inga faktureringsandel"
 
 msgid "Invoicing review"
