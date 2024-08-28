@@ -507,9 +507,31 @@ class InvoicingReviewReport(ReportBase):
             FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
         }
 
+        # worksheet max length name is 31 so need to truncate
+        worksheet_names_with_duplicates = map(
+            lambda key: (key[:29] + "..") if len(key) > 31 else key,
+            data_sections.keys(),
+        )
+
+        # need to make sure there are no duplacted worksheet names so add numbering to end if duplicates
+        duplicate_name_count_dict = {}
+        worksheet_names = []
+        for worksheet_name in worksheet_names_with_duplicates:
+            if worksheet_name in duplicate_name_count_dict:
+                duplicate_name_count_dict[worksheet_name] += 1
+                str_num_to_append = str(duplicate_name_count_dict[worksheet_name])
+                worksheet_names.append(
+                    worksheet_name[: -(1 + len(str_num_to_append))]
+                    + "_"
+                    + str(duplicate_name_count_dict[worksheet_name])
+                )
+            else:
+                duplicate_name_count_dict[worksheet_name] = 1
+                worksheet_names.append(worksheet_name)
+
         for index, (key, rows) in enumerate(data_sections.items()):
             # worksheet max length name is 31 so need to truncate
-            worksheet_name = (key[:29] + "..") if len(key) > 31 else key
+            worksheet_name = worksheet_names[index]
             worksheet = workbook.add_worksheet(worksheet_name)
             row_num = self.write_worksheet_heading(worksheet, formats, key)
             for row in rows:
