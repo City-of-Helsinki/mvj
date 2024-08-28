@@ -528,8 +528,8 @@ class InvoicingReviewReport(ReportBase):
             if billing_period_increment is None:
                 lease_has_gaps = True
                 continue
-            else:
-                invoiced_period_days += billing_period_increment
+
+            invoiced_period_days += billing_period_increment
 
             if current_lease_id != next_lease_id:
                 active_rent_period_start, active_rent_period_end = (
