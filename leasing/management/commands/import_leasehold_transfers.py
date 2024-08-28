@@ -215,7 +215,8 @@ class Command(BaseCommand):
 
                 institution_identifier = entry.find(".//y:laitostunnus", NS).text
 
-                transfer = LeaseholdTransfer.objects.filter(
+                # check if at least 1 leasehold transfer already exists
+                transfer = LeaseholdTransfer.all_objects.filter(
                     institution_identifier=institution_identifier,
                     decision_date=decision_date,
                 ).last()
