@@ -458,7 +458,7 @@ class InvoicingReviewReport(ReportBase):
                 ON l.identifier_id = li.id
             INNER JOIN leasing_rent r
                 ON l.id = r.lease_id
-            INNER JOIN leasing_invoice i
+            LEFT JOIN leasing_invoice i
                 ON l.id = i.lease_id
             INNER JOIN leasing_invoicerow ir
                 ON i.id = ir.invoice_id
