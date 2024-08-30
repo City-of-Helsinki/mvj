@@ -507,6 +507,25 @@ class InvoicingReviewReport(ReportBase):
             FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
         }
 
+        # worksheet max length name is 31 so need to truncate and make sure there are no duplicates
+        worksheet_names_dict = self.get_worksheet_names_dict(data_sections)
+
+        for key, rows in data_sections.items():
+            worksheet_name = worksheet_names_dict[key]
+            worksheet = workbook.add_worksheet(worksheet_name)
+            row_num = self.write_worksheet_heading(worksheet, formats, key)
+            for row in rows:
+                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
+                row_num += 1
+
+        workbook.close()
+        return output.getvalue()
+
+    def get_worksheet_names_dict(self, data_sections):
+        """
+        Returns a dict with key as original section name and value the truncated and numbered worksheet name
+        """
+
         # worksheet max length name is 31 so need to truncate
         worksheet_names_dict = dict(
             map(
@@ -515,11 +534,9 @@ class InvoicingReviewReport(ReportBase):
             )
         )
 
-        # need to make sure there are no duplacted worksheet names so add numbering to end if duplicates
+        # need to make sure there are no duplicated worksheet names so add numbering to end if duplicates
         duplicate_name_count_dict = {}
-        for index, (worksheet_name, truncated_worksheet_name) in enumerate(
-            worksheet_names_dict.items()
-        ):
+        for worksheet_name, truncated_worksheet_name in worksheet_names_dict.items():
             if truncated_worksheet_name in duplicate_name_count_dict:
                 duplicate_name_count_dict[truncated_worksheet_name] += 1
                 str_num_to_append = str(
@@ -533,17 +550,7 @@ class InvoicingReviewReport(ReportBase):
             else:
                 duplicate_name_count_dict[truncated_worksheet_name] = 1
 
-        for index, (key, rows) in enumerate(data_sections.items()):
-            # worksheet max length name is 31 so need to truncate
-            worksheet_name = worksheet_names_dict[key]
-            worksheet = workbook.add_worksheet(worksheet_name)
-            row_num = self.write_worksheet_heading(worksheet, formats, key)
-            for row in rows:
-                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
-                row_num += 1
-
-        workbook.close()
-        return output.getvalue()
+        return worksheet_names_dict
 
     def write_worksheet_heading(self, worksheet, formats, section):
         """
