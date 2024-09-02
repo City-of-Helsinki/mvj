@@ -2449,7 +2449,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 308,
+    "pk": 307,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (LIPA)",
       "service_unit": 3
@@ -2457,7 +2457,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 309,
+    "pk": 308,
     "fields": {
       "name": "Liikuntapuistojen ja -kenttien maa-alueet (LIPA)",
       "service_unit": 3
@@ -2465,7 +2465,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 310,
+    "pk": 309,
     "fields": {
       "name": "Ylipainehallien maa-alueet (LIPA)",
       "service_unit": 3
@@ -2473,7 +2473,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 311,
+    "pk": 310,
     "fields": {
       "name": "Liikuntahallien ym. maa-alueet (LIPA)",
       "service_unit": 3
@@ -2481,7 +2481,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 313,
+    "pk": 311,
     "fields": {
       "name": "Pysäköintialueet (LIPA)",
       "service_unit": 3
@@ -2489,7 +2489,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 315,
+    "pk": 312,
     "fields": {
       "name": "Kioskipaikat (LIPA)",
       "service_unit": 3
@@ -2497,7 +2497,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 316,
+    "pk": 313,
     "fields": {
       "name": "Terassialueet (LIPA)",
       "service_unit": 3
@@ -2505,7 +2505,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 317,
+    "pk": 314,
     "fields": {
       "name": "Tukiasemat (LIPA)",
       "service_unit": 3
@@ -2513,7 +2513,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 318,
+    "pk": 315,
     "fields": {
       "name": "Työmaatukikohdat (LIPA)",
       "service_unit": 3
@@ -2521,7 +2521,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 320,
+    "pk": 316,
     "fields": {
       "name": "Koiraurheilu ja agilitykentät (LIPA)",
       "service_unit": 3
@@ -2529,7 +2529,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 322,
+    "pk": 317,
     "fields": {
       "name": "Ammunta-/jousiammuntaradat (LIPA)",
       "service_unit": 3
@@ -2537,7 +2537,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 323,
+    "pk": 318,
     "fields": {
       "name": "Seikkailupuistot (LIPA)",
       "service_unit": 3
@@ -2545,7 +2545,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 329,
+    "pk": 319,
     "fields": {
       "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen (UPA)",
       "service_unit": 4
@@ -2553,7 +2553,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 330,
+    "pk": 320,
     "fields": {
       "name": "Metsästyssopimukset (UPA)",
       "service_unit": 4
@@ -2561,7 +2561,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 331,
+    "pk": 321,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (UPA)",
       "service_unit": 4
@@ -2569,7 +2569,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 332,
+    "pk": 322,
     "fields": {
       "name": "Liikuntapuistojen ja -kenttien maa-alueet (UPA)",
       "service_unit": 4
@@ -2577,7 +2577,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 333,
+    "pk": 323,
     "fields": {
       "name": "Ylipainehallien maa-alueet (UPA)",
       "service_unit": 4
@@ -2585,7 +2585,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 334,
+    "pk": 324,
     "fields": {
       "name": "Liikuntahallien ym. maa-alueet (UPA)",
       "service_unit": 4
@@ -2593,7 +2593,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 335,
+    "pk": 325,
     "fields": {
       "name": "Golfkentät (UPA)",
       "service_unit": 4
@@ -2601,7 +2601,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 336,
+    "pk": 326,
     "fields": {
       "name": "Pysäköintialueet (UPA)",
       "service_unit": 4
@@ -2609,7 +2609,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 337,
+    "pk": 327,
     "fields": {
       "name": "Laidunalueet / hevosten jaloittelualueet (UPA)",
       "service_unit": 4
@@ -2617,7 +2617,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 338,
+    "pk": 328,
     "fields": {
       "name": "Kioskipaikat (UPA)",
       "service_unit": 4
@@ -2625,7 +2625,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 339,
+    "pk": 329,
     "fields": {
       "name": "Terassialueet (UPA)",
       "service_unit": 4
@@ -2633,7 +2633,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 340,
+    "pk": 330,
     "fields": {
       "name": "Tukiasemat (UPA)",
       "service_unit": 4
@@ -2641,7 +2641,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 341,
+    "pk": 331,
     "fields": {
       "name": "Työmaatukikohdat (UPA)",
       "service_unit": 4
@@ -2649,7 +2649,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 342,
+    "pk": 332,
     "fields": {
       "name": "Tulipaikat (ulkoilualueilla) (UPA)",
       "service_unit": 4
@@ -2657,7 +2657,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 343,
+    "pk": 333,
     "fields": {
       "name": "Koiraurheilu ja agilitykentät (UPA)",
       "service_unit": 4
@@ -2665,7 +2665,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 345,
+    "pk": 334,
     "fields": {
       "name": "Ammunta-/jousiammuntaradat (UPA)",
       "service_unit": 4
@@ -2673,7 +2673,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 346,
+    "pk": 335,
     "fields": {
       "name": "Seikkailupuistot (UPA)",
       "service_unit": 4
@@ -2681,7 +2681,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 347,
+    "pk": 336,
     "fields": {
       "name": "Ravirata",
       "service_unit": 4
@@ -2689,7 +2689,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 348,
+    "pk": 337,
     "fields": {
       "name": "Venesatamat",
       "service_unit": 4
@@ -2697,7 +2697,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 349,
+    "pk": 338,
     "fields": {
       "name": "Laiturinpito-oikeudet",
       "service_unit": 4
@@ -2705,7 +2705,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 350,
+    "pk": 339,
     "fields": {
       "name": "Aluspaikat",
       "service_unit": 4
@@ -2713,7 +2713,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 351,
+    "pk": 340,
     "fields": {
       "name": "Telakka-alueet",
       "service_unit": 4
@@ -2721,7 +2721,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 352,
+    "pk": 341,
     "fields": {
       "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen (NUP)",
       "service_unit": 5
@@ -2729,7 +2729,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 354,
+    "pk": 342,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (NUP)",
       "service_unit": 5
@@ -2737,7 +2737,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 359,
+    "pk": 343,
     "fields": {
       "name": "Pysäköintialueet (NUP)",
       "service_unit": 5
@@ -2745,7 +2745,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 361,
+    "pk": 344,
     "fields": {
       "name": "Kioskipaikat (NUP)",
       "service_unit": 5
@@ -2753,7 +2753,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 363,
+    "pk": 345,
     "fields": {
       "name": "Tukiasemat (NUP)",
       "service_unit": 5
@@ -2761,7 +2761,7 @@
   },
   {
     "model": "leasing.IntendedUse",
-    "pk": 364,
+    "pk": 346,
     "fields": {
       "name": "Työmaatukikohdat (NUP)",
       "service_unit": 5
