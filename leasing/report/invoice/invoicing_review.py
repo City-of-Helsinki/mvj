@@ -502,15 +502,26 @@ class InvoicingReviewReport(ReportBase):
 
         data = []
 
-        active_rent_period_start = None
-        active_rent_period_end = None
-        active_rent_period_days = 0
-        invoiced_period_days = 0
-        lease_has_gaps = False
-        current_lease_id = None
-        next_lease_id = None
-
         for i, billing_period_data_row in enumerate(billing_periods_data):
+            # Initialize variables
+            if i == 0:
+                # Active rent period means the date range defined by
+                # primarily the rent's start and end dates,
+                # and secondarily by the lease's start and end dates.
+                active_rent_period_start = None
+                active_rent_period_end = None
+                active_rent_period_days = 0
+
+                # Invoiced period means the date range accumulated
+                # by the billing periods of lease's invoices.
+                # Their total number of days should match the active rent period days.
+                # If it doesn't, it has gaps and therefore is added to the report.
+                invoiced_period_days = 0
+                lease_has_gaps = False
+
+                current_lease_id = None
+                next_lease_id = None
+
             current_lease_id = billing_period_data_row["lease_id"]
             next_lease_id = (
                 billing_periods_data[i + 1]["lease_id"]
