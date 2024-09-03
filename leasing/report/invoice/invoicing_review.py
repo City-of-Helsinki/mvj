@@ -24,11 +24,13 @@ from leasing.report.utils import (
 )
 
 # Ids of receivable types that are not included in the gaps in the billing periods report
-# These lack the start and end dates of the billing periods by default
+# These lack the start and end dates of the billing periods by default,
+# or have a billing date range of only one day,
+# which make them exceptions to the billing periods.
 EXCLUDED_RECEIVABLE_TYPE_NAMES = [
     "Korko",
     "Yhteismarkkinointi (sis. ALV)",
-    "Muut kulut (sis. ALV)",
+    "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
     "Rahavakuus",
 ]
 

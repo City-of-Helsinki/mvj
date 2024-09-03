@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from multiprocessing import Event, Value
 from unittest.mock import patch
@@ -14,6 +15,7 @@ from django_q.queues import Queue
 from django_q.tasks import queue_size
 
 from leasing.enums import DueDatesType, InvoiceState
+from leasing.report.invoice.invoicing_review import EXCLUDED_RECEIVABLE_TYPE_NAMES
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
 from leasing.report.utils import (
@@ -401,3 +403,23 @@ def test_calculate_invoice_billing_period_days():
         )
         == 31
     )
+
+
+def test_excluded_receivable_type_ids():
+    """
+    Tests that the excluded_receivable_type_ids are found in the fixture data.
+    """
+    data = None
+
+    with open("leasing/fixtures/receivable_type.json") as f:
+        data = f.read()
+        data = json.loads(data)
+
+    excluded_ids_in_data = []
+    excluded_ids_expected = [2, 3, 4, 8, 45, 47, 49, 51]
+
+    for receivable_type in data:
+        if receivable_type["fields"]["name"] in EXCLUDED_RECEIVABLE_TYPE_NAMES:
+            excluded_ids_in_data.append(receivable_type["pk"])
+
+    assert excluded_ids_in_data == excluded_ids_expected
