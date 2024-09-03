@@ -8,9 +8,9 @@ def dictfetchall(cursor):
 # Gaps in billing periods helpers
 
 
-def get_active_rent_period(billing_period_data_row, today, start_date, end_date):
+def get_lease_period(billing_period_data_row, today):
     """
-    Get the active rent period for the lease to be compared with the billing periods of the lease's invoice.
+    Get the period of the lease with active rents to be compared with the billing periods of the lease's invoices.
     """
     start_date = billing_period_data_row["start_date"]
     if (

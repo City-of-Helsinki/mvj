@@ -20,7 +20,7 @@ from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
     calculate_invoice_billing_period_days,
     dictfetchall,
-    get_active_rent_period,
+    get_lease_period,
 )
 
 # Ids of receivable types that are not included in the gaps in the billing periods report
@@ -508,9 +508,9 @@ class InvoicingReviewReport(ReportBase):
                 # Active rent period means the date range defined by
                 # primarily the rent's start and end dates,
                 # and secondarily by the lease's start and end dates.
-                active_rent_period_start = None
-                active_rent_period_end = None
-                active_rent_period_days = 0
+                lease_period_start = None
+                lease_period_end = None
+                lease_period_days = 0
 
                 # Invoiced period means the date range accumulated
                 # by the billing periods of lease's invoices.
@@ -545,19 +545,13 @@ class InvoicingReviewReport(ReportBase):
             invoiced_period_days += billing_period_increment
 
             if current_lease_id != next_lease_id:
-                active_rent_period_start, active_rent_period_end = (
-                    get_active_rent_period(
-                        billing_period_data_row,
-                        today,
-                        active_rent_period_start,
-                        active_rent_period_end,
-                    )
+                lease_period_start, lease_period_end = get_lease_period(
+                    billing_period_data_row,
+                    today,
                 )
-                active_rent_period_days = (
-                    active_rent_period_end - active_rent_period_start
-                ).days + 1
+                lease_period_days = (lease_period_end - lease_period_start).days + 1
 
-                if active_rent_period_days != invoiced_period_days:
+                if lease_period_days != invoiced_period_days:
                     lease_has_gaps = True
 
                 if lease_has_gaps:
@@ -569,9 +563,9 @@ class InvoicingReviewReport(ReportBase):
                             ],
                         }
                     )
-                active_rent_period_start = None
-                active_rent_period_end = None
-                active_rent_period_days = 0
+                lease_period_start = None
+                lease_period_end = None
+                lease_period_days = 0
                 invoiced_period_days = 0
                 lease_has_gaps = False
 

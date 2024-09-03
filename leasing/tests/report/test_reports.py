@@ -18,10 +18,7 @@ from leasing.enums import DueDatesType, InvoiceState
 from leasing.report.invoice.invoicing_review import EXCLUDED_RECEIVABLE_TYPE_NAMES
 from leasing.report.invoice.laske_invoice_count_report import LaskeInvoiceCountReport
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
-from leasing.report.utils import (
-    calculate_invoice_billing_period_days,
-    get_active_rent_period,
-)
+from leasing.report.utils import calculate_invoice_billing_period_days, get_lease_period
 from leasing.report.viewset import ENABLED_REPORTS
 
 
@@ -236,7 +233,7 @@ def test_laske_invoice_count_report(
     }
 
 
-def test_get_active_rent_period():
+def test_get_lease_period():
 
     # Case 1: Set start and end dates.
 
@@ -245,7 +242,7 @@ def test_get_active_rent_period():
         "end_date": make_aware(datetime(2024, 12, 31)),
     }
     today = make_aware(datetime(2025, 6, 15))
-    start, end = get_active_rent_period(row, today, None, None)
+    start, end = get_lease_period(row, today)
     assert start == make_aware(datetime(2024, 1, 1))
     assert end == make_aware(datetime(2024, 12, 31))
 
@@ -257,7 +254,7 @@ def test_get_active_rent_period():
     }
 
     today = make_aware(datetime(2025, 6, 15))
-    start, end = get_active_rent_period(row, today, None, None)
+    start, end = get_lease_period(row, today)
     assert start == make_aware(datetime(2024, 1, 1))
     assert end == make_aware(datetime(2025, 6, 15))
 
@@ -269,7 +266,7 @@ def test_get_active_rent_period():
     }
 
     today = make_aware(datetime(2024, 6, 15))
-    start, end = get_active_rent_period(row, today, None, None)
+    start, end = get_lease_period(row, today)
     assert start == make_aware(datetime(2024, 1, 1))
     assert end == make_aware(datetime(2024, 6, 15))
 
