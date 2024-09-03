@@ -508,7 +508,7 @@ class InvoicingReviewReport(ReportBase):
         current_lease_id = None
         next_lease_id = None
 
-        for i, billing_period_data_row in list(enumerate(billing_periods_data)):
+        for i, billing_period_data_row in enumerate(billing_periods_data):
             current_lease_id = billing_period_data_row["lease_id"]
             next_lease_id = (
                 billing_periods_data[i + 1]["lease_id"]
