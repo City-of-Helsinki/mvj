@@ -443,6 +443,12 @@ class InvoicingReviewReport(ReportBase):
         return data
 
     def get_gaps_in_billing_periods_data(self, service_unit_ids, cursor):
+        """
+        Finds gaps in the billing periods of the leases' invoices.
+
+        It compares the start dates of the lease with active rents to the billing periods of the lease's invoices.
+        If there is a difference between the numbers of days in these periods, the lease is added to the report.
+        """
 
         query = """
             SELECT li.identifier AS "lease_identifier",
@@ -505,17 +511,10 @@ class InvoicingReviewReport(ReportBase):
         for i, billing_period_data_row in enumerate(billing_periods_data):
             # Initialize variables
             if i == 0:
-                # Active rent period means the date range defined by
-                # primarily the rent's start and end dates,
-                # and secondarily by the lease's start and end dates.
                 lease_period_start = None
                 lease_period_end = None
                 lease_period_days = 0
 
-                # Invoiced period means the date range accumulated
-                # by the billing periods of lease's invoices.
-                # Their total number of days should match the active rent period days.
-                # If it doesn't, it has gaps and therefore is added to the report.
                 invoiced_period_days = 0
                 lease_has_gaps = False
 
