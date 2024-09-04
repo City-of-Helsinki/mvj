@@ -2443,7 +2443,7 @@
     "model": "leasing.IntendedUse",
     "pk": 306,
     "fields": {
-      "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen (LIPA)",
+      "name": "Konttien/vajojen/majojen sijoittaminen (LIPA)",
       "service_unit": 3
     }
   },
@@ -2547,7 +2547,7 @@
     "model": "leasing.IntendedUse",
     "pk": 319,
     "fields": {
-      "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen (UPA)",
+      "name": "Konttien/vajojen/majojen sijoittaminen (UPA)",
       "service_unit": 4
     }
   },
@@ -2723,7 +2723,7 @@
     "model": "leasing.IntendedUse",
     "pk": 341,
     "fields": {
-      "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen (NUP)",
+      "name": "Konttien/vajojen/majojen sijoittaminen (NUP)",
       "service_unit": 5
     }
   },
