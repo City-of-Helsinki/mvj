@@ -2,6 +2,7 @@ import datetime
 from collections import defaultdict
 from fractions import Fraction
 from io import BytesIO
+from itertools import groupby
 from operator import itemgetter
 
 import xlsxwriter
@@ -508,65 +509,50 @@ class InvoicingReviewReport(ReportBase):
 
         data = []
 
-        for i, billing_period_data_row in enumerate(billing_periods_data):
-            # Initialize variables
-            if i == 0:
-                lease_period_start = None
-                lease_period_end = None
-                lease_period_days = 0
+        for _, lease_row_group in groupby(
+            billing_periods_data, lambda x: x["lease_id"]
+        ):
+            lease_period_start = None
+            lease_period_end = None
+            lease_period_days = 0
 
-                invoiced_period_days = 0
-                lease_has_gaps = False
+            invoiced_period_days = 0
+            lease_has_gaps = False
 
-                current_lease_id = None
-                next_lease_id = None
-
-            current_lease_id = billing_period_data_row["lease_id"]
-            next_lease_id = (
-                billing_periods_data[i + 1]["lease_id"]
-                if i + 1 < len(billing_periods_data)
-                else None
-            )
-
-            if lease_has_gaps and current_lease_id == next_lease_id:
-                continue
-
-            billing_period_increment = calculate_invoice_billing_period_days(
-                billing_period_data_row["billing_period_start_date"],
-                billing_period_data_row["billing_period_end_date"],
-                today,
-            )
-
-            if billing_period_increment is None:
-                lease_has_gaps = True
-                continue
-
-            invoiced_period_days += billing_period_increment
-
-            if current_lease_id != next_lease_id:
-                lease_period_start, lease_period_end = get_lease_period(
-                    billing_period_data_row,
+            for lease in lease_row_group:
+                billing_period_increment = calculate_invoice_billing_period_days(
+                    lease["billing_period_start_date"],
+                    lease["billing_period_end_date"],
                     today,
                 )
-                lease_period_days = (lease_period_end - lease_period_start).days + 1
 
-                if lease_period_days != invoiced_period_days:
+                if billing_period_increment is None:
                     lease_has_gaps = True
+                    break
 
-                if lease_has_gaps:
-                    data.append(
-                        {
-                            "section": None,
-                            "lease_identifier": billing_period_data_row[
-                                "lease_identifier"
-                            ],
-                        }
-                    )
-                lease_period_start = None
-                lease_period_end = None
-                lease_period_days = 0
-                invoiced_period_days = 0
-                lease_has_gaps = False
+                invoiced_period_days += billing_period_increment
+
+            lease_period_start, lease_period_end = get_lease_period(
+                lease,
+                today,
+            )
+            lease_period_days = (lease_period_end - lease_period_start).days + 1
+
+            if lease_period_days != invoiced_period_days:
+                lease_has_gaps = True
+
+            if lease_has_gaps:
+                data.append(
+                    {
+                        "section": None,
+                        "lease_identifier": lease["lease_identifier"],
+                    }
+                )
+            lease_period_start = None
+            lease_period_end = None
+            lease_period_days = 0
+            invoiced_period_days = 0
+            lease_has_gaps = False
 
         return data
 
