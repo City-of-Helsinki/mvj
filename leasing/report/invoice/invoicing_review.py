@@ -8,8 +8,7 @@ from operator import itemgetter
 import xlsxwriter
 from django import forms
 from django.db import DataError, connection
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext_lazy, pgettext_lazy
 from enumfields import Enum
 from enumfields.drf import EnumField
 from rest_framework.response import Response
@@ -249,12 +248,12 @@ INVOICING_REVIEW_QUERIES = {
 
 
 class InvoicingReviewReport(ReportBase):
-    name = _("Invoicing review")
-    description = _("Show leases that might have errors in their invoicing")
+    name = gettext_lazy("Invoicing review")
+    description = gettext_lazy("Show leases that might have errors in their invoicing")
     slug = "invoicing_review"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"),
+            label=gettext_lazy("Service unit"),
             queryset=ServiceUnit.objects.all(),
             required=False,
         ),
@@ -264,10 +263,10 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_identifier": {"label": _("Lease id")},
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
-        "note": {"label": _("Note")},
+        "lease_identifier": {"label": gettext_lazy("Lease id")},
+        "start_date": {"label": gettext_lazy("Start date"), "format": "date"},
+        "end_date": {"label": gettext_lazy("End date"), "format": "date"},
+        "note": {"label": gettext_lazy("Note")},
     }
     automatic_excel_column_labels = False
     is_already_sorted = True
