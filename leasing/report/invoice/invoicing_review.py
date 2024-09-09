@@ -8,6 +8,7 @@ from operator import itemgetter
 import xlsxwriter
 from django import forms
 from django.db import DataError, connection
+from django.db.backends.utils import CursorWrapper
 from django.utils.translation import gettext_lazy, pgettext_lazy
 from enumfields import Enum
 from enumfields.drf import EnumField
@@ -18,6 +19,7 @@ from leasing.report.excel import FormatType
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
+    BillingPeriodDataRow,
     calculate_invoice_billing_period_days,
     dictfetchall,
     get_lease_period,
@@ -271,7 +273,9 @@ class InvoicingReviewReport(ReportBase):
     automatic_excel_column_labels = False
     is_already_sorted = True
 
-    def get_incorrect_rent_shares_data(self, service_unit_ids, cursor):
+    def get_incorrect_rent_shares_data(
+        self, service_unit_ids: list[int], cursor: CursorWrapper
+    ):
         today = datetime.date.today()
 
         query = """
@@ -442,7 +446,9 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
-    def get_gaps_in_billing_periods_data(self, service_unit_ids, cursor):
+    def get_gaps_in_billing_periods_data(
+        self, service_unit_ids: list[int], cursor: CursorWrapper
+    ):
         """
         Finds gaps in the billing periods of the leases' invoices.
 
@@ -488,7 +494,7 @@ class InvoicingReviewReport(ReportBase):
 
         today = datetime.date.today()
 
-        excluded_receivable_type_ids = [
+        excluded_receivable_type_ids: list[int] = [
             id
             for id in ReceivableType.objects.filter(
                 name__in=EXCLUDED_RECEIVABLE_TYPE_NAMES
@@ -504,11 +510,11 @@ class InvoicingReviewReport(ReportBase):
             },
         )
 
-        billing_periods_data = dictfetchall(cursor)
+        billing_periods_data: list[BillingPeriodDataRow] = dictfetchall(cursor)
 
         data = []
 
-        for _, lease_row_group in groupby(
+        for _, billing_period_data_row_group in groupby(
             billing_periods_data, lambda x: x["lease_id"]
         ):
             lease_period_start = None
@@ -518,10 +524,10 @@ class InvoicingReviewReport(ReportBase):
             invoiced_period_days = 0
             lease_has_gaps = False
 
-            for lease in lease_row_group:
+            for billing_period_data_row in billing_period_data_row_group:
                 billing_period_increment = calculate_invoice_billing_period_days(
-                    lease["billing_period_start_date"],
-                    lease["billing_period_end_date"],
+                    billing_period_data_row["billing_period_start_date"],
+                    billing_period_data_row["billing_period_end_date"],
                     today,
                 )
 
@@ -532,7 +538,7 @@ class InvoicingReviewReport(ReportBase):
                 invoiced_period_days += billing_period_increment
 
             lease_period_start, lease_period_end = get_lease_period(
-                lease,
+                billing_period_data_row,
                 today,
             )
             lease_period_days = (lease_period_end - lease_period_start).days + 1
@@ -544,7 +550,7 @@ class InvoicingReviewReport(ReportBase):
                 data.append(
                     {
                         "section": None,
-                        "lease_identifier": lease["lease_identifier"],
+                        "lease_identifier": billing_period_data_row["lease_identifier"],
                     }
                 )
             lease_period_start = None
