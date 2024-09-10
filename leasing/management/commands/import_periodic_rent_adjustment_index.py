@@ -98,8 +98,8 @@ class ResponseDataError(Exception):
 # The keys are arbitrary, and only for internal reference in this file.
 INDEXES_TO_IMPORT: list[IndexInput] = [
     {
-        "name": "13mq -- Vanhojen osakeasuntojen hintaindeksi (2020=100) ja \
-                kauppojen lukumäärät, vuositasolla, 2020-2023",
+        "name": "13mq -- Price index of old dwellings in housing companies \
+                (2020=100) and numbers of transactions, yearly, 2020-2023",
         "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mq.px",
         "code": "ketj_P_QA_T",
     },
