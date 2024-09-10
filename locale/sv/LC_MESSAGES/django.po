@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-12 14:22+0200\n"
+"POT-Creation-Date: 2024-08-26 14:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "View auditlog"
+msgstr "Visa auditeringslogg"
+
+msgid "View auditlog of a lease or a contact"
+msgstr "Visa auditeringsloggen för den valda arrenderingen eller kunden"
 
 msgid "executable or script"
 msgstr "Fil som ska köras"
@@ -158,6 +164,9 @@ msgstr "Tidszon"
 
 msgid "timezones"
 msgstr "Tidszoner"
+
+msgid "Timezone name can't be empty"
+msgstr ""
 
 msgid "Invalid timezone name"
 msgstr "Odugligt namn på tidszon"
@@ -493,14 +502,41 @@ msgstr "Faktura"
 msgid "Invoices"
 msgstr "Fakturor"
 
-msgid "Lease"
-msgstr "Arrendering"
-
 msgid "Lease identifier"
 msgstr "Arrendekod"
 
+msgid "Invoice number"
+msgstr "Fakturanummer "
+
 msgid "Due date"
 msgstr "Förfallodag"
+
+msgid "Service unit"
+msgstr ""
+
+msgid "Invoice count"
+msgstr "Antal fakturor"
+
+msgid "Land use agreement invoice count"
+msgstr ""
+
+msgid "Invoice payment"
+msgstr ""
+
+msgid "Invoice payments"
+msgstr "Betalningar"
+
+msgid "Paid amount"
+msgstr "Betald mängd"
+
+msgid "Paid date"
+msgstr "Betalt datum"
+
+msgid "Filing code"
+msgstr "Arkiveringskod"
+
+msgid "Payment count"
+msgstr ""
 
 msgid "Value should be a string"
 msgstr "Värdet måste vara en sträng"
@@ -540,23 +576,19 @@ msgstr "Överföringen av MVJ ({}) misslyckades!"
 msgid ""
 "Sending invoices to the Laske system has been crashed during the processing. "
 "Please contact your administrator.\n"
+"Service unit: {}\n"
 "\n"
 "Error message: {}"
 msgstr ""
-"Sändningen av fakturor till Laske-systemet kraschade under processen. "
-"Kontakta systemövervakaren.\n"
-"\n"
-"Felmeddelande: {}"
 
 msgid "MVJ ({}) transfer"
 msgstr "MVJ ({}) överföring"
 
 msgid ""
 "MVJ ({}) processed a total of {} invoices to Laske system on {}. Of the "
-"invoices, {} succeeded and {} failed."
+"invoices, {} succeeded and {} failed.\n"
+"Service unit: {}"
 msgstr ""
-"Arrenderingssystemet ({}) behandlade totalt {} fakturor i Laske-systemet {}. "
-"Av fakturorna lyckades {} och misslyckades {}."
 
 msgid "Failed invoice numbers:"
 msgstr "Fakturanummer för fakturor som misslyckades:"
@@ -569,6 +601,9 @@ msgstr "Sluttid"
 
 msgid "Finished?"
 msgstr "Färdig?"
+
+msgid "Filename"
+msgstr "Filnamn"
 
 msgctxt "Model name"
 msgid "Laske export log"
@@ -584,9 +619,6 @@ msgstr "status"
 msgid "information"
 msgstr "uppgifter"
 
-msgid "Filename"
-msgstr "Filnamn"
-
 msgctxt "Model name"
 msgid "Laske payments log"
 msgstr "Logg för Laske-avgifter"
@@ -594,6 +626,9 @@ msgstr "Logg för Laske-avgifter"
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Loggar för Laske-exporten"
+
+msgid "Lease"
+msgstr "Arrendering"
 
 msgid "Search by identifier"
 msgstr "Sök med identifieringskod"
@@ -638,6 +673,10 @@ msgstr "Kortfristig arrendering"
 msgctxt "Lease state"
 msgid "Long term lease"
 msgstr "Långfristig arrendering"
+
+msgctxt "Lease state"
+msgid "Temporary lease"
+msgstr "Tillfällig arrendering"
 
 msgctxt "Lease state"
 msgid "Reservation"
@@ -1428,9 +1467,6 @@ msgstr "Datum för pantbrev"
 msgid "Total amount"
 msgstr "Kapital"
 
-msgid "Paid date"
-msgstr "Betalt datum"
-
 msgid "Returned date"
 msgstr "Returnerat datum"
 
@@ -1793,9 +1829,6 @@ msgstr "Fakturarad"
 msgctxt "Model name"
 msgid "Invoice rows"
 msgstr "Fakturarader "
-
-msgid "Paid amount"
-msgstr "Betald mängd"
 
 msgctxt "Model name"
 msgid "Invoice payment"
@@ -2380,6 +2413,9 @@ msgstr "Specialprojekt"
 msgid "Reservation procedure"
 msgstr "Förfaring för anvisningen"
 
+msgid "Internal order"
+msgstr ""
+
 msgctxt "Model name"
 msgid "Lease"
 msgstr "Arrendering"
@@ -2387,6 +2423,9 @@ msgstr "Arrendering"
 msgctxt "Model name"
 msgid "Leases"
 msgstr "Arrenderingar "
+
+msgid "The intended use's service unit must match the lease's service_unit."
+msgstr ""
 
 #, python-brace-format
 msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
@@ -2769,6 +2808,66 @@ msgctxt "Model name"
 msgid "Temporary subventions (Basis of rent)"
 msgstr "Tillfälliga rabatter (Arrenderingsprincip)"
 
+msgid "Invoice number sequence name"
+msgstr ""
+
+msgid "First invoice number"
+msgstr ""
+
+msgid "Sender ID in Laske"
+msgstr ""
+
+msgid "Import ID in Laske"
+msgstr ""
+
+msgid "Sales Organisation in Laske"
+msgstr ""
+
+msgid "Fill priority and info?"
+msgstr ""
+
+msgid ""
+"Fill Info and Priority data from a contact into OrderParty and BillingParty "
+"in SalesOrder when creating LASKE XML"
+msgstr ""
+
+msgid "Contract number sequence name"
+msgstr ""
+
+msgid "First contract number"
+msgstr ""
+
+msgid "Default receivable type (rent)"
+msgstr ""
+
+msgid "Receivable type used when creating rent invoices"
+msgstr ""
+
+msgid "Default receivable type (collateral)"
+msgstr ""
+
+msgid ""
+"Receivable type which should be used when creating collateral invoices. On "
+"SAP export, the profit center is filled from this receivable type's "
+"sap_order_item_number."
+msgstr ""
+
+msgctxt "Model name"
+msgid "Service unit"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Service units"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Service unit group mapping"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Service unit group mappings"
+msgstr ""
+
 msgid "Reference"
 msgstr "Referens "
 
@@ -2854,18 +2953,9 @@ msgstr "Startdatum för arrendering"
 msgid "Lease end date"
 msgstr "Slutdatum för arrendering"
 
-msgid "Invoice payments"
-msgstr "Betalningar"
-
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Visa betalningar mellan startdatum och slutdatum"
-
-msgid "Invoice number"
-msgstr "Fakturanummer "
-
-msgid "Filing code"
-msgstr "Arkiveringskod"
 
 msgid "Total"
 msgstr "Totalt"
@@ -2929,6 +3019,10 @@ msgctxt "Invoicing review"
 msgid "Index type missing"
 msgstr "Indexarten fattas"
 
+msgctxt "Invoicing review"
+msgid "Ongoing rent without rent shares"
+msgstr "Arrenderingar som har giltig hyra men inga faktureringsandel"
+
 msgid "Invoicing review"
 msgstr "Granskningsrapport för arrenderingens faktureringsuppgifter"
 
@@ -2952,11 +3046,8 @@ msgstr ""
 msgid "Send date"
 msgstr "Datum för sändning"
 
-msgid "Invoice count"
-msgstr "Antal fakturor"
-
-msgid "Estimate"
-msgstr "Uppskattning"
+msgid "Estimated invoice count"
+msgstr ""
 
 msgid "Open invoices"
 msgstr "Öppna fakturor"
@@ -2994,6 +3085,9 @@ msgstr "Arrendatorer"
 msgid "Rent amount"
 msgstr "Arrendets belopp"
 
+msgid "Rent amount for contact"
+msgstr "Kundens hyra"
+
 msgid "Contact not found"
 msgstr "Klienten hittades inte"
 
@@ -3006,6 +3100,12 @@ msgid ""
 msgstr ""
 "Visar de villkor vars övervakningsdatum är mellan de givna datumen. Med "
 "undantag av de villkor som har ett övervakat datum."
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
 
 msgid "Supervision date exists"
 msgstr "Övervakningsdatum har fastställts"
@@ -3223,11 +3323,17 @@ msgstr "Anvisningskod"
 msgid "Reservee name"
 msgstr "Anvisningens mottagare"
 
-msgid "Yes"
-msgstr "Ja"
+msgid "Main permitted build area (floor-m²)"
+msgstr "Huvudbostadsbyggsrätt (k-m²)"
 
-msgid "No"
-msgstr "Nej"
+msgid "Other permitted build area (floor-m²)"
+msgstr "Annan bostadsbyggsrätt (k-m²)"
+
+msgid "Financing method"
+msgstr "Finansieringsform"
+
+msgid "Management method"
+msgstr "Upplåtelseform"
 
 msgid "Message"
 msgstr "Meddelande"
@@ -3253,8 +3359,21 @@ msgstr "Rapporttypen hittades inte"
 msgid "No permission to generate report"
 msgstr "Ingen rätt att skapa rapporten"
 
+msgid "Can only add contacts to service units the user is a member of"
+msgstr ""
+
+msgid "Cannot change service unit"
+msgstr ""
+
 msgid "Cannot use an inactive receivable type"
 msgstr "Fordringsarten är inte tillgänglig"
+
+msgid ""
+"Can only use receivable types from service units the user is a member of"
+msgstr ""
+
+msgid "Can only add invoices to service units the user is a member of"
+msgstr ""
 
 msgid "Either recipient or tenant is required."
 msgstr "Mottagaren eller arrendatorn måste anges."
@@ -3276,6 +3395,12 @@ msgstr "Slutdatum för faktureringsperioden ska vara startdatum eller senare"
 
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Får inte vara samma arrendering"
+
+msgid "Must be from the same service unit as the parent"
+msgstr ""
+
+msgid "Can only add leases to service units the user is a member of"
+msgstr ""
 
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr ""
@@ -3323,12 +3448,6 @@ msgstr "FO-numret är felaktigt"
 
 msgid "File not available"
 msgstr "Filen hittas inte"
-
-msgid "View auditlog"
-msgstr "Visa auditeringslogg"
-
-msgid "View auditlog of a lease or a contact"
-msgstr "Visa auditeringsloggen för den valda arrenderingen eller kunden"
 
 msgid "Check if contact already exist"
 msgstr "Granska huruvida kontakten redan finns"
@@ -3811,20 +3930,8 @@ msgstr "Byggbar"
 msgid "HITAS"
 msgstr "HITAS"
 
-msgid "Financing method"
-msgstr "Finansieringsform"
-
-msgid "Management method"
-msgstr "Upplåtelseform"
-
 msgid "Token exists"
 msgstr "Token existerar"
 
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
-
-msgid "Other permitted build area (floor-m²)"
-msgstr "Annan bostadsbyggsrätt (k-m²)"
-
-msgid "Main permitted build area (floor-m²)"
-msgstr "Huvudbostadsbyggsrätt (k-m²)"

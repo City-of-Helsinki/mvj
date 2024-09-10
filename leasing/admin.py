@@ -769,6 +769,19 @@ class ServiceUnitGroupMappingAdmin(admin.ModelAdmin):
     pass
 
 
+class IntendedUseAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "service_unit",
+    )
+    search_fields = ["name_fi"]
+    list_filter = ("service_unit",)
+    ordering = (
+        "name_fi",
+        "service_unit",
+    )
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -789,7 +802,7 @@ admin.site.register(InfillDevelopmentCompensation, InfillDevelopmentCompensation
 admin.site.register(
     InfillDevelopmentCompensationLease, InfillDevelopmentCompensationLeaseAdmin
 )
-admin.site.register(IntendedUse, NameAdmin)
+admin.site.register(IntendedUse, IntendedUseAdmin)
 admin.site.register(InterestRate, InterestRateAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Invoice, InvoiceAdmin)

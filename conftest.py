@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from pytest_factoryboy import register
 
+from batchrun.models import Command, Job, JobRun, JobRunLog
 from forms.models import Answer, Choice, Entry, Field, Form, Section
 from forms.models.form import EntrySection
 from forms.tests.conftest import fake
@@ -125,6 +126,39 @@ def area_search_test_data(
     )
 
     return area_search
+
+
+# Batchrun model factories
+@register
+class CommandFactory(factory.django.DjangoModelFactory):
+    type = "django-manage"
+
+    class Meta:
+        model = Command
+
+
+@register
+class JobFactory(factory.django.DjangoModelFactory):
+    command = factory.SubFactory(CommandFactory)
+
+    class Meta:
+        model = Job
+
+
+@register
+class JobRunFactory(factory.django.DjangoModelFactory):
+    job = factory.SubFactory(JobFactory)
+
+    class Meta:
+        model = JobRun
+
+
+@register
+class JobRunLogFactory(factory.django.DjangoModelFactory):
+    run = factory.SubFactory(JobRunFactory)
+
+    class Meta:
+        model = JobRunLog
 
 
 @register

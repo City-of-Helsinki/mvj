@@ -25,6 +25,9 @@ class FormChoiceField(forms.ModelChoiceField):
 
 
 class FieldModelAdmin(admin.ModelAdmin):
+    search_fields = [
+        "label_fi",
+    ]
     list_display = (
         "label",
         "section",

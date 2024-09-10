@@ -31,3 +31,4 @@ leasing/management/commands/find_identifiers_for_lease_areas.py
 leasing/management/commands/joo.py
 leasing/management/commands/joo2.py
 leasing/management/commands/prefetch_test.py
+coverage.xml

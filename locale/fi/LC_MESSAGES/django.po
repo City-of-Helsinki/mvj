@@ -672,6 +672,10 @@ msgid "Long term lease"
 msgstr "Pitkäaikainen vuokraus"
 
 msgctxt "Lease state"
+msgid "Temporary lease"
+msgstr "Tilapäinen vuokraus"
+
+msgctxt "Lease state"
 msgid "Reservation"
 msgstr "Varaus"
 
@@ -3059,6 +3063,10 @@ msgctxt "Invoicing review"
 msgid "Index type missing"
 msgstr "Indeksilaji puuttuu"
 
+msgctxt "Invoicing review"
+msgid "Ongoing rent without rent shares"
+msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
+
 msgid "Invoicing review"
 msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
 
@@ -3121,6 +3129,9 @@ msgstr "Vuokralaiset"
 msgid "Rent amount"
 msgstr "Vuokran määrä"
 
+msgid "Rent amount for contact"
+msgstr "Asiakkaan vuokran määrä"
+
 msgid "Contact not found"
 msgstr "Asiakasta ei löytynyt"
 
@@ -3133,6 +3144,12 @@ msgid ""
 msgstr ""
 "Näyttää ehdot joiden valvontapäivämäärä on annettujen päivämäärien välissä. "
 "Lukuunottamatta ehtoja joilla on valvottupäivämäärä."
+
+msgid "Yes"
+msgstr "Kyllä"
+
+msgid "No"
+msgstr "Ei"
 
 msgid "Supervision date exists"
 msgstr "Valvontapäivämäärä asetettu"
@@ -3366,8 +3383,14 @@ msgstr "Hallintamuoto"
 msgid "Yes"
 msgstr "Kyllä"
 
-msgid "No"
-msgstr "Ei"
+msgid "Other permitted build area (floor-m²)"
+msgstr "Muu rakennusoikeus (k-m²)"
+
+msgid "Financing method"
+msgstr "Rahoitusmuoto"
+
+msgid "Management method"
+msgstr "Hallintamuoto"
 
 msgid "Message"
 msgstr "Viesti"

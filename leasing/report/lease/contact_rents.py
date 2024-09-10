@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
+from leasing.enums import TenantContactType
 from leasing.models import Contact, Lease
 from leasing.report.lease.common_getters import (
     get_address,
@@ -47,6 +48,12 @@ class ContactRentsReport(ReportBase):
             "format": "money",
             "width": 13,
         },
+        "rent_amount_for_contact": {
+            "label": _("Rent amount for contact"),
+            "source": "_report__tenants_rent_for_period",
+            "format": "money",
+            "width": 13,
+        },
     }
 
     def get_data(self, input_data):
@@ -57,8 +64,13 @@ class ContactRentsReport(ReportBase):
 
         leases = (
             Lease.objects.filter(
-                Q(end_date__isnull=True) | Q(end_date__gte=input_data["start_date"]),
+                tenants__tenantcontact__type=TenantContactType.TENANT,
                 tenants__contacts=contact,
+                tenants__deleted__isnull=True,
+                tenants__contacts__deleted__isnull=True,
+            )
+            .filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=input_data["start_date"]),
             )
             .select_related(
                 "identifier",
@@ -74,13 +86,33 @@ class ContactRentsReport(ReportBase):
         )
 
         for lease in leases:
-            rent_for_period = lease.calculate_rent_amount_for_period(
-                input_data["start_date"], input_data["end_date"]
+            date_range = (
+                input_data["start_date"],
+                input_data["end_date"],
             )
-            lease._report__rent_for_period = (
-                rent_for_period.get_total_amount().quantize(
-                    Decimal(".01"), rounding=ROUND_HALF_UP
+            rent_for_period = lease.calculate_rent_amount_for_period(*date_range)
+            rent_total_amount_for_period = rent_for_period.get_total_amount()
+            lease._report__rent_for_period = rent_total_amount_for_period.quantize(
+                Decimal(".01"), rounding=ROUND_HALF_UP
+            )
+
+            tenant_shares = lease.get_tenant_shares_for_period(*date_range)
+            contacts_tenant = tenant_shares.get(contact)
+            if contacts_tenant is not None:
+                # One tenant can have multiple contacts, one tenant has only one rent share
+                rent_share = next(iter(contacts_tenant.keys()))
+                tenant_rent_share_portion = Decimal(
+                    rent_share.share_numerator / rent_share.share_denominator
                 )
-            )
+                rent_of_single_tenant_for_period = (
+                    rent_total_amount_for_period * tenant_rent_share_portion
+                )
+                lease._report__tenants_rent_for_period = (
+                    rent_of_single_tenant_for_period.quantize(
+                        Decimal(".01"), rounding=ROUND_HALF_UP
+                    )
+                )
+            else:
+                lease._report__tenants_rent_for_period = lease._report__rent_for_period
 
         return leases

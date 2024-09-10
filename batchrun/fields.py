@@ -52,3 +52,16 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
 class TextJSONField(JSONField):
     def db_type(self, connection: Any) -> str:
         return "json"
+
+    def from_db_value(self, value, expression, connection):
+        """
+        This is a workaround to make this field work with Django.
+        Changing the db_type to "json" causes the issue that this
+        field can't even be accessed and raises a TypeError.
+        """
+        # Seems like setting db_type to "json" gives back value that is a dict.
+        if isinstance(value, dict):
+            return value
+
+        value = super().from_db_value(value, expression, connection)
+        return value

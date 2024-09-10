@@ -1,8 +1,10 @@
 import datetime
 from collections import defaultdict
 from fractions import Fraction
+from io import BytesIO
 from operator import itemgetter
 
+import xlsxwriter
 from django import forms
 from django.db import DataError, connection
 from django.utils.translation import gettext_lazy as _
@@ -12,8 +14,10 @@ from enumfields.drf import EnumField
 from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
-from leasing.report.excel import ExcelCell, ExcelRow, FormatType
+from leasing.report.excel import FormatType
+from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
+from leasing.report.utils import dictfetchall
 
 
 class InvoicingReviewSection(Enum):
@@ -27,6 +31,7 @@ class InvoicingReviewSection(Enum):
     NO_TENANT_CONTACT = "no_tenant_contact"
     NO_LEASE_AREA = "no_lease_area"
     INDEX_TYPE_MISSING = "index_type_missing"
+    ONGOING_RENT_WITHOUT_RENT_SHARES = "ongoing_rent_without_rent_shares"
 
     class Labels:
         INVOICING_NOT_ENABLED = pgettext_lazy(
@@ -49,36 +54,16 @@ class InvoicingReviewSection(Enum):
         NO_TENANT_CONTACT = pgettext_lazy("Invoicing review", "No tenant contact")
         NO_LEASE_AREA = pgettext_lazy("Invoicing review", "No lease area")
         INDEX_TYPE_MISSING = pgettext_lazy("Invoicing review", "Index type missing")
+        ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
+            "Invoicing review", "Ongoing rent without rent shares"
+        )
 
 
 INVOICING_REVIEW_QUERIES = {
-    "invoicing_not_enabled": """
-        SELECT NULL AS "section",
-               li.identifier AS "lease_id",
-               l.start_date,
-               l.end_date
-          FROM leasing_lease l
-               INNER JOIN leasing_leaseidentifier li
-               ON l.identifier_id = li.id
-               INNER JOIN leasing_rent r
-               ON l.id = r.lease_id
-                  AND r.deleted IS NULL
-                  AND (r.start_date IS NULL OR r.start_date <= %(today)s)
-                  AND (r.end_date IS NULL OR r.end_date >= %(today)s)
-                  AND r.type != 'free'
-         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
-           AND l.start_date IS NOT NULL
-           AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
-           AND l.service_unit_id = ANY(%(service_units)s)
-           AND l.deleted IS NULL
-           AND l.is_invoicing_enabled = FALSE
-         GROUP BY l.id,
-                  li.identifier
-         ORDER BY li.identifier;
-    """,
+    "invoicing_not_enabled": INVOICING_DISABLED_REPORT_SQL,
     "rent_info_not_complete": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -96,7 +81,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_rents": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -117,7 +102,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_due_date": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -151,7 +136,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "index_type_missing": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -174,7 +159,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "one_time_rents_with_no_invoice": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -197,7 +182,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_tenant_contact": """
         SELECT NULL as "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -224,7 +209,7 @@ INVOICING_REVIEW_QUERIES = {
     """,
     "no_lease_area": """
         SELECT NULL AS "section",
-            li.identifier AS "lease_id",
+            li.identifier AS "lease_identifier",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -243,13 +228,6 @@ INVOICING_REVIEW_QUERIES = {
 }
 
 
-# From Django docs
-def dictfetchall(cursor):
-    """Return all rows from a cursor as a dict"""
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-
 class InvoicingReviewReport(ReportBase):
     name = _("Invoicing review")
     description = _("Show leases that might have errors in their invoicing")
@@ -266,7 +244,7 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_id": {"label": _("Lease id")},
+        "lease_identifier": {"label": _("Lease id")},
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
         "note": {"label": _("Note")},
@@ -278,7 +256,7 @@ class InvoicingReviewReport(ReportBase):
         today = datetime.date.today()
 
         query = """
-            SELECT li.identifier as lease_id,
+            SELECT li.identifier as lease_identifier,
                    l.start_date,
                    l.end_date,
                    array_agg(share) AS shares
@@ -327,7 +305,7 @@ class InvoicingReviewReport(ReportBase):
                 data.append(
                     {
                         "section": None,
-                        "lease_id": row["lease_id"],
+                        "lease_identifier": row["lease_identifier"],
                         "start_date": row["start_date"],
                         "end_date": row["end_date"],
                         "note": ", ".join(invalid_shares),
@@ -336,11 +314,66 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
+    def get_ongoing_rent_without_rent_shares_data(self, service_unit_ids, cursor):
+        today = datetime.date.today()
+
+        query = """
+            SELECT li.identifier as lease_identifier,
+                   l.start_date,
+                   l.end_date
+              FROM leasing_lease l
+                   INNER JOIN leasing_leaseidentifier li
+                   ON l.identifier_id = li.id
+                   INNER JOIN leasing_rent r
+                        ON l.id = r.lease_id
+                        AND r.deleted IS NULL
+                        AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                        AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                   INNER JOIN
+                   (SELECT t.id,
+                           t.lease_id,
+                           trs.id as trs_id
+                      FROM leasing_tenant t
+                           INNER JOIN leasing_tenantcontact tc
+                           ON t.id = tc.tenant_id
+                              AND tc.type = 'tenant'
+                              AND tc.start_date <= %(today)s
+                              AND (tc.end_date IS NULL OR tc.end_date >= %(today)s)
+                              AND tc.deleted IS NULL
+                           LEFT JOIN leasing_tenantrentshare trs
+                           ON t.id = trs.tenant_id
+                              AND trs.deleted IS NULL
+                     WHERE t.deleted IS NULL
+                   ) tt ON tt.lease_id = l.id
+            WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+              AND l.service_unit_id = ANY(%(service_units)s)
+              AND l.deleted IS NULL
+              AND tt.trs_id IS NULL
+            GROUP BY l.id,
+                     li.id;
+        """
+
+        cursor.execute(query, {"service_units": service_unit_ids, "today": today})
+
+        data = []
+        for row in dictfetchall(cursor):
+            data.append(
+                {
+                    "section": None,
+                    "lease_identifier": row["lease_identifier"],
+                    "start_date": row["start_date"],
+                    "end_date": row["end_date"],
+                    "note": "",
+                }
+            )
+
+        return data
+
     def get_incorrect_management_shares_data(self, service_unit_ids, cursor):
         today = datetime.date.today()
 
         query = """
-            SELECT li.identifier as "lease_id",
+            SELECT li.identifier as "lease_identifier",
                    l."start_date",
                    l."end_date",
                    array_agg(tt.share) AS "shares"
@@ -381,7 +414,7 @@ class InvoicingReviewReport(ReportBase):
                 data.append(
                     {
                         "section": None,
-                        "lease_id": row["lease_id"],
+                        "lease_identifier": row["lease_identifier"],
                         "start_date": row["start_date"],
                         "end_date": row["end_date"],
                         "note": str(shares_total),
@@ -404,7 +437,7 @@ class InvoicingReviewReport(ReportBase):
                 result.append(
                     {
                         "section": lease_list_type.value,
-                        "lease_id": None,
+                        "lease_identifier": None,
                         "start_date": None,
                         "end_date": None,
                     }
@@ -427,14 +460,14 @@ class InvoicingReviewReport(ReportBase):
                     rows = [
                         {
                             "section": None,
-                            "lease_id": None,
+                            "lease_identifier": None,
                             "start_date": None,
                             "end_date": None,
                             "note": f"Query error when generating report: {e}",
                         }
                     ]
 
-                rows.sort(key=itemgetter("lease_id"))
+                rows.sort(key=itemgetter("lease_identifier"))
                 result.extend(rows)
 
         return result
@@ -446,42 +479,110 @@ class InvoicingReviewReport(ReportBase):
         if request.accepted_renderer.format != "xlsx":
             return Response(serialized_report_data)
 
-        final_report_data = []
+        final_report_data = {}
+        section = ""
         for datum in serialized_report_data:
-            if not datum["section"]:
-                final_report_data.append(datum)
-                continue
-
-            section = InvoicingReviewSection(datum["section"])
-
-            final_report_data.append(ExcelRow())
-
-            # Intermediate heading: name of section
-            final_report_data.append(
-                ExcelRow(
-                    [
-                        ExcelCell(
-                            column=0,
-                            value=str(section.label),
-                            format_type=FormatType.BOLD,
-                        )
-                    ]
-                )
-            )
-
-            # Field labels as reminders under each section heading
-            row = []
-            for i, key in enumerate(self.output_fields):
-                if key == "section":
-                    continue
-                row.append(
-                    ExcelCell(
-                        column=i,
-                        value=str(self.output_fields[key]["label"]),
-                        format_type=FormatType.BOLD,
-                    )
-                )
-
-            final_report_data.append(ExcelRow(row))
+            if datum["section"]:
+                section = str(InvoicingReviewSection(datum["section"]).label)
+                final_report_data[section] = []
+            else:
+                final_report_data[section].append(datum)
 
         return Response(final_report_data)
+
+    def data_as_excel(self, data_sections):
+        """
+        Overrides report base function so that data sections can be put on separate sheets.
+        """
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        formats = {
+            FormatType.BOLD: workbook.add_format({"bold": True}),
+            FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
+            FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
+            FormatType.BOLD_MONEY: workbook.add_format(
+                {"bold": True, "num_format": "#,##0.00 €"}
+            ),
+            FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
+            FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+        }
+
+        # worksheet max length name is 31 so need to truncate and make sure there are no duplicates
+        worksheet_names_dict = self.get_worksheet_names_dict(data_sections)
+
+        for key, rows in data_sections.items():
+            worksheet_name = worksheet_names_dict[key]
+            worksheet = workbook.add_worksheet(worksheet_name)
+            row_num = self.write_worksheet_heading(worksheet, formats, key)
+            for row in rows:
+                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
+                row_num += 1
+
+        workbook.close()
+        return output.getvalue()
+
+    def get_worksheet_names_dict(self, data_sections):
+        """
+        Returns a dict with key as original section name and value the truncated and numbered worksheet name
+        """
+
+        # worksheet max length name is 31 so need to truncate
+        worksheet_names_dict = dict(
+            map(
+                lambda key: (key, (key[:29] + "..") if len(key) > 31 else key),
+                data_sections.keys(),
+            )
+        )
+
+        # need to make sure there are no duplicated worksheet names so add numbering to end if duplicates
+        duplicate_name_count_dict = {}
+        for worksheet_name, truncated_worksheet_name in worksheet_names_dict.items():
+            if truncated_worksheet_name in duplicate_name_count_dict:
+                duplicate_name_count_dict[truncated_worksheet_name] += 1
+                str_num_to_append = str(
+                    duplicate_name_count_dict[truncated_worksheet_name]
+                )
+                worksheet_names_dict[worksheet_name] = (
+                    truncated_worksheet_name[: -(1 + len(str_num_to_append))]
+                    + "_"
+                    + str(duplicate_name_count_dict[truncated_worksheet_name])
+                )
+            else:
+                duplicate_name_count_dict[truncated_worksheet_name] = 1
+
+        return worksheet_names_dict
+
+    def write_worksheet_heading(self, worksheet, formats, section):
+        """
+        Sets column width and writes report name, description, section and column labels to worksheet.
+        Returns row number after column labels:
+        """
+
+        # set column widths
+        worksheet.set_column(0, 0, 10)
+        worksheet.set_column(0, 1, 10)
+        worksheet.set_column(0, 2, 10)
+        worksheet.set_column(0, 3, 10)
+        worksheet.set_column(0, 4, 10)
+
+        # On the first row print the report name
+        worksheet.write(0, 0, str(self.name), formats[FormatType.BOLD])
+
+        # On the second row print the report description
+        worksheet.write(1, 0, str(self.description))
+
+        # Write metadata and column labels on excel
+        row_num = self.write_input_field_value_rows(worksheet, self.form, 3, formats)
+        row_num += 1
+        worksheet.write(row_num, 0, section, formats[FormatType.BOLD])
+        row_num += 2
+        self.write_worksheet_labels(row_num, worksheet, formats[FormatType.BOLD])
+        row_num += 1
+
+        return row_num
+
+    def write_worksheet_labels(self, row_num, worksheet, format):
+        worksheet.write(row_num, 1, "Lease id", format)
+        worksheet.write(row_num, 2, "Start date", format)
+        worksheet.write(row_num, 3, "End date", format)
+        worksheet.write(row_num, 4, "Note", format)
