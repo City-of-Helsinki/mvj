@@ -1491,7 +1491,8 @@ class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
 
     Members:
         code: Code for the index's table column. Example: "ketj_P_QA_T". \
-              Same code for different intervals, e.g. yearly or quarterly.
+              Same code is shared between tables for different intervals, e.g. \
+              yearly or quarterly.
         name: Name of the index. Example: "Index (2020=100)".
         comment: Comment for the index's table column.
         source: Source of the data.
@@ -1539,22 +1540,32 @@ class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
         )
 
 
-class IndexNumber(TimeStampedModel):
+class IndexNumberYearly(TimeStampedModel):
     """
-    In Finnish: Indeksipisteluku
+    In Finnish: Indeksipisteluku, vuosittain
 
     Holds the index numbers.
     Currently only used with the newer price indexes related to Periodic Rent
     Adjustment (Tasotarkistus).
 
+    This is expected to hold the final numbers that can be used to calculate the
+    periodic rent adjustment. Numbers can have a comment which might indicate
+    that the number is a preliminary number ("ennakkotieto") instead of a final
+    one, but there is no guarantee that the logic will remain the same in the
+    future.
+
+    The yearly index number is expected to be the average of all numbers from
+    the same year from this same index that use a smaller recording inverval.
+    For example, the yearly index number is the average of the year's quarterly
+    numbers.
+
     Members:
         index: Reference to the index this number is for.
-        number: Index number. Example: 101.5
+        number: Index number. Example: 101.5.
         year: Year for the number. Example: 2020.
-        quarter: Quarter number. Example: 4
         region: Geographical region for index value. Example: "pks" for \
                 Pääkaupunkiseutu / Greater Helsinki area
-        comment: Comment for the number. Example: "* ennakkotieto\r\n"
+        comment: Comment for the number. Example: "* preliminary data\r\n"
     """
 
     index = models.ForeignKey(
@@ -1574,11 +1585,7 @@ class IndexNumber(TimeStampedModel):
         null=True,
     )
     year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
-    quarter = models.PositiveSmallIntegerField(
-        verbose_name=_("Quarter"),
-        validators=[MinValueValidator(1), MaxValueValidator(4)],
-        null=True,
-    )
+
     # Max lengths here are arbitrary, but set to avoid extra large input.
     region = models.CharField(verbose_name=_("Region"), blank=True, max_length=255)
     comment = models.TextField(verbose_name=_("Comment"), blank=True)
@@ -1588,10 +1595,10 @@ class IndexNumber(TimeStampedModel):
         verbose_name_plural = pgettext_lazy("model name", "index numbers")
         constraints = [
             models.UniqueConstraint(
-                fields=["index", "year", "quarter"], name="unique_price_index_number"
+                fields=["index", "year"], name="unique_price_index_number"
             )
         ]
-        ordering = ("-index", "-year", "-quarter")
+        ordering = ("-index", "-year")
 
 
 class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):

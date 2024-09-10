@@ -6,7 +6,10 @@ import requests
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
 
-from leasing.models.rent import IndexNumber, OldDwellingsInHousingCompaniesPriceIndex
+from leasing.models.rent import (
+    IndexNumberYearly,
+    OldDwellingsInHousingCompaniesPriceIndex,
+)
 
 
 class IndexInput(TypedDict):
@@ -95,9 +98,9 @@ class ResponseDataError(Exception):
 # The keys are arbitrary, and only for internal reference in this file.
 INDEXES_TO_IMPORT: list[IndexInput] = [
     {
-        "name": "13mp -- Price index of old dwellings in housing companies (2020=100) \
-                and numbers of transactions, quarterly",
-        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mp.px",
+        "name": "13mq -- Vanhojen osakeasuntojen hintaindeksi (2020=100) ja \
+                kauppojen lukumäärät, vuositasolla, 2020-2023",
+        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mq.px",
         "code": "ketj_P_QA_T",
     },
 ]
@@ -140,7 +143,7 @@ def _get_index_data(url: str, code: str) -> ResponseData:
 
     Example CURL command how to get the data manually:
 
-curl -X POST "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mp.px" \
+curl -X POST "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mq.px" \
 -d  '{
         "query": [
             {
@@ -191,7 +194,7 @@ def _check_that_response_data_is_valid(
     """
     columns = index_data.get("columns", [])
     try:
-        _find_key_position(columns, "Vuosineljännes")
+        _find_key_position(columns, "Vuosi")
         _find_key_position(columns, "Alue")
         _find_column_position(columns, index_input["code"])
         _find_value_position(columns, index_input["code"])
@@ -270,9 +273,7 @@ def _update_or_create_index(
 ) -> tuple[OldDwellingsInHousingCompaniesPriceIndex, bool]:
     """Updates or creates a price index based on Tilastokeskus API data."""
     columns = index_data.get("columns", [])
-
     index_column_pos = _find_column_position(columns, index_input["code"])
-
     index_column_details = columns[index_column_pos]
 
     table_metadata = index_data.get("metadata", [])
@@ -304,7 +305,7 @@ def _update_or_create_index_numbers(
         Count of updated index numbers, and count of created index numbers.
     """
     columns = index_data.get("columns", [])
-    quarter_key_pos = _find_key_position(columns, "Vuosineljännes")
+    year_key_pos = _find_key_position(columns, "Vuosi")
     number_value_pos = _find_value_position(columns, index_input["code"])
     region_key_pos = _find_key_position(columns, "Alue")
 
@@ -314,15 +315,14 @@ def _update_or_create_index_numbers(
     numbers_created = 0
 
     for dp in data_points:
-        year, quarter = _extract_numbers_from_quarter_name(dp["key"][quarter_key_pos])
+        year = int(dp["key"][year_key_pos])
         number = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
         # TODO verify in 5.9. meeting: should we exclude "ennakkotieto" commented values?
-        _, created = IndexNumber.objects.update_or_create(
+        _, created = IndexNumberYearly.objects.update_or_create(
             index=index,
             year=year,
-            quarter=quarter,
             defaults={
                 "number": number,
                 "region": region,
@@ -381,22 +381,6 @@ def _get_update_date(metadata: MetadataItem | dict) -> datetime.datetime | None:
         ".", ":"
     )  # Assumes no sub-second values such as "T05:00:00.000" in the string.
     return parse_datetime(proper_iso_str)
-
-
-def _extract_numbers_from_quarter_name(quarter_name: str) -> tuple[int, int]:
-    """Extracts the year and quarter numbers from a quarter name.
-
-    Example: "2024Q1" -> (2024, 1)
-
-    Raises:
-        ResponseDataError when quarter name doesn't contain the character "Q".
-    """
-    if "q" not in quarter_name.lower():
-        raise ResponseDataError(
-            f'Quarter name is malformed, should be like "2024Q1": {quarter_name}'
-        )
-    year_str, quarter_str = quarter_name.lower().split("q")
-    return int(year_str), int(quarter_str)
 
 
 def _cast_index_number_to_float_or_none(number_str: str) -> float | None:

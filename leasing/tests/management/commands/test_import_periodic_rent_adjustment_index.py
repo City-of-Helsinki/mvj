@@ -15,7 +15,6 @@ from leasing.management.commands.import_periodic_rent_adjustment_index import (
     ResponseDataError,
     _cast_index_number_to_float_or_none,
     _check_that_response_data_is_valid,
-    _extract_numbers_from_quarter_name,
     _find_comment_for_value,
     _find_key_position,
     _find_value_position,
@@ -23,8 +22,6 @@ from leasing.management.commands.import_periodic_rent_adjustment_index import (
     _update_or_create_index,
     _update_or_create_index_numbers,
 )
-
-# TODO test "ennakkotieto" comment exclusion and any other new logic based on 5.9. meeting
 
 
 def test_response_data_is_valid(
@@ -51,33 +48,33 @@ def test_missing_column_raises(real_input_data: IndexInput, real_data: ResponseD
 
 def test_key_position_found(columns_real_data: list[ColumnItem]):
     """Happy path: key positions are correctly identified in the data."""
-    assert _find_key_position(columns_real_data, "Vuosineljännes") == 0
+    assert _find_key_position(columns_real_data, "Vuosi") == 0
     assert _find_key_position(columns_real_data, "Alue") == 1
 
 
 def test_key_column_missing_code_raises(
     columns_real_data: list[ColumnItem],
 ):
-    """Unhappy path: the key column cannot be found in the data because code doesn't match."""
-    code_not_present = deepcopy(columns_real_data)
-    for column in code_not_present:
+    """Unhappy path: the key column cannot be found because the column code doesn't match."""
+    columns = deepcopy(columns_real_data)
+    for column in columns:
         column["code"] = "Something else"
 
     with pytest.raises(ResponseDataError):
-        _find_key_position(code_not_present, "Vuosineljännes")
+        _find_key_position(columns, "Vuosi")
 
 
 def test_key_column_wrong_type_raises(
     columns_real_data: list[ColumnItem],
 ):
-    """Unhappy path: the key column cannot be found in the data because type doesn't match."""
-    type_is_wrong = deepcopy(columns_real_data)
-    for column in type_is_wrong:
+    """Unhappy path: the key column cannot be found because the column type doesn't match."""
+    columns = deepcopy(columns_real_data)
+    for column in columns:
         # type c indicates a measure column instead of a key column
         column["type"] = "c"
 
     with pytest.raises(ResponseDataError):
-        _find_key_position(type_is_wrong, "Vuosineljännes")
+        _find_key_position(columns, "Vuosineljännes")
 
 
 def test_value_position_found(
@@ -91,24 +88,24 @@ def test_value_position_found(
 
 def test_comment_found(
     datapoints_real_data: list[DataPoint],
-    comments_real_data: list[CommentItem],
     columns_real_data: list[ColumnItem],
+    comments_test_data: list[CommentItem],
 ):
     """Happy path: a comment is properly matched to a data point."""
     dp_with_comment = datapoints_real_data[-1]
     assert (
         _find_comment_for_value(
             dp_with_comment,
-            comments_real_data,
+            comments_test_data,
             columns_real_data,
         )
-        == "* ennakkotieto\r\n"
+        == comments_test_data[-1]["comment"]
     )
 
 
 def test_comment_not_found(
     datapoints_real_data: list[DataPoint],
-    comments_real_data: list[CommentItem],
+    comments_test_data: list[CommentItem],
     columns_real_data: list[ColumnItem],
 ):
     """Happy path: a comment is not matched to non-matching data point."""
@@ -116,7 +113,7 @@ def test_comment_not_found(
     assert (
         _find_comment_for_value(
             dp_without_comment,
-            comments_real_data,
+            comments_test_data,
             columns_real_data,
         )
         == ""
@@ -127,37 +124,8 @@ def test_get_update_date_valid(metadata_real_data: list[MetadataItem]):
     """Happy path: update datetime is properly extracted from a string."""
     metadata = metadata_real_data[0]
     assert _get_update_date(metadata) == datetime(
-        2024, 7, 26, 5, 0, 0, tzinfo=timezone.utc
+        2024, 5, 3, 5, 0, 0, tzinfo=timezone.utc
     )
-
-
-@pytest.mark.parametrize(
-    "quarter_name, year_expected, quarter_expected",
-    [
-        ("2020Q1", 2020, 1),
-        ("2020Q2", 2020, 2),
-        ("2020Q3", 2020, 3),
-        ("2020Q4", 2020, 4),
-    ],
-)
-def test_extract_numbers_from_quarter_name_valid(
-    quarter_name: str, year_expected: int, quarter_expected: int
-):
-    """Happy path: input quarter name is valid."""
-    assert _extract_numbers_from_quarter_name(quarter_name) == (
-        year_expected,
-        quarter_expected,
-    )
-
-
-@pytest.mark.parametrize(
-    "quarter_name",
-    ["2020", "", "2020 1", "2020,1", "2020_1"],
-)
-def test_extract_numbers_from_quarter_name_invalid(quarter_name: str):
-    """Unhappy path: the quarter signifier "Q" is missing from the quarter name."""
-    with pytest.raises(ResponseDataError):
-        _extract_numbers_from_quarter_name(quarter_name)
 
 
 @pytest.mark.parametrize(
@@ -249,7 +217,7 @@ def test_create_or_update_index():
 @pytest.mark.django_db
 def test_create_or_update_index_number(old_dwellings_price_index_factory):
     """Happy path: new index numbers are saved to DB, and are updated when using
-    the same index id, year, and quarter.
+    the same index id and year.
     """
     # Case 1: create new numbers
     creation_input = cast(
@@ -265,7 +233,7 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
         {
             "columns": [
                 {
-                    "code": "Vuosineljännes",
+                    "code": "Vuosi",
                     "text": "",
                     "comment": "",
                     "type": "t",
@@ -280,10 +248,10 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
             ],
             "comments": [],
             "data": [
-                {"key": ["2024Q1", "pks"], "values": ["100.1"]},
-                {"key": ["2024Q2", "pks"], "values": ["100.2"]},
-                {"key": ["2024Q3", "pks"], "values": ["100.3"]},
-                {"key": ["2024Q4", "pks"], "values": ["100.4"]},
+                {"key": ["2021", "pks"], "values": ["100.1"]},
+                {"key": ["2022", "pks"], "values": ["100.2"]},
+                {"key": ["2023", "pks"], "values": ["100.3"]},
+                {"key": ["2024", "pks"], "values": ["100.4"]},
             ],
             "metadata": [],
         },
@@ -299,13 +267,13 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
 
     # Case 2: update an existing number
     update_data = deepcopy(creation_data)
-    update_data["data"][2]["values"][0] = "200.3"  # change 2024Q3 number
+    update_data["data"][2]["values"][0] = "200.3"  # change year 2023's index number
     numbers_updated, numbers_created = _update_or_create_index_numbers(
         creation_input, update_data, index
     )
-    assert (
-        numbers_updated == 4
-    )  # TODO verify in 5.9. meeting if numbers should be updated at all
+    # Currently all numbers are updated every time, regardless of changes in content.
+    # If you want to avoid unnecessary updates, write logic to skip update when nothing changes.
+    assert numbers_updated == 4
     assert numbers_created == 0
 
 
@@ -318,9 +286,9 @@ def real_input_data() -> IndexInput:
     The keys are arbitrary, and only for internal reference in our code.
     """
     return {
-        "name": "13mp -- Price index of old dwellings in housing companies (2020=100) \
-                and numbers of transactions, quarterly",
-        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mp.px",
+        "name": "13mq -- Vanhojen osakeasuntojen hintaindeksi (2020=100) ja \
+                kauppojen lukumäärät, vuositasolla, 2020-2023",
+        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mq.px",
         "code": "ketj_P_QA_T",
     }
 
@@ -329,42 +297,30 @@ def real_input_data() -> IndexInput:
 def columns_real_data() -> list[ColumnItem]:
     """Column items from real API response data."""
     return [
-        {
-            "code": "Vuosineljännes",
-            "text": "Vuosineljännes",
-            "comment": "* ennakkotieto\r\n",
-            "type": "t",
-        },
-        {"code": "Alue", "text": "Alue", "type": "d"},
+        {"code": "Vuosi", "text": "Year", "type": "t"},
+        {"code": "Alue", "text": "Region", "type": "d"},
         {
             "code": "ketj_P_QA_T",
-            "text": "Indeksi (2020=100)",
-            "comment": "Indeksi on suhdeluku, joka kuvaa jonkin muuttujan \
-            (esimerkiksi hinnan, määrän tai arvon) suhteellista muutosta \
-            perusjakson (esimerkiksi vuoden) suhteen. Kunkin ajankohdan \
-            indeksipisteluku ilmoittaa, kuinka monta prosenttia kyseisen \
-            ajankohdan tarkasteltava muuttuja on perusjakson arvosta tai \
-            määrästä. Perusjakson indeksipistelukujen keskiarvo on 100. \
-            Tilastossa julkaistavat hintaindeksit ovat laatuvakioituja ja niiden \
-            kehitys voi poiketa neliöhintojen kehityksestä.\r\n",
+            "text": "Index (2020=100)",
+            "comment": "An index is a ratio describing the relative change in a variable (e.g. price, volume or value) compared to a certain base period [e.g. one year]. The index point figure for each point in time tells what percentage the given examined variable is of its respective value or volume at the base point in time. The mean of the index point figures for the base period is 100.\r\n",
             "type": "c",
         },
     ]
 
 
 @pytest.fixture
-def comments_real_data() -> list[CommentItem]:
-    """Comment items from real API response data."""
+def comments_test_data() -> list[CommentItem]:
+    """Hypothetical comment items."""
     return [
         {
-            "variable": "Vuosineljännes",
-            "value": "2024Q1",
-            "comment": "* ennakkotieto\r\n",
+            "variable": "Vuosi",
+            "value": "2022",
+            "comment": "* preliminary data\r\n",
         },
         {
-            "variable": "Vuosineljännes",
-            "value": "2024Q2",
-            "comment": "* ennakkotieto\r\n",
+            "variable": "Vuosi",
+            "value": "2023",
+            "comment": "* preliminary data\r\n",
         },
     ]
 
@@ -373,24 +329,10 @@ def comments_real_data() -> list[CommentItem]:
 def datapoints_real_data() -> list[DataPoint]:
     """Data points from real API response data."""
     return [
-        {"key": ["2020Q1", "pks"], "values": ["98.5"]},
-        {"key": ["2020Q2", "pks"], "values": ["100.1"]},
-        {"key": ["2020Q3", "pks"], "values": ["100.1"]},
-        {"key": ["2020Q4", "pks"], "values": ["101.3"]},
-        {"key": ["2021Q1", "pks"], "values": ["103.8"]},
-        {"key": ["2021Q2", "pks"], "values": ["106.1"]},
-        {"key": ["2021Q3", "pks"], "values": ["105.8"]},
-        {"key": ["2021Q4", "pks"], "values": ["106.9"]},
-        {"key": ["2022Q1", "pks"], "values": ["106.7"]},
-        {"key": ["2022Q2", "pks"], "values": ["108.0"]},
-        {"key": ["2022Q3", "pks"], "values": ["105.6"]},
-        {"key": ["2022Q4", "pks"], "values": ["102.5"]},
-        {"key": ["2023Q1", "pks"], "values": ["99.7"]},
-        {"key": ["2023Q2", "pks"], "values": ["98.7"]},
-        {"key": ["2023Q3", "pks"], "values": ["96.6"]},
-        {"key": ["2023Q4", "pks"], "values": ["94.8"]},
-        {"key": ["2024Q1", "pks"], "values": ["93.6"]},
-        {"key": ["2024Q2", "pks"], "values": ["93.7"]},
+        {"key": ["2020", "pks"], "values": ["100.0"]},
+        {"key": ["2021", "pks"], "values": ["105.6"]},
+        {"key": ["2022", "pks"], "values": ["105.7"]},
+        {"key": ["2023", "pks"], "values": ["97.4"]},
     ]
 
 
@@ -399,11 +341,9 @@ def metadata_real_data() -> list[MetadataItem]:
     """Metadata items from real API response data."""
     return [
         {
-            "updated": "2024-07-26T05.00.00Z",
-            "label": "Vanhojen osakeasuntojen hintaindeksi (2020=100) ja \
-            kauppojen lukumäärät, neljännesvuosittain muuttujina Vuosineljännes, \
-            Alue ja Tiedot",
-            "source": "Tilastokeskus, osakeasuntojen hinnat",
+            "updated": "2024-05-03T05.00.00Z",
+            "label": "Price index of old dwellings in housing companies (2020=100) and numbers of transactions, yearly by Year, Region and Information",
+            "source": "Statistics Finland, prices of dwellings in housing companies",
         }
     ]
 
@@ -411,14 +351,13 @@ def metadata_real_data() -> list[MetadataItem]:
 @pytest.fixture
 def real_data(
     columns_real_data,
-    comments_real_data,
     datapoints_real_data,
     metadata_real_data,
 ) -> ResponseData:
     """The combined real API response data in the expected format."""
     return {
         "columns": columns_real_data,
-        "comments": comments_real_data,
+        "comments": [],
         "data": datapoints_real_data,
         "metadata": metadata_real_data,
     }
