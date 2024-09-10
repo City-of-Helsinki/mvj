@@ -302,7 +302,13 @@ def columns_real_data() -> list[ColumnItem]:
         {
             "code": "ketj_P_QA_T",
             "text": "Index (2020=100)",
-            "comment": "An index is a ratio describing the relative change in a variable (e.g. price, volume or value) compared to a certain base period [e.g. one year]. The index point figure for each point in time tells what percentage the given examined variable is of its respective value or volume at the base point in time. The mean of the index point figures for the base period is 100.\r\n",
+            "comment": "An index is a ratio describing the relative change in a \
+                        variable (e.g. price, volume or value) compared to a \
+                        certain base period [e.g. one year]. The index point \
+                        figure for each point in time tells what percentage \
+                        the given examined variable is of its respective value \
+                        or volume at the base point in time. The mean of the \
+                        index point figures for the base period is 100.\r\n",
             "type": "c",
         },
     ]
@@ -342,7 +348,9 @@ def metadata_real_data() -> list[MetadataItem]:
     return [
         {
             "updated": "2024-05-03T05.00.00Z",
-            "label": "Price index of old dwellings in housing companies (2020=100) and numbers of transactions, yearly by Year, Region and Information",
+            "label": "Price index of old dwellings in housing companies \
+                      (2020=100) and numbers of transactions, yearly by Year, \
+                      Region and Information",
             "source": "Statistics Finland, prices of dwellings in housing companies",
         }
     ]
