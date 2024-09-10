@@ -4282,6 +4282,10 @@ msgid "Ongoing rent without rent shares"
 msgstr "Arrenderingar som har giltig hyra men inga faktureringsandel"
 
 #: leasing/report/invoice/invoicing_review.py:232
+msgctxt "Invoicing review"
+msgid "Gaps in billing periods"
+msgstr "Luckor i faktureringsperioder"
+
 msgid "Invoicing review"
 msgstr "Granskningsrapport för arrenderingens faktureringsuppgifter"
 

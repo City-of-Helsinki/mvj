@@ -4262,6 +4262,10 @@ msgid "Ongoing rent without rent shares"
 msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
 
 #: leasing/report/invoice/invoicing_review.py:232
+msgctxt "Invoicing review"
+msgid "Gaps in billing periods"
+msgstr "Aukkoja laskutuskausissa"
+
 msgid "Invoicing review"
 msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
 
