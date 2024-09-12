@@ -4,12 +4,14 @@
     "pk": 1,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T07:07:11.773Z",
       "modified_at": "2019-05-21T14:44:21.621Z",
       "name": "Indeksien tuonti",
       "comment": "Kuluttajahinta- ja elinkustannusindeksien tuonti",
       "command": 1,
-      "arguments": {}
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -17,12 +19,14 @@
     "pk": 2,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:10:04.064Z",
       "modified_at": "2019-05-21T12:10:04.065Z",
       "name": "Korkojen tuonti",
       "comment": "Viite- ja viivästyskoron tuonti Suomen Pankista",
       "command": 2,
-      "arguments": {}
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -30,12 +34,14 @@
     "pk": 3,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:14:55.854Z",
       "modified_at": "2019-05-21T12:14:55.854Z",
       "name": "Laskujen luonti",
       "comment": "",
       "command": 3,
-      "arguments": {}
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -43,12 +49,14 @@
     "pk": 4,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:17.927Z",
       "modified_at": "2019-05-21T12:40:59.614Z",
       "name": "Vuokraoikeuden siirtojen tuonti",
       "comment": "",
       "command": 4,
-      "arguments": {}
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -56,12 +64,14 @@
     "pk": 5,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:31.065Z",
       "modified_at": "2019-05-21T12:15:31.065Z",
       "name": "Tasauslaskujen luonti",
       "comment": "",
       "command": 5,
-      "arguments": {}
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -69,6 +79,7 @@
     "pk": 6,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:51.318Z",
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'Maaomaisuuden kehittäminen ja tontit'",
@@ -76,7 +87,98 @@
       "command": 6,
       "arguments": {
         "service_unit_id": 1
-      }
+      },
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 7,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2019-10-09T12:50:37.358Z",
+      "modified_at": "2019-10-09T12:50:37.358Z",
+      "name": "Maksujen haku Laske-järjestelmästä",
+      "comment": "",
+      "command": 7,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 8,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2019-10-09T12:52:57.399Z",
+      "modified_at": "2019-10-09T12:52:57.399Z",
+      "name": "Alueiden tuonti",
+      "comment": "Alueiden haku pty:stä",
+      "command": 8,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 9,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2019-10-09T12:53:34.025Z",
+      "modified_at": "2019-10-09T12:53:34.025Z",
+      "name": "Alueiden liittäminen vuokrauksiin",
+      "comment": "",
+      "command": 9,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 10,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2021-05-20T10:24:00.166Z",
+      "modified_at": "2021-05-20T10:24:00.166Z",
+      "name": "Lokien rotatointi (dry-run)",
+      "comment": "Lokien kierrätyksen kokeilu",
+      "command": 10,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 11,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2021-05-20T10:39:02.836Z",
+      "modified_at": "2021-08-12T11:34:13.463Z",
+      "name": "Lokien rotatointi",
+      "comment": "",
+      "command": 11,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 12,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2023-09-13T09:46:50.380Z",
+      "modified_at": "2023-09-13T09:46:50.380Z",
+      "name": "Usage distribution importer",
+      "comment": "",
+      "command": 12,
+      "arguments": {},
+      "history_retention_policy": 1
     }
   },
   {
@@ -84,6 +186,7 @@
     "pk": 20,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:51.318Z",
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'Alueiden käyttö ja -valvonta'",
@@ -91,7 +194,8 @@
       "command": 6,
       "arguments": {
         "service_unit_id": 2
-      }
+      },
+      "history_retention_policy": 1
     }
   },
   {
@@ -99,6 +203,7 @@
     "pk": 21,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:51.318Z",
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Liikuntapaikkapalvelut'",
@@ -106,7 +211,8 @@
       "command": 6,
       "arguments": {
         "service_unit_id": 3
-      }
+      },
+      "history_retention_policy": 1
     }
   },
   {
@@ -114,6 +220,7 @@
     "pk": 22,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:51.318Z",
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Ulkoilupalvelut'",
@@ -121,7 +228,8 @@
       "command": 6,
       "arguments": {
         "service_unit_id": 4
-      }
+      },
+      "history_retention_policy": 1
     }
   },
   {
@@ -129,6 +237,7 @@
     "pk": 23,
     "fields": {
       "deleted": null,
+      "deleted_by_cascade": false,
       "created_at": "2019-05-21T12:15:51.318Z",
       "modified_at": "2019-05-21T12:15:51.318Z",
       "name": "Laskujen lähetys Laske-järjestelmään 'KuVa / Nuorisopalvelut'",
@@ -136,7 +245,8 @@
       "command": 6,
       "arguments": {
         "service_unit_id": 5
-      }
+      },
+      "history_retention_policy": 1
     }
   }
 ]
