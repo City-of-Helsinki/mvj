@@ -142,5 +142,17 @@
       "parameters": {},
       "parameter_format_string": "usage_distributions"
     }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 13,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "update_plotsearch_stage",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
   }
 ]
