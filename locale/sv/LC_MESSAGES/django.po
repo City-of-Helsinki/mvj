@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-10 09:47+0300\n"
+"POT-Creation-Date: 2024-09-12 10:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,39 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: audittrail/viewsets.py:47
 msgid "View auditlog"
 msgstr "Visa auditeringslogg"
 
-#: audittrail/viewsets.py:50
 msgid "View auditlog of a lease or a contact"
 msgstr "Visa auditeringsloggen för den valda arrenderingen eller kunden"
 
-#: batchrun/enums.py:10
 msgid "executable or script"
 msgstr "Fil som ska köras"
 
-#: batchrun/enums.py:11
 msgid "Django management command"
 msgstr "Django-kommando"
 
-#: batchrun/fields.py:48
 msgid "Invalid integer set specifier"
 msgstr "Felaktig definition"
 
-#: batchrun/model_mixins.py:19
 msgid "creation time"
 msgstr "Tidpunkt då skapades"
 
-#: batchrun/model_mixins.py:22
 msgid "modification time"
 msgstr "Tidpunkt då redigerades"
 
-#: batchrun/models.py:44 batchrun/models.py:171 batchrun/models.py:216
 msgid "name"
 msgstr "Namn"
 
-#: batchrun/models.py:46
 msgid ""
 "Name of the command to run e.g. name of a program in PATH or a full path to "
 "an executable, or name of a management command."
@@ -57,15 +48,12 @@ msgstr ""
 "Namn på kommando som körs. T.ex. programmets namn i PATH-miljövariabeln, "
 "hela sökvägen för den fil som ska köras eller namnet på Django-kommandot"
 
-#: batchrun/models.py:65
 msgid "parameters"
 msgstr "parametrar"
 
-#: batchrun/models.py:70
 msgid "parameter format string"
 msgstr "parameterns format"
 
-#: batchrun/models.py:72
 #, python-brace-format
 msgid ""
 "String that defines how the parameters are formatted when calling the "
@@ -77,23 +65,18 @@ msgstr ""
 "exempel, om \"--rent-id {rent_id}\" definieras här och värdet 123 tilldelas "
 "rent_id som argument, körs kommandot i formatet \"COMMAND --rent-id 123\"."
 
-#: batchrun/models.py:81 batchrun/models.py:177
 msgid "command"
 msgstr "Kommando"
 
-#: batchrun/models.py:82
 msgid "commands"
 msgstr "Kommandon"
 
-#: batchrun/models.py:108
 msgid "identifier"
 msgstr "identifieringskod"
 
-#: batchrun/models.py:112
 msgid "log compacting delay"
 msgstr "väntetid vid komprimering av en logg"
 
-#: batchrun/models.py:114
 msgid ""
 "Days to wait before compacting log entries. Calculated from the start time "
 "of the job. Compacting log entries means that the individual log entries are "
@@ -111,22 +94,18 @@ msgstr ""
 "loggmarkeringarna (stdout/stderr) och tidstämplarna sparas separat. Då kan "
 "de ursprungliga loggmarkeringarna fortfarande återställas."
 
-#: batchrun/models.py:128
 msgid "log deleting delay"
 msgstr "väntetid vid radering av en logg"
 
-#: batchrun/models.py:130
 msgid ""
 "Days to wait before deleting logs. Calculated from the start time of the job."
 msgstr ""
 "Antal dagar som väntas innan loggmarkeringarna raderas. Räknas från tiden "
 "arbetet börjades."
 
-#: batchrun/models.py:136
 msgid "run inforomation deleting delay"
 msgstr "väntetid vid radering av körningsdata"
 
-#: batchrun/models.py:138
 msgid ""
 "Days to wait before deleting all inforomation about the run. Calculated from "
 "the start time of the job."
@@ -134,27 +113,21 @@ msgstr ""
 "Antal dagar som väntas innan alla uppgifter om en körning raderas. Räknas "
 "från tiden arbetet börjades."
 
-#: batchrun/models.py:144
 msgid "job history retention policy"
 msgstr "praxis för lagring av arbetshistorik"
 
-#: batchrun/models.py:145
 msgid "job history retention policies"
 msgstr "praxis för lagring av arbetshistorik"
 
-#: batchrun/models.py:172
 msgid "Descriptive name for the job"
 msgstr "Arbetets beskrivande namn"
 
-#: batchrun/models.py:174 batchrun/models.py:251
 msgid "comment"
 msgstr "Kommentar"
 
-#: batchrun/models.py:182
 msgid "arguments"
 msgstr "Argument"
 
-#: batchrun/models.py:184
 msgid ""
 "Argument for the command as a JSON object. These will be formatted with the "
 "parameter format string of the command. E.g. to pass value 123 as an "
@@ -164,24 +137,19 @@ msgstr ""
 "parameterns formatdefinition. T.ex. om man vill ge numret 123 som rent_id-"
 "argument, placeras {\"rent_id\": 123} här."
 
-#: batchrun/models.py:194
 msgid "history retention policy"
 msgstr "praxis för lagring av historik"
 
-#: batchrun/models.py:196
 msgid ""
 "Defines how long logs and information about completed runs is preserved."
 msgstr "Anger hur länge loggarna lagras och uppgifter om genomförda körningar."
 
-#: batchrun/models.py:202 batchrun/models.py:249 batchrun/models.py:394
 msgid "job"
 msgstr "Arbete"
 
-#: batchrun/models.py:203
 msgid "jobs"
 msgstr "Arbeten"
 
-#: batchrun/models.py:218
 msgid ""
 "Name of the timezone, e.g. \"Europe/Helsinki\" or \"UTC\". See https://en."
 "wikipedia.org/wiki/List_of_tz_database_time_zones for a list of possible "
@@ -191,43 +159,33 @@ msgstr ""
 "möjliga namn på tidszoner på adressen https://en.wikipedia.org/wiki/"
 "List_of_tz_database_time_zones"
 
-#: batchrun/models.py:225 batchrun/models.py:258
 msgid "timezone"
 msgstr "Tidszon"
 
-#: batchrun/models.py:226
 msgid "timezones"
 msgstr "Tidszoner"
 
-#: batchrun/models.py:233
 msgid "Timezone name can't be empty"
 msgstr ""
 
-#: batchrun/models.py:237
 msgid "Invalid timezone name"
 msgstr "Odugligt namn på tidszon"
 
-#: batchrun/models.py:254
 msgid "enabled"
 msgstr "på"
 
-#: batchrun/models.py:260
 msgid "years"
 msgstr "År"
 
-#: batchrun/models.py:261
 msgid "months"
 msgstr "Månader"
 
-#: batchrun/models.py:263
 msgid "days of month"
 msgstr "Dagar i månaden"
 
-#: batchrun/models.py:267
 msgid "weekdays"
 msgstr "Veckodagar"
 
-#: batchrun/models.py:269
 msgid ""
 "Limit execution to specified weekdays. Use integer values to represent the "
 "weekdays with the following mapping: 0=Sunday, 1=Monday, 2=Tuesday, ..., "
@@ -236,658 +194,385 @@ msgstr ""
 "Körs endast vissa veckodagar. Använd siffror som motsvarar veckodagarna: "
 "0=söndag, 1=måndag, 2=tisdag, 3=onsdag, 4=torsdag, 5=fredag, 6=lördag."
 
-#: batchrun/models.py:274
 msgid "hours"
 msgstr "Timmar"
 
-#: batchrun/models.py:275
 msgid "minutes"
 msgstr "Minuter"
 
-#: batchrun/models.py:278 batchrun/models.py:598
 msgid "scheduled job"
 msgstr "Tidsinställt arbete"
 
-#: batchrun/models.py:279
 msgid "scheduled jobs"
 msgstr "Tidsinställda arbeten"
 
-#: batchrun/models.py:295
 #, python-brace-format
 msgid "Scheduled job \"{job}\" @ {schedule}"
 msgstr "Tidsinställt arbete \"{job}\" @ {schedule}"
 
-#: batchrun/models.py:398
 msgid "PID"
 msgstr "permanent identifieringskod"
 
-#: batchrun/models.py:400
 msgid "Records the process id of the process, which is/was executing this job"
 msgstr "Nummer på processen som körde arbetet"
 
-#: batchrun/models.py:404
 msgid "start time"
 msgstr "Starttid"
 
-#: batchrun/models.py:407
 msgid "stop time"
 msgstr "Sluttid"
 
-#: batchrun/models.py:409
 msgid "exit code"
 msgstr "Exit-kod"
 
-#: batchrun/models.py:414
 msgid "job run"
 msgstr "Körning av arbetet"
 
-#: batchrun/models.py:415
 msgid "job runs"
 msgstr "Körningar av arbetet"
 
-#: batchrun/models.py:461 batchrun/models.py:490
 msgid "run"
 msgstr "Körning"
 
-#: batchrun/models.py:463
 msgid "kind"
 msgstr "Art"
 
-#: batchrun/models.py:464
 msgid "line number"
 msgstr "radnummer"
 
-#: batchrun/models.py:465
 msgid "number"
 msgstr "Nummer"
 
-#: batchrun/models.py:467
 msgid "time"
 msgstr "Tid"
 
-#: batchrun/models.py:469
 msgid "text"
 msgstr "Text"
 
-#: batchrun/models.py:473
 msgid "log entry"
 msgstr "logganteckning"
 
-#: batchrun/models.py:474
 msgid "log entries"
 msgstr "logganteckningar"
 
-#: batchrun/models.py:477
 #, python-brace-format
 msgid "{run_name}: {kind} entry {linenum}({number})"
 msgstr "{run_name}: {kind} anteckning {linenum}({number})"
 
-#: batchrun/models.py:492
 msgid "content"
 msgstr "innehåll"
 
-#: batchrun/models.py:496
 msgid "log entry metadata"
 msgstr "metadata om logganteckning"
 
-#: batchrun/models.py:505
 msgid "timestamp of the first entry"
 msgstr "tidstämpel av den första anteckningen"
 
-#: batchrun/models.py:509
 msgid "timestamp of the last entry"
 msgstr "tidstämpel av den sista anteckningen"
 
-#: batchrun/models.py:511
 msgid "total count of entries"
 msgstr "antal anteckningar totalt"
 
-#: batchrun/models.py:512
 msgid "count of error entries"
 msgstr "antal felmarkeringar"
 
-#: batchrun/models.py:516
 msgid "log"
 msgstr "logg"
 
-#: batchrun/models.py:517
 msgid "logs"
 msgstr "loggar"
 
-#: batchrun/models.py:593
 msgid "scheduled run time"
 msgstr "Tidpunkt för körning"
 
-#: batchrun/models.py:602
 msgid "assignment time"
 msgstr "Tidpunkt för körorder"
 
-#: batchrun/models.py:605
 msgid "assignee process id (PID)"
 msgstr "Processnummer för körordern (PID)"
 
-#: credit_integration/enums.py:15
 msgctxt "Credit decision status"
 msgid "Yes"
 msgstr "Ja"
 
-#: credit_integration/enums.py:16
 msgctxt "Credit decision status"
 msgid "No"
 msgstr "Nej"
 
-#: credit_integration/enums.py:17
 msgctxt "Credit decision status"
 msgid "Consideration"
 msgstr "Övervägande"
 
-#: credit_integration/models.py:25
 msgid "Reason code"
 msgstr "Orsakskod"
 
-#: credit_integration/models.py:32
 msgid "Reason"
 msgstr "Orsak"
 
-#: credit_integration/models.py:36
 msgctxt "Model name"
 msgid "Credit decision reason"
 msgstr "Orsak till kreditbeslutet"
 
-#: credit_integration/models.py:37
 msgctxt "Model name"
 msgid "Credit decision reasons"
 msgstr "Orsaker till kreditbeslutet"
 
-#: credit_integration/models.py:48
 msgid "Customer"
 msgstr "Kund"
 
-#: credit_integration/models.py:56
 msgid "Status"
 msgstr "Status"
 
-#: credit_integration/models.py:60
 msgid "Reasons"
 msgstr "Orsaker"
 
-#: credit_integration/models.py:65 leasing/models/contact.py:45
-#: leasing/models/leasehold_transfer.py:94
 msgid "Business ID"
 msgstr "FO-nummer"
 
-#: credit_integration/models.py:72
 msgid "Official name"
 msgstr "Officiellt namn"
 
-#: credit_integration/models.py:79 forms/utils.py:453
-#: leasing/models/contact.py:54 leasing/models/land_area.py:37
-#: leasing/report/lease/contact_rents.py:43
-#: leasing/report/lease/decision_conditions_report.py:85
-#: leasing/report/lease/extra_city_rent.py:117
-#: leasing/report/lease/extra_city_rent.py:121
-#: leasing/report/lease/index_types.py:105
-#: leasing/report/lease/lease_statistic_report.py:242
-#: leasing/report/lease/lease_statistic_report2.py:267
-#: leasing/report/lease/rent_type.py:105
-#: leasing/report/lease/reservations.py:178
-#: plotsearch/templates/area_search/detail.html:69
-#: plotsearch/views/plot_search.py:503
 msgid "Address"
 msgstr "Adress"
 
-#: credit_integration/models.py:86
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: credit_integration/models.py:93
 msgid "Business entity"
 msgstr "Bolagsform"
 
-#: credit_integration/models.py:100
 msgid "Date of commencement of operations"
 msgstr "Startdatum för verksamheten"
 
-#: credit_integration/models.py:105
 msgid "Industry code"
 msgstr "Sektorskod"
 
-#: credit_integration/models.py:113
 msgid "Claimant"
 msgstr "Sökande"
 
-#: credit_integration/models.py:120
 msgid "original_data"
 msgstr "Ursprungliga data"
 
-#: credit_integration/models.py:131
 msgctxt "Model name"
 msgid "Credit decision"
 msgstr "Kreditbeslut"
 
-#: credit_integration/models.py:132
 msgctxt "Model name"
 msgid "Credit decisions"
 msgstr "Kreditbeslut"
 
-#: credit_integration/models.py:225
 msgid "Identification"
 msgstr "Identifieringskod"
 
-#: credit_integration/models.py:232 leasing/models/area_note.py:24
-#: leasing/models/comment.py:35 leasing/models/debt_collection.py:101
-#: leasing/models/email.py:21
-#: leasing/models/infill_development_compensation.py:41
-#: leasing/models/land_area.py:231 leasing/models/land_area.py:368
-#: leasing/models/ui_data.py:13
 msgid "User"
 msgstr "Användare"
 
-#: credit_integration/models.py:239 leasing/models/comment.py:46
-#: leasing/models/email.py:23 leasing/models/land_area.py:370
 msgid "Text"
 msgstr "Text"
 
-#: credit_integration/models.py:244
 msgctxt "Model name"
 msgid "Credit decision log"
 msgstr "Logg för kreditbeslutet"
 
-#: credit_integration/models.py:245
 msgctxt "Model name"
 msgid "Credit decision logs"
 msgstr "Loggar för kreditbeslutet"
 
-#: credit_integration/views.py:46
 msgid ""
 "Cannot find business id or national identification number in customer data."
 msgstr ""
 "Kunduppgifterna innehåller inget FO-nummer eller ingen personbeteckning."
 
-#: forms/enums.py:15
 msgctxt "Form state"
 msgid "Work in progress"
 msgstr "Oavslutad"
 
-#: forms/enums.py:16
 msgctxt "Form state"
 msgid "Ready"
 msgstr "Färdig"
 
-#: forms/enums.py:17
 msgctxt "Form state"
 msgid "Deleted"
 msgstr "Makulerad"
 
-#: forms/enums.py:29
 msgctxt "Section type"
 msgid "Show always"
 msgstr "Visa alltid"
 
-#: forms/enums.py:30
 msgctxt "Section type"
 msgid "Show if"
 msgstr "Visa om"
 
-#: forms/enums.py:43
 msgctxt "Applicant type"
 msgid "Person"
 msgstr "Person"
 
-#: forms/enums.py:44
 msgctxt "Applicant type"
 msgid "Company"
 msgstr "Företag"
 
-#: forms/enums.py:45
 msgctxt "Applicant type"
 msgid "Both"
 msgstr "Båda"
 
-#: forms/models/form.py:21 forms/models/form.py:212 leasing/models/email.py:25
-#: leasing/models/mixins.py:7 plotsearch/models/plot_search.py:259
-#: plotsearch/models/plot_search.py:408 plotsearch/models/plot_search.py:605
 msgid "Time created"
 msgstr "Skapad"
 
-#: forms/models/form.py:22 leasing/models/mixins.py:8
-#: plotsearch/models/plot_search.py:261
 msgid "Time modified"
 msgstr "Redigerad"
 
-#: forms/models/form.py:95
 msgid "Tekstikenttä"
 msgstr "Textfält"
 
-#: forms/models/form.py:96
 msgid "Tekstialue"
 msgstr "Textområde"
 
-#: forms/models/form.py:97
 msgid "Alasvetovalikko"
 msgstr "Rullgardinsmeny"
 
-#: forms/models/form.py:98
 msgid "Valintaruutu"
 msgstr "Valruta"
 
-#: forms/models/form.py:99
 msgid "Radiopainike"
 msgstr "Radioknapp"
 
-#: forms/models/form.py:100
 msgid "Radiopainike linjassa"
 msgstr "Radioknapp på linje"
 
-#: forms/models/form.py:101
 msgid "Lataa tiedosto"
 msgstr "Ladda ner filen"
 
-#: forms/models/form.py:102
 msgid "Murtoluku"
 msgstr "Bråktal"
 
-#: forms/utils.py:451 leasing/models/lease.py:475
-#: leasing/report/lease/lease_statistic_report.py:244
-#: leasing/report/lease/lease_statistic_report2.py:269
-#: plotsearch/templates/area_search/detail.html:61
-#: plotsearch/templates/area_search/detail.html:128
 msgid "Lessor"
 msgstr "Arrendegivare"
 
-#: forms/utils.py:452 plotsearch/templates/area_search/detail.html:65
-#: plotsearch/templates/area_search/detail.html:132
 msgid "Description area"
 msgstr "Närmare beskrivning om området"
 
-#: forms/utils.py:454 leasing/models/land_use_agreement.py:78
-#: leasing/models/land_use_agreement.py:135 leasing/models/lease.py:263
-#: leasing/models/lease.py:419
-#: leasing/report/lease/lease_statistic_report.py:234
-#: leasing/report/lease/lease_statistic_report2.py:259
-#: plotsearch/templates/area_search/detail.html:73
 msgid "District"
 msgstr "Stadsdel"
 
-#: forms/utils.py:455 leasing/models/infill_development_compensation.py:241
-#: leasing/models/invoice.py:805 leasing/models/lease.py:485
-#: leasing/models/rent.py:878 leasing/models/rent.py:952
-#: leasing/models/rent.py:1072 leasing/models/rent.py:1113
-#: leasing/models/rent.py:1636 leasing/models/tenant.py:140
-#: leasing/report/lease/extra_city_rent.py:125
-#: leasing/report/lease/index_types.py:120
-#: leasing/report/lease/rent_adjustments.py:57
-#: leasing/report/lease/rent_type.py:120
-#: plotsearch/templates/area_search/detail.html:77
-#: plotsearch/views/plot_search.py:509
 msgid "Intended use"
 msgstr "Användningsändamål"
 
-#: forms/utils.py:456 plotsearch/templates/area_search/detail.html:81
 msgid "Description intended use"
 msgstr "Närmare beskrivning om hur området används"
 
-#: forms/utils.py:457 leasing/models/basis_of_rent.py:53
-#: leasing/models/contract.py:188 leasing/models/debt_collection.py:167
-#: leasing/models/land_use_agreement.py:786 leasing/models/lease.py:434
-#: leasing/models/lease.py:1491 leasing/models/rent.py:185
-#: leasing/models/rent.py:886 leasing/models/rent.py:991
-#: leasing/models/rent.py:1078 leasing/models/rent.py:1119
-#: leasing/models/rent.py:1349 leasing/models/rent.py:1384
-#: leasing/models/tenant.py:104 leasing/models/vat.py:43
-#: leasing/report/invoice/invoice_payments.py:31
-#: leasing/report/invoice/invoices_in_period.py:49
-#: leasing/report/invoice/invoicing_review.py:248
-#: leasing/report/invoice/laske_invoice_count_report.py:35
-#: leasing/report/invoice/open_invoices_report.py:44
-#: leasing/report/invoice/rents_paid_by_contact.py:14
-#: leasing/report/lease/contact_rents.py:26
-#: leasing/report/lease/contact_rents.py:41
-#: leasing/report/lease/decision_conditions_report.py:68
-#: leasing/report/lease/extra_city_rent.py:109
-#: leasing/report/lease/extra_city_rent.py:123
-#: leasing/report/lease/index_types.py:116
-#: leasing/report/lease/invoicing_disabled_report.py:47
-#: leasing/report/lease/lease_statistic_report.py:207
-#: leasing/report/lease/lease_statistic_report.py:256
-#: leasing/report/lease/lease_statistic_report2.py:232
-#: leasing/report/lease/lease_statistic_report2.py:285
-#: leasing/report/lease/rent_adjustments.py:58
-#: leasing/report/lease/rent_type.py:116
-#: leasing/report/lease/reservations.py:189
-#: plotsearch/templates/area_search/detail.html:85
-#: plotsearch/templates/area_search/email_detail.txt:7
 msgid "Start date"
 msgstr "Startdatum"
 
-#: forms/utils.py:458 leasing/models/basis_of_rent.py:56
-#: leasing/models/contract.py:191 leasing/models/debt_collection.py:168
-#: leasing/models/land_use_agreement.py:789 leasing/models/lease.py:437
-#: leasing/models/lease.py:1492 leasing/models/rent.py:188
-#: leasing/models/rent.py:889 leasing/models/rent.py:994
-#: leasing/models/rent.py:1081 leasing/models/rent.py:1122
-#: leasing/models/rent.py:1352 leasing/models/rent.py:1387
-#: leasing/models/tenant.py:107 leasing/models/vat.py:46
-#: leasing/report/invoice/invoice_payments.py:32
-#: leasing/report/invoice/invoices_in_period.py:50
-#: leasing/report/invoice/invoicing_review.py:249
-#: leasing/report/invoice/laske_invoice_count_report.py:36
-#: leasing/report/invoice/open_invoices_report.py:45
-#: leasing/report/invoice/rents_paid_by_contact.py:15
-#: leasing/report/lease/contact_rents.py:27
-#: leasing/report/lease/contact_rents.py:42
-#: leasing/report/lease/decision_conditions_report.py:69
-#: leasing/report/lease/extra_city_rent.py:110
-#: leasing/report/lease/extra_city_rent.py:124
-#: leasing/report/lease/index_types.py:119
-#: leasing/report/lease/invoicing_disabled_report.py:48
-#: leasing/report/lease/lease_statistic_report.py:258
-#: leasing/report/lease/lease_statistic_report2.py:287
-#: leasing/report/lease/rent_adjustments.py:59
-#: leasing/report/lease/rent_type.py:119
-#: leasing/report/lease/reservations.py:190
-#: plotsearch/templates/area_search/detail.html:89
-#: plotsearch/templates/area_search/email_detail.txt:8
 msgid "End date"
 msgstr "Slutdatum"
 
-#: forms/utils.py:459 plotsearch/templates/area_search/detail.html:93
-#: plotsearch/templates/area_search/email_detail.txt:9
 msgid "Received date"
 msgstr "Mottagen"
 
-#: forms/utils.py:460 leasing/models/area.py:16 leasing/models/area.py:30
-#: leasing/models/basis_of_rent.py:164 leasing/models/detailed_plan.py:17
-#: leasing/models/land_area.py:136 leasing/models/land_use_agreement.py:35
-#: leasing/models/land_use_agreement.py:57 leasing/models/lease.py:53
-#: leasing/models/lease.py:82 leasing/models/lease.py:107
-#: leasing/models/lease.py:242 leasing/models/leasehold_transfer.py:58
-#: plotsearch/templates/area_search/email_detail.txt:6
 msgid "Identifier"
 msgstr "Kod"
 
-#: forms/utils.py:461 leasing/models/infill_development_compensation.py:47
-#: leasing/models/invoice.py:248 leasing/models/land_use_agreement.py:229
-#: leasing/models/land_use_agreement.py:1026 leasing/models/lease.py:441
-#: leasing/models/lease.py:1462 leasing/report/invoice/invoices_in_period.py:70
-#: leasing/report/lease/lease_statistic_report.py:209
-#: leasing/report/lease/lease_statistic_report2.py:234
 msgid "State"
 msgstr "Status"
 
-#: forms/utils.py:462 leasing/models/land_use_agreement.py:167
-#: leasing/models/lease.py:589
-#: leasing/report/lease/lease_statistic_report.py:232
-#: leasing/report/lease/lease_statistic_report2.py:257
-#: plotsearch/models/plot_search.py:106 plotsearch/models/plot_search.py:240
-#: plotsearch/models/plot_search.py:539
-#: plotsearch/templates/area_search/detail.html:141
 msgid "Preparer"
 msgstr "Beredd av"
 
-#: forms/utils.py:466
 msgid "Decline reason"
 msgstr "Orsaken till avslaget"
 
-#: forms/utils.py:467
 msgid "Preparer note"
 msgstr "Beredares anmärkning"
 
-#: forms/utils.py:470
 msgid "Status notes"
 msgstr "Statusanmärkningar"
 
-#: forms/utils.py:607
 #, python-brace-format
 msgid "Copy of plot application(s) {target_status_identifiers}"
 msgstr "Kopia av tomtansökningar {target_status_identifiers}"
 
-#: forms/utils.py:638
 #, python-brace-format
 msgid "Copy of area rental application {area_search.identifier}"
 msgstr "Kopia av ansökningar för områdessökning {area_search.identifier}"
 
-#: laske_export/admin.py:31 leasing/models/invoice.py:779
-#: leasing/models/invoice.py:844 leasing/models/land_use_agreement.py:1117
-#: leasing/models/land_use_agreement.py:1196
 msgid "Invoice"
 msgstr "Faktura"
 
-#: laske_export/admin.py:32
 msgid "Invoices"
 msgstr "Fakturor"
 
-#: laske_export/admin.py:60 laske_export/admin.py:184
-#: leasing/models/lease.py:425 leasing/report/lease/contact_rents.py:32
-#: leasing/report/lease/rent_compare.py:31
 msgid "Lease identifier"
 msgstr "Arrendekod"
 
-#: laske_export/admin.py:76 laske_export/admin.py:201
-#: leasing/report/invoice/invoice_payments.py:37
-#: leasing/report/invoice/rents_paid_by_contact.py:21
 msgid "Invoice number"
 msgstr "Fakturanummer "
 
-#: laske_export/admin.py:81 leasing/models/invoice.py:234
-#: leasing/models/land_use_agreement.py:991
-#: leasing/report/invoice/invoices_in_period.py:73
-#: leasing/report/invoice/open_invoices_report.py:51
-#: leasing/report/invoice/rents_paid_by_contact.py:29
 msgid "Due date"
 msgstr "Förfallodag"
 
-#: laske_export/admin.py:86 laske_export/admin.py:216 laske_export/models.py:34
-#: leasing/models/contact.py:134 leasing/models/invoice.py:43
-#: leasing/models/invoice.py:349 leasing/models/lease.py:643
-#: leasing/report/invoice/collaterals_report.py:35
-#: leasing/report/invoice/invoice_payments.py:27
-#: leasing/report/invoice/invoices_in_period.py:45
-#: leasing/report/invoice/invoicing_review.py:237
-#: leasing/report/invoice/laske_invoice_count_report.py:31
-#: leasing/report/invoice/open_invoices_report.py:40
-#: leasing/report/lease/decision_conditions_report.py:64
-#: leasing/report/lease/extra_city_rent.py:105
-#: leasing/report/lease/index_types.py:84
-#: leasing/report/lease/invoicing_disabled_report.py:40
-#: leasing/report/lease/lease_count_report.py:19
-#: leasing/report/lease/lease_statistic_report.py:203
-#: leasing/report/lease/lease_statistic_report2.py:228
-#: leasing/report/lease/rent_adjustments.py:46
-#: leasing/report/lease/rent_compare.py:19
-#: leasing/report/lease/rent_forecast.py:43
-#: leasing/report/lease/rent_type.py:80
-#: leasing/report/lease/reservations.py:156
 msgid "Service unit"
 msgstr ""
 
-#: laske_export/admin.py:131
-#: leasing/report/invoice/laske_invoice_count_report.py:40
 msgid "Invoice count"
 msgstr "Antal fakturor"
 
-#: laske_export/admin.py:137
 msgid "Land use agreement invoice count"
 msgstr ""
 
-#: laske_export/admin.py:155
 msgid "Invoice payment"
 msgstr ""
 
-#: laske_export/admin.py:156 leasing/report/invoice/invoice_payments.py:20
 msgid "Invoice payments"
 msgstr "Betalningar"
 
-#: laske_export/admin.py:206 leasing/models/invoice.py:851
-#: leasing/models/land_use_agreement.py:1203
-#: leasing/report/invoice/invoice_payments.py:42
 msgid "Paid amount"
 msgstr "Betald mängd"
 
-#: laske_export/admin.py:211 leasing/models/contract.py:206
-#: leasing/models/infill_development_compensation.py:166
-#: leasing/models/invoice.py:855 leasing/models/land_use_agreement.py:1030
-#: leasing/models/land_use_agreement.py:1207
-#: leasing/report/invoice/collaterals_report.py:61
-#: leasing/report/invoice/invoice_payments.py:41
 msgid "Paid date"
 msgstr "Betalt datum"
 
-#: laske_export/admin.py:221 leasing/report/invoice/invoice_payments.py:43
 msgid "Filing code"
 msgstr "Arkiveringskod"
 
-#: laske_export/admin.py:250
 msgid "Payment count"
 msgstr ""
 
-#: laske_export/document/fields.py:42
 msgid "Value should be a string"
 msgstr "Värdet måste vara en sträng"
 
-#: laske_export/document/fields.py:47
 msgid "Value should be of type {}"
 msgstr "Värdet måste vara av typ {}"
 
-#: laske_export/document/fields.py:63
 msgid "Value is required"
 msgstr "Värdet är obligatoriskt"
 
-#: laske_export/document/fields.py:70
 msgid "Value should be an Iterable"
 msgstr "Värdet måste vara \"Iterable\""
 
-#: laske_export/document/sales_order.py:80
 msgid "Contact information cannot be null."
 msgstr "Uppgiften om kontakt får inte vara tom."
 
-#: laske_export/enums.py:14
 msgctxt "Laske export log invoice status"
 msgid "Sent"
 msgstr "Sändning lyckades"
 
-#: laske_export/enums.py:15
 msgctxt "Laske export log invoice status"
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: laske_export/exporter.py:50
 msgid "Directory \"{}\" does not exist. Please create it."
 msgstr "Index {} finns inte. Skapa ett index."
 
-#: laske_export/exporter.py:60
 msgid "Can not create file in directory \"{}\"."
 msgstr "Fil kan inte skapas till indexet {}."
 
-#: laske_export/exporter.py:74
 msgid "LASKE_SERVERS[\"export\"] settings missing"
 msgstr "Inställningar för objektet LASKE_SERVERS[\"export\"] saknas"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:111
 msgid "MVJ ({}) transfer failed!"
 msgstr "Överföringen av MVJ ({}) misslyckades!"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:115
 msgid ""
 "Sending invoices to the Laske system has been crashed during the processing. "
 "Please contact your administrator.\n"
@@ -896,1759 +581,1280 @@ msgid ""
 "Error message: {}"
 msgstr ""
 
-#: laske_export/management/commands/send_invoices_to_laske.py:137
 msgid "MVJ ({}) transfer"
 msgstr "MVJ ({}) överföring"
 
-#: laske_export/management/commands/send_invoices_to_laske.py:142
 msgid ""
 "MVJ ({}) processed a total of {} invoices to Laske system on {}. Of the "
 "invoices, {} succeeded and {} failed.\n"
 "Service unit: {}"
 msgstr ""
 
-#: laske_export/management/commands/send_invoices_to_laske.py:158
 msgid "Failed invoice numbers:"
 msgstr "Fakturanummer för fakturor som misslyckades:"
 
-#: laske_export/models.py:20 laske_export/models.py:75
 msgid "Time started"
 msgstr "Starttid"
 
-#: laske_export/models.py:23 laske_export/models.py:78
 msgid "Time ended"
 msgstr "Sluttid"
 
-#: laske_export/models.py:26 laske_export/models.py:81
 msgid "Finished?"
 msgstr "Färdig?"
 
-#: laske_export/models.py:29 laske_export/models.py:72
 msgid "Filename"
 msgstr "Filnamn"
 
-#: laske_export/models.py:44
 msgctxt "Model name"
 msgid "Laske export log"
 msgstr "Logg för Laske-exporten"
 
-#: laske_export/models.py:45
 msgctxt "Model name"
 msgid "Laske export logs"
 msgstr "Loggar för Laske-exporten"
 
-#: laske_export/models.py:59
 msgid "status"
 msgstr "status"
 
-#: laske_export/models.py:63
 msgid "information"
 msgstr "uppgifter"
 
-#: laske_export/models.py:86
 msgctxt "Model name"
 msgid "Laske payments log"
 msgstr "Logg för Laske-avgifter"
 
-#: laske_export/models.py:87
 msgctxt "Model name"
 msgid "Laske payments logs"
 msgstr "Loggar för Laske-exporten"
 
-#: leasing/admin.py:170 leasing/admin.py:689 leasing/models/comment.py:29
-#: leasing/models/contract.py:29 leasing/models/debt_collection.py:25
-#: leasing/models/debt_collection.py:93 leasing/models/debt_collection.py:123
-#: leasing/models/decision.py:48
-#: leasing/models/infill_development_compensation.py:102
-#: leasing/models/inspection.py:18 leasing/models/invoice.py:59
-#: leasing/models/invoice.py:199 leasing/models/invoice.py:747
-#: leasing/models/lease.py:1461 leasing/models/rent.py:109
-#: leasing/models/rent.py:1611 leasing/models/tenant.py:21
 msgid "Lease"
 msgstr "Arrendering"
 
-#: leasing/admin.py:235
 msgid "Search by identifier"
 msgstr "Sök med identifieringskod"
 
-#: leasing/calculation/index.py:34
 #, python-brace-format
 msgid "Ratio {ratio}… ({current_index}/{rent_index})"
 msgstr "Beräkningsfaktor {ratio}… ({current_index}/{rent_index})"
 
-#: leasing/calculation/index.py:74 leasing/calculation/index.py:80
 #, python-brace-format
 msgid "Ratio {ratio}"
 msgstr "Beräkningsfaktor {ratio})"
 
-#: leasing/calculation/index.py:132
 msgid "New base rent"
 msgstr "Nytt basarrende"
 
-#: leasing/calculation/index.py:141
 msgid "New base rent {}"
 msgstr "Nytt basarrende {}"
 
-#: leasing/calculation/result.py:164
 msgid "Total payable"
 msgstr "Arrende som ska debiteras"
 
-#: leasing/enums.py:15
 msgctxt "Classification"
 msgid "Public"
 msgstr "Offentligt"
 
-#: leasing/enums.py:16
 msgctxt "Classification"
 msgid "Confidential"
 msgstr "Hemligt"
 
-#: leasing/enums.py:17
 msgctxt "Classification"
 msgid "Official"
 msgstr "Myndighetsanvändning"
 
-#: leasing/enums.py:37
 msgctxt "Lease state"
 msgid "Lease"
 msgstr "Arrendering"
 
-#: leasing/enums.py:38
 msgctxt "Lease state"
 msgid "Short term lease"
 msgstr "Kortfristig arrendering"
 
-#: leasing/enums.py:39
 msgctxt "Lease state"
 msgid "Long term lease"
 msgstr "Långfristig arrendering"
 
-#: leasing/enums.py:40
 msgctxt "Lease state"
 msgid "Temporary lease"
 msgstr "Tillfällig arrendering"
 
-#: leasing/enums.py:41
 msgctxt "Lease state"
 msgid "Reservation"
 msgstr "Reservering"
 
-#: leasing/enums.py:42
 msgctxt "Lease state"
 msgid "Reserve"
 msgstr "Reserv"
 
-#: leasing/enums.py:43
 msgctxt "Lease state"
 msgid "Permission"
 msgstr "Tillstånd"
 
-#: leasing/enums.py:44
 msgctxt "Lease state"
 msgid "Tenure"
 msgstr "Besittningsrätt"
 
-#: leasing/enums.py:45
 msgctxt "Lease state"
 msgid "Buildings and public areas"
 msgstr "Byggnader och allmänna områden internt (RYA)"
 
-#: leasing/enums.py:46
 msgctxt "Lease state"
 msgid "Power of attorney"
 msgstr "Fullmakt"
 
-#: leasing/enums.py:58
 msgctxt "Lease relation"
 msgid "Transfer"
 msgstr "Överföring"
 
-#: leasing/enums.py:59
 msgctxt "Lease relation"
 msgid "Other"
 msgstr "Övrigt"
 
-#: leasing/enums.py:72
 msgctxt "Notice period"
 msgid "No period"
 msgstr "Ingen uppsägningstid"
 
-#: leasing/enums.py:73
 msgctxt "Notice period"
 msgid "Time period"
 msgstr "Uppsägningstid"
 
-#: leasing/enums.py:74
 msgctxt "Notice period"
 msgid "Other"
 msgstr "Annan uppsägningstid"
 
-#: leasing/enums.py:87
 msgctxt "Tenant contact type"
 msgid "Tenant"
 msgstr "Arrendator"
 
-#: leasing/enums.py:88
 msgctxt "Tenant contact type"
 msgid "Billing contact"
 msgstr "Fakturamottagare"
 
-#: leasing/enums.py:89
 msgctxt "Tenant contact type"
 msgid "Contact"
 msgstr "Kontaktperson"
 
-#: leasing/enums.py:101
 msgctxt "Location type"
 msgid "Surface"
 msgstr "Ovan om"
 
-#: leasing/enums.py:102
 msgctxt "Location type"
 msgid "Underground"
 msgstr "Nedan om"
 
-#: leasing/enums.py:116
 msgctxt "Lease area type"
 msgid "Plan unit"
 msgstr "Planenhet"
 
-#: leasing/enums.py:117
 msgctxt "Lease area type"
 msgid "Real property"
 msgstr "Fastighet"
 
-#: leasing/enums.py:118
 msgctxt "Lease area type"
 msgid "Unseparated parcel"
 msgstr "Outbrutet område"
 
-#: leasing/enums.py:119
 msgctxt "Lease area type"
 msgid "Other"
 msgstr "Övrigt"
 
-#: leasing/enums.py:131
 msgctxt "Lease area attachment type"
 msgid "MATTI report"
 msgstr "MATTI-rapport"
 
-#: leasing/enums.py:132
 msgctxt "Lease area attachment type"
 msgid "Geotechnical"
 msgstr "Geoteknisk tjänst"
 
-#: leasing/enums.py:144
 msgctxt "Plot type"
 msgid "Real property"
 msgstr "Fastighet"
 
-#: leasing/enums.py:145
 msgctxt "Plot type"
 msgid "Unseparated parcel"
 msgstr "Outbrutet område"
 
-#: leasing/enums.py:158
 msgctxt "Plot type"
 msgid "Searchable"
 msgstr "Ska ansökas"
 
-#: leasing/enums.py:159
 msgctxt "Plot type"
 msgid "Procedural reservation"
 msgstr "Processanvisning"
 
-#: leasing/enums.py:160
 msgctxt "Plot type"
 msgid "Direct reservation"
 msgstr "Direktanvisning"
 
-#: leasing/enums.py:172
 msgctxt "Period type"
 msgid "/ month"
 msgstr "/ mån."
 
-#: leasing/enums.py:173
 msgctxt "Period type"
 msgid "/ year"
 msgstr "/ år"
 
-#: leasing/enums.py:189
 msgctxt "Area unit"
 msgid "m^2"
 msgstr "m^2"
 
-#: leasing/enums.py:190
 msgctxt "Area unit"
 msgid "Floor area m^2"
 msgstr "kem^2"
 
-#: leasing/enums.py:191
 msgctxt "Area unit"
 msgid "Apartment area m^2"
 msgstr "hm^2"
 
-#: leasing/enums.py:205
 msgctxt "Constructability state"
 msgid "Unverified"
 msgstr "Ogranskat"
 
-#: leasing/enums.py:206
 msgctxt "Constructability state"
 msgid "Requires measures"
 msgstr "Kräver åtgärder"
 
-#: leasing/enums.py:207
 msgctxt "Constructability state"
 msgid "Enquiry sent"
 msgstr "Förfrågan har skickats"
 
-#: leasing/enums.py:208
 msgctxt "Constructability state"
 msgid "Complete"
 msgstr "Färdig"
 
-#: leasing/enums.py:223
 msgctxt "Constructability type"
 msgid "Preconstruction"
 msgstr "Förkonstruktion, flyttning av ledningar och kommunalteknik"
 
-#: leasing/enums.py:224
 msgctxt "Constructability type"
 msgid "Demolition"
 msgstr "Rivning"
 
-#: leasing/enums.py:225
 msgctxt "Constructability type"
 msgid "Polluted land"
 msgstr "PIMA"
 
-#: leasing/enums.py:226
 msgctxt "Constructability type"
 msgid "Report"
 msgstr "Byggbarhetsutredning"
 
-#: leasing/enums.py:227
 msgctxt "Constructability type"
 msgid "Other"
 msgstr "Annat"
 
-#: leasing/enums.py:239
 msgctxt "Polluted Land rent condition state"
 msgid "Asked"
 msgstr "Frågat"
 
-#: leasing/enums.py:240
 msgctxt "Polluted Land rent condition state"
 msgid "Ready"
 msgstr "Färdig"
 
-#: leasing/enums.py:254
 msgctxt "Constructability Report investigation state"
 msgid "No need"
 msgstr "Behövs inte"
 
-#: leasing/enums.py:257
 msgctxt "Constructability Report investigation state"
 msgid "Ongoing"
 msgstr "Under arbete"
 
-#: leasing/enums.py:259
 msgctxt "Constructability Report investigation state"
 msgid "Ready"
 msgstr "Färdig"
 
-#: leasing/enums.py:275
 msgctxt "Rent type"
 msgid "Index"
 msgstr "Index"
 
-#: leasing/enums.py:276
 msgctxt "Rent type"
 msgid "Index (old)"
 msgstr "Index (gammalt)"
 
-#: leasing/enums.py:277
 msgctxt "Rent type"
 msgid "One time"
 msgstr "Fullständigt"
 
-#: leasing/enums.py:278
 msgctxt "Rent type"
 msgid "Fixed"
 msgstr "Fast"
 
-#: leasing/enums.py:279
 msgctxt "Rent type"
 msgid "Free"
 msgstr "Utan ersättning"
 
-#: leasing/enums.py:280
 msgctxt "Rent type"
 msgid "Manual"
 msgstr "Manuell beräkning"
 
-#: leasing/enums.py:292
 msgctxt "Rent cycle"
 msgid "January to december"
 msgstr "1.1. –31.12."
 
-#: leasing/enums.py:293
 msgctxt "Rent cycle"
 msgid "April to march"
 msgstr "1.4. –31.3."
 
-#: leasing/enums.py:310
 msgctxt "Index type"
 msgid "ind 50620 / 10/20%:n vaihtelut"
 msgstr "ind 50620 / 10/20 %:s variationer"
 
-#: leasing/enums.py:311
 msgctxt "Index type"
 msgid "ind 4661 / 10/20%:n vaihtelut"
 msgstr "ind 4661 / 10/20 %:s variationer"
 
-#: leasing/enums.py:312
 msgctxt "Index type"
 msgid "ind 418 / 10%:n vaihtelu"
 msgstr "ind 418 / 10/10 %:s variationer"
 
-#: leasing/enums.py:313
 msgctxt "Index type"
 msgid "ind 418 / 20%:n vaihtelu"
 msgstr "ind 418 / 10/20 %:s variationer"
 
-#: leasing/enums.py:314
 msgctxt "Index type"
 msgid "ind 392"
 msgstr "ind 392"
 
-#: leasing/enums.py:315
 msgctxt "Index type"
 msgid "ind 100 (pyöristys)"
 msgstr "ind 100 (avrundning)"
 
-#: leasing/enums.py:316
 msgctxt "Index type"
 msgid "ind 100"
 msgstr "ind 100"
 
-#: leasing/enums.py:328
 msgctxt "Due dates type"
 msgid "Custom"
 msgstr "Separat definierad"
 
-#: leasing/enums.py:329
 msgctxt "Due dates type"
 msgid "Fixed"
 msgstr "Fasta"
 
-#: leasing/enums.py:341
 msgctxt "Due dates position"
 msgid "Start of month"
 msgstr "I början av månaden"
 
-#: leasing/enums.py:342
 msgctxt "Due dates position"
 msgid "Middle of month"
 msgstr "Mitt i månaden"
 
-#: leasing/enums.py:354
 msgctxt "Rent adjustment type"
 msgid "Discount"
 msgstr "Rabatt "
 
-#: leasing/enums.py:355
 msgctxt "Rent adjustment type"
 msgid "Increase"
 msgstr "Förhöjning"
 
-#: leasing/enums.py:368
 msgctxt "Rent Adjustment amount type"
 msgid "% per year"
 msgstr "% per år"
 
-#: leasing/enums.py:369
 msgctxt "Rent Adjustment amount type"
 msgid "€ per year"
 msgstr "€ per år"
 
-#: leasing/enums.py:370
 msgctxt "Rent Adjustment amount type"
 msgid "€ total"
 msgstr "€ totalt"
 
-#: leasing/enums.py:382
 msgctxt "Subvention type"
 msgid "Form of management"
 msgstr "Upplåtelseform"
 
-#: leasing/enums.py:383
 msgctxt "Subvention type"
 msgid "Re-lease"
 msgstr "Återarrendering"
 
-#: leasing/enums.py:395
 msgctxt "Invoice delivery method"
 msgid "Mail"
 msgstr "Post"
 
-#: leasing/enums.py:396
 msgctxt "Invoice delivery method"
 msgid "Electronic"
 msgstr "E-räkning"
 
-#: leasing/enums.py:409
 msgctxt "Invoice state"
 msgid "Open"
 msgstr "Öppen"
 
-#: leasing/enums.py:410
 msgctxt "Invoice state"
 msgid "Paid"
 msgstr "Betald"
 
-#: leasing/enums.py:411
 msgctxt "Invoice state"
 msgid "Refunded"
 msgstr "Gottskriven"
 
-#: leasing/enums.py:423
 msgctxt "Invoice type"
 msgid "Charge"
 msgstr "Faktura"
 
-#: leasing/enums.py:424
 msgctxt "Invoice type"
 msgid "Credit note"
 msgstr "Kreditfaktura"
 
-#: leasing/enums.py:439
 msgctxt "Contact type"
 msgid "Person"
 msgstr "Person"
 
-#: leasing/enums.py:440
 msgctxt "Contact type"
 msgid "Business"
 msgstr "Företag"
 
-#: leasing/enums.py:441
 msgctxt "Contact type"
 msgid "Unit"
 msgstr "Enhet"
 
-#: leasing/enums.py:442
 msgctxt "Contact type"
 msgid "Association"
 msgstr "Gemenskap"
 
-#: leasing/enums.py:443
 msgctxt "Contact type"
 msgid "Other"
 msgstr "Övrigt"
 
-#: leasing/enums.py:456
 msgctxt "Infill development compensation"
 msgid "Ongoing"
 msgstr "Anhängig"
 
-#: leasing/enums.py:457
 msgctxt "Infill development compensation"
 msgid "Negotiating"
 msgstr "Förhandling"
 
-#: leasing/enums.py:458
 msgctxt "Infill development compensation"
 msgid "Decision"
 msgstr "Beslut"
 
-#: leasing/enums.py:481
 msgctxt "Area type"
 msgid "Lease area"
 msgstr "Arrendeområde"
 
-#: leasing/enums.py:482
 msgctxt "Area type"
 msgid "Plan unit"
 msgstr "Planenhet"
 
-#: leasing/enums.py:483
 msgctxt "Area type"
 msgid "Real property"
 msgstr "Fastighet"
 
-#: leasing/enums.py:484
 msgctxt "Area type"
 msgid "Unseparated parcel"
 msgstr "Outbrutet område"
 
-#: leasing/enums.py:485
 msgctxt "Area type"
 msgid "Plot division"
 msgstr "Tomtindelning"
 
-#: leasing/enums.py:486
 msgctxt "Area type"
 msgid "Basis of rent"
 msgstr "Arrenderingsprincip "
 
-#: leasing/enums.py:488
 msgctxt "Area type"
 msgid "Infill development compensation"
 msgstr "Ersättning för kompletteringsbyggande"
 
-#: leasing/enums.py:490
 msgctxt "Area type"
 msgid "Land use agreement"
 msgstr "Markanvändningsavtal"
 
-#: leasing/enums.py:491
 msgctxt "Area type"
 msgid "Detailed plan"
 msgstr "Detaljplan"
 
-#: leasing/enums.py:492
 msgctxt "Area type"
 msgid "Other"
 msgstr "Övrigt"
 
-#: leasing/enums.py:503
 msgctxt "Email log type"
 msgid "Constructability"
 msgstr "Byggbarhet"
 
-#: leasing/enums.py:516
 msgctxt "Leasehold transfer party type"
 msgid "Lessor"
 msgstr "Arrendegivare"
 
-#: leasing/enums.py:517
 msgctxt "Leasehold transfer party type"
 msgid "Conveyor"
 msgstr "Överlåtare"
 
-#: leasing/enums.py:518
 msgctxt "Leasehold transfer party type"
 msgid "Acquirer"
 msgstr "Mottagare"
 
-#: leasing/enums.py:530
 msgctxt "Decision type kind"
 msgid "Lease cancellation"
 msgstr "Uppsägning av arrendeavtal"
 
-#: leasing/enums.py:531
 msgctxt "Decision type kind"
 msgid "Basis of Rent"
 msgstr "Arrenderingsprincip"
 
-#: leasing/enums.py:543
 msgctxt "Detailed plan class"
 msgid "Pending"
 msgstr "Öppen"
 
-#: leasing/enums.py:544
 msgctxt "Detailed plan class"
 msgid "Effective"
 msgstr "Gällande"
 
-#: leasing/enums.py:560
 msgctxt "Basis of rent type"
 msgid "Lease"
 msgstr "Arrende"
 
-#: leasing/enums.py:561
 msgctxt "Basis of rent type"
 msgid "Lease (old)"
 msgstr "Arrende (gammalt)"
 
-#: leasing/enums.py:562
 msgctxt "Basis of rent type"
 msgid "Temporary"
 msgstr "Tillfälligt"
 
-#: leasing/enums.py:563
 msgctxt "Basis of rent type"
 msgid "Additional yard"
 msgstr "Tilläggsgård"
 
-#: leasing/enums.py:564
 msgctxt "Basis of rent type"
 msgid "Field"
 msgstr "Åker"
 
-#: leasing/enums.py:565
 msgctxt "Basis of rent type"
 msgid "Mast"
 msgstr "Mast"
 
-#: leasing/enums.py:578
 msgctxt "Basis of rent zone"
 msgid "Zone 1"
 msgstr "Zon 1"
 
-#: leasing/enums.py:579
 msgctxt "Basis of rent zone"
 msgid "Zone 2"
 msgstr "Zon 2"
 
-#: leasing/enums.py:580
 msgctxt "Basis of rent zone"
 msgid "Zone 3"
 msgstr "Zon 3"
 
-#: leasing/enums.py:594
 msgctxt "Land Use Contract Type"
 msgid "Land use agreement"
 msgstr "Markanvändningsavtal"
 
-#: leasing/enums.py:597
 msgctxt "Land Use Contract Type"
 msgid "Agreement on appreciation"
 msgstr "Avtal om värdeökning"
 
-#: leasing/enums.py:599
 msgctxt "Land Use Contract Type"
 msgid "No agreement"
 msgstr "Inget avtal"
 
-#: leasing/enums.py:611
 msgctxt "Land use agreement attachment type"
 msgid "General"
 msgstr "Allmänt"
 
-#: leasing/enums.py:613
 msgctxt "Land use agreement attachment type"
 msgid "Compensation calculation"
 msgstr "Ersättningsberäkning"
 
-#: leasing/enums.py:626
 msgctxt "Land Use Agreement Litigant Contact Type"
 msgid "Tenant"
 msgstr "Arrendator"
 
-#: leasing/enums.py:627
 msgctxt "Land Use Agreement Litigant Contact Type"
 msgid "Billing"
 msgstr "Fakturamottagare"
 
-#: leasing/enums.py:639
 msgctxt "Plan Unit Status"
 msgid "Present"
 msgstr "Nutid"
 
-#: leasing/enums.py:640
 msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Anhängig"
 
-#: leasing/filters.py:156 leasing/filters.py:206
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
-#: leasing/models/area.py:20 leasing/models/area.py:21
 msgctxt "Model name"
 msgid "Area source"
 msgstr "Källa till området"
 
-#: leasing/models/area.py:29
 msgid "Area type"
 msgstr "Typ av området"
 
-#: leasing/models/area.py:31
 msgid "External ID"
 msgstr "Yttre identifierare"
 
-#: leasing/models/area.py:33 leasing/models/basis_of_rent.py:106
-#: leasing/models/basis_of_rent.py:168
-#: leasing/models/infill_development_compensation.py:69
-#: leasing/models/land_area.py:148 plotsearch/models/plot_search.py:489
 msgid "Geometry"
 msgstr "Form"
 
-#: leasing/models/area.py:36
 msgid "Metadata"
 msgstr "Metainformation"
 
-#: leasing/models/area.py:40
 msgid "Source"
 msgstr "Källa"
 
-#: leasing/models/area.py:52 leasing/models/area.py:53
 msgctxt "Model name"
 msgid "Area"
 msgstr "Område"
 
-#: leasing/models/area_note.py:22 leasing/models/basis_of_rent.py:102
-#: leasing/models/contact.py:129 leasing/models/contract.py:214
-#: leasing/models/debt_collection.py:98 leasing/models/debt_collection.py:142
-#: leasing/models/infill_development_compensation.py:59
-#: leasing/models/infill_development_compensation.py:108
-#: leasing/models/lease.py:584 leasing/models/rent.py:182
-#: leasing/models/rent.py:1158 leasing/report/invoice/collaterals_report.py:63
-#: leasing/report/invoice/invoicing_review.py:250
-#: leasing/report/lease/rent_adjustments.py:89
-#: plotsearch/templates/area_search/detail.html:137
 msgid "Note"
 msgstr "Kommentar"
 
-#: leasing/models/area_note.py:30
 msgctxt "Model name"
 msgid "Area note"
 msgstr "Villkor att komma ihåg"
 
-#: leasing/models/area_note.py:31
 msgctxt "Model name"
 msgid "Area notes"
 msgstr "Villkor att komma ihåg"
 
-#: leasing/models/basis_of_rent.py:21
 msgctxt "Model name"
 msgid "Basis of rent plot type"
 msgstr "Typ av tomt"
 
-#: leasing/models/basis_of_rent.py:22
 msgctxt "Model name"
 msgid "Basis of rent plot types"
 msgstr "Typer av tomt"
 
-#: leasing/models/basis_of_rent.py:32
 msgctxt "Model name"
 msgid "Basis of rent build permission type"
 msgstr "Typ av byggrätt"
 
-#: leasing/models/basis_of_rent.py:35
 msgctxt "Model name"
 msgid "Basis of rent build permission types"
 msgstr "Typer av byggrätt"
 
-#: leasing/models/basis_of_rent.py:47
 msgid "Plot type"
 msgstr "Typ av tomt"
 
-#: leasing/models/basis_of_rent.py:60
-#: leasing/models/infill_development_compensation.py:33
-#: leasing/models/land_area.py:520 leasing/models/land_area.py:609
-#: plotsearch/views/plot_search.py:505
 msgid "Detailed plan identifier"
 msgstr "Detaljplan"
 
-#: leasing/models/basis_of_rent.py:69 leasing/models/land_use_agreement.py:702
-#: leasing/models/lease.py:525 leasing/models/rent.py:1281
-#: leasing/models/rent.py:1835
-#: leasing/report/lease/lease_statistic_report.py:318
-#: leasing/report/lease/lease_statistic_report2.py:316
-#: plotsearch/models/plot_search.py:355
 msgid "Form of management"
 msgstr "Upplåtelseform"
 
-#: leasing/models/basis_of_rent.py:79 leasing/models/lease.py:515
-#: leasing/report/lease/lease_statistic_report2.py:322
-#: plotsearch/models/plot_search.py:345
 msgid "Form of financing"
 msgstr "Finansieringsform"
 
-#: leasing/models/basis_of_rent.py:88
 msgid "Lease rights end date"
 msgstr "Arrenderätten upphör"
 
-#: leasing/models/basis_of_rent.py:94 leasing/models/rent.py:960
-#: leasing/models/rent.py:1470 leasing/models/rent.py:1573
-#: leasing/models/rent.py:1666
 msgid "Index"
 msgstr "Index"
 
-#: leasing/models/basis_of_rent.py:110
 msgctxt "Model name"
 msgid "Basis of rent"
 msgstr "Arrenderingssprincip"
 
-#: leasing/models/basis_of_rent.py:111
 msgctxt "Model name"
 msgid "Basis of rents"
 msgstr "Arrenderingsprinciper"
 
-#: leasing/models/basis_of_rent.py:121 leasing/models/basis_of_rent.py:160
 msgid "Basis of rent"
 msgstr "Arrenderingssprincip"
 
-#: leasing/models/basis_of_rent.py:129
 msgid "Build permission type"
 msgstr "Typ av byggrätt"
 
-#: leasing/models/basis_of_rent.py:138 leasing/models/invoice.py:827
-#: leasing/models/land_use_agreement.py:1142 leasing/models/rent.py:178
-#: leasing/models/rent.py:872 leasing/models/rent.py:943
-#: leasing/models/rent.py:1066 leasing/models/rent.py:1345
 msgid "Amount"
 msgstr "Mängd"
 
-#: leasing/models/basis_of_rent.py:143 leasing/models/rent.py:1652
 msgid "Area unit"
 msgstr "Arealenhet"
 
-#: leasing/models/basis_of_rent.py:149
 msgctxt "Model name"
 msgid "Basis of rent rate"
 msgstr "Pris för arrenderingsprincip"
 
-#: leasing/models/basis_of_rent.py:150
 msgctxt "Model name"
 msgid "Basis of rent rates"
 msgstr "Priser för arrenderingsprincip"
 
-#: leasing/models/basis_of_rent.py:174
 msgctxt "Model name"
 msgid "Basis of rent property identifier"
 msgstr "Arrenderingsprincipens Fastighetsbeteckning"
 
-#: leasing/models/basis_of_rent.py:176
 msgctxt "Model name"
 msgid "Basis of rent property identifiers"
 msgstr "Arrenderingsprincipens Fastighetsbeteckningar"
 
-#: leasing/models/basis_of_rent.py:191 leasing/models/decision.py:55
-#: leasing/models/infill_development_compensation.py:28
-#: leasing/models/infill_development_compensation.py:193
-#: leasing/models/land_use_agreement.py:565 leasing/models/lease.py:580
 msgid "Reference number"
 msgstr "Diarienummer"
 
-#: leasing/models/basis_of_rent.py:197 leasing/models/decision.py:61
-#: leasing/models/infill_development_compensation.py:199
-#: leasing/models/land_use_agreement.py:571
-#: leasing/report/lease/lease_statistic_report2.py:280
 msgid "Decision maker"
 msgstr "Beslutsfattare"
 
-#: leasing/models/basis_of_rent.py:206 leasing/models/debt_collection.py:138
-#: leasing/models/decision.py:70
-#: leasing/models/infill_development_compensation.py:208
-#: leasing/models/land_use_agreement.py:580
-#: leasing/models/leasehold_transfer.py:42
 msgid "Decision date"
 msgstr "Beslutsdatum"
 
-#: leasing/models/basis_of_rent.py:211 leasing/models/decision.py:75
-#: leasing/models/infill_development_compensation.py:213
-#: leasing/models/land_use_agreement.py:585
-#: leasing/models/land_use_agreement.py:746
 msgid "Section"
 msgstr "Paragraf"
 
-#: leasing/models/basis_of_rent.py:217
 msgctxt "Model name"
 msgid "Basis of rent decision"
 msgstr "Beslut om arrenderingsprincip"
 
-#: leasing/models/basis_of_rent.py:218
 msgctxt "Model name"
 msgid "Basis of rent decisions"
 msgstr "Beslut om arrenderingsprincip"
 
-#: leasing/models/comment.py:18
 msgctxt "Model name"
 msgid "Comment topic"
 msgstr "Kommentarens ämne"
 
-#: leasing/models/comment.py:19
 msgctxt "Model name"
 msgid "Comment topics"
 msgstr "Kommentarens ämnen"
 
-#: leasing/models/comment.py:40
 msgid "Topic"
 msgstr "Ämne"
 
-#: leasing/models/comment.py:51
 msgctxt "Model name"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: leasing/models/comment.py:52
 msgctxt "Model name"
 msgid "Comments"
 msgstr "Kommentarer"
 
-#: leasing/models/contact.py:21 leasing/models/decision.py:81
-#: leasing/models/decision.py:122 leasing/models/invoice.py:314
-#: leasing/models/land_area.py:166 leasing/models/land_area.py:332
-#: leasing/models/land_area.py:366 leasing/models/land_area.py:393
-#: leasing/models/land_use_agreement.py:333
-#: leasing/models/land_use_agreement.py:591
-#: leasing/models/land_use_agreement.py:638
-#: leasing/models/land_use_agreement.py:1048 leasing/models/rent.py:115
-#: leasing/models/rent.py:1108 leasing/models/rent.py:1619
-#: leasing/report/invoice/collaterals_report.py:40
-#: leasing/report/lease/decision_conditions_report.py:71
-#: leasing/report/lease/decision_conditions_report.py:86
-#: leasing/report/lease/rent_adjustments.py:54
 msgid "Type"
 msgstr "Typ"
 
-#: leasing/models/contact.py:25
 msgid "First name"
 msgstr "Förnamn"
 
-#: leasing/models/contact.py:30
 msgid "Last name"
 msgstr "Efternamn"
 
-#: leasing/models/contact.py:35 leasing/models/debt_collection.py:61
-#: leasing/models/infill_development_compensation.py:23
-#: leasing/models/invoice.py:33 leasing/models/invoice.py:859
-#: leasing/models/land_use_agreement.py:812
-#: leasing/models/land_use_agreement.py:1210 leasing/models/mixins.py:20
-#: leasing/models/service_unit.py:14
-#: leasing/report/invoice/rents_paid_by_contact.py:20
 msgid "Name"
 msgstr "Namn"
 
-#: leasing/models/contact.py:40
 msgid "c/o"
 msgstr "c/o"
 
-#: leasing/models/contact.py:59 leasing/models/land_area.py:41
 msgid "Postal code"
 msgstr "Postnummer"
 
-#: leasing/models/contact.py:64 leasing/models/land_area.py:46
 msgid "City"
 msgstr "Stad"
 
-#: leasing/models/contact.py:68
 msgid "Country"
 msgstr "Land"
 
-#: leasing/models/contact.py:72
 msgid "Email"
 msgstr "E-post"
 
-#: leasing/models/contact.py:77
 msgid "Phone"
 msgstr "Telefon"
 
-#: leasing/models/contact.py:82
 msgid "Language"
 msgstr "Språk"
 
-#: leasing/models/contact.py:91 leasing/models/leasehold_transfer.py:103
 msgid "National identification number"
 msgstr "Personbeteckning"
 
-#: leasing/models/contact.py:99
 msgid "Address protection"
 msgstr "Spärrmarkering"
 
-#: leasing/models/contact.py:104
 msgid "SAP customer number"
 msgstr "SAP kundnummer"
 
-#: leasing/models/contact.py:109
 msgid "Electronic billing address"
 msgstr "Nätfaktureringsadress"
 
-#: leasing/models/contact.py:117
 msgid "Partner code"
 msgstr "Partnerkod"
 
-#: leasing/models/contact.py:121
 msgid "Is a lessor"
 msgstr "Är det arrendegivaren"
 
-#: leasing/models/contact.py:125
 msgid "SAP sales office"
 msgstr "SAP säljkontor"
 
-#: leasing/models/contact.py:148
 msgctxt "Model name"
 msgid "Contact"
 msgstr "Kontaktuppgift"
 
-#: leasing/models/contact.py:149
 msgctxt "Model name"
 msgid "Contacts"
 msgstr "Kontaktuppgifter"
 
-#: leasing/models/contact.py:178
 #, python-brace-format
 msgid "{name} (National Identification Number {id})"
 msgstr "{name} (Personbeteckning {id})"
 
-#: leasing/models/contact.py:186
 #, python-brace-format
 msgid "{name} (Business ID {id})"
 msgstr "{name} (FO-nummer {id})"
 
-#: leasing/models/contract.py:18
 msgctxt "Model name"
 msgid "Contract type"
 msgstr "Typ av avtal"
 
-#: leasing/models/contract.py:19
 msgctxt "Model name"
 msgid "Contract types"
 msgstr "Typer av avtal"
 
-#: leasing/models/contract.py:37 leasing/models/land_use_agreement.py:367
-#: leasing/models/land_use_agreement.py:529
-#: leasing/models/land_use_agreement.py:558
-#: leasing/models/land_use_agreement.py:672
-#: leasing/models/land_use_agreement.py:694
-#: leasing/models/land_use_agreement.py:739
-#: leasing/models/land_use_agreement.py:832
-#: leasing/models/land_use_agreement.py:970
 msgid "Land use agreement"
 msgstr "Markanvändningsavtal"
 
-#: leasing/models/contract.py:46 leasing/models/land_use_agreement.py:177
 msgid "Contract type"
 msgstr "Typ av avtal"
 
-#: leasing/models/contract.py:53 leasing/report/lease/extra_city_rent.py:119
-#: leasing/report/lease/index_types.py:111
-#: leasing/report/lease/lease_statistic_report.py:219
-#: leasing/report/lease/lease_statistic_report2.py:244
-#: leasing/report/lease/rent_type.py:111
 msgid "Contract number"
 msgstr "Avtalsnummer"
 
-#: leasing/models/contract.py:58 leasing/models/contract.py:237
 msgid "Signing date"
 msgstr "Datum för underteckning"
 
-#: leasing/models/contract.py:63 leasing/models/contract.py:242
 msgid "Sign by date"
 msgstr "Ska undertecknas senast"
 
-#: leasing/models/contract.py:68
 msgid "Signing note"
 msgstr "Kommentar till underteckningen"
 
-#: leasing/models/contract.py:73 leasing/models/contract.py:247
 msgid "First call sent"
 msgstr "1. inbjudan skickats"
 
-#: leasing/models/contract.py:78 leasing/models/contract.py:252
 msgid "Second call sent"
 msgstr "2. inbjudan skickats"
 
-#: leasing/models/contract.py:83 leasing/models/contract.py:257
 msgid "Third call sent"
 msgstr "3. inbjudan skickats"
 
-#: leasing/models/contract.py:88
 msgid "Is readjustment decision"
 msgstr "Beslut om arrangemang"
 
-#: leasing/models/contract.py:94 leasing/models/contract.py:266
-#: leasing/models/decision.py:114 leasing/models/land_use_agreement.py:630
-#: leasing/models/rent.py:1150
 msgid "Decision"
 msgstr "Beslut"
 
-#: leasing/models/contract.py:103
 msgid "KTJ link"
 msgstr "Länk till KTJ:s intyg om arrenderätt"
 
-#: leasing/models/contract.py:108 leasing/models/leasehold_transfer.py:38
 msgid "Institution identifier"
 msgstr "Inrättningskod"
 
-#: leasing/models/contract.py:114
 msgctxt "Model name"
 msgid "Contract"
 msgstr "Avtal"
 
-#: leasing/models/contract.py:115
 msgctxt "Model name"
 msgid "Contracts"
 msgstr "Avtal"
 
-#: leasing/models/contract.py:153
 msgctxt "Model name"
 msgid "Collateral type"
 msgstr "Typ av säkerhet"
 
-#: leasing/models/contract.py:154
 msgctxt "Model name"
 msgid "Collateral types"
 msgstr "Typer av säkerhet"
 
-#: leasing/models/contract.py:164 leasing/models/contract.py:230
 msgid "Contract"
 msgstr "Avtal"
 
-#: leasing/models/contract.py:172
 msgid "Collateral type"
 msgstr "Typ av säkerhet"
 
-#: leasing/models/contract.py:179
 msgid "Other type"
 msgstr "Annan typ av säkerhet"
 
-#: leasing/models/contract.py:184 leasing/models/invoice.py:215
-#: leasing/models/land_use_agreement.py:1003 leasing/models/rent.py:1443
-#: leasing/report/invoice/invoices_in_period.py:62
-#: leasing/report/invoice/open_invoices_report.py:48
 msgid "Number"
 msgstr "Nummer"
 
-#: leasing/models/contract.py:194
 msgid "Deed date"
 msgstr "Datum för pantbrev"
 
-#: leasing/models/contract.py:198 leasing/models/invoice.py:268
-#: leasing/models/land_use_agreement.py:1043
-#: leasing/report/invoice/collaterals_report.py:60
-#: leasing/report/invoice/invoices_in_period.py:74
-#: leasing/report/invoice/open_invoices_report.py:52
-#: leasing/report/invoice/rents_paid_by_contact.py:22
 msgid "Total amount"
 msgstr "Kapital"
 
-#: leasing/models/contract.py:210
-#: leasing/report/invoice/collaterals_report.py:62
 msgid "Returned date"
 msgstr "Returnerat datum"
 
-#: leasing/models/contract.py:219
 msgctxt "Model name"
 msgid "Collateral"
 msgstr "Säkerhet"
 
-#: leasing/models/contract.py:220
 msgctxt "Model name"
 msgid "Collaterals"
 msgstr "Säkerheter"
 
-#: leasing/models/contract.py:261 leasing/models/decision.py:89
-#: leasing/models/decision.py:140 leasing/models/inspection.py:39
-#: leasing/models/invoice.py:324 leasing/models/invoice.py:823
-#: leasing/models/land_use_agreement.py:599
-#: leasing/models/land_use_agreement.py:656
-#: leasing/models/land_use_agreement.py:1154 leasing/models/rent.py:1312
-#: leasing/models/rent.py:1866 leasing/models/service_unit.py:15
-#: leasing/report/lease/decision_conditions_report.py:97
-#: leasing/report/lease/lease_count_report.py:29
 msgid "Description"
 msgstr "Förklaring"
 
-#: leasing/models/contract.py:276
 msgctxt "Model name"
 msgid "Contract change"
 msgstr "Avtalsändring"
 
-#: leasing/models/contract.py:277
 msgctxt "Model name"
 msgid "Contract changes"
 msgstr "Avtalsändringar"
 
-#: leasing/models/debt_collection.py:33 leasing/models/debt_collection.py:64
-#: leasing/models/debt_collection.py:131
 msgid "File"
 msgstr "Fil"
 
-#: leasing/models/debt_collection.py:40 leasing/models/debt_collection.py:146
-#: leasing/models/infill_development_compensation.py:306
-#: leasing/models/inspection.py:68 leasing/models/land_area.py:341
-#: leasing/models/land_use_agreement.py:343
 msgid "Uploader"
 msgstr "Laddare"
 
-#: leasing/models/debt_collection.py:45 leasing/models/debt_collection.py:151
-#: leasing/models/infill_development_compensation.py:311
-#: leasing/models/inspection.py:73 leasing/models/land_area.py:346
-#: leasing/models/land_use_agreement.py:348
 msgid "Time uploaded"
 msgstr "Laddningsdatum"
 
-#: leasing/models/debt_collection.py:51
 msgctxt "Model name"
 msgid "Collection letter"
 msgstr "Inkassobrev"
 
-#: leasing/models/debt_collection.py:52
 msgctxt "Model name"
 msgid "Collection letters"
 msgstr "Inkassobrev"
 
-#: leasing/models/debt_collection.py:70
 msgctxt "Model name"
 msgid "Collection letter template"
 msgstr "Mall för inkassobrev"
 
-#: leasing/models/debt_collection.py:71
 msgctxt "Model name"
 msgid "Collection letter templates"
 msgstr "Mallar för inkassobrev"
 
-#: leasing/models/debt_collection.py:107
 msgctxt "Model name"
 msgid "Collection letter note"
 msgstr "Påminnelse om inkasso"
 
-#: leasing/models/debt_collection.py:108
 msgctxt "Model name"
 msgid "Collection letter notes"
 msgstr "Påminnelser om inkasso"
 
-#: leasing/models/debt_collection.py:157
 msgctxt "Model name"
 msgid "Collection court decision"
 msgstr "Tingsrättens beslut"
 
-#: leasing/models/debt_collection.py:158
 msgctxt "Model name"
 msgid "Collection court decisions"
 msgstr "Tingsrättens beslut"
 
-#: leasing/models/debt_collection.py:171
 msgid "Reference rate"
 msgstr "Referensränta"
 
-#: leasing/models/debt_collection.py:175
 msgid "Penalty rate"
 msgstr "Förseningsränta"
 
-#: leasing/models/debt_collection.py:179
 msgctxt "Model name"
 msgid "Interest rate"
 msgstr "Ränta"
 
-#: leasing/models/debt_collection.py:180
 msgctxt "Model name"
 msgid "Interest rates"
 msgstr "Räntor"
 
-#: leasing/models/decision.py:19
 msgctxt "Model name"
 msgid "Decision maker"
 msgstr "Beslutsfattare"
 
-#: leasing/models/decision.py:20
 msgctxt "Model name"
 msgid "Decision makers"
 msgstr "Beslutsfattare"
 
-#: leasing/models/decision.py:30
 msgid "Decision type kind"
 msgstr "Beslutstypens art"
 
-#: leasing/models/decision.py:37
 msgctxt "Model name"
 msgid "Decision type"
 msgstr "Beslutstyp"
 
-#: leasing/models/decision.py:38
 msgctxt "Model name"
 msgid "Decision types"
 msgstr "Beslutstyper"
 
-#: leasing/models/decision.py:92
 msgctxt "Model name"
 msgid "Decision"
 msgstr "Beslut"
 
-#: leasing/models/decision.py:93
 msgctxt "Model name"
 msgid "Decisions"
 msgstr "Beslut"
 
-#: leasing/models/decision.py:102
 msgctxt "Model name"
 msgid "Condition type"
 msgstr "Typ av villkor"
 
-#: leasing/models/decision.py:103
 msgctxt "Model name"
 msgid "Condition types"
 msgstr "Typer av villkor"
 
-#: leasing/models/decision.py:131 leasing/models/inspection.py:30
-#: leasing/models/land_use_agreement.py:647
-#: leasing/models/land_use_agreement.py:726
-#: leasing/report/lease/decision_conditions_report.py:88
 msgid "Supervision date"
 msgstr "Övervakningsdatum"
 
-#: leasing/models/decision.py:136 leasing/models/inspection.py:35
-#: leasing/models/land_use_agreement.py:652
-#: leasing/models/land_use_agreement.py:729
 msgid "Supervised date"
 msgstr "Övervakat datum"
 
-#: leasing/models/decision.py:145
 msgctxt "Model name"
 msgid "Condition"
 msgstr "Villkor"
 
-#: leasing/models/decision.py:146
 msgctxt "Model name"
 msgid "Conditions"
 msgstr "Villkor"
 
-#: leasing/models/detailed_plan.py:20
 msgid "Accepter"
 msgstr "Godkänd av"
 
-#: leasing/models/detailed_plan.py:24
 msgid "Class"
 msgstr "Kategori"
 
-#: leasing/models/detailed_plan.py:29
 msgid "Diary number"
 msgstr "Diarienummer"
 
-#: leasing/models/detailed_plan.py:34
 msgid "Plan stage"
 msgstr "Planeringsfas"
 
-#: leasing/models/detailed_plan.py:39
 msgid "Lawfulness date"
 msgstr "Ikraftträdande"
 
-#: leasing/models/detailed_plan.py:43
 msgctxt "Model name"
 msgid "Detailed plan"
 msgstr "Detaljplan"
 
-#: leasing/models/detailed_plan.py:44
 msgctxt "Model name"
 msgid "Detailed plans"
 msgstr "Detaljplaner"
 
-#: leasing/models/email.py:19
 msgid "Email log type"
 msgstr "Typ av e-postlogg"
 
-#: leasing/models/email.py:37
 msgctxt "Model name"
 msgid "Email log"
 msgstr "E-postlogg"
 
-#: leasing/models/email.py:38
 msgctxt "Model name"
 msgid "Email logs"
 msgstr "E-postloggar"
 
-#: leasing/models/infill_development_compensation.py:55
 msgid "Lease contract change date"
 msgstr "Ändringsdatum för arrendeavtal"
 
-#: leasing/models/infill_development_compensation.py:75
 msgctxt "Model name"
 msgid "Infill development compensation"
 msgstr "Ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:77
 msgctxt "Model name"
 msgid "Infill development compensations"
 msgstr "Ersättningar för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:95
 msgid "Infill development compensation"
 msgstr "Ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:112
 msgid "Monetary compensation amount"
 msgstr "Penningersättning"
 
-#: leasing/models/infill_development_compensation.py:121
 msgid "Compensation investment amount"
 msgstr "Ersättningsinvesteringar"
 
-#: leasing/models/infill_development_compensation.py:130
 msgid "Increase in value"
 msgstr "Värdeökning"
 
-#: leasing/models/infill_development_compensation.py:139
 msgid "Part of the increase in value"
 msgstr "Andel av värdeökningen"
 
-#: leasing/models/infill_development_compensation.py:148
 msgid "Discount in rent"
 msgstr "Arrenderabatt"
 
-#: leasing/models/infill_development_compensation.py:157
-#: leasing/models/rent.py:1445 leasing/models/rent.py:1587
-#: leasing/report/lease/rent_forecast.py:56
 msgid "Year"
 msgstr "År"
 
-#: leasing/models/infill_development_compensation.py:162
 msgid "Sent to SAP date"
 msgstr "Betalningen skickats SAP"
 
-#: leasing/models/infill_development_compensation.py:172
 msgctxt "Model name"
 msgid "Infill development compensation lease"
 msgstr "Ersättning för arrende för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:175
 msgctxt "Model name"
 msgid "Infill development compensation leases"
 msgstr "Ersättning för arrenden för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:186
-#: leasing/models/infill_development_compensation.py:234
-#: leasing/models/infill_development_compensation.py:294
 msgid "Infill development compensation lease"
 msgstr "Ersättning för arrende för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:220
 msgctxt "Model name"
 msgid "Infill development compensation decision"
 msgstr "Beslut om ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:223
 msgctxt "Model name"
 msgid "Infill development compensation decisions"
 msgstr "Beslut om ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:250
 msgid "Floor m2"
 msgstr "K-m2"
 
-#: leasing/models/infill_development_compensation.py:259
 msgid "Amount per floor m^2"
 msgstr "€ / k-m2"
 
-#: leasing/models/infill_development_compensation.py:270
 msgctxt "Model name"
 msgid "Infill development compensation intended use"
 msgstr "Användningsändamål för ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:273
 msgctxt "Model name"
 msgid "Infill development compensation intended uses"
 msgstr "Användningsändamål för ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:321
 msgctxt "Model name"
 msgid "Infill development compensation attachment"
 msgstr "Bifogad fil till ersättning för kompletteringsbyggande"
 
-#: leasing/models/infill_development_compensation.py:324
 msgctxt "Model name"
 msgid "Infill development compensation attachments"
 msgstr "Bifogad filer till ersättning för kompletteringsbyggande"
 
-#: leasing/models/inspection.py:25
 msgid "Inspector"
 msgstr "Inspektör"
 
-#: leasing/models/inspection.py:44
 msgctxt "Model name"
 msgid "Inspection"
 msgstr "Inspektion"
 
-#: leasing/models/inspection.py:45
 msgctxt "Model name"
 msgid "Inspections"
 msgstr "Inspektioner"
 
-#: leasing/models/inspection.py:79
 msgctxt "Model name"
 msgid "Inspection attachment"
 msgstr "Bilaga till inspektion"
 
-#: leasing/models/inspection.py:80
 msgctxt "Model name"
 msgid "Inspection attachments"
 msgstr "Bilagor till inspektion"
 
-#: leasing/models/invoice.py:35 leasing/models/land_use_agreement.py:814
-#: leasing/models/lease.py:56
 msgid "SAP material code"
 msgstr "SAP materialnummer"
 
-#: leasing/models/invoice.py:38 leasing/models/land_use_agreement.py:817
-#: leasing/models/lease.py:59
 msgid "SAP order item number"
 msgstr "SAP beställningsnummer"
 
-#: leasing/models/invoice.py:40 leasing/models/land_use_agreement.py:819
 msgid "Is active?"
 msgstr "Disponibelt?"
 
-#: leasing/models/invoice.py:49 leasing/models/land_use_agreement.py:822
 msgctxt "Model name"
 msgid "Receivable type"
 msgstr "Fordringsart"
 
-#: leasing/models/invoice.py:50 leasing/models/land_use_agreement.py:823
 msgctxt "Model name"
 msgid "Receivable types"
 msgstr "Fordringsarter"
 
-#: leasing/models/invoice.py:65 leasing/models/invoice.py:252
-#: leasing/models/invoice.py:754 leasing/models/invoice.py:814
 msgid "Billing period start date"
 msgstr "Startdatum för faktureringsperiod"
 
-#: leasing/models/invoice.py:70 leasing/models/invoice.py:257
-#: leasing/models/invoice.py:759 leasing/models/invoice.py:819
 msgid "Billing period end date"
 msgstr "Slutdatum för faktureringsperiod"
 
-#: leasing/models/invoice.py:76 leasing/models/invoice.py:77
-#: leasing/models/land_use_agreement.py:840
-#: leasing/models/land_use_agreement.py:841
 msgctxt "Model name"
 msgid "Invoice set"
 msgstr "Fakturagrupp"
 
-#: leasing/models/invoice.py:206 leasing/models/land_use_agreement.py:961
 msgid "Invoice set"
 msgstr "Fakturagrupper"
 
-#: leasing/models/invoice.py:220 leasing/models/land_use_agreement.py:1021
 msgid "Recipient"
 msgstr "Fakturamottagare"
 
-#: leasing/models/invoice.py:225 leasing/models/land_use_agreement.py:1037
 msgid "Sent to SAP at"
 msgstr "Skickats till SAP"
 
-#: leasing/models/invoice.py:230
 msgid "SAP ID"
 msgstr "SAP-nummer"
 
-#: leasing/models/invoice.py:239
 msgid "Adjusted due date"
 msgstr "Förfallodatum (överfört)"
 
-#: leasing/models/invoice.py:244 leasing/models/land_use_agreement.py:995
-#: leasing/report/invoice/rents_paid_by_contact.py:28
 msgid "Invoicing date"
 msgstr "Faktureringsdatum"
 
-#: leasing/models/invoice.py:262 leasing/models/land_use_agreement.py:1016
 msgid "Postpone date"
 msgstr "Uppskovsdatum"
 
-#: leasing/models/invoice.py:273 leasing/models/land_use_agreement.py:977
-#: leasing/report/invoice/invoices_in_period.py:75
-#: leasing/report/invoice/open_invoices_report.py:53
 msgid "Billed amount"
 msgstr "Fakturerat antal"
 
-#: leasing/models/invoice.py:278 leasing/models/land_use_agreement.py:1008
-#: leasing/report/invoice/invoices_in_period.py:77
-#: leasing/report/invoice/open_invoices_report.py:55
-#: leasing/report/invoice/rents_paid_by_contact.py:24
 msgid "Outstanding amount"
 msgstr "Obetald mängd"
 
-#: leasing/models/invoice.py:287
 msgid "Payment notification date"
 msgstr "Datum för betalningspåminnelse"
 
-#: leasing/models/invoice.py:292
 msgid "Collection charge"
 msgstr "Inkassoavgift"
 
-#: leasing/models/invoice.py:301
 msgid "Payment notification catalog date"
 msgstr "Betalningsuppmaning förteckning"
 
-#: leasing/models/invoice.py:307
 msgid "Delivery method"
 msgstr "E eller pappersfaktura"
 
-#: leasing/models/invoice.py:317 leasing/models/invoice.py:763
-#: leasing/models/land_use_agreement.py:999
 msgid "Notes"
 msgstr "Meddelande"
 
-#: leasing/models/invoice.py:320
 msgid "Is automatically generated?"
 msgstr "Automatiskt skapat?"
 
-#: leasing/models/invoice.py:329 leasing/models/land_use_agreement.py:983
 msgid "Credited invoice"
 msgstr "Gottskriven faktura"
 
-#: leasing/models/invoice.py:339 leasing/models/land_use_agreement.py:1054
 msgid "Interest invoice for"
 msgstr "Ränta på fakturan"
 
-#: leasing/models/invoice.py:361
 msgctxt "Model name"
 msgid "Invoice"
 msgstr "Faktura"
 
-#: leasing/models/invoice.py:362
 msgctxt "Model name"
 msgid "Invoices"
 msgstr "Fakturor"
 
-#: leasing/models/invoice.py:768
 msgctxt "Model name"
 msgid "Invoice note"
 msgstr "Fakturans meddelande"
 
-#: leasing/models/invoice.py:769
 msgctxt "Model name"
 msgid "Invoice notes"
 msgstr "Fakturans meddelanden"
 
-#: leasing/models/invoice.py:787 leasing/models/tenant.py:97
-#: leasing/models/tenant.py:132
 msgid "Tenant"
 msgstr "Arrendator"
 
-#: leasing/models/invoice.py:797 leasing/models/land_use_agreement.py:1135
-#: leasing/report/invoice/invoices_in_period.py:65
-#: leasing/report/invoice/rents_paid_by_contact.py:31
 msgid "Receivable type"
 msgstr "Fordringsart"
 
-#: leasing/models/invoice.py:833 leasing/models/land_use_agreement.py:1175
 msgctxt "Model name"
 msgid "Invoice row"
 msgstr "Fakturarad"
 
-#: leasing/models/invoice.py:834 leasing/models/land_use_agreement.py:1176
 msgctxt "Model name"
 msgid "Invoice rows"
 msgstr "Fakturarader "
 
-#: leasing/models/invoice.py:865 leasing/models/land_use_agreement.py:1215
 msgctxt "Model name"
 msgid "Invoice payment"
 msgstr "Betalning"
 
-#: leasing/models/invoice.py:866 leasing/models/land_use_agreement.py:1216
 msgctxt "Model name"
 msgid "Invoice payments"
 msgstr "Betalningar"
 
-#: leasing/models/invoice.py:870 leasing/models/rent.py:841
 msgid "Day"
 msgstr "Dag"
 
-#: leasing/models/invoice.py:873
 msgctxt "Model name"
 msgid "Bank holiday"
 msgstr "Allmän ledig dag"
 
-#: leasing/models/invoice.py:874
 msgctxt "Model name"
 msgid "Bank holidays"
 msgstr "Allmänna lediga dagar"
 
-#: leasing/models/land_area.py:56
 msgid "Is master?"
 msgstr "Är det originalet?"
 
-#: leasing/models/land_area.py:60
 msgid "Master timestamp"
 msgstr "Originalets tidsstämpel"
 
-#: leasing/models/land_area.py:85
 msgid ""
 "The master land item has already created. There can be only one master land "
 "item per lease area and identifier."
@@ -2656,1632 +1862,1210 @@ msgstr ""
 "Den ursprungliga planenheten har redan skapats. Det kan endast finnas en "
 "ursprunglig planenhet per arrendeområdets planenhetsidentifierare."
 
-#: leasing/models/land_area.py:139
 msgid "Area in square meters"
 msgstr "Total areal i kvadratmeter"
 
-#: leasing/models/land_area.py:143
 msgid "Section area"
 msgstr "Skärningsyta"
 
-#: leasing/models/land_area.py:168
 msgid "Location"
 msgstr "Läge"
 
-#: leasing/models/land_area.py:176
 msgid "Preconstruction state"
 msgstr ""
 "Utredningsgrad (Förkonstruktion, flyttning av ledningar och kommunalteknik)"
 
-#: leasing/models/land_area.py:183 leasing/models/land_area.py:626
 msgid "Preconstruction estimated construction readiness"
 msgstr "Uppskattad tidpunkt för byggberedskap (Förkonstruktion)"
 
-#: leasing/models/land_area.py:190
 msgid "Preconstruction inspection"
 msgstr ""
 "Tidpunkt för granskning (Förkonstruktion, flyttning av ledningar och "
 "kommunalteknik)"
 
-#: leasing/models/land_area.py:199
 msgid "Demolition state"
 msgstr "Utredningsgrad (Rivning)"
 
-#: leasing/models/land_area.py:208
 msgid "Polluted land state"
 msgstr "Utredningsgrad (Förorenat markområde (PIMA))"
 
-#: leasing/models/land_area.py:217
 msgid "Polluted land rent condition state"
 msgstr "Arrendevillkor (fråga)"
 
-#: leasing/models/land_area.py:225
 msgid "Polluted land rent condition date"
 msgstr "Datum för fråga om arrendevillkor"
 
-#: leasing/models/land_area.py:240
 msgid "ProjectWise number"
 msgstr "ProjectWise objektnummer"
 
-#: leasing/models/land_area.py:246
 msgid "Constructability report state"
 msgstr "Utredningsgrad (Byggbarhetsutredning)"
 
-#: leasing/models/land_area.py:255
 msgid "Constructability report investigation state"
 msgstr "Status för byggbarhetsutredning"
 
-#: leasing/models/land_area.py:263
 msgid "Constructability report signing date"
 msgstr "Datum för underteckning"
 
-#: leasing/models/land_area.py:268
 msgid "Constructability report signer"
 msgstr "Undertecknare"
 
-#: leasing/models/land_area.py:277
 msgid "Other state"
 msgstr "Utredningsgrad (Övriga)"
 
-#: leasing/models/land_area.py:286
 msgid "Archived decision"
 msgstr "Arkiveringsbeslut"
 
-#: leasing/models/land_area.py:299
 msgctxt "Model name"
 msgid "Lease area"
 msgstr "Arrendeområde"
 
-#: leasing/models/land_area.py:300
 msgctxt "Model name"
 msgid "Lease areas"
 msgstr "Arrendeområden"
 
-#: leasing/models/land_area.py:309 leasing/models/land_use_agreement.py:678
 msgid "Is primary?"
 msgstr "Primär?"
 
-#: leasing/models/land_area.py:314
 msgctxt "Model name"
 msgid "Lease area address"
 msgstr "Adress till arrendeområdet"
 
-#: leasing/models/land_area.py:315
 msgctxt "Model name"
 msgid "Lease area addresses"
 msgstr "Adresser till arrendeområdet"
 
-#: leasing/models/land_area.py:352
 msgctxt "Model name"
 msgid "Lease area attachment"
 msgstr "Bilaga till arrendeområdet"
 
-#: leasing/models/land_area.py:353
 msgctxt "Model name"
 msgid "Lease area attachments"
 msgstr "Bilagor till arrendeområdet"
 
-#: leasing/models/land_area.py:373
 msgid "AHJO reference number"
 msgstr "AHJO diarienummer"
 
-#: leasing/models/land_area.py:376
 msgid "Is static?"
 msgstr "Permanent?"
 
-#: leasing/models/land_area.py:381
 msgctxt "Model name"
 msgid "Constructability description"
 msgstr "Redogörelse om byggbarhet"
 
-#: leasing/models/land_area.py:383
 msgctxt "Model name"
 msgid "Constructability descriptions"
 msgstr "Redogörelser om byggbarhet"
 
-#: leasing/models/land_area.py:396
 msgid "Registration date"
 msgstr "Registreringsdatum"
 
-#: leasing/models/land_area.py:399
 msgid "Repeal date"
 msgstr "Upphävningsdatum"
 
-#: leasing/models/land_area.py:405 leasing/models/land_area.py:487
 msgid "At time of contract"
 msgstr "Vid tidpunkten för avtalet"
 
-#: leasing/models/land_area.py:413
 msgctxt "Model name"
 msgid "Plot"
 msgstr "Tomt"
 
-#: leasing/models/land_area.py:414
 msgctxt "Model name"
 msgid "Plots"
 msgstr "Tomter"
 
-#: leasing/models/land_area.py:423
 msgctxt "Model name"
 msgid "Plan unit type"
 msgstr "Planenhetens art"
 
-#: leasing/models/land_area.py:424
 msgctxt "Model name"
 msgid "Plan unit types"
 msgstr "Planenhetens arter"
 
-#: leasing/models/land_area.py:433
 msgctxt "Model name"
 msgid "Plot divisions state"
 msgstr "Tomtindelningens skede"
 
-#: leasing/models/land_area.py:434
 msgctxt "Model name"
 msgid "Plot division states"
 msgstr "Tomtindelningens skeden"
 
-#: leasing/models/land_area.py:448
 msgctxt "Model name"
 msgid "Plan unit state"
 msgstr "Planenhetens form"
 
-#: leasing/models/land_area.py:449
 msgctxt "Model name"
 msgid "Plan unit states"
 msgstr "Planenhetens former"
 
-#: leasing/models/land_area.py:464
 msgctxt "Model name"
 msgid "Plan unit intended use"
 msgstr "Planenhetens användningsändamål"
 
-#: leasing/models/land_area.py:465
 msgctxt "Model name"
 msgid "Plan unit intended uses"
 msgstr "Planenhetens användningsändamål"
 
-#: leasing/models/land_area.py:492
 msgid "Plot division identifier"
 msgstr "Tomtindelningens identifierare"
 
-#: leasing/models/land_area.py:500
 msgid "Plot division date of approval"
 msgstr "Datum för godkännande av tomtindelning"
 
-#: leasing/models/land_area.py:505
 msgid "Plot division effective date"
 msgstr "Tomtindelning Datum för ifkraftträdande av tomtindelningen"
 
-#: leasing/models/land_area.py:511
 msgid "Plot division state"
 msgstr "Tomtindelningens form"
 
-#: leasing/models/land_area.py:528 leasing/models/land_area.py:616
 msgid "Detailed plan latest processing date"
 msgstr "Sista behandlingsdatum för detaljplanen"
 
-#: leasing/models/land_area.py:533 leasing/models/land_area.py:620
 msgid "Note for latest processing date"
 msgstr "Sista behandlingsdatum för detaljplanen. förklaring"
 
-#: leasing/models/land_area.py:539
 msgid "Plan unit type"
 msgstr "Planenhetens art"
 
-#: leasing/models/land_area.py:549
 msgid "Plan unit state"
 msgstr "Planenhetens form"
 
-#: leasing/models/land_area.py:559 leasing/report/lease/reservations.py:193
 msgid "Plan unit intended use"
 msgstr "Planenhetens användningsändamål"
 
-#: leasing/models/land_area.py:569
 msgid "Plan unit status"
 msgstr "Status för planenheten"
 
-#: leasing/models/land_area.py:579
 msgctxt "Model name"
 msgid "Plan unit"
 msgstr "Planenhet"
 
-#: leasing/models/land_area.py:580
 msgctxt "Model name"
 msgid "Plan units"
 msgstr "Planenheter"
 
-#: leasing/models/land_use_agreement.py:63
-#: leasing/models/land_use_agreement.py:159
 msgid "Land use agreement type"
 msgstr "Typ av markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:71
-#: leasing/models/land_use_agreement.py:128 leasing/models/lease.py:103
-#: leasing/models/lease.py:256 leasing/models/lease.py:412
-#: leasing/report/lease/index_types.py:108
-#: leasing/report/lease/rent_type.py:108
 msgid "Municipality"
 msgstr "Stad"
 
-#: leasing/models/land_use_agreement.py:82 leasing/models/lease.py:267
 msgid "Sequence number"
 msgstr "Löpande nummer"
 
-#: leasing/models/land_use_agreement.py:85
 msgctxt "Model name"
 msgid "Land use agreement identifier"
 msgstr "Identifierare för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:87
 msgctxt "Model name"
 msgid "Land use agreement identifiers"
 msgstr "Identifierare för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:119
 msgid "Land use agreement identifier"
 msgstr "Identifierare för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:141
 msgid "Land use agreement definition"
 msgstr "Definition av markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:151
 msgid "Land use agreement status"
 msgstr "Status för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:185
 msgid "Estimated completion year"
 msgstr "Uppskattat genomförandeår"
 
-#: leasing/models/land_use_agreement.py:190
 msgid "Estimated introduction year"
 msgstr "Uppskattat presentationsår"
 
-#: leasing/models/land_use_agreement.py:195
 msgid "Project area"
 msgstr "Projektområde"
 
-#: leasing/models/land_use_agreement.py:200
 msgid "Plan reference number"
 msgstr "Detaljplanens diarienummer"
 
-#: leasing/models/land_use_agreement.py:205
-#: leasing/report/lease/reservations.py:198
 msgid "Plan number"
 msgstr "Detaljplanens nummer"
 
-#: leasing/models/land_use_agreement.py:211
 msgid "Plan acceptor"
 msgstr "Beslutsfattare"
 
-#: leasing/models/land_use_agreement.py:220
-#: leasing/models/land_use_agreement.py:1166
 msgid "Plan lawfulness date"
 msgstr "Datum för detaljplanens formella rättskraft"
 
-#: leasing/models/land_use_agreement.py:236
 msgctxt "Model name"
 msgid "Land use agreement"
 msgstr "Markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:237
 msgctxt "Model name"
 msgid "Land use agreements"
 msgstr "Markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:352
 msgctxt "Model name"
 msgid "Land use agreement attachment"
 msgstr "Bifogad fil till markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:354
 msgctxt "Model name"
 msgid "Land use agreement attachments"
 msgstr "Bifogade filer till markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:374
 msgid "Cash compensation"
 msgstr "Penningersättning"
 
-#: leasing/models/land_use_agreement.py:383
 msgid "Land compensation"
 msgstr "Ersättning för kompletteringsbyggande"
 
-#: leasing/models/land_use_agreement.py:392
 msgid "Other compensation"
 msgstr "Annan ersättning"
 
-#: leasing/models/land_use_agreement.py:401
 msgid "First installment increase"
 msgstr "Ökning av första raten"
 
-#: leasing/models/land_use_agreement.py:410
 msgid "Street acquisition value"
 msgstr "Gata anskaffningsvärde"
 
-#: leasing/models/land_use_agreement.py:424
 msgid "Park acquisition value"
 msgstr "Park anskaffningsvärde"
 
-#: leasing/models/land_use_agreement.py:438
 msgid "Other acquisition value"
 msgstr "Annat anskaffningsvärde"
 
-#: leasing/models/land_use_agreement.py:470
 msgid "Usage"
 msgstr "Användning"
 
-#: leasing/models/land_use_agreement.py:475
 msgid "Management"
 msgstr "Hantering"
 
-#: leasing/models/land_use_agreement.py:482
 msgid "Protected"
 msgstr "Skyddat"
 
-#: leasing/models/land_use_agreement.py:487
 msgid "Area"
 msgstr "Område"
 
-#: leasing/models/land_use_agreement.py:496
 msgid "Unit value"
 msgstr "Enhetens värde"
 
-#: leasing/models/land_use_agreement.py:505
 msgid "Discount"
 msgstr "Rabatt"
 
-#: leasing/models/land_use_agreement.py:514
 msgid "Used price"
 msgstr "Använda priset"
 
-#: leasing/models/land_use_agreement.py:536
 msgid "Estate id"
 msgstr "Objektets identifierare"
 
-#: leasing/models/land_use_agreement.py:545
 msgctxt "Model name"
 msgid "Land use agreement decision type"
 msgstr "Beslutstyp av markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:547
 msgctxt "Model name"
 msgid "Land use agreement decision types"
 msgstr "Beslutstyper av markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:602
 msgctxt "Model name"
 msgid "Land use agreement decision"
 msgstr "Beslut om markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:604
 msgctxt "Model name"
 msgid "Land use agreement decisions"
 msgstr "Beslut om markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:615
 msgctxt "Model name"
 msgid "Land use agreement decision condition type"
 msgstr "Typ av beslutsvillkor för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:618
 msgctxt "Model name"
 msgid "Land use agreement decision condition types"
 msgstr "Typer av beslutsvillkor för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:662
 msgctxt "Model name"
 msgid "Land use agreement decision condition"
 msgstr "Beslutsvillkor för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:665
 msgctxt "Model name"
 msgid "Land use agreement decision conditions"
 msgstr "Beslutsvillkor för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:681
 msgctxt "Model name"
 msgid "Land use agreement address"
 msgstr "Adress för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:683
 msgctxt "Model name"
 msgid "Land use agreement addresses"
 msgstr "Adresser för markanvändningsavtal"
 
-#: leasing/models/land_use_agreement.py:709
 msgid "Obligated area (f-m2)"
 msgstr "Område som omfattas av åläggandet (f-m2)"
 
-#: leasing/models/land_use_agreement.py:714
 msgid "Actualized area (f-m2)"
 msgstr "Faktiska området (f-m2)"
 
-#: leasing/models/land_use_agreement.py:718 leasing/models/rent.py:1288
-#: leasing/models/rent.py:1842
 msgid "Subvention amount"
 msgstr "Subventionens mängd"
 
-#: leasing/models/land_use_agreement.py:722
 msgid "Compensation percent"
 msgstr "Ersättningsprocent"
 
-#: leasing/models/land_use_agreement.py:758
-#: leasing/models/land_use_agreement.py:794
 msgctxt "Model name"
 msgid "Land use agreement litigant"
 msgstr "Markanvändningsavtalets parter"
 
-#: leasing/models/land_use_agreement.py:760
-#: leasing/models/land_use_agreement.py:796
 msgctxt "Model name"
 msgid "Land use agreement litigants"
 msgstr "Markanvändningsavtalets parter"
 
-#: leasing/models/land_use_agreement.py:767
 msgid "Land use agreement litigant"
 msgstr "Markanvändningsavtalets part"
 
-#: leasing/models/land_use_agreement.py:774 leasing/models/tenant.py:100
 msgid "Contact"
 msgstr "Kontaktuppgift"
 
-#: leasing/models/land_use_agreement.py:781
 msgid "Contact type"
 msgstr "Typ av kontaktuppgift"
 
-#: leasing/models/land_use_agreement.py:1033
 msgid "Sent date"
 msgstr "Datum för sändning"
 
-#: leasing/models/land_use_agreement.py:1125
 msgid "Litigant"
 msgstr "Part"
 
-#: leasing/models/land_use_agreement.py:1147
 msgid "Compensation amount"
 msgstr "Ersättningsinvesteringar"
 
-#: leasing/models/land_use_agreement.py:1158
 msgid "Increase percentage"
 msgstr "Öka procenten"
 
-#: leasing/models/land_use_agreement.py:1170
 msgid "Sign date"
 msgstr "Ska undertecknas senast"
 
-#: leasing/models/lease.py:63
 msgid "Due dates position"
 msgstr "Läge för förfallodatum"
 
-#: leasing/models/lease.py:69
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Art"
 
-#: leasing/models/lease.py:70
 msgctxt "Model name"
 msgid "Lease types"
 msgstr "Arter"
 
-#: leasing/models/lease.py:88
 msgctxt "Model name"
 msgid "Municipality"
 msgstr "Stad"
 
-#: leasing/models/lease.py:89
 msgctxt "Model name"
 msgid "Municipalities"
 msgstr "Stad"
 
-#: leasing/models/lease.py:110
 msgctxt "Model name"
 msgid "District"
 msgstr "Stadsdel"
 
-#: leasing/models/lease.py:111
 msgctxt "Model name"
 msgid "Districts"
 msgstr "Stadsdelar"
 
-#: leasing/models/lease.py:129
 msgctxt "Model name"
 msgid "Intended use"
 msgstr "Användningsändamål"
 
-#: leasing/models/lease.py:130
 msgctxt "Model name"
 msgid "Intended uses"
 msgstr "Användningsändamål"
 
-#: leasing/models/lease.py:142
 msgctxt "Model name"
 msgid "Statistical use"
 msgstr "Statistiskt huvudanvändningsändamål"
 
-#: leasing/models/lease.py:143
 msgctxt "Model name"
 msgid "Statistical uses"
 msgstr "Statistiska huvudanvändningsändamål"
 
-#: leasing/models/lease.py:152
 msgctxt "Model name"
 msgid "Supportive housing"
 msgstr "Specialbostad"
 
-#: leasing/models/lease.py:153
 msgctxt "Model name"
 msgid "Supportive housings"
 msgstr "Specialbostäder"
 
-#: leasing/models/lease.py:162
 msgctxt "Model name"
 msgid "Form of financing"
 msgstr "Finansieringsform"
 
-#: leasing/models/lease.py:163
 msgctxt "Model name"
 msgid "Forms of financing"
 msgstr "Finansieringsformer"
 
-#: leasing/models/lease.py:172
 msgctxt "Model name"
 msgid "Form of management"
 msgstr "Upplåtelseform"
 
-#: leasing/models/lease.py:173
 msgctxt "Model name"
 msgid "Forms of management"
 msgstr "Upplåtelseformer"
 
-#: leasing/models/lease.py:182
 msgctxt "Model name"
 msgid "Form of regulation"
 msgstr "Regleringsform"
 
-#: leasing/models/lease.py:183
 msgctxt "Model name"
 msgid "Forms of regulation"
 msgstr "Regleringformer"
 
-#: leasing/models/lease.py:192 leasing/models/lease.py:193
 msgctxt "Model name"
 msgid "Hitas"
 msgstr "Hitas"
 
-#: leasing/models/lease.py:201
 msgid "Period type"
 msgstr "Typ av uppsägningstid"
 
-#: leasing/models/lease.py:203
 msgid "Duration"
 msgstr "Längd"
 
-#: leasing/models/lease.py:207
 msgid "In ISO 8601 Duration format"
 msgstr "I ISO 8601 Duration-form"
 
-#: leasing/models/lease.py:211
 msgctxt "Model name"
 msgid "Notice period"
 msgstr "Uppsägningstid"
 
-#: leasing/models/lease.py:212
 msgctxt "Model name"
 msgid "Notice periods"
 msgstr "Uppsägningtider"
 
-#: leasing/models/lease.py:221
 msgctxt "Model name"
 msgid "Special project"
 msgstr "Specialprojekt"
 
-#: leasing/models/lease.py:222
 msgctxt "Model name"
 msgid "Special projects"
 msgstr "Specialprojekt"
 
-#: leasing/models/lease.py:231
 msgctxt "Model name"
 msgid "Reservation procedure"
 msgstr "Förfaring för anvisningen"
 
-#: leasing/models/lease.py:232
 msgctxt "Model name"
 msgid "Reservation Procedures"
 msgstr "Förfaringar för anvisningen"
 
-#: leasing/models/lease.py:248 leasing/models/lease.py:404
-#: leasing/report/invoice/invoices_in_period.py:67
-#: leasing/report/invoice/open_invoices_report.py:49
-#: leasing/report/lease/lease_count_report.py:27
-#: leasing/report/lease/lease_statistic_report.py:224
-#: leasing/report/lease/lease_statistic_report2.py:249
-#: leasing/report/lease/rent_forecast.py:55
 msgid "Lease type"
 msgstr "Art"
 
-#: leasing/models/lease.py:270
 msgctxt "Model name"
 msgid "Lease identifier"
 msgstr "Arrendekod"
 
-#: leasing/models/lease.py:271
 msgctxt "Model name"
 msgid "Lease identifiers"
 msgstr "Arrendekoder"
 
-#: leasing/models/lease.py:447
 msgid "Classification"
 msgstr "Offentlighetsklass"
 
-#: leasing/models/lease.py:455
 msgid "Intended use note"
 msgstr "Förklaring för användningsändamålet"
 
-#: leasing/models/lease.py:460
 msgid "Transferable"
 msgstr "Överföringsrätt"
 
-#: leasing/models/lease.py:465
 msgid "Regulated"
 msgstr "Reglerad"
 
-#: leasing/models/lease.py:469
 msgid "Notice note"
 msgstr "Förklaring för uppsägningsanmälan"
 
-#: leasing/models/lease.py:495
-#: leasing/report/lease/lease_statistic_report.py:324
-#: leasing/report/lease/lease_statistic_report2.py:328
 msgid "Supportive housing"
 msgstr "Specialbostäder"
 
-#: leasing/models/lease.py:505
 msgid "Statistical use"
 msgstr "Statistiskt huvudanvändningsändamål"
 
-#: leasing/models/lease.py:535
-#: leasing/report/lease/lease_statistic_report.py:330
-#: leasing/report/lease/lease_statistic_report2.py:334
 msgid "Form of regulation"
 msgstr "Regleringsform"
 
-#: leasing/models/lease.py:544 plotsearch/models/plot_search.py:364
 msgid "Hitas"
 msgstr "Hitas"
 
-#: leasing/models/lease.py:554
-#: leasing/report/lease/lease_statistic_report.py:354
-#: leasing/report/lease/lease_statistic_report2.py:393
 msgid "Notice period"
 msgstr "Uppsägningstid"
 
-#: leasing/models/lease.py:570
 msgid "Rent info complete?"
 msgstr "Är arrendeuppgifterna i ordning?"
 
-#: leasing/models/lease.py:575
 msgid "Invoicing enabled?"
 msgstr "Är faktureringen igång?"
 
-#: leasing/models/lease.py:598
 msgid "Is subject to VAT?"
 msgstr "Är den underställd mervärdesskatt"
 
-#: leasing/models/lease.py:603
-#: leasing/report/lease/lease_statistic_report.py:246
-#: leasing/report/lease/lease_statistic_report2.py:271
 msgid "Real estate developer"
 msgstr "Byggherre"
 
-#: leasing/models/lease.py:608
 msgid "Conveyance number"
 msgstr "Överlåtelsenummer"
 
-#: leasing/models/lease.py:613
 msgid "Building selling price"
 msgstr "Byggnadens köpeskilling"
 
-#: leasing/models/lease.py:623
 msgid "Special project"
 msgstr "Specialprojekt"
 
-#: leasing/models/lease.py:633 leasing/report/lease/reservations.py:186
 msgid "Reservation procedure"
 msgstr "Förfaring för anvisningen"
 
-#: leasing/models/lease.py:650
 msgid "Internal order"
 msgstr ""
 
-#: leasing/models/lease.py:667
 msgctxt "Model name"
 msgid "Lease"
 msgstr "Arrendering"
 
-#: leasing/models/lease.py:668
 msgctxt "Model name"
 msgid "Leases"
 msgstr "Arrenderingar "
 
-#: leasing/models/lease.py:722
 msgid "The intended use's service unit must match the lease's service_unit."
 msgstr ""
 
-#: leasing/models/lease.py:843
 #, python-brace-format
 msgid "{area_identifier}, {area_addresses}, {area_m2}m2"
 msgstr "{area_identifier}, {area_addresses}, {area_m2}m2"
 
-#: leasing/models/lease.py:859
 #, python-brace-format
 msgid "Contract #{contract_number}"
 msgstr "Avtal #{contract_number}"
 
-#: leasing/models/lease.py:1467
 msgctxt "Model name"
 msgid "Lease state log"
 msgstr "Logg över statusändring för arrenderingen"
 
-#: leasing/models/lease.py:1468
 msgctxt "Model name"
 msgid "Lease state logs"
 msgstr "Loggar över statusändring för arrenderingen"
 
-#: leasing/models/lease.py:1474
 msgid "From lease"
 msgstr "Från arrendering"
 
-#: leasing/models/lease.py:1480
 msgid "To lease"
 msgstr "Till arrendering"
 
-#: leasing/models/lease.py:1486
 msgid "Lease relation type"
 msgstr "Typ av relation"
 
-#: leasing/models/lease.py:1497
 msgctxt "Model name"
 msgid "Related lease"
 msgstr "Anknytande arrendering"
 
-#: leasing/models/lease.py:1498
 msgctxt "Model name"
 msgid "Related leases"
 msgstr "Anknytande arrenderingar"
 
-#: leasing/models/leasehold_transfer.py:19
 msgid "File name"
 msgstr "Filnamn"
 
-#: leasing/models/leasehold_transfer.py:22
 msgctxt "Model name"
 msgid "Leasehold transfer import log"
 msgstr "Logg över import av arrenderättsöverföringar"
 
-#: leasing/models/leasehold_transfer.py:24
 msgctxt "Model name"
 msgid "Leasehold transfer import logs"
 msgstr "Loggar över import av arrenderättsöverföringar"
 
-#: leasing/models/leasehold_transfer.py:45
 msgctxt "Model name"
 msgid "Leasehold transfer"
 msgstr "Överföring av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:46
 msgctxt "Model name"
 msgid "Leasehold transfers"
 msgstr "Överföringar av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:62
-#: leasing/models/leasehold_transfer.py:87
 msgid "Leasehold transfer"
 msgstr "Överföring av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:68
 msgctxt "Model name"
 msgid "Leasehold transfer property"
 msgstr "Objekt för överföring av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:70
 msgctxt "Model name"
 msgid "Leasehold transfer properties"
 msgstr "Objekt för överföring av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:111 leasing/models/tenant.py:27
 msgid "Numerator"
 msgstr "Att dela"
 
-#: leasing/models/leasehold_transfer.py:116 leasing/models/tenant.py:30
 msgid "Denominator"
 msgstr "Delad av"
 
-#: leasing/models/leasehold_transfer.py:120
 msgctxt "Model name"
 msgid "Leasehold transfer party"
 msgstr "Part vid överföring av arrenderätt"
 
-#: leasing/models/leasehold_transfer.py:121
 msgctxt "Model name"
 msgid "Leasehold transfer parties"
 msgstr "Parter vid överföring av arrenderätt"
 
-#: leasing/models/mixins.py:33
 msgid "Time archived"
 msgstr "Arkiveringstid"
 
-#: leasing/models/mixins.py:37
 msgid "Archived note"
 msgstr "Arkiveringsanmärkning"
 
-#: leasing/models/rent.py:98
 msgctxt "Model name"
 msgid "Rent intended use"
 msgstr "Användningsändamål för arrende"
 
-#: leasing/models/rent.py:99
 msgctxt "Model name"
 msgid "Rent intended uses"
 msgstr "Användningsändamål för arrende"
 
-#: leasing/models/rent.py:119
 msgid "Cycle"
 msgstr "Arrendeperiod"
 
-#: leasing/models/rent.py:124 leasing/report/lease/index_types.py:89
-#: leasing/report/lease/index_types.py:121
 msgid "Index type"
 msgstr "Identifieringsnumer för indexet"
 
-#: leasing/models/rent.py:130
 msgid "Due dates type"
 msgstr "Faktureringsfördelning"
 
-#: leasing/models/rent.py:138
 msgid "Due dates per year"
 msgstr "Fakturor st./år"
 
-#: leasing/models/rent.py:143
 msgid "Elementary index"
 msgstr "Basindex "
 
-#: leasing/models/rent.py:148
 msgid "Index rounding"
 msgstr "Avrundning"
 
-#: leasing/models/rent.py:153
 msgid "X value"
 msgstr "X-tal"
 
-#: leasing/models/rent.py:158
 msgid "Y value"
 msgstr "Y-tal"
 
-#: leasing/models/rent.py:163
 msgid "Y value start date"
 msgstr "Y-från och med datum"
 
-#: leasing/models/rent.py:168
 msgid "Equalization start date"
 msgstr "Utjämning startdatum"
 
-#: leasing/models/rent.py:173
 msgid "Equalization end date"
 msgstr "Utjämning slutdatum"
 
-#: leasing/models/rent.py:192
 msgid "Seasonal start day"
 msgstr "Startdag för perioden"
 
-#: leasing/models/rent.py:198
 msgid "Seasonal start month"
 msgstr "Starmånad för perioden"
 
-#: leasing/models/rent.py:204
 msgid "Seasonal end day"
 msgstr "Slutdag för perioden"
 
-#: leasing/models/rent.py:210
 msgid "Seasonal end month"
 msgstr "Slutmånad för perioden"
 
-#: leasing/models/rent.py:221
 msgid "Manual ratio"
 msgstr "Manuell beräkningsfaktor"
 
-#: leasing/models/rent.py:231
 msgid "Manual ratio (previous)"
 msgstr "Manuell beräkningsfaktor (föregående)"
 
-#: leasing/models/rent.py:240
 msgid "Payable rent amount"
 msgstr "Hyresbeloppet som ska betalas"
 
-#: leasing/models/rent.py:249
 msgid "Payable rent start date"
 msgstr "Startdatum för arrendebetalning"
 
-#: leasing/models/rent.py:256
 msgid "Payable rent end date"
 msgstr "Slutdatum för arrendebetalning"
 
-#: leasing/models/rent.py:262
 msgctxt "Model name"
 msgid "Rent"
 msgstr "Arrende"
 
-#: leasing/models/rent.py:263
 msgctxt "Model name"
 msgid "Rents"
 msgstr "Arrenden"
 
-#: leasing/models/rent.py:279
 msgid "Cannot calculate payable rent. The rent cycle '{}' is not defined."
 msgstr ""
 "Arrendebelopp som ska betalas kan inte beräknas. Arrendeperioden {} har inte "
 "fastställts."
 
-#: leasing/models/rent.py:491
 #, python-brace-format
 msgid "Manual ratio {ratio}"
 msgstr "Manuell beräkningsfaktor {ratio}"
 
-#: leasing/models/rent.py:500
 msgid "Manual ratio not found!"
 msgstr "Den manuella beräkningsfaktorn hittades inte!"
 
-#: leasing/models/rent.py:545
 msgid "Average index for the year {} is not available!"
 msgstr "Årets {} genomsnittsindex är inte känt!"
 
-#: leasing/models/rent.py:838 leasing/models/rent.py:865
-#: leasing/models/rent.py:932 leasing/models/rent.py:1059
-#: leasing/models/rent.py:1102 leasing/models/rent.py:1338
-#: leasing/models/rent.py:1378 leasing/report/lease/extra_city_rent.py:118
-#: leasing/report/lease/rent_forecast.py:57
 msgid "Rent"
 msgstr "Arrende"
 
-#: leasing/models/rent.py:844 leasing/models/rent.py:1447
 msgid "Month"
 msgstr "Månad"
 
-#: leasing/models/rent.py:851
 msgctxt "Model name"
 msgid "Rent due date"
 msgstr "Förfallodag"
 
-#: leasing/models/rent.py:852
 msgctxt "Model name"
 msgid "Rent due dates"
 msgstr "Förfallodagar"
 
-#: leasing/models/rent.py:894
 msgctxt "Model name"
 msgid "Fixed initial year rent"
 msgstr "Fast arrende för början av året"
 
-#: leasing/models/rent.py:895
 msgctxt "Model name"
 msgid "Fixed initial year rents"
 msgstr "Fasta arrenden för början av året"
 
-#: leasing/models/rent.py:947
 msgid "Period"
 msgstr "Enhet"
 
-#: leasing/models/rent.py:969
 msgid "Base amount"
 msgstr "Arrende som ligger till grund för arrendeberäkningen"
 
-#: leasing/models/rent.py:977
 msgid "Base amount period"
 msgstr "Enhet"
 
-#: leasing/models/rent.py:983
 msgid "Base year rent"
 msgstr "Nytt arrende för basår"
 
-#: leasing/models/rent.py:999
 msgctxt "Model name"
 msgid "Contract rent"
 msgstr "Avtalsarrende"
 
-#: leasing/models/rent.py:1000
 msgctxt "Model name"
 msgid "Contract rents"
 msgstr "Avtalsarrenden"
 
-#: leasing/models/rent.py:1085
 msgid "Factor"
 msgstr "Beräkningsfaktor"
 
-#: leasing/models/rent.py:1091
 msgctxt "Model name"
 msgid "Index adjusted rent"
 msgstr "Indexjusterat arrende"
 
-#: leasing/models/rent.py:1092
 msgctxt "Model name"
 msgid "Index adjusted rents"
 msgstr "Indexjusterade arrenden"
 
-#: leasing/models/rent.py:1126 leasing/report/lease/rent_adjustments.py:60
 msgid "Full amount"
 msgstr "Total mängd"
 
-#: leasing/models/rent.py:1135 leasing/report/lease/rent_adjustments.py:62
 msgid "Amount type"
 msgstr "Mängdtyp"
 
-#: leasing/models/rent.py:1140 leasing/report/lease/rent_adjustments.py:65
 msgid "Amount left"
 msgstr "Kvar"
 
-#: leasing/models/rent.py:1163 leasing/models/rent.py:1722
-#: leasing/report/lease/rent_adjustments.py:67
 msgid "Subvention type"
 msgstr "Typ av subvention"
 
-#: leasing/models/rent.py:1171 leasing/models/rent.py:1730
-#: leasing/report/lease/rent_adjustments.py:72
 msgid "Subvention base percent"
 msgstr "Basrabatt på marknadsarrende"
 
-#: leasing/models/rent.py:1180 leasing/models/rent.py:1739
-#: leasing/report/lease/rent_adjustments.py:76
 msgid "Graduated subvention percent"
 msgstr "Stegvis rabatt"
 
-#: leasing/models/rent.py:1190
 msgctxt "Model name"
 msgid "Rent adjustment"
 msgstr "Rabatt/Höjning"
 
-#: leasing/models/rent.py:1191
 msgctxt "Model name"
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
 
-#: leasing/models/rent.py:1264 leasing/models/rent.py:1266
 msgctxt "Model name"
 msgid "Form of management (Subvention)"
 msgstr "Upplåtelseform (Subvention)"
 
-#: leasing/models/rent.py:1273 leasing/models/rent.py:1305
 msgid "Rent adjustment"
 msgstr "Rabatt/Höjning"
 
-#: leasing/models/rent.py:1295
 msgctxt "Model name"
 msgid "Management subvention (Rent adjustment)"
 msgstr "Subvention för upplåtelseformen (Rabatt)"
 
-#: leasing/models/rent.py:1298
 msgctxt "Model name"
 msgid "Management subventions (Rent adjustment)"
 msgstr "Subventioner för upplåtelseformen (Rabatt)"
 
-#: leasing/models/rent.py:1317 leasing/models/rent.py:1871
 msgid "Subvention percent"
 msgstr "Subventionsprocent"
 
-#: leasing/models/rent.py:1324
 msgctxt "Model name"
 msgid "Temporary subvention (Rent adjustment)"
 msgstr "Tillfällig rabatt (Rabatt)"
 
-#: leasing/models/rent.py:1327
 msgctxt "Model name"
 msgid "Temporary subventions (Rent adjustment)"
 msgstr "Tillfälliga rabatter (Rabatt)"
 
-#: leasing/models/rent.py:1356 leasing/report/lease/rent_compare.py:37
 msgid "Difference percent"
 msgstr "Höjning %"
 
-#: leasing/models/rent.py:1361
 msgid "Calendar year rent"
 msgstr "Arrende för kalenderår"
 
-#: leasing/models/rent.py:1367
 msgctxt "Model name"
 msgid "Payable rent"
 msgstr "Arrende som ska debiteras"
 
-#: leasing/models/rent.py:1368
 msgctxt "Model name"
 msgid "Payable rents"
 msgstr "Arrenden som ska debiteras"
 
-#: leasing/models/rent.py:1391
 msgid "Payable amount"
 msgstr "Arrende som ska debiteras"
 
-#: leasing/models/rent.py:1396
 msgid "Equalized payable amount"
 msgstr "Utjämnat arrende som ska debiteras"
 
-#: leasing/models/rent.py:1401
 msgid "Equalization factor"
 msgstr "Utjämningsfaktor "
 
-#: leasing/models/rent.py:1407
 msgctxt "Model name"
 msgid "Equalized rent"
 msgstr "Utjämnat arrende"
 
-#: leasing/models/rent.py:1408
 msgctxt "Model name"
 msgid "Equalized rents"
 msgstr "Utjämnade arrenden"
 
-#: leasing/models/rent.py:1456
 msgctxt "Model name"
 msgid "Index"
 msgstr "Index"
 
-#: leasing/models/rent.py:1457
 msgctxt "Model name"
 msgid "Indexes"
 msgstr "Index"
 
-#: leasing/models/rent.py:1463
 msgid "Index {}{} = {}"
 msgstr "Index {}{} = {}"
 
-#: leasing/models/rent.py:1475
 msgid "Index 1914:1-6=100"
 msgstr "Index 1914:1-6=100"
 
-#: leasing/models/rent.py:1480
 msgid "Index 1938:8-1939:7=100"
 msgstr "Index 1938:8–1939:7=100"
 
-#: leasing/models/rent.py:1508
-#, fuzzy
-#| msgctxt "Rent type"
-#| msgid "Index (old)"
 msgid "Index code"
-msgstr "Index (gammalt)"
+msgstr ""
 
-#: leasing/models/rent.py:1513
-#, fuzzy
-#| msgctxt "Model name"
-#| msgid "Indexes"
 msgid "Index name"
-msgstr "Index"
+msgstr ""
 
-#: leasing/models/rent.py:1516 leasing/models/rent.py:1590
 msgid "Region"
 msgstr ""
 
-#: leasing/models/rent.py:1518
-#, fuzzy
-#| msgctxt "Model name"
-#| msgid "Area source"
 msgid "Data source"
-msgstr "Källa till området"
+msgstr ""
 
-#: leasing/models/rent.py:1523
 msgid "Source table updated"
 msgstr ""
 
-#: leasing/models/rent.py:1526
 msgid "Source table label"
 msgstr ""
 
-#: leasing/models/rent.py:1530
 msgid "API endpoint URL"
 msgstr ""
 
-#: leasing/models/rent.py:1536
 msgctxt "model name"
 msgid "price index of old dwellings in housing companies"
 msgstr ""
 
-#: leasing/models/rent.py:1539
 msgctxt "model name"
 msgid "price indexes of old dwellings in housing companies"
 msgstr ""
 
-#: leasing/models/rent.py:1582
-#, fuzzy
-#| msgid "line number"
 msgid "Index number"
-msgstr "radnummer"
+msgstr ""
 
-#: leasing/models/rent.py:1591
-#, fuzzy
-#| msgctxt "Model name"
-#| msgid "Comment"
 msgid "Comment"
-msgstr "Kommentar"
+msgstr ""
 
-#: leasing/models/rent.py:1594
-#, fuzzy
-#| msgid "line number"
 msgctxt "model name"
 msgid "index number"
-msgstr "radnummer"
+msgstr ""
 
-#: leasing/models/rent.py:1595
-#, fuzzy
-#| msgid "line number"
 msgctxt "model name"
 msgid "index numbers"
-msgstr "radnummer"
+msgstr ""
 
-#: leasing/models/rent.py:1626 leasing/models/rent.py:1827
-#: leasing/models/rent.py:1859
 msgid "Lease basis of rent"
 msgstr "Arrenderingsprincip för arrenderingen"
 
-#: leasing/models/rent.py:1643 leasing/report/lease/extra_city_rent.py:116
 msgid "Area amount"
 msgstr "Areal"
 
-#: leasing/models/rent.py:1648
 msgid "Zone"
 msgstr "Zon"
 
-#: leasing/models/rent.py:1656
 msgid "Amount per area (index 100)"
 msgstr "Summa per areal (ind 100)"
 
-#: leasing/models/rent.py:1675
 msgid "Profit margin percentage"
 msgstr "Vinstprocent"
 
-#: leasing/models/rent.py:1684
 msgid "Discount percentage"
 msgstr "Rabattprocent "
 
-#: leasing/models/rent.py:1693
 msgid "Plans inspected at"
 msgstr "Ritningarna har granskats datum"
 
-#: leasing/models/rent.py:1699
 msgid "Plans inspected by"
 msgstr "Ritningarna har granskats av"
 
-#: leasing/models/rent.py:1707
 msgid "Locked at"
 msgstr "Låst datum"
 
-#: leasing/models/rent.py:1712
 msgid "Locked by"
 msgstr "Låst av"
 
-#: leasing/models/rent.py:1749
 msgctxt "Model name"
 msgid "Lease basis of rent"
 msgstr "Arrenderingsprincip"
 
-#: leasing/models/rent.py:1750
 msgctxt "Model name"
 msgid "Lease basis of rents"
 msgstr "Arrenderingsprinciper för arrenderingen"
 
-#: leasing/models/rent.py:1849
 msgctxt "Model name"
 msgid "Management subvention (Basis of rent)"
 msgstr "Subvention för upplåtelseformen (Arrenderingsprincip)"
 
-#: leasing/models/rent.py:1852
 msgctxt "Model name"
 msgid "Management subventions (Basis of rent)"
 msgstr "Subventioner för upplåtelseformen (Arrenderingsprincip)"
 
-#: leasing/models/rent.py:1878
 msgctxt "Model name"
 msgid "Temporary subvention (Basis of rent)"
 msgstr "Tillfällig rabatt (Arrenderingsprincip)"
 
-#: leasing/models/rent.py:1881
 msgctxt "Model name"
 msgid "Temporary subventions (Basis of rent)"
 msgstr "Tillfälliga rabatter (Arrenderingsprincip)"
 
-#: leasing/models/service_unit.py:17
 msgid "Invoice number sequence name"
 msgstr ""
 
-#: leasing/models/service_unit.py:23
 msgid "First invoice number"
 msgstr ""
 
-#: leasing/models/service_unit.py:26
 msgid "Sender ID in Laske"
 msgstr ""
 
-#: leasing/models/service_unit.py:29
 msgid "Import ID in Laske"
 msgstr ""
 
-#: leasing/models/service_unit.py:32
 msgid "Sales Organisation in Laske"
 msgstr ""
 
-#: leasing/models/service_unit.py:35
 msgid "Fill priority and info?"
 msgstr ""
 
-#: leasing/models/service_unit.py:37
 msgid ""
 "Fill Info and Priority data from a contact into OrderParty and BillingParty "
 "in SalesOrder when creating LASKE XML"
 msgstr ""
 
-#: leasing/models/service_unit.py:43
 msgid "Contract number sequence name"
 msgstr ""
 
-#: leasing/models/service_unit.py:49
 msgid "First contract number"
 msgstr ""
 
-#: leasing/models/service_unit.py:53
 msgid "Default receivable type (rent)"
 msgstr ""
 
-#: leasing/models/service_unit.py:54
 msgid "Receivable type used when creating rent invoices"
 msgstr ""
 
-#: leasing/models/service_unit.py:62
 msgid "Default receivable type (collateral)"
 msgstr ""
 
-#: leasing/models/service_unit.py:64
 msgid ""
 "Receivable type which should be used when creating collateral invoices. On "
 "SAP export, the profit center is filled from this receivable type's "
 "sap_order_item_number."
 msgstr ""
 
-#: leasing/models/service_unit.py:84
 msgctxt "Model name"
 msgid "Service unit"
 msgstr ""
 
-#: leasing/models/service_unit.py:85
 msgctxt "Model name"
 msgid "Service units"
 msgstr ""
 
-#: leasing/models/service_unit.py:104
 msgctxt "Model name"
 msgid "Service unit group mapping"
 msgstr ""
 
-#: leasing/models/service_unit.py:105
 msgctxt "Model name"
 msgid "Service unit group mappings"
 msgstr ""
 
-#: leasing/models/tenant.py:34
 msgid "Reference"
 msgstr "Referens "
 
-#: leasing/models/tenant.py:46
 msgctxt "Model name"
 msgid "Tenant"
 msgstr "Arrendator"
 
-#: leasing/models/tenant.py:47
 msgctxt "Model name"
 msgid "Tenants"
 msgstr "Arrendatorer"
 
-#: leasing/models/tenant.py:112
 msgctxt "Model name"
 msgid "Tenant contact"
 msgstr "Arrendatorns kontaktuppgift"
 
-#: leasing/models/tenant.py:113
 msgctxt "Model name"
 msgid "Tenant contacts"
 msgstr "Arrendatorns kontaktuppgifter"
 
-#: leasing/models/tenant.py:147
 msgid "Rent share numerator"
 msgstr "Att dela (Fakturaandel)"
 
-#: leasing/models/tenant.py:152
 msgid "Rent share denominator"
 msgstr "Delad av (Fakturaandel)"
 
-#: leasing/models/tenant.py:158
 msgctxt "Model name"
 msgid "Tenant rent share"
 msgstr "Arrendatorns fakturaandel"
 
-#: leasing/models/tenant.py:159
 msgctxt "Model name"
 msgid "Tenant rent shares"
 msgstr "Arrendatorns fakturaandelar"
 
-#: leasing/models/ui_data.py:19
 msgid "Key"
 msgstr "Nyckel"
 
-#: leasing/models/ui_data.py:20
 msgid "Value"
 msgstr "Värde"
 
-#: leasing/models/ui_data.py:23
 msgctxt "Model name"
 msgid "UI Datum"
 msgstr "Användargränssnittets datum"
 
-#: leasing/models/ui_data.py:24
 msgctxt "Model name"
 msgid "UI Data"
 msgstr "Användargränssnittets uppgifter"
 
-#: leasing/models/vat.py:36
 msgid "Percent"
 msgstr "Procent"
 
-#: leasing/models/vat.py:51
 msgctxt "Model name"
 msgid "VAT"
 msgstr "Mervärdesskatt"
 
-#: leasing/models/vat.py:52
 msgctxt "Model name"
 msgid "VATs"
 msgstr "Mervärdesskatter"
 
-#: leasing/models/vat.py:56
 msgid "VAT {}% {} - {}"
 msgstr "Mervärdesskatt {}% {} - {}"
 
-#: leasing/models/vat.py:66 leasing/models/vat.py:76 leasing/models/vat.py:85
 msgid "Only one VAT can be active at a time"
 msgstr "Endast en mervärdesskatt kan gälla i taget"
 
-#: leasing/report/invoice/collaterals_report.py:30
 msgid "Collaterals"
 msgstr "Säkerheter"
 
-#: leasing/report/invoice/collaterals_report.py:31
 msgid "Show all collaterals"
 msgstr "Visa alla säkerheter"
 
-#: leasing/report/invoice/collaterals_report.py:45
 msgid "Paid"
 msgstr "Betald"
 
-#: leasing/report/invoice/collaterals_report.py:46
 msgid "Returned"
 msgstr "Returnerad"
 
-#: leasing/report/invoice/collaterals_report.py:49
-#: leasing/report/invoice/invoice_payments.py:40
-#: leasing/report/invoice/invoices_in_period.py:68
-#: leasing/report/invoice/invoicing_review.py:247
-#: leasing/report/invoice/open_invoices_report.py:50
-#: leasing/report/lease/decision_conditions_report.py:83
-#: leasing/report/lease/extra_city_rent.py:113
-#: leasing/report/lease/index_types.py:96
-#: leasing/report/lease/invoicing_disabled_report.py:46
-#: leasing/report/lease/lease_statistic_report.py:216
-#: leasing/report/lease/lease_statistic_report2.py:241
-#: leasing/report/lease/rent_adjustments.py:52
-#: leasing/report/lease/rent_type.py:92
 msgid "Lease id"
 msgstr "Arrendering"
 
-#: leasing/report/invoice/collaterals_report.py:52
 msgid "Lease start date"
 msgstr "Startdatum för arrendering"
 
-#: leasing/report/invoice/collaterals_report.py:57
 msgid "Lease end date"
 msgstr "Slutdatum för arrendering"
 
-#: leasing/report/invoice/invoice_payments.py:22
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Visa betalningar mellan startdatum och slutdatum"
 
-#: leasing/report/invoice/invoice_payments.py:79
-#: leasing/report/invoice/invoices_in_period.py:133
-#: leasing/report/invoice/open_invoices_report.py:116
-#: leasing/report/lease/extra_city_rent.py:294
-#: leasing/report/lease/lease_count_report.py:57
-#: leasing/report/lease/rent_forecast.py:169
 msgid "Total"
 msgstr "Totalt"
 
-#: leasing/report/invoice/invoices_in_period.py:38
 msgid "Invoces in period"
 msgstr "Fakturor under perioden"
 
-#: leasing/report/invoice/invoices_in_period.py:40
 msgid "Show all the invoices that have due date between start and end date"
 msgstr ""
 "Visa alla fakturor vars förfallodag ligger mellan start- och slutdatumen"
 
-#: leasing/report/invoice/invoices_in_period.py:52
 msgid "Laskutuslaji"
 msgstr "Faktureringstyp"
 
-#: leasing/report/invoice/invoices_in_period.py:58
 msgid "Invoice state"
 msgstr "Status för fakturan"
 
-#: leasing/report/invoice/invoices_in_period.py:83
-#: leasing/report/invoice/open_invoices_report.py:61
 msgid "Recipient name"
 msgstr "Fakturamottagare"
 
-#: leasing/report/invoice/invoices_in_period.py:88
-#: leasing/report/invoice/open_invoices_report.py:66
 msgid "Recipient address"
 msgstr "Fakturamottagarens adress"
 
-#: leasing/report/invoice/invoicing_review.py:38
 msgctxt "Invoicing review"
 msgid "Invoicing not enabled"
 msgstr "Arrenderingar för vilka fakturering inte pågår"
 
-#: leasing/report/invoice/invoicing_review.py:41
 msgctxt "Invoicing review"
 msgid "Rent info not complete"
 msgstr "Arrenderingar för vilka utarrenderingsuppgifterna inte är i ordning"
 
-#: leasing/report/invoice/invoicing_review.py:43
 msgctxt "Invoicing review"
 msgid "No rents"
 msgstr "Arrenderingar för vilka utarrenderingsuppgifterna saknas"
 
-#: leasing/report/invoice/invoicing_review.py:44
 msgctxt "Invoicing review"
 msgid "No due date"
 msgstr "Arrenderingar utan förfallodatum"
 
-#: leasing/report/invoice/invoicing_review.py:46
 msgctxt "Invoicing review"
 msgid "One time rents with no invoice"
 msgstr "Arrenderingar som har fullständigt arrende men inga fakturor"
 
-#: leasing/report/invoice/invoicing_review.py:49
 msgctxt "Invoicing review"
 msgid "Incorrect management shares"
 msgstr "Arrenderingar som har en felaktig besittningsandel"
 
-#: leasing/report/invoice/invoicing_review.py:52
 msgctxt "Invoicing review"
 msgid "Incorrect rent shares"
 msgstr "Arrenderingar som har en felaktig faktureringsandel"
 
-#: leasing/report/invoice/invoicing_review.py:54
 msgctxt "Invoicing review"
 msgid "No tenant contact"
 msgstr "Arrenderingar utan en giltig arrendator"
 
-#: leasing/report/invoice/invoicing_review.py:55
 msgctxt "Invoicing review"
 msgid "No lease area"
 msgstr "Arrenderingar utan ett arrendeobjekt"
 
-#: leasing/report/invoice/invoicing_review.py:56
 msgctxt "Invoicing review"
 msgid "Index type missing"
 msgstr "Indexarten fattas"
 
-#: leasing/report/invoice/invoicing_review.py:58
 msgctxt "Invoicing review"
 msgid "Ongoing rent without rent shares"
 msgstr "Arrenderingar som har giltig hyra men inga faktureringsandel"
 
-#: leasing/report/invoice/invoicing_review.py:232
 msgctxt "Invoicing review"
 msgid "Gaps in billing periods"
 msgstr "Luckor i faktureringsperioder"
@@ -4289,20 +3073,16 @@ msgstr "Luckor i faktureringsperioder"
 msgid "Invoicing review"
 msgstr "Granskningsrapport för arrenderingens faktureringsuppgifter"
 
-#: leasing/report/invoice/invoicing_review.py:233
 msgid "Show leases that might have errors in their invoicing"
 msgstr "Arrenderingar för vilka det kan finnas fel i faktureringsuppgifterna"
 
-#: leasing/report/invoice/invoicing_review.py:244
 msgctxt "Invoicing review"
 msgid "Section"
 msgstr "Avsnitt"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:24
 msgid "Count of Invoices sent to Laske per day"
 msgstr "Antalet fakturor per dag som skickats till Laske-systemet"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:26
 msgid ""
 "Shows actual sent invoice counts until yesterday, and estimated counts for "
 "today and beyond"
@@ -4310,87 +3090,57 @@ msgstr ""
 "Visar antalet fakturor som har skickats fram tills i går. För innevarande "
 "dag och framöver är antalet en uppskattning."
 
-#: leasing/report/invoice/laske_invoice_count_report.py:39
 msgid "Send date"
 msgstr "Datum för sändning"
 
-#: leasing/report/invoice/laske_invoice_count_report.py:41
 msgid "Estimated invoice count"
 msgstr ""
 
-#: leasing/report/invoice/open_invoices_report.py:35
 msgid "Open invoices"
 msgstr "Öppna fakturor"
 
-#: leasing/report/invoice/open_invoices_report.py:36
 msgid "Show all the invoices that have their state as \"open\""
 msgstr "Visar alla fakturor för vilka status är \"öppen\""
 
-#: leasing/report/invoice/open_invoices_report.py:127
-#: leasing/report/lease/extra_city_rent.py:315
 msgid "Grand total"
 msgstr "Alla sammanlagt"
 
-#: leasing/report/invoice/rents_paid_by_contact.py:10
 msgid "Invoices paid by a contact"
 msgstr "Betalda fakturor per kundnummer"
 
-#: leasing/report/invoice/rents_paid_by_contact.py:11
 msgid "Show invoices paid by a contact"
 msgstr "Visar de fakturor en viss kund har betalat"
 
-#: leasing/report/invoice/rents_paid_by_contact.py:16
-#: leasing/report/invoice/rents_paid_by_contact.py:19
-#: leasing/report/lease/contact_rents.py:28
 msgid "Contact identifier"
 msgstr "Kundnummer"
 
-#: leasing/report/invoice/rents_paid_by_contact.py:30
 msgid "Number of rows"
 msgstr "Antalet rader"
 
-#: leasing/report/lease/contact_rents.py:20
 msgid "Contact rents"
 msgstr "Arrende som ska debiteras av kunden"
 
-#: leasing/report/lease/contact_rents.py:22
 msgid "Show all rent amounts from all of the leases the contact is a part of"
 msgstr "Arrendebelopp för alla arrenderingar där kunden är delaktig"
 
-#: leasing/report/lease/contact_rents.py:37
-#: leasing/report/lease/extra_city_rent.py:120
-#: leasing/report/lease/index_types.py:100
-#: leasing/report/lease/lease_statistic_report.py:237
-#: leasing/report/lease/lease_statistic_report2.py:262
-#: leasing/report/lease/rent_type.py:100
 msgid "Lease area identifier"
 msgstr "Objektets identifierare"
 
-#: leasing/report/lease/contact_rents.py:44
-#: leasing/report/lease/decision_conditions_report.py:98
-#: leasing/report/lease/extra_city_rent.py:122
-#: leasing/report/lease/lease_statistic_report.py:249
-#: leasing/report/lease/lease_statistic_report2.py:274
 msgid "Tenants"
 msgstr "Arrendatorer"
 
-#: leasing/report/lease/contact_rents.py:46
 msgid "Rent amount"
 msgstr "Arrendets belopp"
 
-#: leasing/report/lease/contact_rents.py:52
 msgid "Rent amount for contact"
 msgstr "Kundens hyra"
 
-#: leasing/report/lease/contact_rents.py:63
 msgid "Contact not found"
 msgstr "Klienten hittades inte"
 
-#: leasing/report/lease/decision_conditions_report.py:56
 msgid "Decision conditions"
 msgstr "Villkor för beslutet"
 
-#: leasing/report/lease/decision_conditions_report.py:58
 msgid ""
 "Show decision conditions that have their supervision date between the given "
 "dates. Excluding conditions that have a supervised date."
@@ -4398,89 +3148,61 @@ msgstr ""
 "Visar de villkor vars övervakningsdatum är mellan de givna datumen. Med "
 "undantag av de villkor som har ett övervakat datum."
 
-#: leasing/report/lease/decision_conditions_report.py:77
-#: leasing/report/report_base.py:293 leasing/report/report_base.py:342
 msgid "Yes"
 msgstr "Ja"
 
-#: leasing/report/lease/decision_conditions_report.py:77
-#: leasing/report/report_base.py:295 leasing/report/report_base.py:344
 msgid "No"
 msgstr "Nej"
 
-#: leasing/report/lease/decision_conditions_report.py:78
 msgid "Supervision date exists"
 msgstr "Övervakningsdatum har fastställts"
 
-#: leasing/report/lease/decision_conditions_report.py:84
-#: leasing/report/lease/reservations.py:177
 msgid "Lease area"
 msgstr "Arrendeområde"
 
-#: leasing/report/lease/extra_city_rent.py:100
 msgid "Extra city rent"
 msgstr "Arrenden i andra kommuner"
 
-#: leasing/report/lease/extra_city_rent.py:101
 msgid "The invoiced rent of the leases that are not in the main city"
 msgstr ""
 "Visar beloppen för de fakturerade arrenden som inte är belägna i Helsingfors"
 
-#: leasing/report/lease/extra_city_rent.py:114
-#: leasing/report/lease/index_types.py:97 leasing/report/lease/rent_type.py:95
 msgid "Tenant name"
 msgstr "Arrendatorns namn"
 
-#: leasing/report/lease/extra_city_rent.py:115
 msgid "Area identifier"
 msgstr "Fastighetsbeteckning"
 
-#: leasing/report/lease/extra_city_rent.py:126
-#: leasing/report/lease/lease_statistic_report.py:261
-#: leasing/report/lease/lease_statistic_report2.py:290
 msgid "Total area"
 msgstr "Total areal"
 
-#: leasing/report/lease/index_types.py:79
 msgid "Index type leases"
 msgstr "Identifieringsnumer för indexet"
 
-#: leasing/report/lease/index_types.py:80
 msgid "Show leases with a certain index type"
 msgstr "Visar arrenderingarna för ett visst indexkodnummer"
 
-#: leasing/report/lease/index_types.py:92
-#: leasing/report/lease/lease_statistic_report.py:212
-#: leasing/report/lease/lease_statistic_report2.py:237
-#: leasing/report/lease/rent_type.py:88
 msgid "Only active leases"
 msgstr "Endast giltiga arrenderingar"
 
-#: leasing/report/lease/invoicing_disabled_report.py:35
 msgid "Leases where invoicing is disabled"
 msgstr "Arrenderingar för vilka fakturering inte pågår"
 
-#: leasing/report/lease/invoicing_disabled_report.py:36
 msgid "Shows active leases where invoicing is not enabled"
 msgstr "Visar pågående arrenderingar för vilka fakturering inte pågår"
 
-#: leasing/report/lease/lease_count_report.py:14
 msgid "Lease count"
 msgstr "Antal arrenderingar"
 
-#: leasing/report/lease/lease_count_report.py:15
 msgid "Show the count of leases by type"
 msgstr "Visar antalet arrenderingar per arrenderingsart"
 
-#: leasing/report/lease/lease_count_report.py:30
 msgid "Count"
 msgstr "Antal"
 
-#: leasing/report/lease/lease_statistic_report.py:196
 msgid "Lease statistics report"
 msgstr "Statistikrapport för arrenderingar"
 
-#: leasing/report/lease/lease_statistic_report.py:198
 msgid ""
 "Shows information about all leases or if start date is provided the leases "
 "that have started on or after it"
@@ -4488,538 +3210,388 @@ msgstr ""
 "Visar en statistikrapport om alla arrenderingar eller om startdatum har "
 "angetts, de arrenderingar som har börjat vid startdatumet eller senare"
 
-#: leasing/report/lease/lease_statistic_report.py:227
-#: leasing/report/lease/lease_statistic_report2.py:252
 msgid "Lease state"
 msgstr "Status för arrenderingen"
 
-#: leasing/report/lease/lease_statistic_report.py:267
 msgid "Permitted building volume (Residential)"
 msgstr "Byggnadsrätt (boende)"
 
-#: leasing/report/lease/lease_statistic_report.py:273
 msgid "Rent amount (Residential)"
 msgstr "Årsarrende (boende)"
 
-#: leasing/report/lease/lease_statistic_report.py:280
 msgid "Permitted building volume (Business)"
 msgstr "Byggnadsrätt (företagslokal)"
 
-#: leasing/report/lease/lease_statistic_report.py:286
 msgid "Rent amount (Business)"
 msgstr "Årsarrende (företagslokal)"
 
-#: leasing/report/lease/lease_statistic_report.py:293
 msgid "Permitted building volume total"
 msgstr "Total byggnadsrätt"
 
-#: leasing/report/lease/lease_statistic_report.py:299
 msgid "Total rent amount for year"
 msgstr "Årsarrende sammanlagt"
 
-#: leasing/report/lease/lease_statistic_report.py:306
 msgid "Average amount per area (Residential)"
 msgstr "Genomsnittligt enhetspris (boende)"
 
-#: leasing/report/lease/lease_statistic_report.py:312
 msgid "Average amount per area (Business)"
 msgstr "Genomsnittligt enhetspris (företagslokal)"
 
-#: leasing/report/lease/lease_statistic_report.py:336
-#: leasing/report/lease/lease_statistic_report2.py:340
 msgid "Re-lease"
 msgstr "Återarrendering"
 
-#: leasing/report/lease/lease_statistic_report.py:342
-#: leasing/report/lease/lease_statistic_report2.py:346
 msgid "Option to purchase"
 msgstr "Köprätt"
 
-#: leasing/report/lease/lease_statistic_report.py:348
 msgid "Matti report"
 msgstr "MATTI-rapport"
 
-#: leasing/report/lease/lease_statistic_report2.py:223
 msgid "Lease statistics report II"
 msgstr "Statistikrapport för arrenderingar II"
 
-#: leasing/report/lease/lease_statistic_report2.py:224
 msgid "Shows statistics about leases and their basis of rents"
 msgstr "Förteckning över arrenderingar och grunderna för deras arrenden"
 
-#: leasing/report/lease/lease_statistic_report2.py:296
 msgid "Unit price (index)"
 msgstr "Enhetspris (ind)"
 
-#: leasing/report/lease/lease_statistic_report2.py:302
 msgid "Initial year rent"
 msgstr "Arrende för början av året"
 
-#: leasing/report/lease/lease_statistic_report2.py:309
 msgid "Subsidised rent"
 msgstr "Subventionerat arrende"
 
-#: leasing/report/lease/lease_statistic_report2.py:352
 msgid "Subsidy amount"
 msgstr "Subvention i euro/år"
 
-#: leasing/report/lease/lease_statistic_report2.py:359
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
 
-#: leasing/report/lease/lease_statistic_report2.py:366
 msgid "Subsidy amount per area"
 msgstr "Subventionerat eur/m^2"
 
-#: leasing/report/lease/lease_statistic_report2.py:373
 msgid "Temporary discount percent"
 msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
-#: leasing/report/lease/lease_statistic_report2.py:380
 msgid "Temporary discount amount"
 msgstr "Tillfällig rabatt i euro/år"
 
-#: leasing/report/lease/lease_statistic_report2.py:387
 msgid "Form of management (Subvention)"
 msgstr "Subvention för upplåtelseform"
 
-#: leasing/report/lease/rent_adjustments.py:41
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
 
-#: leasing/report/lease/rent_adjustments.py:42
 msgid "Shows all of the rent adjustments"
 msgstr "Rabatter/höjningar för alla giltiga arrenderingar"
 
-#: leasing/report/lease/rent_adjustments.py:81
 msgid "Management subventions"
 msgstr "Subventioner för upplåtelseform"
 
-#: leasing/report/lease/rent_adjustments.py:86
 msgid "Temporary subventions"
 msgstr "Tillfälliga rabatter"
 
-#: leasing/report/lease/rent_compare.py:14
 msgid "Rent compare"
 msgstr "Jämförelse av arrenden"
 
-#: leasing/report/lease/rent_compare.py:15
 msgid "Show difference in rent between two years"
 msgstr "Skillnad mellan arrendebeloppen för två olika år"
 
-#: leasing/report/lease/rent_compare.py:24
 msgid "First year"
 msgstr "Första året"
 
-#: leasing/report/lease/rent_compare.py:27
 msgid "Second year"
 msgstr "Andra året"
 
-#: leasing/report/lease/rent_compare.py:34 leasing/report/lease/rent_type.py:85
-#: leasing/report/lease/rent_type.py:121
 msgid "Rent type"
 msgstr "Arrendeart"
 
-#: leasing/report/lease/rent_compare.py:35
 msgid "First year rent"
 msgstr "Arrende för första året"
 
-#: leasing/report/lease/rent_compare.py:36
 msgid "Second year rent"
 msgstr "Arrende för andra året"
 
-#: leasing/report/lease/rent_forecast.py:38
 msgid "Rent forecast"
 msgstr "Arrendeprognos"
 
-#: leasing/report/lease/rent_forecast.py:39
 msgid "Calculate total yearly rent by lease type"
 msgstr "Visar en prognos för arrendebeloppen per arrendeart"
 
-#: leasing/report/lease/rent_forecast.py:48
 msgid "Start year"
 msgstr "Siffra för början av året"
 
-#: leasing/report/lease/rent_forecast.py:51
 msgid "End year"
 msgstr "Siffra för slutet av året"
 
-#: leasing/report/lease/rent_forecast.py:120
 msgid "Internal"
 msgstr "Interna"
 
-#: leasing/report/lease/rent_forecast.py:122
 msgid "External"
 msgstr "Externa"
 
-#: leasing/report/lease/rent_forecast.py:145
 #, python-brace-format
 msgid "Total {year} {internal_external_text}"
 msgstr "{internal_external_text} totalt år {year}"
 
-#: leasing/report/lease/rent_type.py:75
 msgid "Rent type leases"
 msgstr "Arrenderingar enligt arrendeart"
 
-#: leasing/report/lease/rent_type.py:76
 msgid "Show leases with a certain rent type"
 msgstr "Alla arrenderingar där arrendearten har valts"
 
-#: leasing/report/lease/reservations.py:151
 msgid "Reservations"
 msgstr "Anvisningar"
 
-#: leasing/report/lease/reservations.py:152
 msgid "Show reservations"
 msgstr "Visa anvisningar"
 
-#: leasing/report/lease/reservations.py:161
 msgid "Start date start"
 msgstr "Startdatum från"
 
-#: leasing/report/lease/reservations.py:163
 msgid "Start date end"
 msgstr "Startdatum senast"
 
-#: leasing/report/lease/reservations.py:164
 msgid "End date start"
 msgstr "Slutdatum från"
 
-#: leasing/report/lease/reservations.py:165
 msgid "End date end"
 msgstr "Slutdatum senast"
 
-#: leasing/report/lease/reservations.py:167
 msgid "Exclude ones that are related to a lease"
 msgstr "Avgränsar de anvisningar som har kopplats till arrenderingen"
 
-#: leasing/report/lease/reservations.py:172
 msgid "Exclude sold"
 msgstr "Avgränsar sålda objekt"
 
-#: leasing/report/lease/reservations.py:176
 msgid "Reservation id"
 msgstr "Anvisningskod"
 
-#: leasing/report/lease/reservations.py:181
 msgid "Reservee name"
 msgstr "Anvisningens mottagare"
 
-#: leasing/report/lease/reservations.py:203
 msgid "Main permitted build area (floor-m²)"
 msgstr "Huvudbostadsbyggsrätt (k-m²)"
 
-#: leasing/report/lease/reservations.py:208
 msgid "Other permitted build area (floor-m²)"
 msgstr "Annan bostadsbyggsrätt (k-m²)"
 
-#: leasing/report/lease/reservations.py:213 plotsearch/views/plot_search.py:528
 msgid "Financing method"
 msgstr "Finansieringsform"
 
-#: leasing/report/lease/reservations.py:218 plotsearch/views/plot_search.py:529
 msgid "Management method"
 msgstr "Upplåtelseform"
 
-#: leasing/report/report_base.py:366
 msgid "Message"
 msgstr "Meddelande"
 
-#: leasing/report/report_base.py:379
 msgid "Report \"{}\" successfully generated"
 msgstr "Rapport \"{}\" skapades"
 
-#: leasing/report/report_base.py:380
 msgid "Generated report attached"
 msgstr "Den skapade rapporten är bifogad."
 
-#: leasing/report/report_base.py:387
 msgid "Failed to generate report \"{}\""
 msgstr "Rapport \"{}\" kunde inte skapas"
 
-#: leasing/report/report_base.py:388
 msgid "Please try again"
 msgstr "Vänligen försök på nytt"
 
-#: leasing/report/report_base.py:405
 msgid "Results will be sent by email to {}"
 msgstr "Rapporten lämnas in per e-post till adressen {}"
 
-#: leasing/report/viewset.py:101
 msgid "Report type not found"
 msgstr "Rapporttypen hittades inte"
 
-#: leasing/report/viewset.py:107
 msgid "No permission to generate report"
 msgstr "Ingen rätt att skapa rapporten"
 
-#: leasing/serializers/contact.py:50
 msgid "Can only add contacts to service units the user is a member of"
 msgstr ""
 
-#: leasing/serializers/contact.py:54 leasing/serializers/lease.py:686
 msgid "Cannot change service unit"
 msgstr ""
 
-#: leasing/serializers/invoice.py:177
-#: leasing/serializers/land_use_agreement.py:730
 msgid "Cannot use an inactive receivable type"
 msgstr "Fordringsarten är inte tillgänglig"
 
-#: leasing/serializers/invoice.py:184
 msgid ""
 "Can only use receivable types from service units the user is a member of"
 msgstr ""
 
-#: leasing/serializers/invoice.py:293
 msgid "Can only add invoices to service units the user is a member of"
 msgstr ""
 
-#: leasing/serializers/invoice.py:297
-#: leasing/serializers/land_use_agreement.py:779
 msgid "Either recipient or tenant is required."
 msgstr "Mottagaren eller arrendatorn måste anges."
 
-#: leasing/serializers/invoice.py:303
-#: leasing/serializers/land_use_agreement.py:785
 msgid "Tenant not found in lease"
 msgstr "Ingen arrendator hittades för arrenderingen"
 
-#: leasing/serializers/invoice.py:335
 msgid "Billing contact not found for tenant"
 msgstr "Arrendatorns kontaktuppgift för fakturering hittades inte"
 
-#: leasing/serializers/invoice.py:557
 msgid ""
 "Both Billing period start and end are required if one of them is provided"
 msgstr ""
 "Både start- och slutdatum för faktureringsperioden är obligatoriska ifall "
 "någondera är vald"
 
-#: leasing/serializers/invoice.py:566
 msgid "Billing period end must be the same or after the start"
 msgstr "Slutdatum för faktureringsperioden ska vara startdatum eller senare"
 
-#: leasing/serializers/lease.py:387
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Får inte vara samma arrendering"
 
-#: leasing/serializers/lease.py:608
 msgid "Must be from the same service unit as the parent"
 msgstr ""
 
-#: leasing/serializers/lease.py:715
 msgid "Can only add leases to service units the user is a member of"
 msgstr ""
 
-#: leasing/serializers/rent.py:96 leasing/serializers/rent.py:106
 msgid "Fixed initial rent end date must match rent cycle end date"
 msgstr ""
 "Slutet på arrendet för början av året ska vara samma som slutet av "
 "arrendeperioden"
 
-#: leasing/serializers/rent.py:172 leasing/serializers/rent.py:182
 msgid "Index is mandatory if the rent type is Index"
 msgstr "Indexet ska väljas då arrendearten är Index"
 
-#: leasing/serializers/rent.py:351
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Rabatt-/höjningstypen \"€ totalt\" kan inte ha ett slutdatum"
 
-#: leasing/serializers/rent.py:537
 msgid "All seasonal values are required if one is set"
 msgstr "Alla säsongsfaktureringsvärden är obligatoriska om en av dem är vald"
 
-#: leasing/serializers/rent.py:542
 msgid "Due dates type must be custom if seasonal dates are set"
 msgstr "Förfallodatumen ska definieras separat om säsongsfakturering används"
 
-#: leasing/serializers/rent.py:682
 msgid "Basis of rent item id {} not found"
 msgstr "Arrenderingsprincipen med identifieraren {} hittas inte"
 
-#: leasing/serializers/rent.py:688
 msgid "Can't edit locked basis of rent item"
 msgstr "Låsta arrenderingsprinciper kan inte redigeras"
 
-#: leasing/validators.py:6
 msgid "Enter a valid business id."
 msgstr "Ange ett giltigt FO-nummer."
 
-#: leasing/views.py:97 leasing/views.py:148
 msgid "Error in upstream service"
 msgstr "Fel i ett externt system"
 
-#: leasing/views.py:116
 msgid "Cloudia Proxy"
 msgstr "Cloudia-proxyserver"
 
-#: leasing/views.py:134
 msgid "file_id parameter is not valid"
 msgstr "fiel_id-parametern är felaktig"
 
-#: leasing/views.py:167
 msgid "Virre Proxy"
 msgstr "Virre-proxyserver"
 
-#: leasing/views.py:198
 msgid "service parameter is not valid"
 msgstr "service-parametern är felaktig"
 
-#: leasing/views.py:223
 msgid "business id is invalid"
 msgstr "FO-numret är felaktigt"
 
-#: leasing/views.py:230
 msgid "File not available"
 msgstr "Filen hittas inte"
 
-#: leasing/viewsets/contact_additional_views.py:18
 msgid "Check if contact already exist"
 msgstr "Granska huruvida kontakten redan finns"
 
-#: leasing/viewsets/contact_additional_views.py:22
 msgid ""
 "Check if contact already exist by business id or national identification "
 "number"
 msgstr "Kontakten finns redan med samma FO-nummer eller personbeteckning"
 
-#: leasing/viewsets/contact_additional_views.py:28
 msgid "Query parameter \"identifier\" is mandatory"
 msgstr "\"identifier\"-parametern är obligatorisk"
 
-#: leasing/viewsets/decision.py:49
 msgid "Copy decision to leases"
 msgstr "Kopiera besluten i arrenderingen"
 
-#: leasing/viewsets/decision.py:52
 msgid "Duplicates chosen decision to chosen leases"
 msgstr "Kopiera det valda beslutet till de valda arrenderingarna"
 
-#: leasing/viewsets/email.py:20 leasing/viewsets/email.py:23
 msgid "Send email"
 msgstr "Skicka e-post"
 
-#: leasing/viewsets/email.py:46
 msgid "MVJ lease {} {}"
 msgstr "MVJ arrendering {} {}"
 
-#: leasing/viewsets/invoice.py:113
 msgid "Can't create invoices if invoicing is not enabled."
 msgstr "Fakturor går inte att skapa om faktureringen inte har startats"
 
-#: leasing/viewsets/invoice.py:125 leasing/viewsets/land_use_agreement.py:250
 msgid "Can't edit invoices that have been sent to SAP"
 msgstr "Fakturor som har skickats till SAP går inte att redigera"
 
-#: leasing/viewsets/invoice.py:128 leasing/viewsets/land_use_agreement.py:253
 msgid "Can't edit fully refunded invoices"
 msgstr "En helt gottskriven faktura går inte att redigera"
 
-#: leasing/viewsets/invoice.py:136 leasing/viewsets/land_use_agreement.py:261
 msgid "Can't delete numbered invoices"
 msgstr "Numrerade fakturor går inte att ta bort"
 
-#: leasing/viewsets/invoice.py:139 leasing/viewsets/land_use_agreement.py:264
 msgid "Can't delete invoices that have been sent to SAP"
 msgstr "Fakturor som har skickats till SAP går inte att redigera"
 
-#: leasing/viewsets/invoice_additional_views.py:32
-#: leasing/viewsets/invoice_additional_views.py:160
-#: leasing/viewsets/land_use_agreement.py:113
-#: leasing/viewsets/land_use_agreement.py:343
 msgid "Invalid amount"
 msgstr "Odugligt antal"
 
-#: leasing/viewsets/invoice_additional_views.py:35
-#: leasing/viewsets/invoice_additional_views.py:163
-#: leasing/viewsets/land_use_agreement.py:116
-#: leasing/viewsets/land_use_agreement.py:346
 msgid "Amount must be bigger than zero"
 msgstr "Antalet ska vara större än noll"
 
-#: leasing/viewsets/invoice_additional_views.py:92
 msgid "Calculate penalty interest"
 msgstr "Räkna förseningsräntan"
 
-#: leasing/viewsets/invoice_additional_views.py:95
 msgid "Calculate penalty interest for the outstanding amount until today"
 msgstr "Räkna förseningsräntan på det uteblivna beloppet fram till i dag"
 
-#: leasing/viewsets/invoice_additional_views.py:112
-#: leasing/viewsets/land_use_agreement.py:293
 msgid "Credit invoice"
 msgstr "Gottskriv fakturan"
 
-#: leasing/viewsets/invoice_additional_views.py:115
-#: leasing/viewsets/land_use_agreement.py:296
 msgid "Credit invoice or part of it"
 msgstr "Gottskriv fakturan eller en del av den"
 
-#: leasing/viewsets/invoice_additional_views.py:122
-#: leasing/viewsets/land_use_agreement.py:303
 msgid "Cannot credit invoices that have not been sent to SAP"
 msgstr "Fakturor som har skickats till SAP går inte att gottskriva"
 
-#: leasing/viewsets/invoice_additional_views.py:146
-#: leasing/viewsets/invoice_additional_views.py:184
-#: leasing/viewsets/land_use_agreement.py:327
-#: leasing/viewsets/land_use_agreement.py:367
 msgid "Credit invoice row"
 msgstr "Gottskriv fakturaraden"
 
-#: leasing/viewsets/invoice_additional_views.py:149
-#: leasing/viewsets/invoice_additional_views.py:187
-#: leasing/viewsets/land_use_agreement.py:330
-#: leasing/viewsets/land_use_agreement.py:370
 msgid "Credit invoice row or part of it"
 msgstr "Gottskriv fakturaraden eller en del av den"
 
-#: leasing/viewsets/invoice_additional_views.py:221
-#: leasing/viewsets/land_use_agreement.py:410
 msgid "Export invoice to Laske"
 msgstr "Exportera fakturan till Laske"
 
-#: leasing/viewsets/invoice_additional_views.py:224
-#: leasing/viewsets/land_use_agreement.py:413
 msgid "Export chosen invoice to Laske SAP system"
 msgstr "Exportera den valda fakturan till Laske SAP-systemet"
 
-#: leasing/viewsets/invoice_additional_views.py:229
-#: leasing/viewsets/land_use_agreement.py:420
 msgid "This invoice has already been sent to SAP"
 msgstr "Fakturan har redan skickats till SAP"
 
-#: leasing/viewsets/invoice_additional_views.py:233
-#: leasing/viewsets/land_use_agreement.py:424
 msgid "Can't send invoices that already have a number to SAP"
 msgstr "Numrerade fakturor går inte att skicka till SAP"
 
-#: leasing/viewsets/lease.py:576
 msgid "No permission. Can only delete own empty leases."
 msgstr "Ingen behörighet. Du kan endast ta bort egna tomma arrenderingar."
 
-#: leasing/viewsets/lease_additional_views.py:34
 msgid "Create charge"
 msgstr "Skapa faktura"
 
-#: leasing/viewsets/lease_additional_views.py:37
 msgid "Create charge shared to tenants by their shares"
 msgstr "Skapa faktura som delas mellan arrendatorerna enligt andelar"
 
-#: leasing/viewsets/lease_additional_views.py:53
 #, python-brace-format
 msgid "the penalty interest rate is {interest_percent} %"
 msgstr "förseningsräntans storlek är {interest_percent} %"
 
-#: leasing/viewsets/lease_additional_views.py:74
 #, python-brace-format
 msgid ""
 "The penalty interest rate starting on {start_date} is {interest_percent} %"
 msgstr ""
 "Förseningsräntans storlek från och med {start_date} är {interest_percent} %"
 
-#: leasing/viewsets/lease_additional_views.py:83
 #, python-brace-format
 msgid ""
 "The penalty interest rate between {start_date} and {end_date} is "
@@ -5028,17 +3600,14 @@ msgstr ""
 "Förseningsräntans storlek under perioden {start_date} - {end_date} är "
 "{interest_percent} %"
 
-#: leasing/viewsets/lease_additional_views.py:102
 msgid "Create collection letter document"
 msgstr "Skapa ett inkassobrev"
 
-#: leasing/viewsets/lease_additional_views.py:125
 msgid "No billing info or billing info does not have a contact address"
 msgstr ""
 "Inga faktureringsuppgifter eller det finns ingen adress i "
 "faktureringsuppgifterna"
 
-#: leasing/viewsets/lease_additional_views.py:162
 #, python-brace-format
 msgid ""
 "Penalty interest for the invoice with the due date of {due_date} is "
@@ -5047,396 +3616,308 @@ msgstr ""
 "Räntan på en faktura vars förfallodatum har varit {due_date} är "
 "{interest_amount} euro"
 
-#: leasing/viewsets/lease_additional_views.py:175
 #, python-brace-format
 msgid "{due_date}, {debt_amount} euro (between {start_date} and {end_date})"
 msgstr ""
 "{due_date}, {debt_amount} euro (från perioden {start_date} - {end_date})"
 
-#: leasing/viewsets/lease_additional_views.py:219
 msgid "Error creating the document from the template"
 msgstr "Fel då dokumentet skapades med dokumentmallen"
 
-#: leasing/viewsets/lease_additional_views.py:253
 msgid "Rent for period"
 msgstr "Arrende för perioden"
 
-#: leasing/viewsets/lease_additional_views.py:256
 msgid "View rent amounts for a given period"
 msgstr "Visa arrendet för det definierade tidsintervallet"
 
-#: leasing/viewsets/lease_additional_views.py:271
 msgid "Start date or end date is invalid"
 msgstr "Start- eller slutdatumet är felaktigt"
 
-#: leasing/viewsets/lease_additional_views.py:274
 msgid "Start date cannot be after end date"
 msgstr "Startdatumet kan inte vara efter slutdatumet"
 
-#: leasing/viewsets/lease_additional_views.py:308
 msgid "List billing periods for year"
 msgstr "Visa årets faktureringsperioder"
 
-#: leasing/viewsets/lease_additional_views.py:317
-#: leasing/viewsets/lease_additional_views.py:351
 msgid "Year parameter is not valid"
 msgstr "Årsparametern är felaktig"
 
-#: leasing/viewsets/lease_additional_views.py:342
 msgid "Preview invoices for year"
 msgstr "Förhandsgranska årets fakturor"
 
-#: leasing/viewsets/lease_additional_views.py:389
 msgid "Copy areas to contract"
 msgstr "Kopiera områdena i avtalet"
 
-#: leasing/viewsets/lease_additional_views.py:392
 msgid "Duplicates current areas and marks them \"in contract\""
 msgstr "Kopiera de nuvarande områdena och anteckna dem \"i avtalet\""
 
-#: leasing/viewsets/lease_additional_views.py:441
 msgid "Set invoicing state"
 msgstr "Starta eller avbryt fakturering"
 
-#: leasing/viewsets/lease_additional_views.py:444
 msgid "Sets invoicing state for lease to true or false"
 msgstr "Startar eller avbryter faktureringen"
 
-#: leasing/viewsets/lease_additional_views.py:460
 msgid "Cannot enable invoicing if rent info is not complete"
 msgstr "Faktureringen kan inte startas om arrendeuppgifterna är ofullständiga"
 
-#: leasing/viewsets/lease_additional_views.py:473
 msgid "Set rent info completion state"
 msgstr "Fastställ uppgiften arrendeuppgifterna i ordning"
 
-#: leasing/viewsets/ui_data.py:46
 msgid "Can't create global ui data"
 msgstr "Ingen behörighet att lägga till ui data"
 
-#: leasing/viewsets/ui_data.py:49
 msgid "Can't create other users ui data"
 msgstr "Ingen behörighet att lägga till andra användares ui data"
 
-#: leasing/viewsets/utils.py:109
 msgid "Data integrity error"
 msgstr "Dataintegritetsfel"
 
-#: mvj/settings.py:142
 msgid "Finnish"
 msgstr "Finska"
 
-#: mvj/settings.py:143
 msgid "Swedish"
 msgstr "Svenska"
 
-#: mvj/settings.py:144
 msgid "English"
 msgstr "Engelska"
 
-#: mvj/settings.py:231
 msgid "Sender email address. Example: john@example.com"
 msgstr "Avsändarens e-postadress. Exempel: matti@example.com"
 
-#: mvj/settings.py:235
 msgid ""
 "Recipients of announce emails. Example: john@example.com,jane@example.com"
 msgstr ""
 "Anmälningsmeddelandenas mottagare. Exempel: matti@example.com,maija@example."
 "com"
 
-#: plotsearch/enums.py:18
 msgctxt "Area search lessor"
 msgid "Area use and control"
 msgstr "Områdesanvändning och -övervakning"
 
-#: plotsearch/enums.py:19
 msgctxt "Area search lessor"
 msgid "Culture and leisure"
 msgstr "Kultur och fritid"
 
-#: plotsearch/enums.py:20
 msgctxt "Area search lessor"
 msgid "Development of land assets"
 msgstr "Utveckling av jordegendom och tomter"
 
-#: plotsearch/enums.py:21
 msgctxt "Area search lessor"
 msgid "Sports venue services"
 msgstr "Motionsplatstjänster "
 
-#: plotsearch/enums.py:22
 msgctxt "Area search lessor"
 msgid "Outdoor services"
 msgstr "Friluftstjänster "
 
-#: plotsearch/enums.py:23
 msgctxt "Area search lessor"
 msgid "Youth services"
 msgstr "Ungdomstjänster"
 
-#: plotsearch/enums.py:35
 msgctxt "Search class"
 msgid "Plot search"
 msgstr "Tomtansökan eller -tävling"
 
-#: plotsearch/enums.py:36
 msgctxt "Search class"
 msgid "Other"
 msgstr "Annan tävling eller ansökning"
 
-#: plotsearch/enums.py:51
 msgctxt "Search stage"
 msgid "In preparation"
 msgstr "Under beredning"
 
-#: plotsearch/enums.py:52
 msgctxt "Search stage"
 msgid "In action"
 msgstr "Pågående"
 
-#: plotsearch/enums.py:53
 msgctxt "Search stage"
 msgid "Processing"
 msgstr "Behandlas"
 
-#: plotsearch/enums.py:54
 msgctxt "Search stage"
 msgid "Decision making"
 msgstr "Under beslutsfattande"
 
-#: plotsearch/enums.py:55
 msgctxt "Search stage"
 msgid "Settled"
 msgstr "Beslutat "
 
-#: plotsearch/enums.py:69
 msgctxt "Information state"
 msgid "Checked"
 msgstr "Granskat"
 
-#: plotsearch/enums.py:70
 msgctxt "Information state"
 msgid "Not checked"
 msgstr "Inte granskat"
 
-#: plotsearch/enums.py:71
 msgctxt "Information state"
 msgid "Not needed"
 msgstr "Behövs inte"
 
-#: plotsearch/enums.py:72
 msgctxt "Information state"
 msgid "Requires further action"
 msgstr "Behöver ytterligare information"
 
-#: plotsearch/enums.py:90
 msgctxt "Information check name"
 msgid "Trade register extract"
 msgstr "Handelsregisterutdrag"
 
-#: plotsearch/enums.py:93
 msgctxt "Information check name"
 msgid "Creditworthiness certificate"
 msgstr "Kreditvärdighetsintyg"
 
-#: plotsearch/enums.py:97
 msgctxt "Information check name"
 msgid "Statement of payment of earning-related pension contributions"
 msgstr "Utredning om betalning av arbetspensionsavgifter"
 
-#: plotsearch/enums.py:100
 msgctxt "Information check name"
 msgid "Certificate of entry in the VAT register"
 msgstr "Intyg över införande i mervärdesskatteregistret"
 
-#: plotsearch/enums.py:104
 msgctxt "Information check name"
 msgid "Certificate of entry in the advance payment register"
 msgstr "Intyg över införande i förskottsuppbördsregistret"
 
-#: plotsearch/enums.py:106
 msgctxt "Information check name"
 msgid "Tax debt certificate"
 msgstr "Intyg över skatteskuld"
 
-#: plotsearch/enums.py:109
 msgctxt "Information check name"
 msgid "Certificate of entry in the register of employers"
 msgstr "Intyg över införande i arbetsgivarregistret"
 
-#: plotsearch/enums.py:124
 msgctxt "Decline reason"
 msgid "Application expired"
 msgstr "Ansökan har förfallit"
 
-#: plotsearch/enums.py:125
 msgctxt "Decline reason"
 msgid "Area not controlled by city"
 msgstr "Området förvaltas inte av staden"
 
-#: plotsearch/enums.py:127
 msgctxt "Decline reason"
 msgid "Area not available for lease"
 msgstr "Området går inte att arrendera"
 
-#: plotsearch/enums.py:129
 msgctxt "Decline reason"
 msgid "Other reason"
 msgstr "Annan orsak"
 
-#: plotsearch/enums.py:144
 msgctxt "Area search state"
 msgid "Received"
 msgstr "Fordringsart"
 
-#: plotsearch/enums.py:145
 msgctxt "Area search state"
 msgid "In action"
 msgstr "Inspektion"
 
-#: plotsearch/enums.py:146
 msgctxt "Area search state"
 msgid "Settled"
 msgstr "Avgjort"
 
-#: plotsearch/enums.py:147
 msgctxt "Area search state"
 msgid "Revoked"
 msgstr "Upphävt"
 
-#: plotsearch/enums.py:148
 msgctxt "Area search state"
 msgid "Declined"
 msgstr "Avslaget"
 
-#: plotsearch/models/plot_search.py:45
 msgctxt "Model name"
 msgid "Plot search type"
 msgstr "Typ av tomtansökan"
 
-#: plotsearch/models/plot_search.py:46
 msgctxt "Model name"
 msgid "Plot search types"
 msgstr "Typer av tomtansökan"
 
-#: plotsearch/models/plot_search.py:66
 msgctxt "Model name"
 msgid "Plot search subtype"
 msgstr "Undertyper av tomtansökan"
 
-#: plotsearch/models/plot_search.py:67
 msgctxt "Model name"
 msgid "Plot search subtypes"
 msgstr "Undertyper av tomtansökan"
 
-#: plotsearch/models/plot_search.py:90
 msgctxt "Model name"
 msgid "Plot search stage"
 msgstr "Tomtansökningens skede"
 
-#: plotsearch/models/plot_search.py:91
 msgctxt "Model name"
 msgid "Plot search stages"
 msgstr "Tomtansökningens skeden"
 
-#: plotsearch/models/plot_search.py:114
 msgid "Subtype"
 msgstr "Undertyp"
 
-#: plotsearch/models/plot_search.py:122 plotsearch/models/plot_search.py:510
 msgid "Begin at"
 msgstr "Börjar"
 
-#: plotsearch/models/plot_search.py:125 plotsearch/models/plot_search.py:511
 msgid "End at"
 msgstr "Slutar"
 
-#: plotsearch/models/plot_search.py:133
 msgid "Stage"
 msgstr "Skede"
 
-#: plotsearch/models/plot_search.py:156
 msgctxt "Model name"
 msgid "Plot search"
 msgstr "Tomtansökan"
 
-#: plotsearch/models/plot_search.py:157
 msgctxt "Model name"
 msgid "Plot searches"
 msgstr "Tomtansökningar"
 
-#: plotsearch/models/plot_search.py:198
 msgid "Target type"
 msgstr "Objekt typ"
 
-#: plotsearch/models/plot_search.py:449
 msgctxt "Model name"
 msgid "Area search intended use"
 msgstr "Användningsändamål för områdesansökan"
 
-#: plotsearch/models/plot_search.py:450
 msgctxt "Model name"
 msgid "Area search intended uses"
 msgstr "Användningsändamål för områdesansökan"
 
-#: plotsearch/models/plot_search.py:514
 msgid "Time received"
 msgstr "Arkiveringstid"
 
-#: plotsearch/models/plot_search.py:523
 msgid "Area search state"
 msgstr "Status för arrenderingen"
 
-#: plotsearch/serializers/plot_search.py:285
-#: plotsearch/serializers/plot_search.py:287
 msgid "The target has been removed from the system!"
 msgstr "Objektet har avlägsnats från systemet!"
 
-#: plotsearch/serializers/plot_search.py:289
 msgid "The target information has changed!"
 msgstr "Objektets uppgifter har ändrats!"
 
-#: plotsearch/templates/area_search/detail.html:10
 msgid "Area search application"
 msgstr "Applikation för områdesansökning"
 
-#: plotsearch/templates/area_search/detail.html:58
-#: plotsearch/templates/area_search/email_detail.txt:4
 msgid "Area search information"
 msgstr "Uppgifter för områdesansökan"
 
-#: plotsearch/templates/area_search/detail.html:62
 msgid "City of Helsinki"
 msgstr "Helsingfors stad"
 
-#: plotsearch/templates/area_search/detail.html:117
 msgid "Information check"
 msgstr "Kontroll av uppgifter"
 
-#: plotsearch/templates/area_search/detail.html:145
 msgid "Time stamp"
 msgstr "Tidsstämpel"
 
-#: plotsearch/templates/area_search/email_detail.txt:1
 msgid ""
 "This is a copy of your area search application sent to the City of Helsinki."
 msgstr ""
 "Detta är en kopia av ansökan om områdensansökan som har skickats till "
 "Helsingfors stad."
 
-#: plotsearch/templates/area_search/email_detail.txt:2
-#: plotsearch/templates/target_status/email_detail.txt:4
 msgid ""
 "You can find a detailed copy of your application as an attachment in this "
 "email."
 msgstr "Kopian av ansökan har fogats till detta e-postmeddelande."
 
-#: plotsearch/templates/target_status/detail.html:22
 msgid "Plot search information"
 msgstr "Uppgifter om tomtansökan"
 
-#: plotsearch/templates/target_status/email_detail.txt:1
 msgid ""
 "This is a confirmation that the following plot application sent to the City "
 "of Helsinki were received."
@@ -5444,25 +3925,20 @@ msgstr ""
 "Tomtansökningar som har skickats till Helsingfors stad har mottagits "
 "bekräftat med följande koder."
 
-#: plotsearch/templates/target_status/email_detail.txt:2
 msgctxt "list of identifiers in email"
 msgid "Application identifiers"
 msgstr "Ansökningskoder"
 
-#: plotsearch/templatetags/form_visible.py:37
 msgid "yes"
 msgstr "ja"
 
-#: plotsearch/templatetags/form_visible.py:39
 msgid "no"
 msgstr "nej"
 
-#: plotsearch/utils.py:71
 msgid "You have received a link for a direct reservation plot search"
 msgstr "Du har mottagit en länk till ansökningen om direktanvisning"
 
 # python-brace-format
-#: plotsearch/utils.py:87
 #, python-brace-format
 msgid ""
 "Hi {receiver}! Here is the link for the direct reservation plot search: "
@@ -5474,46 +3950,35 @@ msgstr ""
 "\n"
 "{covering_note}"
 
-#: plotsearch/views/plot_search.py:499
 msgid "The deadline for applications"
 msgstr "Ansökan upphör"
 
-#: plotsearch/views/plot_search.py:502
 msgid "Plot"
 msgstr "Tomt"
 
-#: plotsearch/views/plot_search.py:508
 msgid "Detailed plan state"
 msgstr "Behandlingsfas av detaljplan"
 
-#: plotsearch/views/plot_search.py:511
 msgid "Permitted build floor area (floor-m²)"
 msgstr "Byggrätt (k-m²)"
 
-#: plotsearch/views/plot_search.py:515
 msgid "Permitted build residential floor area (floor-m²)"
 msgstr "Bostadsbyggsrätt (k-m²)"
 
-#: plotsearch/views/plot_search.py:519
 msgid "Permitted build commercial floor area (floor-m²)"
 msgstr "Affärsbyggnadsrätt (k-m²)"
 
-#: plotsearch/views/plot_search.py:522
 msgid "Area (m²)"
 msgstr "Area (m²)"
 
-#: plotsearch/views/plot_search.py:524
 msgid "First suitable construction year"
 msgstr "Byggbar"
 
-#: plotsearch/views/plot_search.py:527
 msgid "HITAS"
 msgstr "HITAS"
 
-#: users/models.py:34
 msgid "Token exists"
 msgstr "Token existerar"
 
-#: users/views.py:15
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
