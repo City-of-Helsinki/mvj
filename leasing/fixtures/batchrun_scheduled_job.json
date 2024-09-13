@@ -268,7 +268,7 @@
       "hours": "*",
       "minutes": "00"
     }
-  }
+  },
   {
     "model": "batchrun.scheduledjob",
     "pk": 20,
