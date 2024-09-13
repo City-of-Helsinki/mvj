@@ -1,0 +1,12 @@
+[
+  {
+    "model": "batchrun.jobhistoryretentionpolicy",
+    "pk": 1,
+    "fields": {
+      "identifier": "default",
+      "compact_logs_delay": "15 00:00:00",
+      "delete_logs_delay": "1461 00:00:00",
+      "delete_run_delay": "3652 00:00:00"
+    }
+  }
+]
