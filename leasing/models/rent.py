@@ -1548,12 +1548,6 @@ class IndexNumberYearly(TimeStampedModel):
     Currently only used with the newer price indexes related to Periodic Rent
     Adjustment (Tasotarkistus).
 
-    This is expected to hold the final numbers that can be used to calculate the
-    periodic rent adjustment. Numbers can have a comment which might indicate
-    that the number is a preliminary number ("ennakkotieto") instead of a final
-    one, but there is no guarantee that the logic will remain the same in the
-    future.
-
     The yearly index number is expected to be the average of all numbers from
     the same year from this same index that use a smaller recording inverval.
     For example, the yearly index number is the average of the year's quarterly
