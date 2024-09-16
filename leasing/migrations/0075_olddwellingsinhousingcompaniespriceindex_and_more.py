@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0073_intendeduse_service_unit"),
+        ("leasing", "0074_delete_duplicate_intended_use_permissions"),
     ]
 
     operations = [
