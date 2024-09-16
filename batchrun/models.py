@@ -4,11 +4,7 @@ import sys
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
-
-try:
-    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore
-except ImportError:
-    from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.core.exceptions import ValidationError
 from django.db import connections, models, transaction

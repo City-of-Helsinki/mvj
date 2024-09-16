@@ -1,13 +1,9 @@
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from typing import Iterable, Set, Union
+from zoneinfo import ZoneInfo
 
 from dateutil import tz as dateutil_tz
-
-try:
-    from zoneinfo import ZoneInfo  # type: ignore
-except ImportError:  # zoneinfo is introduced in python 3.9
-    from backports.zoneinfo import ZoneInfo
 
 from ._times import AwareDateTime, TZAwareDateTime, check_is_aware
 from .intset import IntegerSetSpecifier
