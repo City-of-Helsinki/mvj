@@ -271,6 +271,24 @@
   },
   {
     "model": "batchrun.scheduledjob",
+    "pk": 16,
+    "fields": {
+      "created_at": "2024-09-16T08:00:00.000Z", 
+      "modified_at": "2024-09-16T08:00:00.000Z",
+      "job": 14,
+      "comment": "Tasotarkistuksen indeksien haku",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "22",
+      "minutes": "00"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
     "pk": 20,
     "fields": {
       "created_at": "2024-06-03T08:00:00Z",
