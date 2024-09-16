@@ -1,5 +1,4 @@
 beautifulsoup4~=4.11.1
-blessed~=1.20.0
 deepmerge~=1.1.1
 Django~=4.2.14
 django-anymail~=10.3
