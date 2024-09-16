@@ -1,200 +1,344 @@
 [
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 1,
-        "fields": {
-            "created_at": "2019-05-21T07:07:58.074Z",
-            "modified_at": "2019-05-21T12:38:21.432Z",
-            "job": 1,
-            "comment": "Kuukausittainen indeksien tuonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "16",
-            "weekdays": "*",
-            "hours": "8",
-            "minutes": "30"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 2,
-        "fields": {
-            "created_at": "2019-05-21T09:33:44.414Z",
-            "modified_at": "2019-05-21T12:38:13.958Z",
-            "job": 1,
-            "comment": "Tammikuun indeksin tuonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "2",
-            "days_of_month": "20",
-            "weekdays": "*",
-            "hours": "8",
-            "minutes": "30"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 3,
-        "fields": {
-            "created_at": "2019-05-21T12:11:14.570Z",
-            "modified_at": "2019-05-21T12:39:38.980Z",
-            "job": 2,
-            "comment": "Loppuvuoden korkojen tuonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "6",
-            "days_of_month": "30",
-            "weekdays": "*",
-            "hours": "12",
-            "minutes": "0"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 4,
-        "fields": {
-            "created_at": "2019-05-21T12:11:34.366Z",
-            "modified_at": "2019-05-21T12:39:52.271Z",
-            "job": 2,
-            "comment": "Alkuvuoden korkojen tuonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "12",
-            "days_of_month": "31",
-            "weekdays": "*",
-            "hours": "12",
-            "minutes": "0"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 5,
-        "fields": {
-            "created_at": "2019-05-21T12:37:49.778Z",
-            "modified_at": "2019-05-21T12:38:50.680Z",
-            "job": 5,
-            "comment": "Tasauslaskujen luonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "1",
-            "days_of_month": "17",
-            "weekdays": "*",
-            "hours": "9",
-            "minutes": "0"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 6,
-        "fields": {
-            "created_at": "2019-05-21T12:40:50.535Z",
-            "modified_at": "2019-05-21T12:40:50.535Z",
-            "job": 4,
-            "comment": "Vuokraoikeuden siirtojen tuonti",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "0",
-            "hours": "3",
-            "minutes": "0"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 7,
-        "fields": {
-            "created_at": "2019-05-21T12:41:20.629Z",
-            "modified_at": "2024-06-03T8:00:00.000Z",
-            "job": 6,
-            "comment": "Laskujen lähetys Laske-järjestelmään 'Maaomaisuuden kehittäminen ja tontit'",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "*",
-            "hours": "4",
-            "minutes": "0"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 20,
-        "fields": {
-            "created_at": "2024-06-03T8:00:00.000Z",
-            "modified_at": "2024-06-03T8:00:00.000Z",
-            "job": 20,
-            "comment": "Laskujen lähetys Laske-järjestelmään 'Alueiden käyttö ja -valvonta'",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "*",
-            "hours": "4",
-            "minutes": "10"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 21,
-        "fields": {
-            "created_at": "2024-06-03T8:00:00.000Z",
-            "modified_at": "2024-06-03T8:00:00.000Z",
-            "job": 21,
-            "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Liikuntapaikkapalvelut'",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "*",
-            "hours": "4",
-            "minutes": "20"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 22,
-        "fields": {
-            "created_at": "2024-06-03T8:00:00.000Z",
-            "modified_at": "2024-06-03T8:00:00.000Z",
-            "job": 22,
-            "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Ulkoilupalvelut'",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "*",
-            "hours": "4",
-            "minutes": "30"
-        }
-    },
-    {
-        "model": "batchrun.scheduledjob",
-        "pk": 23,
-        "fields": {
-            "created_at": "2024-06-03T8:00:00.000Z",
-            "modified_at": "2024-06-03T8:00:00.000Z",
-            "job": 23,
-            "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Nuorisopalvelut'",
-            "enabled": false,
-            "timezone": 1,
-            "years": "*",
-            "months": "*",
-            "days_of_month": "*",
-            "weekdays": "*",
-            "hours": "4",
-            "minutes": "40"
-        }
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-05-21T07:07:58.074Z",
+      "modified_at": "2024-08-14T08:19:52.647Z",
+      "job": 1,
+      "comment": "Kuukausittainen indeksien tuonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "16",
+      "weekdays": "*",
+      "hours": "8",
+      "minutes": "30"
     }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 2,
+    "fields": {
+      "created_at": "2019-05-21T09:33:44.414Z",
+      "modified_at": "2024-08-14T08:20:04.728Z",
+      "job": 1,
+      "comment": "Tammikuun indeksin tuonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "2",
+      "days_of_month": "20",
+      "weekdays": "*",
+      "hours": "8",
+      "minutes": "30"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 3,
+    "fields": {
+      "created_at": "2019-05-21T12:11:14.570Z",
+      "modified_at": "2024-08-14T08:19:37.734Z",
+      "job": 2,
+      "comment": "Loppuvuoden korkojen tuonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "6",
+      "days_of_month": "30",
+      "weekdays": "*",
+      "hours": "12",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 4,
+    "fields": {
+      "created_at": "2019-05-21T12:11:34.366Z",
+      "modified_at": "2024-08-14T08:19:28.181Z",
+      "job": 2,
+      "comment": "Alkuvuoden korkojen tuonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "12",
+      "days_of_month": "31",
+      "weekdays": "*",
+      "hours": "12",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 5,
+    "fields": {
+      "created_at": "2019-05-21T12:37:49.778Z",
+      "modified_at": "2024-08-14T09:12:06.736Z",
+      "job": 5,
+      "comment": "Tasauslaskujen luonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "1",
+      "days_of_month": "17",
+      "weekdays": "*",
+      "hours": "9",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 6,
+    "fields": {
+      "created_at": "2019-05-21T12:40:50.535Z",
+      "modified_at": "2024-08-14T09:12:00.548Z",
+      "job": 4,
+      "comment": "Vuokraoikeuden siirtojen tuonti",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "0",
+      "hours": "3",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 7,
+    "fields": {
+      "created_at": "2019-05-21T12:41:20.629Z",
+      "modified_at": "2024-08-14T08:17:37.335Z",
+      "job": 6,
+      "comment": "Laskujen lähetys Laske-järjestelmään 'Maaomaisuuden kehittäminen ja tontit'",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "4",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 8,
+    "fields": {
+      "created_at": "2019-10-09T12:54:23.117Z",
+      "modified_at": "2021-01-13T13:18:20.733Z",
+      "job": 3,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "1",
+      "weekdays": "*",
+      "hours": "3",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 9,
+    "fields": {
+      "created_at": "2019-10-09T12:56:52.985Z",
+      "modified_at": "2022-06-23T09:25:55.902Z",
+      "job": 8,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "1",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 10,
+    "fields": {
+      "created_at": "2019-10-09T12:57:33.363Z",
+      "modified_at": "2019-10-09T12:57:33.363Z",
+      "job": 9,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "2",
+      "minutes": "0"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 11,
+    "fields": {
+      "created_at": "2019-10-10T11:03:27.308Z",
+      "modified_at": "2020-05-29T14:15:34.089Z",
+      "job": 7,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "2",
+      "minutes": "30"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 12,
+    "fields": {
+      "created_at": "2021-05-20T10:24:19.822Z",
+      "modified_at": "2021-07-27T05:50:37.620Z",
+      "job": 10,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "*",
+      "minutes": "50"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 13,
+    "fields": {
+      "created_at": "2021-05-20T10:39:27.935Z",
+      "modified_at": "2021-08-12T12:54:33.768Z",
+      "job": 11,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "23",
+      "minutes": "11"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 14,
+    "fields": {
+      "created_at": "2023-09-13T09:47:27.305Z",
+      "modified_at": "2023-09-13T09:48:02.047Z",
+      "job": 12,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "0",
+      "minutes": "30"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 15,
+    "fields": {
+      "created_at": "2023-10-20T09:42:50.399Z",
+      "modified_at": "2023-10-20T09:42:50.399Z",
+      "job": 13,
+      "comment": "",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "*",
+      "minutes": "00"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 20,
+    "fields": {
+      "created_at": "2024-06-03T08:00:00Z",
+      "modified_at": "2024-08-14T08:20:43.966Z",
+      "job": 20,
+      "comment": "Laskujen lähetys Laske-järjestelmään 'Alueiden käyttö ja -valvonta'",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "4",
+      "minutes": "10"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 21,
+    "fields": {
+      "created_at": "2024-06-03T08:00:00Z",
+      "modified_at": "2024-08-14T08:17:12.683Z",
+      "job": 21,
+      "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Liikuntapaikkapalvelut'",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "4",
+      "minutes": "20"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 22,
+    "fields": {
+      "created_at": "2024-06-03T08:00:00Z",
+      "modified_at": "2024-08-14T08:17:02.832Z",
+      "job": 22,
+      "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Ulkoilupalvelut'",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "4",
+      "minutes": "30"
+    }
+  },
+  {
+    "model": "batchrun.scheduledjob",
+    "pk": 23,
+    "fields": {
+      "created_at": "2024-06-03T08:00:00Z",
+      "modified_at": "2024-08-14T08:16:51.750Z",
+      "job": 23,
+      "comment": "Laskujen lähetys Laske-järjestelmään 'KuVa / Nuorisopalvelut'",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "4",
+      "minutes": "40"
+    }
+  }
 ]
