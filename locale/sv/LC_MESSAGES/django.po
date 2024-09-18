@@ -8,8 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-
-"POT-Creation-Date: 2024-08-26 15:57+0300\n"
+"POT-Creation-Date: 2024-09-12 10:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2754,6 +2753,49 @@ msgstr "Index 1914:1-6=100"
 
 msgid "Index 1938:8-1939:7=100"
 msgstr "Index 1938:8–1939:7=100"
+
+msgid "Index code"
+msgstr ""
+
+msgid "Index name"
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
+msgid "Data source"
+msgstr ""
+
+msgid "Source table updated"
+msgstr ""
+
+msgid "Source table label"
+msgstr ""
+
+msgid "API endpoint URL"
+msgstr ""
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr ""
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr ""
+
+msgid "Index number"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgctxt "model name"
+msgid "index number"
+msgstr ""
+
+msgctxt "model name"
+msgid "index numbers"
+msgstr ""
 
 msgid "Lease basis of rent"
 msgstr "Arrenderingsprincip för arrenderingen"

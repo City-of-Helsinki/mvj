@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-26 15:57+0300\n"
+"POT-Creation-Date: 2024-09-12 10:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2747,6 +2747,49 @@ msgstr ""
 
 msgid "Index 1938:8-1939:7=100"
 msgstr ""
+
+msgid "Index code"
+msgstr "Indeksin tunniste"
+
+msgid "Index name"
+msgstr "Indeksin nimi"
+
+msgid "Region"
+msgstr "Alue"
+
+msgid "Data source"
+msgstr "Tiedonlähde"
+
+msgid "Source table updated"
+msgstr "Lähdetietokantapöytä päivitetty"
+
+msgid "Source table label"
+msgstr "Lähdetietokantapöydän selite"
+
+msgid "API endpoint URL"
+msgstr "Ohjelmointirajapinnan päätepisteen verkko-osoite"
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksit"
+
+msgid "Index number"
+msgstr "Indeksipisteluku"
+
+msgid "Comment"
+msgstr "Kommentti"
+
+msgctxt "model name"
+msgid "index number"
+msgstr "Indeksipisteluku"
+
+msgctxt "model name"
+msgid "index numbers"
+msgstr "Indeksipisteluvut"
 
 msgid "Lease basis of rent"
 msgstr "Vuokrauksen vuokrausperiaate"
