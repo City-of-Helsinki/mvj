@@ -528,7 +528,11 @@ class AreaImporter(BaseImporter):
             if geom is None:
                 continue
 
-            other_data: OtherData = {"geometry": geom, "metadata": metadata}
+            other_data: OtherData = {
+                "geometry": geom,
+                "metadata": metadata,
+                "external_id": row.id,
+            }
 
             imported_identifiers, error_count = self.update_or_create_areas(
                 areas, other_data, match_data, imported_identifiers, error_count
