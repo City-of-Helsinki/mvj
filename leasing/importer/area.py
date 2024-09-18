@@ -4,6 +4,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict
 import psycopg
 from django.conf import settings
 from django.contrib.gis import geos
+from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
 from django.db.models import QuerySet
 from psycopg.rows import namedtuple_row
@@ -473,7 +474,10 @@ class AreaImporter(BaseImporter):
     ) -> Tuple[list, int]:
         try:
             areas.update_or_create(defaults=dict(other_data), **match_data)
-        except IntegrityError:  # There should only be one object per identifier...
+        except (
+            MultipleObjectsReturned,
+            IntegrityError,
+        ):  # There should only be one object per identifier...
             ext_id = other_data.pop("external_id", "")
             # If external id exists, we can continue deleting data. We should only
             # delete duplicate rows, if we have external id available for the new row.
