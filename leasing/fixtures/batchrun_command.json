@@ -154,5 +154,17 @@
       "parameters": {},
       "parameter_format_string": ""
     }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 14,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "import_periodic_rent_adjustment_index",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
   }
 ]
