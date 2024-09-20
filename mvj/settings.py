@@ -307,7 +307,7 @@ NLS_HELSINKI_USERNAME = env.str("NLS_HELSINKI_USERNAME")
 NLS_HELSINKI_PASSWORD = env.str("NLS_HELSINKI_PASSWORD")
 NLS_IMPORT_ROOT = project_root("nls_leasehold_transfers")
 
-# Enable `/helauth/logout/oidc/backchannel/` endpoint
+# Enable `{/v1}/pub/helauth/logout/oidc/backchannel/` endpoint
 HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
 
 OIDC_API_TOKEN_AUTH = {

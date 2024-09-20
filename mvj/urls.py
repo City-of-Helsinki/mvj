@@ -376,7 +376,18 @@ additional_pub_api_paths = [
 
 api_urls = router.urls + additional_api_paths
 # Path: v1/pub/
-pub_api_urls = [path("pub/", include(pub_router.urls + additional_pub_api_paths))]
+pub_api_urls = [
+    path(
+        "pub/",
+        include(
+            pub_router.urls
+            + additional_pub_api_paths
+            # Enables oidc backchannel logout, requires setting `HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True`
+            # to be useful
+            + [path("helauth/", include("helusers.urls"))]
+        ),
+    )
+]
 credit_integration_urls = [
     path("", include((credit_integration_urlpatterns, "credit_integration")))
 ]
@@ -397,9 +408,6 @@ urlpatterns = [
     path("trade_register/<service>/<business_id>/", VirreProxy.as_view()),
     path("admin/", admin.site.urls),
     path("auth/", include(rest_framework.urls)),
-    # Enables oidc backchannel logout, requires setting HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
-    # to be useful
-    path("helauth/", include("helusers.urls")),
 ]
 
 # Generate a schema
