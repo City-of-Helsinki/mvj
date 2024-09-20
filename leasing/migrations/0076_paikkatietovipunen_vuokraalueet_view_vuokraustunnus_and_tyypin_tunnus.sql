@@ -5,11 +5,8 @@ CREATE OR REPLACE VIEW public.paikkatietovipunen_vuokraalueet
  AS
  SELECT lease.id AS vuokraus_id,
     l_area.identifier AS kiinteistotunnus,
-    concat(ltype.identifier, ( SELECT leasing_municipality.identifier
-           FROM leasing_municipality
-          WHERE leasing_municipality.id = lid.municipality_id), ( SELECT lpad(leasing_district.identifier::text, 2, '0'::text) AS lpad
-           FROM leasing_district
-          WHERE leasing_district.id = lid.district_id), '-', lid.sequence) AS vuokraustunnus,
+    ltype.identifier AS tyypin_tunnus,
+    lid.identifier AS vuokraustunnus,
     ( SELECT leasing_contract.contract_number
            FROM leasing_contract
           WHERE leasing_contract.lease_id = lease.id
