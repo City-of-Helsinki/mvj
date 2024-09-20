@@ -397,6 +397,9 @@ urlpatterns = [
     path("trade_register/<service>/<business_id>/", VirreProxy.as_view()),
     path("admin/", admin.site.urls),
     path("auth/", include(rest_framework.urls)),
+    # Enables oidc backchannel logout, requires setting HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
+    # to be useful
+    path("helauth/", include("helusers.urls")),
 ]
 
 # Generate a schema
