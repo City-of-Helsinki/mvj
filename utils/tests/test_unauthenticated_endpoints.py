@@ -27,6 +27,7 @@ WHITELIST_PUBLIC_URLS = (
     "/v1/pub/plot_search_stage/",
     "/v1/pub/plot_search_type/",
     "/v1/pub/plot_search_subtype/",
+    "/v1/pub/helauth/logout/oidc/backchannel/",
 )
 WHITELIST_DJANGO_URLS = (
     "/admin/",
