@@ -28,7 +28,7 @@ def dictfetchall(cursor: CursorWrapper):
 
 
 def get_lease_period(
-    billing_period_data_row: list[BillingPeriodDataRow], today: date
+    billing_period_data_row: BillingPeriodDataRow, today: date
 ) -> tuple[date, date]:
     """
     Get the period of the lease with active rents to be compared with the billing periods of the lease's invoices.
