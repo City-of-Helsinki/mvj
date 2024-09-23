@@ -16,10 +16,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            sql_file=load_sql_file(
+            sql=load_sql_file(
                 "./0076_paikkatietovipunen_vuokraalueet_view_vuokraustunnus_and_tyypin_tunnus.sql"
             ),
-            reverse_sql_file=load_sql_file(
+            reverse_sql=load_sql_file(
                 "./0060_fix_paikkatietovipunen_vuokraalueet_remove_intended_use_requirement.sql"
             ),
         ),
