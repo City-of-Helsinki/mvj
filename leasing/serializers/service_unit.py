@@ -11,5 +11,6 @@ class ServiceUnitSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "abbreviation",
             # "description",
         )

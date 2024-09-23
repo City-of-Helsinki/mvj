@@ -12,6 +12,7 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
     """
 
     name = models.CharField(verbose_name=_("Name"), max_length=255)
+    abbreviation = models.CharField(verbose_name=_("Abbreviation"), max_length=15)
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
     invoice_number_sequence_name = models.CharField(
         verbose_name=_("Invoice number sequence name"),

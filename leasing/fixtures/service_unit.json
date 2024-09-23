@@ -4,6 +4,7 @@
         "pk": 1,
         "fields": {
             "name": "Maaomaisuuden kehittäminen ja tontit",
+            "abbreviation": "MAKE / Tontit",
             "description": null,
             "invoice_number_sequence_name": null,
             "first_invoice_number": null,
@@ -24,6 +25,7 @@
         "pk": 2,
         "fields": {
             "name": "Alueiden käyttö ja valvonta",
+            "abbreviation": "AKV",
             "description": null,
             "invoice_number_sequence_name": "akv_invoice_number_sequence",
             "first_invoice_number": 5000000,
@@ -44,6 +46,7 @@
         "pk": 3,
         "fields": {
             "name": "KuVa / Liikuntapaikkapalvelut",
+            "abbreviation": "KUVA (LIPA)",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
             "first_invoice_number": 10000000,
@@ -64,6 +67,7 @@
         "pk": 4,
         "fields": {
             "name": "KuVa / Ulkoilupalvelut",
+            "abbreviation": "KUVA (UPA)",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
             "first_invoice_number": 10000000,
@@ -84,6 +88,7 @@
         "pk": 5,
         "fields": {
             "name": "KuVa / Nuorisopalvelut",
+            "abbreviation": "KUVA (NUP)",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
             "first_invoice_number": 10000000,

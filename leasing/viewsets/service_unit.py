@@ -17,6 +17,7 @@ class ServiceUnitViewSet(ReadOnlyModelViewSet):
     search_fields = (
         "id",
         "name",
+        "abbreviation",
         "description",
     )
     ordering = ("name",)
