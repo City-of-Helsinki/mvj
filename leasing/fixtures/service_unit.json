@@ -4,7 +4,7 @@
         "pk": 1,
         "fields": {
             "name": "Maaomaisuuden kehittäminen ja tontit",
-            "abbreviation": "MAKE / Tontit",
+            "abbreviation": "MAKE/Tontit",
             "description": null,
             "invoice_number_sequence_name": null,
             "first_invoice_number": null,
