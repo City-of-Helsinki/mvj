@@ -13,10 +13,10 @@ from leasing.enums import LeaseAreaAttachmentType, LeaseState
 from leasing.models import Lease, ServiceUnit
 from leasing.report.lease.common_getters import (
     get_address,
-    get_contract_number,
     get_district,
     get_form_of_management,
     get_form_of_regulation,
+    get_latest_contract_number,
     get_lease_area_identifier,
     get_lease_id,
     get_lease_type,
@@ -217,7 +217,7 @@ class LeaseStatisticReport(AsyncReportBase):
         # Sopimusnumero
         "contract_number": {
             "label": _("Contract number"),
-            "source": get_contract_number,
+            "source": get_latest_contract_number,
             "is_numeric": True,
         },
         # Vuokrauksen tyyppi
