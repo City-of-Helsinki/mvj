@@ -67,20 +67,21 @@ def get_latest_contract_number(obj):
 
         contracts.append(contract)
 
-    if not contracts:
-        return ""
-
     latest_contract = max(
         contracts,
         key=lambda contract: (
             contract.signing_date
-            if contract.signning_date is not None
+            if contract.signing_date is not None
             else datetime.datetime.min
         ),
         default=None,
     )
 
-    if latest_contract is None:
+    if (
+        latest_contract is None
+        or not latest_contract.signing_date
+        or not latest_contract.contract_number
+    ):
         return ""
 
     return latest_contract.contract_number
