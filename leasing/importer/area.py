@@ -35,6 +35,9 @@ class MatchData(TypedDict, total=False):
     detailed_plan_identifier: Optional[str]
 
 
+MatchDataIdentifier = MatchData["identifier"]
+
+
 class OtherData(TypedDict, total=False):
     geometry: geos.MultiPolygon
     metadata: Metadata
@@ -407,22 +410,22 @@ class AreaImporter(BaseImporter):
             match_data["external_id"] = row.id
 
         if area_import["area_type"] == AreaType.PLAN_UNIT:
-            dp_id = metadata.get("detailed_plan_identifier")
-            if not dp_id:
-                self.stderr.write(
-                    "detailed_plan_identifier not found for area #{}".format(
-                        match_data["identifier"]
-                    )
-                )
-                return None
+            match_data["detailed_plan_identifier"] = metadata.get(
+                "detailed_plan_identifier"
+            )
+
         return match_data
 
-    def get_areas(self, match_data: MatchData, metadata: Metadata) -> QuerySet[Area]:
+    def get_plan_unit_areas(self, metadata: Metadata, identifier: MatchDataIdentifier):
         areas = Area.objects.all()
-        if "detailed_plan_identifier" in match_data:
-            dp_id = metadata.get("detailed_plan_identifier")
-            areas = areas.filter(metadata__detailed_plan_identifier=dp_id)
-        return areas
+        dp_id = metadata.get("detailed_plan_identifier")
+        if dp_id is None:
+            self.stderr.write(
+                "detailed_plan_identifier not found for area #{}".format(identifier)
+            )
+            return None
+
+        return areas.filter(metadata__detailed_plan_identifier=dp_id)
 
     def get_geometry(self, row: NamedTupleUnknown, errors: List[str], error_count: int):
         try:
@@ -519,10 +522,14 @@ class AreaImporter(BaseImporter):
                 continue
 
             match_data = self.get_match_data(row, area_import, source, metadata)
-            if match_data is None:
+
+            if (
+                area_import["area_type"] == AreaType.PLAN_UNIT
+                and not match_data["detailed_plan_identifier"]
+            ):
                 continue
 
-            areas = self.get_areas(match_data, metadata)
+            areas = Area.objects.all()
 
             geom, error_count = self.get_geometry(row, errors, error_count)
             if geom is None:
