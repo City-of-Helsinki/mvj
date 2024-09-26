@@ -3,6 +3,10 @@
         "model": "leasing.serviceunit",
         "pk": 1,
         "fields": {
+            "deleted": null,
+            "deleted_by_cascade": false,
+            "created_at": "2021-11-22T08:00:00Z",
+            "modified_at": "2024-09-26T13:57:25.096Z",
             "name": "Maaomaisuuden kehittäminen ja tontit",
             "description": null,
             "invoice_number_sequence_name": null,
@@ -14,15 +18,17 @@
             "contract_number_sequence_name": null,
             "first_contract_number": null,
             "default_receivable_type_rent": 1,
-            "default_receivable_type_collateral": 8,
-            "created_at": "2021-11-22T08:00:00Z",
-            "modified_at": "2021-11-22T08:00:00Z"
+            "default_receivable_type_collateral": 8
         }
     },
     {
         "model": "leasing.serviceunit",
         "pk": 2,
         "fields": {
+            "deleted": null,
+            "deleted_by_cascade": false,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2024-09-26T13:57:25.101Z",
             "name": "Alueiden käyttö ja valvonta",
             "description": null,
             "invoice_number_sequence_name": "akv_invoice_number_sequence",
@@ -33,16 +39,18 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "akv_contract_number_sequence",
             "first_contract_number": 100000,
-            "default_receivable_type_rent": null,
-            "default_receivable_type_collateral": null,
-            "created_at": "2023-09-04T12:00:00Z",
-            "modified_at": "2023-09-04T12:00:00Z"
+            "default_receivable_type_rent": 44,
+            "default_receivable_type_collateral": 45
         }
     },
     {
         "model": "leasing.serviceunit",
         "pk": 3,
         "fields": {
+            "deleted": null,
+            "deleted_by_cascade": false,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2024-09-26T13:57:25.105Z",
             "name": "KuVa / Liikuntapaikkapalvelut",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
@@ -53,16 +61,18 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": null,
-            "default_receivable_type_collateral": null,
-            "created_at": "2023-09-04T12:00:00Z",
-            "modified_at": "2023-09-04T12:00:00Z"
+            "default_receivable_type_rent": 46,
+            "default_receivable_type_collateral": 47
         }
     },
     {
         "model": "leasing.serviceunit",
         "pk": 4,
         "fields": {
+            "deleted": null,
+            "deleted_by_cascade": false,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2024-09-26T13:57:25.110Z",
             "name": "KuVa / Ulkoilupalvelut",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
@@ -73,16 +83,18 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": null,
-            "default_receivable_type_collateral": null,
-            "created_at": "2023-09-04T12:00:00Z",
-            "modified_at": "2023-09-04T12:00:00Z"
+            "default_receivable_type_rent": 48,
+            "default_receivable_type_collateral": 49
         }
     },
     {
         "model": "leasing.serviceunit",
         "pk": 5,
         "fields": {
+            "deleted": null,
+            "deleted_by_cascade": false,
+            "created_at": "2023-09-04T12:00:00Z",
+            "modified_at": "2024-09-26T13:57:25.114Z",
             "name": "KuVa / Nuorisopalvelut",
             "description": null,
             "invoice_number_sequence_name": "kuva_invoice_number_sequence",
@@ -93,10 +105,8 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": null,
-            "default_receivable_type_collateral": null,
-            "created_at": "2023-09-04T12:00:00Z",
-            "modified_at": "2023-09-04T12:00:00Z"
+            "default_receivable_type_rent": 50,
+            "default_receivable_type_collateral": 51
         }
     }
 ]
