@@ -6,7 +6,8 @@ from django.db import migrations
 def load_sql_file(name):
     file_path = Path(__file__).resolve().parent / name
     with open(file_path, encoding="utf-8") as file:
-        return file.read()
+        # The necessary DROP VIEW added to avoid editing the reverse sql file
+        return "DROP VIEW public.paikkatietovipunen_vuokraalueet;" + file.read()
 
 
 class Migration(migrations.Migration):
