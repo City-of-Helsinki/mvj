@@ -1,5 +1,5 @@
 -- View: public.paikkatietovipunen_vuokraalueet
-DROP VIEW public.paikkatietovipunen_vuokraalueet;
+-- DROP VIEW public.paikkatietovipunen_vuokraalueet;
 
 CREATE OR REPLACE VIEW public.paikkatietovipunen_vuokraalueet
 AS
