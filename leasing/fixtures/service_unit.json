@@ -17,8 +17,8 @@
             "laske_fill_priority_and_info": true,
             "contract_number_sequence_name": null,
             "first_contract_number": null,
-            "default_receivable_type_rent": 1,
-            "default_receivable_type_collateral": 8
+            "default_receivable_type_rent": null,
+            "default_receivable_type_collateral": null
         }
     },
     {
@@ -39,8 +39,8 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "akv_contract_number_sequence",
             "first_contract_number": 100000,
-            "default_receivable_type_rent": 44,
-            "default_receivable_type_collateral": 45
+            "default_receivable_type_rent": null,
+            "default_receivable_type_collateral": null
         }
     },
     {
@@ -61,8 +61,8 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": 46,
-            "default_receivable_type_collateral": 47
+            "default_receivable_type_rent": null,
+            "default_receivable_type_collateral": null
         }
     },
     {
@@ -83,8 +83,8 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": 48,
-            "default_receivable_type_collateral": 49
+            "default_receivable_type_rent": null,
+            "default_receivable_type_collateral": null
         }
     },
     {
@@ -105,8 +105,8 @@
             "laske_fill_priority_and_info": false,
             "contract_number_sequence_name": "kuva_contract_number_sequence",
             "first_contract_number": 200000,
-            "default_receivable_type_rent": 50,
-            "default_receivable_type_collateral": 51
+            "default_receivable_type_rent": null,
+            "default_receivable_type_collateral": null
         }
     }
 ]
