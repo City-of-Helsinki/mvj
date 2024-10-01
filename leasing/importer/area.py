@@ -38,7 +38,7 @@ class MatchData(TypedDict, total=False):
 MatchDataIdentifier = MatchData["identifier"]
 
 
-class OtherData(TypedDict, total=False):
+class UpdateData(TypedDict, total=False):
     geometry: geos.MultiPolygon
     metadata: Metadata
     external_id: Optional[str]
@@ -397,7 +397,7 @@ class AreaImporter(BaseImporter):
         self,
         row: NamedTupleUnknown,
         area_import: AreaImport,
-        source: str,
+        source: AreaSource,
         metadata: Metadata,
     ) -> Optional[MatchData]:
         match_data: MatchData = {
@@ -470,18 +470,20 @@ class AreaImporter(BaseImporter):
     def update_or_create_areas(
         self,
         areas: QuerySet[Area],
-        other_data: OtherData,
+        update_data: UpdateData,
         match_data: MatchData,
         imported_identifiers: List[str],
         error_count: int,
     ) -> Tuple[list, int]:
         try:
-            areas.update_or_create(defaults=dict(other_data), **match_data)
+            areas.update_or_create(defaults=dict(update_data), **match_data)
         except (
             MultipleObjectsReturned,
             IntegrityError,
         ):  # There should only be one object per identifier...
-            ext_id = other_data.pop("external_id", "")
+            ext_id = (
+                update_data["external_id"] if "external_id" in update_data else None
+            )
             # If external id exists, we can continue deleting data. We should only
             # delete duplicate rows, if we have external id available for the new row.
             if ext_id:
@@ -489,7 +491,7 @@ class AreaImporter(BaseImporter):
                 # external_id (if it happens to exist)
                 Area.objects.filter(**match_data).exclude(external_id=ext_id).delete()
                 match_data["external_id"] = ext_id
-                Area.objects.update_or_create(defaults=other_data, **match_data)
+                Area.objects.update_or_create(defaults=update_data, **match_data)
 
         imported_identifiers.append(match_data["identifier"])
 
@@ -505,7 +507,7 @@ class AreaImporter(BaseImporter):
         self,
         cursor: psycopg.Cursor[NamedTuple],
         area_import: AreaImport,
-        source: str,
+        source: AreaSource,
         errors: List[str],
     ):
         imported_identifiers: List[str] = []
@@ -539,14 +541,14 @@ class AreaImporter(BaseImporter):
             if geom is None:
                 continue
 
-            other_data: OtherData = {
+            update_data: UpdateData = {
                 "geometry": geom,
                 "metadata": metadata,
                 "external_id": row.id,
             }
 
             imported_identifiers, error_count = self.update_or_create_areas(
-                areas, other_data, match_data, imported_identifiers, error_count
+                areas, update_data, match_data, imported_identifiers, error_count
             )
 
             row_end = perf_counter()
