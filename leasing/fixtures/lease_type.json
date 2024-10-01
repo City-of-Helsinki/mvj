@@ -1,441 +1,442 @@
 [
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 1,
     "fields": {
       "name": "Asuntotontit",
       "identifier": "A1",
-      "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813101001"
+      "sap_order_item_number": "2813101001",
+      "due_dates_position": "middle_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 2,
     "fields": {
       "name": "Opiskelija-asuntotontit",
       "identifier": "A2",
-      "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813101001"
+      "sap_order_item_number": "2813101001",
+      "due_dates_position": "middle_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 3,
     "fields": {
       "name": "Vanhusten asunto- ja vanhainkotitontit",
       "identifier": "A3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813101001"
+      "sap_order_item_number": "2813101001",
+      "due_dates_position": "middle_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 4,
     "fields": {
       "name": "Asuntotontteihin liittyvä pysäköintit.",
       "identifier": "A4",
-      "due_dates_position": "middle_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": "2813101002"
+      "sap_order_item_number": "2813101002",
+      "due_dates_position": "middle_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 5,
     "fields": {
       "name": "Sekalaiset vuokraukset",
       "identifier": "S0",
-      "due_dates_position": "middle_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813102007"
+      "sap_order_item_number": "2813104106",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 6,
     "fields": {
       "name": "Teollisuus- ja varastotontit",
       "identifier": "T1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002006",
-      "sap_order_item_number": "2813102001"
+      "sap_order_item_number": "2813104100",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 7,
     "fields": {
       "name": "Käyttöoikeudet",
       "identifier": "O1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813102006"
+      "sap_order_item_number": "2813104105",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 8,
     "fields": {
       "name": "Teollis./varastot. liittyv. pysäköintit.",
       "identifier": "T2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": "2813102002"
+      "sap_order_item_number": "2813104101",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 9,
     "fields": {
       "name": "Huoltoasema",
       "identifier": "H1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002008",
-      "sap_order_item_number": "2813102003"
+      "sap_order_item_number": "2813104102",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 10,
     "fields": {
       "name": "Jakeluasema",
       "identifier": "H2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002008",
-      "sap_order_item_number": "2813102003"
+      "sap_order_item_number": "2813104102",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 11,
     "fields": {
       "name": "Liike- ja toimistotontit",
       "identifier": "L1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002005",
-      "sap_order_item_number": "2813102004"
+      "sap_order_item_number": "2813104103",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 12,
     "fields": {
       "name": "Yleisen rakennuksen tontit",
       "identifier": "L2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002005",
-      "sap_order_item_number": "2813102004"
+      "sap_order_item_number": "2813104103",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 13,
     "fields": {
       "name": "Liike/Yleistenr. tonttien pysäköintit.",
       "identifier": "L3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002007",
-      "sap_order_item_number": "2813102005"
+      "sap_order_item_number": "2813104104",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 14,
     "fields": {
       "name": "Laiturinpito ja poijuluvat",
       "identifier": "O2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813102006"
+      "sap_order_item_number": "2813104105",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 15,
     "fields": {
       "name": "Kokoontumisluvat",
       "identifier": "O3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813102006"
+      "sap_order_item_number": "2813102006",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 16,
     "fields": {
       "name": "Muut luvat",
       "identifier": "O4",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813102006"
+      "sap_order_item_number": "2813104105",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 17,
     "fields": {
       "name": "Kaupungin sisäiset (tilapäiset vuokr.)",
       "identifier": "K0",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100001"
+      "sap_order_item_number": "2813100001",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 18,
     "fields": {
       "name": "Helsingin Satama",
       "identifier": "V5",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100002"
+      "sap_order_item_number": "2813100002",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 19,
     "fields": {
       "name": "Helsingin Energia",
       "identifier": "V2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100002"
+      "sap_order_item_number": "2813100002",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 20,
     "fields": {
       "name": "Helsingin Vesi",
       "identifier": "V6",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 21,
     "fields": {
       "name": "Liikennelaitos",
       "identifier": "V4",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100002"
+      "sap_order_item_number": "2813100002",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 22,
     "fields": {
       "name": "Elintarviketukkukaupan keskus",
       "identifier": "V1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100002"
+      "sap_order_item_number": "2813100002",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 23,
     "fields": {
       "name": "Keskuspesula",
       "identifier": "V3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100002"
+      "sap_order_item_number": "2813100002",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 24,
     "fields": {
       "name": "Liikuntavirasto",
       "identifier": "Y3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 25,
     "fields": {
       "name": "Rakennusvirasto",
       "identifier": "Y5",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 26,
     "fields": {
       "name": "Sosiaalivirasto",
       "identifier": "Y6",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 27,
     "fields": {
       "name": "Terveysvirasto",
       "identifier": "Y7",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 28,
     "fields": {
       "name": "Opetusvirasto",
       "identifier": "Y2",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 29,
     "fields": {
       "name": "Pelastuslaitos",
       "identifier": "Y4",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 30,
     "fields": {
       "name": "Korkeasaari",
       "identifier": "Y1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 31,
     "fields": {
       "name": "Nuorisoasiainkeskus",
       "identifier": "Y8",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 32,
     "fields": {
       "name": "TYHJÄ TONTTI",
       "identifier": "TY",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 33,
     "fields": {
       "name": "Maapoliittinen sopimus",
       "identifier": "MA",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 34,
     "fields": {
-      "name": "Kiinteistövirasto tilakeskus",
+      "name": "KYMP, RYA",
       "identifier": "Y9",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 35,
     "fields": {
       "name": "Myynti/maksamaton kauppahinta",
       "identifier": "MY",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 36,
     "fields": {
       "name": "SIIRTOLAPUUTARHA ei käytössä",
       "identifier": "R0",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 37,
     "fields": {
       "name": "Väestönsuojakorvaukset",
       "identifier": "VS",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 38,
     "fields": {
       "name": "Varhaiskasvatusvirasto",
       "identifier": "Y0",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "2813100003"
+      "sap_order_item_number": "2813100003",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 39,
     "fields": {
-      "name": "Teollisuus- ja varatotontit (alv:set)",
+      "name": "Teollisuus- ja varastotontit (alv:set)",
       "identifier": "T3",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "10001860",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "2813104100",
+      "due_dates_position": "start_of_month"
     }
   },
   {
-    "model": "leasing.LeaseType",
+    "model": "leasing.leasetype",
     "pk": 40,
     "fields": {
       "name": "Liikuntaviraston ulosvuokraus",
       "identifier": "S1",
-      "due_dates_position": "start_of_month",
       "sap_material_code": "",
-      "sap_order_item_number": ""
+      "sap_order_item_number": "",
+      "due_dates_position": "start_of_month"
     }
   }
 ]
