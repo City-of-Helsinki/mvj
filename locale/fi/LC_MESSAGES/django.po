@@ -672,10 +672,6 @@ msgid "Long term lease"
 msgstr "Pitkäaikainen vuokraus"
 
 msgctxt "Lease state"
-msgid "Temporary lease"
-msgstr "Tilapäinen vuokraus"
-
-msgctxt "Lease state"
 msgid "Reservation"
 msgstr "Varaus"
 
