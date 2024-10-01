@@ -675,10 +675,6 @@ msgid "Long term lease"
 msgstr "Långfristig arrendering"
 
 msgctxt "Lease state"
-msgid "Temporary lease"
-msgstr "Tillfällig arrendering"
-
-msgctxt "Lease state"
 msgid "Reservation"
 msgstr "Reservering"
 
