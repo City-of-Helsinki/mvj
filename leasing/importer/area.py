@@ -405,11 +405,6 @@ class AreaImporter(BaseImporter):
         if area_import["area_type"] == AreaType.LEASE_AREA:
             match_data["external_id"] = row.id
 
-        if area_import["area_type"] == AreaType.PLAN_UNIT:
-            match_data["detailed_plan_identifier"] = metadata.get(
-                "detailed_plan_identifier"
-            )
-
         return match_data
 
     def get_plan_unit_areas(self, metadata: Metadata, identifier: str):
@@ -519,15 +514,14 @@ class AreaImporter(BaseImporter):
             if metadata is None:
                 continue
 
-            match_data = self.get_match_data(row, area_import, source, metadata)
-
-            if (
-                area_import["area_type"] == AreaType.PLAN_UNIT
-                and not match_data["detailed_plan_identifier"]
-            ):
-                continue
+            match_data = self.get_match_data(row, area_import, source)
 
             areas = Area.objects.all()
+
+            if area_import["area_type"] == AreaType.PLAN_UNIT:
+                if not metadata.get("detailed_plan_identifier"):
+                    continue
+                areas = self.get_plan_unit_areas(metadata, match_data["identifier"])
 
             geom, error_count = self.get_geometry(row, errors, error_count)
             if geom is None:
