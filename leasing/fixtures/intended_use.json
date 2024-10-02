@@ -2329,6 +2329,14 @@
   },
   {
     "model": "leasing.IntendedUse",
+    "pk": 292,
+    "fields": {
+      "name": "Laiva ja muu vesialue",
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.IntendedUse",
     "pk": 293,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus",
