@@ -35,9 +35,6 @@ class MatchData(TypedDict, total=False):
     detailed_plan_identifier: Optional[str]
 
 
-MatchDataIdentifier = MatchData["identifier"]
-
-
 class UpdateData(TypedDict, total=False):
     geometry: geos.MultiPolygon
     metadata: Metadata
@@ -398,8 +395,7 @@ class AreaImporter(BaseImporter):
         row: NamedTupleUnknown,
         area_import: AreaImport,
         source: AreaSource,
-        metadata: Metadata,
-    ) -> Optional[MatchData]:
+    ) -> MatchData:
         match_data: MatchData = {
             "type": area_import["area_type"],
             "identifier": getattr(row, area_import["identifier_field_name"]),
@@ -416,7 +412,7 @@ class AreaImporter(BaseImporter):
 
         return match_data
 
-    def get_plan_unit_areas(self, metadata: Metadata, identifier: MatchDataIdentifier):
+    def get_plan_unit_areas(self, metadata: Metadata, identifier: str):
         areas = Area.objects.all()
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
