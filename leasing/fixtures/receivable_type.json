@@ -1,6 +1,6 @@
 [
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 1,
     "fields": {
       "name": "Maanvuokraus",
@@ -11,7 +11,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 2,
     "fields": {
       "name": "Korko",
@@ -22,7 +22,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 3,
     "fields": {
       "name": "Yhteismarkkinointi (sis. ALV)",
@@ -33,7 +33,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 4,
     "fields": {
       "name": "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
@@ -44,7 +44,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 5,
     "fields": {
       "name": "Haastemiestiedoksianto",
@@ -55,7 +55,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 6,
     "fields": {
       "name": "Rasite ja muut vastaavat korvaukset",
@@ -66,7 +66,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 7,
     "fields": {
       "name": "Esirakentamistoimenpiteet",
@@ -77,18 +77,18 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 8,
     "fields": {
       "name": "Rahavakuus",
-      "sap_material_code": null,
-      "sap_order_item_number": null,
+      "sap_material_code": "10002550",
+      "sap_order_item_number": "2813000",
       "is_active": true,
       "service_unit": 1
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 9,
     "fields": {
       "name": "Väestösuojakorvaus",
@@ -99,7 +99,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 10,
     "fields": {
       "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
@@ -110,7 +110,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 11,
     "fields": {
       "name": "Hiekkasiilo, kaupungin urakkasopimukset",
@@ -121,7 +121,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 12,
     "fields": {
       "name": "Hiekkasiilo",
@@ -132,7 +132,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 13,
     "fields": {
       "name": "Kaupunkipyörä",
@@ -143,7 +143,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 14,
     "fields": {
       "name": "Kaupunkiviljelypaikat",
@@ -154,7 +154,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 15,
     "fields": {
       "name": "Kioski, kahvila, myyntipaikat",
@@ -165,7 +165,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 16,
     "fields": {
       "name": "Vesialueen vuokraaminen toimintaan (alv)",
@@ -176,7 +176,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 17,
     "fields": {
       "name": "Lasitettu katuterassi ja asiakastila alv",
@@ -187,7 +187,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 18,
     "fields": {
       "name": "Leikkipaikan käyttöoikeus",
@@ -198,7 +198,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 19,
     "fields": {
       "name": "Liikunta ja ulkoilupaikat yleisellä alueella",
@@ -209,7 +209,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 20,
     "fields": {
       "name": "Lisäpiha, asuntotontit",
@@ -220,7 +220,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 21,
     "fields": {
       "name": "Lisäpiha, yksityiset päiväkodit",
@@ -231,7 +231,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 22,
     "fields": {
       "name": "Maa-aineksen varastointi (alv)",
@@ -242,7 +242,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 23,
     "fields": {
       "name": "Mehiläistarhaus",
@@ -253,7 +253,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 24,
     "fields": {
       "name": "Metsästysoikeus",
@@ -264,7 +264,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 25,
     "fields": {
       "name": "Muuntamo, laitetila, masto",
@@ -275,7 +275,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 26,
     "fields": {
       "name": "Pysäköinti",
@@ -286,7 +286,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 27,
     "fields": {
       "name": "Sähköpotkulauta",
@@ -297,7 +297,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 28,
     "fields": {
       "name": "Taide ja kulttuuri yleisellä alueella (muu kuin tapahtumatoiminta)",
@@ -308,7 +308,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 29,
     "fields": {
       "name": "Tilapäinen käymälä ja taukotila",
@@ -319,7 +319,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 30,
     "fields": {
       "name": "Työmaatukitoiminta",
@@ -330,7 +330,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 31,
     "fields": {
       "name": "Ulkomainoslaitepaikka",
@@ -341,7 +341,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 32,
     "fields": {
       "name": "Ulkomainosvälinepaikkojen vuokraus",
@@ -352,7 +352,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 33,
     "fields": {
       "name": "Varastointi",
@@ -363,7 +363,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 34,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus",
@@ -374,7 +374,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 35,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
@@ -385,7 +385,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 36,
     "fields": {
       "name": "Muu tontinosan tilapäinen vuokraus",
@@ -396,7 +396,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 37,
     "fields": {
       "name": "Muu tontinosan tilapäinen vuokraus (alv)",
@@ -407,7 +407,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 38,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
@@ -418,7 +418,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 39,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot alv",
@@ -429,7 +429,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 40,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
@@ -440,7 +440,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 41,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot alv",
@@ -451,7 +451,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 42,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
@@ -462,7 +462,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 43,
     "fields": {
       "name": "Maa- ja vesialueiden vuokratuotot alv",
@@ -473,7 +473,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 44,
     "fields": {
       "name": "Maanvuokraus",
@@ -484,7 +484,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 45,
     "fields": {
       "name": "Rahavakuus",
@@ -495,7 +495,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 46,
     "fields": {
       "name": "Maanvuokraus",
@@ -506,7 +506,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 47,
     "fields": {
       "name": "Rahavakuus",
@@ -517,7 +517,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 48,
     "fields": {
       "name": "Maanvuokraus",
@@ -528,7 +528,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 49,
     "fields": {
       "name": "Rahavakuus",
@@ -539,7 +539,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 50,
     "fields": {
       "name": "Maanvuokraus",
@@ -550,7 +550,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 51,
     "fields": {
       "name": "Rahavakuus",
@@ -561,7 +561,7 @@
     }
   },
   {
-    "model": "leasing.ReceivableType",
+    "model": "leasing.receivabletype",
     "pk": 52,
     "fields": {
       "name": "Sähköautojen latauspaikat",
