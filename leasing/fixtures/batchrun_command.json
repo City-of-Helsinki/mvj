@@ -3,6 +3,8 @@
     "model": "batchrun.command",
     "pk": 1,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "import_index",
       "parameters": {},
@@ -13,6 +15,8 @@
     "model": "batchrun.command",
     "pk": 2,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "import_interest_rate",
       "parameters": {},
@@ -23,6 +27,8 @@
     "model": "batchrun.command",
     "pk": 3,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "create_invoices",
       "parameters": {},
@@ -33,6 +39,8 @@
     "model": "batchrun.command",
     "pk": 4,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "import_leasehold_transfers",
       "parameters": {},
@@ -43,6 +51,8 @@
     "model": "batchrun.command",
     "pk": 5,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "index_rent_equalization",
       "parameters": {},
@@ -53,10 +63,108 @@
     "model": "batchrun.command",
     "pk": 6,
     "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
       "type": "django-manage",
       "name": "send_invoices_to_laske",
       "parameters": {},
       "parameter_format_string": "{service_unit_id}"
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 7,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "get_payments_from_laske",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 8,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "mvj_import",
+      "parameters": {},
+      "parameter_format_string": "area"
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 9,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "attach_areas",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 10,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "batchrun_log_rotate",
+      "parameters": {},
+      "parameter_format_string": "--dry-run"
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 11,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "batchrun_log_rotate",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 12,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "mvj_import",
+      "parameters": {},
+      "parameter_format_string": "usage_distributions"
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 13,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "update_plotsearch_stage",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 14,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "import_periodic_rent_adjustment_index",
+      "parameters": {},
+      "parameter_format_string": ""
     }
   }
 ]

@@ -2227,7 +2227,7 @@
     "model": "leasing.IntendedUse",
     "pk": 279,
     "fields": {
-      "name": "Hiekkasiilo",
+      "name": "Hiekkasiilo, muut",
       "service_unit": 2
     }
   },
@@ -2243,7 +2243,7 @@
     "model": "leasing.IntendedUse",
     "pk": 281,
     "fields": {
-      "name": "Kaupunkiviljelypaikat",
+      "name": "Kaupunkiviljely",
       "service_unit": 2
     }
   },
@@ -2259,7 +2259,7 @@
     "model": "leasing.IntendedUse",
     "pk": 283,
     "fields": {
-      "name": "Lasitettu katuterassi ja asiakastila alv",
+      "name": "Lasitettu katuterassi ja lasitettu asiakastila",
       "service_unit": 2
     }
   },
@@ -2275,7 +2275,7 @@
     "model": "leasing.IntendedUse",
     "pk": 285,
     "fields": {
-      "name": "Liikunta ja ulkoilupaikat yleisellä alueella",
+      "name": "Liikunta ja ulkoilu",
       "service_unit": 2
     }
   },
@@ -2299,7 +2299,7 @@
     "model": "leasing.IntendedUse",
     "pk": 288,
     "fields": {
-      "name": "Maa-aineksen varastointi (alv)",
+      "name": "Maa-aineksen varastointi",
       "service_unit": 2
     }
   },
@@ -2331,7 +2331,7 @@
     "model": "leasing.IntendedUse",
     "pk": 292,
     "fields": {
-      "name": "Muu tontinosan tilapäinen vuokraus (alv)",
+      "name": "Laiva ja muu vesialue",
       "service_unit": 2
     }
   },
@@ -2340,14 +2340,6 @@
     "pk": 293,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus",
-      "service_unit": 2
-    }
-  },
-  {
-    "model": "leasing.IntendedUse",
-    "pk": 294,
-    "fields": {
-      "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
       "service_unit": 2
     }
   },
@@ -2371,7 +2363,7 @@
     "model": "leasing.IntendedUse",
     "pk": 297,
     "fields": {
-      "name": "Sähköautojen latauspaikat",
+      "name": "Sähköauton latauspaikka",
       "service_unit": 2
     }
   },
@@ -2387,7 +2379,7 @@
     "model": "leasing.IntendedUse",
     "pk": 299,
     "fields": {
-      "name": "Taide ja kulttuuri yleisellä alueella (muu kuin tapahtumatoiminta)",
+      "name": "Taide ja kulttuuri",
       "service_unit": 2
     }
   },
@@ -2411,7 +2403,7 @@
     "model": "leasing.IntendedUse",
     "pk": 302,
     "fields": {
-      "name": "Ulkomainosvälinepaikkojen vuokraus",
+      "name": "Ulkomainonta, kilpailutettu",
       "service_unit": 2
     }
   },
@@ -2419,7 +2411,7 @@
     "model": "leasing.IntendedUse",
     "pk": 303,
     "fields": {
-      "name": "Ulkomainoslaitepaikka",
+      "name": "Ulkomainonta, yksityinen",
       "service_unit": 2
     }
   },
@@ -2428,14 +2420,6 @@
     "pk": 304,
     "fields": {
       "name": "Varastointi",
-      "service_unit": 2
-    }
-  },
-  {
-    "model": "leasing.IntendedUse",
-    "pk": 305,
-    "fields": {
-      "name": "Vesialueen vuokraaminen toimintaan (alv)",
       "service_unit": 2
     }
   },

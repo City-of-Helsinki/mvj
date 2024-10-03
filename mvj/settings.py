@@ -307,6 +307,16 @@ NLS_HELSINKI_USERNAME = env.str("NLS_HELSINKI_USERNAME")
 NLS_HELSINKI_PASSWORD = env.str("NLS_HELSINKI_PASSWORD")
 NLS_IMPORT_ROOT = project_root("nls_leasehold_transfers")
 
+# Enable `{/v1}/pub/helauth/logout/oidc/backchannel/` endpoint
+HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
+# Migrate Tunnistamo users to Keycloak users, replaces old uuid with new based on email.
+# Migration is triggered on login.
+HELUSERS_USER_MIGRATE_ENABLED = True
+# List of email domains to migrate.
+HELUSERS_USER_MIGRATE_EMAIL_DOMAINS = ["hel.fi"]
+# List of authentication methods to migrate.
+HELUSERS_USER_MIGRATE_AMRS = ["helsinkiad"]
+
 OIDC_API_TOKEN_AUTH = {
     "AUDIENCE": env.str("TOKEN_AUTH_ACCEPTED_AUDIENCE"),
     "API_SCOPE_PREFIX": env.str("TOKEN_AUTH_ACCEPTED_SCOPE_PREFIX"),
