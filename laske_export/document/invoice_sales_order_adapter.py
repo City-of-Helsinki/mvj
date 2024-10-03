@@ -344,15 +344,19 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     def get_line_items(self) -> list[LineItem]:
         """Create line items for the AKV service unit."""
         line_items: list[LineItem] = []
-
+        number_of_line_text_lines = 6
         invoice_rows = self.invoice.rows.all()
+
         for invoice_row in invoice_rows:
             line_text = self.get_line_text(invoice_row)
             text_lines = textwrap.wrap(
-                line_text, width=70, max_lines=6, drop_whitespace=False
+                line_text,
+                width=70,
+                max_lines=number_of_line_text_lines,
+                drop_whitespace=False,
             )
             item = LineItem()
-            for i in range(0, 6):
+            for i in range(0, number_of_line_text_lines):
                 line = text_lines[i] if i < len(text_lines) else ""
                 setattr(item, f"line_text_l{i+1}", line)
 
