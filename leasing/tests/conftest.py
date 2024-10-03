@@ -41,6 +41,7 @@ from leasing.models import (
     RelatedLease,
     Rent,
     RentAdjustment,
+    RentIntendedUse,
     ServiceUnit,
     UiData,
 )
@@ -371,6 +372,12 @@ class IntendedUseFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = IntendedUse
+
+
+@register
+class RentIntendedUseFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = RentIntendedUse
 
 
 @pytest.fixture

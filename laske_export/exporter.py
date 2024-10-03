@@ -11,7 +11,9 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from laske_export.document.invoice_sales_order_adapter import InvoiceSalesOrderAdapter
+from laske_export.document.invoice_sales_order_adapter import (
+    invoice_sales_order_adapter_factory,
+)
 from laske_export.document.land_use_agreement_invoice_sales_order_adapter import (
     LandUseAgreementInvoiceSalesOrderAdapter,
 )
@@ -182,7 +184,7 @@ class LaskeExporter:
 
                 sales_order = create_sales_order_with_laske_values(invoice.service_unit)
 
-                adapter = InvoiceSalesOrderAdapter(
+                adapter = invoice_sales_order_adapter_factory(
                     invoice=invoice,
                     sales_order=sales_order,
                     receivable_type_rent=receivable_type_rent,

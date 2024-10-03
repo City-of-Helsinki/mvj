@@ -1,3 +1,5 @@
+import logging
+import textwrap
 from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
@@ -8,16 +10,26 @@ from leasing.enums import (
     RentCycle,
     SapSalesOfficeNumber,
     SapSalesOrgNumber,
+    ServiceUnitId,
 )
 from leasing.models import Contact, Invoice, InvoiceRow, ReceivableType, Tenant
 from leasing.models.utils import get_next_business_day, is_business_day
 
 from .sales_order import BillingParty1, LineItem, OrderParty, SalesOrder
 
-KUVA_LASKE_SALES_ORG = "2900"
+logger = logging.getLogger(__name__)
 
 
 class InvoiceSalesOrderAdapter:
+    """Adapter for invoice sales orders to use in Laske exports.
+
+    Currently contains the MaKe service unit logic, which is the default logic
+    until a service unit requests customizations to their exports, like AKV did.
+
+    For service-unit-aware instantiation of class objects, please use the
+    factory function invoice_sales_order_adapter_factory
+    """
+
     def __init__(
         self,
         invoice: Invoice,
@@ -307,5 +319,133 @@ class InvoiceSalesOrderAdapter:
         self.set_dates()
         self.set_references()
 
-        line_items = self.get_line_items()
-        self.sales_order.line_items = line_items
+        self.sales_order.line_items = self.get_line_items()
+
+
+class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
+    """Adapter for service unit Alueiden kehittäminen ja valvonta.
+
+    For service-unit-aware instantiation of class objects, please use the
+    factory function invoice_sales_order_adapter_factory
+    """
+
+    AKV_DATE_FORMAT = "%d.%m.%Y"
+
+    def get_bill_text(self) -> str:
+        """Create bill text
+
+        AKV requested that "Hki otsikko ulkoinen" is left empty in their SAP.
+        "Hki otsikko ulkoinen" corresponds to XML elements BillTextL<number> in
+        the MVJ export.
+        """
+        number_of_bill_text_lines = 6
+        return "\n" * number_of_bill_text_lines
+
+    def get_line_items(self) -> list[LineItem]:
+        """Create line items for the AKV service unit."""
+        line_items: list[LineItem] = []
+
+        invoice_rows = self.invoice.rows.all()
+        for invoice_row in invoice_rows:
+            line_text = self.get_line_text(invoice_row)
+            text_lines = textwrap.wrap(
+                line_text, width=70, max_lines=6, drop_whitespace=False
+            )
+            item = LineItem()
+            for i in range(0, 6):
+                line = text_lines[i] if i < len(text_lines) else ""
+                setattr(item, f"line_text_l{i+1}", line)
+
+            line_items.append(item)
+
+        return line_items
+
+    def get_line_text(self, invoice_row: InvoiceRow) -> str:
+        intended_use_str = (
+            invoice_row.intended_use.name
+            if invoice_row.intended_use
+            else "<käyttötarkoitus>"
+        )
+
+        # TODO Which area to use when multiple areas in lease?
+        #      Selecting the first area has been the logic so far with Make exports.
+        first_lease_area = self.invoice.lease.lease_areas.first()
+        if not first_lease_area:
+            logger.error(f"No LeaseAreas found for lease ID {self.invoice.lease.id}")
+
+        area_m2_str = first_lease_area.area if first_lease_area else "<pinta-ala>"
+
+        first_lease_area_address = first_lease_area.addresses.order_by(
+            "-is_primary"
+        ).first()  # Note: will be non-primary if no primary addresses exist
+        address_str = (
+            first_lease_area_address.address if first_lease_area_address else "<osoite>"
+        )
+        postal_code = (
+            first_lease_area_address.postal_code
+            if first_lease_area_address
+            else "<postinumero>"
+        )
+
+        district = self.invoice.lease.district
+        district_name_str = district.name if district else "<kaupunginosa>"
+        district_identifier_str = (
+            district.identifier if district else "<kaupunginosan tunniste>"
+        )
+
+        decision = first_lease_area.archived_decision
+        decision_reference_number_str = (
+            decision.reference_number if decision else "<diaarinumero>"
+        )
+        decision_date_str = (
+            decision.decision_date.strftime("%d.%m.%Y")
+            if decision
+            else "<päätöksen pvm>"
+        )
+        decision_section_str = decision.section if decision else "<pykälä>"
+
+        billing_period_start_date_str = (
+            (invoice_row.billing_period_start_date.strftime(self.AKV_DATE_FORMAT))
+            if invoice_row.billing_period_start_date
+            else "<laskutuskauden alkupvm>"
+        )
+        billing_period_end_date_str = (
+            invoice_row.billing_period_end_date.strftime(self.AKV_DATE_FORMAT)
+            if invoice_row.billing_period_end_date
+            else "<laskutuskauden loppupvm>"
+        )
+
+        # Formulate the text contents
+        return (
+            f"Kohde: {intended_use_str}, noin {area_m2_str} m², "
+            f"{district_name_str} ({district_identifier_str}), "
+            f"{address_str}, {postal_code}. "
+            f"Päätös: {decision_reference_number_str}, {decision_date_str} § {decision_section_str}, "
+            f"{billing_period_start_date_str}-{billing_period_end_date_str}"
+        )
+
+
+def invoice_sales_order_adapter_factory(
+    invoice: Invoice,
+    sales_order: SalesOrder,
+    receivable_type_rent: ReceivableType,
+    receivable_type_collateral: ReceivableType,
+    fill_priority_and_info: bool = True,
+) -> InvoiceSalesOrderAdapter | AkvInvoiceSalesOrderAdapter:
+    """Instantiates an invoice sales order adapter based on invoice's service unit.
+
+    AKV SAP export requires bill text and line text to be different from the
+    previously used Make/Tontit logic.
+    """
+    if invoice.service_unit.id == ServiceUnitId.AKV:
+        adapter = AkvInvoiceSalesOrderAdapter
+    else:
+        adapter = InvoiceSalesOrderAdapter
+
+    return adapter(
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type_rent,
+        receivable_type_collateral=receivable_type_collateral,
+        fill_priority_and_info=fill_priority_and_info,
+    )
