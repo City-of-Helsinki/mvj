@@ -1,5 +1,5 @@
 from django.utils.translation import pgettext_lazy
-from enumfields import Enum
+from enumfields import Enum, IntEnum
 
 
 class Classification(Enum):
@@ -638,3 +638,55 @@ class PlanUnitStatus(Enum):
     class Labels:
         PRESENT = pgettext_lazy("Plan Unit Status", "Present")
         PENDING = pgettext_lazy("Plan Unit Status", "Pending")
+
+
+class ServiceUnitId(IntEnum):
+    """
+    In Finnish: Palvelukokonaisuuden tunniste
+
+    Expected IDs of the ServiceUnit model in fixtures and database.
+    """
+
+    MAKE = 1
+    AKV = 2
+    KUVA_LIPA = 3
+    KUVA_UPA = 4
+    KUVA_NUP = 5
+
+    class Labels:
+        MAKE = "Maaomaisuuden kehittäminen ja tontit"
+        AKV = "Alueiden käyttö ja valvonta"
+        KUVA_LIPA = "KuVa / Liikuntapaikkapalvelut"
+        KUVA_UPA = "KuVa / Ulkoilupalvelut"
+        KUVA_NUP = "KuVa / Nuorisopalvelut"
+
+
+class SapSalesOfficeNumber(str, Enum):
+    """
+    In Finnish: SAP myyntitoimiston numero
+
+    These are set to lessor contacts in
+    leasing>management>commands>set_default_lessors.py
+
+    Python3.10 note: must have a mixin from "str" class because in some logic we
+    want to use len(), and Python3.10 string enums don't implement that function
+    or string comparison.
+    When upgrading to 3.11 and beyond you might prefer the StrEnum as super class.
+    """
+
+    MAKE = "2826"
+    AKV = "2805"
+    KUVA = "2951"
+
+
+class SapSalesOrgNumber(Enum):
+    """
+    In Finnish: SAP myyntiorganisaation numero
+
+    Make's number was initialized in leasing migration 0063, and I assume others
+    have been added to the database later via the service_unit.json fixture.
+    """
+
+    MAKE = "2800"
+    AKV = "2800"
+    KUVA = "2900"

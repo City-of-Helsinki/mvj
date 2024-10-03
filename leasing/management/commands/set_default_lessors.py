@@ -1,26 +1,34 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from leasing.enums import ContactType
+from leasing.enums import ContactType, SapSalesOfficeNumber, ServiceUnitId
 from leasing.models import Contact, ServiceUnit
 
 SERVICE_UNITS = [
     {
-        "id": 1,
+        "id": ServiceUnitId.MAKE,
         "contact_name": "Maaomaisuuden kehittäminen ja tontit",
-        "sap_sales_office": "2826",
+        "sap_sales_office": SapSalesOfficeNumber.MAKE,
     },
     {
-        "id": 2,
+        "id": ServiceUnitId.AKV,
         "contact_name": "Alueiden käyttö ja valvonta",
-        "sap_sales_office": "2805",
+        "sap_sales_office": SapSalesOfficeNumber.AKV,
     },
     {
-        "id": 3,
+        "id": ServiceUnitId.KUVA_LIPA,
         "contact_name": "KuVa / Liikuntapaikkapalvelut",
-        "sap_sales_office": "2951",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA,
     },
-    {"id": 4, "contact_name": "KuVa / Ulkoilupalvelut", "sap_sales_office": "2951"},
-    {"id": 5, "contact_name": "KuVa / Nuorisopalvelut", "sap_sales_office": "2951"},
+    {
+        "id": ServiceUnitId.KUVA_UPA,
+        "contact_name": "KuVa / Ulkoilupalvelut",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA,
+    },
+    {
+        "id": ServiceUnitId.KUVA_NUP,
+        "contact_name": "KuVa / Nuorisopalvelut",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA,
+    },
 ]
 
 
@@ -30,7 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         service_units = {su.id: su for su in ServiceUnit.objects.all()}
         for service_unit_data in SERVICE_UNITS:
-            if service_unit_data["id"] not in service_units.keys():
+            if int(service_unit_data["id"]) not in service_units.keys():
                 raise CommandError(
                     "Service unit id {} missing. Please load service_unit.json fixture first.".format(
                         service_unit_data["id"]

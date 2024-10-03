@@ -12,7 +12,7 @@ from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from laske_export.management.commands import send_invoices_to_laske
 from laske_export.models import LaskeExportLog
-from leasing.enums import ContactType
+from leasing.enums import ContactType, ServiceUnitId
 
 
 @pytest.fixture(scope="session")
@@ -119,7 +119,7 @@ def send_invoices_to_laske_command_handle(
     monkeypatch_laske_exporter_send,
 ):
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=1)
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture
@@ -130,7 +130,7 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     monkeypatch_laske_exporter_send_with_error,
 ):
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=1)
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture

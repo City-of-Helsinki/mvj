@@ -3,7 +3,13 @@ from decimal import ROUND_HALF_UP, Decimal
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 
-from leasing.enums import InvoiceType, RentCycle
+from leasing.enums import (
+    InvoiceType,
+    RentCycle,
+    SapSalesOfficeNumber,
+    SapSalesOrgNumber,
+)
+from leasing.models import Contact, Invoice, InvoiceRow, ReceivableType, Tenant
 from leasing.models.utils import get_next_business_day, is_business_day
 
 from .sales_order import BillingParty1, LineItem, OrderParty
@@ -198,12 +204,12 @@ class InvoiceSalesOrderAdapter:
                 line_item.material = receivable_type.sap_material_code
                 line_item.order_item_number = receivable_type.sap_order_item_number
 
-            # Finally we'll use internal order from the lease if the receivable type is
-            # "rent" and the internal order is set.
+            # Finally we'll use internal order from the lease if the internal order is set,
+            # and the receivable type is "rent" or service unit is KUVA.
             if (
                 receivable_type == self.receivable_type_rent
                 or self.invoice.lease.service_unit.laske_sales_org
-                == KUVA_LASKE_SALES_ORG
+                == SapSalesOrgNumber.KUVA
             ) and self.invoice.lease.internal_order:
                 line_item.order_item_number = self.invoice.lease.internal_order
 
@@ -278,8 +284,9 @@ class InvoiceSalesOrderAdapter:
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
             return self.invoice.lease.lessor.sap_sales_office
 
-        # TODO: Remove
-        return "2826"
+        # TODO: What should be the default value when SAP sales office is not found?
+        #       Make, or something else? Maybe return empty string instead?
+        return SapSalesOfficeNumber.MAKE
 
     def set_values(self):
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
