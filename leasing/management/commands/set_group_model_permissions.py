@@ -468,6 +468,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "areasearchintendeduse": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
     "intendeduse": {
         1: ("view",),
         2: ("view",),

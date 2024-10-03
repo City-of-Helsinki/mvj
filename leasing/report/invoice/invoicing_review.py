@@ -2,22 +2,39 @@ import datetime
 from collections import defaultdict
 from fractions import Fraction
 from io import BytesIO
+from itertools import groupby
 from operator import itemgetter
 
 import xlsxwriter
 from django import forms
 from django.db import DataError, connection
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext_lazy
+from django.db.backends.utils import CursorWrapper
+from django.utils.translation import gettext_lazy, pgettext_lazy
 from enumfields import Enum
 from enumfields.drf import EnumField
 from rest_framework.response import Response
 
-from leasing.models import ServiceUnit
+from leasing.models import ReceivableType, ServiceUnit
 from leasing.report.excel import FormatType
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
-from leasing.report.utils import dictfetchall
+from leasing.report.utils import (
+    BillingPeriodDataRow,
+    calculate_invoice_billing_period_days,
+    dictfetchall,
+    get_lease_period,
+)
+
+# Ids of receivable types that are not included in the gaps in the billing periods report
+# These lack the start and end dates of the billing periods by default,
+# or have a billing date range of only one day,
+# which make them exceptions to the billing periods.
+EXCLUDED_RECEIVABLE_TYPE_NAMES = [
+    "Korko",
+    "Yhteismarkkinointi (sis. ALV)",
+    "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
+    "Rahavakuus",
+]
 
 
 class InvoicingReviewSection(Enum):
@@ -32,6 +49,7 @@ class InvoicingReviewSection(Enum):
     NO_LEASE_AREA = "no_lease_area"
     INDEX_TYPE_MISSING = "index_type_missing"
     ONGOING_RENT_WITHOUT_RENT_SHARES = "ongoing_rent_without_rent_shares"
+    GAPS_IN_BILLING_PERIODS = "gaps_in_billing_periods"
 
     class Labels:
         INVOICING_NOT_ENABLED = pgettext_lazy(
@@ -56,6 +74,9 @@ class InvoicingReviewSection(Enum):
         INDEX_TYPE_MISSING = pgettext_lazy("Invoicing review", "Index type missing")
         ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
             "Invoicing review", "Ongoing rent without rent shares"
+        )
+        GAPS_IN_BILLING_PERIODS = pgettext_lazy(
+            "Invoicing review", "Gaps in billing periods"
         )
 
 
@@ -229,12 +250,12 @@ INVOICING_REVIEW_QUERIES = {
 
 
 class InvoicingReviewReport(ReportBase):
-    name = _("Invoicing review")
-    description = _("Show leases that might have errors in their invoicing")
+    name = gettext_lazy("Invoicing review")
+    description = gettext_lazy("Show leases that might have errors in their invoicing")
     slug = "invoicing_review"
     input_fields = {
         "service_unit": forms.ModelMultipleChoiceField(
-            label=_("Service unit"),
+            label=gettext_lazy("Service unit"),
             queryset=ServiceUnit.objects.all(),
             required=False,
         ),
@@ -244,15 +265,17 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_identifier": {"label": _("Lease id")},
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
-        "note": {"label": _("Note")},
+        "lease_identifier": {"label": gettext_lazy("Lease id")},
+        "start_date": {"label": gettext_lazy("Start date"), "format": "date"},
+        "end_date": {"label": gettext_lazy("End date"), "format": "date"},
+        "note": {"label": gettext_lazy("Note")},
     }
     automatic_excel_column_labels = False
     is_already_sorted = True
 
-    def get_incorrect_rent_shares_data(self, service_unit_ids, cursor):
+    def get_incorrect_rent_shares_data(
+        self, service_unit_ids: list[int], cursor: CursorWrapper
+    ):
         today = datetime.date.today()
 
         query = """
@@ -420,6 +443,121 @@ class InvoicingReviewReport(ReportBase):
                         "note": str(shares_total),
                     }
                 )
+
+        return data
+
+    def get_gaps_in_billing_periods_data(
+        self, service_unit_ids: list[int], cursor: CursorWrapper
+    ):
+        """
+        Finds gaps in the billing periods of the leases' invoices.
+
+        It compares the start dates of the lease with active rents to the billing periods of the lease's invoices.
+        If there is a difference between the numbers of days in these periods, the lease is added to the report.
+        """
+
+        query = """
+            SELECT li.identifier AS "lease_identifier",
+                l.id AS "lease_id",
+                l.start_date,
+                l.end_date,
+                r.id AS "rent_id",
+                r.start_date AS "rent_start_date",
+                r.end_date AS "rent_end_date",
+                i.id AS "invoice_id",
+                i.billing_period_start_date,
+                i.billing_period_end_date
+            FROM leasing_lease l
+            INNER JOIN leasing_leaseidentifier li
+                ON l.identifier_id = li.id
+            INNER JOIN leasing_rent r
+                ON l.id = r.lease_id
+            LEFT JOIN leasing_invoice i
+                ON l.id = i.lease_id
+            INNER JOIN leasing_invoicerow ir
+                ON i.id = ir.invoice_id
+            WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
+                AND (l.start_date IS NOT NULL AND l.start_date <= %(today)s)
+                AND l.service_unit_id = ANY(%(service_units)s)
+                AND l.deleted IS NULL
+                AND l.state NOT IN ('reservation', 'power_of_attorney')
+                AND r.deleted IS NULL
+                AND r."type" != 'free'
+                AND (r.start_date IS NULL OR r.start_date <= %(today)s)
+                AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                AND i.deleted IS NULL
+                AND i.deleted_by_cascade IS false
+                AND ir.deleted IS NULL
+                AND ir.receivable_type_id != ANY(%(excluded_receivable_type_ids)s)
+            ORDER BY li.identifier ASC;
+        """
+
+        today = datetime.date.today()
+
+        excluded_receivable_type_ids: list[int] = [
+            id
+            for id in ReceivableType.objects.filter(
+                name__in=EXCLUDED_RECEIVABLE_TYPE_NAMES
+            ).values_list("id", flat=True)
+        ]
+
+        cursor.execute(
+            query,
+            {
+                "service_units": service_unit_ids,
+                "today": today,
+                "excluded_receivable_type_ids": excluded_receivable_type_ids,
+            },
+        )
+
+        billing_periods_data: list[BillingPeriodDataRow] = dictfetchall(cursor)
+
+        data = []
+
+        for _, billing_period_data_row_group in groupby(
+            billing_periods_data, lambda x: x["lease_id"]
+        ):
+            lease_period_start = None
+            lease_period_end = None
+            lease_period_days = 0
+
+            invoiced_period_days = 0
+            lease_has_gaps = False
+
+            for billing_period_data_row in billing_period_data_row_group:
+                billing_period_increment = calculate_invoice_billing_period_days(
+                    billing_period_data_row["billing_period_start_date"],
+                    billing_period_data_row["billing_period_end_date"],
+                    today,
+                )
+
+                if billing_period_increment is None:
+                    lease_has_gaps = True
+                    break
+
+                invoiced_period_days += billing_period_increment
+
+            lease_period_start, lease_period_end = get_lease_period(
+                billing_period_data_row,
+                today,
+            )
+            lease_period_days = (lease_period_end - lease_period_start).days + 1
+
+            if lease_period_days != invoiced_period_days:
+                lease_has_gaps = True
+
+            if lease_has_gaps:
+                data.append(
+                    {
+                        "section": None,
+                        "lease_identifier": billing_period_data_row["lease_identifier"],
+                    }
+                )
+            lease_period_start = None
+            lease_period_end = None
+            lease_period_days = 0
+            invoiced_period_days = 0
+            lease_has_gaps = False
 
         return data
 

@@ -13,10 +13,10 @@ from leasing.enums import LeaseAreaAttachmentType, LeaseState
 from leasing.models import Lease, ServiceUnit
 from leasing.report.lease.common_getters import (
     get_address,
-    get_contract_number,
     get_district,
     get_form_of_management,
     get_form_of_regulation,
+    get_latest_contract_number,
     get_lease_area_identifier,
     get_lease_id,
     get_lease_type,
@@ -54,7 +54,11 @@ def get_matti_report(obj):
 def get_permitted_building_volume_residential(obj):
     volumes = defaultdict(Decimal)
     for basis_of_rent in obj.basis_of_rents.all():
-        if basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS:
+        if (
+            basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
+        ):
             continue
 
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
@@ -72,7 +76,11 @@ def get_permitted_building_volume_residential(obj):
 def get_permitted_building_volume_business(obj):
     volumes = defaultdict(Decimal)
     for basis_of_rent in obj.basis_of_rents.all():
-        if basis_of_rent.intended_use_id in RESIDENTIAL_INTENDED_USE_IDS:
+        if (
+            basis_of_rent.intended_use_id in RESIDENTIAL_INTENDED_USE_IDS
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
+        ):
             continue
 
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
@@ -90,6 +98,9 @@ def get_permitted_building_volume_business(obj):
 def get_permitted_building_volume_total(obj):
     volumes = defaultdict(Decimal)
     for basis_of_rent in obj.basis_of_rents.all():
+        if basis_of_rent.archived_at or not basis_of_rent.locked_at:
+            continue
+
         volumes[basis_of_rent.area_unit] += basis_of_rent.area
 
     return " / ".join(
@@ -146,6 +157,8 @@ def get_average_amount_per_area_residential(obj):
         if (
             basis_of_rent.intended_use_id not in RESIDENTIAL_INTENDED_USE_IDS
             or not basis_of_rent.amount_per_area
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
         ):
             continue
 
@@ -172,6 +185,8 @@ def get_average_amount_per_area_business(obj):
         if (
             basis_of_rent.intended_use_id in RESIDENTIAL_INTENDED_USE_IDS
             or not basis_of_rent.amount_per_area
+            or basis_of_rent.archived_at
+            or not basis_of_rent.locked_at
         ):
             continue
 
@@ -217,7 +232,7 @@ class LeaseStatisticReport(AsyncReportBase):
         # Sopimusnumero
         "contract_number": {
             "label": _("Contract number"),
-            "source": get_contract_number,
+            "source": get_latest_contract_number,
             "is_numeric": True,
         },
         # Vuokrauksen tyyppi

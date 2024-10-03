@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-26 14:25+0300\n"
+"POT-Creation-Date: 2024-09-12 10:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -670,10 +670,6 @@ msgstr "Lyhytaikainen vuokraus"
 msgctxt "Lease state"
 msgid "Long term lease"
 msgstr "Pitkäaikainen vuokraus"
-
-msgctxt "Lease state"
-msgid "Temporary lease"
-msgstr "Tilapäinen vuokraus"
 
 msgctxt "Lease state"
 msgid "Reservation"
@@ -2748,6 +2744,49 @@ msgstr ""
 msgid "Index 1938:8-1939:7=100"
 msgstr ""
 
+msgid "Index code"
+msgstr "Indeksin tunniste"
+
+msgid "Index name"
+msgstr "Indeksin nimi"
+
+msgid "Region"
+msgstr "Alue"
+
+msgid "Data source"
+msgstr "Tiedonlähde"
+
+msgid "Source table updated"
+msgstr "Lähdetietokantapöytä päivitetty"
+
+msgid "Source table label"
+msgstr "Lähdetietokantapöydän selite"
+
+msgid "API endpoint URL"
+msgstr "Ohjelmointirajapinnan päätepisteen verkko-osoite"
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksit"
+
+msgid "Index number"
+msgstr "Indeksipisteluku"
+
+msgid "Comment"
+msgstr "Kommentti"
+
+msgctxt "model name"
+msgid "index number"
+msgstr "Indeksipisteluku"
+
+msgctxt "model name"
+msgid "index numbers"
+msgstr "Indeksipisteluvut"
+
 msgid "Lease basis of rent"
 msgstr "Vuokrauksen vuokrausperiaate"
 
@@ -3020,6 +3059,10 @@ msgstr "Indeksilaji puuttuu"
 msgctxt "Invoicing review"
 msgid "Ongoing rent without rent shares"
 msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
+
+msgctxt "Invoicing review"
+msgid "Gaps in billing periods"
+msgstr "Aukkoja laskutuskausissa"
 
 msgid "Invoicing review"
 msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
