@@ -16,7 +16,7 @@ from leasing.enums import (
     ServiceUnitId,
     TenantContactType,
 )
-from leasing.models import ReceivableType, ServiceUnit
+from leasing.models import ServiceUnit
 
 
 @pytest.mark.django_db

@@ -6,7 +6,6 @@ import pytest
 from laske_export.document.invoice_sales_order_adapter import InvoiceSalesOrderAdapter
 from laske_export.document.sales_order import SalesOrder
 from leasing.enums import ContactType, DueDatesType, RentCycle, TenantContactType
-from leasing.models import ReceivableType
 
 
 @pytest.mark.django_db
