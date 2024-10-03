@@ -14,6 +14,7 @@ from leasing.models import ReceivableType
 def test_one_primary_address_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -78,7 +79,8 @@ def test_one_primary_address_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
+    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -92,7 +94,10 @@ def test_one_primary_address_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=collateral_type,
     )
 
     adapter.set_values()
@@ -104,6 +109,7 @@ def test_one_primary_address_in_leasearea(
 def test_one_nonprimary_address_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -168,7 +174,8 @@ def test_one_nonprimary_address_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
+    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -182,7 +189,10 @@ def test_one_nonprimary_address_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=collateral_type,
     )
 
     adapter.set_values()
@@ -194,6 +204,7 @@ def test_one_nonprimary_address_in_leasearea(
 def test_one_primary_and_nonprimary_addresses_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -272,7 +283,8 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
+    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -286,7 +298,10 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=collateral_type,
     )
 
     adapter.set_values()

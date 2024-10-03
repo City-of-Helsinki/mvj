@@ -13,6 +13,7 @@ from leasing.models import ReceivableType
 def test_ponumber_from_single_tenant(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -61,7 +62,7 @@ def test_ponumber_from_single_tenant(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -75,7 +76,10 @@ def test_ponumber_from_single_tenant(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=receivable_type_factory(),
     )
 
     adapter.set_values()
@@ -87,6 +91,7 @@ def test_ponumber_from_single_tenant(
 def test_ponumber_from_recipient_tenant(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -151,7 +156,7 @@ def test_ponumber_from_recipient_tenant(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -173,7 +178,10 @@ def test_ponumber_from_recipient_tenant(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=receivable_type_factory(),
     )
 
     adapter.set_values()
@@ -185,6 +193,7 @@ def test_ponumber_from_recipient_tenant(
 def test_ponumber_from_all_tenants(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -253,7 +262,7 @@ def test_ponumber_from_all_tenants(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -275,7 +284,10 @@ def test_ponumber_from_all_tenants(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        receivable_type_rent=receivable_type,
+        receivable_type_collateral=receivable_type_factory(),
     )
 
     adapter.set_values()

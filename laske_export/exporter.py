@@ -19,18 +19,21 @@ from laske_export.document.sales_order import SalesOrder, SalesOrderContainer
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
 from leasing.enums import InvoiceType
-from leasing.models import Invoice
+from leasing.models import Invoice, ServiceUnit
 from leasing.models.land_use_agreement import LandUseAgreementInvoice
 
 logger = logging.getLogger(__name__)
 
 
-def set_constant_laske_values(sales_order, service_unit):
+def create_sales_order_with_laske_values(service_unit: ServiceUnit) -> SalesOrder:
+    sales_order = SalesOrder()
+
     for key, val in settings.LASKE_VALUES.items():
         setattr(sales_order, key, val)
 
     sales_order.sender_id = service_unit.laske_sender_id
     sales_order.sales_org = service_unit.laske_sales_org
+    return sales_order
 
 
 class LaskeExporterError(Exception):
@@ -38,7 +41,7 @@ class LaskeExporterError(Exception):
 
 
 class LaskeExporter:
-    def __init__(self, service_unit):
+    def __init__(self, service_unit: ServiceUnit):
         self.message_output = None
         self.service_unit = service_unit
         self._check_export_directory()
@@ -122,14 +125,8 @@ class LaskeExporter:
 
         self.message_output.write(message)
 
-    def export_invoices(self, invoices):
-        """
-        :type invoices: list[Invoice] | Invoice
-        :rtype: LaskeExportLog
-        """
-        if isinstance(invoices, Invoice):
-            invoices = [invoices]
-
+    def export_invoices(self, invoices: list[Invoice]) -> LaskeExportLog:
+        """Export invoices as XML and send them to Laske SAP"""
         receivable_type_rent = self.service_unit.default_receivable_type_rent
         receivable_type_collateral = (
             self.service_unit.default_receivable_type_collateral
@@ -183,8 +180,7 @@ class LaskeExporter:
                     invoice.invoicing_date = now.date()
                     invoice.save()
 
-                sales_order = SalesOrder()
-                set_constant_laske_values(sales_order, invoice.service_unit)
+                sales_order = create_sales_order_with_laske_values(invoice.service_unit)
 
                 adapter = InvoiceSalesOrderAdapter(
                     invoice=invoice,
@@ -258,21 +254,16 @@ class LaskeExporter:
 
         return laske_export_log_entry
 
-    def export_land_use_agreement_invoices(self, invoices):
-        """
-        :type invoices: list[LandUseAgreementInvoice] | LandUseAgreementInvoice
-        :rtype: LaskeExportLog
-        """
-        if isinstance(invoices, LandUseAgreementInvoice):
-            invoices = [invoices]
-
+    def export_land_use_agreement_invoices(
+        self, invoices: list[LandUseAgreementInvoice]
+    ) -> LaskeExportLog:
         now = timezone.now()
         laske_export_log_entry = LaskeExportLog.objects.create(
             started_at=now, filename="", service_unit=self.service_unit
         )
 
-        sales_orders = []
-        log_invoices = []
+        sales_orders: list[SalesOrder] = []
+        log_invoices: list[LandUseAgreementInvoice] = []
         invoice_count = 0
 
         self.write_to_output(
@@ -282,8 +273,7 @@ class LaskeExporter:
         for invoice in invoices:
             self.write_to_output(" Land use agreement invoice id {}".format(invoice.id))
 
-            sales_order = SalesOrder()
-            set_constant_laske_values(sales_order, self.service_unit)
+            sales_order = create_sales_order_with_laske_values(self.service_unit)
 
             adapter = LandUseAgreementInvoiceSalesOrderAdapter(
                 invoice=invoice,

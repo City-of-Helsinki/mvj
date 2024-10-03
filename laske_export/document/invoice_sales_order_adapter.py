@@ -12,7 +12,7 @@ from leasing.enums import (
 from leasing.models import Contact, Invoice, InvoiceRow, ReceivableType, Tenant
 from leasing.models.utils import get_next_business_day, is_business_day
 
-from .sales_order import BillingParty1, LineItem, OrderParty
+from .sales_order import BillingParty1, LineItem, OrderParty, SalesOrder
 
 KUVA_LASKE_SALES_ORG = "2900"
 
@@ -20,10 +20,10 @@ KUVA_LASKE_SALES_ORG = "2900"
 class InvoiceSalesOrderAdapter:
     def __init__(
         self,
-        invoice=None,
-        sales_order=None,
-        receivable_type_rent=None,
-        receivable_type_collateral=None,
+        invoice: Invoice,
+        sales_order: SalesOrder,
+        receivable_type_rent: ReceivableType,
+        receivable_type_collateral: ReceivableType,
         fill_priority_and_info=True,
     ):
         self.invoice = invoice
@@ -32,14 +32,16 @@ class InvoiceSalesOrderAdapter:
         self.receivable_type_collateral = receivable_type_collateral
         self.fill_priority_and_info = fill_priority_and_info
 
-    def get_bill_text(self):
+    def get_bill_text(
+        self,
+    ) -> str:
         if (
             self.invoice.billing_period_start_date
             and self.invoice.billing_period_end_date
         ):
             invoice_year = self.invoice.billing_period_start_date.year
 
-            # TODO: Which rent
+            # TODO: Which rent? Always the first? Ask customer expert
             rent = self.invoice.lease.get_active_rents_on_period(
                 self.invoice.billing_period_start_date,
                 self.invoice.billing_period_end_date,
@@ -130,14 +132,14 @@ class InvoiceSalesOrderAdapter:
 
         return "\n".join(bill_texts)
 
-    def get_first_tenant(self):
+    def get_first_tenant(self) -> Tenant | None:
         for invoice_row in self.invoice.rows.all():
             if not invoice_row.tenant:
                 continue
 
             return invoice_row.tenant
 
-    def get_contact_to_bill(self):
+    def get_contact_to_bill(self) -> Contact:
         tenant = self.get_first_tenant()
         # We need a tenant and time period to find the BILLING contact
         if not tenant or not self.invoice.billing_period_start_date:
@@ -152,13 +154,13 @@ class InvoiceSalesOrderAdapter:
             return self.invoice.recipient
         return tenant_billingcontact.contact
 
-    def get_po_number(self):
+    def get_po_number(self) -> str | None:
         # Simply return the first reference ("viite") we come across
         for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
             if invoice_row.tenant.reference:
                 return invoice_row.tenant.reference[:35]
 
-    def set_dates(self):
+    def set_dates(self) -> None:
         billing_date = self.invoice.due_date.replace(day=1)
         self.sales_order.billing_date = billing_date.strftime("%Y%m%d")
 
@@ -171,11 +173,11 @@ class InvoiceSalesOrderAdapter:
         value_date = due_date - relativedelta(days=settings.LASKE_DUE_DATE_OFFSET_DAYS)
         self.sales_order.value_date = value_date.strftime("%Y%m%d")
 
-    def set_references(self):
+    def set_references(self) -> None:
         self.sales_order.reference = str(self.invoice.generate_number())
         self.sales_order.reference_text = self.invoice.lease.get_identifier_string()
 
-    def get_line_items(self):
+    def get_line_items(self) -> list[LineItem]:
         line_items = []
 
         invoice_rows = self.invoice.rows.all()
@@ -183,7 +185,7 @@ class InvoiceSalesOrderAdapter:
             line_item = LineItem()
 
             receivable_type = invoice_row.receivable_type
-            # If the receivable type is "rent" and doesn't have its own code and
+            # If the receivable type is "rent" ("Maanvuokraus") and doesn't have its own code and
             # item number we look up the SAP codes from the LeaseType
             if (
                 receivable_type == self.receivable_type_rent
@@ -234,12 +236,6 @@ class InvoiceSalesOrderAdapter:
             line_item.line_text_l1 = " ".join(line1_strings)[:70]
 
             if invoice_row.tenant:
-                # NB! As can be seen below, here the billing_period_start_date was used twice originally.
-                # I believe it's a mistake, but I'm leaving it here as a reminder in case some weird bugs pop up.
-                # tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
-                #     invoice_row.billing_period_start_date,
-                #     invoice_row.billing_period_start_date).first()
-
                 start_date = self.invoice.billing_period_start_date
                 end_date = self.invoice.billing_period_end_date
 
@@ -270,17 +266,17 @@ class InvoiceSalesOrderAdapter:
 
         return line_items
 
-    def get_order_type(self):
+    def get_order_type(self) -> str | None:
         if self.invoice.type == InvoiceType.CHARGE:
             return "ZTY1"
         elif self.invoice.type == InvoiceType.CREDIT_NOTE:
             return "ZHY1"
 
-    def get_original_order(self):
+    def get_original_order(self) -> str | None:
         if self.invoice.type == InvoiceType.CREDIT_NOTE:
             return str(self.invoice.credited_invoice.number)
 
-    def get_sales_office(self):
+    def get_sales_office(self) -> str:
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
             return self.invoice.lease.lessor.sap_sales_office
 
@@ -288,7 +284,7 @@ class InvoiceSalesOrderAdapter:
         #       Make, or something else? Maybe return empty string instead?
         return SapSalesOfficeNumber.MAKE
 
-    def set_values(self):
+    def set_values(self) -> None:
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
 
         contact_to_be_billed = self.get_contact_to_bill()
