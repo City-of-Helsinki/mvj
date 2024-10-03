@@ -124,7 +124,7 @@
     "model": "leasing.receivabletype",
     "pk": 12,
     "fields": {
-      "name": "Hiekkasiilo",
+      "name": "Hiekkasiilo, muut",
       "sap_material_code": "27100049",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -135,7 +135,7 @@
     "model": "leasing.receivabletype",
     "pk": 13,
     "fields": {
-      "name": "Kaupunkipyörä",
+      "name": "Kaupunkipyörä (alv)",
       "sap_material_code": "10003614",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -146,7 +146,7 @@
     "model": "leasing.receivabletype",
     "pk": 14,
     "fields": {
-      "name": "Kaupunkiviljelypaikat",
+      "name": "Kaupunkiviljely",
       "sap_material_code": "27100028",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -168,7 +168,7 @@
     "model": "leasing.receivabletype",
     "pk": 16,
     "fields": {
-      "name": "Vesialueen vuokraaminen toimintaan (alv)",
+      "name": "Laiva ja muu vesialue (alv)",
       "sap_material_code": "10003628",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -179,7 +179,7 @@
     "model": "leasing.receivabletype",
     "pk": 17,
     "fields": {
-      "name": "Lasitettu katuterassi ja asiakastila alv",
+      "name": "Lasitettu katuterassi ja asiakastila (alv)",
       "sap_material_code": "10003629",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -201,7 +201,7 @@
     "model": "leasing.receivabletype",
     "pk": 19,
     "fields": {
-      "name": "Liikunta ja ulkoilupaikat yleisellä alueella",
+      "name": "Liikunta ja ulkoilu (alv)",
       "sap_material_code": "10003615",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -256,7 +256,7 @@
     "model": "leasing.receivabletype",
     "pk": 24,
     "fields": {
-      "name": "Metsästysoikeus",
+      "name": "Metsästysoikeus (alv)",
       "sap_material_code": "27100045",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -267,7 +267,7 @@
     "model": "leasing.receivabletype",
     "pk": 25,
     "fields": {
-      "name": "Muuntamo, laitetila, masto",
+      "name": "Muuntamo, laitetila, masto (alv)",
       "sap_material_code": "10003625",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -278,7 +278,7 @@
     "model": "leasing.receivabletype",
     "pk": 26,
     "fields": {
-      "name": "Pysäköinti",
+      "name": "Pysäköinti (alv)",
       "sap_material_code": "27100048",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -289,7 +289,7 @@
     "model": "leasing.receivabletype",
     "pk": 27,
     "fields": {
-      "name": "Sähköpotkulauta",
+      "name": "Sähköpotkulauta (alv)",
       "sap_material_code": "10003620",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -300,7 +300,7 @@
     "model": "leasing.receivabletype",
     "pk": 28,
     "fields": {
-      "name": "Taide ja kulttuuri yleisellä alueella (muu kuin tapahtumatoiminta)",
+      "name": "Taide ja kulttuuri",
       "sap_material_code": "27100037",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -311,7 +311,7 @@
     "model": "leasing.receivabletype",
     "pk": 29,
     "fields": {
-      "name": "Tilapäinen käymälä ja taukotila",
+      "name": "Tilapäinen käymälä ja taukotila (alv)",
       "sap_material_code": "10003621",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -322,7 +322,7 @@
     "model": "leasing.receivabletype",
     "pk": 30,
     "fields": {
-      "name": "Työmaatukitoiminta",
+      "name": "Työmaatukitoiminta (alv)",
       "sap_material_code": "10003626",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -333,7 +333,7 @@
     "model": "leasing.receivabletype",
     "pk": 31,
     "fields": {
-      "name": "Ulkomainoslaitepaikka",
+      "name": "Ulkomainonta, yksityinen",
       "sap_material_code": "27100044",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -344,7 +344,7 @@
     "model": "leasing.receivabletype",
     "pk": 32,
     "fields": {
-      "name": "Ulkomainosvälinepaikkojen vuokraus",
+      "name": "Ulkomainonta, kilpailutettu (alv)",
       "sap_material_code": "27100000",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -355,7 +355,7 @@
     "model": "leasing.receivabletype",
     "pk": 33,
     "fields": {
-      "name": "Varastointi",
+      "name": "Varastointi (alv)",
       "sap_material_code": "10003627",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -564,8 +564,63 @@
     "model": "leasing.receivabletype",
     "pk": 52,
     "fields": {
-      "name": "Sähköautojen latauspaikat",
+      "name": "Sähköauton latauspaikka (alv)",
       "sap_material_code": "10003619",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 53,
+    "fields": {
+      "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko (alv)",
+      "sap_material_code": "10003722",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 54,
+    "fields": {
+      "name": "Hiekkasiilo, muut (alv)",
+      "sap_material_code": "10003730",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 55,
+    "fields": {
+      "name": "Kioski, kahvila, myyntipaikat (alv)",
+      "sap_material_code": "10003731",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 56,
+    "fields": {
+      "name": "Taide ja kulttuuri (alv)",
+      "sap_material_code": "10003732",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 57,
+    "fields": {
+      "name": "Ulkomainonta, yksityinen (alv)",
+      "sap_material_code": "27100044",
       "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
