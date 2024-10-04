@@ -1,10 +1,18 @@
 import datetime
+from typing import Protocol
+
+from django.db.models import QuerySet
 
 from leasing.enums import TenantContactType
+from leasing.models import Contract
 
 RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
+
+
+class LeaseWithContracts(Protocol):
+    contracts: QuerySet[Contract]
 
 
 def get_lease_type(lease):
@@ -55,9 +63,9 @@ def get_address(lease):
     return " / ".join(addresses)
 
 
-def get_latest_contract_number(obj):
-    contracts = []
-    for contract in obj.contracts.all():
+def get_latest_contract_number(lease: LeaseWithContracts):
+    contracts: list[Contract] = []
+    for contract in lease.contracts.all():
         if not contract.contract_number:
             continue
 
@@ -72,7 +80,7 @@ def get_latest_contract_number(obj):
         key=lambda contract: (
             contract.signing_date
             if contract.signing_date is not None
-            else datetime.datetime.min
+            else datetime.date.min
         ),
         default=None,
     )
