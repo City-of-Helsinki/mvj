@@ -124,7 +124,9 @@ class RentCompareReport(AsyncReportBase):
             for year in [first_year, second_year]:
                 year_key = "first_year" if year == first_year else "second_year"
                 try:
-                    rent_amount = lease.calculate_rent_amount_for_year(year)
+                    rent_amount = lease.calculate_rent_amount_for_year(
+                        year, dry_run=True
+                    )
 
                     result[year_key] = rent_amount.get_total_amount()
                 except NotImplementedError:
