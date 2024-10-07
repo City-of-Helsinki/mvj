@@ -659,17 +659,12 @@ class ServiceUnitId(IntEnum):
         KUVA_NUP = "KuVa / Nuorisopalvelut"
 
 
-class SapSalesOfficeNumber(str, Enum):
+class SapSalesOfficeNumber(Enum):
     """
     In Finnish: SAP myyntitoimiston numero
 
     These are set to lessor contacts in
     leasing>management>commands>set_default_lessors.py
-
-    Python3.10 note: must have a mixin from "str" class because in some logic we
-    want to use len(), and Python3.10 string enums don't implement that function
-    or string comparison.
-    When upgrading to 3.11 and beyond you might prefer the StrEnum as super class.
     """
 
     MAKE = "2826"

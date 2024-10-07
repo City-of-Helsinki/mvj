@@ -294,7 +294,7 @@ class InvoiceSalesOrderAdapter:
 
         # TODO: What should be the default value when SAP sales office is not found?
         #       Make, or something else? Maybe return empty string instead?
-        return SapSalesOfficeNumber.MAKE
+        return SapSalesOfficeNumber.MAKE.value
 
     def set_values(self) -> None:
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
