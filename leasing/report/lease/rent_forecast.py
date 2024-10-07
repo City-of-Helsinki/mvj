@@ -95,7 +95,9 @@ class RentForecastReport(AsyncReportBase):
 
             for year in years:
                 try:
-                    rent_amount = lease.calculate_rent_amount_for_year(year)
+                    rent_amount = lease.calculate_rent_amount_for_year(
+                        year, dry_run=True
+                    )
 
                     rent_sums_key = "external"
                     if lease.type.identifier in INTERNAL_LEASE_TYPES:
