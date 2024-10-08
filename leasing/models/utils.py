@@ -3,11 +3,16 @@ import re
 from collections import OrderedDict, namedtuple
 from datetime import date
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from dateutil.relativedelta import relativedelta
 from django.db.models import Manager, Model
 
 from leasing.enums import PeriodType
+
+if TYPE_CHECKING:
+    # Avoid circular import
+    from leasing.models.rent import RentAdjustment
 
 
 def get_range_overlap(start1, end1, start2, end2):
@@ -88,7 +93,7 @@ def get_date_range_amount_from_monthly_amount(
     return total
 
 
-def fix_amount_for_overlap(amount, overlap, remainders):
+def fix_amount_for_overlap(amount, overlap: tuple[date, date], remainders):
     if not remainders or not amount:
         return amount
 
@@ -314,7 +319,9 @@ def _get_date_range_from_item(item, fill_min_max_values=True):
     return start_date, end_date
 
 
-def group_items_in_period_by_date_range(items, min_date, max_date):
+def group_items_in_period_by_date_range(
+    items: list["RentAdjustment"], min_date, max_date
+) -> dict[tuple[date, date], list["RentAdjustment"]]:
     grouped_items = {}
 
     if not items:
