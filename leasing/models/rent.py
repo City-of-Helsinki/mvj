@@ -1223,7 +1223,9 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
                 adjustment = min(adjustment_left, rent_amount)
 
             if update_amount_total:
-                self.amount_left = max(0, adjustment_left - adjustment)
+                self.amount_left = Decimal(
+                    max(0, adjustment_left - adjustment)
+                ).quantize(Decimal("0.00"), rounding=ROUND_HALF_UP)
                 self.save()
         else:
             raise NotImplementedError(
