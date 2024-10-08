@@ -129,10 +129,6 @@ class LaskeExporter:
 
     def export_invoices(self, invoices: list[Invoice]) -> LaskeExportLog:
         """Export invoices as XML and send them to Laske SAP"""
-        receivable_type_rent = self.service_unit.default_receivable_type_rent
-        receivable_type_collateral = (
-            self.service_unit.default_receivable_type_collateral
-        )
 
         now = timezone.now()
         laske_export_log_entry = LaskeExportLog.objects.create(
@@ -187,8 +183,7 @@ class LaskeExporter:
                 adapter = invoice_sales_order_adapter_factory(
                     invoice=invoice,
                     sales_order=sales_order,
-                    receivable_type_rent=receivable_type_rent,
-                    receivable_type_collateral=receivable_type_collateral,
+                    service_unit=self.service_unit,
                     fill_priority_and_info=self.service_unit.laske_fill_priority_and_info,
                 )
                 adapter.set_values()

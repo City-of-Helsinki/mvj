@@ -34,8 +34,14 @@ def test_one_primary_address_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """Bill text should contain the primary address of the lease area."""
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -89,7 +95,6 @@ def test_one_primary_address_in_leasearea(
     )
 
     receivable_type = receivable_type_factory()
-    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -105,8 +110,7 @@ def test_one_primary_address_in_leasearea(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=collateral_type,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -129,8 +133,17 @@ def test_one_nonprimary_address_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """
+    Bill text should contain the sole non-primary address of the lease area,
+    if no primary addresses exist.
+    """
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -184,7 +197,6 @@ def test_one_nonprimary_address_in_leasearea(
     )
 
     receivable_type = receivable_type_factory()
-    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -200,8 +212,7 @@ def test_one_nonprimary_address_in_leasearea(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=collateral_type,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -224,8 +235,17 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """
+    If lease area has multiple addresses, only include the primary address in
+    bill text.
+    """
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -293,7 +313,6 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     )
 
     receivable_type = receivable_type_factory()
-    collateral_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -309,8 +328,7 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=collateral_type,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -346,14 +364,13 @@ def test_akv_bill_text(
         billing_period_end_date=datetime.date(year=2020, month=12, day=31),
     )
     sales_order = SalesOrder()
-    receivable_type = receivable_type_factory(service_unit=service_unit)
+    receivable_type_factory(service_unit=service_unit)
 
     # Create bill text
     adapter = invoice_sales_order_adapter_factory(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=receivable_type_factory(service_unit=service_unit),
+        service_unit=service_unit,
     )
     adapter.set_values()
 

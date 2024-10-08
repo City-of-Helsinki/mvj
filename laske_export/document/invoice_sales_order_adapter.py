@@ -4,6 +4,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.db.models import QuerySet
 
 from leasing.enums import (
     InvoiceType,
@@ -12,7 +13,7 @@ from leasing.enums import (
     SapSalesOrgNumber,
     ServiceUnitId,
 )
-from leasing.models import Contact, Invoice, InvoiceRow, ReceivableType, Tenant
+from leasing.models import Contact, Invoice, InvoiceRow, ServiceUnit, Tenant
 from leasing.models.utils import get_next_business_day, is_business_day
 
 from .sales_order import BillingParty1, LineItem, OrderParty, SalesOrder
@@ -34,14 +35,12 @@ class InvoiceSalesOrderAdapter:
         self,
         invoice: Invoice,
         sales_order: SalesOrder,
-        receivable_type_rent: ReceivableType,
-        receivable_type_collateral: ReceivableType,
+        service_unit: ServiceUnit,
         fill_priority_and_info=True,
     ):
         self.invoice = invoice
         self.sales_order = sales_order
-        self.receivable_type_rent = receivable_type_rent
-        self.receivable_type_collateral = receivable_type_collateral
+        self.service_unit = service_unit
         self.fill_priority_and_info = fill_priority_and_info
 
     def get_bill_text(
@@ -53,7 +52,7 @@ class InvoiceSalesOrderAdapter:
         ):
             invoice_year = self.invoice.billing_period_start_date.year
 
-            # TODO: Which rent? Always the first? Ask customer expert
+            # TODO: Which rent? Always the first?
             rent = self.invoice.lease.get_active_rents_on_period(
                 self.invoice.billing_period_start_date,
                 self.invoice.billing_period_end_date,
@@ -192,91 +191,165 @@ class InvoiceSalesOrderAdapter:
     def get_line_items(self) -> list[LineItem]:
         line_items = []
 
-        invoice_rows = self.invoice.rows.all()
+        invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
         for i, invoice_row in enumerate(invoice_rows):
             line_item = LineItem()
 
-            receivable_type = invoice_row.receivable_type
-            # If the receivable type is "rent" ("Maanvuokraus") and doesn't have its own code and
-            # item number we look up the SAP codes from the LeaseType
-            if (
-                receivable_type == self.receivable_type_rent
-                and not self.receivable_type_rent.sap_material_code
-                and not self.receivable_type_rent.sap_order_item_number
-            ):
-                line_item.material = self.invoice.lease.type.sap_material_code
-                line_item.order_item_number = (
-                    self.invoice.lease.type.sap_order_item_number
-                )
+            self.set_line_item_common_values(line_item, invoice_row)
 
-            # ...but in other cases the SAP codes are found in the ReceivableType object of the invoice row.
-            elif receivable_type == self.receivable_type_collateral:
-                # In case of a collateral ("Rahavakuus") row, need to populate ProfitCenter element instead
-                line_item.profit_center = receivable_type.sap_order_item_number
-                line_item.material = receivable_type.sap_material_code
-            else:
-                line_item.material = receivable_type.sap_material_code
-                line_item.order_item_number = receivable_type.sap_order_item_number
-
-            # Finally we'll use internal order from the lease if the internal order is set,
-            # and the receivable type is "rent" or service unit is KUVA.
-            if (
-                receivable_type == self.receivable_type_rent
-                or self.invoice.lease.service_unit.laske_sales_org
-                == SapSalesOrgNumber.KUVA
-            ) and self.invoice.lease.internal_order:
-                line_item.order_item_number = self.invoice.lease.internal_order
-
-            line_item.quantity = "1,00"
-            line_item.net_price = "{:.2f}".format(invoice_row.amount).replace(".", ",")
-
-            line1_strings = ["{}".format(invoice_row.receivable_type.name)]
-
-            if (
-                invoice_row.billing_period_start_date
-                and invoice_row.billing_period_end_date
-            ):
-                line1_strings.append(
-                    "{} - {}".format(
-                        invoice_row.billing_period_start_date.strftime("%d.%m.%Y"),
-                        invoice_row.billing_period_end_date.strftime("%d.%m.%Y"),
-                    )
-                )
-
-            line1_strings.append(" ")
-
-            line_item.line_text_l1 = " ".join(line1_strings)[:70]
-
-            if invoice_row.tenant:
-                start_date = self.invoice.billing_period_start_date
-                end_date = self.invoice.billing_period_end_date
-
-                # There might be invoices that have no billing_period_start and end_date at all!
-                # If this is the case, use the invoicing date to find the proper contacts
-                if not start_date and not end_date:
-                    start_date = end_date = self.invoice.invoicing_date
-
-                tenant_contact = invoice_row.tenant.get_tenant_tenantcontacts(
-                    start_date, end_date
-                ).first()
-
-                if tenant_contact and tenant_contact.contact:
-                    line_item.line_text_l2 = "{}  ".format(
-                        tenant_contact.contact.get_name()[:68]
-                    )
-
-            if i == len(invoice_rows) - 1:
-                line_item.line_text_l4 = "   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä."
-                line_item.line_text_l5 = (
-                    " Eräpäivän jälkeen peritään korkolain mukainen viivästyskorko ja"
-                )
-                line_item.line_text_l6 = (
-                    " mahdollisista perimistoimenpiteistä perimispalkkio."
-                )
+            # Create and set the LineTextL<number> elements
+            linetext = self.get_line_text(invoice_row)
+            is_last_invoicerow = i == len(invoice_rows) - 1
+            self.set_linetexts_from_string(line_item, linetext, is_last_invoicerow)
 
             line_items.append(line_item)
 
         return line_items
+
+    def set_line_item_common_values(
+        self, line_item: LineItem, invoice_row: InvoiceRow
+    ) -> None:
+        line_item.quantity = "1,00"
+        line_item.net_price = "{:.2f}".format(invoice_row.amount).replace(".", ",")
+
+        # Service unit default receivable types for rent and collateral might be
+        # null, but we need to check if SAP codes exist in them.
+        service_unit_default_rent_material_code = getattr(
+            self.service_unit.default_receivable_type_rent,
+            "sap_material_code",
+            None,
+        )
+        service_unit_default_rent_order_item_number = getattr(
+            self.service_unit.default_receivable_type_rent,
+            "sap_order_item_number",
+            None,
+        )
+        if (
+            invoice_row.receivable_type
+            == self.service_unit.default_receivable_type_rent
+            and not service_unit_default_rent_material_code
+            and not service_unit_default_rent_order_item_number
+        ):
+            # If the receivable type is "rent" ("Maanvuokraus"), it probably doesn't have
+            # its own SAP codes, so we look up the codes from LeaseType
+            line_item.material = self.invoice.lease.type.sap_material_code
+            line_item.order_item_number = self.invoice.lease.type.sap_order_item_number
+
+        # ...but in other cases the SAP codes are found in InvoiceRow's ReceivableType.
+        elif (
+            invoice_row.receivable_type
+            == self.service_unit.default_receivable_type_collateral
+        ):
+            # In case of collateral ("Rahavakuus") receivable type, populate the
+            # ProfitCenter element instead of OrderItemNumber element
+            line_item.material = invoice_row.receivable_type.sap_material_code
+            line_item.profit_center = invoice_row.receivable_type.sap_order_item_number
+        else:
+            # Otherwise, use SAP codes from the InvoiceRow's receivable type
+            line_item.material = invoice_row.receivable_type.sap_material_code
+            line_item.order_item_number = (
+                invoice_row.receivable_type.sap_order_item_number
+            )
+
+        # Sometimes lease has an internal order.
+        # In this case, check other relevant business conditions and use it as
+        # the order item number.
+        if self.invoice.lease.internal_order and (
+            self.invoice.lease.service_unit.laske_sales_org
+            == SapSalesOrgNumber.KUVA.value
+            or invoice_row.receivable_type
+            == self.service_unit.default_receivable_type_rent
+        ):
+            line_item.order_item_number = self.invoice.lease.internal_order
+
+    def get_line_text(self, invoice_row: InvoiceRow) -> str:
+        """Generates contents of the LineTextL<number> elements in LineItem."""
+        receivable_type_text = (
+            invoice_row.receivable_type.name if invoice_row.receivable_type else ""
+        )
+        # Billing period text
+        if (
+            invoice_row.billing_period_start_date
+            and invoice_row.billing_period_end_date
+        ):
+            billing_period_text = f"{invoice_row.billing_period_start_date.strftime('%d.%m.%Y')} - \
+                {invoice_row.billing_period_end_date.strftime('%d.%m.%Y')}"
+        else:
+            billing_period_text = ""
+
+        # Contact name text
+        if invoice_row.tenant:
+            start_date = self.invoice.billing_period_start_date
+            end_date = self.invoice.billing_period_end_date
+
+            # There might be invoices that have no billing_period_start and end_date at all.
+            # If this is the case, use the invoicing date to find the proper contacts
+            if not start_date and not end_date:
+                start_date = end_date = self.invoice.invoicing_date
+
+            first_tenantcontact = invoice_row.tenant.get_tenant_tenantcontacts(
+                start_date, end_date
+            ).first()
+
+            if first_tenantcontact and first_tenantcontact.contact:
+                contact_name_text = first_tenantcontact.contact.get_name()
+            else:
+                contact_name_text = ""
+        else:
+            contact_name_text = ""
+
+        # Formulate the full linetext in the format as before
+        return f"{receivable_type_text} {billing_period_text}  \n{contact_name_text}  "
+
+    def set_linetexts_from_string(
+        self, line_item: LineItem, text: str, is_last_invoicerow: bool = False
+    ) -> None:
+        """Set the LineTextL<number> XML elements in the LineItem.
+
+        Linetext will be wrapped to a maximum line length, and number of lines.
+        If there is not enough text to fill all the lines, adds empty string to
+        the remaining lines.
+        """
+        number_of_linetext_lines = 6
+        line_max_length = 70
+
+        if is_last_invoicerow:
+            # In the last invoicerow, Make/tontit has some lines about
+            # payment practices at the end, separated from invoicerow linetext
+            # with an empty line...
+            last_rows_text = (
+                "\n"
+                "   Maksun suorittaminen: Maksu on suoritettava viimeistään eräpäivänä."
+                " Eräpäivän jälkeen peritään korkolain mukainen viivästyskorko ja"
+                " mahdollisista perimistoimenpiteistä perimispalkkio."
+            )
+            last_rows_lines = textwrap.wrap(
+                last_rows_text,
+                width=line_max_length,
+                drop_whitespace=False,
+            )
+            # ... which means that the last invoicerow gets less space for its linetext
+            first_rows_lines = textwrap.wrap(
+                text,
+                width=line_max_length,
+                max_lines=number_of_linetext_lines - len(last_rows_lines),
+                drop_whitespace=False,
+            )
+            text_lines = first_rows_lines + last_rows_lines
+        else:
+            # For invoicerows other than the last one, we can use all the
+            # available lines for the linetext
+            text_lines = textwrap.wrap(
+                text,
+                width=line_max_length,
+                max_lines=number_of_linetext_lines,
+                drop_whitespace=False,
+            )
+
+        # Set the linetexts to the lineitem
+        for i in range(0, number_of_linetext_lines):
+            line = text_lines[i] if i < len(text_lines) else ""
+            setattr(line_item, f"line_text_l{i+1}", line)
 
     def get_order_type(self) -> str | None:
         if self.invoice.type == InvoiceType.CHARGE:
@@ -332,113 +405,131 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     AKV_DATE_FORMAT = "%d.%m.%Y"
 
     def get_bill_text(self) -> str:
-        """Create bill text
+        """Create billtext for AKV service unit.
 
         AKV requested that "Hki otsikko ulkoinen" is left empty in their SAP.
         "Hki otsikko ulkoinen" corresponds to XML elements BillTextL<number> in
         the MVJ export.
         """
-        number_of_bill_text_lines = 6
-        return "\n" * number_of_bill_text_lines
+        number_of_billtext_lines = 6
+        return "\n" * number_of_billtext_lines
 
     def get_line_items(self) -> list[LineItem]:
-        """Create line items for the AKV service unit."""
+        """Create LineItems for AKV service unit."""
         line_items: list[LineItem] = []
-        number_of_line_text_lines = 6
         invoice_rows = self.invoice.rows.all()
 
         for invoice_row in invoice_rows:
-            line_text = self.get_line_text(invoice_row)
-            text_lines = textwrap.wrap(
-                line_text,
-                width=70,
-                max_lines=number_of_line_text_lines,
-                drop_whitespace=False,
-            )
-            item = LineItem()
-            for i in range(0, number_of_line_text_lines):
-                line = text_lines[i] if i < len(text_lines) else ""
-                setattr(item, f"line_text_l{i+1}", line)
+            line_item = LineItem()
+            self.set_line_item_common_values(line_item, invoice_row)
 
-            line_items.append(item)
+            linetext = self.get_line_text(invoice_row)
+            self.set_linetexts_from_string(line_item, linetext)
+
+            line_items.append(line_item)
 
         return line_items
 
     def get_line_text(self, invoice_row: InvoiceRow) -> str:
-        intended_use_str = (
+        """Generates contents of the LineTextL<number> elements in LineItem for
+        AKV service unit."""
+        intended_use_text = (
             invoice_row.intended_use.name
             if invoice_row.intended_use
             else "<käyttötarkoitus>"
         )
 
         # TODO Which area to use when multiple areas in lease?
-        #      Selecting the first area has been the logic so far with Make exports.
+        #      Selecting the first area has been the logic so far in Make exports.
         first_lease_area = self.invoice.lease.lease_areas.first()
         if not first_lease_area:
             logger.error(f"No LeaseAreas found for lease ID {self.invoice.lease.id}")
 
-        area_m2_str = first_lease_area.area if first_lease_area else "<pinta-ala>"
+        area_m2_text = first_lease_area.area if first_lease_area else "<pinta-ala>"
 
         first_lease_area_address = first_lease_area.addresses.order_by(
             "-is_primary"
         ).first()  # Note: will be non-primary if no primary addresses exist
-        address_str = (
+        address_text = (
             first_lease_area_address.address if first_lease_area_address else "<osoite>"
         )
-        postal_code = (
+        postal_code_text = (
             first_lease_area_address.postal_code
             if first_lease_area_address
             else "<postinumero>"
         )
 
         district = self.invoice.lease.district
-        district_name_str = district.name if district else "<kaupunginosa>"
-        district_identifier_str = (
+        district_name_text = district.name if district else "<kaupunginosa>"
+        district_identifier_text = (
             district.identifier if district else "<kaupunginosan tunniste>"
         )
 
         decision = first_lease_area.archived_decision
-        decision_reference_number_str = (
+        decision_reference_number_text = (
             decision.reference_number if decision else "<diaarinumero>"
         )
-        decision_date_str = (
+        decision_date_text = (
             decision.decision_date.strftime("%d.%m.%Y")
             if decision
             else "<päätöksen pvm>"
         )
-        decision_section_str = decision.section if decision else "<pykälä>"
+        decision_section_text = decision.section if decision else "<pykälä>"
 
-        billing_period_start_date_str = (
+        billing_period_start_date_text = (
             (invoice_row.billing_period_start_date.strftime(self.AKV_DATE_FORMAT))
             if invoice_row.billing_period_start_date
             else "<laskutuskauden alkupvm>"
         )
-        billing_period_end_date_str = (
+        billing_period_end_date_text = (
             invoice_row.billing_period_end_date.strftime(self.AKV_DATE_FORMAT)
             if invoice_row.billing_period_end_date
             else "<laskutuskauden loppupvm>"
         )
 
-        # Formulate the text contents
+        # Formulate the full text contents without linebreaks
         return (
-            f"Kohde: {intended_use_str}, noin {area_m2_str} m², "
-            f"{district_name_str} ({district_identifier_str}), "
-            f"{address_str}, {postal_code}. "
-            f"Päätös: {decision_reference_number_str}, {decision_date_str} § {decision_section_str}, "
-            f"{billing_period_start_date_str}-{billing_period_end_date_str}"
+            f"Kohde: {intended_use_text}, noin {area_m2_text} m², "
+            f"{district_name_text} ({district_identifier_text}), "
+            f"{address_text}, {postal_code_text}. "
+            f"Päätös: {decision_reference_number_text}, {decision_date_text} § {decision_section_text}, "
+            f"{billing_period_start_date_text}-{billing_period_end_date_text}"
         )
+
+    def set_linetexts_from_string(self, line_item: LineItem, text: str) -> None:
+        """Set the LineTextL<number> XML elements in the LineItem for AKV
+        service unit.
+
+        AKV doesn't need the invoicing instructions that are added to the last
+        invoicerow in Make/Tontit invoices.
+
+        Linetext will be wrapped to a maximum line length, and number of lines.
+        If there is not enough text to fill all the lines, adds empty string to
+        the remaining lines.
+        """
+        number_of_linetext_lines = 6
+        line_max_length = 70
+
+        text_lines = textwrap.wrap(
+            text,
+            width=line_max_length,
+            max_lines=number_of_linetext_lines,
+            drop_whitespace=False,
+        )
+        for i in range(0, number_of_linetext_lines):
+            line = text_lines[i] if i < len(text_lines) else ""
+            setattr(line_item, f"line_text_l{i+1}", line)
 
 
 def invoice_sales_order_adapter_factory(
     invoice: Invoice,
     sales_order: SalesOrder,
-    receivable_type_rent: ReceivableType,
-    receivable_type_collateral: ReceivableType,
+    service_unit: ServiceUnit,
     fill_priority_and_info: bool = True,
 ) -> InvoiceSalesOrderAdapter | AkvInvoiceSalesOrderAdapter:
     """Instantiates an invoice sales order adapter based on invoice's service unit.
 
-    AKV SAP export requires bill text and line text to be different from the
+    AKV SAP export requires billtext and linetext to be different from the
     previously used Make/Tontit logic.
     """
     if invoice.service_unit.id == ServiceUnitId.AKV:
@@ -449,7 +540,6 @@ def invoice_sales_order_adapter_factory(
     return adapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type_rent,
-        receivable_type_collateral=receivable_type_collateral,
+        service_unit=service_unit,
         fill_priority_and_info=fill_priority_and_info,
     )

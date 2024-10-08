@@ -465,6 +465,10 @@ def test_send_invoices_order_num_from_lease(
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
 ):
+    """
+    Make/Tontit SAP order item number should be populated from lease's internal
+    order, when internal order is present.
+    """
     _order_number_test_setup["lease"].internal_order = "lease-ordern"
     _order_number_test_setup["lease"].save()
 

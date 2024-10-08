@@ -5,7 +5,14 @@ import pytest
 
 from laske_export.document.invoice_sales_order_adapter import InvoiceSalesOrderAdapter
 from laske_export.document.sales_order import SalesOrder
-from leasing.enums import ContactType, DueDatesType, RentCycle, TenantContactType
+from leasing.enums import (
+    ContactType,
+    DueDatesType,
+    RentCycle,
+    ServiceUnitId,
+    TenantContactType,
+)
+from leasing.models import ServiceUnit
 
 
 @pytest.mark.django_db
@@ -21,8 +28,13 @@ def test_ponumber_from_single_tenant(
     invoice_factory,
     invoice_row_factory,
 ):
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -77,8 +89,7 @@ def test_ponumber_from_single_tenant(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=receivable_type_factory(),
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -99,8 +110,13 @@ def test_ponumber_from_recipient_tenant(
     invoice_factory,
     invoice_row_factory,
 ):
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -179,8 +195,7 @@ def test_ponumber_from_recipient_tenant(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=receivable_type_factory(),
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -201,8 +216,13 @@ def test_ponumber_from_all_tenants(
     invoice_factory,
     invoice_row_factory,
 ):
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -285,8 +305,7 @@ def test_ponumber_from_all_tenants(
     adapter = InvoiceSalesOrderAdapter(
         invoice=invoice,
         sales_order=sales_order,
-        receivable_type_rent=receivable_type,
-        receivable_type_collateral=receivable_type_factory(),
+        service_unit=service_unit,
     )
 
     adapter.set_values()
