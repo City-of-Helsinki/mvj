@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import connection, models, transaction
-from django.db.models import Max, Q
+from django.db.models import Max, Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -35,6 +35,7 @@ from leasing.models.mixins import (
     TimeStampedModel,
     TimeStampedSafeDeleteModel,
 )
+from leasing.models.rent import Rent
 from leasing.models.utils import (
     fix_amount_for_overlap,
     get_range_overlap_and_remainder,
@@ -865,7 +866,9 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return result
 
-    def get_active_rents_on_period(self, date_range_start, date_range_end):
+    def get_active_rents_on_period(
+        self, date_range_start, date_range_end
+    ) -> QuerySet[Rent]:
         rent_range_filter = Q(
             Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
             & Q(Q(start_date=None) | Q(start_date__lte=date_range_end))

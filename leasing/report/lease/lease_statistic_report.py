@@ -114,8 +114,8 @@ def get_permitted_building_volume_total(obj):
 
 
 @lru_cache(maxsize=1)
-def _get_rent_amount_for_year(obj, year):
-    return obj.calculate_rent_amount_for_year(year, dry_run=True)
+def _get_rent_amount_for_year(lease: Lease, year):
+    return lease.calculate_rent_amount_for_year(year, dry_run=True)
 
 
 def get_rent_amount_residential(obj):
