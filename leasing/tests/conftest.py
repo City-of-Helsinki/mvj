@@ -792,7 +792,7 @@ def land_use_agreement_test_data(
     district_factory,
     contact_factory,
 ):
-    municipality = municipality_factory(name="Helsinki", identifier=10)
+    municipality = municipality_factory(name="Helsinki")
     district = district_factory(
         name="Alppila", identifier=22, municipality=municipality
     )
