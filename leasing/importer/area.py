@@ -27,9 +27,12 @@ class AreaImport(TypedDict, total=False):
     query: str
 
 
+MatchDataIdentifier = str
+
+
 class MatchData(TypedDict, total=False):
     type: str
-    identifier: str
+    identifier: MatchDataIdentifier
     source: str
     external_id: Optional[str]
     detailed_plan_identifier: Optional[str]
@@ -407,7 +410,7 @@ class AreaImporter(BaseImporter):
 
         return match_data
 
-    def get_plan_unit_areas(self, metadata: Metadata, identifier: str):
+    def get_plan_unit_areas(self, metadata: Metadata, identifier: MatchDataIdentifier):
         areas = Area.objects.all()
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
