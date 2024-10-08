@@ -8,6 +8,13 @@ from leasing.tests.conftest import *  # noqa
 
 
 def pytest_configure():
+    """
+    Pytest hook to set common configurations for all test files that use this conftest.
+
+    Temporary directory will be shared by tests in a single file.
+    If you require a unique directory for your test, use the `tmp_path` fixture:
+    https://docs.pytest.org/en/stable/how-to/tmp_path.html
+    """
     laske_export_root = tempfile.mkdtemp(prefix="laske-export-")
     settings.LANGUAGE_CODE = "en"
     settings.LASKE_EXPORT_ROOT = laske_export_root

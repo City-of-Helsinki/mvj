@@ -386,7 +386,15 @@ def _order_number_test_setup(
     return test_data
 
 
-def _get_exported_file_as_tree(settings):
+def _get_exported_file_as_tree(settings) -> et.ElementTree:
+    """
+    Returns a single XML element tree based on the first found XML file.
+
+    Args:
+        settings: Django configuration set in the conftest file.
+                  LASKE_EXPORT_ROOT must be unique for each test that exports a
+                  file, to ensure that the correct export is returned.
+    """
     files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
     assert len(files) == 1
     exported_file = files[0]
