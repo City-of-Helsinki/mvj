@@ -6,7 +6,7 @@ from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -399,12 +399,14 @@ class Rent(TimeStampedSafeDeleteModel):
     def fixed_initial_year_rent_amount_for_date_range(
         self, intended_use, date_range_start, date_range_end, dry_run=False
     ):
-        fixed_initial_year_rents = self.fixed_initial_year_rents.filter(
-            Q(
-                Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
-                & Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+        fixed_initial_year_rents: QuerySet[FixedInitialYearRent] = (
+            self.fixed_initial_year_rents.filter(
+                Q(
+                    Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
+                    & Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
+                )
+                & Q(intended_use=intended_use)
             )
-            & Q(intended_use=intended_use)
         )
 
         calculation_result = FixedInitialYearRentCalculationResult(
@@ -449,7 +451,7 @@ class Rent(TimeStampedSafeDeleteModel):
             date_range_start=date_range_start, date_range_end=date_range_end
         )
 
-        contract_rents = self.contract_rents.filter(
+        contract_rents: QuerySet[ContractRent] = self.contract_rents.filter(
             Q(
                 Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
                 & Q(Q(start_date=None) | Q(start_date__lte=date_range_end))
@@ -628,7 +630,7 @@ class Rent(TimeStampedSafeDeleteModel):
 
     def get_applicable_adjustments(
         self, intended_use, date_range_start, date_range_end
-    ):
+    ) -> list["RentAdjustment"]:
         applicable_adjustments = []
 
         range_filtering = Q(

@@ -20,7 +20,7 @@ class CalculationAmount:
         self.amount = amount
         self.date_range_start = date_range_start
         self.date_range_end = date_range_end
-        self.sub_amounts = []
+        self.sub_amounts: list[CalculationAmount] = []
         self.notes = []
 
     def __str__(self):
@@ -107,7 +107,7 @@ class CalculationResult:
     def __init__(self, date_range_start, date_range_end):
         self.date_range_start = date_range_start
         self.date_range_end = date_range_end
-        self.amounts = []
+        self.amounts: list[CalculationAmount] = []
 
     def __str__(self):
         result = "Date range: {} - {}\n".format(
