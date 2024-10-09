@@ -620,7 +620,7 @@
     "pk": 57,
     "fields": {
       "name": "Ulkomainonta, yksityinen (alv)",
-      "sap_material_code": "27100044",
+      "sap_material_code": "10003733",
       "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
