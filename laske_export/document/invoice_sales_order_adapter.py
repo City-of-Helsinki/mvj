@@ -496,7 +496,9 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
             f"{billing_period_start_date_text}-{billing_period_end_date_text}"
         )
 
-    def set_linetexts_from_string(self, line_item: LineItem, text: str) -> None:
+    def set_linetexts_from_string(
+        self, line_item: LineItem, text: str, is_last_invoicerow: bool = False
+    ) -> None:
         """Set the LineTextL<number> XML elements in the LineItem for AKV
         service unit.
 
@@ -507,6 +509,10 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         If there is not enough text to fill all the lines, adds empty string to
         the remaining lines.
         """
+        # This variable is unused in this child class, but I wanted to avoid a more
+        # complicated class structure at this stage when we don't know the KUVA logic yet
+        del is_last_invoicerow
+
         number_of_linetext_lines = 6
         line_max_length = 70
 
