@@ -36,7 +36,7 @@ class InvoiceSalesOrderAdapter:
         invoice: Invoice,
         sales_order: SalesOrder,
         service_unit: ServiceUnit,
-        fill_priority_and_info=True,
+        fill_priority_and_info: bool = True,
     ):
         self.invoice = invoice
         self.sales_order = sales_order
