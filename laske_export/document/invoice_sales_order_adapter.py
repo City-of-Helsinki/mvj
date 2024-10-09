@@ -150,6 +150,8 @@ class InvoiceSalesOrderAdapter:
 
             return invoice_row.tenant
 
+        return None
+
     def get_contact_to_bill(self) -> Contact:
         tenant = self.get_first_tenant()
         # We need a tenant and time period to find the BILLING contact
@@ -163,6 +165,7 @@ class InvoiceSalesOrderAdapter:
 
         if not tenant_billingcontact:
             return self.invoice.recipient
+
         return tenant_billingcontact.contact
 
     def get_po_number(self) -> str | None:
@@ -170,6 +173,8 @@ class InvoiceSalesOrderAdapter:
         for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
             if invoice_row.tenant.reference:
                 return invoice_row.tenant.reference[:35]
+
+        return None
 
     def set_dates(self) -> None:
         billing_date = self.invoice.due_date.replace(day=1)
@@ -357,9 +362,13 @@ class InvoiceSalesOrderAdapter:
         elif self.invoice.type == InvoiceType.CREDIT_NOTE:
             return "ZHY1"
 
+        return None
+
     def get_original_order(self) -> str | None:
         if self.invoice.type == InvoiceType.CREDIT_NOTE:
             return str(self.invoice.credited_invoice.number)
+
+        return None
 
     def get_sales_office(self) -> str:
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
