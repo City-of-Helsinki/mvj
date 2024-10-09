@@ -423,7 +423,7 @@ class AreaImporter(BaseImporter):
 
         ext_id = getattr(row, "id", None)
 
-        if ext_id:
+        if ext_id is not None:
             update_data["external_id"] = ext_id
 
         return update_data
