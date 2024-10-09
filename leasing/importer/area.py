@@ -413,7 +413,6 @@ class AreaImporter(BaseImporter):
     def get_update_data(
         self,
         row: NamedTupleUnknown,
-        area_import: AreaImport,
         metadata: Metadata,
         geom: geos.MultiPolygon,
     ):
@@ -422,8 +421,10 @@ class AreaImporter(BaseImporter):
             "metadata": metadata,
         }
 
-        if area_import["area_type"] == AreaType.PLAN_UNIT:
-            update_data["external_id"] = row.id if row.id else None
+        ext_id = getattr(row, "id", None)
+
+        if ext_id:
+            update_data["external_id"] = ext_id
 
         return update_data
 
@@ -551,9 +552,7 @@ class AreaImporter(BaseImporter):
             if geom is None:
                 continue
 
-            update_data: UpdateData = self.get_update_data(
-                row, area_import, metadata, geom
-            )
+            update_data: UpdateData = self.get_update_data(row, metadata, geom)
 
             imported_identifiers, error_count = self.update_or_create_areas(
                 areas, update_data, match_data, imported_identifiers, error_count
