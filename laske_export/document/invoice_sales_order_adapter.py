@@ -172,7 +172,7 @@ class InvoiceSalesOrderAdapter:
         # Simply return the first reference ("viite") we come across
         for invoice_row in self.invoice.rows.filter(tenant__isnull=False):
             if invoice_row.tenant.reference:
-                return invoice_row.tenant.reference[:35]
+                return invoice_row.tenant.reference[:35]  # type: ignore[no-any-return]
 
         return None
 
@@ -186,7 +186,7 @@ class InvoiceSalesOrderAdapter:
             self.invoice.adjusted_due_date = due_date
             self.invoice.save()
 
-        value_date = due_date - relativedelta(days=settings.LASKE_DUE_DATE_OFFSET_DAYS)
+        value_date = due_date - relativedelta(days=settings.LASKE_DUE_DATE_OFFSET_DAYS)  # type: ignore[misc]
         self.sales_order.value_date = value_date.strftime("%Y%m%d")
 
     def set_references(self) -> None:
@@ -372,11 +372,11 @@ class InvoiceSalesOrderAdapter:
 
     def get_sales_office(self) -> str:
         if self.invoice.lease.lessor and self.invoice.lease.lessor.sap_sales_office:
-            return self.invoice.lease.lessor.sap_sales_office
+            return self.invoice.lease.lessor.sap_sales_office  # type: ignore[no-any-return]
 
         # TODO: What should be the default value when SAP sales office is not found?
         #       Make, or something else? Maybe return empty string instead?
-        return SapSalesOfficeNumber.MAKE.value
+        return SapSalesOfficeNumber.MAKE.value  # type: ignore[no-any-return]
 
     def set_values(self) -> None:
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
