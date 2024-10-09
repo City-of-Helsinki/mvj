@@ -628,7 +628,7 @@
   },
   {
     "model": "leasing.receivabletype",
-    "pk": 57,
+    "pk": 58,
     "fields": {
       "name": "Varastointi",
       "sap_material_code": "10003724",
