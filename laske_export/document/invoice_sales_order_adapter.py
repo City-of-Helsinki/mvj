@@ -539,13 +539,16 @@ def invoice_sales_order_adapter_factory(
     previously used Make/Tontit logic.
     """
     if invoice.service_unit.id == ServiceUnitId.AKV:
-        adapter = AkvInvoiceSalesOrderAdapter
+        return AkvInvoiceSalesOrderAdapter(
+            invoice=invoice,
+            sales_order=sales_order,
+            service_unit=service_unit,
+            fill_priority_and_info=fill_priority_and_info,
+        )
     else:
-        adapter = InvoiceSalesOrderAdapter
-
-    return adapter(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
-        fill_priority_and_info=fill_priority_and_info,
-    )
+        return InvoiceSalesOrderAdapter(
+            invoice=invoice,
+            sales_order=sales_order,
+            service_unit=service_unit,
+            fill_priority_and_info=fill_priority_and_info,
+        )
