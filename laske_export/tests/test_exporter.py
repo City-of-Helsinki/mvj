@@ -313,10 +313,12 @@ def test_send_invoices_service_unit(
     assert service_unit.laske_sender_id in exported_file
 
     # Check that the XML has the correct values from the service unit
-    tree = et.parse(exported_file)
-    assert len(tree.findall("./SBO_SalesOrder")) == 1
-    assert tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
-    assert tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder")) == 1
+    assert (
+        xml_tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
+    )
+    assert xml_tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
 
 
 @pytest.fixture
@@ -399,11 +401,11 @@ def _get_exported_file_as_tree(settings) -> et.ElementTree:
     assert len(files) == 1
     exported_file = files[0]
 
-    tree = et.parse(exported_file)
-    assert len(tree.findall("./SBO_SalesOrder")) == 1
-    assert len(tree.findall("./SBO_SalesOrder/LineItem")) == 1
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder")) == 1
+    assert len(xml_tree.findall("./SBO_SalesOrder/LineItem")) == 1
 
-    return tree
+    return xml_tree
 
 
 @pytest.mark.django_db
@@ -418,8 +420,8 @@ def test_send_invoices_order_num_from_lease_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text
@@ -450,8 +452,8 @@ def test_send_invoices_order_num_from_receivable_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert line_item.find("Material").text == "rt-material-code"
     assert line_item.find("OrderItemNumber").text == "rt-order-num"
@@ -476,8 +478,8 @@ def test_send_invoices_order_num_from_lease(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text

@@ -75,8 +75,8 @@ def test_akv_xml_elements_exist(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    tree = _get_exported_file_as_tree(settings)
-    sales_order = tree.find("./SBO_SalesOrder")
+    xml_tree = _get_exported_file_as_tree(settings)
+    sales_order = xml_tree.find("./SBO_SalesOrder")
 
     assert sales_order.find("SenderId").text is not None
     assert sales_order.find("Reference").text is not None
@@ -89,7 +89,7 @@ def test_akv_xml_elements_exist(
     assert sales_order.find("ReferenceText").text is not None
     assert sales_order.find("BillingDate").text is not None
 
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
     assert line_item.find("Material").text is not None
     assert line_item.find("Quantity").text is not None
     assert line_item.find("NetPrice").text is not None
@@ -116,8 +116,8 @@ def test_akv_sap_codes_from_invoicerow(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text
@@ -152,8 +152,8 @@ def test_akv_sap_codes_from_leasetype(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text
@@ -190,8 +190,8 @@ def test_akv_sap_codes_when_collateral(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text
