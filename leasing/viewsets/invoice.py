@@ -33,7 +33,7 @@ from leasing.serializers.invoice import (
 )
 
 from ..permissions import IsMemberOfSameServiceUnit, MvjDjangoModelPermissions
-from .utils import AtomicTransactionModelViewSet
+from .utils import AtomicTransactionModelViewSet, ReceivableTypeResultSetPagination
 
 
 class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
@@ -169,3 +169,4 @@ class ReceivableTypeViewSet(ReadOnlyModelViewSet):
     queryset = ReceivableType.objects.all()
     serializer_class = ReceivableTypeSerializer
     filterset_class = ReceivableTypeFilter
+    pagination_class = ReceivableTypeResultSetPagination

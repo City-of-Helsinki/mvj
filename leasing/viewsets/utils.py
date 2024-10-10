@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from rest_framework import parsers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -111,3 +112,9 @@ def integrityerror_exception_handler(exc, context):
         )
 
     return response
+
+
+class ReceivableTypeResultSetPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = "page_size"
+    max_page_size = 50
