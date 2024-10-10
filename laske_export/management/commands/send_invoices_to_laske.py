@@ -87,7 +87,7 @@ class Command(BaseCommand):
                 self.stdout.write("No invoices to send. Exiting.")
                 return
 
-            laske_export_log_entry = exporter.export_invoices(invoices)
+            laske_export_log_entry = exporter.export_invoices(list(invoices))
         except Exception as err:
             error_flag = True
             error_message = str(err)

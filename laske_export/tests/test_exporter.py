@@ -12,7 +12,7 @@ from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from laske_export.management.commands import send_invoices_to_laske
 from laske_export.models import LaskeExportLog
-from leasing.enums import ContactType
+from leasing.enums import ContactType, ServiceUnitId
 
 
 @pytest.fixture(scope="session")
@@ -119,7 +119,7 @@ def send_invoices_to_laske_command_handle(
     monkeypatch_laske_exporter_send,
 ):
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=1)
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture
@@ -130,7 +130,7 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     monkeypatch_laske_exporter_send_with_error,
 ):
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=1)
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture
@@ -313,10 +313,12 @@ def test_send_invoices_service_unit(
     assert service_unit.laske_sender_id in exported_file
 
     # Check that the XML has the correct values from the service unit
-    tree = et.parse(exported_file)
-    assert len(tree.findall("./SBO_SalesOrder")) == 1
-    assert tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
-    assert tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder")) == 1
+    assert (
+        xml_tree.find("./SBO_SalesOrder/SalesOrg").text == service_unit.laske_sales_org
+    )
+    assert xml_tree.find("./SBO_SalesOrder/Reference").text == str(invoice.number)
 
 
 @pytest.fixture
@@ -386,16 +388,24 @@ def _order_number_test_setup(
     return test_data
 
 
-def _get_exported_file_as_tree(settings):
+def _get_exported_file_as_tree(settings) -> et.ElementTree:
+    """
+    Returns a single XML element tree based on the first found XML file.
+
+    Args:
+        settings: Django configuration set in the conftest file.
+                  LASKE_EXPORT_ROOT must be unique for each test that exports a
+                  file, to ensure that the correct export is returned.
+    """
     files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
     assert len(files) == 1
     exported_file = files[0]
 
-    tree = et.parse(exported_file)
-    assert len(tree.findall("./SBO_SalesOrder")) == 1
-    assert len(tree.findall("./SBO_SalesOrder/LineItem")) == 1
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder")) == 1
+    assert len(xml_tree.findall("./SBO_SalesOrder/LineItem")) == 1
 
-    return tree
+    return xml_tree
 
 
 @pytest.mark.django_db
@@ -410,8 +420,8 @@ def test_send_invoices_order_num_from_lease_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text
@@ -442,8 +452,8 @@ def test_send_invoices_order_num_from_receivable_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert line_item.find("Material").text == "rt-material-code"
     assert line_item.find("OrderItemNumber").text == "rt-order-num"
@@ -457,6 +467,10 @@ def test_send_invoices_order_num_from_lease(
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
 ):
+    """
+    Make/Tontit SAP order item number should be populated from lease's internal
+    order, when internal order is present.
+    """
     _order_number_test_setup["lease"].internal_order = "lease-ordern"
     _order_number_test_setup["lease"].save()
 
@@ -464,8 +478,8 @@ def test_send_invoices_order_num_from_lease(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    tree = _get_exported_file_as_tree(settings)
-    line_item = tree.find("./SBO_SalesOrder/LineItem")
+    xml_tree = _get_exported_file_as_tree(settings)
+    line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
         line_item.find("Material").text

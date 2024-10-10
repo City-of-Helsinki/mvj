@@ -1,26 +1,34 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from leasing.enums import ContactType
+from leasing.enums import ContactType, SapSalesOfficeNumber, ServiceUnitId
 from leasing.models import Contact, ServiceUnit
 
 SERVICE_UNITS = [
     {
-        "id": 1,
+        "id": ServiceUnitId.MAKE.value,
         "contact_name": "Maaomaisuuden kehittäminen ja tontit",
-        "sap_sales_office": "2826",
+        "sap_sales_office": SapSalesOfficeNumber.MAKE.value,
     },
     {
-        "id": 2,
+        "id": ServiceUnitId.AKV.value,
         "contact_name": "Alueiden käyttö ja valvonta",
-        "sap_sales_office": "2805",
+        "sap_sales_office": SapSalesOfficeNumber.AKV.value,
     },
     {
-        "id": 3,
+        "id": ServiceUnitId.KUVA_LIPA.value,
         "contact_name": "KuVa / Liikuntapaikkapalvelut",
-        "sap_sales_office": "2951",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
     },
-    {"id": 4, "contact_name": "KuVa / Ulkoilupalvelut", "sap_sales_office": "2951"},
-    {"id": 5, "contact_name": "KuVa / Nuorisopalvelut", "sap_sales_office": "2951"},
+    {
+        "id": ServiceUnitId.KUVA_UPA.value,
+        "contact_name": "KuVa / Ulkoilupalvelut",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
+    },
+    {
+        "id": ServiceUnitId.KUVA_NUP.value,
+        "contact_name": "KuVa / Nuorisopalvelut",
+        "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
+    },
 ]
 
 
