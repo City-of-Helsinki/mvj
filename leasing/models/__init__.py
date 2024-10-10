@@ -29,7 +29,7 @@ from .infill_development_compensation import (
     InfillDevelopmentCompensationLease,
 )
 from .inspection import Inspection, InspectionAttachment
-from .invoice import BankHoliday, Invoice, InvoiceNote, ReceivableType
+from .invoice import BankHoliday, Invoice, InvoiceNote, InvoiceRow, ReceivableType
 from .land_area import (
     ConstructabilityDescription,
     CustomDetailedPlan,
@@ -149,6 +149,7 @@ __all__ = [
     "InterestRate",
     "Invoice",
     "InvoiceNote",
+    "InvoiceRow",
     "LandUseAgreement",
     "LandUseAgreementAttachment",
     "LandUseAgreementCondition",

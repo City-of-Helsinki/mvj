@@ -4,16 +4,26 @@ from decimal import Decimal
 import pytest
 from django.utils.crypto import get_random_string
 
-from laske_export.document.invoice_sales_order_adapter import InvoiceSalesOrderAdapter
+from laske_export.document.invoice_sales_order_adapter import (
+    InvoiceSalesOrderAdapter,
+    invoice_sales_order_adapter_factory,
+)
 from laske_export.document.sales_order import SalesOrder
-from leasing.enums import ContactType, DueDatesType, RentCycle, TenantContactType
-from leasing.models import ReceivableType
+from leasing.enums import (
+    ContactType,
+    DueDatesType,
+    RentCycle,
+    ServiceUnitId,
+    TenantContactType,
+)
+from leasing.models import ServiceUnit
 
 
 @pytest.mark.django_db
 def test_one_primary_address_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -24,8 +34,14 @@ def test_one_primary_address_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """Bill text should contain the primary address of the lease area."""
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -78,7 +94,7 @@ def test_one_primary_address_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -92,7 +108,9 @@ def test_one_primary_address_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -104,6 +122,7 @@ def test_one_primary_address_in_leasearea(
 def test_one_nonprimary_address_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -114,8 +133,17 @@ def test_one_nonprimary_address_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """
+    Bill text should contain the sole non-primary address of the lease area,
+    if no primary addresses exist.
+    """
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -168,7 +196,7 @@ def test_one_nonprimary_address_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -182,7 +210,9 @@ def test_one_nonprimary_address_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -194,6 +224,7 @@ def test_one_nonprimary_address_in_leasearea(
 def test_one_primary_and_nonprimary_addresses_in_leasearea(
     django_db_setup,
     lease_factory,
+    receivable_type_factory,
     rent_factory,
     contact_factory,
     tenant_factory,
@@ -204,8 +235,17 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     lease_area_factory,
     lease_area_address_factory,
 ):
+    """
+    If lease area has multiple addresses, only include the primary address in
+    bill text.
+    """
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.MAKE)
     lease = lease_factory(
-        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+        type_id=1,
+        municipality_id=1,
+        district_id=5,
+        notice_period_id=1,
+        service_unit=service_unit,
     )
 
     rent_factory(
@@ -272,7 +312,7 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
         billing_period_end_date=billing_period_end_date,
     )
 
-    receivable_type = ReceivableType.objects.get(pk=1)
+    receivable_type = receivable_type_factory()
 
     invoice_row_factory(
         invoice=invoice,
@@ -286,7 +326,9 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     sales_order = SalesOrder()
 
     adapter = InvoiceSalesOrderAdapter(
-        invoice=invoice, sales_order=sales_order, receivable_type_rent=receivable_type
+        invoice=invoice,
+        sales_order=sales_order,
+        service_unit=service_unit,
     )
 
     adapter.set_values()
@@ -294,3 +336,44 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
     assert "Ensisijainen testiosoite" in adapter.get_bill_text()
     assert "Jokutoinen osoite" not in adapter.get_bill_text()
     assert "Toissijainen osoite" not in adapter.get_bill_text()
+
+
+@pytest.mark.django_db
+def test_akv_bill_text(
+    django_db_setup,
+    lease_factory,
+    contact_factory,
+    invoice_factory,
+    receivable_type_factory,
+):
+    """Bill text should be empty for SAP laske exports for the AKV service unit."""
+    # Set service unit to AKV
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.AKV)
+    lease = lease_factory(service_unit=service_unit)
+
+    # Setup necessary objects with placeholder values
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("123.45"),
+        billed_amount=Decimal("123.45"),
+        outstanding_amount=Decimal("123.45"),
+        recipient=contact_factory(
+            first_name="First", last_name="Last", type=ContactType.PERSON
+        ),
+        billing_period_start_date=datetime.date(year=2020, month=1, day=1),
+        billing_period_end_date=datetime.date(year=2020, month=12, day=31),
+    )
+    sales_order = SalesOrder()
+    receivable_type_factory(service_unit=service_unit)
+
+    # Create bill text
+    adapter = invoice_sales_order_adapter_factory(
+        invoice=invoice,
+        sales_order=sales_order,
+        service_unit=service_unit,
+    )
+    adapter.set_values()
+
+    # Verify that each bill text line is empty
+    for i in range(1, 7):
+        assert getattr(adapter.sales_order, f"bill_text_l{i}", None) == ""

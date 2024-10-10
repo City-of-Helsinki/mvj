@@ -235,7 +235,7 @@ class InvoiceExportToLaskeView(APIView):
 
         try:
             exporter = LaskeExporter(service_unit=invoice.service_unit)
-            exporter.export_invoices(invoice)
+            exporter.export_invoices([invoice])
         except (
             LaskeExporterError,
             ConnectionException,
