@@ -442,67 +442,84 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     def get_line_text(self, invoice_row: InvoiceRow) -> str:
         """Generates contents of the LineTextL<number> elements in LineItem for
         AKV service unit."""
-        intended_use_text = (
-            invoice_row.intended_use.name
-            if invoice_row.intended_use
-            else "<käyttötarkoitus>"
-        )
+        # Intended use text
+        intended_use = invoice_row.intended_use
+        intended_use_text = intended_use.name if intended_use else ""
+        if not intended_use:
+            logger.warning(f"No IntendedUse found for InvoiceRow {invoice_row.id}")
 
+        # Area texts
         # TODO Which area to use when multiple areas in lease?
         #      Selecting the first area has been the logic so far in Make exports.
         first_lease_area = self.invoice.lease.lease_areas.first()
         if not first_lease_area:
-            logger.error(f"No LeaseAreas found for lease ID {self.invoice.lease.id}")
+            logger.error(
+                f"No LeaseArea found for Lease {self.invoice.lease.id}, skipping linetext"
+            )
+            return ""
 
-        area_m2_text = first_lease_area.area if first_lease_area else "<pinta-ala>"
+        area_m2_text = f"noin {first_lease_area.area} m²"
 
+        # Address texts
         first_lease_area_address = first_lease_area.addresses.order_by(
             "-is_primary"
         ).first()  # Note: will be non-primary if no primary addresses exist
-        address_text = (
-            first_lease_area_address.address if first_lease_area_address else "<osoite>"
-        )
-        postal_code_text = (
-            first_lease_area_address.postal_code
-            if first_lease_area_address
-            else "<postinumero>"
-        )
+        if first_lease_area_address:
+            address_text = (
+                first_lease_area_address.address
+                if first_lease_area_address.address
+                else ""
+            )
+            postal_code_text = (
+                first_lease_area_address.postal_code
+                if first_lease_area_address.postal_code
+                else ""
+            )
+        else:
+            logger.warning(
+                f"No LeaseAreaAddress found for LeaseArea {first_lease_area.id}"
+            )
+            address_text = ""
+            postal_code_text = ""
 
+        # District text
         district = self.invoice.lease.district
-        district_name_text = district.name if district else "<kaupunginosa>"
-        district_identifier_text = (
-            district.identifier if district else "<kaupunginosan tunniste>"
-        )
+        district_text = f", {district.name} ({district.identifier})" if district else ""
+        if not district:
+            logger.warning(f"No District found for Lease {self.invoice.lease.id}")
 
+        # Decision text
         decision = first_lease_area.archived_decision
-        decision_reference_number_text = (
-            decision.reference_number if decision else "<diaarinumero>"
-        )
-        decision_date_text = (
-            decision.decision_date.strftime("%d.%m.%Y")
+        decision_text = (
+            f"Päätös: {decision.reference_number}, {decision.decision_date.strftime('%d.%m.%Y')} § {decision.section}. "
             if decision
-            else "<päätöksen pvm>"
+            else ""
         )
-        decision_section_text = decision.section if decision else "<pykälä>"
+        if not decision:
+            logger.warning(f"No Decision found for LeaseArea {first_lease_area.id}")
 
+        # Billing period text
         billing_period_start_date_text = (
             (invoice_row.billing_period_start_date.strftime(self.AKV_DATE_FORMAT))
             if invoice_row.billing_period_start_date
-            else "<laskutuskauden alkupvm>"
+            else ""
         )
         billing_period_end_date_text = (
             invoice_row.billing_period_end_date.strftime(self.AKV_DATE_FORMAT)
             if invoice_row.billing_period_end_date
-            else "<laskutuskauden loppupvm>"
+            else ""
+        )
+        billing_period_text = (
+            f"{billing_period_start_date_text}-{billing_period_end_date_text}"
+            if (billing_period_start_date_text or billing_period_end_date_text)
+            else ""
         )
 
         # Formulate the full text contents without linebreaks
         return (
-            f"Kohde: {intended_use_text}, noin {area_m2_text} m², "
-            f"{district_name_text} ({district_identifier_text}), "
-            f"{address_text}, {postal_code_text}. "
-            f"Päätös: {decision_reference_number_text}, {decision_date_text} § {decision_section_text}, "
-            f"{billing_period_start_date_text}-{billing_period_end_date_text}"
+            f"Kohde: {intended_use_text}{area_m2_text}{district_text}{address_text}{postal_code_text}. "
+            f"{decision_text}"
+            f"{billing_period_text}"
         )
 
     def set_linetexts_from_string(
