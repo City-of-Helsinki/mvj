@@ -4,6 +4,7 @@ from collections import OrderedDict
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OneToOneRel
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -305,3 +306,28 @@ class FileSerializerMixin:
 
     def get_file_filename(self, obj):
         return os.path.basename(obj.file.name)
+
+
+def validate_seasonal_day_for_month(day: int, month: int):
+    max_days_in_month = {
+        1: 31,  # January
+        # Since this a generic date and not a calendar date with year, accept only 28 days for February
+        2: 28,  # February (non-leap year)
+        3: 31,  # March
+        4: 30,  # April
+        5: 31,  # May
+        6: 30,  # June
+        7: 31,  # July
+        8: 31,  # August
+        9: 30,  # September
+        10: 31,  # October
+        11: 30,  # November
+        12: 31,  # December
+    }
+
+    if month < 1 or month > 12:
+        raise ValidationError({"month": _(f"Invalid month: {month}")})
+
+    max_day = max_days_in_month.get(month)
+    if day < 1 or day > max_day:
+        raise ValidationError({"day": _(f"Invalid day: {day} for month: {month}")})
