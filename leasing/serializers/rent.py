@@ -15,6 +15,7 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     TemporarySubvention,
 )
+from leasing.serializers.utils import validate_seasonal_day_for_month
 from users.serializers import UserSerializer
 
 from ..models import (
@@ -52,6 +53,10 @@ class RentDueDateSerializer(
     class Meta:
         model = RentDueDate
         fields = ("id", "day", "month")
+
+    def validate(self, data):
+        validate_seasonal_day_for_month(data.get("day"), data.get("month"))
+        return data
 
 
 class FixedInitialYearRentSerializer(
@@ -541,6 +546,10 @@ class RentCreateUpdateSerializer(
             raise serializers.ValidationError(
                 _("Due dates type must be custom if seasonal dates are set")
             )
+
+        start_day, start_month, end_day, end_month = seasonal_values
+        validate_seasonal_day_for_month(start_day, start_month)
+        validate_seasonal_day_for_month(end_day, end_month)
 
         return data
 
