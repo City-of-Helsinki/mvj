@@ -63,6 +63,38 @@ class UsageDistributionImporter(BaseImporter):
         LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
         ORDER BY A.c_kaavayksikkotunnus ASC
         """
+        # # # Muistiinpanoja kyselystä # # # #
+        #
+        # Arvot jotka otetaan suoraan taulusta MV_KAAVAYKSIKON RAKOIKJAKAUMA (eli A):
+        # - A.kg_kkaavyks (Käytetään joinissa. Ei tallenneta meillä mihinkään. Mitä tarkoittaa kg?)
+        # - A.c_kaavayksikkotunnus (Käytetään lajitteluun. Ei tallenneta meillä mihinkään)
+        # - A.c_paasivuk (Ei käytetä muualla kyselyssä, eikä tallenneta meillä mihinkään. Mitä tarkoittaa paasivuk? Onko edes tarpeen?)
+        # - A.c_rakoikeus (Tämä on se rakennusoikeuden määrä, tallennetaan usage_distribution.build_permission)
+        #
+        # Pöydästä mv_koodisto otetaan rivit mukaan vain kun:
+        # - mv_koodisto0.c_koodisto on 'SU_KAYTJAKAUMA' ja samalla mv_koodisto0.c_koodi on sama kuin A.c_kaytjakauma
+        #
+        # Pöydästä mv_kaavayksikko otetaan rivit mukaan vain kun:
+        # - mv_kaavayksikko.kg_kkaavyks on sama kuin A.kg_kkaavyks
+        #
+        # - mv_koodisto0 alias ei taida olla tarpeellinen tässä kyselyssä, koska ei ole vaaraa sekoittaa sitä toiseen samannimiseen tauluun (ellei ole Oracle-kohtainen seikka?)
+        # - LEFT OUTER JOIN voisi olla pelkkä LEFT JOIN, koska Oraclessa ne ovat sama asia
+        #
+        # Käyttöoikeusjakauman tunniste/koodi c_kaytjakauma (meillä usage_distribution.distribution) on:
+        # - A.c_kaytjakauma jos se ei ole '1'.
+        # - mv_kaavayksikko.c_kayttota jos se ei ole NULL ja A.c_kaytjakauma on '1'
+        # - '1' jos sekä A.c_kaytjakauma ja mv_kaavayksikko.c_kayttota ovat NULL, tai jos A.c_kaytjakauma on '1' ja mv_kaavayksikko.c_kayttota on NULL
+        # --> Esimerkiksi: 1A, 1AC, 1C, 1N, 2, 2A, 2AB, 2AC, 2P, 2Ö, 3, ... , 7K
+        #
+        # Selitteen mv_koodisto0_c_selite (ei tallenneta meillä, onko tarpeen?) arvo on:
+        # - mv_koodisto0.c_selite jos A.c_kaytjakauma arvo ei ole  '1', tai jos A.c_kaytjakauma arvo on '1' ja samalla mv_kaavayksikko.ktarsel on NULL
+        # - mv_kaavayksikko.c_ktarsel jos se ei ole NULL ja A.c_kaytjakauma  on '1'
+
+        # # # # Lisää kysymyksiä joita selvittää Factan vastauksista # # # #
+        #
+        # - Saadaanko me jakaumat ja niille rakennusoikeuden määrät kun jakaumia on vain 1?
+        # - Mistä me saadaan rakennusoikeuden määrä, jos Facta ei tarjoa sitä tässä kyselyssä kun jakaumia on tasan 1?
+        #   Onko haluttu rakennusoikeuden määrä meillä tallennettuna johonkin muuhun tauluun eri tietueen nimellä?
 
         cursor.execute(query)
 
@@ -86,12 +118,12 @@ class UsageDistributionImporter(BaseImporter):
 
                 for usage_distribution_row in grouped_usage_distributions_list:
                     usage_distribution, _created = (
-                        UsageDistribution.objects.get_or_create(
-                            plan_unit=plan_unit,
-                            distribution=usage_distribution_row["C_KAYTJAKAUMA"] or "-",
-                            build_permission=usage_distribution_row["C_RAKOIKEUS"]
-                            or "-",
-                        )
+                        # UsageDistribution.objects.get_or_create(
+                        #     plan_unit=plan_unit,
+                        #     distribution=usage_distribution_row["C_KAYTJAKAUMA"] or "-",
+                        #     build_permission=usage_distribution_row["C_RAKOIKEUS"]
+                        #     or "-",
+                        # )
                     )
 
                     existing_or_created_usage_distributions_ids.append(
