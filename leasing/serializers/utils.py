@@ -308,7 +308,13 @@ class FileSerializerMixin:
         return os.path.basename(obj.file.name)
 
 
-def validate_seasonal_day_for_month(day: int, month: int):
+def validate_seasonal_day_for_month(day: int | None, month: int | None):
+    if day is None and month is None:
+        return
+
+    if (day is None and month is not None) or (day is not None and month is None):
+        raise ValidationError({"day": _("Both day and month must be provided")})
+
     max_days_in_month = {
         1: 31,  # January
         # Since this a generic date and not a calendar date with year, accept only 28 days for February
