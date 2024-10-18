@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-12 10:50+0300\n"
+"POT-Creation-Date: 2024-10-18 13:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3467,6 +3467,23 @@ msgstr "Arrenderingsprincipen med identifieraren {} hittas inte"
 
 msgid "Can't edit locked basis of rent item"
 msgstr "Låsta arrenderingsprinciper kan inte redigeras"
+
+msgid "Both day and month must be provided"
+msgstr ""
+
+msgid "Day must be an integer"
+msgstr ""
+
+msgid "Month must be an integer"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid month: {month}. Month must be between 1 and 12."
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid day: {day} for month: {month}"
+msgstr ""
 
 msgid "Enter a valid business id."
 msgstr "Ange ett giltigt FO-nummer."
