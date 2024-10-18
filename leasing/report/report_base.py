@@ -1,11 +1,12 @@
 from io import BytesIO
-from typing import Union
+from typing import Any, Optional, Type, Union
 
 import xlsxwriter
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Model, QuerySet
 from django.forms.models import ModelChoiceIteratorValue
+from django.http import QueryDict
 from django.utils import timezone
 from django.utils.functional import Promise
 from django.utils.translation import gettext
@@ -14,6 +15,7 @@ from django_q.conf import Conf
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ChoiceField
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.report.excel import ExcelRow, FormatType
@@ -123,20 +125,11 @@ class ReportBase:
 
         return metadata
 
-    def get_form(self, data=None):
-        """Initializes a form with fields from input_fields, saves the form as
-        self.form instance attribute and returns it."""
-        self.form = ReportFormBase(data, input_fields=self.input_fields)
-
-        # This has been set to None as the report doesn't require any form rendering
-        # and it causes pickle error in Django Q async tasks.
-        self.form.renderer = None
-
-        return self.form
-
-    def get_input_data(self, request):
+    def get_input_data(self, request: Request) -> dict[str, Any]:
         """Validates the request's query parameters using self.form"""
-        input_form = self.get_form(request.query_params)
+        # TODO verify that this still works after removing the get_form function
+        input_form = ReportFormBase(report_settings, input_fields=self.input_fields)
+        self.form = input_form
 
         if not input_form.is_valid():
             raise ValidationError({"detail": input_form.errors})
@@ -151,16 +144,20 @@ class ReportBase:
 
         return serializer.data
 
-    def get_response(self, request):
+    def get_response(self, request: Request) -> Response:
         report_data = self.get_data(self.get_input_data(request))
         serialized_report_data = self.serialize_data(report_data)
-
         return Response(serialized_report_data)
 
-    def get_serializer_class(self):
+    def get_data(self, input_data: dict[str, Any]):
+        raise NotImplementedError(
+            "Please implement this method in the concrete report class"
+        )
+
+    def get_serializer_class(self) -> Type[ReportOutputSerializer]:
         return ReportOutputSerializer
 
-    def get_filename(self, format):
+    def get_filename(self, format) -> str:
         return "{}_{}.{}".format(
             timezone.localtime(timezone.now()).strftime("%Y-%m-%d_%H-%M"),
             self.slug,
@@ -177,96 +174,6 @@ class ReportBase:
             value = self.output_fields[field_name][attr_name]
 
         return value
-
-    def data_as_excel(self, data):
-        report = self
-
-        output = BytesIO()
-        workbook = xlsxwriter.Workbook(output)
-        worksheet = workbook.add_worksheet()
-
-        formats = {
-            FormatType.BOLD: workbook.add_format({"bold": True}),
-            FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
-            FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
-            FormatType.BOLD_MONEY: workbook.add_format(
-                {"bold": True, "num_format": "#,##0.00 €"}
-            ),
-            FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
-            FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
-        }
-
-        row_num = 0
-
-        # On the first row print the report name
-        worksheet.write(row_num, 0, str(report.name), formats[FormatType.BOLD])
-
-        # On the second row print the report description
-        row_num += 1
-        worksheet.write(row_num, 0, str(report.description))
-
-        # On the fourth row forwards print the input fields and their values
-        row_num += 2
-        row_num = self.write_input_field_value_rows(
-            worksheet, report.form, row_num, formats
-        )
-
-        # Set column widths
-        for index, field_name in enumerate(report.output_fields.keys()):
-            worksheet.set_column(
-                index,
-                index,
-                report.get_output_field_attr(field_name, "width", default=10),
-            )
-
-        # Labels from the first non-ExcelRow row
-        if report.automatic_excel_column_labels:
-            row_num += 1
-
-            lookup_row_num = 0
-            while (
-                lookup_row_num < len(data)
-                and lookup_row_num in data
-                and isinstance(data[lookup_row_num], ExcelRow)
-            ):
-                lookup_row_num += 1
-
-            if len(data) > lookup_row_num:
-                for index, field_name in enumerate(data[lookup_row_num].keys()):
-                    field_label = report.get_output_field_attr(
-                        field_name, "label", default=field_name
-                    )
-
-                    worksheet.write(
-                        row_num, index, str(field_label), formats[FormatType.BOLD]
-                    )
-
-        # The data itself
-        row_num += 1
-        first_data_row_num = row_num
-        for row in data:
-            if isinstance(row, dict):
-                self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
-            elif isinstance(row, ExcelRow):
-                for cell in row.cells:
-                    cell.set_row(row_num)
-                    cell.set_first_data_row_num(first_data_row_num)
-                    worksheet.write(
-                        row_num,
-                        cell.column,
-                        cell.get_value(),
-                        (
-                            formats[cell.get_format_type()]
-                            if cell.get_format_type() in formats
-                            else None
-                        ),
-                    )
-
-            row_num += 1
-
-        workbook.close()
-
-        return output.getvalue()
 
     def write_dict_row_to_worksheet(self, worksheet, formats, row_num, row):
         """
@@ -370,25 +277,6 @@ class AsyncReportBase(ReportBase):
 
         return self.data_as_excel(report_data)
 
-    def send_report(self, task):
-        user = task.kwargs["user"]
-
-        message = EmailMessage(from_email=settings.MVJ_EMAIL_FROM, to=[user.email])
-
-        if task.success:
-            message.subject = _('Report "{}" successfully generated').format(self.name)
-            message.body = _("Generated report attached")
-            message.attach(
-                self.get_filename("xlsx"),
-                task.result,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
-        else:
-            message.subject = _('Failed to generate report "{}"').format(self.name)
-            message.body = _("Please try again")
-
-        message.send()
-
     def get_response(self, request):
         user = request.user
         input_data = self.get_input_data(request)
@@ -397,10 +285,148 @@ class AsyncReportBase(ReportBase):
             self.generate_report,
             user=user,
             input_data=input_data,
-            hook=self.send_report,
+            hook=self.send_email_report,
+            timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
+        )
+
+    # ============= My async alternatives ==================== #
+
+    def get_response(self, request: Request) -> Response:
+        user = request.user
+        input_data = self.get_input_data(request)
+
+        async_task(
+            generate_email_report,
+            email=user.email,
+            input_data=input_data,
+            report_class=self.__class__,
+            hook=send_email_report,
             timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
         )
 
         return Response(
             {"message": _("Results will be sent by email to {}").format(user.email)}
         )
+
+
+def generate_email_report(email: str, input_data, report_class: Type[AsyncReportBase]):
+    del email
+    report = report_class()
+    report_data = report.get_data(input_data)
+    return _data_as_excel(report, report_data)
+
+
+def _data_as_excel(report: AsyncReportBase, data) -> bytes:
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    formats = {
+        FormatType.BOLD: workbook.add_format({"bold": True}),
+        FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
+        FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
+        FormatType.BOLD_MONEY: workbook.add_format(
+            {"bold": True, "num_format": "#,##0.00 €"}
+        ),
+        FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
+        FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+    }
+
+    row_num = 0
+
+    # On the first row print the report name
+    worksheet.write(row_num, 0, str(report.name), formats[FormatType.BOLD])
+
+    # On the second row print the report description
+    row_num += 1
+    worksheet.write(row_num, 0, str(report.description))
+
+    # On the fourth row forwards print the input fields and their values
+    row_num += 2
+    row_num = report.write_input_field_value_rows(
+        worksheet, report.form, row_num, formats
+    )
+
+    # Set column widths
+    for index, field_name in enumerate(report.output_fields.keys()):
+        worksheet.set_column(
+            index,
+            index,
+            report.get_output_field_attr(field_name, "width", default=10),
+        )
+
+    # Labels from the first non-ExcelRow row
+    if report.automatic_excel_column_labels:
+        row_num += 1
+
+        lookup_row_num = 0
+        while (
+            lookup_row_num < len(data)
+            and lookup_row_num in data
+            and isinstance(data[lookup_row_num], ExcelRow)
+        ):
+            lookup_row_num += 1
+
+        if len(data) > lookup_row_num:
+            for index, field_name in enumerate(data[lookup_row_num].keys()):
+                field_label = report.get_output_field_attr(
+                    field_name, "label", default=field_name
+                )
+
+                worksheet.write(
+                    row_num, index, str(field_label), formats[FormatType.BOLD]
+                )
+
+    # The data itself
+    row_num += 1
+    first_data_row_num = row_num
+    for row in data:
+        if isinstance(row, dict):
+            report.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
+        elif isinstance(row, ExcelRow):
+            for cell in row.cells:
+                cell.set_row(row_num)
+                cell.set_first_data_row_num(first_data_row_num)
+                worksheet.write(
+                    row_num,
+                    cell.column,
+                    cell.get_value(),
+                    (
+                        formats[cell.get_format_type()]
+                        if cell.get_format_type() in formats
+                        else None
+                    ),
+                )
+
+        row_num += 1
+
+    workbook.close()
+
+    return output.getvalue()
+
+
+def send_email_report(report: ReportBase, task):
+    email = task.kwargs["email"]
+    message = EmailMessage(from_email=settings.MVJ_EMAIL_FROM, to=[email])
+
+    if task.success:
+        message.subject = _('Report "{}" successfully generated').format(report.name)
+        message.body = _("Generated report attached")
+        message.attach(
+            get_email_report_filename(report.slug, "xlsx"),
+            task.result,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        message.subject = _('Failed to generate report "{}"').format(report.name)
+        message.body = _("Please try again")
+
+    message.send()
+
+
+def get_email_report_filename(report_id: str | None, format: str):
+    return "{}_{}.{}".format(
+        timezone.localtime(timezone.now()).strftime("%Y-%m-%d_%H-%M"),
+        report_id if report_id else "",
+        format,
+    )

@@ -447,7 +447,7 @@ class LeaseStatisticReport2(AsyncReportBase):
 
         return qs
 
-    def generate_report(self, user, input_data):
+    def generate_report(self, input_data):
         report_data = self.get_data(input_data)
         serialized_report_data = self.serialize_data(report_data)
 
