@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-12 10:50+0300\n"
+"POT-Creation-Date: 2024-10-18 13:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3465,6 +3465,23 @@ msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"
 
 msgid "Can't edit locked basis of rent item"
 msgstr "Lukittua vuokrausperiaatetta ei voi muokata"
+
+msgid "Both day and month must be provided"
+msgstr "Vaaditaan molemmat: päivä ja kuukausi"
+
+msgid "Day must be an integer"
+msgstr "Päivän pitää olla kokonaisluku"
+
+msgid "Month must be an integer"
+msgstr "Kuukauden pitää olla kokonaisluku"
+
+#, python-brace-format
+msgid "Invalid month: {month}. Month must be between 1 and 12."
+msgstr "Virheellinen kuukausi: {month}. Kuukauden pitää olla 1-12."
+
+#, python-brace-format
+msgid "Invalid day: {day} for month: {month}"
+msgstr "Vireellinen päivä: {day} kuukaudelle: {month}"
 
 msgid "Enter a valid business id."
 msgstr "Anna kelvollinen Y-tunnus."
