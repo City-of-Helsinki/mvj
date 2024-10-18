@@ -312,8 +312,17 @@ def validate_seasonal_day_for_month(day: int | None, month: int | None):
     if day is None and month is None:
         return
 
-    if (day is None and month is not None) or (day is not None and month is None):
+    if day is None and month is not None:
         raise ValidationError({"day": _("Both day and month must be provided")})
+
+    if day is not None and month is None:
+        raise ValidationError({"month": _("Both day and month must be provided")})
+
+    if not isinstance(day, int):
+        raise ValidationError({"day": _("Day must be an integer")})
+
+    if not isinstance(month, int):
+        raise ValidationError({"month": _("Month must be an integer")})
 
     max_days_in_month = {
         1: 31,  # January
@@ -332,7 +341,9 @@ def validate_seasonal_day_for_month(day: int | None, month: int | None):
     }
 
     if month < 1 or month > 12:
-        raise ValidationError({"month": _(f"Invalid month: {month}")})
+        raise ValidationError(
+            {"month": _(f"Invalid month: {month}. Month must be between 1 and 12.")}
+        )
 
     max_day = max_days_in_month.get(month)
     if day < 1 or day > max_day:
