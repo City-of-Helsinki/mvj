@@ -12,6 +12,7 @@ from django.db.backends.utils import CursorWrapper
 from django.utils.translation import gettext_lazy, pgettext_lazy
 from enumfields import Enum
 from enumfields.drf import EnumField
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.models import ReceivableType, ServiceUnit
@@ -610,8 +611,9 @@ class InvoicingReviewReport(ReportBase):
 
         return result
 
-    def get_response(self, request):
-        report_data = self.get_data(self.get_input_data(request))
+    def get_response(self, request: Request) -> Response:
+        input_data = self.get_input_data(request.query_params)
+        report_data = self.get_data(input_data)
         serialized_report_data = self.serialize_data(report_data)
 
         if request.accepted_renderer.format != "xlsx":
