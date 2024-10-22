@@ -4,7 +4,7 @@ from decimal import Decimal
 from functools import lru_cache
 
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
@@ -372,7 +372,7 @@ class LeaseStatisticReport(AsyncReportBase):
         },
     }
 
-    def get_data(self, input_data):
+    def get_data(self, input_data) -> QuerySet[Lease]:
         qs = Lease.objects.select_related(
             "identifier__type",
             "identifier__district",

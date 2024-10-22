@@ -3,7 +3,7 @@ from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
@@ -397,7 +397,7 @@ class LeaseStatisticReport2(AsyncReportBase):
     }
     async_task_timeout = 60 * 30  # 30 minutes
 
-    def get_data(self, input_data):
+    def get_data(self, input_data) -> QuerySet[Lease]:
         qs = Lease.objects.select_related(
             "identifier__type",
             "identifier__district",

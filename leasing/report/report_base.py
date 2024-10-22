@@ -157,14 +157,19 @@ class ReportBase:
 
         return Response(serialized_report_data)
 
-    def get_serializer_class(self):
+    def get_data(self, input_data: dict[str, Any]) -> list[dict] | QuerySet:
+        raise NotImplementedError(
+            "Please implement this method in the concrete report class"
+        )
+
+    def get_serializer_class(self) -> Type[ReportOutputSerializer]:
         return ReportOutputSerializer
 
-    def get_filename(self, format):
+    def get_filename(self, file_format: str):
         return "{}_{}.{}".format(
             timezone.localtime(timezone.now()).strftime("%Y-%m-%d_%H-%M"),
             self.slug,
-            format,
+            file_format,
         )
 
     def get_output_field_attr(self, field_name, attr_name, default=None):
