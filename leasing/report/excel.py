@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import TypeAlias
 
 from xlsxwriter.utility import xl_range, xl_rowcol_to_cell
 
@@ -12,50 +13,65 @@ class FormatType(Enum):
     AREA = "area"
 
 
+class ExcelCell:
+    def __init__(
+        self,
+        column: int,
+        value: str | None = None,
+        format_type: FormatType | None = None,
+    ):
+        self.column = column
+        self.value = value
+        self.format_type = format_type
+        self.row: int | None = None
+        self.first_data_row_num: int | None = None
+
+    def get_value(self) -> str | None:
+        return self.value
+
+    def get_format_type(self) -> FormatType | None:
+        return self.format_type
+
+    def set_row(self, row_num: int) -> None:
+        self.row = row_num
+
+    def set_first_data_row_num(self, row_num: int) -> None:
+        self.first_data_row_num = row_num
+
+
 class ExcelRow:
-    def __init__(self, cells=None):
-        self.cells = []
+    def __init__(self, cells: list[ExcelCell] | None = None):
+        self.cells: list[ExcelCell] = []
 
         if cells is not None:
             self.cells.extend(cells)
 
 
-class ExcelCell:
-    def __init__(self, column, value=None, format_type=None):
-        self.column = column
-        self.value = value
-        self.format_type = format_type
-        self.row = None
-        self.first_data_row_num = None
-
-    def get_value(self):
-        return self.value
-
-    def get_format_type(self):
-        return self.format_type
-
-    def set_row(self, row_num):
-        self.row = row_num
-
-    def set_first_data_row_num(self, row_num):
-        self.first_data_row_num = row_num
-
-
 class PreviousRowsSumCell(ExcelCell):
-    def __init__(self, column, count, format_type=FormatType.BOLD):
+    def __init__(
+        self, column: int, count: int, format_type: FormatType | None = FormatType.BOLD
+    ):
         super().__init__(column, format_type=format_type)
 
         self.count = count
 
-    def get_value(self):
+    def get_value(self) -> str:
         return "=SUM({}:{})".format(
             xl_rowcol_to_cell(self.row - self.count, self.column),
             xl_rowcol_to_cell(self.row - 1, self.column),
         )
 
 
+TargetRange: TypeAlias = tuple[int, int, int, int]
+
+
 class SumCell(ExcelCell):
-    def __init__(self, column, format_type=FormatType.BOLD, target_ranges=None):
+    def __init__(
+        self,
+        column: int,
+        format_type=FormatType.BOLD,
+        target_ranges: list[TargetRange] | None = None,
+    ):
         super().__init__(column, format_type=format_type)
 
         if target_ranges:
@@ -63,10 +79,10 @@ class SumCell(ExcelCell):
         else:
             self.target_ranges = []
 
-    def add_target_range(self, range):
+    def add_target_range(self, range: TargetRange):
         self.target_ranges.append(range)
 
-    def get_value(self):
+    def get_value(self) -> str:
         return "=SUM({})".format(
             ",".join(
                 [

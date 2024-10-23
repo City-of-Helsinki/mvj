@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.models import Lease, ServiceUnit
@@ -45,8 +46,9 @@ class LeaseCountReport(ReportBase):
 
         return qs
 
-    def get_response(self, request):
-        report_data = self.get_data(self.get_input_data(request))
+    def get_response(self, request: Request) -> Response:
+        input_data = self.get_input_data(request.query_params)
+        report_data = self.get_data(input_data)
         serialized_report_data = self.serialize_data(report_data)
 
         if request.accepted_renderer.format != "xlsx":

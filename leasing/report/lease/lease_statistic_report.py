@@ -4,7 +4,7 @@ from decimal import Decimal
 from functools import lru_cache
 
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField
@@ -371,8 +371,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 20,
         },
     }
+    async_task_timeout = 60 * 30  # 30 minutes
 
-    def get_data(self, input_data):
+    def get_data(self, input_data) -> QuerySet[Lease]:
         qs = Lease.objects.select_related(
             "identifier__type",
             "identifier__district",
@@ -413,9 +414,3 @@ class LeaseStatisticReport(AsyncReportBase):
             )
 
         return qs
-
-    def generate_report(self, user, input_data):
-        report_data = self.get_data(input_data)
-        serialized_report_data = self.serialize_data(report_data)
-
-        return self.data_as_excel(serialized_report_data)

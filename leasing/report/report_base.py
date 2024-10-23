@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Union
+from typing import Any, Type, Union
 
 import xlsxwriter
 from django.conf import settings
@@ -14,6 +14,7 @@ from django_q.conf import Conf
 from django_q.tasks import async_task
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ChoiceField
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.report.excel import ExcelRow, FormatType
@@ -123,20 +124,16 @@ class ReportBase:
 
         return metadata
 
-    def get_form(self, data=None):
+    def set_form(self, data=None):
         """Initializes a form with fields from input_fields, saves the form as
         self.form instance attribute and returns it."""
-        self.form = ReportFormBase(data, input_fields=self.input_fields)
+        report_form = ReportFormBase(data, input_fields=self.input_fields)
+        self.form = report_form
+        return report_form
 
-        # This has been set to None as the report doesn't require any form rendering
-        # and it causes pickle error in Django Q async tasks.
-        self.form.renderer = None
-
-        return self.form
-
-    def get_input_data(self, request):
+    def get_input_data(self, query_params: dict[str, str]):
         """Validates the request's query parameters using self.form"""
-        input_form = self.get_form(request.query_params)
+        input_form = self.set_form(query_params)
 
         if not input_form.is_valid():
             raise ValidationError({"detail": input_form.errors})
@@ -148,23 +145,27 @@ class ReportBase:
         serializer = serializer_class(
             report_data, output_fields=self.output_fields, many=True
         )
-
         return serializer.data
 
-    def get_response(self, request):
-        report_data = self.get_data(self.get_input_data(request))
+    def get_response(self, request: Request) -> Response:
+        input_data = self.get_input_data(request.query_params)
+        report_data = self.get_data(input_data)
         serialized_report_data = self.serialize_data(report_data)
-
         return Response(serialized_report_data)
 
-    def get_serializer_class(self):
+    def get_data(self, input_data: dict[str, Any]) -> list[dict] | QuerySet:
+        raise NotImplementedError(
+            "Please implement this method in the concrete report class"
+        )
+
+    def get_serializer_class(self) -> Type[ReportOutputSerializer]:
         return ReportOutputSerializer
 
-    def get_filename(self, format):
+    def get_filename(self, file_format: str):
         return "{}_{}.{}".format(
             timezone.localtime(timezone.now()).strftime("%Y-%m-%d_%H-%M"),
             self.slug,
-            format,
+            file_format,
         )
 
     def get_output_field_attr(self, field_name, attr_name, default=None):
@@ -178,7 +179,7 @@ class ReportBase:
 
         return value
 
-    def data_as_excel(self, data):
+    def data_as_excel(self, data: list[dict | ExcelRow]):
         report = self
 
         output = BytesIO()
@@ -353,54 +354,70 @@ class ReportBase:
 
 
 class AsyncReportBase(ReportBase):
-    @property
-    def __name__(self):
-        # Django-Q added some code for version 1.3.6 that requires setting this property for
-        # instances of this class, as django-q tries to access __name__ expecting it being served
-        # with a function and not a class instance.
-        # https://github.com/Koed00/django-q/commit/1eb5cf4b9bbff833d39dc108f1c37bde8caaa1dc
-        return self.__class__.__name__
 
     @classmethod
     def get_output_fields_metadata(cls):
         return {"message": {"label": _("Message")}}
 
-    def generate_report(self, user, input_data):
-        report_data = self.get_data(input_data)
-
-        return self.data_as_excel(report_data)
-
-    def send_report(self, task):
-        user = task.kwargs["user"]
-
-        message = EmailMessage(from_email=settings.MVJ_EMAIL_FROM, to=[user.email])
-
-        if task.success:
-            message.subject = _('Report "{}" successfully generated').format(self.name)
-            message.body = _("Generated report attached")
-            message.attach(
-                self.get_filename("xlsx"),
-                task.result,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
-        else:
-            message.subject = _('Failed to generate report "{}"').format(self.name)
-            message.body = _("Please try again")
-
-        message.send()
-
-    def get_response(self, request):
-        user = request.user
-        input_data = self.get_input_data(request)
-
+    def get_response(self, request: Request) -> Response:
+        user_email: str = request.user.email
         async_task(
-            self.generate_report,
-            user=user,
-            input_data=input_data,
-            hook=self.send_report,
+            generate_email_report,
+            email=user_email,
+            query_params=request.query_params,
+            report_class=self.__class__,
+            hook=send_email_report,
             timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
         )
 
         return Response(
-            {"message": _("Results will be sent by email to {}").format(user.email)}
+            {"message": _("Results will be sent by email to {}").format(user_email)}
         )
+
+
+def generate_email_report(
+    email: str,
+    query_params: dict[str, str],
+    report_class: Type[AsyncReportBase],
+) -> dict[str, Any]:
+    """Generates the report based on the selected report settings."""
+    del email  # Unused in this function, but needed in the hook
+
+    report = report_class()
+    input_data = report.get_input_data(query_params)
+    report_data = report.get_data(input_data)
+
+    if isinstance(report_data, list):
+        spreadsheet = report.data_as_excel(report_data)
+    else:
+        serialized_data = report.serialize_data(report_data)
+        spreadsheet = report.data_as_excel(serialized_data)
+
+    return {
+        "report_spreadsheet": spreadsheet,
+        "report_name": report.name,
+        "report_filename": report.get_filename("xlsx"),
+    }
+
+
+def send_email_report(task):
+    email = task.kwargs["email"]
+    report_name = task.result["report_name"]
+    report_filename = task.result["report_filename"]
+    report_spreadsheet = task.result["report_spreadsheet"]
+
+    message = EmailMessage(from_email=settings.MVJ_EMAIL_FROM, to=[email])
+
+    if task.success:
+        message.subject = _('Report "{}" successfully generated').format(report_name)
+        message.body = _("Generated report attached")
+        message.attach(
+            report_filename,
+            report_spreadsheet,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        message.subject = _('Failed to generate report "{}"').format(report_name)
+        message.body = _("Please try again")
+
+    message.send()
