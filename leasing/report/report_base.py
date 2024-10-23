@@ -179,7 +179,7 @@ class ReportBase:
 
         return value
 
-    def data_as_excel(self, data):
+    def data_as_excel(self, data: list[dict | ExcelRow]):
         report = self
 
         output = BytesIO()
