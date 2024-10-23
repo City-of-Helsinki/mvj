@@ -371,6 +371,7 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 20,
         },
     }
+    async_task_timeout = 60 * 30  # 30 minutes
 
     def get_data(self, input_data) -> QuerySet[Lease]:
         qs = Lease.objects.select_related(
