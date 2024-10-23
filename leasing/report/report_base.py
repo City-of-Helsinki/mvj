@@ -362,11 +362,11 @@ class AsyncReportBase(ReportBase):
     def get_response(self, request: Request) -> Response:
         user_email: str = request.user.email
         async_task(
-            "leasing.report.report_base.generate_email_report",
+            generate_email_report,
             email=user_email,
             query_params=request.query_params,
             report_class=self.__class__,
-            hook="leasing.report.report_base.send_email_report",
+            hook=send_email_report,
             timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
         )
 
