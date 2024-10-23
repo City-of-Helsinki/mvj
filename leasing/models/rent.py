@@ -660,9 +660,8 @@ class Rent(TimeStampedSafeDeleteModel):
         if self.due_dates_type != DueDatesType.CUSTOM:
             return set()
 
-        return [
-            dd.as_daymonth() for dd in self.due_dates.all().order_by("month", "day")
-        ]
+        due_dates: QuerySet[RentDueDate] = self.due_dates
+        return [dd.as_daymonth() for dd in due_dates.all().order_by("month", "day")]
 
     def get_due_dates_as_daymonths(self):
         due_dates = []
