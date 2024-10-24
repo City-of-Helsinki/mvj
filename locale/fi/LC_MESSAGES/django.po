@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-18 13:53+0300\n"
+"POT-Creation-Date: 2024-10-23 15:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2569,6 +2569,11 @@ msgstr ""
 
 msgid "Payable rent end date"
 msgstr ""
+
+#, fuzzy
+#| msgid "Receivable type"
+msgid "Override receivable type"
+msgstr "Saamislaji"
 
 msgctxt "Model name"
 msgid "Rent"

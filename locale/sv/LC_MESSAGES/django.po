@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-18 13:53+0300\n"
+"POT-Creation-Date: 2024-10-23 15:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2573,6 +2573,11 @@ msgstr "Startdatum för arrendebetalning"
 
 msgid "Payable rent end date"
 msgstr "Slutdatum för arrendebetalning"
+
+#, fuzzy
+#| msgid "Receivable type"
+msgid "Override receivable type"
+msgstr "Fordringsart"
 
 msgctxt "Model name"
 msgid "Rent"
