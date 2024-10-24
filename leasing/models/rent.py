@@ -256,6 +256,16 @@ class Rent(TimeStampedSafeDeleteModel):
         verbose_name=_("Payable rent end date"), null=True, blank=True
     )
 
+    # In Finnish: Korvaava saamislaji
+    override_receivable_type = models.ForeignKey(
+        "leasing.ReceivableType",
+        verbose_name=_("Override receivable type"),
+        related_name="+",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
