@@ -4,6 +4,7 @@ from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from itertools import chain, groupby
 from random import choice
+from typing import TYPE_CHECKING
 
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
@@ -29,13 +30,21 @@ from leasing.enums import (
     TenantContactType,
 )
 from leasing.models import Contact
-from leasing.models.invoice import InvoiceRow
+from leasing.models.invoice import InvoiceRow, ReceivableType
 from leasing.models.mixins import (
     NameModel,
     TimeStampedModel,
     TimeStampedSafeDeleteModel,
 )
 from leasing.models.rent import Rent
+from leasing.models.types import (
+    CalculationAmountsByContact,
+    InvoiceDatum,
+    InvoiceNoteNotes,
+    PayableRentsInPeriods,
+    Periods,
+    TenantShares,
+)
 from leasing.models.utils import (
     fix_amount_for_overlap,
     get_range_overlap_and_remainder,
@@ -43,6 +52,9 @@ from leasing.models.utils import (
     subtract_ranges_from_ranges,
 )
 from users.models import User
+
+if TYPE_CHECKING:
+    from leasing.models.tenant import Tenant
 
 
 class LeaseType(NameModel):
@@ -728,14 +740,14 @@ class Lease(TimeStampedSafeDeleteModel):
 
     def get_due_dates_for_period(self, start_date, end_date):
         due_dates = set()
-
-        for rent in self.rents.all():
+        rents: QuerySet[Rent] = self.rents.all()
+        for rent in rents:
             due_dates.update(rent.get_due_dates_for_period(start_date, end_date))
 
         return sorted(due_dates)
 
     def get_tenant_shares_for_period(  # noqa C901 TODO
-        self, period_start_date, period_end_date
+        self, period_start_date: datetime.date, period_end_date: datetime.date
     ):
         tenant_range_filter = Q(
             Q(
@@ -750,8 +762,9 @@ class Lease(TimeStampedSafeDeleteModel):
             & Q(tenantcontact__deleted__isnull=True)
         )
 
-        shares = {}
-        for tenant in self.tenants.filter(tenant_range_filter).distinct():
+        shares: TenantShares = {}
+        tenants: QuerySet["Tenant"] = self.tenants
+        for tenant in tenants.filter(tenant_range_filter).distinct():
             tenant_tenantcontacts = tenant.get_tenant_tenantcontacts(
                 period_start_date, period_end_date
             )
@@ -785,7 +798,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
                 # Make sure that there are no multiple billing contacts for
                 # the same tenant and period
-                existing_overlaps = []
+                existing_overlaps: Periods = []
                 for contact in shares:
                     for this_tenant, periods in shares[contact].items():
                         if this_tenant == tenant:
@@ -802,7 +815,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
                 shares[billing_tenantcontact.contact][tenant].append(billing_overlap)
 
-            ranges_for_billing_contacts = []
+            ranges_for_billing_contacts: Periods = []
             for billing_contact, tenant_overlaps in shares.items():
                 if tenant in tenant_overlaps:
                     ranges_for_billing_contacts.extend(tenant_overlaps[tenant])
@@ -867,7 +880,7 @@ class Lease(TimeStampedSafeDeleteModel):
         return result
 
     def get_active_rents_on_period(
-        self, date_range_start, date_range_end
+        self, date_range_start: datetime.date, date_range_end: datetime.date
     ) -> QuerySet[Rent]:
         rent_range_filter = Q(
             Q(Q(end_date=None) | Q(end_date__gte=date_range_start))
@@ -922,7 +935,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
     def determine_payable_rents_and_periods(  # noqa: TODO
         self, start_date, end_date, dry_run=False, ignore_invoicing_date_after=None
-    ):
+    ) -> PayableRentsInPeriods:
         """Determines billing periods and rent amounts for them
 
         dry_run parameter is used when rent calculation is not for
@@ -941,7 +954,7 @@ class Lease(TimeStampedSafeDeleteModel):
             # TODO
             return {}
 
-        amounts_for_billing_periods = {}
+        amounts_for_billing_periods: PayableRentsInPeriods = {}
 
         for lease_due_date in lease_due_dates:
             if ignore_invoicing_date_after:
@@ -953,7 +966,8 @@ class Lease(TimeStampedSafeDeleteModel):
                 if due_date_invoicing_date > ignore_invoicing_date_after:
                     continue
 
-            for rent in self.rents.all():
+            rents: QuerySet[Rent] = self.rents
+            for rent in rents.all():
                 billing_period = rent.get_billing_period_from_due_date(lease_due_date)
 
                 if not billing_period:
@@ -1000,14 +1014,18 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
-        receivable_type_rent = self.service_unit.default_receivable_type_rent
+    def calculate_invoices(  # noqa: TODO
+        self, period_rents: PayableRentsInPeriods, dry_run=False
+    ):
+        receivable_type_rent: ReceivableType | None = (
+            self.service_unit.default_receivable_type_rent
+        )
 
         invoice_data = []
         last_billing_period = None
 
         for billing_period, period_rent in period_rents.items():
-            contact_rows = defaultdict(list)
+            contact_rows: CalculationAmountsByContact = defaultdict(list)
 
             if period_rent["last_billing_period"]:
                 last_billing_period = billing_period
@@ -1026,7 +1044,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     continue
 
                 all_shares_total = Decimal(0)
-                amount_rows = defaultdict(list)
+                amount_rows: CalculationAmountsByContact = defaultdict(list)
 
                 for contact, share in shares.items():
                     for tenant, overlaps in share.items():
@@ -1111,7 +1129,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
             billing_period_invoices = []
             for contact, rows in contact_rows.items():
-                notes = [
+                notes: InvoiceNoteNotes = [
                     note.notes
                     for note in self.invoice_notes.filter(
                         billing_period_start_date=billing_period[0],
@@ -1125,7 +1143,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     Decimal(".01"), rounding=ROUND_HALF_UP
                 )
 
-                invoice_datum = {
+                invoice_datum: InvoiceDatum = {
                     "type": InvoiceType.CHARGE,
                     "lease": self,
                     "recipient": contact,
