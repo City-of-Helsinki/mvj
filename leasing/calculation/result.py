@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.utils.translation import gettext_lazy as _
 
 from leasing.calculation.explanation import Explanation, ExplanationItem
+from leasing.models.types import CalculationAmountItem
 
 
 class CalculationNote:
@@ -15,8 +16,10 @@ class CalculationNote:
 
 
 class CalculationAmount:
-    def __init__(self, item, date_range_start, date_range_end, amount):
-        self.item = item
+    def __init__(
+        self, item: CalculationAmountItem, date_range_start, date_range_end, amount
+    ):
+        self.item: CalculationAmountItem = item
         self.amount = amount
         self.date_range_start = date_range_start
         self.date_range_end = date_range_end
@@ -147,8 +150,8 @@ class CalculationResult:
 
         return totals
 
-    def get_all_amounts(self):
-        amounts = []
+    def get_all_amounts(self) -> list[CalculationAmount]:
+        amounts: list[CalculationAmount] = []
         for amount in self.amounts:
             amounts.extend(amount.get_all_amounts())
 
