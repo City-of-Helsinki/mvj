@@ -191,5 +191,5 @@ urllib3==2.2.1
     #   types-requests
 wcwidth==0.2.13
     # via blessed
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via -r requirements-dev.in
