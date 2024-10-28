@@ -257,6 +257,7 @@ class Rent(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Korvaava saamislaji
+    # Choices should be filtered by the lease's service unit
     override_receivable_type = models.ForeignKey(
         "leasing.ReceivableType",
         verbose_name=_("Override receivable type"),

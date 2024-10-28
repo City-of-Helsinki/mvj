@@ -997,6 +997,7 @@ class Lease(TimeStampedSafeDeleteModel):
                             date_range_start=start_date, date_range_end=end_date
                         ),
                         "last_billing_period": False,
+                        "override_receivable_type": rent.override_receivable_type,
                     }
 
                 rent_calculation_result = rent.get_amount_for_date_range(
@@ -1014,18 +1015,17 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(  # noqa: TODO
-        self, period_rents: PayableRentsInPeriods, dry_run=False
-    ):
-        receivable_type_rent: ReceivableType | None = (
-            self.service_unit.default_receivable_type_rent
-        )
-
+    def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
         invoice_data = []
         last_billing_period = None
 
         for billing_period, period_rent in period_rents.items():
             contact_rows: CalculationAmountsByContact = defaultdict(list)
+
+            if period_rent["override_receivable_type"]:
+                receivable_type = period_rent["override_receivable_type"]
+            else:
+                receivable_type = self.service_unit.default_receivable_type_rent
 
             if period_rent["last_billing_period"]:
                 last_billing_period = billing_period
@@ -1075,7 +1075,7 @@ class Lease(TimeStampedSafeDeleteModel):
                             amount_rows[contact].append(
                                 {
                                     "tenant": tenant,
-                                    "receivable_type": receivable_type_rent,
+                                    "receivable_type": receivable_type,
                                     "intended_use": calculation_amount.item.intended_use,
                                     "billing_period_start_date": overlap[0],
                                     "billing_period_end_date": overlap[1],
@@ -1107,7 +1107,7 @@ class Lease(TimeStampedSafeDeleteModel):
                         amount_rows[random_contact].append(
                             {
                                 "tenant": random_tenant,
-                                "receivable_type": receivable_type_rent,
+                                "receivable_type": receivable_type,
                                 "intended_use": calculation_amount.item.intended_use,
                                 "billing_period_start_date": amount_period[0],
                                 "billing_period_end_date": amount_period[1],
