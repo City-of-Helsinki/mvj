@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "leasing",
-            "0076_paikkatietovipunen_vuokraalueet_view_vuokraustunnus_and_tyypin_tunnus",
+            "0077_paikkatietovipunen_vuokraalueet_add_kami_permissions",
         ),
     ]
 
