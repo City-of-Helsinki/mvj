@@ -265,46 +265,68 @@ def subtract_ranges_from_ranges(ranges: Periods, subtract_ranges: Periods):
     return combined_ranges
 
 
-def split_date_range(date_range, count):
-    # TODO: Split by full months or weeks if possible
+def split_date_range(
+    date_range: tuple[datetime.date, datetime.date], due_date_count: int
+) -> list[tuple[datetime.date, datetime.date]]:
     assert len(date_range) == 2
     assert isinstance(date_range[0], datetime.date)
     assert isinstance(date_range[1], datetime.date)
-    assert date_range[0] < date_range[1]
+    assert (
+        date_range[0] < date_range[1]
+    ), "Start date must be before end date in split_date_range()"
 
-    if count == 0:
+    if due_date_count == 0:
         return []
 
-    if count == 1:
+    if due_date_count == 1:
         return [date_range]
 
-    start_date = date_range[0]
-    end_date = date_range[1]
+    start_date, end_date = date_range
+    # How many months are within the date range
+    month_count_in_range = get_spanned_months(start_date, end_date)
+    result: list[tuple[datetime.date, datetime.date]] = []
 
-    days_between = (end_date - start_date).days
-    # TODO: error if can't split as many times as requested?
-    if days_between < count:
-        raise RuntimeError(
-            "Can't split date range {} - {} ({} days) into {} parts".format(
-                start_date, end_date, days_between, count
+    # Use monthly ranges when amount of months is equal to due_date_count
+    if True:  # month_count_in_range == due_date_count:
+        for i in range(month_count_in_range):
+            if i == 0:
+                # First months start date should remain unchanged
+                current_month_start_date = start_date
+            else:
+                current_month_start_date = start_date + relativedelta(months=i, day=1)
+
+            current_month_end_date = get_last_date_of_month(
+                start_date.year, start_date.month
+            ) + relativedelta(months=i)
+            if current_month_end_date >= end_date:
+                current_month_end_date = end_date
+            result.append((current_month_start_date, current_month_end_date))
+
+    # Otherwise divide ranges to equal parts
+    else:
+        days_between = (end_date - start_date).days
+        # TODO: error if can't split as many times as requested?
+        if days_between < due_date_count:
+            raise RuntimeError(
+                "Can't split date range {} - {} ({} days) into {} parts".format(
+                    start_date, end_date, days_between, due_date_count
+                )
             )
-        )
 
-    days_per_period = days_between // count
+        days_per_period = days_between // due_date_count
 
-    result = []
-    current_start = start_date
-    while current_start < end_date:
-        split_end = current_start + relativedelta(days=days_per_period)
+        current_start = start_date
+        while current_start < end_date:
+            split_end = current_start + relativedelta(days=days_per_period)
 
-        if split_end > end_date:
-            split_end = end_date
+            if split_end > end_date:
+                split_end = end_date
 
-        result.append((current_start, split_end))
-        current_start = split_end + relativedelta(days=1)
+            result.append((current_start, split_end))
+            current_start = split_end + relativedelta(days=1)
 
-        if current_start == end_date:
-            result[-1] = (result[-1][0], end_date)
+            if current_start == end_date:
+                result[-1] = (result[-1][0], end_date)
 
     return result
 
