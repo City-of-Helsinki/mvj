@@ -1022,7 +1022,7 @@ class Lease(TimeStampedSafeDeleteModel):
         for billing_period, period_rent in period_rents.items():
             contact_rows: CalculationAmountsByContact = defaultdict(list)
 
-            if period_rent["override_receivable_type"]:
+            if period_rent.get("override_receivable_type"):
                 receivable_type = period_rent["override_receivable_type"]
             else:
                 receivable_type = self.service_unit.default_receivable_type_rent
