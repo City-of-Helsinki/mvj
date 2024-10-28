@@ -2574,10 +2574,8 @@ msgstr "Startdatum för arrendebetalning"
 msgid "Payable rent end date"
 msgstr "Slutdatum för arrendebetalning"
 
-#, fuzzy
-#| msgid "Receivable type"
 msgid "Override receivable type"
-msgstr "Fordringsart"
+msgstr "Ersättande Fordringsart"
 
 msgctxt "Model name"
 msgid "Rent"

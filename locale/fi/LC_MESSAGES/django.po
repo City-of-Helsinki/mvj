@@ -2570,10 +2570,8 @@ msgstr ""
 msgid "Payable rent end date"
 msgstr ""
 
-#, fuzzy
-#| msgid "Receivable type"
 msgid "Override receivable type"
-msgstr "Saamislaji"
+msgstr "Korvaava saamislaji"
 
 msgctxt "Model name"
 msgid "Rent"
