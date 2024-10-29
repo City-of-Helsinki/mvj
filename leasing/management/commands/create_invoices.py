@@ -22,7 +22,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  # noqa: C901 TODO
         override = options.get("override", False)
         today = datetime.date.today()
-        today = today.replace(day=1)
 
         if not override and today.day != 1:
             raise CommandError(
