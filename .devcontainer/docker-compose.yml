@@ -41,8 +41,3 @@ services:
 volumes:
   mvj-postgres-data-volume:
   mvj-django-media-volume:
-
-networks:
-  default:
-    name: tunnistamo_net
-    external: true
