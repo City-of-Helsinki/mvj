@@ -15,6 +15,7 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     TemporarySubvention,
 )
+from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from leasing.serializers.utils import validate_seasonal_day_for_month
 from users.serializers import UserSerializer
 
@@ -387,6 +388,7 @@ class RentSerializer(
         source="get_due_dates_as_daymonths",
         read_only=True,
     )
+    override_receivable_type = ReceivableTypeSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Rent
@@ -422,6 +424,7 @@ class RentSerializer(
             "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
+            "override_receivable_type"
         )
 
     def override_permission_check_field_name(self, field_name):
