@@ -30,7 +30,6 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementInvoiceSet,
 )
 from leasing.permissions import PerMethodPermission
-from leasing.serializers.invoice import ReceivableTypeSerializer
 from leasing.serializers.land_use_agreement import (
     LandUseAgreementAttachmentCreateUpdateSerializer,
     LandUseAgreementAttachmentSerializer,
@@ -47,6 +46,7 @@ from leasing.serializers.land_use_agreement import (
     LandUseAgreementUpdateSerializer,
     SentToSapLandUseAgreementInvoiceUpdateSerializer,
 )
+from leasing.serializers.receivable_type import ReceivableTypeSerializer
 
 from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
 
