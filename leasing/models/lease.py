@@ -30,7 +30,7 @@ from leasing.enums import (
     TenantContactType,
 )
 from leasing.models import Contact
-from leasing.models.invoice import InvoiceRow, ReceivableType
+from leasing.models.invoice import InvoiceRow
 from leasing.models.mixins import (
     NameModel,
     TimeStampedModel,
