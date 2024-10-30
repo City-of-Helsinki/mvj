@@ -20,8 +20,8 @@ from leasing.models.invoice import (
     InvoicePayment,
     InvoiceRow,
     InvoiceSet,
-    ReceivableType,
 )
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
 from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.receivable_type import ReceivableTypeSerializer

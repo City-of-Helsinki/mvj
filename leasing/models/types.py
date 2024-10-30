@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
 
 from leasing.calculation.explanation import Explanation
 from leasing.enums import InvoiceState, InvoiceType
+from leasing.models.receivable_type import ReceivableType
 
 if TYPE_CHECKING:
     # Avoid circular imports
     from leasing.calculation.result import CalculationResult
     from leasing.models.contact import Contact  # noqa: F401
-    from leasing.models.invoice import ReceivableType
     from leasing.models.lease import Lease
     from leasing.models.rent import (
         ContractRent,

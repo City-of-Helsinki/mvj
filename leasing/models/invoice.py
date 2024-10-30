@@ -17,40 +17,13 @@ from field_permissions.registry import field_permissions
 from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.utils import get_next_business_day, get_range_overlap
 
 # Avoids circular imports
 if TYPE_CHECKING:
     from leasing.models import Lease
     from leasing.models import Vat as VatModel
-
-
-class ReceivableType(models.Model):
-    """
-    In Finnish: Saamislaji
-    """
-
-    name = models.CharField(verbose_name=_("Name"), max_length=255)
-    sap_material_code = models.CharField(
-        verbose_name=_("SAP material code"), null=True, blank=True, max_length=255
-    )
-    sap_order_item_number = models.CharField(
-        verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
-    )
-    is_active = models.BooleanField(verbose_name=_("Is active?"), default=True)
-    service_unit = models.ForeignKey(
-        "leasing.ServiceUnit",
-        verbose_name=_("Service unit"),
-        related_name="receivable_types",
-        on_delete=models.PROTECT,
-    )
-
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Receivable type")
-        verbose_name_plural = pgettext_lazy("Model name", "Receivable types")
-
-    def __str__(self):
-        return self.name
 
 
 class InvoiceSet(models.Model):
