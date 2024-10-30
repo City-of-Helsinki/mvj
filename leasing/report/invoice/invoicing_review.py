@@ -467,7 +467,8 @@ WITH invoices_sorted AS (
         COALESCE(c.name, (c.first_name || ' ' || c.last_name)) AS recipient_name,
         COALESCE(r.start_date, l.start_date) AS rent_start_date,
         COALESCE(r.end_date, l.end_date) AS rent_end_date,
-        LEAD(i.billing_period_start_date) OVER (PARTITION BY r.id ORDER BY i.billing_period_start_date) AS next_start_date
+        LEAD(i.billing_period_start_date) OVER (PARTITION BY r.id ORDER BY i.billing_period_start_date)
+            AS next_start_date
     FROM
         leasing_invoice i
     INNER JOIN
