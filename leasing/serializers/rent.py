@@ -499,6 +499,8 @@ class RentCreateUpdateSerializer(
         instance_class=ReceivableType,
         queryset=ReceivableType.objects.all(),
         related_serializer=ReceivableTypeSerializer,
+        required=False,
+        allow_null=True,
     )
 
     class Meta:
