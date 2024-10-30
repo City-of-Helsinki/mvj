@@ -351,6 +351,7 @@ class LeaseManager(SafeDeleteManager):
                 "rents__payable_rents",
                 "rents__fixed_initial_year_rents",
                 "rents__fixed_initial_year_rents__intended_use",
+                "rents__override_receivable_type",
                 "basis_of_rents",
                 "collection_letters",
                 "collection_notes",
