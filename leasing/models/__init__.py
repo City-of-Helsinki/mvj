@@ -29,7 +29,7 @@ from .infill_development_compensation import (
     InfillDevelopmentCompensationLease,
 )
 from .inspection import Inspection, InspectionAttachment
-from .invoice import BankHoliday, Invoice, InvoiceNote, InvoiceRow, ReceivableType
+from .invoice import BankHoliday, Invoice, InvoiceNote, InvoiceRow
 from .land_area import (
     ConstructabilityDescription,
     CustomDetailedPlan,
@@ -80,6 +80,7 @@ from .leasehold_transfer import (
     LeaseholdTransferParty,
     LeaseholdTransferProperty,
 )
+from .receivable_type import ReceivableType
 from .rent import (
     ContractRent,
     EqualizedRent,

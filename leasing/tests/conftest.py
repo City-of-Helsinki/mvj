@@ -45,13 +45,7 @@ from leasing.models import (
     ServiceUnit,
     UiData,
 )
-from leasing.models.invoice import (
-    InvoiceNote,
-    InvoicePayment,
-    InvoiceRow,
-    InvoiceSet,
-    ReceivableType,
-)
+from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import CustomDetailedPlan
 from leasing.models.land_use_agreement import (
     LandUseAgreement,
@@ -72,6 +66,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import OldDwellingsInHousingCompaniesPriceIndex
 from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
