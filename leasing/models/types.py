@@ -27,6 +27,7 @@ class PayableRent(TypedDict):
     due_date: DueDate
     calculation_result: "CalculationResult"
     last_billing_period: bool
+    override_receivable_type: ReceivableType | None
 
 
 BillingPeriod: TypeAlias = tuple[datetime.date, datetime.date]
