@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-23 15:29+0300\n"
+"POT-Creation-Date: 2024-10-30 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2259,6 +2259,9 @@ msgctxt "Model name"
 msgid "Districts"
 msgstr "Stadsdelar"
 
+msgid "Is the intended use active?"
+msgstr "Är den avsedda användningen aktiv?"
+
 msgctxt "Model name"
 msgid "Intended use"
 msgstr "Användningsändamål"
@@ -3384,6 +3387,9 @@ msgstr "Upplåtelseform"
 msgid "Message"
 msgstr "Meddelande"
 
+msgid "Results will be sent by email to {}"
+msgstr "Rapporten lämnas in per e-post till adressen {}"
+
 msgid "Report \"{}\" successfully generated"
 msgstr "Rapport \"{}\" skapades"
 
@@ -3395,9 +3401,6 @@ msgstr "Rapport \"{}\" kunde inte skapas"
 
 msgid "Please try again"
 msgstr "Vänligen försök på nytt"
-
-msgid "Results will be sent by email to {}"
-msgstr "Rapporten lämnas in per e-post till adressen {}"
 
 msgid "Report type not found"
 msgstr "Rapporttypen hittades inte"

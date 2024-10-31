@@ -129,6 +129,12 @@ class District(NameModel):
         return "{} ({})".format(self.name, self.identifier)
 
 
+class IntendedUseManager(models.Manager):
+    def get_queryset(self):
+        # By default, only return active IntendedUses
+        return super().get_queryset().filter(is_active=True)
+
+
 class IntendedUse(NameModel):
     """
     In Finnish: Käyttötarkoitus
@@ -137,6 +143,14 @@ class IntendedUse(NameModel):
     service_unit = models.ForeignKey(
         "leasing.ServiceUnit", on_delete=models.SET_NULL, null=True
     )
+    # Determines whether to show the intended use in the UI selection list
+    # The list of unused IntendedUses grew too large and was cluttering the UI
+    is_active = models.BooleanField(
+        default=True,
+        help_text=_("Is the intended use active?"),
+        verbose_name=_("Is active?"),
+    )
+    objects = IntendedUseManager()
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Intended use")
