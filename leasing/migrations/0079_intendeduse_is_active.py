@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0077_paikkatietovipunen_vuokraalueet_add_kami_permissions"),
+        ("leasing", "0078_rent_override_receivable_type"),
     ]
 
     operations = [
