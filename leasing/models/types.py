@@ -73,3 +73,8 @@ class InvoiceDatum(TypedDict):
     state: InvoiceState
     notes: InvoiceNoteNotes
     service_unit: "ServiceUnit"
+
+
+class ContactsActiveLeases(TypedDict):
+    lease_identifier: str
+    lease_id: int

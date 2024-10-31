@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from auditlog.registry import auditlog
 from django.conf.global_settings import LANGUAGES
 from django.db import models
+from django.db.models import QuerySet
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django_countries.fields import CountryField
@@ -8,9 +12,13 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.enums import ContactType
+from leasing.models.types import ContactsActiveLeases
 from leasing.validators import validate_business_id
 
 from .mixins import TimeStampedSafeDeleteModel
+
+if TYPE_CHECKING:
+    from leasing.models.tenant import Tenant
 
 
 class Contact(TimeStampedSafeDeleteModel):
@@ -148,6 +156,11 @@ class Contact(TimeStampedSafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Contact")
         verbose_name_plural = pgettext_lazy("Model name", "Contacts")
         ordering = ["type", "name", "last_name", "first_name"]
+        permissions = [
+            # Custom permission for a serializer method field `contacts_active_leases`,
+            # required for being able to add field permissions for the field.
+            ("view_contact_contacts_active_leases", "Can view contacts active leases"),
+        ]
 
     def __str__(self):
         person_name = " ".join(
@@ -191,6 +204,26 @@ class Contact(TimeStampedSafeDeleteModel):
 
     def get_service_unit(self):
         return self.service_unit
+
+    def get_contacts_active_leases(self):
+        self.tenants: QuerySet[Tenant]
+        now_date = timezone.now().date()
+        active_leases = set()
+        # Constructing the data in python way avoids N+1 queries when
+        # related data is prefetched.
+        for tenant in self.tenants.all():
+            if tenant.lease.end_date is None or tenant.lease.end_date > now_date:
+                active_leases.add(
+                    (
+                        tenant.lease.id,
+                        tenant.lease.identifier.identifier,
+                    )
+                )
+        active_leases_list: list[ContactsActiveLeases] = [
+            {"lease_identifier": lease_identifier, "lease_id": lease_id}
+            for lease_id, lease_identifier in active_leases
+        ]
+        return active_leases_list
 
 
 auditlog.register(Contact)

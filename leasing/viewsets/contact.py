@@ -40,7 +40,10 @@ class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     ordering = ("names", "first_name")
 
     def get_queryset(self):
-        return Contact.objects.select_related("service_unit")
+        return Contact.objects.select_related("service_unit").prefetch_related(
+            # Required for `contacts_active_leases` serializer method field
+            "tenants__lease__identifier",
+        )
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "metadata"):
