@@ -389,7 +389,6 @@ class RentSerializer(
         source="get_due_dates_as_daymonths",
         read_only=True,
     )
-    override_receivable_type = ReceivableTypeSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Rent
@@ -495,13 +494,6 @@ class RentCreateUpdateSerializer(
     )
     equalized_rents = EqualizedRentSerializer(
         many=True, required=False, allow_null=True, read_only=True
-    )
-    override_receivable_type = InstanceDictPrimaryKeyRelatedField(
-        instance_class=ReceivableType,
-        queryset=ReceivableType.objects.all(),
-        related_serializer=ReceivableTypeSerializer,
-        required=False,
-        allow_null=True,
     )
 
     class Meta:
