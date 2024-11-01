@@ -4,14 +4,17 @@ from rest_framework import filters
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import CoalesceOrderingFilter, ContactFilter
 from leasing.models import Contact
-from leasing.serializers.contact import ContactCreateUpdateSerializer, ContactSerializer
+from leasing.serializers.contact import (
+    ContactCreateUpdateSerializer,
+    ContactSerializerWithActiveLeases,
+)
 
 from .utils import AtomicTransactionModelViewSet
 
 
 class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
     queryset = Contact.objects.all()
-    serializer_class = ContactSerializer
+    serializer_class = ContactSerializerWithActiveLeases
     filterset_class = ContactFilter
     filter_backends = (
         DjangoFilterBackend,
@@ -40,10 +43,13 @@ class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     ordering = ("names", "first_name")
 
     def get_queryset(self):
-        return Contact.objects.select_related("service_unit")
+        return Contact.objects.select_related("service_unit").prefetch_related(
+            # Required for `contacts_active_leases` serializer method field
+            "tenants__lease__identifier",
+        )
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "metadata"):
             return ContactCreateUpdateSerializer
 
-        return ContactSerializer
+        return ContactSerializerWithActiveLeases

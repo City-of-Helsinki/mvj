@@ -466,6 +466,15 @@ CUSTOM_FIELD_PERMS = {
         },
         "phone": {2: "change", 5: "change"},
         "email": {2: "change", 5: "change"},
+        "contacts_active_leases": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+            6: "view",
+            7: "view",
+        },
     },
     "condition": {
         "id": {2: "view", 3: "view", 5: "view"},

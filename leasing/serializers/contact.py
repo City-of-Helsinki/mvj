@@ -23,6 +23,18 @@ class ContactSerializer(
         model = Contact
         fields = "__all__"
 
+    def get_contacts_active_leases(self, contact: Contact):
+        return contact.get_contacts_active_leases()
+
+
+class ContactSerializerWithActiveLeases(ContactSerializer):
+    contacts_active_leases = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Contact
+        fields = "__all__"
+        read_only_fields = ("contacts_active_leases",)
+
 
 class ContactCreateUpdateSerializer(
     EnumSupportSerializerMixin,
@@ -37,6 +49,10 @@ class ContactCreateUpdateSerializer(
         related_serializer=ServiceUnitSerializer,
         required=True,
     )
+    contacts_active_leases = serializers.SerializerMethodField()
+
+    def get_contacts_active_leases(self, contact: Contact):
+        return contact.get_contacts_active_leases()
 
     def validate_service_unit(self, value):
         request = self.context.get("request")
@@ -58,3 +74,4 @@ class ContactCreateUpdateSerializer(
     class Meta:
         model = Contact
         fields = "__all__"
+        read_only_fields = ("contacts_active_leases",)
