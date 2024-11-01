@@ -37,7 +37,6 @@ from .invoice import (
     InvoiceRow,
     InvoiceSet,
 )
-from .receivable_type import ReceivableType
 from .land_area import (
     AbstractAddress,
     ConstructabilityDescription,
@@ -74,8 +73,6 @@ from .land_use_agreement import (
     LandUseAgreementInvoiceSet,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
-    LandUseAgreement
-  ,
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
