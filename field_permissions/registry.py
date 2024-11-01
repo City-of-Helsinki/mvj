@@ -22,12 +22,12 @@ class FieldPermissionsModelRegistry(object):
             "exclude_fields": exclude_fields,
         }
 
-    def in_registry(self, klass):
+    def in_registry(self, klass: Model):
         model_name = klass._meta.model_name
 
         return model_name in [klass._meta.model_name for klass in self._registry.keys()]
 
-    def get_include_fields_for(self, klass):
+    def get_include_fields_for(self, klass: Model):
         model_name = klass._meta.model_name
 
         for klass, conf in self._registry.items():
@@ -36,7 +36,7 @@ class FieldPermissionsModelRegistry(object):
 
         return []
 
-    def get_exclude_fields_for(self, klass):
+    def get_exclude_fields_for(self, klass: Model):
         model_name = klass._meta.model_name
 
         for klass, conf in self._registry.items():
@@ -48,7 +48,7 @@ class FieldPermissionsModelRegistry(object):
     def get_models(self):
         return self._registry.keys()
 
-    def get_model_fields(self, klass):
+    def get_model_fields(self, klass: Model):
         opts = klass._meta
         include_fields = self.get_include_fields_for(klass)
         exclude_fields = self.get_exclude_fields_for(klass)
@@ -64,12 +64,18 @@ class FieldPermissionsModelRegistry(object):
 
         return fields
 
-    def get_field_permissions_for_model(self, klass):
+    def get_field_permissions_for_model(self, klass: Model):
         opts = klass._meta
         include_fields = self.get_include_fields_for(klass)
         exclude_fields = self.get_exclude_fields_for(klass)
 
         perms = []
+        # If a model has custom non-model-field permissions set in `Meta.permissions`
+        # with codename starting with `view_` or `change_` add these permissions to FieldPermissions
+        if klass._meta.permissions:
+            permissions = self._get_model_meta_permissions(klass)
+            perms.extend(permissions)
+
         for field in opts.get_fields(include_parents=True):
             if include_fields != "__all__" and field.name not in include_fields:
                 continue
@@ -104,6 +110,17 @@ class FieldPermissionsModelRegistry(object):
                 )
 
         return perms
+
+    def _get_model_meta_permissions(self, klass: Model):
+        """Get permissions from the model's Meta class that start with `view_` or `change_`"""
+        permissions: list[tuple[str, str]] = klass._meta.permissions
+        model_meta_permissions: list[tuple[str, str]] = []
+        for permission in permissions:
+            codename, _name = permission
+            if codename.startswith("view_") or codename.startswith("change_"):
+                model_meta_permissions.append(permission)
+
+        return model_meta_permissions
 
 
 field_permissions = FieldPermissionsModelRegistry()

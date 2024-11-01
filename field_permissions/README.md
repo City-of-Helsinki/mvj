@@ -17,6 +17,17 @@ view_[model name]_[field_name]
 change_[model name]_[field_name]
 ```
 
+### Custom permissions
+
+Add non-model-field permissions on models Meta class with the prefix `view_` or `change_` and the permissions will be picked up by `get_field_permissions_for_model()`.
+
+For example:
+```python
+class MyModel(models.Model):
+   ...
+   class Meta:
+      permissions = [("view_modelname_custom_value", "Can view modelname custom value")]
+```
 
 Usage
 -----
