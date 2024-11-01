@@ -94,6 +94,7 @@ def test_calculate_invoices_one_tenant(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
+            "override_receivable_type": rent.override_receivable_type,
         }
     }
 
@@ -190,6 +191,7 @@ def test_calculate_invoices_two_tenants(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
+            "override_receivable_type": rent.override_receivable_type,
         }
     }
 
@@ -308,6 +310,7 @@ def test_calculate_invoices_three_tenants(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
+            "override_receivable_type": rent.override_receivable_type,
         }
     }
 
@@ -563,6 +566,7 @@ def test_calculate_invoices_uses_correct_receivable_type(
                 "due_date": date(year=2017, month=6, day=1),
                 "calculation_result": calculation_result,
                 "last_billing_period": False,
+                "override_receivable_type": rent.override_receivable_type,
             }
         }
 

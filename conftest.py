@@ -33,11 +33,11 @@ from leasing.models import (
     Municipality,
     PlanUnit,
     PlanUnitIntendedUse,
-    ReceivableType,
     Tenant,
     TenantContact,
 )
 from leasing.models.land_area import LeaseAreaAddress
+from leasing.models.receivable_type import ReceivableType
 from plotsearch.models import (
     AreaSearch,
     AreaSearchIntendedUse,

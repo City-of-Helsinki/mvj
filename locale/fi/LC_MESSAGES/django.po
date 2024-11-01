@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-18 13:53+0300\n"
+"POT-Creation-Date: 2024-10-30 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2254,6 +2254,9 @@ msgctxt "Model name"
 msgid "Districts"
 msgstr "Kaupunginosat"
 
+msgid "Is the intended use active?"
+msgstr "Onko käyttötarkoitus käytössä?"
+
 msgctxt "Model name"
 msgid "Intended use"
 msgstr "Käyttötarkoitus"
@@ -2569,6 +2572,9 @@ msgstr ""
 
 msgid "Payable rent end date"
 msgstr ""
+
+msgid "Override receivable type"
+msgstr "Korvaava saamislaji"
 
 msgctxt "Model name"
 msgid "Rent"
@@ -3380,6 +3386,9 @@ msgstr "Hallintamuoto"
 msgid "Message"
 msgstr "Viesti"
 
+msgid "Results will be sent by email to {}"
+msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
+
 msgid "Report \"{}\" successfully generated"
 msgstr "Raportti \"{}\" luotu onnistuneesti"
 
@@ -3391,9 +3400,6 @@ msgstr "Raportin \"{}\" luonti epäonnistui"
 
 msgid "Please try again"
 msgstr "Ole hyvä ja yritä uudelleen"
-
-msgid "Results will be sent by email to {}"
-msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
 msgid "Report type not found"
 msgstr "Raporttityyppiä ei löytynyt"

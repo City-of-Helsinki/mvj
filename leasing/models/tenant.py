@@ -1,6 +1,9 @@
+import datetime
+from typing import Optional
+
 from auditlog.registry import auditlog
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -51,7 +54,12 @@ class Tenant(TimeStampedSafeDeleteModel):
             self.id, self.share_numerator, self.share_denominator
         )
 
-    def get_tenantcontacts_for_period(self, contact_type, start_date, end_date):
+    def get_tenantcontacts_for_period(
+        self,
+        contact_type: TenantContactType,
+        start_date: datetime.date,
+        end_date: datetime.date,
+    ) -> QuerySet["TenantContact"]:
         if not end_date:
             range_filter = Q(Q(end_date=None) | Q(end_date__gte=start_date))
         else:
@@ -60,7 +68,7 @@ class Tenant(TimeStampedSafeDeleteModel):
                 & Q(Q(start_date=None) | Q(start_date__lte=end_date))
             )
 
-        tenantcontacts = (
+        tenantcontacts: QuerySet[TenantContact] = (
             self.tenantcontact_set.filter(type=contact_type)
             .filter(range_filter)
             .order_by("-start_date")
@@ -68,12 +76,16 @@ class Tenant(TimeStampedSafeDeleteModel):
 
         return tenantcontacts
 
-    def get_tenant_tenantcontacts(self, start_date, end_date):
+    def get_tenant_tenantcontacts(
+        self, start_date: datetime.date, end_date: datetime.date
+    ):
         return self.get_tenantcontacts_for_period(
             TenantContactType.TENANT, start_date, end_date
         )
 
-    def get_billing_tenantcontacts(self, start_date, end_date):
+    def get_billing_tenantcontacts(
+        self, start_date: datetime.date, end_date: datetime.date
+    ) -> QuerySet["TenantContact"]:
         billing_contacts = self.get_tenantcontacts_for_period(
             TenantContactType.BILLING, start_date, end_date
         )
@@ -83,7 +95,9 @@ class Tenant(TimeStampedSafeDeleteModel):
         else:
             return self.get_tenant_tenantcontacts(start_date, end_date)
 
-    def get_rent_share_by_intended_use(self, intended_use):
+    def get_rent_share_by_intended_use(
+        self, intended_use: RentIntendedUse
+    ) -> Optional["TenantRentShare"]:
         try:
             return self.rent_shares.get(intended_use=intended_use)
         except TenantRentShare.DoesNotExist:

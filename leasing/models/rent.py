@@ -256,6 +256,17 @@ class Rent(TimeStampedSafeDeleteModel):
         verbose_name=_("Payable rent end date"), null=True, blank=True
     )
 
+    # In Finnish: Korvaava saamislaji
+    # Choices should be filtered by the lease's service unit
+    override_receivable_type = models.ForeignKey(
+        "leasing.ReceivableType",
+        verbose_name=_("Override receivable type"),
+        related_name="+",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
@@ -742,7 +753,11 @@ class Rent(TimeStampedSafeDeleteModel):
                 return None
 
             return split_date_range(
-                (seasonal_period_start, seasonal_period_end), len(due_dates_in_period)
+                (
+                    seasonal_period_start,
+                    seasonal_period_end,
+                ),
+                len(due_dates_in_period),
             )[due_date_index]
 
     def get_all_billing_periods_for_year(self, year):

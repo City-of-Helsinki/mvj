@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Manager, Model
 
 from leasing.enums import PeriodType
+from leasing.models.types import Periods
 
 if TYPE_CHECKING:
     # Avoid circular import
@@ -22,7 +23,14 @@ def get_range_overlap(start1, end1, start2, end2):
     return max_start, min_end if max_start < min_end else None
 
 
-def get_range_overlap_and_remainder(start1, end1, start2, end2):
+def get_range_overlap_and_remainder(
+    start1: datetime.date,
+    end1: datetime.date,
+    start2: datetime.date,
+    end2: datetime.date,
+) -> list[
+    tuple[datetime.date, datetime.date], list[tuple[datetime.date, datetime.date]]
+]:
     if start2 and end2 and (start1 > start2 and start1 > end2):
         return [None, []]
 
@@ -141,13 +149,13 @@ def get_billing_periods_for_year(year, periods_per_year):
     return periods
 
 
-def combine_ranges(ranges):
+def combine_ranges(ranges: Periods) -> Periods:
     try:
         sorted_ranges = sorted(ranges)
     except TypeError:
         return []
 
-    result = []
+    result: Periods = []
 
     new_range_start = None
     new_range_end = None
@@ -234,7 +242,7 @@ def subtract_range_from_range(the_range, subtract_range):
     return result
 
 
-def subtract_ranges_from_ranges(ranges, subtract_ranges):
+def subtract_ranges_from_ranges(ranges: Periods, subtract_ranges: Periods):
     # TODO: check argument validity
     combined_ranges = combine_ranges(ranges)
     combined_subtract_ranges = combine_ranges(subtract_ranges)

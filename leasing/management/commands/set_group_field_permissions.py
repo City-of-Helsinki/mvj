@@ -481,6 +481,15 @@ CUSTOM_FIELD_PERMS = {
         "due_dates_per_year": {6: "change"},
         "due_dates": {6: "change"},
         "rent_adjustments": {2: "change", 3: "change", 4: "change", 5: "change"},
+        "override_receivable_type": {
+            1: "view",
+            2: "change",
+            3: "change",
+            4: "change",
+            5: "change",
+            6: "change",
+            7: "change",
+        },
     },
     "tenant": {"reference": {6: "change"}, "tenantcontact_set": {6: "change"}},
     "leasearea": {

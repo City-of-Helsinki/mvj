@@ -16,7 +16,8 @@ from leasing.filters import (
     ReceivableTypeFilter,
 )
 from leasing.models import Invoice, Lease
-from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet, ReceivableType
+from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
+from leasing.models.receivable_type import ReceivableType
 from leasing.serializers.invoice import (
     CreditNoteUpdateSerializer,
     GeneratedInvoiceUpdateSerializer,

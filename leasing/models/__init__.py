@@ -36,8 +36,8 @@ from .invoice import (
     InvoicePayment,
     InvoiceRow,
     InvoiceSet,
-    ReceivableType,
 )
+from .receivable_type import ReceivableType
 from .land_area import (
     AbstractAddress,
     ConstructabilityDescription,
@@ -74,7 +74,8 @@ from .land_use_agreement import (
     LandUseAgreementInvoiceSet,
     LandUseAgreementLitigant,
     LandUseAgreementLitigantContact,
-    LandUseAgreementReceivableType,
+    LandUseAgreement
+  ,
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
@@ -103,6 +104,7 @@ from .leasehold_transfer import (
     LeaseholdTransferParty,
     LeaseholdTransferProperty,
 )
+from .receivable_type import ReceivableType
 from .rent import (
     ContractRent,
     EqualizedRent,

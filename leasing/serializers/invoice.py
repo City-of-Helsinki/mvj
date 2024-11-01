@@ -20,10 +20,11 @@ from leasing.models.invoice import (
     InvoicePayment,
     InvoiceRow,
     InvoiceSet,
-    ReceivableType,
 )
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
 from leasing.serializers.explanation import ExplanationSerializer
+from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from leasing.serializers.tenant import TenantSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
@@ -32,12 +33,6 @@ from leasing.serializers.utils import (
 
 from .contact import ContactSerializer
 from .service_unit import ServiceUnitSerializer
-
-
-class ReceivableTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReceivableType
-        fields = "__all__"
 
 
 class InvoiceNoteSerializer(
