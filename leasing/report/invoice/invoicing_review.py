@@ -456,7 +456,7 @@ class InvoicingReviewReport(ReportBase):
         """
 
         query = """
-WITH invoices_sorted AS (
+WITH invoices AS (
     SELECT
         i.id,
         i.billing_period_start_date,
@@ -489,12 +489,7 @@ WITH invoices_sorted AS (
         AND i.type IN ('charge')
         AND r.deleted IS NULL
         AND r."type" NOT IN ('free', 'manual')
-        AND rt.name NOT IN (
-            'Korko',
-            'Yhteismarkkinointi (sis. ALV)',
-            'Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)',
-            'Rahavakuus'
-            )
+        AND rt.name != ALL(%(excluded_receivable_type_names)s)
         AND (r.start_date IS NULL OR r.start_date <= %(today)s)
         AND (r.end_date IS NULL OR r.end_date >= %(today)s)
         AND l.state IN ('lease', 'long_term_lease')
@@ -518,7 +513,7 @@ invoicing_gaps AS (
         (billing_period_end_date + interval '1 day')::date AS gap_start_date,
         COALESCE((next_start_date - interval '1 day')::date, rent_end_date) AS gap_end_date
     FROM
-        invoices_sorted
+        invoices
     WHERE
         billing_period_end_date < next_start_date
         OR (rent_end_date IS NOT NULL AND billing_period_end_date < rent_end_date)
@@ -549,6 +544,7 @@ ORDER BY
             {
                 "service_units": service_unit_ids,
                 "today": today,
+                "excluded_receivable_type_names": EXCLUDED_RECEIVABLE_TYPE_NAMES,
             },
         )
 
