@@ -458,7 +458,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
             )
             return ""
 
-        area_m2_text = f"noin {first_lease_area.area} m²"
+        area_m2_text = f", noin {first_lease_area.area} m²"
 
         # Address texts
         first_lease_area_address = first_lease_area.addresses.order_by(
@@ -466,12 +466,12 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         ).first()  # Note: will be non-primary if no primary addresses exist
         if first_lease_area_address:
             address_text = (
-                first_lease_area_address.address
+                f", {first_lease_area_address.address}"
                 if first_lease_area_address.address
                 else ""
             )
             postal_code_text = (
-                first_lease_area_address.postal_code
+                f", {first_lease_area_address.postal_code}"
                 if first_lease_area_address.postal_code
                 else ""
             )
@@ -491,7 +491,11 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         # Decision text
         decision = first_lease_area.archived_decision
         decision_text = (
-            f"Päätös: {decision.reference_number}, {decision.decision_date.strftime('%d.%m.%Y')} § {decision.section}. "
+            (
+                f"Päätös: {decision.reference_number}, "
+                f"{decision.decision_date.strftime(self.AKV_DATE_FORMAT)} "
+                f"§ {decision.section}. "
+            )
             if decision
             else ""
         )
