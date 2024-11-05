@@ -33,6 +33,7 @@ from leasing.enums import (
     RentType,
     SubventionType,
 )
+from leasing.models.types import BillingPeriod
 from leasing.models.utils import (
     DayMonth,
     fix_amount_for_overlap,
@@ -61,7 +62,7 @@ first_day_of_every_month = []
 for i in range(1, 13):
     first_day_of_every_month.append(DayMonth(day=1, month=i))
 
-FIXED_DUE_DATES = {
+FIXED_DUE_DATES: dict[str, dict[int, list[DayMonth]]] = {
     DueDatesPosition.START_OF_MONTH: {
         1: [DayMonth(day=2, month=1)],
         2: [DayMonth(day=2, month=1), DayMonth(day=1, month=7)],
@@ -667,14 +668,14 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return applicable_adjustments
 
-    def get_custom_due_dates_as_daymonths(self):
+    def get_custom_due_dates_as_daymonths(self) -> list[DayMonth]:
         if self.due_dates_type != DueDatesType.CUSTOM:
-            return set()
+            return []
 
         due_dates: QuerySet[RentDueDate] = self.due_dates
         return [dd.as_daymonth() for dd in due_dates.all().order_by("month", "day")]
 
-    def get_due_dates_as_daymonths(self):
+    def get_due_dates_as_daymonths(self) -> list[DayMonth]:
         due_dates = []
         if self.due_dates_type == DueDatesType.FIXED:
             # TODO: handle unknown due date count
@@ -691,10 +692,12 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return due_dates
 
-    def get_due_dates_for_period(self, start_date, end_date):
+    def get_due_dates_for_period(
+        self, start_date: datetime.date, end_date: datetime.date
+    ) -> list[datetime.date]:
         rent_due_dates = self.get_due_dates_as_daymonths()
 
-        due_dates = []
+        due_dates: list[datetime.date] = []
         for rent_due_date in rent_due_dates:
             for year in range(start_date.year, end_date.year + 1):
                 tmp_date = datetime.date(
@@ -705,7 +708,9 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return due_dates
 
-    def get_billing_period_from_due_date(self, due_date):
+    def get_billing_period_from_due_date(
+        self, due_date: datetime.date
+    ) -> BillingPeriod | None:
         if not due_date:
             return None
 
@@ -760,17 +765,17 @@ class Rent(TimeStampedSafeDeleteModel):
                 len(due_dates_in_period),
             )[due_date_index]
 
-    def get_all_billing_periods_for_year(self, year):
+    def get_all_billing_periods_for_year(self, year: int) -> list[BillingPeriod | None]:
         date_range_start = datetime.date(year, 1, 1)
         date_range_end = datetime.date(year, 12, 31)
 
-        billing_periods = []
+        billing_periods: list[BillingPeriod | None] = []
         for due_date in self.get_due_dates_for_period(date_range_start, date_range_end):
             billing_periods.append(self.get_billing_period_from_due_date(due_date))
 
         return billing_periods
 
-    def is_the_last_billing_period(self, billing_period):
+    def is_the_last_billing_period(self, billing_period: BillingPeriod):
         billing_periods = self.get_all_billing_periods_for_year(billing_period[0].year)
 
         try:

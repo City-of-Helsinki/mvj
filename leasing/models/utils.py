@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Manager, Model
 
 from leasing.enums import PeriodType
-from leasing.models.types import Periods
+from leasing.models.types import BillingPeriod, Periods
 
 if TYPE_CHECKING:
     # Avoid circular import
@@ -28,9 +28,7 @@ def get_range_overlap_and_remainder(
     end1: datetime.date,
     start2: datetime.date,
     end2: datetime.date,
-) -> list[
-    tuple[datetime.date, datetime.date], list[tuple[datetime.date, datetime.date]]
-]:
+) -> list[tuple[date, date] | None, list[tuple[date, date]]]:
     if start2 and end2 and (start1 > start2 and start1 > end2):
         return [None, []]
 
@@ -133,7 +131,9 @@ def fix_amount_for_overlap(amount, overlap: tuple[date, date], remainders):
     return amount / (full_overlap_days + full_remainder_days) * full_overlap_days
 
 
-def get_billing_periods_for_year(year, periods_per_year):
+def get_billing_periods_for_year(
+    year: int, periods_per_year: int
+) -> list[BillingPeriod]:
     if periods_per_year < 1 or 12 % periods_per_year != 0 or periods_per_year > 12:
         # TODO: raise exception or log an error
         return []
@@ -265,7 +265,9 @@ def subtract_ranges_from_ranges(ranges: Periods, subtract_ranges: Periods):
     return combined_ranges
 
 
-def split_date_range(date_range, count):
+def split_date_range(
+    date_range: tuple[date, date], count: int
+) -> list[tuple[date, date]]:
     # TODO: Split by full months or weeks if possible
     assert len(date_range) == 2
     assert isinstance(date_range[0], datetime.date)
@@ -292,7 +294,7 @@ def split_date_range(date_range, count):
 
     days_per_period = days_between // count
 
-    result = []
+    result: list[tuple[date, date]] = []
     current_start = start_date
     while current_start < end_date:
         split_end = current_start + relativedelta(days=days_per_period)

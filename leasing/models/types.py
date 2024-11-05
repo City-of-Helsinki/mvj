@@ -40,7 +40,9 @@ TenantShares: TypeAlias = dict["Contact", TenantPeriods]
 InvoiceNoteNotes: TypeAlias = list[str]
 
 
-class CalculationAmountRows(TypedDict):
+class CalculationAmountRow(TypedDict):
+    """Roughly analogous to InvoiceRow"""
+
     tenant: "Tenant"
     receivable_type: "ReceivableType"
     intended_use: "RentIntendedUse"
@@ -49,7 +51,7 @@ class CalculationAmountRows(TypedDict):
     amount: Decimal
 
 
-CalculationAmountsByContact = dict["Contact", list[CalculationAmountRows]]
+CalculationAmountsByContact = dict["Contact", list[CalculationAmountRow]]
 
 CalculationAmountItem: TypeAlias = Union[
     "FixedInitialYearRent", "ContractRent", "RentAdjustment"
@@ -59,6 +61,8 @@ CalculationAmountsSum: TypeAlias = Decimal
 
 
 class InvoiceDatum(TypedDict):
+    """Roughly analogous to Invoice"""
+
     type: InvoiceType
     lease: "Lease"
     recipient: "Contact"
@@ -67,7 +71,7 @@ class InvoiceDatum(TypedDict):
     billing_period_end_date: BillingPeriod
     total_amount: CalculationAmountsSum
     billed_amount: CalculationAmountsSum
-    rows: CalculationAmountRows
+    rows: list[CalculationAmountRow]
     explanations: list[Explanation]
     calculation_result: "CalculationResult"
     state: InvoiceState

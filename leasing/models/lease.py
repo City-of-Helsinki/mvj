@@ -38,6 +38,7 @@ from leasing.models.mixins import (
 )
 from leasing.models.rent import Rent
 from leasing.models.types import (
+    BillingPeriod,
     CalculationAmountsByContact,
     InvoiceDatum,
     InvoiceNoteNotes,
@@ -1023,8 +1024,10 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
-        invoice_data = []
+    def calculate_invoices(  # noqa: TODO
+        self, period_rents: PayableRentsInPeriods, dry_run=False
+    ) -> list[list[InvoiceDatum]]:
+        invoice_data: list[list[InvoiceDatum]] = []
         last_billing_period = None
 
         for billing_period, period_rent in period_rents.items():
@@ -1135,7 +1138,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 Decimal(".01"), rounding=ROUND_HALF_UP
             )
 
-            billing_period_invoices = []
+            billing_period_invoices: list[InvoiceDatum] = []
             for contact, rows in contact_rows.items():
                 notes: InvoiceNoteNotes = [
                     note.notes
@@ -1183,9 +1186,12 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return invoice_data
 
-    def _year_rent_rounding_correction(  # noqa C901 TODO
-        self, last_billing_period, invoice_data, dry_run=False
-    ):
+    def _year_rent_rounding_correction(  # noqa C901 TODO too complex
+        self,
+        last_billing_period: BillingPeriod,
+        invoice_data: list[list[InvoiceDatum]],
+        dry_run=False,
+    ) -> None:
         round_adjust_year = last_billing_period[0].year
         first_day_of_year = datetime.date(year=round_adjust_year, month=1, day=1)
         last_day_of_year = datetime.date(year=round_adjust_year, month=12, day=31)
