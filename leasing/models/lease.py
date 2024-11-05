@@ -1030,7 +1030,9 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return amounts_for_billing_periods
 
-    def calculate_invoices(self, period_rents, dry_run=False):  # noqa: TODO
+    def calculate_invoices(  # noqa: TODO
+        self, period_rents: PayableRentsInPeriods, dry_run=False
+    ):
         invoice_data = []
         last_billing_period = None
 
