@@ -129,12 +129,6 @@ class District(NameModel):
         return "{} ({})".format(self.name, self.identifier)
 
 
-class IntendedUseManager(models.Manager):
-    def get_queryset(self):
-        # By default, only return active IntendedUses
-        return super().get_queryset().filter(is_active=True)
-
-
 class IntendedUse(NameModel):
     """
     In Finnish: Käyttötarkoitus
@@ -150,7 +144,6 @@ class IntendedUse(NameModel):
         help_text=_("Is the intended use active?"),
         verbose_name=_("Is active?"),
     )
-    objects = IntendedUseManager()
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Intended use")
@@ -805,7 +798,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 (billing_overlap, billing_remainders) = get_range_overlap_and_remainder(
                     tenant_overlap[0],
                     tenant_overlap[1],
-                    *billing_tenantcontact.date_range
+                    *billing_tenantcontact.date_range,
                 )
 
                 if not billing_overlap:

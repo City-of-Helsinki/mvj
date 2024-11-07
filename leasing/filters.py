@@ -148,7 +148,7 @@ class IntendedUseFilter(FilterSet):
 
     class Meta:
         model = IntendedUse
-        fields = ["service_unit"]
+        fields = ["service_unit", "is_active"]
 
 
 class InvoiceFilter(FilterSet):
