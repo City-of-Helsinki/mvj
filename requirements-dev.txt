@@ -39,15 +39,15 @@ django-debug-toolbar==4.3.0
     # via -r requirements-dev.in
 django-extensions==3.2.3
     # via -r requirements-dev.in
-django-stubs[compatible-mypy]==4.2.7
+django-stubs[compatible-mypy]==5.1.0
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
-django-stubs-ext==5.0.0
+django-stubs-ext==5.1.1
     # via
     #   -c requirements.txt
     #   django-stubs
-djangorestframework-stubs[compatible-mypy]==3.14.5
+djangorestframework-stubs[compatible-mypy]==3.15.1
     # via -r requirements-dev.in
 et-xmlfile==1.1.0
     # via openpyxl
@@ -88,7 +88,7 @@ markupsafe==2.1.5
     #   werkzeug
 mccabe==0.7.0
     # via flake8
-mypy==1.7.1
+mypy==1.11.2
     # via
     #   -c requirements.txt
     #   -r requirements-dev.in
@@ -163,10 +163,6 @@ tomli==2.0.1
     #   pytest
 types-python-dateutil==2.9.0.20241003
     # via -r requirements-dev.in
-types-pytz==2024.1.0.20240417
-    # via
-    #   -c requirements.txt
-    #   django-stubs
 types-pyyaml==6.0.12.20240311
     # via
     #   -c requirements.txt
