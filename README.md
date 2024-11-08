@@ -4,6 +4,16 @@
 
 City of Helsinki land lease system
 
+
+## Development with development container (devcontainer)
+
+Code editors (e.g. VSCode, Pycharm) that support devcontainer spec should be able to build and run your development environment from `.devcontainer`, either locally or remotely.
+See: [https://containers.dev/](https://containers.dev/)
+
+The devcontainer setup will build and run containers for the database and django.
+Integrated to the editor you gain access to the shell within the django container, running code with debugger or run tests in debugging mode should work without much hassle.
+
+
 ## Development with Docker
 
 If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd64` to `django` service in `docker-compose.yml` file.
@@ -21,7 +31,6 @@ The project is now running at [localhost:8000](http://localhost:8000).
 
 Known issues:
 - runserver_plus not found/not working: replace `command: python manage.py runserver_plus 0:8000` with `command: python manage.py runserver 0:8000` command in `docker-compose.yml`.
-- You can only start Tunnistamo or MVJ in Docker: change port to `command: python manage.py runserver_plus 0:8000` command for example to `8001`.
 
 ### Settings for development environment
 
@@ -50,25 +59,23 @@ python manage.py copy_groups_and_service_unit_mappings
 
 Install PostgreSQL and PostGIS.
 
-    # Ubuntu 16.04
+    # Ubuntu
     sudo apt-get install python3-dev libpq-dev postgresql postgis
 
 #### GeoDjango extra packages
 
-    # Ubuntu 16.04
+    # Ubuntu
     sudo apt-get install binutils libproj-dev gdal-bin
 
 ### Creating a Python virtualenv
 
-Create a Python 3.x virtualenv either using the [`venv`](https://docs.python.org/3/library/venv.html) tool or using
-the great [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) toolset. Assuming the latter,
-once installed, simply do:
+Create a Python 3 virtualenv either using the [`venv`](https://docs.python.org/3/library/venv.html) tool.
 
-    mkvirtualenv -p /usr/bin/python3 mvj
+    python3 -m venv /path/to/venv
 
-The virtualenv will automatically activate. To activate it in the future, just do:
+Activate virtualenv
 
-    workon mvj
+    python3 venv/bin/activate
 
 ### Creating Python requirements files
 
