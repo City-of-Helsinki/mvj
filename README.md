@@ -6,14 +6,7 @@ City of Helsinki land lease system
 
 ## Development with Docker
 
-If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd64` to `django` service in `docker-compose.yml` file. When you want to run also [Tunnistamo](https://github.com/City-of-Helsinki/tunnistamo) on local environment, see [Connecting to Tunnistamo](###Connecting-to-Tunnistamo).
-
-```bash
-networks:
-    default:
-        name: tunnistamo_net
-        external: true
-```
+If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd64` to `django` service in `docker-compose.yml` file.
 
 1. Run `docker-compose up`
 
@@ -48,92 +41,6 @@ python manage.py copy_groups_and_service_unit_mappings
 
 - Add "TEST Pääkäyttäjä" -group to created user at Django admin.
 
-### Connecting to Tunnistamo
-
-If you have a Tunnistamo and an mvj-ui instance running with docker in separate docker-compose
-environments, you can set up a network to sync mvj, mvj-ui and tunnistamo together.
-
-1.  Add network definition to tunnistamo's `docker-compose`:
-
-        version: '3'
-        services:
-            postgres:
-                ...
-                networks:
-                    - net
-
-            django:
-                ...
-                networks:
-                    - net
-
-        networks:
-            net:
-                driver: bridge
-
-2.  Connect mvj to tunnistamo's network, by adding this to mvj's and mvj-ui's `docker-compose`:
-
-        networks:
-            default:
-                name: tunnistamo_net
-                external: true
-
-    The name `tunnistamo_net` comes from the name of the folder, where tunnistamo lives
-    combined with the name of the network. Change those according to your setup, if needed.
-
-3.  Now you can access tunnistamo from other docker containers with `tunnistamo-backend`,
-    i.e. Tunnistamo's `django` container's name. Connect mvj's OIDC logic to that like so:
-
-            OIDC_API_TOKEN_AUTH = {
-                ...
-                'ISSUER': 'http://tunnistamo-backend:8001/openid',
-                ...
-            }
-
-4.  Add `tunnistamo-backend` to your computer's localhost aliases. To do this on UNIX-like systems open
-    `/etc/hosts` and add it:
-
-            127.0.0.1    localhost tunnistamo-backend
-
-    This way callbacks to `tunnistamo-backend` URL will work locally.
-
-5.  Configure OIDC settings in Tunnistamo's admin panel. Might require help from other devs.
-
-6.  Configure some social auth application to allow requests from your local tunnistamo by using this
-    URL in the settings `http://tunnistamo-backend`
-
-### Settings for Tunnistamo
-
-```bash
-docker-compose exec django python manage.py createsuperuser
-```
-
-At Django admin:
-
-- Create new Login Method: yletunnus
-- OpenID Connect Provider / Clients / Add client:
-  - Name: mvj
-  - Client Type: public
-  - Response types: id_token token (Implicit Flow)
-  - Redirect URIs: http://localhost:3000/callback <new line> http://localhost:3000/silent_renew.html
-  - Client ID: https://api.hel.fi/auth/mvj
-  - Site type: Development
-  - Login methods: GitHub
-- Oidc_Apis / APIs / Add API:
-  - Domain: https://api.hel.fi/auth
-  - Name: mvj
-  - Required scopes: Sähköposti, Profile, Address, AD Groups
-  - OIDC client: mvj
-- Oidc_Apis / API scopes / Add API scope:
-
-  - API: https://api.hel.fi/auth/mvj
-  - Name: mvj
-  - Description: lue ja modifioi
-  - Allowed applications: mvj
-
-- Copy docker-compose.env.template -> docker-compose.env
-- Create a new OAuth app to Github (use http://tunnistamo-backend:8888/accounts/github/login/callback/ as callback url)
-- Add SOCIAL_AUTH_GITHUB_KEY and SOCIAL_AUTH_GITHUB_SECRET from Github to docker-compose.env.yaml
 
 ## Development without Docker
 
