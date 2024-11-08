@@ -775,13 +775,13 @@ class IntendedUseAdmin(admin.ModelAdmin):
         "service_unit",
         "is_active",
     )
-    search_fields = ["name_fi"]
+    search_fields = ["name"]
     list_filter = (
         "is_active",
         "service_unit",
     )
     ordering = (
-        "name_fi",
+        "name",
         "service_unit",
     )
 
