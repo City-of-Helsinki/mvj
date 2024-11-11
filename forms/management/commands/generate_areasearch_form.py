@@ -28,10 +28,18 @@ def initialize_area_search_form():
         default_value="2",
     )
     Choice.objects.create(
-        field=applicant_field, text="Henkilö", value="2", has_text_input=False
+        field=applicant_field,
+        text="Henkilö",
+        value="2",
+        has_text_input=False,
+        sort_order=2,
     )
     Choice.objects.create(
-        field=applicant_field, text="Yritys", value="1", has_text_input=False
+        field=applicant_field,
+        text="Yritys",
+        value="1",
+        has_text_input=False,
+        sort_order=1,
     )
 
     corporate_section = Section.objects.create(

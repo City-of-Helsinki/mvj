@@ -149,10 +149,9 @@ class Choice(models.Model):
     value = models.CharField(max_length=50)
     action = models.CharField(max_length=255, null=True, blank=True)
     has_text_input = models.BooleanField(default=False)
-
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="choices")
-
     recursive_get_related_skip_relations = []
+    sort_order = models.PositiveIntegerField(default=0, null=True, blank=True)
 
 
 class Answer(models.Model):

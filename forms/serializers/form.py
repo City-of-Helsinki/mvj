@@ -55,6 +55,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
             "value",
             "action",
             "has_text_input",
+            "sort_order",
         )
 
 
