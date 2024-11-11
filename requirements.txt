@@ -11,7 +11,6 @@ asgiref==3.8.1
     #   django
     #   django-cors-headers
     #   django-countries
-    #   django-stubs
 asn1crypto==1.5.1
     # via
     #   oscrypto
@@ -117,9 +116,9 @@ django-sanitized-dump==1.2.2
     # via -r requirements.in
 django-sequences==3.0
     # via -r requirements.in
-django-stubs[compatible-mypy]==5.1.0
+django-stubs[compatible-mypy]==4.2.7
     # via -r requirements.in
-django-stubs-ext==5.1.1
+django-stubs-ext==5.0.0
     # via django-stubs
 django-xhtml2pdf==0.0.4
     # via -r requirements.in
@@ -165,7 +164,7 @@ lxml==5.2.2
     #   zeep
 markupsafe==2.1.5
     # via jinja2
-mypy==1.11.2
+mypy==1.7.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
@@ -298,6 +297,8 @@ tomli==2.0.1
     # via
     #   django-stubs
     #   mypy
+types-pytz==2024.1.0.20240417
+    # via django-stubs
 types-pyyaml==6.0.12.20240311
     # via django-stubs
 typing-extensions==4.11.0
