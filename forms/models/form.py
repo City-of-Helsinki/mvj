@@ -151,7 +151,7 @@ class Choice(models.Model):
     has_text_input = models.BooleanField(default=False)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="choices")
     recursive_get_related_skip_relations = []
-    sort_order = models.PositiveIntegerField(default=0, null=True, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
 
 class Answer(models.Model):
