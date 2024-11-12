@@ -73,7 +73,7 @@ class FixedInitialYearRentSerializer(
         model = FixedInitialYearRent
         fields = ("id", "amount", "intended_use", "start_date", "end_date")
 
-    def is_valid_end_date(self, rent, end_date):
+    def is_valid_end_date(self, rent: Rent, end_date):
         if not rent or not rent.cycle or not end_date:
             return True
 
@@ -152,6 +152,7 @@ class ContractRentSerializer(
             "base_year_rent",
             "start_date",
             "end_date",
+            "override_receivable_type",
         )
 
     def to_internal_value(self, data):
@@ -163,7 +164,7 @@ class ContractRentSerializer(
 
         return super().to_internal_value(data)
 
-    def _is_valid_index(self, rent, index):
+    def _is_valid_index(self, rent: Rent, index):
         if rent.type != RentType.INDEX2022:
             return True
 
@@ -422,7 +423,6 @@ class RentSerializer(
             "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
-            "override_receivable_type",
         )
 
     def override_permission_check_field_name(self, field_name):
@@ -465,7 +465,6 @@ class RentSimpleSerializer(
             "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
-            "override_receivable_type",
         )
 
 
@@ -527,7 +526,6 @@ class RentCreateUpdateSerializer(
             "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
-            "override_receivable_type",
         )
 
     def validate(self, data):

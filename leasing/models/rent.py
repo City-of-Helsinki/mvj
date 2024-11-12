@@ -33,6 +33,7 @@ from leasing.enums import (
     RentType,
     SubventionType,
 )
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.types import BillingPeriod
 from leasing.models.utils import (
     DayMonth,
@@ -255,17 +256,6 @@ class Rent(TimeStampedSafeDeleteModel):
     # In Finnish: Perittävän vuokramäärän päättymispäivä
     payable_rent_end_date = models.DateField(
         verbose_name=_("Payable rent end date"), null=True, blank=True
-    )
-
-    # In Finnish: Korvaava saamislaji
-    # Choices should be filtered by the lease's service unit
-    override_receivable_type = models.ForeignKey(
-        "leasing.ReceivableType",
-        verbose_name=_("Override receivable type"),
-        related_name="+",
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
     )
 
     recursive_get_related_skip_relations = ["lease"]
@@ -849,6 +839,20 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return False
 
+    def get_override_receivable_type(self) -> ReceivableType | None:
+        """
+        Retrieve the overriding receivable type that should be used in automatic invoice
+        creation, whenever it has been added to ContractRents
+
+        Each non-MaKe rent should only have 1 contract rent, even though the
+        Rent model allows multiple.
+        If multiple contract rents are expected, ask users how to select the
+        correct override receivable type from those, and alter this method.
+        """
+        return self.contract_rents.filter(
+            override_receivable_type__isnull=False
+        ).first()
+
 
 class RentDueDate(TimeStampedSafeDeleteModel):
     """
@@ -1015,6 +1019,18 @@ class ContractRent(TimeStampedSafeDeleteModel):
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
     recursive_get_related_skip_relations = ["rent"]
+
+    # In Finnish: Automaattisten laskujen saamislaji
+    # Used in service units other than MaKe/Tontit.
+    # Choices in UI select elements should be filtered by the lease's service unit.
+    override_receivable_type = models.ForeignKey(
+        "leasing.ReceivableType",
+        verbose_name=_("Override receivable type"),
+        related_name="+",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Contract rent")

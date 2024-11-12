@@ -360,13 +360,13 @@ class LeaseManager(SafeDeleteManager):
                 "rents__due_dates",
                 "rents__contract_rents",
                 "rents__contract_rents__intended_use",
+                "rents__contract_rents__override_receivable_type",
                 "rents__rent_adjustments",
                 "rents__rent_adjustments__intended_use",
                 "rents__index_adjusted_rents",
                 "rents__payable_rents",
                 "rents__fixed_initial_year_rents",
                 "rents__fixed_initial_year_rents__intended_use",
-                "rents__override_receivable_type",
                 "basis_of_rents",
                 "collection_letters",
                 "collection_notes",
@@ -1013,7 +1013,7 @@ class Lease(TimeStampedSafeDeleteModel):
                             date_range_start=start_date, date_range_end=end_date
                         ),
                         "last_billing_period": False,
-                        "override_receivable_type": rent.override_receivable_type,
+                        "override_receivable_type": rent.get_override_receivable_type(),
                     }
 
                 rent_calculation_result = rent.get_amount_for_date_range(

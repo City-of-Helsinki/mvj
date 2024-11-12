@@ -14,7 +14,8 @@ from leasing.enums import (
     RentType,
     TenantContactType,
 )
-from leasing.models import RentDueDate
+from leasing.models import Lease, Rent, RentDueDate
+from leasing.models.types import PayableRentsInPeriods
 
 
 @pytest.mark.django_db
@@ -35,7 +36,7 @@ def test_calculate_invoices_one_tenant(
     rent_factory,
     contract_rent_factory,
 ):
-    lease = lease_factory(
+    lease: Lease = lease_factory(
         type_id=1,
         municipality_id=1,
         district_id=1,
@@ -57,7 +58,7 @@ def test_calculate_invoices_one_tenant(
         start_date=date(year=2000, month=1, day=1),
     )
 
-    rent = rent_factory(
+    rent: Rent = rent_factory(
         lease=lease,
         type=RentType.FIXED,
         cycle=RentCycle.JANUARY_TO_DECEMBER,
@@ -89,12 +90,12 @@ def test_calculate_invoices_one_tenant(
         )
     )
 
-    period_rents = {
+    period_rents: PayableRentsInPeriods = {
         billing_period: {
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": rent.get_override_receivable_type(),
         }
     }
 
@@ -118,7 +119,7 @@ def test_calculate_invoices_two_tenants(
     rent_factory,
     contract_rent_factory,
 ):
-    lease = lease_factory(
+    lease: Lease = lease_factory(
         type_id=1,
         municipality_id=1,
         district_id=1,
@@ -154,7 +155,7 @@ def test_calculate_invoices_two_tenants(
         start_date=date(year=2000, month=1, day=1),
     )
 
-    rent = rent_factory(
+    rent: Rent = rent_factory(
         lease=lease,
         type=RentType.FIXED,
         cycle=RentCycle.JANUARY_TO_DECEMBER,
@@ -186,12 +187,12 @@ def test_calculate_invoices_two_tenants(
         )
     )
 
-    period_rents = {
+    period_rents: PayableRentsInPeriods = {
         billing_period: {
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": rent.get_override_receivable_type(),
         }
     }
 
@@ -223,7 +224,7 @@ def test_calculate_invoices_three_tenants(
     rent_factory,
     contract_rent_factory,
 ):
-    lease = lease_factory(
+    lease: Lease = lease_factory(
         type_id=1,
         municipality_id=1,
         district_id=1,
@@ -273,7 +274,7 @@ def test_calculate_invoices_three_tenants(
         start_date=date(year=2000, month=1, day=1),
     )
 
-    rent = rent_factory(
+    rent: Rent = rent_factory(
         lease=lease,
         type=RentType.FIXED,
         cycle=RentCycle.JANUARY_TO_DECEMBER,
@@ -305,12 +306,12 @@ def test_calculate_invoices_three_tenants(
         )
     )
 
-    period_rents = {
+    period_rents: PayableRentsInPeriods = {
         billing_period: {
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": rent.get_override_receivable_type(),
         }
     }
 
@@ -345,7 +346,7 @@ def test_calculate_invoices_three_tenants(
 def test_calculate_invoices_seasonal(
     lease_test_data, tenant_rent_share_factory, rent_factory, contract_rent_factory
 ):
-    lease = lease_test_data["lease"]
+    lease: Lease = lease_test_data["lease"]
     tenant1 = lease_test_data["tenants"][0]
     tenant_rent_share_factory(
         tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
@@ -503,7 +504,7 @@ def test_calculate_invoices_uses_correct_receivable_type(
         )
         service_unit.default_receivable_type_rent = receivable_type
 
-        lease = lease_factory(
+        lease: Lease = lease_factory(
             type_id=1,
             municipality_id=1,
             district_id=1,
@@ -529,7 +530,7 @@ def test_calculate_invoices_uses_correct_receivable_type(
             start_date=date(year=2000, month=1, day=1),
         )
 
-        rent = rent_factory(
+        rent: Rent = rent_factory(
             lease=lease,
             type=RentType.FIXED,
             cycle=RentCycle.JANUARY_TO_DECEMBER,
@@ -561,12 +562,12 @@ def test_calculate_invoices_uses_correct_receivable_type(
             )
         )
 
-        period_rents = {
+        period_rents: PayableRentsInPeriods = {
             billing_period: {
                 "due_date": date(year=2017, month=6, day=1),
                 "calculation_result": calculation_result,
                 "last_billing_period": False,
-                "override_receivable_type": rent.override_receivable_type,
+                "override_receivable_type": rent.get_override_receivable_type(),
             }
         }
 
