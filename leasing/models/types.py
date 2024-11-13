@@ -24,6 +24,7 @@ DueDate: TypeAlias = datetime.date
 
 
 class PayableRent(TypedDict):
+    # FIXME name clash with existing class PayableRent in rent.py
     due_date: DueDate
     calculation_result: "CalculationResult"
     last_billing_period: bool
