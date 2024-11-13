@@ -849,9 +849,14 @@ class Rent(TimeStampedSafeDeleteModel):
         If multiple contract rents are expected, ask users how to select the
         correct override receivable type from those, and alter this method.
         """
-        return self.contract_rents.filter(
+        primary_contract_rent: ContractRent = self.contract_rents.filter(
             override_receivable_type__isnull=False
         ).first()
+        return (
+            primary_contract_rent.override_receivable_type
+            if primary_contract_rent
+            else None
+        )
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
