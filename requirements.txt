@@ -25,7 +25,7 @@ babel==2.15.0
     # via docxcompose
 bcrypt==4.1.3
     # via paramiko
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.3
     # via -r requirements.in
 cachetools==5.3.3
     # via django-helusers
@@ -54,11 +54,11 @@ cssselect2==0.7.0
     # via svglib
 database-sanitizer==1.1.0
     # via django-sanitized-dump
-deepmerge==1.1.1
+deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==4.2.14
+django==4.2.16
     # via
     #   -r requirements.in
     #   django-anymail
@@ -78,41 +78,41 @@ django==4.2.14
     #   django-xhtml2pdf
     #   djangorestframework
     #   drf-yasg
-django-admin-rangefilter==0.12.5
+django-admin-rangefilter==0.13.2
     # via -r requirements.in
-django-anymail==10.3
+django-anymail==12.0
     # via -r requirements.in
 django-auditlog==2.2.2
     # via -r requirements.in
-django-constance==3.1.0
+django-constance==4.1.3
     # via -r requirements.in
-django-cors-headers==4.3.1
+django-cors-headers==4.6.0
     # via -r requirements.in
-django-countries==7.5.1
+django-countries==7.6.1
     # via -r requirements.in
 django-enumfields2==3.0.2
     # via -r requirements.in
 django-environ==0.11.2
     # via -r requirements.in
-django-filter==23.5
-    # via -r requirements.in
+django-filter==24.3
+    # via
+    #   -r requirements.in
+    #   djangorestframework-gis
 django-helusers==0.13.0
     # via -r requirements.in
-django-model-utils==4.4.0
+django-model-utils==5.0.0
     # via -r requirements.in
-django-modeltranslation==0.18.13
+django-modeltranslation==0.19.10
     # via -r requirements.in
 django-nested-inline==0.4.6
     # via -r requirements.in
 django-picklefield==3.2
-    # via
-    #   django-constance
-    #   django-q2
+    # via django-q2
 django-q-sentry==0.1.6
     # via django-q2
-django-q2[sentry]==1.6.2
+django-q2[sentry]==1.7.4
     # via -r requirements.in
-django-safedelete==1.3.3
+django-safedelete==1.4.0
     # via -r requirements.in
 django-sanitized-dump==1.2.2
     # via -r requirements.in
@@ -129,15 +129,13 @@ djangorestframework==3.15.2
     #   -r requirements.in
     #   djangorestframework-gis
     #   drf-yasg
-djangorestframework-gis==1.0
+djangorestframework-gis==1.1
     # via -r requirements.in
-docutils==0.20.1
-    # via python-daemon
 docxcompose==1.4.0
     # via docxtpl
-docxtpl==0.16.8
+docxtpl==0.18.0
     # via -r requirements.in
-drf-yasg[validation]==1.21.7
+drf-yasg[validation]==1.21.8
     # via -r requirements.in
 ecdsa==0.19.0
     # via python-jose
@@ -177,6 +175,7 @@ oscrypto==1.3.0
 packaging==24.0
     # via
     #   deprecation
+    #   django-safedelete
     #   drf-yasg
 paramiko==3.4.0
     # via pysftp
@@ -186,9 +185,9 @@ pillow==10.3.0
     #   xhtml2pdf
 platformdirs==4.2.2
     # via zeep
-psycopg[binary]==3.1.19
+psycopg[binary]==3.2.3
     # via -r requirements.in
-psycopg-binary==3.1.19
+psycopg-binary==3.2.3
     # via psycopg
 pyasn1==0.6.0
     # via
@@ -208,15 +207,15 @@ pypdf==4.2.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
-pyproj==3.5.0
+pyproj==3.7.0
     # via -r requirements.in
 pysftp==0.2.9
     # via -r requirements.in
 python-bidi==0.4.2
     # via xhtml2pdf
-python-daemon==3.0.1
+python-daemon==3.1.0
     # via -r requirements.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   django-auditlog
@@ -247,7 +246,7 @@ reportlab==4.0.9
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.32.2
+requests==2.32.3
     # via
     #   -r requirements.in
     #   django-anymail
@@ -276,7 +275,6 @@ six==1.16.0
     #   database-sanitizer
     #   django-sanitized-dump
     #   docxcompose
-    #   docxtpl
     #   ecdsa
     #   html5lib
     #   isodate
@@ -335,7 +333,7 @@ xhtml2pdf==0.2.15
     # via django-xhtml2pdf
 xlsxwriter==3.2.0
     # via -r requirements.in
-zeep==4.2.1
+zeep==4.3.1
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
