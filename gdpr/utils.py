@@ -7,3 +7,10 @@ def get_user(user: User) -> User:
     by default attempts to get it from the root models user attribute.
     """
     return user
+
+
+def delete_user_data(user: User, dry_run: bool) -> None:
+    """
+    Delete user data.
+    """
+    user.delete()
