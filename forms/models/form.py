@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.fields.json import JSONField
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumField
+from helsinki_gdpr.models import SerializableMixin
 
 from users.models import User
 
@@ -206,7 +207,7 @@ def get_attachment_file_upload_to(instance, filename):
     )
 
 
-class Attachment(models.Model):
+class Attachment(SerializableMixin, models.Model):
     name = models.CharField(max_length=255)
     attachment = models.FileField(upload_to=get_attachment_file_upload_to)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
@@ -215,6 +216,13 @@ class Attachment(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # GDPR API
+    serialize_fields = (
+        {"name": "name"},
+        {"name": "attachment"},
+        {"name": "created_at"},
+    )
 
     recursive_get_related_skip_relations = [
         "user",

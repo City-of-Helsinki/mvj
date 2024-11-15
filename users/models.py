@@ -5,12 +5,25 @@ from django.contrib import admin
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
+from helsinki_gdpr.models import SerializableMixin
 from helusers.models import AbstractUser, ADGroupMapping
 from rest_framework.authtoken.models import Token
 
 
-class User(AbstractUser):
+class User(AbstractUser, SerializableMixin):
     service_units = models.ManyToManyField("leasing.ServiceUnit", related_name="users")
+
+    # GDPR API, meant for PlotSearch app users
+    serialize_fields = (
+        {"name": "uuid"},
+        {"name": "first_name"},
+        {"name": "last_name"},
+        {"name": "email"},
+        # forms.Attachment
+        {"name": "attachment"},
+        # plotsearch.AreaSearch
+        {"name": "areasearch_set"},
+    )
 
     recursive_get_related_skip_relations = [
         "auth_token",

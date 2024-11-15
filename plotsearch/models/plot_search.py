@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
+from helsinki_gdpr.models import SerializableMixin
 from rest_framework.serializers import ValidationError
 from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
@@ -482,7 +483,7 @@ class AreaSearchStatus(models.Model):
     ]
 
 
-class AreaSearch(models.Model):
+class AreaSearch(SerializableMixin, models.Model):
     # In Finnish: aluehaku
 
     geometry = gmodels.MultiPolygonField(
@@ -566,6 +567,14 @@ class AreaSearch(models.Model):
         blank=True,
     )
 
+    # GDPR API
+    serialize_fields = (
+        {"name": "address"},
+        {"name": "received_date"},
+        # plotsearch.AreaSearchAttachment
+        {"name": "area_search_attachments"},
+    )
+
     recursive_get_related_skip_relations = [
         "related_plot_applications",
         "areasearchattachment",
@@ -598,7 +607,7 @@ def get_area_search_attachment_upload_to(instance, filename):
     )
 
 
-class AreaSearchAttachment(NameModel):
+class AreaSearchAttachment(SerializableMixin, NameModel):
     attachment = models.FileField(
         upload_to=get_area_search_attachment_upload_to, null=True, blank=True
     )
@@ -614,6 +623,9 @@ class AreaSearchAttachment(NameModel):
         null=True,
         blank=True,
     )
+
+    # GDPR API
+    serialize_fields = ({"name": "attachment"}, {"name": "created_at"})
 
     recursive_get_related_skip_relations = [
         "user",

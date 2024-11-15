@@ -103,6 +103,12 @@ env = environ.Env(
     LASKE_PAYMENTS_DIRECTORY=(str, ""),
     LASKE_PAYMENTS_KEY_TYPE=(str, ""),
     LASKE_PAYMENTS_KEY=(bytes, ""),
+    GDPR_API_URL_PATTERN=(str, "v1/profiles/<uuid:uuid>"),
+    GDPR_API_MODEL=(str, "users.User"),
+    GDPR_API_MODEL_LOOKUP=(str, "uuid"),
+    GDPR_API_QUERY_SCOPE=(str, ""),
+    GDPR_API_DELETE_SCOPE=(str, ""),
+    GDPR_API_USER_PROVIDER=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -324,6 +330,14 @@ OIDC_API_TOKEN_AUTH = {
     "API_AUTHORIZATION_FIELD": env.str("TOKEN_AUTH_FIELD_FOR_CONSENTS"),
     "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": env.bool("TOKEN_AUTH_REQUIRE_SCOPE_PREFIX"),
 }
+
+# https://github.com/City-of-Helsinki/helsinki-profile-gdpr-api
+GDPR_API_URL_PATTERN = env("GDPR_API_URL_PATTERN")
+GDPR_API_MODEL = env("GDPR_API_MODEL")
+GDPR_API_MODEL_LOOKUP = env("GDPR_API_MODEL_LOOKUP")
+GDPR_API_QUERY_SCOPE = env("GDPR_API_QUERY_SCOPE")
+GDPR_API_DELETE_SCOPE = env("GDPR_API_DELETE_SCOPE")
+GDPR_API_USER_PROVIDER = env("GDPR_API_USER_PROVIDER")
 
 LASKE_VALUES = {
     "distribution_channel": "10",
