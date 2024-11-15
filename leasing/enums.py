@@ -659,6 +659,16 @@ class ServiceUnitId(IntEnum):
         KUVA_NUP = "KuVa / Nuorisopalvelut"
 
 
+def is_akv_or_kuva_service_unit_id(service_unit_id: int) -> bool:
+    akv_kuva_service_unit_ids = [
+        ServiceUnitId.AKV,
+        ServiceUnitId.KUVA_LIPA,
+        ServiceUnitId.KUVA_UPA,
+        ServiceUnitId.KUVA_NUP,
+    ]
+    return service_unit_id in akv_kuva_service_unit_ids
+
+
 class SapSalesOfficeNumber(Enum):
     """
     In Finnish: SAP myyntitoimiston numero

@@ -14,7 +14,8 @@ from leasing.enums import (
     RentType,
     TenantContactType,
 )
-from leasing.models import RentDueDate
+from leasing.models import Lease, Rent, RentDueDate, ServiceUnit
+from leasing.models.types import PayableRentsInPeriods
 
 
 @pytest.mark.django_db
@@ -94,7 +95,7 @@ def test_calculate_invoices_one_tenant(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": None,
         }
     }
 
@@ -191,7 +192,7 @@ def test_calculate_invoices_two_tenants(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": None,
         }
     }
 
@@ -310,7 +311,7 @@ def test_calculate_invoices_three_tenants(
             "due_date": date(year=2017, month=6, day=1),
             "calculation_result": calculation_result,
             "last_billing_period": False,
-            "override_receivable_type": rent.override_receivable_type,
+            "override_receivable_type": None,
         }
     }
 
@@ -566,7 +567,7 @@ def test_calculate_invoices_uses_correct_receivable_type(
                 "due_date": date(year=2017, month=6, day=1),
                 "calculation_result": calculation_result,
                 "last_billing_period": False,
-                "override_receivable_type": rent.override_receivable_type,
+                "override_receivable_type": None,
             }
         }
 
@@ -575,3 +576,101 @@ def test_calculate_invoices_uses_correct_receivable_type(
         assert len(invoice_data) == 1
         assert len(invoice_data[0]) == 1
         assert invoice_data[0][0]["rows"][0]["receivable_type"] == receivable_type
+
+
+@pytest.mark.django_db
+def test_calculate_invoices_uses_override_receivable_type(
+    django_db_setup,
+    service_unit_factory,
+    receivable_type_factory,
+    lease_factory,
+    tenant_factory,
+    contact_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    rent_factory,
+    contract_rent_factory,
+):
+    """
+    If an override_receivable_type is defined in a rent, that receivable type is
+    used in the invoice over the default value.
+    """
+    # Mandatory set up
+    service_unit: ServiceUnit = service_unit_factory(name="ServiceUnitName")
+    service_unit.default_receivable_type_rent = receivable_type_factory(
+        name="Maanvuokraus", service_unit=service_unit
+    )
+    lease: Lease = lease_factory(
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=date(year=2000, month=1, day=1),
+        service_unit=service_unit,
+    )
+    tenant = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    tenant_rent_share_factory(
+        tenant=tenant, intended_use_id=1, share_numerator=1, share_denominator=1
+    )
+    contact = contact_factory(
+        first_name="ContactFirstName",
+        last_name="ContactLastName",
+        type=ContactType.PERSON,
+        service_unit=service_unit,
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=contact,
+        start_date=date(year=2000, month=1, day=1),
+    )
+    # Set the receivable type override that should be in invoice
+    override_receivable_type = receivable_type_factory(
+        name="OverrideReceivableType", service_unit=service_unit
+    )
+    rent: Rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+        override_receivable_type=override_receivable_type,
+    )
+
+    # Billing item calculations
+    billing_period = (
+        date(year=2020, month=1, day=1),
+        date(year=2020, month=12, day=31),
+    )
+    calculation_result = CalculationResult(*billing_period)
+    contract_rent1 = contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=1000,
+        period=PeriodType.PER_YEAR,
+        base_amount=1000,
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+    calculation_result.add_amount(
+        CalculationAmount(
+            item=contract_rent1,
+            amount=Decimal(1000),
+            date_range_start=billing_period[0],
+            date_range_end=billing_period[1],
+        )
+    )
+    period_rents: PayableRentsInPeriods = {
+        billing_period: {
+            "due_date": date(year=2020, month=6, day=1),
+            "calculation_result": calculation_result,
+            "last_billing_period": False,
+            "override_receivable_type": rent.override_receivable_type,
+        }
+    }
+
+    # Calculate the results
+    invoice_data = lease.calculate_invoices(period_rents)
+
+    # Test that override receivable type is used by the invoice
+    invoice_datum = invoice_data[0][0]
+    assert invoice_datum["rows"][0]["receivable_type"] == override_receivable_type

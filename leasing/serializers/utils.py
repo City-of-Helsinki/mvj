@@ -308,7 +308,8 @@ class FileSerializerMixin:
         return os.path.basename(obj.file.name)
 
 
-def validate_seasonal_day_for_month(day: int | None, month: int | None):
+def validate_seasonal_day_for_month(day: int | None, month: int | None) -> None:
+    """Raises: serializers.ValidationError"""
     if day is None and month is None:
         return
 

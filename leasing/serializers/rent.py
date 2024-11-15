@@ -5,8 +5,27 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle, RentType
-from leasing.models import Index
+from leasing.enums import (
+    DueDatesType,
+    RentAdjustmentAmountType,
+    RentCycle,
+    RentType,
+    is_akv_or_kuva_service_unit_id,
+)
+from leasing.models import (
+    ContractRent,
+    Decision,
+    FixedInitialYearRent,
+    Index,
+    IndexAdjustedRent,
+    LeaseBasisOfRent,
+    PayableRent,
+    ReceivableType,
+    Rent,
+    RentAdjustment,
+    RentDueDate,
+    RentIntendedUse,
+)
 from leasing.models.rent import (
     EqualizedRent,
     LeaseBasisOfRentManagementSubvention,
@@ -15,21 +34,10 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     TemporarySubvention,
 )
+from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from leasing.serializers.utils import validate_seasonal_day_for_month
 from users.serializers import UserSerializer
 
-from ..models import (
-    ContractRent,
-    Decision,
-    FixedInitialYearRent,
-    IndexAdjustedRent,
-    LeaseBasisOfRent,
-    PayableRent,
-    Rent,
-    RentAdjustment,
-    RentDueDate,
-    RentIntendedUse,
-)
 from .decision import DecisionSerializer
 from .utils import (
     DayMonthField,
@@ -73,7 +81,7 @@ class FixedInitialYearRentSerializer(
         model = FixedInitialYearRent
         fields = ("id", "amount", "intended_use", "start_date", "end_date")
 
-    def is_valid_end_date(self, rent, end_date):
+    def is_valid_end_date(self, rent: Rent, end_date):
         if not rent or not rent.cycle or not end_date:
             return True
 
@@ -163,7 +171,7 @@ class ContractRentSerializer(
 
         return super().to_internal_value(data)
 
-    def _is_valid_index(self, rent, index):
+    def _is_valid_index(self, rent: Rent, index):
         if rent.type != RentType.INDEX2022:
             return True
 
@@ -493,6 +501,13 @@ class RentCreateUpdateSerializer(
     equalized_rents = EqualizedRentSerializer(
         many=True, required=False, allow_null=True, read_only=True
     )
+    override_receivable_type = InstanceDictPrimaryKeyRelatedField(
+        instance_class=ReceivableType,
+        queryset=ReceivableType.objects.all(),
+        related_serializer=ReceivableTypeSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Rent
@@ -530,12 +545,18 @@ class RentCreateUpdateSerializer(
             "override_receivable_type",
         )
 
-    def validate(self, data):
+    def validate(self, rent_data: dict):
+        self.validate_seasonal_values(rent_data)
+        self.validate_override_receivable_type_value(rent_data)
+        return rent_data
+
+    def validate_seasonal_values(self, rent_data: dict) -> None:
+        """Raises: serializers.ValidationError"""
         seasonal_values = [
-            data.get("seasonal_start_day"),
-            data.get("seasonal_start_month"),
-            data.get("seasonal_end_day"),
-            data.get("seasonal_end_month"),
+            rent_data.get("seasonal_start_day"),
+            rent_data.get("seasonal_start_month"),
+            rent_data.get("seasonal_end_day"),
+            rent_data.get("seasonal_end_month"),
         ]
 
         if not all(v is None for v in seasonal_values) and any(
@@ -545,7 +566,10 @@ class RentCreateUpdateSerializer(
                 _("All seasonal values are required if one is set")
             )
 
-        if all(seasonal_values) and data.get("due_dates_type") != DueDatesType.CUSTOM:
+        if (
+            all(seasonal_values)
+            and rent_data.get("due_dates_type") != DueDatesType.CUSTOM
+        ):
             raise serializers.ValidationError(
                 _("Due dates type must be custom if seasonal dates are set")
             )
@@ -554,7 +578,63 @@ class RentCreateUpdateSerializer(
         validate_seasonal_day_for_month(start_day, start_month)
         validate_seasonal_day_for_month(end_day, end_month)
 
-        return data
+    def validate_override_receivable_type_value(self, rent_data: dict) -> None:
+        """
+        Override receivabletype is mandatory for AKV and KuVa leases, and not
+        used by MaKe/Tontit.
+
+        It is only used in index rents, fixed rents, and manual rents, because
+        these rent types can generate automatic invoices.
+
+        Raises: serializers.ValidationError
+        """
+        override_receivable_type = rent_data.get("override_receivable_type")
+
+        if not override_receivable_type:
+            # Empty override receivabletype input should be allowed, because it
+            # is always empty for all MaKe rents, and those must be allowed.
+            return
+
+        elif not is_akv_or_kuva_service_unit_id(
+            override_receivable_type.service_unit_id
+        ):
+            # All MaKe receivabletypes should be rejected regardless of rent
+            # type, because MaKe doesn't use the override feature, and if any
+            # other service unit would use MaKe's receivabletypes, it would be
+            # a mistake.
+            raise serializers.ValidationError(
+                _(
+                    f'Override receivabletype "{override_receivable_type.name}" was unexpected. '
+                    "Override receivabletype is not used by MaKe/Tontit."
+                )
+            )
+
+        elif is_akv_or_kuva_service_unit_id(override_receivable_type.service_unit_id):
+            rent_type = rent_data.get("type", {})
+
+            if rent_type in [
+                RentType.INDEX,
+                RentType.INDEX2022,
+                RentType.FIXED,
+                RentType.MANUAL,
+            ]:
+                # These rent types can generate automatic invoices, so they can
+                # utilize the override receivabletype.
+                return
+            else:
+                raise serializers.ValidationError(
+                    _(
+                        f'Override receivabletype "{override_receivable_type.name}" was unexpected. '
+                        f'Rent type "{rent_type.name}" does not generate automatic invoices.'
+                    )
+                )
+
+        else:
+            raise serializers.ValidationError(
+                _(
+                    "Unhandled case in override receivabletype validation. Rejecting just in case."
+                )
+            )
 
 
 class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer):
