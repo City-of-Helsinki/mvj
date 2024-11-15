@@ -109,6 +109,7 @@ env = environ.Env(
     GDPR_API_QUERY_SCOPE=(str, ""),
     GDPR_API_DELETE_SCOPE=(str, ""),
     GDPR_API_USER_PROVIDER=(str, ""),
+    GDPR_API_DELETER=(str, "gdpr.utils.delete_user_data"),
 )
 
 env_file = project_root(".env")
@@ -338,6 +339,7 @@ GDPR_API_MODEL_LOOKUP = env("GDPR_API_MODEL_LOOKUP")
 GDPR_API_QUERY_SCOPE = env("GDPR_API_QUERY_SCOPE")
 GDPR_API_DELETE_SCOPE = env("GDPR_API_DELETE_SCOPE")
 GDPR_API_USER_PROVIDER = env("GDPR_API_USER_PROVIDER")
+GDPR_API_DELETER = env("GDPR_API_DELETER")
 
 LASKE_VALUES = {
     "distribution_channel": "10",
