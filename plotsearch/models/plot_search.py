@@ -423,7 +423,7 @@ class MeetingMemo(models.Model):
 
 
 class Favourite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -532,7 +532,7 @@ class AreaSearch(SerializableMixin, models.Model):
     answer = models.OneToOneField(
         Answer, on_delete=models.CASCADE, null=True, related_name="area_search"
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     # In Finnish: Käsittelijä
     preparer = models.ForeignKey(
@@ -613,7 +613,9 @@ class AreaSearchAttachment(SerializableMixin, NameModel):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    user = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
 
     # In Finnish: Aluehaut
     area_search = models.ForeignKey(

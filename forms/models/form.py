@@ -162,7 +162,7 @@ class Answer(models.Model):
     """
 
     form = models.ForeignKey(Form, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     created_at = models.DateTimeField(auto_now=True)
     ready = models.BooleanField(default=False)
@@ -215,7 +215,7 @@ class Attachment(SerializableMixin, models.Model):
 
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     # GDPR API
     serialize_fields = (
