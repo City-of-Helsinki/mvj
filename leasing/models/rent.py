@@ -99,6 +99,65 @@ class RentIntendedUse(NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Rent intended uses")
 
 
+class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
+    """
+    In Finnish: Vanhojen osakeasuntojen hintaindeksi
+
+    From my understanding, a unique price index is identified by the API
+    database table URL and code of the index. A single table can hold multiple
+    indexes, and a single code can be used in multiple tables.
+
+    Members:
+        code: Code for the index's table column. Example: "ketj_P_QA_T". \
+              Same code is shared between tables for different intervals, e.g. \
+              yearly or quarterly.
+        name: Name of the index. Example: "Index (2020=100)".
+        comment: Comment for the index's table column.
+        source: Source of the data.
+        source_table_updated: UTC timestamp when the source table was last updated.
+        source_table_label: Label for the source table.
+        url: API endpoint URL.
+    """
+
+    # Maximum lengths are arbitrary, but set to avoid extra large input.
+    CHARFIELD_MAX_LENGTH = 255
+
+    code = models.CharField(
+        verbose_name=_("Index code"),
+        max_length=CHARFIELD_MAX_LENGTH,
+        unique=True,
+    )
+    name = models.CharField(
+        verbose_name=_("Index name"),
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+    comment = models.TextField(verbose_name=_("Region"), blank=True)
+    source = models.CharField(
+        verbose_name=_("Data source"),
+        blank=True,
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+    source_table_updated = models.DateTimeField(
+        verbose_name=_("Source table updated"), null=True
+    )
+    source_table_label = models.TextField(
+        verbose_name=_("Source table label"),
+        blank=True,
+    )
+    url = models.CharField(
+        verbose_name=_("API endpoint URL"),
+        max_length=CHARFIELD_MAX_LENGTH,
+    )
+
+    class Meta:
+        verbose_name = pgettext_lazy(
+            "model name", "price index of old dwellings in housing companies"
+        )
+        verbose_name_plural = pgettext_lazy(
+            "model name", "price indexes of old dwellings in housing companies"
+        )
+
+
 class Rent(TimeStampedSafeDeleteModel):
     """
     In Finnish: Vuokran perustiedot
@@ -235,6 +294,16 @@ class Rent(TimeStampedSafeDeleteModel):
     override_receivable_type = models.ForeignKey(
         "leasing.ReceivableType",
         verbose_name=_("Override receivable type"),
+        related_name="+",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
+
+    # In Finnish: Tasotarkistusindeksi
+    old_dwellings_in_housing_companies_price_index = models.ForeignKey(
+        OldDwellingsInHousingCompaniesPriceIndex,
+        verbose_name=_("Old dwellings in housing companies price index"),
         related_name="+",
         on_delete=models.PROTECT,
         blank=True,
@@ -1406,65 +1475,6 @@ class LegacyIndex(models.Model):
     number_1938 = models.PositiveIntegerField(
         verbose_name=_("Index 1938:8-1939:7=100"), null=True, blank=True
     )
-
-
-class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
-    """
-    In Finnish: Vanhojen osakeasuntojen hintaindeksi
-
-    From my understanding, a unique price index is identified by the API
-    database table URL and code of the index. A single table can hold multiple
-    indexes, and a single code can be used in multiple tables.
-
-    Members:
-        code: Code for the index's table column. Example: "ketj_P_QA_T". \
-              Same code is shared between tables for different intervals, e.g. \
-              yearly or quarterly.
-        name: Name of the index. Example: "Index (2020=100)".
-        comment: Comment for the index's table column.
-        source: Source of the data.
-        source_table_updated: UTC timestamp when the source table was last updated.
-        source_table_label: Label for the source table.
-        url: API endpoint URL.
-    """
-
-    # Maximum lengths are arbitrary, but set to avoid extra large input.
-    CHARFIELD_MAX_LENGTH = 255
-
-    code = models.CharField(
-        verbose_name=_("Index code"),
-        max_length=CHARFIELD_MAX_LENGTH,
-        unique=True,
-    )
-    name = models.CharField(
-        verbose_name=_("Index name"),
-        max_length=CHARFIELD_MAX_LENGTH,
-    )
-    comment = models.TextField(verbose_name=_("Region"), blank=True)
-    source = models.CharField(
-        verbose_name=_("Data source"),
-        blank=True,
-        max_length=CHARFIELD_MAX_LENGTH,
-    )
-    source_table_updated = models.DateTimeField(
-        verbose_name=_("Source table updated"), null=True
-    )
-    source_table_label = models.TextField(
-        verbose_name=_("Source table label"),
-        blank=True,
-    )
-    url = models.CharField(
-        verbose_name=_("API endpoint URL"),
-        max_length=CHARFIELD_MAX_LENGTH,
-    )
-
-    class Meta:
-        verbose_name = pgettext_lazy(
-            "model name", "price index of old dwellings in housing companies"
-        )
-        verbose_name_plural = pgettext_lazy(
-            "model name", "price indexes of old dwellings in housing companies"
-        )
 
 
 class IndexNumberYearly(TimeStampedModel):

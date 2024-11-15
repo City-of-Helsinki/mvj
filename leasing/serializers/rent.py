@@ -14,7 +14,9 @@ from leasing.models import (
     FixedInitialYearRent,
     Index,
     IndexAdjustedRent,
+    IndexNumberYearly,
     LeaseBasisOfRent,
+    OldDwellingsInHousingCompaniesPriceIndex,
     PayableRent,
     ReceivableType,
     Rent,
@@ -46,6 +48,26 @@ from .utils import (
 class RentIntendedUseSerializer(NameModelSerializer):
     class Meta:
         model = RentIntendedUse
+        fields = "__all__"
+
+
+class IndexNumberYearlySerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    number = serializers.DecimalField(max_digits=10, decimal_places=2)
+    year = serializers.IntegerField()
+    region = serializers.CharField(max_length=255, required=False, allow_null=True)
+    comment = serializers.CharField(max_length=255, required=False, allow_null=True)
+
+    class Meta:
+        model = IndexNumberYearly
+        fields = ("id", "number", "year", "region", "comment")
+
+
+class OldDwellingsInHousingCompaniesPriceIndexSerializer(serializers.ModelSerializer):
+    numbers = IndexNumberYearlySerializer(many=True, required=False, allow_null=True)
+
+    class Meta:
+        model = OldDwellingsInHousingCompaniesPriceIndex
         fields = "__all__"
 
 
@@ -387,6 +409,12 @@ class RentSerializer(
         source="get_due_dates_as_daymonths",
         read_only=True,
     )
+    override_receivable_type = ReceivableTypeSerializer(required=False, allow_null=True)
+    old_dwellings_in_housing_companies_price_index = (
+        OldDwellingsInHousingCompaniesPriceIndexSerializer(
+            required=False, allow_null=True
+        )
+    )
 
     class Meta:
         model = Rent
@@ -419,6 +447,7 @@ class RentSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
+            "old_dwellings_in_housing_companies_price_index",
         )
 
     def override_permission_check_field_name(self, field_name):
