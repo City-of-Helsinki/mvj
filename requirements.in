@@ -24,6 +24,7 @@ djangorestframework~=3.15.2
 djangorestframework-gis~=1.1.0
 drf-yasg[validation]~=1.21.8
 docxtpl~=0.18.0
+helsinki-profile-gdpr-api~=0.2.0
 oracledb~=2.1.0
 psycopg[binary]~=3.2.3
 pysftp~=0.2.9

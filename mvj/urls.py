@@ -20,6 +20,7 @@ from forms.viewsets.form import (
     MeetingMemoViewset,
     TargetStatusViewset,
 )
+from gdpr.views import MvjGDPRAPIView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
@@ -364,7 +365,17 @@ additional_api_paths = [
         CalculateIncreaseWith360DayCalendar.as_view(),
     ),
 ]
-
+gdpr_urls = [
+    path(
+        getattr(
+            settings,
+            "GDPR_API_URL_PATTERN",
+            "v1/profiles/<uuid:pk>",
+        ),
+        MvjGDPRAPIView.as_view(),
+        name="gdpr_v1",
+    )
+]
 additional_pub_api_paths = [
     path(
         "direct_reservation_to_favourite/<str:uuid>/",
@@ -372,20 +383,28 @@ additional_pub_api_paths = [
         name="pub_direct_reservation_to_favourite",
     ),
     path("plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"),
+    # Enables oidc backchannel logout, requires setting `HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True`
+    # to be useful
+    path("helauth/", include("helusers.urls")),
+    # GDPR API
+    path(
+        "gdpr-api/",
+        include(
+            (
+                gdpr_urls,
+                "gdpr",  # Namespace
+            ),
+        ),
+    ),
 ]
 
 api_urls = router.urls + additional_api_paths
+
 # Path: v1/pub/
 pub_api_urls = [
     path(
         "pub/",
-        include(
-            pub_router.urls
-            + additional_pub_api_paths
-            # Enables oidc backchannel logout, requires setting `HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True`
-            # to be useful
-            + [path("helauth/", include("helusers.urls"))]
-        ),
+        include(pub_router.urls + additional_pub_api_paths),
     )
 ]
 credit_integration_urls = [
