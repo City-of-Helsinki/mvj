@@ -53,10 +53,10 @@ class RentIntendedUseSerializer(NameModelSerializer):
 
 class IndexNumberYearlySerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
-    number = serializers.DecimalField(max_digits=10, decimal_places=2)
+    number = serializers.DecimalField(max_digits=8, decimal_places=1)
     year = serializers.IntegerField()
     region = serializers.CharField(max_length=255, required=False, allow_null=True)
-    comment = serializers.CharField(max_length=255, required=False, allow_null=True)
+    comment = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         model = IndexNumberYearly
