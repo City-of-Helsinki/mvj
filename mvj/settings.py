@@ -108,7 +108,7 @@ env = environ.Env(
     GDPR_API_MODEL_LOOKUP=(str, "uuid"),
     GDPR_API_QUERY_SCOPE=(str, ""),
     GDPR_API_DELETE_SCOPE=(str, ""),
-    GDPR_API_USER_PROVIDER=(str, ""),
+    GDPR_API_USER_PROVIDER=(str, "gdpr.utils.get_user"),
     GDPR_API_DELETER=(str, "gdpr.utils.delete_user_data"),
 )
 
