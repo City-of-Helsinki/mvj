@@ -19,6 +19,7 @@ class User(AbstractUser, SerializableMixin):
         {"name": "first_name"},
         {"name": "last_name"},
         {"name": "email"},
+        {"name": "date_joined"},
         # forms.Attachment
         {"name": "attachment"},
         # plotsearch.AreaSearch

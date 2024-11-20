@@ -451,6 +451,9 @@ class AreaSearchIntendedUse(SafeDeleteModel, NameModel):
         verbose_name_plural = pgettext_lazy("Model name", "Area search intended uses")
         ordering = ["name"]
 
+    # GDPR API
+    serialize_fields = ({"name": "name"},)
+
     recursive_get_related_skip_relations = [
         "areasearch",
     ]
@@ -571,8 +574,12 @@ class AreaSearch(SerializableMixin, models.Model):
     serialize_fields = (
         {"name": "address"},
         {"name": "received_date"},
+        {"name": "start_date"},
+        {"name": "end_date"},
         # plotsearch.AreaSearchAttachment
         {"name": "area_search_attachments"},
+        # plotsearch.AreaSearchIntendedUse
+        {"name": "intended_use"},
     )
 
     recursive_get_related_skip_relations = [
@@ -627,7 +634,11 @@ class AreaSearchAttachment(SerializableMixin, NameModel):
     )
 
     # GDPR API
-    serialize_fields = ({"name": "attachment"}, {"name": "created_at"})
+    serialize_fields = (
+        {"name": "name"},
+        {"name": "attachment"},
+        {"name": "created_at"},
+    )
 
     recursive_get_related_skip_relations = [
         "user",
