@@ -12,7 +12,7 @@ from pytest_factoryboy import register
 
 from batchrun.models import Command, Job, JobRun, JobRunLog
 from forms.models import Answer, Choice, Entry, Field, Form, Section
-from forms.models.form import EntrySection
+from forms.models.form import Attachment, EntrySection
 from forms.tests.conftest import fake
 from forms.utils import EmailMessageInput
 from leasing.enums import (
@@ -40,7 +40,10 @@ from leasing.models.land_area import LeaseAreaAddress
 from leasing.models.receivable_type import ReceivableType
 from plotsearch.models import (
     AreaSearch,
+    AreaSearchAttachment,
     AreaSearchIntendedUse,
+    Favourite,
+    InformationCheck,
     PlotSearch,
     PlotSearchStage,
     PlotSearchSubtype,
@@ -173,6 +176,18 @@ class AreaSearchFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AreaSearch
+
+
+@register
+class AreaSearchAttachmentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = AreaSearchAttachment
+
+
+@register
+class FavouriteFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Favourite
 
 
 @register
@@ -504,12 +519,16 @@ class InfoLinkFactory(factory.django.DjangoModelFactory):
 
 @register
 class SectionFactory(factory.django.DjangoModelFactory):
+    form = factory.SubFactory(FormFactory)
+
     class Meta:
         model = Section
 
 
 @register
 class FieldFactory(factory.django.DjangoModelFactory):
+    section = factory.SubFactory(SectionFactory)
+
     class Meta:
         model = Field
 
@@ -559,6 +578,15 @@ class AnswerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Answer
+
+
+@register
+class AttachmentFactory(factory.django.DjangoModelFactory):
+
+    field = factory.SubFactory(FieldFactory)
+
+    class Meta:
+        model = Attachment
 
 
 @pytest.fixture
@@ -1202,6 +1230,14 @@ class TargetStatusFactory(factory.django.DjangoModelFactory):
 
     plot_search_target = factory.SubFactory(PlotSearchTargetFactoryWithSubFactories)
     answer = factory.SubFactory(AnswerFactory)
+
+
+@register
+class InformationCheckFactory(factory.django.DjangoModelFactory):
+    entry_section = factory.SubFactory(EntrySectionFactory)
+
+    class Meta:
+        model = InformationCheck
 
 
 @register

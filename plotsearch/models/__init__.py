@@ -2,6 +2,7 @@ from .info_links import TargetInfoLink
 from .plot_search import (
     FAQ,
     AreaSearch,
+    AreaSearchAttachment,
     AreaSearchIntendedUse,
     Favourite,
     FavouriteTarget,
@@ -22,6 +23,7 @@ __all__ = [
     "Favourite",
     "FavouriteTarget",
     "InformationCheck",
+    "AreaSearchAttachment",
     "AreaSearchIntendedUse",
     "PlotSearch",
     "PlotSearchStage",
