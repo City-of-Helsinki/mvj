@@ -15,6 +15,7 @@
             "first_contract_number": null,
             "default_receivable_type_rent": 1,
             "default_receivable_type_collateral": 8,
+            "use_rent_override_receivable_type": false,
             "created_at": "2021-11-22T08:00:00Z",
             "modified_at": "2021-11-22T08:00:00Z"
         }
@@ -35,6 +36,7 @@
             "first_contract_number": 100000,
             "default_receivable_type_rent": null,
             "default_receivable_type_collateral": null,
+            "use_rent_override_receivable_type": true,
             "created_at": "2023-09-04T12:00:00Z",
             "modified_at": "2023-09-04T12:00:00Z"
         }
@@ -55,6 +57,7 @@
             "first_contract_number": 200000,
             "default_receivable_type_rent": null,
             "default_receivable_type_collateral": null,
+            "use_rent_override_receivable_type": true,
             "created_at": "2023-09-04T12:00:00Z",
             "modified_at": "2023-09-04T12:00:00Z"
         }
@@ -75,6 +78,7 @@
             "first_contract_number": 200000,
             "default_receivable_type_rent": null,
             "default_receivable_type_collateral": null,
+            "use_rent_override_receivable_type": true,
             "created_at": "2023-09-04T12:00:00Z",
             "modified_at": "2023-09-04T12:00:00Z"
         }
@@ -95,6 +99,7 @@
             "first_contract_number": 200000,
             "default_receivable_type_rent": null,
             "default_receivable_type_collateral": null,
+            "use_rent_override_receivable_type": true,
             "created_at": "2023-09-04T12:00:00Z",
             "modified_at": "2023-09-04T12:00:00Z"
         }

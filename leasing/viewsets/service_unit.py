@@ -18,5 +18,6 @@ class ServiceUnitViewSet(ReadOnlyModelViewSet):
         "id",
         "name",
         "description",
+        "use_rent_override_receivable_type",
     )
     ordering = ("name",)
