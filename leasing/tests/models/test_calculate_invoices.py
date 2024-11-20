@@ -493,6 +493,10 @@ def test_calculate_invoices_uses_correct_receivable_type(
     rent_factory,
     contract_rent_factory,
 ):
+    """
+    By default, invoice generation uses the service unit's default
+    receivable type for rents, if no other receivable types are specified.
+    """
     service_units = [
         service_unit_factory(name="First service unit"),
         service_unit_factory(name="Second service unit"),
@@ -593,7 +597,8 @@ def test_calculate_invoices_uses_override_receivable_type(
 ):
     """
     If an override_receivable_type is defined in a rent, that receivable type is
-    used in the invoice over the default value.
+    used in the invoice generation over the service unit's
+    default_receivable_type_rent.
     """
     # Mandatory set up
     service_unit: ServiceUnit = service_unit_factory(name="ServiceUnitName")

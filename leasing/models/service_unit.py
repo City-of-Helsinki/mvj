@@ -72,16 +72,17 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
     )
     use_rent_override_receivable_type = models.BooleanField(
         verbose_name=_(
-            "Use the override receivabletype from rent in automatic invoices?"
+            "Use the override receivable type from rent in automatic invoices?"
         ),
         help_text=_(
-            "Use the override receivable type from rent in automatic invoices, if "
-            "it is present. When creating a rent, some service units (such as AKV "
-            "and KuVa) want to select a receivable type to be used in future "
-            "automatic invoices. This helps avoid some technical difficulties in "
-            "invoice XML generation. Generation logic would otherwise be unaware "
-            "of the desired receivable type, if it is different from the service "
-            "unit's default receivable type, or the leasetype's receivable type."
+            "Use the override receivable type from rent in "
+            "automatic invoices, if it is present. When creating a rent, some "
+            "service units (such as AKV and KuVa) want to select a receivable "
+            "type to be used in future automatic invoices. This helps avoid "
+            "some technical difficulties in invoice XML generation. "
+            "Generation logic would otherwise be unaware of the desired "
+            "receivable type, if it is different from the service unit's "
+            "default receivable type, or the leasetype's receivable type."
         ),
         default=False,
     )
