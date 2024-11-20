@@ -1,4 +1,5 @@
 import pytest
+from auditlog.models import LogEntry
 from helusers.authz import UserAuthorization
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -112,6 +113,7 @@ def test_api_delete_user_data(
     }
 
     user = user_factory(first_name="Etunimi", last_name="Sukunimi")
+    user_id = user.id
     areasearch = area_search_factory(user=user, description_area="Test")
     apirequest_factory = APIRequestFactory()
     request = apirequest_factory.delete(f"/v1/pub/gdpr-api/v1/profiles/{user.uuid}")
@@ -126,9 +128,18 @@ def test_api_delete_user_data(
 
     response = MvjGDPRAPIView.as_view()(request, uuid=user.uuid)
 
-    # Expect deletion to be successful
+    # Expect deletion request to be successful.
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
+    # Ensure that auditlog entry has been created.
+    assert (
+        LogEntry.objects.get_for_model(user._meta.model)
+        .filter(object_id=user_id, changes="GDPR API: User data deleted.")
+        .exists()
+        is True
+    )
+
+    # Check that user instance is deleted.
     with pytest.raises(user.DoesNotExist):
         user.refresh_from_db()
 
@@ -171,3 +182,11 @@ def test_api_delete_user_data_not_possible(
     # Deletion of the user object is therefore not possible.
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert information_check.preparer == user
+
+    # Ensure that auditlog entry has _not_ been created.
+    assert (
+        LogEntry.objects.get_for_object(user)
+        .filter(changes="GDPR API: User data deleted.")
+        .exists()
+        is False
+    )
