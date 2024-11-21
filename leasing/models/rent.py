@@ -310,6 +310,14 @@ class Rent(TimeStampedSafeDeleteModel):
         null=True,
     )
 
+    # In Finnish: Tasotarkistusindeksi vuokran alkaessa
+    start_price_index = models.DecimalField(
+        verbose_name=_("Index number"),
+        decimal_places=1,
+        max_digits=8,
+        null=True,
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
@@ -821,6 +829,14 @@ class Rent(TimeStampedSafeDeleteModel):
             return True
 
         return False
+
+    def set_start_price_index(self):
+        if self.old_dwellings_in_housing_companies_price_index:
+            start_index_number_yearly = IndexNumberYearly.objects.get(
+                index=self.old_dwellings_in_housing_companies_price_index,
+                year=self.start_date.year - 1,
+            )
+            self.start_price_index = start_index_number_yearly.number
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
