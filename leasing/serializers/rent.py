@@ -53,14 +53,14 @@ class RentIntendedUseSerializer(NameModelSerializer):
 
 class IndexNumberYearlySerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
-    number = serializers.DecimalField(max_digits=8, decimal_places=1)
+    point_figure = serializers.DecimalField(max_digits=8, decimal_places=1)
     year = serializers.IntegerField()
     region = serializers.CharField(max_length=255, required=False, allow_null=True)
     comment = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         model = IndexNumberYearly
-        fields = ("id", "number", "year", "region", "comment")
+        fields = ("id", "point_figure", "year", "region", "comment")
 
 
 class OldDwellingsInHousingCompaniesPriceIndexSerializer(serializers.ModelSerializer):
