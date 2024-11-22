@@ -2546,18 +2546,6 @@ msgstr "Tasaus alkupvm"
 msgid "Equalization end date"
 msgstr "Tasaus loppupvm"
 
-msgid "Seasonal start day"
-msgstr "Kauden alkupäivä"
-
-msgid "Seasonal start month"
-msgstr "Kauden alkukuukausi"
-
-msgid "Seasonal end day"
-msgstr "Kauden loppupäivä"
-
-msgid "Seasonal end month"
-msgstr "Kauden loppukuukausi"
-
 msgid "Manual ratio"
 msgstr "Käsinlaskentakerroin"
 
@@ -3459,12 +3447,6 @@ msgstr "Indeksi on valittava kun vuokralaji on Indeksi"
 
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Alennus-/korotustyypillä \"€ yhteensä\" ei voi olla loppupäivämäärää"
-
-msgid "All seasonal values are required if one is set"
-msgstr "Kaikki kausilaskutusarvot ovat pakollisia jos yksikin valittu"
-
-msgid "Due dates type must be custom if seasonal dates are set"
-msgstr "Eräpäivät tulee olla erikseen määritellyt jos käytössä kausilaskutus"
 
 msgid "Basis of rent item id {} not found"
 msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"

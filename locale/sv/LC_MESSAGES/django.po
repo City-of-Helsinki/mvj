@@ -2550,18 +2550,6 @@ msgstr "Utjämning startdatum"
 msgid "Equalization end date"
 msgstr "Utjämning slutdatum"
 
-msgid "Seasonal start day"
-msgstr "Startdag för perioden"
-
-msgid "Seasonal start month"
-msgstr "Starmånad för perioden"
-
-msgid "Seasonal end day"
-msgstr "Slutdag för perioden"
-
-msgid "Seasonal end month"
-msgstr "Slutmånad för perioden"
-
 msgid "Manual ratio"
 msgstr "Manuell beräkningsfaktor"
 
@@ -3461,12 +3449,6 @@ msgstr "Indexet ska väljas då arrendearten är Index"
 
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Rabatt-/höjningstypen \"€ totalt\" kan inte ha ett slutdatum"
-
-msgid "All seasonal values are required if one is set"
-msgstr "Alla säsongsfaktureringsvärden är obligatoriska om en av dem är vald"
-
-msgid "Due dates type must be custom if seasonal dates are set"
-msgstr "Förfallodatumen ska definieras separat om säsongsfakturering används"
 
 msgid "Basis of rent item id {} not found"
 msgstr "Arrenderingsprincipen med identifieraren {} hittas inte"

@@ -2,8 +2,6 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-from dateutil.relativedelta import relativedelta
-from dateutil.rrule import MONTHLY, rrule
 
 from leasing.calculation.result import CalculationAmount, CalculationResult
 from leasing.enums import (
@@ -14,7 +12,7 @@ from leasing.enums import (
     RentType,
     TenantContactType,
 )
-from leasing.models import Lease, Rent, RentDueDate, ServiceUnit
+from leasing.models import Lease, Rent, ServiceUnit
 from leasing.models.types import PayableRentsInPeriods
 
 
@@ -340,144 +338,6 @@ def test_calculate_invoices_three_tenants(
     }
 
     assert tenants == {tenant1, tenant2, tenant3}
-
-
-@pytest.mark.django_db
-def test_calculate_invoices_seasonal(
-    lease_test_data, tenant_rent_share_factory, rent_factory, contract_rent_factory
-):
-    lease = lease_test_data["lease"]
-    tenant1 = lease_test_data["tenants"][0]
-    tenant_rent_share_factory(
-        tenant=tenant1, intended_use_id=1, share_numerator=1, share_denominator=1
-    )
-
-    rent1 = rent_factory(
-        lease=lease,
-        type=RentType.FIXED,
-        due_dates_type=DueDatesType.FIXED,
-        due_dates_per_year=12,
-        start_date=None,
-        end_date=date(year=2019, month=12, day=31),
-    )
-    contract_rent_factory(
-        rent=rent1,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
-        base_amount=80,
-        base_amount_period=PeriodType.PER_MONTH,
-        start_date=date(year=2018, month=10, day=1),
-        end_date=date(year=2019, month=6, day=30),
-    )
-    contract_rent_factory(
-        rent=rent1,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
-        base_amount=80,
-        base_amount_period=PeriodType.PER_MONTH,
-        start_date=date(year=2019, month=10, day=1),
-        end_date=date(year=2020, month=6, day=30),
-    )
-
-    rent2 = rent_factory(
-        lease=lease,
-        type=RentType.FIXED,
-        due_dates_type=DueDatesType.CUSTOM,
-        start_date=date(year=2020, month=1, day=1),
-        end_date=None,
-        seasonal_start_day=1,
-        seasonal_start_month=1,
-        seasonal_end_day=30,
-        seasonal_end_month=6,
-    )
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=2, day=1))
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=3, day=1))
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=4, day=1))
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=5, day=1))
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=1, day=1))
-    rent2.due_dates.add(RentDueDate.objects.create(rent=rent2, month=6, day=1))
-
-    contract_rent_factory(
-        rent=rent2,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
-        base_amount=80,
-        base_amount_period=PeriodType.PER_MONTH,
-    )
-
-    rent3 = rent_factory(
-        lease=lease,
-        type=RentType.FIXED,
-        due_dates_type=DueDatesType.CUSTOM,
-        start_date=date(year=2020, month=1, day=1),
-        end_date=None,
-        seasonal_start_day=1,
-        seasonal_start_month=7,
-        seasonal_end_day=30,
-        seasonal_end_month=9,
-    )
-    rent3.due_dates.add(RentDueDate.objects.create(rent=rent3, month=7, day=1))
-
-    contract_rent_factory(
-        rent=rent3,
-        intended_use_id=1,
-        amount=120,
-        period=PeriodType.PER_MONTH,
-        base_amount=120,
-        base_amount_period=PeriodType.PER_MONTH,
-    )
-
-    rent4 = rent_factory(
-        lease=lease,
-        type=RentType.FIXED,
-        due_dates_type=DueDatesType.CUSTOM,
-        start_date=date(year=2020, month=1, day=1),
-        end_date=None,
-        seasonal_start_day=1,
-        seasonal_start_month=10,
-        seasonal_end_day=31,
-        seasonal_end_month=12,
-    )
-    rent4.due_dates.add(RentDueDate.objects.create(rent=rent4, month=10, day=1))
-    rent4.due_dates.add(RentDueDate.objects.create(rent=rent4, month=11, day=1))
-    rent4.due_dates.add(RentDueDate.objects.create(rent=rent4, month=12, day=1))
-
-    contract_rent_factory(
-        rent=rent4,
-        intended_use_id=1,
-        amount=80,
-        period=PeriodType.PER_MONTH,
-        base_amount=80,
-        base_amount_period=PeriodType.PER_MONTH,
-    )
-
-    first_day_of_year = date(year=2020, month=1, day=1)
-    first_day_of_every_month = [
-        dt.date() for dt in rrule(freq=MONTHLY, count=12, dtstart=first_day_of_year)
-    ]
-
-    total_invoice_amount = Decimal(0)
-    total_invoice_row_amount = Decimal(0)
-
-    for first_day in first_day_of_every_month:
-        last_day = first_day + relativedelta(day=31)
-
-        rents = lease.determine_payable_rents_and_periods(
-            first_day, last_day, dry_run=True
-        )
-
-        for period_invoice_data in lease.calculate_invoices(rents):
-            for invoice_data in period_invoice_data:
-                total_invoice_amount += invoice_data["billed_amount"]
-                total_invoice_row_amount += sum(
-                    [row["amount"] for row in invoice_data["rows"]]
-                )
-
-    assert total_invoice_amount == total_invoice_row_amount
-    assert total_invoice_amount == Decimal(1080)
 
 
 @pytest.mark.django_db

@@ -907,10 +907,6 @@ strategy:
     manual_ratio_previous: null
     modified_at: null
     note: null
-    seasonal_end_day: null
-    seasonal_end_month: null
-    seasonal_start_day: null
-    seasonal_start_month: null
     start_date: null
     type: null
     x_value: null
