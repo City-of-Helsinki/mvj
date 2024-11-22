@@ -316,7 +316,9 @@ def _update_or_create_index_numbers(
 
     for dp in data_points:
         year = int(dp["key"][year_key_pos])
-        number = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
+        point_figure = _cast_index_number_to_float_or_none(
+            dp["values"][number_value_pos]
+        )
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
         # TODO verify in 5.9. meeting: should we exclude "ennakkotieto" commented values?
@@ -324,7 +326,7 @@ def _update_or_create_index_numbers(
             index=index,
             year=year,
             defaults={
-                "number": number,
+                "point_figure": point_figure,
                 "region": region,
                 "comment": comment,
             },
