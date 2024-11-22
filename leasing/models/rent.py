@@ -832,7 +832,7 @@ class Rent(TimeStampedSafeDeleteModel):
 
     def set_start_price_index_point_figure(self):
         if self.old_dwellings_in_housing_companies_price_index:
-            start_index_number_yearly = IndexNumberYearly.objects.get(
+            start_index_number_yearly = IndexPointFigureYearly.objects.get(
                 index=self.old_dwellings_in_housing_companies_price_index,
                 year=self.start_date.year - 1,
             )
@@ -1493,7 +1493,7 @@ class LegacyIndex(models.Model):
     )
 
 
-class IndexNumberYearly(TimeStampedModel):
+class IndexPointFigureYearly(TimeStampedModel):
     """
     In Finnish: Indeksipisteluku, vuosittain
 
@@ -1519,14 +1519,14 @@ class IndexNumberYearly(TimeStampedModel):
         OldDwellingsInHousingCompaniesPriceIndex,
         verbose_name=_("Index"),
         on_delete=models.PROTECT,
-        related_name="numbers",
+        related_name="point_figures",
     )
     # max_digits is arbitrary for the number. No need to limit it, although 7
     # should be enough if the numbers are at most in the 100s of thousands.
     # Largest index number in the system at the moment is year 1914's index
     # with a number around 260 000.
-    point_figure = models.DecimalField(
-        verbose_name=_("Index point figure"),
+    value = models.DecimalField(
+        verbose_name=_("Value"),
         decimal_places=1,
         max_digits=8,
         null=True,

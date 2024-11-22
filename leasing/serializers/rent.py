@@ -14,7 +14,7 @@ from leasing.models import (
     FixedInitialYearRent,
     Index,
     IndexAdjustedRent,
-    IndexNumberYearly,
+    IndexPointFigureYearly,
     LeaseBasisOfRent,
     OldDwellingsInHousingCompaniesPriceIndex,
     PayableRent,
@@ -51,20 +51,22 @@ class RentIntendedUseSerializer(NameModelSerializer):
         fields = "__all__"
 
 
-class IndexNumberYearlySerializer(serializers.Serializer):
+class IndexPointFigureYearlySerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
-    point_figure = serializers.DecimalField(max_digits=8, decimal_places=1)
+    value = serializers.DecimalField(max_digits=8, decimal_places=1)
     year = serializers.IntegerField()
     region = serializers.CharField(max_length=255, required=False, allow_null=True)
     comment = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
-        model = IndexNumberYearly
-        fields = ("id", "point_figure", "year", "region", "comment")
+        model = IndexPointFigureYearly
+        fields = ("id", "value", "year", "region", "comment")
 
 
 class OldDwellingsInHousingCompaniesPriceIndexSerializer(serializers.ModelSerializer):
-    numbers = IndexNumberYearlySerializer(many=True, required=False, allow_null=True)
+    point_figures = IndexPointFigureYearlySerializer(
+        many=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = OldDwellingsInHousingCompaniesPriceIndex
