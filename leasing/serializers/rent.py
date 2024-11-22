@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle, RentType
+from leasing.enums import RentAdjustmentAmountType, RentCycle, RentType
 from leasing.models import (
     ContractRent,
     Decision,
@@ -32,7 +32,6 @@ from leasing.models.rent import (
     TemporarySubvention,
 )
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
-from leasing.serializers.utils import validate_seasonal_day_for_month
 from users.serializers import UserSerializer
 
 from .decision import DecisionSerializer
@@ -58,10 +57,6 @@ class RentDueDateSerializer(
     class Meta:
         model = RentDueDate
         fields = ("id", "day", "month")
-
-    def validate(self, data):
-        validate_seasonal_day_for_month(data.get("day"), data.get("month"))
-        return data
 
 
 class FixedInitialYearRentSerializer(
@@ -421,10 +416,6 @@ class RentSerializer(
             "start_date",
             "end_date",
             "yearly_due_dates",
-            "seasonal_start_day",
-            "seasonal_start_month",
-            "seasonal_end_day",
-            "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
@@ -464,10 +455,6 @@ class RentSimpleSerializer(
             "note",
             "start_date",
             "end_date",
-            "seasonal_start_day",
-            "seasonal_start_month",
-            "seasonal_end_day",
-            "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
@@ -533,47 +520,14 @@ class RentCreateUpdateSerializer(
             "equalized_rents",
             "start_date",
             "end_date",
-            "seasonal_start_day",
-            "seasonal_start_month",
-            "seasonal_end_day",
-            "seasonal_end_month",
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
         )
 
     def validate(self, rent_data: dict):
-        self.validate_seasonal_values(rent_data)
         self.validate_override_receivable_type_value(rent_data)
         return rent_data
-
-    def validate_seasonal_values(self, rent_data: dict) -> None:
-        """Raises: serializers.ValidationError"""
-        seasonal_values = [
-            rent_data.get("seasonal_start_day"),
-            rent_data.get("seasonal_start_month"),
-            rent_data.get("seasonal_end_day"),
-            rent_data.get("seasonal_end_month"),
-        ]
-
-        if not all(v is None for v in seasonal_values) and any(
-            v is None for v in seasonal_values
-        ):
-            raise serializers.ValidationError(
-                _("All seasonal values are required if one is set")
-            )
-
-        if (
-            all(seasonal_values)
-            and rent_data.get("due_dates_type") != DueDatesType.CUSTOM
-        ):
-            raise serializers.ValidationError(
-                _("Due dates type must be custom if seasonal dates are set")
-            )
-
-        start_day, start_month, end_day, end_month = seasonal_values
-        validate_seasonal_day_for_month(start_day, start_month)
-        validate_seasonal_day_for_month(end_day, end_month)
 
     def validate_override_receivable_type_value(
         self, rent_data: dict[str, Any]

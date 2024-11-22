@@ -43,7 +43,6 @@ from leasing.models.utils import (
     get_range_overlap_and_remainder,
     group_items_in_period_by_date_range,
     is_date_on_first_quarter,
-    split_date_range,
     subtract_range_from_range,
     subtract_ranges_from_ranges,
 )
@@ -188,32 +187,6 @@ class Rent(TimeStampedSafeDeleteModel):
     # In Finnish: Loppupvm
     end_date = models.DateField(verbose_name=_("End date"), null=True, blank=True)
 
-    # In Finnish: Kausilaskutus
-    seasonal_start_day = models.PositiveIntegerField(
-        verbose_name=_("Seasonal start day"),
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(31)],
-    )
-    seasonal_start_month = models.PositiveIntegerField(
-        verbose_name=_("Seasonal start month"),
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(12)],
-    )
-    seasonal_end_day = models.PositiveIntegerField(
-        verbose_name=_("Seasonal end day"),
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(31)],
-    )
-    seasonal_end_month = models.PositiveIntegerField(
-        verbose_name=_("Seasonal end month"),
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(12)],
-    )
-
     # These ratios are used if the rent type is MANUAL
     # manual_ratio is used for the whole year if the RentCycle is
     # JANUARY_TO_DECEMBER. If the Rent Cycle is APRIL_TO_MARCH, this is used for 1.4. - 31.12.
@@ -305,14 +278,6 @@ class Rent(TimeStampedSafeDeleteModel):
 
         self.save()
 
-    def is_seasonal(self):
-        return (
-            self.seasonal_start_day
-            and self.seasonal_start_month
-            and self.seasonal_end_day
-            and self.seasonal_end_month
-        )
-
     def get_intended_uses_for_date_range(self, date_range_start, date_range_end):
         intended_uses = set()
 
@@ -337,39 +302,15 @@ class Rent(TimeStampedSafeDeleteModel):
         clamped_date_range_start = date_range_start
         clamped_date_range_end = date_range_end
 
-        if self.is_seasonal():
-            seasonal_period_start = datetime.date(
-                year=date_range_start.year,
-                month=self.seasonal_start_month,
-                day=self.seasonal_start_day,
-            )
-            seasonal_period_end = datetime.date(
-                year=date_range_start.year,
-                month=self.seasonal_end_month,
-                day=self.seasonal_end_day,
-            )
+        if (self.start_date and date_range_start < self.start_date) and (
+            not self.end_date or date_range_start < self.end_date
+        ):
+            clamped_date_range_start = self.start_date
 
-            if (
-                date_range_start < seasonal_period_start
-                and date_range_start < seasonal_period_end
-            ):
-                clamped_date_range_start = seasonal_period_start
-
-            if (
-                date_range_end > seasonal_period_end
-                and date_range_end > seasonal_period_start
-            ):
-                clamped_date_range_end = seasonal_period_end
-        else:
-            if (self.start_date and date_range_start < self.start_date) and (
-                not self.end_date or date_range_start < self.end_date
-            ):
-                clamped_date_range_start = self.start_date
-
-            if (self.end_date and date_range_end > self.end_date) and (
-                self.start_date and date_range_end > self.start_date
-            ):
-                clamped_date_range_end = self.end_date
+        if (self.end_date and date_range_end > self.end_date) and (
+            self.start_date and date_range_end > self.start_date
+        ):
+            clamped_date_range_end = self.end_date
 
         return clamped_date_range_start, clamped_date_range_end
 
@@ -587,8 +528,7 @@ class Rent(TimeStampedSafeDeleteModel):
             # ONE_TIME rents are calculated manually
             return calculation_result
 
-        # Limit the date range by season dates if the rent is seasonal or
-        # by the rent start and end dates if not
+        # Limit the date range based on the rent start and end dates
         (clamped_date_range_start, clamped_date_range_end) = self.clamp_date_range(
             date_range_start, date_range_end
         )
@@ -714,56 +654,20 @@ class Rent(TimeStampedSafeDeleteModel):
         if not due_date:
             return None
 
-        # Non-seasonal rent
-        if not self.is_seasonal():
-            due_dates_per_year = self.get_due_dates_for_period(
-                datetime.date(year=due_date.year, month=1, day=1),
-                datetime.date(year=due_date.year, month=12, day=31),
-            )
-
-            try:
-                due_date_index = due_dates_per_year.index(due_date)
-
-                return get_billing_periods_for_year(
-                    due_date.year, len(due_dates_per_year)
-                )[due_date_index]
-            except (ValueError, IndexError):
-                # TODO: better error handling
-                return None
-
-        # Seasonal rent
-        seasonal_period_start = datetime.date(
-            year=due_date.year,
-            month=self.seasonal_start_month,
-            day=self.seasonal_start_day,
-        )
-        seasonal_period_end = datetime.date(
-            year=due_date.year, month=self.seasonal_end_month, day=self.seasonal_end_day
+        due_dates_per_year = self.get_due_dates_for_period(
+            datetime.date(year=due_date.year, month=1, day=1),
+            datetime.date(year=due_date.year, month=12, day=31),
         )
 
-        if seasonal_period_start > due_date or seasonal_period_end < due_date:
+        try:
+            due_date_index = due_dates_per_year.index(due_date)
+
+            return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[
+                due_date_index
+            ]
+        except (ValueError, IndexError):
+            # TODO: better error handling
             return None
-
-        due_dates_in_period = self.get_due_dates_for_period(
-            seasonal_period_start, seasonal_period_end
-        )
-        if not due_dates_in_period:
-            return None
-        elif len(due_dates_in_period) == 1 and due_dates_in_period[0] == due_date:
-            return seasonal_period_start, seasonal_period_end
-        else:
-            try:
-                due_date_index = due_dates_in_period.index(due_date)
-            except ValueError:
-                return None
-
-            return split_date_range(
-                (
-                    seasonal_period_start,
-                    seasonal_period_end,
-                ),
-                len(due_dates_in_period),
-            )[due_date_index]
 
     def get_all_billing_periods_for_year(self, year: int) -> list[BillingPeriod | None]:
         date_range_start = datetime.date(year, 1, 1)
