@@ -278,7 +278,7 @@
     "model": "leasing.receivabletype",
     "pk": 26,
     "fields": {
-      "name": "Pysäköinti (alv)",
+      "name": "Pysäköinti",
       "sap_material_code": "27100048",
       "sap_order_item_number": "2831300000",
       "is_active": true,
@@ -632,6 +632,17 @@
     "fields": {
       "name": "Varastointi",
       "sap_material_code": "10003724",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 59,
+    "fields": {
+      "name": "Pysäköinti (alv)",
+      "sap_material_code": "10003760",
       "sap_order_item_number": "2831300000",
       "is_active": true,
       "service_unit": 2
