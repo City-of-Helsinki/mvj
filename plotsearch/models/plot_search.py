@@ -636,7 +636,6 @@ class AreaSearchAttachment(SerializableMixin, NameModel):
     # GDPR API
     serialize_fields = (
         {"name": "name"},
-        {"name": "attachment"},
         {"name": "created_at"},
     )
 
