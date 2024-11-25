@@ -443,7 +443,7 @@ class FavouriteTarget(models.Model):
     recursive_get_related_skip_relations = []
 
 
-class AreaSearchIntendedUse(SafeDeleteModel, NameModel):
+class AreaSearchIntendedUse(SerializableMixin, SafeDeleteModel, NameModel):
     _safedelete_policy = SOFT_DELETE
 
     class Meta(NameModel.Meta):
@@ -636,7 +636,6 @@ class AreaSearchAttachment(SerializableMixin, NameModel):
     # GDPR API
     serialize_fields = (
         {"name": "name"},
-        {"name": "attachment"},
         {"name": "created_at"},
     )
 

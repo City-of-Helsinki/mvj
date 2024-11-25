@@ -370,7 +370,7 @@ gdpr_urls = [
         getattr(
             settings,
             "GDPR_API_URL_PATTERN",
-            "v1/profiles/<uuid:pk>",
+            "v1/profiles/<uuid:uuid>",
         ),
         MvjGDPRAPIView.as_view(),
         name="gdpr_v1",
