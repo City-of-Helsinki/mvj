@@ -423,7 +423,7 @@
     "fields": {
       "name": "Teollisuus- ja varastotontit (alv:set)",
       "identifier": "T3",
-      "sap_material_code": "10001860",
+      "sap_material_code": "10003610",
       "sap_order_item_number": "2813104100",
       "due_dates_position": "start_of_month"
     }
