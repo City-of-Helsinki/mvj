@@ -14,4 +14,4 @@ class AmrPermission(BasePermission):
 
 
 class MvjGDPRAPIView(GDPRAPIView):
-    permission_classes = GDPRAPIView.permission_classes  # + [AmrPermission]
+    permission_classes = []  # GDPRAPIView.permission_classes  # + [AmrPermission]
