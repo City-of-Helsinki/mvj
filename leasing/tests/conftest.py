@@ -67,7 +67,10 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.models.receivable_type import ReceivableType
-from leasing.models.rent import OldDwellingsInHousingCompaniesPriceIndex
+from leasing.models.rent import (
+    IndexPointFigureYearly,
+    OldDwellingsInHousingCompaniesPriceIndex,
+)
 from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
 
@@ -143,6 +146,20 @@ class RentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Rent
+
+
+@register
+class OldDwellingsInHousingCompaniesPriceIndexFactory(
+    factory.django.DjangoModelFactory
+):
+    class Meta:
+        model = OldDwellingsInHousingCompaniesPriceIndex
+
+
+@register
+class IndexPointFigureYearlyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = IndexPointFigureYearly
 
 
 @register

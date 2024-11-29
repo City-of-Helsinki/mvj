@@ -834,9 +834,9 @@ class Rent(TimeStampedSafeDeleteModel):
         if self.old_dwellings_in_housing_companies_price_index:
             start_index_number_yearly = IndexPointFigureYearly.objects.get(
                 index=self.old_dwellings_in_housing_companies_price_index,
-                year=self.start_date.year - 1,
+                year=self.lease.start_date.year - 1,
             )
-            self.start_price_index_point_figure = start_index_number_yearly.point_figure
+            self.start_price_index_point_figure = start_index_number_yearly.value
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
