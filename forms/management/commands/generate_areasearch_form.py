@@ -25,7 +25,7 @@ def initialize_area_search_form():
         identifier="hakija",
         enabled=True,
         required=False,
-        default_value="2",
+        default_value="1",
     )
     Choice.objects.create(
         field=applicant_field, text="Henkilö", value="2", has_text_input=False
