@@ -63,7 +63,10 @@ class IndexPointFigureYearlySerializer(serializers.Serializer):
         fields = ("id", "value", "year", "region", "comment")
 
 
-class OldDwellingsInHousingCompaniesPriceIndexSerializer(serializers.ModelSerializer):
+class OldDwellingsInHousingCompaniesPriceIndexSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
     point_figures = IndexPointFigureYearlySerializer(
         many=True, required=False, allow_null=True
     )
@@ -489,6 +492,7 @@ class RentSimpleSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
+            "old_dwellings_in_housing_companies_price_index",
         )
 
 
@@ -523,6 +527,13 @@ class RentCreateUpdateSerializer(
         required=False,
         allow_null=True,
     )
+    old_dwellings_in_housing_companies_price_index = InstanceDictPrimaryKeyRelatedField(
+        instance_class=OldDwellingsInHousingCompaniesPriceIndex,
+        queryset=OldDwellingsInHousingCompaniesPriceIndex.objects.all(),
+        related_serializer=OldDwellingsInHousingCompaniesPriceIndexSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Rent
@@ -554,6 +565,7 @@ class RentCreateUpdateSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
+            "old_dwellings_in_housing_companies_price_index",
         )
 
     def validate(self, rent_data: dict):
