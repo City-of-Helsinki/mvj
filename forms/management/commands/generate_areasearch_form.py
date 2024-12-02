@@ -31,7 +31,7 @@ def initialize_area_search_form():
         field=applicant_field, text="Henkilö", value="2", has_text_input=False
     )
     Choice.objects.create(
-        field=applicant_field, text="Yritys", value="1", has_text_input=False
+        field=applicant_field, text="Yritys/yhteisö", value="1", has_text_input=False
     )
 
     corporate_section = Section.objects.create(
