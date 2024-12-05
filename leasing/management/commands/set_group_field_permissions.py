@@ -499,6 +499,15 @@ CUSTOM_FIELD_PERMS = {
             6: "view",
             7: "change",
         },
+        "old_dwellings_in_housing_companies_price_index": {
+            1: "view",
+            2: "view",
+            3: "view",
+            4: "view",
+            5: "view",
+            6: "view",
+            7: "change",
+        },
     },
     "tenant": {"reference": {6: "change"}, "tenantcontact_set": {6: "change"}},
     "leasearea": {

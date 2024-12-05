@@ -973,6 +973,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "olddwellingsinhousingcompaniespriceindex": {
+        1: ("view",),
+        2: ("view",),
+        3: ("view",),
+        4: ("view",),
+        5: ("view",),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
     "uidata": {
         1: ("view", "add", "change", "delete"),
         2: ("view", "add", "change", "delete"),

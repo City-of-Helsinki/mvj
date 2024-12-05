@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
 
 from leasing.models.rent import (
-    IndexNumberYearly,
+    IndexPointFigureYearly,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
 
@@ -316,15 +316,15 @@ def _update_or_create_index_numbers(
 
     for dp in data_points:
         year = int(dp["key"][year_key_pos])
-        number = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
+        value = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
         # TODO verify in 5.9. meeting: should we exclude "ennakkotieto" commented values?
-        _, created = IndexNumberYearly.objects.update_or_create(
+        _, created = IndexPointFigureYearly.objects.update_or_create(
             index=index,
             year=year,
             defaults={
-                "number": number,
+                "value": value,
                 "region": region,
                 "comment": comment,
             },
