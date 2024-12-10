@@ -647,5 +647,38 @@
       "is_active": true,
       "service_unit": 2
     }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 60,
+    "fields": {
+      "name": "Työmaatukitoiminta",
+      "sap_material_code": "10003771",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 61,
+    "fields": {
+      "name": "Lasitettu katuterassi ja asiakastila",
+      "sap_material_code": "10003781",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 62,
+    "fields": {
+      "name": "Laiva ja muu vesialue",
+      "sap_material_code": "10003780",
+      "sap_order_item_number": "2831300000",
+      "is_active": true,
+      "service_unit": 2
+    }
   }
 ]
