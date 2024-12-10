@@ -683,3 +683,27 @@ class SapSalesOrgNumber(Enum):
     MAKE = "2800"
     AKV = "2800"
     KUVA = "2900"
+
+
+class OldDwellingsInHousingCompaniesPriceIndexType(Enum):
+    """
+    In Finnish: Tasotarkistuksen tyyppi
+
+    The rents that have an old_dwellings_in_housing_companies_price_index
+    also have assigned to them the type of the index that is used to calculate
+    the interval of the old_dwellings_in_housing_companies_price_index check
+    of the rent price.
+    """
+
+    TASOTARKISTUS_20_20 = "TASOTARKISTUS_20_20"
+    TASOTARKISTUS_20_10 = "TASOTARKISTUS_20_10"
+
+    class Labels:
+        TASOTARKISTUS_20_20 = pgettext_lazy(
+            "Old dwellings in housing companies price index type",
+            "Tasotarkistus 20/20",
+        )
+        TASOTARKISTUS_20_10 = pgettext_lazy(
+            "Old dwellings in housing companies price index type",
+            "Tasotarkistus 20/10",
+        )

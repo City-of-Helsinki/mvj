@@ -453,6 +453,7 @@ class RentSerializer(
             "manual_ratio_previous",
             "override_receivable_type",
             "old_dwellings_in_housing_companies_price_index",
+            "old_dwellings_in_housing_companies_price_index_type",
         )
 
     def override_permission_check_field_name(self, field_name):
@@ -493,6 +494,7 @@ class RentSimpleSerializer(
             "manual_ratio_previous",
             "override_receivable_type",
             "old_dwellings_in_housing_companies_price_index",
+            "old_dwellings_in_housing_companies_price_index_type",
         )
 
 
@@ -566,6 +568,7 @@ class RentCreateUpdateSerializer(
             "manual_ratio_previous",
             "override_receivable_type",
             "old_dwellings_in_housing_companies_price_index",
+            "old_dwellings_in_housing_companies_price_index_type",
         )
 
     def validate(self, rent_data: dict):
