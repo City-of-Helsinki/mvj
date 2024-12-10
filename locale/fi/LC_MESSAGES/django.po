@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-21 15:41+0200\n"
+"POT-Creation-Date: 2024-12-09 13:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2566,6 +2566,9 @@ msgstr "Korvaava saamislaji"
 
 msgid "Old dwellings in housing companies price index"
 msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgid "Old dwellings in housing companies price index type"
+msgstr "Vanhojen osakeasuntojen hintaindeksin tyyppi"
 
 msgid "Start price index point figure"
 msgstr "Tasotarkistusindeksin pisteluku vuokran alkaessa"

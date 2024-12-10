@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 14:47+0200\n"
+"POT-Creation-Date: 2024-12-09 13:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2567,6 +2567,15 @@ msgstr "Slutdatum för arrendebetalning"
 
 msgid "Override receivable type"
 msgstr "Ersättande Fordringsart"
+
+msgid "Old dwellings in housing companies price index"
+msgstr ""
+
+msgid "Old dwellings in housing companies price index type"
+msgstr ""
+
+msgid "Start price index point figure"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Rent"

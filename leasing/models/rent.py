@@ -26,6 +26,7 @@ from leasing.enums import (
     DueDatesPosition,
     DueDatesType,
     IndexType,
+    OldDwellingsInHousingCompaniesPriceIndexType,
     PeriodType,
     RentAdjustmentAmountType,
     RentAdjustmentType,
@@ -308,6 +309,15 @@ class Rent(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
         blank=True,
         null=True,
+    )
+
+    # In Finnish: Tasotarkistusindeksin tyyppi
+    old_dwellings_in_housing_companies_price_index_type = EnumField(
+        OldDwellingsInHousingCompaniesPriceIndexType,
+        verbose_name=_("Old dwellings in housing companies price index type"),
+        null=True,
+        blank=True,
+        max_length=20,
     )
 
     # In Finnish: Tasotarkistusindeksin pisteluku vuokran alkaessa (edellisen vuoden keskiarvo)
