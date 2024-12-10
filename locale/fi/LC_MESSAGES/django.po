@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 13:08+0200\n"
+"POT-Creation-Date: 2024-12-10 16:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1715,23 +1715,6 @@ msgctxt "Model name"
 msgid "Inspection attachments"
 msgstr "Tarkastuksen liitteet"
 
-msgid "SAP material code"
-msgstr "SAP materiaalinumero"
-
-msgid "SAP order item number"
-msgstr "SAP tilausnumero"
-
-msgid "Is active?"
-msgstr "Käytettävissä?"
-
-msgctxt "Model name"
-msgid "Receivable type"
-msgstr "Saamislaji"
-
-msgctxt "Model name"
-msgid "Receivable types"
-msgstr "Saamislajit"
-
 msgid "Billing period start date"
 msgstr "Laskutuskauden alkupvm"
 
@@ -2212,6 +2195,23 @@ msgstr "Yhteystieto"
 msgid "Contact type"
 msgstr "Yhteystiedon tyyppi"
 
+msgid "SAP material code"
+msgstr "SAP materiaalinumero"
+
+msgid "SAP order item number"
+msgstr "SAP tilausnumero"
+
+msgid "Is active?"
+msgstr "Käytettävissä?"
+
+msgctxt "Model name"
+msgid "Receivable type"
+msgstr "Saamislaji"
+
+msgctxt "Model name"
+msgid "Receivable types"
+msgstr "Saamislajit"
+
 msgid "Sent date"
 msgstr "Lähetyspvm"
 
@@ -2226,6 +2226,15 @@ msgstr ""
 
 msgid "Sign date"
 msgstr "Allekirjoitettava mennessä"
+
+msgid "If 'SAP project number' is set, it will be used instead of this value."
+msgstr "Jos 'SAP projektinumero' on asetettu, sitä käytetään tämän arvon sijaan."
+
+msgid "SAP project number"
+msgstr "SAP projektinumero"
+
+msgid "This field takes priority over 'SAP order item number' if both are set."
+msgstr "Tätä kenttää käytetään 'SAP tilausnumeron' sijaan jos kumpikin on asetettu."
 
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
@@ -2513,6 +2522,35 @@ msgctxt "Model name"
 msgid "Rent intended uses"
 msgstr "Vuokran käyttötarkoitus"
 
+msgid "Index code"
+msgstr "Indeksin tunniste"
+
+msgid "Index name"
+msgstr "Indeksin nimi"
+
+msgid "Region"
+msgstr "Alue"
+
+msgid "Data source"
+msgstr "Tiedonlähde"
+
+msgid "Source table updated"
+msgstr "Lähdetietokantapöytä päivitetty"
+
+msgid "Source table label"
+msgstr "Lähdetietokantapöydän selite"
+
+msgid "API endpoint URL"
+msgstr "Ohjelmointirajapinnan päätepisteen verkko-osoite"
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr "Vanhojen osakeasuntojen hintaindeksit"
+
 msgid "Cycle"
 msgstr "Vuokrakausi"
 
@@ -2747,37 +2785,8 @@ msgstr ""
 msgid "Index 1938:8-1939:7=100"
 msgstr ""
 
-msgid "Index code"
-msgstr "Indeksin tunniste"
-
-msgid "Index name"
-msgstr "Indeksin nimi"
-
-msgid "Region"
-msgstr "Alue"
-
-msgid "Data source"
-msgstr "Tiedonlähde"
-
-msgid "Source table updated"
-msgstr "Lähdetietokantapöytä päivitetty"
-
-msgid "Source table label"
-msgstr "Lähdetietokantapöydän selite"
-
-msgid "API endpoint URL"
-msgstr "Ohjelmointirajapinnan päätepisteen verkko-osoite"
-
-msgctxt "model name"
-msgid "price index of old dwellings in housing companies"
-msgstr "Vanhojen osakeasuntojen hintaindeksi"
-
-msgctxt "model name"
-msgid "price indexes of old dwellings in housing companies"
-msgstr "Vanhojen osakeasuntojen hintaindeksit"
-
-msgid "Index point figure"
-msgstr "Indeksipisteluku"
+msgid "Value"
+msgstr "Arvo"
 
 msgid "Comment"
 msgstr "Kommentti"
@@ -2887,10 +2896,21 @@ msgstr "Oletus-saamislaji (rahavakuus)"
 msgid ""
 "Receivable type which should be used when creating collateral invoices. On "
 "SAP export, the profit center is filled from this receivable type's "
-"sap_order_item_number."
+"sap_project_number or sap_order_item_number."
 msgstr ""
-"Saamislaji jota tulee käyttää vakuuslaskuissa. Laske-viennissä tulosyksikkö "
-"täytetään tämän saamislajin SAP tilausnumero-kentästä."
+
+msgid "Use the override receivable type from rent in automatic invoices?"
+msgstr ""
+
+msgid ""
+"Use the override receivable type from rent in automatic invoices, if it is "
+"present. When creating a rent, some service units (such as AKV and KuVa) "
+"want to select a receivable type to be used in future automatic invoices. "
+"This helps avoid some technical difficulties in invoice XML generation. "
+"Generation logic would otherwise be unaware of the desired receivable type, "
+"if it is different from the service unit's default receivable type, or the "
+"leasetype's receivable type."
+msgstr ""
 
 msgctxt "Model name"
 msgid "Service unit"
@@ -2943,9 +2963,6 @@ msgstr "Vuokralaiset laskuosuudet"
 
 msgid "Key"
 msgstr "Avain"
-
-msgid "Value"
-msgstr "Arvo"
 
 msgctxt "Model name"
 msgid "UI Datum"
@@ -3457,28 +3474,25 @@ msgstr "Indeksi on valittava kun vuokralaji on Indeksi"
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Alennus-/korotustyypillä \"€ yhteensä\" ei voi olla loppupäivämäärää"
 
+#, python-brace-format
+msgid ""
+"Override receivable type \"{override_receivable_type.name}\" was unexpected. "
+msgstr ""
+
+msgid ""
+"Override receivable type is required for this rent type in service unit "
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Override receivabletype \"{override_receivable_type.name}\" was unexpected. "
+msgstr ""
+
 msgid "Basis of rent item id {} not found"
 msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"
 
 msgid "Can't edit locked basis of rent item"
 msgstr "Lukittua vuokrausperiaatetta ei voi muokata"
-
-msgid "Both day and month must be provided"
-msgstr "Vaaditaan molemmat: päivä ja kuukausi"
-
-msgid "Day must be an integer"
-msgstr "Päivän pitää olla kokonaisluku"
-
-msgid "Month must be an integer"
-msgstr "Kuukauden pitää olla kokonaisluku"
-
-#, python-brace-format
-msgid "Invalid month: {month}. Month must be between 1 and 12."
-msgstr "Virheellinen kuukausi: {month}. Kuukauden pitää olla 1-12."
-
-#, python-brace-format
-msgid "Invalid day: {day} for month: {month}"
-msgstr "Vireellinen päivä: {day} kuukaudelle: {month}"
 
 msgid "Enter a valid business id."
 msgstr "Anna kelvollinen Y-tunnus."

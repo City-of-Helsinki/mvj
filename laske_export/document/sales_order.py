@@ -183,10 +183,13 @@ class LineItem(FieldGroup):
     line_text_l5 = Field(name="LineTextL5", validators=[MaxLengthValidator(70)])
     line_text_l6 = Field(name="LineTextL6", validators=[MaxLengthValidator(70)])
     profit_center = Field(name="ProfitCenter", validators=[MaxLengthValidator(10)])
+    # Only one of the following can be set: 'order_item_number' or 'wbs_element'
     order_item_number = Field(
         name="OrderItemNumber", validators=[MaxLengthValidator(12)]
     )
-    wbs_element = Field(name="WBS_Element", validators=[MaxLengthValidator(16)])
+    wbs_element = Field(
+        name="WBS_Element", validators=None
+    )  # Used for "SAP project number"
     functional_area = Field(name="FunctionalArea", validators=[MaxLengthValidator(6)])
     business_entity = Field(name="BusinessEntity", validators=[MaxLengthValidator(8)])
     building = Field(name="Building", validators=[MaxLengthValidator(8)])
@@ -194,6 +197,15 @@ class LineItem(FieldGroup):
 
     class Meta:
         element_name = "LineItem"
+
+    def validate(self):
+        super().validate()
+
+        # Only one of 'order_item_number' or 'wbs_element' can be set.
+        if self.order_item_number is not None and self.wbs_element is not None:
+            raise ValidationError(
+                "Only one of 'order_item_number' or 'wbs_element' can be set."
+            )
 
 
 class SalesOrder(FieldGroup):
