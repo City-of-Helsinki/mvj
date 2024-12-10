@@ -14,6 +14,8 @@ from leasing.enums import (
     ServiceUnitId,
 )
 from leasing.models import Contact, Invoice, InvoiceRow, ServiceUnit, Tenant
+from leasing.models.lease import LeaseType
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.utils import get_next_business_day, is_business_day
 
 from .sales_order import BillingParty1, LineItem, OrderParty, SalesOrder
@@ -217,28 +219,42 @@ class InvoiceSalesOrderAdapter:
         line_item.quantity = "1,00"
         line_item.net_price = "{:.2f}".format(invoice_row.amount).replace(".", ",")
 
+        default_receivable_type_rent: ReceivableType | None = (
+            self.service_unit.default_receivable_type_rent
+        )
         # Service unit default receivable types for rent and collateral might be
         # null, but we need to check if SAP codes exist in them.
         service_unit_default_rent_material_code = getattr(
-            self.service_unit.default_receivable_type_rent,
+            default_receivable_type_rent,
             "sap_material_code",
             None,
         )
+        service_unit_default_rent_project_number = getattr(
+            default_receivable_type_rent,
+            "sap_project_number",
+            None,
+        )
         service_unit_default_rent_order_item_number = getattr(
-            self.service_unit.default_receivable_type_rent,
+            default_receivable_type_rent,
             "sap_order_item_number",
             None,
         )
+
         if (
-            invoice_row.receivable_type
-            == self.service_unit.default_receivable_type_rent
+            invoice_row.receivable_type == default_receivable_type_rent
             and not service_unit_default_rent_material_code
             and not service_unit_default_rent_order_item_number
+            and not service_unit_default_rent_project_number
         ):
             # If the receivable type is "rent" ("Maanvuokraus"), it probably doesn't have
             # its own SAP codes, so we look up the codes from LeaseType
-            line_item.material = self.invoice.lease.type.sap_material_code
-            line_item.order_item_number = self.invoice.lease.type.sap_order_item_number
+            lease_type: LeaseType = self.invoice.lease.type
+            line_item.material = lease_type.sap_material_code
+            if lease_type.sap_project_number is not None:
+                # If sap_project_number is set, use it for wbs_element and discard order_item_number
+                line_item.wbs_element = lease_type.sap_project_number
+            else:
+                line_item.order_item_number = lease_type.sap_order_item_number
 
         # ...but in other cases the SAP codes are found in InvoiceRow's ReceivableType.
         elif (
@@ -248,13 +264,23 @@ class InvoiceSalesOrderAdapter:
             # In case of collateral ("Rahavakuus") receivable type, populate the
             # ProfitCenter element instead of OrderItemNumber element
             line_item.material = invoice_row.receivable_type.sap_material_code
-            line_item.profit_center = invoice_row.receivable_type.sap_order_item_number
+            if invoice_row.receivable_type.sap_project_number is not None:
+                # If sap_project_number is set, use it over order_item_number
+                line_item.profit_center = invoice_row.receivable_type.sap_project_number
+            else:
+                line_item.profit_center = (
+                    invoice_row.receivable_type.sap_order_item_number
+                )
         else:
             # Otherwise, use SAP codes from the InvoiceRow's receivable type
             line_item.material = invoice_row.receivable_type.sap_material_code
-            line_item.order_item_number = (
-                invoice_row.receivable_type.sap_order_item_number
-            )
+            if invoice_row.receivable_type.sap_project_number is not None:
+                # If sap_project_number is set, use it for wbs_element and discard order_item_number
+                line_item.wbs_element = invoice_row.receivable_type.sap_project_number
+            else:
+                line_item.order_item_number = (
+                    invoice_row.receivable_type.sap_order_item_number
+                )
 
         # Sometimes lease has an internal order.
         # In this case, check other relevant business conditions and use it as
@@ -262,8 +288,7 @@ class InvoiceSalesOrderAdapter:
         if self.invoice.lease.internal_order and (
             self.invoice.lease.service_unit.laske_sales_org
             == SapSalesOrgNumber.KUVA.value
-            or invoice_row.receivable_type
-            == self.service_unit.default_receivable_type_rent
+            or invoice_row.receivable_type == default_receivable_type_rent
         ):
             line_item.order_item_number = self.invoice.lease.internal_order
 

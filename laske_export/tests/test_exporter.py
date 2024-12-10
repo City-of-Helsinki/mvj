@@ -428,8 +428,8 @@ def test_send_invoices_order_num_from_lease_type(
         == _order_number_test_setup["lease"].type.sap_material_code
     )
     assert (
-        line_item.find("OrderItemNumber").text
-        == _order_number_test_setup["lease"].type.sap_order_item_number
+        line_item.find("WBS_Element").text
+        == _order_number_test_setup["lease"].type.sap_project_number
     )
 
 
@@ -445,7 +445,7 @@ def test_send_invoices_order_num_from_receivable_type(
         "service_unit"
     ].default_receivable_type_rent
     receivable_type_rent.sap_material_code = "rt-material-code"
-    receivable_type_rent.sap_order_item_number = "rt-order-num"
+    receivable_type_rent.sap_project_number = "rt-order-num"
     receivable_type_rent.save()
 
     send_invoices_to_laske_command.handle(
@@ -456,7 +456,7 @@ def test_send_invoices_order_num_from_receivable_type(
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert line_item.find("Material").text == "rt-material-code"
-    assert line_item.find("OrderItemNumber").text == "rt-order-num"
+    assert line_item.find("WBS_Element").text == "rt-order-num"
 
 
 @pytest.mark.django_db
@@ -485,4 +485,4 @@ def test_send_invoices_order_num_from_lease(
         line_item.find("Material").text
         == _order_number_test_setup["lease"].type.sap_material_code
     )
-    assert line_item.find("OrderItemNumber").text == "lease-ordern"
+    assert line_item.find("WBS_Element").text == "lease-ordern"

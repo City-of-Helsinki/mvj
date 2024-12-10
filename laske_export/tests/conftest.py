@@ -139,7 +139,7 @@ def akv_default_test_setup(
     lease_type = lease_type_factory(
         name="LeaseTypeName",
         sap_material_code="33333333",
-        sap_order_item_number="4444444444",
+        sap_project_number="4444444444",
     )
     lease = lease_factory(
         service_unit=service_unit,
@@ -230,7 +230,7 @@ def akv_default_test_setup(
         name="InvoiceRow1ReceivableType",
         service_unit=service_unit,
         sap_material_code="55555555",
-        sap_order_item_number="6666666666",
+        sap_project_number="6666666666",
     )
     invoicerow1_intended_use = rent_intended_use_factory(name="Muu")
     invoicerow1 = invoice_row_factory(
@@ -316,7 +316,7 @@ def akv_lacking_test_setup(
     lease_type = lease_type_factory(
         name="LeaseTypeName",
         sap_material_code=None,
-        sap_order_item_number=None,
+        sap_project_number=None,
     )
     lease = lease_factory(
         service_unit=service_unit,
@@ -360,7 +360,7 @@ def akv_lacking_test_setup(
         name="InvoiceRow1ReceivableType",
         service_unit=service_unit,
         sap_material_code=None,
-        sap_order_item_number=None,
+        sap_project_number=None,
     )
     invoicerow1 = invoice_row_factory(
         invoice=invoice1,
@@ -400,13 +400,13 @@ def _setup_akv_service_unit_for_tests(
         name="Maanvuokraus",
         service_unit=akv_service_unit,
         sap_material_code=None,
-        sap_order_item_number=None,
+        sap_project_number=None,
     )
     default_receivable_type_collateral = receivable_type_factory(
         name="Rahavakuus",
         service_unit=akv_service_unit,
         sap_material_code="11111111",
-        sap_order_item_number="2222222222",
+        sap_project_number="2222222222",
     )
     akv_service_unit.default_receivable_type_rent = default_receivable_type_rent
     akv_service_unit.default_receivable_type_collateral = (
