@@ -100,7 +100,7 @@ INDEXES_TO_IMPORT: list[IndexInput] = [
     {
         "name": "13mq -- Price index of old dwellings in housing companies \
                 (2020=100) and numbers of transactions, yearly, 2020-2023",
-        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mq.px",
+        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mq.px",
         "code": "ketj_P_QA_T",
     },
 ]
