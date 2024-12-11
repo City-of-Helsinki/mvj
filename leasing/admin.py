@@ -602,6 +602,7 @@ class ReceivableTypeAdmin(admin.ModelAdmin):
         "service_unit__name",
         "sap_material_code",
         "sap_order_item_number",
+        "sap_project_number",
     ]
     ordering = (
         "service_unit",

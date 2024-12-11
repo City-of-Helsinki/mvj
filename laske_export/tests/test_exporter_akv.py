@@ -96,7 +96,8 @@ def test_akv_xml_elements_exist(
     assert line_item.find("LineTextL1").text is not None
     # Note: some linetexts might be None, depending on length of the contents
     assert (
-        line_item.find("OrderItemNumber").text is not None
+        line_item.find("WBS_Element") is not None  # sap_project_number
+        or line_item.find("OrderItemNumber").text is not None
         or line_item.find("ProfitCenter").text is not None
     )
 
@@ -124,8 +125,8 @@ def test_akv_sap_codes_from_invoicerow(
         == akv_default_test_setup["invoicerow1"].receivable_type.sap_material_code
     )
     assert (
-        line_item.find("OrderItemNumber").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_order_item_number
+        line_item.find("WBS_Element").text
+        == akv_default_test_setup["invoicerow1"].receivable_type.sap_project_number
     )
 
 
@@ -160,8 +161,8 @@ def test_akv_sap_codes_from_leasetype(
         == akv_default_test_setup["lease"].type.sap_material_code
     )
     assert (
-        line_item.find("OrderItemNumber").text
-        == akv_default_test_setup["lease"].type.sap_order_item_number
+        line_item.find("WBS_Element").text
+        == akv_default_test_setup["lease"].type.sap_project_number
     )
 
 
@@ -199,5 +200,5 @@ def test_akv_sap_codes_when_collateral(
     )
     assert (
         line_item.find("ProfitCenter").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_order_item_number
+        == akv_default_test_setup["invoicerow1"].receivable_type.sap_project_number
     )

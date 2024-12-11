@@ -63,7 +63,7 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         help_text=_(
             "Receivable type which should be used when creating collateral invoices. "
             "On SAP export, the profit center is filled from this receivable type's "
-            "sap_order_item_number."
+            "sap_project_number or sap_order_item_number."
         ),
         related_name="+",
         null=True,

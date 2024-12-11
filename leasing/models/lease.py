@@ -70,7 +70,22 @@ class LeaseType(NameModel):
         verbose_name=_("SAP material code"), null=True, blank=True, max_length=255
     )
     sap_order_item_number = models.CharField(
-        verbose_name=_("SAP order item number"), null=True, blank=True, max_length=255
+        verbose_name=_("SAP order item number"),
+        null=True,
+        blank=True,
+        max_length=255,
+        help_text=_(
+            "If 'SAP project number' is set, it will be used instead of this value."
+        ),
+    )
+    sap_project_number = models.CharField(
+        verbose_name=_("SAP project number"),
+        null=True,
+        blank=True,
+        max_length=255,
+        help_text=_(
+            "This field takes priority over 'SAP order item number' if both are set."
+        ),
     )
     due_dates_position = EnumField(
         DueDatesPosition,

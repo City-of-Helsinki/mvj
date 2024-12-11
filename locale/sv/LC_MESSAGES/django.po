@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 13:10+0200\n"
+"POT-Creation-Date: 2024-12-10 16:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1718,23 +1718,6 @@ msgctxt "Model name"
 msgid "Inspection attachments"
 msgstr "Bilagor till inspektion"
 
-msgid "SAP material code"
-msgstr "SAP materialnummer"
-
-msgid "SAP order item number"
-msgstr "SAP beställningsnummer"
-
-msgid "Is active?"
-msgstr "Disponibelt?"
-
-msgctxt "Model name"
-msgid "Receivable type"
-msgstr "Fordringsart"
-
-msgctxt "Model name"
-msgid "Receivable types"
-msgstr "Fordringsarter"
-
 msgid "Billing period start date"
 msgstr "Startdatum för faktureringsperiod"
 
@@ -2217,6 +2200,23 @@ msgstr "Kontaktuppgift"
 msgid "Contact type"
 msgstr "Typ av kontaktuppgift"
 
+msgid "SAP material code"
+msgstr "SAP materialnummer"
+
+msgid "SAP order item number"
+msgstr "SAP beställningsnummer"
+
+msgid "Is active?"
+msgstr "Disponibelt?"
+
+msgctxt "Model name"
+msgid "Receivable type"
+msgstr "Fordringsart"
+
+msgctxt "Model name"
+msgid "Receivable types"
+msgstr "Fordringsarter"
+
 msgid "Sent date"
 msgstr "Datum för sändning"
 
@@ -2231,6 +2231,15 @@ msgstr "Öka procenten"
 
 msgid "Sign date"
 msgstr "Ska undertecknas senast"
+
+msgid "If 'SAP project number' is set, it will be used instead of this value."
+msgstr ""
+
+msgid "SAP project number"
+msgstr ""
+
+msgid "This field takes priority over 'SAP order item number' if both are set."
+msgstr ""
 
 msgid "Due dates position"
 msgstr "Läge för förfallodatum"
@@ -2517,6 +2526,35 @@ msgctxt "Model name"
 msgid "Rent intended uses"
 msgstr "Användningsändamål för arrende"
 
+msgid "Index code"
+msgstr ""
+
+msgid "Index name"
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
+msgid "Data source"
+msgstr ""
+
+msgid "Source table updated"
+msgstr ""
+
+msgid "Source table label"
+msgstr ""
+
+msgid "API endpoint URL"
+msgstr ""
+
+msgctxt "model name"
+msgid "price index of old dwellings in housing companies"
+msgstr ""
+
+msgctxt "model name"
+msgid "price indexes of old dwellings in housing companies"
+msgstr ""
+
 msgid "Cycle"
 msgstr "Arrendeperiod"
 
@@ -2569,9 +2607,6 @@ msgid "Override receivable type"
 msgstr "Ersättande Fordringsart"
 
 msgid "Old dwellings in housing companies price index"
-msgstr ""
-
-msgid "Old dwellings in housing companies price index type"
 msgstr ""
 
 msgid "Start price index point figure"
@@ -2753,37 +2788,8 @@ msgstr "Index 1914:1-6=100"
 msgid "Index 1938:8-1939:7=100"
 msgstr "Index 1938:8–1939:7=100"
 
-msgid "Index code"
-msgstr ""
-
-msgid "Index name"
-msgstr ""
-
-msgid "Region"
-msgstr ""
-
-msgid "Data source"
-msgstr ""
-
-msgid "Source table updated"
-msgstr ""
-
-msgid "Source table label"
-msgstr ""
-
-msgid "API endpoint URL"
-msgstr ""
-
-msgctxt "model name"
-msgid "price index of old dwellings in housing companies"
-msgstr ""
-
-msgctxt "model name"
-msgid "price indexes of old dwellings in housing companies"
-msgstr ""
-
-msgid "Index number"
-msgstr ""
+msgid "Value"
+msgstr "Värde"
 
 msgid "Comment"
 msgstr ""
@@ -2891,7 +2897,20 @@ msgstr ""
 msgid ""
 "Receivable type which should be used when creating collateral invoices. On "
 "SAP export, the profit center is filled from this receivable type's "
-"sap_order_item_number."
+"sap_project_number or sap_order_item_number."
+msgstr ""
+
+msgid "Use the override receivable type from rent in automatic invoices?"
+msgstr ""
+
+msgid ""
+"Use the override receivable type from rent in automatic invoices, if it is "
+"present. When creating a rent, some service units (such as AKV and KuVa) "
+"want to select a receivable type to be used in future automatic invoices. "
+"This helps avoid some technical difficulties in invoice XML generation. "
+"Generation logic would otherwise be unaware of the desired receivable type, "
+"if it is different from the service unit's default receivable type, or the "
+"leasetype's receivable type."
 msgstr ""
 
 msgctxt "Model name"
@@ -2945,9 +2964,6 @@ msgstr "Arrendatorns fakturaandelar"
 
 msgid "Key"
 msgstr "Nyckel"
-
-msgid "Value"
-msgstr "Värde"
 
 msgctxt "Model name"
 msgid "UI Datum"
@@ -3459,28 +3475,25 @@ msgstr "Indexet ska väljas då arrendearten är Index"
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Rabatt-/höjningstypen \"€ totalt\" kan inte ha ett slutdatum"
 
+#, python-brace-format
+msgid ""
+"Override receivable type \"{override_receivable_type.name}\" was unexpected. "
+msgstr ""
+
+msgid ""
+"Override receivable type is required for this rent type in service unit "
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Override receivabletype \"{override_receivable_type.name}\" was unexpected. "
+msgstr ""
+
 msgid "Basis of rent item id {} not found"
 msgstr "Arrenderingsprincipen med identifieraren {} hittas inte"
 
 msgid "Can't edit locked basis of rent item"
 msgstr "Låsta arrenderingsprinciper kan inte redigeras"
-
-msgid "Both day and month must be provided"
-msgstr ""
-
-msgid "Day must be an integer"
-msgstr ""
-
-msgid "Month must be an integer"
-msgstr ""
-
-#, python-brace-format
-msgid "Invalid month: {month}. Month must be between 1 and 12."
-msgstr ""
-
-#, python-brace-format
-msgid "Invalid day: {day} for month: {month}"
-msgstr ""
 
 msgid "Enter a valid business id."
 msgstr "Ange ett giltigt FO-nummer."

@@ -23,6 +23,17 @@ def test_export_one_invoice(
     invoice_factory,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
+    if any(
+        [
+            not hasattr(settings, "LASKE_SERVERS"),
+            not settings.LASKE_SERVERS.get("export", {}).get("host"),
+            not settings.LASKE_SERVERS.get("export", {}).get("username"),
+            not settings.LASKE_SERVERS.get("export", {}).get("password"),
+        ]
+    ):
+        settings.LASKE_SERVERS = {
+            "export": {"host": "localhost", "username": "test", "password": "test"}
+        }
 
     service_unit = service_unit_factory(
         invoice_number_sequence_name="test_sequence",
