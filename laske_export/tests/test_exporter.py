@@ -485,4 +485,4 @@ def test_send_invoices_order_num_from_lease(
         line_item.find("Material").text
         == _order_number_test_setup["lease"].type.sap_material_code
     )
-    assert line_item.find("WBS_Element").text == "lease-ordern"
+    assert line_item.find("OrderItemNumber").text == "lease-ordern"
