@@ -477,7 +477,10 @@ CUSTOM_FIELD_PERMS = {
         },
     },
     "condition": {
+        "description": {6: "change"},
         "id": {2: "view", 3: "view", 5: "view"},
+        "supervised_date": {6: "change"},
+        "supervision_date": {6: "change"},
         "type": {2: "view", 3: "view", 5: "view"},
     },
     "contract": {
