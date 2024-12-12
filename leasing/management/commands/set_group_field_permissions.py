@@ -518,6 +518,7 @@ CUSTOM_FIELD_PERMS = {
             7: "change",
         },
     },
+    "rentadjustment": {"full_amount": {2: "view"}},
     "tenant": {"reference": {6: "change"}, "tenantcontact_set": {6: "change"}},
     "leasearea": {
         "plots": {2: "view", 5: "view"},
