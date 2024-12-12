@@ -13,8 +13,8 @@ def test_load_leasearea(lease_factory):
     csv_content = "\n".join(
         [
             "mvj_vuokraustunnus,mvj_kohteen_tunnus,mvj_maaritelma,mvj_pinta_ala,mvj_sijainti,mvj_osoite,mvj_postinumero,mvj_kaupunki,mvj_ensisijainen_osoite",  # noqa: E501
-            f"{lease.identifier.identifier},456,plan_unit,1000,surface,Address1,12345,City1,True",
-            f"{lease.identifier.identifier},789,unseparated_parcel,2000,underground,Address2,02345,City2,True",
+            f"{lease.identifier.identifier},456,Kaavayksikkö,1000,Yläpuolella,Address1,12345,City1,Kyllä",
+            f"{lease.identifier.identifier},789,Määräala,2000,Alapuolella,Address2,02345,City2,Kyllä",
         ]
     )
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
@@ -87,8 +87,8 @@ def test_pre_validate_csv(lease_factory):
     csv_content = "\n".join(
         [
             "mvj_vuokraustunnus,mvj_kohteen_tunnus,mvj_maaritelma,mvj_pinta_ala,mvj_sijainti,mvj_osoite,mvj_postinumero,mvj_kaupunki,mvj_ensisijainen_osoite",  # noqa: E501
-            f"{lease.identifier.identifier},456,{incorrect_type},1000,surface,Address1,12345,City1,True",
-            f"{lease.identifier.identifier},789,unseparated_parcel,2000,{incorrect_location},Address2,02345,City2,True",
+            f"{lease.identifier.identifier},456,{incorrect_type},1000,Yläpuolella,Address1,12345,City1,Kyllä",
+            f"{lease.identifier.identifier},789,Määräala,2000,{incorrect_location},Address2,02345,City2,Kyllä",
         ]
     )
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
