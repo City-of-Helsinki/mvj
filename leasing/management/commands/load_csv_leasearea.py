@@ -80,6 +80,24 @@ class Command(BaseCommand):
             if key in fieldnames_mapping
         }
 
+    def _transform_type(self, value):
+        mapping = {
+            "Kaavayksikkö": LeaseAreaType.PLAN_UNIT,
+            "Kiinteistö": LeaseAreaType.REAL_PROPERTY,
+            "Määräala": LeaseAreaType.UNSEPARATED_PARCEL,
+            "Muu": LeaseAreaType.OTHER,
+        }
+        transformed_value = mapping.get(value, None)
+        return transformed_value
+
+    def _transform_location(self, value):
+        mapping = {
+            "Yläpuolella": LocationType.SURFACE,
+            "Alapuolella": LocationType.UNDERGROUND,
+        }
+        transformed_value = mapping.get(value, None)
+        return transformed_value
+
     def _transform_is_primary(self, value):
         """Expected values are 'Kyllä' or 'Ei', but if it is not correctly set we can't assume it is primary.
         Sets the value to False unless it is 'Kyllä'."""
@@ -130,6 +148,10 @@ class Command(BaseCommand):
         # Transform the row to match the LeaseArea model fields
         leasearea_data = self._transform_keys(row, fieldnames_mapping_leasearea)
         leasearea_data["lease_id"] = lease.id
+        leasearea_data["type"] = self._transform_type(leasearea_data.get("type"))
+        leasearea_data["location"] = self._transform_location(
+            leasearea_data.get("location")
+        )
 
         # Create the LeaseArea object
         lease_area = LeaseArea.objects.create(**leasearea_data)
@@ -165,11 +187,11 @@ class Command(BaseCommand):
             warnings = []
             for i, row in enumerate(reader, start=2):
                 # Errors
-                if row.get("mvj_maaritelma") not in [x.value for x in LeaseAreaType]:
+                if self._transform_type(row.get("mvj_maaritelma")) is None:
                     errors.append(
                         f"Row {i}: Invalid mvj_maaritelma value: {row.get('mvj_maaritelma')}"
                     )
-                if row.get("mvj_sijainti") not in [x.value for x in LocationType]:
+                if self._transform_location(row.get("mvj_sijainti")) is None:
                     errors.append(
                         f"Row {i}: Invalid mvj_sijainti value: {row.get('mvj_sijainti')}"
                     )
