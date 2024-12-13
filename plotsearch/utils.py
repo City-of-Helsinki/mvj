@@ -6,15 +6,6 @@ from plotsearch.enums import AreaSearchLessor
 
 
 def map_intended_use_to_lessor(intended_use):
-    # Keeping these for a transformation period
-    old_intended_uses_with_lessors = {
-        "myynti- ja mainontapaikat": AreaSearchLessor.AKV,
-        "taide- ja kulttuuripaikat": AreaSearchLessor.AKV,
-        "varasto- ja jakelualueet": AreaSearchLessor.AKV,
-        "työmaa tukikohdat ja alueet": AreaSearchLessor.AKV,
-        "veneily ja laiturialueet": AreaSearchLessor.KUVA,
-        "urheilu- ja liikuntapaikat": AreaSearchLessor.KUVA,
-    }
     intended_uses_with_lessors = {
         "ravitsemus, myynti ja mainonta": AreaSearchLessor.AKV,
         "taide ja kulttuuri": AreaSearchLessor.AKV,
@@ -25,9 +16,7 @@ def map_intended_use_to_lessor(intended_use):
         "urheilu ja liikunta": AreaSearchLessor.LIPA,
     }
     try:
-        lessor = {**intended_uses_with_lessors, **old_intended_uses_with_lessors}.get(
-            intended_use.name.lower(), None
-        )
+        lessor = intended_uses_with_lessors.get(intended_use.name.lower(), None)
     except AttributeError:
         return None
 
