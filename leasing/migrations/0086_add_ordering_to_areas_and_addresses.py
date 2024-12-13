@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0084_rent_old_dwellings_in_housing_companies_price_index_type"),
+        ("leasing", "0085_leasetype_sap_project_number_and_more"),
     ]
 
     operations = [
