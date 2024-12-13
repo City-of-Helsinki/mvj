@@ -1,5 +1,6 @@
 from auditlog.registry import auditlog
 from django.contrib.gis.db import models
+from django.db.models import F
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
@@ -298,6 +299,7 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease area")
         verbose_name_plural = pgettext_lazy("Model name", "Lease areas")
+        ordering = [F("archived_at").asc(nulls_first=True), "id"]
 
 
 class LeaseAreaAddress(AbstractAddress):
@@ -313,6 +315,7 @@ class LeaseAreaAddress(AbstractAddress):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease area address")
         verbose_name_plural = pgettext_lazy("Model name", "Lease area addresses")
+        ordering = ["-is_primary", "id"]
 
 
 def get_attachment_file_upload_to(instance, filename):

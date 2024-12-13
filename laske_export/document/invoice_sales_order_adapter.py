@@ -77,10 +77,8 @@ class InvoiceSalesOrderAdapter:
         first_lease_area = self.invoice.lease.lease_areas.first()
         if first_lease_area:
             real_property_identifier = first_lease_area.identifier
-            lease_area_address = first_lease_area.addresses.order_by(
-                "-is_primary"
-            ).first()
 
+            lease_area_address = first_lease_area.addresses.first()
             if lease_area_address:
                 address = lease_area_address.address
 
@@ -474,8 +472,6 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
             logger.warning(f"No IntendedUse found for InvoiceRow {invoice_row.id}")
 
         # Area texts
-        # TODO Which area to use when multiple areas in lease?
-        #      Selecting the first area has been the logic so far in Make exports.
         first_lease_area = self.invoice.lease.lease_areas.first()
         if not first_lease_area:
             logger.error(
@@ -486,9 +482,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         area_m2_text = f", noin {first_lease_area.area} m²"
 
         # Address texts
-        first_lease_area_address = first_lease_area.addresses.order_by(
-            "-is_primary"
-        ).first()  # Note: will be non-primary if no primary addresses exist
+        first_lease_area_address = first_lease_area.addresses.first()
         if first_lease_area_address:
             address_text = (
                 f", {first_lease_area_address.address}"
