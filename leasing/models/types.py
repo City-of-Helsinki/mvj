@@ -79,6 +79,10 @@ class InvoiceDatum(TypedDict):
     service_unit: "ServiceUnit"
 
 
+class InvoiceDatumDict(InvoiceDatum):
+    rows: dict[int, CalculationAmountRow]
+
+
 class ContactsActiveLeases(TypedDict):
     lease_identifier: str
     lease_id: int
