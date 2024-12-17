@@ -7,6 +7,7 @@
       "identifier": "A1",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
+      "sap_project_number": "2810K00281310101",
       "due_dates_position": "middle_of_month"
     }
   },
@@ -18,6 +19,7 @@
       "identifier": "A2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
+      "sap_project_number": "2810K00281310101",
       "due_dates_position": "middle_of_month"
     }
   },
@@ -29,6 +31,7 @@
       "identifier": "A3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
+      "sap_project_number": "2810K00281310101",
       "due_dates_position": "middle_of_month"
     }
   },
@@ -40,6 +43,7 @@
       "identifier": "A4",
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813101002",
+      "sap_project_number": "2810K00281310102",
       "due_dates_position": "middle_of_month"
     }
   },
@@ -51,6 +55,7 @@
       "identifier": "S0",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104106",
+      "sap_project_number": "2810K00281310412",
       "due_dates_position": "start_of_month"
     }
   },
@@ -62,6 +67,7 @@
       "identifier": "T1",
       "sap_material_code": "20002006",
       "sap_order_item_number": "2813104100",
+      "sap_project_number": "2810K00281310406",
       "due_dates_position": "start_of_month"
     }
   },
@@ -73,6 +79,7 @@
       "identifier": "O1",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
+      "sap_project_number": "2810K00281310411",
       "due_dates_position": "start_of_month"
     }
   },
@@ -84,6 +91,7 @@
       "identifier": "T2",
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813104101",
+      "sap_project_number": "2810K00281310407",
       "due_dates_position": "start_of_month"
     }
   },
@@ -95,6 +103,7 @@
       "identifier": "H1",
       "sap_material_code": "20002008",
       "sap_order_item_number": "2813104102",
+      "sap_project_number": "2810K00281310408",
       "due_dates_position": "start_of_month"
     }
   },
@@ -106,6 +115,7 @@
       "identifier": "H2",
       "sap_material_code": "20002008",
       "sap_order_item_number": "2813104102",
+      "sap_project_number": "2810K00281310408",
       "due_dates_position": "start_of_month"
     }
   },
@@ -117,6 +127,7 @@
       "identifier": "L1",
       "sap_material_code": "20002005",
       "sap_order_item_number": "2813104103",
+      "sap_project_number": "2810K00281310409",
       "due_dates_position": "start_of_month"
     }
   },
@@ -128,6 +139,7 @@
       "identifier": "L2",
       "sap_material_code": "20002005",
       "sap_order_item_number": "2813104103",
+      "sap_project_number": "2810K00281310409",
       "due_dates_position": "start_of_month"
     }
   },
@@ -139,6 +151,7 @@
       "identifier": "L3",
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813104104",
+      "sap_project_number": "2810K00281310410",
       "due_dates_position": "start_of_month"
     }
   },
@@ -150,6 +163,7 @@
       "identifier": "O2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
+      "sap_project_number": "2810K00281310411",
       "due_dates_position": "start_of_month"
     }
   },
@@ -161,6 +175,7 @@
       "identifier": "O3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813102006",
+      "sap_project_number": "2810K00281310206",
       "due_dates_position": "start_of_month"
     }
   },
@@ -172,6 +187,7 @@
       "identifier": "O4",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
+      "sap_project_number": "2810K00281310411",
       "due_dates_position": "start_of_month"
     }
   },
@@ -183,6 +199,7 @@
       "identifier": "K0",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100001",
+      "sap_project_number": "2810K00281310001",
       "due_dates_position": "start_of_month"
     }
   },
@@ -194,6 +211,7 @@
       "identifier": "V5",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -205,6 +223,7 @@
       "identifier": "V2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
+      "sap_project_number": "2810K00281310002",
       "due_dates_position": "start_of_month"
     }
   },
@@ -215,7 +234,8 @@
       "name": "Helsingin Vesi",
       "identifier": "V6",
       "sap_material_code": "20002009",
-      "sap_order_item_number": "",
+      "sap_order_item_number": null,
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -227,6 +247,7 @@
       "identifier": "V4",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
+      "sap_project_number": "2810K00281310002",
       "due_dates_position": "start_of_month"
     }
   },
@@ -238,6 +259,7 @@
       "identifier": "V1",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
+      "sap_project_number": "2810K00281310002",
       "due_dates_position": "start_of_month"
     }
   },
@@ -249,6 +271,7 @@
       "identifier": "V3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
+      "sap_project_number": "2810K00281310002",
       "due_dates_position": "start_of_month"
     }
   },
@@ -260,6 +283,7 @@
       "identifier": "Y3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -271,6 +295,7 @@
       "identifier": "Y5",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -282,6 +307,7 @@
       "identifier": "Y6",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -293,6 +319,7 @@
       "identifier": "Y7",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -304,6 +331,7 @@
       "identifier": "Y2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -315,6 +343,7 @@
       "identifier": "Y4",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -326,6 +355,7 @@
       "identifier": "Y1",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -337,6 +367,7 @@
       "identifier": "Y8",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -348,6 +379,7 @@
       "identifier": "TY",
       "sap_material_code": "",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -359,6 +391,7 @@
       "identifier": "MA",
       "sap_material_code": "",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -370,6 +403,7 @@
       "identifier": "Y9",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -381,6 +415,7 @@
       "identifier": "MY",
       "sap_material_code": "",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -390,8 +425,9 @@
     "fields": {
       "name": "SIIRTOLAPUUTARHA ei käytössä",
       "identifier": "R0",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -401,8 +437,9 @@
     "fields": {
       "name": "Väestönsuojakorvaukset",
       "identifier": "VS",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   },
@@ -414,6 +451,7 @@
       "identifier": "Y0",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
+      "sap_project_number": "2810K00281310003",
       "due_dates_position": "start_of_month"
     }
   },
@@ -425,6 +463,7 @@
       "identifier": "T3",
       "sap_material_code": "10003610",
       "sap_order_item_number": "2813104100",
+      "sap_project_number": "2810K00281310406",
       "due_dates_position": "start_of_month"
     }
   },
@@ -434,8 +473,9 @@
     "fields": {
       "name": "Liikuntaviraston ulosvuokraus",
       "identifier": "S1",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
+      "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
   }
