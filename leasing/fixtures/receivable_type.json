@@ -6,6 +6,7 @@
       "name": "Maanvuokraus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 1
     }
@@ -17,6 +18,7 @@
       "name": "Korko",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": false,
       "service_unit": 1
     }
@@ -28,6 +30,7 @@
       "name": "Yhteismarkkinointi (sis. ALV)",
       "sap_material_code": "20002162",
       "sap_order_item_number": "2813101001",
+      "sap_project_number": "2810K002813000",
       "is_active": true,
       "service_unit": 1
     }
@@ -39,6 +42,7 @@
       "name": "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
       "sap_material_code": "20001751",
       "sap_order_item_number": "2813000003",
+      "sap_project_number": "2810K00281300001",
       "is_active": true,
       "service_unit": 1
     }
@@ -50,6 +54,7 @@
       "name": "Haastemiestiedoksianto",
       "sap_material_code": "10002534",
       "sap_order_item_number": "2813100000",
+      "sap_project_number": "2810K002813000",
       "is_active": true,
       "service_unit": 1
     }
@@ -61,6 +66,7 @@
       "name": "Rasite ja muut vastaavat korvaukset",
       "sap_material_code": "10002495",
       "sap_order_item_number": "2813000004",
+      "sap_project_number": "2810K00281300002",
       "is_active": true,
       "service_unit": 1
     }
@@ -72,6 +78,7 @@
       "name": "Esirakentamistoimenpiteet",
       "sap_material_code": "20002161",
       "sap_order_item_number": "2813100000",
+      "sap_project_number": "2810K002813000",
       "is_active": true,
       "service_unit": 1
     }
@@ -83,6 +90,7 @@
       "name": "Rahavakuus",
       "sap_material_code": "10002550",
       "sap_order_item_number": "2813000",
+      "sap_project_number": "2810K002813000",
       "is_active": true,
       "service_unit": 1
     }
@@ -94,6 +102,7 @@
       "name": "Väestösuojakorvaus",
       "sap_material_code": "10002532",
       "sap_order_item_number": "2813000000",
+      "sap_project_number": "2810K00281310101",
       "is_active": true,
       "service_unit": 1
     }
@@ -105,6 +114,7 @@
       "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
       "sap_material_code": "27100033",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -116,6 +126,7 @@
       "name": "Hiekkasiilo, kaupungin urakkasopimukset",
       "sap_material_code": "10003613",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -127,6 +138,7 @@
       "name": "Hiekkasiilo, muut",
       "sap_material_code": "27100049",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -138,6 +150,7 @@
       "name": "Kaupunkipyörä (alv)",
       "sap_material_code": "10003614",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -149,6 +162,7 @@
       "name": "Kaupunkiviljely",
       "sap_material_code": "27100028",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -160,6 +174,7 @@
       "name": "Kioski, kahvila, myyntipaikat",
       "sap_material_code": "27100009",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -171,6 +186,7 @@
       "name": "Laiva ja muu vesialue (alv)",
       "sap_material_code": "10003628",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -182,6 +198,7 @@
       "name": "Lasitettu katuterassi ja asiakastila (alv)",
       "sap_material_code": "10003629",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -193,6 +210,7 @@
       "name": "Leikkipaikan käyttöoikeus",
       "sap_material_code": "10003624",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -204,6 +222,7 @@
       "name": "Liikunta ja ulkoilu (alv)",
       "sap_material_code": "10003615",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -215,6 +234,7 @@
       "name": "Lisäpiha, asuntotontit",
       "sap_material_code": "10003616",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -226,6 +246,7 @@
       "name": "Lisäpiha, yksityiset päiväkodit",
       "sap_material_code": "10003630",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -237,6 +258,7 @@
       "name": "Maa-aineksen varastointi (alv)",
       "sap_material_code": "10003623",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -248,6 +270,7 @@
       "name": "Mehiläistarhaus",
       "sap_material_code": "10003622",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -259,6 +282,7 @@
       "name": "Metsästysoikeus (alv)",
       "sap_material_code": "27100045",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -270,6 +294,7 @@
       "name": "Muuntamo, laitetila, masto (alv)",
       "sap_material_code": "10003625",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -281,6 +306,7 @@
       "name": "Pysäköinti",
       "sap_material_code": "27100048",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -292,6 +318,7 @@
       "name": "Sähköpotkulauta (alv)",
       "sap_material_code": "10003620",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -303,6 +330,7 @@
       "name": "Taide ja kulttuuri",
       "sap_material_code": "27100037",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -314,6 +342,7 @@
       "name": "Tilapäinen käymälä ja taukotila (alv)",
       "sap_material_code": "10003621",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -325,6 +354,7 @@
       "name": "Työmaatukitoiminta (alv)",
       "sap_material_code": "10003626",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -336,6 +366,7 @@
       "name": "Ulkomainonta, yksityinen",
       "sap_material_code": "27100044",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -347,6 +378,7 @@
       "name": "Ulkomainonta, kilpailutettu (alv)",
       "sap_material_code": "27100000",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -358,6 +390,7 @@
       "name": "Varastointi (alv)",
       "sap_material_code": "10003627",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -369,6 +402,7 @@
       "name": "Muu yleisen alueen tilapäinen vuokraus",
       "sap_material_code": "27100046",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -380,6 +414,7 @@
       "name": "Muu yleisen alueen tilapäinen vuokraus (alv)",
       "sap_material_code": "27100017",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -391,6 +426,7 @@
       "name": "Muu tontinosan tilapäinen vuokraus",
       "sap_material_code": "10003617",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -402,6 +438,7 @@
       "name": "Muu tontinosan tilapäinen vuokraus (alv)",
       "sap_material_code": "10003618",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -413,6 +450,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
       "sap_material_code": "20000070",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 3
     }
@@ -424,6 +462,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot alv",
       "sap_material_code": "20000069",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 3
     }
@@ -435,6 +474,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
       "sap_material_code": "20000070",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 4
     }
@@ -446,6 +486,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot alv",
       "sap_material_code": "20000069",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 4
     }
@@ -457,6 +498,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot veroton",
       "sap_material_code": "20000070",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 5
     }
@@ -468,6 +510,7 @@
       "name": "Maa- ja vesialueiden vuokratuotot alv",
       "sap_material_code": "20000069",
       "sap_order_item_number": "",
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 5
     }
@@ -479,6 +522,7 @@
       "name": "Maanvuokraus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -490,6 +534,7 @@
       "name": "Rahavakuus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -501,6 +546,7 @@
       "name": "Maanvuokraus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 3
     }
@@ -512,6 +558,7 @@
       "name": "Rahavakuus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 3
     }
@@ -523,6 +570,7 @@
       "name": "Maanvuokraus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 4
     }
@@ -534,6 +582,7 @@
       "name": "Rahavakuus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 4
     }
@@ -545,6 +594,7 @@
       "name": "Maanvuokraus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 5
     }
@@ -556,6 +606,7 @@
       "name": "Rahavakuus",
       "sap_material_code": null,
       "sap_order_item_number": null,
+      "sap_project_number": null,
       "is_active": true,
       "service_unit": 5
     }
@@ -567,6 +618,7 @@
       "name": "Sähköauton latauspaikka (alv)",
       "sap_material_code": "10003619",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -578,6 +630,7 @@
       "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko (alv)",
       "sap_material_code": "10003722",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -589,6 +642,7 @@
       "name": "Hiekkasiilo, muut (alv)",
       "sap_material_code": "10003730",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -600,6 +654,7 @@
       "name": "Kioski, kahvila, myyntipaikat (alv)",
       "sap_material_code": "10003731",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -611,6 +666,7 @@
       "name": "Taide ja kulttuuri (alv)",
       "sap_material_code": "10003732",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -622,6 +678,7 @@
       "name": "Ulkomainonta, yksityinen (alv)",
       "sap_material_code": "10003733",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -633,6 +690,7 @@
       "name": "Varastointi",
       "sap_material_code": "10003724",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -644,6 +702,7 @@
       "name": "Pysäköinti (alv)",
       "sap_material_code": "10003760",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -655,6 +714,7 @@
       "name": "Työmaatukitoiminta",
       "sap_material_code": "10003771",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -666,6 +726,7 @@
       "name": "Lasitettu katuterassi ja asiakastila",
       "sap_material_code": "10003781",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
@@ -677,6 +738,7 @@
       "name": "Laiva ja muu vesialue",
       "sap_material_code": "10003780",
       "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
       "is_active": true,
       "service_unit": 2
     }
