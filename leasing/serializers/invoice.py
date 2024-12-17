@@ -21,11 +21,14 @@ from leasing.models.invoice import (
     InvoiceRow,
     InvoiceSet,
 )
+from leasing.models.lease import Lease
 from leasing.models.receivable_type import ReceivableType
+from leasing.models.types import InvoiceDatumDict
 from leasing.models.utils import fix_amount_for_overlap, subtract_ranges_from_ranges
 from leasing.serializers.explanation import ExplanationSerializer
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from leasing.serializers.tenant import TenantSerializer
+from leasing.serializers.types import CreateChargeData, CreateChargeInvoiceRowData
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     UpdateNestedMixin,
@@ -539,7 +542,7 @@ class CreateChargeSerializer(serializers.Serializer):
         elif isinstance(instance, Invoice):
             return InvoiceSerializer().to_representation(instance=instance)
 
-    def validate(self, data):
+    def validate(self, data: CreateChargeData):
         if (
             data.get("billing_period_start_date")
             and not data.get("billing_period_end_date")
@@ -563,9 +566,9 @@ class CreateChargeSerializer(serializers.Serializer):
 
         return data
 
-    def create(self, validated_data):  # noqa: C901 TODO
+    def create(self, validated_data: CreateChargeData):  # noqa: C901 TODO
         today = timezone.now().date()
-        lease = validated_data.get("lease")
+        lease: Lease = validated_data.get("lease")
         billing_period_start_date = validated_data.get(
             "billing_period_start_date", today
         )
@@ -591,7 +594,7 @@ class CreateChargeSerializer(serializers.Serializer):
                 billing_period_end_date=billing_period_end_date,
             )
 
-        invoice_data = []
+        invoice_data: list[InvoiceDatumDict] = []
 
         # TODO: check for periods without 1/1 shares
         for contact, share in shares.items():
@@ -645,7 +648,7 @@ class CreateChargeSerializer(serializers.Serializer):
         # amount to a random invoice if not
         for input_row_index, input_row in enumerate(validated_data.get("rows", [])):
             row_sum = Decimal(0)
-            all_rows = []
+            all_rows: list[CreateChargeInvoiceRowData] = []
             for invoice_datum in invoice_data:
                 for row_data in invoice_datum["rows"][input_row_index]:
                     row_sum += row_data["amount"]
