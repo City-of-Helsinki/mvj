@@ -288,6 +288,9 @@ class InvoiceSalesOrderAdapter:
             == SapSalesOrgNumber.KUVA.value
             or invoice_row.receivable_type == default_receivable_type_rent
         ):
+            # Ensure `wbs_element` is not set when setting `order_item_number`,
+            # `internal_order` is supposed to contain only `order_item_number` values.
+            line_item.wbs_element = None
             line_item.order_item_number = self.invoice.lease.internal_order
 
     def get_line_text(self, invoice_row: InvoiceRow) -> str:
