@@ -1163,6 +1163,14 @@ msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Vireillä"
 
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Periodic Rent Adjustment 20y/20y"
+msgstr "Tasotarkistus 20v/20v"
+
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Periodic Rent Adjustment 20y/10y"
+msgstr "Tasotarkistus 20v/10v"
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
