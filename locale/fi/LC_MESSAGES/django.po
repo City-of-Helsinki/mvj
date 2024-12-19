@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-10 16:31+0200\n"
+"POT-Creation-Date: 2024-12-19 12:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1163,6 +1163,14 @@ msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Vireillä"
 
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Tasotarkistus 20v/20v"
+msgstr ""
+
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Tasotarkistus 20v/10v"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
@@ -2228,13 +2236,15 @@ msgid "Sign date"
 msgstr "Allekirjoitettava mennessä"
 
 msgid "If 'SAP project number' is set, it will be used instead of this value."
-msgstr "Jos 'SAP projektinumero' on asetettu, sitä käytetään tämän arvon sijaan."
+msgstr ""
+"Jos 'SAP projektinumero' on asetettu, sitä käytetään tämän arvon sijaan."
 
 msgid "SAP project number"
 msgstr "SAP projektinumero"
 
 msgid "This field takes priority over 'SAP order item number' if both are set."
-msgstr "Tätä kenttää käytetään 'SAP tilausnumeron' sijaan jos kumpikin on asetettu."
+msgstr ""
+"Tätä kenttää käytetään 'SAP tilausnumeron' sijaan jos kumpikin on asetettu."
 
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
@@ -3713,10 +3723,6 @@ msgid "Area use and control"
 msgstr "Alueiden käyttö ja valvonta"
 
 msgctxt "Area search lessor"
-msgid "Culture and leisure"
-msgstr "Kulttuuri ja vapaa-aika"
-
-msgctxt "Area search lessor"
 msgid "Development of land assets"
 msgstr "Maaomaisuuden kehittäminen ja tontit"
 
@@ -3823,6 +3829,10 @@ msgstr "Muu syy"
 msgctxt "Area search state"
 msgid "Received"
 msgstr "Vastaanotettu"
+
+msgctxt "Area search state"
+msgid "Pending additional information"
+msgstr "Odottaa lisätietoja"
 
 msgctxt "Area search state"
 msgid "In action"

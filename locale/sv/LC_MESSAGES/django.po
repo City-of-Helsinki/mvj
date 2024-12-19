@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-10 16:31+0200\n"
+"POT-Creation-Date: 2024-12-19 12:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1165,6 +1165,14 @@ msgstr "Nutid"
 msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Anhängig"
+
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Tasotarkistus 20v/20v"
+msgstr ""
+
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Tasotarkistus 20v/10v"
+msgstr ""
 
 msgid "Going to SAP"
 msgstr "På väg till SAP"
@@ -2609,6 +2617,9 @@ msgstr "Ersättande Fordringsart"
 msgid "Old dwellings in housing companies price index"
 msgstr ""
 
+msgid "Old dwellings in housing companies price index type"
+msgstr ""
+
 msgid "Start price index point figure"
 msgstr ""
 
@@ -3718,10 +3729,6 @@ msgid "Area use and control"
 msgstr "Områdesanvändning och -övervakning"
 
 msgctxt "Area search lessor"
-msgid "Culture and leisure"
-msgstr "Kultur och fritid"
-
-msgctxt "Area search lessor"
 msgid "Development of land assets"
 msgstr "Utveckling av jordegendom och tomter"
 
@@ -3828,6 +3835,10 @@ msgstr "Annan orsak"
 msgctxt "Area search state"
 msgid "Received"
 msgstr "Fordringsart"
+
+msgctxt "Area search state"
+msgid "Pending additional information"
+msgstr "Väntar på mer information"
 
 msgctxt "Area search state"
 msgid "In action"
