@@ -377,8 +377,8 @@
     "fields": {
       "name": "TYHJÄ TONTTI",
       "identifier": "TY",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
       "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
@@ -389,8 +389,8 @@
     "fields": {
       "name": "Maapoliittinen sopimus",
       "identifier": "MA",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
       "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
@@ -413,8 +413,8 @@
     "fields": {
       "name": "Myynti/maksamaton kauppahinta",
       "identifier": "MY",
-      "sap_material_code": "",
-      "sap_order_item_number": "",
+      "sap_material_code": null,
+      "sap_order_item_number": null,
       "sap_project_number": null,
       "due_dates_position": "start_of_month"
     }
