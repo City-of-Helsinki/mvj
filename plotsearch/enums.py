@@ -133,6 +133,7 @@ class AreaSearchState(str, Enum):
     """
 
     RECEIVED = "received"
+    PENDING_INFORMATION = "pending_information"
     IN_ACTION = "in_action"
     SETTLED = "settled"
     REVOKED = "revoked"
@@ -140,6 +141,9 @@ class AreaSearchState(str, Enum):
 
     class Labels:
         RECEIVED = pgettext_lazy("Area search state", "Received")
+        PENDING_INFORMATION = pgettext_lazy(
+            "Area search state", "Pending additional information"
+        )
         IN_ACTION = pgettext_lazy("Area search state", "In action")
         SETTLED = pgettext_lazy("Area search state", "Settled")
         REVOKED = pgettext_lazy("Area search state", "Revoked")
