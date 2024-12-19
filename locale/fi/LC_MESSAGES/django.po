@@ -3723,10 +3723,6 @@ msgid "Area use and control"
 msgstr "Alueiden käyttö ja valvonta"
 
 msgctxt "Area search lessor"
-msgid "Culture and leisure"
-msgstr "Kulttuuri ja vapaa-aika"
-
-msgctxt "Area search lessor"
 msgid "Development of land assets"
 msgstr "Maaomaisuuden kehittäminen ja tontit"
 
