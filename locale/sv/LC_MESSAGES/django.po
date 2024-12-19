@@ -3729,10 +3729,6 @@ msgid "Area use and control"
 msgstr "Områdesanvändning och -övervakning"
 
 msgctxt "Area search lessor"
-msgid "Culture and leisure"
-msgstr "Kultur och fritid"
-
-msgctxt "Area search lessor"
 msgid "Development of land assets"
 msgstr "Utveckling av jordegendom och tomter"
 
