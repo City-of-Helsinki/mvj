@@ -1166,6 +1166,14 @@ msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Anhängig"
 
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Periodic Rent Adjustment 20y/20y"
+msgstr ""
+
+msgctxt "Old dwellings in housing companies price index type"
+msgid "Periodic Rent Adjustment 20y/10y"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
@@ -2607,6 +2615,9 @@ msgid "Override receivable type"
 msgstr "Ersättande Fordringsart"
 
 msgid "Old dwellings in housing companies price index"
+msgstr ""
+
+msgid "Old dwellings in housing companies price index type"
 msgstr ""
 
 msgid "Start price index point figure"

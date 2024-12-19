@@ -701,9 +701,9 @@ class OldDwellingsInHousingCompaniesPriceIndexType(Enum):
     class Labels:
         TASOTARKISTUS_20_20 = pgettext_lazy(
             "Old dwellings in housing companies price index type",
-            "Tasotarkistus 20v/20v",
+            "Periodic Rent Adjustment 20y/20y",
         )
         TASOTARKISTUS_20_10 = pgettext_lazy(
             "Old dwellings in housing companies price index type",
-            "Tasotarkistus 20v/10v",
+            "Periodic Rent Adjustment 20y/10y",
         )
