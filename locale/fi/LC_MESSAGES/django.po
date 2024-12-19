@@ -2236,13 +2236,15 @@ msgid "Sign date"
 msgstr "Allekirjoitettava mennessä"
 
 msgid "If 'SAP project number' is set, it will be used instead of this value."
-msgstr "Jos 'SAP projektinumero' on asetettu, sitä käytetään tämän arvon sijaan."
+msgstr ""
+"Jos 'SAP projektinumero' on asetettu, sitä käytetään tämän arvon sijaan."
 
 msgid "SAP project number"
 msgstr "SAP projektinumero"
 
 msgid "This field takes priority over 'SAP order item number' if both are set."
-msgstr "Tätä kenttää käytetään 'SAP tilausnumeron' sijaan jos kumpikin on asetettu."
+msgstr ""
+"Tätä kenttää käytetään 'SAP tilausnumeron' sijaan jos kumpikin on asetettu."
 
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
