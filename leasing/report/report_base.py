@@ -225,10 +225,8 @@ class ReportBase:
             row_num += 1
 
             lookup_row_num = 0
-            while (
-                lookup_row_num < len(data)
-                and lookup_row_num in data
-                and isinstance(data[lookup_row_num], ExcelRow)
+            while lookup_row_num < len(data) and isinstance(
+                data[lookup_row_num], ExcelRow
             ):
                 lookup_row_num += 1
 
