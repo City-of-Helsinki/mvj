@@ -57,12 +57,20 @@ class UsageDistributionImporter(BaseImporter):
                 ELSE mv_koodisto0.c_selite
             END AS mv_koodisto0_c_selite,
             A.c_paasivuk,
-            A.c_rakoikeus
+            A.c_rakoikeus,
+            mv_kaavayksikko.i_rakoikeus
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
-        LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
-        LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
+        LEFT JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
+        LEFT JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
         ORDER BY A.c_kaavayksikkotunnus ASC
         """
+        # TEMP NOTES ABOUT MY CHANGES ABOVE
+        # - Also selected mv_kaavayksikko.i_rakoikeus
+        # - Removed unnecessary OUTER keyword. Left join is always outer.
+        # TODO how to make sure all rows are included, including those without
+        #      usage distributions but only a build permissions for the
+        #      plan_unit itself?
+        # TODO check the older query in my DBeaver that was replaced by this current one
 
         cursor.execute(query)
 
@@ -85,12 +93,16 @@ class UsageDistributionImporter(BaseImporter):
                 existing_or_created_usage_distributions_ids: List[int] = []
 
                 for usage_distribution_row in grouped_usage_distributions_list:
+                    build_permission = (
+                        usage_distribution_row["C_RAKOIKEUS"]
+                        if usage_distribution_row["C_RAKOIKEUS"] is not None
+                        else usage_distribution_row["I_RAKOIKEUS"]
+                    )
                     usage_distribution, _created = (
                         UsageDistribution.objects.get_or_create(
                             plan_unit=plan_unit,
                             distribution=usage_distribution_row["C_KAYTJAKAUMA"] or "-",
-                            build_permission=usage_distribution_row["C_RAKOIKEUS"]
-                            or "-",
+                            build_permission=build_permission or "-",
                         )
                     )
 
@@ -104,8 +116,11 @@ class UsageDistributionImporter(BaseImporter):
                 redundant_usage_distributions.delete()
 
     def _strip_leading_zeros_from_identifier(self, identifier: str) -> str:
-        """Strips leading zeros from identifiers joined by hyphens `-`
-        e.g. '0001-0002' -> '1-2'"""
+        """
+        Strips leading zeros from identifiers joined by hyphens `-`
+        e.g. '0001-0002' -> '1-2'
+             '0123-0000' -> '123-0'
+        """
         plan_unit_id = "-".join(
             str(int(part)) for part in identifier.split("-")  # Strip leading zeros
         )
