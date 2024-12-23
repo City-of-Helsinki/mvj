@@ -199,6 +199,6 @@ def test_akv_sap_codes_when_collateral(
         == akv_default_test_setup["invoicerow1"].receivable_type.sap_material_code
     )
     assert (
-        line_item.find("ProfitCenter").text
+        line_item.find("WBS_Element").text
         == akv_default_test_setup["invoicerow1"].receivable_type.sap_project_number
     )
