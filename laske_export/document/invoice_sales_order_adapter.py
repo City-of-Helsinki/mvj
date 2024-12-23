@@ -259,16 +259,12 @@ class InvoiceSalesOrderAdapter:
             invoice_row.receivable_type
             == self.service_unit.default_receivable_type_collateral
         ):
-            # In case of collateral ("Rahavakuus") receivable type, populate the
-            # ProfitCenter element instead of OrderItemNumber element
             line_item.material = invoice_row.receivable_type.sap_material_code
-            if invoice_row.receivable_type.sap_project_number is not None:
-                # If sap_project_number is set, use it over order_item_number
-                line_item.profit_center = invoice_row.receivable_type.sap_project_number
-            else:
-                line_item.profit_center = (
-                    invoice_row.receivable_type.sap_order_item_number
-                )
+            # In case of collateral ("Rahavakuus") receivable type, populate the
+            # WBS_Element element instead of OrderItemNumber or (previously) ProfitCenter element
+            # Use `sap_project_number` only, not `sap_order_item_number`.
+            # Also discontinue setting the value to `line_item.profit_center`.
+            line_item.wbs_element = invoice_row.receivable_type.sap_project_number
         else:
             # Otherwise, use SAP codes from the InvoiceRow's receivable type
             line_item.material = invoice_row.receivable_type.sap_material_code
