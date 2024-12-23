@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name="old_dwellings_in_housing_companies_price_index_type",
             field=enumfields.fields.EnumField(
                 blank=True,
-                enum=leasing.enums.PeriodicRentAdjustmentType,  # This has been renamed later
+                enum=leasing.enums.OldDwellingsInHousingCompaniesPriceIndexType,
                 max_length=20,
                 null=True,
                 verbose_name="Old dwellings in housing companies price index type",

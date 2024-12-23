@@ -707,3 +707,8 @@ class PeriodicRentAdjustmentType(Enum):
             "Periodic Rent Adjustment Type",
             "Periodic Rent Adjustment 20y/10y",
         )
+
+
+# Previous name of PeriodicRentAdjustmentType, used for db migration leasing 0084:
+class OldDwellingsInHousingCompaniesPriceIndexType(PeriodicRentAdjustmentType):
+    pass
