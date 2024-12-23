@@ -511,7 +511,7 @@ CUSTOM_FIELD_PERMS = {
             6: "view",
             7: "change",
         },
-        "old_dwellings_in_housing_companies_price_index_type": {
+        "periodic_rent_adjustment_type": {
             1: "view",
             2: "view",
             3: "view",

@@ -685,7 +685,7 @@ class SapSalesOrgNumber(Enum):
     KUVA = "2900"
 
 
-class OldDwellingsInHousingCompaniesPriceIndexType(Enum):
+class PeriodicRentAdjustmentType(Enum):
     """
     In Finnish: Tasotarkistuksen tyyppi
 
@@ -700,10 +700,10 @@ class OldDwellingsInHousingCompaniesPriceIndexType(Enum):
 
     class Labels:
         TASOTARKISTUS_20_20 = pgettext_lazy(
-            "Old dwellings in housing companies price index type",
+            "Periodic Rent Adjustment Type",
             "Periodic Rent Adjustment 20y/20y",
         )
         TASOTARKISTUS_20_10 = pgettext_lazy(
-            "Old dwellings in housing companies price index type",
+            "Periodic Rent Adjustment Type",
             "Periodic Rent Adjustment 20y/10y",
         )
