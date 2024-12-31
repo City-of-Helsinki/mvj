@@ -26,12 +26,19 @@ class LogEntrySerializer(serializers.ModelSerializer):
             result["action"] = "delete"
 
         for field_name in list(result["changes"].keys()):
-            permission_name = "{}.view_{}_{}".format(
+            view_permission_name = "{}.view_{}_{}".format(
                 instance.content_type.model_class()._meta.app_label,
                 instance.content_type.model_class()._meta.model_name,
                 field_name,
             )
-            if not self.context["request"].user.has_perm(permission_name):
+            change_permission_name = "{}.change_{}_{}".format(
+                instance.content_type.model_class()._meta.app_label,
+                instance.content_type.model_class()._meta.model_name,
+                field_name,
+            )
+            if not self.context["request"].user.has_perm(
+                view_permission_name
+            ) and not self.context["request"].user.has_perm(change_permission_name):
                 del result["changes"][field_name]
 
         return result
