@@ -15,6 +15,7 @@ from helsinki_gdpr.models import SerializableMixin
 from rest_framework.serializers import ValidationError
 from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
+from field_permissions.registry import field_permissions
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
@@ -718,3 +719,6 @@ auditlog.register(PlotSearch)
 auditlog.register(AreaSearch)
 auditlog.register(InformationCheck)
 auditlog.register(RelatedPlotApplication)
+
+field_permissions.register(PlotSearch)
+field_permissions.register(AreaSearch)
