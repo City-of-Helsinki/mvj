@@ -3718,6 +3718,9 @@ msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
 
+msgid "Area search"
+msgstr "Aluehaku"
+
 msgctxt "Area search lessor"
 msgid "Area use and control"
 msgstr "Alueiden käyttö ja valvonta"
@@ -3909,7 +3912,7 @@ msgid "Time received"
 msgstr "Arkistointiaika"
 
 msgid "Area search state"
-msgstr "Vuokrauksen tila"
+msgstr "Tila"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"
