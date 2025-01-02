@@ -1122,6 +1122,21 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
         return ret
 
 
+class AreaSearchListSerializer(AreaSearchSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        fields_to_exclude = [
+            "form",
+            "answer",
+            "geometry",
+            "description_area",
+            "description_intended_use",
+            "area_search_attachments",
+        ]
+        for field in fields_to_exclude:
+            self.fields.pop(field, None)
+
+
 class InformationCheckSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):

@@ -65,6 +65,7 @@ from plotsearch.permissions import (
 from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
+    AreaSearchListSerializer,
     AreaSearchSerializer,
     DirectReservationLinkSerializer,
     FAQSerializer,
@@ -299,7 +300,10 @@ class IntendedUsePlotsearchPublicViewSet(
 
 
 class AreaSearchViewSet(viewsets.ModelViewSet):
-    queryset = AreaSearch.objects.filter(answer__isnull=False)
+    queryset = AreaSearch.objects.filter(answer__isnull=False).prefetch_related(
+        "area_search_status__status_notes__preparer",
+        "answer__entry_sections",
+    )
     serializer_class = AreaSearchSerializer
     permission_classes = (PerMethodPermission,)
     perms_map = {
@@ -318,6 +322,8 @@ class AreaSearchViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "retrieve":
             return AreaSearchDetailSerializer
+        if self.action == "list":
+            return AreaSearchListSerializer
         return super().get_serializer_class()
 
     @action(methods=["get"], detail=False)
