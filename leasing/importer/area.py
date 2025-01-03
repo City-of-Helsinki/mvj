@@ -330,9 +330,7 @@ class AreaImporter(BaseImporter):
             self.area_types = []
             for area_type in options["area_types"].split(","):
                 if area_type not in AREA_IMPORT_TYPES.keys():
-                    raise RuntimeError(
-                        'Area import type "{}" doesn\'t exist'.format(area_type)
-                    )
+                    raise RuntimeError(f'Area import type "{area_type}" doesn\'t exist')
 
                 self.area_types.append(area_type)
 
@@ -368,9 +366,7 @@ class AreaImporter(BaseImporter):
 
         func_end = perf_counter()
         self.stdout.write(
-            "The area import is completed. Execution time: {0:.2f}s\n".format(
-                func_end - func_start
-            )
+            f"The area import is completed. Execution time: {func_end - func_start:.2f}s\n"
         )
 
     def get_metadata(
@@ -388,14 +384,12 @@ class AreaImporter(BaseImporter):
             }
             return metadata, error_count
         except AttributeError as e:
-            errors.append(
-                "id #{}, metadata field missing. Error: {}\n".format(row.id, str(e))
-            )
+            errors.append(f"id #{row.id}, metadata field missing. Error: {str(e)}\n")
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -439,7 +433,7 @@ class AreaImporter(BaseImporter):
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
             self.stderr.write(
-                "detailed_plan_identifier not found for area #{}".format(identifier)
+                f"detailed_plan_identifier not found for area #{identifier}"
             )
             return None
 
@@ -450,12 +444,12 @@ class AreaImporter(BaseImporter):
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
         except geos.error.GEOSException as e:
-            errors.append("id #{} error: {}\n".format(row.id, str(e)))
+            errors.append(f"id #{row.id} error: {str(e)}\n")
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -471,15 +465,13 @@ class AreaImporter(BaseImporter):
 
         if geom and not isinstance(geom, geos.MultiPolygon):
             errors.append(
-                'id #{} Error! Geometry is not a Multipolygon but "{}"\n'.format(
-                    row.id, geom
-                )
+                f'id #{row.id} Error! Geometry is not a Multipolygon but "{geom}"\n'
             )
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -517,7 +509,7 @@ class AreaImporter(BaseImporter):
         if error_count % 100 == 0:
             self.stdout.write(".")
         if error_count % 1000 == 0:
-            self.stdout.write(" {}".format(error_count))
+            self.stdout.write(f" {error_count}")
             self.stdout.flush()
         return imported_identifiers, error_count
 
@@ -578,10 +570,8 @@ class AreaImporter(BaseImporter):
             avg_row_time = sum_row_time / error_count
 
         self.stdout.write(
-            "Updated area count {}. Execution time: {:.2f}s "
-            "(Row time avg: {:.2f}s, min: {:.2f}s, max: {:.2f}s)\n".format(
-                error_count, sum_row_time, avg_row_time, min_row_time, max_row_time
-            )
+            f"Updated area count {error_count}. Execution time: {sum_row_time:.2f}s "
+            f"(Row time avg: {avg_row_time:.2f}s, min: {min_row_time:.2f}s, max: {max_row_time:.2f}s)\n"
         )
         return imported_identifiers
 
@@ -589,10 +579,7 @@ class AreaImporter(BaseImporter):
         type_start = perf_counter()
 
         errors: list[str] = []
-        errors: List[str] = []
-        self.stdout.write(
-            'Starting to import the area type "{}"...\n'.format(area_import_type)
-        )
+        self.stdout.write(f'Starting to import the area type "{area_import_type}"...\n')
 
         area_import = AREA_IMPORT_TYPES[area_import_type]
 
@@ -628,9 +615,7 @@ class AreaImporter(BaseImporter):
 
         type_end = perf_counter()
         self.stdout.write(
-            'The area import of type "{}" is completed. Execution time: {:.2f}s\n'.format(
-                area_import_type, (type_end - type_start)
-            )
+            f'The area import of type "{area_import_type}" is completed. Execution time: {type_end - type_start:.2f}s\n'
         )
 
     def handle_stale_areas(
@@ -645,7 +630,5 @@ class AreaImporter(BaseImporter):
         stale.delete()
         stale_time_end = perf_counter()
         self.stdout.write(
-            "Removed stale count {}. Execution time: {:.2f}s\n".format(
-                stale_count, stale_time_end - stale_time_start
-            )
+            f"Removed stale count {stale_count}. Execution time: {stale_time_end - stale_time_start:.2f}s\n"
         )
