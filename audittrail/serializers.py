@@ -27,13 +27,13 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
         for field_name in list(result["changes"].keys()):
             view_permission_name = "{}.view_{}_{}".format(
-                instance.content_type.model_class()._meta.app_label,
-                instance.content_type.model_class()._meta.model_name,
+                instance.content_type.app_label,
+                instance.content_type.model,
                 field_name,
             )
             change_permission_name = "{}.change_{}_{}".format(
-                instance.content_type.model_class()._meta.app_label,
-                instance.content_type.model_class()._meta.model_name,
+                instance.content_type.app_label,
+                instance.content_type.model,
                 field_name,
             )
             if not self.context["request"].user.has_perm(
