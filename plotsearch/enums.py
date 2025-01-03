@@ -127,7 +127,7 @@ class DeclineReason(str, Enum):
         OTHER = pgettext_lazy("Decline reason", "Other reason")
 
 
-class AreaSearchState(str, Enum):
+class AreaSearchState(Enum):
     """
     In Finnish: Aluehaun tila
     """
