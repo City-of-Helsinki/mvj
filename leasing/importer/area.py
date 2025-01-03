@@ -1,6 +1,6 @@
 import logging
 from time import perf_counter
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict
+from typing import Any, Dict, NamedTuple, Optional, Tuple, TypedDict
 
 import psycopg
 from django.conf import settings
@@ -26,7 +26,7 @@ class AreaImport(TypedDict, total=False):
     source_identifier: str
     area_type: AreaType
     identifier_field_name: str
-    metadata_columns: List[str]
+    metadata_columns: list[str]
     query: str
 
 
@@ -313,7 +313,7 @@ class AreaImporter(BaseImporter):
     def __init__(self, stdout=None, stderr=None):
         self.stdout = stdout
         self.stderr = stderr
-        self.area_types: List[AreaType] = []
+        self.area_types: list[AreaType] = []
 
     @classmethod
     def add_arguments(cls, parser):
@@ -378,7 +378,7 @@ class AreaImporter(BaseImporter):
         row: NamedTupleUnknown,
         area_import: AreaImport,
         column_name_map: Dict[str, str],
-        errors: List[str],
+        errors: list[str],
         error_count: int,
     ) -> Tuple[Optional[Metadata], int]:
         try:
@@ -445,7 +445,7 @@ class AreaImporter(BaseImporter):
 
         return areas.filter(metadata__detailed_plan_identifier=dp_id)
 
-    def get_geometry(self, row: NamedTupleUnknown, errors: List[str], error_count: int):
+    def get_geometry(self, row: NamedTupleUnknown, errors: list[str], error_count: int):
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
@@ -463,7 +463,7 @@ class AreaImporter(BaseImporter):
         self,
         geom: geos.MultiPolygon,
         row: NamedTuple,
-        errors: List[str],
+        errors: list[str],
         error_count: int,
     ):
         if geom and isinstance(geom, geos.Polygon):
@@ -490,7 +490,7 @@ class AreaImporter(BaseImporter):
         areas: QuerySet[Area],
         update_data: UpdateData,
         match_data: MatchData,
-        imported_identifiers: List[str],
+        imported_identifiers: list[str],
         error_count: int,
     ) -> Tuple[list, int]:
         try:
@@ -526,9 +526,9 @@ class AreaImporter(BaseImporter):
         cursor: psycopg.Cursor[NamedTuple],
         area_import: AreaImport,
         source: AreaSource,
-        errors: List[str],
+        errors: list[str],
     ):
-        imported_identifiers: List[str] = []
+        imported_identifiers: list[str] = []
         error_count = 0
         sum_row_time, avg_row_time, min_row_time, max_row_time = (0.0,) * 4
         self.stdout.write("Starting to update areas...\n")
@@ -588,6 +588,7 @@ class AreaImporter(BaseImporter):
     def process_area_import_type(self, area_import_type: AreaType):
         type_start = perf_counter()
 
+        errors: list[str] = []
         errors: List[str] = []
         self.stdout.write(
             'Starting to import the area type "{}"...\n'.format(area_import_type)
@@ -633,7 +634,7 @@ class AreaImporter(BaseImporter):
         )
 
     def handle_stale_areas(
-        self, area_import: AreaImport, source: str, imported_identifiers: List[str]
+        self, area_import: AreaImport, source: str, imported_identifiers: list[str]
     ):
         self.stdout.write("Starting to remove stales...\n")
         stale_time_start = perf_counter()
