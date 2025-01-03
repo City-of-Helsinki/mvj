@@ -495,7 +495,12 @@ class AreaSearch(SerializableMixin, models.Model):
     )
 
     lessor = EnumField(
-        enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
+        enum=AreaSearchLessor,
+        verbose_name=_("Lessor"),
+        default=None,
+        null=True,
+        blank=True,
+        max_length=30,
     )
 
     @property
