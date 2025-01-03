@@ -1,3 +1,4 @@
+import logging
 from time import perf_counter
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict
 
@@ -13,6 +14,8 @@ from leasing.enums import AreaType
 from leasing.models.area import Area, AreaSource
 
 from .base import BaseImporter
+
+logger = logging.getLogger(__name__)
 
 Metadata = Dict[str, str]
 
@@ -344,11 +347,14 @@ class AreaImporter(BaseImporter):
             return conn
         except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
             self.stderr.write(str(e))
-            self.stderr.write(
-                'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
-                    area_import_type, area_import["source_dsn_setting_name"]
-                )
+            source_dsn_setting_name = area_import["source_dsn_setting_name"]
+            error_msg = (
+                f'Could not connect to the database when importing area type "{area_import_type}". '
+                f'DSN setting name "{source_dsn_setting_name}"'
             )
+            self.stderr.write(error_msg)
+            # Use logger to trigger sentry capturing
+            logger.error(error_msg)
             return None
 
     def execute(self):
@@ -605,15 +611,19 @@ class AreaImporter(BaseImporter):
             cursor.execute(area_import["query"])
         except psycopg.ProgrammingError as e:
             self.stderr.write(str(e))
+            logger.error(str(e))
             return
 
         imported_identifiers = self.process_rows(cursor, area_import, source, errors)
         self.handle_stale_areas(area_import, source, imported_identifiers)
 
         if errors:
-            self.stdout.write(" {} errors:\n".format(len(errors)))
+            self.stdout.write(f" {len(errors)} errors:\n")
             for error in errors:
                 self.stdout.write(error)
+
+            # Use logger to trigger sentry capturing
+            logger.error(f"Errors occurred during area import: {len(errors)}")
 
         type_end = perf_counter()
         self.stdout.write(
