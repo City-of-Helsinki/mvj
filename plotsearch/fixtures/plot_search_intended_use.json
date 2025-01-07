@@ -5,8 +5,8 @@
     "fields": {
       "name": "Ravitsemus, myynti ja mainonta",
       "name_fi": "Ravitsemus, myynti ja mainonta",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Nutritionstjänster, försäljning och reklam",
+      "name_en": "Services, sales and marketing"
     }
   },
   {
@@ -15,8 +15,8 @@
     "fields": {
       "name": "Urheilu ja Liikunta",
       "name_fi": "Urheilu ja Liikunta",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Idrott och träning",
+      "name_en": "Sport and training"
     }
   },
   {
@@ -25,8 +25,8 @@
     "fields": {
       "name": "Taide ja kulttuuri",
       "name_fi": "Taide ja kulttuuri",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Konst och kultur",
+      "name_en": "Arts and culture"
     }
   },
   {
@@ -35,8 +35,8 @@
     "fields": {
       "name": "Veneily ja laiturit",
       "name_fi": "Veneily ja laiturit",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Båtliv och bryggor",
+      "name_en": "Boating and piers"
     }
   },
   {
@@ -45,8 +45,8 @@
     "fields": {
       "name": "Varastointi ja jakelu",
       "name_fi": "Varastointi ja jakelu",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Lagring och utdelning",
+      "name_en": "Storage and distribution"
     }
   },
   {
@@ -55,8 +55,8 @@
     "fields": {
       "name": "Työmaat",
       "name_fi": "Työmaat",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Arbetsområde",
+      "name_en": "Work zone"
     }
   },
   {
@@ -65,8 +65,8 @@
     "fields": {
       "name": "Muu alueen käyttö",
       "name_fi": "Muu alueen käyttö",
-      "name_sv": null,
-      "name_en": null
+      "name_sv": "Övriga användning",
+      "name_en": "Other uses"
     }
   }
 ]
