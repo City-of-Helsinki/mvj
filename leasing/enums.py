@@ -707,22 +707,3 @@ class PeriodicRentAdjustmentType(Enum):
             "Periodic Rent Adjustment Type",
             "Periodic Rent Adjustment 20y/10y",
         )
-
-
-class OldDwellingsInHousingCompaniesPriceIndexType(Enum):
-    """
-    Previous name of PeriodicRentAdjustmentType, used for db migration leasing 0084
-    """
-
-    TASOTARKISTUS_20_20 = "TASOTARKISTUS_20_20"
-    TASOTARKISTUS_20_10 = "TASOTARKISTUS_20_10"
-
-    class Labels:
-        TASOTARKISTUS_20_20 = pgettext_lazy(
-            "Periodic Rent Adjustment Type",
-            "Periodic Rent Adjustment 20y/20y",
-        )
-        TASOTARKISTUS_20_10 = pgettext_lazy(
-            "Periodic Rent Adjustment Type",
-            "Periodic Rent Adjustment 20y/10y",
-        )
