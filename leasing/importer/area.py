@@ -1,5 +1,6 @@
+import logging
 from time import perf_counter
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict
+from typing import Any, Dict, NamedTuple, Optional, Tuple, TypedDict
 
 import psycopg
 from django.conf import settings
@@ -14,6 +15,8 @@ from leasing.models.area import Area, AreaSource
 
 from .base import BaseImporter
 
+logger = logging.getLogger(__name__)
+
 Metadata = Dict[str, str]
 
 
@@ -23,7 +26,7 @@ class AreaImport(TypedDict, total=False):
     source_identifier: str
     area_type: AreaType
     identifier_field_name: str
-    metadata_columns: List[str]
+    metadata_columns: list[str]
     query: str
 
 
@@ -310,7 +313,7 @@ class AreaImporter(BaseImporter):
     def __init__(self, stdout=None, stderr=None):
         self.stdout = stdout
         self.stderr = stderr
-        self.area_types: List[AreaType] = []
+        self.area_types: list[AreaType] = []
 
     @classmethod
     def add_arguments(cls, parser):
@@ -327,9 +330,7 @@ class AreaImporter(BaseImporter):
             self.area_types = []
             for area_type in options["area_types"].split(","):
                 if area_type not in AREA_IMPORT_TYPES.keys():
-                    raise RuntimeError(
-                        'Area import type "{}" doesn\'t exist'.format(area_type)
-                    )
+                    raise RuntimeError(f'Area import type "{area_type}" doesn\'t exist')
 
                 self.area_types.append(area_type)
 
@@ -344,11 +345,14 @@ class AreaImporter(BaseImporter):
             return conn
         except (psycopg.ProgrammingError, psycopg.OperationalError) as e:
             self.stderr.write(str(e))
-            self.stderr.write(
-                'Could not connect to the database when importing area type "{}". DSN setting name "{}"'.format(
-                    area_import_type, area_import["source_dsn_setting_name"]
-                )
+            source_dsn_setting_name = area_import["source_dsn_setting_name"]
+            error_msg = (
+                f'Could not connect to the database when importing area type "{area_import_type}". '
+                f'DSN setting name "{source_dsn_setting_name}"'
             )
+            self.stderr.write(error_msg)
+            # Use logger to trigger sentry capturing
+            logger.error(error_msg)
             return None
 
     def execute(self):
@@ -362,9 +366,7 @@ class AreaImporter(BaseImporter):
 
         func_end = perf_counter()
         self.stdout.write(
-            "The area import is completed. Execution time: {0:.2f}s\n".format(
-                func_end - func_start
-            )
+            f"The area import is completed. Execution time: {func_end - func_start:.2f}s\n"
         )
 
     def get_metadata(
@@ -372,7 +374,7 @@ class AreaImporter(BaseImporter):
         row: NamedTupleUnknown,
         area_import: AreaImport,
         column_name_map: Dict[str, str],
-        errors: List[str],
+        errors: list[str],
         error_count: int,
     ) -> Tuple[Optional[Metadata], int]:
         try:
@@ -382,14 +384,12 @@ class AreaImporter(BaseImporter):
             }
             return metadata, error_count
         except AttributeError as e:
-            errors.append(
-                "id #{}, metadata field missing. Error: {}\n".format(row.id, str(e))
-            )
+            errors.append(f"id #{row.id}, metadata field missing. Error: {str(e)}\n")
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -433,23 +433,23 @@ class AreaImporter(BaseImporter):
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
             self.stderr.write(
-                "detailed_plan_identifier not found for area #{}".format(identifier)
+                f"detailed_plan_identifier not found for area #{identifier}"
             )
             return None
 
         return areas.filter(metadata__detailed_plan_identifier=dp_id)
 
-    def get_geometry(self, row: NamedTupleUnknown, errors: List[str], error_count: int):
+    def get_geometry(self, row: NamedTupleUnknown, errors: list[str], error_count: int):
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
         except geos.error.GEOSException as e:
-            errors.append("id #{} error: {}\n".format(row.id, str(e)))
+            errors.append(f"id #{row.id} error: {str(e)}\n")
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -457,7 +457,7 @@ class AreaImporter(BaseImporter):
         self,
         geom: geos.MultiPolygon,
         row: NamedTuple,
-        errors: List[str],
+        errors: list[str],
         error_count: int,
     ):
         if geom and isinstance(geom, geos.Polygon):
@@ -465,15 +465,13 @@ class AreaImporter(BaseImporter):
 
         if geom and not isinstance(geom, geos.MultiPolygon):
             errors.append(
-                'id #{} Error! Geometry is not a Multipolygon but "{}"\n'.format(
-                    row.id, geom
-                )
+                f'id #{row.id} Error! Geometry is not a Multipolygon but "{geom}"\n'
             )
 
             error_count += 1
             self.stdout.write("E")
             if error_count % 1000 == 0:
-                self.stdout.write(" {}".format(error_count))
+                self.stdout.write(f" {error_count}")
                 self.stdout.flush()
             return None, error_count
 
@@ -484,7 +482,7 @@ class AreaImporter(BaseImporter):
         areas: QuerySet[Area],
         update_data: UpdateData,
         match_data: MatchData,
-        imported_identifiers: List[str],
+        imported_identifiers: list[str],
         error_count: int,
     ) -> Tuple[list, int]:
         try:
@@ -511,7 +509,7 @@ class AreaImporter(BaseImporter):
         if error_count % 100 == 0:
             self.stdout.write(".")
         if error_count % 1000 == 0:
-            self.stdout.write(" {}".format(error_count))
+            self.stdout.write(f" {error_count}")
             self.stdout.flush()
         return imported_identifiers, error_count
 
@@ -520,9 +518,9 @@ class AreaImporter(BaseImporter):
         cursor: psycopg.Cursor[NamedTuple],
         area_import: AreaImport,
         source: AreaSource,
-        errors: List[str],
+        errors: list[str],
     ):
-        imported_identifiers: List[str] = []
+        imported_identifiers: list[str] = []
         error_count = 0
         sum_row_time, avg_row_time, min_row_time, max_row_time = (0.0,) * 4
         self.stdout.write("Starting to update areas...\n")
@@ -572,20 +570,16 @@ class AreaImporter(BaseImporter):
             avg_row_time = sum_row_time / error_count
 
         self.stdout.write(
-            "Updated area count {}. Execution time: {:.2f}s "
-            "(Row time avg: {:.2f}s, min: {:.2f}s, max: {:.2f}s)\n".format(
-                error_count, sum_row_time, avg_row_time, min_row_time, max_row_time
-            )
+            f"Updated area count {error_count}. Execution time: {sum_row_time:.2f}s "
+            f"(Row time avg: {avg_row_time:.2f}s, min: {min_row_time:.2f}s, max: {max_row_time:.2f}s)\n"
         )
         return imported_identifiers
 
     def process_area_import_type(self, area_import_type: AreaType):
         type_start = perf_counter()
 
-        errors: List[str] = []
-        self.stdout.write(
-            'Starting to import the area type "{}"...\n'.format(area_import_type)
-        )
+        errors: list[str] = []
+        self.stdout.write(f'Starting to import the area type "{area_import_type}"...\n')
 
         area_import = AREA_IMPORT_TYPES[area_import_type]
 
@@ -605,25 +599,27 @@ class AreaImporter(BaseImporter):
             cursor.execute(area_import["query"])
         except psycopg.ProgrammingError as e:
             self.stderr.write(str(e))
+            logger.error(str(e))
             return
 
         imported_identifiers = self.process_rows(cursor, area_import, source, errors)
         self.handle_stale_areas(area_import, source, imported_identifiers)
 
         if errors:
-            self.stdout.write(" {} errors:\n".format(len(errors)))
+            self.stdout.write(f" {len(errors)} errors:\n")
             for error in errors:
                 self.stdout.write(error)
 
+            # Use logger to trigger sentry capturing
+            logger.error(f"Errors occurred during area import: {len(errors)}")
+
         type_end = perf_counter()
         self.stdout.write(
-            'The area import of type "{}" is completed. Execution time: {:.2f}s\n'.format(
-                area_import_type, (type_end - type_start)
-            )
+            f'The area import of type "{area_import_type}" is completed. Execution time: {type_end - type_start:.2f}s\n'
         )
 
     def handle_stale_areas(
-        self, area_import: AreaImport, source: str, imported_identifiers: List[str]
+        self, area_import: AreaImport, source: str, imported_identifiers: list[str]
     ):
         self.stdout.write("Starting to remove stales...\n")
         stale_time_start = perf_counter()
@@ -634,7 +630,5 @@ class AreaImporter(BaseImporter):
         stale.delete()
         stale_time_end = perf_counter()
         self.stdout.write(
-            "Removed stale count {}. Execution time: {:.2f}s\n".format(
-                stale_count, stale_time_end - stale_time_start
-            )
+            f"Removed stale count {stale_count}. Execution time: {stale_time_end - stale_time_start:.2f}s\n"
         )
