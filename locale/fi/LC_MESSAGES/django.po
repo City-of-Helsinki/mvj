@@ -1163,11 +1163,11 @@ msgctxt "Plan Unit Status"
 msgid "Pending"
 msgstr "Vireillä"
 
-msgctxt "Old dwellings in housing companies price index type"
+msgctxt "Periodic Rent Adjustment Type"
 msgid "Periodic Rent Adjustment 20y/20y"
 msgstr "Tasotarkistus 20v/20v"
 
-msgctxt "Old dwellings in housing companies price index type"
+msgctxt "Periodic Rent Adjustment Type"
 msgid "Periodic Rent Adjustment 20y/10y"
 msgstr "Tasotarkistus 20v/10v"
 
@@ -2615,7 +2615,7 @@ msgstr "Korvaava saamislaji"
 msgid "Old dwellings in housing companies price index"
 msgstr "Vanhojen osakeasuntojen hintaindeksi"
 
-msgid "Old dwellings in housing companies price index type"
+msgid "Periodic Rent Adjustment Type"
 msgstr "Vanhojen osakeasuntojen hintaindeksin tyyppi"
 
 msgid "Start price index point figure"
