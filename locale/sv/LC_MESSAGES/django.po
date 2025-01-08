@@ -3724,6 +3724,9 @@ msgstr ""
 "Anmälningsmeddelandenas mottagare. Exempel: matti@example.com,maija@example."
 "com"
 
+msgid "Area search"
+msgstr "Områdesansökan"
+
 msgctxt "Area search lessor"
 msgid "Area use and control"
 msgstr "Områdesanvändning och -övervakning"
@@ -3915,7 +3918,7 @@ msgid "Time received"
 msgstr "Arkiveringstid"
 
 msgid "Area search state"
-msgstr "Status för arrenderingen"
+msgstr "Status"
 
 msgid "The target has been removed from the system!"
 msgstr "Objektet har avlägsnats från systemet!"

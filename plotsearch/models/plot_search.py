@@ -15,6 +15,7 @@ from helsinki_gdpr.models import SerializableMixin
 from rest_framework.serializers import ValidationError
 from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
+from field_permissions.registry import field_permissions
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
@@ -494,7 +495,12 @@ class AreaSearch(SerializableMixin, models.Model):
     )
 
     lessor = EnumField(
-        enum=AreaSearchLessor, default=None, null=True, blank=True, max_length=30
+        enum=AreaSearchLessor,
+        verbose_name=_("Lessor"),
+        default=None,
+        null=True,
+        blank=True,
+        max_length=30,
     )
 
     @property
@@ -589,6 +595,10 @@ class AreaSearch(SerializableMixin, models.Model):
         "lease",
         "form",
     ]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Area search")
+        verbose_name_plural = pgettext_lazy("Model name", "Area searches")
 
     def clean(self):
         if not self.description_area and not self.geometry:
@@ -718,3 +728,6 @@ auditlog.register(PlotSearch)
 auditlog.register(AreaSearch)
 auditlog.register(InformationCheck)
 auditlog.register(RelatedPlotApplication)
+
+field_permissions.register(PlotSearch)
+field_permissions.register(AreaSearch)
