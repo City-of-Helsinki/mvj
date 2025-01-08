@@ -3901,6 +3901,14 @@ msgid "Target type"
 msgstr "Kohde tyyppi"
 
 msgctxt "Model name"
+msgid "Area search"
+msgstr "Aluehaku"
+
+msgctxt "Model name"
+msgid "Area searches"
+msgstr "Aluehaut"
+
+msgctxt "Model name"
 msgid "Area search intended use"
 msgstr "Aluehaun käyttötarkoitus"
 

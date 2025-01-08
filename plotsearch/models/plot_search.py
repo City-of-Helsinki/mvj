@@ -596,6 +596,10 @@ class AreaSearch(SerializableMixin, models.Model):
         "form",
     ]
 
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Area search")
+        verbose_name_plural = pgettext_lazy("Model name", "Area searches")
+
     def clean(self):
         if not self.description_area and not self.geometry:
             raise ValidationError(
