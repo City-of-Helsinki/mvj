@@ -8,7 +8,7 @@ import leasing.enums
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0086_add_ordering_to_areas_and_addresses"),
+        ("leasing", "0087_permissions_view_20250102_1632"),
     ]
 
     operations = [
