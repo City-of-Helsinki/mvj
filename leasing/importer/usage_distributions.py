@@ -104,8 +104,11 @@ class UsageDistributionImporter(BaseImporter):
                 redundant_usage_distributions.delete()
 
     def _strip_leading_zeros_from_identifier(self, identifier: str) -> str:
-        """Strips leading zeros from identifiers joined by hyphens `-`
-        e.g. '0001-0002' -> '1-2'"""
+        """
+        Strips leading zeros from identifiers joined by hyphens `-`
+        e.g. '0001-0002' -> '1-2'
+             '0123-0000' -> '123-0'
+        """
         plan_unit_id = "-".join(
             str(int(part)) for part in identifier.split("-")  # Strip leading zeros
         )
