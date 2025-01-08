@@ -57,7 +57,8 @@ class UsageDistributionImporter(BaseImporter):
                 ELSE mv_koodisto0.c_selite
             END AS mv_koodisto0_c_selite,
             A.c_paasivuk,
-            A.c_rakoikeus
+            A.c_rakoikeus,
+            mv_kaavayksikko.i_rakoikeus
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
         LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
         LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
@@ -89,8 +90,9 @@ class UsageDistributionImporter(BaseImporter):
                         UsageDistribution.objects.get_or_create(
                             plan_unit=plan_unit,
                             distribution=usage_distribution_row["C_KAYTJAKAUMA"] or "-",
-                            build_permission=usage_distribution_row["C_RAKOIKEUS"]
-                            or "-",
+                            build_permission=self._get_build_permission_value(
+                                usage_distribution_row
+                            ),
                         )
                     )
 
@@ -113,3 +115,27 @@ class UsageDistributionImporter(BaseImporter):
             str(int(part)) for part in identifier.split("-")  # Strip leading zeros
         )
         return plan_unit_id
+
+    def _get_build_permission_value(self, usage_distribution_row: dict) -> str:
+        """
+        Primarily, use the usage distribution's build permission.
+
+        If that value is None, use plan unit's build permission instead.
+        This can happen if the plan unit doesn't have usage distributions,
+        but we still want to know how much build permission is available in
+        total.
+
+        If even that value is None, return a string signifying a missing value.
+        """
+        usage_distribution_build_permission = usage_distribution_row["C_RAKOIKEUS"]
+        plan_unit_build_permission = usage_distribution_row["I_RAKOIKEUS"]
+
+        if usage_distribution_build_permission is not None:
+            return usage_distribution_build_permission
+        elif (
+            usage_distribution_build_permission is None
+            and plan_unit_build_permission is not None
+        ):
+            return plan_unit_build_permission
+        else:
+            return "-"
