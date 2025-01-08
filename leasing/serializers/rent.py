@@ -453,6 +453,7 @@ class RentSerializer(
             "manual_ratio_previous",
             "override_receivable_type",
             "old_dwellings_in_housing_companies_price_index",
+            "start_price_index_point_figure",
             "old_dwellings_in_housing_companies_price_index_type",
         )
 
@@ -570,6 +571,19 @@ class RentCreateUpdateSerializer(
             "old_dwellings_in_housing_companies_price_index",
             "old_dwellings_in_housing_companies_price_index_type",
         )
+
+    def update(self, instance, validated_data):
+
+        if (
+            instance.old_dwellings_in_housing_companies_price_index is None
+            and validated_data.get("old_dwellings_in_housing_companies_price_index")
+            is not None
+        ):
+            instance.old_dwellings_in_housing_companies_price_index = (
+                validated_data.get("old_dwellings_in_housing_companies_price_index")
+            )
+            instance.set_start_price_index_point_figure()
+        return super().update(instance, validated_data)
 
     def validate(self, rent_data: dict):
         self.validate_override_receivable_type_value(rent_data)
