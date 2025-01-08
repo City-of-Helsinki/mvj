@@ -7,9 +7,12 @@ from leasing.models.land_area import UsageDistribution
 
 
 @pytest.mark.django_db
-def test_utilization_distribution_importer(
+def test_usage_distribution_count(
     lease_test_data, lease_area_factory, lease_factory, plan_unit_factory
 ):
+    """
+    Correct number of usage distributions are saved during import.
+    """
     master_plan_unit = plan_unit_factory(
         area=100,
         lease_area=lease_test_data["lease_area"],
