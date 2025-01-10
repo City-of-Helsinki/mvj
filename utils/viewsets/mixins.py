@@ -7,11 +7,14 @@ from rest_framework.response import Response
 
 class FileDownloadMixin:
     @action(methods=["get"], detail=True)
-    def download(self, request, pk=None):
+    def download(self, request, pk=None, file_field: str | None = None):
         obj = self.get_object()
-
-        filename = "/".join([settings.MEDIA_ROOT, obj.file.name])
-        response = FileResponse(open(filename, "rb"), as_attachment=True)
+        if file_field is not None:
+            filename = getattr(obj, file_field).name
+        else:
+            filename = obj.file.name
+        filepath = "/".join([settings.MEDIA_ROOT, filename])
+        response = FileResponse(open(filepath, "rb"), as_attachment=True)
 
         return response
 
@@ -60,5 +63,5 @@ class FileMixin:
         return Response(read_serializer.data)
 
     @action(methods=["get"], detail=True)
-    def download(self, request, pk=None):
-        return FileDownloadMixin.download(self, request, pk)
+    def download(self, request, pk=None, file_field: str | None = None):
+        return FileDownloadMixin.download(self, request, pk, file_field=file_field)

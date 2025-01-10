@@ -170,6 +170,10 @@ class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        return super().download(request, pk, file_field="attachment")
+
 
 class TargetStatusViewset(
     mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet

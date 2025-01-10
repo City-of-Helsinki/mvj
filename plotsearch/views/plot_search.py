@@ -399,6 +399,10 @@ class AreaSearchAttachmentViewset(
             return qs
         return qs.filter(user=self.request.user)
 
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        return super().download(self, request, pk, file_field="attachment")
+
 
 class InformationCheckViewSet(
     mixins.ListModelMixin,
