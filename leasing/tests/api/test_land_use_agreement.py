@@ -518,7 +518,8 @@ def test_download_attachment(
     assert response.get("Content-Disposition").startswith(
         'attachment; filename="dummy_file'
     )
-    assert response.content == b"dummy data"
+    # Get the content from the generator
+    assert b"".join(response.streaming_content) == b"dummy data"
 
 
 def test_create_invoice(contact_factory, admin_client, land_use_agreement_test_data):
