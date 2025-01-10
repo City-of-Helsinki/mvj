@@ -14,8 +14,9 @@ from leasing.serializers.land_area import (
     PlotIdentifierSerializer,
 )
 from plotsearch.models import PlotSearch, PlotSearchTarget
+from utils.viewsets.mixins import FileMixin
 
-from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 
 
 class LeaseAreaAttachmentViewSet(
