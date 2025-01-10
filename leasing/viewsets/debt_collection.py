@@ -19,11 +19,8 @@ from leasing.serializers.debt_collection import (
     CollectionNoteCreateUpdateSerializer,
     CollectionNoteSerializer,
 )
-from leasing.viewsets.utils import (
-    AtomicTransactionModelViewSet,
-    FileMixin,
-    MultiPartJsonParser,
-)
+from leasing.viewsets.utils import AtomicTransactionModelViewSet, MultiPartJsonParser
+from utils.viewsets.mixins import FileMixin
 
 
 class CollectionCourtDecisionViewSet(

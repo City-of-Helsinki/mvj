@@ -1,6 +1,4 @@
-from django.core.files import File
 from django.db.models import Prefetch
-from django.http import HttpResponse
 from django.utils.translation import get_language_from_request
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
@@ -33,6 +31,7 @@ from forms.utils import AnswerInBBoxFilter, handle_email_sending
 from leasing.permissions import MvjDjangoModelPermissions
 from plotsearch.models import TargetStatus
 from plotsearch.models.plot_search import MeetingMemo
+from utils.viewsets.mixins import FileDownloadMixin
 
 
 class FormViewSet(
@@ -140,7 +139,7 @@ class AnswerPublicViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return response
 
 
-class AttachmentViewSet(viewsets.ModelViewSet):
+class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
     permission_classes = (AttachmentPermissions,)
@@ -171,19 +170,6 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(methods=["get"], detail=True)
-    def download(self, request, pk=None):
-        obj = self.get_object()
-
-        with obj.attachment.open() as fp:
-            # TODO: detect file MIME type
-            response = HttpResponse(File(fp), content_type="application/octet-stream")
-            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-                obj.attachment.name
-            )
-
-            return response
-
 
 class TargetStatusViewset(
     mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
@@ -201,24 +187,14 @@ class TargetStatusViewset(
 
 
 class MeetingMemoViewset(
-    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+    FileDownloadMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = MeetingMemo.objects.all()
     serializer_class = MeetingMemoSerializer
     permission_classes = (MvjDjangoModelPermissions,)
-
-    @action(methods=["get"], detail=True)
-    def download(self, request, pk=None):
-        obj = self.get_object()
-
-        with obj.meeting_memo.open() as fp:
-            # TODO: detect file MIME type
-            response = HttpResponse(File(fp), content_type="application/octet-stream")
-            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-                obj.meeting_memo.name
-            )
-
-            return response
 
 
 class AnswerOpeningRecordViewset(

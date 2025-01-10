@@ -47,8 +47,9 @@ from leasing.serializers.land_use_agreement import (
     SentToSapLandUseAgreementInvoiceUpdateSerializer,
 )
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
+from utils.viewsets.mixins import FileMixin
 
-from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 
 
 def get_object_from_query_params(object_type, query_params):

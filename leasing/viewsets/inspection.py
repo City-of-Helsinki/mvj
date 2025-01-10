@@ -4,8 +4,9 @@ from leasing.serializers.inspection import (
     InspectionAttachmentCreateUpdateSerializer,
     InspectionAttachmentSerializer,
 )
+from utils.viewsets.mixins import FileMixin
 
-from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 
 
 class InspectionAttachmentViewSet(

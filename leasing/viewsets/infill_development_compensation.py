@@ -13,8 +13,9 @@ from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationCreateUpdateSerializer,
     InfillDevelopmentCompensationSerializer,
 )
+from utils.viewsets.mixins import FileMixin
 
-from .utils import AtomicTransactionModelViewSet, FileMixin, MultiPartJsonParser
+from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 
 
 class InfillDevelopmentCompensationViewSet(

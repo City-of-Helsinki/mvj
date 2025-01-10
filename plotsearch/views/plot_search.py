@@ -6,7 +6,6 @@ from zipfile import ZipInfo
 
 import xlsxwriter
 from django import http
-from django.core.files import File
 from django.http import HttpResponse, QueryDict
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -85,6 +84,7 @@ from plotsearch.serializers.plot_search import (
     RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
+from utils.viewsets.mixins import FileDownloadMixin
 
 
 class PlotSearchSubtypeViewSet(
@@ -376,7 +376,10 @@ class AreaSearchPublicViewSet(
 
 
 class AreaSearchAttachmentViewset(
-    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+    FileDownloadMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = AreaSearchAttachment.objects.all()
     serializer_class = AreaSearchAttachmentSerializer
@@ -395,18 +398,6 @@ class AreaSearchAttachmentViewset(
         if user.has_perm("plotsearch.view_areasearchattachment"):
             return qs
         return qs.filter(user=self.request.user)
-
-    @action(methods=["get"], detail=True)
-    def download(self, request, pk=None):
-        obj = self.get_object()
-        with obj.attachment.open() as fp:
-            # TODO: detect file MIME type
-            response = HttpResponse(File(fp), content_type="application/octet-stream")
-            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-                obj.name
-            )
-
-            return response
 
 
 class InformationCheckViewSet(
