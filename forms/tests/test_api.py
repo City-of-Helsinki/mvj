@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import FileResponse
 from django.urls import reverse
 from django.utils import timezone
 from faker import Faker
@@ -405,11 +406,12 @@ def test_attachment_post(
     url = reverse("v1:answer-attachments", kwargs={"pk": id})
     response = admin_client.get(url)
     url = reverse("v1:attachment-download", kwargs={"pk": attachment_id})
-    file_request = admin_client.get(url)
+    file_response: FileResponse = admin_client.get(url)
     assert response.status_code == 200
     assert len(response.json()) != 0
-    assert file_request.status_code == 200
-    assert file_request.content == b"Lorem lipsum"
+    assert file_response.status_code == 200
+    # Get the content from the generator
+    assert b"".join(file_response.streaming_content) == b"Lorem lipsum"
 
 
 @pytest.mark.django_db

@@ -3,6 +3,7 @@ from io import BytesIO
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import FileResponse
 from django.urls import reverse
 
 from leasing.models import (
@@ -83,7 +84,7 @@ def test_download_attachment(
     url = attachment_serializer.get_file_url(attachment)
 
     # anonymous shouldn't have the permission to download the file
-    response = client.get(url)
+    response: FileResponse = client.get(url)
     assert response.status_code == 401, "%s %s" % (response.status_code, response.data)
     assert response.data["detail"].code == "not_authenticated"
 
@@ -100,4 +101,5 @@ def test_download_attachment(
     assert response.get("Content-Disposition").startswith(
         'attachment; filename="dummy_file'
     )
-    assert response.content == b"dummy data"
+    # Get the content from the generator
+    assert b"".join(response.streaming_content) == b"dummy data"
