@@ -137,8 +137,11 @@ if env("SENTRY_DSN"):
     )
 
 MEDIA_ROOT = project_root("media")
+
+
 STATIC_ROOT = project_root("static")
 MEDIA_URL = "/media/"
+ATTACHMENTS_URL = "/attachments"
 STATIC_URL = "/static/"
 
 ROOT_URLCONF = "mvj.urls"

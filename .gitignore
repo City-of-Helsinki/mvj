@@ -20,6 +20,7 @@
 /.idea/
 /.tox/
 /media/
+/attachments/
 /static/
 /venv/
 /laske_export_files/
