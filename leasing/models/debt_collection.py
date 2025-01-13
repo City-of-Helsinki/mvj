@@ -9,6 +9,7 @@ from docxtpl import DocxTemplate
 from field_permissions.registry import field_permissions
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
+from utils.models.fields import PrivateFileField
 
 
 def get_collection_letter_file_upload_to(instance, filename):
@@ -28,7 +29,7 @@ class CollectionLetter(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tiedosto
-    file = models.FileField(
+    file = PrivateFileField(
         upload_to=get_collection_letter_file_upload_to,
         verbose_name=_("File"),
         blank=False,
@@ -59,7 +60,7 @@ class CollectionLetterTemplate(TimeStampedSafeDeleteModel):
     """
 
     name = models.CharField(verbose_name=_("Name"), max_length=255)
-    file = models.FileField(
+    file = PrivateFileField(
         upload_to="collection_letter_templates/",
         verbose_name=_("File"),
         blank=False,
@@ -126,7 +127,7 @@ class CollectionCourtDecision(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tiedosto
-    file = models.FileField(
+    file = PrivateFileField(
         upload_to=get_collection_court_decision_file_upload_to,
         verbose_name=_("File"),
         blank=False,

@@ -84,7 +84,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         destination_path = (
-            Path(settings.MEDIA_ROOT) / CollectionLetterTemplate.file.field.upload_to
+            Path(settings.PRIVATE_FILES_LOCATION)
+            / CollectionLetterTemplate.file.field.upload_to
         )
         if not self.check_is_directory_writable(destination_path):
             raise CommandError(
@@ -123,7 +124,9 @@ class Command(BaseCommand):
                     name=name, file=str(destination_filename)
                 )
 
-            destination_path = Path(settings.MEDIA_ROOT) / destination_filename
+            destination_path = (
+                Path(settings.PRIVATE_FILES_LOCATION) / destination_filename
+            )
 
             self.stdout.write(
                 ' Copying "{}" to "{}"'.format(source_filename, destination_path)
