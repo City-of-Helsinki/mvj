@@ -41,6 +41,8 @@ def get_git_revision_hash():
 
 
 env = environ.Env(
+    ATTACHMENTS_LOCATION=(str, ""),
+    ATTACHMENTS_BASE_URL=(str, ""),
     DEBUG=(bool, True),
     SECRET_KEY=(str, ""),
     ALLOWED_HOSTS=(list, []),
@@ -117,6 +119,9 @@ env_file = project_root(".env")
 if os.path.exists(env_file):
     env.read_env(env_file)
 
+ATTACHMENTS_LOCATION = env.str("ATTACHMENTS_LOCATION")
+ATTACHMENTS_BASE_URL = env.str("ATTACHMENTS_BASE_URL")
+
 DEBUG = env.bool("DEBUG")
 SECRET_KEY = env.str("SECRET_KEY", default=("xxx" if DEBUG else ""))
 
@@ -138,10 +143,8 @@ if env("SENTRY_DSN"):
 
 MEDIA_ROOT = project_root("media")
 
-
 STATIC_ROOT = project_root("static")
 MEDIA_URL = "/media/"
-ATTACHMENTS_URL = "/attachments"
 STATIC_URL = "/static/"
 
 ROOT_URLCONF = "mvj.urls"

@@ -5,6 +5,7 @@ from enumfields import EnumField
 from helsinki_gdpr.models import SerializableMixin
 
 from users.models import User
+from utils.models.fields import CustomFileField
 
 from ..enums import ApplicantType, FormState, SectionType
 from ..utils import clone_object, generate_unique_identifier
@@ -209,7 +210,7 @@ def get_attachment_file_upload_to(instance, filename):
 
 class Attachment(SerializableMixin, models.Model):
     name = models.CharField(max_length=255)
-    attachment = models.FileField(upload_to=get_attachment_file_upload_to)
+    attachment = CustomFileField(upload_to=get_attachment_file_upload_to)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
     path = models.TextField(null=True, blank=True)
 

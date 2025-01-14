@@ -9,3 +9,6 @@ Q_CLUSTER = {
         }
     }
 }
+
+ATTACHMENTS_LOCATION = "attachments"
+ATTACHMENTS_BASE_URL = "/attachments/"

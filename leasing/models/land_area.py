@@ -24,6 +24,7 @@ from leasing.enums import (
 from leasing.models.lease import Lease
 from leasing.models.utils import normalize_identifier
 from users.models import User
+from utils.models.fields import CustomFileField
 
 from .mixins import (
     ArchivableModel,
@@ -335,7 +336,7 @@ class LeaseAreaAttachment(TimeStampedSafeDeleteModel):
     type = EnumField(LeaseAreaAttachmentType, verbose_name=_("Type"), max_length=30)
 
     # In Finnish: Tiedosto
-    file = models.FileField(
+    file = CustomFileField(
         upload_to=get_attachment_file_upload_to, blank=False, null=False
     )
 
