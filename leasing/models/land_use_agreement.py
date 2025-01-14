@@ -23,7 +23,7 @@ from leasing.models.land_area import AbstractAddress, Plot
 from leasing.models.lease import District, Municipality
 from leasing.utils import calculate_increase_with_360_day_calendar
 from users.models import User
-from utils.models.fields import CustomFileField
+from utils.models.fields import PrivateFileField
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
@@ -335,7 +335,7 @@ class LandUseAgreementAttachment(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tiedosto
-    file = CustomFileField(
+    file = PrivateFileField(
         upload_to=get_attachment_file_upload_to, blank=False, null=False
     )
 

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="areasearchattachment",
             name="attachment",
-            field=utils.models.fields.CustomFileField(
+            field=utils.models.fields.PrivateFileField(
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="meetingmemo",
             name="meeting_memo",
-            field=utils.models.fields.CustomFileField(
+            field=utils.models.fields.PrivateFileField(
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(

@@ -16,4 +16,4 @@ class CustomStorageFileFieldMixin:
         self.storage = storage
 
 
-class CustomFileField(CustomStorageFileFieldMixin, models.FileField): ...  # noqa: E701
+class PrivateFileField(CustomStorageFileFieldMixin, models.FileField): ...  # noqa: E701

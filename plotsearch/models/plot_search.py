@@ -34,7 +34,7 @@ from plotsearch.enums import (
 )
 from plotsearch.utils import map_intended_use_to_lessor
 from users.models import User
-from utils.models.fields import CustomFileField
+from utils.models.fields import PrivateFileField
 
 
 class PlotSearchType(NameModel):
@@ -405,7 +405,7 @@ def get_meeting_memo_file_upload_to(instance, filename):
 class MeetingMemo(models.Model):
     # In Finnish: Kokousmuistio
     name = models.CharField(max_length=255)
-    meeting_memo = CustomFileField(
+    meeting_memo = PrivateFileField(
         upload_to=get_meeting_memo_file_upload_to, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))
@@ -626,7 +626,7 @@ def get_area_search_attachment_upload_to(instance, filename):
 
 
 class AreaSearchAttachment(SerializableMixin, NameModel):
-    attachment = CustomFileField(
+    attachment = PrivateFileField(
         upload_to=get_area_search_attachment_upload_to,
         null=True,
         blank=True,

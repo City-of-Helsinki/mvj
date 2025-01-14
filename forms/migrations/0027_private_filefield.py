@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="attachment",
             name="attachment",
-            field=utils.models.fields.CustomFileField(
+            field=utils.models.fields.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),

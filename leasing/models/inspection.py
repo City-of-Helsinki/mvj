@@ -6,7 +6,7 @@ from django.utils.translation import pgettext_lazy
 from field_permissions.registry import field_permissions
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
-from utils.models.fields import CustomFileField
+from utils.models.fields import PrivateFileField
 
 
 class Inspection(models.Model):
@@ -60,7 +60,7 @@ class InspectionAttachment(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tiedosto
-    file = CustomFileField(
+    file = PrivateFileField(
         upload_to=get_inspection_attachment_file_upload_to, blank=False, null=False
     )
 

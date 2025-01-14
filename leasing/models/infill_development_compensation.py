@@ -9,7 +9,7 @@ from leasing.enums import InfillDevelopmentCompensationState
 from leasing.models.decision import DecisionMaker
 from leasing.models.lease import IntendedUse
 from users.models import User
-from utils.models.fields import CustomFileField
+from utils.models.fields import PrivateFileField
 
 from .mixins import TimeStampedSafeDeleteModel
 
@@ -298,7 +298,7 @@ class InfillDevelopmentCompensationAttachment(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tiedosto
-    file = CustomFileField(
+    file = PrivateFileField(
         upload_to=get_attachment_file_upload_to, blank=False, null=False
     )
 
