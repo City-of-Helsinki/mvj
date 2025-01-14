@@ -41,8 +41,8 @@ def get_git_revision_hash():
 
 
 env = environ.Env(
-    ATTACHMENTS_LOCATION=(str, ""),
-    ATTACHMENTS_BASE_URL=(str, ""),
+    ATTACHMENTS_LOCATION=(str, "attachments"),
+    ATTACHMENTS_BASE_URL=(str, "/attachments/"),
     DEBUG=(bool, True),
     SECRET_KEY=(str, ""),
     ALLOWED_HOSTS=(list, []),
