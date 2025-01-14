@@ -12,6 +12,6 @@ class PrivateFileField(models.FileField):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.storage = PrivateFileSystemStorage(
-            location=settings.ATTACHMENTS_LOCATION,
-            base_url=settings.ATTACHMENTS_BASE_URL,
+            location=settings.PRIVATE_FILES_LOCATION,
+            base_url=settings.PRIVATE_FILES_BASE_URL,
         )

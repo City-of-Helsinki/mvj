@@ -84,7 +84,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         destination_path = (
-            Path(settings.ATTACHMENTS_LOCATION)
+            Path(settings.PRIVATE_FILES_LOCATION)
             / CollectionLetterTemplate.file.field.upload_to
         )
         if not self.check_is_directory_writable(destination_path):
@@ -125,7 +125,7 @@ class Command(BaseCommand):
                 )
 
             destination_path = (
-                Path(settings.ATTACHMENTS_LOCATION) / destination_filename
+                Path(settings.PRIVATE_FILES_LOCATION) / destination_filename
             )
 
             self.stdout.write(
