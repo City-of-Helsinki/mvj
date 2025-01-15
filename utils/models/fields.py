@@ -13,5 +13,5 @@ class PrivateFileField(models.FileField):
         super().__init__(**kwargs)
         self.storage = PrivateFileSystemStorage(
             location=settings.PRIVATE_FILES_LOCATION,
-            base_url=settings.PRIVATE_FILES_BASE_URL,
+            base_url=None,
         )

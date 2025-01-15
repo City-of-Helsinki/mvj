@@ -142,7 +142,6 @@ PRIVATE_FILES_LOCATION = project_root("private_files")
 
 MEDIA_URL = "/media/"
 STATIC_URL = "/static/"
-PRIVATE_FILES_BASE_URL = "/private_files/"
 
 ROOT_URLCONF = "mvj.urls"
 WSGI_APPLICATION = "mvj.wsgi.application"
