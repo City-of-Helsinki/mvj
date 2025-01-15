@@ -401,7 +401,7 @@ class AreaSearchAttachmentViewset(
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
-        return super().download(self, request, pk, file_field="attachment")
+        return super().download(request, pk, file_field="attachment")
 
 
 class InformationCheckViewSet(
