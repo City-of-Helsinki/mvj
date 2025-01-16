@@ -14,6 +14,7 @@ from django_filters.views import FilterView
 from django_xhtml2pdf.views import PdfMixin
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -58,6 +59,7 @@ from plotsearch.models.plot_search import (
     DirectReservationLink,
 )
 from plotsearch.permissions import (
+    AreaSearchAttachmentPublicPermissions,
     AreaSearchPublicPermissions,
     PlotSearchOpeningRecordPermissions,
 )
@@ -84,7 +86,7 @@ from plotsearch.serializers.plot_search import (
     RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
-from utils.viewsets.mixins import FileDownloadMixin
+from utils.viewsets.mixins import FileExtensionFileMixin, FileMixin
 
 
 class PlotSearchSubtypeViewSet(
@@ -376,7 +378,7 @@ class AreaSearchPublicViewSet(
 
 
 class AreaSearchAttachmentViewset(
-    FileDownloadMixin,
+    FileMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
@@ -402,6 +404,17 @@ class AreaSearchAttachmentViewset(
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
         return super().download(request, pk, file_field="attachment")
+
+
+class AreaSearchAttachmentPublicViewset(
+    FileExtensionFileMixin, AreaSearchAttachmentViewset
+):
+    """Includes FileExtensionFileMixin to validate file extensions."""
+
+    permission_classes = (AreaSearchAttachmentPublicPermissions,)
+
+    def destroy(self, request, *args, **kwargs):
+        raise MethodNotAllowed("DELETE")
 
 
 class InformationCheckViewSet(

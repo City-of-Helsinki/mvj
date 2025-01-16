@@ -15,6 +15,7 @@ from forms.viewsets.form import (
     AnswerOpeningRecordViewset,
     AnswerPublicViewSet,
     AnswerViewSet,
+    AttachmentPublicViewSet,
     AttachmentViewSet,
     FormViewSet,
     MeetingMemoViewset,
@@ -117,6 +118,7 @@ from leasing.viewsets.service_unit import ServiceUnitViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
+    AreaSearchAttachmentPublicViewset,
     AreaSearchAttachmentViewset,
     AreaSearchGeneratePDF,
     AreaSearchPublicViewSet,
@@ -252,11 +254,11 @@ router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetVie
 pub_router = routers.DefaultRouter()
 
 pub_router.register(r"answer", AnswerPublicViewSet, basename="pub_answer")
-pub_router.register(r"attachment", AttachmentViewSet, basename="pub_attachment")
+pub_router.register(r"attachment", AttachmentPublicViewSet, basename="pub_attachment")
 pub_router.register(r"area_search", AreaSearchPublicViewSet, basename="pub_area_search")
 pub_router.register(
     r"area_search_attachment",
-    AreaSearchAttachmentViewset,
+    AreaSearchAttachmentPublicViewset,
     basename="pub_area_search_attachment",
 )
 pub_router.register(r"faq", FAQViewSet, basename="pub_faq")

@@ -31,7 +31,7 @@ from forms.utils import AnswerInBBoxFilter, handle_email_sending
 from leasing.permissions import MvjDjangoModelPermissions
 from plotsearch.models import TargetStatus
 from plotsearch.models.plot_search import MeetingMemo
-from utils.viewsets.mixins import FileDownloadMixin
+from utils.viewsets.mixins import FileDownloadMixin, FileExtensionFileMixin
 
 
 class FormViewSet(
@@ -173,6 +173,12 @@ class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
         return super().download(request, pk, file_field="attachment")
+
+
+class AttachmentPublicViewSet(FileExtensionFileMixin, AttachmentViewSet):
+    """Includes FileExtensionFileMixin to validate file extensions."""
+
+    pass
 
 
 class TargetStatusViewset(
