@@ -837,7 +837,12 @@ class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
         )
         attachment.attachment = validated_data["attachment"]
         attachment.save()
-        return attachment
+
+        response = {}
+        for key in attachment.__dict__.keys():
+            if key != "attachment":
+                response[key] = getattr(attachment, key)
+        return response
 
 
 class AreaSearchStatusNoteSerializer(serializers.ModelSerializer):
