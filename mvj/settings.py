@@ -110,6 +110,7 @@ env = environ.Env(
     GDPR_API_DELETE_SCOPE=(str, ""),
     GDPR_API_USER_PROVIDER=(str, "gdpr.utils.get_user"),
     GDPR_API_DELETER=(str, "gdpr.utils.delete_user_data"),
+    FILE_SCAN_SERVICE_URL=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -193,6 +194,7 @@ INSTALLED_APPS = [
     "sanitized_dump",
     "utils",
     "django_q",
+    "filescan",
 ]
 
 MIDDLEWARE = [
@@ -394,6 +396,8 @@ ASIAKASTIETO_CONSUMER_TARGET_KEY = env.str("ASIAKASTIETO_CONSUMER_TARGET_KEY")
 ASIAKASTIETO_COMPANY_TARGET_KEY = env.str("ASIAKASTIETO_COMPANY_TARGET_KEY")
 
 PUBLIC_UI_URL = env.str("PUBLIC_UI_URL")
+
+FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_API_URL")
 
 local_settings = project_root("local_settings.py")
 if os.path.exists(local_settings):
