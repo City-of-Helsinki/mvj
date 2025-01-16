@@ -5,12 +5,14 @@ import factory
 import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import GEOSGeometry
 from django.urls import reverse
 from django.utils import timezone
 from pytest_factoryboy import register
 
 from batchrun.models import Command, Job, JobRun, JobRunLog
+from filescan.models import FileScanStatus
 from forms.models import Answer, Choice, Entry, Field, Form, Section
 from forms.models.form import Attachment, EntrySection
 from forms.tests.conftest import fake
@@ -1485,3 +1487,22 @@ def answer_email_message():
         "to": ["test@example.com"],
     }
     return email
+
+
+@register
+class FileScanStatusFactory(factory.django.DjangoModelFactory):
+    # Use plotsearch_areasearchattachment as a default content object,
+    # because that model might be most relevant to this use case.
+    content_object = factory.SubFactory(AreaSearchAttachmentFactory)
+
+    # The remaining required properties can be derived from the referenced object
+    @factory.lazy_attribute
+    def content_type(self):
+        return ContentType.objects.get_for_model(self.content_object)
+
+    @factory.lazy_attribute
+    def object_id(self):
+        return self.content_object.id
+
+    class Meta:
+        model = FileScanStatus
