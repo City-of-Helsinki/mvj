@@ -12,6 +12,13 @@ class AreaSearchPublicPermissions(PerMethodPermission):
         return super().has_object_permission(request, view, obj)
 
 
+class AreaSearchAttachmentPublicPermissions(PerMethodPermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.user == request.user:
+            return True
+        return super().has_object_permission(request, view, obj)
+
+
 class PlotSearchOpeningRecordPermissions(PerMethodPermission):
     def has_permission(self, request, view):
         if PlotSearch.objects.filter(
