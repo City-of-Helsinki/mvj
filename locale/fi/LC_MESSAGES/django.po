@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-19 12:26+0200\n"
+"POT-Creation-Date: 2025-01-16 13:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3718,9 +3718,6 @@ msgstr ""
 "Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
 "com"
 
-msgid "Area search"
-msgstr "Aluehaku"
-
 msgctxt "Area search lessor"
 msgid "Area use and control"
 msgstr "Alueiden käyttö ja valvonta"
@@ -3901,14 +3898,6 @@ msgid "Target type"
 msgstr "Kohde tyyppi"
 
 msgctxt "Model name"
-msgid "Area search"
-msgstr "Aluehaku"
-
-msgctxt "Model name"
-msgid "Area searches"
-msgstr "Aluehaut"
-
-msgctxt "Model name"
 msgid "Area search intended use"
 msgstr "Aluehaun käyttötarkoitus"
 
@@ -3921,6 +3910,14 @@ msgstr "Arkistointiaika"
 
 msgid "Area search state"
 msgstr "Tila"
+
+msgctxt "Model name"
+msgid "Area search"
+msgstr "Aluehaku"
+
+msgctxt "Model name"
+msgid "Area searches"
+msgstr "Aluehaut"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"
@@ -4019,3 +4016,11 @@ msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
+
+#, python-brace-format
+msgid "File '{file.name}' does not have an extension."
+msgstr "Puuttuva tiedostopääte '{file.name}'"
+
+#, python-brace-format
+msgid "File extension '.{ext}' is not allowed."
+msgstr "Tiedostomuoto '.{ext}' ei ole sallittu."

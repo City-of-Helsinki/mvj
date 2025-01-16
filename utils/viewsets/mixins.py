@@ -1,7 +1,12 @@
+from typing import NoReturn
+
 from django.conf import settings
 from django.http import FileResponse
+from django.utils.datastructures import MultiValueDict
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 
@@ -61,6 +66,81 @@ class FileMixin:
         )
 
         return Response(read_serializer.data)
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None, file_field: str | None = None):
+        return FileDownloadMixin.download(self, request, pk, file_field=file_field)
+
+
+class FileExtensionFileMixin:
+    @staticmethod
+    def get_allowed_extensions() -> list[str]:
+        # If you make changes to the list of allowed extensions,
+        # make sure you update those also in the front-end.
+        document_types = [
+            "pdf",
+            "csv",
+            "txt",
+            # Word
+            "doc",
+            "docx",
+            "xls",
+            "xlsx",
+            "ppt",
+            "pptx",
+            # OpenOffice/LibreOffice
+            "odt",
+            "fodt",
+            "ods",
+            "fods",
+        ]
+        image_types = [
+            "jpg",
+            "jpeg",
+            "jxl",
+            "png",
+            "gif",
+            "tiff",
+            "bmp",
+            "svg",
+            "webp",
+        ]
+        return document_types + image_types
+
+    def _validate_file_extensions(self, files: MultiValueDict) -> NoReturn:
+        """
+        Validate file extensions of uploaded files from the file extension.
+        Does not validate the the file type from the first bytes of the tile,
+        nor does it validate the content type / mimetype of the file.
+
+        Raises:
+            ValidationError: If a file does not have an extension or if the extension is not allowed.
+        """
+
+        allowed_extensions = self.get_allowed_extensions()
+        for file in files.values():
+            if "." not in file.name:
+                raise ValidationError(
+                    _(f"File '{file.name}' does not have an extension.")
+                )
+
+            ext = file.name.split(".")[-1]
+            if ext not in allowed_extensions:
+                raise ValidationError(_(f"File extension '.{ext}' is not allowed."))
+
+    def create(self, request, *args, **kwargs):
+        files: MultiValueDict = getattr(request, "FILES")
+        if files and len(files) > 0:
+            self._validate_file_extensions(files)
+
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        files: MultiValueDict = getattr(request, "FILES")
+        if files and len(files) > 0:
+            self._validate_file_extensions(files)
+
+        return super().update(request, *args, **kwargs)
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None, file_field: str | None = None):

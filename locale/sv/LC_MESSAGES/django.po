@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-19 12:30+0200\n"
+"POT-Creation-Date: 2025-01-16 13:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3724,9 +3724,6 @@ msgstr ""
 "Anmälningsmeddelandenas mottagare. Exempel: matti@example.com,maija@example."
 "com"
 
-msgid "Area search"
-msgstr "Områdesansökan"
-
 msgctxt "Area search lessor"
 msgid "Area use and control"
 msgstr "Områdesanvändning och -övervakning"
@@ -3920,6 +3917,14 @@ msgstr "Arkiveringstid"
 msgid "Area search state"
 msgstr "Status"
 
+msgctxt "Model name"
+msgid "Area search"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Area searches"
+msgstr ""
+
 msgid "The target has been removed from the system!"
 msgstr "Objektet har avlägsnats från systemet!"
 
@@ -4019,3 +4024,11 @@ msgstr "Token existerar"
 
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
+
+#, python-brace-format
+msgid "File '{file.name}' does not have an extension."
+msgstr ""
+
+#, python-brace-format
+msgid "File extension '.{ext}' is not allowed."
+msgstr ""
