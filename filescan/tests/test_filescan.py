@@ -3,15 +3,19 @@ from unittest.mock import patch
 
 import pytest
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
+from django.core.files.uploadedfile import SimpleUploadedFile
 
-from filescan.models import FileScanResult, FileScanStatus, scan_file_task
-from plotsearch.models.plot_search import (
-    AreaSearchAttachment,
-    get_area_search_attachment_upload_to,
+from filescan.models import (
+    FileScanResult,
+    FileScanStatus,
+    schedule_file_for_virus_scanning,
 )
+from filescan.types import PlattaClamAvResponse
+from plotsearch.models.plot_search import AreaSearchAttachment
 
 
+# FIXME the attachments I generate in tests still use /media/ directory
+#       Maybe Jukka's changes are required for the attachment creation to utilize the new root?
 @pytest.fixture(scope="module")
 def module_temp_dir():
     """
@@ -21,57 +25,65 @@ def module_temp_dir():
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         settings.PRIVATE_FILES_LOCATION = tmpdir
+        settings.MEDIA_ROOT = (
+            tmpdir  # TODO remove after Jukka's changes are integrated?
+        )
         yield tmpdir
-
-
-# TODO is this needed for all tests, or only for some?
-#      If only for some, remove autouse
-@pytest.fixture(autouse=True)
-def patch_filescan_save():
-    """
-    Patches the save() method of all FileScanStatus instances in this test file,
-    to have more control over when the scan is triggered during tests.
-    """
-
-    def mock_save_without_task(self, *args, **kwargs):
-        super(FileScanStatus, self).save(*args, **kwargs)
-
-    with patch(
-        "filescan.models.FileScanStatus.save", new=mock_save_without_task
-    ) as mock_save:
-        yield mock_save
 
 
 @pytest.mark.django_db
 def test_filescan_pending(
     django_db_setup,
-    module_temp_dir,  # TODO needed?
+    module_temp_dir,
     file_scan_status_factory,
     area_search_attachment_factory,
 ):
     """FileScans that have not been scanned are pending"""
-    # TODO reasonable properties for attachment to be used in tests
     filename = "test_attachment_1.pdf"
-
-    attachment: AreaSearchAttachment = area_search_attachment_factory(
-        name=filename,
+    file = SimpleUploadedFile(
+        name=filename, content=b"test", content_type="application/pdf"
     )
-
-    filepath = get_area_search_attachment_upload_to(
-        instance=attachment, filename=filename
+    attachment: AreaSearchAttachment = area_search_attachment_factory(attachment=file)
+    scan: FileScanStatus = file_scan_status_factory(
+        content_object=attachment, filepath=attachment.attachment.name
     )
-    scan = file_scan_status_factory(
-        content_object=attachment, filepath=attachment.attachment
-    )
-    # We mocked the scan task out of the save method, so it should not have been run
-    scan.scan_result = FileScanResult.PENDING
+    assert scan.scan_result() == FileScanResult.PENDING
 
 
 @pytest.mark.django_db
-def test_filescan_safe(django_db_setup):
+def test_filescan_safe(
+    django_db_setup,
+    module_temp_dir,
+    file_scan_status_factory,
+    area_search_attachment_factory,
+):
     """Files scanned as "safe" are handled correctly: not deleted."""
-    # TODO
-    pass
+    filename = "test_attachment_1.pdf"
+    file = SimpleUploadedFile(
+        name=filename, content=b"test", content_type="application/pdf"
+    )
+    attachment: AreaSearchAttachment = area_search_attachment_factory(attachment=file)
+    scan = file_scan_status_factory(
+        content_object=attachment, filepath=attachment.attachment.name
+    )
+    with patch("requests.post") as mock_post:
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "success": True,
+            "data": {
+                "result": [
+                    {
+                        "name": filename,
+                        "is_infected": False,
+                        "viruses": [],
+                    }
+                ]
+            },
+        }
+        schedule_file_for_virus_scanning(file=attachment)
+
+    # FIXME result was PENDING
+    assert scan.scan_result() == FileScanResult.SAFE
 
 
 @pytest.mark.django_db

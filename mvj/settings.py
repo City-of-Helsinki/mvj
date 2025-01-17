@@ -399,7 +399,7 @@ ASIAKASTIETO_COMPANY_TARGET_KEY = env.str("ASIAKASTIETO_COMPANY_TARGET_KEY")
 
 PUBLIC_UI_URL = env.str("PUBLIC_UI_URL")
 
-FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_API_URL")
+FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_SERVICE_URL")
 
 local_settings = project_root("local_settings.py")
 if os.path.exists(local_settings):

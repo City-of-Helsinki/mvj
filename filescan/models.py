@@ -11,15 +11,34 @@ from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 
 from filescan.enums import FileScanResult, FileScanStatusContentType
-from filescan.types import PlattaClamAvResponse
+from filescan.types import AttachmentFileModelProtocol, PlattaClamAvResponse
 from leasing.models.mixins import TimeStampedModel
 
 logger = logging.getLogger(__name__)
 
 # TODO batchrun to re-trigger scan after interrupted or failed scan processes?
 
-# TODO factory function for easy creation of FileScanStatus instances, to be called
-# in the attachment/file model save methods.
+
+def schedule_file_for_virus_scanning(file: AttachmentFileModelProtocol):
+    """
+    A factory function for creating FileScanStatus instances, and triggering a
+    virus scan task.
+    """
+    file_scan_status = FileScanStatus.objects.create(
+        content_object=file,
+        content_type=ContentType.objects.get_for_model(type(file)),
+        object_id=file.id,
+        filepath=_get_filepath(file),
+    )
+    async_task("filescan.tasks._scan_file_task", file_scan_status.pk)
+
+
+def _get_filepath(file: AttachmentFileModelProtocol) -> str:
+    """
+    Resolves the file's path on the server, so that the correct file can be sent
+    to scanning.
+    """
+    return file.attachment.name
 
 
 class FileScanStatus(TimeStampedModel):
@@ -33,15 +52,16 @@ class FileScanStatus(TimeStampedModel):
     """
 
     # Generic reference to a related file object.
+    content_object = GenericForeignKey("content_type", "object_id")
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.PROTECT,
         limit_choices_to={"model__in": FileScanStatusContentType.values()},
     )
     object_id = models.PositiveBigIntegerField()
-    content_object = GenericForeignKey("content_type", "object_id")
 
     # Details of the file and its scanning status
+    # TODO what to save here, from each of the file/attachment models?
     filepath = models.CharField(
         max_length=255,
         verbose_name=_("filepath"),
@@ -52,7 +72,7 @@ class FileScanStatus(TimeStampedModel):
         null=True, blank=True, verbose_name=_("scan time")
     )
     # TODO if the target file is not actually deleted when this is updated,
-    # rename field to something like "marked_for_deletion"
+    # rename field to something like "marked_for_deletion_at"
     deleted_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("deletion time")
     )
@@ -65,21 +85,14 @@ class FileScanStatus(TimeStampedModel):
 
     def scan_result(self) -> FileScanResult:
         """Determine the result of the virus scan."""
-        if self.deleted_at:
+        if self.deleted_at is not None:
             return FileScanResult.UNSAFE
-        elif self.error_message:
+        elif self.error_message is not None:
             return FileScanResult.ERROR
-        elif self.scanned_at:
+        elif self.scanned_at is not None:
             return FileScanResult.SAFE
         else:
             return FileScanResult.PENDING
-
-    def save(self, *args, **kwargs):
-        """
-        Triggers the async file scan process.
-        """
-        super().save(*args, **kwargs)
-        async_task("filescan.tasks.scan_file_task", self.pk)
 
     class Meta:
         verbose_name = _("File Scan Status")
@@ -93,7 +106,7 @@ class FileScanStatus(TimeStampedModel):
     ]
 
 
-def scan_file_task(scan_status_id: int):
+def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
     """
     Task to scan a file for viruses by calling an external service.
 
@@ -107,8 +120,8 @@ def scan_file_task(scan_status_id: int):
         file_path = os.path.join(settings.PRIVATE_FILES_LOCATION, filepath)
 
         if not os.path.exists(file_path):
-            handle_error(filescan_obj=scan_status, text=f"File not found: {file_path}")
-            return
+            _handle_error(filescan_obj=scan_status, text=f"File not found: {file_path}")
+            return scan_status
 
         # TODO disguise the filepath before scan?
         # TODO remove metadata before scan?
@@ -118,27 +131,27 @@ def scan_file_task(scan_status_id: int):
                 files={"FILES": file},
             )
             if not response.status_code == 200:
-                handle_error(
+                _handle_error(
                     filescan_obj=scan_status,
                     text=f"Response from filescan service was not 200: {response.status_code}",
                 )
-                return
+                return scan_status
 
             response_dict: PlattaClamAvResponse = response.json()
-            if not response_dict.get("success"):
-                handle_error(
+            if not response_dict.get("success", False):
+                _handle_error(
                     filescan_obj=scan_status,
                     text="Response from filescan service was not a success",
                 )
-                return
+                return scan_status
 
             response_result = response_dict.get("data", {}).get("result", [])[0]
             if response_result is None:
-                handle_error(
+                _handle_error(
                     filescan_obj=scan_status,
                     text="Response from filescan service was empty",
                 )
-                return
+                return scan_status
 
             scan_status.scanned_at = timezone.now()
 
@@ -149,17 +162,18 @@ def scan_file_task(scan_status_id: int):
 
             scan_status.error_message = None
             scan_status.save()
+            return scan_status
 
     except FileScanStatus.DoesNotExist:
         logger.error(f"FileScanStatus object with id {scan_status_id} does not exist")
-        return
+        return None
 
     except Exception as e:
-        handle_error(filescan_obj=scan_status, text=f"An error occurred: {e}")
-        return
+        _handle_error(filescan_obj=scan_status, text=f"An error occurred: {e}")
+        return None
 
 
-def handle_error(filescan_obj: FileScanStatus, text: str) -> None:
+def _handle_error(filescan_obj: FileScanStatus, text: str) -> None:
     logger.error(text)
     filescan_obj.error_message = text
     filescan_obj.save()
