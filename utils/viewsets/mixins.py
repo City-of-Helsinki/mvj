@@ -9,6 +9,9 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+MAX_FILE_SIZE_MB = 20
+MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
 
 class FileDownloadMixin:
     @action(methods=["get"], detail=True)
@@ -128,10 +131,26 @@ class FileExtensionFileMixin:
             if ext not in allowed_extensions:
                 raise ValidationError(_(f"File extension '.{ext}' is not allowed."))
 
+    def _validate_file_size(self, files: MultiValueDict) -> NoReturn:
+        """
+        Validate that the size of files do not exceed set maximum size.
+
+        Raises:
+            ValidationError: If a file is too large in size.
+        """
+        for file in files.values():
+            if file.size > MAX_FILE_SIZE_BYTES:
+                raise ValidationError(
+                    _(
+                        f"File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
+                    )
+                )
+
     def create(self, request, *args, **kwargs):
         files: MultiValueDict = getattr(request, "FILES")
         if files and len(files) > 0:
             self._validate_file_extensions(files)
+            self._validate_file_size(files)
 
         return super().create(request, *args, **kwargs)
 
@@ -139,6 +158,7 @@ class FileExtensionFileMixin:
         files: MultiValueDict = getattr(request, "FILES")
         if files and len(files) > 0:
             self._validate_file_extensions(files)
+            self._validate_file_size(files)
 
         return super().update(request, *args, **kwargs)
 
