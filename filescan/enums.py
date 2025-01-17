@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Type
 
 
 class FileScanResult(Enum):
@@ -30,9 +31,9 @@ class FileScanStatusContentType(str, Enum):
     AREA_SEARCH_ATTACHMENT = "plotsearch_areasearchattachment"
 
     @classmethod
-    def choices(cls):
+    def choices(cls: Type["FileScanStatusContentType"]):
         return [(field.value, field.name) for field in cls]
 
     @classmethod
-    def values(cls):
+    def values(cls: Type["FileScanStatusContentType"]):
         return [field.value for field in cls]

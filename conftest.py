@@ -1495,14 +1495,13 @@ class FileScanStatusFactory(factory.django.DjangoModelFactory):
     # because that model might be most relevant to this use case.
     content_object = factory.SubFactory(AreaSearchAttachmentFactory)
 
+    # The remaining required properties can be derived from the referenced object
     @factory.lazy_attribute
     def content_type(self):
-        # Get the ContentType for the TargetModel
         return ContentType.objects.get_for_model(self.content_object)
 
     @factory.lazy_attribute
     def object_id(self):
-        # Use the ID of the created TargetModel instance
         return self.content_object.id
 
     class Meta:
