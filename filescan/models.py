@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 
-from filescan.enums import FileScanResult, FileScanStatusContentType
+from filescan.enums import FileScanResult
 from filescan.types import AttachmentFileModelProtocol, PlattaClamAvResponse
 from leasing.models.mixins import TimeStampedModel
 
@@ -19,14 +19,17 @@ logger = logging.getLogger(__name__)
 # TODO batchrun to re-trigger scan after interrupted or failed scan processes?
 
 
-def schedule_file_for_virus_scanning(file: AttachmentFileModelProtocol):
+def schedule_file_for_virus_scanning(
+    file: AttachmentFileModelProtocol,
+    # TODO parameter: which property contains filepath?
+):
     """
     A factory function for creating FileScanStatus instances, and triggering a
     virus scan task.
     """
     file_scan_status = FileScanStatus.objects.create(
         content_object=file,
-        content_type=ContentType.objects.get_for_model(type(file)),
+        content_type=ContentType.objects.get_for_model(type(file)),  # FIXME
         object_id=file.id,
         filepath=_get_filepath(file),
     )
@@ -38,6 +41,8 @@ def _get_filepath(file: AttachmentFileModelProtocol) -> str:
     Resolves the file's path on the server, so that the correct file can be sent
     to scanning.
     """
+    # TODO isinstance
+    #
     return file.attachment.name
 
 
@@ -56,7 +61,6 @@ class FileScanStatus(TimeStampedModel):
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.PROTECT,
-        limit_choices_to={"model__in": FileScanStatusContentType.values()},
     )
     object_id = models.PositiveBigIntegerField()
 
@@ -73,19 +77,18 @@ class FileScanStatus(TimeStampedModel):
     )
     # TODO if the target file is not actually deleted when this is updated,
     # rename field to something like "marked_for_deletion_at"
-    deleted_at = models.DateTimeField(
+    file_deleted_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("deletion time")
     )
-    error_message = models.CharField(
+    error_message = models.TextField(
         null=True,
         blank=True,
-        max_length=511,
         verbose_name=_("error message"),
     )
 
     def scan_result(self) -> FileScanResult:
         """Determine the result of the virus scan."""
-        if self.deleted_at is not None:
+        if self.file_deleted_at is not None:
             return FileScanResult.UNSAFE
         elif self.error_message is not None:
             return FileScanResult.ERROR
@@ -117,15 +120,17 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
         scan_status = FileScanStatus.objects.get(pk=scan_status_id)
         filepath = scan_status.filepath
 
-        file_path = os.path.join(settings.PRIVATE_FILES_LOCATION, filepath)
+        absolute_filepath = os.path.join(settings.PRIVATE_FILES_LOCATION, filepath)
 
-        if not os.path.exists(file_path):
-            _handle_error(filescan_obj=scan_status, text=f"File not found: {file_path}")
+        if not os.path.exists(absolute_filepath):
+            _handle_error(
+                filescan_obj=scan_status, text=f"File not found: {absolute_filepath}"
+            )
             return scan_status
 
         # TODO disguise the filepath before scan?
         # TODO remove metadata before scan?
-        with open(file_path, "rb") as file:
+        with open(absolute_filepath, "rb") as file:
             response = requests.post(
                 settings.FILE_SCAN_SERVICE_URL,
                 files={"FILES": file},
@@ -158,7 +163,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
             if response_result["is_infected"]:
                 # TODO when/where to delete the actual file?
                 # Need to go through the file's model to remove the row or update deletion timestamp
-                scan_status.deleted_at = timezone.now()
+                scan_status.file_deleted_at = timezone.now()
 
             scan_status.error_message = None
             scan_status.save()
