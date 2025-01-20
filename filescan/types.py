@@ -4,7 +4,7 @@ from django.db import models
 
 
 # TODO different protocols to cover models with different filepath column names?
-class AttachmentFileModelProtocol(Protocol):
+class FileModelProtocol(Protocol):
     """
     Protocol to represent models with the column `attachment` that holds the
     filepath to the physical file.
