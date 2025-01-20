@@ -18,7 +18,7 @@ class FileDownloadMixin:
             filename = getattr(obj, file_field).name
         else:
             filename = obj.file.name
-        filepath = "/".join([settings.MEDIA_ROOT, filename])
+        filepath = "/".join([settings.PRIVATE_FILES_LOCATION, filename])
         response = FileResponse(open(filepath, "rb"), as_attachment=True)
 
         return response

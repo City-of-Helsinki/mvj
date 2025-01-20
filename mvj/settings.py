@@ -138,6 +138,8 @@ if env("SENTRY_DSN"):
 
 MEDIA_ROOT = project_root("media")
 STATIC_ROOT = project_root("static")
+PRIVATE_FILES_LOCATION = project_root("private_files")
+
 MEDIA_URL = "/media/"
 STATIC_URL = "/static/"
 
