@@ -1,5 +1,6 @@
 import logging
 import os
+import uuid
 
 import requests
 from django.conf import settings
@@ -11,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 
 from filescan.enums import FileScanResult
-from filescan.types import AttachmentFileModelProtocol, PlattaClamAvResponse
+from filescan.types import FileModelProtocol, PlattaClamAvResponse
 from leasing.models.mixins import TimeStampedModel
 
 logger = logging.getLogger(__name__)
@@ -19,31 +20,13 @@ logger = logging.getLogger(__name__)
 # TODO batchrun to re-trigger scan after interrupted or failed scan processes?
 
 
-def schedule_file_for_virus_scanning(
-    file: AttachmentFileModelProtocol,
-    # TODO parameter: which property contains filepath?
-):
-    """
-    A factory function for creating FileScanStatus instances, and triggering a
-    virus scan task.
-    """
-    file_scan_status = FileScanStatus.objects.create(
-        content_object=file,
-        content_type=ContentType.objects.get_for_model(type(file)),  # FIXME
-        object_id=file.id,
-        filepath=_get_filepath(file),
-    )
-    async_task("filescan.tasks._scan_file_task", file_scan_status.pk)
-
-
-def _get_filepath(file: AttachmentFileModelProtocol) -> str:
+def _get_filepath(file_model_instance: models.Model, file_field_name: str) -> str:
     """
     Resolves the file's path on the server, so that the correct file can be sent
     to scanning.
     """
-    # TODO isinstance
-    #
-    return file.attachment.name
+    file_field = getattr(file_model_instance, file_field_name)
+    return file_field.path
 
 
 class FileScanStatus(TimeStampedModel):
@@ -109,6 +92,36 @@ class FileScanStatus(TimeStampedModel):
     ]
 
 
+def schedule_file_for_virus_scanning(
+    file_model_instance: models.Model, file_field_name: str
+) -> FileScanStatus | None:
+    """
+    A factory function for creating FileScanStatus instances, and triggering a
+    virus scan task.
+    """
+    error_message = None
+    try:
+        absolute_path = _get_filepath(file_model_instance, file_field_name)
+    except AttributeError:
+        absolute_path = None  # TODO logger
+        error_message = f'Unable to find file field from "{file_field_name}"'
+
+    file_scan_status = FileScanStatus.objects.create(
+        content_object=file_model_instance,
+        content_type=ContentType.objects.get_for_model(file_model_instance._meta.model),
+        object_id=file_model_instance.pk,
+        filepath=absolute_path,
+        error_message=error_message,
+    )
+
+    if error_message is not None:
+        return
+
+    async_task(_scan_file_task, file_scan_status.pk)
+
+    return file_scan_status
+
+
 def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
     """
     Task to scan a file for viruses by calling an external service.
@@ -120,20 +133,16 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
         scan_status = FileScanStatus.objects.get(pk=scan_status_id)
         filepath = scan_status.filepath
 
-        absolute_filepath = os.path.join(settings.PRIVATE_FILES_LOCATION, filepath)
-
-        if not os.path.exists(absolute_filepath):
-            _handle_error(
-                filescan_obj=scan_status, text=f"File not found: {absolute_filepath}"
-            )
+        if not os.path.exists(filepath):
+            _handle_error(filescan_obj=scan_status, text=f"File not found: {filepath}")
             return scan_status
 
-        # TODO disguise the filepath before scan?
-        # TODO remove metadata before scan?
-        with open(absolute_filepath, "rb") as file:
+        with open(filepath, "rb") as file:
+            obfuscated_filename = str(uuid.uuid4())
+
             response = requests.post(
                 settings.FILE_SCAN_SERVICE_URL,
-                files={"FILES": file},
+                files={obfuscated_filename: file},
             )
             if not response.status_code == 200:
                 _handle_error(
