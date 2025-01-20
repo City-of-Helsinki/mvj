@@ -1,3 +1,4 @@
+import os
 import tempfile
 from importlib import import_module
 from typing import Type
@@ -11,6 +12,7 @@ from conftest import FileScanStatusFactory
 from filescan.models import (
     FileScanResult,
     FileScanStatus,
+    _delete_file,
     _scan_file_task,
     schedule_file_for_virus_scanning,
 )
@@ -27,6 +29,7 @@ def module_temp_dir():
     target directory for files to be scanned, and automatically deletes the
     directory and all the files within after all in the module tests are done.
     """
+    # FIXME tests still save the files to private_files!!!
     with tempfile.TemporaryDirectory() as tmpdir:
         settings.PRIVATE_FILES_LOCATION = tmpdir
         settings.MEDIA_ROOT = (
@@ -138,3 +141,38 @@ def test_filescan_unsafe(
 
     scan.refresh_from_db()
     assert scan.scan_result() == FileScanResult.UNSAFE
+
+
+@pytest.mark.django_db
+def test_file_deletion(
+    django_db_setup,
+    module_temp_dir,
+    file_scan_status_factory,
+    area_search_attachment_factory,
+):
+    """File deletion deletes the actual file, and sets FileField value to NULL"""
+    filename = "test_attachment_1.pdf"
+    file = SimpleUploadedFile(
+        name=filename, content=b"test", content_type="application/pdf"
+    )
+    attachment: AreaSearchAttachment = area_search_attachment_factory(attachment=file)
+    scan_status: FileScanStatus = file_scan_status_factory(
+        content_object=attachment,
+        filepath=attachment.attachment.name,
+        filefield_field_name="attachment",
+    )
+
+    absolute_path = attachment.attachment.path
+    assert attachment.attachment
+    assert (
+        attachment.attachment.name
+    )  # FieldFile.name contains a value if the file exists
+    assert os.path.isfile(absolute_path)
+
+    _delete_file(
+        scan_status,
+    )
+
+    assert not attachment.attachment
+    assert attachment.attachment.name is None
+    assert not os.path.isfile(absolute_path)

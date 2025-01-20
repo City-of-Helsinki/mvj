@@ -47,6 +47,12 @@ class FileScanStatus(TimeStampedModel):
     )
     object_id = models.PositiveBigIntegerField()
 
+    filefield_field_name = models.CharField(
+        null=False,
+        blank=False,
+        help_text="Name of the column of the content object's FileField",
+    )
+
     # Details of the file and its scanning status
     # TODO what to save here, from each of the file/attachment models?
     filepath = models.CharField(
@@ -111,6 +117,7 @@ def schedule_file_for_virus_scanning(
         content_type=ContentType.objects.get_for_model(file_model_instance._meta.model),
         object_id=file_model_instance.pk,
         filepath=absolute_path,
+        filefield_field_name=file_field_name,
         error_message=error_message,
     )
 
@@ -170,8 +177,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
             scan_status.scanned_at = timezone.now()
 
             if response_result["is_infected"]:
-                # TODO when/where to delete the actual file?
-                # Need to go through the file's model to remove the row or update deletion timestamp
+                _delete_file(scan_status)
                 scan_status.file_deleted_at = timezone.now()
 
             scan_status.error_message = None
@@ -192,3 +198,9 @@ def _handle_error(filescan_obj: FileScanStatus, text: str) -> None:
     filescan_obj.error_message = text
     filescan_obj.save()
     return
+
+
+def _delete_file(scan_status: FileScanStatus) -> None:
+    filefield = getattr(scan_status.content_object, scan_status.filefield_field_name)
+    filefield.delete()
+    print(filefield)
