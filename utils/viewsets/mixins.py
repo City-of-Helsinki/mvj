@@ -1,6 +1,5 @@
 from typing import NoReturn
 
-from django.conf import settings
 from django.http import FileResponse
 from django.utils.datastructures import MultiValueDict
 from django.utils.translation import gettext_lazy as _
@@ -8,6 +7,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+
+from utils.models.fields import PrivateFieldFile, UnsafeFileError
 
 MAX_FILE_SIZE_MB = 20
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -18,11 +19,19 @@ class FileDownloadMixin:
     def download(self, request, pk=None, file_field: str | None = None):
         obj = self.get_object()
         if file_field is not None:
-            filename = getattr(obj, file_field).name
+            private_fieldfile: PrivateFieldFile = getattr(obj, file_field)
         else:
-            filename = obj.file.name
-        filepath = "/".join([settings.PRIVATE_FILES_LOCATION, filename])
-        response = FileResponse(open(filepath, "rb"), as_attachment=True)
+            # Default to accessing field/column named 'file'
+            private_fieldfile: PrivateFieldFile = obj.file
+
+        try:
+            file = private_fieldfile.open("rb")
+            response = FileResponse(file, as_attachment=True)
+        except UnsafeFileError:
+            response = Response(
+                status=status.HTTP_410_GONE,
+                data={"error": _("File has been deleted. Detected malware or virus.")},
+            )
 
         return response
 
