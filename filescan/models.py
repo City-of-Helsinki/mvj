@@ -18,8 +18,6 @@ from utils.models.fields import PrivateFieldFile
 
 logger = logging.getLogger(__name__)
 
-# TODO batchrun to re-trigger scan after interrupted or failed scan processes?
-
 
 class FileScanStatus(TimeStampedModel):
     """
@@ -55,8 +53,6 @@ class FileScanStatus(TimeStampedModel):
     scanned_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("scan time")
     )
-    # TODO if the target file is not actually deleted when this is updated,
-    # rename field to something like "marked_for_deletion_at"
     file_deleted_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("deletion time")
     )
