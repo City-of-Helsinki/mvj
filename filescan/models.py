@@ -14,6 +14,7 @@ from django_q.tasks import async_task
 from filescan.enums import FileScanResult
 from filescan.types import PlattaClamAvResponse
 from leasing.models.mixins import TimeStampedModel
+from utils.models.fields import PrivateFieldFile
 
 logger = logging.getLogger(__name__)
 
@@ -69,12 +70,35 @@ class FileScanStatus(TimeStampedModel):
         """Determine the result of the virus scan."""
         if self.file_deleted_at is not None:
             return FileScanResult.UNSAFE
-        elif self.error_message is not None:
+        elif self.error_message:
             return FileScanResult.ERROR
         elif self.scanned_at is not None:
             return FileScanResult.SAFE
         else:
             return FileScanResult.PENDING
+
+    @staticmethod
+    def is_file_scanned_and_safe(fieldfile_instance: PrivateFieldFile) -> bool:
+        if settings.FLAG_FILE_SCAN is True:
+            from filescan.models import FileScanStatus
+
+            content_type = ContentType.objects.get_for_model(fieldfile_instance)
+            scan_status = (
+                FileScanStatus.objects.filter(
+                    content_type=content_type,
+                    object_id=fieldfile_instance.pk,
+                )
+                .order_by("id")
+                .last()
+            )
+            if scan_status is None:
+                return False
+
+            scan_result = scan_status.scan_result()
+            is_file_scanned_and_safe = scan_result == FileScanResult.SAFE
+            return is_file_scanned_and_safe
+
+        return True
 
     class Meta:
         verbose_name = _("File Scan Status")
