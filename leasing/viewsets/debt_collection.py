@@ -1,3 +1,5 @@
+from rest_framework.decorators import action
+
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.filters import (
     CollectionCourtDecisionFilter,
@@ -39,6 +41,11 @@ class CollectionCourtDecisionViewSet(
 
         return CollectionCourtDecisionSerializer
 
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="file")
+
 
 class CollectionLetterViewSet(
     FileMixin,
@@ -55,6 +62,11 @@ class CollectionLetterViewSet(
             return CollectionLetterCreateUpdateSerializer
 
         return CollectionLetterSerializer
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="file")
 
 
 class CollectionLetterTemplateViewSet(AtomicTransactionModelViewSet):

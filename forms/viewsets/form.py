@@ -172,6 +172,7 @@ class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
         return super().download(request, pk, file_field="attachment")
 
 
@@ -205,6 +206,11 @@ class MeetingMemoViewset(
     queryset = MeetingMemo.objects.all()
     serializer_class = MeetingMemoSerializer
     permission_classes = (MvjDjangoModelPermissions,)
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="meeting_memo")
 
 
 class AnswerOpeningRecordViewset(

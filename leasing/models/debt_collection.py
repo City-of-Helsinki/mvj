@@ -55,7 +55,7 @@ class CollectionLetter(FileScanMixin, TimeStampedSafeDeleteModel):
         ordering = ["-uploaded_at"]
 
 
-class CollectionLetterTemplate(FileScanMixin, TimeStampedSafeDeleteModel):
+class CollectionLetterTemplate(TimeStampedSafeDeleteModel):
     """
     In Finnish: Perintäkirjepohja
     """

@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
 from paramiko import SSHException
 from pysftp import ConnectionException, CredentialException, HostKeysException
+from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
@@ -175,6 +176,11 @@ class LandUseAgreementAttachmentViewSet(
             return LandUseAgreementAttachmentCreateUpdateSerializer
 
         return LandUseAgreementAttachmentSerializer
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="file")
 
 
 class LandUseAgreementInvoiceViewSet(

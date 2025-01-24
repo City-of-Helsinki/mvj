@@ -25,10 +25,14 @@ from leasing.enums import (
     TenantContactType,
 )
 from leasing.models import (
+    CollectionLetter,
     Contact,
     CustomDetailedPlan,
     Decision,
     District,
+    InfillDevelopmentCompensation,
+    InfillDevelopmentCompensationLease,
+    Inspection,
     Lease,
     LeaseArea,
     LeaseType,
@@ -1535,3 +1539,39 @@ class FileScanStatusFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = FileScanStatus
+
+
+@register
+class CollectionLetterFactory(factory.django.DjangoModelFactory):
+    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
+    uploader = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = CollectionLetter
+
+
+@register
+class InfillDevelopmentCompensationFactory(factory.django.DjangoModelFactory):
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = InfillDevelopmentCompensation
+
+
+@register
+class InfillDevelopmentCompensationLeaseFactory(factory.django.DjangoModelFactory):
+    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
+    infill_development_compensation = factory.SubFactory(
+        InfillDevelopmentCompensationFactory
+    )
+
+    class Meta:
+        model = InfillDevelopmentCompensationLease
+
+
+@register
+class InspectionFactory(factory.django.DjangoModelFactory):
+    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
+
+    class Meta:
+        model = Inspection

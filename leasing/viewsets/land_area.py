@@ -1,4 +1,5 @@
 from rest_framework import filters, mixins
+from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
@@ -33,6 +34,11 @@ class LeaseAreaAttachmentViewSet(
             return LeaseAreaAttachmentCreateUpdateSerializer
 
         return LeaseAreaAttachmentSerializer
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="file")
 
 
 class PlanUnitViewSet(mixins.RetrieveModelMixin, GenericViewSet):

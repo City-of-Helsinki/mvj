@@ -1,3 +1,5 @@
+from rest_framework.decorators import action
+
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from leasing.models import InspectionAttachment
 from leasing.serializers.inspection import (
@@ -23,3 +25,8 @@ class InspectionAttachmentViewSet(
             return InspectionAttachmentCreateUpdateSerializer
 
         return InspectionAttachmentSerializer
+
+    @action(methods=["get"], detail=True)
+    def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
+        return super().download(request, pk, file_field="file")
