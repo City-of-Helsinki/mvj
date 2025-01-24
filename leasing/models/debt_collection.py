@@ -7,6 +7,7 @@ from django.utils.translation import pgettext_lazy
 from docxtpl import DocxTemplate
 
 from field_permissions.registry import field_permissions
+from filescan.mixins import FileScanMixin
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
 from utils.models.fields import PrivateFileField
@@ -16,7 +17,7 @@ def get_collection_letter_file_upload_to(instance, filename):
     return "/".join(["collection_letters", str(instance.lease.id), filename])
 
 
-class CollectionLetter(TimeStampedSafeDeleteModel):
+class CollectionLetter(FileScanMixin, TimeStampedSafeDeleteModel):
     """
     In Finnish: Perintäkirje
     """
@@ -54,7 +55,7 @@ class CollectionLetter(TimeStampedSafeDeleteModel):
         ordering = ["-uploaded_at"]
 
 
-class CollectionLetterTemplate(TimeStampedSafeDeleteModel):
+class CollectionLetterTemplate(FileScanMixin, TimeStampedSafeDeleteModel):
     """
     In Finnish: Perintäkirjepohja
     """
@@ -114,7 +115,7 @@ def get_collection_court_decision_file_upload_to(instance, filename):
     return "/".join(["court_decisions", str(instance.lease.id), filename])
 
 
-class CollectionCourtDecision(TimeStampedSafeDeleteModel):
+class CollectionCourtDecision(FileScanMixin, TimeStampedSafeDeleteModel):
     """
     In Finnish: Oikeuden päätös
     """

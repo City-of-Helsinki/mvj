@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 from safedelete.models import SafeDeleteModel
 
 from field_permissions.registry import field_permissions
+from filescan.mixins import FileScanMixin
 from leasing.enums import (
     ConstructabilityReportInvestigationState,
     ConstructabilityState,
@@ -323,7 +324,7 @@ def get_attachment_file_upload_to(instance, filename):
     return "/".join(["lease_area_attachments", str(instance.lease_area.id), filename])
 
 
-class LeaseAreaAttachment(TimeStampedSafeDeleteModel):
+class LeaseAreaAttachment(FileScanMixin, TimeStampedSafeDeleteModel):
     """
     In Finnish: Liitetiedosto (Vuokra-alue)
     """
