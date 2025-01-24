@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 
 from filescan.enums import FileScanResult
-from filescan.types import PlattaClamAvResponse
+from filescan.types import PlattaClamAvResponse, PlattaClamAvResult
 from leasing.models.mixins import TimeStampedModel
 from utils.models.fields import PrivateFieldFile
 
@@ -76,8 +76,6 @@ class FileScanStatus(TimeStampedModel):
     @staticmethod
     def is_file_scanned_and_safe(fieldfile_instance: PrivateFieldFile) -> bool:
         if settings.FLAG_FILE_SCAN is True:
-            from filescan.models import FileScanStatus
-
             content_type = ContentType.objects.get_for_model(fieldfile_instance)
             scan_status = (
                 FileScanStatus.objects.filter(
@@ -141,8 +139,8 @@ def schedule_file_for_virus_scanning(
 
 
 def _get_filepath(file_model_instance: models.Model, file_field_name: str) -> str:
-    file_field = getattr(file_model_instance, file_field_name)
-    return file_field.path
+    field_file: PrivateFieldFile = getattr(file_model_instance, file_field_name)
+    return field_file.path
 
 
 def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
@@ -161,7 +159,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
     try:
         filepath = scan_status.filepath
         if not os.path.exists(filepath):
-            _handle_error(filescan_obj=scan_status, text=f"File not found: {filepath}")
+            _handle_error(scan_status, f"File not found: {filepath}")
             return scan_status
 
         with open(filepath, "rb") as file:
@@ -169,56 +167,68 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
 
             response = requests.post(
                 settings.FILE_SCAN_SERVICE_URL,
-                files={obfuscated_filename: file},
+                files={"FILES": (obfuscated_filename, file)},
             )
             if not response.status_code == 200:
                 _handle_error(
-                    filescan_obj=scan_status,
-                    text=f"Response from filescan service was not 200: {response.status_code}",
+                    scan_status,
+                    f"Response from filescan service was not 200: {response.status_code}",
                 )
                 return scan_status
 
             response_dict: PlattaClamAvResponse = response.json()
             if not response_dict.get("success", False):
                 _handle_error(
-                    filescan_obj=scan_status,
-                    text="Response from filescan service was not a success",
+                    scan_status,
+                    f"Scanning service failed: {response_dict}",
                 )
                 return scan_status
 
-            response_result = response_dict.get("data", {}).get("result", [])[0]
-            if response_result is None:
+            try:
+                scanning_result = response_dict.get("data", {}).get("result", [])[0]
+            except TypeError:
                 _handle_error(
-                    filescan_obj=scan_status,
-                    text="Response from filescan service was empty",
+                    scan_status,
+                    f"Response from filescan service did not contain a result: {response_dict}",
                 )
                 return scan_status
 
-            scan_status.scanned_at = timezone.now()
-
-            if response_result["is_infected"]:
-                _delete_file(scan_status)
-                scan_status.file_deleted_at = timezone.now()
-
-            scan_status.error_message = None
-            scan_status.save()
-            return scan_status
+            return _handle_scanning_result(scan_status, scanning_result)
 
     except Exception as e:
-        _handle_error(filescan_obj=scan_status, text=f"An error occurred: {e}")
+        _handle_error(scan_status, f"An error occurred: {e}")
 
 
-def _handle_error(filescan_obj: FileScanStatus, text: str) -> None:
+def _handle_error(scan_status: FileScanStatus, text: str) -> None:
     logger.error(text)
-    filescan_obj.error_message = text
-    filescan_obj.save()
+    scan_status.error_message = text
+    scan_status.save()
 
 
-def _delete_file(filescan_obj: FileScanStatus) -> None:
-    file_object = filescan_obj.content_object
-    filefield = getattr(file_object, filescan_obj.filefield_field_name)
-    filefield.delete()
+def _handle_scanning_result(
+    scan_status: FileScanStatus, scanning_result: PlattaClamAvResult
+) -> FileScanStatus:
+    scan_status.scanned_at = timezone.now()
+
+    if scanning_result["is_infected"]:
+        _delete_infected_file(scan_status)
+        scan_status.file_deleted_at = timezone.now()
+
+    scan_status.error_message = None
+    scan_status.save()
+    return scan_status
+
+
+def _delete_infected_file(scan_status: FileScanStatus) -> None:
+    file_object: models.Model | None = scan_status.content_object
+    if file_object is None:
+        raise AttributeError
+
+    field_file: PrivateFieldFile = getattr(
+        file_object, scan_status.filefield_field_name
+    )
+    field_file.delete()
     file_object.save()
 
-    filescan_obj.file_deleted_at = timezone.now()
-    filescan_obj.save()
+    scan_status.file_deleted_at = timezone.now()
+    scan_status.save()
