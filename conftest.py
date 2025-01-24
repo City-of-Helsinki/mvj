@@ -35,6 +35,7 @@ from leasing.models import (
     Municipality,
     PlanUnit,
     PlanUnitIntendedUse,
+    ServiceUnit,
     Tenant,
     TenantContact,
 )
@@ -71,7 +72,8 @@ def admin_client(db, admin_user):
     try:
         admin_user.service_units.set([ServiceUnit.objects.get(pk=1)])
     except ServiceUnit.DoesNotExist:
-        pass
+        service_unit = ServiceUnitFactory()
+        admin_user.service_units.set([service_unit])
 
     client = Client()
     client.login(username=admin_user.username, password="password")
@@ -236,7 +238,34 @@ class LeaseFactory(factory.django.DjangoModelFactory):
         try:
             return ServiceUnit.objects.get(pk=1)
         except ServiceUnit.DoesNotExist:
-            return None
+            return ServiceUnitFactory()
+
+    class Meta:
+        model = Lease
+
+
+@register
+class ServiceUnitFactory(factory.django.DjangoModelFactory):
+    id = factory.Sequence(lambda n: n + 100)
+
+    class Meta:
+        model = ServiceUnit
+
+
+@register
+class LeaseWithGeneratedServiceUnitFactory(factory.django.DjangoModelFactory):
+    """
+    Created to circumvent the existing LeaseFactory, which hardcodes the
+    service unit id to 1, which is expected to match service unit "MaKe".
+
+    Feel free to replace that implementation with this one, and fix all the old
+    tests at the same time.
+    """
+
+    type = factory.SubFactory(LeaseTypeFactory)
+    municipality = factory.SubFactory(MunicipalityFactory)
+    district = factory.SubFactory(DistrictFactory)
+    service_unit = factory.SubFactory(ServiceUnitFactory)
 
     class Meta:
         model = Lease
@@ -353,7 +382,7 @@ class ReceivableTypeFactory(factory.django.DjangoModelFactory):
         try:
             return ServiceUnit.objects.get(pk=1)
         except ServiceUnit.DoesNotExist:
-            return None
+            return ServiceUnitFactory()
 
     class Meta:
         model = ReceivableType
@@ -477,7 +506,7 @@ class ContactFactory(factory.django.DjangoModelFactory):
         try:
             return ServiceUnit.objects.get(pk=1)
         except ServiceUnit.DoesNotExist:
-            return None
+            return ServiceUnitFactory()
 
     class Meta:
         model = Contact

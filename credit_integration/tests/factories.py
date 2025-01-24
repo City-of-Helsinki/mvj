@@ -1,11 +1,11 @@
 import factory
 from factory import Faker, fuzzy
 
+from conftest import ServiceUnitFactory
 from credit_integration.enums import CreditDecisionStatus
 from credit_integration.models import CreditDecision, CreditDecisionReason
 from leasing.enums import ContactType
 from leasing.models import Contact, ServiceUnit
-from leasing.tests.conftest import ServiceUnitFactory
 from users.models import User
 
 
