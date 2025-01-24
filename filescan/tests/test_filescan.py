@@ -8,7 +8,7 @@ from django.test import override_settings
 from filescan.models import (
     FileScanResult,
     FileScanStatus,
-    _delete_file,
+    _delete_infected_file,
     _scan_file_task,
     schedule_file_for_virus_scanning,
 )
@@ -185,7 +185,7 @@ def test_file_deletion(
     assert os.path.isfile(absolute_path)
     assert scan_status.file_deleted_at is None
 
-    _delete_file(
+    _delete_infected_file(
         scan_status,
     )
 
