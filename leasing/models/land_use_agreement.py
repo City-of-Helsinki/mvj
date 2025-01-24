@@ -9,6 +9,7 @@ from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
 from sequences import get_next_value
 
+from filescan.mixins import FileScanMixin
 from leasing.enums import (
     InfillDevelopmentCompensationState,
     InvoiceState,
@@ -320,7 +321,7 @@ def get_attachment_file_upload_to(instance, filename):
     )
 
 
-class LandUseAgreementAttachment(TimeStampedSafeDeleteModel):
+class LandUseAgreementAttachment(FileScanMixin, TimeStampedSafeDeleteModel):
     """
     In Finnish: Liitetiedosto
     """

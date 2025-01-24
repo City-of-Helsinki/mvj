@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from enumfields import EnumField
 from helsinki_gdpr.models import SerializableMixin
 
+from filescan.mixins import FileScanMixin
 from users.models import User
 from utils.models.fields import PrivateFileField
 
@@ -208,7 +209,7 @@ def get_attachment_file_upload_to(instance, filename):
     )
 
 
-class Attachment(SerializableMixin, models.Model):
+class Attachment(FileScanMixin, SerializableMixin, models.Model):
     name = models.CharField(max_length=255)
     attachment = PrivateFileField(upload_to=get_attachment_file_upload_to)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Time created"))

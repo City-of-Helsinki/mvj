@@ -16,6 +16,7 @@ from rest_framework.serializers import ValidationError
 from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
 from field_permissions.registry import field_permissions
+from filescan.mixins import FileScanMixin
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
@@ -402,7 +403,7 @@ def get_meeting_memo_file_upload_to(instance, filename):
         )
 
 
-class MeetingMemo(models.Model):
+class MeetingMemo(FileScanMixin, models.Model):
     # In Finnish: Kokousmuistio
     name = models.CharField(max_length=255)
     meeting_memo = PrivateFileField(
@@ -625,7 +626,7 @@ def get_area_search_attachment_upload_to(instance, filename):
     )
 
 
-class AreaSearchAttachment(SerializableMixin, NameModel):
+class AreaSearchAttachment(FileScanMixin, SerializableMixin, NameModel):
     attachment = PrivateFileField(
         upload_to=get_area_search_attachment_upload_to,
         null=True,
