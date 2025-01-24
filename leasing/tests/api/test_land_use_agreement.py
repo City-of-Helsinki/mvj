@@ -5,6 +5,7 @@ from io import BytesIO
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -461,6 +462,9 @@ def test_upload_attachment(
     assert lua.attachments.first().uploader == response.wsgi_request.user
 
 
+# override_settings is necessary to avoid breaking this older test after the
+# virus/malware scanning mechanic was added to most file/attachment classes.
+@override_settings(FLAG_FILE_SCAN=False)
 @pytest.mark.django_db
 def test_download_attachment(
     django_db_setup, admin_client, client, land_use_agreement_test_data, user_factory

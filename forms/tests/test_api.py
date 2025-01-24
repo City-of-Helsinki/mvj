@@ -6,6 +6,7 @@ import pytest
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import FileResponse
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from faker import Faker
@@ -187,9 +188,10 @@ def test_answer_post(
     assert len(Entry.objects.all()) == 4
     assert mock_async_task.called, "async_task was not called to generate emails"
     _, async_task_kwargs = mock_async_task.call_args
-    assert async_task_kwargs.get("input_data").get("answer_id") == response.data["id"]
+    answer_id = async_task_kwargs.get("input_data").get("answer_id")
+    assert answer_id == response.data["id"]
 
-    url = reverse("v1:answer-detail", kwargs={"pk": 1})
+    url = reverse("v1:answer-detail", kwargs={"pk": answer_id})
     payload = {
         "form": basic_form.id,
         "user": admin_user.pk,
@@ -398,15 +400,20 @@ def test_attachment_post(
         "ready": True,
     }
     response = admin_client.post(url, data=payload, content_type="application/json")
-    id = response.json()["id"]
+    answer_id = response.json()["id"]
 
     assert response.status_code == 201
     assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
-    url = reverse("v1:answer-attachments", kwargs={"pk": id})
+    url = reverse("v1:answer-attachments", kwargs={"pk": answer_id})
     response = admin_client.get(url)
-    url = reverse("v1:attachment-download", kwargs={"pk": attachment_id})
-    file_response: FileResponse = admin_client.get(url)
+
+    # override_settings is necessary to avoid breaking this older test after the
+    # virus/malware scanning mechanic was added to most file/attachment classes.
+    with override_settings(FLAG_FILE_SCAN=False):
+        url = reverse("v1:attachment-download", kwargs={"pk": attachment_id})
+        file_response: FileResponse = admin_client.get(url)
+
     assert response.status_code == 200
     assert len(response.json()) != 0
     assert file_response.status_code == 200
