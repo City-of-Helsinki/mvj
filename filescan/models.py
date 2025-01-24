@@ -10,11 +10,12 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
+from safedelete.models import SafeDeleteModel
 
 from filescan.enums import FileScanResult
 from filescan.types import PlattaClamAvResponse, PlattaClamAvResult
 from leasing.models.mixins import TimeStampedModel
-from utils.models.fields import PrivateFieldFile
+from utils.models.fields import PrivateFieldFile, PrivateFileField
 
 logger = logging.getLogger(__name__)
 
@@ -232,3 +233,28 @@ def _delete_infected_file(scan_status: FileScanStatus) -> None:
 
     scan_status.file_deleted_at = timezone.now()
     scan_status.save()
+
+
+class TestGenericAttachmentModel(models.Model):
+    """
+    A generic test model to represent models with PrivateFileFields, to avoid
+    selecting a sample model in our test cases.
+
+    Used only in unit tests. Feel free to refactor if you want to remove this.
+    """
+
+    file_attachment = PrivateFileField()
+
+
+class TestGenericSafeDeleteAttachmentModel(SafeDeleteModel):
+    """
+    A generic model to represent SafeDeleteModels with PrivateFileFields, to
+    avoid selecting a sample model in our test cases.
+
+    SafeDeleteModels execute a save() method during their delete, which must be
+    considered in filescan scheduling triggers.
+
+    Used only in unit tests. Feel free to refactor if you want to remove this.
+    """
+
+    file_attachment = PrivateFileField()

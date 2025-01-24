@@ -403,6 +403,7 @@ class AreaSearchAttachmentViewset(
 
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None):
+        """Needed to inform FileDownloadMixin of which field holds the file."""
         return super().download(request, pk, file_field="attachment")
 
 
