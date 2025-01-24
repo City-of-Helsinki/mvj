@@ -11,7 +11,7 @@ from django.utils import timezone
 from faker import Faker
 from pytest_factoryboy import register
 
-from conftest import ContactFactory
+from conftest import ContactFactory, ServiceUnitFactory
 from leasing.enums import (
     AreaType,
     ContactType,
@@ -42,7 +42,6 @@ from leasing.models import (
     Rent,
     RentAdjustment,
     RentIntendedUse,
-    ServiceUnit,
     UiData,
 )
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
@@ -364,12 +363,6 @@ class DecisionMakerFactory(factory.django.DjangoModelFactory):
 class CustomDetailedPlanFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CustomDetailedPlan
-
-
-@register
-class ServiceUnitFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ServiceUnit
 
 
 @register
