@@ -70,9 +70,11 @@ from plotsearch.permissions import (
     PlotSearchOpeningRecordPermissions,
 )
 from plotsearch.serializers.plot_search import (
+    AreaSearchAttachmentPublicSerializer,
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
     AreaSearchListSerializer,
+    AreaSearchPublicSerializer,
     AreaSearchSerializer,
     DirectReservationLinkSerializer,
     FAQSerializer,
@@ -368,7 +370,7 @@ class AreaSearchPublicViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
     queryset = AreaSearch.objects.all()
-    serializer_class = AreaSearchSerializer
+    serializer_class = AreaSearchPublicSerializer
     permission_classes = (
         AreaSearchPublicPermissions,
         IsAuthenticated,
@@ -417,6 +419,7 @@ class AreaSearchAttachmentPublicViewset(
 ):
     """Includes FileExtensionFileMixin to validate file extensions."""
 
+    serializer_class = AreaSearchAttachmentPublicSerializer
     permission_classes = (AreaSearchAttachmentPublicPermissions,)
 
     def destroy(self, request, *args, **kwargs):

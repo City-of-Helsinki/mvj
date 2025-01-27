@@ -12,8 +12,9 @@ from django.utils import timezone
 from faker import Faker
 
 from forms.enums import FormState
-from forms.models import Entry, Field
+from forms.models import Entry
 from forms.models.form import AnswerOpeningRecord, Attachment
+from forms.serializers.form import EXCLUDED_ATTACHMENT_FIELDS
 from plotsearch.enums import DeclineReason
 from plotsearch.models import TargetStatus
 
@@ -345,12 +346,18 @@ def test_meeting_memo_create(
 
 
 @pytest.mark.django_db
-def test_attachment_post(
+def test_attachment_upload(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
+    """
+    should upload an attachment, create a form answer, and the attachment should be linked to the form answer
+    """
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    field = basic_form.sections.get(identifier="application-target").fields.get(
+        identifier="reference-attachments"
+    )
     payload = {
-        "field": Field.objects.all().first().id,
+        "field": field.id,
         "name": fake.name(),
         "attachment": example_file,
     }
@@ -425,7 +432,7 @@ def test_attachment_post(
 def test_attachment_delete(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
-    test_attachment_post(
+    test_attachment_upload(
         django_db_setup, admin_client, admin_user, plot_search_target, basic_form
     )
     attachment = Attachment.objects.all().first()
@@ -435,6 +442,77 @@ def test_attachment_delete(
     response = admin_client.delete(url)
     assert response.status_code == 204
     assert os.path.isfile(file_path) is False
+
+
+@pytest.mark.django_db
+def test_attachment_upload_public(
+    django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+):
+    """
+    should upload an attachment with the public API and not return any sensitive or unnecessary fields in the HTTP,
+    create a form answer, and the attachment should be linked to a form answer
+    """
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    field = basic_form.sections.get(identifier="application-target").fields.get(
+        identifier="reference-attachments"
+    )
+    payload = {
+        "field": field.id,
+        "name": fake.name(),
+        "attachment": example_file,
+    }
+    url = reverse("v1:pub_attachment-list")
+    response = admin_client.post(url, data=payload)
+    assert response.status_code == 201
+
+    attachment_keys = response.json().keys()
+    assert len(set(EXCLUDED_ATTACHMENT_FIELDS).intersection(set(attachment_keys))) == 0
+
+    attachment_id = response.json()["id"]
+    url = reverse("v1:pub_answer-list")
+    payload = {
+        "form": basic_form.id,
+        "user": admin_user.pk,
+        "targets": [
+            plot_search_target.pk,
+        ],  # noqa: E231
+        "entries": {
+            "sections": {
+                "company-information": [
+                    {
+                        "sections": {},
+                        "fields": {"company-name": {"value": "", "extraValue": ""}},
+                    },
+                    {
+                        "sections": {},
+                        "fields": {
+                            "business-id": {"value": "", "extraValue": ""},
+                            "hallintaosuus": {"value": "1/1", "extraValue": ""},
+                        },
+                    },
+                ],
+                "contact-person": {
+                    "sections": {},
+                    "fields": {
+                        "first-name": {"value": "False", "extraValue": ""},
+                        "last-name": {
+                            "value": "99",
+                            "extraValue": "developers developers developers",
+                        },
+                    },
+                },
+            },
+            "fields": {},
+        },
+        "attachments": [
+            attachment_id,
+        ],  # noqa: E231
+        "ready": True,
+    }
+    response = admin_client.post(url, data=payload, content_type="application/json")
+
+    assert response.status_code == 201
+    assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
 
 @pytest.mark.django_db

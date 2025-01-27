@@ -16,7 +16,8 @@ from leasing.enums import PlotSearchTargetType
 from leasing.models import PlanUnit
 from plotsearch.enums import SearchClass, SearchStage
 from plotsearch.models import AreaSearch, PlotSearch, PlotSearchTarget
-from plotsearch.models.plot_search import PlotSearchStage
+from plotsearch.models.plot_search import AreaSearchAttachment, PlotSearchStage
+from plotsearch.serializers.plot_search import EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS
 
 fake = Faker("fi_FI")
 
@@ -799,6 +800,48 @@ def test_area_search_create_simple(
 
 
 @pytest.mark.django_db
+def test_area_search_create_simple_public(
+    django_db_setup, admin_client, area_search_test_data, area_search_attachment_factory
+):
+    url = reverse("v1:pub_area_search-list")  # list == create
+
+    attachment = area_search_attachment_factory(
+        area_search=area_search_test_data,
+        attachment=SimpleUploadedFile(content=b"Lorem Impsum", name="test.txt"),
+        name="test.txt",
+    )
+
+    data = {
+        "description_area": get_random_string(length=12),
+        "description_intended_use": get_random_string(length=12),
+        "intended_use": area_search_test_data.intended_use.pk,
+        "geometry": area_search_test_data.geometry.geojson,
+        "attachments": 1,
+        "area_search_attachments": [attachment.id],
+    }
+
+    response = admin_client.post(
+        url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
+    )
+    attachments = response.json().get("area_search_attachments")
+    assert (
+        len(
+            set(attachments[0].keys()).intersection(
+                set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS)
+            )
+        )
+        == 0
+    )
+
+    assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
+    assert AreaSearch.objects.filter(id=response.data["id"]).exists()
+    assert (
+        AreaSearch.objects.get(id=response.data["id"]).intended_use.id
+        == area_search_test_data.intended_use.pk
+    )
+
+
+@pytest.mark.django_db
 def test_area_search_attachment_create(
     django_db_setup, admin_client, area_search_test_data
 ):
@@ -822,6 +865,37 @@ def test_area_search_attachment_create(
     response = admin_client.get(url)
 
     assert len(response.data["area_search_attachments"]) == 1
+
+
+@pytest.mark.django_db
+def test_area_search_attachment_create_public(
+    django_db_setup, admin_client, area_search_test_data
+):
+    attachment = {
+        "area_search": area_search_test_data.id,
+        "attachment": SimpleUploadedFile(content=b"Lorem Impsum", name="test.txt"),
+        "name": fake.name(),
+    }
+
+    url = reverse(
+        "v1:pub_area_search_attachment-list",
+    )
+    response = admin_client.post(url, data=attachment)
+
+    assert response.status_code == 201
+
+    attachment_keys = response.json().keys()
+    assert (
+        len(
+            set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS).intersection(
+                set(attachment_keys)
+            )
+        )
+        == 0
+    )
+    assert AreaSearchAttachment.objects.filter(
+        area_search=area_search_test_data
+    ).exists()
 
 
 @pytest.mark.django_db

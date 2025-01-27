@@ -21,6 +21,7 @@ from forms.serializers.form import (
     AnswerOpeningRecordSerializer,
     AnswerPublicSerializer,
     AnswerSerializer,
+    AttachmentPublicSerializer,
     AttachmentSerializer,
     FormSerializer,
     MeetingMemoSerializer,
@@ -179,7 +180,7 @@ class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
 class AttachmentPublicViewSet(FileExtensionFileMixin, AttachmentViewSet):
     """Includes FileExtensionFileMixin to validate file extensions."""
 
-    pass
+    serializer_class = AttachmentPublicSerializer
 
 
 class TargetStatusViewset(
