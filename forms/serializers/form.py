@@ -33,6 +33,9 @@ from ..validators.answer import (
     RequiredFormFieldValidator,
 )
 
+# These fields include sensitive or unnecessary data for the public API
+EXCLUDED_ATTACHMENT_FIELDS = ["attachment", "created_at"]
+
 
 class RecursiveSerializer(serializers.Serializer):
     def to_representation(self, value):
@@ -921,6 +924,15 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         kwargs["user"] = self.context["request"].user
         return super().save(**kwargs)
+
+
+class AttachmentPublicSerializer(AttachmentSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        for key in EXCLUDED_ATTACHMENT_FIELDS:
+            if key in representation:
+                representation.pop(key)
+        return representation
 
 
 class ReadAttachmentSerializer(AttachmentSerializer):

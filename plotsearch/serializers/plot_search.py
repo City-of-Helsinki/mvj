@@ -65,6 +65,14 @@ from plotsearch.utils import (
 from users.models import User
 from users.serializers import UserSerializer
 
+# These fields include sensitive or unnecessary data for the public API
+EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS = [
+    "attachment",
+    "user",
+    "area_search",
+    "created_at",
+]
+
 
 class PlotSearchSubTypeLinkedSerializer(NameModelSerializer):
     class Meta:
@@ -840,6 +848,15 @@ class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
         return attachment
 
 
+class AreaSearchAttachmentPublicSerializer(AreaSearchAttachmentSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        for key in EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS:
+            if key in representation:
+                representation.pop(key)
+        return representation
+
+
 class AreaSearchStatusNoteSerializer(serializers.ModelSerializer):
     preparer = UserSerializer(read_only=True)
     time_stamp = serializers.DateTimeField(read_only=True)
@@ -1075,6 +1092,17 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         instance.save()
 
         return instance
+
+
+class AreaSearchPublicSerializer(AreaSearchSerializer):
+    area_search_attachments = InstanceDictPrimaryKeyRelatedField(
+        instance_class=AreaSearchAttachment,
+        queryset=AreaSearchAttachment.objects.all(),
+        related_serializer=AreaSearchAttachmentPublicSerializer,
+        required=False,
+        allow_null=True,
+        many=True,
+    )
 
 
 class AreaSearchDetailSerializer(AreaSearchSerializer):
