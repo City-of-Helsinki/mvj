@@ -650,7 +650,7 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="""Vakuutan antamani tiedot oikeiksi.*""",
+        label="""Vakuutan antamani tiedot oikeiksi.""",
         type="checkbox",
         identifier="vakuutan-antamani-tiedot-oikeiksi",
         enabled=True,
@@ -659,26 +659,41 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
-                 ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
-        hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
-                     Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään
-                     päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
+        label="Vakuutan että hakijat eivät ole pakotteiden kohteena.",
+        hint_text="""Vastaamalla KYLLÄ hakija vakuuttaa, että se itse tai yksikään sen suora tai välillinen
+            omistaja, vastuuhenkilö tai muu lähellä oleva taho ei ole pakotteiden kohteena tai että
+            pakotteita tai varojen jäädyttämispäätöksiä ei ole asetettu hakijalle, hakijan hallinto-, johto-,
+            tai valvontaelimen jäsenille tai edustus-, päätös-, määräys- tai valvontavaltaa käyttäville
+            henkilöille tai tahoille.""",
         type="checkbox",
-        identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
+        identifier="pakotelista-vakuutus",
         enabled=True,
-        required=False,
+        required=True,
         sort_order=1,
     )
     Field.objects.create(
         section=decision_section,
+        label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
+            ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
+        hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
+            Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään
+            päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
+        type="checkbox",
+        identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
+        enabled=True,
+        required=False,
+        sort_order=2,
+    )
+    Field.objects.create(
+        section=decision_section,
         label="""Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön
-                 asiakasrekisterin selosteen mukaisesti. Lisätiedot: www.hel.fi/rekisteriseloste""",
+            asiakasrekisterin selosteen mukaisesti.""",
+        hint_text="Lisätiedot: www.hel.fi/rekisteriseloste",
         type="checkbox",
         identifier="hyvaksyn-tietojeni-tallentamisen",
         enabled=True,
         required=False,
-        sort_order=2,
+        sort_order=3,
     )
 
     return form
