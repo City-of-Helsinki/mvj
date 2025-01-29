@@ -170,21 +170,12 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=invoice_section,
-        label="Hakijan laskutusosoite",
-        type="checkbox",
-        identifier="laskutusosoite-hakija",
-        enabled=True,
-        required=False,
-        sort_order=0,
-    )
-    Field.objects.create(
-        section=invoice_section,
         label="Verkkolaskuosoite",
         type="textbox",
         identifier="verkkolaskuosoite",
         enabled=True,
         required=False,
-        sort_order=1,
+        sort_order=0,
     )
     Field.objects.create(
         section=invoice_section,
@@ -193,7 +184,7 @@ def initialize_area_search_form():
         identifier="valittajan-tunnus",
         enabled=True,
         required=False,
-        sort_order=2,
+        sort_order=1,
     )
     Field.objects.create(
         section=invoice_section,
@@ -202,7 +193,7 @@ def initialize_area_search_form():
         identifier="laskutusviite",
         enabled=True,
         required=False,
-        sort_order=3,
+        sort_order=2,
     )
 
     invoice_other_section = Section.objects.create(
