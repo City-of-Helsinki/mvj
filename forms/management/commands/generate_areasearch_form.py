@@ -316,6 +316,15 @@ def initialize_area_search_form():
         required=False,
         sort_order=9,
     )
+    Field.objects.create(
+        section=invoice_other_section,
+        label="Laskutusviite (tulee näkyviin laskulle)",
+        type="textbox",
+        identifier="laskutusviite",
+        enabled=True,
+        required=False,
+        sort_order=10,
+    )
 
     people_section = Section.objects.create(
         form=form,
