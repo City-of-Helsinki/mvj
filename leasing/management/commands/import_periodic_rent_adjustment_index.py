@@ -319,7 +319,11 @@ def _update_or_create_index_numbers(
         value = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
-        # TODO verify in 5.9. meeting: should we exclude "ennakkotieto" commented values?
+        # Preliminary figure point values (indeksipistelukujen ennakkoarvot)
+        # will be released by StatFin ahead of the final values. These
+        # preliminary values will contain a comment like "* ennakkotieto\r\n".
+        # If future requirements state that preliminary values should not be
+        # saved or used in our system, add exclusion logic here.
         _, created = IndexPointFigureYearly.objects.update_or_create(
             index=index,
             year=year,
