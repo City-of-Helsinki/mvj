@@ -884,6 +884,8 @@ def test_area_search_attachment_create_public(
 
     assert response.status_code == 201
 
+    # When attachments are created, the HTTP response should not return any sensitive or unnecessary data
+    # Checks that the response does not contain any of the keys in EXCLUDED_ATTACHMENT_FIELDS
     attachment_keys = response.json().keys()
     assert (
         len(
