@@ -5,7 +5,7 @@ from django.http import FileResponse
 from django.utils.datastructures import MultiValueDict
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import MethodNotAllowed, ValidationError
 from rest_framework.response import Response
 
 from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
@@ -256,3 +256,11 @@ class FileExtensionFileMixin:
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None, file_field: str | None = None):
         return FileDownloadMixin.download(self, request, pk, file_field=file_field)
+
+
+class DisablePublicDownloadMixin:
+    from rest_framework.decorators import action
+
+    @action(methods=["get"], detail=True)
+    def download(self, *args, **kwargs):
+        raise MethodNotAllowed("GET")

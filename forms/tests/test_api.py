@@ -7,7 +7,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import FileResponse
 from django.test import override_settings
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from faker import Faker
 
@@ -346,12 +346,9 @@ def test_meeting_memo_create(
 
 
 @pytest.mark.django_db
-def test_attachment_upload(
+def test_attachment_upload_and_download(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
-    """
-    should upload an attachment, create a form answer, and the attachment should be linked to the form answer
-    """
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
     field = basic_form.sections.get(identifier="application-target").fields.get(
         identifier="reference-attachments"
@@ -410,10 +407,15 @@ def test_attachment_upload(
     answer_id = response.json()["id"]
 
     assert response.status_code == 201
-    assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
+    # Attachment should exist
+    assert Attachment.objects.filter(answer=answer_id).exists()
+
+    # Should get attachments
     url = reverse("v1:answer-attachments", kwargs={"pk": answer_id})
     response = admin_client.get(url)
+    assert response.status_code == 200
+    assert len(response.json()) != 0
 
     # override_settings is necessary to avoid breaking this older test after the
     # virus/malware scanning mechanic was added to most file/attachment classes.
@@ -421,8 +423,6 @@ def test_attachment_upload(
         url = reverse("v1:attachment-download", kwargs={"pk": attachment_id})
         file_response: FileResponse = admin_client.get(url)
 
-    assert response.status_code == 200
-    assert len(response.json()) != 0
     assert file_response.status_code == 200
     # Get the content from the generator
     assert b"".join(file_response.streaming_content) == b"Lorem lipsum"
@@ -432,7 +432,7 @@ def test_attachment_upload(
 def test_attachment_delete(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
-    test_attachment_upload(
+    test_attachment_upload_and_download(
         django_db_setup, admin_client, admin_user, plot_search_target, basic_form
     )
     attachment = Attachment.objects.all().first()
@@ -445,13 +445,9 @@ def test_attachment_delete(
 
 
 @pytest.mark.django_db
-def test_attachment_upload_public(
+def test_attachment_upload_and_download_public(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
-    """
-    should upload an attachment with the public API and not return any sensitive or unnecessary fields in the HTTP,
-    create a form answer, and the attachment should be linked to a form answer
-    """
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
     field = basic_form.sections.get(identifier="application-target").fields.get(
         identifier="reference-attachments"
@@ -465,6 +461,8 @@ def test_attachment_upload_public(
     response = admin_client.post(url, data=payload)
     assert response.status_code == 201
 
+    # When attachments are created, the HTTP response should not return any sensitive or unnecessary data
+    # Checks that the response does not contain any of the keys in EXCLUDED_ATTACHMENT_FIELDS
     attachment_keys = response.json().keys()
     assert len(set(EXCLUDED_ATTACHMENT_FIELDS).intersection(set(attachment_keys))) == 0
 
@@ -511,8 +509,22 @@ def test_attachment_upload_public(
     }
     response = admin_client.post(url, data=payload, content_type="application/json")
 
+    # When an answer is created, the HTTP response should not contain the key "attachments"
+    assert "attachments" not in response.json().keys()
+
+    # Attachment should exist
     assert response.status_code == 201
     assert Attachment.objects.filter(answer=response.json()["id"]).exists()
+
+    # Public endpoint should not allow getting attachments
+    with pytest.raises(NoReverseMatch):
+        url = reverse("v1:pub_answer-attachments", kwargs={"pk": response.json()["id"]})
+
+    # Public endpoint should not allow downloading attachments
+    url = reverse("v1:pub_attachment-download", kwargs={"pk": attachment_id})
+    file_response: FileResponse = admin_client.get(url)
+    assert len(response.json()) != 0
+    assert file_response.status_code == 405  # Method not allowed
 
 
 @pytest.mark.django_db

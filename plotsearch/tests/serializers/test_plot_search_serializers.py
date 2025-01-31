@@ -1,7 +1,16 @@
 import pytest
 from django.core.exceptions import BadRequest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
-from plotsearch.serializers.plot_search import PlotSearchTargetCreateUpdateSerializer
+from forms.serializers.form import (
+    EXCLUDED_ATTACHMENT_FIELDS,
+    AttachmentPublicSerializer,
+)
+from plotsearch.serializers.plot_search import (
+    EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS,
+    AreaSearchAttachmentPublicSerializer,
+    PlotSearchTargetCreateUpdateSerializer,
+)
 
 
 @pytest.mark.django_db
@@ -68,3 +77,28 @@ def test_get_plan_unit_or_custom_detailed_plan_badrequest(
     validated_data = {}
     with pytest.raises(BadRequest):
         serializer.get_plan_unit_or_custom_detailed_plan(validated_data)
+
+
+@pytest.mark.django_db
+def test_attachment_public_serializer(attachment_factory, user_factory):
+    user = user_factory()
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    attachment = attachment_factory(attachment=example_file, user=user)
+    data = AttachmentPublicSerializer(attachment).data
+    assert len(set(data.keys()).intersection(set(EXCLUDED_ATTACHMENT_FIELDS))) == 0
+
+
+@pytest.mark.django_db
+def test_area_search_attachment_public_serializer(
+    area_search_attachment_factory, user_factory
+):
+    user = user_factory()
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    area_search_attachment = area_search_attachment_factory(
+        attachment=example_file, user=user
+    )
+    data = AreaSearchAttachmentPublicSerializer(area_search_attachment).data
+    assert (
+        len(set(data.keys()).intersection(set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS)))
+        == 0
+    )

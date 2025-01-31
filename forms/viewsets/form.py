@@ -6,7 +6,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from file_operations.viewsets.mixins import FileDownloadMixin, FileExtensionFileMixin
+from file_operations.viewsets.mixins import (
+    DisablePublicDownloadMixin,
+    FileDownloadMixin,
+    FileExtensionFileMixin,
+)
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import AnswerOpeningRecord, Attachment
@@ -177,7 +181,9 @@ class AttachmentViewSet(FileDownloadMixin, viewsets.ModelViewSet):
         return super().download(request, pk, file_field="attachment")
 
 
-class AttachmentPublicViewSet(FileExtensionFileMixin, AttachmentViewSet):
+class AttachmentPublicViewSet(
+    DisablePublicDownloadMixin, FileExtensionFileMixin, AttachmentViewSet
+):
     """Includes FileExtensionFileMixin to validate file extensions."""
 
     serializer_class = AttachmentPublicSerializer
