@@ -17,12 +17,13 @@ MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 class FileDownloadMixin:
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None, file_field: str | None = None):
+        if file_field is None:
+            raise ValueError(
+                "file_field is required in order to utilize FileDownloadMixin"
+            )
+
         obj = self.get_object()
-        if file_field is not None:
-            private_fieldfile: PrivateFieldFile = getattr(obj, file_field)
-        else:
-            # Default to accessing field/column named 'file'
-            private_fieldfile: PrivateFieldFile = obj.file
+        private_fieldfile: PrivateFieldFile = getattr(obj, file_field)
 
         try:
             file = private_fieldfile.open("rb")
