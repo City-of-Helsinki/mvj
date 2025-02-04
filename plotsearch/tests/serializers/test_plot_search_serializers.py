@@ -80,16 +80,19 @@ def test_get_plan_unit_or_custom_detailed_plan_badrequest(
 
 
 @pytest.mark.django_db
-def test_attachment_public_serializer(attachment_factory, user_factory):
+def test_attachment_public_serializer_unwanted_fields(attachment_factory, user_factory):
     user = user_factory()
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
     attachment = attachment_factory(attachment=example_file, user=user)
     data = AttachmentPublicSerializer(attachment).data
-    assert len(set(data.keys()).intersection(set(EXCLUDED_ATTACHMENT_FIELDS))) == 0
+    unwanted_fields_in_data = set(data.keys()).intersection(
+        set(EXCLUDED_ATTACHMENT_FIELDS)
+    )
+    assert len(unwanted_fields_in_data) == 0
 
 
 @pytest.mark.django_db
-def test_area_search_attachment_public_serializer(
+def test_area_search_attachment_public_serializer_unwanted_fields(
     area_search_attachment_factory, user_factory
 ):
     user = user_factory()
@@ -98,7 +101,7 @@ def test_area_search_attachment_public_serializer(
         attachment=example_file, user=user
     )
     data = AreaSearchAttachmentPublicSerializer(area_search_attachment).data
-    assert (
-        len(set(data.keys()).intersection(set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS)))
-        == 0
+    unwanted_fields_in_data = set(data.keys()).intersection(
+        set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS)
     )
+    assert len(unwanted_fields_in_data) == 0

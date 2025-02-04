@@ -15,6 +15,7 @@ from forms.enums import FormState
 from forms.models import Entry
 from forms.models.form import AnswerOpeningRecord, Attachment
 from forms.serializers.form import EXCLUDED_ATTACHMENT_FIELDS
+from mvj.tests.test_urls import set_plotsearch_flag_reload_urlconf  # noqa: F401
 from plotsearch.enums import DeclineReason
 from plotsearch.models import TargetStatus
 
@@ -346,7 +347,7 @@ def test_meeting_memo_create(
 
 
 @pytest.mark.django_db
-def test_attachment_upload_and_download(
+def test_attachment_post(
     django_db_setup, admin_client, admin_user, plot_search_target, basic_form
 ):
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
@@ -411,6 +412,19 @@ def test_attachment_upload_and_download(
     # Attachment should exist
     assert Attachment.objects.filter(answer=answer_id).exists()
 
+
+@pytest.mark.django_db
+def test_attachment_get(
+    django_db_setup, admin_client, admin_user, answer_factory, attachment_factory
+):
+    answer = answer_factory()
+    answer_id = answer.id
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    attachment = attachment_factory(
+        user=admin_user, answer=answer, attachment=example_file
+    )
+    attachment_id = attachment.id
+
     # Should get attachments
     url = reverse("v1:answer-attachments", kwargs={"pk": answer_id})
     response = admin_client.get(url)
@@ -430,12 +444,10 @@ def test_attachment_upload_and_download(
 
 @pytest.mark.django_db
 def test_attachment_delete(
-    django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+    django_db_setup, admin_client, admin_user, attachment_factory
 ):
-    test_attachment_upload_and_download(
-        django_db_setup, admin_client, admin_user, plot_search_target, basic_form
-    )
-    attachment = Attachment.objects.all().first()
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    attachment = attachment_factory(attachment=example_file, user=admin_user)
     url = reverse("v1:attachment-detail", kwargs={"pk": attachment.pk})
     file_path = attachment.attachment.path
     assert os.path.isfile(file_path) is True
@@ -444,9 +456,15 @@ def test_attachment_delete(
     assert os.path.isfile(file_path) is False
 
 
+@override_settings(FLAG_PLOTSEARCH=True)
 @pytest.mark.django_db
-def test_attachment_upload_and_download_public(
-    django_db_setup, admin_client, admin_user, plot_search_target, basic_form
+def test_attachment_post_public(
+    set_plotsearch_flag_reload_urlconf,  # noqa: F811
+    django_db_setup,
+    admin_client,
+    admin_user,
+    plot_search_target,
+    basic_form,
 ):
     example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
     field = basic_form.sections.get(identifier="application-target").fields.get(
@@ -461,10 +479,13 @@ def test_attachment_upload_and_download_public(
     response = admin_client.post(url, data=payload)
     assert response.status_code == 201
 
-    # When attachments are created, the HTTP response should not return any sensitive or unnecessary data
-    # Checks that the response does not contain any of the keys in EXCLUDED_ATTACHMENT_FIELDS
+    # When attachments are created,
+    # the HTTP response should not return any sensitive or unnecessary data
     attachment_keys = response.json().keys()
-    assert len(set(EXCLUDED_ATTACHMENT_FIELDS).intersection(set(attachment_keys))) == 0
+    unwanted_fields_in_response = set(EXCLUDED_ATTACHMENT_FIELDS).intersection(
+        set(attachment_keys)
+    )
+    assert len(unwanted_fields_in_response) == 0
 
     attachment_id = response.json()["id"]
     url = reverse("v1:pub_answer-list")
@@ -516,15 +537,51 @@ def test_attachment_upload_and_download_public(
     assert response.status_code == 201
     assert Attachment.objects.filter(answer=response.json()["id"]).exists()
 
+
+@override_settings(FLAG_PLOTSEARCH=True)
+@pytest.mark.django_db
+def test_attachment_get_public(
+    set_plotsearch_flag_reload_urlconf,  # noqa: F811
+    django_db_setup,
+    admin_client,
+    admin_user,
+    answer_factory,
+    attachment_factory,
+):
+    answer = answer_factory()
+    answer_id = answer.id
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    attachment = attachment_factory(
+        user=admin_user, answer=answer, attachment=example_file
+    )
+    attachment_id = attachment.id
+
     # Public endpoint should not allow getting attachments
     with pytest.raises(NoReverseMatch):
-        url = reverse("v1:pub_answer-attachments", kwargs={"pk": response.json()["id"]})
+        url = reverse("v1:pub_answer-attachments", kwargs={"pk": answer_id})
 
     # Public endpoint should not allow downloading attachments
     url = reverse("v1:pub_attachment-download", kwargs={"pk": attachment_id})
-    file_response: FileResponse = admin_client.get(url)
-    assert len(response.json()) != 0
-    assert file_response.status_code == 405  # Method not allowed
+    response: FileResponse = admin_client.get(url)
+    assert response.status_code == 405  # Method not allowed
+
+
+@override_settings(FLAG_PLOTSEARCH=True)
+@pytest.mark.django_db
+def test_attachment_delete_public(
+    set_plotsearch_flag_reload_urlconf,  # noqa: F811
+    django_db_setup,
+    admin_user,
+    admin_client,
+    attachment_factory,
+):
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+    attachment = attachment_factory(attachment=example_file, user=admin_user)
+    url = reverse("v1:pub_attachment-detail", kwargs={"pk": attachment.pk})
+    file_path = attachment.attachment.path
+    assert os.path.isfile(file_path) is True
+    response = admin_client.delete(url)
+    assert response.status_code == 405  # Method not allowed
 
 
 @pytest.mark.django_db
