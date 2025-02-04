@@ -3,6 +3,7 @@ from django.utils.translation import get_language_from_request
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -187,6 +188,9 @@ class AttachmentPublicViewSet(
     """Includes FileExtensionFileMixin to validate file extensions."""
 
     serializer_class = AttachmentPublicSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        raise MethodNotAllowed("DELETE")
 
 
 class TargetStatusViewset(
