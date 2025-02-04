@@ -86,7 +86,12 @@ from plotsearch.serializers.plot_search import (
     RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
-from utils.viewsets.mixins import FileExtensionFileMixin, FileMixin
+from utils.models.fields import FileScanError, FileScanPendingError, FileUnsafeError
+from utils.viewsets.mixins import (
+    FileExtensionFileMixin,
+    FileMixin,
+    get_filescan_error_response,
+)
 
 
 class PlotSearchSubtypeViewSet(
@@ -617,15 +622,22 @@ class AreaSearchGeneratePDF(PdfMixin, FilterView, APIView):
                 )
                 if self.request.GET.get("show_attachments", False):
                     for attachment in object.area_search_attachments.all():
-                        file = attachment.attachment.open()
-                        zip_file.writestr(
-                            ZipInfo(
-                                "{} {}".format(
-                                    object.identifier, attachment.attachment.name
-                                )
-                            ),
-                            file.file.file.read(),
-                        )
+                        try:
+                            file = attachment.attachment.open()
+                            zip_file.writestr(
+                                ZipInfo(
+                                    "{} {}".format(
+                                        object.identifier, attachment.attachment.name
+                                    )
+                                ),
+                                file.file.file.read(),
+                            )
+                        except (
+                            FileScanPendingError,
+                            FileUnsafeError,
+                            FileScanError,
+                        ) as e:
+                            return get_filescan_error_response(e)
 
         response["Content-Disposition"] = (
             f'attachment; filename={"{}.zip".format(self.object_list[0].lessor)}'

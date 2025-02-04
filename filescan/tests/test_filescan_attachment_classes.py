@@ -117,7 +117,7 @@ def test_attachment_classes(
             f"{api_route_root}-download", kwargs={"pk": attachment_id}
         )
         response = admin_client.get(path=url_download)
-        assert response.status_code == http_status.HTTP_410_GONE
+        assert response.status_code == http_status.HTTP_403_FORBIDDEN
         assert "error" in response.data.keys()
 
         # If a file has been scanned successfully with no detections, allow download
@@ -130,7 +130,7 @@ def test_attachment_classes(
         # If scanning process encountered an error, deny download
         _mock_scan_file_task_error(filescan.pk)
         response = admin_client.get(path=url_download)
-        assert response.status_code == http_status.HTTP_410_GONE
+        assert response.status_code == http_status.HTTP_403_FORBIDDEN
         assert "error" in response.data.keys()
 
         # If file was deleted due to detected virus, deny download

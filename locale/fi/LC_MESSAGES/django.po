@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-16 13:25+0200\n"
+"POT-Creation-Date: 2025-02-06 09:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -372,6 +372,24 @@ msgstr "Luottopäätöksien lokit"
 msgid ""
 "Cannot find business id or national identification number in customer data."
 msgstr "Asiakastiedoista ei löydy y-tunnusta tai henkilötunnusta."
+
+msgid "filepath"
+msgstr "tiedostopolku"
+
+msgid "scan time"
+msgstr "skannaushetki"
+
+msgid "deletion time"
+msgstr "poistohetki"
+
+msgid "error message"
+msgstr "virheviesti"
+
+msgid "File Scan Status"
+msgstr "Tiedoston skannauksen tila"
+
+msgid "File Scan Statuses"
+msgstr "Tiedoston skannauksen tilat"
 
 msgctxt "Form state"
 msgid "Work in progress"
@@ -4017,6 +4035,30 @@ msgstr "Token olemassa"
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
 
+msgid ""
+"File has not yet been scanned for viruses, and is unsafe to download at this "
+"time."
+msgstr ""
+"Tiedostoa ei ole vielä skannattu virusten varalta, joten sitä ei ole "
+"turvallista ladata tällä hetkellä."
+
+msgid ""
+"File was found to contain virus or malware, and the file has been deleted."
+msgstr ""
+"Tiedostosta löydettiin virus tai muu haittaohjelma, joten tiedosto on "
+"poistettu."
+
+msgid ""
+"File scan failed. File is unsafe to download before it has been successfully "
+"scanned for viruses and malware."
+msgstr ""
+"Tiedoston skannaus epäonnistui. Tiedostoa ei ole turvallista ladata ennen "
+"kuin se on onnistuneesti skannattu virusten ja haittaohjelmien varalta."
+
+#, python-brace-format
+msgid "Unknown error related to virus scanning: '{error_str}'"
+msgstr "Tuntematon virhe virusskannaukseen liittyen: '{error_str}'"
+
 #, python-brace-format
 msgid "File '{file.name}' does not have an extension."
 msgstr "Puuttuva tiedostopääte '{file.name}'"
@@ -4024,3 +4066,9 @@ msgstr "Puuttuva tiedostopääte '{file.name}'"
 #, python-brace-format
 msgid "File extension '.{ext}' is not allowed."
 msgstr "Tiedostomuoto '.{ext}' ei ole sallittu."
+
+#, python-brace-format
+msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
+msgstr ""
+"Tiedosto '{file.name}' ylittää suurimman sallitun tiedostokoon "
+"{MAX_FILE_SIZE_MB} MB"
