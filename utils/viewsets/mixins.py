@@ -8,7 +8,12 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from utils.models.fields import PrivateFieldFile, UnsafeFileError
+from utils.models.fields import (
+    FileScanError,
+    FileScanPendingError,
+    FileUnsafeError,
+    PrivateFieldFile,
+)
 
 MAX_FILE_SIZE_MB = 20
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -27,14 +32,51 @@ class FileDownloadMixin:
 
         try:
             file = private_fieldfile.open("rb")
-            response = FileResponse(file, as_attachment=True)
-        except UnsafeFileError:
-            response = Response(
-                status=status.HTTP_410_GONE,
-                data={"error": _("File has been deleted. Detected malware or virus.")},
-            )
+            return FileResponse(file, as_attachment=True)
+        except (FileScanPendingError, FileUnsafeError, FileScanError) as e:
+            return get_filescan_error_response(e)
 
-        return response
+
+def get_filescan_error_response(error: Exception) -> Response:
+    match error.__class__.__name__:
+        case FileScanPendingError.__name__:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={
+                    "error": _(
+                        "File has not yet been scanned for viruses, and is unsafe to download at this time."
+                    )
+                },
+            )
+        case FileUnsafeError.__name__:
+            return Response(
+                status=status.HTTP_410_GONE,
+                data={
+                    "error": _(
+                        "File was found to contain virus or malware, and the file has been deleted."
+                    )
+                },
+            )
+        case FileScanError.__name__:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={
+                    "error": _(
+                        "File scan failed. "
+                        "File is unsafe to download before it has been successfully scanned for viruses and malware."
+                    )
+                },
+            )
+        case _:
+            error_str = str(error)
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={
+                    "error": _(
+                        f"Unknown error related to virus scanning: '{error_str}'"
+                    )
+                },
+            )
 
 
 class FileMixin:

@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from django.conf import settings
@@ -5,15 +6,30 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models.fields.files import FieldFile
 
+logger = logging.getLogger(__name__)
 
-class UnsafeFileError(Exception):
-    """Raised when a file is attempted to be opened but is not marked to be
-    safe by FileScanStatus."""
+
+class FileScanPendingError(Exception):
+    """File has not yet been scanned for viruses."""
 
     pass
 
 
+class FileUnsafeError(Exception):
+    """File has been found unsafe by virus scan."""
+
+    pass
+
+
+class FileScanError(Exception):
+    """Virus scan failed for this file."""
+
+
 class PrivateFileSystemStorage(FileSystemStorage):
+    """
+    Private files are stored in a location separate from the usual media root.
+    """
+
     def __init__(self) -> None:
         # base_url is not needed, but it defaults to MEDIA_URL if not explicitly set
         super().__init__(location=settings.PRIVATE_FILES_LOCATION, base_url=None)
@@ -21,17 +37,28 @@ class PrivateFileSystemStorage(FileSystemStorage):
 
 class PrivateFieldFile(FieldFile):
     def open(self, mode="rb"):
-        if (
-            settings.FLAG_FILE_SCAN is True
-            and self._is_file_scanned_and_safe() is False
-        ):
-            raise UnsafeFileError("Opening this file is not allowed.")
-        return super().open(mode)
+        """
+        Private files require a successful virus scan with a clean result before they can be opened.
+        """
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN")
+        if file_scans_are_enabled is False:
+            # File scanning feature is not enabled, all files should be allowed
+            # to be read
+            return super().open(mode)
 
-    def _is_file_scanned_and_safe(self) -> bool:
+        from filescan.enums import FileScanResult
         from filescan.models import FileScanStatus
 
-        return FileScanStatus.is_file_scanned_and_safe(self.instance)
+        filescan_result = FileScanStatus.filefield_latest_scan_result(self.instance)
+
+        if filescan_result == FileScanResult.SAFE:
+            return super().open(mode)
+        elif filescan_result == FileScanResult.PENDING:
+            raise FileScanPendingError()
+        elif filescan_result == FileScanResult.UNSAFE:
+            raise FileUnsafeError()
+        elif filescan_result == FileScanResult.ERROR:
+            raise FileScanError()
 
 
 class PrivateFileField(models.FileField):

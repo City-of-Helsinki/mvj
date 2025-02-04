@@ -75,25 +75,33 @@ class FileScanStatus(TimeStampedModel):
             return FileScanResult.PENDING
 
     @staticmethod
-    def is_file_scanned_and_safe(fieldfile_instance: PrivateFieldFile) -> bool:
-        if settings.FLAG_FILE_SCAN is True:
-            content_type = ContentType.objects.get_for_model(fieldfile_instance)
-            scan_status = (
-                FileScanStatus.objects.filter(
-                    content_type=content_type,
-                    object_id=fieldfile_instance.pk,
-                )
-                .order_by("id")
-                .last()
+    def filefield_latest_scan_result(
+        file_object: models.Model,
+    ) -> FileScanResult:
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN")
+        if file_scans_are_enabled is False:
+            # Feature is not enabled, all files are considered safe.
+            return FileScanResult.SAFE
+
+        # Find the latest filescan status for this file
+        content_type = ContentType.objects.get_for_model(file_object)
+        scan_status = (
+            FileScanStatus.objects.filter(
+                content_type=content_type,
+                object_id=file_object.pk,
             )
-            if scan_status is None:
-                return False
+            .order_by("id")
+            .last()
+        )
+        if scan_status is None:
+            # The file has not yet been queued for a virus scan.
+            # Consider if this branch should raise an error.
+            logger.warning(
+                f"FileScanStatus not found for object {file_object.pk} of contenttype {content_type}"
+            )
+            return FileScanResult.PENDING
 
-            scan_result = scan_status.scan_result()
-            is_file_scanned_and_safe = scan_result == FileScanResult.SAFE
-            return is_file_scanned_and_safe
-
-        return True
+        return scan_status.scan_result()
 
     class Meta:
         verbose_name = _("File Scan Status")

@@ -16,7 +16,12 @@ from filescan.models import (
     _scan_file_task,
     schedule_file_for_virus_scanning,
 )
-from utils.models.fields import PrivateFieldFile, UnsafeFileError
+from utils.models.fields import (
+    FileScanError,
+    FileScanPendingError,
+    FileUnsafeError,
+    PrivateFieldFile,
+)
 
 
 @override_settings(FLAG_FILE_SCAN=False)
@@ -186,60 +191,44 @@ def test_file_deletion(
 
 @override_settings(FLAG_FILE_SCAN=False)
 @pytest.mark.django_db
-def test_is_file_scanned_and_safe(
-    django_db_setup,
-    generic_test_data,
-):
-    """
-    Test different scan_results with _is_file_scanned_and_safe().
-    """
-    scan: FileScanStatus = generic_test_data["scan"]
-    private_fieldfile: PrivateFieldFile = generic_test_data["private_fieldfile"]
-    with override_settings(FLAG_FILE_SCAN=True):
-        assert private_fieldfile._is_file_scanned_and_safe() is False
-
-        scan.scanned_at = timezone.now()
-        scan.save()
-        assert private_fieldfile._is_file_scanned_and_safe() is True
-
-        scan.error_message = "error"
-        scan.save()
-        assert private_fieldfile._is_file_scanned_and_safe() is False
-
-        scan.error_message = None
-        scan.file_deleted_at = timezone.now()
-        scan.save()
-        assert private_fieldfile._is_file_scanned_and_safe() is False
-
-
-@override_settings(FLAG_FILE_SCAN=False)
-@pytest.mark.django_db
-def test_is_file_scanned_and_safe_multiple_scan_statuses(
+def test_private_field_file_open(
     django_db_setup,
     generic_test_data,
     file_scan_status_factory,
 ):
     """
-    Test different scan_results with _is_file_scanned_and_safe()
-    With multiple FileScanStatus for the same file.
+    File in a PrivateFileField is only allowed to be opened if the file has been
+    successfully scanned and found to be safe.
     """
     attachment = generic_test_data["attachment"]
     private_fieldfile: PrivateFieldFile = generic_test_data["private_fieldfile"]
 
+    # File must be allowed to be opened for reading if feature flag is off
+    with override_settings(FLAG_FILE_SCAN=False):
+        try:
+            assert private_fieldfile.open()
+        except (FileScanPendingError, FileUnsafeError, FileScanError):
+            pytest.fail(
+                "An error related to file scanning was raised when feature flag is off"
+            )
+
+    # File has not yet been scanned --> open() method must raise an error
     _scan_status_pending: FileScanStatus = generic_test_data["scan"]  # noqa: F841
     with override_settings(FLAG_FILE_SCAN=True):
-        assert private_fieldfile._is_file_scanned_and_safe() is False
+        with pytest.raises(FileScanPendingError):
+            private_fieldfile.open()
 
+    # File has been found safe --> it can be read
     _scan_status_safe: FileScanStatus = file_scan_status_factory(  # noqa: F841
         content_object=attachment,
         filepath=attachment.file_attachment.name,
         filefield_field_name="file_attachment",
         scanned_at=timezone.now(),
     )
-
     with override_settings(FLAG_FILE_SCAN=True):
-        assert private_fieldfile._is_file_scanned_and_safe() is True
+        assert private_fieldfile.open()
 
+    # File has been found unsafe --> open() method must raise an error
     _scan_status_unsafe: FileScanStatus = file_scan_status_factory(  # noqa: F841
         content_object=attachment,
         filepath=attachment.file_attachment.name,
@@ -247,42 +236,19 @@ def test_is_file_scanned_and_safe_multiple_scan_statuses(
         file_deleted_at=timezone.now(),
     )
     with override_settings(FLAG_FILE_SCAN=True):
-        assert private_fieldfile._is_file_scanned_and_safe() is False
+        with pytest.raises(FileUnsafeError):
+            private_fieldfile.open()
 
-
-@pytest.mark.django_db
-def test_filescan_unsafe_fieldfile_open(
-    django_db_setup,
-    generic_test_data,
-):
-    """
-    Test PrivateFieldFile.open() with feature flag on and off, and
-    FileScanStatus with safe and unsafe.
-    """
-    private_fieldfile: PrivateFieldFile = generic_test_data["private_fieldfile"]
-
+    # Filescan was not successful --> open() method must raise an error
+    _scan_status_error: FileScanStatus = file_scan_status_factory(  # noqa: F841
+        content_object=attachment,
+        filepath=attachment.file_attachment.name,
+        filefield_field_name="file_attachment",
+        error_message="error message",
+    )
     with override_settings(FLAG_FILE_SCAN=True):
-        with pytest.raises(UnsafeFileError):
+        with pytest.raises(FileScanError):
             private_fieldfile.open()
-
-    with override_settings(FLAG_FILE_SCAN=False):
-        try:
-            private_fieldfile.open()
-        except UnsafeFileError:
-            pytest.fail("UnsafeFileDeletedError was raised when feature flag is off")
-
-    scan: FileScanStatus = generic_test_data["scan"]
-    scan.file_deleted_at = timezone.now()
-    scan.save()
-
-    scan.file_deleted_at = None
-    scan.scanned_at = timezone.now()
-    scan.save()
-    with override_settings(FLAG_FILE_SCAN=True):
-        try:
-            private_fieldfile.open()
-        except UnsafeFileError:
-            pytest.fail("UnsafeFileDeletedError was raised when file was safe")
 
 
 @override_settings(FLAG_FILE_SCAN=False)

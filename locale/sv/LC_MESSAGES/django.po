@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-16 13:25+0200\n"
+"POT-Creation-Date: 2025-02-06 09:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -383,6 +383,24 @@ msgid ""
 "Cannot find business id or national identification number in customer data."
 msgstr ""
 "Kunduppgifterna innehåller inget FO-nummer eller ingen personbeteckning."
+
+msgid "filepath"
+msgstr ""
+
+msgid "scan time"
+msgstr ""
+
+msgid "deletion time"
+msgstr ""
+
+msgid "error message"
+msgstr ""
+
+msgid "File Scan Status"
+msgstr ""
+
+msgid "File Scan Statuses"
+msgstr ""
 
 msgctxt "Form state"
 msgid "Work in progress"
@@ -4025,10 +4043,37 @@ msgstr "Token existerar"
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
 
+msgid ""
+"File has not yet been scanned for viruses, and is unsafe to download at this "
+"time."
+msgstr ""
+"Filen har ännu inte genomsökts efter virus och är osäker att ladda ner just "
+"nu."
+
+msgid ""
+"File was found to contain virus or malware, and the file has been deleted."
+msgstr ""
+"Filen visade sig innehålla virus eller skadlig programvara och har raderats."
+
+msgid ""
+"File scan failed. File is unsafe to download before it has been successfully "
+"scanned for viruses and malware."
+msgstr ""
+"Filskanning misslyckades. Filen är osäker att ladda ner innan den har "
+"genomsökts framgångsrikt efter virus och skadlig programvara."
+
+#, python-brace-format
+msgid "Unknown error related to virus scanning: '{error_str}'"
+msgstr "Okänt fel relaterat till virusskanning: '{error_str}'"
+
 #, python-brace-format
 msgid "File '{file.name}' does not have an extension."
 msgstr ""
 
 #, python-brace-format
 msgid "File extension '.{ext}' is not allowed."
+msgstr ""
+
+#, python-brace-format
+msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
 msgstr ""
