@@ -9,10 +9,15 @@ class FileScanMixin:
     an asynchronous virus/malware scan for the file.
     """
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, skip_virus_scan: bool = False, **kwargs):
         super().save(*args, **kwargs)
 
-        if settings.FLAG_FILE_SCAN is True and not _is_safedelete_delete_action(kwargs):
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN")
+        if (
+            file_scans_are_enabled is True
+            and skip_virus_scan is False
+            and not _is_safedelete_delete_action(kwargs)
+        ):
             from filescan.models import schedule_file_for_virus_scanning
 
             for field in self._meta.fields:
