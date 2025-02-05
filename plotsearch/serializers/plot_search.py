@@ -1029,7 +1029,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         area_search.save()
         for attachment in attachments:
             attachment.area_search = area_search
-            attachment.save()
+            # Virus scan was already queued when the attachment was first created,
+            # so we can skip it this time
+            attachment.save(skip_virus_scan=True)
 
         as_serializer = AreaSearchStatusSerializer(
             data=area_search_status, context=self.context
