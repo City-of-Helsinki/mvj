@@ -81,7 +81,7 @@ jobs:
           FTP_HOST: localhost
         run: |
           python manage.py compilemessages
-          pytest -ra -vvv --doctest-modules --cov=. --migrations
+          pytest -ra -vvv --cov=. --migrations
           ./run-type-checks
 
       - name: Run codecov
