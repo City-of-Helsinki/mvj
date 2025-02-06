@@ -112,6 +112,7 @@ env = environ.Env(
     GDPR_API_DELETER=(str, "gdpr.utils.delete_user_data"),
     FILE_SCAN_SERVICE_URL=(str, ""),
     FLAG_FILE_SCAN=(bool, False),
+    FLAG_PLOTSEARCH=(bool, False),
 )
 
 env_file = project_root(".env")
@@ -404,6 +405,7 @@ FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_SERVICE_URL")
 
 # Feature flags
 FLAG_FILE_SCAN = env.bool("FLAG_FILE_SCAN")
+FLAG_PLOTSEARCH = env.bool("FLAG_PLOTSEARCH")
 
 # Override with local settings if present
 local_settings = project_root("local_settings.py")
