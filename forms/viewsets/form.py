@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from file_operations.viewsets.mixins import FileDownloadMixin, FileExtensionFileMixin
 from forms.filter import AnswerFilterSet, TargetStatusFilterSet
 from forms.models import Answer, Entry, Form
 from forms.models.form import AnswerOpeningRecord, Attachment
@@ -31,7 +32,6 @@ from forms.utils import AnswerInBBoxFilter, handle_email_sending
 from leasing.permissions import MvjDjangoModelPermissions
 from plotsearch.models import TargetStatus
 from plotsearch.models.plot_search import MeetingMemo
-from utils.viewsets.mixins import FileDownloadMixin, FileExtensionFileMixin
 
 
 class FormViewSet(

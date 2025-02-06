@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.viewsets.mixins import FileMixin
 from leasing.models import LeaseAreaAttachment
 from leasing.models.land_area import CustomDetailedPlan, PlanUnit, Plot
 from leasing.serializers.land_area import (
@@ -15,7 +16,6 @@ from leasing.serializers.land_area import (
     PlotIdentifierSerializer,
 )
 from plotsearch.models import PlotSearch, PlotSearchTarget
-from utils.viewsets.mixins import FileMixin
 
 from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 

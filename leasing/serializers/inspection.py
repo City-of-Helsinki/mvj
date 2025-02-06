@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.serializers.utils import FileSerializerMixin
+from file_operations.serializers.mixins import FileSerializerMixin
 from users.serializers import UserSerializer
 
 from ..models import Inspection, InspectionAttachment

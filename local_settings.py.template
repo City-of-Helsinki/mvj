@@ -13,5 +13,5 @@ Q_CLUSTER = {
 # File virus scan settings
 FLAG_FILE_SCAN = True
 FILE_SCAN_SERVICE_URL = (
-    "http://*****/api/v1/scan"  # Prefer the devtest endpoint
+    "https://*****/api/v1/scan"  # Prefer the devtest endpoint
 )

@@ -2,6 +2,7 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from file_operations.serializers.mixins import FileSerializerMixin
 from leasing.models import DecisionMaker, IntendedUse, Lease
 from users.models import User
 from users.serializers import UserSerializer
@@ -15,11 +16,7 @@ from ..models import (
 )
 from .decision import DecisionMakerSerializer
 from .lease import IntendedUseSerializer, LeaseSuccinctSerializer
-from .utils import (
-    FileSerializerMixin,
-    InstanceDictPrimaryKeyRelatedField,
-    UpdateNestedMixin,
-)
+from .utils import InstanceDictPrimaryKeyRelatedField, UpdateNestedMixin
 
 
 class InfillDevelopmentCompensationDecisionSerializer(

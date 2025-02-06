@@ -9,7 +9,8 @@ from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
 from sequences import get_next_value
 
-from filescan.mixins import FileScanMixin
+from file_operations.private_files import PrivateFileField
+from file_operations.viewsets.mixins import FileScanMixin
 from leasing.enums import (
     InfillDevelopmentCompensationState,
     InvoiceState,
@@ -24,7 +25,6 @@ from leasing.models.land_area import AbstractAddress, Plot
 from leasing.models.lease import District, Municipality
 from leasing.utils import calculate_increase_with_360_day_calendar
 from users.models import User
-from utils.models.fields import PrivateFileField
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 

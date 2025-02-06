@@ -1,4 +1,3 @@
-import logging
 from typing import Any
 
 from django.conf import settings
@@ -6,23 +5,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models.fields.files import FieldFile
 
-logger = logging.getLogger(__name__)
-
-
-class FileScanPendingError(Exception):
-    """File has not yet been scanned for viruses."""
-
-    pass
-
-
-class FileUnsafeError(Exception):
-    """File has been found unsafe by virus scan."""
-
-    pass
-
-
-class FileScanError(Exception):
-    """Virus scan failed for this file."""
+from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
 
 
 class PrivateFileSystemStorage(FileSystemStorage):
@@ -40,14 +23,14 @@ class PrivateFieldFile(FieldFile):
         """
         Private files require a successful virus scan with a clean result before they can be opened.
         """
-        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN")
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN", False) is True
         if file_scans_are_enabled is False:
             # File scanning feature is not enabled, all files should be allowed
             # to be read
             return super().open(mode)
 
-        from filescan.enums import FileScanResult
-        from filescan.models import FileScanStatus
+        from file_operations.enums import FileScanResult
+        from file_operations.models.filescan import FileScanStatus
 
         filescan_result = FileScanStatus.filefield_latest_scan_result(self.instance)
 

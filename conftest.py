@@ -12,7 +12,7 @@ from django.utils import timezone
 from pytest_factoryboy import register
 
 from batchrun.models import Command, Job, JobRun, JobRunLog
-from filescan.models import FileScanStatus
+from file_operations.models.filescan import FileScanStatus
 from forms.models import Answer, Choice, Entry, Field, Form, Section
 from forms.models.form import Attachment, EntrySection
 from forms.tests.conftest import fake

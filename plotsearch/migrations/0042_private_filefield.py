@@ -3,7 +3,7 @@
 import django.core.files.storage
 from django.db import migrations
 import plotsearch.models.plot_search
-import utils.models.fields
+import file_operations.private_files
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="areasearchattachment",
             name="attachment",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="meetingmemo",
             name="meeting_memo",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(

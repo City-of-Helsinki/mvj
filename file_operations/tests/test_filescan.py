@@ -6,22 +6,19 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.utils import timezone
+from rest_framework import status as http_status
 
-from filescan.models import (
+from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
+from file_operations.models.filescan import (
     FileScanResult,
     FileScanStatus,
-    TestGenericAttachmentModel,
-    TestGenericSafeDeleteAttachmentModel,
+    GenericAttachmentTestModel,
+    GenericSafeDeleteAttachmentTestModel,
     _delete_infected_file,
     _scan_file_task,
     schedule_file_for_virus_scanning,
 )
-from utils.models.fields import (
-    FileScanError,
-    FileScanPendingError,
-    FileUnsafeError,
-    PrivateFieldFile,
-)
+from file_operations.private_files import PrivateFieldFile
 
 
 @override_settings(FLAG_FILE_SCAN=False)
@@ -34,15 +31,15 @@ def generic_test_data(file_scan_status_factory):
     file = SimpleUploadedFile(
         name=filename, content=b"test", content_type="application/pdf"
     )
-    attachment = TestGenericAttachmentModel.objects.create(file_attachment=file)
-    attachment_safedelete = TestGenericSafeDeleteAttachmentModel.objects.create(
+    attachment = GenericAttachmentTestModel.objects.create(file_attachment=file)
+    attachment_safedelete = GenericSafeDeleteAttachmentTestModel.objects.create(
         file_attachment=file
     )
     private_fieldfile = attachment.file_attachment
     scan: FileScanStatus = file_scan_status_factory(
         content_object=attachment,
         filepath=attachment.file_attachment.name,
-        filefield_field_name="file_attachment",
+        filefield_name="file_attachment",
     )
     return {
         "attachment": attachment,
@@ -71,7 +68,7 @@ def test_filescan_safe(django_db_setup, generic_test_data):
     """
     attachment = generic_test_data["attachment"]
     with patch("requests.post") as mock_post:
-        mock_post.return_value.status_code = 200
+        mock_post.return_value.status_code = http_status.HTTP_200_OK
         mock_post.return_value.json.return_value = {
             "success": True,
             "data": {
@@ -84,7 +81,7 @@ def test_filescan_safe(django_db_setup, generic_test_data):
                 ]
             },
         }
-        with patch("filescan.models.async_task") as mock_async_task:
+        with patch("file_operations.models.filescan.async_task") as mock_async_task:
             scan = schedule_file_for_virus_scanning(attachment, "file_attachment")
             if not scan:
                 pytest.fail()
@@ -116,7 +113,7 @@ def test_filescan_unsafe(
     """
     attachment = generic_test_data["attachment"]
     with patch("requests.post") as mock_post:
-        mock_post.return_value.status_code = 200
+        mock_post.return_value.status_code = http_status.HTTP_200_OK
         mock_post.return_value.json.return_value = {
             "success": True,
             "data": {
@@ -129,7 +126,7 @@ def test_filescan_unsafe(
                 ]
             },
         }
-        with patch("filescan.models.async_task") as mock_async_task:
+        with patch("file_operations.models.filescan.async_task") as mock_async_task:
             scan = schedule_file_for_virus_scanning(attachment, "file_attachment")
             if not scan:
                 pytest.fail()
@@ -222,7 +219,7 @@ def test_private_field_file_open(
     _scan_status_safe: FileScanStatus = file_scan_status_factory(  # noqa: F841
         content_object=attachment,
         filepath=attachment.file_attachment.name,
-        filefield_field_name="file_attachment",
+        filefield_name="file_attachment",
         scanned_at=timezone.now(),
     )
     with override_settings(FLAG_FILE_SCAN=True):
@@ -232,7 +229,7 @@ def test_private_field_file_open(
     _scan_status_unsafe: FileScanStatus = file_scan_status_factory(  # noqa: F841
         content_object=attachment,
         filepath=attachment.file_attachment.name,
-        filefield_field_name="file_attachment",
+        filefield_name="file_attachment",
         file_deleted_at=timezone.now(),
     )
     with override_settings(FLAG_FILE_SCAN=True):
@@ -243,7 +240,7 @@ def test_private_field_file_open(
     _scan_status_error: FileScanStatus = file_scan_status_factory(  # noqa: F841
         content_object=attachment,
         filepath=attachment.file_attachment.name,
-        filefield_field_name="file_attachment",
+        filefield_name="file_attachment",
         error_message="error message",
     )
     with override_settings(FLAG_FILE_SCAN=True):

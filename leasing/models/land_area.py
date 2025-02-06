@@ -10,7 +10,8 @@ from rest_framework.exceptions import ValidationError
 from safedelete.models import SafeDeleteModel
 
 from field_permissions.registry import field_permissions
-from filescan.mixins import FileScanMixin
+from file_operations.private_files import PrivateFileField
+from file_operations.viewsets.mixins import FileScanMixin
 from leasing.enums import (
     ConstructabilityReportInvestigationState,
     ConstructabilityState,
@@ -25,7 +26,6 @@ from leasing.enums import (
 from leasing.models.lease import Lease
 from leasing.models.utils import normalize_identifier
 from users.models import User
-from utils.models.fields import PrivateFileField
 
 from .mixins import (
     ArchivableModel,

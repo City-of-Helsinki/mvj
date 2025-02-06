@@ -4,9 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from enumfields import EnumField
 from helsinki_gdpr.models import SerializableMixin
 
-from filescan.mixins import FileScanMixin
+from file_operations.private_files import PrivateFileField
+from file_operations.viewsets.mixins import FileScanMixin
 from users.models import User
-from utils.models.fields import PrivateFileField
 
 from ..enums import ApplicantType, FormState, SectionType
 from ..utils import clone_object, generate_unique_identifier

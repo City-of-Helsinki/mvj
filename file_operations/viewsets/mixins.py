@@ -1,25 +1,61 @@
 from typing import NoReturn
 
+from django.conf import settings
 from django.http import FileResponse
 from django.utils.datastructures import MultiValueDict
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from utils.models.fields import (
-    FileScanError,
-    FileScanPendingError,
-    FileUnsafeError,
-    PrivateFieldFile,
-)
+from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
+from file_operations.private_files import PrivateFieldFile, PrivateFileField
+
+
+class FileScanMixin:
+    """
+    On save(), if file scanning feature flag FLAG_FILE_SCAN is enabled, queues
+    an asynchronous virus/malware scan for the file.
+    """
+
+    def save(self, *args, skip_virus_scan: bool = False, **kwargs):
+        super().save(*args, **kwargs)
+
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN", False) is True
+        if (
+            file_scans_are_enabled is True
+            and skip_virus_scan is False
+            and not _is_safedelete_delete_action(kwargs)
+        ):
+            from file_operations.models.filescan import schedule_file_for_virus_scanning
+
+            for field in self._meta.fields:
+                if isinstance(field, PrivateFileField):
+                    fieldfile = getattr(self, field.attname)
+                    if fieldfile:
+                        schedule_file_for_virus_scanning(
+                            file_model_instance=self, file_field_name=field.attname
+                        )
+
+
+def _is_safedelete_delete_action(keyword_arguments: dict) -> bool:
+    """
+    safedelete.models.SafeDelete runs an additional save() during delete
+    process, and triggering another filescan is not desirable in that case.
+    """
+    return "keep_deleted" in keyword_arguments.keys()
+
 
 MAX_FILE_SIZE_MB = 20
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
 
 class FileDownloadMixin:
+    # We import "action" in each class separately, because otherwise this import
+    # creates a circular dependency through rest_framework.decorators and
+    # leasing.metadata
+    from rest_framework.decorators import action
+
     @action(methods=["get"], detail=True)
     def download(self, request, pk=None, file_field: str | None = None):
         if file_field is None:
@@ -38,48 +74,49 @@ class FileDownloadMixin:
 
 
 def get_filescan_error_response(error: Exception) -> Response:
-    match error.__class__.__name__:
-        case FileScanPendingError.__name__:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={
-                    "error": _(
-                        "File has not yet been scanned for viruses, and is unsafe to download at this time."
-                    )
-                },
-            )
-        case FileUnsafeError.__name__:
-            return Response(
-                status=status.HTTP_410_GONE,
-                data={
-                    "error": _(
-                        "File was found to contain virus or malware, and the file has been deleted."
-                    )
-                },
-            )
-        case FileScanError.__name__:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={
-                    "error": _(
-                        "File scan failed. "
-                        "File is unsafe to download before it has been successfully scanned for viruses and malware."
-                    )
-                },
-            )
-        case _:
-            error_str = str(error)
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={
-                    "error": _(
-                        f"Unknown error related to virus scanning: '{error_str}'"
-                    )
-                },
-            )
+    try:
+        raise error
+    except FileScanPendingError:
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={
+                "error": _(
+                    "File has not yet been scanned for viruses, and is unsafe to download at this time."
+                )
+            },
+        )
+    except FileUnsafeError:
+        return Response(
+            status=status.HTTP_410_GONE,
+            data={
+                "error": _(
+                    "File was found to contain virus or malware, and the file has been deleted."
+                )
+            },
+        )
+    except FileScanError:
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={
+                "error": _(
+                    "File scan failed. "
+                    "File is unsafe to download before it has been successfully scanned for viruses and malware."
+                )
+            },
+        )
+    except Exception:
+        error_str = str(error)
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={
+                "error": _(f"Unknown error related to virus scanning: '{error_str}'")
+            },
+        )
 
 
 class FileMixin:
+    from rest_framework.decorators import action
+
     def create(self, request, *args, **kwargs):
         """Use the Class.serializer_class after the creation for returning the saved data.
         Instead of a different serializer used in 'create' action."""
@@ -128,6 +165,8 @@ class FileMixin:
 
 
 class FileExtensionFileMixin:
+    from rest_framework.decorators import action
+
     @staticmethod
     def get_allowed_extensions() -> list[str]:
         # If you make changes to the list of allowed extensions,

@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.viewsets.mixins import FileMixin
 from leasing.forms import InfillDevelopmentCompensationSearchForm
 from leasing.models import (
     InfillDevelopmentCompensation,
@@ -14,7 +15,6 @@ from leasing.serializers.infill_development_compensation import (
     InfillDevelopmentCompensationCreateUpdateSerializer,
     InfillDevelopmentCompensationSerializer,
 )
-from utils.viewsets.mixins import FileMixin
 
 from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 

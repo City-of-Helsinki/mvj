@@ -1,12 +1,12 @@
 from rest_framework.decorators import action
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.viewsets.mixins import FileMixin
 from leasing.models import InspectionAttachment
 from leasing.serializers.inspection import (
     InspectionAttachmentCreateUpdateSerializer,
     InspectionAttachmentSerializer,
 )
-from utils.viewsets.mixins import FileMixin
 
 from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 

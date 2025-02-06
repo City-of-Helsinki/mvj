@@ -1,12 +1,13 @@
 from rest_framework.decorators import action
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.viewsets.mixins import FileMixin
 from leasing.filters import (
     CollectionCourtDecisionFilter,
     CollectionLetterFilter,
     CollectionNoteFilter,
 )
-from leasing.models import (
+from leasing.models.debt_collection import (
     CollectionCourtDecision,
     CollectionLetter,
     CollectionLetterTemplate,
@@ -22,7 +23,6 @@ from leasing.serializers.debt_collection import (
     CollectionNoteSerializer,
 )
 from leasing.viewsets.utils import AtomicTransactionModelViewSet, MultiPartJsonParser
-from utils.viewsets.mixins import FileMixin
 
 
 class CollectionCourtDecisionViewSet(

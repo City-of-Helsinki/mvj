@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from file_operations.serializers.mixins import FileSerializerMixin
 from leasing.models import ConstructabilityDescription, Decision
 from leasing.models.land_area import (
     CustomDetailedPlan,
@@ -19,7 +20,6 @@ from users.serializers import UserSerializer
 
 from ..models import LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
 from .utils import (
-    FileSerializerMixin,
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
     UpdateNestedMixin,

@@ -3,7 +3,7 @@ import time
 from django.core.management.base import BaseCommand
 from django_q.tasks import async_task
 
-from filescan.models import FileScanStatus, _scan_file_task
+from file_operations.models.filescan import FileScanStatus, _scan_file_task
 
 
 class Command(BaseCommand):

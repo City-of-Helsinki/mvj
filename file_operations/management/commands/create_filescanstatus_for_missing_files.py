@@ -3,8 +3,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from filescan.models import FileScanStatus
-from utils.models.fields import PrivateFieldFile, PrivateFileField
+from file_operations.models.filescan import FileScanStatus
+from file_operations.private_files import PrivateFieldFile, PrivateFileField
 
 
 class Command(BaseCommand):
@@ -36,7 +36,7 @@ class Command(BaseCommand):
                                         content_type=content_type,
                                         object_id=instance.pk,
                                         filepath=field_file.path,
-                                        filefield_field_name=field.name,
+                                        filefield_name=field.name,
                                     )
                                     self.stdout.write(
                                         self.style.SUCCESS(

@@ -14,6 +14,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.viewsets.mixins import FileMixin
 from laske_export.exporter import LaskeExporter, LaskeExporterError
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import (
@@ -48,7 +49,6 @@ from leasing.serializers.land_use_agreement import (
     SentToSapLandUseAgreementInvoiceUpdateSerializer,
 )
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
-from utils.viewsets.mixins import FileMixin
 
 from .utils import AtomicTransactionModelViewSet, MultiPartJsonParser
 
