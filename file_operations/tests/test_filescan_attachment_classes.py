@@ -20,18 +20,20 @@ from conftest import (
     MunicipalityFactory,
     TargetStatusFactory,
 )
-from filescan.enums import FileScanResult
-from filescan.models import FileScanStatus, _scan_file_task
+from file_operations.enums import FileScanResult
+from file_operations.models.filescan import FileScanStatus, _scan_file_task
 from forms.models.form import Attachment, Field
 from leasing.enums import LandUseAgreementAttachmentType, LeaseAreaAttachmentType
-from leasing.models import (
+from leasing.models.debt_collection import CollectionCourtDecision, CollectionLetter
+from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensationAttachment,
-    InspectionAttachment,
+)
+from leasing.models.inspection import InspectionAttachment
+from leasing.models.land_area import LeaseAreaAttachment
+from leasing.models.land_use_agreement import (
     LandUseAgreement,
     LandUseAgreementAttachment,
-    LeaseAreaAttachment,
 )
-from leasing.models.debt_collection import CollectionCourtDecision, CollectionLetter
 from leasing.tests.conftest import (
     LandUseAgreementFactory,
     LandUseAgreementStatusFactory,
@@ -84,7 +86,7 @@ def test_attachment_classes(
     with override_settings(FLAG_FILE_SCAN=True):
         # Create one instance of the attachment class.
         # This is expected to create a corresponding FileScanStatus instance.
-        with patch("filescan.models.async_task") as _:
+        with patch("file_operations.models.filescan.async_task") as _:
             path = reverse(f"{api_route_root}-list")
             request_details = _get_request_details(
                 file_class,
@@ -96,7 +98,7 @@ def test_attachment_classes(
                 path,
                 request_details,
             )
-            assert response.status_code == 201
+            assert response.status_code == http_status.HTTP_201_CREATED
 
         attachment_id = response.data["id"]
         try:
@@ -124,7 +126,7 @@ def test_attachment_classes(
         _mock_scan_file_task_safe(filescan.pk)
         file_response: FileResponse = admin_client.get(path=url_download)
         uploaded_file.seek(0)
-        assert file_response.status_code == 200
+        assert file_response.status_code == http_status.HTTP_200_OK
         assert b"".join(file_response.streaming_content) == uploaded_file.read()
 
         # If scanning process encountered an error, deny download
@@ -278,8 +280,8 @@ def _mock_scan_file_task_safe(scan_status_id: int) -> None:
     """
     Run virus scan with a mocked response for a safe file.
     """
-    with patch("filescan.models.requests.post") as mock_post:
-        mock_post.return_value.status_code = 200
+    with patch("file_operations.models.filescan.requests.post") as mock_post:
+        mock_post.return_value.status_code = http_status.HTTP_200_OK
         mock_post.return_value.json.return_value = {
             "success": True,
             "data": {
@@ -299,7 +301,7 @@ def _mock_scan_file_task_error(scan_status_id: int) -> None:
     """
     Run virus scan with a mocked response for a failed scan.
     """
-    with patch("filescan.models.requests.post") as mock_post:
+    with patch("file_operations.models.filescan.requests.post") as mock_post:
         mock_post.return_value.status_code = 500
         mock_post.return_value.json.return_value = {
             "success": False,
@@ -312,8 +314,8 @@ def _mock_scan_file_task_unsafe(scan_status_id: int) -> None:
     """
     Run virus scan with a mocked response for an unsafe file.
     """
-    with patch("filescan.models.requests.post") as mock_post:
-        mock_post.return_value.status_code = 200
+    with patch("file_operations.models.filescan.requests.post") as mock_post:
+        mock_post.return_value.status_code = http_status.HTTP_200_OK
         mock_post.return_value.json.return_value = {
             "success": True,
             "data": {

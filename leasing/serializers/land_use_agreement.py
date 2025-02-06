@@ -8,6 +8,7 @@ from rest_framework import serializers
 from rest_framework.fields import empty
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from file_operations.serializers.mixins import FileSerializerMixin
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, DecisionMaker, Plot
 from leasing.models.land_use_agreement import (
@@ -45,7 +46,6 @@ from users.serializers import UserSerializer
 
 from .contract import ContractCreateUpdateSerializer, ContractSerializer
 from .utils import (
-    FileSerializerMixin,
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
     UpdateNestedMixin,

@@ -7,7 +7,7 @@ import leasing.models.infill_development_compensation
 import leasing.models.inspection
 import leasing.models.land_area
 import leasing.models.land_use_agreement
-import utils.models.fields
+import file_operations.private_files
 
 
 class Migration(migrations.Migration):
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="collectioncourtdecision",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="collectionletter",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="collectionlettertemplate",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="infilldevelopmentcompensationattachment",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="inspectionattachment",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="landuseagreementattachment",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="leaseareaattachment",
             name="file",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),

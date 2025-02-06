@@ -197,7 +197,7 @@ INSTALLED_APPS = [
     "sanitized_dump",
     "utils",
     "django_q",
-    "filescan",
+    "file_operations",
 ]
 
 MIDDLEWARE = [

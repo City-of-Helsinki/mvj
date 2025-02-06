@@ -1,19 +1,20 @@
 from django.contrib import admin
 
-from .models import FileScanStatus
+from file_operations.models.filescan import FileScanStatus
 
 
 @admin.register(FileScanStatus)
 class FileScanStatusAdmin(admin.ModelAdmin):
     list_display = (
         "filepath",
+        "content_type",
         "scanned_at",
         "file_deleted_at",
         "error_message",
         "scan_result",
     )
     search_fields = ("filepath",)
-    list_filter = ("scanned_at", "file_deleted_at", "content_type", "error_message")
+    list_filter = ("scanned_at", "file_deleted_at", "error_message", "content_type")
 
     # Dynamically set all fields as read-only
     def get_readonly_fields(self, request, obj=None):

@@ -4,10 +4,10 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
 from field_permissions.registry import field_permissions
-from filescan.mixins import FileScanMixin
+from file_operations.private_files import PrivateFileField
+from file_operations.viewsets.mixins import FileScanMixin
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
-from utils.models.fields import PrivateFileField
 
 
 class Inspection(models.Model):

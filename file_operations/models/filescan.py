@@ -10,12 +10,13 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
+from rest_framework import status as http_status
 from safedelete.models import SafeDeleteModel
 
-from filescan.enums import FileScanResult
-from filescan.types import PlattaClamAvResponse, PlattaClamAvResult
+from file_operations.enums import FileScanResult
+from file_operations.private_files import PrivateFieldFile, PrivateFileField
+from file_operations.types import PlattaClamAvResponse, PlattaClamAvResult
 from leasing.models.mixins import TimeStampedModel
-from utils.models.fields import PrivateFieldFile, PrivateFileField
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class FileScanStatus(TimeStampedModel):
     Tracks the scanning status of various file objects using a generic foreign key.
 
     It records the filepath, the time the scan was performed, and, whether the
-    file was  marked for deletion due to detected virus or malware.
+    file was deleted due to detected virus or malware.
     """
 
     # Generic reference to a related file object.
@@ -38,7 +39,7 @@ class FileScanStatus(TimeStampedModel):
     )
     object_id = models.PositiveBigIntegerField()
 
-    filefield_field_name = models.CharField(
+    filefield_name = models.CharField(
         null=False,
         blank=False,
         help_text="Name of the column of the content object's FileField",
@@ -78,7 +79,7 @@ class FileScanStatus(TimeStampedModel):
     def filefield_latest_scan_result(
         file_object: models.Model,
     ) -> FileScanResult:
-        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN")
+        file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN", False) is True
         if file_scans_are_enabled is False:
             # Feature is not enabled, all files are considered safe.
             return FileScanResult.SAFE
@@ -134,7 +135,7 @@ def schedule_file_for_virus_scanning(
         content_type=ContentType.objects.get_for_model(file_model_instance._meta.model),
         object_id=file_model_instance.pk,
         filepath=absolute_path,
-        filefield_field_name=file_field_name,
+        filefield_name=file_field_name,
         error_message=error_message,
     )
 
@@ -157,7 +158,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
     Task to scan a file for viruses by calling an external service.
 
     If file is safe, no need for further actions.
-    If file is unsafe, mark the file for deletion.
+    If file is unsafe, delete it.
     """
     try:
         scan_status = FileScanStatus.objects.get(pk=scan_status_id)
@@ -178,7 +179,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
                 settings.FILE_SCAN_SERVICE_URL,
                 files={"FILES": (obfuscated_filename, file)},
             )
-            if not response.status_code == 200:
+            if not response.status_code == http_status.HTTP_200_OK:
                 _handle_error(
                     scan_status,
                     f"Response from filescan service was not 200: {response.status_code}",
@@ -209,6 +210,7 @@ def _scan_file_task(scan_status_id: int) -> FileScanStatus | None:
 
 
 def _handle_error(scan_status: FileScanStatus, text: str) -> None:
+    """Actions after an error happened somewhere along the way."""
     logger.error(text)
     scan_status.error_message = text
     scan_status.save()
@@ -217,6 +219,7 @@ def _handle_error(scan_status: FileScanStatus, text: str) -> None:
 def _handle_scanning_result(
     scan_status: FileScanStatus, scanning_result: PlattaClamAvResult
 ) -> FileScanStatus:
+    """Actions after a file was successfully scanned."""
     scan_status.scanned_at = timezone.now()
 
     if scanning_result["is_infected"]:
@@ -229,13 +232,12 @@ def _handle_scanning_result(
 
 
 def _delete_infected_file(scan_status: FileScanStatus) -> None:
+    """File must be deleted if it was found to contain a virus or malware."""
     file_object: models.Model | None = scan_status.content_object
     if file_object is None:
         raise AttributeError
 
-    field_file: PrivateFieldFile = getattr(
-        file_object, scan_status.filefield_field_name
-    )
+    field_file: PrivateFieldFile = getattr(file_object, scan_status.filefield_name)
     field_file.delete()
     file_object.save()
 
@@ -243,7 +245,7 @@ def _delete_infected_file(scan_status: FileScanStatus) -> None:
     scan_status.save()
 
 
-class TestGenericAttachmentModel(models.Model):
+class GenericAttachmentTestModel(models.Model):
     """
     A generic test model to represent models with PrivateFileFields, to avoid
     selecting a sample model in our test cases.
@@ -254,7 +256,7 @@ class TestGenericAttachmentModel(models.Model):
     file_attachment = PrivateFileField()
 
 
-class TestGenericSafeDeleteAttachmentModel(SafeDeleteModel):
+class GenericSafeDeleteAttachmentTestModel(SafeDeleteModel):
     """
     A generic model to represent SafeDeleteModels with PrivateFileFields, to
     avoid selecting a sample model in our test cases.

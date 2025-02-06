@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
+from file_operations.serializers.mixins import FileSerializerMixin
 from leasing.models import Invoice, Lease, Tenant
 from users.serializers import UserSerializer
 
@@ -10,7 +11,7 @@ from ..models.debt_collection import (
     CollectionLetterTemplate,
     CollectionNote,
 )
-from .utils import FileSerializerMixin, InstanceDictPrimaryKeyRelatedField
+from .utils import InstanceDictPrimaryKeyRelatedField
 
 
 class CollectionCourtDecisionSerializer(

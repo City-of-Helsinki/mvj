@@ -1,9 +1,7 @@
-import os
 from collections import OrderedDict
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OneToOneRel
-from django.urls import reverse
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -283,25 +281,3 @@ class DayMonthField(serializers.Field):
 
     def to_representation(self, instance):
         return instance.asdict()
-
-
-class FileSerializerMixin:
-    def get_file_url(self, obj):
-        if not obj or not obj.file:
-            return None
-
-        request = self.context.get("request", None)
-        version_namespace = getattr(request, "version", "v1")
-        url_name = self.Meta.download_url_name
-        url = reverse(
-            f"{version_namespace}:{url_name}",
-            args=[obj.id],
-        )
-
-        if request is not None:
-            return request.build_absolute_uri(url)
-
-        return url
-
-    def get_file_filename(self, obj):
-        return os.path.basename(obj.file.name)

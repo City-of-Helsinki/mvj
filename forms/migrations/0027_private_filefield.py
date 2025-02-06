@@ -3,7 +3,7 @@
 import django.core.files.storage
 from django.db import migrations
 import forms.models.form
-import utils.models.fields
+import file_operations.private_files
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="attachment",
             name="attachment",
-            field=utils.models.fields.PrivateFileField(
+            field=file_operations.private_files.PrivateFileField(
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),

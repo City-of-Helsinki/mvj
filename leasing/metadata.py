@@ -6,16 +6,13 @@ from rest_framework.metadata import SimpleMetadata
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from field_permissions.metadata import FieldPermissionsMetadataMixin
-from leasing.models import (
-    Contact,
-    Decision,
-    Inspection,
-    Invoice,
-    Lease,
-    LeaseArea,
-    Tenant,
-)
-from leasing.models.invoice import InvoiceSet
+from leasing.models.contact import Contact
+from leasing.models.decision import Decision
+from leasing.models.inspection import Inspection
+from leasing.models.invoice import Invoice, InvoiceSet
+from leasing.models.land_area import LeaseArea
+from leasing.models.lease import Lease
+from leasing.models.tenant import Tenant
 from leasing.permissions import PerMethodPermission
 from users.models import User
 

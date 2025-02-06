@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.datastructures import MultiValueDict
 from rest_framework.exceptions import ValidationError
 
-from utils.viewsets.mixins import MAX_FILE_SIZE_BYTES, FileExtensionFileMixin
+from file_operations.viewsets.mixins import MAX_FILE_SIZE_BYTES, FileExtensionFileMixin
 
 
 @pytest.fixture

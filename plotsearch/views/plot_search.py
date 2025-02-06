@@ -22,6 +22,12 @@ from rest_framework.views import APIView
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
+from file_operations.viewsets.mixins import (
+    FileExtensionFileMixin,
+    FileMixin,
+    get_filescan_error_response,
+)
 from forms.models import Answer
 from forms.serializers.form import AnswerOpeningRecordSerializer
 from leasing.models import CustomDetailedPlan
@@ -86,12 +92,6 @@ from plotsearch.serializers.plot_search import (
     RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
-from utils.models.fields import FileScanError, FileScanPendingError, FileUnsafeError
-from utils.viewsets.mixins import (
-    FileExtensionFileMixin,
-    FileMixin,
-    get_filescan_error_response,
-)
 
 
 class PlotSearchSubtypeViewSet(

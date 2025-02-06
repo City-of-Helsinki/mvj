@@ -16,7 +16,8 @@ from rest_framework.serializers import ValidationError
 from safedelete.models import SOFT_DELETE, SafeDeleteModel
 
 from field_permissions.registry import field_permissions
-from filescan.mixins import FileScanMixin
+from file_operations.private_files import PrivateFileField
+from file_operations.viewsets.mixins import FileScanMixin
 from forms.models import Answer, Form
 from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
@@ -35,7 +36,6 @@ from plotsearch.enums import (
 )
 from plotsearch.utils import map_intended_use_to_lessor
 from users.models import User
-from utils.models.fields import PrivateFileField
 
 
 class PlotSearchType(NameModel):
