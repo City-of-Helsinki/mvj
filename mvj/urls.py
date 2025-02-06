@@ -251,10 +251,10 @@ router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
 router.register(r"land_use_agreement_invoice_row", LandUseAgreementInvoiceRowViewSet)
 router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetViewSet)
 
+# Public router
 pub_router = routers.DefaultRouter()
 
 pub_router.register(r"answer", AnswerPublicViewSet, basename="pub_answer")
-pub_router.register(r"attachment", AttachmentPublicViewSet, basename="pub_attachment")
 pub_router.register(r"area_search", AreaSearchPublicViewSet, basename="pub_area_search")
 pub_router.register(
     r"area_search_attachment",
@@ -262,23 +262,35 @@ pub_router.register(
     basename="pub_area_search_attachment",
 )
 pub_router.register(r"faq", FAQViewSet, basename="pub_faq")
-pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
-pub_router.register(r"form", FormViewSet, basename="pub_form")
 pub_router.register(
     r"intended_use", IntendedUsePlotsearchPublicViewSet, basename="pub_intended_use"
 )
-pub_router.register(r"plot_search", PlotSearchPublicViewSet, basename="pub_plot_search")
-pub_router.register(
-    r"plot_search_stage", PlotSearchStagePublicViewSet, basename="pub_plot_search_stage"
-)
-pub_router.register(
-    r"plot_search_type", PlotSearchTypePublicViewSet, basename="pub_plot_search_type"
-)
-pub_router.register(
-    r"plot_search_subtype",
-    PlotSearchSubtypePublicViewSet,
-    basename="pub_plot_search_subtype",
-)
+
+# Plotsearch public endpoints
+if getattr(settings, "FLAG_PLOTSEARCH", False) is True:
+    pub_router.register(
+        r"attachment", AttachmentPublicViewSet, basename="pub_attachment"
+    )
+    pub_router.register(r"favourite", FavouriteViewSet, basename="pub_favourite")
+    pub_router.register(r"form", FormViewSet, basename="pub_form")
+    pub_router.register(
+        r"plot_search", PlotSearchPublicViewSet, basename="pub_plot_search"
+    )
+    pub_router.register(
+        r"plot_search_stage",
+        PlotSearchStagePublicViewSet,
+        basename="pub_plot_search_stage",
+    )
+    pub_router.register(
+        r"plot_search_type",
+        PlotSearchTypePublicViewSet,
+        basename="pub_plot_search_type",
+    )
+    pub_router.register(
+        r"plot_search_subtype",
+        PlotSearchSubtypePublicViewSet,
+        basename="pub_plot_search_subtype",
+    )
 
 # Batchrun
 router.register("scheduled_job", ScheduledJobViewSet)
@@ -386,11 +398,6 @@ gdpr_urls = [
     )
 ]
 additional_pub_api_paths = [
-    path(
-        "direct_reservation_to_favourite/<str:uuid>/",
-        DirectReservationToFavourite.as_view(),
-        name="pub_direct_reservation_to_favourite",
-    ),
     path("plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"),
     # Enables oidc backchannel logout, requires setting `HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True`
     # to be useful
@@ -406,6 +413,14 @@ additional_pub_api_paths = [
         ),
     ),
 ]
+if getattr(settings, "FLAG_PLOTSEARCH", False) is True:
+    additional_pub_api_paths.append(
+        path(
+            "direct_reservation_to_favourite/<str:uuid>/",
+            DirectReservationToFavourite.as_view(),
+            name="pub_direct_reservation_to_favourite",
+        ),
+    )
 
 api_urls = router.urls + additional_api_paths
 
