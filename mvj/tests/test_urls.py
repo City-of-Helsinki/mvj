@@ -74,3 +74,14 @@ def test_flag_plotsearch_pub_urls_disabled(url_info):
     kwargs = url_info["kwargs"]
     with pytest.raises(NoReverseMatch):
         reverse(f"v1:{url_name}", kwargs=kwargs)
+
+
+@pytest.mark.django_db
+def test_pub_download_should_not_exist(set_plotsearch_flag_reload_urlconf):
+    from mvj.urls import pub_router
+
+    views = [x[1] for x in pub_router.registry]
+    for view in views:
+        has_download = hasattr(view, "download")
+        if has_download:
+            assert False, f"download should not exist in {view}"
