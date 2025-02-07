@@ -62,7 +62,7 @@ deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==4.2.17
+django==4.2.19
     # via
     #   -r requirements.in
     #   django-anymail
@@ -90,15 +90,15 @@ django-anymail==12.0
     # via -r requirements.in
 django-auditlog==2.2.2
     # via -r requirements.in
-django-constance==4.1.3
+django-constance==4.3.2
     # via -r requirements.in
-django-cors-headers==4.6.0
+django-cors-headers==4.7.0
     # via -r requirements.in
 django-countries==7.6.1
     # via -r requirements.in
 django-enumfields2==3.0.2
     # via -r requirements.in
-django-environ==0.11.2
+django-environ==0.12.0
     # via -r requirements.in
 django-filter==24.3
     # via
@@ -110,7 +110,7 @@ django-helusers==0.13.0
     #   helsinki-profile-gdpr-api
 django-model-utils==5.0.0
     # via -r requirements.in
-django-modeltranslation==0.19.10
+django-modeltranslation==0.19.12
     # via -r requirements.in
 django-nested-inline==0.4.6
     # via -r requirements.in
@@ -118,7 +118,7 @@ django-picklefield==3.2
     # via django-q2
 django-q-sentry==0.1.6
     # via django-q2
-django-q2[sentry]==1.7.4
+django-q2[sentry]==1.7.6
     # via -r requirements.in
 django-safedelete==1.4.0
     # via -r requirements.in
@@ -143,7 +143,7 @@ djangorestframework-gis==1.1
     # via -r requirements.in
 docxcompose==1.4.0
     # via docxtpl
-docxtpl==0.18.0
+docxtpl==0.19.1
     # via -r requirements.in
 drf-oidc-auth==3.0.0
     # via helsinki-profile-gdpr-api
@@ -199,9 +199,9 @@ pillow==10.3.0
     #   xhtml2pdf
 platformdirs==4.2.2
     # via zeep
-psycopg[binary]==3.2.3
+psycopg[binary]==3.2.4
     # via -r requirements.in
-psycopg-binary==3.2.3
+psycopg-binary==3.2.4
     # via psycopg
 pyasn1==0.6.0
     # via
@@ -227,7 +227,7 @@ pysftp==0.2.9
     # via -r requirements.in
 python-bidi==0.4.2
     # via xhtml2pdf
-python-daemon==3.1.0
+python-daemon==3.1.2
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -346,7 +346,7 @@ webencodings==0.5.1
     #   tinycss2
 xhtml2pdf==0.2.15
     # via django-xhtml2pdf
-xlsxwriter==3.2.0
+xlsxwriter==3.2.2
     # via -r requirements.in
 zeep==4.3.1
     # via -r requirements.in
