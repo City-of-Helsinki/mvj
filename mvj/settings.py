@@ -113,6 +113,7 @@ env = environ.Env(
     FILE_SCAN_SERVICE_URL=(str, ""),
     FLAG_FILE_SCAN=(bool, False),
     FLAG_PLOTSEARCH=(bool, False),
+    PRIVATE_FILES_LOCATION=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -141,7 +142,7 @@ if env("SENTRY_DSN"):
 
 MEDIA_ROOT = project_root("media")
 STATIC_ROOT = project_root("static")
-PRIVATE_FILES_LOCATION = project_root("private_files")
+PRIVATE_FILES_LOCATION = env.str("PRIVATE_FILES_LOCATION")
 
 MEDIA_URL = "/media/"
 STATIC_URL = "/static/"
