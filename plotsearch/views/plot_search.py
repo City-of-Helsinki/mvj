@@ -24,7 +24,6 @@ from rest_framework_gis.filters import InBBoxFilter
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from file_operations.errors import FileScanError, FileScanPendingError, FileUnsafeError
 from file_operations.viewsets.mixins import (
-    DisablePublicDownloadMixin,
     FileExtensionFileMixin,
     FileMixin,
     get_filescan_error_response,
@@ -416,7 +415,7 @@ class AreaSearchAttachmentViewset(
 
 
 class AreaSearchAttachmentPublicViewset(
-    DisablePublicDownloadMixin, FileExtensionFileMixin, AreaSearchAttachmentViewset
+    FileExtensionFileMixin, AreaSearchAttachmentViewset
 ):
     """Includes FileExtensionFileMixin to validate file extensions."""
 

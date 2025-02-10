@@ -82,6 +82,8 @@ def test_pub_download_should_not_exist(set_plotsearch_flag_reload_urlconf):
 
     views = [x[1] for x in pub_router.registry]
     for view in views:
+        view = view()
         has_download = hasattr(view, "download")
         if has_download:
-            assert False, f"download should not exist in {view}"
+            with pytest.raises(NotImplementedError):
+                view.download()
