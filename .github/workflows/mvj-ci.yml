@@ -10,6 +10,7 @@ jobs:
   build:
     env:
       DATABASE_URL: 'postgis://postgres:postgres@localhost/github_actions'
+      PRIVATE_FILES_LOCATION: '/tmp/private_files'
 
     runs-on: ubuntu-22.04
     strategy:
