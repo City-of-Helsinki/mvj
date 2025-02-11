@@ -25,8 +25,9 @@ class Command(BaseCommand):
             )
         )
         batch_size = 10
-        delay_between_batches = 300  # seconds
+        delay_between_batches = 60  # seconds
 
+        # Scan files in batches, with a delay in between to avoid API congestion
         batch = []
         for scan in pending_scan_statuses.iterator():
             batch.append(scan)
@@ -34,6 +35,10 @@ class Command(BaseCommand):
                 self.process_batch(batch)
                 batch = []
                 time.sleep(delay_between_batches)
+
+        # Process any remaining items that didn't fill a complete batch
+        if batch:
+            self.process_batch(batch)
 
         self.stdout.write(self.style.SUCCESS("DONE"))
 
