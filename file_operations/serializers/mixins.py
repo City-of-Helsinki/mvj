@@ -4,6 +4,21 @@ from django.urls import reverse
 
 
 class FileSerializerMixin:
+    """
+    Helper functions to formulate download URLs for attachment files.
+
+    Example from CollectionLetterSerializer:
+    ```
+    file = serializers.SerializerMethodField("get_file_url")
+    filename = serializers.SerializerMethodField("get_file_filename")
+    ```
+
+    Example from CollectionLetterViewset:
+    ```
+    parser_classes = (MultiPartJsonParser,)
+    ```
+    """
+
     def get_file_url(self, obj):
         if not obj or not obj.file:
             return None
