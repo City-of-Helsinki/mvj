@@ -16,7 +16,7 @@ class PrivateFileSystemStorage(FileSystemStorage):
     def __init__(self) -> None:
         # Raise an error if the PRIVATE_FILES_LOCATION setting is not set
         # To avoid resolving the location as the MEDIA_ROOT by default
-        if bool(settings.PRIVATE_FILES_LOCATION) is not True:
+        if len(settings.PRIVATE_FILES_LOCATION) == 0:
             raise ValueError("PRIVATE_FILES_LOCATION setting is not set")
         super().__init__(location=settings.PRIVATE_FILES_LOCATION, base_url=None)
 
