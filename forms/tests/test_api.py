@@ -558,12 +558,11 @@ def test_attachment_get_public(
 
     # Public endpoint should not allow getting attachments
     with pytest.raises(NoReverseMatch):
-        url = reverse("v1:pub_answer-attachments", kwargs={"pk": answer_id})
+        reverse("v1:pub_answer-attachments", kwargs={"pk": answer_id})
 
     # Public endpoint should not allow downloading attachments
-    url = reverse("v1:pub_attachment-download", kwargs={"pk": attachment_id})
-    response: FileResponse = admin_client.get(url)
-    assert response.status_code == 405  # Method not allowed
+    with pytest.raises(NoReverseMatch):
+        reverse("v1:pub_attachment-download", kwargs={"pk": attachment_id})
 
 
 @override_settings(FLAG_PLOTSEARCH=True)
