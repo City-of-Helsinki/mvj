@@ -183,6 +183,26 @@ database before running this command.
 Adds the default receivable types for all the Service units. The `service_unit.json` should be loaded into the
 database before running this command.
 
+#### `create_filescanstatus_for_missing_files`
+
+Creates FileScanStatus objects for all uploaded files that require a virus scan
+in order to be downloaded.
+
+Only needs to be run once per environment if there are historical uploaded files
+that were uploaded before virus scanning was added to the system. Afterwards,
+run `enqueue_scan_for_pending`.
+
+#### `enqueue_scan_for_pending`
+
+Enqueues an asynchronous virus scan for all FileScanStatus objects whose result
+is `Pending`, or `Error`. After the async jobs complete, infected files have been deleted,
+and safe files can be downloaded.
+
+Only needs to be run if there are FileScanStatus objects that have not yet been
+successfully scanned by the file scanning service.  This means that the command
+also retries all filescans that resulted in an error previously. Before this
+one, run `create_filescanstatus_for_missing_files`.
+
 ### Regularly run commands
 
 #### `create_invoices`
@@ -233,7 +253,7 @@ No need to run.
 
 #### `set_contact_cities_from_postcodes`
 
-## Other usefull information
+## Other useful information
 
 ### Resend Invoices
 
@@ -269,3 +289,19 @@ To restore dump run `psql -f mvj-api-prod-DATE_HERE.sql ${DATABASE_URL/postgis/p
 For machine-to-machine integration Django REST Framework's token based authentication is in use. To create token for the user you need to run `python manage.py drf_create_token <username>` command. If you need to renew token, then you need to append `-r` option to the command. To make things secure robot user should not have password set (aka cannot log in with browser) and it should only have access to the certain API endpoint and nothing else.
 
 From client perspective token is sent in HTTP headers (Authorization header) with Token keyword. As an example `Authorization: Token abcdefghijklmnopqrstuvwxyz1234567890`.
+
+### Virus scanning
+
+All uploaded files are scanned for viruses by using an external file scanning
+service, currently ClamAV Antivirus API service on Platta. The app
+`file_operations` is responsible for orchestrating the scans.
+
+In models, file scanning can be added through `FileScanMixin`. In viewsets, file
+downloads can be restricted to only safe files through `FileDownloadMixin` or
+any other mixin that calls this mixin in their download method, such as
+`FileMixin`.
+
+See the following management commands how to batch process historical uploaded
+files:
+- `create_filescanstatus_for_missing_files`
+- `enqueue_scan_for_pending`

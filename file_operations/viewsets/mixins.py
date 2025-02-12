@@ -19,6 +19,11 @@ class FileScanMixin:
     """
 
     def save(self, *args, skip_virus_scan: bool = False, **kwargs):
+        """Overrides the model's default save method.
+
+        If you invoke `save()` in a flow where scheduling a virus scan is not
+        desired, supply the keyword parameter `skip_virus_scan=True`.
+        """
         super().save(*args, **kwargs)
 
         file_scans_are_enabled = getattr(settings, "FLAG_FILE_SCAN", False) is True
