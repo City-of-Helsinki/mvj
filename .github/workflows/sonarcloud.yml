@@ -44,6 +44,8 @@ jobs:
       run: |
         python manage.py compilemessages
         pytest --cov=. --cov-report xml:coverage.xml --migrations
+      env:
+        PRIVATE_FILES_LOCATION: '/tmp/private_files'
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
