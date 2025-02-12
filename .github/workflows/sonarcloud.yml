@@ -40,6 +40,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
+    - name: print env variable TODO REMOVE THIS # remove this
+      run: echo "PRIVATE_FILES_LOCATION is $PRIVATE_FILES_LOCATION" # remove this
+      env:
+        PRIVATE_FILES_LOCATION: '/tmp/private_files'
     - name: Generate coverage file
       run: |
         python manage.py compilemessages
