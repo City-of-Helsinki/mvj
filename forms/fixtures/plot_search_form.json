@@ -2197,8 +2197,8 @@
     "model": "forms.field",
     "pk": 1032,
     "fields": {
-        "label": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
-        "label_fi": "Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+        "label": "Hyväksyn tietojeni tallentamisen ja käsittelyn sekä luottokelpoisuuden ja pakotelistatarkistukset Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
+        "label_fi": "Hyväksyn tietojeni tallentamisen ja käsittelyn sekä luottokelpoisuuden ja pakotelistatarkistukset Helsingin kaupunkiympäristön asiakasrekisterin selosteen mukaisesti. Lisätiedot: hel.fi/rekisteriseloste",
         "label_sv": null,
         "label_en": null,
         "hint_text": null,
