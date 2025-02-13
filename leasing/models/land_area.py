@@ -302,6 +302,10 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
         verbose_name = pgettext_lazy("Model name", "Lease area")
         verbose_name_plural = pgettext_lazy("Model name", "Lease areas")
         ordering = [F("archived_at").asc(nulls_first=True), "id"]
+        permissions = [
+            # Access to the model via Export API
+            ("export_api_lease_area", "Can access export API lease area"),
+        ]
 
 
 class LeaseAreaAddress(AbstractAddress):

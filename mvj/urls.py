@@ -23,6 +23,7 @@ from forms.viewsets.form import (
 )
 from gdpr.views import MvjGDPRAPIView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
+from leasing.export_api.viewsets import ExportLeaseAreaViewSet
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
@@ -251,6 +252,15 @@ router.register(r"land_use_agreement_invoice", LandUseAgreementInvoiceViewSet)
 router.register(r"land_use_agreement_invoice_row", LandUseAgreementInvoiceRowViewSet)
 router.register(r"land_use_agreement_invoice_set", LandUseAgreementInvoiceSetViewSet)
 
+
+# Export API
+export_router = routers.DefaultRouter()
+export_router.register(
+    r"lease_area",
+    ExportLeaseAreaViewSet,
+    basename="export_lease_area",
+)
+
 # Public router
 pub_router = routers.DefaultRouter()
 
@@ -444,6 +454,10 @@ urlpatterns = [
             (v1_urls, "v1"),
             namespace="v1",
         ),
+    ),
+    path(
+        "export/v1/",
+        include((export_router.urls, "export_v1"), namespace="export_v1"),
     ),
     re_path(r"(?P<base_type>ktjki[ir])/tuloste/(?P<print_type>[\w/]+)/pdf", ktj_proxy),
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),
