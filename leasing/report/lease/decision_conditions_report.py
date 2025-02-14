@@ -102,6 +102,7 @@ class DecisionConditionsReport(ReportBase):
         qs = (
             Condition.objects.filter(supervised_date__isnull=True)
             .exclude(deleted__isnull=False)
+            .exclude(decision__deleted__isnull=False)
             .exclude(decision__lease__deleted__isnull=False)
             .select_related(
                 "type",
