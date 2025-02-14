@@ -44,6 +44,7 @@ from leasing.models import (
     RentIntendedUse,
     UiData,
 )
+from leasing.models.decision import ConditionType
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import CustomDetailedPlan
 from leasing.models.land_use_agreement import (
@@ -221,6 +222,12 @@ class InvoiceSetFactory(factory.django.DjangoModelFactory):
 class InvoicePaymentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = InvoicePayment
+
+
+@register
+class ConditionTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ConditionType
 
 
 @register

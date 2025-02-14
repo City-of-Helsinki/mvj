@@ -524,6 +524,9 @@ class TenantFactory(factory.django.DjangoModelFactory):
 
 @register
 class TenantContactFactory(factory.django.DjangoModelFactory):
+    tenant = factory.SubFactory(TenantFactory)
+    contact = factory.SubFactory(ContactFactory)
+
     class Meta:
         model = TenantContact
 
