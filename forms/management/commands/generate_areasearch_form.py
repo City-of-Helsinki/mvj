@@ -8,11 +8,17 @@ def initialize_area_search_form():
         name="Aluehaun perustietolomake",
         state="ready",
         title="Perustietolomake",
+        title_fi="Perustietolomake",
+        title_en="Basic information form",
+        title_sv="Grundläggande informationsformulär",
         is_area_form=True,
     )
     main_section = Section.objects.create(
         form=form,
         title="Hakijan tiedot",
+        title_fi="Hakijan tiedot",
+        title_en="Applicant information",
+        title_sv="Sökandes uppgifter",
         identifier="hakijan-tiedot",
         visible=True,
         applicant_type="both",
@@ -21,6 +27,9 @@ def initialize_area_search_form():
     applicant_field = Field.objects.create(
         section=main_section,
         label="Hakija",
+        label_fi="Hakija",
+        label_en="Applicant",
+        label_sv="Sökande",
         type="radiobuttoninline",
         identifier="hakija",
         enabled=True,
@@ -28,16 +37,31 @@ def initialize_area_search_form():
         default_value="1",
     )
     Choice.objects.create(
-        field=applicant_field, text="Henkilö", value="2", has_text_input=False
+        field=applicant_field,
+        text="Henkilö",
+        text_fi="Henkilö",
+        text_en="Person",
+        text_sv="Person",
+        value="2",
+        has_text_input=False,
     )
     Choice.objects.create(
-        field=applicant_field, text="Yritys/yhteisö", value="1", has_text_input=False
+        field=applicant_field,
+        text="Yritys/yhteisö",
+        text_fi="Yritys/yhteisö",
+        text_en="Company/organisation",
+        text_sv="Företag/organization",
+        value="1",
+        has_text_input=False,
     )
 
     corporate_section = Section.objects.create(
         form=form,
         parent=main_section,
         title="Yrityksen tiedot",
+        title_fi="Yrityksen tiedot",
+        title_en="Company information",
+        title_sv="Företagsuppgifter",
         identifier="yrityksen-tiedot",
         visible=True,
         applicant_type="company",
@@ -45,6 +69,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Yrityksen nimi",
+        label_fi="Yrityksen nimi",
+        label_en="Company name",
+        label_sv="Företagsnamn",
         type="textbox",
         identifier="yrityksen-nimi",
         enabled=True,
@@ -54,6 +81,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Y-tunnus",
+        label_fi="Y-tunnus",
+        label_en="Business ID",
+        label_sv="FO-nummer",
         type="textbox",
         identifier="y-tunnus",
         enabled=True,
@@ -63,6 +93,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Katuosoite",
+        label_fi="Katuosoite",
+        label_en="Street address",
+        label_sv="Gatuadress",
         type="textbox",
         identifier="katuosoite",
         enabled=True,
@@ -72,6 +105,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Postinumero",
+        label_fi="Postinumero",
+        label_en="Postal code",
+        label_sv="Postnummer",
         type="textbox",
         identifier="postinumero",
         enabled=True,
@@ -81,6 +117,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Postitoimipaikka",
+        label_fi="Postitoimipaikka",
+        label_en="City or town",
+        label_sv="Postort",
         type="textbox",
         identifier="postitoimipaikka",
         enabled=True,
@@ -90,6 +129,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Maa",
+        label_fi="Maa",
+        label_en="Country",
+        label_sv="Land",
         type="textbox",
         identifier="maa",
         enabled=True,
@@ -100,6 +142,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
@@ -109,6 +154,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_section,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -120,12 +168,18 @@ def initialize_area_search_form():
         form=form,
         parent=corporate_section,
         title="Yhteyshenkilö",
+        title_fi="Yhteyshenkilö",
+        title_en="Contact person",
+        title_sv="Kontaktperson",
         identifier="yhteyshenkilo-company",
         applicant_type="company",
     )
     Field.objects.create(
         section=corporate_contact_section,
         label="Etunimi",
+        label_fi="Etunimi",
+        label_en="First name",
+        label_sv="Förnamn",
         type="textbox",
         identifier="etunimi",
         enabled=True,
@@ -135,6 +189,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_contact_section,
         label="Sukunimi",
+        label_fi="Sukunimi",
+        label_en="Last name",
+        label_sv="Efternamn",
         type="textbox",
         identifier="Sukunimi",
         enabled=True,
@@ -144,6 +201,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_contact_section,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -153,6 +213,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=corporate_contact_section,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
@@ -164,6 +227,9 @@ def initialize_area_search_form():
         form=form,
         parent=corporate_contact_section,
         title="Laskutustiedot",
+        title_fi="Laskutustiedot",
+        title_en="Billing information",
+        title_sv="Faktureringsuppgifter",
         identifier="laskutustiedot",
         visible=True,
         applicant_type="company",
@@ -171,6 +237,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Verkkolaskuosoite",
+        label_fi="Verkkolaskuosoite",
+        label_en="E-invoice address",
+        label_sv="E-fakturaadress",
         type="textbox",
         identifier="verkkolaskuosoite",
         enabled=True,
@@ -180,6 +249,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Välittäjän tunnus",
+        label_fi="Välittäjän tunnus",
+        label_en="Intermediary ID",
+        label_sv="Förmedlarens ID",
         type="textbox",
         identifier="valittajan-tunnus",
         enabled=True,
@@ -189,6 +261,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section,
         label="Laskutusviite (tulee näkyviin laskulle)",
+        label_fi="Laskutusviite (tulee näkyviin laskulle)",
+        label_en="Billing reference (will appear on the invoice)",
+        label_sv="Faktureringsreferens (visas på fakturan)",
         type="textbox",
         identifier="laskutusviite",
         enabled=True,
@@ -200,6 +275,9 @@ def initialize_area_search_form():
         form=form,
         parent=invoice_section,
         title="Muut laskutustiedot",
+        title_fi="Muut laskutustiedot",
+        title_en="Other billing information",
+        title_sv="Övriga faktureringsuppgifter",
         identifier="muut-laskutustiedot",
         visible=True,
         applicant_type="company",
@@ -207,6 +285,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Muu laskutusosoite",
+        label_fi="Muu laskutusosoite",
+        label_en="Other billing address",
+        label_sv="Annan faktureringsadress",
         type="checkbox",
         identifier="laskutusosoite-muu",
         enabled=True,
@@ -214,10 +295,19 @@ def initialize_area_search_form():
         sort_order=0,
         hint_text="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
         Täytä vain, jos käytössä on muu laskutusosoite.""",
+        hint_text_fi="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
+        Täytä vain, jos käytössä on muu laskutusosoite.""",
+        hint_text_en="""Please note that City of Helsinki does not send invoices via email.
+        Fill in only if there is another billing address.""",
+        hint_text_sv="""Observera att Helsingfors stad inte skickar fakturor via e-post.
+        Fyll i endast om det finns en annan faktureringsadress.""",
     )
     invoice_section_language = Field.objects.create(
         section=invoice_other_section,
         label="Kieli",
+        label_fi="Kieli",
+        label_en="Language",
+        label_sv="Språk",
         type="dropdown",
         identifier="kieli",
         enabled=True,
@@ -227,18 +317,27 @@ def initialize_area_search_form():
     Choice.objects.create(
         field=invoice_section_language,
         text="suomi",
+        text_fi="suomi",
+        text_en="Finnish",
+        text_sv="finska",
         value="suomi",
         has_text_input=False,
     )
     Choice.objects.create(
         field=invoice_section_language,
         text="ruotsi",
+        text_fi="ruotsi",
+        text_en="Swedish",
+        text_sv="svenska",
         value="ruotsi",
         has_text_input=False,
     )
     Choice.objects.create(
         field=invoice_section_language,
         text="englanti",
+        text_fi="englanti",
+        text_en="English",
+        text_sv="engelska",
         value="englanti",
         has_text_input=False,
     )
@@ -246,6 +345,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="c/o",
+        label_fi="c/o",
+        label_en="c/o",
+        label_sv="c/o",
         type="textbox",
         identifier="c_o",
         enabled=True,
@@ -255,6 +357,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Katuosoite",
+        label_fi="Katuosoite",
+        label_en="Street address",
+        label_sv="Gatuadress",
         type="textbox",
         identifier="katuosoite",
         enabled=True,
@@ -264,6 +369,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Postinumero",
+        label_fi="Postinumero",
+        label_en="Postal number",
+        label_sv="Postnummer",
         type="textbox",
         identifier="postinumero",
         enabled=True,
@@ -273,6 +381,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Postitoimipaikka",
+        label_fi="Postitoimipaikka",
+        label_en="City or town",
+        label_sv="Postort",
         type="textbox",
         identifier="postitoimipaikka",
         enabled=True,
@@ -282,6 +393,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Maa",
+        label_fi="Maa",
+        label_en="Country",
+        label_sv="Land",
         type="textbox",
         identifier="maa",
         enabled=True,
@@ -292,6 +406,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Nimi",
+        label_fi="Nimi",
+        label_en="Name",
+        label_sv="Namn",
         type="textbox",
         identifier="nimi",
         enabled=True,
@@ -301,6 +418,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
@@ -310,6 +430,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -319,6 +442,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_other_section,
         label="Laskutusviite (tulee näkyviin laskulle)",
+        label_fi="Laskutusviite (tulee näkyviin laskulle)",
+        label_en="Billing reference (will appear on the invoice)",
+        label_sv="Faktureringsreferens (visas på fakturan)",
         type="textbox",
         identifier="laskutusviite",
         enabled=True,
@@ -330,6 +456,9 @@ def initialize_area_search_form():
         form=form,
         parent=main_section,
         title="Henkilön tiedot",
+        title_fi="Henkilön tiedot",
+        title_en="Personal information",
+        title_sv="Personuppgifter",
         identifier="henkilon-tiedot",
         visible=True,
         applicant_type="person",
@@ -337,6 +466,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Etunimi",
+        label_fi="Etunimi",
+        label_en="First name",
+        label_sv="Förnamn",
         type="textbox",
         identifier="etunimi",
         enabled=True,
@@ -346,6 +478,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Sukunimi",
+        label_fi="Sukunimi",
+        label_en="Last name",
+        label_sv="Efternamn",
         type="textbox",
         identifier="Sukunimi",
         enabled=True,
@@ -355,6 +490,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Henkilötunnus",
+        label_fi="Henkilötunnus",
+        label_en="Personal identity code",
+        label_sv="Personnummer",
         type="textbox",
         identifier="henkilotunnus",
         enabled=True,
@@ -364,6 +502,9 @@ def initialize_area_search_form():
     people_section_language = Field.objects.create(
         section=people_section,
         label="Kieli",
+        label_fi="Kieli",
+        label_en="Language",
+        label_sv="Språk",
         type="dropdown",
         identifier="kieli",
         enabled=True,
@@ -372,17 +513,29 @@ def initialize_area_search_form():
     )
 
     Choice.objects.create(
-        field=people_section_language, text="suomi", value="suomi", has_text_input=False
+        field=people_section_language,
+        text="suomi",
+        text_fi="suomi",
+        text_en="Finnish",
+        text_sv="finska",
+        value="suomi",
+        has_text_input=False,
     )
     Choice.objects.create(
         field=people_section_language,
         text="ruotsi",
+        text_fi="ruotsi",
+        text_en="Swedish",
+        text_sv="svenska",
         value="ruotsi",
         has_text_input=False,
     )
     Choice.objects.create(
         field=people_section_language,
         text="englanti",
+        text_fi="englanti",
+        text_en="English",
+        text_sv="engelska",
         value="englanti",
         has_text_input=False,
     )
@@ -390,6 +543,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
@@ -399,6 +555,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -408,6 +567,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Katuosoite",
+        label_fi="Katuosoite",
+        label_en="Street address",
+        label_sv="Gatuadress",
         type="textbox",
         identifier="katuosoite",
         enabled=True,
@@ -417,6 +579,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Postinumero",
+        label_fi="Postinumero",
+        label_en="Postal number",
+        label_sv="Postnummer",
         type="textbox",
         identifier="postinumero",
         enabled=True,
@@ -426,6 +591,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Postitoimipaikka",
+        label_fi="Postitoimipaikka",
+        label_en="City or town",
+        label_sv="Postort",
         type="textbox",
         identifier="postitoimipaikka",
         enabled=True,
@@ -435,6 +603,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=people_section,
         label="Maa",
+        label_fi="Maa",
+        label_en="Country",
+        label_sv="Land",
         type="textbox",
         identifier="maa",
         enabled=True,
@@ -445,6 +616,9 @@ def initialize_area_search_form():
     security_ban = Field.objects.create(
         section=people_section,
         label="Turvakielto",
+        label_fi="Turvakielto",
+        label_en="Non-disclosure for safety reasons",
+        label_sv="Spärrmarkering",
         type="textbox",
         identifier="turvakielto",
         enabled=True,
@@ -453,11 +627,20 @@ def initialize_area_search_form():
         default_value="ei",
     )
     Choice.objects.create(
-        field=security_ban, text="Ei", value="ei", has_text_input=False
+        field=security_ban,
+        text="Ei",
+        text_fi="Ei",
+        text_en="No",
+        text_sv="Nej",
+        value="ei",
+        has_text_input=False,
     )
     Choice.objects.create(
         field=security_ban,
         text="Kyllä",
+        text_fi="Kyllä",
+        text_en="Yes",
+        text_sv="Ja",
         value="kyllä",
         has_text_input=False,
     )
@@ -466,22 +649,34 @@ def initialize_area_search_form():
         form=form,
         parent=people_section,
         title="Yhteyshenkilö",
+        title_fi="Yhteyshenkilö",
+        title_en="Contact person",
+        title_sv="Kontaktperson",
         identifier="yhteyshenkilo-1",
         applicant_type="person",
     )
     Field.objects.create(
         section=contact_section,
         label="Eri kuin hakija",
+        label_fi="Eri kuin hakija",
+        label_en="Different from the applicant",
+        label_sv="Annan än sökanden",
         type="checkbox",
         identifier="eri-kuin-hakija",
         enabled=True,
         required=False,
         sort_order=0,
         hint_text="Täytä vain, jos yhteyshenkilö on eri kuin hakija.",
+        hint_text_fi="Täytä vain, jos yhteyshenkilö on eri kuin hakija.",
+        hint_text_en="Fill in only if the contact person is different from the applicant.",
+        hint_text_sv="Fyll i endast om kontaktpersonen är annan än sökanden.",
     )
     Field.objects.create(
         section=contact_section,
         label="Etunimi",
+        label_fi="Etunimi",
+        label_en="First name",
+        label_sv="Förnamn",
         type="textbox",
         identifier="etunimi",
         enabled=True,
@@ -491,6 +686,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Sukunimi",
+        label_fi="Sukunimi",
+        label_en="Last name",
+        label_sv="Efternamn",
         type="textbox",
         identifier="Sukunimi",
         enabled=True,
@@ -500,6 +698,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -509,6 +710,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=contact_section,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
@@ -520,12 +724,18 @@ def initialize_area_search_form():
         form=form,
         parent=people_section,
         title="Laskunsaaja",
+        title_fi="Laskunsaaja",
+        title_en="Invoice recipient",
+        title_sv="Fakturamottagare",
         identifier="laskunsaaja",
         applicant_type="person",
     )
     Field.objects.create(
         section=invoice_section2,
         label="Eri kuin hakija",
+        label_fi="Eri kuin hakija",
+        label_en="Different from the applicant",
+        label_sv="Annan än sökanden",
         type="checkbox",
         identifier="eri-kuin-hakija",
         enabled=True,
@@ -533,10 +743,19 @@ def initialize_area_search_form():
         sort_order=0,
         hint_text="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
                      Täytä vain, jos laskunsaaja on eri kuin hakija.""",
+        hint_text_fi="""Huomaathan, että Helsingin kaupunki ei lähetä laskuja sähköpostitse.
+        Täytä vain, jos käytössä on muu laskutusosoite.""",
+        hint_text_en="""Please note that City of Helsinki does not send invoices via email.
+        Fill in only if there is another billing address.""",
+        hint_text_sv="""Observera att Helsingfors stad inte skickar fakturor via e-post.
+        Fyll i endast om det finns en annan faktureringsadress.""",
     )
     invoice_section2_language = Field.objects.create(
         section=invoice_section2,
         label="Kieli",
+        label_fi="Kieli",
+        label_en="Language",
+        label_sv="Språk",
         type="dropdown",
         identifier="kieli",
         enabled=True,
@@ -547,24 +766,36 @@ def initialize_area_search_form():
     Choice.objects.create(
         field=invoice_section2_language,
         text="suomi",
+        text_fi="suomi",
+        text_en="Finnish",
+        text_sv="finska",
         value="suomi",
         has_text_input=False,
     )
     Choice.objects.create(
         field=invoice_section2_language,
         text="ruotsi",
+        text_fi="ruotsi",
+        text_en="Swedish",
+        text_sv="svenska",
         value="ruotsi",
         has_text_input=False,
     )
     Choice.objects.create(
         field=invoice_section2_language,
         text="englanti",
+        text_fi="englanti",
+        text_en="English",
+        text_sv="engelska",
         value="englanti",
         has_text_input=False,
     )
     Field.objects.create(
         section=invoice_section2,
         label="c/o",
+        label_fi="c/o",
+        label_en="c/o",
+        label_sv="c/o",
         type="textbox",
         identifier="c_o",
         enabled=True,
@@ -574,6 +805,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Katuosoite",
+        label_fi="Katuosoite",
+        label_en="Street address",
+        label_sv="Gatuadress",
         type="textbox",
         identifier="katuosoite",
         enabled=True,
@@ -583,6 +817,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Postinumero",
+        label_fi="Postinumero",
+        label_en="Postal number",
+        label_sv="Postnummer",
         type="textbox",
         identifier="postinumero",
         enabled=True,
@@ -592,6 +829,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Postitoimipaikka",
+        label_fi="Postitoimipaikka",
+        label_en="City or town",
+        label_sv="Postort",
         type="textbox",
         identifier="postitoimipaikka",
         enabled=True,
@@ -601,6 +841,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Maa",
+        label_fi="Maa",
+        label_en="Country",
+        label_sv="Land",
         type="textbox",
         identifier="maa",
         enabled=True,
@@ -611,6 +854,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Laskutusviite",
+        label_fi="Laskutusviite (tulee näkyviin laskulle)",
+        label_en="Billing reference (will appear on the invoice)",
+        label_sv="Faktureringsreferens (visas på fakturan)",
         type="textbox",
         identifier="laskutusviite",
         enabled=True,
@@ -620,6 +866,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Nimi",
+        label_fi="Nimi",
+        label_en="Name",
+        label_sv="Namn",
         type="textbox",
         identifier="nimi",
         enabled=True,
@@ -629,6 +878,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Sähköposti",
+        label_fi="Sähköposti",
+        label_en="Email",
+        label_sv="E-post",
         type="textbox",
         identifier="sahkoposti",
         enabled=True,
@@ -638,6 +890,9 @@ def initialize_area_search_form():
     Field.objects.create(
         section=invoice_section2,
         label="Puhelinnumero",
+        label_fi="Puhelinnumero",
+        label_en="Phone number",
+        label_sv="Telefonnummer",
         type="textbox",
         identifier="puhelinnumero",
         enabled=True,
