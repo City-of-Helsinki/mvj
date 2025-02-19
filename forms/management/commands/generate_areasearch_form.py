@@ -655,7 +655,10 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="""Vakuutan antamani tiedot oikeiksi.""",
+        label="Vakuutan antamani tiedot oikeiksi.",
+        label_fi="Vakuutan antamani tiedot oikeiksi.",
+        label_en="I certify that the information I have provided is correct",
+        label_sv="Jag försäkrar att informationen jag har lämnat är korrekt.",
         type="checkbox",
         identifier="vakuutan-antamani-tiedot-oikeiksi",
         enabled=True,
@@ -665,11 +668,35 @@ def initialize_area_search_form():
     Field.objects.create(
         section=decision_section,
         label="Vakuutan että hakijat eivät ole pakotteiden kohteena.",
+        label_fi="Vakuutan että hakijat eivät ole pakotteiden kohteena.",
+        label_en="I certify that the applicants are not subject to sanctions.",
+        label_sv="Jag försäkrar att de sökande inte utsätts för sanktioner",
         hint_text="""Vastaamalla KYLLÄ hakija vakuuttaa, että se itse tai yksikään sen suora tai välillinen
             omistaja, vastuuhenkilö tai muu lähellä oleva taho ei ole pakotteiden kohteena tai että
             pakotteita tai varojen jäädyttämispäätöksiä ei ole asetettu hakijalle, hakijan hallinto-, johto-,
             tai valvontaelimen jäsenille tai edustus-, päätös-, määräys- tai valvontavaltaa käyttäville
             henkilöille tai tahoille.""",
+        hint_text_fi="""Vastaamalla KYLLÄ hakija vakuuttaa, että se itse tai
+        yksikään sen suora tai välillinen omistaja, vastuuhenkilö tai muu
+        lähellä oleva taho ei ole pakotteiden kohteena tai että pakotteita tai
+        varojen jäädyttämispäätöksiä ei ole asetettu hakijalle, hakijan
+        hallinto-, johto-, tai valvontaelimen jäsenille tai edustus-, päätös-,
+        määräys- tai valvontavaltaa käyttäville henkilöille tai tahoille.""",
+        hint_text_en="""By answering YES, the applicant certifies that they or
+        any of their direct or indirect owners, officers, directors or other
+        persons associated with them are not subject to sanctions or that
+        sanctions or asset freezing orders have not been imposed on the
+        applicant, members of their administrative, management or supervisory
+        bodies, or persons or entities with powers of representation, decision
+        making, control or supervision.""",
+        hint_text_sv="""Genom att svara JA försäkrar den sökande att varken hen
+        själv eller en enda direkt eller indirekt ägare, ansvarsperson eller
+        annan närvarande aktör utsätts för sanktioner, och att inga sanktioner
+        eller beslut om att frysa tillgångar gäller varken den sökande,
+        medlemmar i den sökandes förvaltnings-, lednings- eller
+        övervakningsorgan eller de personer eller organ som använder sin
+        befogenhet att representera, fatta beslut, utfärda bestämmelser eller
+        övervaka.""",
         type="checkbox",
         identifier="pakotelista-vakuutus",
         enabled=True,
@@ -680,9 +707,30 @@ def initialize_area_search_form():
         section=decision_section,
         label="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen tai muun asiakirjan tiedoksi
             ilmoittamaani sähköpostiosoitteeseen sähköisenä viestinä.""",
+        label_fi="""Hakija suostuu, että Helsingin kaupunki voi antaa päätöksen
+        tai muun asiakirjan tiedoksi ilmoittamaani sähköpostiosoitteeseen
+        sähköisenä viestinä.""",
+        label_en="""The applicant agrees that the City of Helsinki may deliver
+        the decision or other document to the e-mail address I have provided as
+        an electronic message.""",
+        label_sv="""Den sökande godkänner att Helsingfors stad får ge ett beslut
+        eller en annan handling för kännedom i form av ett elektroniskt
+        meddelande till den e-postadress som jag har angett.""",
         hint_text="""Päätös tai muu asiakirja lähetetään hakijan yhteyshenkilön sähköpostiositteeseen.
             Mikäli hakijana on yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään
             päätös tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
+        hint_text_fi="""Päätös tai muu asiakirja lähetetään hakijan
+        yhteyshenkilön sähköpostiositteeseen.  Mikäli hakijana on
+        yksityishenkilö ja yhteyshenkilöä ei ole ilmoitettu, lähetetään päätös
+        tai muu asiakirja hakijan sähköpostiosoitteeseen.""",
+        hint_text_en="""The decision or other document will be sent to the email
+        address of the applicant's contact person. If the applicant is a private
+        person and no contact person is indicated, the decision or other
+        document will be sent to the applicant's e-mail address.""",
+        hint_text_sv="""Beslutet eller handlingen skickas till e-postadressen
+        till den sökandes kontaktperson. Om den sökande är en privatperson
+        eller ingen kontaktperson har angetts, skickas beslutet eller handlingen
+        till den sökandes e-postdress.""",
         type="checkbox",
         identifier="sahkoisesti-ilmoittamaani-sahkopostiosoitteeseen",
         enabled=True,
