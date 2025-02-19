@@ -17,3 +17,7 @@ FILE_SCAN_SERVICE_URL = (
 )
 
 PRIVATE_FILES_LOCATION = "/code/private_files"
+
+# qcluster configs for generating email reports locally
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = "/tmp/mvj-emails"
