@@ -646,7 +646,12 @@ def initialize_area_search_form():
     )
 
     decision_section = Section.objects.create(
-        form=form, title="Päätöksen toimitus", identifier="päätöksen-toimitus"
+        form=form,
+        title="Hyväksyn",
+        title_fi="Hyväksyn",
+        title_en="I agree",
+        title_sv="Jag godkänner",
+        identifier="päätöksen-toimitus",
     )
     Field.objects.create(
         section=decision_section,
@@ -686,9 +691,23 @@ def initialize_area_search_form():
     )
     Field.objects.create(
         section=decision_section,
-        label="""Hyväksyn tietojeni tallentamisen ja käsittelyn Helsingin kaupunkiympäristön
-            asiakasrekisterin selosteen mukaisesti.""",
-        hint_text="Lisätiedot: www.hel.fi/rekisteriseloste",
+        label="""Hyväksyn tietojeni tallentamisen ja käsittelyn sekä
+        luottokelpoisuuden ja pakotelistatarkistukset Helsingin
+        kaupunkiympäristön asiakasrekisterin selosteen mukaisesti.""",
+        label_fi="""Hyväksyn tietojeni tallentamisen ja käsittelyn sekä
+        luottokelpoisuuden ja pakotelistatarkistukset Helsingin
+        kaupunkiympäristön asiakasrekisterin selosteen mukaisesti.""",
+        label_en="""I agree to the storage and processing of my data and the
+        creditworthiness and sanctions list checks in accordance with the City
+        of Helsinki Urban Environment Division's customer register notice.""",
+        label_sv="""Jag godkänner att mina uppgifter lagras och behandlas samt
+        kontrollerna av kreditvärdighet och sanktionslistor i enlighet med
+        registerbeskrivningen för kundregistret för Helsingfors
+        stadsmiljösektor.""",
+        hint_text="Olen tutustunut henkilötietojen käsittelyä koskeviin tietosuojaselosteisiin.",
+        hint_text_fi="Olen tutustunut henkilötietojen käsittelyä koskeviin tietosuojaselosteisiin.",
+        hint_text_en="I have read the data protection notices concerning the processing of personal data.",
+        hint_text_sv="Jag har läst integritetspolicyerna angående behandlingen av personuppgifter.",
         type="checkbox",
         identifier="hyvaksyn-tietojeni-tallentamisen",
         enabled=True,
