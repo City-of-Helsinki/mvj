@@ -3081,8 +3081,8 @@ msgid "No due date"
 msgstr "Vuokraukset, joissa ei ole eräpäivää"
 
 msgctxt "Invoicing review"
-msgid "One time rents with no invoice"
-msgstr "Vuokraukset, joilla on kertakaikkinen vuokra mutta ei ole laskuja"
+msgid "One time rents with no invoice from max 5 year old leases"
+msgstr "Vuokraukset (max 5v vanhat), joilla on kertakaikkinen vuokra mutta ei ole laskuja"
 
 msgctxt "Invoicing review"
 msgid "Incorrect management shares"
