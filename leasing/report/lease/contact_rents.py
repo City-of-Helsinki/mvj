@@ -140,7 +140,7 @@ class ContactRentsReport(ReportBase):
         # a Tenant from TenantContact.tenant of type TenantContactType.BILLING
         billing_contacts_tenant = tenant_shares.get(contact)
         if billing_contacts_tenant is not None:
-            # Contact is not in tenant_shares, possibly because Contacts TenantContact is not of type `BILLING``
+            # Contact is in tenant_shares as it is of type `BILLING`
             tenant: Tenant | None = next(iter(billing_contacts_tenant.keys()))
             return tenant
 
