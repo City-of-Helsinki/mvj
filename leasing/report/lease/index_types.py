@@ -123,7 +123,9 @@ class IndexTypesReport(ReportBase):
 
     def get_data(self, input_data):
         qs = (
-            Rent.objects.filter(index_type=input_data["index_type"])
+            Rent.objects.filter(
+                index_type=input_data["index_type"], lease__deleted__isnull=True
+            )
             .select_related(
                 "lease",
                 "lease__identifier",
