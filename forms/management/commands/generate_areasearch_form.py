@@ -613,13 +613,13 @@ def initialize_area_search_form():
         sort_order=9,
         default_value="Suomi",
     )
-    security_ban = Field.objects.create(
+    non_disclosure = Field.objects.create(
         section=people_section,
         label="Turvakielto",
         label_fi="Turvakielto",
         label_en="Non-disclosure for safety reasons",
         label_sv="Spärrmarkering",
-        type="textbox",
+        type="dropdown",
         identifier="turvakielto",
         enabled=True,
         required=False,
@@ -627,7 +627,7 @@ def initialize_area_search_form():
         default_value="ei",
     )
     Choice.objects.create(
-        field=security_ban,
+        field=non_disclosure,
         text="Ei",
         text_fi="Ei",
         text_en="No",
@@ -636,7 +636,7 @@ def initialize_area_search_form():
         has_text_input=False,
     )
     Choice.objects.create(
-        field=security_ban,
+        field=non_disclosure,
         text="Kyllä",
         text_fi="Kyllä",
         text_en="Yes",
