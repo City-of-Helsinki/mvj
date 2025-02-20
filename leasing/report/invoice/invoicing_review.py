@@ -361,6 +361,7 @@ class InvoicingReviewReport(ReportBase):
                         AND r.deleted IS NULL
                         AND (r.start_date IS NULL OR r.start_date <= %(today)s)
                         AND (r.end_date IS NULL OR r.end_date >= %(today)s)
+                        AND r.type NOT IN ('free')
                    INNER JOIN
                    (SELECT t.id,
                            t.lease_id,
