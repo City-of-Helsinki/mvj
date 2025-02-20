@@ -112,11 +112,14 @@ INVOICING_REVIEW_QUERIES = {
                 AND (r.end_date IS NULL OR r.end_date >= %(today)s)
         INNER JOIN leasing_leaseidentifier li
             ON (l.identifier_id = li.id)
+        JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
             AND l.start_date IS NOT NULL
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         HAVING COUNT(r.id) = 0
