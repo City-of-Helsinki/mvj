@@ -1,12 +1,15 @@
+import datetime
 from decimal import ROUND_HALF_UP, Decimal
 
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from leasing.enums import TenantContactType
 from leasing.models import Contact, Lease
+from leasing.models.tenant import Tenant, TenantContact
+from leasing.models.types import TenantShares
 from leasing.report.lease.common_getters import (
     get_address,
     get_lease_area_identifier,
@@ -80,7 +83,9 @@ class ContactRentsReport(ReportBase):
             )
             .prefetch_related(
                 "lease_areas__addresses",
+                "tenants__contacts",
                 "tenants__tenantcontact_set__contact",
+                "rents",
             )
             .distinct()
         )
@@ -97,12 +102,14 @@ class ContactRentsReport(ReportBase):
             )
 
             tenant_shares = lease.get_tenant_shares_for_period(*date_range)
-            contacts_tenant = tenant_shares.get(contact)
-            if contacts_tenant is not None:
-                # One tenant can have multiple contacts, one tenant has only one rent share
-                rent_share = next(iter(contacts_tenant.keys()))
+            tenant = self._get_tenant_from_tenant_shares(
+                contact, lease, tenant_shares, date_range
+            )
+
+            if tenant is not None:
+                # One Tenant can have multiple Contacts via TenantContact, one Tenant has only one rent share
                 tenant_rent_share_portion = Decimal(
-                    rent_share.share_numerator / rent_share.share_denominator
+                    tenant.share_numerator / tenant.share_denominator
                 )
                 rent_of_single_tenant_for_period = (
                     rent_total_amount_for_period * tenant_rent_share_portion
@@ -116,3 +123,55 @@ class ContactRentsReport(ReportBase):
                 lease._report__tenants_rent_for_period = lease._report__rent_for_period
 
         return leases
+
+    def _get_tenant_from_tenant_shares(
+        self,
+        contact: Contact,
+        lease: Lease,
+        tenant_shares: TenantShares,
+        date_range: tuple[datetime.date, datetime.date],
+    ) -> Tenant | None:
+        """
+        Get Tenant for the given Contact or for Contact & Lease from tenant_shares.
+        If the contact is not directly found in tenant_shares, attempt to get the shared tenant
+        with the billing contact. This is because only TenantContact.type `billing` contacts are
+        included in tenant_shares, not TenantContact.type `tenant`.
+        """
+        # a Tenant from TenantContact.tenant of type TenantContactType.BILLING
+        billing_contacts_tenant = tenant_shares.get(contact)
+        if billing_contacts_tenant is not None:
+            # Contact is not in tenant_shares, possibly because Contacts TenantContact is not of type `BILLING``
+            tenant: Tenant | None = next(iter(billing_contacts_tenant.keys()))
+            return tenant
+
+        # `tenant_shares` only includes billing contacts as keys.
+        # Attempt to get the Tenant for the contact if it is of type TENANT and
+        # its Tenant is the same as one of the billing contacts.
+        contacts_tenantcontacts: QuerySet[TenantContact] = contact.tenantcontact_set
+        start_date, end_date = date_range
+        tenantcontact_range_filter = Q(
+            Q(Q(end_date=None) | Q(end_date__gte=start_date))
+            & Q(Q(start_date=None) | Q(start_date__lte=end_date))
+            & Q(deleted__isnull=True)
+        )
+        contacts_tenantcontact: TenantContact = contacts_tenantcontacts.filter(
+            tenantcontact_range_filter,
+            tenant__lease=lease,
+            type=TenantContactType.TENANT,
+        ).first()
+
+        if not contacts_tenantcontact:
+            # Contacts Tenant is not found in tenant_shares, edge case which "should not happen"
+            return None
+
+        # a Tenant from TenantContact.tenant of `type` TenantContactType.TENANT
+        contacts_tenant: Tenant = contacts_tenantcontact.tenant
+        all_tenant_periods = tenant_shares.values()
+        # Look for the Contacts Tenant in all tenant periods
+        for tenant_period in all_tenant_periods:
+            if contacts_tenant in tenant_period:
+                tenants = tenant_period.keys()
+                tenant: Tenant | None = next(iter(tenants))
+                return tenant
+
+        return None

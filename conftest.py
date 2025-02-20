@@ -518,6 +518,10 @@ class ContactFactory(factory.django.DjangoModelFactory):
 
 @register
 class TenantFactory(factory.django.DjangoModelFactory):
+    lease = factory.SubFactory(LeaseFactory)
+    share_numerator = 1
+    share_denominator = 5
+
     class Meta:
         model = Tenant
 
