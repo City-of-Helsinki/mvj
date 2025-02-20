@@ -3111,8 +3111,8 @@ msgid "Ongoing rent without rent shares"
 msgstr "Arrenderingar som har giltig hyra men inga faktureringsandel"
 
 msgctxt "Invoicing review"
-msgid "Gaps in billing periods"
-msgstr "Luckor i faktureringsperioder"
+msgid "Gaps in billing periods for last 5 years"
+msgstr "Luckor i faktureringsperioder för de senaste 5 åren"
 
 msgid "Invoicing review"
 msgstr "Granskningsrapport för arrenderingens faktureringsuppgifter"

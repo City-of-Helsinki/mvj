@@ -50,7 +50,7 @@ class InvoicingReviewSection(Enum):
     NO_LEASE_AREA = "no_lease_area"
     INDEX_TYPE_MISSING = "index_type_missing"
     ONGOING_RENT_WITHOUT_RENT_SHARES = "ongoing_rent_without_rent_shares"
-    GAPS_IN_BILLING_PERIODS = "gaps_in_billing_periods"
+    GAPS_IN_BILLING_PERIODS_LAST_5YEARS = "gaps_in_billing_periods_last_5years"
 
     class Labels:
         INVOICING_NOT_ENABLED = pgettext_lazy(
@@ -77,8 +77,8 @@ class InvoicingReviewSection(Enum):
         ONGOING_RENT_WITHOUT_RENT_SHARES = pgettext_lazy(
             "Invoicing review", "Ongoing rent without rent shares"
         )
-        GAPS_IN_BILLING_PERIODS = pgettext_lazy(
-            "Invoicing review", "Gaps in billing periods"
+        GAPS_IN_BILLING_PERIODS_LAST_5YEARS = pgettext_lazy(
+            "Invoicing review", "Gaps in billing periods for last 5 years"
         )
 
 
@@ -456,11 +456,11 @@ class InvoicingReviewReport(ReportBase):
 
         return data
 
-    def get_gaps_in_billing_periods_data(
+    def get_gaps_in_billing_periods_last_5years_data(
         self, service_unit_ids: list[int], cursor: CursorWrapper
     ):
         """
-        Finds gaps in the billing periods of the leases' invoices.
+        Finds gaps in the billing periods of the leases' invoices that are at most 5 years old.
 
         It compares the start dates of the lease with active rents to the billing periods of the lease's invoices.
         If there is a difference between the numbers of days in these periods, the lease is added to the report.
@@ -505,6 +505,7 @@ WITH invoices AS (
         AND (r.end_date IS NULL OR r.end_date >= %(today)s)
         AND l.state IN ('lease', 'long_term_lease')
         AND l.service_unit_id = ANY(%(service_units)s)
+        AND i.created_at >= (CURRENT_DATE - INTERVAL '5 years')
 ),
 invoicing_gaps AS (
     SELECT

@@ -3109,8 +3109,8 @@ msgid "Ongoing rent without rent shares"
 msgstr "Vuokraukset, joissa voimassa oleva vuokra, mutta ei laskutusosuuksia"
 
 msgctxt "Invoicing review"
-msgid "Gaps in billing periods"
-msgstr "Aukkoja laskutuskausissa"
+msgid "Gaps in billing periods for last 5 years"
+msgstr "Aukkoja laskutuskausissa 5 vuoden ajalla"
 
 msgid "Invoicing review"
 msgstr "Vuokrauksen laskutustietojen tarkastusraportti"
