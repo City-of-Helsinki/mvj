@@ -1,7 +1,8 @@
 import datetime
+from typing import Any
 
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import IndexType, TenantContactType
@@ -9,14 +10,14 @@ from leasing.models import Rent, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
-    return obj.lease.get_identifier_string()
+def get_lease_id(rent: Rent) -> str:
+    return rent.lease.get_identifier_string()
 
 
-def get_tenants(obj):
+def get_tenants(rent: Rent) -> str:
     today = datetime.date.today()
     contacts = set()
-    for tenant in obj.lease.tenants.all():
+    for tenant in rent.lease.tenants.all():
         for tc in tenant.tenantcontact_set.all():
             if tc.type != TenantContactType.TENANT:
                 continue
@@ -27,24 +28,24 @@ def get_tenants(obj):
     return ", ".join([c.get_name() for c in contacts])
 
 
-def get_area_id(obj):
+def get_area_id(rent: Rent) -> str:
     return ", ".join(
-        [la.identifier for la in obj.lease.lease_areas.all() if la.archived_at is None]
+        [la.identifier for la in rent.lease.lease_areas.all() if la.archived_at is None]
     )
 
 
-def get_contract_number(obj):
+def get_contract_number(rent: Rent) -> str:
     contract_numbers = []
-    for contract in obj.lease.contracts.all():
+    for contract in rent.lease.contracts.all():
         if not contract.contract_number:
             continue
         contract_numbers.append(contract.contract_number)
     return " / ".join(contract_numbers)
 
 
-def get_area_address(obj):
+def get_area_address(rent: Rent) -> str:
     addresses = []
-    for lease_area in obj.lease.lease_areas.all():
+    for lease_area in rent.lease.lease_areas.all():
         if lease_area.archived_at:
             continue
         for area_address in lease_area.addresses.all():
@@ -54,25 +55,25 @@ def get_area_address(obj):
     return ", ".join(addresses)
 
 
-def get_municipality(obj):
-    return obj.lease.municipality.name
+def get_municipality(rent: Rent) -> str:
+    return rent.lease.municipality.name
 
 
-def get_start_date(obj):
-    return obj.lease.start_date
+def get_start_date(rent: Rent) -> str:
+    return rent.lease.start_date
 
 
-def get_end_date(obj):
-    return obj.lease.end_date
+def get_end_date(rent: Rent) -> str:
+    return rent.lease.end_date
 
 
-def get_intended_use(obj):
-    iu = obj.lease.intended_use
+def get_intended_use(rent: Rent) -> str:
+    iu = rent.lease.intended_use
     return iu.name if iu else "-"
 
 
-def get_index_type(obj):
-    return str(obj.index_type.label)
+def get_index_type(rent: Rent) -> str:
+    return str(rent.index_type.label)
 
 
 class IndexTypesReport(ReportBase):
@@ -121,7 +122,7 @@ class IndexTypesReport(ReportBase):
         "index_type": {"source": get_index_type, "label": _("Index type")},
     }
 
-    def get_data(self, input_data):
+    def get_data(self, input_data: dict[str, Any]) -> QuerySet:
         qs = (
             Rent.objects.filter(
                 index_type=input_data["index_type"], lease__deleted__isnull=True
