@@ -305,3 +305,15 @@ See the following management commands how to batch process historical uploaded
 files:
 - `create_filescanstatus_for_missing_files`
 - `enqueue_scan_for_pending`
+
+### Generate email reports locally into files
+
+Some reports are not generated in the UI, but emailed to the user instead. This is replaced in the local development environment by generating the emails in the local file system instead. There are example configurations for this in the `local_settings.py.template`.
+
+To generate the email files, you must first start the qcluster:
+
+```bash
+python manage.py qcluster
+```
+
+Now the emails can be created as `.log` files in the given `EMAIL_FILE_PATH`. Change the file extension into `.eml` to open the email in an email application.
