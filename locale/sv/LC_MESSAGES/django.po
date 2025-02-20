@@ -3083,8 +3083,8 @@ msgid "No due date"
 msgstr "Arrenderingar utan förfallodatum"
 
 msgctxt "Invoicing review"
-msgid "One time rents with no invoice"
-msgstr "Arrenderingar som har fullständigt arrende men inga fakturor"
+msgid "One time rents with no invoice from max 5 year old leases"
+msgstr "Arrenderingar (max 5 år gamla) som har fullständigt arrende men inga fakturor"
 
 msgctxt "Invoicing review"
 msgid "Incorrect management shares"

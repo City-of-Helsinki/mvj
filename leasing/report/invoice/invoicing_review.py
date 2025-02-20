@@ -41,7 +41,9 @@ class InvoicingReviewSection(Enum):
     RENT_INFO_NOT_COMPLETE = "rent_info_not_complete"
     NO_RENTS = "no_rents"
     NO_DUE_DATE = "no_due_date"
-    ONE_TIME_RENTS_WITH_NO_INVOICE = "one_time_rents_with_no_invoice"
+    ONE_TIME_RENTS_WITH_NO_INVOICE_MAX_5YEAR_OLD_LEASES = (
+        "one_time_rents_with_no_invoice_max_5year_old_leases"
+    )
     INCORRECT_MANAGEMENT_SHARES = "incorrect_management_shares"
     INCORRECT_RENT_SHARES = "incorrect_rent_shares"
     NO_TENANT_CONTACT = "no_tenant_contact"
@@ -59,8 +61,9 @@ class InvoicingReviewSection(Enum):
         )
         NO_RENTS = pgettext_lazy("Invoicing review", "No rents")
         NO_DUE_DATE = pgettext_lazy("Invoicing review", "No due date")
-        ONE_TIME_RENTS_WITH_NO_INVOICE = pgettext_lazy(
-            "Invoicing review", "One time rents with no invoice"
+        ONE_TIME_RENTS_WITH_NO_INVOICE_MAX_5YEAR_OLD_LEASES = pgettext_lazy(
+            "Invoicing review",
+            "One time rents with no invoice from max 5 year old leases",
         )
         INCORRECT_MANAGEMENT_SHARES = pgettext_lazy(
             "Invoicing review", "Incorrect management shares"
@@ -181,7 +184,7 @@ INVOICING_REVIEW_QUERIES = {
         GROUP BY l.id,
                  li.id
     """,
-    "one_time_rents_with_no_invoice": """
+    "one_time_rents_with_no_invoice_max_5year_old_leases": """
         SELECT NULL as "section",
             li.identifier AS "lease_identifier",
             l.start_date,
@@ -200,6 +203,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
+            AND l.start_date >= (CURRENT_DATE - INTERVAL '5 years')
         GROUP BY l.id,
                 li.id
         HAVING COUNT(i.id) = 0
