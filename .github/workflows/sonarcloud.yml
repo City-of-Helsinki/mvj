@@ -45,8 +45,8 @@ jobs:
       run: |
         python manage.py compilemessages
         pytest --cov=. --cov-report xml:coverage.xml --migrations
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
       with:
         args: >
           -Dsonar.organization=managedcloudapplications
