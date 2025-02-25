@@ -5,11 +5,14 @@ from leasing.models import Collateral, CollateralType, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
+def get_lease_ids(obj):
     if not obj.contract.lease:
         return
 
-    return obj.contract.lease.get_identifier_string()
+    return {
+        "id": obj.contract.lease.id,
+        "identifier": obj.contract.lease.get_identifier_string(),
+    }
 
 
 def get_start_date(obj):
@@ -46,7 +49,7 @@ class CollateralsReport(ReportBase):
         "returned": forms.NullBooleanField(label=_("Returned"), required=False),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_ids": {"source": get_lease_ids, "label": _("Lease id")},
         "start_date": {
             "source": get_start_date,
             "label": _("Lease start date"),

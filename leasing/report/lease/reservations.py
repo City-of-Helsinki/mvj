@@ -8,11 +8,8 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, LeaseState, TenantContactType
 from leasing.models import Lease, ServiceUnit
+from leasing.report.lease.common_getters import get_lease_ids
 from leasing.report.report_base import ReportBase
-
-
-def get_lease_id(lease):
-    return lease.get_identifier_string()
 
 
 def get_area(lease):
@@ -173,7 +170,7 @@ class ReservationsReport(ReportBase):
         ),
     }
     output_fields = {
-        "reservation_id": {"source": get_lease_id, "label": _("Reservation id")},
+        "lease_id": {"source": get_lease_ids, "label": _("Reservation id")},
         "area": {"source": get_area, "label": _("Lease area"), "width": 30},
         "address": {"source": get_address, "label": _("Address"), "width": 50},
         "reservee_name": {

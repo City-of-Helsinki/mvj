@@ -21,6 +21,13 @@ from leasing.report.excel import (
 from leasing.report.report_base import ReportBase
 
 
+def get_lease_ids(obj):
+    return {
+        "id": obj.lease.id,
+        "identifier": obj.lease.get_identifier_string(),
+    }
+
+
 def get_recipient_address(obj):
     return ", ".join(
         filter(
@@ -197,7 +204,7 @@ class ExtraCityRentReport(ReportBase):
             aggregated_data.append(
                 {
                     "municipality_name": lease.identifier.municipality.name,
-                    "lease_id": lease.get_identifier_string(),
+                    "lease_id": get_lease_ids(lease),
                     "tenant_name": ", ".join([c.get_name() for c in contacts]),
                     "area_identifier": ", ".join(
                         [

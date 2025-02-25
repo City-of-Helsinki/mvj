@@ -13,8 +13,11 @@ def get_invoice_number(obj):
     return obj.invoice.number
 
 
-def get_lease_id(obj):
-    return obj.invoice.lease.get_identifier_string()
+def get_lease_ids(obj):
+    return {
+        "id": obj.invoice.lease.id,
+        "identifier": obj.invoice.lease.get_identifier_string(),
+    }
 
 
 class InvoicePaymentsReport(ReportBase):
@@ -38,7 +41,7 @@ class InvoicePaymentsReport(ReportBase):
             "label": _("Invoice number"),
             "is_numeric": True,
         },
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_ids": {"source": get_lease_ids, "label": _("Lease id")},
         "paid_date": {"label": _("Paid date"), "format": "date"},
         "paid_amount": {"label": _("Paid amount"), "format": "money", "width": 13},
         "filing_code": {"label": _("Filing code")},

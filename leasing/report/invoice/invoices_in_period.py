@@ -7,15 +7,12 @@ from rest_framework.response import Response
 from leasing.enums import InvoiceState
 from leasing.models import Invoice, LeaseType, ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
+from leasing.report.lease.common_getters import get_lease_ids
 from leasing.report.report_base import ReportBase
 
 
 def get_lease_type(obj):
     return obj.lease.identifier.type.identifier
-
-
-def get_lease_id(obj):
-    return obj.lease.get_identifier_string()
 
 
 def get_recipient_name(obj):
@@ -66,7 +63,7 @@ class InvoicesInPeriodReport(ReportBase):
             "label": _("Receivable type"),
         },
         "lease_type": {"source": get_lease_type, "label": _("Lease type")},
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_ids": {"source": get_lease_ids, "label": _("Lease id")},
         "state": {
             "label": _("State"),
             "serializer_field": EnumField(enum=InvoiceState),

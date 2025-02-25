@@ -19,8 +19,8 @@ def get_lease_type(lease):
     return lease.identifier.type.identifier
 
 
-def get_lease_id(lease):
-    return lease.get_identifier_string()
+def get_lease_ids(lease):
+    return {"id": lease.id, "identifier": lease.get_identifier_string()}
 
 
 def get_tenants(lease, include_future_tenants=False, report=None):
