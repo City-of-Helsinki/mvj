@@ -118,7 +118,7 @@ class ExtraCityRentReport(ReportBase):
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
     output_fields = {
-        "lease_id": {"label": _("Lease id")},
+        "lease_ids": {"label": _("Lease id")},
         "tenant_name": {"label": _("Tenant name"), "width": 50},
         "area_identifier": {"label": _("Area identifier"), "width": 50},
         "area": {"label": _("Area amount"), "format": "area"},
@@ -204,7 +204,7 @@ class ExtraCityRentReport(ReportBase):
             aggregated_data.append(
                 {
                     "municipality_name": lease.identifier.municipality.name,
-                    "lease_id": get_lease_ids(lease),
+                    "lease_ids": get_lease_ids(lease),
                     "tenant_name": ", ".join([c.get_name() for c in contacts]),
                     "area_identifier": ", ".join(
                         [

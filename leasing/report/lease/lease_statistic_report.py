@@ -18,7 +18,7 @@ from leasing.report.lease.common_getters import (
     get_form_of_regulation,
     get_latest_contract_number,
     get_lease_area_identifier,
-    get_lease_ids,
+    get_lease_identifier_string,
     get_lease_type,
     get_lessor,
     get_notice_period,
@@ -416,7 +416,7 @@ class LeaseStatisticReport(AsyncReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"label": _("Lease id"), "source": get_lease_ids},
+        "lease_id": {"label": _("Lease id"), "source": get_lease_identifier_string},
         # Sopimusnumero
         "contract_number": {
             "label": _("Contract number"),

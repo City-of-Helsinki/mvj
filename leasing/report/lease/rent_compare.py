@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import RentType
 from leasing.models import Lease, ServiceUnit
+from leasing.report.lease.common_getters import get_lease_identifier_string
 from leasing.report.report_base import AsyncReportBase
 
 
@@ -28,7 +29,7 @@ class RentCompareReport(AsyncReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"label": _("Lease identifier"), "width": 13},
+        "lease_ids": {"label": _("Lease identifier"), "width": 13},
         "start_date": {"label": "Start date", "format": "date"},
         "end_date": {"label": "End date", "format": "date"},
         "rent_type": {"label": _("Rent type")},
@@ -109,7 +110,7 @@ class RentCompareReport(AsyncReportBase):
         results = []
         for lease in leases:
             result = {
-                "lease_id": lease.get_identifier_string(),
+                "lease_ids": get_lease_identifier_string(lease),
                 "start_date": lease.start_date,
                 "end_date": lease.end_date,
                 "rent_type": None,

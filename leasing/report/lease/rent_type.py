@@ -8,15 +8,12 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, RentType, TenantContactType
 from leasing.models import Rent, ServiceUnit
+from leasing.report.lease.common_getters import get_lease_ids_from_related_object
 from leasing.report.report_base import ReportBase
 
 
 class RentWithContactNames(Protocol):
     contact_names: str
-
-
-def get_lease_id(obj: Rent):
-    return obj.lease.get_identifier_string()
 
 
 def get_tenants(obj: RentWithContactNames) -> str:
@@ -89,7 +86,10 @@ class RentTypeReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_ids": {
+            "source": get_lease_ids_from_related_object,
+            "label": _("Lease id"),
+        },
         "tenant_name": {
             "source": get_tenants,
             "label": _("Tenant name"),

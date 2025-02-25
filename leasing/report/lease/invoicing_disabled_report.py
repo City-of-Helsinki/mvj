@@ -7,9 +7,18 @@ from leasing.models import ServiceUnit
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import dictfetchall
 
+
+def get_lease_ids_for_invoicing_disabled_report(obj):
+    return {
+        "id": obj["lease_id"],
+        "identifier": obj["lease_identifier"],
+    }
+
+
 INVOICING_DISABLED_REPORT_SQL = """
     SELECT NULL AS "section",
         li.identifier AS "lease_identifier",
+        l.id AS "lease_id",
         l.start_date,
         l.end_date
     FROM leasing_lease l
@@ -43,7 +52,10 @@ class LeaseInvoicingDisabledReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_identifier": {"label": _("Lease id")},
+        "lease_ids": {
+            "source": get_lease_ids_for_invoicing_disabled_report,
+            "label": _("Lease id"),
+        },
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
     }

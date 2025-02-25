@@ -170,7 +170,7 @@ class ReservationsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_ids, "label": _("Reservation id")},
+        "lease_ids": {"source": get_lease_ids, "label": _("Reservation id")},
         "area": {"source": get_area, "label": _("Lease area"), "width": 30},
         "address": {"source": get_address, "label": _("Address"), "width": 50},
         "reservee_name": {

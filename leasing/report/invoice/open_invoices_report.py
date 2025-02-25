@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from leasing.enums import InvoiceState
 from leasing.models import Invoice, ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, PreviousRowsSumCell, SumCell
-from leasing.report.lease.common_getters import get_lease_ids
+from leasing.report.lease.common_getters import get_lease_ids_from_related_object
 from leasing.report.report_base import ReportBase
 
 
@@ -45,7 +45,10 @@ class OpenInvoicesReport(ReportBase):
     output_fields = {
         "number": {"label": _("Number")},
         "lease_type": {"source": get_lease_type, "label": _("Lease type")},
-        "lease_ids": {"source": get_lease_ids, "label": _("Lease id")},
+        "lease_ids": {
+            "source": get_lease_ids_from_related_object,
+            "label": _("Lease id"),
+        },
         "due_date": {"label": _("Due date"), "format": "date"},
         "total_amount": {"label": _("Total amount"), "format": "money", "width": 13},
         "billed_amount": {"label": _("Billed amount"), "format": "money", "width": 13},

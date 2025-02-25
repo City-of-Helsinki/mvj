@@ -6,11 +6,21 @@ from enumfields.drf import EnumField
 
 from leasing.enums import RentAdjustmentAmountType, RentAdjustmentType, SubventionType
 from leasing.models import RentAdjustment, ServiceUnit
+from leasing.report.lease.common_getters import LeaseIds
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
-    return obj.rent.lease.get_identifier_string()
+def get_lease_ids_from_rent_adjustment(rent_adjustment: RentAdjustment) -> LeaseIds:
+    if not rent_adjustment.rent.lease:
+        return {
+            "id": None,
+            "identifier": None,
+        }
+
+    return {
+        "id": rent_adjustment.rent.lease.id,
+        "identifier": rent_adjustment.rent.lease.get_identifier_string(),
+    }
 
 
 def get_intended_use(obj):
@@ -49,7 +59,10 @@ class RentAdjustmentsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_ids": {
+            "source": get_lease_ids_from_rent_adjustment,
+            "label": _("Lease id"),
+        },
         "type": {
             "label": _("Type"),
             "serializer_field": EnumField(enum=RentAdjustmentType),

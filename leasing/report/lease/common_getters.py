@@ -5,10 +5,20 @@ from django.db.models import QuerySet
 
 from leasing.enums import TenantContactType
 from leasing.models import Contract
+from leasing.models.lease import Lease
 
 RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
+
+
+class LeaseIds(Protocol):
+    id: int | None
+    identifier: str | None
+
+
+class LeaseRelatedModel(Protocol):
+    lease: Lease
 
 
 class LeaseWithContracts(Protocol):
@@ -19,8 +29,24 @@ def get_lease_type(lease):
     return lease.identifier.type.identifier
 
 
-def get_lease_ids(lease):
+def get_lease_identifier_string(lease: Lease) -> str:
+    return lease.get_identifier_string()
+
+
+def get_lease_ids(lease: Lease) -> LeaseIds:
     return {"id": lease.id, "identifier": lease.get_identifier_string()}
+
+
+def get_lease_ids_from_related_object(
+    lease_related_object: LeaseRelatedModel,
+) -> LeaseIds:
+    if not lease_related_object.lease:
+        return {"id": None, "identifier": None}
+
+    return {
+        "id": lease_related_object.lease.id,
+        "identifier": lease_related_object.lease.get_identifier_string(),
+    }
 
 
 def get_tenants(lease, include_future_tenants=False, report=None):
