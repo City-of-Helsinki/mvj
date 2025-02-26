@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from leasing.enums import InvoiceState
 from leasing.models import Invoice, LeaseType, ServiceUnit
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
-from leasing.report.lease.common_getters import get_lease_ids_from_related_object
+from leasing.report.lease.common_getters import get_lease_link_data_from_related_object
 from leasing.report.report_base import ReportBase
 
 
@@ -63,8 +63,8 @@ class InvoicesInPeriodReport(ReportBase):
             "label": _("Receivable type"),
         },
         "lease_type": {"source": get_lease_type, "label": _("Lease type")},
-        "lease_ids": {
-            "source": get_lease_ids_from_related_object,
+        "lease_link_data": {
+            "source": get_lease_link_data_from_related_object,
             "label": _("Lease id"),
         },
         "state": {

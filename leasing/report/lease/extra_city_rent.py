@@ -18,14 +18,8 @@ from leasing.report.excel import (
     PreviousRowsSumCell,
     SumCell,
 )
+from leasing.report.lease.common_getters import get_lease_link_data
 from leasing.report.report_base import ReportBase
-
-
-def get_lease_ids(obj):
-    return {
-        "id": obj.lease.id,
-        "identifier": obj.lease.get_identifier_string(),
-    }
 
 
 def get_recipient_address(obj):
@@ -118,7 +112,7 @@ class ExtraCityRentReport(ReportBase):
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
     output_fields = {
-        "lease_ids": {"label": _("Lease id")},
+        "lease_link_data": {"label": _("Lease id")},
         "tenant_name": {"label": _("Tenant name"), "width": 50},
         "area_identifier": {"label": _("Area identifier"), "width": 50},
         "area": {"label": _("Area amount"), "format": "area"},
@@ -204,7 +198,7 @@ class ExtraCityRentReport(ReportBase):
             aggregated_data.append(
                 {
                     "municipality_name": lease.identifier.municipality.name,
-                    "lease_ids": get_lease_ids(lease),
+                    "lease_link_data": get_lease_link_data(lease),
                     "tenant_name": ", ".join([c.get_name() for c in contacts]),
                     "area_identifier": ", ".join(
                         [

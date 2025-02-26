@@ -5,7 +5,7 @@ from leasing.models import Condition, ConditionType, ServiceUnit
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_ids_from_decision_condition(obj):
+def get_lease_link_data_from_decision_condition(obj):
     return {
         "id": obj.decision.lease.id,
         "identifier": obj.decision.lease.get_identifier_string(),
@@ -83,8 +83,8 @@ class DecisionConditionsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_ids": {
-            "source": get_lease_ids_from_decision_condition,
+        "lease_link_data": {
+            "source": get_lease_link_data_from_decision_condition,
             "label": _("Lease id"),
         },
         "area": {"source": get_area, "label": _("Lease area"), "width": 30},

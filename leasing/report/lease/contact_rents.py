@@ -13,7 +13,7 @@ from leasing.models.types import TenantShares
 from leasing.report.lease.common_getters import (
     get_address,
     get_lease_area_identifier,
-    get_lease_ids,
+    get_lease_link_data,
     get_tenants,
 )
 from leasing.report.report_base import ReportBase
@@ -31,9 +31,9 @@ class ContactRentsReport(ReportBase):
         "contact_id": forms.IntegerField(label=_("Contact identifier"), required=True),
     }
     output_fields = {
-        "lease_ids": {
+        "lease_link_data": {
             "label": _("Lease identifier"),
-            "source": get_lease_ids,
+            "source": get_lease_link_data,
             "width": 13,
         },
         "lease_area_identifier": {

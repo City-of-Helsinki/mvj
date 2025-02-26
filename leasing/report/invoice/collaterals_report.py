@@ -2,11 +2,11 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Collateral, CollateralType, ServiceUnit
-from leasing.report.lease.common_getters import LeaseIds
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_ids_from_collateral(collateral: Collateral) -> LeaseIds:
+def get_lease_link_data_from_collateral(collateral: Collateral) -> LeaseLinkData:
     if not collateral.contract.lease:
         return {"id": None, "identifier": None}
 
@@ -50,7 +50,10 @@ class CollateralsReport(ReportBase):
         "returned": forms.NullBooleanField(label=_("Returned"), required=False),
     }
     output_fields = {
-        "lease_ids": {"source": get_lease_ids_from_collateral, "label": _("Lease id")},
+        "lease_link_data": {
+            "source": get_lease_link_data_from_collateral,
+            "label": _("Lease id"),
+        },
         "start_date": {
             "source": get_start_date,
             "label": _("Lease start date"),

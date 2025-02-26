@@ -6,11 +6,13 @@ from enumfields.drf import EnumField
 
 from leasing.enums import RentAdjustmentAmountType, RentAdjustmentType, SubventionType
 from leasing.models import RentAdjustment, ServiceUnit
-from leasing.report.lease.common_getters import LeaseIds
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_ids_from_rent_adjustment(rent_adjustment: RentAdjustment) -> LeaseIds:
+def get_lease_link_data_from_rent_adjustment(
+    rent_adjustment: RentAdjustment,
+) -> LeaseLinkData:
     if not rent_adjustment.rent.lease:
         return {
             "id": None,
@@ -59,8 +61,8 @@ class RentAdjustmentsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_ids": {
-            "source": get_lease_ids_from_rent_adjustment,
+        "lease_link_data": {
+            "source": get_lease_link_data_from_rent_adjustment,
             "label": _("Lease id"),
         },
         "type": {

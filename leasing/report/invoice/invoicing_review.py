@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import LeaseIds
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
@@ -37,9 +37,9 @@ EXCLUDED_RECEIVABLE_TYPE_NAMES = [
 ]
 
 
-def get_lease_ids_from_report_row(
+def get_lease_link_data_from_report_row(
     row: InvoicingReviewReportRow | InvoicingGapsRow,
-) -> LeaseIds:
+) -> LeaseLinkData:
     try:
         if row["section"]:
             return {
@@ -302,8 +302,8 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_ids": {
-            "source": get_lease_ids_from_report_row,
+        "lease_link_data": {
+            "source": get_lease_link_data_from_report_row,
             "label": gettext_lazy("Lease id"),
         },
         "start_date": {"label": gettext_lazy("Start date"), "format": "date"},

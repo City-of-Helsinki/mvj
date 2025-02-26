@@ -1,5 +1,5 @@
 import datetime
-from typing import Protocol
+from typing import Protocol, TypedDict
 
 from django.db.models import QuerySet
 
@@ -12,7 +12,9 @@ RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
 
 
-class LeaseIds(Protocol):
+class LeaseLinkData(TypedDict):
+    """Data required to show lease identifier with a link to that lease on reports."""
+
     id: int | None
     identifier: str | None
 
@@ -33,13 +35,13 @@ def get_lease_identifier_string(lease: Lease) -> str:
     return lease.get_identifier_string()
 
 
-def get_lease_ids(lease: Lease) -> LeaseIds:
+def get_lease_link_data(lease: Lease) -> LeaseLinkData:
     return {"id": lease.id, "identifier": lease.get_identifier_string()}
 
 
-def get_lease_ids_from_related_object(
+def get_lease_link_data_from_related_object(
     lease_related_object: LeaseRelatedModel,
-) -> LeaseIds:
+) -> LeaseLinkData:
     if not lease_related_object.lease:
         return {"id": None, "identifier": None}
 
