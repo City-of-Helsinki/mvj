@@ -17,10 +17,16 @@ def get_invoice_number(obj):
 def get_lease_link_data_from_invoice_payment(
     invoice_payment: InvoicePayment,
 ) -> LeaseLinkData:
-    return {
-        "id": invoice_payment.invoice.lease.id,
-        "identifier": invoice_payment.invoice.lease.get_identifier_string(),
-    }
+    try:
+        return {
+            "id": invoice_payment.invoice.lease.id,
+            "identifier": invoice_payment.invoice.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 class InvoicePaymentsReport(ReportBase):

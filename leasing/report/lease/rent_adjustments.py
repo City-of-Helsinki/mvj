@@ -13,16 +13,16 @@ from leasing.report.report_base import ReportBase
 def get_lease_link_data_from_rent_adjustment(
     rent_adjustment: RentAdjustment,
 ) -> LeaseLinkData:
-    if not rent_adjustment.rent.lease:
+    try:
+        return {
+            "id": rent_adjustment.rent.lease.id,
+            "identifier": rent_adjustment.rent.lease.get_identifier_string(),
+        }
+    except AttributeError:
         return {
             "id": None,
             "identifier": None,
         }
-
-    return {
-        "id": rent_adjustment.rent.lease.id,
-        "identifier": rent_adjustment.rent.lease.get_identifier_string(),
-    }
 
 
 def get_intended_use(obj):

@@ -2,14 +2,21 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Condition, ConditionType, ServiceUnit
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_link_data_from_decision_condition(obj):
-    return {
-        "id": obj.decision.lease.id,
-        "identifier": obj.decision.lease.get_identifier_string(),
-    }
+def get_lease_link_data_from_decision_condition(condition: Condition) -> LeaseLinkData:
+    try:
+        return {
+            "id": condition.decision.lease.id,
+            "identifier": condition.decision.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 def get_condition_type(obj):

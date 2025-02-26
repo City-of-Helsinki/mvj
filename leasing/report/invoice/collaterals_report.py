@@ -7,13 +7,16 @@ from leasing.report.report_base import ReportBase
 
 
 def get_lease_link_data_from_collateral(collateral: Collateral) -> LeaseLinkData:
-    if not collateral.contract.lease:
-        return {"id": None, "identifier": None}
-
-    return {
-        "id": collateral.contract.lease.id,
-        "identifier": collateral.contract.lease.identifier,
-    }
+    try:
+        return {
+            "id": collateral.contract.lease.id,
+            "identifier": collateral.contract.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 def get_start_date(obj):

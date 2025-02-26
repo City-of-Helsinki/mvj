@@ -42,13 +42,16 @@ def get_lease_link_data(lease: Lease) -> LeaseLinkData:
 def get_lease_link_data_from_related_object(
     lease_related_object: LeaseRelatedModel,
 ) -> LeaseLinkData:
-    if not lease_related_object.lease:
-        return {"id": None, "identifier": None}
-
-    return {
-        "id": lease_related_object.lease.id,
-        "identifier": lease_related_object.lease.get_identifier_string(),
-    }
+    try:
+        return {
+            "id": lease_related_object.lease.id,
+            "identifier": lease_related_object.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 def get_tenants(lease, include_future_tenants=False, report=None):

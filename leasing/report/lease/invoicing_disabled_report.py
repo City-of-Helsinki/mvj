@@ -9,13 +9,19 @@ from leasing.report.report_base import ReportBase
 from leasing.report.utils import InvoicingDisabledReportRow, dictfetchall
 
 
-def get_lease_link_data_for_invoicing_disabled_report(
+def get_lease_link_data_from_invoicing_disabled_report_row(
     disabled_report_row: InvoicingDisabledReportRow,
 ) -> LeaseLinkData:
-    return {
-        "id": disabled_report_row["lease_id"],
-        "identifier": disabled_report_row["lease_identifier"],
-    }
+    try:
+        return {
+            "id": disabled_report_row["lease_id"],
+            "identifier": disabled_report_row["lease_identifier"],
+        }
+    except KeyError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 INVOICING_DISABLED_REPORT_SQL = """
@@ -56,7 +62,7 @@ class LeaseInvoicingDisabledReport(ReportBase):
     }
     output_fields = {
         "lease_link_data": {
-            "source": get_lease_link_data_for_invoicing_disabled_report,
+            "source": get_lease_link_data_from_invoicing_disabled_report_row,
             "label": _("Lease id"),
         },
         "start_date": {"label": _("Start date"), "format": "date"},
