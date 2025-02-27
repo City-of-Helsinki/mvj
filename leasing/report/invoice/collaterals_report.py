@@ -2,14 +2,21 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Collateral, CollateralType, ServiceUnit
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_id(obj):
-    if not obj.contract.lease:
-        return
-
-    return obj.contract.lease.get_identifier_string()
+def get_lease_link_data_from_collateral(collateral: Collateral) -> LeaseLinkData:
+    try:
+        return {
+            "id": collateral.contract.lease.id,
+            "identifier": collateral.contract.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 def get_start_date(obj):
@@ -46,7 +53,10 @@ class CollateralsReport(ReportBase):
         "returned": forms.NullBooleanField(label=_("Returned"), required=False),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_identifier": {
+            "source": get_lease_link_data_from_collateral,
+            "label": _("Lease id"),
+        },
         "start_date": {
             "source": get_start_date,
             "label": _("Lease start date"),

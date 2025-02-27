@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from leasing.models import ServiceUnit
 from leasing.models.invoice import InvoicePayment
 from leasing.report.excel import ExcelCell, ExcelRow, SumCell
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
 
 
@@ -13,8 +14,19 @@ def get_invoice_number(obj):
     return obj.invoice.number
 
 
-def get_lease_id(obj):
-    return obj.invoice.lease.get_identifier_string()
+def get_lease_link_data_from_invoice_payment(
+    invoice_payment: InvoicePayment,
+) -> LeaseLinkData:
+    try:
+        return {
+            "id": invoice_payment.invoice.lease.id,
+            "identifier": invoice_payment.invoice.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 class InvoicePaymentsReport(ReportBase):
@@ -38,7 +50,10 @@ class InvoicePaymentsReport(ReportBase):
             "label": _("Invoice number"),
             "is_numeric": True,
         },
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_identifier": {
+            "source": get_lease_link_data_from_invoice_payment,
+            "label": _("Lease id"),
+        },
         "paid_date": {"label": _("Paid date"), "format": "date"},
         "paid_amount": {"label": _("Paid amount"), "format": "money", "width": 13},
         "filing_code": {"label": _("Filing code")},

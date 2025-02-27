@@ -4,12 +4,30 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import ServiceUnit
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.report_base import ReportBase
-from leasing.report.utils import dictfetchall
+from leasing.report.utils import InvoicingDisabledReportRow, dictfetchall
+
+
+def get_lease_link_data_from_invoicing_disabled_report_row(
+    disabled_report_row: InvoicingDisabledReportRow,
+) -> LeaseLinkData:
+    try:
+        return {
+            "id": disabled_report_row["lease_id"],
+            "identifier": disabled_report_row["lease_identifier"],
+        }
+    except KeyError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
+
 
 INVOICING_DISABLED_REPORT_SQL = """
     SELECT NULL AS "section",
         li.identifier AS "lease_identifier",
+        l.id AS "lease_id",
         l.start_date,
         l.end_date
     FROM leasing_lease l
@@ -43,7 +61,10 @@ class LeaseInvoicingDisabledReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_identifier": {"label": _("Lease id")},
+        "lease_identifier": {
+            "source": get_lease_link_data_from_invoicing_disabled_report_row,
+            "label": _("Lease id"),
+        },
         "start_date": {"label": _("Start date"), "format": "date"},
         "end_date": {"label": _("End date"), "format": "date"},
     }

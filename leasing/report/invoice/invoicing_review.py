@@ -16,11 +16,12 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
+from leasing.report.lease.common_getters import LeaseLinkData
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
     InvoicingGapsRow,
-    InvoicingReviewReportOutput,
+    InvoicingReviewReportRow,
     dictfetchall,
 )
 
@@ -34,6 +35,26 @@ EXCLUDED_RECEIVABLE_TYPE_NAMES = [
     "Kiinteistötoimitukset (tonttijaot, lohkomiset, rekisteröimiskustannukset, rasitteet)",
     "Rahavakuus",
 ]
+
+
+def get_lease_link_data_from_report_row(
+    row: InvoicingReviewReportRow | InvoicingGapsRow,
+) -> LeaseLinkData:
+    try:
+        if row["section"]:
+            return {
+                "id": None,
+                "identifier": None,
+            }
+        return {
+            "id": row["lease_id"],
+            "identifier": row["lease_identifier"],
+        }
+    except KeyError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
 
 
 class InvoicingReviewSection(Enum):
@@ -87,6 +108,7 @@ INVOICING_REVIEW_QUERIES = {
     "rent_info_not_complete": """
         SELECT NULL AS "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -105,6 +127,7 @@ INVOICING_REVIEW_QUERIES = {
     "no_rents": """
         SELECT NULL AS "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -130,6 +153,7 @@ INVOICING_REVIEW_QUERIES = {
     "no_due_date": """
         SELECT NULL AS "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -164,6 +188,7 @@ INVOICING_REVIEW_QUERIES = {
     "index_type_missing": """
         SELECT NULL as "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -187,6 +212,7 @@ INVOICING_REVIEW_QUERIES = {
     "one_time_rents_with_no_invoice_max_5year_old_leases": """
         SELECT NULL as "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -211,6 +237,7 @@ INVOICING_REVIEW_QUERIES = {
     "no_tenant_contact": """
         SELECT NULL as "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -239,6 +266,7 @@ INVOICING_REVIEW_QUERIES = {
     "no_lease_area": """
         SELECT NULL AS "section",
             li.identifier AS "lease_identifier",
+            l.id AS "lease_id",
             l.start_date,
             l.end_date
         FROM leasing_lease l
@@ -274,7 +302,10 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_identifier": {"label": gettext_lazy("Lease id")},
+        "lease_identifier": {
+            "source": get_lease_link_data_from_report_row,
+            "label": gettext_lazy("Lease id"),
+        },
         "start_date": {"label": gettext_lazy("Start date"), "format": "date"},
         "end_date": {"label": gettext_lazy("End date"), "format": "date"},
         "note": {"label": gettext_lazy("Note")},
@@ -289,6 +320,7 @@ class InvoicingReviewReport(ReportBase):
 
         query = """
             SELECT li.identifier as lease_identifier,
+                   l.id AS lease_id,
                    l.start_date,
                    l.end_date,
                    array_agg(share) AS shares
@@ -351,6 +383,7 @@ class InvoicingReviewReport(ReportBase):
 
         query = """
             SELECT li.identifier as lease_identifier,
+                   l.id AS lease_id,
                    l.start_date,
                    l.end_date
               FROM leasing_lease l
@@ -407,6 +440,7 @@ class InvoicingReviewReport(ReportBase):
 
         query = """
             SELECT li.identifier as "lease_identifier",
+                   l.id AS "lease_id",
                    l."start_date",
                    l."end_date",
                    array_agg(tt.share) AS "shares"
@@ -561,13 +595,14 @@ ORDER BY
         )
 
         invoicing_gaps: list[InvoicingGapsRow] = dictfetchall(cursor)
-        data: list[InvoicingReviewReportOutput] = []
+        data: list[InvoicingReviewReportRow] = []
 
         for invoicing_gap in invoicing_gaps:
             data.append(
                 {
                     "section": None,
                     "lease_identifier": invoicing_gap["lease_identifier"],
+                    "lease_id": invoicing_gap["lease_id"],
                     "start_date": invoicing_gap["gap_start_date"],
                     "end_date": invoicing_gap["gap_end_date"],
                     "note": str(
@@ -621,6 +656,7 @@ ORDER BY
                         {
                             "section": None,
                             "lease_identifier": None,
+                            "lease_id": None,
                             "start_date": None,
                             "end_date": None,
                             "note": f"Query error when generating report: {e}",

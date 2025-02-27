@@ -17,9 +17,18 @@ class InvoicingGapsRow(TypedDict):
     recipient_name: str
 
 
-class InvoicingReviewReportOutput(TypedDict):
+class InvoicingDisabledReportRow(TypedDict):
+    section: None
+    lease_identifier: str | None
+    lease_id: int | None
+    start_date: date | None
+    end_date: date | None
+
+
+class InvoicingReviewReportRow(TypedDict):
     section: str | None
     lease_identifier: str | None
+    lease_id: int | None
     start_date: date | None
     end_date: date | None
     note: str | None

@@ -1,14 +1,26 @@
 import datetime
-from typing import Protocol
+from typing import Protocol, TypedDict
 
 from django.db.models import QuerySet
 
 from leasing.enums import TenantContactType
 from leasing.models import Contract
+from leasing.models.lease import Lease
 
 RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
+
+
+class LeaseLinkData(TypedDict):
+    """Data required to show lease identifier with a link to that lease on reports."""
+
+    id: int | None
+    identifier: str | None
+
+
+class LeaseRelatedModel(Protocol):
+    lease: Lease
 
 
 class LeaseWithContracts(Protocol):
@@ -19,8 +31,34 @@ def get_lease_type(lease):
     return lease.identifier.type.identifier
 
 
-def get_lease_id(lease):
+def get_lease_identifier_string(lease: Lease) -> str:
     return lease.get_identifier_string()
+
+
+def get_lease_link_data(lease: Lease) -> LeaseLinkData:
+    return {"id": lease.id, "identifier": lease.get_identifier_string()}
+
+
+def get_lease_link_data_from_related_object(
+    lease_related_object: LeaseRelatedModel,
+) -> LeaseLinkData:
+    try:
+        return {
+            "id": lease_related_object.lease.id,
+            "identifier": lease_related_object.lease.get_identifier_string(),
+        }
+    except AttributeError:
+        return {
+            "id": None,
+            "identifier": None,
+        }
+
+
+def get_identifier_string_from_lease_link_data(row: dict) -> str:
+    try:
+        return row["lease_identifier"]["identifier"] or "-"
+    except KeyError:
+        return "-"
 
 
 def get_tenants(lease, include_future_tenants=False, report=None):

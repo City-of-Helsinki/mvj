@@ -7,11 +7,8 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import IndexType, TenantContactType
 from leasing.models import Rent, ServiceUnit
+from leasing.report.lease.common_getters import get_lease_link_data_from_related_object
 from leasing.report.report_base import ReportBase
-
-
-def get_lease_id(rent: Rent) -> str:
-    return rent.lease.get_identifier_string()
 
 
 def get_tenants(rent: Rent) -> str:
@@ -94,7 +91,10 @@ class IndexTypesReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_id": {"source": get_lease_id, "label": _("Lease id")},
+        "lease_identifier": {
+            "source": get_lease_link_data_from_related_object,
+            "label": _("Lease id"),
+        },
         "tenant_name": {"source": get_tenants, "label": _("Tenant name"), "width": 50},
         "lease_area_identifier": {
             "source": get_area_id,
