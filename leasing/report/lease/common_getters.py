@@ -56,7 +56,7 @@ def get_lease_link_data_from_related_object(
 
 def get_identifier_string_from_lease_link_data(row: dict) -> str:
     try:
-        return row["lease_identifier"]["identifier"]
+        return row["lease_identifier"]["identifier"] or "-"
     except KeyError:
         return "-"
 
