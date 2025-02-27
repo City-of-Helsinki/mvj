@@ -45,7 +45,7 @@ class OpenInvoicesReport(ReportBase):
     output_fields = {
         "number": {"label": _("Number")},
         "lease_type": {"source": get_lease_type, "label": _("Lease type")},
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_related_object,
             "label": _("Lease id"),
         },

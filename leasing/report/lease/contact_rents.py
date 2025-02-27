@@ -31,7 +31,7 @@ class ContactRentsReport(ReportBase):
         "contact_id": forms.IntegerField(label=_("Contact identifier"), required=True),
     }
     output_fields = {
-        "lease_link_data": {
+        "lease_identifier": {
             "label": _("Lease identifier"),
             "source": get_lease_link_data,
             "width": 13,

@@ -302,7 +302,7 @@ class InvoicingReviewReport(ReportBase):
             "label": pgettext_lazy("Invoicing review", "Section"),
             "serializer_field": EnumField(enum=InvoicingReviewSection),
         },
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_report_row,
             "label": gettext_lazy("Lease id"),
         },

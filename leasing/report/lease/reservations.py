@@ -170,7 +170,7 @@ class ReservationsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data,
             "label": _("Reservation id"),
         },

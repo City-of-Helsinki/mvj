@@ -61,7 +61,7 @@ class RentAdjustmentsReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_rent_adjustment,
             "label": _("Lease id"),
         },

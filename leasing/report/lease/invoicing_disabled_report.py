@@ -61,7 +61,7 @@ class LeaseInvoicingDisabledReport(ReportBase):
         ),
     }
     output_fields = {
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_invoicing_disabled_report_row,
             "label": _("Lease id"),
         },

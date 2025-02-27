@@ -53,7 +53,7 @@ class CollateralsReport(ReportBase):
         "returned": forms.NullBooleanField(label=_("Returned"), required=False),
     }
     output_fields = {
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_collateral,
             "label": _("Lease id"),
         },

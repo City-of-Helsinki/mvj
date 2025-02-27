@@ -19,6 +19,9 @@ from rest_framework.response import Response
 
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.forms import ReportFormBase
+from leasing.report.lease.common_getters import (
+    get_identifier_string_from_lease_link_data,
+)
 from leasing.report.serializers import ReportOutputSerializer
 
 
@@ -245,6 +248,9 @@ class ReportBase:
         first_data_row_num = row_num
         for row in data:
             if isinstance(row, dict):
+                row["lease_identifier"] = get_identifier_string_from_lease_link_data(
+                    row
+                )
                 self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:

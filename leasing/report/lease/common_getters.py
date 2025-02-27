@@ -54,6 +54,13 @@ def get_lease_link_data_from_related_object(
         }
 
 
+def get_identifier_string_from_lease_link_data(row: dict) -> str:
+    try:
+        return row["lease_identifier"]["identifier"]
+    except KeyError:
+        return "-"
+
+
 def get_tenants(lease, include_future_tenants=False, report=None):
     today = datetime.date.today()
 

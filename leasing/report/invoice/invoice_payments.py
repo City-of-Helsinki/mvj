@@ -50,7 +50,7 @@ class InvoicePaymentsReport(ReportBase):
             "label": _("Invoice number"),
             "is_numeric": True,
         },
-        "lease_link_data": {
+        "lease_identifier": {
             "source": get_lease_link_data_from_invoice_payment,
             "label": _("Lease id"),
         },
