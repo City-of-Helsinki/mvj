@@ -1,0 +1,21 @@
+{% with indent=indent|default:3 %}
+<ul>
+{% for key, value in rvalue.items %}
+    {% if value.items %}
+        <h{{indent}}>{{ key }}</h{{indent}}>
+        {% include "recursive_values.html" with rvalue=value indent=indent|add:1 %}
+    {% elif value.0 and value.0.items %}
+        {% for item in value %}
+            <h{{indent}}>{{ key }} {{ forloop.counter }}</h{{indent}}>
+            {% include "recursive_values.html" with rvalue=item indent=indent|add:1 %}
+        {% endfor %}
+    {% else %}
+        {% if value %}
+        <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% else %}
+        <li><strong>{{ key }}:</strong> -</li>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+</ul>
+{% endwith %}

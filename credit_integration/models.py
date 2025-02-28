@@ -135,6 +135,7 @@ class CreditDecision(TimeStampedModel):
                 "send_creditdecision_inquiry",
                 "Can send credit decision inquiry",
             ),
+            ("send_sanctions_inquiry", "Can send sanctions inquiry"),
         ]
 
     @staticmethod

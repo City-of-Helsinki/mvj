@@ -1,0 +1,79 @@
+{% load static %}
+{% load base64_image %}
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Pakotelistatarkastus yritykselle</title>
+    <style>
+    div.logo img {
+        width: 100px;
+    }
+    .alert {
+        background-color:rgb(249, 105, 105);
+    }
+    section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ 'images/Helsinki_kehystunnus_musta_png.png' | base64_image }}" alt="Logo">
+        </div>
+        <div class="title">
+            <h1>Pakotelistatarkastus yritykselle</h1>
+        </div>
+        <ul>
+            <li>Tietolähde: Asiakastieto</li>
+            <li>Päivämäärä: {{ query.timestamp|date:"d.m.Y H:i:s" }}</li>
+            <li>Haun tekijä: {{ user_name }}</li>
+        </ul>
+    </header>
+    <section class="search-terms">
+        <h2>Hakuehdot</h2>
+        <ul>
+            <li>Y-tunnus: {{ query.business_id|default:"-" }}</li>
+        </ul>
+        {% if has_sanction_hits %}
+        <h1 class="alert" style="padding:10px;">{{ total_hit_count }} osumaa pakotelistoilla!</h1>
+        {% else %}
+        <h1>Ei osumia pakotelistoilla.</h1>
+        {% endif %}
+    </section>
+    <section class="company-info">
+        <h2>Yrityksen tiedot</h2>
+        <ul>
+            <li><strong>Yrityksen nimi:</strong> {{ company.companyName }}</li>
+            <li><strong>Y-tunnus:</strong> {{ company.businessId }}</li>
+            <li><strong>Pakotelistaosumat:</strong> {{ company.searchStatus }}</li>
+        </ul>
+    </section>
+    <section>
+        <h2>Pakotelistatulokset</h2>
+    {% for listhit in company.watchListHits %}
+        <h2>Entiteetti {{ forloop.counter }}</h2>
+        <ul>
+            <li><strong>Nimi:</strong> {{ listhit.name|default:"" }}</li>
+            <li><strong>Rooli:</strong> {{ listhit.role|default:"" }}</li>
+            {% if listhit.hitCount|add:"0" > 0 %}
+            <li class="alert"><strong>Pakotelistaosumien määrä:</strong> {{ listhit.hitCount|default:"" }}</li>
+            {% else %}
+            <li><strong>Pakotelistaosumien määrä:</strong> {{ listhit.hitCount|default:"" }}</li>
+            {% endif %}
+        </ul>
+        {% for hitsrow in listhit.hitsRow %}
+            <div>
+                <h3>Osuman {{ forloop.counter }} tiedot</h3>
+                {% include "recursive_values.html" with rvalue=hitsrow %}
+            </div>
+        {% endfor %}
+        <hr>
+    {% endfor %}
+    </section>
+</body>
+</html>

@@ -20,4 +20,9 @@ urlpatterns = [
         views.send_credit_decision_inquiry,
         name="send-credit-decision-inquiry",
     ),
+    path(
+        "send_sanctions_inquiry/",
+        views.send_sanctions_inquiry,
+        name="send-sanctions-inquiry",
+    ),
 ]
