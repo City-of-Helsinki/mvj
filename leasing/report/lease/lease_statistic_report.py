@@ -39,7 +39,7 @@ RESIDENTIAL_INTENDED_USE_IDS = [
 ]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
 
 
-def get_latest_decision_maker(lease):
+def get_latest_decision(lease):
     decision_makers = []
 
     for decision in lease.decisions.all():
@@ -455,10 +455,10 @@ class LeaseStatisticReport(AsyncReportBase):
             ),
             "width": 40,
         },
-        # Päättäjä
+        # Viimeisin päätös
         "decision_maker": {
-            "label": _("Decision maker"),
-            "source": get_latest_decision_maker,
+            "label": _("Latest decision"),
+            "source": get_latest_decision,
             "width": 20,
         },
         # Start date

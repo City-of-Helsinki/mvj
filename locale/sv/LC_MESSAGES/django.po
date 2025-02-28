@@ -1305,6 +1305,9 @@ msgstr "Diarienummer"
 msgid "Decision maker"
 msgstr "Beslutsfattare"
 
+msgid "Latest decision"
+msgstr "Sista beslut"
+
 msgid "Decision date"
 msgstr "Beslutsdatum"
 

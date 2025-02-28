@@ -31,7 +31,7 @@ from leasing.report.lease.common_getters import (
 from leasing.report.report_base import AsyncReportBase
 
 
-def get_latest_decision_maker(lease):
+def get_latest_decision(lease):
     decision_makers = []
 
     for decision in lease.decisions.all():
@@ -275,10 +275,10 @@ class LeaseStatisticReport2(AsyncReportBase):
             "source": lambda x: get_tenants(x, include_future_tenants=True),
             "width": 40,
         },
-        # Päättäjä
+        # Viimeisin päätös
         "decision_maker": {
-            "label": _("Decision maker"),
-            "source": get_latest_decision_maker,
+            "label": _("Latest decision"),
+            "source": get_latest_decision,
             "width": 20,
         },
         # Start date
