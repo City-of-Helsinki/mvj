@@ -203,7 +203,7 @@ psycopg[binary]==3.2.4
     # via -r requirements.in
 psycopg-binary==3.2.4
     # via psycopg
-pyasn1==0.6.0
+pyasn1==0.4.8
     # via
     #   python-jose
     #   rsa
@@ -237,7 +237,7 @@ python-docx==1.1.2
     # via
     #   docxcompose
     #   docxtpl
-python-jose==3.3.0
+python-jose==3.4.0
     # via django-helusers
 pytz==2024.1
     # via
