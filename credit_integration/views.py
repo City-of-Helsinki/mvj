@@ -1,6 +1,7 @@
 from io import BytesIO
 
 import sentry_sdk
+from django.conf import settings
 from django.http import FileResponse, QueryDict
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -186,6 +187,9 @@ def send_sanctions_inquiry(request: Request):
     """
     Get sanctions inquiry from sanctions service for a company or a person.
     """
+    if settings.FLAG_SANCTIONS_INQUIRY is not True:
+        return Response(None, status=status.HTTP_403_FORBIDDEN)
+
     query_params: QueryDict = request.query_params
     business_id = query_params.get("business_id")
     first_name = query_params.get("first_name")
