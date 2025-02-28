@@ -1302,6 +1302,9 @@ msgstr "Diaarinumero"
 msgid "Decision maker"
 msgstr "Päättäjä"
 
+msgid "Latest decision"
+msgstr "Viimeisin päätös"
+
 msgid "Decision date"
 msgstr "Päätöspäivämäärä"
 
