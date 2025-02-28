@@ -537,7 +537,7 @@ class LeaseStatisticReport(AsyncReportBase):
         },
         # Subventoitu Alkuvuosivuokra (ind)
         "subsidised_rent": {
-            "label": _("Subsidised rent"),
+            "label": _("Subsidised initial year rent"),
             "source": get_subsidised_rent,
             "format": "money",
             "width": 13,

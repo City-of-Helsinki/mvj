@@ -3305,8 +3305,8 @@ msgstr "Enhetspris (ind)"
 msgid "Initial year rent"
 msgstr "Arrende för början av året"
 
-msgid "Subsidised rent"
-msgstr "Subventionerat arrende"
+msgid "Subsidised initial year rent"
+msgstr "Subventionerat arrende för början av året (ind)"
 
 msgid "Subsidy amount"
 msgstr "Subvention i euro/år"
