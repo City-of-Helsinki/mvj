@@ -1,0 +1,69 @@
+{% load static %}
+{% load base64_image %}
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Pakotelistatarkastus yritykselle</title>
+    <style>
+    div.logo img {
+        width: 100px;
+    }
+    section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    section.category {
+        padding-bottom: 100px;
+    }
+    .alert {
+        background-color:rgb(249, 105, 105);
+    }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ 'images/Helsinki_kehystunnus_musta_png.png' | base64_image }}" alt="Logo">
+        </div>
+        <div class="title">
+            <h1>Pakotelistatarkastus henkilölle</h1>
+        </div>
+        <ul class="level-1">
+            <li>Tietolähde: Asiakastieto</li>
+            <li>Päivämäärä: {{query.timestamp|date:"d.m.Y H:i:s"}}</li>
+            <li>Haun tekijä: {{ user_name }}</li>
+        </ul>
+    </header>
+    <section class="search-terms">
+        <h2>Hakuehdot</h2>
+        <ul>
+            <li>Etunimi: {{ query.first_name|default:"-" }}</li>
+            <li>Sukunimi: {{ query.last_name|default:"-" }}</li>
+            <li>Syntymäaika: {{ query.date_of_birth|default:"-" }}</li>
+        </ul>
+        {% if has_sanction_hits %}
+        <h1 class="alert" style="padding:10px;">{{ total_hit_count }} osumaa pakotelistoilla!</h1>
+        {% else %}
+        <h1>Ei osumia pakotelistoilla.</h1>
+        {% endif %}
+    </section>
+    <section class="content">
+    {% for category in watchlist %}
+        <section class="category">
+        <h2>Listan tyyppi: {{ category.watchListType }}</h2>
+        <p>Osumien määrä listalla: {{ category.hitCount }}</p>
+            {% for hitsrow in category.watchListHits.hitsRow %}
+                <div>
+                    <h2>Osuman {{ forloop.counter }} tiedot</h2>
+                    {% include "recursive_values.html" with rvalue=hitsrow %}
+                </div>
+                <hr>
+            {% endfor %}
+        </section>
+    {% endfor %}
+    </section>
+</body>
+</html>
