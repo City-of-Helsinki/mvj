@@ -23,7 +23,7 @@ def request_company_decision(business_id, end_user):
     user_id: str = settings.ASIAKASTIETO_USER_ID
     password: str = settings.ASIAKASTIETO_PASSWORD
     key: str = settings.ASIAKASTIETO_KEY
-    target: str = settings.ASIAKASTIETO_COMPANY_TARGET_KEY
+    target: AsiakastietoTarget = settings.ASIAKASTIETO_COMPANY_TARGET_KEY
 
     timestamp = _get_timestamp()
     checksum = _calculate_checksum(user_id, end_user, timestamp, key)
@@ -45,7 +45,7 @@ def request_consumer_decision(identity_number, end_user):
     user_id: str = settings.ASIAKASTIETO_USER_ID
     password: str = settings.ASIAKASTIETO_PASSWORD
     key: str = settings.ASIAKASTIETO_KEY
-    target: str = settings.ASIAKASTIETO_CONSUMER_TARGET_KEY
+    target: AsiakastietoTarget = settings.ASIAKASTIETO_CONSUMER_TARGET_KEY
 
     timestamp = _get_timestamp()
     checksum = _calculate_checksum(user_id, end_user, timestamp, key)
@@ -122,7 +122,7 @@ def request_consumer_sanctions(
     target: AsiakastietoTarget = settings.ASIAKASTIETO_CONSUMER_TARGET_KEY
 
     if end_user is None or len(end_user) == 0:
-        # This API seems to be certainly require end_user not being empty string
+        # This API seems to require end_user not being empty string
         end_user = "test"
     timestamp = _get_timestamp()
     checksum = _calculate_checksum(user_id, end_user, timestamp, key)
