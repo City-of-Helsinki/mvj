@@ -16,7 +16,11 @@ from credit_integration.tests.mocks import (
     mock_return_consumer_json_data,
     mock_return_consumer_sanctions_json_data,
 )
-from credit_integration.views import validate_sanctions_request_params
+from credit_integration.views import (
+    _sort_dict,
+    _translate_keys,
+    validate_sanctions_request_params,
+)
 from leasing.enums import ContactType
 
 
@@ -444,3 +448,43 @@ def test_validate_sanctions_request_params():
     assert response is None
     response = validate_sanctions_request_params(None, "Doe", None)
     assert response is None
+
+
+def test_translate_keys():
+    translation_map = {
+        "key1": "key1_translated",
+        "key2": "key2_translated",
+    }
+    data = {
+        "key1": "value1",
+        "key2": [{"key2": "value2"}, {"key4": "value4"}],
+        "not_translated": "hello",
+    }
+    translated = _translate_keys(data, translation_map)
+    assert translated["key1_translated"] == "value1"
+    assert translated["key2_translated"] == [
+        {"key2_translated": "value2"},
+        {"key4": "value4"},
+    ]
+    assert translated["not_translated"] == "hello"
+
+
+def test_sort_dict():
+    data = {
+        "lists": [
+            {"key1_1": "value1_1"},
+            {"key1_2": "value1_2"},
+        ],
+        "dicts": {
+            "lists": [
+                {"key2_1_1": "value2_1_1"},
+                {"key2_1_2": "value2_1_2"},
+            ],
+            "dicts": {"asd": "123"},
+            "values": "value2",
+        },
+        "values": "value3",
+    }
+    sorted_data = _sort_dict(data)
+    assert list(sorted_data.keys()) == ["values", "dicts", "lists"]
+    assert list(sorted_data["dicts"].keys()) == ["values", "dicts", "lists"]
