@@ -1049,11 +1049,10 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             validated_data["form"] = initialize_area_search_form()
         attachments = validated_data.pop("area_search_attachments", [])
 
-        if "geometry" in validated_data and validated_data["geometry"] is not None:
+        geometry = validated_data.get("geometry")
+        if geometry is not None:
             validated_data["address"], validated_data["district"] = (
-                self.get_address_and_district_from_kartta_hel(
-                    validated_data["geometry"]
-                )
+                self.get_address_and_district_from_kartta_hel(geometry)
             )
 
         area_search = AreaSearch.objects.create(**validated_data)
