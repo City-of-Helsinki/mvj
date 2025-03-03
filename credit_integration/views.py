@@ -405,8 +405,6 @@ def _add_log(identification, user, text):
 
 def _generate_pdf(context, template_name) -> BytesIO:
     html_source = render_to_string(template_name, context=context)
-    with open("sanctions.html", "w") as f:
-        f.write(html_source)
     output = BytesIO()
     pisa_status = pisa.CreatePDF(
         html_source,
