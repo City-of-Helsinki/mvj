@@ -1,5 +1,6 @@
 {% load static %}
 {% load base64_image %}
+{% load get_item %}
 
 <!DOCTYPE html>
 <html lang="fi">
@@ -53,7 +54,7 @@
     <section class="content">
     {% for category in watchlist %}
         <section class="category">
-        <h2>Listan tyyppi: {{ category.watchListType }}</h2>
+        <h2>Listan tyyppi: {% if category.watchListType %}{{ category.watchListType }}{% else %}{{ category|get_item:"Listan tyyppi" }}{% endif %}</h2>
         <p>Osumien määrä listalla: {{ category.hitCount }}</p>
             {% for hitsrow in category.watchListHits.hitsRow %}
                 <div>

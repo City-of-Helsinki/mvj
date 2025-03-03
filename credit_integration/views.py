@@ -39,13 +39,16 @@ from leasing.models import Contact
 from users.models import User
 
 TRANSLATION_MAP = {
-    # "watchListType": "Listan tyyppi",
+    # Commented out keys are marked here to exist, but we don't want to translate those,
+    # as some of them are being accessed in templates directly.
     # "hitCount": "Osumien määrä",
     # "watchListHits": "Osumat listalla",
     # "hitsRow": "Osumarivi",
+    "watchListType": "Listan tyyppi",
     "hitId": "Osuman tunniste",
     "names": "Nimet",
     "name": "Nimi",
+    "role": "Rooli",
     "prefix": "Etuliite",
     "firstName": "Etunimi",
     "lastName": "Sukunimi",
@@ -502,7 +505,6 @@ def _get_consumer_sanctions_pdf(
 
 
 def _translate_keys(data, translation_map: dict):
-
     if isinstance(data, dict):
         return {
             translation_map.get(key, key): _translate_keys(value, translation_map)

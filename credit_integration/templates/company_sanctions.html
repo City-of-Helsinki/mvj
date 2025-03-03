@@ -58,8 +58,8 @@
     {% for listhit in company.watchListHits %}
         <h2>Entiteetti {{ forloop.counter }}</h2>
         <ul>
-            <li><strong>Nimi:</strong> {{ listhit.name|default:"" }}</li>
-            <li><strong>Rooli:</strong> {{ listhit.role|default:"" }}</li>
+            <li><strong>Nimi:</strong> {% if listhit.name %}{{listhit.name}}{% else %}{{ listhit.Nimi|default:"" }}{% endif %}</li>
+            <li><strong>Rooli:</strong> {% if listhit.role %}{{listhit.role}}{% else %}{{ listhit.Rooli|default:"" }}{% endif %}</li>
             {% if listhit.hitCount|add:"0" > 0 %}
             <li class="alert"><strong>Pakotelistaosumien määrä:</strong> {{ listhit.hitCount|default:"" }}</li>
             {% else %}
