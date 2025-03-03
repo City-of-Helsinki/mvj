@@ -16,6 +16,7 @@ from credit_integration.tests.mocks import (
     mock_return_consumer_json_data,
     mock_return_consumer_sanctions_json_data,
 )
+from credit_integration.views import validate_sanctions_request_params
 from leasing.enums import ContactType
 
 
@@ -411,3 +412,35 @@ def test_send_send_sanctions_inquiry_endpoint_disallowed_method(
     )
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
+def test_validate_sanctions_request_params():
+    # Must have one of they required keys
+    response = validate_sanctions_request_params(None, None, None)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert (
+        response.data["message"]
+        == "Missing one of `business_id`, `last_name` in request."
+    )
+    # Must not have business_id and last_name at the same time
+    response = validate_sanctions_request_params("1234567-8", "Doe", None)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert (
+        response.data["message"] == "Only one of `business_id` or `last_name` allowed."
+    )
+    # Invalid business_id format
+    response = validate_sanctions_request_params("1234567-81", None, None)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data["message"] == "Invalid `business_id`."
+    # Invalid birth_year format
+    response = validate_sanctions_request_params(None, "Doe", "98")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data["message"] == "Invalid `birth_year`."
+    response = validate_sanctions_request_params(None, "Doe", "abcd")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data["message"] == "Invalid `birth_year`."
+    # All ok
+    response = validate_sanctions_request_params("1234567-8", None, None)
+    assert response is None
+    response = validate_sanctions_request_params(None, "Doe", None)
+    assert response is None
