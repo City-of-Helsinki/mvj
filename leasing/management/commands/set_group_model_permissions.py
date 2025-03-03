@@ -74,22 +74,27 @@ DEFAULT_MODEL_PERMS = {
         2: (
             "view",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
         3: (
             "view",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
         4: (
             "view",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
         5: (
             "view",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
         6: (
             "view",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
         7: (
             "view",
@@ -97,6 +102,7 @@ DEFAULT_MODEL_PERMS = {
             "change",
             "delete",
             "send_creditdecision_inquiry",
+            "send_sanctions_inquiry",
         ),
     },
     "creditdecisionreason": {
