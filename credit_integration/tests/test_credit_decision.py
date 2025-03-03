@@ -1,203 +1,30 @@
+from io import BytesIO
 from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import Permission
+from django.test import override_settings
 from django.urls import reverse
+from pypdf import PdfReader  # via xhtml2pdf
+from rest_framework import status
 
 from credit_integration.enums import CreditDecisionStatus
 from credit_integration.models import CreditDecision, CreditDecisionLog
+from credit_integration.tests.mocks import (
+    mock_return_company_json_data,
+    mock_return_company_sanctions_json_data,
+    mock_return_consumer_json_data,
+    mock_return_consumer_sanctions_json_data,
+)
 from leasing.enums import ContactType
 
 
-def mock_return_company_json_data(business_id):
-    return {
-        "companyResponse": {
-            "responseHeader": {
-                "languageCode": "FI",
-                "timeStamp": {"date": 1634590800000, "time": 23365000},
-                "responseStatus": "0",
-                "currencyCode": "EUR",
-            },
-            "identificationData": None,
-            "companyBasics": None,
-            "scoringData": [],
-            "companyGroupReferences": None,
-            "mergerData": None,
-            "companyClassification": None,
-            "registerData": None,
-            "companyPaymentDefaultData": None,
-            "personInCharge": None,
-            "decisionMakers": None,
-            "personInChargeSummary": [],
-            "shareholderData": None,
-            "paymentHistory": None,
-            "errorMessage": None,
-            "confirmationMessage": None,
-            "authorisedSignaturesText": None,
-            "authorisedSignaturesData": None,
-            "mortgageData": None,
-            "additionalNamesData": None,
-            "newsRow": [],
-            "paymentDefaultRefData": None,
-            "additionalInformationRow": [],
-            "companyHistoryRow": [],
-            "lineOfBusinessLongRow": [],
-            "listOfCompaniesRow": [],
-            "decisionProposalData": {
-                "usecode": "1",
-                "model": {"code": "HEASYR", "name": "Yritysluottopäätökset"},
-                "customerData": {
-                    "customerDataRow": [],
-                    "customerProductDataRow": [],
-                    "name": "Solid Corporation Oy",
-                    "businessId": business_id,
-                    "personId": None,
-                    "insertedInMonitoringText": None,
-                    "customerKey": None,
-                },
-                "decisionProposal": {
-                    "handler": None,
-                    "inputRow": [],
-                    "prosessingDate": 1634590800000,
-                    "proposal": {
-                        "code": "1",
-                        "text": "Luottopäätös edellyttää lisäselvityksiä.",
-                        "proposalCode": None,
-                        "proposalText": None,
-                        "factorRow": [
-                            {
-                                "code": "004",
-                                "text": "Yritystä ei ole merkitty ennakkoperintärekisteriin.",
-                            },
-                            {
-                                "code": "090",
-                                "text": "Yritys on vanhempi kuin -1 kuukautta ja tilinpäätös puuttuu.",
-                            },
-                        ],
-                    },
-                },
-            },
-            "companyData": {
-                "identificationData": {
-                    "businessId": "30101929",
-                    "name": "Solid Corporation Oy",
-                    "domicileCode": None,
-                    "domicile": None,
-                    "companyLanguageCode": None,
-                    "companyLanguageText": None,
-                    "postalAddress": None,
-                    "address": {
-                        "street": "Kruunuvuorenkatu 3 E",
-                        "zip": "00160",
-                        "town": "Helsinki",
-                    },
-                    "contactInformation": {
-                        "phone": "+358 44 7200965",
-                        "fax": None,
-                        "www": None,
-                        "email": None,
-                    },
-                    "companyForm": "OY",
-                    "companyFormText": "Osakeyhtiö",
-                    "lineOfBusiness": {
-                        "lineOfBusinessCode": "62010",
-                        "lineOfBusinessText": "Ohjelmistojen suunnittelu ja valmistus",
-                    },
-                    "naceCode": None,
-                    "naceText": None,
-                },
-                "startDate": None,
-            },
-            "populationInformation": None,
-            "companyPaymentsAnalysis": None,
-            "ratios": None,
-            "tradeRegisterExtracts": None,
-            "articlesOfAssociation": None,
-            "authorizedSignature": None,
-            "companysDomainNames": None,
-            "queryHistoryInformation": None,
-            "debtCollectionData": None,
-            "bankruptcyIndicator": None,
-            "beneficialOwner": None,
-            "trustedCompanyData": None,
-            "esgData": None,
-            "valueReportData": None,
-            "digitalActivityData": None,
-            "growthIndicator": None,
-            "officialRegisterBeneficialOwner": None,
-            "authorisedSignaturesAbstract": None,
-            "companyInGroup": [],
-            "companyRadar": None,
-            "leiData": None,
-            "companyLoan": None,
-            "shareholder2021Data": None,
-            "authorizedSignature2021": None,
-            "extract": None,
-            "einvoiceData": None,
-        },
-        "groupResponse": None,
-    }
-
-
-def mock_return_consumer_json_data(identity_number):
-    return {
-        "consumerResponse": {
-            "responseHeader": {
-                "languageCode": "FI",
-                "timeStamp": {"date": 1634590800000, "time": 40333000},
-                "responseStatus": "0",
-                "currencyCode": "EUR",
-            },
-            "personInformation": None,
-            "profileData": None,
-            "scoringBackgroundData": None,
-            "scoringData": [],
-            "decisionProposalData": {
-                "usecode": "1",
-                "model": {"code": "HEASKU", "name": "Kuluttajaluottopäätökset"},
-                "customerData": {
-                    "customerDataRow": [],
-                    "customerProductDataRow": [],
-                    "name": None,
-                    "businessId": None,
-                    "personId": identity_number,
-                    "insertedInMonitoringText": None,
-                    "customerKey": None,
-                },
-                "decisionProposal": {
-                    "handler": None,
-                    "inputRow": [],
-                    "prosessingDate": 1634590800000,
-                    "proposal": {
-                        "code": "0",
-                        "text": "Ehdotetaan hylättäväksi.",
-                        "proposalCode": None,
-                        "proposalText": None,
-                        "factorRow": [
-                            {
-                                "code": "041",
-                                "text": "Henkilöllä on maksuhäiriöitä 1, joka on vähintään 1 kpl.",
-                            }
-                        ],
-                    },
-                },
-            },
-            "populationInformation": None,
-            "personIdentification": None,
-            "soletrader": None,
-            "paymentDefaultData": None,
-            "creditInformationData": None,
-            "noRegisteredMessage": None,
-            "personInChargeSummary": None,
-            "creditSummary": None,
-            "assets": None,
-            "taxInformation": None,
-            "otherInformation": None,
-            "errorMessage": None,
-            "personInAssociationSummary": None,
-            "officialRegisterBeneficialOwner": None,
-        }
-    }
+def _extract_text_from_pdf(pdf_content):
+    pdf_reader = PdfReader(BytesIO(pdf_content))
+    text = ""
+    for page in pdf_reader.pages:
+        text += page.extract_text()
+    return text
 
 
 @pytest.mark.django_db
@@ -231,7 +58,7 @@ def test_get_credit_decisions_endpoint(
         reverse("v1:credit_integration:get-credit-decisions"), data=data, format="json"
     )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
@@ -258,7 +85,7 @@ def test_get_credit_decisions_without_access_right(
         reverse("v1:credit_integration:get-credit-decisions"), data=data, format="json"
     )
 
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -296,7 +123,7 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
             format="json",
         )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
     assert "id" in response.data[0]
 
@@ -349,7 +176,7 @@ def test_send_credit_decision_inquiry_endpoint_with_identity_number(
             format="json",
         )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
     assert "id" not in response.data[0]
 
@@ -399,7 +226,7 @@ def test_send_credit_decision_inquiry_endpoint_with_person_contact(
             format="json",
         )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
     assert "id" not in response.data[0]
 
@@ -436,4 +263,151 @@ def test_send_credit_decision_inquiry_endpoint_without_access_right(
         format="json",
     )
 
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@override_settings(FLAG_SANCTIONS_INQUIRY=True)
+@pytest.mark.django_db
+def test_send_send_sanctions_inquiry_endpoint_with_business_id(
+    client,
+    user_factory,
+):
+    user_first_name = "Firstname"
+    user_last_name = "Lastname"
+    user = user_factory(first_name=user_first_name, last_name=user_last_name)
+    password = "test"
+    user.set_password(password)
+    user.save()
+
+    permission_names = [
+        "send_sanctions_inquiry",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.login(username=user.username, password=password)
+
+    business_id = "1234567-8"
+
+    data = {"business_id": business_id}
+    mock_response = mock_return_company_sanctions_json_data()
+    with patch(
+        "credit_integration.views.request_company_sanctions",
+        return_value=mock_response,
+    ):
+        response = client.get(
+            reverse("v1:credit_integration:send-sanctions-inquiry"),
+            data=data,
+        )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.headers.get("Content-Type") == "application/pdf"
+    assert int(response.headers.get("Content-Length")) > 3000
+
+    pdf_content = b"".join(response.streaming_content)
+    pdf_text = _extract_text_from_pdf(pdf_content)
+    watchlist_hits = mock_response["companyResponse"]["pepAndSanctionsData"][
+        "watchListHits"
+    ]
+    hit1, non_hit2 = watchlist_hits
+    assert hit1["hitsRow"][0]["names"]["name"] in pdf_text  # "SANCTIONED COMPANY OY"
+    assert non_hit2["name"] in pdf_text  # "Doe, John"
+
+
+@override_settings(FLAG_SANCTIONS_INQUIRY=True)
+@pytest.mark.django_db
+def test_send_send_sanctions_inquiry_endpoint_with_last_name(client, user_factory):
+    user_first_name = "Firstname"
+    user_last_name = "Lastname"
+    user = user_factory(first_name=user_first_name, last_name=user_last_name)
+    password = "test"
+    user.set_password(password)
+    user.save()
+
+    permission_names = [
+        "send_sanctions_inquiry",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.login(username=user.username, password=password)
+
+    data = {"last_name": "Doe"}
+
+    mock_response = mock_return_consumer_sanctions_json_data()
+    with patch(
+        "credit_integration.views.request_consumer_sanctions",
+        return_value=mock_response,
+    ):
+        response = client.get(
+            reverse("v1:credit_integration:send-sanctions-inquiry"),
+            data=data,
+        )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.headers.get("Content-Type") == "application/pdf"
+    assert int(response.headers.get("Content-Length")) > 5000
+    pdf_content = b"".join(response.streaming_content)
+    pdf_text = _extract_text_from_pdf(pdf_content)
+    category0 = mock_response["watchListResponse"]["watchLists"]["category"][0]
+    hitrow1, hitrow2 = category0["watchListHits"]["hitsRow"]
+    assert hitrow1["names"]["name"] in pdf_text  # "Doe, John Michael"
+    assert category0["watchListType"] in pdf_text  # "SANCTION_LIST"
+    assert (
+        hitrow2["description"] in pdf_text
+    )  # "Sanctioned Entity. Son of John Michael Doe, Former President Doeland."
+
+
+@override_settings(FLAG_SANCTIONS_INQUIRY=True)
+@pytest.mark.django_db
+def test_send_send_sanctions_inquiry_endpoint_without_access_right(
+    client,
+    user_factory,
+):
+    user = user_factory()
+    password = "test"
+    user.set_password(password)
+    user.save()
+
+    client.login(username=user.username, password=password)
+
+    business_id = "1234567-8"
+
+    data = {"business_id": business_id}
+    response = client.get(
+        reverse("v1:credit_integration:send-sanctions-inquiry"),
+        data=data,
+    )
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@override_settings(FLAG_SANCTIONS_INQUIRY=True)
+@pytest.mark.django_db
+def test_send_send_sanctions_inquiry_endpoint_disallowed_method(
+    client,
+    user_factory,
+):
+    user = user_factory()
+    password = "test"
+    user.set_password(password)
+    user.save()
+    permission_names = [
+        "send_sanctions_inquiry",
+    ]
+
+    for permission_name in permission_names:
+        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+
+    client.login(username=user.username, password=password)
+
+    business_id = "1234567-8"
+
+    data = {"business_id": business_id}
+    response = client.post(
+        reverse("v1:credit_integration:send-sanctions-inquiry"),
+        data=data,
+    )
+
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
