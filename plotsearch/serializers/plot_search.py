@@ -973,6 +973,26 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "service_unit",
         )
 
+    def _get_address_and_district(
+        self, validated_data: dict
+    ) -> tuple[str | None, str | None]:
+        """
+        Get address and district information from geometry data if present,
+        or existing data if present.
+        """
+        geometry = validated_data.get("geometry")
+        if geometry is not None:
+            return AreaSearchSerializer.get_address_and_district_from_kartta_hel(
+                geometry
+            )
+
+        address = self.data.get("address", None)
+        district = self.data.get("district", None)
+        return (
+            address if address else None,
+            district if district else None,
+        )
+
     @staticmethod
     def get_address_and_district_from_kartta_hel(geometry):
         """
@@ -1068,14 +1088,10 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
     def update(self, instance, validated_data):
         area_search_status = validated_data.pop("area_search_status", None)
 
-        if "geometry" in validated_data and validated_data["geometry"] is not None:
-            validated_data["address"], validated_data["district"] = (
-                self.get_address_and_district_from_kartta_hel(
-                    validated_data["geometry"]
-                )
-            )
-        else:
-            validated_data["address"], validated_data["district"] = None, None
+        address, district = self._get_address_and_district(validated_data)
+        if address or district:
+            validated_data["address"] = address
+            validated_data["district"] = district
 
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)

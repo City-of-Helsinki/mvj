@@ -1,4 +1,7 @@
+from unittest.mock import patch
+
 import pytest
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import BadRequest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -9,6 +12,7 @@ from forms.serializers.form import (
 from plotsearch.serializers.plot_search import (
     EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS,
     AreaSearchAttachmentPublicSerializer,
+    AreaSearchSerializer,
     PlotSearchTargetCreateUpdateSerializer,
 )
 
@@ -105,3 +109,119 @@ def test_area_search_attachment_public_serializer_unwanted_fields(
         set(EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS)
     )
     assert len(unwanted_fields_in_data) == 0
+
+
+@pytest.fixture
+def areasearch_serializer_with_location() -> AreaSearchSerializer:
+    """AreaSearchSerializer with address and district."""
+    serializer_with_defaults = AreaSearchSerializer()
+    custom_data = serializer_with_defaults.data.copy()
+    custom_data.update(
+        {
+            "address": "Existing address from areasearch",
+            "district": "Existing district from areasearch",
+        }
+    )
+    serializer = AreaSearchSerializer(data=custom_data)
+    serializer.is_valid()
+    return serializer
+
+
+def test_get_address_and_district_from_geometry(
+    areasearch_serializer_with_location: AreaSearchSerializer,
+):
+    """
+    AreaSearchSerializer:
+    If geometry data is provided in validated_data, pull address and district
+    from there, even if areasearch has an existing address and district.
+    """
+    address_from_geometry = "New address from geometry"
+    district_from_geometry = "New district from geometry"
+    dummy_geometry = GEOSGeometry(
+        "MULTIPOLYGON (((24.967535 60.174334, 24.966888 60.173293, 24.970275 60.172791, 24.970922 60.17412, 24.967535 60.174334)))"  # noqa: E501
+    )
+    validated_data = {"geometry": dummy_geometry}
+
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_kartta_hel:
+        mock_kartta_hel.return_value = (address_from_geometry, district_from_geometry)
+        address, district = (
+            areasearch_serializer_with_location._get_address_and_district(
+                validated_data
+            )
+        )
+        assert address == address_from_geometry
+        assert district == district_from_geometry
+
+
+def test_get_address_and_district_from_existing_data(
+    areasearch_serializer_with_location: AreaSearchSerializer,
+):
+    """
+    AreaSearchSerializer:
+    If geometry data is not provided in validated_data, pull address and district
+    from existing areasearch data.
+    """
+    validated_data = {}
+    address, district = areasearch_serializer_with_location._get_address_and_district(
+        validated_data
+    )
+    assert address == areasearch_serializer_with_location.data["address"]
+    assert district == areasearch_serializer_with_location.data["district"]
+
+
+def test_get_address_and_district_from_same_source(
+    areasearch_serializer_with_location: AreaSearchSerializer,
+):
+    """
+    AreaSearchSerializer:
+    If both
+    - geometry query returns a partial result, e.g. only an address or only a district, and
+    - areasearch has existing address or district data,
+
+    then only pull both the address and district (or None where present) from geometry query.
+    """
+    dummy_geometry = GEOSGeometry(
+        "MULTIPOLYGON (((24.967535 60.174334, 24.966888 60.173293, 24.970275 60.172791, 24.970922 60.17412, 24.967535 60.174334)))"  # noqa: E501
+    )
+    validated_data = {"geometry": dummy_geometry}
+    address_from_geometry = "New address from geometry"
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_kartta_hel_without_district:
+        mock_kartta_hel_without_district.return_value = (address_from_geometry, None)
+        address, district = (
+            areasearch_serializer_with_location._get_address_and_district(
+                validated_data
+            )
+        )
+        assert address == address_from_geometry
+        assert district is None
+
+    district_from_geometry = "New district from geometry"
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_kartta_hel_without_address:
+        mock_kartta_hel_without_address.return_value = (None, district_from_geometry)
+        address, district = (
+            areasearch_serializer_with_location._get_address_and_district(
+                validated_data
+            )
+        )
+        assert address is None
+        assert district == district_from_geometry
+
+
+def test_get_address_and_district_as_none():
+    """
+    AreaSearchSerializer:
+    If neither geometry data or existing location data exists, return a tuple of Nones.
+    """
+    areasearch_serializer_without_location = AreaSearchSerializer()
+    validated_data = {}
+    address, district = (
+        areasearch_serializer_without_location._get_address_and_district(validated_data)
+    )
+    assert address is None
+    assert district is None
