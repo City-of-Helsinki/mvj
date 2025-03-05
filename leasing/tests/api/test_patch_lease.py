@@ -221,13 +221,20 @@ def test_patch_lease_is_rent_info_complete_not_possible(
     assert lease.is_rent_info_complete is False
 
 
-def test_patch_lease_basis_of_rents(
-    django_db_setup, admin_client, contact_factory, lease_test_data
-):
+@pytest.mark.django_db
+def test_patch_lease_basis_of_rents(django_db_setup, admin_client, lease_test_data):
     lease = lease_test_data["lease"]
-    data = {
-        "basis_of_rents": [{"intended_use": 1, "area": "101.00", "area_unit": "m2"}]
+
+    lease_basis_of_rent_data = {
+        "intended_use": 1,
+        "area": 12580.00,
+        "area_unit": "kem2",
+        "amount_per_area": 29.00,
+        "profit_margin_percentage": 5.00,
+        "initial_year_rent": 355881.91,
     }
+
+    data = {"basis_of_rents": [lease_basis_of_rent_data]}
 
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
 

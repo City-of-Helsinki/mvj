@@ -259,7 +259,7 @@ def get_initial_year_rent(lease):
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
     ):
-        amount += basis_of_rent.calculate_initial_year_rent()
+        amount += basis_of_rent.initial_year_rent
 
     return amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 

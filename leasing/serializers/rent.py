@@ -796,6 +796,7 @@ class LeaseBasisOfRentSerializer(
             "management_subventions",
             "temporary_subventions",
             "children",
+            "initial_year_rent",
         )
 
 
@@ -848,6 +849,7 @@ class LeaseBaseBasisOfRentCreateUpdateSerializer(
             "zone",
             "type",
             "children",
+            "initial_year_rent",
         )
 
     def validate(self, data):

@@ -1702,6 +1702,14 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
     recursive_get_related_skip_relations = ["lease"]
 
+    initial_year_rent = models.DecimalField(
+        verbose_name=_("Initial year rent"),
+        null=True,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+    )
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease basis of rent")
         verbose_name_plural = pgettext_lazy("Model name", "Lease basis of rents")
