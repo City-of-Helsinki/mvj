@@ -796,7 +796,6 @@ class LeaseBasisOfRentSerializer(
             "management_subventions",
             "temporary_subventions",
             "children",
-            "initial_year_rent",
         )
 
 
@@ -837,6 +836,7 @@ class LeaseBaseBasisOfRentCreateUpdateSerializer(
             "index",
             "profit_margin_percentage",
             "discount_percentage",
+            "initial_year_rent",
             "plans_inspected_at",
             "locked_at",
             "archived_at",
@@ -849,7 +849,6 @@ class LeaseBaseBasisOfRentCreateUpdateSerializer(
             "zone",
             "type",
             "children",
-            "initial_year_rent",
         )
 
     def validate(self, data):
@@ -948,6 +947,7 @@ class LeaseBasisOfRentCreateUpdateSerializer(
             "index",
             "profit_margin_percentage",
             "discount_percentage",
+            "initial_year_rent",
             "plans_inspected_at",
             "locked_at",
             "archived_at",
