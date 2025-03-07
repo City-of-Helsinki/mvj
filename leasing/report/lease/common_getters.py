@@ -123,11 +123,7 @@ def get_latest_contract_number(lease: LeaseWithContracts):
         default=None,
     )
 
-    if (
-        latest_contract is None
-        or not latest_contract.signing_date
-        or not latest_contract.contract_number
-    ):
+    if latest_contract is None or not latest_contract.contract_number:
         return ""
 
     return latest_contract.contract_number
