@@ -16,11 +16,11 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.utils.translation import override
 from django_q.tasks import Conf, async_task
-from django_xhtml2pdf.utils import generate_pdf
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from forms.enums import AnswerType
+from utils.pdf import PDFGenerationError, generate_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -610,7 +610,12 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
     for target_status in target_statuses.all():
         context["object"] = target_status
         context = build_pdf_context(context)
-        pdf: BytesIO = generate_pdf("target_status/detail.html", context=context)
+        try:
+            pdf: BytesIO = generate_pdf(context, "target_status/detail.html")
+        except PDFGenerationError as e:
+            logger.error(f"PDF generation failed: {e}")
+            pdf = BytesIO()
+
         email_pdf: bytes = pdf.getvalue()
         attachment_filename = f"{target_status.application_identifier}.pdf"
         attachments.append([attachment_filename, email_pdf, "application/pdf"])
@@ -637,7 +642,12 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
     from_email = settings.FROM_EMAIL_AREA_SEARCH
     email_subject = _(f"Copy of area rental application {area_search.identifier}")
     email_body = render_to_string("area_search/email_detail.txt", context)
-    pdf: BytesIO = generate_pdf("area_search/detail.html", context=context)
+    try:
+        pdf: BytesIO = generate_pdf(context, "area_search/detail.html")
+    except PDFGenerationError as e:
+        logger.error(f"PDF generation failed: {e}")
+        pdf = BytesIO()
+
     email_pdf: bytes = pdf.getvalue()
     attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
     attachments.append([attachment_filename, email_pdf, "application/pdf"])

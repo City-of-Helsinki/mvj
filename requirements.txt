@@ -79,7 +79,6 @@ django==4.2.19
     #   django-sequences
     #   django-stubs
     #   django-stubs-ext
-    #   django-xhtml2pdf
     #   djangorestframework
     #   drf-oidc-auth
     #   drf-yasg
@@ -130,8 +129,6 @@ django-stubs[compatible-mypy]==4.2.7
     # via -r requirements.in
 django-stubs-ext==5.0.0
     # via django-stubs
-django-xhtml2pdf==0.0.4
-    # via -r requirements.in
 djangorestframework==3.15.2
     # via
     #   -r requirements.in
@@ -225,7 +222,7 @@ pyproj==3.7.0
     # via -r requirements.in
 pysftp==0.2.9
     # via -r requirements.in
-python-bidi==0.4.2
+python-bidi==0.6.6
     # via xhtml2pdf
 python-daemon==3.1.2
     # via -r requirements.in
@@ -293,7 +290,6 @@ six==1.16.0
     #   ecdsa
     #   html5lib
     #   isodate
-    #   python-bidi
     #   python-dateutil
 soupsieve==2.5
     # via beautifulsoup4
@@ -344,8 +340,8 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-xhtml2pdf==0.2.15
-    # via django-xhtml2pdf
+xhtml2pdf==0.2.17
+    # via -r requirements.in
 xlsxwriter==3.2.2
     # via -r requirements.in
 zeep==4.3.1
