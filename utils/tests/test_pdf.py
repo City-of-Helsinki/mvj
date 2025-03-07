@@ -2,7 +2,7 @@ from io import BytesIO
 from unittest.mock import MagicMock
 
 import pytest
-from django.test import override_settings
+from django.template import Context, Template
 from pypdf import PdfReader  # via xhtml2pdf
 
 from utils.pdf import PDFGenerationError, generate_pdf
@@ -22,10 +22,6 @@ def mock_create_pdf(monkeypatch):
     return mock
 
 
-def append_template_dir(settings, new_dir):
-    settings.TEMPLATES[0]["DIRS"].append(new_dir)
-
-
 def _extract_text_from_pdf(pdf_content: BytesIO):
     pdf_reader = PdfReader(pdf_content)
     text = ""
@@ -34,9 +30,15 @@ def _extract_text_from_pdf(pdf_content: BytesIO):
     return text
 
 
-@override_settings()
-def test_generate_pdf_success(settings):
-    append_template_dir(settings, "utils/tests/templates")
+def test_generate_pdf_success(monkeypatch):
+    template_content = "<html><body>Test {{ key }}</body></html>"
+    template = Template(template_content)
+
+    # Mock render_to_string to use the in-memory template
+    def mock_render_to_string(template_name, context):
+        return template.render(Context(context))
+
+    monkeypatch.setattr("utils.pdf.render_to_string", mock_render_to_string)
     context = {"key": "kangaroo"}
     template_name = "test_pdf.html"
 
