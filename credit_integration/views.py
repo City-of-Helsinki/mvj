@@ -445,8 +445,8 @@ def _get_company_sanctions_pdf(user: User, business_id: str) -> BytesIO:
             "business_id": business_id,
             "timestamp": timestamp,
             "user_name": (
-                user.get_full_name()
-                if hasattr(user, "get_full_name")
+                user.get_display_name()
+                if hasattr(user, "get_display_name")
                 else user.username
             ),
         },
@@ -488,8 +488,8 @@ def _get_consumer_sanctions_pdf(
             "last_name": last_name,
             "timestamp": timestamp,
             "user_name": (
-                user.get_full_name()
-                if hasattr(user, "get_full_name")
+                user.get_display_name()
+                if hasattr(user, "get_display_name")
                 else user.username
             ),
         },
