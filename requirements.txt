@@ -62,7 +62,7 @@ deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==4.2.19
+django==4.2.20
     # via
     #   -r requirements.in
     #   django-anymail
