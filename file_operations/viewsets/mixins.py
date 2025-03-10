@@ -195,6 +195,8 @@ class FileExtensionFileMixin:
             "fodt",
             "ods",
             "fods",
+            # Outlook
+            "eml",
         ]
         image_types = [
             "jpg",
