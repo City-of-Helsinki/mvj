@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 09:45+0200\n"
+"POT-Creation-Date: 2025-03-10 13:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -400,6 +400,41 @@ msgid "File Scan Status"
 msgstr ""
 
 msgid "File Scan Statuses"
+msgstr ""
+
+msgid ""
+"File has not yet been scanned for viruses, and is unsafe to download at this "
+"time."
+msgstr ""
+"Filen har ännu inte genomsökts efter virus och är osäker att ladda ner just "
+"nu."
+
+msgid ""
+"File was found to contain virus or malware, and the file has been deleted."
+msgstr ""
+"Filen visade sig innehålla virus eller skadlig programvara och har raderats."
+
+msgid ""
+"File scan failed. File is unsafe to download before it has been successfully "
+"scanned for viruses and malware."
+msgstr ""
+"Filskanning misslyckades. Filen är osäker att ladda ner innan den har "
+"genomsökts framgångsrikt efter virus och skadlig programvara."
+
+#, python-brace-format
+msgid "Unknown error related to virus scanning: '{error_str}'"
+msgstr "Okänt fel relaterat till virusskanning: '{error_str}'"
+
+#, python-brace-format
+msgid "File '{file.name}' does not have an extension."
+msgstr ""
+
+#, python-brace-format
+msgid "File extension '.{ext}' is not allowed."
+msgstr ""
+
+#, python-brace-format
+msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
 msgstr ""
 
 msgctxt "Form state"
@@ -1304,9 +1339,6 @@ msgstr "Diarienummer"
 
 msgid "Decision maker"
 msgstr "Beslutsfattare"
-
-msgid "Latest decision"
-msgstr "Sista beslut"
 
 msgid "Decision date"
 msgstr "Beslutsdatum"
@@ -3087,7 +3119,8 @@ msgstr "Arrenderingar utan förfallodatum"
 
 msgctxt "Invoicing review"
 msgid "One time rents with no invoice from max 5 year old leases"
-msgstr "Arrenderingar (max 5 år gamla) som har fullständigt arrende men inga fakturor"
+msgstr ""
+"Arrenderingar (max 5 år gamla) som har fullständigt arrende men inga fakturor"
 
 msgctxt "Invoicing review"
 msgid "Incorrect management shares"
@@ -3260,6 +3293,9 @@ msgstr ""
 msgid "Lease state"
 msgstr "Status för arrenderingen"
 
+msgid "Latest decision"
+msgstr "Sista beslut"
+
 msgid "Permitted building volume (Residential)"
 msgstr "Byggnadsrätt (boende)"
 
@@ -3283,21 +3319,6 @@ msgstr "Genomsnittligt enhetspris (boende)"
 
 msgid "Average amount per area (Business)"
 msgstr "Genomsnittligt enhetspris (företagslokal)"
-
-msgid "Re-lease"
-msgstr "Återarrendering"
-
-msgid "Option to purchase"
-msgstr "Köprätt"
-
-msgid "Matti report"
-msgstr "MATTI-rapport"
-
-msgid "Lease statistics report II"
-msgstr "Statistikrapport för arrenderingar II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Förteckning över arrenderingar och grunderna för deras arrenden"
 
 msgid "Unit price (index)"
 msgstr "Enhetspris (ind)"
@@ -3325,6 +3346,21 @@ msgstr "Tillfällig rabatt i euro/år"
 
 msgid "Form of management (Subvention)"
 msgstr "Subvention för upplåtelseform"
+
+msgid "Re-lease"
+msgstr "Återarrendering"
+
+msgid "Option to purchase"
+msgstr "Köprätt"
+
+msgid "Matti report"
+msgstr "MATTI-rapport"
+
+msgid "Lease statistics report II"
+msgstr "Statistikrapport för arrenderingar II"
+
+msgid "Shows statistics about leases and their basis of rents"
+msgstr "Förteckning över arrenderingar och grunderna för deras arrenden"
 
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
@@ -3842,6 +3878,22 @@ msgid "Application expired"
 msgstr "Ansökan har förfallit"
 
 msgctxt "Decline reason"
+msgid "Application missed deadline"
+msgstr "Ansökan kom inte in inom tidsfristen"
+
+msgctxt "Decline reason"
+msgid "Application missing details"
+msgstr "Ansökan är ofullständig"
+
+msgctxt "Decline reason"
+msgid "Applicant not qualified"
+msgstr "Den sökande uppfyller inte behörighetskriterierna"
+
+msgctxt "Decline reason"
+msgid "Applicant withdrew application"
+msgstr "Sökanden har dragit tillbaka sin ansökan"
+
+msgctxt "Decline reason"
 msgid "Area not controlled by city"
 msgstr "Området förvaltas inte av staden"
 
@@ -4045,38 +4097,3 @@ msgstr "Token existerar"
 
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
-
-msgid ""
-"File has not yet been scanned for viruses, and is unsafe to download at this "
-"time."
-msgstr ""
-"Filen har ännu inte genomsökts efter virus och är osäker att ladda ner just "
-"nu."
-
-msgid ""
-"File was found to contain virus or malware, and the file has been deleted."
-msgstr ""
-"Filen visade sig innehålla virus eller skadlig programvara och har raderats."
-
-msgid ""
-"File scan failed. File is unsafe to download before it has been successfully "
-"scanned for viruses and malware."
-msgstr ""
-"Filskanning misslyckades. Filen är osäker att ladda ner innan den har "
-"genomsökts framgångsrikt efter virus och skadlig programvara."
-
-#, python-brace-format
-msgid "Unknown error related to virus scanning: '{error_str}'"
-msgstr "Okänt fel relaterat till virusskanning: '{error_str}'"
-
-#, python-brace-format
-msgid "File '{file.name}' does not have an extension."
-msgstr ""
-
-#, python-brace-format
-msgid "File extension '.{ext}' is not allowed."
-msgstr ""
-
-#, python-brace-format
-msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
-msgstr ""

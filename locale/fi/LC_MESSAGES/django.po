@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 09:45+0200\n"
+"POT-Creation-Date: 2025-03-10 13:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -390,6 +390,44 @@ msgstr "Tiedoston skannauksen tila"
 
 msgid "File Scan Statuses"
 msgstr "Tiedoston skannauksen tilat"
+
+msgid ""
+"File has not yet been scanned for viruses, and is unsafe to download at this "
+"time."
+msgstr ""
+"Tiedostoa ei ole vielä skannattu virusten varalta, joten sitä ei ole "
+"turvallista ladata tällä hetkellä."
+
+msgid ""
+"File was found to contain virus or malware, and the file has been deleted."
+msgstr ""
+"Tiedostosta löydettiin virus tai muu haittaohjelma, joten tiedosto on "
+"poistettu."
+
+msgid ""
+"File scan failed. File is unsafe to download before it has been successfully "
+"scanned for viruses and malware."
+msgstr ""
+"Tiedoston skannaus epäonnistui. Tiedostoa ei ole turvallista ladata ennen "
+"kuin se on onnistuneesti skannattu virusten ja haittaohjelmien varalta."
+
+#, python-brace-format
+msgid "Unknown error related to virus scanning: '{error_str}'"
+msgstr "Tuntematon virhe virusskannaukseen liittyen: '{error_str}'"
+
+#, python-brace-format
+msgid "File '{file.name}' does not have an extension."
+msgstr "Puuttuva tiedostopääte '{file.name}'"
+
+#, python-brace-format
+msgid "File extension '.{ext}' is not allowed."
+msgstr "Tiedostomuoto '.{ext}' ei ole sallittu."
+
+#, python-brace-format
+msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
+msgstr ""
+"Tiedosto '{file.name}' ylittää suurimman sallitun tiedostokoon "
+"{MAX_FILE_SIZE_MB} MB"
 
 msgctxt "Form state"
 msgid "Work in progress"
@@ -1301,9 +1339,6 @@ msgstr "Diaarinumero"
 
 msgid "Decision maker"
 msgstr "Päättäjä"
-
-msgid "Latest decision"
-msgstr "Viimeisin päätös"
 
 msgid "Decision date"
 msgstr "Päätöspäivämäärä"
@@ -3085,7 +3120,9 @@ msgstr "Vuokraukset, joissa ei ole eräpäivää"
 
 msgctxt "Invoicing review"
 msgid "One time rents with no invoice from max 5 year old leases"
-msgstr "Vuokraukset (max 5v vanhat), joilla on kertakaikkinen vuokra mutta ei ole laskuja"
+msgstr ""
+"Vuokraukset (max 5v vanhat), joilla on kertakaikkinen vuokra mutta ei ole "
+"laskuja"
 
 msgctxt "Invoicing review"
 msgid "Incorrect management shares"
@@ -3259,6 +3296,9 @@ msgstr ""
 msgid "Lease state"
 msgstr "Vuokrauksen tila"
 
+msgid "Latest decision"
+msgstr "Viimeisin päätös"
+
 msgid "Permitted building volume (Residential)"
 msgstr "Rakennus-oikeus (asuminen)"
 
@@ -3282,21 +3322,6 @@ msgstr "Keskimääräinen yksikköhinta (asuminen)"
 
 msgid "Average amount per area (Business)"
 msgstr "Keskimääräinen yksikköhinta (yritystila)"
-
-msgid "Re-lease"
-msgstr "Uudelleenvuokraus"
-
-msgid "Option to purchase"
-msgstr "Osto-oikeus"
-
-msgid "Matti report"
-msgstr "MATTI-raportti"
-
-msgid "Lease statistics report II"
-msgstr "Vuokrausten tilastoraportti II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Lista vuokrauksista ja niiden vuokranperusteista"
 
 msgid "Unit price (index)"
 msgstr "Yksikköhinta (ind)"
@@ -3324,6 +3349,21 @@ msgstr "Tilapäisalennus euroa/vuosi"
 
 msgid "Form of management (Subvention)"
 msgstr "Hallintamuotosubventio"
+
+msgid "Re-lease"
+msgstr "Uudelleenvuokraus"
+
+msgid "Option to purchase"
+msgstr "Osto-oikeus"
+
+msgid "Matti report"
+msgstr "MATTI-raportti"
+
+msgid "Lease statistics report II"
+msgstr "Vuokrausten tilastoraportti II"
+
+msgid "Shows statistics about leases and their basis of rents"
+msgstr "Lista vuokrauksista ja niiden vuokranperusteista"
 
 msgid "Rent adjustments"
 msgstr "Alennukset/Korotukset"
@@ -3836,6 +3876,22 @@ msgid "Application expired"
 msgstr "Hakemus rauennut"
 
 msgctxt "Decline reason"
+msgid "Application missed deadline"
+msgstr "Hakemus ei tullut määräajassa"
+
+msgctxt "Decline reason"
+msgid "Application missing details"
+msgstr "Hakemus on puutteellinen"
+
+msgctxt "Decline reason"
+msgid "Applicant not qualified"
+msgstr "Hakija ei täytä kelpoisuusehtoja"
+
+msgctxt "Decline reason"
+msgid "Applicant withdrew application"
+msgstr "Hakija on perunut hakemuksensa"
+
+msgctxt "Decline reason"
 msgid "Area not controlled by city"
 msgstr "Alue ei ole kaupungin hallinnoima"
 
@@ -4037,41 +4093,3 @@ msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
-
-msgid ""
-"File has not yet been scanned for viruses, and is unsafe to download at this "
-"time."
-msgstr ""
-"Tiedostoa ei ole vielä skannattu virusten varalta, joten sitä ei ole "
-"turvallista ladata tällä hetkellä."
-
-msgid ""
-"File was found to contain virus or malware, and the file has been deleted."
-msgstr ""
-"Tiedostosta löydettiin virus tai muu haittaohjelma, joten tiedosto on "
-"poistettu."
-
-msgid ""
-"File scan failed. File is unsafe to download before it has been successfully "
-"scanned for viruses and malware."
-msgstr ""
-"Tiedoston skannaus epäonnistui. Tiedostoa ei ole turvallista ladata ennen "
-"kuin se on onnistuneesti skannattu virusten ja haittaohjelmien varalta."
-
-#, python-brace-format
-msgid "Unknown error related to virus scanning: '{error_str}'"
-msgstr "Tuntematon virhe virusskannaukseen liittyen: '{error_str}'"
-
-#, python-brace-format
-msgid "File '{file.name}' does not have an extension."
-msgstr "Puuttuva tiedostopääte '{file.name}'"
-
-#, python-brace-format
-msgid "File extension '.{ext}' is not allowed."
-msgstr "Tiedostomuoto '.{ext}' ei ole sallittu."
-
-#, python-brace-format
-msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
-msgstr ""
-"Tiedosto '{file.name}' ylittää suurimman sallitun tiedostokoon "
-"{MAX_FILE_SIZE_MB} MB"
