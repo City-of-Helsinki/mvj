@@ -326,7 +326,7 @@ def handle_company_sanctions(user, business_id):
     return FileResponse(
         pdf_data,
         as_attachment=True,
-        filename="sanctions.pdf",
+        filename=f"pakotelistaus-yritys_{timezone.now().strftime('%Y-%m-%d')}.pdf",
         content_type="application/pdf",
     )
 
@@ -362,7 +362,7 @@ def handle_consumer_sanctions(user, first_name, last_name, birth_year):
     return FileResponse(
         pdf_data,
         as_attachment=True,
-        filename="sanctions.pdf",
+        filename=f"pakotelistaus-henkilo_{timezone.now().strftime('%Y-%m-%d')}.pdf",
         content_type="application/pdf",
     )
 
