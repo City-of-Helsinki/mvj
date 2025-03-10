@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
-from django_xhtml2pdf.views import PdfMixin
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
@@ -94,6 +93,7 @@ from plotsearch.serializers.plot_search import (
     RelatedPlotApplicationCreateDeleteSerializer,
 )
 from plotsearch.utils import build_pdf_context
+from utils.pdf import PdfMixin
 
 
 class PlotSearchSubtypeViewSet(

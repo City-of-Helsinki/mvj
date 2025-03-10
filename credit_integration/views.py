@@ -1,16 +1,14 @@
+import logging
 from io import BytesIO
 
-import sentry_sdk
 from django.conf import settings
 from django.http import FileResponse, QueryDict
-from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
-from xhtml2pdf import pisa
 
 from credit_integration.exceptions import AsiakastietoAPIError
 from credit_integration.mapper import map_consumer_response
@@ -37,6 +35,9 @@ from credit_integration.types import (
 )
 from leasing.models import Contact
 from users.models import User
+from utils.pdf import PDFGenerationError, generate_pdf
+
+logger = logging.getLogger(__name__)
 
 TRANSLATION_MAP = {
     # Commented out keys are marked here to exist, but we don't want to translate those,
@@ -298,15 +299,23 @@ def handle_company_sanctions(user, business_id):
     try:
         pdf_data = _get_company_sanctions_pdf(user, business_id)
     except AsiakastietoAPIError as e:
-        sentry_sdk.capture_exception(e)
+        logger.error(f"Asiakastieto API error: {e}")
         return Response(
             {
                 "message": str(e),
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    except PDFGenerationError as e:
+        logger.error(f"PDF generation failed: {e}")
+        return Response(
+            {
+                "message": "PDF generation failed.",
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     except Exception as e:
-        sentry_sdk.capture_exception(e)
+        logger.error(e)
         return Response(
             {
                 "message": "Unknown error while getting company sanctions.",
@@ -326,15 +335,23 @@ def handle_consumer_sanctions(user, first_name, last_name, birth_year):
     try:
         pdf_data = _get_consumer_sanctions_pdf(user, first_name, last_name, birth_year)
     except AsiakastietoAPIError as e:
-        sentry_sdk.capture_exception(e)
+        logger.error(f"Asiakastieto API error: {e}")
         return Response(
             {
                 "message": str(e),
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    except PDFGenerationError as e:
+        logger.error(f"PDF generation failed: {e}")
+        return Response(
+            {
+                "message": "PDF generation failed.",
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     except Exception as e:
-        sentry_sdk.capture_exception(e)
+        logger.error(e)
         return Response(
             {
                 "message": "Unknown error while getting consumer sanctions.",
@@ -406,26 +423,6 @@ def _add_log(identification, user, text):
     )
 
 
-def _generate_pdf(context, template_name) -> BytesIO:
-    html_source = render_to_string(template_name, context=context)
-    output = BytesIO()
-    pisa_status = pisa.CreatePDF(
-        html_source,
-        dest=output,
-    )
-
-    if pisa_status.err:
-        return Response(
-            {
-                "message": "PDF generation failed.",
-            },
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    output.seek(0)
-    return output
-
-
 def _get_company_sanctions_pdf(user: User, business_id: str) -> BytesIO:
     business_id_without_dash = business_id.replace("-", "")
     sanctions_response: CompanySanctionsResponse = request_company_sanctions(
@@ -458,7 +455,8 @@ def _get_company_sanctions_pdf(user: User, business_id: str) -> BytesIO:
         "total_hit_count": sum(hitcounts),
     }
     sanctions_template = "company_sanctions.html"
-    pdf_bytes_io = _generate_pdf(context, sanctions_template)
+    pdf_bytes_io = generate_pdf(context, sanctions_template)
+
     return pdf_bytes_io
 
 
@@ -500,7 +498,8 @@ def _get_consumer_sanctions_pdf(
         "total_hit_count": sum(hitcounts),
     }
     sanctions_template = "consumer_sanctions.html"
-    pdf_bytes_io = _generate_pdf(context, sanctions_template)
+    pdf_bytes_io = generate_pdf(context, sanctions_template)
+
     return pdf_bytes_io
 
 
