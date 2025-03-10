@@ -31,6 +31,8 @@ def test_get_allowed_extensions(mixin):
         "fodt",
         "ods",
         "fods",
+        # Outlook
+        "eml",
     ]
     image_types = [
         "jpg",
