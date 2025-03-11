@@ -114,12 +114,28 @@ class DeclineReason(str, Enum):
     """
 
     APPLICATION_EXPIRED = "application_expired"
+    APPLICATION_MISSED_DEADLINE = "application_missed_deadline"
+    APPLICATION_MISSING_DETAILS = "application_missing_details"
+    APPLICANT_NOT_QUALIFIED = "applicant_not_qualified"
+    APPLICANT_WITHDREW_APPLICATION = "applicant_withdrew_application"
     NOT_IN_CONTROL = "not_in_control"
     NOT_AVAILABLE_LEASE = "not_available_for_lease"
     OTHER = "other"
 
     class Labels:
         APPLICATION_EXPIRED = pgettext_lazy("Decline reason", "Application expired")
+        APPLICATION_MISSED_DEADLINE = pgettext_lazy(
+            "Decline reason", "Application missed deadline"
+        )
+        APPLICATION_MISSING_DETAILS = pgettext_lazy(
+            "Decline reason", "Application missing details"
+        )
+        APPLICANT_NOT_QUALIFIED = pgettext_lazy(
+            "Decline reason", "Applicant not qualified"
+        )
+        APPLICANT_WITHDREW_APPLICATION = pgettext_lazy(
+            "Decline reason", "Applicant withdrew application"
+        )
         NOT_IN_CONTROL = pgettext_lazy("Decline reason", "Area not controlled by city")
         NOT_AVAILABLE_LEASE = pgettext_lazy(
             "Decline reason", "Area not available for lease"
