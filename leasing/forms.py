@@ -135,6 +135,9 @@ class LeaseSearchForm(forms.Form):
         queryset=IntendedUse.objects.all(),
         required=False,
     )
+    preparers_own_leases = forms.NullBooleanField(
+        label="Preparer's own leases", required=False
+    )
 
 
 class BasisOfRentSearchForm(forms.Form):
