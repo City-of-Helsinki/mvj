@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from leasing.models.contact import Contact
 from leasing.models.land_area import LeaseArea
+from leasing.models.map_layers import VipunenMapLayer
 
 
 class ExportLeaseAreaSerializer(serializers.ModelSerializer):
@@ -52,6 +53,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
     )
     palvelukokonaisuus = serializers.SerializerMethodField()
     vuokranantaja = serializers.SerializerMethodField()
+    tree_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = LeaseArea
@@ -86,6 +88,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
             "geometria",
             "palvelukokonaisuus",
             "vuokranantaja",
+            "tree_ids",
         ]
         # Make all fields read only
         read_only_fields = fields
@@ -194,3 +197,31 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
         if lessor:
             return lessor.get_name()
         return ""
+
+    def get_tree_ids(self, lease_area: LeaseArea):
+        return VipunenMapLayer.get_map_layer_ids_for_lease_area(lease_area)
+
+
+class ExportVipunenMapLayerSerializer(serializers.ModelSerializer):
+    tree_id = serializers.IntegerField(source="id")
+    parent_tree_id = serializers.PrimaryKeyRelatedField(
+        pk_field="parent", queryset=VipunenMapLayer.objects.all(), allow_null=True
+    )
+    name_fi = serializers.CharField()
+    name_sv = serializers.CharField(allow_null=True)
+    name_en = serializers.CharField(allow_null=True)
+    keywords = serializers.CharField(allow_null=True)
+    hex_color = serializers.CharField(allow_null=True)
+
+    class Meta:
+        model = VipunenMapLayer
+        fields = [
+            "tree_id",
+            "parent_tree_id",
+            "name_fi",
+            "name_sv",
+            "name_en",
+            "keywords",
+            "hex_color",
+        ]
+        read_only_fields = fields

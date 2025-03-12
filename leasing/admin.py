@@ -1,6 +1,7 @@
 from itertools import groupby
 
 from django.contrib.gis import admin
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from enumfields.admin import EnumFieldListFilter
 
@@ -104,6 +105,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementType,
 )
 from leasing.models.lease import ReservationProcedure
+from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.service_unit import ServiceUnitGroupMapping
 
 
@@ -787,6 +789,39 @@ class IntendedUseAdmin(admin.ModelAdmin):
     )
 
 
+class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
+    readonly_fields = ("color_display",)
+    list_display = (
+        "hierarchical_name",
+        "color_display",
+        "parent",
+        "name_fi",
+        "name_sv",
+        "name_en",
+        "keywords",
+    )
+    list_filter = ("parent",)
+    search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
+
+    def hierarchical_name(self, obj):
+        return str(obj)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request).order_by("parent")
+        return qs.select_related("parent")
+
+    hierarchical_name.short_description = "Name"
+
+    def color_display(self, obj: VipunenMapLayer):
+        """Displays `hex_color` as a square."""
+        return format_html(
+            '<div style="width: 20px; height: 20px; background-color: {};"></div>',
+            obj.hex_color,
+        )
+
+    color_display.short_description = "Color"
+
+
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
@@ -861,3 +896,4 @@ admin.site.register(LandUseAgreementConditionFormOfManagement, NameAdmin)
 admin.site.register(LandUseAgreementDecisionConditionType, NameAdmin)
 admin.site.register(LandUseAgreementDecision, LandUseAgreementDecisionAdmin)
 admin.site.register(LandUseAgreement, LandUseAgreementAdmin)
+admin.site.register(VipunenMapLayer, VipunenMapLayerAdmin)

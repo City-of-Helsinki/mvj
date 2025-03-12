@@ -23,7 +23,10 @@ from forms.viewsets.form import (
 )
 from gdpr.views import MvjGDPRAPIView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
-from leasing.export_api.viewsets import ExportLeaseAreaViewSet
+from leasing.export_api.viewsets import (
+    ExportLeaseAreaViewSet,
+    ExportVipunenMapLayerViewSet,
+)
 from leasing.report.viewset import ReportViewSet
 from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
@@ -259,6 +262,11 @@ export_router.register(
     r"lease_area",
     ExportLeaseAreaViewSet,
     basename="export_lease_area",
+)
+export_router.register(
+    r"vipunen_map_layer",
+    ExportVipunenMapLayerViewSet,
+    basename="export_vipunen_map_layer",
 )
 
 # Public router

@@ -9,9 +9,13 @@ from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from leasing.enums import TenantContactType
-from leasing.export_api.serializers import ExportLeaseAreaSerializer
+from leasing.export_api.serializers import (
+    ExportLeaseAreaSerializer,
+    ExportVipunenMapLayerSerializer,
+)
 from leasing.models.contract import Contract
 from leasing.models.land_area import LeaseArea, LeaseAreaAddress
+from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.rent import Rent
 from leasing.models.tenant import TenantContact
 
@@ -36,6 +40,24 @@ class ExportLeaseAreaPermission(BasePermission):
             and request.user.is_authenticated
             and isinstance(request.auth, TokenAuthenticationModel)
             and request.user.has_perm("leasing.export_api_lease_area")
+        )
+
+
+class ExportVipunenMapLayerPermission(BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.auth, TokenAuthenticationModel)
+            and request.user.has_perm("leasing.export_api_vipunen_map_layer")
+        )
+
+    def has_object_permission(self, request, view, obj):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.auth, TokenAuthenticationModel)
+            and request.user.has_perm("leasing.export_api_vipunen_map_layer")
         )
 
 
@@ -199,3 +221,13 @@ class ExportLeaseAreaViewSet(ReadOnlyModelViewSet):
             )
         )
         return qs
+
+
+class ExportVipunenMapLayerViewSet(ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [
+        IsAuthenticated,
+        ExportVipunenMapLayerPermission,
+    ]
+    serializer_class = ExportVipunenMapLayerSerializer
+    queryset = VipunenMapLayer.objects.all()
