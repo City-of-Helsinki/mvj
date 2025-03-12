@@ -420,6 +420,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 if search_form.cleaned_data.get("has_geometry") is False:
                     queryset = queryset.exclude(lease_areas__geometry__isnull=False)
 
+            if search_form.cleaned_data.get("preparers_own_leases", False) is True:
+                queryset = queryset.filter(preparer=self.request.user)
+
             if search_form.cleaned_data.get("property_identifier"):
                 property_identifier = search_form.cleaned_data.get(
                     "property_identifier"
