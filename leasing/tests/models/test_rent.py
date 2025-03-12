@@ -2887,3 +2887,38 @@ def test_set_start_price_index_point_figure_with_last_year_index(
     rent.set_start_price_index_point_figure()
 
     assert rent.start_price_index_point_figure == expected_point_figure.value
+
+
+@pytest.mark.django_db
+def test_set_start_price_index_point_figure_last_year_index_not_found(
+    rent_factory,
+    lease_factory,
+    old_dwellings_in_housing_companies_price_index_factory,
+    index_point_figure_yearly_factory,
+):
+    """The point figure should be set to the latest available index
+    if the year previous to the LEASE's start date is not found."""
+    lease = lease_factory(start_date=date(year=2026, month=1, day=1))
+    old_dwellings_in_housing_companies_price_index = (
+        old_dwellings_in_housing_companies_price_index_factory()
+    )
+    index_point_figure_yearly_factory(
+        value=101, year=2021, index=old_dwellings_in_housing_companies_price_index
+    )
+    index_point_figure_yearly_factory(
+        value=102, year=2022, index=old_dwellings_in_housing_companies_price_index
+    )
+    index_point_figure_yearly_factory(
+        value=103, year=2023, index=old_dwellings_in_housing_companies_price_index
+    )
+    expected_point_figure = index_point_figure_yearly_factory(
+        value=104, year=2024, index=old_dwellings_in_housing_companies_price_index
+    )
+    rent: Rent = rent_factory(
+        lease=lease,
+        old_dwellings_in_housing_companies_price_index=old_dwellings_in_housing_companies_price_index,
+    )
+
+    rent.set_start_price_index_point_figure()
+
+    assert rent.start_price_index_point_figure == expected_point_figure.value

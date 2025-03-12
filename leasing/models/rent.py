@@ -841,12 +841,25 @@ class Rent(TimeStampedSafeDeleteModel):
         return False
 
     def set_start_price_index_point_figure(self):
+        last_year_figure = None
+        latest_figure = None
+
         if self.old_dwellings_in_housing_companies_price_index:
-            start_index_number_yearly = IndexPointFigureYearly.objects.get(
+            all_index_point_figures = IndexPointFigureYearly.objects.filter(
                 index=self.old_dwellings_in_housing_companies_price_index,
-                year=self.lease.start_date.year - 1,
-            )
-            self.start_price_index_point_figure = start_index_number_yearly.value
+            ).order_by("-year")
+
+            last_year_figure = all_index_point_figures.filter(
+                year=self.lease.start_date.year - 1
+            ).first()
+            latest_figure = all_index_point_figures.first()
+
+        if last_year_figure is not None and last_year_figure.value:
+            self.start_price_index_point_figure = last_year_figure.value
+        elif latest_figure is not None and latest_figure.value:
+            self.start_price_index_point_figure = latest_figure.value
+        else:
+            self.start_price_index_point_figure = None
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
