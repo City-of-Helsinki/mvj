@@ -204,9 +204,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
 
 class ExportVipunenMapLayerSerializer(serializers.ModelSerializer):
     tree_id = serializers.IntegerField(source="id")
-    parent_tree_id = serializers.PrimaryKeyRelatedField(
-        pk_field="parent", queryset=VipunenMapLayer.objects.all(), allow_null=True
-    )
+    parent_tree_id = serializers.IntegerField(source="parent_id", allow_null=True)
     name_fi = serializers.CharField()
     name_sv = serializers.CharField(allow_null=True)
     name_en = serializers.CharField(allow_null=True)
