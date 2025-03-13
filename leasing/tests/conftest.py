@@ -66,6 +66,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
+from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import (
     IndexPointFigureYearly,
@@ -397,6 +398,12 @@ class RentIntendedUseFactory(factory.django.DjangoModelFactory):
 class OldDwellingsPriceIndexFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = OldDwellingsInHousingCompaniesPriceIndex
+
+
+@register
+class VipunenMapLayerFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = VipunenMapLayer
 
 
 @pytest.fixture
