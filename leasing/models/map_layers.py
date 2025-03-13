@@ -15,18 +15,14 @@ class HexColorValidator(RegexValidator):
 class VipunenMapLayer(models.Model):
     """Tree structure of categories for Vipunen map layers."""
 
-    filter_by_lease_type = models.ForeignKey(
+    filter_by_lease_type = models.ManyToManyField(
         "leasing.LeaseType",
-        on_delete=models.SET_NULL,
         related_name="map_layers",
-        null=True,
         blank=True,
     )
-    filter_by_intended_use = models.ForeignKey(
+    filter_by_intended_use = models.ManyToManyField(
         "leasing.IntendedUse",
-        on_delete=models.SET_NULL,
         related_name="map_layers",
-        null=True,
         blank=True,
     )
     filter_by_service_unit = models.ForeignKey(
