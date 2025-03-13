@@ -803,7 +803,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
     list_filter = ("parent",)
     search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
 
-    def hierarchical_name(self, obj):
+    def hierarchical_name(self, obj: VipunenMapLayer):
         return str(obj)
 
     def get_queryset(self, request):
