@@ -86,18 +86,20 @@ class VipunenMapLayer(models.Model):
 
         layer_ids_qs = cls.objects.none()
         if lease_area.lease.type:
-            lease_type_qs = cls.objects.filter(lease_type=lease_area.lease.type)
+            lease_type_qs = cls.objects.filter(
+                filter_by_lease_type=lease_area.lease.type
+            )
             layer_ids_qs = layer_ids_qs.union(lease_type_qs)
 
         if lease_area.lease.intended_use:
             intended_use_qs = cls.objects.filter(
-                intended_use=lease_area.lease.intended_use
+                filter_by_intended_use=lease_area.lease.intended_use
             )
             layer_ids_qs = layer_ids_qs.union(intended_use_qs)
 
         if lease_area.lease.service_unit:
             service_unit_qs = cls.objects.filter(
-                service_unit=lease_area.lease.service_unit
+                filter_by_service_unit=lease_area.lease.service_unit
             )
             layer_ids_qs = layer_ids_qs.union(service_unit_qs)
 
