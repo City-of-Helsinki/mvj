@@ -1711,6 +1711,30 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         if self.locked_at is None:
             super().delete(*args, **kwargs)
 
+    def get_index_adjusted_amount_per_area(self):
+        """
+        For new indexes (lease 2022), the amount per area is already adjusted.
+        For old indexes, the amount per area needs to be adjusted by index number.
+        """
+        if self.type == BasisOfRentType.LEASE2022:
+            return self.amount_per_area
+
+        index_ratio = Decimal(1)
+        if self.index:
+            index_ratio = Decimal(self.index.number / 100)
+
+        return self.amount_per_area * index_ratio
+
+    def get_re_lease_subvention_percent(self):
+        subvention_base_percent = self.subvention_base_percent | 0
+        subvention_graduated_percent = self.subvention_graduated_percent | 0
+        percent = (
+            1
+            - (1 - subvention_base_percent / 100)
+            * (1 - subvention_graduated_percent / 100)
+        ) * 100
+        return percent
+
     def calculate_initial_year_rent(self):
         if not self.area or not self.amount_per_area:
             return Decimal(0)
@@ -1727,6 +1751,33 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         initial_year_rent = base_rent * index_ratio
 
         return initial_year_rent
+
+    def calculate_subvented_initial_year_rent(self):
+        initial_year_rent = self.calculate_initial_year_rent()
+
+        if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
+            management_subventions = self.management_subventions.all()
+            if management_subventions:
+                total_subvention_amount = Decimal(0)
+                for management_subvention in management_subventions:
+                    total_subvention_amount += management_subvention.subvention_amount
+
+                amount_per_area = self.get_index_adjusted_amount_per_area()
+
+                subvention_percent = round(
+                    (1 - (total_subvention_amount / amount_per_area)) * 100, 2
+                )
+
+                discount_multiplier = (100 - subvention_percent) / 100
+
+                return round(initial_year_rent, 2) * discount_multiplier
+
+        # TODO: Find test cases for testing re-lease subvention
+        if self.subvention_type == SubventionType.RE_LEASE:
+            subvention_percent = self.get_re_lease_subvention_percent()
+            return initial_year_rent * (1 - subvention_percent / 100)
+
+        return round(initial_year_rent, 2)
 
     def calculate_discounted_rent(self):
         initial_year_rent = self.calculate_initial_year_rent()
@@ -1754,11 +1805,11 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                 for management_subvention in management_subventions:
                     total_subvention_amount += management_subvention.subvention_amount
 
-            subsidy_amount = self.area * (
-                self.amount_per_area * index_ratio - total_subvention_amount
-            )
-            if self.profit_margin_percentage:
-                subsidy_amount *= self.profit_margin_percentage / 100
+                subsidy_amount = self.area * (
+                    self.amount_per_area * index_ratio - total_subvention_amount
+                )
+                if self.profit_margin_percentage:
+                    subsidy_amount *= self.profit_margin_percentage / 100
         elif self.subvention_type == SubventionType.RE_LEASE:
             initial_year_rent = self.calculate_initial_year_rent()
             base_percent = (

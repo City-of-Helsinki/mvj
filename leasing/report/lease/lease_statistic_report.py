@@ -264,28 +264,30 @@ def get_initial_year_rent(lease):
     return amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
-def get_subsidised_rent(lease):
-    subsidy_amount = Decimal(0)
-    initial_year_rent = Decimal(0)
+def get_subvented_initial_year_rent(lease):
+    subvented_rent_total = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
     ):
-        initial_year_rent += basis_of_rent.calculate_initial_year_rent()
-        subsidy_amount += basis_of_rent.calculate_subsidy()
+        subvented_rent_total += basis_of_rent.calculate_subvented_initial_year_rent()
 
-    return (initial_year_rent - subsidy_amount).quantize(
-        Decimal(".01"), rounding=ROUND_HALF_UP
-    )
+    return subvented_rent_total.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_subsidy_amount(lease):
-    subsidy_amount = Decimal(0)
+    initial_year_rent_total = Decimal(0)
+    subvented_initial_year_rent_total = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
     ):
-        subsidy_amount += basis_of_rent.calculate_subsidy()
+        initial_year_rent_total += basis_of_rent.calculate_initial_year_rent()
+        subvented_initial_year_rent_total += (
+            basis_of_rent.calculate_subvented_initial_year_rent()
+        )
 
-    return subsidy_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+    return (initial_year_rent_total - subvented_initial_year_rent_total).quantize(
+        Decimal(".01"), rounding=ROUND_HALF_UP
+    )
 
 
 def get_subsidy_percent(lease):
@@ -370,7 +372,7 @@ def get_temporary_discount_percentage(lease):
 
 def get_temporary_discount_amount(lease):
     temporary_discount_percentage = get_temporary_discount_percentage(lease)
-    subsidised_rent = get_subsidised_rent(lease)
+    subsidised_rent = get_subvented_initial_year_rent(lease)
 
     return (subsidised_rent / 100 * temporary_discount_percentage).quantize(
         Decimal(".01"), rounding=ROUND_HALF_UP
@@ -538,7 +540,7 @@ class LeaseStatisticReport(AsyncReportBase):
         # Subventoitu Alkuvuosivuokra (ind)
         "subsidised_rent": {
             "label": _("Subsidised initial year rent"),
-            "source": get_subsidised_rent,
+            "source": get_subvented_initial_year_rent,
             "format": "money",
             "width": 13,
         },
