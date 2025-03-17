@@ -689,10 +689,11 @@ class PeriodicRentAdjustmentType(Enum):
     """
     In Finnish: Tasotarkistuksen tyyppi
 
-    The rents that have an old_dwellings_in_housing_companies_price_index
-    also have assigned to them the type of the index that is used to calculate
-    the interval of the old_dwellings_in_housing_companies_price_index check
-    of the rent price.
+    Periodic rent adjustment type dictates the intervals when the rent price
+    is adjusted.
+    - 20/20 means that the rent price is adjusted every 20 years.
+    - 20/10 means that the rent price is adjusted after the first 20 years, and
+      then every 10 years afterwards.
     """
 
     TASOTARKISTUS_20_20 = "TASOTARKISTUS_20_20"
