@@ -111,8 +111,8 @@ from leasing.viewsets.lease_additional_views import (
     LeaseSetRentInfoCompletionStateView,
 )
 from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
-from leasing.viewsets.old_dwellings_in_housing_companies_price_index import (
-    OldDwellingsInHousingCompaniesPriceIndexViewSet,
+from leasing.viewsets.periodic_rent_adjustment_price_index import (
+    PeriodicRentAdjustmentPriceIndexViewSet,
 )
 from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.service_unit import ServiceUnitViewSet
@@ -207,8 +207,8 @@ router.register(r"meeting_memo", MeetingMemoViewset)
 router.register(r"municipality", MunicipalityViewSet)
 router.register(r"notice_period", NoticePeriodViewSet)
 router.register(
-    r"old_dwellings_in_housing_companies_price_index",
-    OldDwellingsInHousingCompaniesPriceIndexViewSet,
+    r"periodic_rent_adjustment_price_index",
+    PeriodicRentAdjustmentPriceIndexViewSet,
 )
 router.register(r"plan_unit", PlanUnitViewSet)
 router.register(

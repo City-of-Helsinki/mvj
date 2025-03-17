@@ -66,11 +66,11 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
-from leasing.models.receivable_type import ReceivableType
-from leasing.models.rent import (
+from leasing.models.periodic_rent_adjustment import (
     IndexPointFigureYearly,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
+from leasing.models.receivable_type import ReceivableType
 from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import TenantRentShare
 

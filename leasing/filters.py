@@ -5,17 +5,15 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
 
-from leasing.models import (
-    CollectionCourtDecision,
-    CollectionLetter,
-    CollectionNote,
-    OldDwellingsInHousingCompaniesPriceIndex,
-)
+from leasing.models import CollectionCourtDecision, CollectionLetter, CollectionNote
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.models.land_use_agreement import (
     LandUseAgreementInvoice,
     LandUseAgreementInvoiceRow,
     LandUseAgreementInvoiceSet,
+)
+from leasing.models.periodic_rent_adjustment import (
+    OldDwellingsInHousingCompaniesPriceIndex,
 )
 from leasing.models.receivable_type import ReceivableType
 

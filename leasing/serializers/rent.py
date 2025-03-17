@@ -14,9 +14,7 @@ from leasing.models import (
     FixedInitialYearRent,
     Index,
     IndexAdjustedRent,
-    IndexPointFigureYearly,
     LeaseBasisOfRent,
-    OldDwellingsInHousingCompaniesPriceIndex,
     PayableRent,
     ReceivableType,
     Rent,
@@ -33,6 +31,10 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     TemporarySubvention,
 )
+from leasing.serializers.periodic_rent_adjustment import (
+    PeriodicRentAdjustmentCreateUpdateSerializer,
+    PeriodicRentAdjustmentSerializer,
+)
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from users.serializers import UserSerializer
 
@@ -48,31 +50,6 @@ from .utils import (
 class RentIntendedUseSerializer(NameModelSerializer):
     class Meta:
         model = RentIntendedUse
-        fields = "__all__"
-
-
-class IndexPointFigureYearlySerializer(serializers.Serializer):
-    id = serializers.IntegerField(required=False)
-    value = serializers.DecimalField(max_digits=8, decimal_places=1)
-    year = serializers.IntegerField()
-    region = serializers.CharField(max_length=255, required=False, allow_null=True)
-    comment = serializers.CharField(required=False, allow_null=True)
-
-    class Meta:
-        model = IndexPointFigureYearly
-        fields = ("id", "value", "year", "region", "comment")
-
-
-class OldDwellingsInHousingCompaniesPriceIndexSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
-):
-    id = serializers.IntegerField(required=False)
-    point_figures = IndexPointFigureYearlySerializer(
-        many=True, required=False, allow_null=True
-    )
-
-    class Meta:
-        model = OldDwellingsInHousingCompaniesPriceIndex
         fields = "__all__"
 
 
@@ -415,10 +392,8 @@ class RentSerializer(
         read_only=True,
     )
     override_receivable_type = ReceivableTypeSerializer(required=False, allow_null=True)
-    old_dwellings_in_housing_companies_price_index = (
-        OldDwellingsInHousingCompaniesPriceIndexSerializer(
-            required=False, allow_null=True
-        )
+    periodic_rent_adjustment = PeriodicRentAdjustmentSerializer(
+        required=False, allow_null=True
     )
 
     class Meta:
@@ -452,8 +427,7 @@ class RentSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
-            "old_dwellings_in_housing_companies_price_index",
-            "periodic_rent_adjustment_type",
+            "periodic_rent_adjustment",
         )
 
     def override_permission_check_field_name(self, field_name):
@@ -493,8 +467,7 @@ class RentSimpleSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
-            "old_dwellings_in_housing_companies_price_index",
-            "periodic_rent_adjustment_type",
+            "periodic_rent_adjustment",
         )
 
 
@@ -529,12 +502,8 @@ class RentCreateUpdateSerializer(
         required=False,
         allow_null=True,
     )
-    old_dwellings_in_housing_companies_price_index = InstanceDictPrimaryKeyRelatedField(
-        instance_class=OldDwellingsInHousingCompaniesPriceIndex,
-        queryset=OldDwellingsInHousingCompaniesPriceIndex.objects.all(),
-        related_serializer=OldDwellingsInHousingCompaniesPriceIndexSerializer,
-        required=False,
-        allow_null=True,
+    periodic_rent_adjustment = PeriodicRentAdjustmentCreateUpdateSerializer(
+        required=False, allow_null=True
     )
 
     class Meta:
@@ -567,8 +536,7 @@ class RentCreateUpdateSerializer(
             "manual_ratio",
             "manual_ratio_previous",
             "override_receivable_type",
-            "old_dwellings_in_housing_companies_price_index",
-            "periodic_rent_adjustment_type",
+            "periodic_rent_adjustment",
         )
 
     def validate(self, rent_data: dict):

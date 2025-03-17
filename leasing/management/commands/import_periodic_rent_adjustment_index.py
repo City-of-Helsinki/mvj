@@ -7,7 +7,7 @@ import requests
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
 
-from leasing.models.rent import (
+from leasing.models.periodic_rent_adjustment import (
     IndexPointFigureYearly,
     OldDwellingsInHousingCompaniesPriceIndex,
 )

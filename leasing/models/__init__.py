@@ -101,6 +101,11 @@ from .leasehold_transfer import (
     LeaseholdTransferParty,
     LeaseholdTransferProperty,
 )
+from .periodic_rent_adjustment import (
+    IndexPointFigureYearly,
+    OldDwellingsInHousingCompaniesPriceIndex,
+    PeriodicRentAdjustment,
+)
 from .receivable_type import ReceivableType
 from .rent import (
     ContractRent,
@@ -108,7 +113,6 @@ from .rent import (
     FixedInitialYearRent,
     Index,
     IndexAdjustedRent,
-    IndexPointFigureYearly,
     LeaseBasisOfRent,
     LeaseBasisOfRentManagementSubvention,
     LeaseBasisOfRentTemporarySubvention,
@@ -116,7 +120,6 @@ from .rent import (
     LegacyIndexCalculation,
     ManagementSubvention,
     ManagementSubventionFormOfManagement,
-    OldDwellingsInHousingCompaniesPriceIndex,
     PayableRent,
     Rent,
     RentAdjustment,
@@ -231,6 +234,7 @@ __all__ = [
     "NoticePeriod",
     "OldDwellingsInHousingCompaniesPriceIndex",
     "PayableRent",
+    "PeriodicRentAdjustment",
     "PlanUnit",
     "PlanUnitIntendedUse",
     "PlanUnitState",

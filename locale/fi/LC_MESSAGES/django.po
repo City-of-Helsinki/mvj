@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-10 13:01+0200\n"
+"POT-Creation-Date: 2025-03-13 13:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2580,14 +2580,6 @@ msgstr "Arkistointiaika"
 msgid "Archived note"
 msgstr "Arkistointihuomautus"
 
-msgctxt "Model name"
-msgid "Rent intended use"
-msgstr "Vuokran käyttötarkoitus"
-
-msgctxt "Model name"
-msgid "Rent intended uses"
-msgstr "Vuokran käyttötarkoitus"
-
 msgid "Index code"
 msgstr "Indeksin tunniste"
 
@@ -2616,6 +2608,37 @@ msgstr "Vanhojen osakeasuntojen hintaindeksi"
 msgctxt "model name"
 msgid "price indexes of old dwellings in housing companies"
 msgstr "Vanhojen osakeasuntojen hintaindeksit"
+
+msgid "Value"
+msgstr "Arvo"
+
+msgid "Comment"
+msgstr "Kommentti"
+
+msgctxt "model name"
+msgid "index point figure"
+msgstr "indeksipisteluku"
+
+msgctxt "model name"
+msgid "index point figures"
+msgstr "indeksipisteluvut"
+
+msgid "Old dwellings in housing companies price index"
+msgstr "Vanhojen osakeasuntojen hintaindeksi"
+
+msgid "Periodic Rent Adjustment Type"
+msgstr "Tasotarkistuksen tyyppi"
+
+msgid "Price index point figure at the start of the rent"
+msgstr "Hintaindeksin pisteluku vuokran alussa"
+
+msgctxt "Model name"
+msgid "Rent intended use"
+msgstr "Vuokran käyttötarkoitus"
+
+msgctxt "Model name"
+msgid "Rent intended uses"
+msgstr "Vuokran käyttötarkoitus"
 
 msgid "Cycle"
 msgstr "Vuokrakausi"
@@ -2668,14 +2691,8 @@ msgstr ""
 msgid "Override receivable type"
 msgstr "Korvaava saamislaji"
 
-msgid "Old dwellings in housing companies price index"
-msgstr "Vanhojen osakeasuntojen hintaindeksi"
-
-msgid "Periodic Rent Adjustment Type"
-msgstr "Vanhojen osakeasuntojen hintaindeksin tyyppi"
-
-msgid "Start price index point figure"
-msgstr "Tasotarkistusindeksin pisteluku vuokran alkaessa"
+msgid "Periodic rent adjustment"
+msgstr "Tasotarkistus"
 
 msgctxt "Model name"
 msgid "Rent"
@@ -2850,20 +2867,6 @@ msgstr ""
 
 msgid "Index 1938:8-1939:7=100"
 msgstr ""
-
-msgid "Value"
-msgstr "Arvo"
-
-msgid "Comment"
-msgstr "Kommentti"
-
-msgctxt "model name"
-msgid "index number"
-msgstr "Indeksipisteluku"
-
-msgctxt "model name"
-msgid "index numbers"
-msgstr "Indeksipisteluvut"
 
 msgid "Lease basis of rent"
 msgstr "Vuokrauksen vuokrausperiaate"
@@ -3358,12 +3361,6 @@ msgstr "Osto-oikeus"
 
 msgid "Matti report"
 msgstr "MATTI-raportti"
-
-msgid "Lease statistics report II"
-msgstr "Vuokrausten tilastoraportti II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Lista vuokrauksista ja niiden vuokranperusteista"
 
 msgid "Rent adjustments"
 msgstr "Alennukset/Korotukset"

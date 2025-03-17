@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-10 13:01+0200\n"
+"POT-Creation-Date: 2025-03-13 13:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2579,14 +2579,6 @@ msgstr "Arkiveringstid"
 msgid "Archived note"
 msgstr "Arkiveringsanmärkning"
 
-msgctxt "Model name"
-msgid "Rent intended use"
-msgstr "Användningsändamål för arrende"
-
-msgctxt "Model name"
-msgid "Rent intended uses"
-msgstr "Användningsändamål för arrende"
-
 msgid "Index code"
 msgstr ""
 
@@ -2615,6 +2607,37 @@ msgstr ""
 msgctxt "model name"
 msgid "price indexes of old dwellings in housing companies"
 msgstr ""
+
+msgid "Value"
+msgstr "Värde"
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgctxt "model name"
+msgid "index point figure"
+msgstr "indexpunktsfigur"
+
+msgctxt "model name"
+msgid "index point figures"
+msgstr "indexpunktsfigurer"
+
+msgid "Old dwellings in housing companies price index"
+msgstr "Prisindex för äldre bostäder i bostadsrättsföreningar"
+
+msgid "Periodic Rent Adjustment Type"
+msgstr "Periodisk hyresjustering"
+
+msgid "Price index point figure at the start of the rent"
+msgstr "Prisindexpunktsfigur vid hyresperiodens början"
+
+msgctxt "Model name"
+msgid "Rent intended use"
+msgstr "Användningsändamål för arrende"
+
+msgctxt "Model name"
+msgid "Rent intended uses"
+msgstr "Användningsändamål för arrende"
 
 msgid "Cycle"
 msgstr "Arrendeperiod"
@@ -2667,13 +2690,7 @@ msgstr "Slutdatum för arrendebetalning"
 msgid "Override receivable type"
 msgstr "Ersättande Fordringsart"
 
-msgid "Old dwellings in housing companies price index"
-msgstr ""
-
-msgid "Periodic Rent Adjustment Type"
-msgstr ""
-
-msgid "Start price index point figure"
+msgid "Periodic rent adjustment"
 msgstr ""
 
 msgctxt "Model name"
@@ -2851,20 +2868,6 @@ msgstr "Index 1914:1-6=100"
 
 msgid "Index 1938:8-1939:7=100"
 msgstr "Index 1938:8–1939:7=100"
-
-msgid "Value"
-msgstr "Värde"
-
-msgid "Comment"
-msgstr ""
-
-msgctxt "model name"
-msgid "index number"
-msgstr ""
-
-msgctxt "model name"
-msgid "index numbers"
-msgstr ""
 
 msgid "Lease basis of rent"
 msgstr "Arrenderingsprincip för arrenderingen"
@@ -3355,12 +3358,6 @@ msgstr "Köprätt"
 
 msgid "Matti report"
 msgstr "MATTI-rapport"
-
-msgid "Lease statistics report II"
-msgstr "Statistikrapport för arrenderingar II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Förteckning över arrenderingar och grunderna för deras arrenden"
 
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
