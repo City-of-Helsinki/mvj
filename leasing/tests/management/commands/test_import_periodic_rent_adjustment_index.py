@@ -130,7 +130,13 @@ def test_get_update_date_valid(metadata_real_data: list[MetadataItem]):
 
 @pytest.mark.parametrize(
     "index_number, expected",
-    [("100.00", 100.00), ("0", 0), ("123456.1234", 123456.1234), (".", None)],
+    [
+        ("100.00", 100.00),
+        ("0", 0),
+        ("123456.1234", 123456.1234),
+        (".", None),
+        ("invalid value", None),
+    ],
 )
 def test_cast_index_number_to_float_or_none(index_number: str, expected: int | None):
     """Happy path: index number is a proper number that can be cast to float,
@@ -215,7 +221,9 @@ def test_create_or_update_index():
 
 
 @pytest.mark.django_db
-def test_create_or_update_index_number(old_dwellings_price_index_factory):
+def test_create_or_update_index_number(
+    old_dwellings_in_housing_companies_price_index_factory,
+):
     """Happy path: new index numbers are saved to DB, and are updated when using
     the same index id and year.
     """
@@ -251,19 +259,22 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
                 {"key": ["2021", "pks"], "values": ["100.1"]},
                 {"key": ["2022", "pks"], "values": ["100.2"]},
                 {"key": ["2023", "pks"], "values": ["100.3"]},
-                {"key": ["2024", "pks"], "values": ["100.4"]},
+                {
+                    "key": ["2024", "pks"],
+                    "values": ["."],  # Not saved because not a number
+                },
             ],
             "metadata": [],
         },
     )
-    index = old_dwellings_price_index_factory(
+    index = old_dwellings_in_housing_companies_price_index_factory(
         code="test_index_code_1", name="Test index 1", url="https://test.url.1"
     )
     numbers_updated, numbers_created = _update_or_create_index_numbers(
         creation_input, creation_data, index
     )
     assert numbers_updated == 0
-    assert numbers_created == 4
+    assert numbers_created == 3
 
     # Case 2: update an existing number
     update_data = deepcopy(creation_data)
@@ -273,7 +284,7 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
     )
     # Currently all numbers are updated every time, regardless of changes in content.
     # If you want to avoid unnecessary updates, write logic to skip update when nothing changes.
-    assert numbers_updated == 4
+    assert numbers_updated == 3
     assert numbers_created == 0
 
 

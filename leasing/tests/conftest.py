@@ -393,12 +393,6 @@ class RentIntendedUseFactory(factory.django.DjangoModelFactory):
         model = RentIntendedUse
 
 
-@register
-class OldDwellingsPriceIndexFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = OldDwellingsInHousingCompaniesPriceIndex
-
-
 @pytest.fixture
 def area_test_data(
     area_factory,

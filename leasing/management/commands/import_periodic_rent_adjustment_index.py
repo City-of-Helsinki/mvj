@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 from typing import Callable, TypedDict
 
 import requests
@@ -10,6 +11,8 @@ from leasing.models.rent import (
     IndexPointFigureYearly,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class IndexInput(TypedDict):
@@ -316,7 +319,16 @@ def _update_or_create_index_numbers(
 
     for dp in data_points:
         year = int(dp["key"][year_key_pos])
-        value = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
+
+        value_str = dp["values"][number_value_pos]
+        value = _cast_index_number_to_float_or_none(value_str)
+        if value is None:
+            logger.info(
+                f"No point figure value for year {year}: '{value_str}'. "
+                "Won't save the figure to avoid possibly overwriting a valid value."
+            )
+            continue
+
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
         # Preliminary figure point values (indeksipistelukujen ennakkoarvot)
@@ -324,6 +336,7 @@ def _update_or_create_index_numbers(
         # preliminary values will contain a comment like "* ennakkotieto\r\n".
         # If future requirements state that preliminary values should not be
         # saved or used in our system, add exclusion logic here.
+
         _, created = IndexPointFigureYearly.objects.update_or_create(
             index=index,
             year=year,
@@ -388,12 +401,12 @@ def _get_update_date(metadata: MetadataItem | dict) -> datetime.datetime | None:
 
 
 def _cast_index_number_to_float_or_none(number_str: str) -> float | None:
-    """Casts the number from string to float, or None if ".".
+    """Casts the number from string to float, or None if not a number.
 
     Tilastokeskus API substitutes missing index numbers with the period
     character (".").
     """
-    if number_str == ".":
-        return None
-    else:
+    try:
         return float(number_str)
+    except ValueError:
+        return None
