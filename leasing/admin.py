@@ -800,6 +800,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
     )
     list_filter = ("parent",)
     search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
+    autocomplete_fields = ["filter_by_lease_type", "filter_by_intended_use"]
 
     def hierarchical_name(self, obj: VipunenMapLayer):
         return str(obj)
