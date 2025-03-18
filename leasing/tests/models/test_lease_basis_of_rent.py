@@ -2,6 +2,8 @@ from decimal import Decimal
 
 import pytest
 
+from leasing.enums import AreaUnit, BasisOfRentType, SubventionType
+
 
 @pytest.mark.django_db
 def test_calculate_subvented_initial_year_rent_form_of_management(
@@ -19,13 +21,13 @@ def test_calculate_subvented_initial_year_rent_form_of_management(
         lease=lease_factory(),
         intended_use_id=1,
         index=index,
-        type="lease",
+        type=BasisOfRentType.LEASE,
         area=Decimal(2803.00),
-        area_unit="kem2",
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
         amount_per_area=Decimal(37.00),
         profit_margin_percentage=Decimal(4.00),
         discount_percentage=Decimal(37.000000),
-        subvention_type="form_of_management",
+        subvention_type=SubventionType.FORM_OF_MANAGEMENT,
     )
     lease_basis_of_rent_management_subvention = (  # noqa: F841
         lease_basis_of_rent_management_subvention_factory(
@@ -55,14 +57,14 @@ def test_calculate_subvented_initial_year_rent_re_lease(
     lease_basis_of_rent = lease_basis_of_rent_factory(
         lease=lease_factory(),
         intended_use_id=1,
-        type="lease",
+        type=BasisOfRentType.LEASE,
         index=index,
         area=Decimal(17987.00),
-        area_unit="kem2",
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
         amount_per_area=Decimal(49.00),
         profit_margin_percentage=Decimal(5.00),
         discount_percentage=Decimal(27.800000),
-        subvention_type="re_lease",
+        subvention_type=SubventionType.RE_LEASE,
         subvention_base_percent=Decimal(5.00),
         subvention_graduated_percent=Decimal(5.00),
     )
