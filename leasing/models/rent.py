@@ -1778,7 +1778,6 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
                 return round(initial_year_rent, 2) * discount_multiplier
 
-        # TODO: Find test cases for testing re-lease subvention
         if self.subvention_type == SubventionType.RE_LEASE:
             subvention_percent = self.get_re_lease_subvention_percent()
             return initial_year_rent * (1 - subvention_percent / 100)
