@@ -28,6 +28,16 @@ def test_calculate_subvented_initial_year_rent_form_of_management(
         discount_percentage=Decimal(37.000000),
         subvention_type=SubventionType.FORM_OF_MANAGEMENT,
     )
+
+    # If there are no management subventions, the subvented initial year rent
+    # should be the same as the initial year rent
+    assert round(
+        lease_basis_of_rent.calculate_subvented_initial_year_rent(), 2
+    ) == round(lease_basis_of_rent.calculate_initial_year_rent(), 2)
+
+    # In the case when there is a management subvention,
+    # expect a certain number subvented initial year rent
+    # with the accuracy of two decimals
     lease_basis_of_rent_management_subvention_factory(
         lease_basis_of_rent=lease_basis_of_rent,
         subvention_amount=516.45,

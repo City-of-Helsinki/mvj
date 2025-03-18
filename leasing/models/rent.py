@@ -1763,20 +1763,22 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
             management_subventions = self.management_subventions.all()
-            if management_subventions:
-                total_subvention_amount = Decimal(0)
-                for management_subvention in management_subventions:
-                    total_subvention_amount += management_subvention.subvention_amount
+            if not management_subventions:
+                return round(initial_year_rent, 2)
 
-                amount_per_area = self.get_index_adjusted_amount_per_area()
+            total_subvention_amount = Decimal(0)
+            for management_subvention in management_subventions:
+                total_subvention_amount += management_subvention.subvention_amount
 
-                subvention_percent = round(
-                    (1 - (total_subvention_amount / amount_per_area)) * 100, 2
-                )
+            amount_per_area = self.get_index_adjusted_amount_per_area()
 
-                discount_multiplier = (100 - subvention_percent) / 100
+            subvention_percent = round(
+                (1 - (total_subvention_amount / amount_per_area)) * 100, 2
+            )
 
-                return round(initial_year_rent, 2) * discount_multiplier
+            discount_multiplier = (100 - subvention_percent) / 100
+
+            return round(initial_year_rent, 2) * discount_multiplier
 
         if self.subvention_type == SubventionType.RE_LEASE:
             subvention_percent = self.get_re_lease_subvention_percent()
