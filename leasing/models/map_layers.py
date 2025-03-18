@@ -80,23 +80,59 @@ class VipunenMapLayer(models.Model):
         """Get all map layer ids for a lease area,
         based on the matching attributes of LeaseType, IntendedUse and ServiceUnit."""
 
-        layer_ids_qs = cls.objects.none()
-        if lease_area.lease.type:
-            lease_type_qs = cls.objects.filter(
-                filter_by_lease_type=lease_area.lease.type
-            )
-            layer_ids_qs = layer_ids_qs.union(lease_type_qs)
+        map_layers = (
+            cls.objects.all()
+            .select_related("filter_by_service_unit")
+            .prefetch_related("filter_by_lease_type", "filter_by_intended_use")
+        )
 
-        if lease_area.lease.intended_use:
-            intended_use_qs = cls.objects.filter(
-                filter_by_intended_use=lease_area.lease.intended_use
-            )
-            layer_ids_qs = layer_ids_qs.union(intended_use_qs)
+        matching_layer_ids = set()
 
-        if lease_area.lease.service_unit:
-            service_unit_qs = cls.objects.filter(
-                filter_by_service_unit=lease_area.lease.service_unit
-            )
-            layer_ids_qs = layer_ids_qs.union(service_unit_qs)
+        lease_type_id = lease_area.lease.type.id if lease_area.lease.type else None
+        lease_intended_use_id = (
+            lease_area.lease.intended_use.id if lease_area.lease.intended_use else None
+        )
+        lease_service_unit_id = (
+            lease_area.lease.service_unit.id if lease_area.lease.service_unit else None
+        )
 
-        return layer_ids_qs.values_list("id", flat=True)
+        for layer in map_layers:
+            filter_by_lease_type_ids: set = {
+                lease_type.id for lease_type in layer.filter_by_lease_type.all()
+            }
+            filter_by_intended_use_ids: set = {
+                intended_use.id for intended_use in layer.filter_by_intended_use.all()
+            }
+            has_lease_type_filter = bool(filter_by_lease_type_ids)
+            has_intended_use_filter = bool(filter_by_intended_use_ids)
+            has_service_unit_filter = layer.filter_by_service_unit is not None
+
+            # If no filters are set on this layer, it doesn't match any LeaseArea
+            if not (
+                has_lease_type_filter
+                or has_intended_use_filter
+                or has_service_unit_filter
+            ):
+                continue
+
+            if has_lease_type_filter and (
+                not lease_type_id or lease_type_id not in filter_by_lease_type_ids
+            ):
+                continue
+
+            if has_intended_use_filter and (
+                not lease_intended_use_id
+                or lease_intended_use_id not in filter_by_intended_use_ids
+            ):
+                continue
+
+            if has_service_unit_filter and (
+                not lease_service_unit_id
+                or layer.filter_by_service_unit.id != lease_service_unit_id
+            ):
+                continue
+
+            # The LeaseArea matched all filters set on this map layer
+            matching_layer_ids.add(layer.id)
+
+        return list(matching_layer_ids)
