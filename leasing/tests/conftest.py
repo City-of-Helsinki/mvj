@@ -252,12 +252,6 @@ class UiDataFactory(factory.django.DjangoModelFactory):
 
 
 @register
-class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = LeaseBasisOfRent
-
-
-@register
 class LeaseBasisOfRentManagementSubventionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
@@ -406,6 +400,14 @@ class IntendedUseFactory(factory.django.DjangoModelFactory):
 class RentIntendedUseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RentIntendedUse
+
+
+@register
+class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
+    intended_use = factory.SubFactory(RentIntendedUseFactory)
+
+    class Meta:
+        model = LeaseBasisOfRent
 
 
 @register

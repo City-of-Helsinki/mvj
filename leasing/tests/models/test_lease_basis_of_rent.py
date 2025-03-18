@@ -19,7 +19,6 @@ def test_calculate_subvented_initial_year_rent_form_of_management(
     )
     lease_basis_of_rent = lease_basis_of_rent_factory(
         lease=lease_factory(),
-        intended_use_id=1,
         index=index,
         type=BasisOfRentType.LEASE,
         area=Decimal(2803.00),
@@ -54,7 +53,6 @@ def test_calculate_subvented_initial_year_rent_re_lease(
     )
     lease_basis_of_rent = lease_basis_of_rent_factory(
         lease=lease_factory(),
-        intended_use_id=1,
         type=BasisOfRentType.LEASE,
         index=index,
         area=Decimal(17987.00),
