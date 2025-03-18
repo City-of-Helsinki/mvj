@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_calculate_subvented_initial_year_rent(
+def test_calculate_subvented_initial_year_rent_form_of_management(
     index_factory,
     lease_basis_of_rent_factory,
     lease_basis_of_rent_management_subvention_factory,
@@ -19,6 +19,7 @@ def test_calculate_subvented_initial_year_rent(
         lease=lease_factory(),
         intended_use_id=1,
         index=index,
+        type="lease",
         area=Decimal(2803.00),
         area_unit="kem2",
         amount_per_area=Decimal(37.00),
