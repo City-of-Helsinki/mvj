@@ -29,12 +29,10 @@ def test_calculate_subvented_initial_year_rent_form_of_management(
         discount_percentage=Decimal(37.000000),
         subvention_type=SubventionType.FORM_OF_MANAGEMENT,
     )
-    lease_basis_of_rent_management_subvention = (  # noqa: F841
-        lease_basis_of_rent_management_subvention_factory(
-            lease_basis_of_rent=lease_basis_of_rent,
-            subvention_amount=516.45,
-            management_id=1,
-        )
+    lease_basis_of_rent_management_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        subvention_amount=516.45,
+        management_id=1,
     )
 
     expected_subvented_initial_year_rent = Decimal(57903.92)
