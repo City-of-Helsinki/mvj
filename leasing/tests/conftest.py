@@ -69,7 +69,9 @@ from leasing.models.land_use_agreement import (
 from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import (
+    Index,
     IndexPointFigureYearly,
+    LeaseBasisOfRentManagementSubvention,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
 from leasing.models.service_unit import ServiceUnitGroupMapping
@@ -107,6 +109,12 @@ class AreaFactory(factory.django.DjangoModelFactory):
 class AreaSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AreaSource
+
+
+@register
+class IndexFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Index
 
 
 @register
@@ -244,9 +252,9 @@ class UiDataFactory(factory.django.DjangoModelFactory):
 
 
 @register
-class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
+class LeaseBasisOfRentManagementSubventionFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = LeaseBasisOfRent
+        model = LeaseBasisOfRentManagementSubvention
 
 
 @register
@@ -392,6 +400,14 @@ class IntendedUseFactory(factory.django.DjangoModelFactory):
 class RentIntendedUseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RentIntendedUse
+
+
+@register
+class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
+    intended_use = factory.SubFactory(RentIntendedUseFactory)
+
+    class Meta:
+        model = LeaseBasisOfRent
 
 
 @register
