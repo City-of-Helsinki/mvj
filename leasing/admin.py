@@ -796,12 +796,11 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
         "color_display",
         "parent",
         "name_fi",
-        "name_sv",
-        "name_en",
         "keywords",
     )
     list_filter = ("parent",)
     search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
+    autocomplete_fields = ["filter_by_lease_type", "filter_by_intended_use"]
 
     def hierarchical_name(self, obj: VipunenMapLayer):
         return str(obj)
@@ -810,7 +809,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
         qs = super().get_queryset(request).order_by("parent")
         return qs.select_related("parent")
 
-    hierarchical_name.short_description = "Name"
+    hierarchical_name.short_description = "Hierarchical name"
 
     def color_display(self, obj: VipunenMapLayer):
         """Displays `hex_color` as a square."""
