@@ -302,6 +302,7 @@ class Rent(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tasotarkistusindeksi
+    # Is used as indicator that the rent uses periodic rent adjustment.
     old_dwellings_in_housing_companies_price_index = models.ForeignKey(
         OldDwellingsInHousingCompaniesPriceIndex,
         verbose_name=_("Old dwellings in housing companies price index"),
@@ -311,7 +312,7 @@ class Rent(TimeStampedSafeDeleteModel):
         null=True,
     )
 
-    # In Finnish: Tasotarkistusindeksin tyyppi
+    # In Finnish: Tasotarkistuksen tyyppi
     periodic_rent_adjustment_type = EnumField(
         PeriodicRentAdjustmentType,
         verbose_name=_("Periodic Rent Adjustment Type"),
@@ -1507,22 +1508,22 @@ class IndexPointFigureYearly(TimeStampedModel):
     """
     In Finnish: Indeksipisteluku, vuosittain
 
-    Holds the index numbers.
+    Holds the index point figures.
     Currently only used with the newer price indexes related to Periodic Rent
     Adjustment (Tasotarkistus).
 
-    The yearly index number is expected to be the average of all numbers from
-    the same year from this same index that use a smaller recording inverval.
-    For example, the yearly index number is the average of the year's quarterly
-    numbers.
+    The yearly index point figure is expected to be the average of all figure
+    values from the same year from this same index that use a smaller recording
+    inverval.  For example, the yearly index point figure value is the average
+    of the year's quarterly values.
 
     Members:
-        index: Reference to the index this number is for.
-        number: Index number. Example: 101.5.
-        year: Year for the number. Example: 2020.
+        index: Reference to the index this point figure is for.
+        value: Index point figure value. Example: 101.5.
+        year: Year of the point figure. Example: 2020.
         region: Geographical region for index value. Example: "pks" for \
                 Pääkaupunkiseutu / Greater Helsinki area
-        comment: Comment for the number. Example: "* preliminary data\r\n"
+        comment: Comment for the point figure. Example: "* preliminary data\r\n"
     """
 
     index = models.ForeignKey(
@@ -1531,10 +1532,10 @@ class IndexPointFigureYearly(TimeStampedModel):
         on_delete=models.PROTECT,
         related_name="point_figures",
     )
-    # max_digits is arbitrary for the number. No need to limit it, although 7
-    # should be enough if the numbers are at most in the 100s of thousands.
-    # Largest index number in the system at the moment is year 1914's index
-    # with a number around 260 000.
+    # max_digits is arbitrary for the value. No need to limit it, although 7
+    # should be enough if the values are at most in the 100s of thousands.
+    # Largest point figure value in the system at the moment is year 1914's index
+    # with a value around 260 000.
     value = models.DecimalField(
         verbose_name=_("Value"),
         decimal_places=1,
@@ -1548,11 +1549,11 @@ class IndexPointFigureYearly(TimeStampedModel):
     comment = models.TextField(verbose_name=_("Comment"), blank=True)
 
     class Meta:
-        verbose_name = pgettext_lazy("model name", "index number")
-        verbose_name_plural = pgettext_lazy("model name", "index numbers")
+        verbose_name = pgettext_lazy("model name", "index point figure")
+        verbose_name_plural = pgettext_lazy("model name", "index point figures")
         constraints = [
             models.UniqueConstraint(
-                fields=["index", "year"], name="unique_price_index_number"
+                fields=["index", "year"], name="unique_price_index_point_figure"
             )
         ]
         ordering = ("-index", "-year")
