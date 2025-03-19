@@ -61,6 +61,28 @@ def test_calculate_subvented_initial_year_rent_re_lease(
         number=2161,
         year=2022,
     )
+
+    # If there are no subventions, the subvented initial year rent
+    # should be the same as the initial year rent
+    lease_basis_of_rent_without_subvention = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index,
+        area=Decimal(17987.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(49.00),
+        profit_margin_percentage=Decimal(5.00),
+        discount_percentage=Decimal(27.800000),
+    )
+
+    assert round(
+        lease_basis_of_rent_without_subvention.calculate_subvented_initial_year_rent(),
+        2,
+    ) == round(lease_basis_of_rent_without_subvention.calculate_initial_year_rent(), 2)
+
+    # In the case when there is a re-lease subvention,
+    # expect a certain number subvented initial year rent
+    # with the accuracy of two decimals
     lease_basis_of_rent = lease_basis_of_rent_factory(
         lease=lease_factory(),
         type=BasisOfRentType.LEASE,

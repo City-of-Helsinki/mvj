@@ -1727,11 +1727,13 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
     def get_re_lease_subvention_percent(self):
         subvention_base_percent = (
-            self.subvention_base_percent if self.subvention_base_percent else 0
+            self.subvention_base_percent
+            if self.subvention_base_percent is not None
+            else 0
         )
         subvention_graduated_percent = (
             self.subvention_graduated_percent
-            if self.subvention_graduated_percent
+            if self.subvention_graduated_percent is not None
             else 0
         )
         percent = (
