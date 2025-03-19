@@ -232,12 +232,9 @@ def get_amount_per_area_index_adjusted(lease):
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False, amount_per_area__isnull=False
     ):
-        if basis_of_rent.index:
-            index_ratio = Decimal(basis_of_rent.index.number / 100)
-        else:
-            index_ratio = Decimal(1)
-
-        volumes[basis_of_rent.area_unit] += basis_of_rent.amount_per_area * index_ratio
+        volumes[
+            basis_of_rent.area_unit
+        ] += basis_of_rent.get_index_adjusted_amount_per_area()
 
     return ", ".join(
         [
