@@ -3359,12 +3359,6 @@ msgstr "Osto-oikeus"
 msgid "Matti report"
 msgstr "MATTI-raportti"
 
-msgid "Lease statistics report II"
-msgstr "Vuokrausten tilastoraportti II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Lista vuokrauksista ja niiden vuokranperusteista"
-
 msgid "Rent adjustments"
 msgstr "Alennukset/Korotukset"
 
