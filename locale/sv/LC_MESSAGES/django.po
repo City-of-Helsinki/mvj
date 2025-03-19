@@ -2859,11 +2859,11 @@ msgid "Comment"
 msgstr ""
 
 msgctxt "model name"
-msgid "index number"
+msgid "index point figure"
 msgstr ""
 
 msgctxt "model name"
-msgid "index numbers"
+msgid "index point figures"
 msgstr ""
 
 msgid "Lease basis of rent"

@@ -13,14 +13,14 @@ from leasing.management.commands.import_periodic_rent_adjustment_index import (
     MetadataItem,
     ResponseData,
     ResponseDataError,
-    _cast_index_number_to_float_or_none,
+    _cast_point_figure_value_to_float_or_none,
     _check_that_response_data_is_valid,
     _find_comment_for_value,
     _find_key_position,
     _find_value_position,
     _get_update_date,
     _update_or_create_index,
-    _update_or_create_index_numbers,
+    _update_or_create_point_figures,
 )
 
 
@@ -129,13 +129,15 @@ def test_get_update_date_valid(metadata_real_data: list[MetadataItem]):
 
 
 @pytest.mark.parametrize(
-    "index_number, expected",
+    "figure_value, expected",
     [("100.00", 100.00), ("0", 0), ("123456.1234", 123456.1234), (".", None)],
 )
-def test_cast_index_number_to_float_or_none(index_number: str, expected: int | None):
-    """Happy path: index number is a proper number that can be cast to float,
+def test_cast_point_figure_value_to_float_or_none(
+    figure_value: str, expected: int | None
+):
+    """Happy path: point figure value is a proper number that can be cast to float,
     while period character "." is cast to None."""
-    assert _cast_index_number_to_float_or_none(index_number) == expected
+    assert _cast_point_figure_value_to_float_or_none(figure_value) == expected
 
 
 @pytest.mark.django_db
@@ -215,11 +217,11 @@ def test_create_or_update_index():
 
 
 @pytest.mark.django_db
-def test_create_or_update_index_number(old_dwellings_price_index_factory):
-    """Happy path: new index numbers are saved to DB, and are updated when using
+def test_create_or_update_point_figure(old_dwellings_price_index_factory):
+    """Happy path: new point figures are saved to DB, and are updated when using
     the same index id and year.
     """
-    # Case 1: create new numbers
+    # Case 1: create new figures
     creation_input = cast(
         IndexInput,
         {
@@ -259,27 +261,27 @@ def test_create_or_update_index_number(old_dwellings_price_index_factory):
     index = old_dwellings_price_index_factory(
         code="test_index_code_1", name="Test index 1", url="https://test.url.1"
     )
-    numbers_updated, numbers_created = _update_or_create_index_numbers(
+    figures_updated, figures_created = _update_or_create_point_figures(
         creation_input, creation_data, index
     )
-    assert numbers_updated == 0
-    assert numbers_created == 4
+    assert figures_updated == 0
+    assert figures_created == 4
 
-    # Case 2: update an existing number
+    # Case 2: update an existing figure
     update_data = deepcopy(creation_data)
-    update_data["data"][2]["values"][0] = "200.3"  # change year 2023's index number
-    numbers_updated, numbers_created = _update_or_create_index_numbers(
+    update_data["data"][2]["values"][0] = "200.3"  # change year 2023's point figure
+    figures_updated, figures_created = _update_or_create_point_figures(
         creation_input, update_data, index
     )
-    # Currently all numbers are updated every time, regardless of changes in content.
+    # Currently all point figures are updated every time, regardless of changes in content.
     # If you want to avoid unnecessary updates, write logic to skip update when nothing changes.
-    assert numbers_updated == 4
-    assert numbers_created == 0
+    assert figures_updated == 4
+    assert figures_created == 0
 
 
 @pytest.fixture
 def real_input_data() -> IndexInput:
-    """Inputs for requesting index number details from Tilastokeskus API.
+    """Inputs for requesting point figure details from Tilastokeskus API.
 
     The only values necessary for the request are the `url` and `code` values.
 

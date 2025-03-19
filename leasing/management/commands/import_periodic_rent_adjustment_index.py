@@ -93,7 +93,7 @@ class ResponseDataError(Exception):
     pass
 
 
-# Inputs for requesting index number details from Tilastokeskus API.
+# Inputs for requesting index point figure details from Tilastokeskus API.
 # The only values necessary for the request are the `url` and `code` values.
 # The keys are arbitrary, and only for internal reference in this file.
 INDEXES_TO_IMPORT: list[IndexInput] = [
@@ -128,11 +128,11 @@ class Command(BaseCommand):
                 "Added new index." if created else "Updated existing index."
             )
 
-            numbers_updated, numbers_created = _update_or_create_index_numbers(
+            figures_updated, figures_created = _update_or_create_point_figures(
                 index_input, index_data, index
             )
             self.stdout.write(
-                f"Updated {numbers_updated} and created {numbers_created} index numbers."
+                f"Updated {figures_updated} and created {figures_created} point figures."
             )
 
         self.stdout.write("Done")
@@ -293,30 +293,32 @@ def _update_or_create_index(
     return index, created
 
 
-def _update_or_create_index_numbers(
+def _update_or_create_point_figures(
     index_input: IndexInput,
     index_data: ResponseData,
     index: OldDwellingsInHousingCompaniesPriceIndex,
 ) -> tuple[int, int]:
-    """Updates or creates the price numbers related to a price index based on
+    """Updates or creates the price index point figures related to a price index based on
     Tilastokeskus API data.
 
     Returns:
-        Count of updated index numbers, and count of created index numbers.
+        Count of updated point figures, and count of created point figures.
     """
     columns = index_data.get("columns", [])
     year_key_pos = _find_key_position(columns, "Vuosi")
-    number_value_pos = _find_value_position(columns, index_input["code"])
+    figure_value_pos = _find_value_position(columns, index_input["code"])
     region_key_pos = _find_key_position(columns, "Alue")
 
     data_points = index_data.get("data", [])
     comments = index_data.get("comments", [])
-    numbers_updated = 0
-    numbers_created = 0
+    figures_updated = 0
+    figures_created = 0
 
     for dp in data_points:
         year = int(dp["key"][year_key_pos])
-        value = _cast_index_number_to_float_or_none(dp["values"][number_value_pos])
+        value = _cast_point_figure_value_to_float_or_none(
+            dp["values"][figure_value_pos]
+        )
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
         # Preliminary figure point values (indeksipistelukujen ennakkoarvot)
@@ -334,11 +336,11 @@ def _update_or_create_index_numbers(
             },
         )
         if created:
-            numbers_created += 1
+            figures_created += 1
         else:
-            numbers_updated += 1
+            figures_updated += 1
 
-    return (numbers_updated, numbers_created)
+    return (figures_updated, figures_created)
 
 
 def _find_comment_for_value(
@@ -387,13 +389,13 @@ def _get_update_date(metadata: MetadataItem | dict) -> datetime.datetime | None:
     return parse_datetime(proper_iso_str)
 
 
-def _cast_index_number_to_float_or_none(number_str: str) -> float | None:
-    """Casts the number from string to float, or None if ".".
+def _cast_point_figure_value_to_float_or_none(value_str: str) -> float | None:
+    """Casts the point figure value from string to float, or None if ".".
 
-    Tilastokeskus API substitutes missing index numbers with the period
+    Tilastokeskus API substitutes missing point figure values with the period
     character (".").
     """
-    if number_str == ".":
+    if value_str == ".":
         return None
     else:
-        return float(number_str)
+        return float(value_str)
