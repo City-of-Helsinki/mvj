@@ -454,6 +454,8 @@ class RentSerializer(
             "override_receivable_type",
             "old_dwellings_in_housing_companies_price_index",
             "periodic_rent_adjustment_type",
+            "start_price_index_point_figure_value",
+            "start_price_index_point_figure_year",
         )
 
     def override_permission_check_field_name(self, field_name):
@@ -735,6 +737,20 @@ class RentCreateUpdateSerializer(
                     "Please contact MVJ developers about this error."
                 )
             )
+
+    def update(self, instance: Rent, validated_data: dict):
+        # Only set Periodic Rent Adjustment's index values when added for the first time.
+        if (
+            instance.old_dwellings_in_housing_companies_price_index is None
+            and validated_data.get("old_dwellings_in_housing_companies_price_index")
+            is not None
+        ):
+            instance.old_dwellings_in_housing_companies_price_index = (
+                validated_data.get("old_dwellings_in_housing_companies_price_index")
+            )
+            instance.set_start_price_index_point_figure()
+
+        return super().update(instance, validated_data)
 
 
 class LeaseBasisOfRentManagementSubventionSerializer(serializers.ModelSerializer):
