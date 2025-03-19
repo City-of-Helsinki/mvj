@@ -322,10 +322,16 @@ class Rent(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Tasotarkistusindeksin pisteluku vuokran alkaessa (edellisen vuoden keskiarvo)
-    start_price_index_point_figure = models.DecimalField(
-        verbose_name=_("Start price index point figure"),
+    start_price_index_point_figure_value = models.DecimalField(
+        verbose_name=_("Start price index point figure value"),
         decimal_places=1,
         max_digits=8,
+        null=True,
+    )
+
+    # In Finnish: Tasotarkistusindeksin pisteluvun vuosi vuokran alkaessa (edellinen vuosi)
+    start_price_index_point_figure_year = models.PositiveSmallIntegerField(
+        verbose_name=_("Start price index point figure year"),
         null=True,
     )
 
@@ -842,12 +848,32 @@ class Rent(TimeStampedSafeDeleteModel):
         return False
 
     def set_start_price_index_point_figure(self):
-        if self.old_dwellings_in_housing_companies_price_index:
-            start_index_number_yearly = IndexPointFigureYearly.objects.get(
+        """Sets the values for Periodic Rent Adjustment's price index's
+        point figure at the start of the rent.
+
+        Once set, they should not be changed afterwards."""
+        if not self.old_dwellings_in_housing_companies_price_index:
+            # The rent does not use a Periodic Rent Adjustment.
+            return
+
+        if (
+            self.start_price_index_point_figure_value is not None
+            and self.start_price_index_point_figure_year is not None
+        ):
+            # The required values are already set and should not be changed.
+            return
+
+        try:
+            point_figure = IndexPointFigureYearly.objects.get(
                 index=self.old_dwellings_in_housing_companies_price_index,
                 year=self.lease.start_date.year - 1,
             )
-            self.start_price_index_point_figure = start_index_number_yearly.value
+            self.start_price_index_point_figure_value = point_figure.value
+            self.start_price_index_point_figure_year = point_figure.year
+        except IndexPointFigureYearly.DoesNotExist:
+            # The details will be added to this rent later via a batchjob
+            # when the data becomes available in the source API.
+            return
 
 
 class RentDueDate(TimeStampedSafeDeleteModel):
@@ -1549,8 +1575,8 @@ class IndexPointFigureYearly(TimeStampedModel):
     comment = models.TextField(verbose_name=_("Comment"), blank=True)
 
     class Meta:
-        verbose_name = pgettext_lazy("model name", "index point figure")
-        verbose_name_plural = pgettext_lazy("model name", "index point figures")
+        verbose_name = pgettext_lazy("Model name", "Index point figure, yearly")
+        verbose_name_plural = pgettext_lazy("Model name", "Index point figures, yearly")
         constraints = [
             models.UniqueConstraint(
                 fields=["index", "year"], name="unique_price_index_point_figure"

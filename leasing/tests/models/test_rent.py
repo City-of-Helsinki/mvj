@@ -2845,24 +2845,83 @@ def test_is_the_last_billing_period(
 
 @pytest.mark.django_db
 def test_set_start_price_index_point_figure_without_index(rent_factory, lease_factory):
-    """The point figure should be None if the rent has no old_dwellings_in_housing_companies_price_index."""
+    """Periodic rent adjustment's point figure should not be set if the rent
+    does not use periodic rent adjustment."""
     lease = lease_factory()
     rent: Rent = rent_factory(lease=lease)
-
     rent.set_start_price_index_point_figure()
 
-    assert rent.start_price_index_point_figure is None
+    assert rent.start_price_index_point_figure_value is None
+    assert rent.start_price_index_point_figure_year is None
 
 
 @pytest.mark.django_db
-def test_set_start_price_index_point_figure_with_last_year_index(
+def test_set_start_price_index_point_figure_values_already_set(
+    rent_factory,
+    lease_factory,
+    old_dwellings_in_housing_companies_price_index_factory,
+):
+    """Periodic rent adjustment's point figure should not be changed if the
+    details are already set."""
+    lease = lease_factory(start_date=date(year=2024, month=1, day=1))
+    old_dwellings_in_housing_companies_price_index = (
+        old_dwellings_in_housing_companies_price_index_factory()
+    )
+    year_already_set = 2023
+    value_already_set = 103
+    rent: Rent = rent_factory(
+        lease=lease,
+        old_dwellings_in_housing_companies_price_index=old_dwellings_in_housing_companies_price_index,
+        start_price_index_point_figure_year=year_already_set,
+        start_price_index_point_figure_value=value_already_set,
+    )
+    rent.set_start_price_index_point_figure()
+
+    assert rent.start_price_index_point_figure_year == year_already_set
+    assert rent.start_price_index_point_figure_value == value_already_set
+
+
+@pytest.mark.django_db
+def test_set_start_price_index_point_figure_not_available(
     rent_factory,
     lease_factory,
     old_dwellings_in_housing_companies_price_index_factory,
     index_point_figure_yearly_factory,
 ):
-    """The point figure should be set if rent has old_dwellings_in_housing_companies_price_index
-    and it should be the year previous to the LEASE's start date."""
+    """Periodic rent adjustment's point figure should not be set if the desired
+    point figure is not available."""
+    lease = lease_factory(start_date=date(year=2024, month=1, day=1))
+    old_dwellings_in_housing_companies_price_index = (
+        old_dwellings_in_housing_companies_price_index_factory()
+    )
+    rent: Rent = rent_factory(
+        lease=lease,
+        old_dwellings_in_housing_companies_price_index=old_dwellings_in_housing_companies_price_index,
+    )
+    index_point_figure_yearly_factory(
+        value=101, year=2021, index=old_dwellings_in_housing_companies_price_index
+    )
+    index_point_figure_yearly_factory(
+        value=102, year=2022, index=old_dwellings_in_housing_companies_price_index
+    )
+    rent.set_start_price_index_point_figure()
+
+    assert rent.start_price_index_point_figure_year is None
+    assert rent.start_price_index_point_figure_value is None
+
+
+@pytest.mark.django_db
+def test_set_start_price_index_point_figure(
+    rent_factory,
+    lease_factory,
+    old_dwellings_in_housing_companies_price_index_factory,
+    index_point_figure_yearly_factory,
+):
+    """If the rent has a periodic rent adjustment, the price index's point figure
+    value and year should be set in the rent.
+
+    The point figure must correspond to the year previous to the LEASE's start date,
+    e.g. year 2023's point figure if lease started in 2024."""
     lease = lease_factory(start_date=date(year=2024, month=1, day=1))
     old_dwellings_in_housing_companies_price_index = (
         old_dwellings_in_housing_companies_price_index_factory()
@@ -2883,7 +2942,7 @@ def test_set_start_price_index_point_figure_with_last_year_index(
         lease=lease,
         old_dwellings_in_housing_companies_price_index=old_dwellings_in_housing_companies_price_index,
     )
-
     rent.set_start_price_index_point_figure()
 
-    assert rent.start_price_index_point_figure == expected_point_figure.value
+    assert rent.start_price_index_point_figure_value == expected_point_figure.value
+    assert rent.start_price_index_point_figure_year == expected_point_figure.year
