@@ -572,8 +572,23 @@ class RentCreateUpdateSerializer(
         )
 
     def validate(self, rent_data: dict):
+        self.validate_periodic_rent_adjustment(rent_data)
         self.validate_override_receivable_type_value(rent_data)
         return rent_data
+
+    def validate_periodic_rent_adjustment(self, rent_data: dict[str, Any]) -> None:
+        """Validate that the Periodic Rent Adjustment values are set to the rent in
+        an internally consistent way."""
+        # If periodic rent adjustment is added, the adjustment type must be set.
+        # Currently the existence of price index indicates when periodic rent
+        # adjustment is used.
+        adjustment_type = rent_data.get("periodic_rent_adjustment_type")
+        price_index = rent_data.get("old_dwellings_in_housing_companies_price_index")
+
+        if price_index and not adjustment_type:
+            raise serializers.ValidationError(
+                _("Adjustment type is required when periodic rent adjustment is added")
+            )
 
     def validate_override_receivable_type_value(
         self, rent_data: dict[str, Any]

@@ -220,3 +220,18 @@ def test_validate_override_receivable_type_invalid_rent_type(
         data["id"] = rent_with_override_receivable_type.id
         with pytest.raises(ValidationError):
             serializer.validate(data)
+
+
+# @pytest.mark.django_db
+def test_validate_periodic_rent_adjustment():
+    """
+    Rent create/update serializer should raise an error if periodic rent
+    adjustment is set, but adjustment type is not provided.
+    """
+    serializer = RentCreateUpdateSerializer()
+    incoming_data = {
+        "old_dwellings_in_housing_companies_price_index": 1,
+        "periodic_rent_adjustment_type": None,
+    }
+    with pytest.raises(ValidationError):
+        serializer.validate(incoming_data)
