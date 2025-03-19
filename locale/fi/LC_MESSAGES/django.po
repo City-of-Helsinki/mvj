@@ -3539,6 +3539,9 @@ msgstr "Indeksi on valittava kun vuokralaji on Indeksi"
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Alennus-/korotustyypillä \"€ yhteensä\" ei voi olla loppupäivämäärää"
 
+msgid "Adjustment type is required when periodic rent adjustment is added"
+msgstr "Tarkistuksen tyyppi vaaditaan kun tasotarkistus lisätään"
+
 #, python-brace-format
 msgid ""
 "Override receivable type \"{override_receivable_type.name}\" was unexpected. "
