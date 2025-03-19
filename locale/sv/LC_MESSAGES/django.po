@@ -3356,12 +3356,6 @@ msgstr "Köprätt"
 msgid "Matti report"
 msgstr "MATTI-rapport"
 
-msgid "Lease statistics report II"
-msgstr "Statistikrapport för arrenderingar II"
-
-msgid "Shows statistics about leases and their basis of rents"
-msgstr "Förteckning över arrenderingar och grunderna för deras arrenden"
-
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
 
