@@ -462,6 +462,15 @@ CUSTOM_FIELD_PERMS = {
         "target_statuses": {2: "view", 4: "view"},
         "area_searches": {2: "view", 4: "view"},
         "related_plot_applications": {2: "view", 4: "view"},
+        "application_metadata": {
+            1: "view",
+            2: "change",
+            3: "view",
+            4: "change",
+            5: "view",
+            6: "view",
+            7: "change",
+        },
     },
     "contact": {
         "national_identification_number": {

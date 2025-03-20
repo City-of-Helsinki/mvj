@@ -17,6 +17,7 @@ from leasing.models import (
     ReservationProcedure,
     ServiceUnit,
 )
+from leasing.models.lease import ApplicationMetadata
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer,
     CollectionLetterSerializer,
@@ -169,6 +170,15 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
         fields = ("type", "municipality", "district", "sequence")
 
 
+class ApplicationMetadataSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+
+    class Meta:
+        model = ApplicationMetadata
+        fields = "__all__"
+
+
 class TargetStatusSuccinctSerializer(serializers.ModelSerializer):
     received_at = serializers.DateTimeField(source="answer.created_at")
 
@@ -238,6 +248,9 @@ class LeaseSuccinctSerializer(
     district = DistrictSerializer()
     identifier = LeaseIdentifierSerializer(read_only=True)
     service_unit = ServiceUnitSerializer()
+    application_metadata = ApplicationMetadataSerializer(
+        many=False, required=False, allow_null=True
+    )
 
     class Meta:
         model = Lease
@@ -260,6 +273,7 @@ class LeaseSuccinctSerializer(
             "preparer",
             "is_subject_to_vat",
             "service_unit",
+            "application_metadata",
         )
 
 
@@ -435,6 +449,9 @@ class LeaseSerializerBase(
         many=True, required=False, allow_null=True
     )
     invoice_notes = InvoiceNoteSerializer(many=True, required=False, allow_null=True)
+    application_metadata = ApplicationMetadataSerializer(
+        many=False, required=False, allow_null=True
+    )
     service_unit = ServiceUnitSerializer(read_only=True)
 
     class Meta:
@@ -665,6 +682,9 @@ class LeaseUpdateSerializer(
     )
     invoice_notes = InvoiceNoteCreateUpdateSerializer(
         many=True, required=False, allow_null=True
+    )
+    application_metadata = ApplicationMetadataSerializer(
+        many=False, required=False, allow_null=True
     )
     service_unit = InstanceDictPrimaryKeyRelatedField(
         instance_class=ServiceUnit,
