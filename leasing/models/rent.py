@@ -1744,19 +1744,19 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         return percent
 
     def calculate_initial_year_rent(self):
-        if not self.area or not self.amount_per_area:
+        if (
+            not self.area
+            or not self.amount_per_area
+            or not self.profit_margin_percentage
+        ):
             return Decimal(0)
 
-        base_rent = self.area * self.amount_per_area
-        if self.profit_margin_percentage:
-            base_rent *= self.profit_margin_percentage / 100
+        initial_year_rent = (
+            self.area * self.amount_per_area * self.profit_margin_percentage / 100
+        )
 
-        if self.index:
-            index_ratio = Decimal(self.index.number / 100)
-        else:
-            index_ratio = Decimal(1)
-
-        initial_year_rent = base_rent * index_ratio
+        if self.index and self.type != BasisOfRentType.LEASE2022:
+            initial_year_rent *= Decimal(self.index.number / 100)
 
         return initial_year_rent
 

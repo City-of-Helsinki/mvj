@@ -6,6 +6,70 @@ from leasing.enums import AreaUnit, BasisOfRentType, SubventionType
 
 
 @pytest.mark.django_db
+def test_calculate_initial_year_rent(
+    index_factory,
+    lease_basis_of_rent_factory,
+    lease_factory,
+):
+    index = index_factory(
+        number=1951,
+        year=2018,
+        month=8,
+    )
+    area = Decimal(12580.00)
+    amount_per_area = Decimal(29.00)
+    profit_margin_percentage = Decimal(5.00)
+
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index,
+        area=Decimal(0.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(0.00),
+        profit_margin_percentage=Decimal(0.00),
+    )
+
+    # In the case when there is no area,
+    # initial year rent should be 0
+    lease_basis_of_rent.area = Decimal(0.00)
+    lease_basis_of_rent.amount_per_area = amount_per_area
+    lease_basis_of_rent.profit_margin_percentage = profit_margin_percentage
+
+    assert round(lease_basis_of_rent.calculate_initial_year_rent(), 2) == Decimal(0.00)
+
+    # In the case when there is no amount_per_area,
+    # initial year rent should be 0
+    lease_basis_of_rent.area = area
+    lease_basis_of_rent.amount_per_area = Decimal(0.00)
+    lease_basis_of_rent.profit_margin_percentage = profit_margin_percentage
+
+    assert round(lease_basis_of_rent.calculate_initial_year_rent(), 2) == Decimal(0.00)
+
+    # In the case when there is no profit_margin_percentage,
+    # initial year rent should be 0
+    lease_basis_of_rent.area = area
+    lease_basis_of_rent.amount_per_area = amount_per_area
+    lease_basis_of_rent.profit_margin_percentage = Decimal(0.00)
+
+    assert round(lease_basis_of_rent.calculate_initial_year_rent(), 2) == Decimal(0.00)
+
+    # In the case when
+    # area, amount_per_area and profit_margin_percentage
+    # are all defined and greater than 0,
+    # expect a certain number for initial year rent with the accuracy of two decimals
+    lease_basis_of_rent.area = area
+    lease_basis_of_rent.amount_per_area = amount_per_area
+    lease_basis_of_rent.profit_margin_percentage = profit_margin_percentage
+
+    expected_initial_year_rent = Decimal(355881.91)
+
+    assert round(lease_basis_of_rent.calculate_initial_year_rent(), 2) == round(
+        expected_initial_year_rent, 2
+    )
+
+
+@pytest.mark.django_db
 def test_calculate_subvented_initial_year_rent_form_of_management(
     index_factory,
     lease_basis_of_rent_factory,
