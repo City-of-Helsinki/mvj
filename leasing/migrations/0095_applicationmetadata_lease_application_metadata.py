@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0093_remove_vipunenmaplayer_filter_by_intended_use_and_more"),
+        ("leasing", "0094_periodic_rent_adjustment_year_and_terminology"),
     ]
 
     operations = [
