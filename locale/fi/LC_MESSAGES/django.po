@@ -3335,7 +3335,7 @@ msgstr "Alkuvuosivuokra"
 msgid "Subsidised initial year rent"
 msgstr "Subventoitu alkuvuosivuokra (ind)"
 
-msgid "Subsidy amount"
+msgid "Subvention euros / year"
 msgstr "Subventio euroina / vuosi"
 
 msgid "Subsidy percent"

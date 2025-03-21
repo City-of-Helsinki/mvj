@@ -271,7 +271,7 @@ def get_subvented_initial_year_rent(lease):
     return subvented_rent_total.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
-def get_subvention_amount(lease):
+def get_subvention_euros_per_year(lease):
     initial_year_rent_total = Decimal(0)
     subvented_initial_year_rent_total = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.filter(
@@ -542,9 +542,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 13,
         },
         # Subventio euroina / vuosi (laskurista)
-        "subvention_amount": {
-            "label": _("Subsidy amount"),
-            "source": get_subvention_amount,
+        "subvention_euros_per_year": {
+            "label": _("Subvention euros / year"),
+            "source": get_subvention_euros_per_year,
             "format": "money",
             "width": 13,
         },
