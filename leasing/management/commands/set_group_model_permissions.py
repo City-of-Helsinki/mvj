@@ -988,6 +988,15 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    "applicationmetadata": {
+        1: ("view",),
+        2: ("view", "add", "change", "delete"),
+        3: ("view",),
+        4: ("view", "add", "change", "delete"),
+        5: ("view",),
+        6: ("view",),
+        7: ("view", "add", "change", "delete"),
+    },
     "uidata": {
         1: ("view", "add", "change", "delete"),
         2: ("view", "add", "change", "delete"),

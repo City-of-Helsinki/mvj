@@ -687,6 +687,11 @@ class Lease(TimeStampedSafeDeleteModel):
         verbose_name=_("Internal order"), null=True, blank=True, max_length=12
     )
 
+    # In Finnish: Hakemuksen tiedot (saapumispäivämäärä)
+    application_metadata = models.OneToOneField(
+        "ApplicationMetadata", related_name="+", on_delete=models.PROTECT, null=True
+    )
+
     objects = LeaseManager()
 
     recursive_get_related_skip_relations = [
@@ -1516,6 +1521,18 @@ class LeaseStateLog(TimeStampedModel):
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Lease state log")
         verbose_name_plural = pgettext_lazy("Model name", "Lease state logs")
+
+
+class ApplicationMetadata(models.Model):
+    """Used to track Leases applications received at date.
+    Application meaning when one sent an application to get a lease."""
+
+    application_received_at = models.DateField(
+        verbose_name=_("Application received at"),
+        null=True,
+        blank=True,
+        help_text=_("The date the application was received."),
+    )
 
 
 class RelatedLease(TimeStampedSafeDeleteModel):

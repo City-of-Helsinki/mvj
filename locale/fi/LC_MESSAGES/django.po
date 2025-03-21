@@ -2513,6 +2513,12 @@ msgctxt "Model name"
 msgid "Lease state logs"
 msgstr "Vuokrauksen tilamuutoslokit"
 
+msgid "Application received at"
+msgstr "Hakemuksen saapumispäivämäärä"
+
+msgid "The date the application was received."
+msgstr "Hakemuksen saapumispäivämäärä."
+
 msgid "From lease"
 msgstr "Vuokrauksesta"
 

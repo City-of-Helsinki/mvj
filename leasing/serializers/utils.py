@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OneToOneRel
+from django.db.models import OneToOneField, OneToOneRel
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -162,13 +162,25 @@ def instance_create_or_update_related_one_to_one(
     serializer_class=None,
     validated_data=None,
     context=None,
+    is_forward: bool = False,
 ):
+    """
+    is_forward (bool): Indicates whether the relationship is a forward relationship.
+    If set to True, the related instance is assigned back to the parent instance
+    after being saved, and the parent instance is updated accordingly.
+    """
+
     if hasattr(instance, related_name):
         related_instance = getattr(instance, related_name)
     else:
         related_instance = None
 
     if not validated_data:
+        if is_forward is True:
+            # If the relationship is forward,
+            # then related_instance existed before and no deletion is necessary.
+            return
+
         if related_instance:
             # TODO: Permission check when removing?
             related_instance.delete()
@@ -194,7 +206,12 @@ def instance_create_or_update_related_one_to_one(
         # Ignore the new item if the user doesn't have permission to add
         return
 
-    serializer.save(**{remote_name: instance})
+    related_instance = serializer.save(**{remote_name: instance})
+    if is_forward is True:
+        # If related_instance is a forward relation from instance,
+        # set the related_instance to instance
+        setattr(instance, related_name, related_instance)
+        instance.save()
 
 
 class UpdateNestedMixin:
@@ -213,6 +230,14 @@ class UpdateNestedMixin:
                         "data": validated_data.pop(field_name, None),
                         "remote_name": related_field.remote_field.name,
                         "one_to_one": True,
+                    }
+                    continue
+                elif isinstance(related_field, OneToOneField):
+                    nested[field_name] = {
+                        "data": validated_data.pop(field_name, None),
+                        "remote_name": related_field.remote_field.name,
+                        "one_to_one": True,
+                        "is_forward": True,
                     }
                     continue
 
@@ -240,6 +265,7 @@ class UpdateNestedMixin:
                     serializer_class=self.fields[nested_name].__class__,
                     validated_data=nested_datum["data"],
                     context=context,
+                    is_forward=nested_datum.get("is_forward", False),
                 )
                 continue
 

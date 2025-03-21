@@ -2512,6 +2512,12 @@ msgctxt "Model name"
 msgid "Lease state logs"
 msgstr "Loggar över statusändring för arrenderingen"
 
+msgid "Application received at"
+msgstr "Ansökan inkom kl"
+
+msgid "The date the application was received."
+msgstr "Datumet då ansökan inkom."
+
 msgid "From lease"
 msgstr "Från arrendering"
 
