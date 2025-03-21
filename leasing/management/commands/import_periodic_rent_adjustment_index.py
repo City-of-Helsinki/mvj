@@ -1,6 +1,7 @@
 import datetime
 import json
-from typing import Callable, TypedDict
+from collections.abc import Callable
+from typing import TypedDict
 
 import requests
 from django.core.management.base import BaseCommand, CommandError

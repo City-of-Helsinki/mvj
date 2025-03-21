@@ -202,11 +202,26 @@
     "fields": {
       "deleted": null,
       "deleted_by_cascade": false,
-      "created_at": "2024-09-16T08:00:00.000Z", 
+      "created_at": "2024-09-16T08:00:00.000Z",
       "modified_at": "2024-09-16T08:00:00.000Z",
       "name": "Tasotarkistuksen indeksien haku",
       "comment": "",
       "command": 14,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 17,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2025-03-21T08:00:00.000Z",
+      "modified_at": "2025-03-21T08:00:00.000Z",
+      "name": "Tasotarkistuksen puuttuvien indeksiarvojen päivittäminen vuokriin",
+      "comment": "",
+      "command": 17,
       "arguments": {},
       "history_retention_policy": 1
     }

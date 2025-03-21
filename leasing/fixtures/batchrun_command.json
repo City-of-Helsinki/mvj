@@ -166,5 +166,17 @@
       "parameters": {},
       "parameter_format_string": ""
     }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 17,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "update_missing_periodic_rent_adjustment_index_values",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
   }
 ]
