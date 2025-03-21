@@ -4,6 +4,7 @@ import pytest
 from _pytest.capture import CaptureFixture
 from django.core.management import call_command
 
+from leasing.models.lease import Lease
 from leasing.models.rent import IndexPointFigureYearly, Rent
 
 
@@ -22,7 +23,7 @@ def test_no_rents_to_update(capfd: CaptureFixture[str]) -> None:
 @pytest.mark.django_db
 def test_update_rent_with_existing_index_point_figure(
     index_point_figure_yearly_factory: Callable[..., IndexPointFigureYearly],
-    lease_factory: Callable[..., Rent],
+    lease_factory: Callable[..., Lease],
     old_dwellings_in_housing_companies_price_index_factory: Callable[..., str],
     rent_factory: Callable[..., Rent],
 ) -> None:
@@ -48,7 +49,7 @@ def test_update_rent_with_existing_index_point_figure(
 
 @pytest.mark.django_db
 def test_missing_index_point_figure(
-    lease_factory: Callable[..., Rent],
+    lease_factory: Callable[..., Lease],
     old_dwellings_in_housing_companies_price_index_factory: Callable[..., str],
     rent_factory: Callable[..., Rent],
 ) -> None:
@@ -75,7 +76,7 @@ def test_missing_index_point_figure(
 @pytest.mark.django_db
 def test_multiple_rents_updated(
     index_point_figure_yearly_factory: Callable[..., IndexPointFigureYearly],
-    lease_factory: Callable[..., Rent],
+    lease_factory: Callable[..., Lease],
     old_dwellings_in_housing_companies_price_index_factory: Callable[..., str],
     rent_factory: Callable[..., Rent],
 ) -> None:
