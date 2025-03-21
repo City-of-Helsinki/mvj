@@ -3338,7 +3338,7 @@ msgstr "Arrende för början av året"
 msgid "Subsidised initial year rent"
 msgstr "Subventionerat arrende för början av året (ind)"
 
-msgid "Subsidy amount"
+msgid "Subvention euros / year"
 msgstr "Subvention i euro/år"
 
 msgid "Subsidy percent"
