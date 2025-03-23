@@ -3353,7 +3353,7 @@ msgstr "Subventoitu eur/m^2"
 msgid "Temporary discount percent"
 msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
-msgid "Temporary discount amount"
+msgid "Temporary discount amount euros / year"
 msgstr "Tilapäisalennus euroa/vuosi"
 
 msgid "Form of management (Subvention)"
