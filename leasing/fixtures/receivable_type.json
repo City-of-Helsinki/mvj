@@ -742,5 +742,17 @@
       "is_active": true,
       "service_unit": 2
     }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 63,
+    "fields": {
+      "name": "Tilapäinen käymälä ja taukotila",
+      "sap_material_code": "10003940",
+      "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
   }
 ]
