@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
 from leasing.models.mixins import TimeStampedSafeDeleteModel
+from leasing.validators import HexColorValidator
 
 
 class ServiceUnit(TimeStampedSafeDeleteModel):
@@ -85,6 +86,12 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
             "default receivable type, or the leasetype's receivable type."
         ),
         default=False,
+    )
+    hex_color = models.CharField(
+        max_length=7,
+        blank=True,
+        null=True,
+        validators=[HexColorValidator()],
     )
 
     recursive_get_related_skip_relations = [
