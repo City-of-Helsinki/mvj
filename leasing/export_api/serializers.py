@@ -52,6 +52,9 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
         source="lease_area.geometry", read_only=True
     )
     palvelukokonaisuus = serializers.SerializerMethodField()
+    palvelukokonaisuus_hex_color = serializers.CharField(
+        source="lease.service_unit.hex_color", allow_null=True, allow_blank=True
+    )
     vuokranantaja = serializers.SerializerMethodField()
     tree_ids = serializers.SerializerMethodField()
 
@@ -87,6 +90,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
             "sijainti",
             "geometria",
             "palvelukokonaisuus",
+            "palvelukokonaisuus_hex_color",
             "vuokranantaja",
             "tree_ids",
         ]

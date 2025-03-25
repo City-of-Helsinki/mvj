@@ -762,10 +762,20 @@ class ServiceUnitGroupMappingInline(admin.TabularInline):
 
 
 class ServiceUnitAdmin(admin.ModelAdmin):
-    list_display = ("name", "created_at", "modified_at")
+    readonly_fields = ("color_display",)
+    list_display = ("name", "created_at", "modified_at", "color_display")
     inlines = [ServiceUnitGroupMappingInline]
     readonly_fields = ("created_at", "modified_at")
     ordering = ("name",)
+
+    def color_display(self, obj: ServiceUnit):
+        """Displays `hex_color` as a square."""
+        return format_html(
+            '<div style="width: 20px; height: 20px; background-color: {};"></div>',
+            obj.hex_color,
+        )
+
+    color_display.short_description = _("Color")
 
 
 class ServiceUnitGroupMappingAdmin(admin.ModelAdmin):

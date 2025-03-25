@@ -1,15 +1,8 @@
-from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import get_language
 
 from leasing.models.land_area import LeaseArea
-
-
-class HexColorValidator(RegexValidator):
-    # Startswith `#`, then has either 1 or 2 groups of 3 characters
-    # that are 0-9 or a-f or A-F
-    regex = r"^#(?:[0-9a-fA-F]{3}){1,2}$"
-    message = "Enter a valid hex color code, e.g. #000000 or #FFF"
+from leasing.validators import HexColorValidator
 
 
 class VipunenMapLayer(models.Model):
