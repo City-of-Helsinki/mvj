@@ -45,7 +45,9 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
         source="payable_rent_amount", max_digits=10, decimal_places=2
     )
     perittava_vuokra_jakso = serializers.SerializerMethodField()
-    vuokraus_huom = serializers.CharField(source="lease.note", allow_null=True)
+    vuokraus_huom = serializers.CharField(
+        source="lease.intended_use_note", allow_null=True
+    )
     vuokraus_tyyppi = serializers.CharField(source="lease.type.name", allow_null=True)
     sijainti = serializers.CharField(source="location")
     geometria = serializers.SerializerMethodField(
