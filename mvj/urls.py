@@ -25,6 +25,7 @@ from gdpr.views import MvjGDPRAPIView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.export_api.viewsets import (
     ExportLeaseAreaViewSet,
+    ExportLeaseStatisticReportViewSet,
     ExportVipunenMapLayerViewSet,
 )
 from leasing.report.viewset import ReportViewSet
@@ -267,6 +268,11 @@ export_router.register(
     r"vipunen_map_layer",
     ExportVipunenMapLayerViewSet,
     basename="export_vipunen_map_layer",
+)
+export_router.register(
+    r"report/lease_statistic",
+    ExportLeaseStatisticReportViewSet,
+    basename="export_lease_statistic_report",
 )
 
 # Public router

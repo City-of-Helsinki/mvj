@@ -178,5 +178,17 @@
       "parameters": {},
       "parameter_format_string": ""
     }
+  },
+  {
+    "model": "batchrun.command",
+    "pk": 18,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "generate_export_report_lease_statistic",
+      "parameters": {},
+      "parameter_format_string": ""
+    }
   }
 ]

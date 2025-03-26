@@ -13,6 +13,10 @@ from users.models import User
     [
         ("export_v1:export_lease_area-list", "export_api_lease_area"),
         ("export_v1:export_vipunen_map_layer-list", "export_api_vipunen_map_layer"),
+        (
+            "export_v1:export_lease_statistic_report-list",
+            "export_api_lease_statistic_report",
+        ),
     ],
 )
 @pytest.mark.django_db
@@ -36,6 +40,7 @@ def test_export_endpoint_permission_with_permission(urlname, permission_codename
     [
         "export_v1:export_lease_area-list",
         "export_v1:export_vipunen_map_layer-list",
+        "export_v1:export_lease_statistic_report-list",
     ],
 )
 @pytest.mark.django_db
@@ -57,6 +62,7 @@ def test_export_endpoint_permission_without_permission(urlname):
     [
         "export_v1:export_lease_area-list",
         "export_v1:export_vipunen_map_layer-list",
+        "export_v1:export_lease_statistic_report-list",
     ],
 )
 @pytest.mark.django_db

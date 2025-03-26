@@ -3,12 +3,17 @@ from django.db.models import OuterRef, Q, Subquery, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.authtoken.models import Token as TokenAuthenticationModel
 from rest_framework.pagination import CursorPagination
-from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from leasing.enums import TenantContactType
+from leasing.export_api.permissions import (
+    ExportLeaseAreaPermission,
+    ExportLeaseStatisticReportPermission,
+    ExportVipunenMapLayerPermission,
+)
 from leasing.export_api.serializers import (
     ExportLeaseAreaSerializer,
     ExportVipunenMapLayerSerializer,
@@ -17,48 +22,13 @@ from leasing.models.contract import Contract
 from leasing.models.land_area import LeaseArea, LeaseAreaAddress
 from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.rent import Rent
+from leasing.models.report_storage import ReportStorage
 from leasing.models.tenant import TenantContact
 
 
 class CreatedAtCursorPagination(CursorPagination):
     ordering = "-created_at"
     page_size = 100
-
-
-class ExportLeaseAreaPermission(BasePermission):
-    def has_permission(self, request, view):
-        return (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.auth, TokenAuthenticationModel)
-            and request.user.has_perm("leasing.export_api_lease_area")
-        )
-
-    def has_object_permission(self, request, view, obj):
-        return (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.auth, TokenAuthenticationModel)
-            and request.user.has_perm("leasing.export_api_lease_area")
-        )
-
-
-class ExportVipunenMapLayerPermission(BasePermission):
-    def has_permission(self, request, view):
-        return (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.auth, TokenAuthenticationModel)
-            and request.user.has_perm("leasing.export_api_vipunen_map_layer")
-        )
-
-    def has_object_permission(self, request, view, obj):
-        return (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.auth, TokenAuthenticationModel)
-            and request.user.has_perm("leasing.export_api_vipunen_map_layer")
-        )
 
 
 class ExportLeaseAreaViewSet(ReadOnlyModelViewSet):
@@ -231,3 +201,20 @@ class ExportVipunenMapLayerViewSet(ReadOnlyModelViewSet):
     ]
     serializer_class = ExportVipunenMapLayerSerializer
     queryset = VipunenMapLayer.objects.all()
+
+
+class ExportLeaseStatisticReportViewSet(ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [
+        IsAuthenticated,
+        ExportLeaseStatisticReportPermission,
+    ]
+    queryset = ReportStorage.objects.filter(report_type="lease_statistic").order_by(
+        "created_at"
+    )
+
+    def list(self, request):
+        latest_report = self.queryset.last()
+
+        report_data = getattr(latest_report, "report_data", {})
+        return Response(data=report_data)
