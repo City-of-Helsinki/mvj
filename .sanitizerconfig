@@ -207,15 +207,7 @@ strategy:
     answeropeningrecord_id: null
     id: null
     user_id: null
-  forms_attachment:
-    answer_id: null
-    attachment: null
-    created_at: null
-    field_id: null
-    id: null
-    name: null
-    path: null
-    user_id: null
+  forms_attachment: skip_rows
   forms_choice:
     action: null
     field_id: null
@@ -435,28 +427,8 @@ strategy:
   leasing_collateraltype:
     id: null
     name: null
-  leasing_collectioncourtdecision:
-    created_at: null
-    decision_date: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    lease_id: null
-    modified_at: null
-    note: null
-    uploaded_at: null
-    uploader_id: null
-  leasing_collectionletter:
-    created_at: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    lease_id: null
-    modified_at: null
-    uploaded_at: null
-    uploader_id: null
+  leasing_collectioncourtdecision: skip_rows
+  leasing_collectionletter: skip_rows
   leasing_collectionlettertemplate:
     created_at: null
     deleted: null
@@ -729,16 +701,7 @@ strategy:
     reference_number: null
     state: null
     user_id: null
-  leasing_infilldevelopmentcompensationattachment:
-    created_at: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    infill_development_compensation_lease_id: null
-    modified_at: null
-    uploaded_at: null
-    uploader_id: null
+  leasing_infilldevelopmentcompensationattachment: skip_rows
   leasing_infilldevelopmentcompensationdecision:
     created_at: null
     decision_date: null
@@ -784,16 +747,7 @@ strategy:
     lease_id: null
     supervised_date: null
     supervision_date: null
-  leasing_inspectionattachment:
-    created_at: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    inspection_id: null
-    modified_at: null
-    uploaded_at: null
-    uploader_id: null
+  leasing_inspectionattachment: skip_rows
   leasing_intendeduse:
     id: null
     is_active: null
@@ -915,17 +869,7 @@ strategy:
     land_use_agreement_id: null
     modified_at: null
     postal_code: null
-  leasing_landuseagreementattachment:
-    created_at: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    land_use_agreement_id: null
-    modified_at: null
-    type: null
-    uploaded_at: null
-    uploader_id: null
+  leasing_landuseagreementattachment: skip_rows
   leasing_landuseagreementcompensations:
     cash_compensation: null
     first_installment_increase: null
@@ -1184,17 +1128,7 @@ strategy:
     lease_area_id: null
     modified_at: null
     postal_code: null
-  leasing_leaseareaattachment:
-    created_at: null
-    deleted: null
-    deleted_by_cascade: null
-    file: null
-    id: null
-    lease_area_id: null
-    modified_at: null
-    type: null
-    uploaded_at: null
-    uploader_id: null
+  leasing_leaseareaattachment: skip_rows
   leasing_leasebasisofrent:
     amount_per_area: null
     archived_at: null
@@ -1600,13 +1534,7 @@ strategy:
     start_date: null
     state: null
     user_id: null
-  plotsearch_areasearchattachment:
-    area_search_id: null
-    attachment: null
-    created_at: null
-    id: null
-    name: null
-    user_id: null
+  plotsearch_areasearchattachment: skip_rows
   plotsearch_areasearchintendeduse:
     deleted: null
     deleted_by_cascade: null
@@ -1659,13 +1587,7 @@ strategy:
     name: null
     preparer_id: null
     state: null
-  plotsearch_meetingmemo:
-    created_at: null
-    id: null
-    meeting_memo: null
-    name: null
-    target_status_id: null
-    user_id: null
+  plotsearch_meetingmemo: skip_rows
   plotsearch_plotsearch:
     begin_at: null
     created_at: null
