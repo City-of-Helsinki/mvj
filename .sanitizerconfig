@@ -1764,7 +1764,7 @@ strategy:
   users_user:
     date_joined: null
     department_name: null
-    email: user.email
+    email: mvj.email
     first_name: mvj.first_name
     id: null
     is_active: null
