@@ -116,7 +116,7 @@ strategy:
     official_name: mvj.company_if_exist
     operation_start_date: null
     original_data: null
-    phone_number: null
+    phone_number: mvj.phone_number_if_exist
     status: null
   credit_integration_creditdecision_reasons:
     creditdecision_id: null
