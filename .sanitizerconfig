@@ -125,7 +125,7 @@ strategy:
   credit_integration_creditdecisionlog:
     created_at: null
     id: null
-    identification: null
+    identification: mvj.national_identification_number_if_exist
     modified_at: null
     text: null
     user_id: null
@@ -1250,7 +1250,7 @@ strategy:
     business_id: null
     id: null
     name: mvj.company_if_exist
-    national_identification_number: null
+    national_identification_number: mvj.national_identification_number_if_exist
     share_denominator: null
     share_numerator: null
     transfer_id: null
