@@ -106,7 +106,7 @@ strategy:
   credit_integration_creditdecision:
     address: mvj.address_if_exist
     business_entity: null
-    business_id: null
+    business_id: mvj.business_id_if_exist
     claimant_id: null
     created_at: null
     customer_id: null
@@ -1247,7 +1247,7 @@ strategy:
     id: null
     modified_at: null
   leasing_leaseholdtransferparty:
-    business_id: null
+    business_id: mvj.business_id_if_exist
     id: null
     name: mvj.company_if_exist
     national_identification_number: mvj.national_identification_number_if_exist
