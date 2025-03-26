@@ -113,7 +113,7 @@ strategy:
     id: null
     industry_code: null
     modified_at: null
-    official_name: null
+    official_name: mvj.company_if_exist
     operation_start_date: null
     original_data: null
     phone_number: null
@@ -1249,7 +1249,7 @@ strategy:
   leasing_leaseholdtransferparty:
     business_id: null
     id: null
-    name: null
+    name: mvj.company_if_exist
     national_identification_number: null
     share_denominator: null
     share_numerator: null
