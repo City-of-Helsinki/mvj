@@ -1815,6 +1815,33 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         return round(initial_year_rent, 2)
 
+    def calculate_cumulative_temporary_subventions(self):
+        temporary_subventions = self.temporary_subventions.all()
+        if not temporary_subventions:
+            return Decimal(0)
+
+        cumulative_temporary_subventions = []
+
+        current_discounted_amount = round(
+            self.calculate_subvented_initial_year_rent(), 6
+        )
+        for temporary_subvention in temporary_subventions:
+            last_total = current_discounted_amount
+            current_discounted_amount = (
+                current_discounted_amount
+                * (100 - temporary_subvention.subvention_percent)
+                / 100
+            )
+            cumulative_temporary_subventions.append(
+                {
+                    "description": temporary_subvention.description,
+                    "subvention_percent": temporary_subvention.subvention_percent,
+                    "subvention_amount_euros_per_year": last_total
+                    - current_discounted_amount,
+                }
+            )
+        return cumulative_temporary_subventions
+
     def calculate_discounted_rent(self):
         initial_year_rent = self.calculate_initial_year_rent()
         if not self.discount_percentage:

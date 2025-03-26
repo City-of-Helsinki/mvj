@@ -373,19 +373,13 @@ def get_temporary_discount_amount_euros_per_year(lease):
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
     ):
-        temporary_subventions = basis_of_rent.temporary_subventions.all()
-        if not temporary_subventions:
-            continue
-
-        subvented_initial_year_rent = (
-            basis_of_rent.calculate_subvented_initial_year_rent()
+        cumulative_temporary_subventions = (
+            basis_of_rent.calculate_cumulative_temporary_subventions()
         )
-        for temporary_subvention in temporary_subventions:
-            temporary_discount_amount_total += (
-                subvented_initial_year_rent
-                * temporary_subvention.subvention_percent
-                / 100
-            )
+        for subvention in cumulative_temporary_subventions:
+            temporary_discount_amount_total += subvention[
+                "subvention_amount_euros_per_year"
+            ]
 
     return (temporary_discount_amount_total).quantize(
         Decimal(".01"), rounding=ROUND_HALF_UP
