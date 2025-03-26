@@ -74,7 +74,7 @@ def sanitize_generate_random_numbers_if_exist(value):
 
 
 def sanitize_last_name(value):
-    return fake.first_name()
+    return fake.last_name()
 
 
 def sanitize_last_name_if_exist(value):
