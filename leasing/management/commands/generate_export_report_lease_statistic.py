@@ -1,9 +1,13 @@
+import logging
+
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from leasing.models.report_storage import ReportStorage
 from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -14,6 +18,7 @@ class Command(BaseCommand):
     help = "Generate Lease statistic report to ReportStorage"
 
     def handle(self, *args, **options):
+        report_slug = "lease_statistic"
         lease_statistics_report = LeaseStatisticReport()
         previous_year = timezone.now().year - 1
         input_data = {
@@ -31,19 +36,19 @@ class Command(BaseCommand):
             ReportStorage.objects.create(
                 report_data=serialized_report_data,
                 input_data=input_data,
-                report_type="lease_statistic",
+                report_type=report_slug,
             )
         except Exception as e:
-            self.stdout.write(
+            logger.exception(
                 f"Generation of Lease Statistic report to ReportStorage failed: {e}"
             )
 
         # Delete one month old ReportStorage objects for report `lease_statistic`
         one_month_ago = timezone.now() - relativedelta(months=1)
         deleted_count, _ = ReportStorage.objects.filter(
-            report_type="lease_statistic", created_at__lt=one_month_ago
+            report_type=report_slug, created_at__lt=one_month_ago
         ).delete()
-        self.stdout.write(
-            f"Deleted {deleted_count} old ReportStorage objects for report `lease_statistic`"
+        logger.info(
+            f"Deleted {deleted_count} old ReportStorage objects for report `{report_slug}`"
         )
-        self.stdout.write("Generation of Lease Statistic report to ReportStorage done")
+        logger.info("Generation of Lease Statistic report to ReportStorage done")
