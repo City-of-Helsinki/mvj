@@ -166,3 +166,64 @@ def test_calculate_subvented_initial_year_rent_re_lease(
     assert round(
         lease_basis_of_rent.calculate_subvented_initial_year_rent(), 2
     ) == round(expected_subvented_initial_year_rent, 2)
+
+
+@pytest.mark.django_db
+def test_calculate_cumulative_temporary_subventions(
+    lease_basis_of_rent_factory,
+    lease_basis_of_rent_management_subvention_factory,
+    lease_basis_of_rent_temporary_subvention_factory,
+    lease_factory,
+    index_factory,
+):
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index_factory(number=1976, year=2020, month=2),
+        area=Decimal(2969.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(37.00),
+        profit_margin_percentage=Decimal(4.00),
+        discount_percentage=Decimal(28.000000),
+    )
+
+    lease_basis_of_rent_management_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        subvention_amount=731.12,
+    )
+    # In the case when there are no temporary subventions,
+    # cumulative temporary subventions should be 0
+    assert round(
+        lease_basis_of_rent.calculate_cumulative_temporary_subventions(), 2
+    ) == Decimal(0.00)
+
+    # In the case when there are temporary subventions,
+    # expect a certain number for the sum of cumulative temporary subventions
+    # with the accuracy of two decimals
+
+    lease_basis_of_rent_temporary_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        description="Temporary subvention 1",
+        subvention_percent=10.00,
+    )
+
+    lease_basis_of_rent_temporary_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        description="Temporary subvention 2",
+        subvention_percent=20.00,
+    )
+
+    expected_sum_of_subvention_amounts = Decimal(24311.79)
+
+    cumulative_temporary_subventions = (
+        lease_basis_of_rent.calculate_cumulative_temporary_subventions()
+    )
+
+    sum_of_subvention_amounts = sum(
+        subvention["subvention_amount_euros_per_year"]
+        for subvention in cumulative_temporary_subventions
+    )
+
+    assert round(sum_of_subvention_amounts, 2) == round(
+        expected_sum_of_subvention_amounts, 2
+    )

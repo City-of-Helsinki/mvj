@@ -72,6 +72,7 @@ from leasing.models.rent import (
     Index,
     IndexPointFigureYearly,
     LeaseBasisOfRentManagementSubvention,
+    LeaseBasisOfRentTemporarySubvention,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
 from leasing.models.service_unit import ServiceUnitGroupMapping
@@ -253,8 +254,16 @@ class UiDataFactory(factory.django.DjangoModelFactory):
 
 @register
 class LeaseBasisOfRentManagementSubventionFactory(factory.django.DjangoModelFactory):
+    management_id = 1
+
     class Meta:
         model = LeaseBasisOfRentManagementSubvention
+
+
+@register
+class LeaseBasisOfRentTemporarySubventionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = LeaseBasisOfRentTemporarySubvention
 
 
 @register
