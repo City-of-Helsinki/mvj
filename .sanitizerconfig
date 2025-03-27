@@ -1,6 +1,23 @@
 config:
   addons: []
+  extra_parameters:
+    # These are passed to pg_dump via python-database-sanitizer library.
+    pg_dump:
+      - "--format=plain" # Plain-text SQL script format. Default value.
+                         # Also, it's the only possible format for this sanitizer library
+                         # because it relies on plain-text standard output for sanitizing objects.
+      - "--clean" # Drop objects before recreating them. Does not affect the database itself.
+      - "--if-exists" # Don't warn about missing objects during cleaning.
 strategy:
+  # Top-level keys under strategy are DB table names, as interpreted by init_sanitizer command.
+  # `skip_rows` means that the table definition is included in the dump, but the table will have zero rows.
+  #
+  # Second-level keys are model's fields.
+  #
+  # Values specify which sanitization function to use.
+  # MVJ's custom functions are defined in `sanitizer/mvj.py`. For example `mvj.paragraph_if_exist`.
+  # Sanitizer library's predefined functions are namespaced. For example `constant.empty_json_list`, and `string.random`.
+  # `null` means that no sanitization function is used, so the field value will be dumped as-is.
   auditlog_logentry: skip_rows
   auth_group:
     id: null
