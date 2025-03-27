@@ -83,7 +83,25 @@ def sanitize_last_name_if_exist(value):
 
 
 def sanitize_national_identification_number(value):
-    return fake.pystr_format(string_format="######-####", letters="0123456789")
+    """
+    Generate a mock of a Finnish national identification number (henkilötunnus).
+    To avoid collisions, we're using years larger than 2050.
+    """
+    day = random.randint(1, 28)  # Avoid edge cases with 29-31
+    month = random.randint(1, 12)
+
+    century_marker = "A"  # For years 2000-2099
+    year = random.randint(50, 99)
+
+    date_part = f"{day:02d}{month:02d}{year:02d}"
+    individual_number = random.randint(1, 899)
+    number_without_control_char = f"{date_part}{century_marker}{individual_number:03d}"
+
+    control_number = int(date_part + f"{individual_number:03d}") % 31
+    control_chars = "0123456789ABCDEFHJKLMNPRSTUVWXY"
+    control_char = control_chars[control_number]
+
+    return number_without_control_char + control_char
 
 
 def sanitize_national_identification_number_if_exist(value):
