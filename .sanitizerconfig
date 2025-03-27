@@ -92,7 +92,7 @@ strategy:
     created_at: null
     id: null
     modified_at: null
-    reason: null
+    reason: mvj.paragraph_if_exist
     reason_code: null
   django_admin_log:
     action_flag: null
@@ -139,7 +139,7 @@ strategy:
   forms_answeropeningrecord:
     answer_id: null
     id: null
-    note: null
+    note: mvj.paragraph_if_exist
     time_stamp: null
   forms_answeropeningrecord_openers:
     answeropeningrecord_id: null
@@ -277,7 +277,7 @@ strategy:
     geometry: null
     id: null
     modified_at: null
-    note: null
+    note: mvj.paragraph_if_exist
     user_id: null
   leasing_areasource:
     id: null
@@ -299,7 +299,7 @@ strategy:
     lease_rights_end_date: null
     management_id: null
     modified_at: null
-    note: null
+    note: mvj.paragraph_if_exist
     plot_type_id: null
     start_date: null
   leasing_basisofrentbuildpermissiontype:
@@ -335,7 +335,7 @@ strategy:
     deed_date: null
     end_date: null
     id: null
-    note: null
+    note: mvj.paragraph_if_exist
     number: null
     other_type: null
     paid_date: null
@@ -363,7 +363,7 @@ strategy:
     id: null
     lease_id: null
     modified_at: null
-    note: null
+    note: mvj.paragraph_if_exist
     user_id: null
   leasing_comment:
     created_at: null
@@ -372,7 +372,7 @@ strategy:
     id: null
     lease_id: null
     modified_at: null
-    text: mvj.paragraph
+    text: mvj.paragraph_if_exist
     topic_id: null
     user_id: null
   leasing_commenttopic:
@@ -383,7 +383,7 @@ strategy:
     decision_id: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     modified_at: null
     supervised_date: null
@@ -401,7 +401,7 @@ strategy:
     is_static: null
     lease_area_id: null
     modified_at: null
-    text: null
+    text: mvj.paragraph_if_exist
     type: null
     user_id: null
   leasing_contact:
@@ -449,13 +449,13 @@ strategy:
     second_call_sent: null
     sign_by_date: null
     signing_date: null
-    signing_note: null
+    signing_note: mvj.paragraph_if_exist
     third_call_sent: null
     type_id: null
   leasing_contractchange:
     contract_id: null
     decision_id: null
-    description: null
+    description: mvj.paragraph_if_exist
     first_call_sent: null
     id: null
     second_call_sent: null
@@ -487,7 +487,7 @@ strategy:
     created_at: null
     detailed_plan: null
     detailed_plan_latest_processing_date: null
-    detailed_plan_latest_processing_date_note: null
+    detailed_plan_latest_processing_date_note: mvj.paragraph_if_exist
     id: null
     identifier: null
     intended_use_id: null
@@ -503,7 +503,7 @@ strategy:
     decision_maker_id: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     lease_id: null
     modified_at: null
@@ -616,7 +616,7 @@ strategy:
     lease_contract_change_date: null
     modified_at: null
     name: null
-    note: null
+    note: mvj.paragraph_if_exist
     reference_number: null
     state: null
     user_id: null
@@ -654,13 +654,13 @@ strategy:
     lease_id: null
     modified_at: null
     monetary_compensation_amount: null
-    note: null
+    note: mvj.paragraph_if_exist
     paid_date: null
     part_of_the_increase_in_value: null
     sent_to_sap_date: null
     year: null
   leasing_inspection:
-    description: mvj.paragraph
+    description: mvj.paragraph_if_exist
     id: null
     inspector: string.random
     lease_id: null
@@ -692,7 +692,7 @@ strategy:
     deleted: null
     deleted_by_cascade: null
     delivery_method: null
-    description: null
+    description: mvj.paragraph_if_exist
     due_date: null
     generated: null
     id: null
@@ -701,7 +701,7 @@ strategy:
     invoicing_date: null
     lease_id: null
     modified_at: null
-    notes: null
+    notes: mvj.paragraph_if_exist
     number: null
     outstanding_amount: null
     payment_notification_catalog_date: null
@@ -723,7 +723,7 @@ strategy:
     id: null
     lease_id: null
     modified_at: null
-    notes: null
+    notes: mvj.paragraph_if_exist
   leasing_invoicepayment:
     created_at: null
     deleted: null
@@ -741,7 +741,7 @@ strategy:
     created_at: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     intended_use_id: null
     invoice_id: null
@@ -837,7 +837,7 @@ strategy:
     decision_maker_id: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     land_use_agreement_id: null
     modified_at: null
@@ -849,7 +849,7 @@ strategy:
     decision_id: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     modified_at: null
     supervised_date: null
@@ -893,7 +893,7 @@ strategy:
     invoicing_date: null
     land_use_agreement_id: null
     modified_at: null
-    notes: null
+    notes: mvj.paragraph_if_exist
     number: null
     outstanding_amount: null
     paid_date: null
@@ -920,7 +920,7 @@ strategy:
     created_at: null
     deleted: null
     deleted_by_cascade: null
-    description: null
+    description: mvj.paragraph_if_exist
     id: null
     increase_percentage: null
     invoice_id: null
@@ -979,7 +979,7 @@ strategy:
     id: null
     identifier_id: null
     intended_use_id: null
-    intended_use_note: null
+    intended_use_note: mvj.paragraph_if_exist
     internal_order: null
     is_invoicing_enabled: null
     is_rent_info_complete: null
@@ -988,8 +988,8 @@ strategy:
     management_id: null
     modified_at: null
     municipality_id: null
-    note: null
-    notice_note: null
+    note: mvj.paragraph_if_exist
+    notice_note: mvj.paragraph_if_exist
     notice_period_id: null
     preparer_id: null
     real_estate_developer: null
@@ -1008,7 +1008,7 @@ strategy:
   leasing_leasearea:
     archived_at: null
     archived_decision_id: null
-    archived_note: null
+    archived_note: mvj.paragraph_if_exist
     area: null
     constructability_report_investigation_state: null
     constructability_report_signer: null
@@ -1051,7 +1051,7 @@ strategy:
   leasing_leasebasisofrent:
     amount_per_area: null
     archived_at: null
-    archived_note: null
+    archived_note: mvj.paragraph_if_exist
     area: null
     area_unit: null
     created_at: null
@@ -1192,7 +1192,7 @@ strategy:
     created_at: null
     detailed_plan_identifier: null
     detailed_plan_latest_processing_date: null
-    detailed_plan_latest_processing_date_note: null
+    detailed_plan_latest_processing_date_note: mvj.paragraph_if_exist
     geometry: null
     id: null
     identifier: null
@@ -1278,7 +1278,7 @@ strategy:
     manual_ratio: null
     manual_ratio_previous: null
     modified_at: null
-    note: null
+    note: mvj.paragraph_if_exist
     old_dwellings_in_housing_companies_price_index_id: null
     override_receivable_type_id: null
     payable_rent_amount: null
@@ -1304,7 +1304,7 @@ strategy:
     id: null
     intended_use_id: null
     modified_at: null
-    note: null
+    note: mvj.paragraph_if_exist
     rent_id: null
     start_date: null
     subvention_base_percent: null
@@ -1407,7 +1407,7 @@ strategy:
     custom_detailed_plan_id: null
     distribution: null
     id: null
-    note: null
+    note: mvj.paragraph_if_exist
     plan_unit_id: null
   leasing_vat:
     end_date: null
@@ -1436,8 +1436,8 @@ strategy:
     address: mvj.address_if_exist
     answer_id: null
     area_search_status_id: null
-    description_area: null
-    description_intended_use: null
+    description_area: mvj.paragraph_if_exist
+    description_intended_use: mvj.paragraph_if_exist
     district: null
     end_date: null
     form_id: null
@@ -1465,11 +1465,11 @@ strategy:
   plotsearch_areasearchstatus:
     decline_reason: null
     id: null
-    preparer_note: null
+    preparer_note: mvj.paragraph_if_exist
   plotsearch_areasearchstatusnote:
     area_search_status_id: null
     id: null
-    note: null
+    note: mvj.paragraph_if_exist
     preparer_id: null
     time_stamp: null
   plotsearch_directreservationlink:
@@ -1498,7 +1498,7 @@ strategy:
     id: null
     plot_search_target_id: null
   plotsearch_informationcheck:
-    comment: null
+    comment: mvj.paragraph_if_exist
     created_at: null
     entry_section_id: null
     id: null
@@ -1583,7 +1583,7 @@ strategy:
     added_target_to_applicant: null
     answer_id: null
     application_identifier: null
-    arguments: null
+    arguments: mvj.paragraph_if_exist
     counsel_date: null
     decline_reason: null
     id: null
