@@ -367,11 +367,21 @@ def get_temporary_discount_percentage(lease):
     return (1 - base) * 100
 
 
-def get_temporary_discount_amount(lease):
-    temporary_discount_percentage = get_temporary_discount_percentage(lease)
-    subsidised_rent = get_subvented_initial_year_rent(lease)
+def get_temporary_discount_amount_euros_per_year(lease):
+    temporary_discount_amount_total = Decimal(0)
 
-    return (subsidised_rent / 100 * temporary_discount_percentage).quantize(
+    for basis_of_rent in lease.basis_of_rents.filter(
+        archived_at__isnull=True, locked_at__isnull=False
+    ):
+        cumulative_temporary_subventions = (
+            basis_of_rent.calculate_cumulative_temporary_subventions()
+        )
+        for subvention in cumulative_temporary_subventions:
+            temporary_discount_amount_total += subvention[
+                "subvention_amount_euros_per_year"
+            ]
+
+    return (temporary_discount_amount_total).quantize(
         Decimal(".01"), rounding=ROUND_HALF_UP
     )
 
@@ -570,9 +580,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 13,
         },
         # Tilapäisalennus euroa/vuosi (laskurista)
-        "temporary_discount_amount": {
-            "label": _("Temporary discount amount"),
-            "source": get_temporary_discount_amount,
+        "temporary_discount_amount_euros_per_year": {
+            "label": _("Temporary discount amount euros / year"),
+            "source": get_temporary_discount_amount_euros_per_year,
             "format": "money",
             "width": 13,
         },
