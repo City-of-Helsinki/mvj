@@ -1,19 +1,7 @@
 config:
   addons: []
 strategy:
-  auditlog_logentry:
-    action: null
-    actor_id: null
-    additional_data: null
-    changes: constant.empty_json_dict
-    content_type_id: null
-    id: null
-    object_id: null
-    object_pk: null
-    object_repr: null
-    remote_addr: null
-    serialized_data: null
-    timestamp: null
+  auditlog_logentry: skip_rows
   auth_group:
     id: null
     name: null
@@ -26,7 +14,7 @@ strategy:
     content_type_id: null
     id: null
     name: null
-  authtoken_token: {}
+  authtoken_token: skip_rows
   batchrun_command:
     deleted: null
     deleted_by_cascade: null
@@ -52,36 +40,10 @@ strategy:
     delete_run_delay: null
     id: null
     identifier: null
-  batchrun_jobrun:
-    exit_code: null
-    id: null
-    job_id: null
-    pid: null
-    started_at: null
-    stopped_at: null
-  batchrun_jobrunlog:
-    content: null
-    end: null
-    entry_count: null
-    entry_data: null
-    error_count: null
-    id: null
-    run_id: null
-    start: null
-  batchrun_jobrunlogentry:
-    id: null
-    kind: null
-    line_number: null
-    number: null
-    run_id: null
-    text: null
-    time: null
-  batchrun_jobrunqueueitem:
-    assigned_at: null
-    assignee_pid: null
-    id: null
-    run_at: null
-    scheduled_job_id: null
+  batchrun_jobrun: skip_rows
+  batchrun_jobrunlog: skip_rows
+  batchrun_jobrunlogentry: skip_rows
+  batchrun_jobrunqueueitem: skip_rows
   batchrun_scheduledjob:
     comment: null
     created_at: null
@@ -99,10 +61,7 @@ strategy:
   batchrun_timezone:
     id: null
     name: null
-  constance_constance:
-    id: null
-    key: null
-    value: null
+  constance_constance: skip_rows
   credit_integration_creditdecision:
     address: mvj.address_if_exist
     business_entity: null
@@ -148,31 +107,10 @@ strategy:
     app_label: null
     id: null
     model: null
-  django_q_ormq:
-    id: null
-    key: null
-    lock: null
-    payload: null
-  django_q_schedule:
-    args: null
-    cluster: null
-    cron: null
-    func: null
-    hook: null
-    id: null
-    intended_date_kwarg: null
-    kwargs: null
-    minutes: null
-    name: null
-    next_run: null
-    repeats: null
-    schedule_type: null
-    task: null
-  django_q_task: {}
-  django_session:
-    expire_date: null
-    session_data: null
-    session_key: null
+  django_q_ormq: skip_rows
+  django_q_schedule: skip_rows
+  django_q_task: skip_rows
+  django_session: skip_rows
   file_operations_filescanstatus:
     content_type_id: null
     created_at: null
@@ -218,13 +156,7 @@ strategy:
     text_fi: null
     text_sv: null
     value: null
-  forms_entry:
-    entry_section_id: null
-    extra_value: null
-    field_id: null
-    id: null
-    path: null
-    value: null
+  forms_entry: skip_rows
   forms_entrysection:
     answer_id: null
     id: null
@@ -297,12 +229,7 @@ strategy:
     ad_group_id: null
     group_id: null
     id: null
-  helusers_oidcbackchannellogoutevent:
-    created_at: null
-    id: null
-    iss: null
-    sid: null
-    sub: null
+  helusers_oidcbackchannellogoutevent: skip_rows
   laske_export_laskeexportlog:
     created_at: null
     deleted: null
@@ -318,12 +245,7 @@ strategy:
     id: null
     landuseagreementinvoice_id: null
     laskeexportlog_id: null
-  laske_export_laskeexportloginvoiceitem:
-    id: null
-    information: null
-    invoice_id: null
-    laskeexportlog_id: null
-    status: null
+  laske_export_laskeexportloginvoiceitem: skip_rows
   laske_export_laskepaymentslog:
     created_at: null
     deleted: null
@@ -334,10 +256,7 @@ strategy:
     is_finished: null
     modified_at: null
     started_at: null
-  laske_export_laskepaymentslog_payments:
-    id: null
-    invoicepayment_id: null
-    laskepaymentslog_id: null
+  laske_export_laskepaymentslog_payments: skip_rows
   leasing_applicationmetadata:
     application_received_at: null
     id: null
