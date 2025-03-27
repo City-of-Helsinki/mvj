@@ -278,17 +278,84 @@ sudo touch virre_server_certificate.crt
 sudo update-ca-certificates # This is the actual command that registers certificates.
 ```
 
-### Backup database
+### Production database backup
 
-Most important thing to remember when making a backup is to sanitize the data, when needed. Usually we need to take dump from the database only for the development/testing purposes so normally you should sanitize the data. We are using [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands) for sanitizing data so check the most recent instructions from the vendor.
-
-<strong>When running backup for the staging/testing/development purposes, you should exclude few tables to limit the size of the backup.</strong> So remember to add `--exclude-table-data 'public.auditlog_logentry' --exclude-table-data 'public.batchrun_jobrunlog*' --exclude-table-data 'public.django_q_task'` to `pg_dump` command.
+Before doing extensive production deployments, backup the database:
 
 ```bash
-pg_dump mvj_api_prod | gzip > mvj-api-prod_$(date +%Y%m%d%H%m).sql.gz
+pg_dump mvj_api_prod -h proddb-mvj.hel.fi | gzip > mvj-api-prod_$(date +%Y%m%d%H%m).sql.gz
 ```
 
 To restore dump run `psql -f mvj-api-prod-DATE_HERE.sql ${DATABASE_URL/postgis/postgres}`.
+
+### Sanitized database dump for development use
+
+When taking a database dump from production to be used for development/testing
+purposes, sensitive fields must be sanitized. We use
+[Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
+for sanitizing the data, so check the most recent instructions from the vendor (unless ours are newer).
+
+#### 1. Validate sanitizer configuration
+
+Sanitizer configuration is specified in `.sanitizerconfig`.
+First, validate if the current configuration is up to date with Django models:
+
+```bash
+python manage.py validate_sanitizerconfig
+```
+
+This will tell you if any models or model fields are missing from the
+configuration based on current state of the models.
+
+#### 2. Update sanitizer configuration
+
+If you have any deficiencies in the configuration, update the configuration file
+with missing models and their fields.
+
+Our custom sanitizer functions are specified in `sanitizers/mvj.py`.
+The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers) are also available.
+
+`skip_rows` strategy can be used to entirely avoid dumping rows from a table
+that contains data unnecessary for development purposes.
+The table schema is still included in the dump
+
+If you need lots of changes, you can fully reset the configuration file.
+Afterwards, only stage the updates you need to version control, and avoid
+setting row sanitizers to null if they specified a sanitization function before.
+
+```bash
+python manage.py init_sanitizer
+```
+
+#### 3. Create sanitized dump
+
+```bash
+python manage.py create_sanitized_dump > prod-sanitized-dump_$(date +%Y%m%d%H%m).sql
+```
+
+#### 4. Load the dump into local/dev/stage
+
+First, backup your destination database [like you would for production](#production-database-backup).
+
+Then, if .sanitizerconfig did not include the `--clean` extra parameter, you need to either:
+
+- load the dump into a new database, or
+- drop the current database before loading the dump in its place.
+
+If the dump was generated with `--clean` parameter, it includes the necessary DROP statements to
+successfully overwrite an existing database.
+
+Load the .sql format dump with `psql`:
+
+```bash
+psql --username <username> --dbname <dbname> --host <hostname> --port <port> --file prod-sanitized-dump_<datetime>.sql > dump_loading.log
+```
+
+Example for local environment:
+
+```bash
+psql --username mvj --dbname mvj --host mvj-db --port 5433 --file sanitized-dump_<datetime>.sql > dump_loading.log
+```
 
 ### Token authentication
 
