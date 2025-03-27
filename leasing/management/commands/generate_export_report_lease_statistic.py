@@ -29,14 +29,13 @@ class Command(BaseCommand):
 def handle_async_task():
     report_slug = "lease_statistic"
     lease_statistics_report = LeaseStatisticReport()
-    previous_year = timezone.now().year - 1
     input_data = {
         "service_unit": None,
         # Start of the previous year
-        "start_date": f"{previous_year}-01-01",
+        "start_date": None,
         "end_date": None,
         "state": None,
-        "only_active_leases": None,
+        "only_active_leases": True,
     }
     try:
         # Generate report data and create a ReportStorage
