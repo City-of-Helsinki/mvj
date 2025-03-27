@@ -1836,8 +1836,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                 {
                     "description": temporary_subvention.description,
                     "subvention_percent": temporary_subvention.subvention_percent,
-                    "subvention_amount_euros_per_year": last_total
-                    - current_discounted_amount,
+                    "subvention_amount_euros_per_year": Decimal(
+                        last_total - current_discounted_amount
+                    ),
                 }
             )
         return cumulative_temporary_subventions
