@@ -1233,6 +1233,16 @@ DEFAULT_MODEL_PERMS = {
         6: ("view",),
         7: ("view", "add", "change", "delete"),
     },
+    # leasing.report_storage
+    "reportstorage": {
+        1: None,
+        2: None,
+        3: None,
+        4: None,
+        5: None,
+        6: None,
+        7: ("view", "delete"),
+    },
 }
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")

@@ -293,5 +293,20 @@
       },
       "history_retention_policy": 1
     }
+  },
+  {
+    "model": "batchrun.job",
+    "pk": 24,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2025-03-26T12:24:00.000Z",
+      "modified_at": "2025-03-26T12:24:00.000Z",
+      "name": "Export raportin generointi: Vuokrausten tilastoraportti",
+      "comment": "",
+      "command": 18,
+      "arguments": {},
+      "history_retention_policy": 1
+    }
   }
 ]
