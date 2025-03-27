@@ -1816,6 +1816,13 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         return round(initial_year_rent, 2)
 
     def calculate_cumulative_temporary_subventions(self):
+        """
+        Returns objects to include data for temporary subventions.
+
+        Each subvention_amount_euros_per_year is calculated cumulatively.
+        The subvention_percent is taken from the amount of subvented_initial_year_rent
+        minus all the temporary subvention amounts that have been applied before it.
+        """
         temporary_subventions = self.temporary_subventions.all()
         if not temporary_subventions:
             return Decimal(0)
