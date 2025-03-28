@@ -34,7 +34,7 @@ from leasing.enums import (
     RentType,
     SubventionType,
 )
-from leasing.models.types import BillingPeriod
+from leasing.models.types import BillingPeriod, CumulativeTemporarySubvention
 from leasing.models.utils import (
     DayMonth,
     fix_amount_for_overlap,
@@ -1815,7 +1815,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         return round(initial_year_rent, 2)
 
-    def calculate_cumulative_temporary_subventions(self):
+    def calculate_cumulative_temporary_subventions(
+        self,
+    ) -> list[CumulativeTemporarySubvention]:
         """
         Returns objects to include data for temporary subventions.
 
@@ -1825,7 +1827,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         """
         temporary_subventions = self.temporary_subventions.all()
         if not temporary_subventions:
-            return Decimal(0)
+            return []
 
         cumulative_temporary_subventions = []
 
