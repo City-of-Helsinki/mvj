@@ -86,3 +86,9 @@ class InvoiceDatumDict(InvoiceDatum):
 class ContactsActiveLeases(TypedDict):
     lease_identifier: str
     lease_id: int
+
+
+class CumulativeTemporarySubvention(TypedDict):
+    description: str
+    subvention_percent: Decimal
+    subvention_amount_euros_per_year: Decimal

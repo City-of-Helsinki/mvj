@@ -191,10 +191,8 @@ def test_calculate_cumulative_temporary_subventions(
         subvention_amount=731.12,
     )
     # In the case when there are no temporary subventions,
-    # cumulative temporary subventions should be 0
-    assert round(
-        lease_basis_of_rent.calculate_cumulative_temporary_subventions(), 2
-    ) == Decimal(0.00)
+    # an empty array should be returned
+    assert lease_basis_of_rent.calculate_cumulative_temporary_subventions() == []
 
     # In the case when there are temporary subventions,
     # expect a certain number for the sum of cumulative temporary subventions
