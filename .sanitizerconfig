@@ -91,7 +91,7 @@ strategy:
     modified_at: null
     official_name: mvj.company_if_exist
     operation_start_date: null
-    original_data: null
+    original_data: constant.empty_json_dict
     phone_number: mvj.phone_number_if_exist
     status: null
   credit_integration_creditdecision_reasons:
