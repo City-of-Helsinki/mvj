@@ -76,6 +76,11 @@ jobs:
           python manage.py makemigrations --dry-run --check
           python manage.py migrate
 
+      # Check that .sanitizerconfig is not missing any new models or their fields
+      - name: Check DB sanitizer configuration
+        run: |
+          python manage.py validate_sanitizerconfig --silent
+
       - name: Run tests, compile translations, run type checks
         env:
           TEST_FTP_ACTIVE: 1
