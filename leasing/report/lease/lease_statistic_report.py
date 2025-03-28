@@ -2,6 +2,7 @@ import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from functools import lru_cache
+from typing import TypedDict
 
 from django import forms
 from django.db.models import Q, QuerySet
@@ -37,6 +38,13 @@ RESIDENTIAL_INTENDED_USE_IDS = [
     12,
     13,
 ]  # 1 = Asunto, 12 = Asunto, lisärakent., 13 = Asunto 2
+
+
+class LeaseStatisticReportInputData(TypedDict):
+    service_unit: list[int] | None
+    start_date: datetime.date | None
+    only_active_leases: bool | None
+    state: str | None
 
 
 def get_latest_decision(lease):
@@ -643,7 +651,7 @@ class LeaseStatisticReport(AsyncReportBase):
     }
     async_task_timeout = 60 * 30  # 30 minutes
 
-    def get_data(self, input_data) -> QuerySet[Lease]:
+    def get_data(self, input_data: LeaseStatisticReportInputData) -> QuerySet[Lease]:
         qs = Lease.objects.select_related(
             "identifier__type",
             "identifier__district",
