@@ -29,8 +29,9 @@ class Command(BaseCommand):
             "state": None,
             "only_active_leases": True,
         }
+        async_task_timeout = 60 * 60  # 1 hour
         try:
-            async_task(handle_async_task, input_data)
+            async_task(handle_async_task, input_data, timeout=async_task_timeout)
         except Exception as e:
             logger.exception(f"Queuing async task for '{self.help}' failed: {e}")
         logger.info(f"Queued async task for '{self.help}'")
