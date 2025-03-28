@@ -1340,6 +1340,7 @@ strategy:
   leasing_rentintendeduse:
     id: null
     name: null
+  leasing_reportstorage: skip_rows
   leasing_reservationprocedure:
     id: null
     name: null
