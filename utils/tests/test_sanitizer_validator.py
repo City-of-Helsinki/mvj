@@ -1,4 +1,6 @@
+import inspect
 import re
+from collections.abc import Callable
 
 import pytest
 
@@ -67,3 +69,34 @@ def test_national_identification_number_if_exist():
         pytest.fail("Expected a value, got None")
 
     assert re.match(HETU_REGEX, result)
+
+
+def _get_all_if_exist_functions():
+    """Get all *_if_exist functions from mvj module."""
+    from sanitizers import mvj
+
+    functions = []
+    for name, obj in inspect.getmembers(mvj):
+        if name.endswith("_if_exist") and inspect.isfunction(obj):
+            functions.append(obj)
+    return functions
+
+
+@pytest.mark.parametrize("tested_function", _get_all_if_exist_functions())
+def test_conditional_sanitizers(tested_function: Callable[..., str | None]):
+    """All "*_if_exist()" functions preserve None and empty string values."""
+    # Test with None
+    assert (
+        tested_function(None) is None
+    ), f"{tested_function.__name__} should return None when None is passed"
+
+    # Test with empty string
+    assert (
+        tested_function("") == ""
+    ), f"{tested_function.__name__} should return empty string when empty string is passed"
+
+    # Test with a value
+    result = tested_function("something")
+    assert (
+        result is not None and result != ""
+    ), f"{tested_function.__name__} should return something when a value is passed"

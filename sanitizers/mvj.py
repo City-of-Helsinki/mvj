@@ -17,6 +17,8 @@ def sanitize_address(value):
 def sanitize_address_if_exist(value):
     if value:
         return sanitize_address(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_business_id(value):
@@ -26,6 +28,8 @@ def sanitize_business_id(value):
 def sanitize_business_id_if_exist(value):
     if value:
         return sanitize_business_id(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_city(value):
@@ -35,6 +39,8 @@ def sanitize_city(value):
 def sanitize_city_if_exist(value):
     if value:
         return sanitize_city(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_company(value):
@@ -44,6 +50,8 @@ def sanitize_company(value):
 def sanitize_company_if_exist(value):
     if value:
         return sanitize_company(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_email(value):
@@ -53,6 +61,8 @@ def sanitize_email(value):
 def sanitize_email_if_exist(value):
     if value:
         return sanitize_email(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_first_name(value):
@@ -62,6 +72,8 @@ def sanitize_first_name(value):
 def sanitize_first_name_if_exist(value):
     if value:
         return sanitize_first_name(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_generate_random_numbers(value):
@@ -71,6 +83,8 @@ def sanitize_generate_random_numbers(value):
 def sanitize_generate_random_numbers_if_exist(value):
     if value:
         return sanitize_generate_random_numbers(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_last_name(value):
@@ -80,6 +94,8 @@ def sanitize_last_name(value):
 def sanitize_last_name_if_exist(value):
     if value:
         return sanitize_last_name(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_national_identification_number(value):
@@ -107,6 +123,8 @@ def sanitize_national_identification_number(value):
 def sanitize_national_identification_number_if_exist(value):
     if value:
         return sanitize_national_identification_number(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_name(value):
@@ -120,6 +138,8 @@ def sanitize_paragraph(value):
 def sanitize_paragraph_if_exist(value):
     if value:
         return sanitize_paragraph(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_phone_number(value):
@@ -129,6 +149,8 @@ def sanitize_phone_number(value):
 def sanitize_phone_number_if_exist(value):
     if value:
         return sanitize_phone_number(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_postcode(value):
@@ -138,6 +160,8 @@ def sanitize_postcode(value):
 def sanitize_postcode_if_exist(value):
     if value:
         return sanitize_postcode(value)
+    elif value == "":
+        return ""
 
 
 def sanitize_url(value):
