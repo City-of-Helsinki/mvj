@@ -6,7 +6,10 @@ from django.utils import timezone
 from django_q.tasks import async_task
 
 from leasing.models.report_storage import ReportStorage
-from leasing.report.lease.lease_statistic_report import LeaseStatisticReport
+from leasing.report.lease.lease_statistic_report import (
+    LeaseStatisticReport,
+    LeaseStatisticReportInputData,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -19,25 +22,24 @@ class Command(BaseCommand):
     help = "Generate Lease statistic report to ReportStorage"
 
     def handle(self, *args, **options):
+        input_data: LeaseStatisticReportInputData = {
+            "service_unit": None,
+            "start_date": None,
+            "end_date": None,
+            "state": None,
+            "only_active_leases": True,
+        }
+        async_task_timeout = 60 * 60  # 1 hour
         try:
-            async_task(handle_async_task)
+            async_task(handle_async_task, input_data, timeout=async_task_timeout)
         except Exception as e:
             logger.exception(f"Queuing async task for '{self.help}' failed: {e}")
         logger.info(f"Queued async task for '{self.help}'")
 
 
-def handle_async_task():
+def handle_async_task(input_data: LeaseStatisticReportInputData):
     report_slug = "lease_statistic"
     lease_statistics_report = LeaseStatisticReport()
-    previous_year = timezone.now().year - 1
-    input_data = {
-        "service_unit": None,
-        # Start of the previous year
-        "start_date": f"{previous_year}-01-01",
-        "end_date": None,
-        "state": None,
-        "only_active_leases": None,
-    }
     try:
         # Generate report data and create a ReportStorage
         report_data = lease_statistics_report.get_data(input_data)

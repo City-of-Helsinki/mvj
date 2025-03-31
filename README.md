@@ -241,6 +241,12 @@ Imports leasehold transfers from National Land Survey of Finland (Maanmittauslai
 
 _Should be run every week_
 
+#### `generate_export_report_lease_statistic`
+
+Generates Lease statistics report for Export API.
+
+Can be generated in desired intervals, how often the report should need to be updated. For now daily.
+
 ### Development commands
 
 No need to run.
