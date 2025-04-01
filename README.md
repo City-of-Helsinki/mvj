@@ -34,6 +34,18 @@ Known issues:
 
 ### Settings for development environment
 
+#### Import sanitized data from production
+
+See section [Sanitized database dump for development use](#sanitized-database-dump-for-development-use) how to generate and load the database dump.
+
+If you already have the dump provided by another developer, skip the generation steps.
+
+#### local_settings.py
+
+See `local_settings.py.template` for most important local settings. Ask other developers for remaining settings if things don't seem to work.
+
+#### TODO update to align with current development setup
+
 ```bash
 cd mvj
 # copy sanitized.sql to root
@@ -299,12 +311,38 @@ purposes, sensitive fields must be sanitized. We use
 [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
 for sanitizing the data, so check the most recent instructions from the vendor (unless ours are newer).
 
+#### 0. Activate virtual environment with development dependencies
+
+Sanitizer requires Python packages that are not included in production virtual environment.
+
+If the virtual environment `venv-dev` already exists in
+`home/mvj-api-prod/venv-dev` you can activate it and continue to next step in instructions:
+
+```bash
+sudo su mvj-api-prod
+cd
+set -a; source service_state/config.sh; set +a;
+
+source venv-dev/bin/activate
+```
+
+If sourcing fails because venv-dev did not exist yet, create it, activate it,
+then install the dependencies in it:
+
+```bash
+python -m venv venv-dev
+source venv-dev/bin/activate
+pip install -r mvj-api-dev/requirements-dev.txt
+pip install -r mvj-api-dev/requirements.txt
+```
+
 #### 1. Validate sanitizer configuration
 
 Sanitizer configuration is specified in `.sanitizerconfig`.
 First, validate if the current configuration is up to date with Django models:
 
 ```bash
+cd mvj-api-prod
 python manage.py validate_sanitizerconfig
 ```
 
@@ -328,6 +366,7 @@ Afterwards, only stage the updates you need to version control, and avoid
 setting row sanitizers to null if they specified a sanitization function before.
 
 ```bash
+# Only run this if you need the reset
 python manage.py init_sanitizer
 ```
 
@@ -336,6 +375,8 @@ python manage.py init_sanitizer
 ```bash
 python manage.py create_sanitized_dump > prod-sanitized-dump_$(date +%Y%m%d%H%m).sql
 ```
+
+Then copy the dump from prod server to destination server, e.g. with `scp` tool.
 
 #### 4. Load the dump into local/dev/stage
 
@@ -360,6 +401,11 @@ Example for local environment:
 ```bash
 psql --username mvj --dbname mvj --host mvj-db --port 5433 --file sanitized-dump_<datetime>.sql > dump_loading.log
 ```
+
+#### 5. Restore overwritten functionality
+
+Sanitized dump will overwrite or drop existing users, including admin users.
+
 
 ### Token authentication
 
