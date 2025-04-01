@@ -283,10 +283,14 @@ sudo update-ca-certificates # This is the actual command that registers certific
 Before doing extensive production deployments, backup the database:
 
 ```bash
-pg_dump mvj_api_prod -h proddb-mvj.hel.fi | gzip > mvj-api-prod_$(date +%Y%m%d%H%m).sql.gz
+pg_dump --username mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
 ```
 
-To restore dump run `psql -f mvj-api-prod-DATE_HERE.sql ${DATABASE_URL/postgis/postgres}`.
+To restore the database from backup, run:
+
+```bash
+pg_restore --username mvj_api_prod --host proddb-mvj.hel.fi --clean --if-exists mvj-api-prod_DATETIME.dump
+```
 
 ### Sanitized database dump for development use
 
