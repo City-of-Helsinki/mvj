@@ -283,7 +283,7 @@ sudo update-ca-certificates # This is the actual command that registers certific
 Before doing extensive production deployments, backup the database:
 
 ```bash
-pg_dump --username mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
+pg_dump mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
 ```
 
 To restore the database from backup, run:
