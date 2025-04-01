@@ -38,6 +38,7 @@ from leasing.permissions import (
 from leasing.viewsets.utils import AtomicTransactionModelViewSet
 from plotsearch.enums import SearchStage
 from plotsearch.filter import (
+    AreaSearchDistrictFilter,
     AreaSearchFilterSet,
     InformationCheckListFilterSet,
     PlotSearchFilterSet,
@@ -72,6 +73,7 @@ from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentPublicSerializer,
     AreaSearchAttachmentSerializer,
     AreaSearchDetailSerializer,
+    AreaSearchDistrictSerializer,
     AreaSearchListSerializer,
     AreaSearchPublicSerializer,
     AreaSearchSerializer,
@@ -424,6 +426,23 @@ class AreaSearchAttachmentPublicViewset(
 
     def destroy(self, request, *args, **kwargs):
         raise MethodNotAllowed("DELETE")
+
+
+class AreaSearchDistrictViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = (
+        AreaSearch.objects.exclude(district__isnull=True)
+        .order_by("district")
+        .distinct("district")
+        .values("district")
+    )
+    serializer_class = AreaSearchDistrictSerializer
+    permission_classes = (IsAuthenticated, MvjDjangoModelPermissions)
+    filterset_class = AreaSearchDistrictFilter
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class InformationCheckViewSet(

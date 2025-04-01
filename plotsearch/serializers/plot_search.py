@@ -1182,6 +1182,13 @@ class AreaSearchListSerializer(AreaSearchSerializer):
             self.fields.pop(field, None)
 
 
+class AreaSearchDistrictSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AreaSearch
+        fields = ("district",)
+
+
 class InformationCheckSerializer(
     EnumSupportSerializerMixin, serializers.ModelSerializer
 ):

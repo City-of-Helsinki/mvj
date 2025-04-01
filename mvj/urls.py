@@ -125,6 +125,7 @@ from leasing.viewsets.vat import VatViewSet
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentPublicViewset,
     AreaSearchAttachmentViewset,
+    AreaSearchDistrictViewSet,
     AreaSearchGeneratePDF,
     AreaSearchPublicViewSet,
     AreaSearchViewSet,
@@ -155,6 +156,9 @@ router = routers.DefaultRouter()
 router.register(r"area_note", AreaNoteViewSet)
 router.register(r"area_search", AreaSearchViewSet)
 router.register(r"area_search_attachment", AreaSearchAttachmentViewset)
+router.register(
+    r"area_search_district", AreaSearchDistrictViewSet, basename="area_search_district"
+)
 router.register(r"attachment", AttachmentViewSet)
 router.register(r"basis_of_rent", BasisOfRentViewSet)
 router.register(r"collection_court_decision", CollectionCourtDecisionViewSet)

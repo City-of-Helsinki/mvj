@@ -85,6 +85,16 @@ class AreaSearchSimpleFilter(ApplicantMixin, django_filters.CharFilter):
         return qs
 
 
+class AreaSearchDistrictFilter(django_filters.FilterSet):
+    district = django_filters.CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = AreaSearch
+        fields = [
+            "district",
+        ]
+
+
 class PlotSearchSimpleFilter(django_filters.CharFilter):
     def filter(self, qs, value):
         if value in EMPTY_VALUES:
