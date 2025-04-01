@@ -9,6 +9,9 @@ from faker import Faker
 
 fake = Faker("fi_FI")
 
+# Original value will be passed to the sanitization function as a paremeter,
+# even if it is not used when generating the sanitized replacement value.
+
 
 def sanitize_address(value):
     return fake.address()
