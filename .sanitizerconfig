@@ -8,6 +8,15 @@ config:
                          # because it relies on plain-text standard output for sanitizing objects.
       - "--clean" # Drop objects before recreating them. Does not affect the database itself.
       - "--if-exists" # Don't warn about missing objects during cleaning.
+      - "--exclude-table-data=public.auditlog_logentry"
+      - "--exclude-table-data=public.batchrun_jobrun"
+      - "--exclude-table-data=public.batchrun_jobrunlog"
+      - "--exclude-table-data=public.batchrun_jobrunlogentry"
+      - "--exclude-table-data=public.batchrun_jobrunqueueitem"
+      - "--exclude-table-data=public.django_q_task"
+      - "--exclude-table-data=public.leasing_reportstorage"
+      - "--verbose"
+
 strategy:
   # Top-level keys under strategy are DB table names, as interpreted by init_sanitizer command.
   # `skip_rows` means that the table definition is included in the dump, but the table will have zero rows.
