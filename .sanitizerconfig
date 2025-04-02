@@ -436,7 +436,7 @@ strategy:
     address: mvj.address_if_exist
     address_protection: null
     business_id: mvj.business_id_if_exist
-    care_of: null
+    care_of: mvj.company_if_exist
     city: mvj.city_if_exist
     country: null
     created_at: null
