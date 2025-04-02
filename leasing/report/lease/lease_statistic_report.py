@@ -2,8 +2,10 @@ import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from functools import lru_cache
+from io import BytesIO
 from typing import TypedDict
 
+import xlsxwriter
 from django import forms
 from django.db.models import Q, QuerySet
 from django.utils import formats
@@ -12,11 +14,13 @@ from enumfields.drf import EnumField
 
 from leasing.enums import LeaseAreaAttachmentType, LeaseState, SubventionType
 from leasing.models import Lease, ServiceUnit
+from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.lease.common_getters import (
     get_address,
     get_district,
     get_form_of_management,
     get_form_of_regulation,
+    get_identifier_string_from_lease_link_data,
     get_latest_contract_number,
     get_lease_area_identifier,
     get_lease_identifier_string,
@@ -691,4 +695,131 @@ class LeaseStatisticReport(AsyncReportBase):
                 Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today())
             )
 
+        basis_of_rents = qs.only("basis_of_rents")
+
+        print("Basis of rents: ", basis_of_rents.all())
+
         return qs
+
+    def data_as_excel(self, data: list[dict | ExcelRow]):
+        report = self
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+
+        formats = {
+            FormatType.BOLD: workbook.add_format({"bold": True}),
+            FormatType.DATE: workbook.add_format({"num_format": "dd.mm.yyyy"}),
+            FormatType.MONEY: workbook.add_format({"num_format": "#,##0.00 €"}),
+            FormatType.BOLD_MONEY: workbook.add_format(
+                {"bold": True, "num_format": "#,##0.00 €"}
+            ),
+            FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
+            FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+        }
+
+        row_number = 0
+
+        # On the first row print the report name
+        worksheet.write(row_number, 0, str(report.name), formats[FormatType.BOLD])
+
+        # On the second row print the report description
+        row_number += 1
+        worksheet.write(row_number, 0, str(report.description))
+
+        # On the fourth row forwards print the input fields and their values
+        row_number += 2
+        row_number = self.write_input_field_value_rows(
+            worksheet, report.form, row_number, formats
+        )
+
+        # Set column widths
+        for index, field_name in enumerate(report.output_fields.keys()):
+            worksheet.set_column(
+                index,
+                index,
+                report.get_output_field_attr(field_name, "width", default=10),
+            )
+
+        # Labels from the first non-ExcelRow row
+        if report.automatic_excel_column_labels:
+            row_number += 1
+
+            lookup_row_num = 0
+            while lookup_row_num < len(data) and isinstance(
+                data[lookup_row_num], ExcelRow
+            ):
+                lookup_row_num += 1
+
+            if len(data) > lookup_row_num:
+                for index, field_name in enumerate(data[lookup_row_num].keys()):
+                    field_label = report.get_output_field_attr(
+                        field_name, "label", default=field_name
+                    )
+
+                    worksheet.write(
+                        row_number, index, str(field_label), formats[FormatType.BOLD]
+                    )
+
+        # The data itself
+        row_number += 1
+        first_data_row_num = row_number
+        for row in data:
+            if isinstance(row, dict):
+                row["lease_identifier"] = get_identifier_string_from_lease_link_data(
+                    row
+                )
+                self.write_dict_row_to_worksheet(
+                    worksheet, formats, row_number, row[0:5]
+                )
+            elif isinstance(row, ExcelRow):
+                for cell in row.cells:
+                    cell.set_row(row_number)
+                    cell.set_first_data_row_num(first_data_row_num)
+                    worksheet.write(
+                        row_number,
+                        cell.column,
+                        cell.get_value(),
+                        (
+                            formats[cell.get_format_type()]
+                            if cell.get_format_type() in formats
+                            else None
+                        ),
+                    )
+
+            row_number += 1
+
+        # Second worksheet: Bases of rent separately
+
+        worksheet_basis_of_rents = workbook.add_worksheet()
+
+        row_number = 0
+        column_number = 0
+        worksheet_basis_of_rents.write(
+            row_number,
+            column_number,
+            "Statistic report: Bases of rent",
+            formats[FormatType.BOLD],
+        )
+
+        row_number = 1
+        worksheet_basis_of_rents.write(
+            row_number, column_number, "This is a hardcoded description for testing"
+        )
+
+        row_number = 3
+        row_number = self.write_input_field_value_rows(
+            worksheet_basis_of_rents, report.form, row_number, formats
+        )
+
+        row_number = 5
+        # Column headers
+
+        basis_of_rents = data
+
+        worksheet_basis_of_rents.write(row_number, column_number, "WÄÄÄRGH")
+
+        workbook.close()
+
+        return output.getvalue()
