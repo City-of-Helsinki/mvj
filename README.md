@@ -399,12 +399,40 @@ psql --username <username> --dbname <dbname> --host <hostname> --port <port> --f
 Example for local environment:
 
 ```bash
-psql --username mvj --dbname mvj --host mvj-db --port 5433 --file sanitized-dump_<datetime>.sql > dump_loading.log
+psql --username mvj --dbname mvj --host mvj-db --port 5433 --file prod-sanitized-dump_<datetime>.sql > dump_loading.log
 ```
 
-#### 5. Restore overwritten functionality
+Example for dev environment: [link to Helsinki Confluence](https://helsinkisolutionoffice.atlassian.net/wiki/spaces/KMM/pages/9242542082/#Database-restore-from-sanizited-dump)
+
+#### 5. Restore API database user access
+
+All tables will have their ownership unset, because prod user doesn't exist in other environments.
+Grant the API user all necessary accesses to the database objects.
+
+Example for dev environment: [link to Helsinki Confluence](https://helsinkisolutionoffice.atlassian.net/wiki/spaces/KMM/pages/9242542082/#Database-restore-from-sanizited-dump)
+
+
+#### 6. Restore user access to MVJ
 
 Sanitized dump will overwrite or drop existing users, including admin users.
+
+```bash
+# Recreate permissions just in case
+python manage.py set_group_model_permissions
+python manage.py set_group_field_permissions
+
+# Create the TEST groups for non-AD users
+python manage.py copy_groups_and_service_unit_mappings
+
+# Create at least one admin user so you can login to admin panel
+python manage.py createsuperuser
+```
+
+On first login to MVJ, your regular user will be created.
+After that, login to Django admin as your superuser and grant your regular user
+at least:
+- one TEST service unit
+- superuser privileges, or some TEST usergroup
 
 
 ### Token authentication
