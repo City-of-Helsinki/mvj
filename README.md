@@ -295,13 +295,13 @@ sudo update-ca-certificates # This is the actual command that registers certific
 Before doing extensive production deployments, backup the database:
 
 ```bash
-pg_dump mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
+pg_dump <prod DB name> --host <prod host address> --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
 ```
 
 To restore the database from backup, run:
 
 ```bash
-pg_restore --username mvj_api_prod --host proddb-mvj.hel.fi --clean --if-exists mvj-api-prod_DATETIME.dump
+pg_restore --username <prod DB name> --host <prod host address> --clean --if-exists mvj-api-prod_DATETIME.dump
 ```
 
 ### Sanitized database dump for development use
@@ -316,10 +316,10 @@ for sanitizing the data, so check the most recent instructions from the vendor (
 Sanitizer requires Python packages that are not included in production virtual environment.
 
 If the virtual environment `venv-dev` already exists in
-`home/mvj-api-prod/venv-dev` you can activate it and continue to next step in instructions:
+`home/<prod api user>/venv-dev` you can activate it and continue to next step in instructions:
 
 ```bash
-sudo su mvj-api-prod
+sudo su <prod api user>
 cd
 set -a; source service_state/config.sh; set +a;
 
@@ -332,8 +332,8 @@ then install the dependencies in it:
 ```bash
 python -m venv venv-dev
 source venv-dev/bin/activate
-pip install -r mvj-api-dev/requirements-dev.txt
-pip install -r mvj-api-dev/requirements.txt
+pip install -r <prod api dir>/requirements-dev.txt
+pip install -r <prod api dir>/requirements.txt
 ```
 
 #### 1. Validate sanitizer configuration
@@ -342,7 +342,7 @@ Sanitizer configuration is specified in `.sanitizerconfig`.
 First, validate if the current configuration is up to date with Django models:
 
 ```bash
-cd mvj-api-prod
+cd <prod api user dir>
 python manage.py validate_sanitizerconfig
 ```
 
