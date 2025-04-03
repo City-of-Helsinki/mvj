@@ -139,17 +139,7 @@ strategy:
   django_q_schedule: skip_rows
   django_q_task: skip_rows
   django_session: skip_rows
-  file_operations_filescanstatus:
-    content_type_id: null
-    created_at: null
-    error_message: null
-    file_deleted_at: null
-    filefield_name: null
-    filepath: null
-    id: null
-    modified_at: null
-    object_id: null
-    scanned_at: null
+  file_operations_filescanstatus: skip_rows
   file_operations_genericattachmenttestmodel:
     file_attachment: null
     id: null
@@ -546,7 +536,7 @@ strategy:
     kind: null
     name: null
   leasing_detailedplan:
-    acceptor: null
+    acceptor: string.random
     created_at: null
     deleted: null
     deleted_by_cascade: null
