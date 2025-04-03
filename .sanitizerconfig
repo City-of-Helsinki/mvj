@@ -450,7 +450,7 @@ strategy:
     language: null
     last_name: mvj.last_name_if_exist
     modified_at: null
-    name: mvj.company_if_exist
+    name: null
     national_identification_number: mvj.national_identification_number_if_exist
     note: mvj.paragraph_if_exist
     partner_code: mvj.generate_random_numbers_if_exist
@@ -510,7 +510,7 @@ strategy:
     id: null
     name: null
   leasing_customdetailedplan:
-    address: mvj.address_if_exist
+    address: null
     area: null
     created_at: null
     detailed_plan: null
@@ -808,7 +808,7 @@ strategy:
     landuseagreement_id: null
     plot_id: null
   leasing_landuseagreementaddress:
-    address: mvj.address_if_exist
+    address: null
     city: null
     created_at: null
     id: null
@@ -1064,9 +1064,9 @@ strategy:
     section_area: null
     type: null
   leasing_leaseareaaddress:
-    address: mvj.address_if_exist
+    address: null
     address_en: null
-    address_fi: mvj.address_if_exist
+    address_fi: null
     address_sv: null
     city: null
     created_at: null
@@ -1462,7 +1462,7 @@ strategy:
     leasetype_id: null
     vipunenmaplayer_id: null
   plotsearch_areasearch:
-    address: mvj.address_if_exist
+    address: null
     answer_id: null
     area_search_status_id: null
     description_area: mvj.paragraph_if_exist
