@@ -24,6 +24,17 @@ def sanitize_address_if_exist(value):
         return ""
 
 
+def sanitize_street_address(value):
+    return fake.street_address()
+
+
+def sanitize_street_address_if_exist(value):
+    if value:
+        return sanitize_street_address(value)
+    elif value == "":
+        return ""
+
+
 def sanitize_business_id(value):
     return fake.pystr_format(string_format="#######-#", letters="0123456789")
 
