@@ -433,7 +433,7 @@ strategy:
     type: null
     user_id: null
   leasing_contact:
-    address: mvj.address_if_exist
+    address: mvj.street_address_if_exist
     address_protection: null
     business_id: mvj.business_id_if_exist
     care_of: mvj.company_if_exist
