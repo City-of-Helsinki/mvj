@@ -637,6 +637,13 @@ class AreaSearchAttachment(FileScanMixin, SerializableMixin, NameModel):
     user = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="+"
     )
+    user_amr_list = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("User amr"),
+        help_text=_("Authentication method reference"),
+    )
 
     # In Finnish: Aluehaut
     area_search = models.ForeignKey(
@@ -656,6 +663,18 @@ class AreaSearchAttachment(FileScanMixin, SerializableMixin, NameModel):
     recursive_get_related_skip_relations = [
         "user",
     ]
+
+    def is_user_helsinki_ad(self) -> bool:
+        """Evaluates whether the attachment was uploaded by a Helsinki AD user."""
+        if self.user_amr_list is None:
+            return False
+
+        amr_list = self.user_amr_list.split(",")
+
+        if "helsinkiad" in amr_list and self.user.email.endswith("@hel.fi"):
+            return True
+
+        return False
 
 
 class AreaSearchStatusNote(models.Model):
