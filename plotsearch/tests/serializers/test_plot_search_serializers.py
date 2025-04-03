@@ -9,9 +9,11 @@ from forms.serializers.form import (
     EXCLUDED_ATTACHMENT_FIELDS,
     AttachmentPublicSerializer,
 )
+from plotsearch.models.plot_search import AreaSearchAttachment
 from plotsearch.serializers.plot_search import (
     EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS,
     AreaSearchAttachmentPublicSerializer,
+    AreaSearchAttachmentSerializer,
     AreaSearchSerializer,
     PlotSearchTargetCreateUpdateSerializer,
 )
@@ -93,6 +95,33 @@ def test_attachment_public_serializer_unwanted_fields(attachment_factory, user_f
         set(EXCLUDED_ATTACHMENT_FIELDS)
     )
     assert len(unwanted_fields_in_data) == 0
+
+
+@pytest.mark.django_db
+def test_area_search_attachment_amr_with_mock_request(user_factory, rf):
+    user = user_factory(email="test@hel.fi")
+    example_file = SimpleUploadedFile(name="example.txt", content=b"Lorem lipsum")
+
+    request = rf.post("/")
+    request.user = user
+
+    class MockAuth:
+        def __init__(self):
+            self.data = {"amr": ["helsinkiad", "some-auth-method"]}
+
+    request.auth = MockAuth()
+
+    serializer_context = {"request": request}
+    serializer = AreaSearchAttachmentSerializer(
+        data={"name": "Test Attachment", "attachment": example_file},
+        context=serializer_context,
+    )
+
+    assert serializer.is_valid()
+    attachment: AreaSearchAttachment = serializer.save()
+
+    assert attachment.user_amr_list == "helsinkiad,some-auth-method"
+    assert attachment.is_user_helsinki_ad() is True
 
 
 @pytest.mark.django_db
