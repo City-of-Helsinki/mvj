@@ -1,8 +1,24 @@
 on:
   push:
     branches: [master, develop]
+    paths-ignore:
+      - '.devcontainer/**'
+      - '.editorconfig'
+      - '.gitignore'
+      - 'docker-compose.env.template'
+      - 'LICENSE'
+      - 'local_settings.py.template'
+      - 'README.md'
   pull_request_target:
     branches: [master, develop]
+    paths-ignore:
+      - '.devcontainer/**'
+      - '.editorconfig'
+      - '.gitignore'
+      - 'docker-compose.env.template'
+      - 'LICENSE'
+      - 'local_settings.py.template'
+      - 'README.md'
 name: Sonarcloud Scan
 jobs:
   sonarcloud:
