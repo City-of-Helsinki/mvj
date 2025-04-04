@@ -34,6 +34,18 @@ Known issues:
 
 ### Settings for development environment
 
+#### Import sanitized data from production
+
+See section [Sanitized database dump for development use](#sanitized-database-dump-for-development-use) how to generate and load the database dump.
+
+If you already have the dump provided by another developer, skip the generation steps.
+
+#### local_settings.py
+
+See `local_settings.py.template` for most important local settings. Ask other developers for remaining settings if things don't seem to work.
+
+#### TODO update to align with current development setup
+
 ```bash
 cd mvj
 # copy sanitized.sql to root
@@ -283,13 +295,13 @@ sudo update-ca-certificates # This is the actual command that registers certific
 Before doing extensive production deployments, backup the database:
 
 ```bash
-pg_dump --username mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
+pg_dump <prod DB name> --host <prod host address> --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
 ```
 
 To restore the database from backup, run:
 
 ```bash
-pg_restore --username mvj_api_prod --host proddb-mvj.hel.fi --clean --if-exists mvj-api-prod_DATETIME.dump
+pg_restore --username <prod DB name> --host <prod host address> --clean --if-exists mvj-api-prod_DATETIME.dump
 ```
 
 ### Sanitized database dump for development use
@@ -299,12 +311,38 @@ purposes, sensitive fields must be sanitized. We use
 [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
 for sanitizing the data, so check the most recent instructions from the vendor (unless ours are newer).
 
+#### 0. Activate virtual environment with development dependencies
+
+Sanitizer requires Python packages that are not included in production virtual environment.
+
+If the virtual environment `venv-dev` already exists in
+`home/<prod api user>/venv-dev` you can activate it and continue to next step in instructions:
+
+```bash
+sudo su <prod api user>
+cd
+set -a; source service_state/config.sh; set +a;
+
+source venv-dev/bin/activate
+```
+
+If sourcing fails because venv-dev did not exist yet, create it, activate it,
+then install the dependencies in it:
+
+```bash
+python -m venv venv-dev
+source venv-dev/bin/activate
+pip install -r <prod api dir>/requirements-dev.txt
+pip install -r <prod api dir>/requirements.txt
+```
+
 #### 1. Validate sanitizer configuration
 
 Sanitizer configuration is specified in `.sanitizerconfig`.
 First, validate if the current configuration is up to date with Django models:
 
 ```bash
+cd <prod api user dir>
 python manage.py validate_sanitizerconfig
 ```
 
@@ -328,6 +366,7 @@ Afterwards, only stage the updates you need to version control, and avoid
 setting row sanitizers to null if they specified a sanitization function before.
 
 ```bash
+# Only run this if you need the reset
 python manage.py init_sanitizer
 ```
 
@@ -336,6 +375,8 @@ python manage.py init_sanitizer
 ```bash
 python manage.py create_sanitized_dump > prod-sanitized-dump_$(date +%Y%m%d%H%m).sql
 ```
+
+Then copy the dump from prod server to destination server, e.g. with `scp` tool.
 
 #### 4. Load the dump into local/dev/stage
 
@@ -358,8 +399,41 @@ psql --username <username> --dbname <dbname> --host <hostname> --port <port> --f
 Example for local environment:
 
 ```bash
-psql --username mvj --dbname mvj --host mvj-db --port 5433 --file sanitized-dump_<datetime>.sql > dump_loading.log
+psql --username mvj --dbname mvj --host mvj-db --port 5433 --file prod-sanitized-dump_<datetime>.sql > dump_loading.log
 ```
+
+Example for dev environment: [link to Helsinki Confluence](https://helsinkisolutionoffice.atlassian.net/wiki/spaces/KMM/pages/9242542082/#Database-restore-from-sanizited-dump)
+
+#### 5. Restore API database user access
+
+All tables will have their ownership unset, because prod user doesn't exist in other environments.
+Grant the API user all necessary accesses to the database objects.
+
+Example for dev environment: [link to Helsinki Confluence](https://helsinkisolutionoffice.atlassian.net/wiki/spaces/KMM/pages/9242542082/#Database-restore-from-sanizited-dump)
+
+
+#### 6. Restore user access to MVJ
+
+Sanitized dump will overwrite or drop existing users, including admin users.
+
+```bash
+# Recreate permissions just in case
+python manage.py set_group_model_permissions
+python manage.py set_group_field_permissions
+
+# Create the TEST groups for non-AD users
+python manage.py copy_groups_and_service_unit_mappings
+
+# Create at least one admin user so you can login to admin panel
+python manage.py createsuperuser
+```
+
+On first login to MVJ, your regular user will be created.
+After that, login to Django admin as your superuser and grant your regular user
+at least:
+- one TEST service unit
+- superuser privileges, or some TEST usergroup
+
 
 ### Token authentication
 
