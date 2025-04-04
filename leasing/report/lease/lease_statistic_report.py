@@ -3,16 +3,21 @@ from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from functools import lru_cache
 from io import BytesIO
-from typing import TypedDict
+from typing import Any, Type, TypedDict
 
 import xlsxwriter
 from django import forms
 from django.db.models import Q, QuerySet
 from django.utils import formats
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django_q.conf import Conf
+from django_q.tasks import async_task
 from enumfields.drf import EnumField
+from rest_framework.request import Request
+from rest_framework.response import Response
 
-from leasing.enums import LeaseAreaAttachmentType, LeaseState, SubventionType
+from leasing.enums import AreaUnit, LeaseAreaAttachmentType, LeaseState, SubventionType
 from leasing.models import Lease, ServiceUnit
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.lease.common_getters import (
@@ -34,7 +39,10 @@ from leasing.report.lease.common_getters import (
     get_tenants,
     get_total_area,
 )
-from leasing.report.report_base import AsyncReportBase
+from leasing.report.report_base import (
+    AsyncReportBase,
+    send_email_report,
+)
 
 # TODO: Can we get rid of static ids
 RESIDENTIAL_INTENDED_USE_IDS = [
@@ -49,6 +57,30 @@ class LeaseStatisticReportInputData(TypedDict):
     start_date: datetime.date | None
     only_active_leases: bool | None
     state: str | None
+
+
+LeaseBasisOfRentRowLabels = [
+    gettext("Lease identifier"),
+    gettext("Type"),
+    gettext("Intended use"),
+    gettext("Index"),
+    gettext("Area"),  # TODO: Add translation
+    gettext("Area unit"),
+    gettext("Amount per area"),  # TODO: Add translation
+    gettext("Profit margin percentage"),
+    gettext("Initial year rent"),
+    gettext("Subvention type"),
+    gettext("Subvented initial year rent"),  # TODO: Add translation
+    gettext("Subvention euros per year"),  # TODO: Add translation
+    gettext("Subvention percent"),
+    gettext("Subvention amount per area"),  # TODO: Add translation
+    gettext(
+        "Subvention base percent"
+    ),  # TODO: Perusalennus markkinavuokrasta? Is this correct?
+    gettext("Subvention graduated percent"),  # TODO: Add translation
+    gettext("Temporary discount percentage"),  # TODO: Add translation
+    gettext("Temporary discount amount euros per year"),  # TODO: Add translation
+]
 
 
 def get_latest_decision(lease):
@@ -695,13 +727,40 @@ class LeaseStatisticReport(AsyncReportBase):
                 Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today())
             )
 
-        basis_of_rents = qs.only("basis_of_rents")
-
-        print("Basis of rents: ", basis_of_rents.all())
-
         return qs
 
-    def data_as_excel(self, data: list[dict | ExcelRow]):
+    def get_response(self, request: Request) -> Response:
+        user_email: str = request.user.email
+        async_task(
+            generate_email_report,
+            email=user_email,
+            query_params=request.query_params,
+            report_class=self.__class__,
+            hook=send_email_report,
+            timeout=getattr(self, "async_task_timeout", Conf.TIMEOUT),
+        )
+
+        return Response(
+            {"message": _("Results will be sent by email to {}").format(user_email)}
+        )
+
+    def write_lease_basis_of_rent_column_labels(
+        self, worksheet, row_number, column_number, formats
+    ):
+        for label in LeaseBasisOfRentRowLabels:
+            worksheet.write(row_number, column_number, label, formats[FormatType.BOLD])
+            column_number += 1
+        return row_number + 1
+
+    def write_lease_basis_of_rent_row(
+        self, worksheet, row_number, column_number, lease_basis_of_rent_row, formats
+    ):
+        for attribute in lease_basis_of_rent_row:
+            worksheet.write(row_number, column_number, attribute[1])
+            column_number += 1
+        return row_number + 1
+
+    def data_as_excel(self, data: list[dict | ExcelRow], basis_of_rents: list[Any]):
         report = self
 
         output = BytesIO()
@@ -770,9 +829,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 row["lease_identifier"] = get_identifier_string_from_lease_link_data(
                     row
                 )
-                self.write_dict_row_to_worksheet(
-                    worksheet, formats, row_number, row[0:5]
-                )
+                self.write_dict_row_to_worksheet(worksheet, formats, row_number, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:
                     cell.set_row(row_number)
@@ -813,13 +870,117 @@ class LeaseStatisticReport(AsyncReportBase):
             worksheet_basis_of_rents, report.form, row_number, formats
         )
 
-        row_number = 5
+        row_number += 1
+
         # Column headers
+        row_number = self.write_lease_basis_of_rent_column_labels(
+            worksheet_basis_of_rents, row_number, column_number, formats
+        )
 
-        basis_of_rents = data
-
-        worksheet_basis_of_rents.write(row_number, column_number, "WÄÄÄRGH")
+        row_number = self.write_lease_basis_of_rent_row(
+            worksheet_basis_of_rents,
+            row_number,
+            column_number,
+            basis_of_rents[0],
+            formats,
+        )
 
         workbook.close()
 
         return output.getvalue()
+
+
+def generate_email_report(
+    email: str,
+    query_params: dict[str, str],
+    report_class: Type[LeaseStatisticReport],
+) -> dict[str, Any]:
+    """Generates the report based on the selected report settings."""
+    del email  # Unused in this function, but needed in the hook
+
+    report = report_class()
+    input_data = report.get_input_data(query_params)
+    report_data = report.get_data(input_data)
+
+    basis_of_rents = get_basis_of_rent_rows_from_report_data(report_data)
+
+    if isinstance(report_data, list):
+        spreadsheet = report.data_as_excel(report_data, basis_of_rents)
+    else:
+        serialized_data = report.serialize_data(report_data)
+        spreadsheet = report.data_as_excel(serialized_data, basis_of_rents)
+
+    return {
+        "report_spreadsheet": spreadsheet,
+        "report_name": report.name,
+        "report_filename": report.get_filename("xlsx"),
+    }
+
+
+def get_basis_of_rent_rows_from_report_data(
+    report_data: list[dict[str, Any]]
+) -> list[Any]:
+    basis_of_rents = []
+    for lease in report_data:
+        for basis_of_rent in lease.basis_of_rents.all() or []:
+            if basis_of_rent.archived_at or not basis_of_rent.locked_at:
+                continue
+            basis_of_rent_row = [
+                ("lease_identifier", lease.get_identifier_string()),
+                ("type", basis_of_rent.type.value),
+                ("intended_use", basis_of_rent.intended_use.name),
+                ("index", str(basis_of_rent.index)),
+                ("area", basis_of_rent.area),
+                ("area_unit", basis_of_rent.area_unit.value),
+                ("amount_per_area", basis_of_rent.get_index_adjusted_amount_per_area()),
+                ("profit_margin_percentage", basis_of_rent.profit_margin_percentage),
+                ("initial_year_rent", basis_of_rent.calculate_initial_year_rent()),
+                (
+                    "subvention_type",
+                    (
+                        basis_of_rent.subvention_type.value
+                        if basis_of_rent.subvention_type
+                        else "-"
+                    ),
+                ),
+                (
+                    "subvented_initial_year_rent",
+                    basis_of_rent.calculate_subvented_initial_year_rent(),
+                ),
+                # TODO: implement LeaseBasisOfRent.calculate_subvention_euros_per_year
+                (
+                    "subvention_euros_per_year",
+                    "basis_of_rent.calculate_subvention_euros_per_year()",
+                ),
+                # TODO: implement LeaseBasisOfRent.calculate_subvention_percent
+                (
+                    "subvention_percent",
+                    "basis_of_rent.calculate_subvention_percent()",
+                ),
+                # TODO: implement LeaseBasisOfRent.calculate_subvention_amount_per_area
+                (
+                    "subvention_amount_per_area",
+                    "basis_of_rent.calculate_subvention_amount_per_area()",
+                ),
+                (
+                    "subvention_base_percent",
+                    basis_of_rent.subvention_base_percent,
+                ),
+                (
+                    "subvention_graduated_percent",
+                    basis_of_rent.subvention_graduated_percent,
+                ),
+                # TODO: implement LeaseBasisOfRent.calculate_temporary_discount_percentage
+                (
+                    "temporary_discount_percentage",
+                    "basis_of_rent.calculate_temporary_discount_percentage()",
+                ),
+                # TODO: implement LeaseBasisOfRent.calculate_temporary_discount_amount_euros_per_year
+                (
+                    "temporary_discount_amount_euros_per_year",
+                    "basis_of_rent.calculate_temporary_discount_amount_euros_per_year()",
+                ),
+            ]
+            basis_of_rents.append(basis_of_rent_row)
+    basis_of_rents.sort(key=lambda x: x[0][1])
+    return basis_of_rents
