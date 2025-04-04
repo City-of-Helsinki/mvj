@@ -961,3 +961,47 @@ def test_opening_record_create(
     response = client.post(url, data=opening_record)
     assert response.status_code == 204
     assert AnswerOpeningRecord.objects.all().count() == 1
+
+
+@pytest.mark.django_db
+def test_is_user_helsinki_ad_true(user_factory):
+    user = user_factory(email="test@hel.fi")
+    attachment = AreaSearchAttachment.objects.create(
+        user=user,
+        user_amr_list="helsinkiad,something_else",
+        name="Test Attachment",
+    )
+    assert attachment.is_user_helsinki_ad() is True
+
+
+@pytest.mark.django_db
+def test_is_user_helsinki_ad_false_no_amr(user_factory):
+    user = user_factory(email="test@hel.fi")
+    attachment = AreaSearchAttachment.objects.create(
+        user=user,
+        user_amr_list=None,
+        name="Test Attachment",
+    )
+    assert attachment.is_user_helsinki_ad() is False
+
+
+@pytest.mark.django_db
+def test_is_user_helsinki_ad_false_no_helsinkiad_amr(user_factory):
+    user = user_factory(email="test@hel.fi")
+    attachment = AreaSearchAttachment.objects.create(
+        user=user,
+        user_amr_list="something_else",
+        name="Test Attachment",
+    )
+    assert attachment.is_user_helsinki_ad() is False
+
+
+@pytest.mark.django_db
+def test_is_user_helsinki_ad_false_wrong_email_domain(user_factory):
+    user = user_factory(email="test@example.com")
+    attachment = AreaSearchAttachment.objects.create(
+        user=user,
+        user_amr_list="helsinkiad,something_else",
+        name="Test Attachment",
+    )
+    assert attachment.is_user_helsinki_ad() is False

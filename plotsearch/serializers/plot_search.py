@@ -825,6 +825,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
 class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     user = UserSerializer(read_only=True)
+    is_user_helsinki_ad = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = AreaSearchAttachment
@@ -835,13 +836,27 @@ class AreaSearchAttachmentSerializer(serializers.ModelSerializer):
             "area_search",
             "created_at",
             "attachment",
+            "is_user_helsinki_ad",
         )
 
+    def get_is_user_helsinki_ad(self, areasearch_attachment: AreaSearchAttachment):
+        """
+        Check if the user is a Helsinki AD user.
+        """
+        return areasearch_attachment.is_user_helsinki_ad()
+
     def create(self, validated_data):
+        try:
+            amrs_list = self.context["request"].auth.data.get("amr")
+            amrs = ",".join(amrs_list)
+        except AttributeError:
+            amrs = None
+
         attachment = AreaSearchAttachment.objects.create(
             name=validated_data["name"],
             area_search=validated_data.pop("area_search", None),
             user=self.context["request"].user,
+            user_amr_list=amrs,
         )
         attachment.attachment = validated_data["attachment"]
         attachment.save()
