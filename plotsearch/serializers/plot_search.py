@@ -1152,16 +1152,18 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        plot_identifiers = (
-            Plot.objects.filter(geometry__intersects=instance.geometry)
-            .values("identifier")
-            .distinct("identifier")
-        )
-        identifiers = list()
+        plot_identifiers = Plot.objects.none()
+        if instance.geometry is not None:
+            plot_identifiers = (
+                Plot.objects.filter(geometry__intersects=instance.geometry)
+                .values("identifier")
+                .distinct("identifier")
+            )
+
         if plot_identifiers.exists():
-            for plot_identifier in plot_identifiers:
-                identifiers.append(plot_identifier["identifier"])
-            ret.update({"plot": identifiers})
+            ret.update(
+                {"plot": [plot_identifier for plot_identifier in plot_identifiers]}
+            )
         else:
             ret.update({"plot": None})
         return ret
