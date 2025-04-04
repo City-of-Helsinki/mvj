@@ -76,13 +76,13 @@ def sanitize_first_name_if_exist(value):
         return ""
 
 
-def sanitize_generate_random_numbers(value):
-    return "".join([choice(digits) for i in range(random.randint(0, 10))])
+def sanitize_generate_random_numbers():
+    return "".join([choice(digits) for _ in range(random.randint(1, 10))])
 
 
 def sanitize_generate_random_numbers_if_exist(value):
     if value:
-        return sanitize_generate_random_numbers(value)
+        return sanitize_generate_random_numbers()
     elif value == "":
         return ""
 
