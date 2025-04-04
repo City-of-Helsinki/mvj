@@ -1,0 +1,4 @@
+TMP_DIR="tmp_backups_for_db_restore"
+SCHEMA_BACKUP_FILENAME="schema_backup.csv"
+ADMIN_USERS_BACKUP_FILENAME="admin_users_backup.csv"
+BATCHRUN_SCHEDULEDJOB_BACKUP_FILENAME="batchrun_scheduledjob_backup.csv"
