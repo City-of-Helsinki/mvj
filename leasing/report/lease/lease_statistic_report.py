@@ -332,21 +332,21 @@ def get_subvention_euros_per_year(lease):
 
 
 def get_subsidy_percent(lease):
-    subsidy_amount = Decimal(0)
+    subvention_amount = Decimal(0)
     initial_year_rent = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
     ):
         initial_year_rent += basis_of_rent.calculate_initial_year_rent()
-        subsidy_amount += basis_of_rent.calculate_subsidy()
+        subvention_amount += basis_of_rent.calculate_subvention_amount()
 
     if (
-        subsidy_amount.compare(Decimal(0)) == 0
+        subvention_amount.compare(Decimal(0)) == 0
         or initial_year_rent.compare(Decimal(0)) == 0
     ):
         return Decimal(0)
 
-    return (subsidy_amount * 100 / initial_year_rent).quantize(
+    return (subvention_amount * 100 / initial_year_rent).quantize(
         Decimal(".01"), rounding=ROUND_HALF_UP
     )
 
