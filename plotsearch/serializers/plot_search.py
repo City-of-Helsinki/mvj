@@ -1177,7 +1177,12 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
 
         if plot_identifiers.exists():
             ret.update(
-                {"plot": [plot_identifier for plot_identifier in plot_identifiers]}
+                {
+                    "plot": [
+                        plot_identifier["identifier"]
+                        for plot_identifier in plot_identifiers
+                    ]
+                }
             )
         else:
             ret.update({"plot": None})
