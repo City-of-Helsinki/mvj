@@ -1815,6 +1815,15 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         return round(initial_year_rent, 2)
 
+    def calculate_subvention_euros_per_year(self):
+        """
+        In Finnish: Subventio euroa / vuosi
+        """
+        return (
+            self.calculate_initial_year_rent()
+            - self.calculate_subvented_initial_year_rent()
+        ).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+
     def calculate_cumulative_temporary_subventions(
         self,
     ) -> list[CumulativeTemporarySubvention]:

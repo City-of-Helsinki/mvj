@@ -71,7 +71,7 @@ LeaseBasisOfRentRowLabels = [
     gettext("Initial year rent"),
     gettext("Subvention type"),
     gettext("Subvented initial year rent"),  # TODO: Add translation
-    gettext("Subvention euros per year"),  # TODO: Add translation
+    gettext("Subvention euros / year"),
     gettext("Subvention percent"),
     gettext("Subvention amount per area"),  # TODO: Add translation
     gettext(
@@ -947,10 +947,9 @@ def get_basis_of_rent_rows_from_report_data(
                     "subvented_initial_year_rent",
                     basis_of_rent.calculate_subvented_initial_year_rent(),
                 ),
-                # TODO: implement LeaseBasisOfRent.calculate_subvention_euros_per_year
                 (
                     "subvention_euros_per_year",
-                    "basis_of_rent.calculate_subvention_euros_per_year()",
+                    basis_of_rent.calculate_subvention_euros_per_year(),
                 ),
                 # TODO: implement LeaseBasisOfRent.calculate_subvention_percent
                 (
