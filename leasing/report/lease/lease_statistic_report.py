@@ -752,15 +752,20 @@ class LeaseStatisticReport(AsyncReportBase):
             column_number += 1
         return row_number + 1
 
-    def write_lease_basis_of_rent_row(
-        self, worksheet, row_number, column_number, lease_basis_of_rent_row, formats
+    def write_lease_basis_of_rent_rows(
+        self, worksheet, row_number, column_number, lease_basis_of_rent_rows, formats
     ):
-        for attribute in lease_basis_of_rent_row:
-            worksheet.write(row_number, column_number, attribute[1])
-            column_number += 1
+        for lease_basis_of_rent_row in lease_basis_of_rent_rows:
+            for attribute in lease_basis_of_rent_row:
+                worksheet.write(row_number, column_number, attribute[1])
+                column_number += 1
+            row_number += 1
+            column_number = 0
         return row_number + 1
 
-    def data_as_excel(self, data: list[dict | ExcelRow], basis_of_rents: list[Any]):
+    def data_as_excel(
+        self, data: list[dict | ExcelRow], lease_basis_of_rents: list[Any]
+    ):
         report = self
 
         output = BytesIO()
@@ -877,11 +882,11 @@ class LeaseStatisticReport(AsyncReportBase):
             worksheet_basis_of_rents, row_number, column_number, formats
         )
 
-        row_number = self.write_lease_basis_of_rent_row(
+        row_number = self.write_lease_basis_of_rent_rows(
             worksheet_basis_of_rents,
             row_number,
             column_number,
-            basis_of_rents[0],
+            lease_basis_of_rents,
             formats,
         )
 
