@@ -1824,6 +1824,19 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
             - self.calculate_subvented_initial_year_rent()
         ).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
 
+    def calculate_subvention_percent(self):
+        """
+        In Finnish: Subventio prosentteina
+        """
+        if (
+            self.calculate_initial_year_rent().compare(Decimal(0)) == 0
+            or self.calculate_subsidy().compare(Decimal(0)) == 0
+        ):
+            return Decimal(0)
+        return (
+            (self.calculate_subsidy() / self.calculate_initial_year_rent()) * 100
+        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
     def calculate_cumulative_temporary_subventions(
         self,
     ) -> list[CumulativeTemporarySubvention]:
