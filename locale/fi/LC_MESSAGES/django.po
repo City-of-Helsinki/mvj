@@ -3347,6 +3347,9 @@ msgstr "Subventio euroina / vuosi"
 msgid "Subsidy percent"
 msgstr "Subventio prosentteina"
 
+msgid "Subvention amount per area"
+msgstr "Subventoitu yksikköhinta"
+
 msgid "Subsidy amount per area"
 msgstr "Subventoitu eur/m^2"
 

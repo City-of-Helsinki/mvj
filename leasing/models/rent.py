@@ -1838,6 +1838,39 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
             * 100
         ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
+    def calculate_subvention_amount_per_area(self):
+        """
+        In Finnish: Subventoitu yksikköhinta
+        """
+        subvention_amount_per_area = Decimal(0)
+        if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
+            management_subventions = self.management_subventions.all()
+            if management_subventions:
+                for management_subvention in management_subventions:
+                    subvention_amount_per_area += (
+                        management_subvention.subvention_amount
+                    )
+        elif self.subvention_type == SubventionType.RE_LEASE:
+            index_adjusted_amount_per_area = self.get_index_adjusted_amount_per_area()
+            base_percent = (
+                self.subvention_base_percent if self.subvention_base_percent else 0
+            )
+            graduated_percent = (
+                self.subvention_graduated_percent
+                if self.subvention_graduated_percent
+                else 0
+            )
+            subvention_percent = (
+                1
+                - Decimal(1 - base_percent / 100) * Decimal(1 - graduated_percent / 100)
+            ) * 100
+            subvention_amount_per_area = index_adjusted_amount_per_area * (
+                1 - (subvention_percent / 100)
+            )
+        return subvention_amount_per_area.quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+
     def calculate_cumulative_temporary_subventions(
         self,
     ) -> list[CumulativeTemporarySubvention]:

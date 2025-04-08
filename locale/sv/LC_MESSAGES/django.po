@@ -3344,6 +3344,9 @@ msgstr "Subvention i euro/år"
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
 
+msgid "Subvention amount per area"
+msgstr "Subventionerat enhetspris"
+
 msgid "Subsidy amount per area"
 msgstr "Subventionerat eur/m^2"
 

@@ -960,10 +960,9 @@ def get_basis_of_rent_rows_from_report_data(
                     "subvention_percent",
                     basis_of_rent.calculate_subvention_percent(),
                 ),
-                # TODO: implement LeaseBasisOfRent.calculate_subvention_amount_per_area
                 (
                     "subvention_amount_per_area",
-                    "basis_of_rent.calculate_subvention_amount_per_area()",
+                    basis_of_rent.calculate_subvention_amount_per_area(),
                 ),
                 (
                     "subvention_base_percent",
