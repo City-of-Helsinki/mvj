@@ -59,27 +59,25 @@ class LeaseStatisticReportInputData(TypedDict):
     state: str | None
 
 
-LeaseBasisOfRentRowLabels = [
-    gettext("Lease identifier"),
-    gettext("Type"),
-    gettext("Intended use"),
-    gettext("Index"),
-    gettext("Area"),  # TODO: Add translation
-    gettext("Area unit"),
-    gettext("Amount per area"),  # TODO: Add translation
-    gettext("Profit margin percentage"),
-    gettext("Initial year rent"),
-    gettext("Subvention type"),
-    gettext("Subvented initial year rent"),  # TODO: Add translation
-    gettext("Subvention euros / year"),
-    gettext("Subvention percent"),
-    gettext("Subvention amount per area"),  # TODO: Add translation
-    gettext(
-        "Subvention base percent"
-    ),  # TODO: Perusalennus markkinavuokrasta? Is this correct?
-    gettext("Subvention graduated percent"),  # TODO: Add translation
-    gettext("Temporary subvention percentage"),
-    gettext("Temporary discount amount euros per year"),  # TODO: Add translation
+LeaseBasisOfRentColumns = [
+    {"label": gettext("Lease identifier"), "width": 20},
+    {"label": gettext("Type"), "width": 20},
+    {"label": gettext("Intended use"), "width": 20},
+    {"label": gettext("Index"), "width": 22},
+    {"label": gettext("Area amount"), "width": 20},
+    {"label": gettext("Area unit"), "width": 20},
+    {"label": gettext("Unit price (index)"), "width": 22},
+    {"label": gettext("Profit margin percentage"), "width": 20},
+    {"label": gettext("Initial year rent"), "width": 20},
+    {"label": gettext("Subvention type"), "width": 20},
+    {"label": gettext("Subvented initial year rent"), "width": 32},
+    {"label": gettext("Subvention euros per year"), "width": 25},
+    {"label": gettext("Subvention percent"), "width": 20},
+    {"label": gettext("Subvention amount per area"), "width": 25},
+    {"label": gettext("Subvention base percent"), "width": 28},
+    {"label": gettext("Subvention graduated percent"), "width": 25},
+    {"label": gettext("Temporary subvention percentage (short)"), "width": 30},
+    {"label": gettext("Temporary discount amount euros per year"), "width": 25},
 ]
 
 
@@ -588,14 +586,14 @@ class LeaseStatisticReport(AsyncReportBase):
         },
         # Subventoitu Alkuvuosivuokra (ind)
         "subsidised_rent": {
-            "label": _("Subsidised initial year rent"),
+            "label": _("Subvented initial year rent"),
             "source": get_subvented_initial_year_rent,
             "format": "money",
             "width": 13,
         },
         # Subventio euroina / vuosi (laskurista)
         "subvention_euros_per_year": {
-            "label": _("Subvention euros / year"),
+            "label": _("Subvention euros per year"),
             "source": get_subvention_euros_per_year,
             "format": "money",
             "width": 13,
@@ -623,7 +621,7 @@ class LeaseStatisticReport(AsyncReportBase):
         },
         # Tilapäisalennus euroa/vuosi (laskurista)
         "temporary_discount_amount_euros_per_year": {
-            "label": _("Temporary discount amount euros / year"),
+            "label": _("Temporary discount amount euros per year"),
             "source": get_temporary_discount_amount_euros_per_year,
             "format": "money",
             "width": 13,
@@ -742,11 +740,18 @@ class LeaseStatisticReport(AsyncReportBase):
             {"message": _("Results will be sent by email to {}").format(user_email)}
         )
 
-    def write_lease_basis_of_rent_column_labels(
+    def set_lease_basis_of_rent_columns(
         self, worksheet, row_number, column_number, formats
     ):
-        for label in LeaseBasisOfRentRowLabels:
-            worksheet.write(row_number, column_number, label, formats[FormatType.BOLD])
+        for column in LeaseBasisOfRentColumns:
+            worksheet.write(
+                row_number, column_number, column["label"], formats[FormatType.BOLD]
+            )
+            worksheet.set_column(
+                column_number,
+                column_number,
+                column["width"],
+            )
             column_number += 1
         return row_number + 1
 
@@ -876,7 +881,7 @@ class LeaseStatisticReport(AsyncReportBase):
         row_number += 1
 
         # Column headers
-        row_number = self.write_lease_basis_of_rent_column_labels(
+        row_number = self.set_lease_basis_of_rent_columns(
             worksheet_basis_of_rents, row_number, column_number, formats
         )
 

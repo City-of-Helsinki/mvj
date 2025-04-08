@@ -3341,10 +3341,10 @@ msgstr "Yksikköhinta (ind)"
 msgid "Initial year rent"
 msgstr "Alkuvuosivuokra"
 
-msgid "Subsidised initial year rent"
+msgid "Subvented initial year rent"
 msgstr "Subventoitu alkuvuosivuokra (ind)"
 
-msgid "Subvention euros / year"
+msgid "Subvention euros per year"
 msgstr "Subventio euroina / vuosi"
 
 msgid "Subsidy percent"
@@ -3359,7 +3359,10 @@ msgstr "Subventoitu eur/m^2"
 msgid "Temporary subvention percentage"
 msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
-msgid "Temporary discount amount euros / year"
+msgid "Temporary subvention percentage (short)"
+msgstr "Tilapäisalennuksen prosentti"
+
+msgid "Temporary discount amount euros per year"
 msgstr "Tilapäisalennus euroa/vuosi"
 
 msgid "Form of management (Subvention)"

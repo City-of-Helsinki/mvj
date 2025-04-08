@@ -3338,10 +3338,10 @@ msgstr "Enhetspris (ind)"
 msgid "Initial year rent"
 msgstr "Arrende för början av året"
 
-msgid "Subsidised initial year rent"
+msgid "Subvented initial year rent"
 msgstr "Subventionerat arrende för början av året (ind)"
 
-msgid "Subvention euros / year"
+msgid "Subvention euros per year"
 msgstr "Subvention i euro/år"
 
 msgid "Subsidy percent"
@@ -3356,7 +3356,7 @@ msgstr "Subventionerat eur/m^2"
 msgid "Temporary subvention percentage"
 msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
-msgid "Temporary discount amount euros / year"
+msgid "Temporary discount amount euros per year"
 msgstr "Tillfällig rabatt i euro/år"
 
 msgid "Form of management (Subvention)"
