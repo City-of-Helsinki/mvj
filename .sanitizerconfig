@@ -122,15 +122,7 @@ strategy:
     modified_at: null
     reason: mvj.paragraph_if_exist
     reason_code: null
-  django_admin_log:
-    action_flag: null
-    action_time: null
-    change_message: constant.empty_json_list
-    content_type_id: null
-    id: null
-    object_id: null
-    object_repr: string.empty
-    user_id: null
+  django_admin_log: skip_rows
   django_content_type:
     app_label: null
     id: null
