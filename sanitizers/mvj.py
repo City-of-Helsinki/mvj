@@ -14,7 +14,9 @@ fake = Faker("fi_FI")
 
 
 def sanitize_address(value):
-    return fake.address()
+    address = fake.address()
+    address_without_linebreak = address.replace("\n", ", ")
+    return address_without_linebreak
 
 
 def sanitize_address_if_exist(value):
