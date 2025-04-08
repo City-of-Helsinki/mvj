@@ -2773,7 +2773,10 @@ msgid "Subvention type"
 msgstr "Subvention tyyppi"
 
 msgid "Subvention base percent"
-msgstr "Perusalennus markkinavuokrasta"
+msgstr "Markkinavuokran subventio"
+
+msgid "Subvention graduated percent"
+msgstr "Siirtymäajan subventio"
 
 msgid "Graduated subvention percent"
 msgstr "Porrastettu alennus"

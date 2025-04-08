@@ -1718,9 +1718,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         decimal_places=2,
     )
 
-    # In Finnish: Siirtymäjan subventio
+    # In Finnish: Siirtymäajan subventio
     subvention_graduated_percent = models.DecimalField(
-        verbose_name=_("Graduated subvention percent"),
+        verbose_name=_("Subvention graduated percent"),
         null=True,
         blank=True,
         max_digits=10,

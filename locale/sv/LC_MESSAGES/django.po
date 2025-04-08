@@ -2776,6 +2776,9 @@ msgstr "Typ av subvention"
 msgid "Subvention base percent"
 msgstr "Basrabatt på marknadsarrende"
 
+msgid "Subvention graduated percent"
+msgstr "Stegvis rabatt"
+
 msgid "Graduated subvention percent"
 msgstr "Stegvis rabatt"
 
