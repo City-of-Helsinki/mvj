@@ -3353,7 +3353,7 @@ msgstr "Subventionerat enhetspris"
 msgid "Subsidy amount per area"
 msgstr "Subventionerat eur/m^2"
 
-msgid "Temporary discount percent"
+msgid "Temporary subvention percentage"
 msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
 msgid "Temporary discount amount euros / year"

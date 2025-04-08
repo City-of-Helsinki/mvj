@@ -248,3 +248,46 @@ def test_calculate_temporary_subvention_data(
         assert round(subvention["subvention_amount_euros_per_year"], 3) == round(
             expected_subvention["subvention_amount_euros_per_year"], 3
         )
+
+
+@pytest.mark.django_db
+def test_calculate_temporary_subvention_percentage(
+    lease_basis_of_rent_factory,
+    lease_factory,
+    index_factory,
+    lease_basis_of_rent_temporary_subvention_factory,
+):
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index_factory(number=1976, year=2020, month=2),
+        area=Decimal(2969.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(37.00),
+        profit_margin_percentage=Decimal(4.00),
+        discount_percentage=Decimal(28.000000),
+    )
+
+    # In the case when there are no temporary subventions,
+    # the temporary subvention percent should be 0
+    assert lease_basis_of_rent.calculate_temporary_subvention_percentage() == Decimal(0)
+
+    # In the case when there are temporary subventions,
+    # expect a certain number for the temporary subvention percent
+    # with the accuracy of two decimals
+    lease_basis_of_rent_temporary_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        description="Temporary subvention 1",
+        subvention_percent=10.00,
+    )
+    lease_basis_of_rent_temporary_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        description="Temporary subvention 2",
+        subvention_percent=20.00,
+    )
+
+    expected_temporary_subvention_percent = Decimal(28.00)
+
+    assert round(
+        lease_basis_of_rent.calculate_temporary_subvention_percentage(), 2
+    ) == round(expected_temporary_subvention_percent, 2)

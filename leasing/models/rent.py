@@ -1921,6 +1921,19 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
             "total_amount_euros_per_year": temporary_discount_amount_total,
         }
 
+    def calculate_temporary_subvention_percentage(
+        self,
+    ) -> Decimal:
+        base = Decimal(1)
+        temporary_subventions = self.temporary_subventions.all()
+        if not temporary_subventions:
+            return Decimal(0)
+
+        for temporary_subvention in temporary_subventions:
+            base *= (100 - temporary_subvention.subvention_percent) / 100
+
+        return (1 - base) * 100
+
     def calculate_discounted_rent(self):
         initial_year_rent = self.calculate_initial_year_rent()
         if not self.discount_percentage:

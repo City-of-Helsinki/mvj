@@ -78,7 +78,7 @@ LeaseBasisOfRentRowLabels = [
         "Subvention base percent"
     ),  # TODO: Perusalennus markkinavuokrasta? Is this correct?
     gettext("Subvention graduated percent"),  # TODO: Add translation
-    gettext("Temporary discount percentage"),  # TODO: Add translation
+    gettext("Temporary subvention percentage"),
     gettext("Temporary discount amount euros per year"),  # TODO: Add translation
 ]
 
@@ -396,7 +396,7 @@ def get_subsidy_amount_per_area(lease):
     )
 
 
-def get_temporary_discount_percentage(lease):
+def get_temporary_subvention_percentage(lease):
     base = Decimal(1)
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False
@@ -615,9 +615,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 13,
         },
         # Tilapäisalennus subventoidusta alkuvuosivuokrasta % (laskurista)
-        "temporary_discount_percentage": {
-            "label": _("Temporary discount percent"),
-            "source": get_temporary_discount_percentage,
+        "temporary_subvention_percentage": {
+            "label": _("Temporary subvention percentage"),
+            "source": get_temporary_subvention_percentage,
             "format": "percentage",
             "width": 13,
         },
@@ -970,10 +970,9 @@ def get_basis_of_rent_rows_from_report_data(
                     "subvention_graduated_percent",
                     basis_of_rent.subvention_graduated_percent,
                 ),
-                # TODO: implement LeaseBasisOfRent.calculate_temporary_discount_percentage
                 (
-                    "temporary_discount_percentage",
-                    "basis_of_rent.calculate_temporary_discount_percentage()",
+                    "temporary_subvention_percentage",
+                    basis_of_rent.calculate_temporary_subvention_percentage(),
                 ),
                 (
                     "temporary_discount_amount_euros_per_year",

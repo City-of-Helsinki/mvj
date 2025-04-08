@@ -3356,7 +3356,7 @@ msgstr "Subventoitu yksikköhinta"
 msgid "Subsidy amount per area"
 msgstr "Subventoitu eur/m^2"
 
-msgid "Temporary discount percent"
+msgid "Temporary subvention percentage"
 msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
 msgid "Temporary discount amount euros / year"
