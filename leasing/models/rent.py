@@ -1871,11 +1871,12 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
             Decimal("0.01"), rounding=ROUND_HALF_UP
         )
 
-    def calculate_cumulative_temporary_subventions(
+    def calculate_temporary_subvention_data(
         self,
-    ) -> list[CumulativeTemporarySubvention]:
+    ) -> dict[str, Decimal | list[CumulativeTemporarySubvention]]:
         """
-        Returns objects to include data for temporary subventions.
+        Returns the data for temporary subventions of the lease_basis_of_rent,
+        both individual subventions and the total amount.
 
         Each subvention_amount_euros_per_year is calculated cumulatively.
         The subvention_percent is taken from the amount of subvented_initial_year_rent
@@ -1883,9 +1884,13 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         """
         temporary_subventions = self.temporary_subventions.all()
         if not temporary_subventions:
-            return []
+            return {
+                "temporary_subventions": [],
+                "total_amount_euros_per_year": Decimal(0),
+            }
 
-        cumulative_temporary_subventions = []
+        temporary_subvention_items = []
+        temporary_discount_amount_total = Decimal(0)
 
         current_discounted_amount = round(
             self.calculate_subvented_initial_year_rent(), 6
@@ -1897,7 +1902,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                 * (100 - temporary_subvention.subvention_percent)
                 / 100
             )
-            cumulative_temporary_subventions.append(
+            temporary_subvention_items.append(
                 {
                     "description": temporary_subvention.description,
                     "subvention_percent": temporary_subvention.subvention_percent,
@@ -1906,7 +1911,15 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                     ),
                 }
             )
-        return cumulative_temporary_subventions
+        for subvention in temporary_subvention_items:
+            temporary_discount_amount_total += subvention[
+                "subvention_amount_euros_per_year"
+            ]
+
+        return {
+            "temporary_subventions": temporary_subvention_items,
+            "total_amount_euros_per_year": temporary_discount_amount_total,
+        }
 
     def calculate_discounted_rent(self):
         initial_year_rent = self.calculate_initial_year_rent()

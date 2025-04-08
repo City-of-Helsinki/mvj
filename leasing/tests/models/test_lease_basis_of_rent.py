@@ -168,7 +168,7 @@ def test_calculate_subvented_initial_year_rent_re_lease(
 
 
 @pytest.mark.django_db
-def test_calculate_cumulative_temporary_subventions(
+def test_calculate_temporary_subvention_data(
     lease_basis_of_rent_factory,
     lease_basis_of_rent_management_subvention_factory,
     lease_basis_of_rent_temporary_subvention_factory,
@@ -191,8 +191,12 @@ def test_calculate_cumulative_temporary_subventions(
         subvention_amount=731.12,
     )
     # In the case when there are no temporary subventions,
-    # an empty array should be returned
-    assert lease_basis_of_rent.calculate_cumulative_temporary_subventions() == []
+    # a dictionary with an empty list and the total amount of subventions as 0
+    # should be returned
+    assert lease_basis_of_rent.calculate_temporary_subvention_data() == {
+        "temporary_subventions": [],
+        "total_amount_euros_per_year": Decimal(0),
+    }
 
     # In the case when there are temporary subventions,
     # expect a certain number for the sum of cumulative temporary subventions
@@ -209,41 +213,35 @@ def test_calculate_cumulative_temporary_subventions(
         subvention_percent=20.00,
     )
 
-    expected_cumulative_temporary_subventions = [
-        {
-            "description": "Temporary subvention 1",
-            "subvention_percent": 10.00,
-            "subvention_amount_euros_per_year": Decimal(8682.78100000),
-        },
-        {
-            "description": "Temporary subvention 2",
-            "subvention_percent": 20.00,
-            "subvention_amount_euros_per_year": Decimal(15629.0058000000),
-        },
-    ]
+    expected_temporary_subvention_data = {
+        "temporary_subventions": [
+            {
+                "description": "Temporary subvention 1",
+                "subvention_percent": 10.00,
+                "subvention_amount_euros_per_year": Decimal(8682.78100000),
+            },
+            {
+                "description": "Temporary subvention 2",
+                "subvention_percent": 20.00,
+                "subvention_amount_euros_per_year": Decimal(15629.0058000000),
+            },
+        ],
+        "total_amount_euros_per_year": Decimal(24311.7868000000),
+    }
 
-    expected_sum_of_subvention_amounts = sum(
-        subvention["subvention_amount_euros_per_year"]
-        for subvention in expected_cumulative_temporary_subventions
+    temporary_subvention_data = (
+        lease_basis_of_rent.calculate_temporary_subvention_data()
     )
 
-    cumulative_temporary_subventions = (
-        lease_basis_of_rent.calculate_cumulative_temporary_subventions()
-    )
-
-    sum_of_subvention_amounts = sum(
-        subvention["subvention_amount_euros_per_year"]
-        for subvention in cumulative_temporary_subventions
-    )
-
-    assert round(sum_of_subvention_amounts, 2) == round(
-        expected_sum_of_subvention_amounts, 2
+    assert round(temporary_subvention_data["total_amount_euros_per_year"], 2) == round(
+        expected_temporary_subvention_data["total_amount_euros_per_year"], 2
     )
 
     # Check that the subvention amounts match the expected subvention amounts
     # with the accuracy of three decimals
     subventions = zip(
-        cumulative_temporary_subventions, expected_cumulative_temporary_subventions
+        temporary_subvention_data["temporary_subventions"],
+        expected_temporary_subvention_data["temporary_subventions"],
     )
 
     for subvention, expected_subvention in subventions:
