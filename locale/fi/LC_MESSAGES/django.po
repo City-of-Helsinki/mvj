@@ -1309,6 +1309,9 @@ msgstr "Vuokrausperiaatteet"
 msgid "Basis of rent"
 msgstr "Vuokrausperiaate"
 
+msgid "Basis of rents"
+msgstr "Vuokrausperiaatteet"
+
 msgid "Build permission type"
 msgstr "Rakennusoikeustyyppi"
 

@@ -777,7 +777,7 @@ class LeaseStatisticReport(AsyncReportBase):
 
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output)
-        worksheet = workbook.add_worksheet()
+        worksheet = workbook.add_worksheet(gettext("Lease statistics report"))
 
         formats = {
             FormatType.BOLD: workbook.add_format({"bold": True}),
@@ -861,20 +861,15 @@ class LeaseStatisticReport(AsyncReportBase):
 
         # Second worksheet: Bases of rent separately
 
-        worksheet_basis_of_rents = workbook.add_worksheet()
+        worksheet_basis_of_rents = workbook.add_worksheet(gettext("Basis of rents"))
 
         row_number = 0
         column_number = 0
         worksheet_basis_of_rents.write(
             row_number,
             column_number,
-            "Statistic report: Bases of rent",
+            f"{gettext('Lease statistics report')}: {gettext('Basis of rents')}",
             formats[FormatType.BOLD],
-        )
-
-        row_number = 1
-        worksheet_basis_of_rents.write(
-            row_number, column_number, "This is a hardcoded description for testing"
         )
 
         row_number = 3

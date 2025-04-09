@@ -1309,6 +1309,9 @@ msgstr "Arrenderingsprinciper"
 msgid "Basis of rent"
 msgstr "Arrenderingssprincip"
 
+msgid "Basis of rents"
+msgstr "Arrenderingssprinciper"
+
 msgid "Build permission type"
 msgstr "Typ av byggrätt"
 
