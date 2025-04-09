@@ -935,7 +935,6 @@ def get_basis_of_rent_rows_from_report_data(
     report_data: list[dict[str, Any]]
 ) -> list[Any]:
     basis_of_rents = []
-    basis_of_rent_types = BasisOfRentType.choices()
     for lease in report_data:
         for basis_of_rent in lease.basis_of_rents.all() or []:
             if basis_of_rent.archived_at or not basis_of_rent.locked_at:
@@ -944,9 +943,7 @@ def get_basis_of_rent_rows_from_report_data(
                 ("lease_identifier", lease.get_identifier_string()),
                 (
                     "type",
-                    get_basis_of_rent_type_string(
-                        basis_of_rent_types, basis_of_rent.type.value
-                    ),
+                    str(basis_of_rent.type),
                 ),
                 ("intended_use", basis_of_rent.intended_use.name),
                 ("index", str(basis_of_rent.index)),
@@ -958,7 +955,7 @@ def get_basis_of_rent_rows_from_report_data(
                 (
                     "subvention_type",
                     (
-                        basis_of_rent.subvention_type.value
+                        str(basis_of_rent.subvention_type)
                         if basis_of_rent.subvention_type
                         else "-"
                     ),

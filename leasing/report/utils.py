@@ -39,15 +39,3 @@ def dictfetchall(cursor: CursorWrapper):
     """Return all rows from a cursor as a dict"""
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-
-def get_basis_of_rent_type_string(
-    choices: list[tuple[str, str]], basis_of_rent_type: str
-) -> str:
-    """
-    Get the string representation of a basis of rent type.
-    """
-    for choice in choices:
-        if choice[0] == basis_of_rent_type:
-            return choice[1]
-    return basis_of_rent_type
