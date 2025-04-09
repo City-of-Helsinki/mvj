@@ -88,7 +88,7 @@ class ContactsActiveLeases(TypedDict):
     lease_id: int
 
 
-class CumulativeTemporarySubvention(TypedDict):
+class TemporarySubventionItem(TypedDict):
     description: str
     subvention_percent: Decimal
     subvention_amount_euros_per_year: Decimal
