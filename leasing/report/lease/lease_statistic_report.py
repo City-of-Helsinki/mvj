@@ -18,7 +18,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.enums import (
-    AreaUnit,
     BasisOfRentType,
     LeaseAreaAttachmentType,
     LeaseState,
