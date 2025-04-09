@@ -18,7 +18,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.enums import (
-    BasisOfRentType,
     LeaseAreaAttachmentType,
     LeaseState,
     SubventionType,
@@ -48,7 +47,6 @@ from leasing.report.report_base import (
     AsyncReportBase,
     send_email_report,
 )
-from leasing.report.utils import get_basis_of_rent_type_string
 
 # TODO: Can we get rid of static ids
 RESIDENTIAL_INTENDED_USE_IDS = [
