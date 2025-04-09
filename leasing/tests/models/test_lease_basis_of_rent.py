@@ -291,3 +291,68 @@ def test_calculate_temporary_subvention_percentage(
     assert round(
         lease_basis_of_rent.calculate_temporary_subvention_percentage(), 2
     ) == round(expected_temporary_subvention_percent, 2)
+
+
+@pytest.mark.django_db
+def test_calculate_subvention_amount_per_area(
+    lease_basis_of_rent_factory,
+    lease_basis_of_rent_management_subvention_factory,
+    lease_factory,
+    index_factory,
+):
+    # Subvention type: FORM_OF_MANAGEMENT
+    # In the case of FORM_OF_MANAGEMENT subvention type,
+    # the subvention amount per area equals to
+    # the sum of the subvention amounts of management subventions
+
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index_factory(number=2238, year=2022, month=10),
+        area=Decimal(107.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(500.00),
+        profit_margin_percentage=Decimal(5.00),
+        discount_percentage=Decimal(35.200000),
+        subvention_type=SubventionType.FORM_OF_MANAGEMENT,
+    )
+
+    lease_basis_of_rent_management_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        subvention_amount=500.00,
+    )
+
+    lease_basis_of_rent_management_subvention_factory(
+        lease_basis_of_rent=lease_basis_of_rent,
+        subvention_amount=1000.00,
+    )
+
+    expected_subvention_amount_per_area = Decimal(1500.00)
+
+    assert round(
+        lease_basis_of_rent.calculate_subvention_amount_per_area(), 2
+    ) == round(expected_subvention_amount_per_area, 2)
+
+    # Subvention type: RE_LEASE
+    # In the case of RE_LEASE subvention type,
+    # the subvention amount per area is derived from the
+    # subvention base percent and the subvention graduated percent
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE2022,
+        index=index_factory(number=2238, year=2022, month=11),
+        area=Decimal(107.00),
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=Decimal(500.00),
+        profit_margin_percentage=Decimal(5.00),
+        discount_percentage=Decimal(35.200000),
+        subvention_type=SubventionType.RE_LEASE,
+        subvention_base_percent=Decimal(10.00),
+        subvention_graduated_percent=Decimal(10.00),
+    )
+
+    expected_subvention_amount_per_area = Decimal(405.00)
+
+    assert round(
+        lease_basis_of_rent.calculate_subvention_amount_per_area(), 2
+    ) == round(expected_subvention_amount_per_area, 2)
