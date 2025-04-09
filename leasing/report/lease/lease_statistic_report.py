@@ -17,7 +17,13 @@ from enumfields.drf import EnumField
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from leasing.enums import AreaUnit, LeaseAreaAttachmentType, LeaseState, SubventionType
+from leasing.enums import (
+    AreaUnit,
+    BasisOfRentType,
+    LeaseAreaAttachmentType,
+    LeaseState,
+    SubventionType,
+)
 from leasing.models import Lease, ServiceUnit
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.lease.common_getters import (
@@ -43,6 +49,7 @@ from leasing.report.report_base import (
     AsyncReportBase,
     send_email_report,
 )
+from leasing.report.utils import get_basis_of_rent_type_string
 
 # TODO: Can we get rid of static ids
 RESIDENTIAL_INTENDED_USE_IDS = [
@@ -929,13 +936,19 @@ def get_basis_of_rent_rows_from_report_data(
     report_data: list[dict[str, Any]]
 ) -> list[Any]:
     basis_of_rents = []
+    basis_of_rent_types = BasisOfRentType.choices()
     for lease in report_data:
         for basis_of_rent in lease.basis_of_rents.all() or []:
             if basis_of_rent.archived_at or not basis_of_rent.locked_at:
                 continue
             basis_of_rent_row = [
                 ("lease_identifier", lease.get_identifier_string()),
-                ("type", basis_of_rent.type.value),
+                (
+                    "type",
+                    get_basis_of_rent_type_string(
+                        basis_of_rent_types, basis_of_rent.type.value
+                    ),
+                ),
                 ("intended_use", basis_of_rent.intended_use.name),
                 ("index", str(basis_of_rent.index)),
                 ("area", basis_of_rent.area),
