@@ -278,26 +278,49 @@ sudo touch virre_server_certificate.crt
 sudo update-ca-certificates # This is the actual command that registers certificates.
 ```
 
-### Production database backup
+### Database backup
 
-Before doing extensive production deployments, backup the database:
+Before doing extensive deployments, backup the database:
 
 ```bash
-pg_dump --username mvj_api_prod --host proddb-mvj.hel.fi --format custom --file mvj-api-prod_$(date +%Y%m%d%H%m).dump
+pg_dump <db name> --host <db host address> --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
 ```
 
 To restore the database from backup, run:
 
 ```bash
-pg_restore --username mvj_api_prod --host proddb-mvj.hel.fi --clean --if-exists mvj-api-prod_DATETIME.dump
+pg_restore --username <db username> --host <db host address> --clean --if-exists mvj-ENVIRONMENT_DATETIME.dump
 ```
 
-### Sanitized database dump for development use
+### Sanitized database dump
 
-When taking a database dump from production to be used for development/testing
+When taking a database dump from production to be used for development or testing
 purposes, sensitive fields must be sanitized. We use
 [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
-for sanitizing the data, so check the most recent instructions from the vendor (unless ours are newer).
+for sanitizing the data.
+
+#### 0. Activate virtual environment with development dependencies
+
+Sanitizer requires some Python packages that are listed as development dependencies.
+
+If the source environment already has development dependencies installed,
+continue to next topic.
+
+```bash
+sudo su <api user>
+cd
+# <Here you should load the environment variables required by API user>
+
+# Create the virtual environment, if it doesn't exist yet:
+python -m venv venv-dev
+
+# Activate the venv-dev environment
+source venv-dev/bin/activate
+
+# Install all dependencies, if not installed yet:
+pip install -r <api directory>/requirements-dev.txt
+pip install -r <api directory>/requirements.txt
+```
 
 #### 1. Validate sanitizer configuration
 
@@ -305,6 +328,8 @@ Sanitizer configuration is specified in `.sanitizerconfig`.
 First, validate if the current configuration is up to date with Django models:
 
 ```bash
+cd <api user directory>
+# <Here you should load the environment variables required by API user>
 python manage.py validate_sanitizerconfig
 ```
 
@@ -313,8 +338,7 @@ configuration based on current state of the models.
 
 #### 2. Update sanitizer configuration
 
-If you have any deficiencies in the configuration, update the configuration file
-with missing models and their fields.
+If you have any deficiencies in the configuration, update the configuration file.
 
 Our custom sanitizer functions are specified in `sanitizers/mvj.py`.
 The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers) are also available.
@@ -328,38 +352,68 @@ Afterwards, only stage the updates you need to version control, and avoid
 setting row sanitizers to null if they specified a sanitization function before.
 
 ```bash
+# Only run this if you need the reset
 python manage.py init_sanitizer
 ```
 
 #### 3. Create sanitized dump
 
 ```bash
-python manage.py create_sanitized_dump > prod-sanitized-dump_$(date +%Y%m%d%H%m).sql
+python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%m).sql
 ```
 
-#### 4. Load the dump into local/dev/stage
+Then copy the SQL file from source server to destination server, e.g. with `scp` tool.
 
-First, backup your destination database [like you would for production](#production-database-backup).
-
-Then, if .sanitizerconfig did not include the `--clean` extra parameter, you need to either:
-
-- load the dump into a new database, or
-- drop the current database before loading the dump in its place.
-
-If the dump was generated with `--clean` parameter, it includes the necessary DROP statements to
-successfully overwrite an existing database.
-
-Load the .sql format dump with `psql`:
+#### 4. Backup the destination database
 
 ```bash
-psql --username <username> --dbname <dbname> --host <hostname> --port <port> --file prod-sanitized-dump_<datetime>.sql > dump_loading.log
+./utils/scripts/database_backup_before_load.sh <db name> <db host> <db port> <db user>
 ```
 
-Example for local environment:
+#### 5. Load the sanitized dump
+
+Load the SQL dump with `psql`:
 
 ```bash
-psql --username mvj --dbname mvj --host mvj-db --port 5433 --file sanitized-dump_<datetime>.sql > dump_loading.log
+psql --username <db username> --dbname <db name> --host <db hostname> --port <db port> --file mvj-sanitized-ENVIRONMENT_DATETIME.sql > dump_loading.log
 ```
+
+#### 6. Restore environment-specific settings
+
+```bash
+./utils/scripts/database_repair_after_load.sh <db name> <db host> <db port> <db user>
+```
+
+#### 7. Restore user access to MVJ
+
+Sanitized dump will overwrite or drop existing users, including admin users.
+
+```bash
+# Recreate permissions just in case
+python manage.py set_group_model_permissions
+python manage.py set_group_field_permissions
+
+# Create the TEST groups for non-AD users
+python manage.py copy_groups_and_service_unit_mappings
+
+# Create at least one admin user so you can login to admin panel
+python manage.py createsuperuser
+```
+
+On first login to MVJ, your regular user will be created.
+After that, login to Django admin as your superuser and grant your regular user
+at least:
+- one service unit
+- superuser privileges, or some usergroup
+
+#### 8. Additional restoration tasks and cleanup
+
+Some other environment-specific data might need to be restored, for daily
+work to continue as before.
+Review the generated backups and the new contents of the DB, and restore any
+tables or their rows as you require.
+
+When no longer needed, delete the backups.
 
 ### Token authentication
 

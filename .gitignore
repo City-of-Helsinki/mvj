@@ -2,6 +2,9 @@
 *.mo
 *.sql
 *.iml
+*.csv
+*.dump
+*.log
 .coverage*
 .DS_Store
 .devcontainer

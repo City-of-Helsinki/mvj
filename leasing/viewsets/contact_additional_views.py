@@ -24,17 +24,19 @@ class ContactExistsView(APIView):
 
     def get(self, request, format=None):
         identifier = request.query_params.get("identifier", None)
+        # Optional, some integrations can use the endpoint with just identifier.
+        service_unit_id = request.query_params.get("service_unit", None)
         if not identifier:
             raise APIException(_('Query parameter "identifier" is mandatory'))
 
         if re.match(r"FI\d{8}", identifier, re.IGNORECASE):
             identifier = "{}-{}".format(identifier[2:9], identifier[-1])
 
-        return Response(
-            {
-                "exists": Contact.objects.filter(
-                    Q(business_id__iexact=identifier)
-                    | Q(national_identification_number__iexact=identifier)
-                ).exists()
-            }
+        contacts_qs = Contact.objects.filter(
+            Q(business_id__iexact=identifier)
+            | Q(national_identification_number__iexact=identifier)
         )
+        if service_unit_id is not None:
+            contacts_qs = contacts_qs.filter(service_unit_id=service_unit_id)
+
+        return Response({"exists": contacts_qs.exists()})

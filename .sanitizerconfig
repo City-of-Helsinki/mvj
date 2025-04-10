@@ -6,8 +6,19 @@ config:
       - "--format=plain" # Plain-text SQL script format. Default value.
                          # Also, it's the only possible format for this sanitizer library
                          # because it relies on plain-text standard output for sanitizing objects.
-      - "--clean" # Drop objects before recreating them. Does not affect the database itself.
+      - "--clean" # Output the commands to drop objects before recreating them. Does not drop objects during dumping.
       - "--if-exists" # Don't warn about missing objects during cleaning.
+      - "--no-owner" # Don't set ownership of objects to match the original database. Prod roles don't exist in local/dev/test/stage.
+      - "--no-acl" # No access privileges (grant/revoke) commands. Same reason as above.
+      - "--exclude-table-data=public.auditlog_logentry"
+      - "--exclude-table-data=public.batchrun_jobrun"
+      - "--exclude-table-data=public.batchrun_jobrunlog"
+      - "--exclude-table-data=public.batchrun_jobrunlogentry"
+      - "--exclude-table-data=public.batchrun_jobrunqueueitem"
+      - "--exclude-table-data=public.django_q_task"
+      - "--exclude-table-data=public.leasing_reportstorage"
+      - "--verbose"
+
 strategy:
   # Top-level keys under strategy are DB table names, as interpreted by init_sanitizer command.
   # `skip_rows` means that the table definition is included in the dump, but the table will have zero rows.
@@ -111,15 +122,7 @@ strategy:
     modified_at: null
     reason: mvj.paragraph_if_exist
     reason_code: null
-  django_admin_log:
-    action_flag: null
-    action_time: null
-    change_message: constant.empty_json_list
-    content_type_id: null
-    id: null
-    object_id: null
-    object_repr: string.empty
-    user_id: null
+  django_admin_log: skip_rows
   django_content_type:
     app_label: null
     id: null
@@ -128,17 +131,7 @@ strategy:
   django_q_schedule: skip_rows
   django_q_task: skip_rows
   django_session: skip_rows
-  file_operations_filescanstatus:
-    content_type_id: null
-    created_at: null
-    error_message: null
-    file_deleted_at: null
-    filefield_name: null
-    filepath: null
-    id: null
-    modified_at: null
-    object_id: null
-    scanned_at: null
+  file_operations_filescanstatus: skip_rows
   file_operations_genericattachmenttestmodel:
     file_attachment: null
     id: null
@@ -422,10 +415,10 @@ strategy:
     type: null
     user_id: null
   leasing_contact:
-    address: mvj.address_if_exist
+    address: mvj.street_address_if_exist
     address_protection: null
     business_id: mvj.business_id_if_exist
-    care_of: null
+    care_of: mvj.company_if_exist
     city: mvj.city_if_exist
     country: null
     created_at: null
@@ -439,7 +432,7 @@ strategy:
     language: null
     last_name: mvj.last_name_if_exist
     modified_at: null
-    name: mvj.company_if_exist
+    name: null
     national_identification_number: mvj.national_identification_number_if_exist
     note: mvj.paragraph_if_exist
     partner_code: mvj.generate_random_numbers_if_exist
@@ -499,7 +492,7 @@ strategy:
     id: null
     name: null
   leasing_customdetailedplan:
-    address: mvj.address_if_exist
+    address: null
     area: null
     created_at: null
     detailed_plan: null
@@ -535,7 +528,7 @@ strategy:
     kind: null
     name: null
   leasing_detailedplan:
-    acceptor: null
+    acceptor: string.random
     created_at: null
     deleted: null
     deleted_by_cascade: null
@@ -797,7 +790,7 @@ strategy:
     landuseagreement_id: null
     plot_id: null
   leasing_landuseagreementaddress:
-    address: mvj.address_if_exist
+    address: null
     city: null
     created_at: null
     id: null
@@ -1053,9 +1046,9 @@ strategy:
     section_area: null
     type: null
   leasing_leaseareaaddress:
-    address: mvj.address_if_exist
+    address: null
     address_en: null
-    address_fi: mvj.address_if_exist
+    address_fi: null
     address_sv: null
     city: null
     created_at: null
@@ -1451,7 +1444,7 @@ strategy:
     leasetype_id: null
     vipunenmaplayer_id: null
   plotsearch_areasearch:
-    address: mvj.address_if_exist
+    address: null
     answer_id: null
     area_search_status_id: null
     description_area: mvj.paragraph_if_exist

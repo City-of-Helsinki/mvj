@@ -9,14 +9,30 @@ from faker import Faker
 
 fake = Faker("fi_FI")
 
+# Original value will be passed to the sanitization function as a paremeter,
+# even if it is not used when generating the sanitized replacement value.
+
 
 def sanitize_address(value):
-    return fake.address()
+    address = fake.address()
+    address_without_linebreak = address.replace("\n", ", ")
+    return address_without_linebreak
 
 
 def sanitize_address_if_exist(value):
     if value:
         return sanitize_address(value)
+    elif value == "":
+        return ""
+
+
+def sanitize_street_address(value):
+    return fake.street_address()
+
+
+def sanitize_street_address_if_exist(value):
+    if value:
+        return sanitize_street_address(value)
     elif value == "":
         return ""
 
