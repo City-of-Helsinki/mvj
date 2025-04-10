@@ -257,9 +257,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
     "Laske Export": ("LASKE_EXPORT_FROM_EMAIL", "LASKE_EXPORT_ANNOUNCE_EMAIL"),
 }
 
-# Required by django-helusers
-SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
-
 REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "ALLOWED_VERSIONS": ("v1", "export_v1"),
