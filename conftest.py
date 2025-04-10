@@ -354,6 +354,7 @@ class PlotSearchStageFactory(factory.django.DjangoModelFactory):
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def service_units(self, create, extracted, **kwargs):

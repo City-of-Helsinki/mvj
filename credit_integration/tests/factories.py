@@ -53,6 +53,7 @@ class CreditDecisionReasonFactory(factory.django.DjangoModelFactory):
 class CreditDecisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CreditDecision
+        skip_postgeneration_save = True
 
     status = fuzzy.FuzzyChoice(CreditDecisionStatus)
     claimant = factory.SubFactory(UserFactory)
