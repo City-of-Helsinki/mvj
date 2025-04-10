@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
-from pyproj import Proj, transform
+from pyproj import Transformer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_gis.fields import GeometryField
@@ -1014,14 +1014,21 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         Fetches address and district data from kartta.hel.fi
         Returns tuple with address as first element and district as second
         """
-        inproj = Proj(init="epsg:4326")
-        outproj = Proj(init="epsg:3879")
+        # EPSG:4326 WGS84 - World Geodetic System 1984, used in GPS
+        # EPSG:3879 GK25FIN - Helsinki local coordinate system
+        transformer = Transformer.from_crs("EPSG:4326", "EPSG:3879", always_xy=True)
         multipolygon = list()
 
-        for x1, y1 in geometry.coords[0][0]:
-            multipolygon.append(transform(inproj, outproj, x1, y1))
+        for lon, lat in geometry.coords[0][0]:
+            # EPSG:4326 uses longitude, latitude
+            # EPSG:3879 uses easting, northing
+            easting, northing = transformer.transform(lon, lat)
+            multipolygon.append((easting, northing))
 
-        multipolygon_str = ",".join(["{} {}".format(y1, x1) for x1, y1 in multipolygon])
+        # Swap order of coordinates for WFS, as it expects coordinates in (y,x) or (lat,lon) or (northing,easting)
+        multipolygon_str = ",".join(
+            [f"{northing} {easting}" for easting, northing in multipolygon]
+        )
 
         url = "https://kartta.hel.fi/ws/geoserver/avoindata/wfs"
         params = {
@@ -1031,9 +1038,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "typeName": "avoindata:Osoiteluettelo_piste_rekisteritiedot",
             "srsName": "EPSG:4326",
             "outputFormat": "application/json",
-            "cql_filter": "intersects(geom,MULTIPOLYGON((({}))))".format(
-                multipolygon_str
-            ),
+            "cql_filter": f"intersects(geom,MULTIPOLYGON((({multipolygon_str}))))",
         }
         response = requests.get(url, params=params)
 
