@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from django.utils.timezone import make_aware
 
 from leasing.models import LeaseArea, LeaseAreaAddress
 
@@ -37,16 +38,28 @@ def test_lease_area_ordering(
 
     This helps maintain a shared ordering in all places of usage.
     """
-    area6 = lease_area_factory(archived_at=datetime(year=2024, month=1, day=2))
-    area5 = lease_area_factory(archived_at=datetime(year=2024, month=1, day=1))
+    area6 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=1, day=2))
+    )
+    area5 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=1, day=1))
+    )
     area1 = lease_area_factory(archived_at=None)
-    area10 = lease_area_factory(archived_at=datetime(year=2024, month=4, day=4))
-    area7 = lease_area_factory(archived_at=datetime(year=2024, month=2, day=2))
+    area10 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=4, day=4))
+    )
+    area7 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=2, day=2))
+    )
     area2 = lease_area_factory(archived_at=None)
     area3 = lease_area_factory(archived_at=None)
-    area8 = lease_area_factory(archived_at=datetime(year=2024, month=2, day=2))
+    area8 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=2, day=2))
+    )
     area4 = lease_area_factory(archived_at=None)
-    area9 = lease_area_factory(archived_at=datetime(year=2024, month=3, day=3))
+    area9 = lease_area_factory(
+        archived_at=make_aware(datetime(year=2024, month=3, day=3))
+    )
 
     areas = list(LeaseArea.objects.all())
     expected_ordering = [
