@@ -218,7 +218,7 @@ pypdf==4.2.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
-pyproj==3.7.0
+pyproj==3.7.1
     # via -r requirements.in
 pysftp==0.2.9
     # via -r requirements.in
