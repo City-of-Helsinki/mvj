@@ -20,7 +20,6 @@ from rest_framework.response import Response
 from leasing.enums import (
     LeaseAreaAttachmentType,
     LeaseState,
-    SubventionType,
 )
 from leasing.models import Lease, ServiceUnit
 from leasing.report.excel import ExcelRow, FormatType
@@ -353,49 +352,14 @@ def get_subsidy_percent(lease):
     )
 
 
-def get_subsidy_amount_per_area(lease):
-    rent_per_area_index_adjusted = Decimal(0)
-    subsidy_amount = Decimal(0)
+def get_subvention_amount_per_area(lease):
+    subvention_amount = Decimal(0)
     for basis_of_rent in lease.basis_of_rents.filter(
         archived_at__isnull=True, locked_at__isnull=False, amount_per_area__isnull=False
     ):
-        if basis_of_rent.index:
-            index_ratio = Decimal(basis_of_rent.index.number / 100)
-        else:
-            index_ratio = Decimal(1)
+        subvention_amount += basis_of_rent.calculate_subvention_amount_per_area()
 
-        rent_per_area_index_adjusted += basis_of_rent.amount_per_area * index_ratio
-
-        if basis_of_rent.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
-            management_subventions = basis_of_rent.management_subventions.all()
-            if management_subventions:
-                for management_subvention in management_subventions:
-                    subsidy_amount += management_subvention.subvention_amount
-        elif basis_of_rent.subvention_type == SubventionType.RE_LEASE:
-            base_percent = (
-                basis_of_rent.subvention_base_percent
-                if basis_of_rent.subvention_base_percent
-                else 0
-            )
-            graduated_percent = (
-                basis_of_rent.subvention_graduated_percent
-                if basis_of_rent.subvention_graduated_percent
-                else 0
-            )
-            subvention_percent = (
-                1
-                - Decimal(1 - base_percent / 100) * Decimal(1 - graduated_percent / 100)
-            ) * 100
-            subsidy_amount = rent_per_area_index_adjusted * (
-                1 - (subvention_percent / 100)
-            )
-
-    if not subsidy_amount:
-        return Decimal(0)
-
-    return (subsidy_amount - rent_per_area_index_adjusted).quantize(
-        Decimal(".01"), rounding=ROUND_HALF_UP
-    )
+    return subvention_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_temporary_subvention_percentage(lease):
@@ -610,9 +574,9 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 13,
         },
         # Subventoitu eur/k-m2 = Subventoitu yksikköhinta - Yksikköhinta (ind)
-        "subsidy_amount_per_area": {
-            "label": _("Subsidy amount per area"),
-            "source": get_subsidy_amount_per_area,
+        "subvention_amount_per_area": {
+            "label": _("Subvention amount per area"),
+            "source": get_subvention_amount_per_area,
             "format": "money",
             "width": 13,
         },
