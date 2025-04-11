@@ -21,3 +21,8 @@ PRIVATE_FILES_LOCATION = "/code/private_files"
 # qcluster configs for generating email reports locally
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "/tmp/mvj-emails"
+
+MAP_SERVICE_WMS_URL = ""
+MAP_SERVICE_WMS_USERNAME = ""
+MAP_SERVICE_WMS_PASSWORD = ""
+MAP_SERVICE_WMS_HELSINKI_OWNED_AREAS_LAYER = ""
