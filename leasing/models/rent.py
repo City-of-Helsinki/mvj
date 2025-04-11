@@ -34,7 +34,7 @@ from leasing.enums import (
     RentType,
     SubventionType,
 )
-from leasing.models.types import BillingPeriod, CumulativeTemporarySubvention
+from leasing.models.types import BillingPeriod, TemporarySubventionItem
 from leasing.models.utils import (
     DayMonth,
     fix_amount_for_overlap,
@@ -1718,9 +1718,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         decimal_places=2,
     )
 
-    # In Finnish: Siirtymäjan subventio
+    # In Finnish: Siirtymäajan subventio
     subvention_graduated_percent = models.DecimalField(
-        verbose_name=_("Graduated subvention percent"),
+        verbose_name=_("Subvention graduated percent"),
         null=True,
         blank=True,
         max_digits=10,
@@ -1815,11 +1815,68 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         return round(initial_year_rent, 2)
 
-    def calculate_cumulative_temporary_subventions(
-        self,
-    ) -> list[CumulativeTemporarySubvention]:
+    def calculate_subvention_euros_per_year(self):
         """
-        Returns objects to include data for temporary subventions.
+        In Finnish: Subventio euroa / vuosi
+        """
+        return (
+            self.calculate_initial_year_rent()
+            - self.calculate_subvented_initial_year_rent()
+        ).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+
+    def calculate_subvention_percent(self):
+        """
+        In Finnish: Subventio prosentteina
+        """
+        if (
+            self.calculate_initial_year_rent().compare(Decimal(0)) == 0
+            or self.calculate_subvention_amount().compare(Decimal(0)) == 0
+        ):
+            return Decimal(0)
+        return (
+            (self.calculate_subvention_amount() / self.calculate_initial_year_rent())
+            * 100
+        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    def calculate_subvention_amount_per_area(self):
+        """
+        In Finnish: Subventoitu yksikköhinta
+        """
+        subvention_amount_per_area = Decimal(0)
+        if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
+            management_subventions = self.management_subventions.all()
+            if management_subventions:
+                for management_subvention in management_subventions:
+                    subvention_amount_per_area += (
+                        management_subvention.subvention_amount
+                    )
+        elif self.subvention_type == SubventionType.RE_LEASE:
+            index_adjusted_amount_per_area = self.get_index_adjusted_amount_per_area()
+            base_percent = (
+                self.subvention_base_percent if self.subvention_base_percent else 0
+            )
+            graduated_percent = (
+                self.subvention_graduated_percent
+                if self.subvention_graduated_percent
+                else 0
+            )
+            subvention_percent = (
+                1
+                - Decimal(1 - base_percent / 100) * Decimal(1 - graduated_percent / 100)
+            ) * 100
+            subvention_amount_per_area = index_adjusted_amount_per_area * (
+                1 - (subvention_percent / 100)
+            )
+        return subvention_amount_per_area.quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+
+    def calculate_temporary_subvention_data(
+        self,
+    ) -> dict[str, Decimal | list[TemporarySubventionItem]]:
+        """
+        Returns the data for temporary subventions of the lease_basis_of_rent,
+        both individual subventions and the total amount.
 
         Each subvention_amount_euros_per_year is calculated cumulatively.
         The subvention_percent is taken from the amount of subvented_initial_year_rent
@@ -1827,9 +1884,13 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         """
         temporary_subventions = self.temporary_subventions.all()
         if not temporary_subventions:
-            return []
+            return {
+                "temporary_subventions": [],
+                "total_amount_euros_per_year": Decimal(0),
+            }
 
-        cumulative_temporary_subventions = []
+        temporary_subvention_items = []
+        temporary_discount_amount_total = Decimal(0)
 
         current_discounted_amount = round(
             self.calculate_subvented_initial_year_rent(), 6
@@ -1841,7 +1902,7 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                 * (100 - temporary_subvention.subvention_percent)
                 / 100
             )
-            cumulative_temporary_subventions.append(
+            temporary_subvention_items.append(
                 {
                     "description": temporary_subvention.description,
                     "subvention_percent": temporary_subvention.subvention_percent,
@@ -1850,7 +1911,28 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                     ),
                 }
             )
-        return cumulative_temporary_subventions
+        for subvention in temporary_subvention_items:
+            temporary_discount_amount_total += subvention[
+                "subvention_amount_euros_per_year"
+            ]
+
+        return {
+            "temporary_subventions": temporary_subvention_items,
+            "total_amount_euros_per_year": temporary_discount_amount_total,
+        }
+
+    def calculate_temporary_subvention_percentage(
+        self,
+    ) -> Decimal:
+        base = Decimal(1)
+        temporary_subventions = self.temporary_subventions.all()
+        if not temporary_subventions:
+            return Decimal(0)
+
+        for temporary_subvention in temporary_subventions:
+            base *= (100 - temporary_subvention.subvention_percent) / 100
+
+        return (1 - base) * 100
 
     def calculate_discounted_rent(self):
         initial_year_rent = self.calculate_initial_year_rent()
@@ -1861,28 +1943,27 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
 
         return discounted_rent
 
-    def calculate_subsidy(self):
-        subsidy_amount = Decimal(0)
+    def calculate_subvention_amount(self):
+        subvention_amount = Decimal(0)
         if not self.area or not self.amount_per_area:
             return Decimal(0)
 
-        if self.index:
-            index_ratio = Decimal(self.index.number / 100)
-        else:
-            index_ratio = Decimal(1)
-
-        total_subvention_amount = Decimal(0)
         if self.subvention_type == SubventionType.FORM_OF_MANAGEMENT:
             management_subventions = self.management_subventions.all()
             if management_subventions:
+                management_subvention_amount_total = Decimal(0)
                 for management_subvention in management_subventions:
-                    total_subvention_amount += management_subvention.subvention_amount
+                    management_subvention_amount_total += (
+                        management_subvention.subvention_amount
+                    )
 
-                subsidy_amount = self.area * (
-                    self.amount_per_area * index_ratio - total_subvention_amount
+                amount_per_area = self.get_index_adjusted_amount_per_area()
+
+                subvention_amount = self.area * (
+                    amount_per_area - management_subvention_amount_total
                 )
                 if self.profit_margin_percentage:
-                    subsidy_amount *= self.profit_margin_percentage / 100
+                    subvention_amount *= self.profit_margin_percentage / 100
         elif self.subvention_type == SubventionType.RE_LEASE:
             initial_year_rent = self.calculate_initial_year_rent()
             base_percent = (
@@ -1897,9 +1978,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
                 1
                 - Decimal(1 - base_percent / 100) * Decimal(1 - graduated_percent / 100)
             ) * 100
-            subsidy_amount = initial_year_rent * (subvention_percent / 100)
+            subvention_amount = initial_year_rent * (subvention_percent / 100)
 
-        return subsidy_amount
+        return subvention_amount
 
 
 class LeaseBasisOfRentManagementSubvention(models.Model):

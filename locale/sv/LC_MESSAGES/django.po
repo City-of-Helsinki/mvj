@@ -1309,6 +1309,9 @@ msgstr "Arrenderingsprinciper"
 msgid "Basis of rent"
 msgstr "Arrenderingssprincip"
 
+msgid "Basis of rents"
+msgstr "Arrenderingssprinciper"
+
 msgid "Build permission type"
 msgstr "Typ av byggrätt"
 
@@ -2776,6 +2779,9 @@ msgstr "Typ av subvention"
 msgid "Subvention base percent"
 msgstr "Basrabatt på marknadsarrende"
 
+msgid "Subvention graduated percent"
+msgstr "Stegvis rabatt"
+
 msgid "Graduated subvention percent"
 msgstr "Stegvis rabatt"
 
@@ -3335,22 +3341,25 @@ msgstr "Enhetspris (ind)"
 msgid "Initial year rent"
 msgstr "Arrende för början av året"
 
-msgid "Subsidised initial year rent"
+msgid "Subvented initial year rent"
 msgstr "Subventionerat arrende för början av året (ind)"
 
-msgid "Subvention euros / year"
+msgid "Subvention euros per year"
 msgstr "Subvention i euro/år"
 
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
 
+msgid "Subvention amount per area"
+msgstr "Subventionerat enhetspris"
+
 msgid "Subsidy amount per area"
 msgstr "Subventionerat eur/m^2"
 
-msgid "Temporary discount percent"
+msgid "Temporary subvention percentage"
 msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
-msgid "Temporary discount amount euros / year"
+msgid "Temporary discount amount euros per year"
 msgstr "Tillfällig rabatt i euro/år"
 
 msgid "Form of management (Subvention)"

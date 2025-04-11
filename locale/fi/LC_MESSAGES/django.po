@@ -1309,6 +1309,9 @@ msgstr "Vuokrausperiaatteet"
 msgid "Basis of rent"
 msgstr "Vuokrausperiaate"
 
+msgid "Basis of rents"
+msgstr "Vuokrausperiaatteet"
+
 msgid "Build permission type"
 msgstr "Rakennusoikeustyyppi"
 
@@ -2773,7 +2776,10 @@ msgid "Subvention type"
 msgstr "Subvention tyyppi"
 
 msgid "Subvention base percent"
-msgstr "Perusalennus markkinavuokrasta"
+msgstr "Markkinavuokran subventio"
+
+msgid "Subvention graduated percent"
+msgstr "Siirtymäajan subventio"
 
 msgid "Graduated subvention percent"
 msgstr "Porrastettu alennus"
@@ -3338,22 +3344,28 @@ msgstr "Yksikköhinta (ind)"
 msgid "Initial year rent"
 msgstr "Alkuvuosivuokra"
 
-msgid "Subsidised initial year rent"
+msgid "Subvented initial year rent"
 msgstr "Subventoitu alkuvuosivuokra (ind)"
 
-msgid "Subvention euros / year"
+msgid "Subvention euros per year"
 msgstr "Subventio euroina / vuosi"
 
 msgid "Subsidy percent"
 msgstr "Subventio prosentteina"
 
+msgid "Subvention amount per area"
+msgstr "Subventoitu yksikköhinta"
+
 msgid "Subsidy amount per area"
 msgstr "Subventoitu eur/m^2"
 
-msgid "Temporary discount percent"
+msgid "Temporary subvention percentage"
 msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
-msgid "Temporary discount amount euros / year"
+msgid "Temporary subvention percentage (short)"
+msgstr "Tilapäisalennuksen prosentti"
+
+msgid "Temporary discount amount euros per year"
 msgstr "Tilapäisalennus euroa/vuosi"
 
 msgid "Form of management (Subvention)"
