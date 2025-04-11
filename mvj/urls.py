@@ -122,6 +122,7 @@ from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.service_unit import ServiceUnitViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
+from plotsearch.views.map_service_proxy import helsinki_owned_areas_wms_proxy
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentPublicViewset,
     AreaSearchAttachmentViewset,
@@ -427,6 +428,11 @@ gdpr_urls = [
 ]
 additional_pub_api_paths = [
     path("plot_search_ui/", PlotSearchUIDataView.as_view(), name="pub_plot_search_ui"),
+    path(
+        "proxy/wms/helsinki_owned_areas/",
+        helsinki_owned_areas_wms_proxy,
+        name="pub_helsinki_owned_areas_wms_proxy",
+    ),
     # Enables oidc backchannel logout, requires setting `HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True`
     # to be useful
     path("helauth/", include("helusers.urls")),

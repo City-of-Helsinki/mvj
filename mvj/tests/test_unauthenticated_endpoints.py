@@ -28,6 +28,7 @@ WHITELIST_PUBLIC_URLS = (
     "/v1/pub/plot_search_type/",
     "/v1/pub/plot_search_subtype/",
     "/v1/pub/helauth/logout/oidc/backchannel/",
+    "/v1/pub/proxy/wms/helsinki_owned_areas/",
 )
 WHITELIST_DJANGO_URLS = (
     "/admin/",
