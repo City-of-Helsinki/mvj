@@ -1340,7 +1340,7 @@ def answer_with_email(
     area_search_form,
 ):
     user = user_factory(username=fake.name())
-    intended_use = area_search_intended_use_factory(name="Urheilu- ja liikuntapaikat")
+    intended_use = area_search_intended_use_factory(name="Urheilu ja liikunta")
 
     area_search_payload = {
         "area_search_attachments": [],
