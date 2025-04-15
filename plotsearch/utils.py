@@ -16,7 +16,7 @@ def map_intended_use_to_lessor(intended_use):
         "urheilu ja liikunta": AreaSearchLessor.LIPA,
     }
     try:
-        lessor = intended_uses_with_lessors.get(intended_use.name.lower(), None)
+        lessor = intended_uses_with_lessors.get(intended_use.name_fi.lower(), None)
     except AttributeError:
         return None
 
