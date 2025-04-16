@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-20 14:02+0200\n"
+"POT-Creation-Date: 2025-04-16 15:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -533,13 +533,17 @@ msgstr ""
 msgid "Status notes"
 msgstr ""
 
-#, python-brace-format
-msgid "Copy of plot application(s) {target_status_identifiers}"
-msgstr "Kopio tonttihakemuksista {target_status_identifiers}"
+msgid "Copy of plot application(s) {}"
+msgstr "Kopio tonttihakemuksista {}"
 
-#, python-brace-format
-msgid "Copy of area rental application {area_search.identifier}"
-msgstr "Kopio aluehaun hakemuksista {area_search.identifier}"
+msgid "Copy of area rental application {}"
+msgstr "Kopio aluehaun hakemuksista {}"
+
+msgid "New area search in district {}"
+msgstr "Uusi aluehakemus kaupungiosassa {}"
+
+msgid "A new area search {} has been created in district {}."
+msgstr "Uusi aluehakemus {} on luotu kaupunginosaan {}."
 
 msgid "Invoice"
 msgstr "Lasku"
@@ -685,6 +689,9 @@ msgstr "Vuokraus"
 
 msgid "Search by identifier"
 msgstr "Etsi tunnisteella"
+
+msgid "Color"
+msgstr "Väri"
 
 #, python-brace-format
 msgid "Ratio {ratio}… ({current_index}/{rent_index})"
@@ -4013,6 +4020,12 @@ msgstr "Aluehaku"
 msgctxt "Model name"
 msgid "Area searches"
 msgstr "Aluehaut"
+
+msgid "User amr"
+msgstr "Käyttäjän AMR"
+
+msgid "Authentication method reference"
+msgstr "Todennusmenetelmän viite"
 
 msgid "The target has been removed from the system!"
 msgstr "Kohde on poistunut järjestelmästä!"

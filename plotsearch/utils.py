@@ -2,10 +2,11 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
 from forms.enums import ApplicantType
+from leasing.enums import ServiceUnitId
 from plotsearch.enums import AreaSearchLessor
 
 
-def map_intended_use_to_lessor(intended_use):
+def map_intended_use_to_lessor(intended_use) -> AreaSearchLessor | None:
     intended_uses_with_lessors = {
         "ravitsemus, myynti ja mainonta": AreaSearchLessor.AKV,
         "taide ja kulttuuri": AreaSearchLessor.AKV,
@@ -21,6 +22,24 @@ def map_intended_use_to_lessor(intended_use):
         return None
 
     return lessor
+
+
+def map_lessor_enum_to_service_unit_id(lessor: AreaSearchLessor) -> int:
+    lessor_to_service_unit_id = {
+        AreaSearchLessor.MAKE: int(ServiceUnitId.MAKE),
+        AreaSearchLessor.AKV: int(ServiceUnitId.AKV),
+        AreaSearchLessor.LIPA: int(ServiceUnitId.KUVA_LIPA),
+        AreaSearchLessor.UPA: int(ServiceUnitId.KUVA_UPA),
+        AreaSearchLessor.NUP: int(ServiceUnitId.KUVA_NUP),
+    }
+    return lessor_to_service_unit_id[lessor]
+
+
+def map_intended_use_to_service_unit_id(intended_use):
+    lessor = map_intended_use_to_lessor(intended_use)
+    if not lessor:
+        raise ValueError(f"Invalid intended use name_fi with ID {intended_use.pk}")
+    return map_lessor_enum_to_service_unit_id(lessor)
 
 
 def get_applicant(answer, reservation_recipients):
