@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-20 14:02+0200\n"
+"POT-Creation-Date: 2025-04-16 15:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -541,13 +541,17 @@ msgstr "Beredares anmärkning"
 msgid "Status notes"
 msgstr "Statusanmärkningar"
 
-#, python-brace-format
-msgid "Copy of plot application(s) {target_status_identifiers}"
-msgstr "Kopia av tomtansökningar {target_status_identifiers}"
+msgid "Copy of plot application(s) {}"
+msgstr "Kopia av tomtansökningar {}"
 
-#, python-brace-format
-msgid "Copy of area rental application {area_search.identifier}"
-msgstr "Kopia av ansökningar för områdessökning {area_search.identifier}"
+msgid "Copy of area rental application {}"
+msgstr "Kopia av ansökningar för områdessökning {}"
+
+msgid "New area search in district {}"
+msgstr ""
+
+msgid "A new area search {} has been created in district {}."
+msgstr ""
 
 msgid "Invoice"
 msgstr "Faktura"
@@ -685,6 +689,9 @@ msgstr "Arrendering"
 
 msgid "Search by identifier"
 msgstr "Sök med identifieringskod"
+
+msgid "Color"
+msgstr "Färg"
 
 #, python-brace-format
 msgid "Ratio {ratio}… ({current_index}/{rent_index})"
@@ -4011,6 +4018,12 @@ msgstr ""
 
 msgctxt "Model name"
 msgid "Area searches"
+msgstr ""
+
+msgid "User amr"
+msgstr ""
+
+msgid "Authentication method reference"
 msgstr ""
 
 msgid "The target has been removed from the system!"
