@@ -1,15 +1,8 @@
 import logging
 from io import BytesIO
-from smtplib import (
-    SMTPDataError,
-    SMTPException,
-    SMTPRecipientsRefused,
-    SMTPSenderRefused,
-)
-from typing import Iterable, List, Tuple, TypedDict, Union
+from typing import Iterable, List, Tuple, TypedDict
 
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
@@ -20,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from forms.enums import AnswerType
+from utils.email import EmailMessageInput, send_email
 from utils.pdf import PDFGenerationError, generate_pdf
 
 logger = logging.getLogger(__name__)
@@ -557,15 +551,7 @@ class AnswerInputData(TypedDict):
     user_language: str  # ISO 639-1 language code, e.g. "fi", "en", "sv"
 
 
-class EmailMessageInput(TypedDict):
-    from_email: str
-    to: List[str]
-    subject: str
-    body: str
-    attachments: List[Tuple[str, Union[bytes, BytesIO], str]]
-
-
-def _get_email_to_addresses(answer) -> List[str]:
+def _get_applicant_email_to_addresses(answer) -> List[str]:
     from forms.models.form import Entry
 
     # The query intends to find email addresses for applicants that are either
@@ -593,7 +579,7 @@ def _get_email_to_addresses(answer) -> List[str]:
     return email_addresses
 
 
-def _generate_target_status_email(answer) -> EmailMessageInput:
+def _generate_applicant_target_status_email(answer) -> EmailMessageInput:
     from plotsearch.utils import build_pdf_context
 
     context: dict = {}
@@ -604,7 +590,9 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
     )
     context.update(target_status_identifiers=target_status_identifiers)
     from_email = settings.FROM_EMAIL_PLOT_SEARCH
-    email_subject = _(f"Copy of plot application(s) {target_status_identifiers}")
+    email_subject = _("Copy of plot application(s) {}").format(
+        target_status_identifiers
+    )
     email_body = render_to_string("target_status/email_detail.txt", context)
 
     for target_status in target_statuses.all():
@@ -622,7 +610,7 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_addresses(answer),
+        "to": _get_applicant_email_to_addresses(answer),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
@@ -631,7 +619,7 @@ def _generate_target_status_email(answer) -> EmailMessageInput:
     return email_message
 
 
-def _generate_area_search_email(answer) -> EmailMessageInput:
+def _generate_applicant_area_search_email(answer) -> EmailMessageInput:
     from plotsearch.utils import build_pdf_context
 
     context: dict = {}
@@ -640,7 +628,9 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
     context["object"] = area_search
     context = build_pdf_context(context)
     from_email = settings.FROM_EMAIL_AREA_SEARCH
-    email_subject = _(f"Copy of area rental application {area_search.identifier}")
+    email_subject = _("Copy of area rental application {}").format(
+        area_search.identifier
+    )
     email_body = render_to_string("area_search/email_detail.txt", context)
     try:
         pdf: BytesIO = generate_pdf(context, "area_search/detail.html")
@@ -654,7 +644,7 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
-        "to": _get_email_to_addresses(answer),
+        "to": _get_applicant_email_to_addresses(answer),
         "subject": email_subject,
         "body": email_body,
         "attachments": attachments,
@@ -663,11 +653,13 @@ def _generate_area_search_email(answer) -> EmailMessageInput:
     return email_message
 
 
-def _generate_plotsearch_email(answer_type: AnswerType, answer) -> EmailMessageInput:
+def _generate_applicant_plotsearch_email(
+    answer_type: AnswerType, answer
+) -> EmailMessageInput:
     if answer_type == AnswerType.AREA_SEARCH:
-        return _generate_area_search_email(answer)
+        return _generate_applicant_area_search_email(answer)
     elif answer_type == AnswerType.TARGET_STATUS:
-        return _generate_target_status_email(answer)
+        return _generate_applicant_target_status_email(answer)
     raise ValueError(f"Answer type {answer_type} not supported.")
 
 
@@ -694,41 +686,75 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     # Set the translation language to user's preferred language
     # The language selection comes from the users browser
     with override(user_language):
-        email_message_input = _generate_plotsearch_email(answer_type, answer)
+        # Send email to applicant
+        applicant_email_input = _generate_applicant_plotsearch_email(
+            answer_type, answer
+        )
+        send_email(applicant_email_input)
 
-    send_answer_email(email_message_input)
+    # Use default language for officer emails, because applicant's chosen
+    # language should not influence that.
+    with override("fi"):
+        if answer_type == AnswerType.AREA_SEARCH:
+            # Send email to officers responsible for processing area searches.
+            officer_email_input = _generate_lessor_new_areasearch_email(answer)
+            send_email(officer_email_input)
 
     return
 
 
-def send_answer_email(email_message_input: EmailMessageInput) -> None:
-    if hasattr(settings, "DEBUG") and settings.DEBUG is True:
-        logging.info("Not sending email in debug mode.")
-        logging.info(f"Email message: {email_message_input}")
-        return
+def _generate_lessor_new_areasearch_email(answer) -> EmailMessageInput:
+    """Creates email input for lessors when new area search application is received."""
+    from plotsearch.models import AreaSearch
 
-    email_message = EmailMessage(**email_message_input)
+    area_search: AreaSearch | None = getattr(answer, "area_search", None)
+    if not area_search:
+        raise ValueError(
+            f"Answer {answer.pk} does not have area search information. Cannot generate email."
+        )
 
+    return {
+        "from_email": settings.FROM_EMAIL_AREA_SEARCH or settings.MVJ_EMAIL_FROM,
+        "to": _get_service_unit_email_addresses(area_search.intended_use),
+        "subject": _("New area search in district {}").format(area_search.district),
+        "body": _("A new area search {} has been created in district {}.").format(
+            area_search.identifier, area_search.district
+        ),
+        "attachments": [],
+    }
+
+
+def _get_service_unit_email_addresses(intended_use) -> list[str]:
+    """
+    Returns a list of officer email addresses that should receive emails about
+    area searches in their service unit.
+
+    Raises:
+        ValueError when email address cannot be found.
+    """
+    from leasing.models import Contact
+    from plotsearch.utils import map_intended_use_to_service_unit_id
+
+    service_unit_id = map_intended_use_to_service_unit_id(intended_use)
     try:
-        email_message.send()
-    except SMTPSenderRefused:
-        logging.exception(
-            "Server refused sender address when sending email. Abandoning retrying."
+        service_unit_contact = Contact.objects.get(
+            is_lessor=True,
+            service_unit_id=service_unit_id,
         )
-        return  # No point retrying
-    except SMTPRecipientsRefused:
-        logging.exception(
-            "Server refused recipient address when sending email. Abandoning retrying."
+        if service_unit_contact.email:
+            return [service_unit_contact.email]
+        else:
+            raise ValueError(
+                f"Contact with service unit ID {service_unit_id} does not have an email address. Cannot send email."
+            )
+    except Contact.DoesNotExist:
+        raise ValueError(
+            f"Lessor contact with service unit ID {service_unit_id} not found. Cannot send email."
         )
-        return  # No point retrying
-    except (SMTPDataError, SMTPException) as e:
-        logging.exception(
-            f"Server responded with unexpected error code when sending email: {e}"
+    except Contact.MultipleObjectsReturned:
+        raise ValueError(
+            f"Multiple lessor contacts with service unit ID {service_unit_id} found. Cannot send email."
         )
-        raise e
-    except TimeoutError as e:
-        logging.exception("Server connection timed out when sending email.")
-        raise e
 
 
 def get_supported_language_codes() -> List[str]:
