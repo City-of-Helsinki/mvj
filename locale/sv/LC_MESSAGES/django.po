@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 15:25+0300\n"
+"POT-Creation-Date: 2025-04-17 13:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1315,9 +1315,6 @@ msgstr "Arrenderingsprinciper"
 
 msgid "Basis of rent"
 msgstr "Arrenderingssprincip"
-
-msgid "Basis of rents"
-msgstr "Arrenderingssprinciper"
 
 msgid "Build permission type"
 msgstr "Typ av byggrätt"
@@ -2786,9 +2783,6 @@ msgstr "Typ av subvention"
 msgid "Subvention base percent"
 msgstr "Basrabatt på marknadsarrende"
 
-msgid "Subvention graduated percent"
-msgstr "Stegvis rabatt"
-
 msgid "Graduated subvention percent"
 msgstr "Stegvis rabatt"
 
@@ -2917,6 +2911,9 @@ msgstr "Låst datum"
 
 msgid "Locked by"
 msgstr "Låst av"
+
+msgid "Subvention graduated percent"
+msgstr "Stegvis rabatt"
 
 msgctxt "Model name"
 msgid "Lease basis of rent"
@@ -3302,6 +3299,27 @@ msgstr "Visar antalet arrenderingar per arrenderingsart"
 msgid "Count"
 msgstr "Antal"
 
+msgid "Unit price (index)"
+msgstr "Enhetspris (ind)"
+
+msgid "Initial year rent"
+msgstr "Arrende för början av året"
+
+msgid "Subvented initial year rent"
+msgstr "Subventionerat arrende för början av året (ind)"
+
+msgid "Subvention euros per year"
+msgstr "Subvention i euro/år"
+
+msgid "Subvention amount per area"
+msgstr "Subventionerat enhetspris"
+
+msgid "Temporary subvention percentage (short)"
+msgstr ""
+
+msgid "Temporary discount amount euros per year"
+msgstr "Tillfällig rabatt i euro/år"
+
 msgid "Lease statistics report"
 msgstr "Statistikrapport för arrenderingar"
 
@@ -3342,32 +3360,11 @@ msgstr "Genomsnittligt enhetspris (boende)"
 msgid "Average amount per area (Business)"
 msgstr "Genomsnittligt enhetspris (företagslokal)"
 
-msgid "Unit price (index)"
-msgstr "Enhetspris (ind)"
-
-msgid "Initial year rent"
-msgstr "Arrende för början av året"
-
-msgid "Subvented initial year rent"
-msgstr "Subventionerat arrende för början av året (ind)"
-
-msgid "Subvention euros per year"
-msgstr "Subvention i euro/år"
-
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
 
-msgid "Subvention amount per area"
-msgstr "Subventionerat enhetspris"
-
-msgid "Subsidy amount per area"
-msgstr "Subventionerat eur/m^2"
-
 msgid "Temporary subvention percentage"
 msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
-
-msgid "Temporary discount amount euros per year"
-msgstr "Tillfällig rabatt i euro/år"
 
 msgid "Form of management (Subvention)"
 msgstr "Subvention för upplåtelseform"
@@ -3380,6 +3377,12 @@ msgstr "Köprätt"
 
 msgid "Matti report"
 msgstr "MATTI-rapport"
+
+msgid "Results will be sent by email to {}"
+msgstr "Rapporten lämnas in per e-post till adressen {}"
+
+msgid "Basis of rents"
+msgstr "Arrenderingssprinciper"
 
 msgid "Rent adjustments"
 msgstr "Rabatter/Höjningar"
@@ -3486,9 +3489,6 @@ msgstr "Upplåtelseform"
 
 msgid "Message"
 msgstr "Meddelande"
-
-msgid "Results will be sent by email to {}"
-msgstr "Rapporten lämnas in per e-post till adressen {}"
 
 msgid "Report \"{}\" successfully generated"
 msgstr "Rapport \"{}\" skapades"
@@ -4092,6 +4092,12 @@ msgstr ""
 "Hej {receiver}! Här är en länk till direktanvisningstomtansökan: {url} \n"
 "\n"
 "{covering_note}"
+
+msgid "Area search {} lessor has changed"
+msgstr ""
+
+msgid "New lessor for area search {} is \"{}\", was \"{}\"."
+msgstr ""
 
 msgid "The deadline for applications"
 msgstr "Ansökan upphör"

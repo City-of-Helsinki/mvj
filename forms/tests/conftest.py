@@ -9,8 +9,8 @@ from django.urls import reverse
 from faker import Faker
 
 from forms.models import Answer
-from forms.utils import EmailMessageInput
 from plotsearch.models.plot_search import AreaSearch
+from utils.email import EmailMessageInput
 
 fake = Faker("fi_FI")
 
@@ -262,5 +262,6 @@ def answer_email_message():
         "body": "This is a test email",
         "from_email": settings.DEFAULT_FROM_EMAIL,
         "to": ["test@example.com"],
+        "attachments": [],
     }
     return email
