@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 15:25+0300\n"
+"POT-Creation-Date: 2025-04-17 13:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1315,9 +1315,6 @@ msgstr "Vuokrausperiaatteet"
 
 msgid "Basis of rent"
 msgstr "Vuokrausperiaate"
-
-msgid "Basis of rents"
-msgstr "Vuokrausperiaatteet"
 
 msgid "Build permission type"
 msgstr "Rakennusoikeustyyppi"
@@ -2785,9 +2782,6 @@ msgstr "Subvention tyyppi"
 msgid "Subvention base percent"
 msgstr "Markkinavuokran subventio"
 
-msgid "Subvention graduated percent"
-msgstr "Siirtymäajan subventio"
-
 msgid "Graduated subvention percent"
 msgstr "Porrastettu alennus"
 
@@ -2916,6 +2910,9 @@ msgstr "Lukittu pvm"
 
 msgid "Locked by"
 msgstr "Lukitsija"
+
+msgid "Subvention graduated percent"
+msgstr "Siirtymäajan subventio"
 
 msgctxt "Model name"
 msgid "Lease basis of rent"
@@ -3305,6 +3302,27 @@ msgstr "Näyttää vuokrausten lukumäärän per vuokrauslaji"
 msgid "Count"
 msgstr "Lukumäärä"
 
+msgid "Unit price (index)"
+msgstr "Yksikköhinta (ind)"
+
+msgid "Initial year rent"
+msgstr "Alkuvuosivuokra"
+
+msgid "Subvented initial year rent"
+msgstr "Subventoitu alkuvuosivuokra (ind)"
+
+msgid "Subvention euros per year"
+msgstr "Subventio euroina / vuosi"
+
+msgid "Subvention amount per area"
+msgstr "Subventoitu yksikköhinta"
+
+msgid "Temporary subvention percentage (short)"
+msgstr "Tilapäisalennuksen prosentti"
+
+msgid "Temporary discount amount euros per year"
+msgstr "Tilapäisalennus euroa/vuosi"
+
 msgid "Lease statistics report"
 msgstr "Vuokrausten tilastoraportti"
 
@@ -3345,35 +3363,11 @@ msgstr "Keskimääräinen yksikköhinta (asuminen)"
 msgid "Average amount per area (Business)"
 msgstr "Keskimääräinen yksikköhinta (yritystila)"
 
-msgid "Unit price (index)"
-msgstr "Yksikköhinta (ind)"
-
-msgid "Initial year rent"
-msgstr "Alkuvuosivuokra"
-
-msgid "Subvented initial year rent"
-msgstr "Subventoitu alkuvuosivuokra (ind)"
-
-msgid "Subvention euros per year"
-msgstr "Subventio euroina / vuosi"
-
 msgid "Subsidy percent"
 msgstr "Subventio prosentteina"
 
-msgid "Subvention amount per area"
-msgstr "Subventoitu yksikköhinta"
-
-msgid "Subsidy amount per area"
-msgstr "Subventoitu eur/m^2"
-
 msgid "Temporary subvention percentage"
 msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
-
-msgid "Temporary subvention percentage (short)"
-msgstr "Tilapäisalennuksen prosentti"
-
-msgid "Temporary discount amount euros per year"
-msgstr "Tilapäisalennus euroa/vuosi"
 
 msgid "Form of management (Subvention)"
 msgstr "Hallintamuotosubventio"
@@ -3386,6 +3380,12 @@ msgstr "Osto-oikeus"
 
 msgid "Matti report"
 msgstr "MATTI-raportti"
+
+msgid "Results will be sent by email to {}"
+msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
+
+msgid "Basis of rents"
+msgstr "Vuokrausperiaatteet"
 
 msgid "Rent adjustments"
 msgstr "Alennukset/Korotukset"
@@ -3492,9 +3492,6 @@ msgstr "Hallintamuoto"
 
 msgid "Message"
 msgstr "Viesti"
-
-msgid "Results will be sent by email to {}"
-msgstr "Raportti toimitetaan sähköpostilla osoitteeseen {}"
 
 msgid "Report \"{}\" successfully generated"
 msgstr "Raportti \"{}\" luotu onnistuneesti"
@@ -4091,6 +4088,12 @@ msgstr ""
 "Hei {receiver}! Tässä linkki suoravaraustonttihakuun: {url} \n"
 "\n"
 "{covering_note}"
+
+msgid "Area search {} lessor has changed"
+msgstr "Aluehakemuksen {} vuokranantaja vaihtui"
+
+msgid "New lessor for area search {} is \"{}\", was \"{}\"."
+msgstr "Aluehakemuksen {} uusi vuokranantaja on \"{}\", oli \"{}\"."
 
 msgid "The deadline for applications"
 msgstr "Haku päättyy"

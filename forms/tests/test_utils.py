@@ -20,12 +20,11 @@ from forms.enums import AnswerType
 from forms.models import Field, Section
 from forms.utils import (
     AnswerInputData,
-    EmailMessageInput,
     clone_object,
     generate_and_queue_answer_emails,
-    send_answer_email,
 )
 from plotsearch.enums import AreaSearchLessor
+from utils.email import EmailMessageInput, send_email
 
 BASIC_TEMPLATE_SECTION_COUNT = 7
 BASIC_TEMPLATE_FIELD_COUNT = 23
@@ -110,7 +109,7 @@ def test_generate_and_send_applicant_and_lessor_emails(
         "answer_type": AnswerType.AREA_SEARCH,
         "user_language": "fi",
     }
-    with patch("forms.utils.send_answer_email") as mock_send_answer_email, patch(
+    with patch("forms.utils.send_email") as mock_send_answer_email, patch(
         "forms.utils._generate_applicant_plotsearch_email"
     ) as mock_generate_applicant_plotsearch_email, patch(
         "forms.utils._generate_lessor_new_areasearch_email"
@@ -129,7 +128,7 @@ def test_generate_and_queue_answer_emails(
     answer = answer_with_email.get("answer")
 
     # Case 1: Test that async_task is called, content language is Finnish
-    with patch("forms.utils.send_answer_email") as mock_send_answer_email:
+    with patch("forms.utils.send_email") as mock_send_answer_email:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
@@ -147,7 +146,7 @@ def test_generate_and_queue_answer_emails(
         ), "Should contain Finnish text from the email template"
 
     # Case 1: Test that async_task is called, content language is English
-    with patch("forms.utils.send_answer_email") as mock_send_answer_email:
+    with patch("forms.utils.send_email") as mock_send_answer_email:
         input_data: AnswerInputData = {
             "answer_id": answer.get("id"),
             "answer_type": AnswerType.AREA_SEARCH,
@@ -214,7 +213,7 @@ def test_generate_email_user_language(
             "answer_type": AnswerType.AREA_SEARCH,
             "user_language": user_language,
         }
-        with patch("forms.utils.send_answer_email") as mock_send_answer_email:
+        with patch("forms.utils.send_email") as mock_send_answer_email:
             generate_and_queue_answer_emails(input_data=input_data)
             assert mock_generate_plotsearch_email.called
             assert mock_send_answer_email.called
@@ -229,7 +228,7 @@ def test_generate_email_user_language(
 
 #     # answer = answer_with_email.get("answer")
 #     answer_id = answer_with_email.get("answer", {}).get("id")
-#     with patch("forms.utils.send_answer_email") as mock_send_answer_email:
+#     with patch("forms.utils.send_email") as mock_send_answer_email:
 #         input_data: AnswerInputData = {
 #             "answer_id": answer_id,
 #             "answer_type": AnswerType.AREA_SEARCH,
@@ -256,7 +255,7 @@ def test_generate_email_user_language(
 
 def test_send_answer_email(answer_email_message: EmailMessageInput):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-        send_answer_email(answer_email_message)
+        send_email(answer_email_message)
         assert mock_send.called
 
 
@@ -264,7 +263,7 @@ def test_send_answer_email_debug(answer_email_message: EmailMessageInput):
     with patch("django.core.mail.message.EmailMessage.send") as mock_send:
         with patch("logging.info") as mock_logging:
             settings.DEBUG = True
-            send_answer_email(answer_email_message)
+            send_email(answer_email_message)
             assert not mock_send.called
             assert mock_logging.call_count == 2
 
@@ -291,7 +290,7 @@ def test_send_answer_email_smtp_exceptions_not_raised(
             with patch("logging.exception") as mock_logging:
                 settings.DEBUG = False
                 mock_send.side_effect = side_effect
-                send_answer_email(answer_email_message)
+                send_email(answer_email_message)
                 assert mock_send.called
                 assert mock_logging.call_count == 1
 
@@ -343,6 +342,6 @@ def test_send_answer_email_smtp_exceptions_raised(
                 settings.DEBUG = False
                 mock_send.side_effect = side_effect
                 with pytest.raises(exception):
-                    send_answer_email(answer_email_message)
+                    send_email(answer_email_message)
                 assert mock_send.called
                 assert mock_logging.call_count == 1
