@@ -1,12 +1,22 @@
+from typing import TYPE_CHECKING
+
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
 from forms.enums import ApplicantType
 from leasing.enums import ServiceUnitId
 from plotsearch.enums import AreaSearchLessor
+from utils.email import EmailMessageInput, send_email
+
+if TYPE_CHECKING:
+    from plotsearch.models import AreaSearch, AreaSearchIntendedUse
 
 
-def map_intended_use_to_lessor(intended_use) -> AreaSearchLessor | None:
+def map_intended_use_to_lessor(
+    intended_use: "AreaSearchIntendedUse",
+) -> AreaSearchLessor | None:
+    """Maps AreaSearchIntendedUse to AreaSearchLessor."""
     intended_uses_with_lessors = {
         "ravitsemus, myynti ja mainonta": AreaSearchLessor.AKV,
         "taide ja kulttuuri": AreaSearchLessor.AKV,
@@ -25,6 +35,7 @@ def map_intended_use_to_lessor(intended_use) -> AreaSearchLessor | None:
 
 
 def map_lessor_enum_to_service_unit_id(lessor: AreaSearchLessor) -> int:
+    """Maps AreaSearchLessor to service unit ID."""
     lessor_to_service_unit_id = {
         AreaSearchLessor.MAKE: int(ServiceUnitId.MAKE),
         AreaSearchLessor.AKV: int(ServiceUnitId.AKV),
@@ -35,7 +46,8 @@ def map_lessor_enum_to_service_unit_id(lessor: AreaSearchLessor) -> int:
     return lessor_to_service_unit_id[lessor]
 
 
-def map_intended_use_to_service_unit_id(intended_use):
+def map_intended_use_to_service_unit_id(intended_use: "AreaSearchIntendedUse") -> int:
+    """Maps AreaSearchIntendedUse to service unit ID."""
     lessor = map_intended_use_to_lessor(intended_use)
     if not lessor:
         raise ValueError(f"Invalid intended use name_fi with ID {intended_use.pk}")
@@ -148,3 +160,63 @@ def get_applicant_type(applicant_type):
     if applicant_type == "1":
         return ApplicantType.COMPANY
     return ApplicantType.BOTH
+
+
+def send_areasearch_lessor_changed_email(
+    area_search: "AreaSearch",
+    new_lessor: AreaSearchLessor,
+    old_lessor: AreaSearchLessor,
+    language: str = "fi",
+) -> None:
+    """
+    Sends an email to lessors when area search lessor changes.
+    """
+    with override(language):
+        from_email = settings.FROM_EMAIL_AREA_SEARCH or settings.MVJ_EMAIL_FROM
+        to_addresses = [
+            _get_lessor_email_to_address(new_lessor),
+            _get_lessor_email_to_address(old_lessor),
+        ]
+        subject = _("Area search {} lessor has changed").format(area_search.identifier)
+        body = _('New lessor for area search {} is "{}", was "{}".').format(
+            area_search.identifier, str(new_lessor), str(old_lessor)
+        )
+        email_input: EmailMessageInput = {
+            "from_email": from_email,
+            "to": to_addresses,
+            "subject": subject,
+            "body": body,
+            "attachments": [],
+        }
+        send_email(email_input)
+
+
+def _get_lessor_email_to_address(lessor: AreaSearchLessor) -> str:
+    """
+    Returns email address of the lessor contact.
+
+    Raises:
+        ValueError when email address cannot be found.
+    """
+    from leasing.models import Contact
+
+    service_unit_id = map_lessor_enum_to_service_unit_id(lessor)
+    try:
+        service_unit_contact = Contact.objects.get(
+            is_lessor=True,
+            service_unit_id=service_unit_id,
+        )
+        if service_unit_contact.email:
+            return service_unit_contact.email
+        else:
+            raise ValueError(
+                f"Contact with service unit ID {service_unit_id} does not have an email address. Cannot send email."
+            )
+    except Contact.DoesNotExist:
+        raise ValueError(
+            f"Lessor contact with service unit ID {service_unit_id} not found. Cannot send email."
+        )
+    except Contact.MultipleObjectsReturned:
+        raise ValueError(
+            f"Multiple lessor contacts with service unit ID {service_unit_id} found. Cannot send email."
+        )

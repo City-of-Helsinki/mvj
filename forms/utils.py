@@ -1,15 +1,8 @@
 import logging
 from io import BytesIO
-from smtplib import (
-    SMTPDataError,
-    SMTPException,
-    SMTPRecipientsRefused,
-    SMTPSenderRefused,
-)
-from typing import Iterable, List, Tuple, TypedDict, Union
+from typing import Iterable, List, Tuple, TypedDict
 
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
@@ -20,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from forms.enums import AnswerType
+from utils.email import EmailMessageInput, send_email
 from utils.pdf import PDFGenerationError, generate_pdf
 
 logger = logging.getLogger(__name__)
@@ -557,14 +551,6 @@ class AnswerInputData(TypedDict):
     user_language: str  # ISO 639-1 language code, e.g. "fi", "en", "sv"
 
 
-class EmailMessageInput(TypedDict):
-    from_email: str
-    to: List[str]
-    subject: str
-    body: str
-    attachments: List[Tuple[str, Union[bytes, BytesIO], str]]
-
-
 def _get_applicant_email_to_addresses(answer) -> List[str]:
     from forms.models.form import Entry
 
@@ -704,7 +690,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         applicant_email_input = _generate_applicant_plotsearch_email(
             answer_type, answer
         )
-        send_answer_email(applicant_email_input)
+        send_email(applicant_email_input)
 
     # Use default language for officer emails, because applicant's chosen
     # language should not influence that.
@@ -712,7 +698,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         if answer_type == AnswerType.AREA_SEARCH:
             # Send email to officers responsible for processing area searches.
             officer_email_input = _generate_lessor_new_areasearch_email(answer)
-            send_answer_email(officer_email_input)
+            send_email(officer_email_input)
 
     return
 
@@ -769,36 +755,6 @@ def _get_service_unit_email_addresses(intended_use) -> list[str]:
         raise ValueError(
             f"Multiple lessor contacts with service unit ID {service_unit_id} found. Cannot send email."
         )
-
-
-def send_answer_email(email_message_input: EmailMessageInput) -> None:
-    if hasattr(settings, "DEBUG") and settings.DEBUG is True:
-        logging.info("Not sending email in debug mode.")
-        logging.info(f"Email message: {email_message_input}")
-        return
-
-    email_message = EmailMessage(**email_message_input)
-
-    try:
-        email_message.send()
-    except SMTPSenderRefused:
-        logging.exception(
-            "Server refused sender address when sending email. Abandoning retrying."
-        )
-        return  # No point retrying
-    except SMTPRecipientsRefused:
-        logging.exception(
-            "Server refused recipient address when sending email. Abandoning retrying."
-        )
-        return  # No point retrying
-    except (SMTPDataError, SMTPException) as e:
-        logging.exception(
-            f"Server responded with unexpected error code when sending email: {e}"
-        )
-        raise e
-    except TimeoutError as e:
-        logging.exception("Server connection timed out when sending email.")
-        raise e
 
 
 def get_supported_language_codes() -> List[str]:

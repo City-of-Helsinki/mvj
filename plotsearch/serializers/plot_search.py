@@ -61,6 +61,7 @@ from plotsearch.utils import (
     get_applicant,
     map_intended_use_to_lessor,
     pop_default,
+    send_areasearch_lessor_changed_email,
 )
 from users.models import User
 from users.serializers import UserSerializer
@@ -1112,6 +1113,10 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             validated_data["address"] = address
             validated_data["district"] = district
 
+        new_lessor = validated_data.get("lessor")
+        old_lessor = instance.lessor
+        lessor_was_changed = new_lessor != old_lessor
+
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
         as_serializer = AreaSearchStatusSerializer(context=self.context)
@@ -1125,6 +1130,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
         instance.area_search_status = area_search_status
         instance.save()
+
+        if lessor_was_changed:
+            send_areasearch_lessor_changed_email(instance, new_lessor, old_lessor, "fi")
 
         return instance
 
