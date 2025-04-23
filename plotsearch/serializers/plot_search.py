@@ -32,7 +32,7 @@ from leasing.serializers.utils import (
     NameModelSerializer,
     UpdateNestedMixin,
 )
-from plotsearch.enums import RelatedPlotApplicationContentType
+from plotsearch.enums import AreaSearchState, RelatedPlotApplicationContentType
 from plotsearch.models import (
     AreaSearch,
     AreaSearchIntendedUse,
@@ -985,6 +985,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "identifier",
             "state",
             "received_date",
+            "settled_date",
             "area_search_status",
             "service_unit",
         )
@@ -1119,6 +1120,9 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "lessor" in validated_data.keys() and new_lessor != old_lessor
         )
 
+        state = validated_data.get("state")
+        if state == AreaSearchState.SETTLED:
+            validated_data["settled_date"] = timezone.now()
 
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)

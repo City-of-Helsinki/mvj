@@ -4007,6 +4007,9 @@ msgstr "Aluehaun käyttötarkoitukset"
 msgid "Time received"
 msgstr "Arkistointiaika"
 
+msgid "Time settled"
+msgstr "Päätetty pvm"
+
 msgid "Area search state"
 msgstr "Tila"
 
