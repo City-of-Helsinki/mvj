@@ -1115,7 +1115,10 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
         new_lessor = validated_data.get("lessor")
         old_lessor = instance.lessor
-        lessor_was_changed = new_lessor != old_lessor
+        lessor_was_changed = (
+            "lessor" in validated_data.keys() and new_lessor != old_lessor
+        )
+
 
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
