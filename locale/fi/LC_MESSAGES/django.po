@@ -525,13 +525,13 @@ msgid "Preparer"
 msgstr "Valmistelija"
 
 msgid "Decline reason"
-msgstr ""
+msgstr "Hylkäämisen syy"
 
 msgid "Preparer note"
-msgstr ""
+msgstr "Käsittelijän muistiinpano"
 
 msgid "Status notes"
-msgstr ""
+msgstr "Tilan muistiinpanot"
 
 msgid "Copy of plot application(s) {}"
 msgstr "Kopio tonttihakemuksista {}"
@@ -4003,6 +4003,14 @@ msgstr "Aluehaun käyttötarkoitus"
 msgctxt "Model name"
 msgid "Area search intended uses"
 msgstr "Aluehaun käyttötarkoitukset"
+
+msgctxt "Model name"
+msgid "Area search status"
+msgstr "Aluehaun tila"
+
+msgctxt "Model name"
+msgid "Area search statuses"
+msgstr "Aluehaun tilat"
 
 msgid "Time received"
 msgstr "Arkistointiaika"

@@ -480,13 +480,27 @@ def areasearch_id_generator():
 
 
 class AreaSearchStatus(models.Model):
-    decline_reason = EnumField(DeclineReason, max_length=30, null=True, blank=True)
-    preparer_note = models.TextField(blank=True, null=True)
+    decline_reason = EnumField(
+        DeclineReason,
+        verbose_name=_("Decline reason"),
+        max_length=30,
+        null=True,
+        blank=True,
+    )
+    preparer_note = models.TextField(
+        verbose_name=_("Preparer note"),
+        blank=True,
+        null=True,
+    )
 
     recursive_get_related_skip_relations = [
         "areasearch",
         "areasearchstatusnote",
     ]
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Area search status")
+        verbose_name_plural = pgettext_lazy("Model name", "Area search statuses")
 
 
 class AreaSearch(SerializableMixin, models.Model):
@@ -753,6 +767,7 @@ class RelatedPlotApplication(TimeStampedSafeDeleteModel):
 
 auditlog.register(PlotSearch)
 auditlog.register(AreaSearch)
+auditlog.register(AreaSearchStatus)
 auditlog.register(InformationCheck)
 auditlog.register(RelatedPlotApplication)
 

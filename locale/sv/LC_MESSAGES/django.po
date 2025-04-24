@@ -4006,6 +4006,14 @@ msgctxt "Model name"
 msgid "Area search intended uses"
 msgstr "Användningsändamål för områdesansökan"
 
+msgctxt "Model name"
+msgid "Area search status"
+msgstr ""
+
+msgctxt "Model name"
+msgid "Area search statuses"
+msgstr ""
+
 msgid "Time received"
 msgstr "Arkiveringstid"
 
