@@ -1179,6 +1179,7 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
             "identifier",
             "state",
             "received_date",
+            "settled_date",
             "area_search_status",
             "answer",
             "plot",
