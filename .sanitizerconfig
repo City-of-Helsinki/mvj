@@ -1460,6 +1460,7 @@ strategy:
     lessor: null
     preparer_id: null
     received_date: null
+    settled_date: null
     service_unit_id: null
     start_date: null
     state: null
