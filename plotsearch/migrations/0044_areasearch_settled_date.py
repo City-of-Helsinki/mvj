@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("plotsearch", "0043_areasearchattachment_user_amr_list"),
     ]
