@@ -167,7 +167,7 @@ class LeaseIdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LeaseIdentifier
-        fields = ("type", "municipality", "district", "sequence")
+        fields = ("type", "municipality", "district", "sequence", "identifier")
 
 
 class ApplicationMetadataSerializer(

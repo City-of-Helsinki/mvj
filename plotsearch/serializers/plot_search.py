@@ -26,7 +26,7 @@ from leasing.serializers.land_area import (
     PlanUnitSerializer,
     PublicPlanUnitSerializer,
 )
-from leasing.serializers.lease import DistrictSerializer
+from leasing.serializers.lease import DistrictSerializer, LeaseRetrieveSerializer
 from leasing.serializers.service_unit import ServiceUnitSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
@@ -968,6 +968,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
     lease = InstanceDictPrimaryKeyRelatedField(
         instance_class=Lease,
         queryset=Lease.objects.all(),
+        related_serializer=LeaseRetrieveSerializer,
         required=False,
         allow_null=True,
     )
@@ -1192,6 +1193,7 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
             "answer",
             "plot",
             "service_unit",
+            "lease",
         )
 
     def to_representation(self, instance):
