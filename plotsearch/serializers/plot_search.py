@@ -19,6 +19,7 @@ from forms.models.form import AnswerOpeningRecord
 from forms.serializers.form import AnswerSerializer, FormSerializer
 from leasing.models import Decision, PlanUnit, Plot, ServiceUnit
 from leasing.models.land_area import CustomDetailedPlan
+from leasing.models.lease import Lease
 from leasing.serializers.decision import DecisionSerializer
 from leasing.serializers.land_area import (
     CustomDetailedPlanSerializer,
@@ -964,6 +965,12 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         required=False,
         allow_null=True,
     )
+    lease = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Lease,
+        queryset=Lease.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = AreaSearch
@@ -988,6 +995,7 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "settled_date",
             "area_search_status",
             "service_unit",
+            "lease",
         )
 
     def _get_address_and_district(
