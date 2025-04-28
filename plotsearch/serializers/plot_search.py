@@ -19,20 +19,21 @@ from forms.models.form import AnswerOpeningRecord
 from forms.serializers.form import AnswerSerializer, FormSerializer
 from leasing.models import Decision, PlanUnit, Plot, ServiceUnit
 from leasing.models.land_area import CustomDetailedPlan
+from leasing.models.lease import Lease
 from leasing.serializers.decision import DecisionSerializer
 from leasing.serializers.land_area import (
     CustomDetailedPlanSerializer,
     PlanUnitSerializer,
     PublicPlanUnitSerializer,
 )
-from leasing.serializers.lease import DistrictSerializer
+from leasing.serializers.lease import DistrictSerializer, LeaseSuccinctSerializer
 from leasing.serializers.service_unit import ServiceUnitSerializer
 from leasing.serializers.utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
     UpdateNestedMixin,
 )
-from plotsearch.enums import RelatedPlotApplicationContentType
+from plotsearch.enums import AreaSearchState, RelatedPlotApplicationContentType
 from plotsearch.models import (
     AreaSearch,
     AreaSearchIntendedUse,
@@ -964,6 +965,13 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
         required=False,
         allow_null=True,
     )
+    lease = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Lease,
+        queryset=Lease.objects.all(),
+        related_serializer=LeaseSuccinctSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = AreaSearch
@@ -985,8 +993,10 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
             "identifier",
             "state",
             "received_date",
+            "settled_date",
             "area_search_status",
             "service_unit",
+            "lease",
         )
 
     def _get_address_and_district(
@@ -1115,7 +1125,13 @@ class AreaSearchSerializer(EnumSupportSerializerMixin, serializers.ModelSerializ
 
         new_lessor = validated_data.get("lessor")
         old_lessor = instance.lessor
-        lessor_was_changed = new_lessor != old_lessor
+        lessor_was_changed = (
+            "lessor" in validated_data.keys() and new_lessor != old_lessor
+        )
+
+        state = validated_data.get("state")
+        if state == AreaSearchState.SETTLED:
+            validated_data["settled_date"] = timezone.now()
 
         instance = super().update(instance, validated_data)
         area_search_status_qs = AreaSearchStatus.objects.filter(area_search=instance)
@@ -1172,10 +1188,12 @@ class AreaSearchDetailSerializer(AreaSearchSerializer):
             "identifier",
             "state",
             "received_date",
+            "settled_date",
             "area_search_status",
             "answer",
             "plot",
             "service_unit",
+            "lease",
         )
 
     def to_representation(self, instance):

@@ -526,6 +526,10 @@ class AreaSearch(SerializableMixin, models.Model):
         auto_now_add=True, verbose_name=_("Time received")
     )
 
+    settled_date = models.DateTimeField(
+        verbose_name=_("Time settled"), null=True, blank=True
+    )
+
     identifier = models.CharField(
         max_length=255, unique=True, default=areasearch_id_generator
     )

@@ -4009,6 +4009,9 @@ msgstr "Användningsändamål för områdesansökan"
 msgid "Time received"
 msgstr "Arkiveringstid"
 
+msgid "Time settled"
+msgstr "Bestämt datum"
+
 msgid "Area search state"
 msgstr "Status"
 
