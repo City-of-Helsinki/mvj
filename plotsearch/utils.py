@@ -177,15 +177,13 @@ def send_areasearch_lessor_changed_email(
             _get_lessor_email_to_address(new_lessor),
             _get_lessor_email_to_address(old_lessor),
         ]
-        subject = _("Area search {} lessor has changed").format(area_search.identifier)
-        body = _('New lessor for area search {} is "{}", was "{}".').format(
-            area_search.identifier, str(new_lessor), str(old_lessor)
-        )
         email_input: EmailMessageInput = {
             "from_email": from_email,
             "to": to_addresses,
-            "subject": subject,
-            "body": body,
+            "subject": _get_areasearch_lessor_changed_email_subject(area_search),
+            "body": _get_areasearch_lessor_changed_email_body(
+                area_search, new_lessor, old_lessor
+            ),
             "attachments": [],
         }
         send_email(email_input)
@@ -199,6 +197,9 @@ def _get_lessor_email_to_address(lessor: AreaSearchLessor) -> str:
         ValueError when email address cannot be found.
     """
     from leasing.models import Contact
+
+    if lessor is None:
+        raise ValueError("Lessor is None. Cannot send email.")
 
     service_unit_id = map_lessor_enum_to_service_unit_id(lessor)
     try:
@@ -220,3 +221,51 @@ def _get_lessor_email_to_address(lessor: AreaSearchLessor) -> str:
         raise ValueError(
             f"Multiple lessor contacts with service unit ID {service_unit_id} found. Cannot send email."
         )
+
+
+def _get_areasearch_lessor_changed_email_subject(
+    area_search: "AreaSearch",
+) -> str:
+    if area_search is None:
+        raise ValueError("Area search is None. Cannot generate email subject.")
+
+    answer = area_search.answer
+    if answer is None:
+        raise ValueError("Answer is None. Cannot generate email subject.")
+
+    identifier = area_search.identifier or "<tunnus puuttuu>"
+    district = area_search.district or "<kaupunginosa puuttuu>"
+    address = (
+        area_search.address or "<osoite puuttuu>"
+    )  # Ideally "if many addresses, the one from the first property code",
+    # but areasearch address field is calculated elsewhere from geometry.
+
+    applicants = []
+    get_applicant(answer, applicants)
+    applicant = applicants[0] if applicants else "<hakija puuttuu>"
+
+    date_format = "%d.%m.%Y"
+    start_date = (
+        area_search.start_date.strftime(date_format) if area_search.start_date else "-"
+    )
+    end_date = (
+        area_search.end_date.strftime(date_format) if area_search.end_date else "-"
+    )
+
+    return f"Muutos Aluehakemus {identifier} {district} {address} {applicant} alkaa {start_date} - päättyy {end_date}"
+
+
+def _get_areasearch_lessor_changed_email_body(
+    area_search: "AreaSearch",
+    new_lessor: AreaSearchLessor,
+    old_lessor: AreaSearchLessor,
+) -> str:
+    if area_search is None:
+        raise ValueError("Area search is None. Cannot generate email body.")
+
+    identifier = area_search.identifier or "<tunnus puuttuu>"
+    intended_use = area_search.intended_use or "-"
+    intended_use_description = area_search.description_intended_use or "-"
+    return f"""Aluehakemuksen {identifier} uusi vuokranantaja on {new_lessor}, oli {old_lessor}."
+Käyttötarkoitus: {intended_use}
+Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}"""
