@@ -10,6 +10,9 @@ from faker import Faker
 
 from forms.models import Answer
 from plotsearch.models.plot_search import AreaSearch
+from plotsearch.tests.conftest import (  # noqa:F401
+    setup_lessor_contacts_and_service_units,
+)
 from utils.email import EmailMessageInput
 
 fake = Faker("fi_FI")
