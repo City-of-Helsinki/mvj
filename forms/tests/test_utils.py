@@ -23,60 +23,10 @@ from forms.utils import (
     clone_object,
     generate_and_queue_answer_emails,
 )
-from plotsearch.enums import AreaSearchLessor
 from utils.email import EmailMessageInput, send_email
 
 BASIC_TEMPLATE_SECTION_COUNT = 7
 BASIC_TEMPLATE_FIELD_COUNT = 23
-
-
-@pytest.fixture
-def setup_lessor_contacts_and_service_units(service_unit_factory, contact_factory):
-    """
-    Sets up lessor contacts and service units for testing.
-    Should be used in all tests that call generate_and_queue_answer_emails.
-
-    Normally, service units have specific known IDs, but during testing they are
-    initialized with factories, so we need to align some logic to these dynamic
-    IDs.
-    """
-    from leasing.enums import ServiceUnitId
-    from leasing.models.contact import Contact
-    from leasing.models.service_unit import ServiceUnit
-
-    # Assumption: all service units are also area search lessors
-    assert len(ServiceUnitId) == len(AreaSearchLessor)
-
-    service_units: list[ServiceUnit] = []
-    contacts: list[Contact] = []
-
-    # Instantiate service units and lessor contacts via factories
-    for unit_id in ServiceUnitId:
-        unit = service_unit_factory(name=str(unit_id))
-        service_units.append(unit)
-        contacts.append(
-            contact_factory(
-                name=unit.name,
-                service_unit=unit,
-                is_lessor=True,
-                email=f"{unit_id.name}@example.com",
-            )
-        )
-
-    def mock_map_lessor_enum_to_service_unit_id(lessor: AreaSearchLessor) -> int:
-        """Maps an areasearch lessor to a service unit ID that was created in this fixture via a factory."""
-        lessors_enum_list = list(AreaSearchLessor)
-        mock_map = {
-            lessor: service_units[i].pk for i, lessor in enumerate(lessors_enum_list)
-        }
-        return mock_map[lessor]
-
-    # Apply the mock to all tests that use this fixture
-    with patch(
-        "plotsearch.utils.map_lessor_enum_to_service_unit_id",
-        side_effect=mock_map_lessor_enum_to_service_unit_id,
-    ):
-        yield
 
 
 @pytest.mark.django_db
