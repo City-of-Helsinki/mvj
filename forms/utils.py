@@ -1,6 +1,6 @@
 import logging
 from io import BytesIO
-from typing import Iterable, List, Tuple, TypedDict
+from typing import TYPE_CHECKING, Iterable, List, Tuple, TypedDict
 
 from django.conf import settings
 from django.db.models import Q
@@ -17,6 +17,10 @@ from utils.email import EmailMessageInput, send_email
 from utils.pdf import PDFGenerationError, generate_pdf
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from forms.models import Answer
+    from plotsearch.models import AreaSearch
 
 
 def generate_unique_identifier(klass, field_name, field_value, max_length, **kwargs):
@@ -551,7 +555,7 @@ class AnswerInputData(TypedDict):
     user_language: str  # ISO 639-1 language code, e.g. "fi", "en", "sv"
 
 
-def _get_applicant_email_to_addresses(answer) -> List[str]:
+def _get_applicant_email_to_addresses(answer: "Answer") -> List[str]:
     from forms.models.form import Entry
 
     # The query intends to find email addresses for applicants that are either
@@ -579,7 +583,7 @@ def _get_applicant_email_to_addresses(answer) -> List[str]:
     return email_addresses
 
 
-def _generate_applicant_target_status_email(answer) -> EmailMessageInput:
+def _generate_applicant_target_status_email(answer: "Answer") -> EmailMessageInput:
     from plotsearch.utils import build_pdf_context
 
     context: dict = {}
@@ -619,7 +623,7 @@ def _generate_applicant_target_status_email(answer) -> EmailMessageInput:
     return email_message
 
 
-def _generate_applicant_area_search_email(answer) -> EmailMessageInput:
+def _generate_applicant_area_search_email(answer: "Answer") -> EmailMessageInput:
     from plotsearch.utils import build_pdf_context
 
     context: dict = {}
@@ -654,7 +658,7 @@ def _generate_applicant_area_search_email(answer) -> EmailMessageInput:
 
 
 def _generate_applicant_plotsearch_email(
-    answer_type: AnswerType, answer
+    answer_type: AnswerType, answer: "Answer"
 ) -> EmailMessageInput:
     if answer_type == AnswerType.AREA_SEARCH:
         return _generate_applicant_area_search_email(answer)
@@ -703,7 +707,12 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
     return
 
 
-def _generate_lessor_new_areasearch_email(answer) -> EmailMessageInput:
+def get_supported_language_codes() -> List[str]:
+    """Gets language codes allowed to be translated to."""
+    return [language_code for language_code, _language_name in settings.LANGUAGES]
+
+
+def _generate_lessor_new_areasearch_email(answer: "Answer") -> EmailMessageInput:
     """Creates email input for lessors when new area search application is received."""
     from plotsearch.models import AreaSearch
 
@@ -716,10 +725,8 @@ def _generate_lessor_new_areasearch_email(answer) -> EmailMessageInput:
     return {
         "from_email": settings.FROM_EMAIL_AREA_SEARCH or settings.MVJ_EMAIL_FROM,
         "to": _get_service_unit_email_addresses(area_search.intended_use),
-        "subject": _("New area search in district {}").format(area_search.district),
-        "body": _("A new area search {} has been created in district {}.").format(
-            area_search.identifier, area_search.district
-        ),
+        "subject": _get_lessor_new_areasearch_email_subject(answer, area_search),
+        "body": _get_lessor_new_areasearch_email_body(area_search),
         "attachments": [],
     }
 
@@ -757,6 +764,43 @@ def _get_service_unit_email_addresses(intended_use) -> list[str]:
         )
 
 
-def get_supported_language_codes() -> List[str]:
-    """Gets language codes allowed to be translated to."""
-    return [language_code for language_code, _language_name in settings.LANGUAGES]
+def _get_lessor_new_areasearch_email_subject(
+    answer: "Answer", area_search: "AreaSearch"
+) -> str:
+    from plotsearch.utils import get_applicant
+
+    if answer is None or area_search is None:
+        raise ValueError(
+            "Answer or area search is None. Cannot generate email subject."
+        )
+
+    identifier = area_search.identifier or "<tunnus puuttuu>"
+    district = area_search.district or "<kaupunginosa puuttuu>"
+    address = (
+        area_search.address or "<osoite puuttuu>"
+    )  # Ideally "if many addresses, the one from the first property code",
+    # but areasearch address field is calculated elsewhere from geometry.
+
+    applicants = []
+    get_applicant(answer, applicants)
+    applicant = applicants[0] if applicants else "<hakija puuttuu>"
+
+    date_format = "%d.%m.%Y"
+    start_date = (
+        area_search.start_date.strftime(date_format) if area_search.start_date else "-"
+    )
+    end_date = (
+        area_search.end_date.strftime(date_format) if area_search.end_date else "-"
+    )
+
+    return f"Aluehakemus {identifier} {district} {address} {applicant} alkaa {start_date} - päättyy {end_date}"
+
+
+def _get_lessor_new_areasearch_email_body(area_search: "AreaSearch") -> str:
+    if area_search is None:
+        raise ValueError("Area search is None. Cannot generate email body.")
+
+    intended_use = area_search.intended_use or "-"
+    intended_use_description = area_search.description_intended_use or "-"
+    return f"""Käyttötarkoitus: {intended_use}
+Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}"""
