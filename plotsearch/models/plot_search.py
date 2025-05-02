@@ -207,7 +207,8 @@ class PlotSearchTarget(models.Model):
         "targetstatus",
         "favouritetarget",
         "directreservationlink_targets",
-        "targetinfolink" "lease",
+        "targetinfolink",
+        "lease",
         "planunit",
         "customdetailedplan",
     ]
