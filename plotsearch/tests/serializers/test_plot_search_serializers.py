@@ -4,12 +4,13 @@ import pytest
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import BadRequest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
 
 from forms.serializers.form import (
     EXCLUDED_ATTACHMENT_FIELDS,
     AttachmentPublicSerializer,
 )
-from plotsearch.models.plot_search import AreaSearchAttachment
+from plotsearch.models.plot_search import AreaSearchAttachment, AreaSearchLessor
 from plotsearch.serializers.plot_search import (
     EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS,
     AreaSearchAttachmentPublicSerializer,
@@ -254,3 +255,80 @@ def test_get_address_and_district_as_none():
     )
     assert address is None
     assert district is None
+
+
+@pytest.mark.django_db
+def test_areasearch_update_email_is_sent(
+    setup_lessor_contacts_and_service_units,
+    admin_client,
+    area_search_test_data,
+    area_search_intended_use_factory,
+):
+    """When areasearch is updated with a new lessor, email is sent to the correct lessor contacts."""
+    old_lessor = AreaSearchLessor.MAKE
+    new_lessor = AreaSearchLessor.AKV
+
+    name = "Muu alueen käyttö"
+    intended_use = area_search_intended_use_factory(name=name, name_fi=name)
+
+    area_search = area_search_test_data
+    area_search.lessor = old_lessor
+    area_search.intended_use = intended_use
+    area_search.save()
+
+    with patch("plotsearch.utils.send_email") as mock_send_email:
+        url = reverse("v1:areasearch-detail", kwargs={"pk": area_search_test_data.id})
+        response = admin_client.patch(
+            url, data={"lessor": new_lessor}, content_type="application/json"
+        )
+
+        assert response.status_code == 200
+        assert mock_send_email.called
+        assert mock_send_email.call_count == 1
+
+        email_input = mock_send_email.call_args[0][0]
+        assert email_input.get("from_email")  # from-address is not empty
+        assert email_input.get("subject")  # subject is not empty
+        assert email_input.get("body")  # body is not empty
+
+        # Emails are sent to two different addresses
+        to_addresses = email_input.get("to", [])
+        assert len(to_addresses) == 2
+        assert to_addresses[0] != to_addresses[1]
+
+
+@pytest.mark.django_db
+def test_areasearch_update_email_is_not_sent(
+    setup_lessor_contacts_and_service_units,
+    admin_client,
+    area_search_test_data,
+    area_search_intended_use_factory,
+):
+    """When areasearch is updated, but lessor field is not changed, no email is sent to lessor contacts."""
+    lessor = AreaSearchLessor.MAKE
+    name = "Muu alueen käyttö"
+    intended_use = area_search_intended_use_factory(name=name, name_fi=name)
+
+    area_search = area_search_test_data
+    area_search.lessor = lessor
+    area_search.intended_use = intended_use
+    area_search.save()
+
+    with patch("plotsearch.utils.send_email") as mock_send_email, patch(
+        "plotsearch.utils.send_areasearch_lessor_changed_email"
+    ) as mock_generate_email:
+        url = reverse("v1:areasearch-detail", kwargs={"pk": area_search_test_data.id})
+
+        # Case 1: lessor is included in data, but same as original
+        response = admin_client.patch(
+            url, data={"lessor": lessor}, content_type="application/json"
+        )
+        assert response.status_code == 200
+        assert mock_generate_email.called is False
+        assert mock_send_email.called is False
+
+        # Case 2: lessor is not included in data
+        response = admin_client.patch(url, data={}, content_type="application/json")
+        assert response.status_code == 200
+        assert mock_generate_email.called is False
+        assert mock_send_email.called is False
