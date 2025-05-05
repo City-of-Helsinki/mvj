@@ -6,6 +6,46 @@ from leasing.enums import AreaUnit, BasisOfRentType, SubventionType
 
 
 @pytest.mark.django_db
+def test_get_index_adjusted_amount_per_area(
+    index_factory,
+    lease_basis_of_rent_factory,
+    lease_factory,
+):
+    index = index_factory(
+        number=1973,
+        year=2019,
+        month=8,
+    )
+
+    area = Decimal(200.00)
+    amount_per_area = Decimal(28.00)
+    profit_margin_percentage = Decimal(5.00)
+    expected_amount_per_area = Decimal(552.44)
+
+    lease_basis_of_rent = lease_basis_of_rent_factory(
+        lease=lease_factory(),
+        type=BasisOfRentType.LEASE,
+        index=index,
+        area=area,
+        area_unit=AreaUnit.FLOOR_SQUARE_METRE,
+        amount_per_area=amount_per_area,
+        profit_margin_percentage=profit_margin_percentage,
+    )
+
+    assert round(lease_basis_of_rent.get_index_adjusted_amount_per_area(), 2) == round(
+        expected_amount_per_area, 2
+    )
+
+    # In the case when amount_per_area is None,
+    # the index adjusted amount per area should be 0
+    lease_basis_of_rent.amount_per_area = None
+
+    assert round(
+        lease_basis_of_rent.get_index_adjusted_amount_per_area(), 2
+    ) == Decimal(0.00)
+
+
+@pytest.mark.django_db
 def test_calculate_initial_year_rent(
     index_factory,
     lease_basis_of_rent_factory,

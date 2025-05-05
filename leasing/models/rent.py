@@ -1746,6 +1746,9 @@ class LeaseBasisOfRent(ArchivableModel, TimeStampedSafeDeleteModel):
         if self.type == BasisOfRentType.LEASE2022:
             return self.amount_per_area
 
+        if self.amount_per_area is None:
+            return Decimal(0)
+
         index_ratio = Decimal(1)
         if self.index:
             index_ratio = Decimal(self.index.number / 100)
