@@ -6,31 +6,31 @@ from leasing.models import Contact, ServiceUnit
 SERVICE_UNITS = [
     {
         "id": ServiceUnitId.MAKE.value,
-        "contact_name": "Maaomaisuuden kehittäminen ja tontit",
+        "contact_name": "KYMP/Maaomaisuuden kehittäminen ja tontit",
         "sap_sales_office": SapSalesOfficeNumber.MAKE.value,
         "email": "MAKE@example.com",
     },
     {
         "id": ServiceUnitId.AKV.value,
-        "contact_name": "Alueiden käyttö ja valvonta",
+        "contact_name": "KYMP/Alueiden käyttö ja valvonta",
         "sap_sales_office": SapSalesOfficeNumber.AKV.value,
         "email": "AKV@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_LIPA.value,
-        "contact_name": "KuVa / Liikuntapaikkapalvelut",
+        "contact_name": "KUVA/Liikuntapaikkapalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
         "email": "KUVA@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_UPA.value,
-        "contact_name": "KuVa / Ulkoilupalvelut",
+        "contact_name": "KUVA/Ulkoilupalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
         "email": "KUVA@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_NUP.value,
-        "contact_name": "KuVa / Nuorisopalvelut",
+        "contact_name": "KUVA/Nuorisopalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
         "email": "KUVA@example.com",
     },
