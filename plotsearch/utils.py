@@ -266,6 +266,6 @@ def _get_areasearch_lessor_changed_email_body(
     identifier = area_search.identifier or "<tunnus puuttuu>"
     intended_use = area_search.intended_use or "-"
     intended_use_description = area_search.description_intended_use or "-"
-    return f"""Aluehakemuksen {identifier} uusi vuokranantaja on {new_lessor}, oli {old_lessor}."
+    return f"""Aluehakemuksen {identifier} uusi vuokranantaja on {new_lessor}, oli {old_lessor}.
 Käyttötarkoitus: {intended_use}
 Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}"""
