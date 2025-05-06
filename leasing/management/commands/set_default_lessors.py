@@ -8,26 +8,31 @@ SERVICE_UNITS = [
         "id": ServiceUnitId.MAKE.value,
         "contact_name": "Maaomaisuuden kehittäminen ja tontit",
         "sap_sales_office": SapSalesOfficeNumber.MAKE.value,
+        "email": "MAKE@example.com",
     },
     {
         "id": ServiceUnitId.AKV.value,
         "contact_name": "Alueiden käyttö ja valvonta",
         "sap_sales_office": SapSalesOfficeNumber.AKV.value,
+        "email": "AKV@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_LIPA.value,
         "contact_name": "KuVa / Liikuntapaikkapalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
+        "email": "KUVA@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_UPA.value,
         "contact_name": "KuVa / Ulkoilupalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
+        "email": "KUVA@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_NUP.value,
         "contact_name": "KuVa / Nuorisopalvelut",
         "sap_sales_office": SapSalesOfficeNumber.KUVA.value,
+        "email": "KUVA@example.com",
     },
 ]
 
@@ -58,6 +63,7 @@ class Command(BaseCommand):
                 is_lessor=True,
                 name=service_unit_data["contact_name"],
                 sap_sales_office=service_unit_data["sap_sales_office"],
+                email=service_unit_data["email"],
                 defaults={
                     "type": ContactType.UNIT,
                     "address": "PL2214",
