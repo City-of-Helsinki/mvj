@@ -44,6 +44,7 @@ env = environ.Env(
     DEBUG=(bool, True),
     SECRET_KEY=(str, ""),
     ALLOWED_HOSTS=(list, []),
+    OFFICER_UI_URL=(str, ""),
     ADMINS=(list, []),
     DATABASE_URL=(str, "postgis:///mvj"),
     CACHE_URL=(str, "locmemcache://"),
@@ -133,6 +134,8 @@ DEBUG = env.bool("DEBUG")
 SECRET_KEY = env.str("SECRET_KEY", default=("xxx" if DEBUG else ""))
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+
+OFFICER_UI_URL = env.str("OFFICER_UI_URL")
 
 ADMINS = env.list("ADMINS")
 

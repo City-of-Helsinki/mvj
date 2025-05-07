@@ -20,13 +20,13 @@ class EmailMessageInput(TypedDict):
     attachments: list[tuple[str, bytes | BytesIO, str]]
 
 
-def send_email(email_message_input: EmailMessageInput) -> None:
+def send_email(email_message_input: EmailMessageInput, body_is_html=False) -> None:
     if hasattr(settings, "DEBUG") and settings.DEBUG is True:
         logging.info("Not sending email in debug mode.")
         logging.info(f"Email message: {email_message_input}")
         return
 
-    email_message = EmailMessage(**email_message_input)
+    email_message = _create_email_from_input(email_message_input, body_is_html)
 
     try:
         email_message.send()
@@ -48,3 +48,15 @@ def send_email(email_message_input: EmailMessageInput) -> None:
     except TimeoutError as e:
         logging.exception("Server connection timed out when sending email.")
         raise e
+
+
+def _create_email_from_input(
+    email_message_input: EmailMessageInput,
+    body_is_html: bool = False,
+) -> EmailMessage:
+    email_message = EmailMessage(**email_message_input)
+
+    if body_is_html:
+        email_message.content_subtype = "html"
+
+    return email_message
