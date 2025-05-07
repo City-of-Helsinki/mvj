@@ -787,13 +787,15 @@ def _get_lessor_new_areasearch_email_subject(
 
     date_format = "%d.%m.%Y"
     start_date = (
-        area_search.start_date.strftime(date_format) if area_search.start_date else "-"
+        area_search.start_date.strftime(date_format)
+        if area_search.start_date
+        else "<aloitusaika puuttuu>"
     )
     end_date = (
-        area_search.end_date.strftime(date_format) if area_search.end_date else "-"
+        area_search.end_date.strftime(date_format) if area_search.end_date else ""
     )
 
-    return f"Aluehakemus {identifier} {district} {address} {applicant} alkaa {start_date} - päättyy {end_date}"
+    return f"Aluehakemus {identifier} {district} {address} {applicant} vuokra-aika {start_date} - {end_date}"
 
 
 def _get_lessor_new_areasearch_email_body(area_search: "AreaSearch") -> str:
