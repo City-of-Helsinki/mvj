@@ -284,11 +284,29 @@ def _get_areasearch_lessor_changed_email_body(
     intended_use = area_search.intended_use or "-"
     intended_use_description = area_search.description_intended_use or "-"
 
-    return f"""<html><body><p>
-Aluehakemuksen {link_to_areasearch} uusi vuokranantaja on {new_lessor_name}, oli {old_lessor_name}.<br>
-Käyttötarkoitus: {intended_use}<br>
-Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}<br>
-<p></body></html>"""
+    status = area_search.area_search_status
+    if status:
+        processing_note = status.preparer_note or "-"
+
+        if status.status_notes.exists():
+            latest_status_note = status.status_notes.order_by("-time_stamp").first()
+            note = latest_status_note.note or ""
+            preparer_name = f"{latest_status_note.preparer.last_name} {latest_status_note.preparer.first_name}"
+            timestamp = latest_status_note.time_stamp.strftime("%d.%m.%Y %H:%M")
+            preparer_note = f"{note} ({preparer_name} {timestamp})"
+        else:
+            preparer_note = "-"
+    else:
+        processing_note = "-"
+        preparer_note = "-"
+
+    return f"""<html><body>
+<p>Aluehakemuksen {link_to_areasearch} uusi vuokranantaja on {new_lessor_name}, oli {old_lessor_name}.</p>
+<p>Käyttötarkoitus: {intended_use}</p>
+<p>Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}</p>
+<p>Käsittelytietojen huomautus: {processing_note}</p>
+<p>Käsittelijän muistiinpanot: {preparer_note}</p>
+</body></html>"""
 
 
 def _get_lessor_contact_name(lessor: AreaSearchLessor) -> str | None:
