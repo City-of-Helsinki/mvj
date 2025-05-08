@@ -1,2754 +1,4502 @@
 [
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 1,
     "fields": {
       "name": "Aidan / aitauksen pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Aidan / aitauksen pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 2,
     "fields": {
       "name": "Ajotieyhteys",
-      "service_unit": 1
+      "name_fi": "Ajotieyhteys",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 3,
     "fields": {
       "name": "Ajotunnelin pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Ajotunnelin pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 4,
     "fields": {
       "name": "Aravaomistusasuntoja",
-      "service_unit": 1
+      "name_fi": "Aravaomistusasuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 5,
     "fields": {
       "name": "Aravavuokrataloja",
-      "service_unit": 1
+      "name_fi": "Aravavuokrataloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 6,
     "fields": {
       "name": "Asuinrakennuksen pitäminen",
-      "service_unit": 1
+      "name_fi": "Asuinrakennuksen pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 7,
     "fields": {
       "name": "Asuminen / yleinen",
-      "service_unit": 1
+      "name_fi": "Asuminen / yleinen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 8,
     "fields": {
       "name": "Asumisoikeusasuntoja",
-      "service_unit": 1
+      "name_fi": "Asumisoikeusasuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 9,
     "fields": {
       "name": "Asuntola/tukikoti",
-      "service_unit": 1
+      "name_fi": "Asuntola/tukikoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 10,
     "fields": {
       "name": "Asuntotarkoituksiin",
-      "service_unit": 1
+      "name_fi": "Asuntotarkoituksiin",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 11,
     "fields": {
       "name": "Autogrilli",
-      "service_unit": 1
+      "name_fi": "Autogrilli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 12,
     "fields": {
       "name": "Autojen/asuntov. myynti ja varastointi",
-      "service_unit": 1
+      "name_fi": "Autojen/asuntov. myynti ja varastointi",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 13,
     "fields": {
       "name": "Autokatsastus",
-      "service_unit": 1
+      "name_fi": "Autokatsastus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 14,
     "fields": {
       "name": "Autokorjaamotoiminta",
-      "service_unit": 1
+      "name_fi": "Autokorjaamotoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 15,
     "fields": {
       "name": "Autoliike",
-      "service_unit": 1
+      "name_fi": "Autoliike",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 16,
     "fields": {
       "name": "Autopesula",
-      "service_unit": 1
+      "name_fi": "Autopesula",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 17,
     "fields": {
       "name": "Autotallin pitäminen",
-      "service_unit": 1
+      "name_fi": "Autotallin pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 18,
     "fields": {
       "name": "Betoniasema",
-      "service_unit": 1
+      "name_fi": "Betoniasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 19,
     "fields": {
       "name": "Egnahemshus",
-      "service_unit": 1
+      "name_fi": "Egnahemshus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 20,
     "fields": {
       "name": "Energiahuolto",
-      "service_unit": 1
+      "name_fi": "Energiahuolto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 21,
     "fields": {
       "name": "Erkkerin / katoksen pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Erkkerin / katoksen pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 22,
     "fields": {
       "name": "Esirakentaminen",
-      "service_unit": 1
+      "name_fi": "Esirakentaminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 23,
     "fields": {
       "name": "Hajoitus-/sadevesi- yms kaivon pito-oik.",
-      "service_unit": 1
+      "name_fi": "Hajoitus-/sadevesi- yms kaivon pito-oik.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 24,
     "fields": {
       "name": "Halli",
-      "service_unit": 1
+      "name_fi": "Halli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 25,
     "fields": {
       "name": "Hautausmaa",
-      "service_unit": 1
+      "name_fi": "Hautausmaa",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 26,
     "fields": {
       "name": "Hautausmaa (eläinten)",
-      "service_unit": 1
+      "name_fi": "Hautausmaa (eläinten)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 27,
     "fields": {
       "name": "Hengelliset telttakokoukset",
-      "service_unit": 1
+      "name_fi": "Hengelliset telttakokoukset",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 28,
     "fields": {
       "name": "Hiekkasiilo",
-      "service_unit": 1
+      "name_fi": "Hiekkasiilo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 29,
     "fields": {
       "name": "Hiekkasiilo+ Vaihtolava",
-      "service_unit": 1
+      "name_fi": "Hiekkasiilo+ Vaihtolava",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 30,
     "fields": {
       "name": "Hotelli",
-      "service_unit": 1
+      "name_fi": "Hotelli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 31,
     "fields": {
       "name": "Huoltoasema",
-      "service_unit": 1
+      "name_fi": "Huoltoasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 32,
     "fields": {
       "name": "Huoltoasema/autohalli",
-      "service_unit": 1
+      "name_fi": "Huoltoasema/autohalli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 33,
     "fields": {
       "name": "Huoltoaseman lisäalue",
-      "service_unit": 1
+      "name_fi": "Huoltoaseman lisäalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 34,
     "fields": {
       "name": "Huoltoasemat / jakelulaitteet / poltt.",
-      "service_unit": 1
+      "name_fi": "Huoltoasemat / jakelulaitteet / poltt.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 35,
     "fields": {
       "name": "Huoltorakennus",
-      "service_unit": 1
+      "name_fi": "Huoltorakennus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 36,
     "fields": {
       "name": "Huoltotie",
-      "service_unit": 1
+      "name_fi": "Huoltotie",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 37,
     "fields": {
       "name": "Huvilan pitäminen",
-      "service_unit": 1
+      "name_fi": "Huvilan pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 38,
     "fields": {
       "name": "Ilmoitustaulu/mainostaulu/pyloni",
-      "service_unit": 1
+      "name_fi": "Ilmoitustaulu/mainostaulu/pyloni",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 39,
     "fields": {
       "name": "Jakeluasema",
-      "service_unit": 1
+      "name_fi": "Jakeluasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 40,
     "fields": {
       "name": "Jakeluasema (Diesel)",
-      "service_unit": 1
+      "name_fi": "Jakeluasema (Diesel)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 41,
     "fields": {
       "name": "Jakeluaseman lisäalue",
-      "service_unit": 1
+      "name_fi": "Jakeluaseman lisäalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 42,
     "fields": {
       "name": "Jalank.-/laite-/putki- yms tunnel. p-oik",
-      "service_unit": 1
+      "name_fi": "Jalank.-/laite-/putki- yms tunnel. p-oik",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 43,
     "fields": {
       "name": "Jäte- tm astian/säiliön pitäminen",
-      "service_unit": 1
+      "name_fi": "Jäte- tm astian/säiliön pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 44,
     "fields": {
       "name": "Jäteasema",
-      "service_unit": 1
+      "name_fi": "Jäteasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 45,
     "fields": {
       "name": "Kahvila/ravintola",
-      "service_unit": 1
+      "name_fi": "Kahvila/ravintola",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 46,
     "fields": {
       "name": "Kaluston/materiaalin säilytys",
-      "service_unit": 1
+      "name_fi": "Kaluston/materiaalin säilytys",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 47,
     "fields": {
       "name": "Kanavaputkitus",
-      "service_unit": 1
+      "name_fi": "Kanavaputkitus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 48,
     "fields": {
       "name": "Kartta- tms. telineen pitäminen",
-      "service_unit": 1
+      "name_fi": "Kartta- tms. telineen pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 49,
     "fields": {
       "name": "Katualue",
-      "service_unit": 1
+      "name_fi": "Katualue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 50,
     "fields": {
       "name": "Kaupunkikylpylä",
-      "service_unit": 1
+      "name_fi": "Kaupunkikylpylä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 51,
     "fields": {
       "name": "Kaupunkimetsät",
-      "service_unit": 1
+      "name_fi": "Kaupunkimetsät",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 52,
     "fields": {
       "name": "Kaupunkipientalo",
-      "service_unit": 1
+      "name_fi": "Kaupunkipientalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 53,
     "fields": {
       "name": "Kesämaja",
-      "service_unit": 1
+      "name_fi": "Kesämaja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 54,
     "fields": {
       "name": "Kilpailun järjestäminen",
-      "service_unit": 1
+      "name_fi": "Kilpailun järjestäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 55,
     "fields": {
       "name": "Kioski",
-      "service_unit": 1
+      "name_fi": "Kioski",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 56,
     "fields": {
       "name": "Kirjapaino",
-      "service_unit": 1
+      "name_fi": "Kirjapaino",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 57,
     "fields": {
       "name": "Kirkko",
-      "service_unit": 1
+      "name_fi": "Kirkko",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 58,
     "fields": {
       "name": "Koirien koulutusalue / -tilaisuus",
-      "service_unit": 1
+      "name_fi": "Koirien koulutusalue / -tilaisuus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 59,
     "fields": {
       "name": "Kokoontuminen",
-      "service_unit": 1
+      "name_fi": "Kokoontuminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 60,
     "fields": {
       "name": "Kokoustila",
-      "service_unit": 1
+      "name_fi": "Kokoustila",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 61,
     "fields": {
       "name": "Kontin pitäminen",
-      "service_unit": 1
+      "name_fi": "Kontin pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 62,
     "fields": {
       "name": "Korkotukilainoitettu vuokratalo",
-      "service_unit": 1
+      "name_fi": "Korkotukilainoitettu vuokratalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 63,
     "fields": {
       "name": "Koulurakennus",
-      "service_unit": 1
+      "name_fi": "Koulurakennus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 64,
     "fields": {
       "name": "Krematorio",
-      "service_unit": 1
+      "name_fi": "Krematorio",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 65,
     "fields": {
       "name": "Kulkuoikeus  tontin kautta tontille",
-      "service_unit": 1
+      "name_fi": "Kulkuoikeus  tontin kautta tontille",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 66,
     "fields": {
       "name": "Kulkuyhteys",
-      "service_unit": 1
+      "name_fi": "Kulkuyhteys",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 67,
     "fields": {
       "name": "Kulttuuritoiminta",
-      "service_unit": 1
+      "name_fi": "Kulttuuritoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 68,
     "fields": {
       "name": "Kuntoutus- ja ryhmäkoti",
-      "service_unit": 1
+      "name_fi": "Kuntoutus- ja ryhmäkoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 69,
     "fields": {
       "name": "Käymälä",
-      "service_unit": 1
+      "name_fi": "Käymälä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 70,
     "fields": {
       "name": "Käyttöoikeus alueeseen",
-      "service_unit": 1
+      "name_fi": "Käyttöoikeus alueeseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 71,
     "fields": {
       "name": "Laites./relekesk./jakok. yms. pito-oik.",
-      "service_unit": 1
+      "name_fi": "Laites./relekesk./jakok. yms. pito-oik.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 72,
     "fields": {
       "name": "Laiturialue",
-      "service_unit": 1
+      "name_fi": "Laiturialue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 73,
     "fields": {
       "name": "Lastauslaituri yms. rakenteet",
-      "service_unit": 1
+      "name_fi": "Lastauslaituri yms. rakenteet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 74,
     "fields": {
       "name": "Liikenne-/muu koulutusalue",
-      "service_unit": 1
+      "name_fi": "Liikenne-/muu koulutusalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 75,
     "fields": {
       "name": "Liikennealue",
-      "service_unit": 1
+      "name_fi": "Liikennealue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 76,
     "fields": {
       "name": "Liikenneasema",
-      "service_unit": 1
+      "name_fi": "Liikenneasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 77,
     "fields": {
       "name": "Liikennekioskin pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Liikennekioskin pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 78,
     "fields": {
       "name": "Liiketarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Liiketarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 79,
     "fields": {
       "name": "Liikuntakäyttö",
-      "service_unit": 1
+      "name_fi": "Liikuntakäyttö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 80,
     "fields": {
       "name": "Lisäalue",
-      "service_unit": 1
+      "name_fi": "Lisäalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 81,
     "fields": {
       "name": "Lisäpiha",
-      "service_unit": 1
+      "name_fi": "Lisäpiha",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 82,
     "fields": {
       "name": "Lumenkaatopaikka",
-      "service_unit": 1
+      "name_fi": "Lumenkaatopaikka",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 83,
     "fields": {
       "name": "Lumensulatusasema",
-      "service_unit": 1
+      "name_fi": "Lumensulatusasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 84,
     "fields": {
       "name": "Lupien hakeminen",
-      "service_unit": 1
+      "name_fi": "Lupien hakeminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 85,
     "fields": {
       "name": "Lämpökeskus",
-      "service_unit": 1
+      "name_fi": "Lämpökeskus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 86,
     "fields": {
       "name": "Maa-ainesten varastointi",
-      "service_unit": 1
+      "name_fi": "Maa-ainesten varastointi",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 87,
     "fields": {
       "name": "Maakaasun tankkausasema",
-      "service_unit": 1
+      "name_fi": "Maakaasun tankkausasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 88,
     "fields": {
       "name": "Maamassojen varastointi",
-      "service_unit": 1
+      "name_fi": "Maamassojen varastointi",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 89,
     "fields": {
       "name": "Maanalainen jäteasema",
-      "service_unit": 1
+      "name_fi": "Maanalainen jäteasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 90,
     "fields": {
       "name": "Maanalainen kulkuyhteys",
-      "service_unit": 1
+      "name_fi": "Maanalainen kulkuyhteys",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 91,
     "fields": {
       "name": "Maanalainen polttoainesäiliö",
-      "service_unit": 1
+      "name_fi": "Maanalainen polttoainesäiliö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 92,
     "fields": {
       "name": "Maanalainen tila",
-      "service_unit": 1
+      "name_fi": "Maanalainen tila",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 93,
     "fields": {
       "name": "Maanalainen yhdystunneli",
-      "service_unit": 1
+      "name_fi": "Maanalainen yhdystunneli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 94,
     "fields": {
       "name": "Maanalaisen tilan pito/käyttöoikeus",
-      "service_unit": 1
+      "name_fi": "Maanalaisen tilan pito/käyttöoikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 95,
     "fields": {
       "name": "Maankäyttösopimus",
-      "service_unit": 1
+      "name_fi": "Maankäyttösopimus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 96,
     "fields": {
       "name": "Maanrakennustöiden tekeminen",
-      "service_unit": 1
+      "name_fi": "Maanrakennustöiden tekeminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 97,
     "fields": {
       "name": "Majoitustoiminta",
-      "service_unit": 1
+      "name_fi": "Majoitustoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 98,
     "fields": {
       "name": "Maksamaton kauppahinta",
-      "service_unit": 1
+      "name_fi": "Maksamaton kauppahinta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 99,
     "fields": {
       "name": "Masto (radio, GSM/NMT yms.)",
-      "service_unit": 1
+      "name_fi": "Masto (radio, GSM/NMT yms.)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 100,
     "fields": {
       "name": "Meriasema",
-      "service_unit": 1
+      "name_fi": "Meriasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 101,
     "fields": {
       "name": "Metroasema",
-      "service_unit": 1
+      "name_fi": "Metroasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 102,
     "fields": {
       "name": "Metsäalue",
-      "service_unit": 1
+      "name_fi": "Metsäalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 103,
     "fields": {
       "name": "Metsät ulkokunnissa (Espoo).",
-      "service_unit": 1
+      "name_fi": "Metsät ulkokunnissa (Espoo).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 104,
     "fields": {
       "name": "Metsät ulkokunnissa (Hanko)",
-      "service_unit": 1
+      "name_fi": "Metsät ulkokunnissa (Hanko)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 105,
     "fields": {
       "name": "Metsät ulkokunnissa (Sipoo)",
-      "service_unit": 1
+      "name_fi": "Metsät ulkokunnissa (Sipoo)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 106,
     "fields": {
       "name": "Metsät ulkokunnissa (Vantaa)",
-      "service_unit": 1
+      "name_fi": "Metsät ulkokunnissa (Vantaa)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 107,
     "fields": {
       "name": "Metsät ulkokunnissa (Vihti)",
-      "service_unit": 1
+      "name_fi": "Metsät ulkokunnissa (Vihti)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 108,
     "fields": {
       "name": "Metsät ulkunnissa (Kirkkonummi)",
-      "service_unit": 1
+      "name_fi": "Metsät ulkunnissa (Kirkkonummi)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 109,
     "fields": {
       "name": "Monitoimi- / korttelitalo yms.",
-      "service_unit": 1
+      "name_fi": "Monitoimi- / korttelitalo yms.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 110,
     "fields": {
       "name": "Murskaamoalue",
-      "service_unit": 1
+      "name_fi": "Murskaamoalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 111,
     "fields": {
       "name": "Museo",
-      "service_unit": 1
+      "name_fi": "Museo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 112,
     "fields": {
       "name": "Muu yleinen",
-      "service_unit": 1
+      "name_fi": "Muu yleinen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 113,
     "fields": {
       "name": "Myymälä",
-      "service_unit": 1
+      "name_fi": "Myymälä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 114,
     "fields": {
       "name": "Myynti- ja liiketoimintaa",
-      "service_unit": 1
+      "name_fi": "Myynti- ja liiketoimintaa",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 115,
     "fields": {
       "name": "Omakotitalo",
-      "service_unit": 1
+      "name_fi": "Omakotitalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 116,
     "fields": {
       "name": "Omistusasuntoja",
-      "service_unit": 1
+      "name_fi": "Omistusasuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 117,
     "fields": {
       "name": "Opetustoiminta",
-      "service_unit": 1
+      "name_fi": "Opetustoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 118,
     "fields": {
       "name": "Opiskelija-asuntoja",
-      "service_unit": 1
+      "name_fi": "Opiskelija-asuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 119,
     "fields": {
       "name": "Ostoskeskus",
-      "service_unit": 1
+      "name_fi": "Ostoskeskus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 120,
     "fields": {
       "name": "Paineenmuuntoasema",
-      "service_unit": 1
+      "name_fi": "Paineenmuuntoasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 121,
     "fields": {
       "name": "Paloasema",
-      "service_unit": 1
+      "name_fi": "Paloasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 122,
     "fields": {
       "name": "Palvelutalo (liiketoimintaa)",
-      "service_unit": 1
+      "name_fi": "Palvelutalo (liiketoimintaa)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 123,
     "fields": {
       "name": "Palvelutalo/hoitokoti",
-      "service_unit": 1
+      "name_fi": "Palvelutalo/hoitokoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 124,
     "fields": {
       "name": "Paritalo",
-      "service_unit": 1
+      "name_fi": "Paritalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 125,
     "fields": {
       "name": "Pelastustie",
-      "service_unit": 1
+      "name_fi": "Pelastustie",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 126,
     "fields": {
       "name": "Peruskorjattu omakotitalo",
-      "service_unit": 1
+      "name_fi": "Peruskorjattu omakotitalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 127,
     "fields": {
       "name": "Peruskorjattuja arava-vuokrataloja",
-      "service_unit": 1
+      "name_fi": "Peruskorjattuja arava-vuokrataloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 128,
     "fields": {
       "name": "Peruskorjattuja aravaomistustaloja",
-      "service_unit": 1
+      "name_fi": "Peruskorjattuja aravaomistustaloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 129,
     "fields": {
       "name": "Peruskorjattuja vapaarah. omistustaloja",
-      "service_unit": 1
+      "name_fi": "Peruskorjattuja vapaarah. omistustaloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 130,
     "fields": {
       "name": "Peruskorjattuja vapaarah. vuokrataloja",
-      "service_unit": 1
+      "name_fi": "Peruskorjattuja vapaarah. vuokrataloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 131,
     "fields": {
       "name": "Peruskorjattuja vuokrataloja",
-      "service_unit": 1
+      "name_fi": "Peruskorjattuja vuokrataloja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 132,
     "fields": {
       "name": "Pesula",
-      "service_unit": 1
+      "name_fi": "Pesula",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 133,
     "fields": {
       "name": "Pienoisgolf / golf",
-      "service_unit": 1
+      "name_fi": "Pienoisgolf / golf",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 134,
     "fields": {
       "name": "Pienteollisuusrakennus",
-      "service_unit": 1
+      "name_fi": "Pienteollisuusrakennus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 135,
     "fields": {
       "name": "Poikkeamispäätöksen hakeminen",
-      "service_unit": 1
+      "name_fi": "Poikkeamispäätöksen hakeminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 136,
     "fields": {
       "name": "Polttoaineen jakelulaite",
-      "service_unit": 1
+      "name_fi": "Polttoaineen jakelulaite",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 137,
     "fields": {
       "name": "Puisto- ja viheralueet",
-      "service_unit": 1
+      "name_fi": "Puisto- ja viheralueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 138,
     "fields": {
       "name": "Puistoalueen kunnostaminen",
-      "service_unit": 1
+      "name_fi": "Puistoalueen kunnostaminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 139,
     "fields": {
       "name": "Pumppaamo",
-      "service_unit": 1
+      "name_fi": "Pumppaamo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 140,
     "fields": {
       "name": "Putki-, laite-, kuljetussillan pito-oik.",
-      "service_unit": 1
+      "name_fi": "Putki-, laite-, kuljetussillan pito-oik.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 141,
     "fields": {
       "name": "Putkien pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Putkien pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 142,
     "fields": {
       "name": "Puutarha (Kaisaniemi).",
-      "service_unit": 1
+      "name_fi": "Puutarha (Kaisaniemi).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 143,
     "fields": {
       "name": "Puutarha- / taimimyymälä).",
-      "service_unit": 1
+      "name_fi": "Puutarha- / taimimyymälä).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 144,
     "fields": {
       "name": "Pysäköinti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 145,
     "fields": {
       "name": "Pysäköinti/asuntotontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/asuntotontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 146,
     "fields": {
       "name": "Pysäköinti/kirkko, seurakuntatalo",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/kirkko, seurakuntatalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 147,
     "fields": {
       "name": "Pysäköinti/liiketontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/liiketontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 148,
     "fields": {
       "name": "Pysäköinti/opiskelija-asuntotontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/opiskelija-asuntotontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 149,
     "fields": {
       "name": "Pysäköinti/teollisuustontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/teollisuustontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 150,
     "fields": {
       "name": "Pysäköinti/toimistotontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/toimistotontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 151,
     "fields": {
       "name": "Pysäköinti/vanhainkoti tontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/vanhainkoti tontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 152,
     "fields": {
       "name": "Pysäköinti/vanhusten asuntotontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/vanhusten asuntotontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 153,
     "fields": {
       "name": "Pysäköinti/yleisen rakennuksen tontti",
-      "service_unit": 1
+      "name_fi": "Pysäköinti/yleisen rakennuksen tontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 154,
     "fields": {
       "name": "Pysäköintilaitos/maanalainen tila",
-      "service_unit": 1
+      "name_fi": "Pysäköintilaitos/maanalainen tila",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 155,
     "fields": {
       "name": "Pysäköintilaitos/rakennus",
-      "service_unit": 1
+      "name_fi": "Pysäköintilaitos/rakennus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 156,
     "fields": {
       "name": "Pyörien, veneiden yms. laitt. vuokraus",
-      "service_unit": 1
+      "name_fi": "Pyörien, veneiden yms. laitt. vuokraus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 157,
     "fields": {
       "name": "Päivittäistavarakauppa",
-      "service_unit": 1
+      "name_fi": "Päivittäistavarakauppa",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 158,
     "fields": {
       "name": "Päiväkoti",
-      "service_unit": 1
+      "name_fi": "Päiväkoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 159,
     "fields": {
       "name": "Raiteenpito-oikeus",
-      "service_unit": 1
+      "name_fi": "Raiteenpito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 160,
     "fields": {
       "name": "Rakennuksen pitäminen",
-      "service_unit": 1
+      "name_fi": "Rakennuksen pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 161,
     "fields": {
       "name": "Rakennusjätteen lajittelu",
-      "service_unit": 1
+      "name_fi": "Rakennusjätteen lajittelu",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 162,
     "fields": {
       "name": "Rakennusl. hakem. (toimisto/liike/teoll)",
-      "service_unit": 1
+      "name_fi": "Rakennusl. hakem. (toimisto/liike/teoll)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 163,
     "fields": {
       "name": "Rakennusluvan hak. (huolto/jakeluasema)",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hak. (huolto/jakeluasema)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 164,
     "fields": {
       "name": "Rakennusluvan hak. (yleinen rakennus)",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hak. (yleinen rakennus)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 165,
     "fields": {
       "name": "Rakennusluvan hakeminen (asuminen)",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen (asuminen)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 166,
     "fields": {
       "name": "Rakennusluvan hakeminen (liiketontti).",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen (liiketontti).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 167,
     "fields": {
       "name": "Rakennusluvan hakeminen (maanal. tila).",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen (maanal. tila).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 168,
     "fields": {
       "name": "Rakennusluvan hakeminen (muu)",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen (muu)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 169,
     "fields": {
       "name": "Rakennusluvan hakeminen (teollisuus).",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen (teollisuus).",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 170,
     "fields": {
       "name": "Rakennustöiden aloittaminen",
-      "service_unit": 1
+      "name_fi": "Rakennustöiden aloittaminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 171,
     "fields": {
       "name": "Rakenteiden sijoittaminen",
-      "service_unit": 1
+      "name_fi": "Rakenteiden sijoittaminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 172,
     "fields": {
       "name": "Rasitesopimuksen hyväksyminen",
-      "service_unit": 1
+      "name_fi": "Rasitesopimuksen hyväksyminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 173,
     "fields": {
       "name": "Ravintolalaiva",
-      "service_unit": 1
+      "name_fi": "Ravintolalaiva",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 174,
     "fields": {
       "name": "Romukauppa",
-      "service_unit": 1
+      "name_fi": "Romukauppa",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 175,
     "fields": {
       "name": "Ruoppaaminen/vesirakennustyö",
-      "service_unit": 1
+      "name_fi": "Ruoppaaminen/vesirakennustyö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 176,
     "fields": {
       "name": "Ryhmäkoti",
-      "service_unit": 1
+      "name_fi": "Ryhmäkoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 177,
     "fields": {
       "name": "SIIRTOLAVOJEN SÄILYTYS",
-      "service_unit": 1
+      "name_fi": "SIIRTOLAVOJEN SÄILYTYS",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 178,
     "fields": {
       "name": "Saaret / luodot",
-      "service_unit": 1
+      "name_fi": "Saaret / luodot",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 179,
     "fields": {
       "name": "Sade-/hulevesien johtaminen",
-      "service_unit": 1
+      "name_fi": "Sade-/hulevesien johtaminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 180,
     "fields": {
       "name": "Satamatoiminnot",
-      "service_unit": 1
+      "name_fi": "Satamatoiminnot",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 181,
     "fields": {
       "name": "Sauna",
-      "service_unit": 1
+      "name_fi": "Sauna",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 182,
     "fields": {
       "name": "Sekalaiset",
-      "service_unit": 1
+      "name_fi": "Sekalaiset",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 183,
     "fields": {
       "name": "Sekatalo",
-      "service_unit": 1
+      "name_fi": "Sekatalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 184,
     "fields": {
       "name": "Seurakuntatalo",
-      "service_unit": 1
+      "name_fi": "Seurakuntatalo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 185,
     "fields": {
       "name": "Siirtolapuutarha",
-      "service_unit": 1
+      "name_fi": "Siirtolapuutarha",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 186,
     "fields": {
       "name": "Sirkus / tivoli",
-      "service_unit": 1
+      "name_fi": "Sirkus / tivoli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 187,
     "fields": {
       "name": "Sisäinen vuokraus",
-      "service_unit": 1
+      "name_fi": "Sisäinen vuokraus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 188,
     "fields": {
       "name": "Sosiaalitoimi ja terveydenhuolto",
-      "service_unit": 1
+      "name_fi": "Sosiaalitoimi ja terveydenhuolto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 189,
     "fields": {
       "name": "Suurtehohälytin",
-      "service_unit": 1
+      "name_fi": "Suurtehohälytin",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 190,
     "fields": {
       "name": "Sähköasema",
-      "service_unit": 1
+      "name_fi": "Sähköasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 191,
     "fields": {
       "name": "Sähkömuuntamo",
-      "service_unit": 1
+      "name_fi": "Sähkömuuntamo",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 192,
     "fields": {
       "name": "Sähkön siirto",
-      "service_unit": 1
+      "name_fi": "Sähkön siirto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 193,
     "fields": {
       "name": "Sähkönsyöttöasema",
-      "service_unit": 1
+      "name_fi": "Sähkönsyöttöasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 194,
     "fields": {
       "name": "Säiliö",
-      "service_unit": 1
+      "name_fi": "Säiliö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 195,
     "fields": {
       "name": "Taide- tms teos",
-      "service_unit": 1
+      "name_fi": "Taide- tms teos",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 196,
     "fields": {
       "name": "Tapahtuma",
-      "service_unit": 1
+      "name_fi": "Tapahtuma",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 197,
     "fields": {
       "name": "Tavaraterminaali",
-      "service_unit": 1
+      "name_fi": "Tavaraterminaali",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 198,
     "fields": {
       "name": "Teatteri/Museo/Ooppera ym. taidelaitoks.",
-      "service_unit": 1
+      "name_fi": "Teatteri/Museo/Ooppera ym. taidelaitoks.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 199,
     "fields": {
       "name": "Tekninen huolto",
-      "service_unit": 1
+      "name_fi": "Tekninen huolto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 200,
     "fields": {
       "name": "Telakkateollisuus",
-      "service_unit": 1
+      "name_fi": "Telakkateollisuus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 201,
     "fields": {
       "name": "Tennis-, pallo-, yms. kenttäalue",
-      "service_unit": 1
+      "name_fi": "Tennis-, pallo-, yms. kenttäalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 202,
     "fields": {
       "name": "Teollisuus- ja myymälätarkoituksiin",
-      "service_unit": 1
+      "name_fi": "Teollisuus- ja myymälätarkoituksiin",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 203,
     "fields": {
       "name": "Teollisuus- ja varastotarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Teollisuus- ja varastotarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 204,
     "fields": {
       "name": "Teollisuustarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Teollisuustarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 205,
     "fields": {
       "name": "Terassialue (ravintola)",
-      "service_unit": 1
+      "name_fi": "Terassialue (ravintola)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 206,
     "fields": {
       "name": "Terminaali",
-      "service_unit": 1
+      "name_fi": "Terminaali",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 207,
     "fields": {
       "name": "Tila asuinkiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila asuinkiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 208,
     "fields": {
       "name": "Tila kokoontumiskiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila kokoontumiskiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 209,
     "fields": {
       "name": "Tila liikekiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila liikekiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 210,
     "fields": {
       "name": "Tila liikuntakiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila liikuntakiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 211,
     "fields": {
       "name": "Tila muu kiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila muu kiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 212,
     "fields": {
       "name": "Tila opetustoimen kiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila opetustoimen kiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 213,
     "fields": {
       "name": "Tila palo- ja pelastust kiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila palo- ja pelastust kiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 214,
     "fields": {
       "name": "Tila pysäköinti",
-      "service_unit": 1
+      "name_fi": "Tila pysäköinti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 215,
     "fields": {
       "name": "Tila sosiaalitoimen kiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila sosiaalitoimen kiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 216,
     "fields": {
       "name": "Tila terveystoimen kiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila terveystoimen kiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 217,
     "fields": {
       "name": "Tila toimistokiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila toimistokiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 218,
     "fields": {
       "name": "Tila tuotanto/teollisuuskiinteistö",
-      "service_unit": 1
+      "name_fi": "Tila tuotanto/teollisuuskiinteistö",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 219,
     "fields": {
       "name": "Tilapäinen sähkölinja",
-      "service_unit": 1
+      "name_fi": "Tilapäinen sähkölinja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 220,
     "fields": {
       "name": "Toimistotarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Toimistotarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 221,
     "fields": {
       "name": "Toimitalo (järjestön)",
-      "service_unit": 1
+      "name_fi": "Toimitalo (järjestön)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 222,
     "fields": {
       "name": "Toimitalo (yrityksen)",
-      "service_unit": 1
+      "name_fi": "Toimitalo (yrityksen)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 223,
     "fields": {
       "name": "Tukiseinän/-muurin pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Tukiseinän/-muurin pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 224,
     "fields": {
       "name": "Tukkukauppa",
-      "service_unit": 1
+      "name_fi": "Tukkukauppa",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 225,
     "fields": {
       "name": "Työmaaparakkien pitäminen",
-      "service_unit": 1
+      "name_fi": "Työmaaparakkien pitäminen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 226,
     "fields": {
       "name": "Työmaaruokala",
-      "service_unit": 1
+      "name_fi": "Työmaaruokala",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 227,
     "fields": {
       "name": "Työmaataulu",
-      "service_unit": 1
+      "name_fi": "Työmaataulu",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 228,
     "fields": {
       "name": "Työmaatie",
-      "service_unit": 1
+      "name_fi": "Työmaatie",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 229,
     "fields": {
       "name": "Työmaatukikohta",
-      "service_unit": 1
+      "name_fi": "Työmaatukikohta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 230,
     "fields": {
       "name": "Työmaatukikohta ja työmaatie",
-      "service_unit": 1
+      "name_fi": "Työmaatukikohta ja työmaatie",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 231,
     "fields": {
       "name": "Työmaihin liittyviä",
-      "service_unit": 1
+      "name_fi": "Työmaihin liittyviä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 232,
     "fields": {
       "name": "Täyttö- / luiskan pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Täyttö- / luiskan pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 233,
     "fields": {
       "name": "Ulkoilma-,/esittely-, ym. tilaisuus",
-      "service_unit": 1
+      "name_fi": "Ulkoilma-,/esittely-, ym. tilaisuus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 234,
     "fields": {
       "name": "Ulkoilualue",
-      "service_unit": 1
+      "name_fi": "Ulkoilualue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 235,
     "fields": {
       "name": "Urheilu- ja liikuntatarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Urheilu- ja liikuntatarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 236,
     "fields": {
       "name": "Vaihtolava",
-      "service_unit": 1
+      "name_fi": "Vaihtolava",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 237,
     "fields": {
       "name": "Vanhainkoti, sairaskoti",
-      "service_unit": 1
+      "name_fi": "Vanhainkoti, sairaskoti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 238,
     "fields": {
       "name": "Vanhusten asuntoja",
-      "service_unit": 1
+      "name_fi": "Vanhusten asuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 239,
     "fields": {
       "name": "Vapaarahoitt. työsuhdevuokra-asuntoja",
-      "service_unit": 1
+      "name_fi": "Vapaarahoitt. työsuhdevuokra-asuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 240,
     "fields": {
       "name": "Vapaarahoitteisia omistusasuntoja",
-      "service_unit": 1
+      "name_fi": "Vapaarahoitteisia omistusasuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 241,
     "fields": {
       "name": "Vapaarahoitteisia vuokra-asuntoja",
-      "service_unit": 1
+      "name_fi": "Vapaarahoitteisia vuokra-asuntoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 242,
     "fields": {
       "name": "Varasto- / tukikohta-alue",
-      "service_unit": 1
+      "name_fi": "Varasto- / tukikohta-alue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 243,
     "fields": {
       "name": "Varastotarkoitukseen",
-      "service_unit": 1
+      "name_fi": "Varastotarkoitukseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 244,
     "fields": {
       "name": "Varikko",
-      "service_unit": 1
+      "name_fi": "Varikko",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 245,
     "fields": {
       "name": "Veneiden talvitelakointi tms.",
-      "service_unit": 1
+      "name_fi": "Veneiden talvitelakointi tms.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 246,
     "fields": {
       "name": "Venelaituri",
-      "service_unit": 1
+      "name_fi": "Venelaituri",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 247,
     "fields": {
       "name": "Veneliikenteen jakeluasema",
-      "service_unit": 1
+      "name_fi": "Veneliikenteen jakeluasema",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 248,
     "fields": {
       "name": "Veneliiketoiminta",
-      "service_unit": 1
+      "name_fi": "Veneliiketoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 249,
     "fields": {
       "name": "Venesatama, -laituri yms.",
-      "service_unit": 1
+      "name_fi": "Venesatama, -laituri yms.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 250,
     "fields": {
       "name": "Venesatama, maa-alue",
-      "service_unit": 1
+      "name_fi": "Venesatama, maa-alue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 251,
     "fields": {
       "name": "Venesatama, vesialue",
-      "service_unit": 1
+      "name_fi": "Venesatama, vesialue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 252,
     "fields": {
       "name": "Vesi-/viemäri-/öljy- ym.johtojen pito",
-      "service_unit": 1
+      "name_fi": "Vesi-/viemäri-/öljy- ym.johtojen pito",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 253,
     "fields": {
       "name": "Vesialue",
-      "service_unit": 1
+      "name_fi": "Vesialue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 254,
     "fields": {
       "name": "Vesihuolto",
-      "service_unit": 1
+      "name_fi": "Vesihuolto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 255,
     "fields": {
       "name": "Viljelyspalsta yms.",
-      "service_unit": 1
+      "name_fi": "Viljelyspalsta yms.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 256,
     "fields": {
       "name": "Virkistys ja liikunta",
-      "service_unit": 1
+      "name_fi": "Virkistys ja liikunta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 257,
     "fields": {
       "name": "Virkistystoiminta",
-      "service_unit": 1
+      "name_fi": "Virkistystoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 258,
     "fields": {
       "name": "Voimalaitos",
-      "service_unit": 1
+      "name_fi": "Voimalaitos",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 259,
     "fields": {
       "name": "Väestönsuoja",
-      "service_unit": 1
+      "name_fi": "Väestönsuoja",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 260,
     "fields": {
       "name": "Yhteinen leikki- ja oleskelualue",
-      "service_unit": 1
+      "name_fi": "Yhteinen leikki- ja oleskelualue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 261,
     "fields": {
       "name": "Yhteispiha",
-      "service_unit": 1
+      "name_fi": "Yhteispiha",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 262,
     "fields": {
       "name": "toimisto / liike / teollisuus",
-      "service_unit": 1
+      "name_fi": "toimisto / liike / teollisuus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 263,
     "fields": {
       "name": "Maatalousmaa (peltovuokraus)",
-      "service_unit": 1
+      "name_fi": "Maatalousmaa (peltovuokraus)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 264,
     "fields": {
       "name": "Johtojen pitäminen (myös tieto/valokuit)",
-      "service_unit": 1
+      "name_fi": "Johtojen pitäminen (myös tieto/valokuit)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 265,
     "fields": {
       "name": "Kaup. ostaman kiinteistön hallintaoikeus",
-      "service_unit": 1
+      "name_fi": "Kaup. ostaman kiinteistön hallintaoikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 266,
     "fields": {
       "name": "Pihakalusteiden pitäm.(keinu,hiekkal.ym)",
-      "service_unit": 1
+      "name_fi": "Pihakalusteiden pitäm.(keinu,hiekkal.ym)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 267,
     "fields": {
       "name": "Puistoalueen käyttöoik.tont.ajoon (tie)",
-      "service_unit": 1
+      "name_fi": "Puistoalueen käyttöoik.tont.ajoon (tie)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 268,
     "fields": {
       "name": "Pysäköinti / palvelupiste (linja/kuorm.)",
-      "service_unit": 1
+      "name_fi": "Pysäköinti / palvelupiste (linja/kuorm.)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 269,
     "fields": {
       "name": "Rakennusluvan hakeminen/pysäköintitontti",
-      "service_unit": 1
+      "name_fi": "Rakennusluvan hakeminen/pysäköintitontti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 270,
     "fields": {
       "name": "Sairaala/kuntoutusk/terveys-/lääkärias.",
-      "service_unit": 1
+      "name_fi": "Sairaala/kuntoutusk/terveys-/lääkärias.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 271,
     "fields": {
       "name": "Suurjännitejohto / sähkölinja / -kaapeli",
-      "service_unit": 1
+      "name_fi": "Suurjännitejohto / sähkölinja / -kaapeli",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 272,
     "fields": {
       "name": "Tien / ajorampin / liittymän pito-oikeus",
-      "service_unit": 1
+      "name_fi": "Tien / ajorampin / liittymän pito-oikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 273,
     "fields": {
       "name": "Tilojen käyttöoik. toimistona/liikkeenä",
-      "service_unit": 1
+      "name_fi": "Tilojen käyttöoik. toimistona/liikkeenä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 274,
     "fields": {
       "name": "Tontti-/ LP-alueen käytt. tontille ajoon",
-      "service_unit": 1
+      "name_fi": "Tontti-/ LP-alueen käytt. tontille ajoon",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 275,
     "fields": {
       "name": "Ulkoilu-/kävelytien käytt.oik.tont.ajoon",
-      "service_unit": 1
+      "name_fi": "Ulkoilu-/kävelytien käytt.oik.tont.ajoon",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 276,
     "fields": {
       "name": "Venetel. ja veneilyä palv. liiketoiminta",
-      "service_unit": 1
+      "name_fi": "Venetel. ja veneilyä palv. liiketoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 277,
     "fields": {
       "name": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
-      "service_unit": 2
+      "name_fi": "Aluekeräyspiste, keräyslaatikko, jakelulaatikko",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 278,
     "fields": {
       "name": "Hiekkasiilo, kaupungin urakkasopimukset",
-      "service_unit": 2
+      "name_fi": "Hiekkasiilo, kaupungin urakkasopimukset",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 279,
     "fields": {
       "name": "Hiekkasiilo, muut",
-      "service_unit": 2
+      "name_fi": "Hiekkasiilo, muut",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 280,
     "fields": {
       "name": "Kaupunkipyörä",
-      "service_unit": 2
+      "name_fi": "Kaupunkipyörä",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 281,
     "fields": {
       "name": "Kaupunkiviljely",
-      "service_unit": 2
+      "name_fi": "Kaupunkiviljely",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 282,
     "fields": {
       "name": "Kioski, kahvila, myyntipaikat",
-      "service_unit": 2
+      "name_fi": "Kioski, kahvila, myyntipaikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 283,
     "fields": {
       "name": "Lasitettu katuterassi ja lasitettu asiakastila",
-      "service_unit": 2
+      "name_fi": "Lasitettu katuterassi ja lasitettu asiakastila",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 284,
     "fields": {
       "name": "Leikkipaikan käyttöoikeus",
-      "service_unit": 2
+      "name_fi": "Leikkipaikan käyttöoikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 285,
     "fields": {
       "name": "Liikunta ja ulkoilu",
-      "service_unit": 2
+      "name_fi": "Liikunta ja ulkoilu",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 286,
     "fields": {
       "name": "Lisäpiha, asuntotontit",
-      "service_unit": 2
+      "name_fi": "Lisäpiha, asuntotontit",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 287,
     "fields": {
       "name": "Lisäpiha, yksityiset päiväkodit",
-      "service_unit": 2
+      "name_fi": "Lisäpiha, yksityiset päiväkodit",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 288,
     "fields": {
       "name": "Maa-aineksen varastointi",
-      "service_unit": 2
+      "name_fi": "Maa-aineksen varastointi",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 289,
     "fields": {
       "name": "Mehiläistarhaus",
-      "service_unit": 2
+      "name_fi": "Mehiläistarhaus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 290,
     "fields": {
       "name": "Metsästysoikeus",
-      "service_unit": 2
+      "name_fi": "Metsästysoikeus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 291,
     "fields": {
       "name": "Muu tontinosan tilapäinen vuokraus",
-      "service_unit": 2
+      "name_fi": "Muu tontinosan tilapäinen vuokraus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 292,
     "fields": {
       "name": "Laiva ja muu vesialue",
-      "service_unit": 2
+      "name_fi": "Laiva ja muu vesialue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 293,
     "fields": {
       "name": "Muu yleisen alueen tilapäinen vuokraus",
-      "service_unit": 2
+      "name_fi": "Muu yleisen alueen tilapäinen vuokraus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 295,
     "fields": {
       "name": "Muuntamo, laitetila, masto",
-      "service_unit": 2
+      "name_fi": "Muuntamo, laitetila, masto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 296,
     "fields": {
       "name": "Pysäköinti",
-      "service_unit": 2
+      "name_fi": "Pysäköinti",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 297,
     "fields": {
       "name": "Sähköauton latauspaikka",
-      "service_unit": 2
+      "name_fi": "Sähköauton latauspaikka",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 298,
     "fields": {
       "name": "Sähköpotkulauta",
-      "service_unit": 2
+      "name_fi": "Sähköpotkulauta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 299,
     "fields": {
       "name": "Taide ja kulttuuri",
-      "service_unit": 2
+      "name_fi": "Taide ja kulttuuri",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 300,
     "fields": {
       "name": "Tilapäinen käymälä ja taukotila",
-      "service_unit": 2
+      "name_fi": "Tilapäinen käymälä ja taukotila",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 301,
     "fields": {
       "name": "Työmaatukitoiminta",
-      "service_unit": 2
+      "name_fi": "Työmaatukitoiminta",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 302,
     "fields": {
       "name": "Ulkomainonta, kilpailutettu",
-      "service_unit": 2
+      "name_fi": "Ulkomainonta, kilpailutettu",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 303,
     "fields": {
       "name": "Ulkomainonta, yksityinen",
-      "service_unit": 2
+      "name_fi": "Ulkomainonta, yksityinen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 304,
     "fields": {
       "name": "Varastointi",
-      "service_unit": 2
+      "name_fi": "Varastointi",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 306,
     "fields": {
       "name": "Konttien/vajojen/majojen sijoittaminen (LIPA)",
-      "service_unit": 3
+      "name_fi": "Konttien/vajojen/majojen sijoittaminen (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 307,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (LIPA)",
-      "service_unit": 3
+      "name_fi": "Aluekeräyspisteet ja varhaisjakelun paikat (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 308,
     "fields": {
       "name": "Liikuntapuistojen ja -kenttien maa-alueet (LIPA)",
-      "service_unit": 3
+      "name_fi": "Liikuntapuistojen ja -kenttien maa-alueet (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 309,
     "fields": {
       "name": "Ylipainehallien maa-alueet (LIPA)",
-      "service_unit": 3
+      "name_fi": "Ylipainehallien maa-alueet (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 310,
     "fields": {
       "name": "Liikuntahallien ym. maa-alueet (LIPA)",
-      "service_unit": 3
+      "name_fi": "Liikuntahallien ym. maa-alueet (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 311,
     "fields": {
       "name": "Pysäköintialueet (LIPA)",
-      "service_unit": 3
+      "name_fi": "Pysäköintialueet (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 312,
     "fields": {
       "name": "Kioskipaikat (LIPA)",
-      "service_unit": 3
+      "name_fi": "Kioskipaikat (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 313,
     "fields": {
       "name": "Terassialueet (LIPA)",
-      "service_unit": 3
+      "name_fi": "Terassialueet (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 314,
     "fields": {
       "name": "Tukiasemat (LIPA)",
-      "service_unit": 3
+      "name_fi": "Tukiasemat (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 315,
     "fields": {
       "name": "Työmaatukikohdat (LIPA)",
-      "service_unit": 3
+      "name_fi": "Työmaatukikohdat (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 316,
     "fields": {
       "name": "Koiraurheilu ja agilitykentät (LIPA)",
-      "service_unit": 3
+      "name_fi": "Koiraurheilu ja agilitykentät (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 317,
     "fields": {
       "name": "Ammunta-/jousiammuntaradat (LIPA)",
-      "service_unit": 3
+      "name_fi": "Ammunta-/jousiammuntaradat (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 318,
     "fields": {
       "name": "Seikkailupuistot (LIPA)",
-      "service_unit": 3
+      "name_fi": "Seikkailupuistot (LIPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 3,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 319,
     "fields": {
       "name": "Konttien/vajojen/majojen sijoittaminen (UPA)",
-      "service_unit": 4
+      "name_fi": "Konttien/vajojen/majojen sijoittaminen (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 320,
     "fields": {
       "name": "Metsästyssopimukset (UPA)",
-      "service_unit": 4
+      "name_fi": "Metsästyssopimukset (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 321,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (UPA)",
-      "service_unit": 4
+      "name_fi": "Aluekeräyspisteet ja varhaisjakelun paikat (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 322,
     "fields": {
       "name": "Liikuntapuistojen ja -kenttien maa-alueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Liikuntapuistojen ja -kenttien maa-alueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 323,
     "fields": {
       "name": "Ylipainehallien maa-alueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Ylipainehallien maa-alueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 324,
     "fields": {
       "name": "Liikuntahallien ym. maa-alueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Liikuntahallien ym. maa-alueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 325,
     "fields": {
       "name": "Golfkentät (UPA)",
-      "service_unit": 4
+      "name_fi": "Golfkentät (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 326,
     "fields": {
       "name": "Pysäköintialueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Pysäköintialueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 327,
     "fields": {
       "name": "Laidunalueet / hevosten jaloittelualueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Laidunalueet / hevosten jaloittelualueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 328,
     "fields": {
       "name": "Kioskipaikat (UPA)",
-      "service_unit": 4
+      "name_fi": "Kioskipaikat (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 329,
     "fields": {
       "name": "Terassialueet (UPA)",
-      "service_unit": 4
+      "name_fi": "Terassialueet (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 330,
     "fields": {
       "name": "Tukiasemat (UPA)",
-      "service_unit": 4
+      "name_fi": "Tukiasemat (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 331,
     "fields": {
       "name": "Työmaatukikohdat (UPA)",
-      "service_unit": 4
+      "name_fi": "Työmaatukikohdat (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 332,
     "fields": {
       "name": "Tulipaikat (ulkoilualueilla) (UPA)",
-      "service_unit": 4
+      "name_fi": "Tulipaikat (ulkoilualueilla) (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 333,
     "fields": {
       "name": "Koiraurheilu ja agilitykentät (UPA)",
-      "service_unit": 4
+      "name_fi": "Koiraurheilu ja agilitykentät (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 334,
     "fields": {
       "name": "Ammunta-/jousiammuntaradat (UPA)",
-      "service_unit": 4
+      "name_fi": "Ammunta-/jousiammuntaradat (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 335,
     "fields": {
       "name": "Seikkailupuistot (UPA)",
-      "service_unit": 4
+      "name_fi": "Seikkailupuistot (UPA)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 336,
     "fields": {
       "name": "Ravirata",
-      "service_unit": 4
+      "name_fi": "Ravirata",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 337,
     "fields": {
       "name": "Venesatamat",
-      "service_unit": 4
+      "name_fi": "Venesatamat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 338,
     "fields": {
       "name": "Laiturinpito-oikeudet",
-      "service_unit": 4
+      "name_fi": "Laiturinpito-oikeudet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 339,
     "fields": {
       "name": "Aluspaikat",
-      "service_unit": 4
+      "name_fi": "Aluspaikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 340,
     "fields": {
       "name": "Telakka-alueet",
-      "service_unit": 4
+      "name_fi": "Telakka-alueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 341,
     "fields": {
       "name": "Konttien/vajojen/majojen sijoittaminen (NUP)",
-      "service_unit": 5
+      "name_fi": "Konttien/vajojen/majojen sijoittaminen (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 342,
     "fields": {
       "name": "Aluekeräyspisteet ja varhaisjakelun paikat (NUP)",
-      "service_unit": 5
+      "name_fi": "Aluekeräyspisteet ja varhaisjakelun paikat (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 343,
     "fields": {
       "name": "Pysäköintialueet (NUP)",
-      "service_unit": 5
+      "name_fi": "Pysäköintialueet (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 344,
     "fields": {
       "name": "Kioskipaikat (NUP)",
-      "service_unit": 5
+      "name_fi": "Kioskipaikat (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 345,
     "fields": {
       "name": "Tukiasemat (NUP)",
-      "service_unit": 5
+      "name_fi": "Tukiasemat (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
     }
   },
   {
-    "model": "leasing.IntendedUse",
+    "model": "leasing.intendeduse",
     "pk": 346,
     "fields": {
       "name": "Työmaatukikohdat (NUP)",
-      "service_unit": 5
+      "name_fi": "Työmaatukikohdat (NUP)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 347,
+    "fields": {
+      "name": "Ravirata",
+      "name_fi": "Ravirata",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 348,
+    "fields": {
+      "name": "Venesatamat",
+      "name_fi": "Venesatamat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 349,
+    "fields": {
+      "name": "Laiturinpito-oikeudet",
+      "name_fi": "Laiturinpito-oikeudet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 350,
+    "fields": {
+      "name": "Aluspaikat",
+      "name_fi": "Aluspaikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 351,
+    "fields": {
+      "name": "Telakka-alueet",
+      "name_fi": "Telakka-alueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 352,
+    "fields": {
+      "name": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen",
+      "name_fi": "Maanvuokrasopimukset konttien/vajojen/majojen sijoittamiseen",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 353,
+    "fields": {
+      "name": "Metsästyssopimukset",
+      "name_fi": "Metsästyssopimukset",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 354,
+    "fields": {
+      "name": "Aluekeräyspisteet ja varhaisjakelun paikat",
+      "name_fi": "Aluekeräyspisteet ja varhaisjakelun paikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 355,
+    "fields": {
+      "name": "Liikuntapuistojen ja -kenttien maa-alueet",
+      "name_fi": "Liikuntapuistojen ja -kenttien maa-alueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 356,
+    "fields": {
+      "name": "Ylipainehallien maa-alueet",
+      "name_fi": "Ylipainehallien maa-alueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 357,
+    "fields": {
+      "name": "Liikuntahallien ym. maa-alueet ",
+      "name_fi": "Liikuntahallien ym. maa-alueet ",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 358,
+    "fields": {
+      "name": "Golfkentät",
+      "name_fi": "Golfkentät",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 359,
+    "fields": {
+      "name": "Pysäköintialueet",
+      "name_fi": "Pysäköintialueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 360,
+    "fields": {
+      "name": "Laidunalueet / hevosten jaloittelualueet",
+      "name_fi": "Laidunalueet / hevosten jaloittelualueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 361,
+    "fields": {
+      "name": "Kioskipaikat",
+      "name_fi": "Kioskipaikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 362,
+    "fields": {
+      "name": "Terassialueet",
+      "name_fi": "Terassialueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 363,
+    "fields": {
+      "name": "Tukiasemat",
+      "name_fi": "Tukiasemat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 364,
+    "fields": {
+      "name": "Työmaatukikohdat",
+      "name_fi": "Työmaatukikohdat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 365,
+    "fields": {
+      "name": "Tulipaikat (ulkoilualueilla)",
+      "name_fi": "Tulipaikat (ulkoilualueilla)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 366,
+    "fields": {
+      "name": "Koiraurheilu ja agilitykentät",
+      "name_fi": "Koiraurheilu ja agilitykentät",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 367,
+    "fields": {
+      "name": "VPK:n harjoitusalue",
+      "name_fi": "VPK:n harjoitusalue",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 368,
+    "fields": {
+      "name": "Ammunta-/jousiammuntaradat",
+      "name_fi": "Ammunta-/jousiammuntaradat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 369,
+    "fields": {
+      "name": "Seikkailupuistot",
+      "name_fi": "Seikkailupuistot",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 370,
+    "fields": {
+      "name": "Ravirata",
+      "name_fi": "Ravirata",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 371,
+    "fields": {
+      "name": "Venesatamat",
+      "name_fi": "Venesatamat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 372,
+    "fields": {
+      "name": "Laiturinpito-oikeudet",
+      "name_fi": "Laiturinpito-oikeudet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 373,
+    "fields": {
+      "name": "Aluspaikat",
+      "name_fi": "Aluspaikat",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 374,
+    "fields": {
+      "name": "Telakka-alueet",
+      "name_fi": "Telakka-alueet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 375,
+    "fields": {
+      "name": "Muu ei-julkinen käyttötarkoitus",
+      "name_fi": "Muu ei-julkinen käyttötarkoitus",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 376,
+    "fields": {
+      "name": "Opastetaulu",
+      "name_fi": "Opastetaulu",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 377,
+    "fields": {
+      "name": "Opastetaulu (alv)",
+      "name_fi": "Opastetaulu (alv)",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 2,
+      "is_active": true
     }
   }
 ]
