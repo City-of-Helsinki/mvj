@@ -754,5 +754,29 @@
       "is_active": true,
       "service_unit": 2
     }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 64,
+    "fields": {
+      "name": "Opastetaulu",
+      "sap_material_code": "10003962",
+      "sap_order_item_number": null,
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 65,
+    "fields": {
+      "name": "Opastetaulu (alv)",
+      "sap_material_code": "10003954",
+      "sap_order_item_number": null,
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
   }
 ]
