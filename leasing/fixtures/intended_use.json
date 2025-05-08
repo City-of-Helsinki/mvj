@@ -8,7 +8,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -20,7 +20,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -32,7 +32,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -44,7 +44,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -56,7 +56,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -68,7 +68,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -92,7 +92,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -104,7 +104,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -128,7 +128,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -140,7 +140,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -152,7 +152,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -164,7 +164,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -176,7 +176,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -200,7 +200,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -212,7 +212,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -224,7 +224,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -236,7 +236,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -248,7 +248,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -260,7 +260,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -272,7 +272,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -284,7 +284,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -296,7 +296,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -308,7 +308,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -320,7 +320,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -332,7 +332,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -344,15 +344,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 30,
     "fields": {
-      "name": "Hotelli",
-      "name_fi": "Hotelli",
+      "name": "Hotellit ja majoitus",
+      "name_fi": "Hotellit ja majoitus",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -368,7 +368,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -380,7 +380,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -392,7 +392,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -404,7 +404,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -416,7 +416,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -428,7 +428,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -440,7 +440,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -452,7 +452,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -476,7 +476,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -488,7 +488,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -500,7 +500,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -512,7 +512,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -524,15 +524,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 45,
     "fields": {
-      "name": "Kahvila/ravintola",
-      "name_fi": "Kahvila/ravintola",
+      "name": "Kahvila/ravintola/terassi",
+      "name_fi": "Kahvila/ravintola/terassi",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -548,7 +548,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -560,7 +560,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -572,15 +572,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 49,
     "fields": {
-      "name": "Katualue",
-      "name_fi": "Katualue",
+      "name": "Katu-/liikennealue",
+      "name_fi": "Katu-/liikennealue",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -596,7 +596,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -608,7 +608,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -620,7 +620,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -668,7 +668,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -680,7 +680,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -692,7 +692,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -704,7 +704,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -716,7 +716,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -728,7 +728,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -740,7 +740,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -752,7 +752,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -764,19 +764,19 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 65,
     "fields": {
-      "name": "Kulkuoikeus  tontin kautta tontille",
-      "name_fi": "Kulkuoikeus  tontin kautta tontille",
+      "name": "Kulkuoikeus tontin kautta tontille",
+      "name_fi": "Kulkuoikeus tontin kautta tontille",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -812,7 +812,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -824,7 +824,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -836,7 +836,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -848,15 +848,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 72,
     "fields": {
-      "name": "Laiturialue",
-      "name_fi": "Laiturialue",
+      "name": "Laituri",
+      "name_fi": "Laituri",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -872,7 +872,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -884,7 +884,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -896,7 +896,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -920,7 +920,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -944,7 +944,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -956,7 +956,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -980,7 +980,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -992,7 +992,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1016,7 +1016,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1028,7 +1028,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1040,7 +1040,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1052,7 +1052,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1064,7 +1064,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1076,7 +1076,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1088,7 +1088,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1112,7 +1112,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1124,7 +1124,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1160,7 +1160,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1179,8 +1179,8 @@
     "model": "leasing.intendeduse",
     "pk": 99,
     "fields": {
-      "name": "Masto (radio, GSM/NMT yms.)",
-      "name_fi": "Masto (radio, GSM/NMT yms.)",
+      "name": "Masto",
+      "name_fi": "Masto",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -1196,7 +1196,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1208,15 +1208,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 102,
     "fields": {
-      "name": "Metsäalue",
-      "name_fi": "Metsäalue",
+      "name": "Metsät",
+      "name_fi": "Metsät",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -1304,7 +1304,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1316,7 +1316,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1328,7 +1328,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1352,7 +1352,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1364,7 +1364,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1376,7 +1376,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1388,7 +1388,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1412,7 +1412,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1424,7 +1424,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1436,15 +1436,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 121,
     "fields": {
-      "name": "Paloasema",
-      "name_fi": "Paloasema",
+      "name": "Pelastuslaitos",
+      "name_fi": "Pelastuslaitos",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -1460,7 +1460,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1472,7 +1472,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1484,7 +1484,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1508,7 +1508,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1520,7 +1520,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1532,7 +1532,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1544,7 +1544,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1556,7 +1556,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1568,7 +1568,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1580,7 +1580,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1592,7 +1592,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1604,7 +1604,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1616,7 +1616,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1628,7 +1628,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1640,7 +1640,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1652,7 +1652,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1664,7 +1664,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1676,7 +1676,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1688,7 +1688,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1700,7 +1700,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1712,7 +1712,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1736,7 +1736,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1748,7 +1748,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1760,7 +1760,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1772,7 +1772,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1784,7 +1784,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1796,7 +1796,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1808,7 +1808,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1820,7 +1820,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1832,31 +1832,31 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 154,
     "fields": {
-      "name": "Pysäköintilaitos/maanalainen tila",
-      "name_fi": "Pysäköintilaitos/maanalainen tila",
+      "name": "Pysäköinti (maanalainen)",
+      "name_fi": "Pysäköinti (maanalainen)",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 155,
     "fields": {
-      "name": "Pysäköintilaitos/rakennus",
-      "name_fi": "Pysäköintilaitos/rakennus",
+      "name": "Pysäköintilaitos",
+      "name_fi": "Pysäköintilaitos",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1868,7 +1868,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1880,7 +1880,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1892,7 +1892,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1904,7 +1904,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1928,7 +1928,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1940,7 +1940,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1952,7 +1952,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1964,7 +1964,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -1988,7 +1988,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2000,7 +2000,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2012,7 +2012,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2024,7 +2024,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2036,7 +2036,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2048,7 +2048,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2060,7 +2060,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2072,7 +2072,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2084,7 +2084,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2096,7 +2096,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2108,7 +2108,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2120,7 +2120,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2144,7 +2144,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2156,15 +2156,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 181,
     "fields": {
-      "name": "Sauna",
-      "name_fi": "Sauna",
+      "name": "Saunat",
+      "name_fi": "Saunat",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -2192,7 +2192,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2204,7 +2204,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2228,7 +2228,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2252,7 +2252,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2264,7 +2264,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2276,7 +2276,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2288,7 +2288,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2300,7 +2300,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2312,7 +2312,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2324,7 +2324,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2336,7 +2336,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2348,7 +2348,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2360,7 +2360,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2372,7 +2372,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2384,7 +2384,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2396,7 +2396,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2408,7 +2408,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2420,15 +2420,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 203,
     "fields": {
-      "name": "Teollisuus- ja varastotarkoitukseen",
-      "name_fi": "Teollisuus- ja varastotarkoitukseen",
+      "name": "Teollisuus ja varastointi",
+      "name_fi": "Teollisuus ja varastointi",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -2444,7 +2444,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2456,7 +2456,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2468,7 +2468,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2624,15 +2624,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 220,
     "fields": {
-      "name": "Toimistotarkoitukseen",
-      "name_fi": "Toimistotarkoitukseen",
+      "name": "Toimisto",
+      "name_fi": "Toimisto",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -2648,7 +2648,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2660,7 +2660,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2672,7 +2672,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2684,7 +2684,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2696,7 +2696,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2708,7 +2708,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2720,7 +2720,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2732,7 +2732,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2744,7 +2744,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2756,7 +2756,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2768,7 +2768,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2780,7 +2780,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2792,7 +2792,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2804,7 +2804,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2816,7 +2816,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2828,7 +2828,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2840,7 +2840,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2852,7 +2852,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2864,7 +2864,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2876,7 +2876,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2888,7 +2888,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2900,7 +2900,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2912,7 +2912,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2924,7 +2924,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2948,7 +2948,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2960,7 +2960,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -2972,7 +2972,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3020,7 +3020,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3044,15 +3044,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 255,
     "fields": {
-      "name": "Viljelyspalsta yms.",
-      "name_fi": "Viljelyspalsta yms.",
+      "name": "Viljelyspalstat",
+      "name_fi": "Viljelyspalstat",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -3080,7 +3080,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3092,7 +3092,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3116,7 +3116,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3140,7 +3140,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3152,7 +3152,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3164,7 +3164,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3188,7 +3188,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3200,7 +3200,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3212,7 +3212,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3224,15 +3224,15 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
     "model": "leasing.intendeduse",
     "pk": 270,
     "fields": {
-      "name": "Sairaala/kuntoutusk/terveys-/lääkärias.",
-      "name_fi": "Sairaala/kuntoutusk/terveys-/lääkärias.",
+      "name": "Sosiaali ja terveys",
+      "name_fi": "Sosiaali ja terveys",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -3248,7 +3248,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3260,7 +3260,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3272,7 +3272,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3284,7 +3284,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3296,7 +3296,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -3308,7 +3308,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": true
+      "is_active": false
     }
   },
   {
@@ -4251,8 +4251,8 @@
     "model": "leasing.intendeduse",
     "pk": 357,
     "fields": {
-      "name": "Liikuntahallien ym. maa-alueet ",
-      "name_fi": "Liikuntahallien ym. maa-alueet ",
+      "name": "Liikuntahallien ym. maa-alueet",
+      "name_fi": "Liikuntahallien ym. maa-alueet",
       "name_sv": null,
       "name_en": null,
       "service_unit": 5,
@@ -4496,6 +4496,90 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 378,
+    "fields": {
+      "name": "Pelto",
+      "name_fi": "Pelto",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 379,
+    "fields": {
+      "name": "Rasitteet ja muut käyttöoikeudet",
+      "name_fi": "Rasitteet ja muut käyttöoikeudet",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 380,
+    "fields": {
+      "name": "Infra",
+      "name_fi": "Infra",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 381,
+    "fields": {
+      "name": "Uskonnolliset yhteisöt",
+      "name_fi": "Uskonnolliset yhteisöt",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 382,
+    "fields": {
+      "name": "Sekalaiset/liiketarkoitus tms.",
+      "name_fi": "Sekalaiset/liiketarkoitus tms.",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 383,
+    "fields": {
+      "name": "Tehostettu hoiva",
+      "name_fi": "Tehostettu hoiva",
+      "name_sv": null,
+      "name_en": null,
+      "service_unit": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "leasing.intendeduse",
+    "pk": 384,
+    "fields": {
+      "name": "Puisto-/viheralue/puutarha",
+      "name_fi": "Puisto-/viheralue/puutarha",
+      "name_sv": null,
+      "name_en": "Puisto-/viheralue/puutarha",
+      "service_unit": 1,
       "is_active": true
     }
   }
