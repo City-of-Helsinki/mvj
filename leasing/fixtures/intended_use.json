@@ -4251,8 +4251,8 @@
     "model": "leasing.intendeduse",
     "pk": 357,
     "fields": {
-      "name": "Liikuntahallien ym. maa-alueet ",
-      "name_fi": "Liikuntahallien ym. maa-alueet ",
+      "name": "Liikuntahallien ym. maa-alueet",
+      "name_fi": "Liikuntahallien ym. maa-alueet",
       "name_sv": null,
       "name_en": null,
       "service_unit": 5,
