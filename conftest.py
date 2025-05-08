@@ -120,11 +120,11 @@ def area_search_test_data(
     user_factory,
 ):
     intended_use = area_search_intended_use_factory()
-    form = form_factory(title=fake.name())
+    form = form_factory(title=fake.word())
     user = user_factory(username=fake.name())
     area_search = area_search_factory(
-        description_area=fake.name(),
-        description_intended_use=fake.name(),
+        description_area=fake.paragraph(),
+        description_intended_use=fake.paragraph(),
         intended_use=intended_use,
         geometry=GEOSGeometry(
             "MULTIPOLYGON (((24.967535 60.174334, 24.966888 60.173293, 24.970275 60.172791, 24.970922 60.17412, 24.967535 60.174334)))"  # noqa: E501

@@ -702,7 +702,7 @@ def generate_and_queue_answer_emails(input_data: AnswerInputData) -> None:
         if answer_type == AnswerType.AREA_SEARCH:
             # Send email to officers responsible for processing area searches.
             officer_email_input = _generate_lessor_new_areasearch_email(answer)
-            send_email(officer_email_input)
+            send_email(officer_email_input, body_is_html=True)
 
     return
 
@@ -787,20 +787,35 @@ def _get_lessor_new_areasearch_email_subject(
 
     date_format = "%d.%m.%Y"
     start_date = (
-        area_search.start_date.strftime(date_format) if area_search.start_date else "-"
+        area_search.start_date.strftime(date_format)
+        if area_search.start_date
+        else "<aloitusaika puuttuu>"
     )
     end_date = (
-        area_search.end_date.strftime(date_format) if area_search.end_date else "-"
+        area_search.end_date.strftime(date_format) if area_search.end_date else ""
     )
 
-    return f"Aluehakemus {identifier} {district} {address} {applicant} alkaa {start_date} - päättyy {end_date}"
+    return f"Aluehakemus {identifier} {district} {address} {applicant} vuokra-aika {start_date} - {end_date}"
 
 
 def _get_lessor_new_areasearch_email_body(area_search: "AreaSearch") -> str:
     if area_search is None:
         raise ValueError("Area search is None. Cannot generate email body.")
 
+    identifier = area_search.identifier
+    ui_base_url = settings.OFFICER_UI_URL
+    if not ui_base_url:
+        link_to_areasearch = identifier
+    else:
+        link_to_areasearch = (
+            f"<a href='{ui_base_url}/aluehaut/{area_search.pk}'>{identifier}</a>"
+        )
+
     intended_use = area_search.intended_use or "-"
     intended_use_description = area_search.description_intended_use or "-"
-    return f"""Käyttötarkoitus: {intended_use}
-Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}"""
+
+    return f"""<html><body>
+<p>Aluehakemus: {link_to_areasearch}</p>
+<p>Käyttötarkoitus: {intended_use}</p>
+<p>Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}</p>
+</body></html>"""

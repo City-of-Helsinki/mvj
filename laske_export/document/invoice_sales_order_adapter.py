@@ -427,7 +427,7 @@ class InvoiceSalesOrderAdapter:
 
 
 class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
-    """Adapter for service unit Alueiden kehittäminen ja valvonta.
+    """Adapter for service unit Alueiden käyttö ja valvonta.
 
     For service-unit-aware instantiation of class objects, please use the
     factory function invoice_sales_order_adapter_factory

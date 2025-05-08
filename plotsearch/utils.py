@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -11,6 +12,8 @@ from utils.email import EmailMessageInput, send_email
 
 if TYPE_CHECKING:
     from plotsearch.models import AreaSearch, AreaSearchIntendedUse
+
+logger = logging.getLogger(__name__)
 
 
 def map_intended_use_to_lessor(
@@ -186,7 +189,7 @@ def send_areasearch_lessor_changed_email(
             ),
             "attachments": [],
         }
-        send_email(email_input)
+        send_email(email_input, body_is_html=True)
 
 
 def _get_lessor_email_to_address(lessor: AreaSearchLessor) -> str:
@@ -246,13 +249,15 @@ def _get_areasearch_lessor_changed_email_subject(
 
     date_format = "%d.%m.%Y"
     start_date = (
-        area_search.start_date.strftime(date_format) if area_search.start_date else "-"
+        area_search.start_date.strftime(date_format)
+        if area_search.start_date
+        else "<aloitusaika puuttuu>"
     )
     end_date = (
-        area_search.end_date.strftime(date_format) if area_search.end_date else "-"
+        area_search.end_date.strftime(date_format) if area_search.end_date else ""
     )
 
-    return f"Muutos Aluehakemus {identifier} {district} {address} {applicant} alkaa {start_date} - päättyy {end_date}"
+    return f"Muutos Aluehakemus {identifier} {district} {address} {applicant} vuokra-aika {start_date} - {end_date}"
 
 
 def _get_areasearch_lessor_changed_email_body(
@@ -260,12 +265,78 @@ def _get_areasearch_lessor_changed_email_body(
     new_lessor: AreaSearchLessor,
     old_lessor: AreaSearchLessor,
 ) -> str:
+    """Generates the HTML body of the email when areasearch lessor changes."""
     if area_search is None:
         raise ValueError("Area search is None. Cannot generate email body.")
 
-    identifier = area_search.identifier or "<tunnus puuttuu>"
+    identifier = area_search.identifier
+    ui_base_url = settings.OFFICER_UI_URL
+    if not ui_base_url:
+        link_to_areasearch = identifier
+    else:
+        link_to_areasearch = (
+            f"<a href='{ui_base_url}/aluehaut/{area_search.pk}'>{identifier}</a>"
+        )
+
+    new_lessor_name = _get_lessor_contact_name(new_lessor) or "(nimi puuttuu)"
+    old_lessor_name = _get_lessor_contact_name(old_lessor) or "(nimi puuttuu)"
+
     intended_use = area_search.intended_use or "-"
     intended_use_description = area_search.description_intended_use or "-"
-    return f"""Aluehakemuksen {identifier} uusi vuokranantaja on {new_lessor}, oli {old_lessor}."
-Käyttötarkoitus: {intended_use}
-Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}"""
+
+    status = area_search.area_search_status
+    if status:
+        processing_note = status.preparer_note or "-"
+
+        if status.status_notes.exists():
+            latest_status_note = status.status_notes.order_by("-time_stamp").first()
+            note = latest_status_note.note or ""
+            preparer_name = f"{latest_status_note.preparer.last_name} {latest_status_note.preparer.first_name}"
+            timestamp = latest_status_note.time_stamp.strftime("%d.%m.%Y %H:%M")
+            preparer_note = f"{note} ({preparer_name} {timestamp})"
+        else:
+            preparer_note = "-"
+    else:
+        processing_note = "-"
+        preparer_note = "-"
+
+    return f"""<html><body>
+<p>Aluehakemuksen {link_to_areasearch} uusi vuokranantaja on {new_lessor_name}, oli {old_lessor_name}.</p>
+<p>Käyttötarkoitus: {intended_use}</p>
+<p>Tarkempi kuvaus käyttötarkoituksesta: {intended_use_description}</p>
+<p>Käsittelytietojen huomautus: {processing_note}</p>
+<p>Käsittelijän muistiinpanot: {preparer_note}</p>
+</body></html>"""
+
+
+def _get_lessor_contact_name(lessor: AreaSearchLessor) -> str | None:
+    """Returns the contact name of the lessor, or None if name cannot be found."""
+    from leasing.models import Contact
+
+    if lessor is None:
+        logger.warning("Lessor is None.")
+        return None
+
+    service_unit_id = map_lessor_enum_to_service_unit_id(lessor)
+    try:
+        lessor_contact = Contact.objects.get(
+            is_lessor=True,
+            service_unit_id=service_unit_id,
+        )
+        if lessor_contact.name:
+            return lessor_contact.name
+        else:
+            logger.warning(
+                f"Contact with service unit ID {service_unit_id} does not have a name."
+            )
+            return None
+    except Contact.DoesNotExist:
+        logger.warning(
+            f"Lessor contact not found with service unit ID {service_unit_id}."
+        )
+        return None
+    except Contact.MultipleObjectsReturned:
+        logger.warning(
+            f"Multiple lessor contacts found with service unit ID {service_unit_id}."
+        )
+        return None
