@@ -47,6 +47,7 @@ TARGET_SERVICE_UNIT_ID = 1  # Only MAKE intended uses and leases are updated
 logger = logging.getLogger(__name__)
 stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class IntendedUseUpdateDetails(TypedDict):
@@ -84,7 +85,6 @@ def parse_args():
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        default="false",
         help="Only print what would be done without making changes",
     )
     return parser.parse_args()
@@ -93,7 +93,7 @@ def parse_args():
 def main():
     args = parse_args()
     input_file = args.input_file
-    dry_run = args.dry_run.lower() != "false"
+    dry_run = args.dry_run
 
     with open(input_file, "r", encoding="utf-8") as f:
         intended_use_update_details = json.load(f)
@@ -123,59 +123,70 @@ def update_lease_intended_uses(
 
     for lease in all_leases:
         if lease_counter % 1000 == 0 and lease_counter > 0:
-            logger.info(f"Processed {lease_counter} leases.")
+            logger.info(f"Progress: {lease_counter} leases processed.")
 
         lease_counter += 1
+        updated = update_lease_intended_use_if_needed(lease, old_id_to_details)
 
-        if lease.service_unit.pk != TARGET_SERVICE_UNIT_ID:
-            # This lease is from wrong service unit --> need to skip
-            continue
-
-        old_intended_use = lease.intended_use
-
-        if not old_intended_use or old_intended_use.pk not in old_id_to_details:
-            # This lease is not included in the update --> safe to skip
-            continue
-
-        update_details = old_id_to_details[old_intended_use.pk]
-        old_id = update_details["old_id"]
-        new_id = update_details["new_id"]
-        old_name = update_details["old_name"]
-
-        new_intended_use = IntendedUse.objects.get(pk=new_id)
-
-        if new_intended_use.service_unit.pk != TARGET_SERVICE_UNIT_ID:
-            # The new intended use is from wrong service unit --> need to skip
-            continue
-
-        id_changed = old_id != new_intended_use.pk
-        name_changed = old_name != new_intended_use.name
-
-        if id_changed:
-            if dry_run:
-                logger.info(
-                    f"Would update intended use from {old_id} to {new_intended_use.pk}"
-                )
-            else:
-                lease.intended_use = new_intended_use
-
-        if name_changed:
-            if dry_run:
-                logger.info(f"Would add note: Vanha: {old_name}")
-            else:
-                note = lease.intended_use_note
-                lease.intended_use_note = (
-                    f"{note} Vanha: {old_name}" if note else f"Vanha: {old_name}"
-                )
-
-        if id_changed or name_changed:
-            if dry_run:
-                logger.info(f"Would save lease {lease.pk}")
-            else:
-                lease.save()
-                updated_leases += 1
+        if updated:
+            updated_leases += 1
 
     logger.info(f"Updated {updated_leases} leases in total.")
+
+
+def update_lease_intended_use_if_needed(
+    lease: Lease,
+    old_id_to_details: dict[int, IntendedUseUpdateDetails],
+    dry_run: bool = True,
+) -> bool:
+    """
+    Update a lease's intended use if changes are needed.
+
+    Returns True if the lease was updated, False otherwise.
+    """
+    if lease.service_unit.pk != TARGET_SERVICE_UNIT_ID:
+        # This lease is from wrong service unit --> need to skip
+        return False
+
+    old_intended_use = lease.intended_use
+
+    if not old_intended_use or old_intended_use.pk not in old_id_to_details:
+        # This lease is not included in the update --> safe to skip
+        return False
+
+    update_details = old_id_to_details[old_intended_use.pk]
+    old_id = update_details["old_id"]
+    new_id = update_details["new_id"]
+    old_name = update_details["old_name"]
+
+    new_intended_use = IntendedUse.objects.get(pk=new_id)
+
+    if new_intended_use.service_unit.pk != TARGET_SERVICE_UNIT_ID:
+        # The new intended use is from wrong service unit --> need to skip
+        return False
+
+    id_changed = old_id != new_intended_use.pk
+    name_changed = old_name != new_intended_use.name
+
+    if id_changed:
+        update_lease_intended_use(lease, new_intended_use, old_id, dry_run)
+
+    if name_changed:
+        note_changed = update_lease_intended_use_note_if_changed(
+            lease, old_name, dry_run
+        )
+    else:
+        note_changed = False
+
+    if id_changed or note_changed:
+        if dry_run:
+            logger.info(f"Would save lease {lease.pk}")
+            return False
+        else:
+            lease.save()
+            return True
+
+    return False
 
 
 def new_ids_exist_in_db(
@@ -188,7 +199,8 @@ def new_ids_exist_in_db(
 
     if missing_ids:
         logger.error(
-            f"New intended use IDs {missing_ids} not found in the database. Stopping to avoid problems."
+            f"New intended use IDs {missing_ids} not found in the database. "
+            "Add them to the database before running this script."
         )
         return False
 
@@ -208,6 +220,44 @@ def no_duplicate_old_ids(
             return False
 
     return True
+
+
+def update_lease_intended_use(
+    lease: Lease,
+    new_intended_use: IntendedUse,
+    old_id: int,
+    dry_run: bool = True,
+) -> None:
+    if dry_run:
+        logger.info(f"Would update intended use from {old_id} to {new_intended_use.pk}")
+    else:
+        lease.intended_use = new_intended_use
+
+
+def update_lease_intended_use_note_if_changed(
+    lease: Lease,
+    old_name: str,
+    dry_run: bool = True,
+) -> bool:
+    """
+    Updates lease.intended_use_note if it is not already set to the new value.
+
+    Returns True if the note was updated and lease needs to be saved, False otherwise.
+    """
+    note = lease.intended_use_note or ""
+    note_addition = f"Vanha: {old_name}"
+    note_changed = not note.endswith(note_addition)
+
+    if note_changed:
+        if dry_run:
+            logger.info(f"Would add note: Vanha: {old_name}")
+            return False
+        else:
+            updated_note = f"{note} {note_addition}" if note else note_addition
+            lease.intended_use_note = updated_note
+            return True
+
+    return False
 
 
 if __name__ == "__main__":

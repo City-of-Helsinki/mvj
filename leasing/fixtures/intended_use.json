@@ -351,8 +351,8 @@
     "model": "leasing.intendeduse",
     "pk": 30,
     "fields": {
-      "name": "Hotelli ja majoitus",
-      "name_fi": "Hotelli ja majoitus",
+      "name": "Hotellit ja majoitus",
+      "name_fi": "Hotellit ja majoitus",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -771,8 +771,8 @@
     "model": "leasing.intendeduse",
     "pk": 65,
     "fields": {
-      "name": "Kulkuoikeus  tontin kautta tontille",
-      "name_fi": "Kulkuoikeus  tontin kautta tontille",
+      "name": "Kulkuoikeus tontin kautta tontille",
+      "name_fi": "Kulkuoikeus tontin kautta tontille",
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
@@ -2636,7 +2636,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": false
+      "is_active": true
     }
   },
   {
