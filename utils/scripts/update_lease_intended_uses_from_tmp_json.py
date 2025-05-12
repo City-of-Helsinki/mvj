@@ -61,19 +61,6 @@ class IntendedUseUpdateDetails(TypedDict):
     new_id: int
 
 
-class IntendedUseFields(TypedDict):
-    name: str
-    name_fi: str
-    service_unit: int
-    is_active: bool
-
-
-class IntendedUseFixture(TypedDict):
-    model: str
-    pk: int
-    fields: IntendedUseFields
-
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Updates intended uses in leases based on a JSON file."
