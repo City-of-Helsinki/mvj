@@ -196,6 +196,12 @@ def update_lease_intended_use_if_needed(
 def no_duplicate_old_ids(
     intended_use_update_details: list[IntendedUseUpdateDetails],
 ) -> bool:
+    """
+    Verify that there are no duplicate old_id's in the input file.
+
+    Otherwise the script would silently overwrite the input for the same old_id
+    with the last one in the input file.
+    """
     old_ids = set()
     for update_details in intended_use_update_details:
         old_id = update_details["old_id"]
@@ -284,7 +290,7 @@ def update_lease_intended_use_note_if_changed(
 
     if note_changed:
         if dry_run:
-            logger.info(f"Would add note: Vanha: {old_name}")
+            logger.info(f"Would add note: {note_addition}")
         else:
             updated_note = f"{note} {note_addition}" if note else note_addition
             lease.intended_use_note = updated_note
