@@ -196,10 +196,12 @@ def update_lease_intended_use_if_needed(
 def no_duplicate_old_ids(
     intended_use_update_details: list[IntendedUseUpdateDetails],
 ) -> bool:
-    old_ids = {}
+    old_ids = set()
     for update_details in intended_use_update_details:
         old_id = update_details["old_id"]
-        if old_id in old_ids:
+        if old_id not in old_ids:
+            old_ids.add(old_id)
+        else:
             logger.error(
                 f"Duplicate old_id {old_id} found. Fix this in the input file to avoid problems."
             )
