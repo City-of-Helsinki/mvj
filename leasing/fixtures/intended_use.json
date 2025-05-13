@@ -80,7 +80,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": false
+      "is_active": true
     }
   },
   {
@@ -1496,7 +1496,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": false
+      "is_active": true
     }
   },
   {
@@ -2552,7 +2552,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": false
+      "is_active": true
     }
   },
   {
@@ -2576,7 +2576,7 @@
       "name_sv": null,
       "name_en": null,
       "service_unit": 1,
-      "is_active": false
+      "is_active": true
     }
   },
   {
