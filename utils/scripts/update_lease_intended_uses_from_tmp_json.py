@@ -113,7 +113,7 @@ def update_lease_intended_uses(
 
     lease_counter = 0
     updated_leases = 0
-    all_leases = Lease.objects.all()
+    all_leases = Lease.all_objects.all()  # includes deleted leases
     logger.info(f"Found {len(all_leases)} leases in the database.")
     logger.info("Processing...")
 
