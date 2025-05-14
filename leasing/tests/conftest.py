@@ -700,7 +700,12 @@ def invoices_test_data(
 
 
 @pytest.fixture
-def lease_data_dict_with_contacts(contact_factory):
+def lease_data_dict_with_contacts(
+    contact_factory,
+    intended_use_factory,
+    rent_intended_use_factory,
+    service_unit_factory,
+):
     test_contacts = [
         contact_factory(
             first_name="First name",
@@ -717,6 +722,9 @@ def lease_data_dict_with_contacts(contact_factory):
                 type=ContactType.PERSON,
             )
         )
+    service_unit = service_unit_factory()
+    intended_use = intended_use_factory(service_unit=service_unit)
+    rent_intended_use = rent_intended_use_factory()
 
     data = {
         "state": "lease",
@@ -728,7 +736,8 @@ def lease_data_dict_with_contacts(contact_factory):
         "type": 1,
         "municipality": 1,
         "district": 31,
-        "intended_use": 1,
+        "intended_use": intended_use.id,
+        "rent_intended_use": rent_intended_use.id,
         "supportive_housing": 5,
         "statistical_use": 1,
         "financing": 1,
@@ -737,7 +746,7 @@ def lease_data_dict_with_contacts(contact_factory):
         "hitas": 1,
         "notice_period": 1,
         "lessor": test_contacts[0].id,
-        "service_unit": 1,
+        "service_unit": service_unit.id,
         "tenants": [
             {
                 "share_numerator": 1,
@@ -802,7 +811,7 @@ def lease_data_dict_with_contacts(contact_factory):
 def custom_area_in_lease(lease_data_dict_with_contacts):
     lease_data_dict_with_contacts["lease_areas"][0]["custom_detailed_plan"] = {
         "identifier": "54321",
-        "intended_use": 1,
+        "intended_use": lease_data_dict_with_contacts["intended_use"],
         "rent_build_permission": 300,
         "area": 200,
         "address": "Testaddress 1",
