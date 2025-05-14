@@ -9,9 +9,7 @@ from leasing.models import Lease, ServiceUnit
 
 
 @pytest.mark.django_db
-def test_create_lease(
-    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
-):
+def test_create_lease(django_db_setup, admin_client, lease_data_dict_with_contacts):
     url = reverse("v1:lease-list")
 
     response = admin_client.post(
@@ -145,11 +143,14 @@ def test_create_lease_relate_to_without_permission(
 
 @pytest.mark.django_db
 def test_create_lease_with_basis_of_rents(
-    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
+    django_db_setup,
+    admin_client,
+    lease_data_dict_with_contacts,
 ):
     url = reverse("v1:lease-list")
+    rent_intended_use_id = lease_data_dict_with_contacts["rent_intended_use"]
     lease_data_dict_with_contacts["basis_of_rents"] = [
-        {"intended_use": 1, "area": "101.00", "area_unit": "m2"}
+        {"intended_use": rent_intended_use_id, "area": "101.00", "area_unit": "m2"}
     ]
     response = admin_client.post(
         url,
@@ -161,7 +162,7 @@ def test_create_lease_with_basis_of_rents(
 
 
 def test_create_lease_with_basis_of_rents_fail_without_intended_use(
-    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
+    django_db_setup, admin_client, lease_data_dict_with_contacts
 ):
     url = reverse("v1:lease-list")
     lease_data_dict_with_contacts["basis_of_rents"] = [
@@ -177,11 +178,14 @@ def test_create_lease_with_basis_of_rents_fail_without_intended_use(
 
 
 def test_create_lease_with_basis_of_rents_fail_without_area(
-    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
+    django_db_setup,
+    admin_client,
+    lease_data_dict_with_contacts,
 ):
     url = reverse("v1:lease-list")
+    rent_intended_use_id = lease_data_dict_with_contacts["rent_intended_use"]
     lease_data_dict_with_contacts["basis_of_rents"] = [
-        {"intended_use": 1, "area_unit": "m2"}
+        {"intended_use": rent_intended_use_id, "area_unit": "m2"}
     ]
     response = admin_client.post(
         url,
@@ -193,11 +197,14 @@ def test_create_lease_with_basis_of_rents_fail_without_area(
 
 
 def test_create_lease_with_basis_of_rents_fail_without_area_unit(
-    django_db_setup, admin_client, contact_factory, lease_data_dict_with_contacts
+    django_db_setup,
+    admin_client,
+    lease_data_dict_with_contacts,
 ):
     url = reverse("v1:lease-list")
+    rent_intended_use_id = lease_data_dict_with_contacts["rent_intended_use"]
     lease_data_dict_with_contacts["basis_of_rents"] = [
-        {"intended_use": 1, "area": "101.00"}
+        {"intended_use": rent_intended_use_id, "area": "101.00"}
     ]
     response = admin_client.post(
         url,
