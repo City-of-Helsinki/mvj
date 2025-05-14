@@ -6,7 +6,7 @@ from leasing.models import Contact, ServiceUnit
 SERVICE_UNITS = [
     {
         "id": ServiceUnitId.MAKE.value,
-        "contact_name": "KYMP/Maaomaisuuden kehittäminen ja tontit",
+        "contact_name": "KYMP/MAKE ja Tontit",
         "sap_sales_office": SapSalesOfficeNumber.MAKE.value,
         "email": "MAKE@example.com",
     },
