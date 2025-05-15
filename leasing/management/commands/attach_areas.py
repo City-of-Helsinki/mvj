@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from django.contrib.gis.geos import GEOSException
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand
 from django.db import InternalError
 from django.utils import timezone
