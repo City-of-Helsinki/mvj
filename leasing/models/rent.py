@@ -150,6 +150,9 @@ class OldDwellingsInHousingCompaniesPriceIndex(TimeStampedModel):
         max_length=CHARFIELD_MAX_LENGTH,
     )
 
+    def __str__(self) -> str:
+        return self.name
+
     class Meta:
         verbose_name = pgettext_lazy(
             "model name", "price index of old dwellings in housing companies"
