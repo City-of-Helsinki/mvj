@@ -5,6 +5,7 @@ from typing import Any, Dict, NamedTuple, Optional, Tuple, TypedDict
 import psycopg
 from django.conf import settings
 from django.contrib.gis import geos
+from django.contrib.gis.geos.error import GEOSException
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
 from django.db.models import QuerySet
@@ -443,7 +444,7 @@ class AreaImporter(BaseImporter):
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
-        except geos.error.GEOSException as e:
+        except GEOSException as e:
             errors.append(f"id #{row.id} error: {str(e)}\n")
 
             error_count += 1
