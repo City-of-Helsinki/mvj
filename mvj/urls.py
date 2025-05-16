@@ -2,9 +2,7 @@ import rest_framework.urls
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.http import HttpResponse
 from django.urls import include, path, re_path
-from django.views.decorators.http import require_GET
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, routers
@@ -122,6 +120,7 @@ from leasing.viewsets.rent import IndexViewSet
 from leasing.viewsets.service_unit import ServiceUnitViewSet
 from leasing.viewsets.ui_data import UiDataViewSet
 from leasing.viewsets.vat import VatViewSet
+from mvj.views import healthz, readiness
 from plotsearch.views.map_service_proxy import helsinki_owned_areas_wms_proxy
 from plotsearch.views.plot_search import (
     AreaSearchAttachmentPublicViewset,
@@ -526,16 +525,6 @@ urlpatterns += [
 #
 # Kubernetes liveness & readiness endpoints
 #
-@require_GET
-def healthz(*args, **kwargs):
-    return HttpResponse(status=200)
-
-
-@require_GET
-def readiness(*args, **kwargs):
-    return HttpResponse(status=200)
-
-
 urlpatterns += [path("healthz", healthz), path("readiness", readiness)]
 
 if settings.DEBUG:
