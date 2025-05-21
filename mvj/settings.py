@@ -123,6 +123,7 @@ env = environ.Env(
     FLAG_FILE_SCAN=(bool, False),
     FLAG_PLOTSEARCH=(bool, False),
     FLAG_SANCTIONS_INQUIRY=(bool, False),
+    FLAG_SKIP_FILE_UPLOAD_PERMISSIONS=(bool, False),
 )
 
 env_file = project_root(".env")
@@ -426,6 +427,16 @@ FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_SERVICE_URL")
 FLAG_FILE_SCAN = env.bool("FLAG_FILE_SCAN")
 FLAG_PLOTSEARCH = env.bool("FLAG_PLOTSEARCH")
 FLAG_SANCTIONS_INQUIRY = env.bool("FLAG_SANCTIONS_INQUIRY")
+FLAG_SKIP_FILE_UPLOAD_PERMISSIONS = env.bool(
+    "FLAG_SKIP_FILE_UPLOAD_PERMISSIONS", default=False
+)
+
+if FLAG_SKIP_FILE_UPLOAD_PERMISSIONS:
+    # Use operating-system dependent behavior
+    # Required for Azure `azure-file` storage class, as it does not support chmod etc.
+    FILE_UPLOAD_DIRECTORY_PERMISSIONS = None
+    FILE_UPLOAD_PERMISSIONS = None
+
 
 # Override with local settings if present
 local_settings = project_root("local_settings.py")
