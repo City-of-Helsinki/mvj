@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models.contract import Collateral, CollateralType
+from users.models import User
+from users.serializers import UserSerializer
 
 from ..models import Contract, ContractChange, ContractType, Decision
 from .decision import DecisionSerializer
@@ -16,6 +18,7 @@ class ContractChangeSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
+    executor = UserSerializer()
 
     class Meta:
         model = ContractChange
@@ -28,6 +31,7 @@ class ContractChangeSerializer(
             "third_call_sent",
             "description",
             "decision",
+            "executor",
         )
 
 
@@ -39,6 +43,13 @@ class ContractChangeCreateUpdateSerializer(
         instance_class=Decision,
         queryset=Decision.objects.all(),
         related_serializer=DecisionSerializer,
+        required=False,
+        allow_null=True,
+    )
+    executor = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
         required=False,
         allow_null=True,
     )
@@ -54,6 +65,7 @@ class ContractChangeCreateUpdateSerializer(
             "third_call_sent",
             "description",
             "decision",
+            "executor",
         )
 
 
@@ -100,6 +112,7 @@ class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
         many=True, required=False, allow_null=True
     )
     collaterals = CollateralSerializer(many=True, required=False, allow_null=True)
+    executor = UserSerializer()
 
     class Meta:
         model = Contract
@@ -119,6 +132,7 @@ class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
             "third_call_sent",
             "contract_changes",
             "collaterals",
+            "executor",
         )
         read_only_fields = ("is_readjustment_decision",)
 
@@ -145,6 +159,13 @@ class ContractCreateUpdateSerializer(
     collaterals = CollateralCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
+    executor = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Contract
@@ -164,5 +185,6 @@ class ContractCreateUpdateSerializer(
             "third_call_sent",
             "contract_changes",
             "collaterals",
+            "executor",
         )
         read_only_fields = ("is_readjustment_decision",)

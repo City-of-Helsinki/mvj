@@ -1485,6 +1485,9 @@ msgstr "Beslut om arrangemang"
 msgid "Decision"
 msgstr "Beslut"
 
+msgid "Executor"
+msgstr "Exekutor"
+
 msgid "KTJ link"
 msgstr "Länk till KTJ:s intyg om arrenderätt"
 
