@@ -7,14 +7,9 @@
 *.log
 .coverage*
 .DS_Store
-.devcontainer
-!.devcontainer/devcontainer.json
-!.devcontainer/Dockerfile
-!.devcontainer/docker-compose.yml
 .vscode
 /local_settings.py
-/docker-compose.env
-/docker-compose.override.yml
+.devcontainer/docker-compose.env
 /.env
 /*.env.yaml
 /.venv
@@ -31,9 +26,4 @@
 /tmp_backups_for_db_restore/
 .mypy_cache
 PCF_20181128.dat
-leasing/management/commands/anonymize.py
-leasing/management/commands/find_identifiers_for_lease_areas.py
-leasing/management/commands/joo.py
-leasing/management/commands/joo2.py
-leasing/management/commands/prefetch_test.py
 coverage.xml
