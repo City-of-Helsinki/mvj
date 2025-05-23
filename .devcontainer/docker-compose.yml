@@ -22,7 +22,7 @@ services:
     # user: vscode
   postgres:
     build:
-      context: ../docker/postgres/
+      context: ./postgres/
       dockerfile: ./Dockerfile
     restart: unless-stopped
     volumes:
