@@ -1485,6 +1485,9 @@ msgstr "Järjestelypäätös"
 msgid "Decision"
 msgstr "Päätös"
 
+msgid "Executor"
+msgstr "Toimeenpanija"
+
 msgid "KTJ link"
 msgstr "KTJ vuokraoikeustodistuksen linkki"
 

@@ -108,6 +108,15 @@ class Contract(TimeStampedSafeDeleteModel):
         verbose_name=_("Institution identifier"), null=True, blank=True, max_length=255
     )
 
+    executor = models.ForeignKey(
+        "users.User",
+        verbose_name=_("Executor"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:
@@ -264,6 +273,15 @@ class ContractChange(models.Model):
     decision = models.ForeignKey(
         "leasing.Decision",
         verbose_name=_("Decision"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    executor = models.ForeignKey(
+        "users.User",
+        verbose_name=_("Executor"),
         related_name="+",
         null=True,
         blank=True,
