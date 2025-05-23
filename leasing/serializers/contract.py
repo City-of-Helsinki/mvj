@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models.contract import Collateral, CollateralType
+from users.serializers import UserSerializer
 
 from ..models import Contract, ContractChange, ContractType, Decision
 from .decision import DecisionSerializer
@@ -28,6 +29,7 @@ class ContractChangeSerializer(
             "third_call_sent",
             "description",
             "decision",
+            "executor",
         )
 
 
@@ -42,6 +44,7 @@ class ContractChangeCreateUpdateSerializer(
         required=False,
         allow_null=True,
     )
+    executor = UserSerializer()
 
     class Meta:
         model = ContractChange
@@ -54,6 +57,7 @@ class ContractChangeCreateUpdateSerializer(
             "third_call_sent",
             "description",
             "decision",
+            "executor",
         )
 
 
@@ -100,6 +104,7 @@ class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
         many=True, required=False, allow_null=True
     )
     collaterals = CollateralSerializer(many=True, required=False, allow_null=True)
+    executor = UserSerializer()
 
     class Meta:
         model = Contract
@@ -119,6 +124,7 @@ class ContractSerializer(FieldPermissionsSerializerMixin, serializers.ModelSeria
             "third_call_sent",
             "contract_changes",
             "collaterals",
+            "executor",
         )
         read_only_fields = ("is_readjustment_decision",)
 
@@ -145,6 +151,7 @@ class ContractCreateUpdateSerializer(
     collaterals = CollateralCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
+    executor = UserSerializer()
 
     class Meta:
         model = Contract
@@ -164,5 +171,6 @@ class ContractCreateUpdateSerializer(
             "third_call_sent",
             "contract_changes",
             "collaterals",
+            "executor",
         )
         read_only_fields = ("is_readjustment_decision",)
