@@ -73,7 +73,7 @@ def initialize_area_search_form():
         label_en="Company name",
         label_sv="Företagsnamn",
         type="textbox",
-        identifier="yrityksen-nimi",
+        identifier="nimi",
         enabled=True,
         required=True,
         sort_order=0,
