@@ -539,12 +539,6 @@ msgstr "Kopio tonttihakemuksista {}"
 msgid "Copy of area rental application {}"
 msgstr "Kopio aluehaun hakemuksista {}"
 
-msgid "New area search in district {}"
-msgstr "Uusi aluehakemus kaupungiosassa {}"
-
-msgid "A new area search {} has been created in district {}."
-msgstr "Uusi aluehakemus {} on luotu kaupunginosaan {}."
-
 msgid "Invoice"
 msgstr "Lasku"
 
@@ -4102,12 +4096,6 @@ msgstr ""
 "Hei {receiver}! Tässä linkki suoravaraustonttihakuun: {url} \n"
 "\n"
 "{covering_note}"
-
-msgid "Area search {} lessor has changed"
-msgstr "Aluehakemuksen {} vuokranantaja vaihtui"
-
-msgid "New lessor for area search {} is \"{}\", was \"{}\"."
-msgstr "Aluehakemuksen {} uusi vuokranantaja on \"{}\", oli \"{}\"."
 
 msgid "The deadline for applications"
 msgstr "Haku päättyy"

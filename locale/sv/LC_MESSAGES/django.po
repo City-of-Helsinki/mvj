@@ -547,12 +547,6 @@ msgstr "Kopia av tomtansökningar {}"
 msgid "Copy of area rental application {}"
 msgstr "Kopia av ansökningar för områdessökning {}"
 
-msgid "New area search in district {}"
-msgstr ""
-
-msgid "A new area search {} has been created in district {}."
-msgstr ""
-
 msgid "Invoice"
 msgstr "Faktura"
 
@@ -4106,12 +4100,6 @@ msgstr ""
 "Hej {receiver}! Här är en länk till direktanvisningstomtansökan: {url} \n"
 "\n"
 "{covering_note}"
-
-msgid "Area search {} lessor has changed"
-msgstr ""
-
-msgid "New lessor for area search {} is \"{}\", was \"{}\"."
-msgstr ""
 
 msgid "The deadline for applications"
 msgstr "Ansökan upphör"
