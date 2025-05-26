@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 13:05+0300\n"
+"POT-Creation-Date: 2025-05-26 12:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3633,6 +3633,9 @@ msgstr "Lähetä sähköposti"
 
 msgid "MVJ lease {} {}"
 msgstr "MVJ vuokraus {} {}"
+
+msgid "Reminder: {}"
+msgstr "Muistutus: {}"
 
 msgid "Can't create invoices if invoicing is not enabled."
 msgstr "Ei voi luoda laskuja jos laskutusta ei ole käynnistetty"
