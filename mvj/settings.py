@@ -52,6 +52,7 @@ env = environ.Env(
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     EMAIL_BACKEND=(str, "anymail.backends.mailgun.EmailBackend"),
+    EMAIL_FILE_PATH=(str, ""),
     DEFAULT_FROM_EMAIL=(str, "mvj@hel.fi"),
     FROM_EMAIL_PLOT_SEARCH=(str, ""),
     FROM_EMAIL_AREA_SEARCH=(str, ""),
@@ -302,6 +303,8 @@ ANYMAIL = {
 }
 
 EMAIL_BACKEND = env.str("EMAIL_BACKEND")
+if EMAIL_BACKEND == "django.core.mail.backends.filebased.EmailBackend":
+    EMAIL_FILE_PATH = env.str("EMAIL_FILE_PATH")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_EXPOSE_HEADERS = ["Content-Disposition"]
