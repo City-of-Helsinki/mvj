@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models.contract import Collateral, CollateralType
+from users.models import User
 from users.serializers import UserSerializer
 
 from ..models import Contract, ContractChange, ContractType, Decision
@@ -151,7 +152,13 @@ class ContractCreateUpdateSerializer(
     collaterals = CollateralCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )
-    executor = UserSerializer()
+    executor = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Contract
