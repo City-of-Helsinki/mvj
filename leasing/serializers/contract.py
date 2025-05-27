@@ -18,6 +18,7 @@ class ContractChangeSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
+    executor = UserSerializer()
 
     class Meta:
         model = ContractChange
@@ -45,7 +46,13 @@ class ContractChangeCreateUpdateSerializer(
         required=False,
         allow_null=True,
     )
-    executor = UserSerializer()
+    executor = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = ContractChange
