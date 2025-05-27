@@ -314,6 +314,11 @@ Q_CLUSTER = {
     "timeout": 90,
     "retry": 60 * 60,  # 1 hour
     "orm": "default",
+    "error_reporter": {
+        "sentry": {
+            "dsn": env.str("SENTRY_DSN"),
+        }
+    },
 }
 
 KTJ_PRINT_ROOT_URL = env.str("KTJ_PRINT_ROOT_URL")
