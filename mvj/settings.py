@@ -123,6 +123,8 @@ env = environ.Env(
     GDPR_API_DELETER=(str, "gdpr.utils.delete_user_data"),
     FILE_SCAN_SERVICE_URL=(str, ""),
     PRIVATE_FILES_LOCATION=(str, ""),
+    MEDIA_ROOT=(str, ""),
+    STATIC_ROOT=(str, ""),
     FLAG_FILE_SCAN=(bool, False),
     FLAG_PLOTSEARCH=(bool, False),
     FLAG_SANCTIONS_INQUIRY=(bool, False),
@@ -155,8 +157,8 @@ if env("SENTRY_DSN"):
         integrations=[DjangoIntegration()],
     )
 
-MEDIA_ROOT = project_root("media")
-STATIC_ROOT = project_root("static")
+MEDIA_ROOT = env.str("MEDIA_ROOT", default=project_root("media"))
+STATIC_ROOT = env.str("STATIC_ROOT", default=project_root("static"))
 PRIVATE_FILES_LOCATION = env.str("PRIVATE_FILES_LOCATION")
 
 MEDIA_URL = "/media/"
