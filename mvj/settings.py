@@ -70,6 +70,7 @@ env = environ.Env(
     NLS_HELSINKI_FOLDER_URL=(str, ""),
     NLS_HELSINKI_USERNAME=(str, ""),
     NLS_HELSINKI_PASSWORD=(str, ""),
+    NLS_IMPORT_ROOT=(str, ""),
     MAP_SERVICE_WMS_URL=(str, ""),
     MAP_SERVICE_WMS_USERNAME=(str, ""),
     MAP_SERVICE_WMS_PASSWORD=(str, ""),
@@ -337,7 +338,9 @@ VIRRE_PASSWORD = env.str("VIRRE_PASSWORD")
 NLS_HELSINKI_FOLDER_URL = env.str("NLS_HELSINKI_FOLDER_URL")
 NLS_HELSINKI_USERNAME = env.str("NLS_HELSINKI_USERNAME")
 NLS_HELSINKI_PASSWORD = env.str("NLS_HELSINKI_PASSWORD")
-NLS_IMPORT_ROOT = project_root("nls_leasehold_transfers")
+NLS_IMPORT_ROOT = env.str(
+    "NLS_IMPORT_ROOT", default=project_root("nls_leasehold_transfers")
+)
 
 MAP_SERVICE_WMS_URL = env.str("MAP_SERVICE_WMS_URL")
 MAP_SERVICE_WMS_USERNAME = env.str("MAP_SERVICE_WMS_USERNAME")
