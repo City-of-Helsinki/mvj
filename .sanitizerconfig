@@ -462,6 +462,7 @@ strategy:
     signing_note: mvj.paragraph_if_exist
     third_call_sent: null
     type_id: null
+    executor_id: null
   leasing_contractchange:
     contract_id: null
     decision_id: null
@@ -472,6 +473,7 @@ strategy:
     sign_by_date: null
     signing_date: null
     third_call_sent: null
+    executor_id: null
   leasing_contractrent:
     amount: null
     base_amount: null
