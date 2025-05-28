@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+from django.db.models import QuerySet
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
@@ -12,6 +14,32 @@ from .utils import (
     NameModelSerializer,
     UpdateNestedMixin,
 )
+
+
+def get_users_for_executor_field() -> QuerySet[User]:
+    """
+    Returns a queryset of users that can be assigned as executors
+    for contracts or contract changes.
+    """
+
+    executor_auth_group_names = [
+        "Valmistelija",
+        "Syöttäjä",
+        "Sopimusvalmistelija",
+    ]
+    auth_group_ids = Group.objects.filter(
+        name__in=executor_auth_group_names
+    ).values_list("id", flat=True)
+    users = (
+        User.objects.filter(is_active=True, groups__id__in=auth_group_ids)
+        .distinct()
+        .order_by("last_name", "first_name", "username")
+    )
+
+    if not users.exists():
+        return User.objects.none()
+
+    return users
 
 
 class ContractChangeSerializer(
@@ -48,7 +76,7 @@ class ContractChangeCreateUpdateSerializer(
     )
     executor = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
-        queryset=User.objects.all(),
+        queryset=get_users_for_executor_field(),
         related_serializer=UserSerializer,
         required=False,
         allow_null=True,
@@ -161,7 +189,7 @@ class ContractCreateUpdateSerializer(
     )
     executor = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
-        queryset=User.objects.all(),
+        queryset=get_users_for_executor_field(),
         related_serializer=UserSerializer,
         required=False,
         allow_null=True,
