@@ -32,7 +32,7 @@ def test_send_email(django_db_setup, client, lease_test_data, user_factory):
     email_body = "Test email text"
 
     data = {
-        "type": EmailLogType.CONSTRUCTABILITY.value,
+        "type": EmailLogType.CONSTRUCTABILITY,
         "lease": lease.id,
         "recipients": [user2.id, user3.id],
         "text": email_body,
@@ -81,7 +81,7 @@ def test_constructability_reminder_email_sent(
     recipient = user_factory(email="recipient@example.com")
     lease = lease_test_data["lease"]
     data = {
-        "type": EmailLogType.CONSTRUCTABILITY.value,
+        "type": EmailLogType.CONSTRUCTABILITY,
         "lease": lease.id,
         "recipients": [recipient.id],
         "text": "Test mail text",
