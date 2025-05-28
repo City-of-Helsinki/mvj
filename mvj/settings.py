@@ -98,6 +98,7 @@ env = environ.Env(
     FACTA_DATABASE_PASSWORD=(str, ""),
     FACTA_DATABASE_DSN=(str, ""),
     PUBLIC_UI_URL=(str, ""),
+    LASKE_EXPORT_ROOT=(str, ""),
     LASKE_EXPORT_HOST=(str, ""),
     LASKE_EXPORT_PORT=(int, ""),
     LASKE_EXPORT_USERNAME=(str, ""),
@@ -378,7 +379,10 @@ LASKE_VALUES = {
     "pmntterm": "Z100",
 }
 
-LASKE_EXPORT_ROOT = project_root("laske_export_files")
+# Directory where SAP export files are stored.
+LASKE_EXPORT_ROOT = env.str(
+    "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
+)
 
 LASKE_DUE_DATE_OFFSET_DAYS = 17
 
