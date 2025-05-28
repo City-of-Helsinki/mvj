@@ -372,7 +372,10 @@ LASKE_VALUES = {
 }
 
 # Directory where SAP export files are stored.
-LASKE_EXPORT_ROOT = env("LASKE_EXPORT_ROOT")
+LASKE_EXPORT_ROOT = env.str(
+    "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
+)
+
 LASKE_DUE_DATE_OFFSET_DAYS = 17
 
 LASKE_SERVERS = {
