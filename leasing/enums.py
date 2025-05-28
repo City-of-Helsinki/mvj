@@ -490,7 +490,7 @@ class AreaType(Enum):
         OTHER = pgettext_lazy("Area type", "Other")
 
 
-class EmailLogType(Enum):
+class EmailLogType(str, Enum):
     """
     In Finnish: Sähköpostilokin tyyppi
     """
