@@ -2,6 +2,7 @@ from collections import defaultdict
 from itertools import chain
 
 from django.contrib import admin
+from django.contrib.auth.models import UserManager
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
@@ -10,8 +11,20 @@ from helusers.models import AbstractUser, ADGroupMapping
 from rest_framework.authtoken.models import Token
 
 
+class MvjUserManager(UserManager):
+    def get_officers(self):
+        """
+        Returns users that are officers of City of Helsinki (employees).
+        This is determined by checking if the user has any AD groups,
+        so technically officer == AD user (as of now).
+        """
+        return self.filter(is_active=True, ad_groups__isnull=False).distinct()
+
+
 class User(AbstractUser, SerializableMixin):
     service_units = models.ManyToManyField("leasing.ServiceUnit", related_name="users")
+
+    objects: MvjUserManager = MvjUserManager()
 
     # GDPR API, meant for PlotSearch app users
     serialize_fields = (

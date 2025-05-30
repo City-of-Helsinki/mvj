@@ -44,6 +44,7 @@ from leasing.models import (
     RentIntendedUse,
     UiData,
 )
+from leasing.models.contract import ContractChange, ContractType
 from leasing.models.decision import ConditionType
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import CustomDetailedPlan
@@ -380,9 +381,24 @@ class LandUseAgreementReceivableTypeFactory(factory.django.DjangoModelFactory):
 
 
 @register
+class ContractTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ContractType
+
+
+@register
 class ContractFactory(factory.django.DjangoModelFactory):
+
+    type = factory.SubFactory(ContractTypeFactory)
+
     class Meta:
         model = Contract
+
+
+@register
+class ContractChangeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ContractChange
 
 
 @register
