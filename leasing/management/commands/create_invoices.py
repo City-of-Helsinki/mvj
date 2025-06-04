@@ -50,8 +50,9 @@ class Command(BaseCommand):
         invoice_count = 0
 
         for lease in leases:
+            # `dry_run=False` makes saves to e.g. RentAdjustment(s)
             period_rents = lease.determine_payable_rents_and_periods(
-                start_of_next_month, end_of_next_month
+                start_of_next_month, end_of_next_month, dry_run=False
             )
 
             if not period_rents:

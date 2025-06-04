@@ -1,6 +1,7 @@
 import logging
 import textwrap
 from decimal import ROUND_HALF_UP, Decimal
+from typing import TYPE_CHECKING
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -22,6 +23,10 @@ from .sales_order import BillingParty1, LineItem, OrderParty, SalesOrder
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from leasing.models.land_area import LeaseArea, LeaseAreaAddress
+    from leasing.models.lease import Lease
+
 
 class InvoiceSalesOrderAdapter:
     """Adapter for invoice sales orders to use in Laske exports.
@@ -41,6 +46,7 @@ class InvoiceSalesOrderAdapter:
         fill_priority_and_info: bool = True,
     ):
         self.invoice = invoice
+        self.invoices_lease: Lease = invoice.lease  # For typing purposes
         self.sales_order = sales_order
         self.service_unit = service_unit
         self.fill_priority_and_info = fill_priority_and_info
@@ -55,36 +61,42 @@ class InvoiceSalesOrderAdapter:
             invoice_year = self.invoice.billing_period_start_date.year
 
             # TODO: Which rent? Always the first?
-            rent = self.invoice.lease.get_active_rents_on_period(
+            rent = self.invoices_lease.get_active_rents_on_period(
                 self.invoice.billing_period_start_date,
                 self.invoice.billing_period_end_date,
             ).first()
         else:
             invoice_year = self.invoice.invoicing_date.year
 
-            rent = self.invoice.lease.get_active_rents_on_period(
+            rent = self.invoices_lease.get_active_rents_on_period(
                 self.invoice.invoicing_date, self.invoice.invoicing_date
             ).first()
 
-        rent_calculation = self.invoice.lease.calculate_rent_amount_for_year(
-            invoice_year
+        # It is absolutely critical to set `dry_run=True`, otherwise this
+        # calculation will do saves, e.g. to RentAdjustment(s).
+        rent_calculation = self.invoices_lease.calculate_rent_amount_for_year(
+            invoice_year, dry_run=True
         )
         year_rent = rent_calculation.get_total_amount()
 
         real_property_identifier = ""
         address = ""
 
-        first_lease_area = self.invoice.lease.lease_areas.first()
+        lease_areas: QuerySet[LeaseArea] = self.invoices_lease.lease_areas
+        first_lease_area = lease_areas.first()
         if first_lease_area:
             real_property_identifier = first_lease_area.identifier
 
-            lease_area_address = first_lease_area.addresses.first()
+            lease_area_addresses: QuerySet[LeaseAreaAddress] = (
+                first_lease_area.addresses
+            )
+            lease_area_address = lease_area_addresses.first()
             if lease_area_address:
                 address = lease_area_address.address
 
         bill_texts = []
         row1 = "Vuokraustunnus: {lease_identifier}  ".format(
-            lease_identifier=self.invoice.lease.get_identifier_string()
+            lease_identifier=self.invoices_lease.get_identifier_string()
         )
 
         if (
@@ -103,15 +115,15 @@ class InvoiceSalesOrderAdapter:
 
         row2 = "Päättymispvm: {lease_end_date}  ".format(
             lease_end_date=(
-                self.invoice.lease.end_date.strftime("%d.%m.%Y")
-                if self.invoice.lease.end_date
+                self.invoices_lease.end_date.strftime("%d.%m.%Y")
+                if self.invoices_lease.end_date
                 else "-"
             )
         )
 
-        if self.invoice.lease.intended_use:
+        if self.invoices_lease.intended_use:
             row2 += "Käyttötarkoitus: {lease_intended_use}  ".format(
-                lease_intended_use=self.invoice.lease.intended_use.name[:25]
+                lease_intended_use=self.invoices_lease.intended_use.name[:25]
             )
         bill_texts.append(row2)
 
