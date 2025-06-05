@@ -1,0 +1,8 @@
+TMP_DIR = "tmp_backups_for_db_restore"
+BINARY_DUMP_FILENAME = "database.dump"
+SCHEMA_BACKUP_FILENAME = "schema_backup.sql"
+OWNERSHIPS_BACKUP_FILENAME = "ownerships_backup.sql"
+ADMIN_USERS_BACKUP_FILENAME = "admin_users_backup.json"
+BATCHRUN_SCHEDULEDJOB_BACKUP_FILENAME = "batchrun_scheduledjob_backup.json"
+LESSOR_CONTACTS_BACKUP_FILENAME = "lessor_contacts_backup.json"
+EXPORT_API_USERS_BACKUP_FILENAME = "export_api_users_backup.json"

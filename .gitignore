@@ -36,3 +36,4 @@ leasing/management/commands/joo.py
 leasing/management/commands/joo2.py
 leasing/management/commands/prefetch_test.py
 coverage.xml
+/tmp_backups_for_db_restore/
