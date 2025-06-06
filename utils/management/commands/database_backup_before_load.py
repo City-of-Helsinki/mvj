@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 import re
@@ -114,13 +113,12 @@ class Command(BaseCommand):
             user_permissions_codenames = [
                 permission.codename for permission in user.user_permissions.all()
             ]
-            encoded_key = base64.b64encode(token.key.encode()).decode()
             user_data.append(
                 {
                     "id": user.id,
                     "username": user.username,
                     "permissions": user_permissions_codenames,
-                    "api_key": encoded_key,
+                    "api_key": token.key,
                 }
             )
 

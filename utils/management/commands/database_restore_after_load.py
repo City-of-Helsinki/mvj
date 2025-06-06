@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 import subprocess
@@ -142,10 +141,8 @@ class Command(BaseCommand):
                     user.save()
 
                 # Restore API token
-                encoded_api_key = backup["api_key"]
-                decoded_api_key = base64.b64decode(encoded_api_key).decode()
-                Token.objects.filter(user=user).delete()
-                Token.objects.create(user=user, key=decoded_api_key)
+                api_key = backup["api_key"]
+                Token.objects.create(user=user, key=api_key)
 
                 # Restore API permissions
                 permissions = backup.get("permissions", [])
