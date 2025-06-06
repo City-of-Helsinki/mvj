@@ -381,7 +381,7 @@ psql --username <db username> --dbname <db name> --host <db hostname> --port <db
 #### 6. Restore environment-specific settings
 
 ```bash
-python manage.py database_repair_after_load <db name> <db host> <db port> <db user>
+python manage.py environment_specific_restore_after_database_load <db name> <db host> <db port> <db user>
 ```
 
 #### 7. Restore user access to MVJ
