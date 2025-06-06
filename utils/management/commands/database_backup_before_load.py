@@ -68,12 +68,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("Backup completed."))
 
-    def _ensure_backup_directory(self, tmp_dir_name: str | None) -> None:
-        if not tmp_dir_name:
-            raise CommandError(
-                "Temporary directory path is not set in the variables file."
-            )
-
+    def _ensure_backup_directory(self, tmp_dir_name: str) -> None:
         if not os.path.exists(tmp_dir_name):
             os.makedirs(tmp_dir_name)
             self.stdout.write(f"Temporary directory created at: {tmp_dir_name}")
