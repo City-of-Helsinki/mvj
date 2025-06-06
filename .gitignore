@@ -28,6 +28,7 @@
 /venv/
 /laske_export_files/
 /nls_leasehold_transfers/
+/tmp_backups_for_db_restore/
 .mypy_cache
 PCF_20181128.dat
 leasing/management/commands/anonymize.py
@@ -36,4 +37,3 @@ leasing/management/commands/joo.py
 leasing/management/commands/joo2.py
 leasing/management/commands/prefetch_test.py
 coverage.xml
-/tmp_backups_for_db_restore/
