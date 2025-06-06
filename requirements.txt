@@ -278,7 +278,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via python-jose
-sentry-sdk==1.45.0
+sentry-sdk==1.45.1
     # via
     #   -r requirements.in
     #   django-q-sentry
