@@ -17,6 +17,7 @@ config:
       - "--exclude-table-data=public.batchrun_jobrunqueueitem"
       - "--exclude-table-data=public.django_q_task"
       - "--exclude-table-data=public.leasing_reportstorage"
+      - "--exclude-table-data=public.spatial_ref_sys"
       - "--verbose"
 
 strategy:

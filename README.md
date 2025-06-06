@@ -367,7 +367,7 @@ Then copy the SQL file from source server to destination server, e.g. with `scp`
 #### 4. Backup the destination database
 
 ```bash
-./utils/scripts/database_backup_before_load.sh <db name> <db host> <db port> <db user>
+python manage.py database_backup_before_load <db name> <db host> <db port> <db user>
 ```
 
 #### 5. Load the sanitized dump
@@ -381,30 +381,24 @@ psql --username <db username> --dbname <db name> --host <db hostname> --port <db
 #### 6. Restore environment-specific settings
 
 ```bash
-./utils/scripts/database_repair_after_load.sh <db name> <db host> <db port> <db user>
+python manage.py environment_specific_restore_after_database_load <db name> <db host> <db port> <db user>
 ```
 
 #### 7. Restore user access to MVJ
 
 Sanitized dump will overwrite or drop existing users, including admin users.
+Admin users were restored in previous step, but regular users will require more actions.
 
 ```bash
-# Recreate permissions just in case
-python manage.py set_group_model_permissions
-python manage.py set_group_field_permissions
-
-# Create the TEST groups for non-AD users
+# Create TEST groups for non-AD users
 python manage.py copy_groups_and_service_unit_mappings
-
-# Create at least one admin user so you can login to admin panel
-python manage.py createsuperuser
 ```
 
 On first login to MVJ, your regular user will be created.
 After that, login to Django admin as your superuser and grant your regular user
 at least:
+- one group
 - one service unit
-- superuser privileges, or some usergroup
 
 #### 8. Additional restoration tasks and cleanup
 
