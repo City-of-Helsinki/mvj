@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     user.service_units.set(backup.object.service_units.all())
 
                     self.stdout.write(
-                        f"Restored admin user: {user.username} (ID: {user.pk})"
+                        f"Admin user restored: {user.username} (ID: {user.pk})"
                     )
                 else:
                     self.stdout.write(
@@ -151,7 +151,7 @@ class Command(BaseCommand):
                     user.user_permissions.add(permission)
 
                 self.stdout.write(
-                    f"Restored Export API user: {user.username} (ID: {user.pk})"
+                    f"Export API user restored: {user.username} (ID: {user.pk})"
                 )
 
     def _restore_lessor_contacts(self, tmp_dir: str, filename: str) -> None:
@@ -209,7 +209,7 @@ class Command(BaseCommand):
                 schedule = backup.object
                 schedule.save()
                 self.stdout.write(
-                    f"Restored batchrun schedule: {schedule.comment} (ID: {schedule.pk})"
+                    f"Batchrun schedule restored: {schedule.comment} (ID: {schedule.pk})"
                 )
 
     def _print_follow_up_instructions(self, tmp_dir: str) -> None:
