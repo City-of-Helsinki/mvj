@@ -90,8 +90,9 @@ class Command(BaseCommand):
         admin_users_backup_path = os.path.join(tmp_dir, filename)
         self.stdout.write(f"Backing up admin users to {filename}...")
 
+        sanitized_password_default = "!"
         admin_users = User.objects.filter(is_staff=True, is_active=True).exclude(
-            password="!"
+            password=sanitized_password_default
         )
 
         with open(admin_users_backup_path, "w") as f:
