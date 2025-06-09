@@ -99,7 +99,7 @@ def get_date_range_amount_from_monthly_amount(
     return total
 
 
-def fix_amount_for_overlap(amount, overlap: tuple[date, date], remainders):
+def fix_amount_for_overlap(amount: Decimal, overlap: tuple[date, date], remainders):
     if not remainders or not amount:
         return amount
 

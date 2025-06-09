@@ -411,8 +411,19 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return clamped_date_range_start, clamped_date_range_end
 
-    def get_rent_adjustment_amount(self, intended_use, amount, period, dry_run=False):
-        calculation_amounts = []
+    def calculate_and_process_rent_adjustments(
+        self,
+        intended_use: RentIntendedUse,
+        rent_amount: Decimal,
+        period: tuple[datetime.date, datetime.date],
+        dry_run=False,
+    ):
+        """Calculate rent adjustment amounts and optionally update adjustment records.
+
+        Args:
+            dry_run (bool, optional): **Note:** `dry_run=False` (default) can result in database modifications!
+        """
+        calculation_amounts: list[CalculationAmount] = []
 
         rent_adjustments = self.get_applicable_adjustments(intended_use, *period)
 
@@ -426,29 +437,49 @@ class Rent(TimeStampedSafeDeleteModel):
             if not adjustments:
                 continue
 
-            tmp_amount = fix_amount_for_overlap(
-                amount,
+            tmp_rent_amount = fix_amount_for_overlap(
+                rent_amount,
                 adjustment_range,
                 subtract_range_from_range(period, adjustment_range),
             )
-
-            for rent_adjustment in adjustments:
+            # Sort order is important due to working with `tmp_rent_amount`.
+            # PERCENT_PER_YEAR first, AMOUNT_TOTAL last
+            sorted_adjustments_amount_total_last = sorted(
+                adjustments, key=RentAdjustment.get_sort_priority
+            )
+            for rent_adjustment in sorted_adjustments_amount_total_last:
                 adjustment_amount = rent_adjustment.get_amount_for_date_range(
-                    tmp_amount,
+                    tmp_rent_amount,
                     *adjustment_range,
-                    update_amount_total=False if dry_run else True,
                 )
+                if (
+                    dry_run is False
+                    and rent_adjustment.amount_type
+                    == RentAdjustmentAmountType.AMOUNT_TOTAL
+                ):
+                    rent_adjustment.update_total_adjustment_amount_left(
+                        adjustment_amount
+                    )
 
                 total_adjustment_amount += adjustment_amount.amount
-                tmp_amount += adjustment_amount.amount
+                tmp_rent_amount += adjustment_amount.amount
 
                 calculation_amounts.append(adjustment_amount)
 
         return calculation_amounts
 
     def fixed_initial_year_rent_amount_for_date_range(
-        self, intended_use, date_range_start, date_range_end, dry_run=False
+        self,
+        intended_use: RentIntendedUse,
+        date_range_start: datetime.date,
+        date_range_end: datetime.date,
+        dry_run=False,
     ):
+        """
+        Args:
+            dry_run (bool, optional): **Note:** Despite the function name suggesting a pure calculation, setting
+                `dry_run=False` (default) can result in database modifications!
+        """
         fixed_initial_year_rents: QuerySet[FixedInitialYearRent] = (
             self.fixed_initial_year_rents.filter(
                 Q(
@@ -477,7 +508,7 @@ class Rent(TimeStampedSafeDeleteModel):
                 *fixed_overlap
             )
 
-            rent_adjustment_amounts = self.get_rent_adjustment_amount(
+            rent_adjustment_amounts = self.calculate_and_process_rent_adjustments(
                 fixed_initial_year_rent.intended_use,
                 fixed_amount.amount,
                 fixed_overlap,
@@ -495,8 +526,17 @@ class Rent(TimeStampedSafeDeleteModel):
         return calculation_result
 
     def contract_rent_amount_for_date_range(  # noqa: TODO
-        self, intended_use, date_range_start, date_range_end, dry_run=False
+        self,
+        intended_use: RentIntendedUse,
+        date_range_start: datetime.date,
+        date_range_end: datetime.date,
+        dry_run=False,
     ):
+        """
+        Args:
+            dry_run (bool, optional): **Note:** Despite the function name suggesting a pure calculation, setting
+                `dry_run=False` (default) can result in database modifications!
+        """
         calculation_result = CalculationResult(
             date_range_start=date_range_start, date_range_end=date_range_end
         )
@@ -605,7 +645,7 @@ class Rent(TimeStampedSafeDeleteModel):
                     "RentType {} not implemented".format(self.type)
                 )
 
-            rent_adjustment_amounts = self.get_rent_adjustment_amount(
+            rent_adjustment_amounts = self.calculate_and_process_rent_adjustments(
                 intended_use, contract_amount.amount, contract_overlap, dry_run=dry_run
             )
             contract_amount.add_sub_amounts(rent_adjustment_amounts)
@@ -617,6 +657,11 @@ class Rent(TimeStampedSafeDeleteModel):
     def get_amount_for_date_range(
         self, date_range_start, date_range_end, explain=False, dry_run=False
     ):  # noqa: TODO
+        """
+        Args:
+            dry_run (bool, optional): **Note:** Despite the function name suggesting a pure calculation, setting
+                `dry_run=False` (default) can result in database modifications!
+        """
         calculation_result = CalculationResult(
             date_range_start=date_range_start, date_range_end=date_range_end
         )
@@ -1244,8 +1289,44 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
     def date_range(self):
         return self.start_date, self.end_date
 
+    @staticmethod
+    def update_total_adjustment_amount_left(calculation_amount: CalculationAmount):
+        """Update the remaining amount for AMOUNT_TOTAL type rent adjustments.
+
+        This function is only applicable for rent adjustments with amount_type == AMOUNT_TOTAL.
+        For other amount types, this function will return without modifying anything.
+        """
+
+        def _get_new_amount_left(calculation_amount: CalculationAmount) -> Decimal:
+            """Get the amount left for a rent adjustment, defaulting to full_amount if amount_left is None."""
+            rent_adjustment: RentAdjustment = calculation_amount.item
+            amount_left: Decimal | None = rent_adjustment.amount_left
+            if amount_left is None:
+                amount_left = rent_adjustment.full_amount or Decimal(0)
+
+            # RentAdjustment value is negative when it is a discount.
+            absolute_calculation_amount = abs(calculation_amount.amount)
+            new_amount_left = max(0, amount_left - absolute_calculation_amount)
+            if new_amount_left >= amount_left:  # amount_left should not increase
+                return amount_left
+
+            return new_amount_left
+
+        # -- update_total_adjustment_amount_left() --
+        rent_adjustment: RentAdjustment = calculation_amount.item
+        if rent_adjustment.amount_type != RentAdjustmentAmountType.AMOUNT_TOTAL:
+            return
+
+        new_amount_left = _get_new_amount_left(calculation_amount)
+
+        rent_adjustment.amount_left = Decimal(new_amount_left).quantize(
+            Decimal("0.00"), rounding=ROUND_HALF_UP
+        )
+        rent_adjustment.save()
+        return
+
     def get_amount_for_date_range(  # NOQA TODO
-        self, rent_amount, date_range_start, date_range_end, update_amount_total=False
+        self, rent_amount, date_range_start, date_range_end
     ):
         if self.start_date:
             date_range_start = max(self.start_date, date_range_start)
@@ -1271,12 +1352,6 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
                 adjustment = adjustment_left
             else:
                 adjustment = min(adjustment_left, rent_amount)
-
-            if update_amount_total:
-                self.amount_left = Decimal(
-                    max(0, adjustment_left - adjustment)
-                ).quantize(Decimal("0.00"), rounding=ROUND_HALF_UP)
-                self.save()
         else:
             raise NotImplementedError(
                 "Cannot get adjust amount for RentAdjustmentAmountType {}".format(
@@ -1305,6 +1380,28 @@ class RentAdjustment(TimeStampedSafeDeleteModel):
                     self.amount_type
                 )
             )
+
+    @staticmethod
+    def get_sort_priority(adjustment: "RentAdjustment"):
+        # Lower number = higher priority in sorting
+        amount_type_order = {
+            RentAdjustmentAmountType.PERCENT_PER_YEAR: 0,  # Always first so that it can be calculated from total rent
+            RentAdjustmentAmountType.AMOUNT_PER_YEAR: 1,
+            RentAdjustmentAmountType.AMOUNT_TOTAL: 99,  # Should be last always
+        }
+
+        # Within each amount type, INCREASE comes before DISCOUNT
+        type_order = {
+            RentAdjustmentType.INCREASE: 0,
+            RentAdjustmentType.DISCOUNT: 1,
+        }
+
+        return (
+            amount_type_order.get(
+                adjustment.amount_type, 10
+            ),  # Defaults to 10 which is not before AMOUNT_TOTAL
+            type_order.get(adjustment.type, 10),  # Default to something
+        )
 
 
 class ManagementSubventionFormOfManagement(NameModel):
