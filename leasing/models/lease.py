@@ -917,8 +917,8 @@ class Lease(TimeStampedSafeDeleteModel):
             & Q(Q(lease__end_date=None) | Q(lease__end_date__gte=date_range_start))
             & Q(Q(lease__start_date=None) | Q(lease__start_date__lte=date_range_end))
         )
-
-        return self.rents.filter(rent_range_filter)
+        rents: QuerySet[Rent] = self.rents
+        return rents.filter(rent_range_filter)
 
     # TODO: Create tests for this
     def get_all_billing_periods_for_year(self, year):
@@ -943,6 +943,11 @@ class Lease(TimeStampedSafeDeleteModel):
             return False
 
     def calculate_rent_amount_for_period(self, start_date, end_date, dry_run=False):
+        """
+        Args:
+            dry_run (bool, optional): **Note:** Despite the function name suggesting a pure calculation, setting
+                `dry_run=False` (default) can result in database modifications!
+        """
         calculation_result = CalculationResult(
             date_range_start=start_date, date_range_end=end_date
         )
@@ -955,6 +960,11 @@ class Lease(TimeStampedSafeDeleteModel):
         return calculation_result
 
     def calculate_rent_amount_for_year(self, year, dry_run=False):
+        """
+        Args:
+            dry_run (bool, optional): **Note:** Despite the function name suggesting a pure calculation, setting
+                `dry_run=False` (default) can result in database modifications!
+        """
         first_day_of_year = datetime.date(year=year, month=1, day=1)
         last_day_of_year = datetime.date(year=year, month=12, day=31)
 
