@@ -18,7 +18,7 @@ class MvjUserManager(UserManager):
         This is determined by checking if the user has any AD groups,
         so technically officer == AD user (as of now).
         """
-        return self.filter(is_active=True, ad_groups__isnull=False)
+        return self.filter(is_active=True, ad_groups__isnull=False).distinct()
 
 
 class User(AbstractUser, SerializableMixin):
