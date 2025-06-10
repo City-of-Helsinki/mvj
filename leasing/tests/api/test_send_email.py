@@ -42,7 +42,7 @@ def test_send_email(django_db_setup, client, lease_test_data, user_factory):
     url = reverse("v1:send-email")
 
     with patch(
-        "leasing.viewsets.email.SendEmailView._send_email",
+        "leasing.viewsets.email.send_email",
         return_value=MagicMock(status_code=200),
     ) as mock_send_email:
         response = client.post(
@@ -97,31 +97,34 @@ def test_constructability_reminder_email_sent(
     )
     assert response.status_code == status.HTTP_200_OK
     assert response.data == {"sent": True}
-    assert len(mail.outbox) == 2
+
+    assert (
+        len(mail.outbox) == 1
+    ), "One email is sent immediately, and one is scheduled for later (not in outbox yet)"
 
     # Spy the view's different methods to compare their invocations
     with patch(
-        "leasing.viewsets.email.SendEmailView._send_email"
+        "leasing.viewsets.email.send_email",
     ) as mock_initial_send, patch(
         "leasing.viewsets.email.SendEmailView._schedule_constructability_reminder_email"
-    ) as mock_reminder_send:
+    ) as mock_reminder_schedule:
         response = admin_client.post(
             url,
             data=json.dumps(data, cls=DjangoJSONEncoder),
             content_type="application/json",
         )
-        # Both the initial email and the reminder email should be sent
+        # Both the initial email and the reminder email should be attempted to be sent
         mock_initial_send.assert_called_once()
-        mock_reminder_send.assert_called_once()
+        mock_reminder_schedule.assert_called_once()
 
         # Reminder email is a follow-up to the initial email; it has similar contents
         initial_send_input = mock_initial_send.call_args_list[0][0][0]
-        reminder_send_input = mock_reminder_send.call_args_list[0][0][0]
+        reminder_schedule_input = mock_reminder_schedule.call_args_list[0][0][0]
 
-        assert initial_send_input["from_email"] == reminder_send_input["from_email"]
-        assert initial_send_input["to"] == reminder_send_input["to"]
-        assert initial_send_input["subject"] in reminder_send_input["subject"]
-        assert initial_send_input["body"] == reminder_send_input["body"]
+        assert initial_send_input["from_email"] == reminder_schedule_input["from_email"]
+        assert initial_send_input["to"] == reminder_schedule_input["to"]
+        assert initial_send_input["subject"] in reminder_schedule_input["subject"]
+        assert initial_send_input["body"] == reminder_schedule_input["body"]
 
 
 @pytest.mark.skip
