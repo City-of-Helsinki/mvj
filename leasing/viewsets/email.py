@@ -1,10 +1,8 @@
-from email.utils import format_datetime
-
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django_q.tasks import schedule
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +12,7 @@ from leasing.metadata import FieldsMetadata
 from leasing.models.email import EmailLog
 from leasing.permissions import PerMethodPermission
 from leasing.serializers.email import SendEmailSerializer
-from utils.email import EmailMessageInput
+from utils.email import EmailMessageInput, send_email
 
 
 class SendEmailView(APIView):
@@ -62,7 +60,7 @@ class SendEmailView(APIView):
                 "body": email_body,
                 "attachments": [],
             }
-            self._send_email(email_input)
+            send_email(email_input)
             email_log.recipients.add(recipient)
 
             if email_type == EmailLogType.CONSTRUCTABILITY:
@@ -82,20 +80,16 @@ class SendEmailView(APIView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-    def _send_email(self, email_input: EmailMessageInput) -> None:
-        email_message = EmailMessage(**email_input)
-        email_message.send()
-
     def _schedule_constructability_reminder_email(
         self, email_input: EmailMessageInput
     ) -> None:
-        """
-        Constructability emails come with a reminder email.
-
-        Relies on Mailgun's API's `o:deliverytime` parameter for scheduling.
-        """
-        email_input["subject"] = _("Reminder: {}").format(email_input["subject"])
-        email = EmailMessage(**email_input)
-        reminder_time = timezone.now() + relativedelta(days=7)
-        email.esp_extra = {"o:deliverytime": format_datetime(reminder_time)}
-        email.send(fail_silently=False)
+        """Constructability emails come with a reminder email."""
+        reminder_subject = _("Reminder: {}").format(email_input["subject"])
+        email_input["subject"] = reminder_subject
+        reminder_time = timezone.now() + relativedelta(days=14)
+        schedule(
+            "utils.email.send_email",
+            email_input,
+            next_run=reminder_time,
+            schedule_type="O",  # Once
+        )
