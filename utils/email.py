@@ -21,11 +21,7 @@ class EmailMessageInput(TypedDict):
 
 
 def send_email(email_message_input: EmailMessageInput, body_is_html=False) -> None:
-    if hasattr(settings, "DEBUG") and settings.DEBUG is True:
-        logging.info("Not sending email in debug mode.")
-        logging.info(f"Email message: {email_message_input}")
-        return
-
+    """Creates an EmailMessage from the input and sends it with error handling."""
     email_message = _create_email_from_input(email_message_input, body_is_html)
 
     try:
