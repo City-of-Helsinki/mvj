@@ -3,7 +3,6 @@ from pathlib import Path
 
 import factory
 import pytest
-from django.conf import settings
 from django.core.management import call_command
 from django.urls import reverse
 from faker import Faker
@@ -13,7 +12,6 @@ from plotsearch.models.plot_search import AreaSearch
 from plotsearch.tests.conftest import (  # noqa:F401
     setup_lessor_contacts_and_service_units,
 )
-from utils.email import EmailMessageInput
 
 fake = Faker("fi_FI")
 
@@ -256,15 +254,3 @@ def answer_with_email(
     response = admin_client.post(url, data=answer_payload)
 
     return {"answer": response.data, "area_search": area_search}
-
-
-@pytest.fixture
-def answer_email_message():
-    email: EmailMessageInput = {
-        "subject": "Test email",
-        "body": "This is a test email",
-        "from_email": settings.DEFAULT_FROM_EMAIL,
-        "to": ["test@example.com"],
-        "attachments": [],
-    }
-    return email

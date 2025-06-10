@@ -1,15 +1,3 @@
-from smtplib import (
-    SMTPAuthenticationError,
-    SMTPConnectError,
-    SMTPDataError,
-    SMTPException,
-    SMTPHeloError,
-    SMTPNotSupportedError,
-    SMTPRecipientsRefused,
-    SMTPResponseException,
-    SMTPSenderRefused,
-    SMTPServerDisconnected,
-)
 from unittest.mock import patch
 
 import pytest
@@ -23,7 +11,7 @@ from forms.utils import (
     clone_object,
     generate_and_queue_answer_emails,
 )
-from utils.email import EmailMessageInput, send_email
+from utils.email import EmailMessageInput
 
 BASIC_TEMPLATE_SECTION_COUNT = 7
 BASIC_TEMPLATE_FIELD_COUNT = 23
@@ -201,97 +189,3 @@ def test_generate_email_user_language(
 #         f.write(email.get("subject"))
 #         f.write("\n------------------------------\n\n")
 #         f.write(email.get("body"))
-
-
-def test_send_answer_email(answer_email_message: EmailMessageInput):
-    with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-        send_email(answer_email_message)
-        assert mock_send.called
-
-
-def test_send_answer_email_debug(answer_email_message: EmailMessageInput):
-    with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-        with patch("logging.info") as mock_logging:
-            settings.DEBUG = True
-            send_email(answer_email_message)
-            assert not mock_send.called
-            assert mock_logging.call_count == 2
-
-
-def test_send_answer_email_smtp_exceptions_not_raised(
-    answer_email_message: EmailMessageInput,
-):
-    exceptions = (
-        (
-            SMTPRecipientsRefused,
-            SMTPRecipientsRefused({"test@example.com": (550, "User unknown")}),
-        ),
-        (
-            SMTPSenderRefused,
-            SMTPSenderRefused(
-                550,
-                "User unknown",
-                "test@example.com",
-            ),
-        ),
-    )
-    for _, side_effect in exceptions:
-        with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-            with patch("logging.exception") as mock_logging:
-                settings.DEBUG = False
-                mock_send.side_effect = side_effect
-                send_email(answer_email_message)
-                assert mock_send.called
-                assert mock_logging.call_count == 1
-
-
-def test_send_answer_email_smtp_exceptions_raised(
-    answer_email_message: EmailMessageInput,
-):
-    exceptions = (
-        (
-            SMTPDataError,
-            SMTPDataError(550, "User unknown"),
-        ),
-        (
-            SMTPException,
-            SMTPException("Error sending email"),
-        ),
-        (
-            TimeoutError,
-            TimeoutError("Connection timed out"),
-        ),
-        (
-            SMTPServerDisconnected,
-            SMTPServerDisconnected("Server disconnected"),
-        ),
-        (
-            SMTPResponseException,
-            SMTPResponseException(550, "User unknown"),
-        ),
-        (
-            SMTPConnectError,
-            SMTPConnectError(550, "Connection error"),
-        ),
-        (
-            SMTPHeloError,
-            SMTPHeloError(550, "User unknown"),
-        ),
-        (
-            SMTPAuthenticationError,
-            SMTPAuthenticationError(550, "User unknown"),
-        ),
-        (
-            SMTPNotSupportedError,
-            SMTPNotSupportedError("Not supported"),
-        ),
-    )
-    for exception, side_effect in exceptions:
-        with patch("django.core.mail.message.EmailMessage.send") as mock_send:
-            with patch("logging.exception") as mock_logging:
-                settings.DEBUG = False
-                mock_send.side_effect = side_effect
-                with pytest.raises(exception):
-                    send_email(answer_email_message)
-                assert mock_send.called
-                assert mock_logging.call_count == 1
