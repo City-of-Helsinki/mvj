@@ -1,5 +1,5 @@
 import pytest
-from helusers.models import ADGroup
+from helusers.models import ADGroup, ADGroupMapping
 
 from leasing.models.contract import Contract
 from leasing.serializers.contract import (
@@ -11,14 +11,18 @@ from users.models import User
 
 @pytest.mark.django_db
 def test_contract_change_update_serializer_executor_field(
-    lease_factory, contract_factory, user_factory
+    lease_factory, contract_factory, user_factory, group_factory
 ):
     lease = lease_factory()
     contract: Contract = contract_factory(lease=lease)
 
     officer_user: User = user_factory(username="officer")
+    group = group_factory(name="officers")
     ad_group = ADGroup.objects.create(name="test_ad_group")
-    officer_user.ad_groups.add(ad_group)  # This makes the user an officer
+
+    # Having an ADGoup that has ADGroupMapping makes the user an officer
+    ADGroupMapping.objects.create(group=group, ad_group=ad_group)
+    officer_user.ad_groups.add(ad_group)
     officer_user.save()
 
     regular_user = user_factory(username="regular")
@@ -50,17 +54,19 @@ def test_contract_change_update_serializer_executor_field(
 
 
 @pytest.mark.django_db
-def test_contract_change_change_update_serializer_executor_field(
-    lease_factory,
-    contract_factory,
-    user_factory,
+def test_contract_change_create_update_serializer_executor_field(
+    lease_factory, contract_factory, user_factory, group_factory
 ):
     lease = lease_factory()
     contract: Contract = contract_factory(lease=lease)
 
     officer_user: User = user_factory(username="officer")
+    group = group_factory(name="officers")
     ad_group = ADGroup.objects.create(name="test_ad_group")
-    officer_user.ad_groups.add(ad_group)  # This makes the user an officer
+
+    # Having an ADGoup that has ADGroupMapping makes the user an officer
+    ADGroupMapping.objects.create(group=group, ad_group=ad_group)
+    officer_user.ad_groups.add(ad_group)
     officer_user.save()
 
     regular_user = user_factory(username="regular")

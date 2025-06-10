@@ -16,9 +16,18 @@ class MvjUserManager(UserManager):
         """
         Returns users that are officers of City of Helsinki (employees).
         This is determined by checking if the user has any AD groups,
-        so technically officer == AD user (as of now).
+        and that the AD group has at least one ADGroupMapping.
+        Technically officer == AD user with a mapped group (as of now).
         """
-        return self.filter(is_active=True, ad_groups__isnull=False).distinct()
+        return self.filter(
+            is_active=True,
+            ad_groups__isnull=False,
+            # Ensure that the ADGroup the user has does have ADGroupMapping,
+            # meaning a group that the system expects to be an officer.
+            ad_groups__id__in=ADGroupMapping.objects.values_list(
+                "ad_group_id", flat=True
+            ),
+        ).distinct()
 
 
 class User(AbstractUser, SerializableMixin):
