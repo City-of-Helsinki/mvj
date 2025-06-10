@@ -6,7 +6,7 @@
 #
 asgiref==3.8.1
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django
 black==24.10.0
     # via -r requirements-dev.in
@@ -14,15 +14,15 @@ blessed==1.20.0
     # via -r requirements-dev.in
 certifi==2024.2.2
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   requests
 charset-normalizer==3.3.2
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   requests
 click==8.1.7
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   black
 coverage[toml]==7.5.1
     # via pytest-cov
@@ -30,7 +30,7 @@ debugpy==1.8.8
     # via -r requirements-dev.in
 django==4.2.20
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django-debug-toolbar
     #   django-extensions
     #   django-stubs
@@ -41,11 +41,11 @@ django-extensions==3.2.3
     # via -r requirements-dev.in
 django-stubs[compatible-mypy]==4.2.7
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   djangorestframework-stubs
 django-stubs-ext==5.0.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django-stubs
 djangorestframework-stubs[compatible-mypy]==3.14.5
     # via -r requirements-dev.in
@@ -70,11 +70,11 @@ httpretty==1.1.4
     # via -r requirements-dev.in
 idna==3.7
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   requests
 inflection==0.5.1
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   pytest-factoryboy
 iniconfig==2.0.0
     # via pytest
@@ -84,26 +84,26 @@ lxml-stubs==0.5.1
     # via -r requirements-dev.in
 markupsafe==2.1.5
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   werkzeug
 mccabe==0.7.0
     # via flake8
 mypy==1.7.1
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   -r requirements-dev.in
     #   django-stubs
     #   djangorestframework-stubs
 mypy-extensions==1.0.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   black
     #   mypy
 openpyxl==3.1.2
     # via -r requirements-dev.in
 packaging==24.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   black
     #   pytest
     #   pytest-factoryboy
@@ -113,7 +113,7 @@ pep8-naming==0.13.3
     # via -r requirements-dev.in
 platformdirs==4.2.2
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   black
 pluggy==1.5.0
     # via pytest
@@ -137,25 +137,25 @@ pytest-factoryboy==2.7.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   faker
-requests==2.32.3
+requests==2.32.4
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   djangorestframework-stubs
 six==1.16.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   blessed
     #   python-dateutil
 sqlparse==0.5.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django
     #   django-debug-toolbar
 tomli==2.0.1
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   black
     #   coverage
     #   django-stubs
@@ -165,18 +165,18 @@ types-python-dateutil==2.9.0.20241206
     # via -r requirements-dev.in
 types-pytz==2024.1.0.20240417
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django-stubs
 types-pyyaml==6.0.12.20240311
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   django-stubs
     #   djangorestframework-stubs
 types-requests==2.32.0.20240523
     # via djangorestframework-stubs
 typing-extensions==4.11.0
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   asgiref
     #   black
     #   django-stubs
@@ -186,7 +186,7 @@ typing-extensions==4.11.0
     #   pytest-factoryboy
 urllib3==2.2.1
     # via
-    #   -c /code/requirements.txt
+    #   -c requirements.txt
     #   requests
     #   types-requests
 wcwidth==0.2.13
