@@ -8,7 +8,6 @@ from smtplib import (
 )
 from typing import TypedDict
 
-from django.conf import settings
 from django.core.mail import EmailMessage
 
 
@@ -20,6 +19,9 @@ class EmailMessageInput(TypedDict):
     attachments: list[tuple[str, bytes | BytesIO, str]]
 
 
+logger = logging.getLogger(__name__)
+
+
 def send_email(email_message_input: EmailMessageInput, body_is_html=False) -> None:
     """Creates an EmailMessage from the input and sends it with error handling."""
     email_message = _create_email_from_input(email_message_input, body_is_html)
@@ -27,22 +29,22 @@ def send_email(email_message_input: EmailMessageInput, body_is_html=False) -> No
     try:
         email_message.send()
     except SMTPSenderRefused:
-        logging.exception(
+        logger.exception(
             "Server refused sender address when sending email. Abandoning retrying."
         )
         return  # No point retrying
     except SMTPRecipientsRefused:
-        logging.exception(
+        logger.exception(
             "Server refused recipient address when sending email. Abandoning retrying."
         )
         return  # No point retrying
     except (SMTPDataError, SMTPException) as e:
-        logging.exception(
+        logger.exception(
             f"Server responded with unexpected error code when sending email: {e}"
         )
         raise e
     except TimeoutError as e:
-        logging.exception("Server connection timed out when sending email.")
+        logger.exception("Server connection timed out when sending email.")
         raise e
 
 
