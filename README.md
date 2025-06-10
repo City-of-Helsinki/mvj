@@ -359,7 +359,7 @@ python manage.py init_sanitizer
 #### 3. Create sanitized dump
 
 ```bash
-python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%m).sql
+python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%M).sql
 ```
 
 Then copy the SQL file from source server to destination server, e.g. with `scp` tool.
