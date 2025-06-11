@@ -435,7 +435,7 @@ class LeaseCopyAreasToContractView(APIView):
 
 class LeaseSetInvoicingStateView(APIView):
     permission_classes = (PerMethodPermission,)
-    perms_map = {"POST": ["leasing.change_lease_is_invoicing_enabled"]}
+    perms_map = {"POST": ["leasing.change_lease_invoicing_enabled_at"]}
 
     def get_view_name(self):
         return _("Set invoicing state")
@@ -455,19 +455,21 @@ class LeaseSetInvoicingStateView(APIView):
         ):
             raise APIException('"invoicing_enabled" value has to be true or false')
 
-        if request.data["invoicing_enabled"] and not lease.is_rent_info_complete:
+        if request.data["invoicing_enabled"] and lease.rent_info_completed_at is None:
             raise APIException(
-                _("Cannot enable invoicing if rent info is not complete")
+                _("Cannot enable invoicing if rent info is not completed")
             )
 
-        lease.set_is_invoicing_enabled(request.data["invoicing_enabled"])
+        lease.set_invoicing_enabled(request.data["invoicing_enabled"])
 
-        return Response({"success": True})
+        return Response(
+            {"success": True, "invoicing_enabled_at": lease.invoicing_enabled_at}
+        )
 
 
 class LeaseSetRentInfoCompletionStateView(APIView):
     permission_classes = (PerMethodPermission,)
-    perms_map = {"POST": ["leasing.change_lease_is_rent_info_complete"]}
+    perms_map = {"POST": ["leasing.change_lease_rent_info_completed_at"]}
 
     def get_view_name(self):
         return _("Set rent info completion state")
@@ -484,6 +486,8 @@ class LeaseSetRentInfoCompletionStateView(APIView):
         ):
             raise APIException('"rent_info_complete" value has to be true or false')
 
-        lease.set_is_rent_info_complete(request.data["rent_info_complete"])
+        lease.set_rent_info_complete(request.data["rent_info_complete"])
 
-        return Response({"success": True})
+        return Response(
+            {"success": True, "rent_info_completed_at": lease.rent_info_completed_at}
+        )

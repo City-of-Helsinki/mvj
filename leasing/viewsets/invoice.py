@@ -109,7 +109,7 @@ class InvoiceViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
     def create(self, request, *args, **kwargs):
         lease = Lease.objects.get(pk=request.data.get("lease"))
 
-        if not lease.is_invoicing_enabled:
+        if lease.invoicing_enabled_at is None:
             raise ValidationError(
                 _("Can't create invoices if invoicing is not enabled.")
             )

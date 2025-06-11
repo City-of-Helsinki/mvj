@@ -37,7 +37,7 @@ class Command(BaseCommand):
             )
         )
 
-        leases = Lease.objects.filter(is_invoicing_enabled=True).filter(
+        leases = Lease.objects.filter(invoicing_enabled_at__isnull=False).filter(
             Q(Q(end_date=None) | Q(end_date__gte=today.replace(day=1)))
             & Q(  # ensure whole month is included when forced
                 Q(start_date=None) | Q(start_date__lte=end_of_next_month)

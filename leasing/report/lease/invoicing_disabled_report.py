@@ -44,7 +44,7 @@ INVOICING_DISABLED_REPORT_SQL = """
         AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
         AND l.service_unit_id = ANY(%(service_units)s)
         AND l.deleted IS NULL
-        AND l.is_invoicing_enabled = FALSE
+        AND l.invoicing_enabled_at IS NULL
     ORDER BY li.identifier;
 """
 

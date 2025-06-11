@@ -266,8 +266,8 @@ class LeaseSuccinctSerializer(
             "start_date",
             "end_date",
             "state",
-            "is_rent_info_complete",
-            "is_invoicing_enabled",
+            "rent_info_completed_at",
+            "invoicing_enabled_at",
             "reference_number",
             "note",
             "preparer",
@@ -344,8 +344,8 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "start_date",
             "end_date",
             "state",
-            "is_rent_info_complete",
-            "is_invoicing_enabled",
+            "rent_info_completed_at",
+            "invoicing_enabled_at",
             "reference_number",
             "note",
             "preparer",
@@ -376,8 +376,8 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
             "start_date",
             "end_date",
             "state",
-            "is_rent_info_complete",
-            "is_invoicing_enabled",
+            "rent_info_completed_at",
+            "invoicing_enabled_at",
             "reference_number",
             "note",
             "preparer",
@@ -710,7 +710,7 @@ class LeaseUpdateSerializer(
     class Meta:
         model = Lease
         fields = "__all__"
-        read_only_fields = ("is_invoicing_enabled", "is_rent_info_complete")
+        read_only_fields = ("invoicing_enabled_at", "rent_info_completed_at")
 
 
 class LeaseCreateSerializer(LeaseUpdateSerializer):
@@ -740,4 +740,4 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
     class Meta:
         model = Lease
         fields = "__all__"
-        read_only_fields = ("is_invoicing_enabled", "is_rent_info_complete")
+        read_only_fields = ("invoicing_enabled_at", "rent_info_completed_at")

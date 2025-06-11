@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from unittest.mock import patch
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
@@ -13,34 +14,39 @@ from leasing.models import Lease, PlanUnit
 @pytest.mark.parametrize(
     "value, expected_value, expected_code",
     [
-        ("", False, 500),
-        (None, False, 500),
-        (-1, False, 500),
-        (0, False, 500),
-        (1, False, 500),
-        (5, False, 500),
-        (True, True, 200),
-        (False, False, 200),
+        ("", None, 500),
+        (None, None, 500),
+        (-1, None, 500),
+        (0, None, 500),
+        (1, None, 500),
+        (5, None, 500),
+        (True, timezone.now(), 200),
+        (False, None, 200),
     ],
 )
 def test_set_invoicing_state(
     django_db_setup, admin_client, lease_test_data, value, expected_value, expected_code
 ):
     lease = lease_test_data["lease"]
-    lease.is_rent_info_complete = True
+    lease.rent_info_completed_at = expected_value
     lease.save()
 
-    assert lease.is_invoicing_enabled is False
+    assert lease.invoicing_enabled_at is None
 
     data = {"invoicing_enabled": value}
 
     url = reverse("v1:lease-set-invoicing-state") + "?lease={}".format(lease.id)
 
-    response = admin_client.post(
-        url,
-        data=json.dumps(data, cls=DjangoJSONEncoder),
-        content_type="application/json",
-    )
+    with patch(
+        "django.utils.timezone.now",
+        # Return value is mostly not needed to mock, but can't use None for it so defaulting to something.
+        return_value=expected_value or timezone.now(),
+    ):
+        response = admin_client.post(
+            url,
+            data=json.dumps(data, cls=DjangoJSONEncoder),
+            content_type="application/json",
+        )
 
     assert response.status_code == expected_code, "%s %s" % (
         response.status_code,
@@ -49,21 +55,24 @@ def test_set_invoicing_state(
 
     lease = Lease.objects.get(pk=lease.id)
 
-    assert lease.is_invoicing_enabled is expected_value
+    if isinstance(expected_value, datetime):
+        assert lease.invoicing_enabled_at == expected_value
+    else:
+        assert lease.invoicing_enabled_at is expected_value
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "value, expected_value, expected_code",
     [
-        ("", False, 500),
-        (None, False, 500),
-        (-1, False, 500),
-        (0, False, 500),
-        (1, False, 500),
-        (5, False, 500),
-        (True, True, 200),
-        (False, False, 200),
+        ("", None, 500),
+        (None, None, 500),
+        (-1, None, 500),
+        (0, None, 500),
+        (1, None, 500),
+        (5, None, 500),
+        (True, timezone.now(), 200),
+        (False, None, 200),
     ],
 )
 def test_set_rent_info_completion_state(
@@ -71,7 +80,7 @@ def test_set_rent_info_completion_state(
 ):
     lease = lease_test_data["lease"]
 
-    assert lease.is_rent_info_complete is False
+    assert lease.rent_info_completed_at is None
 
     data = {"rent_info_complete": value}
 
@@ -79,11 +88,16 @@ def test_set_rent_info_completion_state(
         lease.id
     )
 
-    response = admin_client.post(
-        url,
-        data=json.dumps(data, cls=DjangoJSONEncoder),
-        content_type="application/json",
-    )
+    with patch(
+        "django.utils.timezone.now",
+        # Return value is mostly not needed to mock, but can't use None for it so defaulting to something.
+        return_value=expected_value or timezone.now(),
+    ):
+        response = admin_client.post(
+            url,
+            data=json.dumps(data, cls=DjangoJSONEncoder),
+            content_type="application/json",
+        )
 
     assert response.status_code == expected_code, "%s %s" % (
         response.status_code,
@@ -92,7 +106,10 @@ def test_set_rent_info_completion_state(
 
     lease = Lease.objects.get(pk=lease.id)
 
-    assert lease.is_rent_info_complete is expected_value
+    if isinstance(expected_value, datetime):
+        assert lease.rent_info_completed_at == expected_value
+    else:
+        assert lease.rent_info_completed_at is expected_value
 
 
 @pytest.mark.django_db

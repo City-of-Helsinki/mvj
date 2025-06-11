@@ -1,9 +1,11 @@
+import datetime
 import json
 
 import pytest
 from django.contrib.auth.models import Permission
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 
 from leasing.enums import ContactType, PlotSearchTargetType
 from leasing.models import ContractRent, Lease, PlanUnit, ServiceUnit
@@ -174,14 +176,14 @@ def test_lease_area_addresses(
 
 
 @pytest.mark.django_db
-def test_patch_lease_is_invoicing_enabled_not_possible(
+def test_patch_lease_invoicing_enabled_at_not_possible(
     django_db_setup, admin_client, lease_test_data
 ):
     lease = lease_test_data["lease"]
 
-    assert lease.is_invoicing_enabled is False
+    assert lease.invoicing_enabled_at is None
 
-    data = {"is_invoicing_enabled": True}
+    data = {"invoicing_enabled_at": datetime.datetime(year=2025, month=1, day=1)}
 
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
@@ -194,18 +196,18 @@ def test_patch_lease_is_invoicing_enabled_not_possible(
 
     lease = Lease.objects.get(pk=response.data["id"])
 
-    assert lease.is_invoicing_enabled is False
+    assert lease.invoicing_enabled_at is None
 
 
 @pytest.mark.django_db
-def test_patch_lease_is_rent_info_complete_not_possible(
+def test_patch_lease_rent_info_completed_at_not_possible(
     django_db_setup, admin_client, lease_test_data
 ):
     lease = lease_test_data["lease"]
 
-    assert lease.is_rent_info_complete is False
+    assert lease.rent_info_completed_at is None
 
-    data = {"is_rent_info_complete": True}
+    data = {"rent_info_completed_at": timezone.now()}
 
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
     response = admin_client.patch(
@@ -218,7 +220,7 @@ def test_patch_lease_is_rent_info_complete_not_possible(
 
     lease = Lease.objects.get(pk=response.data["id"])
 
-    assert lease.is_rent_info_complete is False
+    assert lease.rent_info_completed_at is None
 
 
 def test_patch_lease_basis_of_rents(

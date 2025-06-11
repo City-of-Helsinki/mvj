@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import connection, models, transaction
 from django.db.models import Max, Q, QuerySet
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -603,13 +604,13 @@ class Lease(TimeStampedSafeDeleteModel):
     )
 
     # In Finnish: Vuokratiedot kunnossa
-    is_rent_info_complete = models.BooleanField(
-        verbose_name=_("Rent info complete?"), default=False
+    rent_info_completed_at = models.DateTimeField(
+        verbose_name=_("Rent info completed at?"), null=True, default=None
     )
 
     # In Finnish: Laskutus käynnissä
-    is_invoicing_enabled = models.BooleanField(
-        verbose_name=_("Invoicing enabled?"), default=False
+    invoicing_enabled_at = models.DateTimeField(
+        verbose_name=_("Invoicing enabled at?"), null=True, default=None
     )
 
     # In Finnish: Diaarinumero
@@ -1480,26 +1481,32 @@ class Lease(TimeStampedSafeDeleteModel):
 
         return invoices
 
-    def set_is_invoicing_enabled(self, state):
-        if self.is_invoicing_enabled is state:
+    def is_invoicing_enabled(self) -> bool:
+        return self.invoicing_enabled_at is not None
+
+    def set_invoicing_enabled(self, state: bool):
+        if self.is_invoicing_enabled() == state:
             return
 
         if state is True:
             # TODO: Check that rents, tenants, etc. are in order
-            self.is_invoicing_enabled = True
+            self.invoicing_enabled_at = timezone.now()
             self.save()
 
             self.generate_first_invoices()
         else:
-            self.is_invoicing_enabled = False
+            self.invoicing_enabled_at = None
             self.save()
 
-    def set_is_rent_info_complete(self, state):
-        if self.is_rent_info_complete is state:
+    def is_rent_info_complete(self) -> bool:
+        return self.rent_info_completed_at is not None
+
+    def set_rent_info_complete(self, state: bool):
+        if self.is_rent_info_complete() is state:
             return
 
         # TODO: Notify billing
-        self.is_rent_info_complete = state
+        self.rent_info_completed_at = timezone.now() if state is True else None
         self.save()
 
     def is_empty(self):
