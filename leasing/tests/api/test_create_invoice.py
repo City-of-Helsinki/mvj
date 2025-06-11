@@ -27,7 +27,7 @@ def test_create_invoice(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -84,7 +84,7 @@ def test_create_invoice_before_tenant_contract_is_activated(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -141,7 +141,7 @@ def test_create_zero_sum_invoice_state_is_paid(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -200,7 +200,7 @@ def test_create_invoice_for_tenant(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -257,7 +257,7 @@ def test_create_invoice_for_tenant_with_billing_contact(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -323,7 +323,7 @@ def test_create_invoice_tenant_not_in_lease(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
     tenant_rent_share_factory(
@@ -345,7 +345,7 @@ def test_create_invoice_tenant_not_in_lease(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
     tenant2 = tenant_factory(lease=lease2, share_numerator=1, share_denominator=1)
     tenant_rent_share_factory(
@@ -394,7 +394,7 @@ def test_create_interest_invoice_fail(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -446,7 +446,7 @@ def test_create_invoice_checks_service_unit(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     service_unit2 = service_unit_factory()
@@ -518,7 +518,7 @@ def test_create_invoice_cannot_add_row_with_receivable_type_from_another_service
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     service_unit = lease.service_unit

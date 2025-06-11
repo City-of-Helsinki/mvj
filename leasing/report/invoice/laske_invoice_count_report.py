@@ -99,7 +99,9 @@ class LaskeInvoiceCountReport(ReportBase):
             Rent.objects.filter(
                 (Q(end_date__isnull=True) | Q(end_date__gte=estimate_start_date))
             )
-            .filter(lease__end_date__gte=today, lease__is_invoicing_enabled=True)
+            .filter(
+                lease__end_date__gte=today, lease__invoicing_enabled_at__isnull=False
+            )
             .select_related("lease", "lease__type")
         )
 

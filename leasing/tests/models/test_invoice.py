@@ -1881,7 +1881,7 @@ def test_create_invoice_zero_amount_is_set_to_status_paid(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
@@ -1945,7 +1945,7 @@ def test_create_invoice_zero_row_sum_is_set_to_status_paid(
         district_id=1,
         notice_period_id=1,
         start_date=datetime.date(year=2000, month=1, day=1),
-        is_invoicing_enabled=True,
+        invoicing_enabled_at=datetime.datetime(year=2000, month=1, day=1),
     )
 
     tenant1 = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)

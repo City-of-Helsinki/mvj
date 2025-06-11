@@ -119,7 +119,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
-            AND l.is_rent_info_complete = FALSE
+            AND l.rent_info_completed_at IS NULL
         GROUP BY l.id,
                 li.id
         ORDER BY li.identifier;

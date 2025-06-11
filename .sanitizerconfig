@@ -994,8 +994,8 @@ strategy:
     intended_use_id: null
     intended_use_note: mvj.paragraph_if_exist
     internal_order: null
-    is_invoicing_enabled: null
-    is_rent_info_complete: null
+    invoicing_enabled_at: null
+    rent_info_completed_at: null
     is_subject_to_vat: null
     lessor_id: null
     management_id: null

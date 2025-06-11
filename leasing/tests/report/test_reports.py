@@ -152,7 +152,9 @@ def test_laske_invoice_count_report(
 
     service_unit = service_unit_factory()
     lease = lease_factory(
-        service_unit=service_unit, is_invoicing_enabled=True, end_date="2030-12-31"
+        service_unit=service_unit,
+        invoicing_enabled_at=datetime(year=2024, month=1, day=1),
+        end_date="2030-12-31",
     )
     contact = contact_factory()
     dates = [
