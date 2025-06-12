@@ -2,32 +2,12 @@ from collections import defaultdict
 from itertools import chain
 
 from django.contrib import admin
-from django.contrib.auth.models import UserManager
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from helsinki_gdpr.models import SerializableMixin
 from helusers.models import AbstractUser, ADGroupMapping
 from rest_framework.authtoken.models import Token
-
-
-class MvjUserManager(UserManager):
-    def get_officers(self):
-        """
-        Returns users that are officers of City of Helsinki (employees).
-        This is determined by checking if the user has any AD groups,
-        and that the AD group has at least one ADGroupMapping.
-        Technically officer == AD user with a mapped group (as of now).
-        """
-        return self.filter(
-            is_active=True,
-            ad_groups__isnull=False,
-            # Ensure that the ADGroup the user has does have ADGroupMapping,
-            # meaning a group that the system expects to be an officer.
-            ad_groups__id__in=ADGroupMapping.objects.values_list(
-                "ad_group_id", flat=True
-            ),
-        ).distinct()
 
 
 class User(AbstractUser, SerializableMixin):
