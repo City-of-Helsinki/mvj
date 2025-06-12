@@ -133,6 +133,18 @@ class Command(BaseCommand):
             user_backups = json.load(f)
 
             for backup in user_backups:
+                heluser_username_prefix = "u-"
+                username: str = backup["username"]
+                if username.startswith(heluser_username_prefix):
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Skipping restoration of Export API user {backup['username']} because it "
+                            "is a heluser account. "
+                            "Creating the user this way would break login for them."
+                        )
+                    )
+                    continue
+
                 user, created = User.objects.get_or_create(username=backup["username"])
 
                 if created:
@@ -213,10 +225,12 @@ class Command(BaseCommand):
                 )
 
     def _print_follow_up_instructions(self, tmp_dir: str) -> None:
-        self.stdout.write(self.style.SUCCESS("Automated repair completed!"))
         self.stdout.write(
-            "Next steps for you: review the temporary backups, "
-            "and restore whatever you think is necessary either manually or with psql or pg_restore."
+            self.style.SUCCESS(
+                "Automated repair completed!\n"
+                "Next steps for you: review the temporary backups, "
+                "and restore whatever you think is necessary either manually or with psql or pg_restore."
+            )
         )
         self.stdout.write(
             self.style.WARNING(
