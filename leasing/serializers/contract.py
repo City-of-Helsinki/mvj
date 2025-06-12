@@ -48,7 +48,7 @@ class ContractChangeCreateUpdateSerializer(
     )
     executor = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
-        queryset=User.objects.get_officers(),
+        queryset=User.get_officers(),
         related_serializer=UserSerializer,
         required=False,
         allow_null=True,
@@ -161,7 +161,7 @@ class ContractCreateUpdateSerializer(
     )
     executor = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
-        queryset=User.objects.get_officers(),
+        queryset=User.get_officers(),
         related_serializer=UserSerializer,
         required=False,
         allow_null=True,
