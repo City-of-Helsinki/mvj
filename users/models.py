@@ -33,8 +33,6 @@ class MvjUserManager(UserManager):
 class User(AbstractUser, SerializableMixin):
     service_units = models.ManyToManyField("leasing.ServiceUnit", related_name="users")
 
-    objects: MvjUserManager = MvjUserManager()
-
     # GDPR API, meant for PlotSearch app users
     serialize_fields = (
         {"name": "uuid"},
@@ -125,3 +123,21 @@ class User(AbstractUser, SerializableMixin):
         service_units_to_add = new_service_units.difference(old_service_units)
         if service_units_to_add:
             self.service_units.add(*service_units_to_add)
+
+    @classmethod
+    def get_officers(cls):
+        """
+        Returns users that are officers of City of Helsinki (employees).
+        This is determined by checking if the user has any AD groups,
+        and that the AD group has at least one ADGroupMapping.
+        Technically officer == AD user with a mapped group (as of now).
+        """
+        return cls.objects.filter(
+            is_active=True,
+            ad_groups__isnull=False,
+            # Ensure that the ADGroup the user has does have ADGroupMapping,
+            # meaning a group that the system expects to be an officer.
+            ad_groups__id__in=ADGroupMapping.objects.values_list(
+                "ad_group_id", flat=True
+            ),
+        ).distinct()
