@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from leasing.models.contact import Contact
 from leasing.models.land_area import LeaseArea
+from leasing.models.lease import Lease
 from leasing.models.map_layers import VipunenMapLayer
 
 
@@ -229,3 +230,23 @@ class ExportVipunenMapLayerSerializer(serializers.ModelSerializer):
             "hex_color",
         ]
         read_only_fields = fields
+
+
+class ExportExpiredLeaseSerializer(serializers.ModelSerializer):
+    vuokraustunnus = serializers.CharField(source="identifier.identifier")
+    vuokraus_loppupvm = serializers.DateField(source="end_date")
+    poistettu = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lease
+        fields = [
+            "vuokraustunnus",
+            "vuokraus_loppupvm",
+            "poistettu",
+        ]
+        read_only_fields = fields
+
+    def get_poistettu(self, instance: Lease):
+        if instance.deleted is not None:
+            return "kyllä"
+        return "ei"
