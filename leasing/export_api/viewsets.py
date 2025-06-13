@@ -10,16 +10,19 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from leasing.enums import TenantContactType
 from leasing.export_api.permissions import (
+    ExportExpiredLeasePermission,
     ExportLeaseAreaPermission,
     ExportLeaseStatisticReportPermission,
     ExportVipunenMapLayerPermission,
 )
 from leasing.export_api.serializers import (
+    ExportExpiredLeaseSerializer,
     ExportLeaseAreaSerializer,
     ExportVipunenMapLayerSerializer,
 )
 from leasing.models.contract import Contract
 from leasing.models.land_area import LeaseArea, LeaseAreaAddress
+from leasing.models.lease import Lease
 from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.rent import Rent
 from leasing.models.report_storage import ReportStorage
@@ -218,3 +221,16 @@ class ExportLeaseStatisticReportViewSet(ReadOnlyModelViewSet):
 
         report_data = getattr(latest_report, "report_data", {})
         return Response(data=report_data)
+
+
+class ExportExpiredLeaseViewSet(ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [
+        IsAuthenticated,
+        ExportExpiredLeasePermission,
+    ]
+    serializer_class = ExportExpiredLeaseSerializer
+
+    def get_queryset(self):
+        now = timezone.now()
+        return Lease.all_objects.filter(Q(deleted__isnull=False) | Q(end_date__lt=now))
