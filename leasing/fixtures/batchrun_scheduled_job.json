@@ -394,5 +394,23 @@
       "hours": "5",
       "minutes": "30"
     }
+  },
+    {
+    "model": "batchrun.scheduledjob",
+    "pk": 24,
+    "fields": {
+      "created_at": "2025-03-26T12:24:00.000Z",
+      "modified_at": "2025-03-26T12:24:00.000Z",
+      "job": 25,
+      "comment": "Export raportin generointi: Vuokrausten käsittelyaikojen raportti [AKV]",
+      "enabled": false,
+      "timezone": 1,
+      "years": "*",
+      "months": "*",
+      "days_of_month": "*",
+      "weekdays": "*",
+      "hours": "5",
+      "minutes": "40"
+    }
   }
 ]

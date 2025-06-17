@@ -190,5 +190,26 @@
       "parameters": {},
       "parameter_format_string": ""
     }
+  },
+    {
+    "model": "batchrun.command",
+    "pk": 19,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "type": "django-manage",
+      "name": "generate_export_report_lease_processing_time",
+      "parameters": {
+        "service_unit_id": {
+          "type": "int",
+          "required": false,
+          "description": {
+            "fi": "Palvelukokonaisuuden id",
+            "sv": "Serviceenhet id"
+          }
+        }
+      },
+      "parameter_format_string": ""
+    }
   }
 ]
