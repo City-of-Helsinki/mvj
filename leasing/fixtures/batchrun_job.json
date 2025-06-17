@@ -308,5 +308,22 @@
       "arguments": {},
       "history_retention_policy": 1
     }
+  },
+    {
+    "model": "batchrun.job",
+    "pk": 25,
+    "fields": {
+      "deleted": null,
+      "deleted_by_cascade": false,
+      "created_at": "2025-06-17T15:00:00.000Z",
+      "modified_at": "2025-06-17T15:00:00.000Z",
+      "name": "Export raportin generointi: Vuokrausten käsittelyaikojen raportti [AKV]",
+      "comment": "",
+      "command": 19,
+      "arguments": {
+        "service_unit_id": 2
+      },
+      "history_retention_policy": 1
+    }
   }
 ]
