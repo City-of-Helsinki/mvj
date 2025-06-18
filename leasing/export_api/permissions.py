@@ -72,3 +72,21 @@ class ExportExpiredLeasePermission(BasePermission):
             and isinstance(request.auth, TokenAuthenticationModel)
             and request.user.has_perm("leasing.export_api_expired_lease")
         )
+
+
+class ExportLeaseProcessingTimeReportPermission(BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.auth, TokenAuthenticationModel)
+            and request.user.has_perm("leasing.export_api_lease_processing_time_report")
+        )
+
+    def has_object_permission(self, request, view, obj):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.auth, TokenAuthenticationModel)
+            and request.user.has_perm("leasing.export_api_lease_processing_time_report")
+        )

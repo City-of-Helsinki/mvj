@@ -14,4 +14,8 @@ class ReportStorage(models.Model):
                 "export_api_lease_statistic_report",
                 "Can access export API for lease statistics report",
             ),
+            (
+                "export_api_lease_processing_time_report",
+                "Can access export API for lease processing time report",
+            ),
         ]
