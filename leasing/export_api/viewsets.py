@@ -9,9 +9,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from leasing.enums import TenantContactType
+from leasing.export_api.enums import ReportType
 from leasing.export_api.permissions import (
     ExportExpiredLeasePermission,
     ExportLeaseAreaPermission,
+    ExportLeaseProcessingTimeReportPermission,
     ExportLeaseStatisticReportPermission,
     ExportVipunenMapLayerPermission,
 )
@@ -206,23 +208,6 @@ class ExportVipunenMapLayerViewSet(ReadOnlyModelViewSet):
     queryset = VipunenMapLayer.objects.all()
 
 
-class ExportLeaseStatisticReportViewSet(ReadOnlyModelViewSet):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [
-        IsAuthenticated,
-        ExportLeaseStatisticReportPermission,
-    ]
-    queryset = ReportStorage.objects.filter(report_type="lease_statistic").order_by(
-        "created_at"
-    )
-
-    def list(self, request):
-        latest_report = self.queryset.last()
-
-        report_data = getattr(latest_report, "report_data", {})
-        return Response(data=report_data)
-
-
 class ExportExpiredLeaseViewSet(ReadOnlyModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [
@@ -234,3 +219,40 @@ class ExportExpiredLeaseViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         now = timezone.now()
         return Lease.all_objects.filter(Q(deleted__isnull=False) | Q(end_date__lt=now))
+
+
+# Reports
+
+
+class ExportLeaseStatisticReportViewSet(ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [
+        IsAuthenticated,
+        ExportLeaseStatisticReportPermission,
+    ]
+    queryset = ReportStorage.objects.filter(
+        report_type=ReportType.LEASE_STATISTIC.value
+    ).order_by("created_at")
+
+    def list(self, request):
+        latest_report = self.queryset.last()
+
+        report_data = getattr(latest_report, "report_data", {})
+        return Response(data=report_data)
+
+
+class ExportLeaseProcessingTimeReportViewSet(ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [
+        IsAuthenticated,
+        ExportLeaseProcessingTimeReportPermission,
+    ]
+    queryset = ReportStorage.objects.filter(
+        report_type=ReportType.LEASE_PROCESSING_TIME.value
+    ).order_by("created_at")
+
+    def list(self, request):
+        latest_report = self.queryset.last()
+
+        report_data = getattr(latest_report, "report_data", {})
+        return Response(data=report_data)
