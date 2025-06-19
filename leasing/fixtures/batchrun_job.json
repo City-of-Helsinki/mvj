@@ -317,12 +317,10 @@
       "deleted_by_cascade": false,
       "created_at": "2025-06-17T15:00:00.000Z",
       "modified_at": "2025-06-17T15:00:00.000Z",
-      "name": "Export raportin generointi: Vuokrausten käsittelyaikojen raportti [AKV]",
+      "name": "Export raportin generointi: Vuokrausten käsittelyaikojen raportti",
       "comment": "",
       "command": 19,
-      "arguments": {
-        "service_unit_id": 2
-      },
+      "arguments": {},
       "history_retention_policy": 1
     }
   }
