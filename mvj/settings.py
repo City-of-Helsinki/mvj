@@ -318,6 +318,8 @@ Q_CLUSTER = {
     "timeout": 90,
     "retry": 60 * 60,  # 1 hour
     "orm": "default",
+    "cpu_affinity": 1,
+    "workers": 1,
     "error_reporter": {
         "sentry": {
             "dsn": env.str("SENTRY_DSN"),
