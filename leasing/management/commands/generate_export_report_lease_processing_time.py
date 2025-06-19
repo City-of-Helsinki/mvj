@@ -26,6 +26,9 @@ from leasing.models.report_storage import ReportStorage
 
 logger = logging.getLogger(__name__)
 
+DATE_FORMAT = "%d.%m.%Y"  # 01.01.2025
+DATETIME_FORMAT = "%d.%m.%Y %H:%M %z"  # 01.01.2025 12:00 +0200
+
 
 class LeaseProcessingTimeReportSerializer(serializers.Serializer):
     palvelukokonaisuus = serializers.CharField(
@@ -35,17 +38,17 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
     vuokraustunnus = serializers.CharField(
         source="identifier.identifier", allow_null=True, read_only=True
     )
-    vuokrauksen_luontipvm = serializers.DateTimeField(
-        source="created_at", allow_null=True, read_only=True
+    vuokrauksen_luonti_pvm = serializers.DateTimeField(
+        source="created_at", allow_null=True, read_only=True, format=DATETIME_FORMAT
     )
     kayttotarkoitus = serializers.CharField(
         source="intended_use.name", allow_null=True, read_only=True
     )
     vuokrauksen_alku_pvm = serializers.DateField(
-        source="start_date", allow_null=True, read_only=True
+        source="start_date", allow_null=True, read_only=True, format=DATE_FORMAT
     )
     vuokrauksen_loppu_pvm = serializers.DateField(
-        source="end_date", allow_null=True, read_only=True
+        source="end_date", allow_null=True, read_only=True, format=DATE_FORMAT
     )
     vuokrauksen_kokonaisala = serializers.IntegerField(
         source="total_lease_area", allow_null=True, read_only=True
@@ -60,24 +63,37 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
         source="preparer.last_name", allow_null=True, read_only=True
     )
     allekirjoitus_pvm = serializers.DateField(
-        source="latest_signing_date", allow_null=True, read_only=True
+        source="latest_signing_date",
+        allow_null=True,
+        read_only=True,
+        format=DATE_FORMAT,
     )
-    laskutuksen_alku_pvm = serializers.DateTimeField(
-        source="invoicing_enabled_at", allow_null=True, read_only=True
+    laskutus_kaynnistetty_pvm = serializers.DateTimeField(
+        source="invoicing_enabled_at",
+        allow_null=True,
+        read_only=True,
+        format=DATETIME_FORMAT,
     )
     vuokratiedot_kunnossa_pvm = serializers.DateTimeField(
-        source="rent_info_completed_at", allow_null=True, read_only=True
+        source="rent_info_completed_at",
+        allow_null=True,
+        read_only=True,
+        format=DATETIME_FORMAT,
     )
     geometria = serializers.IntegerField(
         source="geometria_value", allow_null=True, read_only=True
     )
     viimeisin_paatoksen_pvm = serializers.DateField(
-        source="latest_decision_date", allow_null=True, read_only=True
+        source="latest_decision_date",
+        allow_null=True,
+        read_only=True,
+        format=DATE_FORMAT,
     )
     hakemuksen_saapumis_pvm = serializers.DateField(
         source="application_metadata.application_received_at",
         allow_null=True,
         read_only=True,
+        format=DATE_FORMAT,
     )
 
     def get_url(self, obj: Lease):
@@ -86,10 +102,7 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
         return f"{settings.OFFICER_UI_URL}/{obj.id}"
 
 
-def get_lease_processing_time_report(input_data):
-    service_unit_id = input_data.get("service_unit_id")
-    if not service_unit_id:
-        raise ValueError("Service unit must be provided in input data")
+def get_lease_processing_time_report():
 
     now = timezone.now()
 
@@ -98,7 +111,7 @@ def get_lease_processing_time_report(input_data):
     )
 
     queryset = (
-        Lease.objects.filter(deleted__isnull=True, service_unit_id=service_unit_id)
+        Lease.objects.filter(deleted__isnull=True)
         .filter(Q(end_date__gte=now) | Q(end_date__isnull=True))
         .select_related("identifier", "district", "preparer", "application_metadata")
         .prefetch_related(
@@ -148,18 +161,8 @@ class Command(BaseCommand):
 
     help = "Generate Lease processing time report to ReportStorage"
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--service_unit_id",
-            type=int,
-            required=True,
-            help="Service unit ID",
-        )
-
     def handle(self, *args, **options):
-        input_data = {
-            "service_unit_id": options.get("service_unit_id"),
-        }
+        input_data = {}
         async_task_timeout = 60 * 60  # 1 hour
         try:
             async_task(handle_async_task, input_data, timeout=async_task_timeout)
@@ -173,7 +176,7 @@ def handle_async_task(input_data):
     try:
         logger.info(f"Starting generation of {report_slug} report to ReportStorage")
         # Generate report data and create a ReportStorage
-        report_data = get_lease_processing_time_report(input_data)
+        report_data = get_lease_processing_time_report()
 
         ReportStorage.objects.create(
             report_data=report_data,
