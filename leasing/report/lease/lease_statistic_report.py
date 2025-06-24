@@ -481,7 +481,10 @@ class LeaseStatisticReport(AsyncReportBase):
         "tenants": {
             "label": _("Tenants"),
             "source": lambda x: get_tenants(
-                x, include_future_tenants=False, report="Lease statistics report"
+                x,
+                include_future_tenants=False,
+                report="Lease statistics report",
+                anonymize_person=True,  # Anonymize ContactType.PERSON names in the report
             ),
             "width": 40,
         },

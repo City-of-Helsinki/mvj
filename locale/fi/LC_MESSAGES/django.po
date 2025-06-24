@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-24 17:13+0300\n"
+"POT-Creation-Date: 2025-06-24 17:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1435,6 +1435,11 @@ msgstr "Yhteystieto"
 msgctxt "Model name"
 msgid "Contacts"
 msgstr "Yhteystiedot"
+
+#. Translators: Replaces the name of a person with a generic term.
+msgctxt "Replaces persons name"
+msgid "PRIVATE"
+msgstr "PRIVAT"
 
 #, python-brace-format
 msgid "{name} (National Identification Number {id})"

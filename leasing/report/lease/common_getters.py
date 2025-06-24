@@ -5,6 +5,7 @@ from django.db.models import QuerySet
 
 from leasing.enums import TenantContactType
 from leasing.models import Contract
+from leasing.models.contact import Contact
 from leasing.models.lease import Lease
 
 RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
@@ -61,10 +62,12 @@ def get_identifier_string_from_lease_link_data(row: dict) -> str:
         return "-"
 
 
-def get_tenants(lease, include_future_tenants=False, report=None):
+def get_tenants(
+    lease, include_future_tenants=False, report=None, anonymize_person=False
+):
     today = datetime.date.today()
 
-    contacts = set()
+    contacts: set[Contact] = set()
 
     for tenant in lease.tenants.all():
         all_tenantcontacts = tenant.tenantcontact_set.all()
@@ -82,7 +85,7 @@ def get_tenants(lease, include_future_tenants=False, report=None):
             ):
                 contacts.add(tc.contact)
 
-    return ", ".join([c.get_name() for c in contacts])
+    return ", ".join([c.get_name(anonymize_person=anonymize_person) for c in contacts])
 
 
 def get_address(lease):
