@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-11 09:42+0300\n"
+"POT-Creation-Date: 2025-06-24 17:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1485,14 +1485,14 @@ msgstr "Beslut om arrangemang"
 msgid "Decision"
 msgstr "Beslut"
 
-msgid "Executor"
-msgstr "Exekutor"
-
 msgid "KTJ link"
 msgstr "Länk till KTJ:s intyg om arrenderätt"
 
 msgid "Institution identifier"
 msgstr "Inrättningskod"
+
+msgid "Executor"
+msgstr "Exekutor"
 
 msgctxt "Model name"
 msgid "Contract"
@@ -3330,8 +3330,11 @@ msgstr ""
 msgid "Lease state"
 msgstr "Status för arrenderingen"
 
-msgid "Latest decision"
-msgstr "Sista beslut"
+msgid "Latest decision maker"
+msgstr "Senaste beslutsfattaren"
+
+msgid "Latest decision date"
+msgstr "Senaste beslutsdatum"
 
 msgid "Permitted building volume (Residential)"
 msgstr "Byggnadsrätt (boende)"
@@ -3770,7 +3773,7 @@ msgstr "Starta eller avbryt fakturering"
 msgid "Sets invoicing state for lease to true or false"
 msgstr "Startar eller avbryter faktureringen"
 
-msgid "Cannot enable invoicing if rent info is not complete"
+msgid "Cannot enable invoicing if rent info is not completed"
 msgstr "Faktureringen kan inte startas om arrendeuppgifterna är ofullständiga"
 
 msgid "Set rent info completion state"

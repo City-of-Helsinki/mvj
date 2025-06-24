@@ -22,6 +22,7 @@ from leasing.enums import (
     LeaseState,
 )
 from leasing.models import Lease, ServiceUnit
+from leasing.models.decision import Decision
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.lease.common_getters import (
     get_address,
@@ -84,23 +85,35 @@ LeaseBasisOfRentColumns = [
 ]
 
 
-def get_latest_decision(lease):
-    decision_makers = []
+def _get_latest_decision(lease: Lease) -> Decision | None:
+    decisions: QuerySet[Decision] = lease.decisions.all()
+    if not decisions:
+        return None
 
-    for decision in lease.decisions.all():
-        decision_makers.append(
-            (
-                decision.decision_maker.name if decision.decision_maker else "",
-                decision.decision_date,
-            )
-        )
-    decision_makers.sort(key=lambda x: x[1] if x[1] else datetime.date.today())
+    latest_decision = max(
+        decisions, key=lambda d: d.decision_date or datetime.date.min, default=None
+    )
+    return latest_decision
 
-    if len(decision_makers) > 0:
-        latest_decision_maker = decision_makers[-1]
-        return "{} ({})".format(latest_decision_maker[0], latest_decision_maker[1])
-    else:
+
+def get_latest_decision_maker(lease: Lease):
+    latest_decision = _get_latest_decision(lease)
+    if (
+        latest_decision is None
+        or latest_decision.decision_maker is None
+        or latest_decision.decision_maker.name is None
+    ):
         return ""
+
+    return latest_decision.decision_maker.name
+
+
+def get_latest_decision_date(lease: Lease):
+    latest_decision = _get_latest_decision(lease)
+    if latest_decision is None or latest_decision.decision_date is None:
+        return ""
+
+    return latest_decision.decision_date
 
 
 def get_matti_report(obj):
@@ -473,10 +486,16 @@ class LeaseStatisticReport(AsyncReportBase):
             "width": 40,
         },
         # Viimeisin päätös
-        "decision_maker": {
-            "label": _("Latest decision"),
-            "source": get_latest_decision,
+        "latest_decision_maker": {
+            "label": _("Latest decision maker"),
+            "source": get_latest_decision_maker,
             "width": 20,
+        },
+        # Viimeisin päätös
+        "latest_decision_date": {
+            "label": _("Latest decision date"),
+            "source": get_latest_decision_date,
+            "width": 10,
         },
         # Start date
         "start_date": {"label": _("Start date"), "format": "date"},
