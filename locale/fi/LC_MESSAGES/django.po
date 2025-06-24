@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-11 09:41+0300\n"
+"POT-Creation-Date: 2025-06-24 17:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1485,14 +1485,14 @@ msgstr "Järjestelypäätös"
 msgid "Decision"
 msgstr "Päätös"
 
-msgid "Executor"
-msgstr "Toimeenpanija"
-
 msgid "KTJ link"
 msgstr "KTJ vuokraoikeustodistuksen linkki"
 
 msgid "Institution identifier"
 msgstr "Laitostunnus"
+
+msgid "Executor"
+msgstr "Toimeenpanija"
 
 msgctxt "Model name"
 msgid "Contract"
@@ -3333,8 +3333,11 @@ msgstr ""
 msgid "Lease state"
 msgstr "Vuokrauksen tila"
 
-msgid "Latest decision"
-msgstr "Viimeisin päätös"
+msgid "Latest decision maker"
+msgstr "Viimeisin päätöksentekijä"
+
+msgid "Latest decision date"
+msgstr "Viimeisin päätöksen pvm"
 
 msgid "Permitted building volume (Residential)"
 msgstr "Rakennus-oikeus (asuminen)"
@@ -3768,8 +3771,8 @@ msgstr "Käynnistä tai keskeytä laskutus"
 msgid "Sets invoicing state for lease to true or false"
 msgstr "Käynnistää tai keskeyttää laskutuksen"
 
-msgid "Cannot enable invoicing if rent info is not complete"
-msgstr "Laskutusta ei voi käynnistää jos vuokratiedot ovat keskeneräiset "
+msgid "Cannot enable invoicing if rent info is not completed"
+msgstr "Laskutusta ei voi käynnistää jos vuokratiedot ovat keskeneräiset"
 
 msgid "Set rent info completion state"
 msgstr "Aseta vuokratiedot kunnossa-tieto"
