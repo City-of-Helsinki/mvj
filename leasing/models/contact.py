@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import pgettext, pgettext_lazy
 from django_countries.fields import CountryField
 from enumfields import EnumField
 
@@ -177,8 +177,16 @@ class Contact(TimeStampedSafeDeleteModel):
 
         return name
 
-    def get_name(self):
+    def get_name(self, anonymize_person=False):
+        """
+        Args:
+            anonymize_person: If True, returns only the type of the contact,
+                defaults to False.
+        """
         if self.type == ContactType.PERSON:
+            if anonymize_person:
+                # Translators: Replaces the name of a person with a generic term.
+                return pgettext("Replaces persons name", "PRIVATE")
             return " ".join([n for n in [self.first_name, self.last_name] if n]).strip()
         else:
             return self.name if self.name else ""
