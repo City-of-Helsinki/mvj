@@ -134,13 +134,13 @@ def get_latest_contract_number(lease: LeaseWithContracts):
 
 def get_preparer(obj):
     if not obj.preparer:
-        return
+        return ""
     return "{} {}".format(obj.preparer.last_name, obj.preparer.first_name)
 
 
 def get_district(obj):
     if not obj.district:
-        return
+        return ""
     return "{} {}".format(obj.district.identifier, obj.district.name)
 
 
@@ -158,7 +158,7 @@ def get_lease_area_identifier(obj):
 
 def get_lessor(obj):
     if not obj.lessor:
-        return
+        return ""
     return obj.lessor.name
 
 
@@ -175,25 +175,25 @@ def get_total_area(obj):
 
 def get_supportive_housing(obj):
     if not obj.supportive_housing:
-        return
+        return ""
     return obj.supportive_housing.name
 
 
 def get_notice_period(obj):
     if not obj.notice_period:
-        return
+        return ""
     return obj.notice_period.name
 
 
 def get_form_of_management(obj):
     if not obj.management:
-        return
+        return ""
     return obj.management.name
 
 
 def get_form_of_regulation(obj):
     if not obj.regulation:
-        return
+        return ""
     return obj.regulation.name
 
 
