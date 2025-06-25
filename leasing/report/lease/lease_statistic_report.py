@@ -245,6 +245,7 @@ def get_average_amount_per_area_residential(obj):
         [
             "{} {}".format(
                 formats.number_format(
+                    # ZeroDivisionError not likely due to check `or not basis_of_rent.amount_per_area` above.
                     sum(amounts_per_area) / len(amounts_per_area),
                     decimal_pos=2,
                     use_l10n=True,
@@ -273,6 +274,7 @@ def get_average_amount_per_area_business(obj):
         [
             "{} {}".format(
                 formats.number_format(
+                    # ZeroDivisionError not likely due to check `or not basis_of_rent.amount_per_area` above.
                     sum(amounts_per_area) / len(amounts_per_area),
                     decimal_pos=2,
                     use_l10n=True,
@@ -421,7 +423,7 @@ def get_subvention_form_of_management(lease):
 
 def get_form_of_financing(lease):
     if not lease.financing:
-        return
+        return ""
     return lease.financing.name
 
 
@@ -476,12 +478,16 @@ class LeaseStatisticReport(AsyncReportBase):
         # Vuokranantaja
         "lessor": {"label": _("Lessor"), "source": get_lessor, "width": 30},
         # Rakennuttaja
-        "real_estate_developer": {"label": _("Real estate developer"), "width": 20},
+        "real_estate_developer": {
+            "label": _("Real estate developer"),
+            "source": lambda lease: lease.real_estate_developer or "",
+            "width": 20,
+        },
         # Vuokralaiset
         "tenants": {
             "label": _("Tenants"),
-            "source": lambda x: get_tenants(
-                x,
+            "source": lambda lease: get_tenants(
+                lease,
                 include_future_tenants=False,
                 report="Lease statistics report",
                 anonymize_person=True,  # Anonymize ContactType.PERSON names in the report
@@ -503,7 +509,11 @@ class LeaseStatisticReport(AsyncReportBase):
         # Start date
         "start_date": {"label": _("Start date"), "format": "date"},
         # End date
-        "end_date": {"label": _("End date"), "format": "date"},
+        "end_date": {
+            "label": _("End date"),
+            "source": lambda lease: lease.end_date or "",
+            "format": "date",
+        },
         # Kokonaispinta-ala
         "total_area": {
             "label": _("Total area"),
