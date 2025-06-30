@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-24 17:18+0300\n"
+"POT-Creation-Date: 2025-06-30 12:38+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3341,29 +3341,38 @@ msgstr "Senaste beslutsfattaren"
 msgid "Latest decision date"
 msgstr "Senaste beslutsdatum"
 
-msgid "Permitted building volume (Residential)"
-msgstr "Byggnadsrätt (boende)"
+#, python-brace-format
+msgid "Permitted building volume {unit} (Residential)"
+msgstr "Byggnadsrätt {unit} (boende)"
 
 msgid "Rent amount (Residential)"
 msgstr "Årsarrende (boende)"
 
-msgid "Permitted building volume (Business)"
-msgstr "Byggnadsrätt (företagslokal)"
+#, python-brace-format
+msgid "Permitted building volume {unit} (Business)"
+msgstr "Byggnadsrätt {unit} (företagslokal)"
 
 msgid "Rent amount (Business)"
 msgstr "Årsarrende (företagslokal)"
 
-msgid "Permitted building volume total"
-msgstr "Total byggnadsrätt"
+#, python-brace-format
+msgid "Permitted building volume total {unit}"
+msgstr "Total byggnadsrätt {unit}"
 
 msgid "Total rent amount for year"
 msgstr "Årsarrende sammanlagt"
 
-msgid "Average amount per area (Residential)"
-msgstr "Genomsnittligt enhetspris (boende)"
+#, python-brace-format
+msgid "Average amount per area {unit} (Residential)"
+msgstr "Genomsnittligt enhetspris {unit} (boende)"
 
-msgid "Average amount per area (Business)"
-msgstr "Genomsnittligt enhetspris (företagslokal)"
+#, python-brace-format
+msgid "Average amount per area {unit} (Business)"
+msgstr "Genomsnittligt enhetspris {unit} (företagslokal)"
+
+#, python-brace-format
+msgid "Unit price {unit} (index)"
+msgstr "Enhetspris {unit} (ind)"
 
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
