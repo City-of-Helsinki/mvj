@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-24 17:18+0300\n"
+"POT-Creation-Date: 2025-06-30 12:38+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3344,29 +3344,38 @@ msgstr "Viimeisin päätöksentekijä"
 msgid "Latest decision date"
 msgstr "Viimeisin päätöksen pvm"
 
-msgid "Permitted building volume (Residential)"
-msgstr "Rakennus-oikeus (asuminen)"
+#, python-brace-format
+msgid "Permitted building volume {unit} (Residential)"
+msgstr "Rakennus-oikeus {unit} (asuminen)"
 
 msgid "Rent amount (Residential)"
 msgstr "Vuosivuokra (asuminen)"
 
-msgid "Permitted building volume (Business)"
-msgstr "Rakennusoikeus (yritystila)"
+#, python-brace-format
+msgid "Permitted building volume {unit} (Business)"
+msgstr "Rakennusoikeus {unit} (yritystila)"
 
 msgid "Rent amount (Business)"
 msgstr "Vuosivuokra (yritystila)"
 
-msgid "Permitted building volume total"
-msgstr "Kokonaisrakennusoikeus"
+#, python-brace-format
+msgid "Permitted building volume total {unit}"
+msgstr "Kokonaisrakennusoikeus {unit}"
 
 msgid "Total rent amount for year"
 msgstr "Vuosivuokra yhteensä"
 
-msgid "Average amount per area (Residential)"
-msgstr "Keskimääräinen yksikköhinta (asuminen)"
+#, python-brace-format
+msgid "Average amount per area {unit} (Residential)"
+msgstr "Keskimääräinen yksikköhinta {unit} (asuminen)"
 
-msgid "Average amount per area (Business)"
-msgstr "Keskimääräinen yksikköhinta (yritystila)"
+#, python-brace-format
+msgid "Average amount per area {unit} (Business)"
+msgstr "Keskimääräinen yksikköhinta {unit} (yritystila)"
+
+#, python-brace-format
+msgid "Unit price {unit} (index)"
+msgstr "Yksikköhinta {unit} (ind)"
 
 msgid "Subsidy percent"
 msgstr "Subventio prosentteina"

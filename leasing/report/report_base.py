@@ -289,7 +289,10 @@ class ReportBase:
                 case "percentage":
                     field_format = formats[FormatType.PERCENTAGE]
                     if field_value:
-                        field_value /= 100
+                        try:
+                            field_value = field_value / 100
+                        except TypeError:
+                            field_value = 0
                 case "money":
                     if field_value != 0:
                         field_format = formats[FormatType.MONEY]
