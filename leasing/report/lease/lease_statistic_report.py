@@ -467,7 +467,6 @@ class LeaseStatisticReport(AsyncReportBase):
         "contract_number": {
             "label": _("Contract number"),
             "source": get_latest_contract_number,
-            "is_numeric": True,
         },
         # Vuokrauksen tyyppi
         "type": {"label": _("Lease type"), "source": get_lease_type, "width": 5},
