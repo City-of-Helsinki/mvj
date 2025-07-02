@@ -10,6 +10,14 @@ start_api() {
         echo "Running in initialization container mode"
         # Run migrations in init container
         bash deploy/init-migrate.sh
+        # Update django permissions
+        echo "Run: set_group_field_permissions"
+        ./manage.py set_group_field_permissions
+        echo "Run: set_group_model_permissions"
+        ./manage.py set_group_model_permissions
+        echo "Run: set_report_permissions"
+        ./manage.py set_report_permissions
+        echo "Finished setting permissions"
         # Exit to allow main container to start, and in order to not start uwsgi in initContainer
         exit 0
     fi
