@@ -43,6 +43,7 @@ from leasing.models.types import (
     CalculationAmountsByContact,
     InvoiceDatum,
     InvoiceNoteNotes,
+    PayableRent,
     PayableRentsInPeriods,
     Periods,
     TenantShares,
@@ -1075,6 +1076,8 @@ class Lease(TimeStampedSafeDeleteModel):
 
             if period_rent["last_billing_period"]:
                 last_billing_period = billing_period
+                # Required for later getting `override_receivable_type` to cent rounding invoice rows.
+                last_period_rent = period_rent
 
             for calculation_amount in period_rent[
                 "calculation_result"
@@ -1216,7 +1219,10 @@ class Lease(TimeStampedSafeDeleteModel):
         # due to roundings during the year.
         if last_billing_period:
             self._year_rent_rounding_correction(
-                last_billing_period, invoice_data, dry_run=dry_run
+                last_billing_period,
+                invoice_data,
+                last_period_rent=last_period_rent,
+                dry_run=dry_run,
             )
 
         return invoice_data
@@ -1225,6 +1231,7 @@ class Lease(TimeStampedSafeDeleteModel):
         self,
         last_billing_period: BillingPeriod,
         invoice_data: list[list[InvoiceDatum]],
+        last_period_rent: PayableRent = None,
         dry_run=False,
     ) -> None:
         round_adjust_year = last_billing_period[0].year
@@ -1254,6 +1261,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     ):
                         for row in datum["rows"]:
                             already_billed_amounts[row["intended_use"]] += row["amount"]
+
                         found = True
 
             # If not found, calculate from the previously generated invoices
@@ -1307,14 +1315,14 @@ class Lease(TimeStampedSafeDeleteModel):
             date_range_end=last_billing_period[1],
         )
 
-        class BogusItem:
+        class BogusCalculationAmountItem:
             def __init__(self, intended_use):
                 self.intended_use = intended_use
 
         for intended_use, amount in difference_by_intended_use.items():
             rounding_calculation_result.add_amount(
                 CalculationAmount(
-                    BogusItem(intended_use),
+                    BogusCalculationAmountItem(intended_use),
                     last_billing_period[0],
                     last_billing_period[1],
                     amount,
@@ -1326,6 +1334,10 @@ class Lease(TimeStampedSafeDeleteModel):
                 "due_date": None,
                 "calculation_result": rounding_calculation_result,
                 "last_billing_period": False,
+                # This is an attempt to determine the correct override value.
+                "override_receivable_type": last_period_rent.get(
+                    "override_receivable_type"
+                ),
             }
         }
 
