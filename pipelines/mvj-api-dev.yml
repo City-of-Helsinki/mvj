@@ -1,5 +1,14 @@
 # Continuous integration (CI) triggers cause a pipeline to run whenever you push
 # an update to the specified branches or you push specified tags.
+parameters:
+  - name: APPLY_MIGRATIONS
+    displayName: Apply migrations (1 = true, 0 = false)
+    type: string
+    default: "1"
+    values:
+      - "1"
+      - "0"
+
 trigger:
   batch: true
   branches:
@@ -39,7 +48,8 @@ resources:
 extends:
   # Filename in Azure DevOps Repository
   template: components/mvj-api/pipelines/mvj-api-dev.yml@mvj-pipelines
-  # parameters:
+  parameters:
+    APPLY_MIGRATIONS: ${{ parameters.APPLY_MIGRATIONS }}
     # Application build arguments and config map values as key value pairs.
     # Does not contain all buildArguments or configMap values, the rest located in mvj-pipelines
     # The values here will override the values defined in the mvj-pipelines repository
