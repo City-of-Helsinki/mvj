@@ -60,6 +60,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
     )
     vuokranantaja = serializers.SerializerMethodField()
     tree_ids = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField()
 
     class Meta:
         model = LeaseArea
@@ -96,6 +97,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
             "border_hex_color",
             "vuokranantaja",
             "tree_ids",
+            "created_at",
         ]
         # Make all fields read only
         read_only_fields = fields
