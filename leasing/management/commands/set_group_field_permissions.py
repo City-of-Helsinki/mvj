@@ -1,3 +1,4 @@
+from collections import defaultdict
 from collections.abc import Mapping
 
 from django.apps import apps
@@ -686,9 +687,14 @@ class Command(BaseCommand):
 
         # Save the desired field permissions for the groups
         Group.permissions.through.objects.bulk_create(group_permissions)
+
+        # Logging
+        permissions_by_group = defaultdict(list)
         for group_permission in group_permissions:
+            permissions_by_group[group_permission.group.name].append(
+                group_permission.permission.codename
+            )
+        for group_name, permissions in permissions_by_group.items():
             self.stdout.write(
-                'Added field permission "{}" for group "{}"'.format(
-                    group_permission.permission.codename, group_permission.group.name
-                )
+                f'Added field permissions for group "{group_name}": {", ".join(permissions)}'
             )
