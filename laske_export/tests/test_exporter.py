@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
@@ -13,6 +14,7 @@ from laske_export.exporter import LaskeExporter
 from laske_export.management.commands import send_invoices_to_laske
 from laske_export.models import LaskeExportLog
 from leasing.enums import ContactType, ServiceUnitId
+from leasing.models.invoice import Invoice
 
 
 @pytest.fixture(scope="session")
@@ -178,6 +180,44 @@ def test_invalid_export_invoice(
 
     sent_invoice_logs = log_items.filter(status=LaskeExportLogInvoiceStatus.SENT)
     assert sent_invoice_logs.count() == 1
+
+
+@pytest.mark.django_db
+def test_export_invalid_invoice_not_marked_sent(
+    service_unit_factory,
+    contact_factory,
+    invoice_factory,
+    lease_factory,
+    monkeypatch_laske_exporter_send,
+    caplog: pytest.LogCaptureFixture,
+):
+    service_unit = service_unit_factory()
+    valid_invoice: Invoice = invoice_factory(
+        service_unit=service_unit,
+        lease=lease_factory(),
+        total_amount=1,
+        billed_amount=1,
+    )
+    contact_with_invalid_electronic_billing_address = contact_factory(
+        electronic_billing_address="x" * 100
+    )
+    invalid_invoice: Invoice = invoice_factory(
+        service_unit=service_unit,
+        lease=lease_factory(),
+        total_amount=2,
+        billed_amount=2,
+        # Has too long `electronic_billing_address` which is expected to fail sales_order.validate()
+        recipient=contact_with_invalid_electronic_billing_address,
+    )
+    exporter = LaskeExporter(service_unit=service_unit)
+    caplog.set_level(logging.ERROR)  # set log level for captured log messages
+    exporter.export_invoices([valid_invoice, invalid_invoice])
+    valid_invoice.refresh_from_db()
+    assert valid_invoice.sent_to_sap_at is not None
+    invalid_invoice.refresh_from_db()
+    assert invalid_invoice.sent_to_sap_at is None
+    assert len(caplog.messages) == 1
+    assert str(invalid_invoice.id) in caplog.messages[0]
 
 
 @pytest.mark.django_db
