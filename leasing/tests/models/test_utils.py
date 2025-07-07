@@ -544,28 +544,22 @@ def test_split_date_range_too_big_count():
     )
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "the_day, expected",
     [
         (None, ValueError),
         ("", ValueError),
         (date, ValueError),
-        (date(2015, 1, 1), False),
-        (date(2015, 1, 6), False),
-        (date(2016, 1, 1), False),
-        (date(2016, 1, 6), False),
-        (date(2017, 1, 1), False),
-        (date(2017, 1, 2), True),
-        (date(2017, 12, 25), False),
-        (date(2018, 12, 25), False),
-        (date(2019, 12, 5), True),
-        (date(2019, 12, 6), False),
-        (date(2020, 1, 1), False),
-        (date(2020, 1, 6), False),
-        (date(2020, 1, 7), True),
-        (date(2021, 4, 2), False),
-        (date(2021, 6, 30), True),
+        (date(2025, 1, 1), True),
+        (date(2025, 1, 3), True),
+        (date(2025, 1, 4), False),
+        (date(2025, 1, 5), False),
+        (date(2025, 1, 6), True),
+        (date(2025, 6, 20), True),
+        (date(2025, 6, 22), False),
+        (date(2025, 12, 31), True),
+        # Leap day
+        (date(2024, 2, 29), True),
     ],
 )
 def test_is_business_day(the_day, expected):
@@ -576,26 +570,22 @@ def test_is_business_day(the_day, expected):
         assert is_business_day(the_day) == expected
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "the_day, expected",
     [
         (None, ValueError),
         ("", ValueError),
         (date, ValueError),
-        (date(2015, 1, 5), date(2015, 1, 7)),
-        (date(2016, 1, 5), date(2016, 1, 7)),
-        (date(2017, 1, 1), date(2017, 1, 2)),
-        (date(2017, 1, 2), date(2017, 1, 3)),
-        (date(2017, 12, 25), date(2017, 12, 27)),
-        (date(2018, 12, 25), date(2018, 12, 27)),
-        (date(2019, 12, 5), date(2019, 12, 9)),
-        (date(2019, 12, 6), date(2019, 12, 9)),
-        (date(2020, 1, 1), date(2020, 1, 2)),
-        (date(2020, 1, 5), date(2020, 1, 7)),
-        (date(2020, 1, 7), date(2020, 1, 8)),
-        (date(2021, 4, 2), date(2021, 4, 6)),
-        (date(2021, 6, 30), date(2021, 7, 1)),
+        (
+            date(2025, 1, 1),
+            date(2025, 1, 2),
+        ),  # Both are business days, but call is asking for next business day!
+        (
+            date(2025, 1, 3),
+            date(2025, 1, 6),
+        ),  # Friday to Monday, both are business days but call is asking for next!
+        (date(2025, 1, 4), date(2025, 1, 6)),
+        (date(2025, 6, 22), date(2025, 6, 23)),
     ],
 )
 def test_get_next_business_day(the_day, expected):

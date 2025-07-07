@@ -388,21 +388,17 @@ def get_monthly_amount_by_period_type(amount, period_type):
         )
 
 
-def is_business_day(the_date):
+def is_business_day(the_date) -> bool:
     if not the_date or not isinstance(the_date, datetime.date):
         raise ValueError("the_date must be an instance of datetime.date")
 
     if the_date.weekday() > 4:
         return False
 
-    from leasing.models import BankHoliday
-
-    try:
-        BankHoliday.objects.get(day=the_date)
-
-        return False
-    except BankHoliday.DoesNotExist:
-        return True
+    # This used to include a check to BankHoliday model which had bank holidays set,
+    # but as the model data was no updated since 2021, the model was removed.
+    # Apparently SAP handles bank holidays, so it is not required to check here.
+    return True
 
 
 def get_next_business_day(the_date):

@@ -839,18 +839,6 @@ class InvoicePayment(TimeStampedSafeDeleteModel):
         verbose_name_plural = pgettext_lazy("Model name", "Invoice payments")
 
 
-class BankHoliday(models.Model):
-    day = models.DateField(verbose_name=_("Day"), unique=True, db_index=True)
-
-    class Meta:
-        verbose_name = pgettext_lazy("Model name", "Bank holiday")
-        verbose_name_plural = pgettext_lazy("Model name", "Bank holidays")
-        ordering = ("day",)
-
-    def __str__(self):
-        return str(self.day)
-
-
 auditlog.register(Invoice)
 auditlog.register(InvoiceNote)
 auditlog.register(InvoiceRow)
