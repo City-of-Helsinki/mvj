@@ -294,9 +294,6 @@ strategy:
     id: null
     identifier: null
     name: null
-  leasing_bankholiday:
-    day: null
-    id: null
   leasing_basisofrent:
     created_at: null
     deleted: null

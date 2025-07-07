@@ -728,15 +728,6 @@ DEFAULT_MODEL_PERMS = {
         6: ("view", "add", "change", "delete"),
         7: ("view", "add", "change", "delete"),
     },
-    "bankholiday": {
-        1: ("view",),
-        2: ("view",),
-        3: ("view",),
-        4: ("view",),
-        5: ("view",),
-        6: ("view",),
-        7: ("view", "add", "change", "delete"),
-    },
     "leasearea": {
         1: ("view",),
         2: ("view", "add", "change", "delete"),

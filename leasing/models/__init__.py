@@ -30,7 +30,6 @@ from .infill_development_compensation import (
 )
 from .inspection import Inspection, InspectionAttachment
 from .invoice import (
-    BankHoliday,
     Invoice,
     InvoiceNote,
     InvoicePayment,
@@ -134,7 +133,6 @@ __all__ = [
     "Area",
     "AreaNote",
     "AreaSource",
-    "BankHoliday",
     "BasisOfRent",
     "BasisOfRentBuildPermissionType",
     "BasisOfRentDecision",

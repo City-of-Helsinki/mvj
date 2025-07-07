@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 12:38+0300\n"
+"POT-Creation-Date: 2025-07-07 14:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1887,17 +1887,6 @@ msgctxt "Model name"
 msgid "Invoice payments"
 msgstr "Maksusuoritukset"
 
-msgid "Day"
-msgstr "Päivä"
-
-msgctxt "Model name"
-msgid "Bank holiday"
-msgstr "Yleinen vapaapäivä"
-
-msgctxt "Model name"
-msgid "Bank holidays"
-msgstr "Yleiset vapaapäivät"
-
 msgid "Is master?"
 msgstr "Onko alkuperäinen?"
 
@@ -2718,6 +2707,9 @@ msgstr "Vuoden {} keskiarvoindeksi ei ole tiedossa!"
 
 msgid "Rent"
 msgstr "Vuokra"
+
+msgid "Day"
+msgstr "Päivä"
 
 msgid "Month"
 msgstr "Kuukausi"

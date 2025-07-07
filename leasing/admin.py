@@ -11,7 +11,6 @@ from leasing.models import (
     Area,
     AreaNote,
     AreaSource,
-    BankHoliday,
     BasisOfRent,
     BasisOfRentBuildPermissionType,
     BasisOfRentDecision,
@@ -834,7 +833,6 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
 admin.site.register(Area, AreaAdmin)
 admin.site.register(AreaSource, AreaSourceAdmin)
 admin.site.register(AreaNote, AreaNoteAdmin)
-admin.site.register(BankHoliday)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentTopic, NameAdmin)

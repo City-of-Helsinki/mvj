@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 12:38+0300\n"
+"POT-Creation-Date: 2025-07-07 14:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1887,17 +1887,6 @@ msgctxt "Model name"
 msgid "Invoice payments"
 msgstr "Betalningar"
 
-msgid "Day"
-msgstr "Dag"
-
-msgctxt "Model name"
-msgid "Bank holiday"
-msgstr "Allmän ledig dag"
-
-msgctxt "Model name"
-msgid "Bank holidays"
-msgstr "Allmänna lediga dagar"
-
 msgid "Is master?"
 msgstr "Är det originalet?"
 
@@ -2719,6 +2708,9 @@ msgstr "Årets {} genomsnittsindex är inte känt!"
 
 msgid "Rent"
 msgstr "Arrende"
+
+msgid "Day"
+msgstr "Dag"
 
 msgid "Month"
 msgstr "Månad"
