@@ -1439,7 +1439,7 @@ msgstr "Kontaktuppgifter"
 #. Translators: Replaces the name of a person with a generic term.
 msgctxt "Replaces persons name"
 msgid "PRIVATE"
-msgstr "YKSITYINEN"
+msgstr "PRIVAT"
 
 #, python-brace-format
 msgid "{name} (National Identification Number {id})"
