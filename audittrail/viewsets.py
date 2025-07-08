@@ -127,6 +127,15 @@ class AuditTrailView(APIView):
             LogEntry.objects.filter(q)
             .distinct()
             .order_by("-timestamp")
-            .select_related("actor")
+            .select_related("actor", "content_type")
+            .defer(
+                "remote_addr",
+                "remote_port",
+                "additional_data",
+                "serialized_data",
+                "actor_email",
+                "changes_text",
+                "cid",
+            )
         )
         return queryset
