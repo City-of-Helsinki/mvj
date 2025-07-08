@@ -610,6 +610,7 @@ class AreaSearch(SerializableMixin, models.Model):
     )
 
     recursive_get_related_skip_relations = [
+        "service_unit",
         "related_plot_applications",
         "areasearchattachment",
         "user",

@@ -101,6 +101,8 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         "users",
         "groups",
         "receivable_types",
+        "map_layers",
+        "laskeexportlog",
     ]
 
     class Meta:

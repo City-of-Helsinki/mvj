@@ -145,6 +145,7 @@ class Contact(TimeStampedSafeDeleteModel):
     )
 
     recursive_get_related_skip_relations = [
+        "service_unit",
         "tenants",
         "tenantcontact",
         "litigants",

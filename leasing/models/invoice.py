@@ -325,6 +325,7 @@ class Invoice(TimeStampedSafeDeleteModel):
     )
 
     recursive_get_related_skip_relations = [
+        "service_unit",
         "lease",
         "laskeexportlog",
         "laskeexportloginvoiceitem",

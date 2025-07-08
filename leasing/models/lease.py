@@ -96,6 +96,10 @@ class LeaseType(NameModel):
         max_length=30,
     )
 
+    recursive_get_related_skip_relations = [
+        "map_layers",
+    ]
+
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Lease type")
         verbose_name_plural = pgettext_lazy("Model name", "Lease types")
@@ -162,6 +166,11 @@ class IntendedUse(NameModel):
         help_text=_("Is the intended use active?"),
         verbose_name=_("Is active?"),
     )
+
+    recursive_get_related_skip_relations = [
+        "service_unit",
+        "map_layers",
+    ]
 
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Intended use")
@@ -697,6 +706,7 @@ class Lease(TimeStampedSafeDeleteModel):
     objects = LeaseManager()
 
     recursive_get_related_skip_relations = [
+        "service_unit",
         "related_leases",
         "related_to",
         "from_leases",
