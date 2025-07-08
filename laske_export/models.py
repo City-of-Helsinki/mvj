@@ -40,6 +40,10 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
 
     land_use_agreement_invoices = models.ManyToManyField(LandUseAgreementInvoice)
 
+    recursive_get_related_skip_relations = [
+        "service_unit",
+    ]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Laske export log")
         verbose_name_plural = pgettext_lazy("Model name", "Laske export logs")

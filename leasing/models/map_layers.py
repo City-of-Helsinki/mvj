@@ -44,6 +44,14 @@ class VipunenMapLayer(models.Model):
         validators=[HexColorValidator()],
     )
 
+    recursive_get_related_skip_relations = [
+        "service_unit",
+        "filter_by_lease_type",
+        "filter_by_intended_use",
+        "filter_by_service_unit",
+        "children",
+    ]
+
     class Meta:
         permissions = [
             # Access to the model via Export API

@@ -38,6 +38,10 @@ class ReceivableType(models.Model):
         on_delete=models.PROTECT,
     )
 
+    recursive_get_related_skip_relations = [
+        "service_unit",
+    ]
+
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Receivable type")
         verbose_name_plural = pgettext_lazy("Model name", "Receivable types")
