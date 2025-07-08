@@ -9,7 +9,16 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LogEntry
-        exclude = ("remote_addr", "object_pk", "additional_data")
+        exclude = (
+            "remote_addr",
+            "remote_port",
+            "object_pk",
+            "additional_data",
+            "serialized_data",
+            "cid",
+            "changes_text",
+            "actor_email",
+        )
 
     def to_representation(self, instance):
         result = super().to_representation(instance)

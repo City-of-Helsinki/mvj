@@ -229,7 +229,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "utils.middleware.CustomAuditlogMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
 ]
 
 TEMPLATES = [
@@ -413,9 +413,6 @@ LASKE_SERVERS = {
         "key": env.bytes("LASKE_PAYMENTS_KEY"),
     },
 }
-
-# See: https://github.com/jjkester/django-auditlog/pull/81
-USE_NATIVE_JSONFIELD = True
 
 MVJ_DUE_DATE_OFFSET_DAYS = 17
 
