@@ -114,12 +114,15 @@ INVOICING_REVIEW_QUERIES = {
         FROM leasing_lease l
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
             AND l.start_date IS NOT NULL
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state IN ('lease', 'short_term_lease', 'long_term_lease')
             AND l.rent_info_completed_at IS NULL
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         ORDER BY li.identifier;
@@ -138,7 +141,7 @@ INVOICING_REVIEW_QUERIES = {
                 AND (r.end_date IS NULL OR r.end_date >= %(today)s)
         INNER JOIN leasing_leaseidentifier li
             ON (l.identifier_id = li.id)
-        JOIN leasing_leasetype lt
+        LEFT JOIN leasing_leasetype lt
             ON lt.id = l.type_id
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
             AND l.start_date IS NOT NULL
@@ -159,6 +162,8 @@ INVOICING_REVIEW_QUERIES = {
         FROM leasing_lease l
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         LEFT OUTER JOIN leasing_rent r
             ON l.id = r.lease_id
                 AND r.due_dates_type = 'custom'
@@ -178,6 +183,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         HAVING (
@@ -194,6 +200,8 @@ INVOICING_REVIEW_QUERIES = {
         FROM leasing_lease l
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         INNER JOIN leasing_rent r
             ON l.id = r.lease_id
                 AND r.deleted IS NULL
@@ -206,6 +214,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.start_date IS NOT NULL
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                  li.id
     """,
@@ -223,6 +232,8 @@ INVOICING_REVIEW_QUERIES = {
                 AND r.type = 'one_time'
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         LEFT OUTER JOIN leasing_invoice i
             ON l.id = i.lease_id
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
@@ -230,6 +241,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
             AND l.start_date >= (CURRENT_DATE - INTERVAL '5 years')
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         HAVING COUNT(i.id) = 0
@@ -243,6 +255,8 @@ INVOICING_REVIEW_QUERIES = {
         FROM leasing_lease l
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         LEFT OUTER JOIN
             (SELECT t.id, t.lease_id
                 FROM leasing_tenant t
@@ -259,6 +273,7 @@ INVOICING_REVIEW_QUERIES = {
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
             AND l.start_date IS NOT NULL
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         HAVING COUNT(tt.id) = 0
@@ -274,11 +289,14 @@ INVOICING_REVIEW_QUERIES = {
             ON l.id = la.lease_id
         INNER JOIN leasing_leaseidentifier li
             ON l.identifier_id = li.id
+        LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
         WHERE (l.end_date IS NULL OR l.end_date >= %(today)s)
             AND l.service_unit_id = ANY(%(service_units)s)
             AND l.deleted IS NULL
             AND l.state NOT IN ('reservation', 'power_of_attorney')
             AND l.start_date IS NOT NULL
+            AND lt.identifier NOT IN ('MA', 'TY')
         GROUP BY l.id,
                 li.id
         HAVING COUNT(la.id) = 0

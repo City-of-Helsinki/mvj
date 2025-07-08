@@ -31,9 +31,11 @@ INVOICING_DISABLED_REPORT_SQL = """
         l.start_date,
         l.end_date
     FROM leasing_lease l
-        INNER JOIN leasing_leaseidentifier li
+    INNER JOIN leasing_leaseidentifier li
         ON l.identifier_id = li.id
-        INNER JOIN leasing_rent r
+    LEFT JOIN leasing_leasetype lt
+            ON lt.id = l.type_id
+    INNER JOIN leasing_rent r
         ON l.id = r.lease_id
             AND r.deleted IS NULL
             AND (r.start_date IS NULL OR r.start_date <= %(today)s)
@@ -45,6 +47,7 @@ INVOICING_DISABLED_REPORT_SQL = """
         AND l.service_unit_id = ANY(%(service_units)s)
         AND l.deleted IS NULL
         AND l.invoicing_enabled_at IS NULL
+        AND lt.identifier NOT IN ('MA', 'TY')
     ORDER BY li.identifier;
 """
 
