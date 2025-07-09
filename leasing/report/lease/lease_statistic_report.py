@@ -1062,7 +1062,7 @@ def generate_email_report(
 
 
 def get_basis_of_rent_rows_from_report_data(
-    report_data: list[dict[str, Any]]
+    report_data: list[dict[str, Any]],
 ) -> list[Any]:
     basis_of_rents = []
     for lease in report_data:
