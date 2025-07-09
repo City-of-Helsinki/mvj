@@ -170,6 +170,7 @@ lockfile==0.12.2
     # via python-daemon
 lxml==5.2.2
     # via
+    #   -r requirements.in
     #   docxcompose
     #   docxtpl
     #   python-docx
