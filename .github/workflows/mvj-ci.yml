@@ -22,6 +22,9 @@ on:
       - 'local_settings.py.template'
       - 'README.md'
 
+env:
+  SECRET_KEY: 'notasecret-for-ci'
+
 jobs:
   build:
     env:
