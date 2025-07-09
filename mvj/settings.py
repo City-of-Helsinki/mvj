@@ -41,7 +41,7 @@ def get_git_revision_hash():
 
 
 env = environ.Env(
-    DEBUG=(bool, True),
+    DEBUG=(bool, False),
     SECRET_KEY=(str, ""),
     ALLOWED_HOSTS=(list, []),
     OFFICER_UI_URL=(str, ""),
