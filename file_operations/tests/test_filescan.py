@@ -21,7 +21,6 @@ from file_operations.models.filescan import (
 from file_operations.private_files import PrivateFieldFile
 
 
-@override_settings(FLAG_FILE_SCAN=False)
 @pytest.fixture()
 def generic_test_data(file_scan_status_factory):
     """

@@ -29,9 +29,6 @@ If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd6
 
 The project is now running at [localhost:8000](http://localhost:8000).
 
-Known issues:
-- runserver_plus not found/not working: replace `command: python manage.py runserver_plus 0:8000` with `command: python manage.py runserver 0:8000` command in `docker-compose.yml`.
-
 ### Settings for development environment
 
 ```bash
