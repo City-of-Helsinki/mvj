@@ -107,7 +107,9 @@ jobs:
         run: |
           python manage.py compilemessages
           pytest -ra -vvv --cov=. --migrations
-          ./run-type-checks
+      
+      - name: Mypy type checks
+        run: ./run-type-checks
 
       - name: Run codecov
         run: codecov
