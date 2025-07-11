@@ -37,7 +37,7 @@ class UsageDistributionImporter(BaseImporter):
         pass
 
     def execute(self):
-        from auditlog.registry import auditlog  # type: ignore
+        from auditlog.registry import auditlog
 
         # Unregister all models from auditlog when importing
         for model in list(auditlog._registry.keys()):
@@ -116,7 +116,9 @@ class UsageDistributionImporter(BaseImporter):
         )
         return plan_unit_id
 
-    def _get_build_permission_value(self, usage_distribution_row: dict) -> str:
+    def _get_build_permission_value(
+        self, usage_distribution_row: dict[str, str]
+    ) -> str:
         """
         Primarily, use the usage distribution's build permission.
 

@@ -4,7 +4,7 @@ from rest_framework import serializers
 from users.serializers import UserSerializer
 
 
-class LogEntrySerializer(serializers.ModelSerializer):
+class LogEntrySerializer(serializers.ModelSerializer[LogEntry]):
     actor = UserSerializer()
 
     class Meta:
