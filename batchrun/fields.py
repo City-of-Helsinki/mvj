@@ -53,7 +53,9 @@ class TextJSONField(JSONField):
     def db_type(self, connection: Any) -> str:
         return "json"
 
-    def from_db_value(self, value, expression, connection):
+    def from_db_value(
+        self, value: Any, expression: Any, connection: Any
+    ) -> dict[str, Any] | None | Any:
         """
         This is a workaround to make this field work with Django.
         Changing the db_type to "json" causes the issue that this
@@ -63,5 +65,5 @@ class TextJSONField(JSONField):
         if isinstance(value, dict):
             return value
 
-        value = super().from_db_value(value, expression, connection)
+        value = super().from_db_value(value, expression, connection)  # type: ignore[misc]
         return value

@@ -1,4 +1,4 @@
 #!/bin/sh
-PYTHONPATH=${PYTHONPATH}:${PWD} MYPYPATH=./stubs mypy --follow-imports error --strict batchrun/
-PYTHONPATH=${PYTHONPATH}:${PWD} mypy --follow-imports=skip leasing/importer/ --check-untyped-defs
-PYTHONPATH=${PYTHONPATH}:${PWD} mypy --follow-imports=skip --strict laske_export/document/invoice_sales_order_adapter.py
+mypy --version
+echo "-----"
+PYTHONPATH=${PYTHONPATH}:${PWD} mypy

@@ -100,7 +100,7 @@ jobs:
         run: |
           python manage.py validate_sanitizerconfig --silent
 
-      - name: Run tests, compile translations, run type checks
+      - name: Run tests, compile translations
         env:
           TEST_FTP_ACTIVE: 1
           FTP_HOST: localhost

@@ -485,7 +485,7 @@ class AreaImporter(BaseImporter):
         match_data: MatchData,
         imported_identifiers: list[str],
         error_count: int,
-    ) -> Tuple[list, int]:
+    ) -> Tuple[list[str], int]:
         try:
             areas.update_or_create(defaults=dict(update_data), **match_data)
         except (

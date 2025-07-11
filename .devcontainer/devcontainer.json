@@ -4,6 +4,9 @@
 	"service": "django",
 	"workspaceFolder": "/code",
 	"forwardPorts": [5433, 8001],
+	// Unable to configure these for ghcr.io/devcontainers/features/python:1
+	// Remove packages that conflict with projects packages
+	"postCreateCommand": "pipx uninstall black && pipx uninstall mypy && pipx uninstall pytest",
 	"customizations": {
 		"vscode": {
 			"settings": {
