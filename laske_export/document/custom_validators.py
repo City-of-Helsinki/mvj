@@ -24,3 +24,16 @@ def calculate_checksum(value: str | None) -> int | None:
     )
 
     return (10 - (total % 10)) % 10
+
+
+def validate_payment_reference(value):
+    if value and not value.isdigit():
+        raise ValidationError("Payment reference must contain only digits.")
+
+    if value:
+        reference, checksum = value[:-1], value[-1]
+
+        expected_checksum = calculate_checksum(reference)
+
+        if expected_checksum != int(checksum):
+            raise ValidationError("Invalid payment reference: checksum does not match.")

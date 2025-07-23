@@ -1,7 +1,11 @@
 import pytest
 from constance.test import override_config
+from django.forms import ValidationError
 
-from laske_export.document.custom_validators import calculate_checksum
+from laske_export.document.custom_validators import (
+    calculate_checksum,
+    validate_payment_reference,
+)
 
 
 @pytest.mark.django_db
@@ -27,3 +31,21 @@ def test_calculate_checksum_nondigit_input():
         calculate_checksum("12.34")
     with pytest.raises(ValidationError):
         calculate_checksum("12 34")
+
+
+@pytest.mark.django_db
+@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+def test_validate_payment_reference():
+    # Valid values
+    validate_payment_reference(None)
+    validate_payment_reference("")
+    validate_payment_reference("12344")
+    validate_payment_reference("1234567897")  # Last digit is checksum
+
+    # Invalid values
+    with pytest.raises(ValidationError):
+        validate_payment_reference("12abc340")
+    with pytest.raises(ValidationError):
+        validate_payment_reference("12340")
+    with pytest.raises(ValidationError):
+        validate_payment_reference("1234567890")
