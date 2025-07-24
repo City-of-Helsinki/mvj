@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db.models import QuerySet
 
+from laske_export.document.custom_validators import calculate_checksum
 from leasing.enums import (
     InvoiceType,
     RentCycle,
@@ -202,8 +203,37 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.value_date = value_date.strftime("%Y%m%d")
 
     def set_references(self) -> None:
-        self.sales_order.reference = str(self.invoice.generate_number())
+        self.sales_order.reference = str(self.invoice.number)
         self.sales_order.reference_text = self.invoice.lease.get_identifier_string()
+
+    def set_payment_reference(self) -> None:
+        """
+        Set the payment reference for the sales order.
+        """
+        if not self.invoice.number:
+            logger.error(
+                "Invoice number is not set, cannot set payment reference for sales order."
+            )
+            self.sales_order.payment_reference = ""
+            return
+
+        payment_reference = ""
+
+        service_unit_prefix = ""
+        if self.service_unit.id in [ServiceUnitId.MAKE, ServiceUnitId.AKV]:
+            service_unit_prefix = "288"
+        elif self.service_unit.id in [
+            ServiceUnitId.KUVA_LIPA,
+            ServiceUnitId.KUVA_UPA,
+            ServiceUnitId.KUVA_NUP,
+        ]:
+            service_unit_prefix = "297"
+
+        payment_reference = service_unit_prefix + str(self.invoice.number)
+
+        checksum = calculate_checksum(payment_reference)
+
+        self.sales_order.payment_reference = payment_reference + checksum
 
     def get_line_items(self) -> list[LineItem]:
         line_items = []
@@ -433,7 +463,9 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.original_order = self.get_original_order()
 
         self.set_dates()
+        self.invoice.generate_number()  # Ensure the invoice number is set
         self.set_references()
+        self.set_payment_reference()
 
         self.sales_order.line_items = self.get_line_items()
 
