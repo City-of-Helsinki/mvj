@@ -12,10 +12,10 @@ from laske_export.document.custom_validators import (
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_calculate_checksum():
     result = calculate_checksum("1234")
-    assert result == 4  # Total sum is 46, last digit is 4
+    assert result == "4"  # Total sum is 46, last digit is 4
 
     result = calculate_checksum("123456789")
-    assert result == 7  # Total sum is 183, last digit is 7
+    assert result == "7"  # Total sum is 183, last digit is 7
 
 
 @pytest.mark.django_db

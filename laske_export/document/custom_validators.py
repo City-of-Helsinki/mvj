@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 
 
-def calculate_checksum(value: str | None) -> int | None:
+def calculate_checksum(value: str | None) -> str | None:
     """
     Calculates the checksum for digits of the payment reference (excluding the last digit)
     """
@@ -23,7 +23,7 @@ def calculate_checksum(value: str | None) -> int | None:
         for digit, coefficient in digits_paired_with_coefficients
     )
 
-    return (10 - (total % 10)) % 10
+    return str((10 - (total % 10)) % 10)
 
 
 def validate_payment_reference(value):
@@ -35,5 +35,5 @@ def validate_payment_reference(value):
 
         expected_checksum = calculate_checksum(reference)
 
-        if expected_checksum != int(checksum):
+        if expected_checksum != checksum:
             raise ValidationError("Invalid payment reference: checksum does not match.")
