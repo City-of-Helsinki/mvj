@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.utils.translation import gettext_lazy as _
 
+from laske_export.document.custom_validators import validate_payment_reference
 from leasing.enums import ContactType
 
 from .fields import Field, FieldGroup
@@ -251,7 +252,8 @@ class SalesOrder(FieldGroup):
     pricing_date = Field(name="PricingDate", validators=[MaxLengthValidator(8)])
     value_date = Field(name="ValueDate", validators=[MaxLengthValidator(8)])
     payment_reference = Field(
-        name="PaymentReference", validators=[MaxLengthValidator(30)]
+        name="PaymentReference",
+        validators=[MaxLengthValidator(30), validate_payment_reference],
     )
     already_printed_flag = Field(
         name="AlreadyPrintedFlag", validators=[MaxLengthValidator(1)]
