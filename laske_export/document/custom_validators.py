@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 
 
-def calculate_checksum(value: str | None) -> str | None:
+def calculate_checksum(value: str | None) -> str:
     """
     Calculates the checksum (and the final digit) for SalesOrder payment reference,
     which is service_unit-specific three digits + invoice number.
@@ -27,7 +27,7 @@ def calculate_checksum(value: str | None) -> str | None:
     return str((10 - (total % 10)) % 10)
 
 
-def validate_payment_reference(value):
+def validate_payment_reference(value: str | None):
     if not value or value == "":
         raise ValidationError("Payment reference cannot be None or empty.")
 
