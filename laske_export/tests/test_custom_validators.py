@@ -21,10 +21,10 @@ def test_calculate_checksum():
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_calculate_checksum_nondigit_input():
-    result = calculate_checksum(None)
-    assert result is None
-    result = calculate_checksum("")
-    assert result is None
+    with pytest.raises(ValidationError):
+        calculate_checksum(None)
+    with pytest.raises(ValidationError):
+        calculate_checksum("")
     with pytest.raises(ValidationError):
         calculate_checksum("123a")
     with pytest.raises(ValidationError):
@@ -37,12 +37,14 @@ def test_calculate_checksum_nondigit_input():
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_validate_payment_reference():
     # Valid values
-    validate_payment_reference(None)
-    validate_payment_reference("")
     validate_payment_reference("12344")
     validate_payment_reference("1234567897")  # Last digit is checksum
 
     # Invalid values
+    with pytest.raises(ValidationError):
+        validate_payment_reference(None)
+    with pytest.raises(ValidationError):
+        validate_payment_reference("")
     with pytest.raises(ValidationError):
         validate_payment_reference("12abc340")
     with pytest.raises(ValidationError):

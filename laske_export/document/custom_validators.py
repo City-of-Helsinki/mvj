@@ -5,8 +5,8 @@ def calculate_checksum(value: str | None) -> str | None:
     """
     Calculates the checksum for digits of the payment reference (excluding the last digit)
     """
-    if not value:
-        return None
+    if not value or value == "":
+        raise ValidationError("Input cannot be None or empty.")
 
     if not value.isdigit():
         raise ValidationError("Payment reference must be numeric.")
@@ -27,6 +27,9 @@ def calculate_checksum(value: str | None) -> str | None:
 
 
 def validate_payment_reference(value):
+    if not value or value == "":
+        raise ValidationError("Payment reference cannot be None or empty.")
+
     if value and not value.isdigit():
         raise ValidationError("Payment reference must contain only digits.")
 
