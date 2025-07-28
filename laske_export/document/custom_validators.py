@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 
 def calculate_checksum(value: str | None) -> str | None:
     """
-    Calculates the checksum for digits of the payment reference (excluding the last digit)
+    Calculates the checksum (and the final digit) for SalesOrder payment reference,
+    which is service_unit-specific three digits + invoice number.
     """
     if not value or value == "":
         raise ValidationError("Input cannot be None or empty.")
