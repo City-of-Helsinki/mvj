@@ -7,7 +7,7 @@ def calculate_checksum(value: str | None) -> str:
     which is service_unit-specific three digits + invoice number.
     """
     if not value or value == "":
-        raise ValidationError("Input cannot be None or empty.")
+        raise ValidationError("Payment reference cannot be None or empty.")
 
     if not value.isdigit():
         raise ValidationError("Payment reference must be numeric.")
