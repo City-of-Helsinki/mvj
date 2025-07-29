@@ -33,7 +33,20 @@ LASKE_EXPORT_ROOT = "/tmp"
 LASKE_SERVERS = {
     "export": {
         "host": "placeholder",
+        "port": 1234,
         "username": "placeholder",
         "password": "placeholder",
-    }
+        "directory": "placeholder",
+        # "key_type": "placeholder",
+        # "key": b"",
+    },
+    "payments": {
+        "host": "placeholder",
+        "port": 1234,
+        "username": "placeholder",
+        "password": "placeholder",
+        "directory": "placeholder",
+        # "key_type": "placeholder",
+        # "key": b"",
+    },
 }
