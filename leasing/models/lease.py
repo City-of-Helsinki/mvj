@@ -370,6 +370,7 @@ class LeaseManager(SafeDeleteManager):
                 "tenants__tenantcontact_set",
                 "tenants__tenantcontact_set__contact",
                 "tenants__tenantcontact_set__contact__service_unit",
+                "lease_area_draft",
                 "lease_areas",
                 "lease_areas__addresses",
                 "contracts",
