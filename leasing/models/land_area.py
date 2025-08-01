@@ -313,7 +313,7 @@ class LeaseAreaDraft(ArchivableModel, SafeDeleteModel):
     In Finnish: Vuokra-alueen luonnos
     """
 
-    lease = models.ForeignKey(
+    lease = models.OneToOneField(
         Lease, on_delete=models.PROTECT, related_name="lease_area_draft"
     )
     identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
