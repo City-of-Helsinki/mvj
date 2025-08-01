@@ -638,6 +638,7 @@ class LeaseUpdateSerializer(
     id = serializers.ReadOnlyField()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
+    lease_area_draft = LeaseAreaDraftSerializer(required=False, allow_null=True)
     lease_areas = LeaseAreaCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )

@@ -609,7 +609,12 @@ class LeaseAreaCreateUpdateSerializer(
         )
 
 
-class LeaseAreaDraftSerializer(serializers.ModelSerializer):
+class LeaseAreaDraftSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    UpdateNestedMixin,
+    serializers.ModelSerializer,
+):
     class Meta:
         model = LeaseAreaDraft
         fields = (
