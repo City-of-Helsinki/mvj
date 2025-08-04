@@ -308,6 +308,41 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
         ]
 
 
+class LeaseAreaDraft(ArchivableModel, SafeDeleteModel):
+    """
+    In Finnish: Vuokra-alueen luonnos
+    """
+
+    lease = models.OneToOneField(
+        Lease,
+        on_delete=models.PROTECT,
+        related_name="lease_area_draft",
+        null=True,
+        blank=True,
+    )
+    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
+    area = models.PositiveIntegerField(verbose_name=_("Area in square meters"))
+    geometry = models.MultiPolygonField(
+        srid=4326, verbose_name=_("Geometry"), null=True, blank=True
+    )
+    location = EnumField(LocationType, verbose_name=_("Location"), max_length=30)
+    address = models.CharField(
+        verbose_name=_("Address"), max_length=255, null=True, blank=True
+    )
+    postal_code = models.CharField(
+        verbose_name=_("Postal code"), max_length=255, null=True, blank=True
+    )
+    city = models.CharField(
+        verbose_name=_("City"), max_length=255, null=True, blank=True
+    )
+
+    recursive_get_related_skip_relations = []
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Lease area draft")
+        verbose_name_plural = pgettext_lazy("Model name", "Lease area drafts")
+
+
 class LeaseAreaAddress(AbstractAddress):
     lease_area = models.ForeignKey(
         LeaseArea, related_name="addresses", on_delete=models.CASCADE
