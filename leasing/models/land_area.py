@@ -320,12 +320,18 @@ class LeaseAreaDraft(ArchivableModel, SafeDeleteModel):
         null=True,
         blank=True,
     )
-    identifier = models.CharField(verbose_name=_("Identifier"), max_length=255)
-    area = models.PositiveIntegerField(verbose_name=_("Area in square meters"))
+    identifier = models.CharField(
+        verbose_name=_("Identifier"), max_length=255, null=True, blank=True
+    )
+    area = models.PositiveIntegerField(
+        verbose_name=_("Area in square meters"), null=True, blank=True
+    )
     geometry = models.MultiPolygonField(
         srid=4326, verbose_name=_("Geometry"), null=True, blank=True
     )
-    location = EnumField(LocationType, verbose_name=_("Location"), max_length=30)
+    location = EnumField(
+        LocationType, verbose_name=_("Location"), max_length=30, null=True, blank=True
+    )
     address = models.CharField(
         verbose_name=_("Address"), max_length=255, null=True, blank=True
     )
