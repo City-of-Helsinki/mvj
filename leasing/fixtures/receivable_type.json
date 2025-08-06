@@ -783,7 +783,7 @@
     "model": "leasing.receivabletype",
     "pk": 67,
     "fields": {
-      "name": "Maa- ja vesialueiden vuokratuotot",
+      "name": "Liikunta ja ulkoilu",
       "sap_material_code": "10004090",
       "sap_order_item_number": "2831300000",
       "sap_project_number": "2830K002831300",
