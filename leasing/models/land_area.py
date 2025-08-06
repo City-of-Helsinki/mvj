@@ -731,6 +731,7 @@ class UsageDistribution(models.Model):
 
 auditlog.register(LeaseArea)
 auditlog.register(LeaseAreaAddress)
+auditlog.register(LeaseAreaDraft)
 auditlog.register(ConstructabilityDescription)
 auditlog.register(Plot)
 auditlog.register(PlanUnit)
