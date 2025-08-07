@@ -9,6 +9,7 @@ from leasing.models.land_area import (
     CustomDetailedPlan,
     LeaseAreaAddress,
     LeaseAreaAttachment,
+    LeaseAreaDraft,
     PlanUnitIntendedUse,
     PlotDivisionState,
     UsageDistribution,
@@ -605,4 +606,24 @@ class LeaseAreaCreateUpdateSerializer(
             "geometry",
             "attachments",
             "custom_detailed_plan",
+        )
+
+
+class LeaseAreaDraftSerializer(
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    UpdateNestedMixin,
+    serializers.ModelSerializer,
+):
+    class Meta:
+        model = LeaseAreaDraft
+        fields = (
+            "id",
+            "identifier",
+            "area",
+            "geometry",
+            "location",
+            "address",
+            "postal_code",
+            "city",
         )
