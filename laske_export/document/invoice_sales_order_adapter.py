@@ -341,8 +341,10 @@ class InvoiceSalesOrderAdapter:
             invoice_row.billing_period_start_date
             and invoice_row.billing_period_end_date
         ):
-            billing_period_text = f"{invoice_row.billing_period_start_date.strftime('%d.%m.%Y')} - \
-                {invoice_row.billing_period_end_date.strftime('%d.%m.%Y')}"
+            billing_period_text = (
+                f"{invoice_row.billing_period_start_date.strftime('%d.%m.%Y')} - "
+                f"{invoice_row.billing_period_end_date.strftime('%d.%m.%Y')}"
+            )
         else:
             billing_period_text = ""
 
