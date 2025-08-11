@@ -293,6 +293,11 @@ class LeaseArea(Land, ArchivableModel, SafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Luonnosgeometria
+    draft_geometry = models.MultiPolygonField(
+        srid=4326, verbose_name=_("Draft geometry"), null=True, blank=True
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     def __str__(self):
