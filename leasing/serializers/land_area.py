@@ -498,6 +498,7 @@ class LeaseAreaSerializer(
             "archived_note",
             "archived_decision",
             "geometry",
+            "draft_geometry",
             "attachments",
             "custom_detailed_plan",
         )
@@ -538,6 +539,7 @@ class LeaseAreaWithGeometryListSerializer(LeaseAreaListSerializer):
             "archived_at",
             "archived_note",
             "geometry",
+            "draft_geometry",
         )
 
 
@@ -604,6 +606,7 @@ class LeaseAreaCreateUpdateSerializer(
             "archived_note",
             "archived_decision",
             "geometry",
+            "draft_geometry",
             "attachments",
             "custom_detailed_plan",
         )
