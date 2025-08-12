@@ -208,6 +208,8 @@ Creates invoices for rents that are due in the next month.
 
 _Should be run on the first day of every month_
 
+Has a variant for single lease, for manual actions: `create_invoices_for_single_lease`
+
 #### `send_invoices_to_laske`
 
 Sends unsent invoices to Laske SAP for invoicing.
