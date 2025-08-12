@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     # Avoid circular imports
     from leasing.calculation.result import CalculationResult
     from leasing.models.contact import Contact  # noqa: F401
+    from leasing.models.invoice import InvoiceSet
     from leasing.models.lease import Lease
     from leasing.models.rent import (
         ContractRent,
@@ -77,6 +78,10 @@ class InvoiceDatum(TypedDict):
     state: InvoiceState
     notes: InvoiceNoteNotes
     service_unit: "ServiceUnit"
+    generated: bool
+    invoicing_date: datetime.date
+    invoiceset: "InvoiceSet"
+    outstanding_amount: Decimal
 
 
 class InvoiceDatumDict(InvoiceDatum):
