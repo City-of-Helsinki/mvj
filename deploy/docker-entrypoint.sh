@@ -8,6 +8,8 @@ start_api() {
     # Check if this is an initContainer
     if [[ ! -z "$IS_KUBERNETES_INIT_CONTAINER" ]]; then
         echo "Running in initialization container mode"
+        # Create required directories in init container
+        bash deploy/init-create-dirs.sh
         # Run migrations in init container
         bash deploy/init-migrate.sh
         # Update django permissions
