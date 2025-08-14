@@ -27,3 +27,26 @@ MAP_SERVICE_WMS_URL = ""
 MAP_SERVICE_WMS_USERNAME = ""
 MAP_SERVICE_WMS_PASSWORD = ""
 MAP_SERVICE_WMS_HELSINKI_OWNED_AREAS_LAYER = ""
+
+# Invoice XML creation: temporary directory for output, and placeholders for connection variables
+LASKE_EXPORT_ROOT = "/tmp"
+LASKE_SERVERS = {
+    "export": {
+        "host": "placeholder",
+        "port": 1234,
+        "username": "placeholder",
+        "password": "placeholder",
+        "directory": "placeholder",
+        # "key_type": "placeholder",
+        # "key": b"",
+    },
+    "payments": {
+        "host": "placeholder",
+        "port": 1234,
+        "username": "placeholder",
+        "password": "placeholder",
+        "directory": "placeholder",
+        # "key_type": "placeholder",
+        # "key": b"",
+    },
+}
