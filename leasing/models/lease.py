@@ -1029,7 +1029,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 if not billing_period:
                     continue
 
-                if not rent.is_active_on_period(*billing_period):
+                if not rent.is_active_in_period(*billing_period):
                     continue
 
                 # Ignore periods that occur before the lease start date or after the lease end date

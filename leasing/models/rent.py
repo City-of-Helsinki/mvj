@@ -894,7 +894,7 @@ class Rent(TimeStampedSafeDeleteModel):
 
         return index.month is None and index.year == correct_year
 
-    def is_active_on_period(self, date_range_start, date_range_end):
+    def is_active_in_period(self, date_range_start, date_range_end):
         if (self.end_date is None or self.end_date >= date_range_start) and (
             self.start_date is None or self.start_date <= date_range_end
         ):

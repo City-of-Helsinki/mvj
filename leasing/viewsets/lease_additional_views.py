@@ -276,7 +276,7 @@ class LeaseRentForPeriodView(APIView):
         result = {"start_date": start_date, "end_date": end_date, "rents": []}
 
         for rent in lease.rents.all():
-            if not rent.is_active_on_period(start_date, end_date):
+            if not rent.is_active_in_period(start_date, end_date):
                 continue
 
             calculation_result = rent.get_amount_for_date_range(

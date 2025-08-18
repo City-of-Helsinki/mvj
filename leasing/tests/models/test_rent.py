@@ -2599,7 +2599,7 @@ def test_fixed_initial_year_rent_amount_for_date_range(
         ),
     ],
 )
-def test_is_active_on_period(
+def test_is_active_in_period(
     lease_test_data,
     rent_factory,
     rent_start_date,
@@ -2619,7 +2619,7 @@ def test_is_active_on_period(
         end_date=rent_end_date,
     )
 
-    assert rent.is_active_on_period(period_start_date, period_end_date) == expected
+    assert rent.is_active_in_period(period_start_date, period_end_date) == expected
 
 
 @pytest.mark.django_db
