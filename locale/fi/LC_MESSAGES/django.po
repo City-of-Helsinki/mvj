@@ -3570,6 +3570,13 @@ msgstr "Indeksi on valittava kun vuokralaji on Indeksi"
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Alennus-/korotustyypillä \"€ yhteensä\" ei voi olla loppupäivämäärää"
 
+msgid ""
+"This number of custom due dates per year is not allowed: {}. Must be one of "
+"{}"
+msgstr ""
+"Tämä lukumäärä erikseen määrättyjä eräpäiviä ei ole sallittu: {}. Oltava "
+"joko {}"
+
 msgid "Adjustment type is required when periodic rent adjustment is added"
 msgstr "Tarkistuksen tyyppi vaaditaan kun tasotarkistus lisätään"
 

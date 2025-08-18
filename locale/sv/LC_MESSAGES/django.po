@@ -3568,6 +3568,13 @@ msgstr "Indexet ska väljas då arrendearten är Index"
 msgid "Amount total adjustment type cannot have an end date"
 msgstr "Rabatt-/höjningstypen \"€ totalt\" kan inte ha ett slutdatum"
 
+msgid ""
+"This number of custom due dates per year is not allowed: {}. Must be one of "
+"{}"
+msgstr ""
+"Detta antal anpassade förfallodatum per år är inte tillåtet: {}. Måste vara "
+"ett av {}"
+
 msgid "Adjustment type is required when periodic rent adjustment is added"
 msgstr ""
 

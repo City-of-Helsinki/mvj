@@ -97,3 +97,11 @@ class TemporarySubventionItem(TypedDict):
     description: str
     subvention_percent: Decimal
     subvention_amount_euros_per_year: Decimal
+
+
+class DayMonthDatum(TypedDict):
+    """JSON data coming from the UI into RentCreateUpdateSerializer"""
+
+    id: int
+    day: int
+    month: int

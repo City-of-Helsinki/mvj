@@ -1,5 +1,7 @@
 import datetime
+import logging
 import re
+import sys
 from collections import OrderedDict, namedtuple
 from datetime import date
 from decimal import Decimal
@@ -14,6 +16,11 @@ from leasing.models.types import BillingPeriod, Periods
 if TYPE_CHECKING:
     # Avoid circular import
     from leasing.models.rent import RentAdjustment
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 def get_range_overlap(start1, end1, start2, end2):
@@ -132,17 +139,37 @@ def fix_amount_for_overlap(amount: Decimal, overlap: tuple[date, date], remainde
 
 
 def get_billing_periods_for_year(
-    year: int, periods_per_year: int
+    year: int, due_dates_per_year: int
 ) -> list[BillingPeriod]:
-    if periods_per_year < 1 or 12 % periods_per_year != 0 or periods_per_year > 12:
-        # TODO: raise exception or log an error
+    """Divide a full year into the desired number of evenly spaced billing periods"""
+    from leasing.models import Rent
+
+    if not due_dates_per_year:
+        # Must allow for 0 periods, because this method is called later in
+        # the flow where there is no input passed.
         return []
 
-    period_length = 12 // periods_per_year
-    periods = []
+    if due_dates_per_year not in Rent.allowed_numbers_of_due_dates_per_year():
+        logger.error(
+            (
+                f"This number of due dates per year is not allowed: {due_dates_per_year}. "
+                f"Must be one of {','.join(map(str, Rent.allowed_numbers_of_due_dates_per_year()))}"
+            )
+        )
+        return []
+
+    # TODO: if using custom due dates that are not evenly spaced inside a year,
+    # resulting billing periods will not align with those due dates.
+
+    period_length_in_months = 12 // due_dates_per_year
+    periods: list[BillingPeriod] = []
     start = date(year=year, month=1, day=1)
-    for i in range(periods_per_year):
-        end = start + relativedelta(months=period_length) - relativedelta(days=1)
+    for _ in range(due_dates_per_year):
+        end = (
+            start
+            + relativedelta(months=period_length_in_months)
+            - relativedelta(days=1)
+        )
         periods.append((start, end))
         start = end + relativedelta(days=1)
 
@@ -152,7 +179,8 @@ def get_billing_periods_for_year(
 def combine_ranges(ranges: Periods) -> Periods:
     try:
         sorted_ranges = sorted(ranges)
-    except TypeError:
+    except TypeError as e:
+        logger.error(e)
         return []
 
     result: Periods = []

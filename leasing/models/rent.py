@@ -1,5 +1,6 @@
 import datetime
 import logging
+import sys
 from decimal import ROUND_HALF_UP, Decimal
 
 from auditlog.registry import auditlog
@@ -88,6 +89,9 @@ FIXED_DUE_DATES: dict[str, dict[int, list[DayMonth]]] = {
 }
 
 logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class RentIntendedUse(NameModel):
@@ -782,11 +786,11 @@ class Rent(TimeStampedSafeDeleteModel):
         due_dates: list[datetime.date] = []
         for rent_due_date in rent_due_dates:
             for year in range(start_date.year, end_date.year + 1):
-                tmp_date = datetime.date(
+                due_date = datetime.date(
                     year=year, month=rent_due_date.month, day=rent_due_date.day
                 )
-                if start_date <= tmp_date <= end_date:
-                    due_dates.append(tmp_date)
+                if start_date <= due_date <= end_date:
+                    due_dates.append(due_date)
 
         return due_dates
 
@@ -796,19 +800,22 @@ class Rent(TimeStampedSafeDeleteModel):
         if not due_date:
             return None
 
-        due_dates_per_year = self.get_due_dates_for_period(
+        due_dates_for_year = self.get_due_dates_for_period(
             datetime.date(year=due_date.year, month=1, day=1),
             datetime.date(year=due_date.year, month=12, day=31),
         )
+        billing_periods_for_year = get_billing_periods_for_year(
+            due_date.year, len(due_dates_for_year)
+        )
+
+        if not billing_periods_for_year:
+            return None
 
         try:
-            due_date_index = due_dates_per_year.index(due_date)
-
-            return get_billing_periods_for_year(due_date.year, len(due_dates_per_year))[
-                due_date_index
-            ]
-        except (ValueError, IndexError):
-            # TODO: better error handling
+            due_date_index = due_dates_for_year.index(due_date)
+            return billing_periods_for_year[due_date_index]
+        except (ValueError, IndexError) as e:
+            logger.error(e)
             return None
 
     def get_all_billing_periods_for_year(self, year: int) -> list[BillingPeriod | None]:
@@ -923,10 +930,18 @@ class Rent(TimeStampedSafeDeleteModel):
             # when the data becomes available in the source API.
             return
 
+    @classmethod
+    def allowed_numbers_of_due_dates_per_year(cls) -> list[int]:
+        """Invoicing requires that each rent's number of due dates can evenly divide
+        the 12 months in a year."""
+        return [1, 2, 3, 4, 6, 12]
+
 
 class RentDueDate(TimeStampedSafeDeleteModel):
     """
     In Finnish: Eräpäivä
+
+    Used when rent.due_dates_type is "custom".
     """
 
     rent = models.ForeignKey(

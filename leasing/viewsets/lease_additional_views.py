@@ -326,9 +326,9 @@ class LeaseBillingPeriodsView(APIView):
 
         billing_periods = []
         for rent in lease.rents.all():
-            due_dates_per_year = rent.get_due_dates_for_period(start_date, end_date)
+            due_dates_for_year = rent.get_due_dates_for_period(start_date, end_date)
             billing_periods.extend(
-                get_billing_periods_for_year(year, len(due_dates_per_year))
+                get_billing_periods_for_year(year, len(due_dates_for_year))
             )
 
         return Response({"billing_periods": billing_periods})
