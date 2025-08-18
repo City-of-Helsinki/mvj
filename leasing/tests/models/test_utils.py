@@ -124,7 +124,7 @@ def test_get_overlap(s1, e1, s2, e2, expected):
 
 
 @pytest.mark.parametrize(
-    "year, periods_per_year, expected",
+    "year, due_dates_per_year, expected",
     [
         (
             2017,
@@ -197,8 +197,8 @@ def test_get_overlap(s1, e1, s2, e2, expected):
         (2017, 13, []),
     ],
 )
-def test_get_billing_periods(year, periods_per_year, expected):
-    assert get_billing_periods_for_year(year, periods_per_year) == expected
+def test_get_billing_periods_for_year(year, due_dates_per_year, expected):
+    assert get_billing_periods_for_year(year, due_dates_per_year) == expected
 
 
 @pytest.mark.parametrize(

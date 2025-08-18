@@ -1,8 +1,11 @@
+from typing import Generator
+
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from leasing.enums import RentType
+from leasing.enums import DueDatesType, RentType
 from leasing.models import Rent
+from leasing.models.types import DayMonthDatum
 from leasing.serializers.rent import RentCreateUpdateSerializer
 
 
@@ -222,7 +225,6 @@ def test_validate_override_receivable_type_invalid_rent_type(
             serializer.validate(data)
 
 
-# @pytest.mark.django_db
 def test_validate_periodic_rent_adjustment():
     """
     Rent create/update serializer should raise an error if periodic rent
@@ -235,3 +237,40 @@ def test_validate_periodic_rent_adjustment():
     }
     with pytest.raises(ValidationError):
         serializer.validate(incoming_data)
+
+
+def test_validate_custom_due_dates():
+    """
+    Rent create/update serializer should raise an error if custom due dates are set,
+    but a wrong number of them are supplied.
+    """
+    serializer = RentCreateUpdateSerializer()
+
+    # If due_dates_type is not custom, pass all input
+    fixed_due_dates_input = {"due_dates_type": DueDatesType.FIXED}
+    assert serializer.validate(fixed_due_dates_input)
+
+    # Only allow the specific number of custom due dates specified in the Rent class
+    highest_number_of_allowed_due_dates = max(
+        Rent.allowed_numbers_of_due_dates_per_year()
+    )
+    for number_of_due_dates in range(0, highest_number_of_allowed_due_dates + 1):
+        custom_due_dates = [
+            next(due_date_generator()) for _ in range(0, number_of_due_dates)
+        ]
+        custom_due_dates_input = {
+            "due_dates_type": DueDatesType.CUSTOM,
+            "due_dates": custom_due_dates,
+        }
+        if len(custom_due_dates) in Rent.allowed_numbers_of_due_dates_per_year():
+            assert serializer.validate(custom_due_dates_input)
+        else:
+            with pytest.raises(ValidationError):
+                serializer.validate(custom_due_dates_input)
+
+
+def due_date_generator() -> Generator[DayMonthDatum, None, None]:
+    i = 0
+    while True:
+        yield {"id": i, "day": 15, "month": (i % 12) + 1}
+        i += 1

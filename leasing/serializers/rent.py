@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import RentAdjustmentAmountType, RentCycle, RentType
+from leasing.enums import DueDatesType, RentAdjustmentAmountType, RentCycle, RentType
 from leasing.models import (
     ContractRent,
     Decision,
@@ -33,6 +33,7 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     TemporarySubvention,
 )
+from leasing.models.types import DayMonthDatum
 from leasing.serializers.receivable_type import ReceivableTypeSerializer
 from users.serializers import UserSerializer
 
@@ -574,9 +575,29 @@ class RentCreateUpdateSerializer(
         )
 
     def validate(self, rent_data: dict):
+        self.validate_custom_due_dates(rent_data)
         self.validate_periodic_rent_adjustment(rent_data)
         self.validate_override_receivable_type_value(rent_data)
         return rent_data
+
+    def validate_custom_due_dates(self, rent_data: dict) -> None:
+        """Rent with due_dates_type "custom" must have a specific number of due dates."""
+        due_dates_type = rent_data.get("due_dates_type")
+        due_dates: list[DayMonthDatum] = rent_data.get("due_dates", [])
+        due_dates_per_year = len(due_dates)
+        if (
+            due_dates_type == DueDatesType.CUSTOM
+            and due_dates_per_year not in Rent.allowed_numbers_of_due_dates_per_year()
+        ):
+            raise serializers.ValidationError(
+                _(
+                    "This number of custom due dates per year is not allowed: {}. "
+                    "Must be one of {}"
+                ).format(
+                    due_dates_per_year,
+                    ", ".join(map(str, Rent.allowed_numbers_of_due_dates_per_year())),
+                )
+            )
 
     def validate_periodic_rent_adjustment(self, rent_data: dict[str, Any]) -> None:
         """Validate that the Periodic Rent Adjustment values are set to the rent in
