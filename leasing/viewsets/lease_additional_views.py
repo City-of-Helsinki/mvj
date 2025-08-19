@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
-from rest_framework import status, viewsets
+from rest_framework import exceptions, status, viewsets
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -480,13 +480,19 @@ class LeaseSetRentInfoCompletionStateView(APIView):
         if "rent_info_complete" not in request.data:
             raise APIException('"rent_info_complete" key is required')
 
-        if (
-            request.data["rent_info_complete"] is not True
-            and request.data["rent_info_complete"] is not False
-        ):
+        rent_info_new_status = request.data["rent_info_complete"]
+        if rent_info_new_status is not True and rent_info_new_status is not False:
             raise APIException('"rent_info_complete" value has to be true or false')
 
-        lease.set_rent_info_complete(request.data["rent_info_complete"])
+        if rent_info_new_status is True:
+            try:
+                lease.validate_rents()
+            except ValidationError as e:
+                raise exceptions.ValidationError(
+                    _("Cannot complete rent info: {}").format(str(e.args))
+                )
+
+        lease.set_rent_info_complete(rent_info_new_status)
 
         return Response(
             {"success": True, "rent_info_completed_at": lease.rent_info_completed_at}

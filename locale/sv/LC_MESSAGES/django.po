@@ -3792,6 +3792,9 @@ msgstr "Faktureringen kan inte startas om arrendeuppgifterna är ofullständiga"
 msgid "Set rent info completion state"
 msgstr "Fastställ uppgiften arrendeuppgifterna i ordning"
 
+msgid "Cannot complete rent info: {}"
+msgstr ""
+
 msgid "Can't create global ui data"
 msgstr "Ingen behörighet att lägga till ui data"
 
