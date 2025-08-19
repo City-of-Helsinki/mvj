@@ -41,6 +41,7 @@ from leasing.models import (
     RelatedLease,
     Rent,
     RentAdjustment,
+    RentDueDate,
     RentIntendedUse,
     UiData,
 )
@@ -158,6 +159,12 @@ class RentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Rent
+
+
+@register
+class RentDueDateFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = RentDueDate
 
 
 @register

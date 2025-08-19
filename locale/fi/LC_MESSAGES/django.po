@@ -3790,6 +3790,9 @@ msgstr "Laskutusta ei voi käynnistää jos vuokratiedot ovat keskeneräiset"
 msgid "Set rent info completion state"
 msgstr "Aseta vuokratiedot kunnossa-tieto"
 
+msgid "Cannot complete rent info: {}"
+msgstr "Vuokran tietoja ei pysty merkitsemään valmiiksi: {}"
+
 msgid "Can't create global ui data"
 msgstr "Ei oikeutta lisätä ui dataa"
 

@@ -1528,6 +1528,34 @@ class Lease(TimeStampedSafeDeleteModel):
     def is_rent_info_complete(self) -> bool:
         return self.rent_info_completed_at is not None
 
+    def validate_rents(self) -> None:
+        """
+        Uses the RentCreateUpdateSerializer to perform similar validation
+        before important actions, such as setting rent info complete.
+
+        Raises: ValidationError
+        """
+        # avoid circular import
+        from leasing.serializers.rent import RentCreateUpdateSerializer
+
+        serializer = RentCreateUpdateSerializer()
+
+        for rent in self.rents.all():
+            serializer.instance = rent
+            rent_info = {
+                # Custom due dates
+                "due_dates_type": rent.due_dates_type,
+                "due_dates": rent.due_dates.all(),
+                # Periodic rent adjustment
+                "periodic_rent_adjustment_type": rent.periodic_rent_adjustment_type,
+                "old_dwellings_in_housing_companies_price_index": rent.old_dwellings_in_housing_companies_price_index,
+                # Override receivable type
+                "id": rent.id,
+                "override_receivable_type": rent.override_receivable_type,
+                "type": rent.type,
+            }
+            serializer.validate(rent_info)
+
     def set_rent_info_complete(self, state: bool):
         if self.is_rent_info_complete() is state:
             return

@@ -1,20 +1,31 @@
 import datetime
 from decimal import Decimal
+from typing import Callable
 
 import pytest
 from django.core.exceptions import ValidationError
 from django.db.models.aggregates import Sum
+from rest_framework import exceptions
 
 from leasing.enums import (
     ContactType,
     DueDatesType,
+    PeriodicRentAdjustmentType,
     PeriodType,
     RentCycle,
     RentType,
     TenantContactType,
 )
-from leasing.models import Invoice, Lease, ReceivableType
+from leasing.models import (
+    Invoice,
+    Lease,
+    OldDwellingsInHousingCompaniesPriceIndex,
+    ReceivableType,
+    Rent,
+    RentDueDate,
+)
 from leasing.models.invoice import InvoiceRow
+from leasing.models.service_unit import ServiceUnit
 
 
 @pytest.mark.django_db
@@ -730,3 +741,67 @@ def test_add_rounded_amount_previous_invoices(
     ).aggregate(sum=Sum("amount"))["sum"]
 
     assert invoice_sum == lease.calculate_rent_amount_for_year(2017).get_total_amount()
+
+
+@pytest.mark.django_db
+def test_lease_validate_rents(
+    lease_factory: Callable[..., Lease],
+    rent_factory: Callable[..., Rent],
+    rent_due_date_factory: Callable[..., RentDueDate],
+    old_dwellings_in_housing_companies_price_index_factory: Callable[
+        ..., OldDwellingsInHousingCompaniesPriceIndex
+    ],
+    receivable_type_factory: Callable[..., ReceivableType],
+    service_unit_factory: Callable[..., ServiceUnit],
+):
+    """
+    Tests lease.validate_rents().
+
+    Focus is to ensure that this function is in line with
+    leasing.serializers.rent.RentCreateUpdateSerializer.validate()
+    """
+    service_unit = service_unit_factory(use_rent_override_receivable_type=True)
+    lease = lease_factory(service_unit=service_unit)
+
+    # Happy path with correct variables
+    index = old_dwellings_in_housing_companies_price_index_factory()
+    receivable_type = receivable_type_factory()
+    valid_rent = rent_factory(
+        lease=lease,
+        old_dwellings_in_housing_companies_price_index=index,
+        periodic_rent_adjustment_type=PeriodicRentAdjustmentType.TASOTARKISTUS_20_10,
+        type=RentType.FIXED,
+        override_receivable_type=receivable_type,
+    )
+    rent_due_date_factory.create_batch(12, rent=valid_rent, day=1, month=1)
+    assert lease.validate_rents() is None
+
+    # Fail due to wrong number of custom due dates in the rent
+    invalid_rent = rent_factory(lease=lease)
+    rent_due_date_factory.create_batch(7, rent=invalid_rent, day=1, month=1)
+    with pytest.raises(exceptions.ValidationError):
+        lease.validate_rents()
+
+    # Reset to valid
+    invalid_rent.delete()
+    assert lease.validate_rents() is None
+
+    # Fail due to missing rent.periodic_rent_adjustment_type
+    invalid_rent = rent_factory(
+        lease=lease, old_dwellings_in_housing_companies_price_index=index
+    )
+    with pytest.raises(exceptions.ValidationError):
+        lease.validate_rents()
+
+    # Reset to valid
+    invalid_rent.delete()
+    assert lease.validate_rents() is None
+
+    # Fail due to missing rent.override_receivable_type
+    invalid_rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        override_receivable_type=None,
+    )
+    with pytest.raises(exceptions.ValidationError):
+        lease.validate_rents()
