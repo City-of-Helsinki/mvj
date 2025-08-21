@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-07 14:46+0300\n"
+"POT-Creation-Date: 2025-08-19 15:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2502,6 +2502,12 @@ msgstr "{area_identifier}, {area_addresses}, {area_m2}m2"
 msgid "Contract #{contract_number}"
 msgstr "Avtal #{contract_number}"
 
+msgid "Lease must have a start date to generate invoices."
+msgstr ""
+
+msgid "Lease must have a start date to enable invoicing."
+msgstr ""
+
 msgctxt "Model name"
 msgid "Lease state log"
 msgstr "Logg över statusändring för arrenderingen"
@@ -3788,6 +3794,9 @@ msgstr "Startar eller avbryter faktureringen"
 
 msgid "Cannot enable invoicing if rent info is not completed"
 msgstr "Faktureringen kan inte startas om arrendeuppgifterna är ofullständiga"
+
+msgid "Failed to set invoicing state: {}"
+msgstr ""
 
 msgid "Set rent info completion state"
 msgstr "Fastställ uppgiften arrendeuppgifterna i ordning"

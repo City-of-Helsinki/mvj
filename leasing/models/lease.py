@@ -1,5 +1,7 @@
 import datetime
+import logging
 import re
+import sys
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from itertools import chain, groupby
@@ -9,7 +11,7 @@ from typing import TYPE_CHECKING
 from auditlog.registry import auditlog
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import connection, models, transaction
 from django.db.models import Max, Q, QuerySet
 from django.utils import timezone
@@ -58,6 +60,11 @@ from users.models import User
 
 if TYPE_CHECKING:
     from leasing.models.tenant import Tenant
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class LeaseType(NameModel):
@@ -776,7 +783,7 @@ class Lease(TimeStampedSafeDeleteModel):
         self.create_identifier()
 
         if self.intended_use and self.service_unit != self.intended_use.service_unit:
-            raise ValidationError(
+            raise DjangoValidationError(
                 _(
                     "The intended use's service unit must match the lease's service_unit."
                 )
@@ -1007,7 +1014,9 @@ class Lease(TimeStampedSafeDeleteModel):
         lease_due_dates = self.get_due_dates_for_period(start_date, end_date)
 
         if not lease_due_dates:
-            # TODO
+            logger.info(
+                f"No due dates found for Lease #{self.pk} between {start_date} and {end_date}"
+            )
             return {}
 
         amounts_for_billing_periods: PayableRentsInPeriods = {}
@@ -1393,8 +1402,9 @@ class Lease(TimeStampedSafeDeleteModel):
         today = datetime.date.today()
 
         if not self.start_date:
-            # TODO: Emit error
-            return []
+            raise DjangoValidationError(
+                _("Lease must have a start date to generate invoices.")
+            )
 
         if not end_date:
             end_date = (
@@ -1516,7 +1526,11 @@ class Lease(TimeStampedSafeDeleteModel):
             return
 
         if state is True:
-            # TODO: Check that rents, tenants, etc. are in order
+            if not self.start_date:
+                raise DjangoValidationError(
+                    _("Lease must have a start date to enable invoicing.")
+                )
+
             self.invoicing_enabled_at = timezone.now()
             self.save()
 
