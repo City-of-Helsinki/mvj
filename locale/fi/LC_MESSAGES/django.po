@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-07 14:46+0300\n"
+"POT-Creation-Date: 2025-08-19 15:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2503,6 +2503,12 @@ msgstr "{area_identifier}, {area_addresses}, {area_m2}m2"
 msgid "Contract #{contract_number}"
 msgstr "Sopimus #{contract_number}"
 
+msgid "Lease must have a start date to generate invoices."
+msgstr "Vuokrauksella on oltava aloituspäivämäärä laskujen luomiseksi"
+
+msgid "Lease must have a start date to enable invoicing."
+msgstr "Vuokrauksella on oltava aloituspäivämäärä laskutuksen aloittamiseksi"
+
 msgctxt "Model name"
 msgid "Lease state log"
 msgstr "Vuokrauksen tilamuutosloki"
@@ -3786,6 +3792,9 @@ msgstr "Käynnistää tai keskeyttää laskutuksen"
 
 msgid "Cannot enable invoicing if rent info is not completed"
 msgstr "Laskutusta ei voi käynnistää jos vuokratiedot ovat keskeneräiset"
+
+msgid "Failed to set invoicing state: {}"
+msgstr "Laskutuksen tilan asettaminen epäonnistui: {}"
 
 msgid "Set rent info completion state"
 msgstr "Aseta vuokratiedot kunnossa-tieto"

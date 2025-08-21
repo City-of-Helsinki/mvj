@@ -1,15 +1,19 @@
 import datetime
+import logging
 import os
+import sys
 from decimal import Decimal
 from itertools import groupby
 
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
-from rest_framework import exceptions, status, viewsets
-from rest_framework.exceptions import APIException, ValidationError
+from rest_framework import status, viewsets
+from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,6 +27,11 @@ from leasing.serializers.invoice import (
     InvoiceSerializerWithExplanations,
 )
 from leasing.viewsets.utils import AtomicTransactionMixin
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class LeaseCreateChargeViewSet(AtomicTransactionMixin, viewsets.GenericViewSet):
@@ -216,7 +225,7 @@ class LeaseCreateCollectionLetterDocumentViewSet(
         doc = serializer.validated_data["template"].render_document(template_data)
 
         if not doc:
-            raise ValidationError(_("Error creating the document from the template"))
+            raise DrfValidationError(_("Error creating the document from the template"))
 
         response = HttpResponse(
             doc,
@@ -449,18 +458,30 @@ class LeaseSetInvoicingStateView(APIView):
         if "invoicing_enabled" not in request.data:
             raise APIException('"invoicing_enabled" key is required')
 
+        invoicing_enabled_new_status = request.data["invoicing_enabled"]
         if (
-            request.data["invoicing_enabled"] is not True
-            and request.data["invoicing_enabled"] is not False
+            invoicing_enabled_new_status is not True
+            and invoicing_enabled_new_status is not False
         ):
             raise APIException('"invoicing_enabled" value has to be true or false')
 
-        if request.data["invoicing_enabled"] and lease.rent_info_completed_at is None:
+        if invoicing_enabled_new_status and lease.rent_info_completed_at is None:
             raise APIException(
                 _("Cannot enable invoicing if rent info is not completed")
             )
 
-        lease.set_invoicing_enabled(request.data["invoicing_enabled"])
+        try:
+            lease.set_invoicing_enabled(invoicing_enabled_new_status)
+        except DjangoValidationError as e:
+            if invoicing_enabled_new_status is True:
+                # We don't want to raise validation errors when disabling invoicing,
+                # only when trying to enable it.
+                raise DrfValidationError(str(e.args))
+        except Exception as e:
+            logger.error(
+                f"Error setting invoicing state for lease {lease.pk}: {str(e)}"
+            )
+            raise APIException(_("Failed to set invoicing state: {}").format(str(e)))
 
         return Response(
             {"success": True, "invoicing_enabled_at": lease.invoicing_enabled_at}
@@ -485,10 +506,12 @@ class LeaseSetRentInfoCompletionStateView(APIView):
             raise APIException('"rent_info_complete" value has to be true or false')
 
         if rent_info_new_status is True:
+            # We don't want to validate when setting the completion to false,
+            # only when trying to set it to true.
             try:
                 lease.validate_rents()
-            except ValidationError as e:
-                raise exceptions.ValidationError(
+            except DjangoValidationError as e:
+                raise DrfValidationError(
                     _("Cannot complete rent info: {}").format(str(e.args))
                 )
 
