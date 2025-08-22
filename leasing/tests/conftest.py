@@ -2,6 +2,7 @@ import datetime
 import unittest
 from decimal import Decimal
 from pathlib import Path
+from typing import Callable
 
 import factory
 import pytest
@@ -15,11 +16,13 @@ from conftest import ContactFactory, ServiceUnitFactory
 from leasing.enums import (
     AreaType,
     ContactType,
+    DueDatesType,
     IndexType,
     InvoiceState,
     InvoiceType,
     LandUseAgreementLitigantContactType,
     LandUseContractType,
+    PeriodType,
     RentAdjustmentType,
     RentCycle,
     RentType,
@@ -45,6 +48,7 @@ from leasing.models import (
     RentIntendedUse,
     UiData,
 )
+from leasing.models.contact import Contact
 from leasing.models.contract import ContractChange, ContractType
 from leasing.models.decision import ConditionType
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
@@ -68,6 +72,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementStatus,
     LandUseAgreementType,
 )
+from leasing.models.lease import Lease
 from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import (
@@ -79,7 +84,12 @@ from leasing.models.rent import (
     OldDwellingsInHousingCompaniesPriceIndex,
 )
 from leasing.models.service_unit import ServiceUnitGroupMapping
-from leasing.models.tenant import TenantRentShare
+from leasing.models.tenant import (
+    Tenant,
+    TenantContact,
+    TenantContactType,
+    TenantRentShare,
+)
 
 fake = Faker("fi_FI")
 
@@ -985,3 +995,76 @@ def land_use_agreement_test_data(
     invoice.update_amounts()
 
     return land_use_agreement
+
+
+@pytest.fixture
+def invoicing_test_data_for_create_invoices(
+    lease_factory: Callable[..., Lease],
+    rent_factory: Callable[..., Rent],
+    contract_rent_factory: Callable[..., ContractRent],
+    rent_intended_use_factory: Callable[..., RentIntendedUse],
+    contact_factory: Callable[..., Contact],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+    tenant_rent_share_factory: Callable[..., TenantRentShare],
+) -> dict[str, Lease]:
+    """Generates the test data for management functions create_invoices and
+    create_invoices_for_single_lease.
+
+    One lease, active from 2025-04-01 to 2025-09-30, invoicing is enabled.
+
+    One rent for 1000e/month, two tenants sharing the rent in half.
+
+    --> should result in one Invoice and two InvoiceRows per month.
+    """
+    # Lease that is active between April and September
+    lease = lease_factory(
+        start_date=datetime.date(2025, 4, 1),
+        end_date=datetime.date(2025, 9, 30),
+        invoicing_enabled_at=datetime.date(2025, 1, 1),
+    )
+
+    # Rent with monthly due dates, 1000e per month
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=12,
+        start_date=lease.start_date,
+        end_date=lease.end_date,
+    )
+    rent_intended_use = rent_intended_use_factory()
+    contract_rent_factory(
+        rent=rent,
+        amount=1000,
+        period=PeriodType.PER_MONTH,
+        base_amount=1000,
+        base_amount_period=PeriodType.PER_MONTH,
+        intended_use=rent_intended_use,
+        start_date=lease.start_date,
+        end_date=lease.end_date,
+    )
+
+    # Two tenants, half of the rent each
+    tenants = [
+        tenant_factory(lease=lease, share_numerator=1, share_denominator=2),
+        tenant_factory(lease=lease, share_numerator=1, share_denominator=2),
+    ]
+    contact = contact_factory()
+    for tenant in tenants:
+        tenant_contact_factory(
+            contact=contact,
+            tenant=tenant,
+            start_date=lease.start_date,
+            end_date=lease.end_date,
+            type=TenantContactType.TENANT,
+        )
+        tenant_rent_share_factory(
+            tenant=tenant,
+            intended_use=rent_intended_use,
+            share_numerator=1,
+            share_denominator=2,
+        )
+
+    return {"lease": lease}
