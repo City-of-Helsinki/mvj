@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 
 from leasing.management.commands.create_invoices import (
     create_invoices_for_lease,
+    get_today,
     q_lease_is_active_in_period,
 )
 from leasing.models import Lease
@@ -20,7 +21,7 @@ logger.setLevel(logging.INFO)
 class Command(BaseCommand):
     help = (
         "Creates invoices for a single lease for a given year and month.\n"
-        "Example invocation for invoice 123123, March of year 2025:\n"
+        "Example invocation for lease 123123, March of year 2025:\n"
         "`python manage.py create_invoices_for_single_lease 123123 2025 3`"
     )
 
@@ -43,7 +44,7 @@ class Command(BaseCommand):
         year: int = options.get("year")  # type: ignore
         month: int = options.get("month")  # type: ignore
 
-        today = datetime.date.today()
+        today = get_today()
         start_date = datetime.date(year=year, month=month, day=1)
         end_date = datetime.date(year=year, month=month, day=1) + relativedelta(
             day=31
@@ -61,11 +62,11 @@ class Command(BaseCommand):
             .first()
         )
         if not lease:
-            logger.warning(
+            logger.info(
                 f"Lease not found with ID {lease_id}, or it's not active, or invoicing is not enabled."
             )
             return
 
         logger.info("Found the lease, starting to create invoices")
         created_count = create_invoices_for_lease(lease, start_date, end_date, today)
-        logger.info("{} invoices created".format(created_count))
+        logger.info(f"{created_count} invoices created")

@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         override = options.get("override", False)
-        today = datetime.date.today()
+        today = get_today()
 
         if not override and today.day != 1:
             raise CommandError(
@@ -61,6 +61,11 @@ class Command(BaseCommand):
             logger.info("")
 
         logger.info(f"{invoices_created_count} invoices created")
+
+
+def get_today() -> datetime.date:
+    """Decoupled function to make testing easier."""
+    return datetime.date.today()
 
 
 def _get_start_of_next_month(today: datetime.date) -> datetime.date:
