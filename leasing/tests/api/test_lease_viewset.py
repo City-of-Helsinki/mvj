@@ -55,10 +55,9 @@ def test_set_invoicing_state_inputs(
             content_type="application/json",
         )
 
-    assert response.status_code == expected_response_code, "%s %s" % (
-        response.status_code,
-        response.data,
-    )
+    assert (
+        response.status_code == expected_response_code
+    ), f"{response.status_code}, {response.data}"
 
     lease = Lease.objects.get(pk=lease.id)
 
@@ -89,10 +88,7 @@ def test_set_invoicing_state_without_lease_start_date(
             content_type="application/json",
         )
 
-    assert response.status_code == 400, "%s %s" % (
-        response.status_code,
-        response.data,
-    )
+    assert response.status_code == 400, f"{response.status_code}, {response.data}"
     assert "must have a start date" in str(response.data[0])
 
     lease_from_db = Lease.objects.get(pk=lease_input.id)
@@ -137,10 +133,9 @@ def test_set_rent_info_completion_state(
             content_type="application/json",
         )
 
-    assert response.status_code == expected_code, "%s %s" % (
-        response.status_code,
-        response.data,
-    )
+    assert (
+        response.status_code == expected_code
+    ), f"{response.status_code}, {response.data}"
 
     lease = Lease.objects.get(pk=lease.id)
 
@@ -165,10 +160,7 @@ def test_lease_details_contains_future_tenants(
         content_type="application/json",
     )
 
-    assert response.status_code == 200, "%s %s" % (
-        response.status_code,
-        response.data,
-    )
+    assert response.status_code == 200, f"{response.status_code}, {response.data}"
 
     found = False
     for tenant in response.data["tenants"]:
@@ -207,5 +199,5 @@ def test_copy_areas_to_contract(
         content_type="application/json",
     )
 
-    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert response.status_code == 200, f"{response.status_code}, {response.data}"
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 1
