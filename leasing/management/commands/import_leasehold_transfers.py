@@ -32,15 +32,11 @@ NS = {  # Namespace links for NLS XMLs
 }
 
 
-def get_import_dir():
+def get_import_dir() -> str:
     return settings.NLS_IMPORT_ROOT
 
 
-def get_name_from_xml_elem(elem):
-    """
-    :type elem: xml.etree.ElementTree.Element
-    :rtype: str
-    """
+def get_name_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
     name = ""
 
     first_names_xml = elem.find(".//y:etunimet", NS)
@@ -58,11 +54,7 @@ def get_name_from_xml_elem(elem):
     return name
 
 
-def get_business_id_or_none_from_xml_elem(elem):
-    """
-    :type elem: xml.etree.ElementTree.Element
-    :rtype: str|None
-    """
+def get_business_id_or_none_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
     business_id = None
 
     business_id_xml = elem.find(".//y:ytunnus", NS)
@@ -71,11 +63,7 @@ def get_business_id_or_none_from_xml_elem(elem):
     return business_id
 
 
-def get_national_id_or_none_from_xml_elem(elem):
-    """
-    :type elem: xml.etree.ElementTree.Element
-    :rtype: str|None
-    """
+def get_national_id_or_none_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
     national_id = None
 
     national_id_xml = elem.find(".//y:henkilotunnus", NS)
@@ -87,22 +75,20 @@ def get_national_id_or_none_from_xml_elem(elem):
 class Command(BaseCommand):
     help = __doc__.strip()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.nls_url = settings.NLS_HELSINKI_FOLDER_URL
-        self.nls_user = settings.NLS_HELSINKI_USERNAME
-        self.nls_password = settings.NLS_HELSINKI_PASSWORD.encode("utf-8")
+        self.nls_url: str = settings.NLS_HELSINKI_FOLDER_URL
+        self.nls_user: str = settings.NLS_HELSINKI_USERNAME
+        self.nls_password: str = settings.NLS_HELSINKI_PASSWORD.encode("utf-8")
         self.touched_transfers_count = 0
 
-    def _auth_get(self, url):
+    def _auth_get(self, url) -> requests.Response:
         return requests.get(url, auth=(self.nls_user, self.nls_password))
 
-    def _check_import_directory(self):
+    def _check_import_directory(self) -> None:
         if not os.path.isdir(get_import_dir()):
             self.stdout.write(
-                'Directory "{}" does not exist. Please create it.'.format(
-                    get_import_dir()
-                )
+                f'Directory "{get_import_dir()}" does not exist. Please create it.'
             )
             sys.exit(-1)
 
@@ -110,12 +96,10 @@ class Command(BaseCommand):
             fp = tempfile.TemporaryFile(dir=get_import_dir())
             fp.close()
         except PermissionError:
-            self.stdout.write(
-                'Can not create file in directory "{}".'.format(get_import_dir())
-            )
+            self.stdout.write(f'Can not create file in directory "{get_import_dir()}".')
             sys.exit(-1)
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         self._check_import_directory()
 
         target_folder_path = self.nls_url + "ktjkiraineistoluovutus/"
@@ -161,14 +145,11 @@ class Command(BaseCommand):
             if created:
                 new_archives += 1
 
-        self.stdout.write("Imported data from {} archive(s)".format(imported_archives))
-        self.stdout.write("From which {} were new".format(new_archives))
-        self.stdout.write("Touched {} transfer(s)".format(self.touched_transfers_count))
+        self.stdout.write(f"Imported data from {imported_archives} archive(s)")
+        self.stdout.write(f"From which {new_archives} were new")
+        self.stdout.write(f"Touched {self.touched_transfers_count} transfer(s)")
 
-    def _handle_xml_file(self, xml_file):
-        """
-        :type xml_file: str
-        """
+    def _handle_xml_file(self, xml_file: bytes) -> None:
         root = ElementTree.fromstring(xml_file)
 
         for entry in root.findall("./eavo:Laitos", NS):
@@ -230,7 +211,9 @@ class Command(BaseCommand):
                 self.touched_transfers_count += 1
 
     @staticmethod
-    def _handle_lease_properties(transfer, entry_xml):
+    def _handle_lease_properties(
+        transfer: LeaseholdTransfer, entry_xml: ElementTree.Element[str]
+    ) -> None:
         properties_xml_elems = entry_xml.findall(
             "./trpt:laitoksenPerustiedot//trpt:EOKohde", NS
         )
@@ -243,7 +226,11 @@ class Command(BaseCommand):
                 )
 
     @staticmethod
-    def _handle_lease_parties(transfer, entry_xml, transfer_shares_xml):
+    def _handle_lease_parties(
+        transfer: LeaseholdTransfer,
+        entry_xml: ElementTree.Element[str],
+        transfer_shares_xml: ElementTree.Element[str],
+    ) -> None:
         lessors_xml_elems = entry_xml.findall(
             "./trpt:laitoksenPerustiedot/trpt:eoHenkilot/y:Henkilo", NS
         )
