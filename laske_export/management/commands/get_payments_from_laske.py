@@ -1,5 +1,6 @@
 import datetime
 import glob
+import logging
 import os
 import re
 import sys
@@ -16,6 +17,11 @@ from sentry_sdk import capture_exception
 from laske_export.models import LaskePaymentsLog
 from leasing.models import Invoice, Lease, ServiceUnit, Vat
 from leasing.models.invoice import InvoicePayment
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 def get_import_dir() -> str:
@@ -72,7 +78,7 @@ class Command(BaseCommand):
                     preserve_mtime=True,
                 )
         except SSHException as e:
-            self.stdout.write(f"Error with the Laske payments server: {str(e)}")
+            logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
 
     def download_payments_ftp(self):
@@ -90,37 +96,35 @@ class Command(BaseCommand):
             )
             ftp.cwd(settings.LASKE_SERVERS["payments"]["directory"])
         except Exception as e:
-            self.stderr.write(f"Could connect to the server. Error: {str(e)}")
+            logger.error(f"Could connect to the server. Error: {str(e)}")
             capture_exception(e)
             return
 
         try:
             file_list = ftp.nlst()
         except Exception as e:
-            self.stderr.write(f"Could not get file list. Error: {str(e)}")
+            logger.error(f"Could not get file list. Error: {str(e)}")
             capture_exception(e)
             return
 
         for file_name in file_list:
             if not file_name.lower().startswith("mr_out_"):
-                self.stderr.write(
+                logger.info(
                     f'Skipping the file "{file_name}" because its name does not start with "MR_OUT_"'
                 )
                 continue
 
-            self.stdout.write(f'Downloading file "{file_name}".')
+            logger.info(f'Downloading file "{file_name}".')
             try:
                 fp = open(os.path.join(get_import_dir(), file_name), "wb")
                 ftp.retrbinary(f"RETR {file_name}", fp.write)
-                self.stdout.write(
+                logger.info(
                     "Download complete. Moving it to arch directory on the FTP server."
                 )
                 ftp.rename(file_name, f"arch/{file_name}")
-                self.stdout.write("Done.")
+                logger.info("Done.")
             except Exception as e:
-                self.stderr.write(
-                    f'Could not download file "{file_name}". Error: {str(e)}'
-                )
+                logger.error(f'Could not download file "{file_name}". Error: {str(e)}')
                 capture_exception(e)
 
         ftp.quit()
@@ -136,7 +140,7 @@ class Command(BaseCommand):
 
     def check_import_directory(self):
         if not os.path.isdir(get_import_dir()):
-            self.stdout.write(
+            logger.error(
                 f'Directory "{get_import_dir()}" does not exist. Please create it.'
             )
             sys.exit(-1)
@@ -145,7 +149,7 @@ class Command(BaseCommand):
             fp = tempfile.TemporaryFile(dir=get_import_dir())
             fp.close()
         except PermissionError:
-            self.stdout.write(f'Can not create file in directory "{get_import_dir}".')
+            logger.error(f'Can not create file in directory "{get_import_dir()}".')
             sys.exit(-1)
 
     def _get_service_unit_import_ids(self):
@@ -216,7 +220,7 @@ class Command(BaseCommand):
         date_of_entry = self.parse_date(date_of_entry_str)
         payment_date = value_date or date_of_entry
         if value_date is None and date_of_entry is not None:
-            self.stdout.write(
+            logger.info(
                 f"  Using date_of_entry as payment_date, malformed value_date in payment row: "
                 f"{invoice_number} {value_date_str}."
             )
@@ -225,26 +229,24 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  # NOQA C901 'Command.handle' is too complex
         self.check_import_directory()
 
-        self.stdout.write(
-            "Connecting to the Laske payments server and downloading files..."
-        )
+        logger.info("Connecting to the Laske payments server and downloading files...")
         self.download_payments()
-        self.stdout.write("Done.")
+        logger.info("Done.")
 
-        self.stdout.write("Finding files...")
+        logger.info("Finding files...")
         filenames = self.find_unimported_files()
         if not filenames:
-            self.stdout.write("No new files found. Exiting.")
+            logger.info("No new files found. Exiting.")
             return
 
-        self.stdout.write(f"{len(filenames)} new file(s) found.")
+        logger.info(f"{len(filenames)} new file(s) found.")
 
-        self.stdout.write("Reading files...")
+        logger.info("Reading files...")
 
         for filename in filenames:
             filepath = Path(filename)
 
-            self.stdout.write(f"Filename: {filename}")
+            logger.info(f"Filename: {filename}")
             (
                 laske_payments_log_entry,
                 created,
@@ -255,9 +257,7 @@ class Command(BaseCommand):
             try:
                 lines: List[str] = self.get_payment_lines_from_file(filename)
             except UnicodeDecodeError as e:
-                self.stderr.write(
-                    f"Error: failed to read file {filename}! Error {str(e)}"
-                )
+                logger.error(f"Error: failed to read file {filename}! {str(e)}")
                 capture_exception(e)
                 continue
 
@@ -265,7 +265,7 @@ class Command(BaseCommand):
                 filing_code = line[27:43].strip()
                 # Filing code series 288 = KYMP, 297 = KuVa
                 if filing_code[:3] not in ["288", "297"]:
-                    self.stderr.write(
+                    logger.info(
                         f"  Skipped row: filing code ({filing_code}) should start with 288 or 297"
                     )
                     continue
@@ -273,7 +273,7 @@ class Command(BaseCommand):
                 try:
                     invoice_number = int(line[43:63])
                 except ValueError:
-                    self.stderr.write(
+                    logger.info(
                         "  Skipped row: no invoice number provided in payment row"
                     )
                     continue
@@ -287,23 +287,24 @@ class Command(BaseCommand):
                 # Kirjauspäivä
                 date_of_entry_str = line[15:21]
                 payment_date = self.get_payment_date(
-                    value_date_str, date_of_entry_str, invoice_number
+                    value_date_str, date_of_entry_str, str(invoice_number)
                 )
                 if payment_date is None:
-                    self.stderr.write(
+                    logger.error(
                         f"  Skipped row: malformed value_date and date_of_entry in payment row: "
-                        f"{invoice_number} {value_date_str} {date_of_entry_str}."
+                        f"Invoice #{invoice_number}, value_date {value_date_str}, "
+                        f"date_of_entry {date_of_entry_str}."
                     )
                     continue
 
-                self.stdout.write(
-                    f" Invoice #{invoice_number} amount: {amount} date: {payment_date} filing code: {filing_code}"
+                logger.info(
+                    f" Invoice #{invoice_number} amount: {amount}, date: {payment_date}, filing code: {filing_code}"
                 )
 
                 try:
                     invoice = Invoice.objects.get(number=invoice_number)
                 except Invoice.DoesNotExist:
-                    self.stderr.write(
+                    logger.error(
                         f'  Skipped row: invoice number "{invoice_number}" does not exist.'
                     )
                     continue
@@ -315,15 +316,15 @@ class Command(BaseCommand):
                     )
 
                     if not vat:
-                        self.stdout.write(
-                            f"  Lease is subject to VAT but no VAT percent found for payment date {payment_date} or \
-billing_period_end_date {invoice.billing_period_end_date} !"
+                        logger.info(
+                            f"  Lease is not subject to VAT, or no VAT percent found for payment date "
+                            f"{payment_date} or billing_period_end_date {invoice.billing_period_end_date}"
                         )
                         continue
 
                     amount_without_vat = vat.calculate_amount_without_vat(amount)
 
-                    self.stdout.write(
+                    logger.info(
                         f"  Lease is subject to VAT. Amount: amount - VAT {vat.percent}% = {amount_without_vat}"
                     )
 
@@ -337,7 +338,7 @@ billing_period_end_date {invoice.billing_period_end_date} !"
                 if invoice.payments.filter(
                     paid_amount=amount, paid_date=payment_date
                 ).exists():
-                    self.stdout.write(
+                    logger.info(
                         "  Skipped row: payment with same paid_date and paid_amount exists!"
                     )
                     continue
@@ -355,4 +356,4 @@ billing_period_end_date {invoice.billing_period_end_date} !"
             laske_payments_log_entry.is_finished = True
             laske_payments_log_entry.save()
 
-        self.stdout.write("Done.")
+        logger.info("Done.")
