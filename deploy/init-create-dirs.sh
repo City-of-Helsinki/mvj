@@ -5,6 +5,7 @@ set -e
 # List of envvars to be used to create directories
 DIRECTORY_VARS=(
     "LASKE_EXPORT_ROOT"
+    "LASKE_PAYMENTS_IMPORT_LOCATION"
     "PRIVATE_FILES_LOCATION"
     "NLS_IMPORT_ROOT"
 )
@@ -12,12 +13,12 @@ DIRECTORY_VARS=(
 create_dir() {
     local var_name="$1"
     local dir_path="${!var_name}"
-    
+
     if [ -z "$dir_path" ]; then
         echo "$var_name is not defined, skipping directory creation."
         return
     fi
-    
+
     if [ -d "$dir_path" ]; then
         echo "Directory ($var_name) $dir_path already exists, skipping creation."
     else
