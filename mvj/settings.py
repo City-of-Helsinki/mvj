@@ -394,7 +394,7 @@ LASKE_EXPORT_ROOT = env.str(
 
 # Directory where SAP payment imports are stored on the MVJ system.
 LASKE_PAYMENTS_IMPORT_LOCATION = env.str(
-    "LASKE_PAYMENTS_IMPORT_LOCATION", default=f"{LASKE_EXPORT_ROOT}/payments"
+    "LASKE_PAYMENTS_IMPORT_LOCATION", default=project_root("sap_payment_imports")
 )
 
 LASKE_DUE_DATE_OFFSET_DAYS = 17
