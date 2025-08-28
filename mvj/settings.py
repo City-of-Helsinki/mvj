@@ -387,12 +387,12 @@ LASKE_VALUES = {
     "pmntterm": "Z100",
 }
 
-# Directory where SAP export files are stored.
+# Directory where SAP export files are stored on the MVJ system.
 LASKE_EXPORT_ROOT = env.str(
     "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
 )
 
-# Directory where SAP payment imports are stored.
+# Directory where SAP payment imports are stored on the MVJ system.
 LASKE_PAYMENTS_IMPORT_LOCATION = env.str(
     "LASKE_PAYMENTS_IMPORT_LOCATION", default=f"{LASKE_EXPORT_ROOT}/payments"
 )
