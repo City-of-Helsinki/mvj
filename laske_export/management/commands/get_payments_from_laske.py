@@ -18,8 +18,8 @@ from leasing.models import Invoice, Lease, ServiceUnit, Vat
 from leasing.models.invoice import InvoicePayment
 
 
-def get_import_dir():
-    return os.path.join(settings.LASKE_EXPORT_ROOT, "payments")
+def get_import_dir() -> str:
+    return getattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION", "")
 
 
 class Command(BaseCommand):
