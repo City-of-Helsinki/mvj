@@ -134,8 +134,10 @@ class Command(BaseCommand):
             "key_type" in settings.LASKE_SERVERS["payments"]
             and "key" in settings.LASKE_SERVERS["payments"]
         ):
+            logger.info("Key found, using SFTP")
             self.download_payments_sftp()
         else:
+            logger.info("No key found, using FTP")
             self.download_payments_ftp()
 
     def check_import_directory(self):
@@ -145,9 +147,11 @@ class Command(BaseCommand):
             )
             sys.exit(-1)
 
+        logger.info(f"Local target directory {get_import_dir()} found.")
         try:
             fp = tempfile.TemporaryFile(dir=get_import_dir())
             fp.close()
+            logger.info("Directory is writable, can proceed.")
         except PermissionError:
             logger.error(f'Can not create file in directory "{get_import_dir()}".')
             sys.exit(-1)
