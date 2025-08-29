@@ -75,7 +75,7 @@ class Command(BaseCommand):
                 sftp.get_d(
                     settings.LASKE_SERVERS["payments"]["directory"],
                     get_import_dir(),
-                    preserve_mtime=True,
+                    preserve_mtime=False,
                 )
         except SSHException as e:
             logger.error(f"Error with the Laske payments server: {str(e)}")
