@@ -59,7 +59,6 @@ from .decision import DecisionCreateUpdateNestedSerializer, DecisionSerializer
 from .inspection import InspectionSerializer
 from .land_area import (
     LeaseAreaCreateUpdateSerializer,
-    LeaseAreaDraftSerializer,
     LeaseAreaListSerializer,
     LeaseAreaSerializer,
     LeaseAreaWithGeometryListSerializer,
@@ -384,7 +383,6 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
             "preparer",
             "is_subject_to_vat",
             "lease_areas",
-            "lease_area_draft",
         )
 
 
@@ -431,7 +429,6 @@ class LeaseSerializerBase(
     district = DistrictSerializer()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantSerializer(many=True, required=False, allow_null=True)
-    lease_area_draft = LeaseAreaDraftSerializer(required=False, allow_null=True)
     lease_areas = LeaseAreaSerializer(many=True, required=False, allow_null=True)
     lessor = ContactSerializer(required=False, allow_null=True)
     intended_use = IntendedUseSerializer(required=False, allow_null=True)
@@ -638,7 +635,6 @@ class LeaseUpdateSerializer(
     id = serializers.ReadOnlyField()
     identifier = LeaseIdentifierSerializer(read_only=True)
     tenants = TenantCreateUpdateSerializer(many=True, required=False, allow_null=True)
-    lease_area_draft = LeaseAreaDraftSerializer(required=False, allow_null=True)
     lease_areas = LeaseAreaCreateUpdateSerializer(
         many=True, required=False, allow_null=True
     )

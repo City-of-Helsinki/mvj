@@ -481,15 +481,6 @@ CUSTOM_FIELD_PERMS = {
             6: "view",
             7: "change",
         },
-        "lease_area_draft": {
-            1: "view",
-            2: "change",
-            3: "view",
-            4: "change",
-            5: "view",
-            6: "view",
-            7: "change",
-        },
     },
     "contact": {
         "national_identification_number": {

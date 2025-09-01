@@ -1059,20 +1059,6 @@ strategy:
     modified_at: null
     postal_code: null
   leasing_leaseareaattachment: skip_rows
-  leasing_leaseareadraft:
-    id: null
-    deleted: null
-    deleted_by_cascade: null
-    archived_at: null
-    archived_note: null
-    identifier: null
-    area: null
-    geometry: null
-    location: null
-    address: null
-    postal_code: null
-    city: null
-    lease_id: null
   leasing_leasebasisofrent:
     amount_per_area: null
     archived_at: null
