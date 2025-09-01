@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
 
 from leasing.calculation.explanation import Explanation
-from leasing.enums import InvoiceState, InvoiceType
+from leasing.enums import InvoiceRowType, InvoiceState, InvoiceType
 from leasing.models.receivable_type import ReceivableType
 
 if TYPE_CHECKING:
@@ -50,6 +50,7 @@ class CalculationAmountRow(TypedDict):
     billing_period_start_date: BillingPeriod
     billing_period_end_date: BillingPeriod
     amount: Decimal
+    type: InvoiceRowType
 
 
 CalculationAmountsByContact = dict["Contact", list[CalculationAmountRow]]

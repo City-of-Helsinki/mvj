@@ -236,17 +236,17 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.payment_reference = payment_reference + checksum
 
     def get_line_items(self) -> list[LineItem]:
-        line_items = []
-
+        line_items: list[LineItem] = []
         invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
-        for i, invoice_row in enumerate(invoice_rows):
-            line_item = LineItem()
+        sorted_invoice_rows = _sort_invoice_rows_for_lineitems(invoice_rows)
 
+        for i, invoice_row in enumerate(sorted_invoice_rows):
+            line_item = LineItem()
             self.set_line_item_common_values(line_item, invoice_row)
 
             # Create and set the LineTextL<number> elements
             linetext = self.get_line_text(invoice_row)
-            is_last_invoicerow = i == len(invoice_rows) - 1
+            is_last_invoicerow = i == len(sorted_invoice_rows) - 1
             self.set_linetexts_from_string(line_item, linetext, is_last_invoicerow)
 
             line_items.append(line_item)
@@ -494,9 +494,10 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     def get_line_items(self) -> list[LineItem]:
         """Create LineItems for AKV service unit."""
         line_items: list[LineItem] = []
-        invoice_rows = self.invoice.rows.all()
+        invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
+        sorted_invoice_rows = _sort_invoice_rows_for_lineitems(invoice_rows)
 
-        for invoice_row in invoice_rows:
+        for invoice_row in sorted_invoice_rows:
             line_item = LineItem()
             self.set_line_item_common_values(line_item, invoice_row)
 
@@ -646,3 +647,27 @@ def invoice_sales_order_adapter_factory(
             service_unit=service_unit,
             fill_priority_and_info=fill_priority_and_info,
         )
+
+
+def _sort_invoice_rows_for_lineitems(
+    invoice_rows: QuerySet[InvoiceRow],
+) -> list[InvoiceRow]:
+    """Sort the invoice rows based on the LineItem order requested by
+    Helsinki internal review body.
+
+    Charge rows (positive amounts) should be first.
+    Credit note rows (negative amounts) should be second.
+    Rounding rows (very small amounts, positive or negative) should be last.
+
+    There are no other types yet in the system, but let's assume unknown types
+    are ordered last by default.
+    """
+    ordering_priority_list = InvoiceRow.get_type_ordering_priority()
+    types_to_ordering = {
+        row_type: i for i, row_type in enumerate(ordering_priority_list)
+    }
+    unknown_type_order = 999  # Sort unknown types last
+    return sorted(
+        invoice_rows,
+        key=lambda row: types_to_ordering.get(row.type, unknown_type_order),
+    )

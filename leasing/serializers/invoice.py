@@ -12,7 +12,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import InvoiceState, InvoiceType
+from leasing.enums import InvoiceRowType, InvoiceState, InvoiceType
 from leasing.models import Contact, Tenant
 from leasing.models.invoice import (
     Invoice,
@@ -623,6 +623,7 @@ class CreateChargeSerializer(serializers.Serializer):
                                 "billing_period_start_date": overlap[0],
                                 "billing_period_end_date": overlap[1],
                                 "amount": share_amount,
+                                "type": InvoiceRowType.CHARGE,
                             }
                         )
 
@@ -658,6 +659,7 @@ class CreateChargeSerializer(serializers.Serializer):
             if difference:
                 random_row = choice(all_rows)
                 random_row["amount"] += difference
+                random_row["type"] = InvoiceRowType.ROUNDING
 
         # Flatten rows, update totals and save the invoices
         for invoice_datum in invoice_data:
