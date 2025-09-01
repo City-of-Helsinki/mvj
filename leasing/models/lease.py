@@ -25,6 +25,7 @@ from leasing.calculation.result import CalculationAmount, CalculationResult
 from leasing.enums import (
     Classification,
     DueDatesPosition,
+    InvoiceRowType,
     InvoiceState,
     InvoiceType,
     LeaseRelationType,
@@ -1148,6 +1149,7 @@ class Lease(TimeStampedSafeDeleteModel):
                                     "billing_period_start_date": overlap[0],
                                     "billing_period_end_date": overlap[1],
                                     "amount": share_amount,
+                                    "type": InvoiceRowType.CHARGE,
                                 }
                             )
 
@@ -1162,6 +1164,7 @@ class Lease(TimeStampedSafeDeleteModel):
                         random_row["amount"] = Decimal(
                             random_row["amount"] + difference
                         ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+                        random_row["type"] = InvoiceRowType.ROUNDING
                     else:
                         # Somehow there was no suitable rent share. Add
                         # The amount to a random tenant
@@ -1180,6 +1183,7 @@ class Lease(TimeStampedSafeDeleteModel):
                                 "billing_period_start_date": amount_period[0],
                                 "billing_period_end_date": amount_period[1],
                                 "amount": rounded_amount,
+                                "type": InvoiceRowType.ROUNDING,
                             }
                         )
 

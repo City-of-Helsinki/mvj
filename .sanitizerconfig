@@ -758,6 +758,7 @@ strategy:
     modified_at: null
     receivable_type_id: null
     tenant_id: null
+    type: null
   leasing_invoiceset:
     billing_period_end_date: null
     billing_period_start_date: null
