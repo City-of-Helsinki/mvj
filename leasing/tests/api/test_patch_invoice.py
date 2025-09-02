@@ -16,12 +16,11 @@ from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
 
 @pytest.mark.django_db
 def test_patch_invoice_change_one_row_amount(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -75,12 +74,11 @@ def test_patch_invoice_change_one_row_amount(
 
 @pytest.mark.django_db
 def test_patch_invoice_change_other_row_amount(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -143,12 +141,11 @@ def test_patch_invoice_change_other_row_amount(
 
 @pytest.mark.django_db
 def test_patch_invoice_change_two_row_amount(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -211,13 +208,12 @@ def test_patch_invoice_change_two_row_amount(
 
 @pytest.mark.django_db
 def test_patch_invoice_with_invoiceset_change_row_amount(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_set_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_set_factory: Callable[..., InvoiceSet],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -299,13 +295,12 @@ def test_patch_invoice_with_invoiceset_change_row_amount(
 
 @pytest.mark.django_db
 def test_delete_invoice_invoice_in_invoiceset(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_set_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_set_factory: Callable[..., InvoiceSet],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -360,12 +355,11 @@ def test_delete_invoice_invoice_in_invoiceset(
 
 @pytest.mark.django_db
 def test_patch_invoice_change_if_sent_to_sap(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -425,12 +419,11 @@ def test_patch_invoice_change_if_sent_to_sap(
 
 @pytest.mark.django_db
 def test_patch_invoice_cant_change_if_generated(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -487,12 +480,11 @@ def test_patch_invoice_cant_change_if_generated(
 
 @pytest.mark.django_db
 def test_patch_credit_note_credited_invoice_outstanding_amount(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -549,12 +541,11 @@ def test_patch_credit_note_credited_invoice_outstanding_amount(
 
 @pytest.mark.django_db
 def test_patch_credit_note_dates_read_only(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
     contact = contact_factory(
@@ -622,12 +613,11 @@ def test_patch_credit_note_dates_read_only(
 
 @pytest.mark.django_db
 def test_patch_invoice_add_payment(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -668,12 +658,11 @@ def test_patch_invoice_add_payment(
 
 @pytest.mark.django_db
 def test_patch_generated_invoice_add_payment(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -718,12 +707,11 @@ def test_patch_generated_invoice_add_payment(
 
 @pytest.mark.django_db
 def test_patch_invoice_cannot_add_payment_if_sent_to_sap(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -765,12 +753,11 @@ def test_patch_invoice_cannot_add_payment_if_sent_to_sap(
 
 @pytest.mark.django_db
 def test_patch_invoice_existing_interest_row_success(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -824,12 +811,11 @@ def test_patch_invoice_existing_interest_row_success(
 
 @pytest.mark.django_db
 def test_patch_invoice_change_interest_row_fail(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
@@ -869,12 +855,11 @@ def test_patch_invoice_change_interest_row_fail(
 
 @pytest.mark.django_db
 def test_patch_invoice_new_interest_row_fail(
-    django_db_setup,
-    admin_client,
-    lease_test_data,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
+    admin_client: Client,
+    lease_test_data: dict,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     lease = lease_test_data["lease"]
 
