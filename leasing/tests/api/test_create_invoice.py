@@ -23,13 +23,12 @@ if TYPE_CHECKING:
 
 @pytest.mark.django_db
 def test_create_invoice(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -80,13 +79,12 @@ def test_create_invoice(
 
 @pytest.mark.django_db
 def test_create_invoice_before_tenant_contract_is_activated(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -137,13 +135,12 @@ def test_create_invoice_before_tenant_contract_is_activated(
 
 @pytest.mark.django_db
 def test_create_zero_sum_invoice_state_is_paid(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -196,13 +193,12 @@ def test_create_zero_sum_invoice_state_is_paid(
 
 @pytest.mark.django_db
 def test_create_invoice_for_tenant(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -253,13 +249,12 @@ def test_create_invoice_for_tenant(
 
 @pytest.mark.django_db
 def test_create_invoice_for_tenant_with_billing_contact(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -319,13 +314,12 @@ def test_create_invoice_for_tenant_with_billing_contact(
 
 @pytest.mark.django_db
 def test_create_invoice_tenant_not_in_lease(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -390,13 +384,12 @@ def test_create_invoice_tenant_not_in_lease(
 
 @pytest.mark.django_db
 def test_create_interest_invoice_fail(
-    django_db_setup,
-    admin_client,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    admin_client: Client,
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -440,15 +433,14 @@ def test_create_interest_invoice_fail(
 
 @pytest.mark.django_db
 def test_create_invoice_checks_service_unit(
-    django_db_setup,
-    client,
-    service_unit_factory,
-    user_factory,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
+    client: Client,
+    service_unit_factory: Callable[..., "ServiceUnit"],
+    user_factory: Callable[..., "User"],
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
 ):
     lease = lease_factory(
         type_id=1,
@@ -511,16 +503,15 @@ def test_create_invoice_checks_service_unit(
 
 @pytest.mark.django_db
 def test_create_invoice_cannot_add_row_with_receivable_type_from_another_service_unit(
-    django_db_setup,
-    client,
-    service_unit_factory,
-    user_factory,
-    lease_factory,
-    tenant_factory,
-    tenant_rent_share_factory,
-    contact_factory,
-    tenant_contact_factory,
-    receivable_type_factory,
+    client: Client,
+    service_unit_factory: Callable[..., "ServiceUnit"],
+    user_factory: Callable[..., "User"],
+    lease_factory: Callable[..., "Lease"],
+    tenant_factory: Callable[..., "Tenant"],
+    tenant_rent_share_factory: Callable[..., "TenantRentShare"],
+    contact_factory: Callable[..., "Contact"],
+    tenant_contact_factory: Callable[..., "TenantContact"],
+    receivable_type_factory: Callable[..., "ReceivableType"],
 ):
     lease = lease_factory(
         type_id=1,
