@@ -1,3 +1,4 @@
+import copy
 import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
@@ -94,7 +95,9 @@ class InvoicePaymentCreateUpdateSerializer(
 
 
 class InvoiceRowSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
     tenant = TenantSerializer()
@@ -109,11 +112,14 @@ class InvoiceRowSerializer(
             "billing_period_end_date",
             "description",
             "amount",
+            "type",
         )
 
 
 class InvoiceRowCreateUpdateSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
     tenant = InstanceDictPrimaryKeyRelatedField(
@@ -139,6 +145,7 @@ class InvoiceRowCreateUpdateSerializer(
             "billing_period_end_date",
             "description",
             "amount",
+            "type",
         )
 
     def validate(self, data):
@@ -184,6 +191,27 @@ class InvoiceRowCreateUpdateSerializer(
             )
 
         return data
+
+    def create(self, validated_data):
+        data_with_row_type = self._add_row_type_to_data(validated_data)
+        return super().create(data_with_row_type)
+
+    def update(self, instance, validated_data):
+        data_with_row_type = self._add_row_type_to_data(validated_data)
+        return super().update(instance, data_with_row_type)
+
+    def _add_row_type_to_data(self, validated_data) -> dict:
+        """Add the invoice row type to validated data if not already present."""
+        amount = validated_data.get("amount", None)
+        incoming_type = validated_data.get("type", None)
+
+        if not incoming_type and amount is not None:
+            # Only set the type if it's not already passed into this serializer.
+            appended_data = copy.deepcopy(validated_data)
+            appended_data["type"] = InvoiceRow.get_type_from_amount(amount)
+            return appended_data
+        else:
+            return validated_data
 
 
 class InlineInvoiceSerializer(
