@@ -57,13 +57,19 @@ def _get_exported_file_as_tree(settings) -> et.ElementTree:
     return et.parse(exported_file)
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to test setup fixture
+    "exporter_full_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_xml_elements_exist(
     settings,
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
-    akv_default_test_setup,
+    exporter_full_test_setup,
 ):
     """
     Sanity check: verify that the necessary XML elements are populated in AKV's
@@ -102,13 +108,19 @@ def test_akv_xml_elements_exist(
     )
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to test setup fixture
+    "exporter_full_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_from_invoicerow(
     settings,
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
-    akv_default_test_setup,
+    exporter_full_test_setup,
 ):
     """
     By default, AKV SAP codes should be added to the line item from invoicerow's
@@ -122,21 +134,27 @@ def test_akv_sap_codes_from_invoicerow(
 
     assert (
         line_item.find("Material").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_material_code
+        == exporter_full_test_setup["invoicerow1"].receivable_type.sap_material_code
     )
     assert (
         line_item.find("WBS_Element").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_project_number
+        == exporter_full_test_setup["invoicerow1"].receivable_type.sap_project_number
     )
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to test setup fixture
+    "exporter_full_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_from_leasetype(
     monkeypatch_laske_exporter_send,
     settings,
     send_invoices_to_laske_command,
-    akv_default_test_setup,
+    exporter_full_test_setup,
     receivable_type_factory,
 ):
     """
@@ -144,9 +162,9 @@ def test_akv_sap_codes_from_leasetype(
     invoicerow's receivable type is the service unit's default receivable type
     for rents, and that default doesn't have its own SAP codes.
     """
-    service_unit = akv_default_test_setup["service_unit"]
+    service_unit = exporter_full_test_setup["service_unit"]
 
-    invoice_row = akv_default_test_setup["invoicerow1"]
+    invoice_row = exporter_full_test_setup["invoicerow1"]
     invoice_row.receivable_type = service_unit.default_receivable_type_rent
     invoice_row.save()
 
@@ -158,21 +176,27 @@ def test_akv_sap_codes_from_leasetype(
 
     assert (
         line_item.find("Material").text
-        == akv_default_test_setup["lease"].type.sap_material_code
+        == exporter_full_test_setup["lease"].type.sap_material_code
     )
     assert (
         line_item.find("WBS_Element").text
-        == akv_default_test_setup["lease"].type.sap_project_number
+        == exporter_full_test_setup["lease"].type.sap_project_number
     )
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to test setup fixture
+    "exporter_full_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_when_collateral(
     monkeypatch_laske_exporter_send,
     settings,
     send_invoices_to_laske_command,
-    akv_default_test_setup,
+    exporter_full_test_setup,
 ):
     """
     AKV SAP codes should be added to the line item from invoicerow's receivable
@@ -182,9 +206,9 @@ def test_akv_sap_codes_when_collateral(
     Additionally, order item number should be added to the ProfitCenter element instead
     of the usual OrderItemNumber element.
     """
-    service_unit = akv_default_test_setup["service_unit"]
+    service_unit = exporter_full_test_setup["service_unit"]
 
-    invoice_row = akv_default_test_setup["invoicerow1"]
+    invoice_row = exporter_full_test_setup["invoicerow1"]
     invoice_row.receivable_type = service_unit.default_receivable_type_collateral
     invoice_row.save()
 
@@ -196,9 +220,9 @@ def test_akv_sap_codes_when_collateral(
 
     assert (
         line_item.find("Material").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_material_code
+        == exporter_full_test_setup["invoicerow1"].receivable_type.sap_material_code
     )
     assert (
         line_item.find("WBS_Element").text
-        == akv_default_test_setup["invoicerow1"].receivable_type.sap_project_number
+        == exporter_full_test_setup["invoicerow1"].receivable_type.sap_project_number
     )

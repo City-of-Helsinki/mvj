@@ -2,31 +2,41 @@ import pytest
 
 from laske_export.document.invoice_sales_order_adapter import (
     AkvInvoiceSalesOrderAdapter,
+    InvoiceSalesOrderAdapter,
 )
+from leasing.enums import ServiceUnitId
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "exporter_full_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 def test_akv_line_text(
     django_db_setup,
-    akv_default_test_setup,
+    exporter_full_test_setup,
 ):
     """
     Verify that invoicerow lineitem linetext contains all details
     requested by AKV when invoice's service unit is AKV.
     """
     # Set up the values
-    adapter = akv_default_test_setup["adapter"]
+    adapter: AkvInvoiceSalesOrderAdapter = exporter_full_test_setup["adapter"]
 
     # Extract the results from initialized objects
-    invoicerow_intended_use = akv_default_test_setup["invoicerow1_intended_use"]
-    lease_area_m2 = str(akv_default_test_setup["lease_area1"].area)
-    district = akv_default_test_setup["district"]
-    primary_lease_area_address = akv_default_test_setup["lease_area1_address2"]
-    decision = akv_default_test_setup["decision"]
-    billing_period_start_date = akv_default_test_setup[
+    invoicerow_intended_use = exporter_full_test_setup["invoicerow1_intended_use"]
+    lease_area_m2 = str(exporter_full_test_setup["lease_area1"].area)
+    district = exporter_full_test_setup["district"]
+    primary_lease_area_address = exporter_full_test_setup["lease_area1_address2"]
+    decision = exporter_full_test_setup["decision"]
+    billing_period_start_date = exporter_full_test_setup[
         "invoice1_billing_period_start_date"
     ]
-    billing_period_end_date = akv_default_test_setup["invoice1_billing_period_end_date"]
+    billing_period_end_date = exporter_full_test_setup[
+        "invoice1_billing_period_end_date"
+    ]
     date_format = AkvInvoiceSalesOrderAdapter.AKV_DATE_FORMAT
 
     combined_linetext = get_combined_linetext_from_adapter(adapter)
@@ -45,10 +55,16 @@ def test_akv_line_text(
     assert billing_period_end_date.strftime(date_format) in combined_linetext
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
 def test_missing_sections_not_added(
     django_db_setup,
-    akv_lacking_test_setup,
+    exporter_lacking_test_setup,
     lease_area_factory,
 ):
     """
@@ -58,7 +74,7 @@ def test_missing_sections_not_added(
     This cleanup of text with missing sections is for corner cases.
     The actual invoices are expected to contain all necessary details.
     """
-    adapter = akv_lacking_test_setup["adapter"]
+    adapter: AkvInvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
     linetext_without_area = get_combined_linetext_from_adapter(adapter)
 
     # Lease area is missing
@@ -66,7 +82,7 @@ def test_missing_sections_not_added(
 
     # Create a lease area, so that it exists in the next asserts
     lease_area_factory(
-        lease=akv_lacking_test_setup["lease"],
+        lease=exporter_lacking_test_setup["lease"],
         area=100,
         archived_decision=None,
     )
@@ -82,7 +98,7 @@ def test_missing_sections_not_added(
     # The actual invoices should contain all necessary items for a full linetext.
 
 
-def get_combined_linetext_from_adapter(adapter: AkvInvoiceSalesOrderAdapter) -> str:
+def get_combined_linetext_from_adapter(adapter: InvoiceSalesOrderAdapter) -> str:
     """Combines the linetext from all line_text_l<number> lines to a single string."""
     line_item = adapter.sales_order.line_items[0]
     line_texts = []

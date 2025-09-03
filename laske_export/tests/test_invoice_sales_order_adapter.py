@@ -1,24 +1,36 @@
+from decimal import Decimal
+from typing import Any, Callable
+
 import pytest
 
 from laske_export.document.invoice_sales_order_adapter import (
-    AkvInvoiceSalesOrderAdapter,
+    InvoiceSalesOrderAdapter,
 )
 from laske_export.document.sales_order import LineItem
-from leasing.models.invoice import InvoiceRow
-from leasing.models.lease import Lease, LeaseType
+from leasing.enums import InvoiceRowType, ServiceUnitId
+from leasing.models.invoice import Invoice, InvoiceRow
+from leasing.models.lease import IntendedUse, Lease, LeaseType
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.service_unit import ServiceUnit
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
-def test_set_line_item_common_values_sap_receivable_type(akv_lacking_test_setup):
+def test_set_line_item_common_values_sap_receivable_type(
+    exporter_lacking_test_setup: dict[str, Any],
+):
     """Verifies that only one of 'wbs_element' and 'order_item_number' is set.
     If 'sap_project_number' is set, it should be set to 'wbs_element'.
     When 'sap_project_number' is set, 'sap_order_item_number' should be ignored.
     Otherwise, 'sap_order_item_number' should be set to 'order_item_number'.
     """
-    adapter: AkvInvoiceSalesOrderAdapter = akv_lacking_test_setup["adapter"]
-    invoice_row: InvoiceRow = akv_lacking_test_setup["invoicerow1"]
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice_row: InvoiceRow = exporter_lacking_test_setup["invoicerow1"]
     receivable_type: ReceivableType = invoice_row.receivable_type
 
     receivable_type.sap_project_number = "123"
@@ -49,11 +61,19 @@ def test_set_line_item_common_values_sap_receivable_type(akv_lacking_test_setup)
     assert line_item.order_item_number == "456"
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
-def test_set_line_item_common_values_sap_lease_type(akv_lacking_test_setup):
+def test_set_line_item_common_values_sap_lease_type(
+    exporter_lacking_test_setup: dict[str, Any],
+):
     """Tests logic for handling values from LeaseType."""
-    adapter: AkvInvoiceSalesOrderAdapter = akv_lacking_test_setup["adapter"]
-    invoice_row: InvoiceRow = akv_lacking_test_setup["invoicerow1"]
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice_row: InvoiceRow = exporter_lacking_test_setup["invoicerow1"]
     receivable_type: ReceivableType = invoice_row.receivable_type
     lease_type: LeaseType = invoice_row.invoice.lease.type
     invoice_service_unit: ServiceUnit = invoice_row.invoice.service_unit
@@ -91,13 +111,21 @@ def test_set_line_item_common_values_sap_lease_type(akv_lacking_test_setup):
     assert line_item.order_item_number == "ord_nr"
 
 
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.AKV],
+    indirect=True,
+)
 @pytest.mark.django_db
-def test_set_line_item_common_values_sap_lease_internal_order(akv_lacking_test_setup):
+def test_set_line_item_common_values_sap_lease_internal_order(
+    exporter_lacking_test_setup: dict[str, Any],
+):
     """Tests logic for handling case when `Lease.internal_order` is set,
     which is expected to overwrite values when the conditions are right.
     """
-    adapter: AkvInvoiceSalesOrderAdapter = akv_lacking_test_setup["adapter"]
-    invoice_row: InvoiceRow = akv_lacking_test_setup["invoicerow1"]
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice_row: InvoiceRow = exporter_lacking_test_setup["invoicerow1"]
     receivable_type: ReceivableType = invoice_row.receivable_type
     lease: Lease = invoice_row.invoice.lease
     lease_type: LeaseType = invoice_row.invoice.lease.type
