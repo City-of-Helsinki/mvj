@@ -8,12 +8,6 @@ WORKDIR /app
 
 COPY --chown=default:root requirements*.txt /app/
 
-USER root
-
-RUN dnf install -y \
-    nc \
-    && dnf clean all
-
 USER default
 
 RUN pip install --no-cache-dir -r /app/requirements.txt \

@@ -1,7 +1,6 @@
 import datetime
 import os
 import tempfile
-from pathlib import Path
 
 import pytest
 from django.conf import settings
@@ -18,11 +17,13 @@ def test_unimported_files(monkeypatch):
     ]
     laske_command = get_payments_from_laske.Command()
     with tempfile.TemporaryDirectory() as directory:
-        monkeypatch.setattr(settings, "LASKE_EXPORT_ROOT", directory)
-        directory_path = Path(directory)
-        os.mkdir(directory_path / "payments")
+        temp_payments_path = f"{directory}/payments"
+        monkeypatch.setattr(
+            settings, "LASKE_PAYMENTS_IMPORT_LOCATION", temp_payments_path
+        )
+        os.mkdir(temp_payments_path)
         for test_file in test_files:
-            with open(directory_path / "payments" / test_file, "w") as f:
+            with open(f"{temp_payments_path}/{test_file}", "w") as f:
                 f.write("")
         files = laske_command.find_unimported_files()
         assert len(files) == 2
@@ -47,8 +48,11 @@ def test_download_and_archive_payments_ftp(monkeypatch, setup_ftp, use_ftp):
                 ftp.storbinary(f"STOR {test_file}", f)
     laske_command = get_payments_from_laske.Command()
     with tempfile.TemporaryDirectory() as directory:
-        monkeypatch.setattr(settings, "LASKE_EXPORT_ROOT", directory)
-        os.mkdir(f"{directory}/payments")
+        temp_payments_path = f"{directory}/payments"
+        monkeypatch.setattr(
+            settings, "LASKE_PAYMENTS_IMPORT_LOCATION", temp_payments_path
+        )
+        os.mkdir(temp_payments_path)
         laske_command.download_payments_ftp()
         archived_files = ftp.nlst("arch/")
         assert "arch/MR_OUT_ID256_8000_20190923_014512.TXT" in archived_files
@@ -71,9 +75,11 @@ def test_handle(monkeypatch, setup_ftp, use_ftp):
                 ftp.storbinary(f"STOR {test_file}", f)
     laske_command = get_payments_from_laske.Command()
     with tempfile.TemporaryDirectory() as directory:
-        monkeypatch.setattr(settings, "LASKE_EXPORT_ROOT", directory)
-        directory_path = Path(directory)
-        os.mkdir(directory_path / "payments")
+        temp_payments_path = f"{directory}/payments"
+        monkeypatch.setattr(
+            settings, "LASKE_PAYMENTS_IMPORT_LOCATION", temp_payments_path
+        )
+        os.mkdir(temp_payments_path)
         laske_command.handle()
         ignored_files = ftp.nlst()
         assert ["ML_OUT_ID256_8000_20191126_085824.TXT", "arch"] == ignored_files

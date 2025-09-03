@@ -30,6 +30,7 @@ MAP_SERVICE_WMS_HELSINKI_OWNED_AREAS_LAYER = ""
 
 # Invoice XML creation: temporary directory for output, and placeholders for connection variables
 LASKE_EXPORT_ROOT = "/tmp"
+LASKE_PAYMENTS_IMPORT_LOCATION = "/tmp/payments"
 LASKE_SERVERS = {
     "export": {
         "host": "placeholder",

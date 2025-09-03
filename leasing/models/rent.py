@@ -813,9 +813,25 @@ class Rent(TimeStampedSafeDeleteModel):
 
         try:
             due_date_index = due_dates_for_year.index(due_date)
+        except ValueError:
+            # In the current structure of lease.determine_payable_rents_and_periods(),
+            # it's possible that this due_date belongs to a different rent in the same lease.
+            # In that case, we don't want to match it to any of this rent's billing periods.
+            # Let's log this information for future reference for debugging.
+            logger.info(
+                f"Rent #{self.id}: cannot find due date {due_date} from due dates {due_dates_for_year}"
+            )
+            return None
+
+        try:
             return billing_periods_for_year[due_date_index]
-        except (ValueError, IndexError) as e:
-            logger.error(e)
+        except IndexError:
+            # Length of due dates and billing periods don't match.
+            # Might require investigation.
+            logger.error(
+                f"Rent #{self.id}: cannot find due date {due_date} with index {due_date_index} "
+                f"from billing periods {billing_periods_for_year}"
+            )
             return None
 
     def get_all_billing_periods_for_year(self, year: int) -> list[BillingPeriod | None]:

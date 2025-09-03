@@ -114,6 +114,7 @@ env = environ.Env(
     LASKE_PAYMENTS_DIRECTORY=(str, ""),
     LASKE_PAYMENTS_KEY_TYPE=(str, ""),
     LASKE_PAYMENTS_KEY=(bytes, ""),
+    LASKE_PAYMENTS_IMPORT_LOCATION=(str, ""),
     GDPR_API_URL_PATTERN=(str, "v1/profiles/<uuid:uuid>"),
     GDPR_API_MODEL=(str, "users.User"),
     GDPR_API_MODEL_LOOKUP=(str, "uuid"),
@@ -386,9 +387,14 @@ LASKE_VALUES = {
     "pmntterm": "Z100",
 }
 
-# Directory where SAP export files are stored.
+# Directory where SAP export files are stored on the MVJ system.
 LASKE_EXPORT_ROOT = env.str(
     "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
+)
+
+# Directory where SAP payment imports are stored on the MVJ system.
+LASKE_PAYMENTS_IMPORT_LOCATION = env.str(
+    "LASKE_PAYMENTS_IMPORT_LOCATION", default=project_root("sap_payment_imports")
 )
 
 LASKE_DUE_DATE_OFFSET_DAYS = 17
