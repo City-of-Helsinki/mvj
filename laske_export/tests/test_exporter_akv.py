@@ -1,60 +1,10 @@
-import xml.etree.ElementTree as et  # noqa
-from glob import glob
-
 import pytest
 from constance.test import override_config
 
-from laske_export.exporter import LaskeExporter
-from laske_export.management.commands import send_invoices_to_laske
 from leasing.enums import ServiceUnitId
 from leasing.tests.conftest import *  # noqa
 
-
-@pytest.fixture(scope="session")
-def monkeypatch_session(request):
-    """
-    Experimental (https://github.com/pytest-dev/pytest/issues/363).
-
-    Copied from test_exporter.py
-    """
-    from _pytest.monkeypatch import MonkeyPatch
-
-    mpatch = MonkeyPatch()
-    yield mpatch
-    mpatch.undo()
-
-
-@pytest.fixture
-def monkeypatch_laske_exporter_send(monkeypatch_session):
-    """Copied from test_exporter.py"""
-
-    def laske_exporter_send(self, filename):
-        pass
-
-    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
-
-
-@pytest.fixture
-def send_invoices_to_laske_command():
-    """Copied from test_exporter.py"""
-    command = send_invoices_to_laske.Command()
-    return command
-
-
-def _get_exported_file_as_tree(settings) -> et.ElementTree:
-    """
-    Returns a single XML element tree based on the first found XML file.
-
-    Args:
-        settings: Django configuration set in the conftest file.
-                  LASKE_EXPORT_ROOT must be unique for each test that exports a
-                  file, to ensure that the correct export is returned.
-    """
-    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
-    assert len(files) == 1
-
-    exported_file = files[0]
-    return et.parse(exported_file)
+from .conftest import get_exported_file_as_tree
 
 
 @pytest.mark.parametrize(
@@ -81,7 +31,7 @@ def test_akv_xml_elements_exist(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     sales_order = xml_tree.find("./SBO_SalesOrder")
 
     assert sales_order.find("SenderId").text is not None
@@ -129,7 +79,7 @@ def test_akv_sap_codes_from_invoicerow(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
@@ -171,7 +121,7 @@ def test_akv_sap_codes_from_leasetype(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
@@ -215,7 +165,7 @@ def test_akv_sap_codes_when_collateral(
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.AKV)
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (

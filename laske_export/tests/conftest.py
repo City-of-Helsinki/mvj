@@ -1,16 +1,20 @@
 import datetime
 import os
 import tempfile
+import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
+from glob import glob
 from typing import Any, Callable
 
 import pytest
 from django.conf import settings
+from django.core.management.base import BaseCommand
 
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
 )
-from laske_export.exporter import create_sales_order_with_laske_values
+from laske_export.exporter import LaskeExporter, create_sales_order_with_laske_values
+from laske_export.management.commands import send_invoices_to_laske
 from leasing.enums import ContactType, ServiceUnitId, TenantContactType
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.service_unit import ServiceUnit
@@ -96,11 +100,85 @@ def laske_export_from_email(override_config):
 
 
 @pytest.fixture(scope="function", autouse=True)
+@pytest.mark.django_db
 def laske_export_announce_email(override_config):
     with override_config(
         LASKE_EXPORT_ANNOUNCE_EMAIL="john@example.com,jane@example.com"
     ):
         yield
+
+
+def get_exported_file_as_tree(settings) -> et.ElementTree:
+    """
+    Returns a single XML element tree based on the first found XML file.
+
+    Args:
+        settings: Django configuration set in the conftest file.
+                  LASKE_EXPORT_ROOT must be unique for each test that exports a
+                  file, to ensure that the correct export is returned.
+    """
+    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
+    assert len(files) == 1
+
+    exported_file = files[0]
+    return et.parse(exported_file)
+
+
+@pytest.fixture(scope="session")
+def monkeypatch_session(request):
+    """Experimental (https://github.com/pytest-dev/pytest/issues/363)."""
+    from _pytest.monkeypatch import MonkeyPatch
+
+    mpatch = MonkeyPatch()
+    yield mpatch
+    mpatch.undo()
+
+
+@pytest.fixture
+def monkeypatch_laske_exporter_send(monkeypatch_session):
+    def laske_exporter_send(self, filename):
+        pass
+
+    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
+
+
+laske_exporter_send_with_error__error_message = "Unexpected error!"
+
+
+@pytest.fixture
+def monkeypatch_laske_exporter_send_with_error(monkeypatch_session):
+    def laske_exporter_send(self, filename):
+        raise Exception(laske_exporter_send_with_error__error_message)
+
+    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
+
+
+@pytest.fixture
+def send_invoices_to_laske_command() -> BaseCommand:
+    command = send_invoices_to_laske.Command()
+    return command
+
+
+@pytest.fixture
+def send_invoices_to_laske_command_handle(
+    broken_invoice,
+    invoice,
+    send_invoices_to_laske_command: BaseCommand,
+    monkeypatch_laske_exporter_send,
+):
+    command = send_invoices_to_laske_command
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
+
+
+@pytest.fixture
+def send_invoices_to_laske_command_handle_with_unexpected_error(
+    broken_invoice,
+    invoice,
+    send_invoices_to_laske_command: BaseCommand,
+    monkeypatch_laske_exporter_send_with_error,
+):
+    command = send_invoices_to_laske_command
+    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture
