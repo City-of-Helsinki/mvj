@@ -377,7 +377,6 @@ class LeaseManager(SafeDeleteManager):
                 "tenants__tenantcontact_set",
                 "tenants__tenantcontact_set__contact",
                 "tenants__tenantcontact_set__contact__service_unit",
-                "lease_area_draft",
                 "lease_areas",
                 "lease_areas__addresses",
                 "contracts",
@@ -1593,7 +1592,6 @@ class Lease(TimeStampedSafeDeleteModel):
             "plot_search_target",
             "notice_period",
             "service_unit",
-            "lease_area_draft",
         )
 
         return is_instance_empty(self, skip_fields=skip_fields)
