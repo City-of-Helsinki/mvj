@@ -520,7 +520,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         # Area texts
         first_lease_area = self.invoice.lease.lease_areas.first()
         if not first_lease_area:
-            logger.error(
+            logger.info(
                 f"No LeaseArea found for Lease {self.invoice.lease.id}, skipping linetext"
             )
             return ""
