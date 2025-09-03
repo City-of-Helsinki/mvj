@@ -11,39 +11,14 @@ from django.core import mail
 
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
-from laske_export.management.commands import send_invoices_to_laske
 from laske_export.models import LaskeExportLog
-from leasing.enums import ContactType, ServiceUnitId
+from leasing.models.contact import ContactType
 from leasing.models.invoice import Invoice
 
-
-@pytest.fixture(scope="session")
-def monkeypatch_session(request):
-    """Experimental (https://github.com/pytest-dev/pytest/issues/363)."""
-    from _pytest.monkeypatch import MonkeyPatch
-
-    mpatch = MonkeyPatch()
-    yield mpatch
-    mpatch.undo()
-
-
-@pytest.fixture
-def monkeypatch_laske_exporter_send(monkeypatch_session):
-    def laske_exporter_send(self, filename):
-        pass
-
-    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
-
-
-laske_exporter_send_with_error__error_message = "Unexpected error!"
-
-
-@pytest.fixture
-def monkeypatch_laske_exporter_send_with_error(monkeypatch_session):
-    def laske_exporter_send(self, filename):
-        raise Exception(laske_exporter_send_with_error__error_message)
-
-    monkeypatch_session.setattr(LaskeExporter, "send", laske_exporter_send)
+from .conftest import (
+    get_exported_file_as_tree,
+    laske_exporter_send_with_error__error_message,
+)
 
 
 @pytest.fixture
@@ -105,34 +80,6 @@ def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
     )
 
     return broken_invoice
-
-
-@pytest.fixture
-def send_invoices_to_laske_command():
-    command = send_invoices_to_laske.Command()
-    return command
-
-
-@pytest.fixture
-def send_invoices_to_laske_command_handle(
-    broken_invoice,
-    invoice,
-    send_invoices_to_laske_command,
-    monkeypatch_laske_exporter_send,
-):
-    command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.MAKE)
-
-
-@pytest.fixture
-def send_invoices_to_laske_command_handle_with_unexpected_error(
-    broken_invoice,
-    invoice,
-    send_invoices_to_laske_command,
-    monkeypatch_laske_exporter_send_with_error,
-):
-    command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.MAKE)
 
 
 @pytest.fixture
@@ -428,26 +375,6 @@ def _order_number_test_setup(
     return test_data
 
 
-def _get_exported_file_as_tree(settings) -> et.ElementTree:
-    """
-    Returns a single XML element tree based on the first found XML file.
-
-    Args:
-        settings: Django configuration set in the conftest file.
-                  LASKE_EXPORT_ROOT must be unique for each test that exports a
-                  file, to ensure that the correct export is returned.
-    """
-    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
-    assert len(files) == 1
-    exported_file = files[0]
-
-    xml_tree = et.parse(exported_file)
-    assert len(xml_tree.findall("./SBO_SalesOrder")) == 1
-    assert len(xml_tree.findall("./SBO_SalesOrder/LineItem")) == 1
-
-    return xml_tree
-
-
 @pytest.mark.django_db
 @override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_send_invoices_order_num_from_lease_type(
@@ -460,7 +387,7 @@ def test_send_invoices_order_num_from_lease_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
@@ -492,7 +419,7 @@ def test_send_invoices_order_num_from_receivable_type(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert line_item.find("Material").text == "rt-material-code"
@@ -518,7 +445,7 @@ def test_send_invoices_order_num_from_lease(
         service_unit_id=_order_number_test_setup["service_unit"].id
     )
 
-    xml_tree = _get_exported_file_as_tree(settings)
+    xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
 
     assert (
