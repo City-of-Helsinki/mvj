@@ -2,18 +2,18 @@ import datetime
 import os
 import tempfile
 from decimal import Decimal
-from typing import Any, Type
+from typing import Any, Callable
 
 import pytest
 from django.conf import settings
 
-from conftest import ReceivableTypeFactory
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
 )
 from laske_export.exporter import create_sales_order_with_laske_values
 from leasing.enums import ContactType, ServiceUnitId, TenantContactType
-from leasing.models import ServiceUnit
+from leasing.models.receivable_type import ReceivableType
+from leasing.models.service_unit import ServiceUnit
 from leasing.tests.conftest import *  # noqa
 
 
@@ -104,10 +104,11 @@ def laske_export_announce_email(override_config):
 
 
 @pytest.fixture
-def akv_default_test_setup(
+def exporter_full_test_setup(
     django_db_setup,
     settings,
     tmp_path,  # Unique path provided by pytest: /tmp/pytest-of-vscode/pytest-<num>
+    request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
     contact_factory,
     decision_factory,
     district_factory,
@@ -123,12 +124,15 @@ def akv_default_test_setup(
     tenant_factory,
     tenant_contact_factory,
 ) -> dict[str, Any]:
-    """Default test data fixture for AKV-related exporter tests."""
+    """Default test data fixture for exporter tests."""
     # Ensure a unique directory for each test, so that the export XML can be
     # examined in isolation.
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
 
-    service_unit = _setup_akv_service_unit_for_tests(receivable_type_factory)
+    service_unit_id: ServiceUnitId = request.param
+    service_unit = _setup_service_unit_for_tests(
+        service_unit_id, receivable_type_factory
+    )
 
     # Set up the lease
     lessor = contact_factory(service_unit=service_unit, sap_sales_office="1234")
@@ -279,10 +283,11 @@ def akv_default_test_setup(
 
 
 @pytest.fixture
-def akv_lacking_test_setup(
+def exporter_lacking_test_setup(
     django_db_setup,
     settings,
-    tmp_path,
+    tmp_path,  # Unique path provided by pytest: /tmp/pytest-of-vscode/pytest-<num>
+    request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
     contact_factory,
     district_factory,
     invoice_factory,
@@ -309,7 +314,10 @@ def akv_lacking_test_setup(
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
 
     # Set up the service unit
-    service_unit = _setup_akv_service_unit_for_tests(receivable_type_factory)
+    service_unit_id: ServiceUnitId = request.param
+    service_unit = _setup_service_unit_for_tests(
+        service_unit_id, receivable_type_factory
+    )
 
     # Set up a lease with minimal details
     district = district_factory(identifier="99", name="")
@@ -391,26 +399,26 @@ def akv_lacking_test_setup(
     }
 
 
-def _setup_akv_service_unit_for_tests(
-    receivable_type_factory: Type[ReceivableTypeFactory],
+def _setup_service_unit_for_tests(
+    service_unit_id: ServiceUnitId,
+    receivable_type_factory: Callable[..., ReceivableType],
 ) -> ServiceUnit:
-    """Set up the AKV service unit with mandatory related objects."""
-    akv_service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.AKV)
+    """Set up the service unit with mandatory export-related objects."""
+    service_unit = ServiceUnit.objects.get(pk=service_unit_id)
+
     default_receivable_type_rent = receivable_type_factory(
         name="Maanvuokraus",
-        service_unit=akv_service_unit,
+        service_unit=service_unit,
         sap_material_code=None,
         sap_project_number=None,
     )
     default_receivable_type_collateral = receivable_type_factory(
         name="Rahavakuus",
-        service_unit=akv_service_unit,
+        service_unit=service_unit,
         sap_material_code="11111111",
         sap_project_number="2222222222",
     )
-    akv_service_unit.default_receivable_type_rent = default_receivable_type_rent
-    akv_service_unit.default_receivable_type_collateral = (
-        default_receivable_type_collateral
-    )
-    akv_service_unit.save()
-    return akv_service_unit
+    service_unit.default_receivable_type_rent = default_receivable_type_rent
+    service_unit.default_receivable_type_collateral = default_receivable_type_collateral
+    service_unit.save()
+    return service_unit
