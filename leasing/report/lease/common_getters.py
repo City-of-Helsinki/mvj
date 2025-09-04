@@ -1,5 +1,5 @@
 import datetime
-from typing import Protocol, TypedDict
+from typing import Any, Protocol, TypedDict
 
 from django.db.models import QuerySet
 
@@ -55,11 +55,21 @@ def get_lease_link_data_from_related_object(
         }
 
 
-def get_identifier_string_from_lease_link_data(row: dict) -> str:
-    try:
-        return row["lease_identifier"]["identifier"] or "-"
-    except KeyError:
+def get_identifier_string_from_lease_link_data(
+    row: dict[str, Any],
+) -> str:
+    if not isinstance(row, dict):
         return "-"
+
+    lease_link_data = row.get("lease_identifier")
+    if isinstance(lease_link_data, str):
+        # Assuming this is already a lease_identifier string
+        return lease_link_data
+
+    if isinstance(lease_link_data, dict):
+        return lease_link_data.get("identifier") or "-"
+
+    return "-"
 
 
 def get_tenants(
