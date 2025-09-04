@@ -162,9 +162,12 @@ def test_set_line_item_common_values_sap_lease_internal_order(
 @pytest.mark.parametrize(
     # Parametrize service unit ID, and pass it to the test setup fixture,
     # to properly initialize the data necessary for invoicing to work,
-    # and ensure this test covers every service unit.
+    # and ensure this test covers all adapters.
     "exporter_full_test_setup",
-    [unit_id for unit_id in list(ServiceUnitId)],
+    [
+        unit_id
+        for unit_id in [ServiceUnitId.MAKE, ServiceUnitId.AKV, ServiceUnitId.KUVA_NUP]
+    ],
     indirect=True,
 )
 @pytest.mark.parametrize(
@@ -183,6 +186,11 @@ def test_set_line_item_common_values_sap_lease_internal_order(
             InvoiceRowType.ROUNDING,
             InvoiceRowType.CHARGE,
         ],
+        [],
+        # Unknown types should be ordered last
+        [None],
+        [None, None, None],
+        [None, InvoiceRowType.CREDIT, None, InvoiceRowType.CHARGE, None],
     ],
 )
 @pytest.mark.django_db
@@ -209,6 +217,7 @@ def test_invoice_row_ordering(
         InvoiceRowType.CHARGE: Decimal("100.00"),
         InvoiceRowType.CREDIT: Decimal("-100"),
         InvoiceRowType.ROUNDING: Decimal("0.01"),
+        None: Decimal("50"),
     }
     for i, row_type in enumerate(row_ordering_by_type):
         invoice_row_factory(
@@ -235,11 +244,6 @@ def test_invoice_row_ordering(
         # because all rows of same type have the same amount, in this test.
         item_amount = Decimal(item.net_price.replace(",", "."))
         row = invoice1.rows.filter(amount=item_amount).first()
-
-        # The type must be known in the ordering, otherwise the ordering should
-        # be updated.
-        assert row.type in required_order
-
         row_types.append(row.type)
 
     # Compare each row's type to the next
@@ -247,5 +251,16 @@ def test_invoice_row_ordering(
         if type1 == type2:
             # No ordering required between rows of same type
             continue
+
         else:
-            assert required_order.index(type1) < required_order.index(type2)
+            idx1 = (
+                required_order.index(type1)
+                if type1 in required_order
+                else 999  # arbitrarily large index for unknown types
+            )
+            idx2 = (
+                required_order.index(type2)
+                if type2 in required_order
+                else 999  # arbitrarily large index for unknown types
+            )
+            assert idx1 < idx2
