@@ -1,3 +1,4 @@
+from django.conf import settings
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
@@ -497,10 +498,15 @@ class LeaseAreaSerializer(
             "archived_note",
             "archived_decision",
             "geometry",
-            "draft_geometry",
             "attachments",
             "custom_detailed_plan",
         )
+
+        if getattr(settings, "FLAG_LEASEAREA_DRAFT_GEOMETRY") is True:
+            fields = (
+                *fields,
+                "draft_geometry",
+            )
 
 
 class LeaseAreaListSerializer(LeaseAreaSerializer):
@@ -538,8 +544,13 @@ class LeaseAreaWithGeometryListSerializer(LeaseAreaListSerializer):
             "archived_at",
             "archived_note",
             "geometry",
-            "draft_geometry",
         )
+
+        if getattr(settings, "FLAG_LEASEAREA_DRAFT_GEOMETRY") is True:
+            fields = (
+                *fields,
+                "draft_geometry",
+            )
 
 
 class LeaseAreaCreateUpdateSerializer(
@@ -605,7 +616,12 @@ class LeaseAreaCreateUpdateSerializer(
             "archived_note",
             "archived_decision",
             "geometry",
-            "draft_geometry",
             "attachments",
             "custom_detailed_plan",
         )
+
+        if getattr(settings, "FLAG_LEASEAREA_DRAFT_GEOMETRY") is True:
+            fields = (
+                *fields,
+                "draft_geometry",
+            )
