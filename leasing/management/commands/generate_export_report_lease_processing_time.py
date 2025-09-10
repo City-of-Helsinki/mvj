@@ -98,8 +98,8 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
 
     def get_url(self, obj: Lease):
         if getattr(settings, "OFFICER_UI_URL", "").endswith("/"):
-            return f"{settings.OFFICER_UI_URL}{obj.id}"
-        return f"{settings.OFFICER_UI_URL}/{obj.id}"
+            return f"{settings.OFFICER_UI_URL}vuokraukset/{obj.id}"
+        return f"{settings.OFFICER_UI_URL}/vuokraukset/{obj.id}"
 
 
 def get_lease_processing_time_report():
