@@ -507,6 +507,10 @@ CUSTOM_FIELD_PERMS = {
         "collaterals": {6: "change"},
         "signing_date": {5: "change"},
         "executor": {5: "change"},
+        "contract_changes": {5: "change"},
+    },
+    "contractchange": {
+        "executor": {5: "change"},
     },
     "decision": {"conditions": {2: "change", 3: "change", 5: "change"}},
     "rent": {
