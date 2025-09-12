@@ -422,23 +422,6 @@ class InvoiceType(Enum):
         CREDIT_NOTE = pgettext_lazy("Invoice type", "Credit note")
 
 
-class InvoiceRowType(Enum):
-    """
-    In Finnish: Laskun rivin tyyppi
-
-    Is used to enforce the preferred row ordering during SAP invoice export.
-    """
-
-    CHARGE = "charge"
-    CREDIT = "credit"
-    ROUNDING = "rounding"
-
-    class Labels:
-        CHARGE = pgettext_lazy("Invoice row type", "Charge")
-        CREDIT = pgettext_lazy("Invoice row type", "Credit")
-        ROUNDING = pgettext_lazy("Invoice row type", "Rounding")
-
-
 class ContactType(Enum):
     """
     In Finnish: Yhteystiedon tyyppi
