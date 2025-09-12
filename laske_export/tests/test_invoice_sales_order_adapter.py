@@ -5,6 +5,7 @@ import pytest
 
 from laske_export.document.invoice_sales_order_adapter import (
     InvoiceSalesOrderAdapter,
+    _sort_invoice_rows_for_lineitems,
 )
 from laske_export.document.sales_order import LineItem
 from leasing.enums import ServiceUnitId
@@ -157,3 +158,68 @@ def test_set_line_item_common_values_sap_lease_internal_order(
     adapter.set_line_item_common_values(line_item, invoice_row)
     assert line_item.wbs_element is None
     assert line_item.order_item_number == "internal_ord"
+
+
+@pytest.mark.parametrize(
+    "exporter_full_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.AKV],
+    indirect=True,
+)
+@pytest.mark.django_db
+def test_get_sorted_invoice_rows(exporter_full_test_setup: dict[str, Any]):
+    """Test that invoice rows are properly sorted by amount."""
+    invoice: Invoice = exporter_full_test_setup["invoice1"]
+    InvoiceRow.objects.all().filter(invoice_id=invoice.id).delete()
+    assert InvoiceRow.objects.count() == 0
+
+    receivable_type = exporter_full_test_setup["invoicerow1_receivable_type"]
+
+    row1 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("100.00"),
+        receivable_type=receivable_type,
+    )
+    row2 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("-0.01"),
+        receivable_type=receivable_type,
+    )
+    row3 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("-25.00"),
+        receivable_type=receivable_type,
+    )
+    row4 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("0.05"),
+        receivable_type=receivable_type,
+    )
+    row5 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("200.00"),
+        receivable_type=receivable_type,
+    )
+    row6 = InvoiceRow.objects.create(
+        invoice=invoice,
+        amount=Decimal("-50.00"),
+        receivable_type=receivable_type,
+    )
+
+    # Get sorted rows
+    sorted_rows = _sort_invoice_rows_for_lineitems(invoice.rows.all())
+
+    # Expected order:
+    # 1. Charges (positive amounts) in descending order: 200, 100
+    # 2. Credits (negative amounts) in descending absolute order: -50, -25
+    # 3. Roundings (small amounts) in descending order: 0.05, -0.01
+    expected_order = [
+        row5,
+        row1,
+        row6,
+        row3,
+        row4,
+        row2,
+    ]
+
+    assert len(sorted_rows) == 6
+    assert sorted_rows == expected_order

@@ -236,17 +236,18 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.payment_reference = payment_reference + checksum
 
     def get_line_items(self) -> list[LineItem]:
-        line_items = []
-
+        line_items: list[LineItem] = []
         invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
-        for i, invoice_row in enumerate(invoice_rows):
+        sorted_invoice_rows = _sort_invoice_rows_for_lineitems(invoice_rows)
+
+        for i, invoice_row in enumerate(sorted_invoice_rows):
             line_item = LineItem()
 
             self.set_line_item_common_values(line_item, invoice_row)
 
             # Create and set the LineTextL<number> elements
             linetext = self.get_line_text(invoice_row)
-            is_last_invoicerow = i == len(invoice_rows) - 1
+            is_last_invoicerow = i == len(sorted_invoice_rows) - 1
             self.set_linetexts_from_string(line_item, linetext, is_last_invoicerow)
 
             line_items.append(line_item)
@@ -494,9 +495,10 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     def get_line_items(self) -> list[LineItem]:
         """Create LineItems for AKV service unit."""
         line_items: list[LineItem] = []
-        invoice_rows = self.invoice.rows.all()
+        invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
+        sorted_invoice_rows = _sort_invoice_rows_for_lineitems(invoice_rows)
 
-        for invoice_row in invoice_rows:
+        for invoice_row in sorted_invoice_rows:
             line_item = LineItem()
             self.set_line_item_common_values(line_item, invoice_row)
 
@@ -646,3 +648,39 @@ def invoice_sales_order_adapter_factory(
             service_unit=service_unit,
             fill_priority_and_info=fill_priority_and_info,
         )
+
+
+def _sort_invoice_rows_for_lineitems(
+    invoice_rows: QuerySet[InvoiceRow],
+) -> list[InvoiceRow]:
+    """Sort the invoice rows based on the LineItem order requested by Helsinki
+    internal review body.
+
+    Charge rows (positive amounts) should be first.
+    Credit note rows (negative amounts) should be second.
+    Rounding rows (very small amounts, positive or negative) should be last.
+    """
+    charges = []
+    credits = []
+    roundings = []
+    # The rounding threshold is a guesstimate by the developer.
+    # It should be small enough to not include "real" invoice rows,
+    # but large enough to include all rounding rows.
+    rounding_threshold = Decimal("0.1")
+
+    for row in invoice_rows:
+        if row.amount > rounding_threshold:
+            charges.append(row)
+        elif row.amount < -rounding_threshold:
+            credits.append(row)
+        else:
+            roundings.append(row)
+
+    # Sort each category in a reasonably sensible order for invoices:
+    # Example: 200, 100, 10
+    sorted_charges = sorted(charges, key=lambda r: r.amount, reverse=True)
+    # Example: -50, -25, -10
+    sorted_credits = sorted(credits, key=lambda r: abs(r.amount), reverse=True)
+    # Example: 0.05, -0.01
+    sorted_roundings = sorted(roundings, key=lambda r: r.amount, reverse=True)
+    return sorted_charges + sorted_credits + sorted_roundings
