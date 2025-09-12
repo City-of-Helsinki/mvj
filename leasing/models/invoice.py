@@ -14,12 +14,7 @@ from enumfields import EnumField
 from sequences import get_next_value
 
 from field_permissions.registry import field_permissions
-from leasing.enums import (
-    InvoiceDeliveryMethod,
-    InvoiceRowType,
-    InvoiceState,
-    InvoiceType,
-)
+from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from leasing.models.receivable_type import ReceivableType
@@ -562,7 +557,6 @@ class Invoice(TimeStampedSafeDeleteModel):
                 billing_period_start_date=invoice_row.billing_period_start_date,
                 billing_period_end_date=invoice_row.billing_period_end_date,
                 amount=invoice_row_amount,
-                type=InvoiceRowType.CREDIT,
             )
 
         credit_note.total_amount = total_credited_amount
@@ -807,33 +801,11 @@ class InvoiceRow(TimeStampedSafeDeleteModel):
         verbose_name=_("Amount"), max_digits=10, decimal_places=2
     )
 
-    # In Finnish: Rivin tyyppi
-    type = EnumField(InvoiceRowType, verbose_name=_("Type"), max_length=30, null=True)
-
     recursive_get_related_skip_relations = ["invoice"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Invoice row")
         verbose_name_plural = pgettext_lazy("Model name", "Invoice rows")
-
-    @staticmethod
-    def get_type_ordering_priority() -> list[InvoiceRowType]:
-        """Get the preferred order of invoice rows in invoice exports based on
-        row type."""
-        return [
-            InvoiceRowType.CHARGE,
-            InvoiceRowType.CREDIT,
-            InvoiceRowType.ROUNDING,
-        ]
-
-    @staticmethod
-    def get_type_from_amount(amount: Decimal | int) -> InvoiceRowType:
-        """Deduce the row's type from an amount.
-
-        Can be used when the intended type is not known from the source.
-        Determining the type ROUNDING is best done at the place of InvoiceRow creation.
-        """
-        return InvoiceRowType.CHARGE if amount >= 0 else InvoiceRowType.CREDIT
 
 
 class InvoicePayment(TimeStampedSafeDeleteModel):
