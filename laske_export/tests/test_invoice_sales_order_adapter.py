@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Callable
+from typing import Any
 
 import pytest
 
@@ -7,9 +7,9 @@ from laske_export.document.invoice_sales_order_adapter import (
     InvoiceSalesOrderAdapter,
 )
 from laske_export.document.sales_order import LineItem
-from leasing.enums import InvoiceRowType, ServiceUnitId
+from leasing.enums import ServiceUnitId
 from leasing.models.invoice import Invoice, InvoiceRow
-from leasing.models.lease import IntendedUse, Lease, LeaseType
+from leasing.models.lease import Lease, LeaseType
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.service_unit import ServiceUnit
 
@@ -157,110 +157,3 @@ def test_set_line_item_common_values_sap_lease_internal_order(
     adapter.set_line_item_common_values(line_item, invoice_row)
     assert line_item.wbs_element is None
     assert line_item.order_item_number == "internal_ord"
-
-
-@pytest.mark.parametrize(
-    # Parametrize service unit ID, and pass it to the test setup fixture,
-    # to properly initialize the data necessary for invoicing to work,
-    # and ensure this test covers all adapters.
-    "exporter_full_test_setup",
-    [
-        unit_id
-        for unit_id in [ServiceUnitId.MAKE, ServiceUnitId.AKV, ServiceUnitId.KUVA_NUP]
-    ],
-    indirect=True,
-)
-@pytest.mark.parametrize(
-    "row_ordering_by_type",
-    [
-        [InvoiceRowType.ROUNDING, InvoiceRowType.CREDIT, InvoiceRowType.CHARGE],
-        [InvoiceRowType.ROUNDING, InvoiceRowType.CHARGE, InvoiceRowType.CREDIT],
-        [InvoiceRowType.CREDIT, InvoiceRowType.ROUNDING, InvoiceRowType.CHARGE],
-        [InvoiceRowType.CREDIT, InvoiceRowType.CHARGE, InvoiceRowType.ROUNDING],
-        [
-            InvoiceRowType.ROUNDING,
-            InvoiceRowType.CREDIT,
-            InvoiceRowType.CHARGE,
-            InvoiceRowType.CREDIT,
-            InvoiceRowType.CREDIT,
-            InvoiceRowType.ROUNDING,
-            InvoiceRowType.CHARGE,
-        ],
-        [],
-        # Unknown types should be ordered last
-        [None],
-        [None, None, None],
-        [None, InvoiceRowType.CREDIT, None, InvoiceRowType.CHARGE, None],
-    ],
-)
-@pytest.mark.django_db
-def test_invoice_row_ordering(
-    exporter_full_test_setup: dict[str, Any],
-    invoice_row_factory: Callable[..., InvoiceRow],
-    row_ordering_by_type: list[InvoiceRowType],
-):
-    """LineItem ordering should align with the expected InvoiceRow ordering"""
-    invoice1: Invoice = exporter_full_test_setup["invoice1"]
-    adapter = exporter_full_test_setup["adapter"]
-
-    receivable_type: ReceivableType = exporter_full_test_setup[
-        "invoicerow1_receivable_type"
-    ]
-    intended_use: IntendedUse = exporter_full_test_setup["invoicerow1_intended_use"]
-
-    # get rid of the pre-created invoicerow that could affect results
-    row_charge_old: InvoiceRow = exporter_full_test_setup["invoicerow1"]
-    row_charge_old.delete()
-    assert invoice1.rows.count() == 0
-
-    row_type_to_amount = {
-        InvoiceRowType.CHARGE: Decimal("100.00"),
-        InvoiceRowType.CREDIT: Decimal("-100"),
-        InvoiceRowType.ROUNDING: Decimal("0.01"),
-        None: Decimal("50"),
-    }
-    for i, row_type in enumerate(row_ordering_by_type):
-        invoice_row_factory(
-            invoice=invoice1,
-            receivable_type=receivable_type,
-            intended_use=intended_use,
-            amount=row_type_to_amount[row_type],
-            type=row_type,
-        )
-
-    adapter.invoice = invoice1
-    line_items = adapter.get_line_items()
-
-    assert len(line_items) == len(row_ordering_by_type)
-    assert len(line_items) == invoice1.rows.count()
-
-    required_order = InvoiceRow.get_type_ordering_priority()
-
-    # Verify that line items are in the required order based on invoicerow type,
-    # no matter how many rows per type are added.
-    row_types = []
-    for item in line_items:
-        # Match the item to the invoicerow based on row's amount and item's net price,
-        # because all rows of same type have the same amount, in this test.
-        item_amount = Decimal(item.net_price.replace(",", "."))
-        row = invoice1.rows.filter(amount=item_amount).first()
-        row_types.append(row.type)
-
-    # Compare each row's type to the next
-    for type1, type2 in zip(row_types, row_types[1:]):
-        if type1 == type2:
-            # No ordering required between rows of same type
-            continue
-
-        else:
-            idx1 = (
-                required_order.index(type1)
-                if type1 in required_order
-                else 999  # arbitrarily large index for unknown types
-            )
-            idx2 = (
-                required_order.index(type2)
-                if type2 in required_order
-                else 999  # arbitrarily large index for unknown types
-            )
-            assert idx1 < idx2

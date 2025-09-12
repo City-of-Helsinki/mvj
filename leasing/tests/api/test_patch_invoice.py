@@ -9,9 +9,10 @@ from django.test.client import Client
 from django.urls import reverse
 from django.utils import timezone
 
-from leasing.enums import ContactType, InvoiceRowType, InvoiceType
+from leasing.enums import ContactType, InvoiceType
+from leasing.models import Invoice
 from leasing.models.contact import Contact
-from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
+from leasing.models.invoice import InvoiceRow, InvoiceSet
 
 
 @pytest.mark.django_db
@@ -893,96 +894,3 @@ def test_patch_invoice_new_interest_row_fail(
     )
 
     assert response.status_code == 400, "%s %s" % (response.status_code, response.data)
-
-
-@pytest.mark.django_db
-def test_patch_invoice_row_types(
-    admin_client: Client,
-    lease_test_data: dict,
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
-    contact_factory: Callable[..., Contact],
-):
-    """InvoiceRows with positive or zero amounts are of type CHARGE,
-    negative amounts are of type CREDIT.
-    If another type is passed via the API, that is applied."""
-    lease = lease_test_data["lease"]
-
-    contact = contact_factory(
-        first_name="First name", last_name="Last name", type=ContactType.PERSON
-    )
-    invoice = invoice_factory(
-        lease=lease,
-        type=InvoiceType.CHARGE,
-        total_amount=Decimal(200),
-        billed_amount=Decimal(200),
-        recipient=contact,
-    )
-    # Create four CHARGE rows with positive amounts
-    rows: list[InvoiceRow] = []
-    positive_amount = Decimal(50)
-    for _ in range(1, 5):
-        row = invoice_row_factory(
-            invoice=invoice,
-            receivable_type_id=1,
-            amount=positive_amount,
-            type=InvoiceRowType.CHARGE,
-        )
-        rows.append(row)
-
-    # Input data for four rows with types other than CHARGE
-    data = {
-        "id": invoice.id,
-        "rows": [
-            {
-                "id": rows[0].id,
-                "amount": Decimal(-100),
-                "receivable_type": 1,
-            },  # Type not given, deduce the type from amount
-            {
-                "id": rows[1].id,
-                "amount": Decimal(-0.01).quantize(
-                    Decimal(".01")
-                ),  # quantize to avoid float precision issues
-                "receivable_type": 1,
-                "type": InvoiceRowType.ROUNDING.value,  # use the given type
-            },
-            {
-                "id": rows[2].id,
-                "amount": Decimal(0),
-                "receivable_type": 1,
-                "type": InvoiceRowType.CREDIT.value,  # use the given type, even if amount is not negative
-            },
-            {
-                "id": rows[3].id,
-                "amount": Decimal(-100),
-                "receivable_type": 1,
-                "type": None,  # Type is None, deduce the type from amount
-            },
-        ],
-    }
-
-    url = reverse("v1:invoice-detail", kwargs={"pk": invoice.id})
-    response = admin_client.patch(
-        url,
-        data=json.dumps(data, cls=DjangoJSONEncoder),
-        content_type="application/json",
-    )
-
-    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
-
-    updated_rows = InvoiceRow.objects.filter(invoice=invoice).order_by("id")
-
-    assert updated_rows.count() == 4
-
-    assert updated_rows[0].type == InvoiceRowType.CREDIT  # Deduced from negative amount
-    assert updated_rows[0].amount == updated_rows[0].amount  # Amounts are equal
-
-    assert updated_rows[1].type == InvoiceRowType.ROUNDING  # Given type
-    assert updated_rows[1].amount == updated_rows[1].amount
-
-    assert updated_rows[2].type == InvoiceRowType.CREDIT  # Given type
-    assert updated_rows[2].amount == updated_rows[2].amount
-
-    assert updated_rows[3].type == InvoiceRowType.CREDIT  # Deduced from negative amount
-    assert updated_rows[3].amount == updated_rows[3].amount

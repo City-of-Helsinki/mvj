@@ -1,4 +1,3 @@
-import copy
 import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
@@ -13,7 +12,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import InvoiceRowType, InvoiceState, InvoiceType
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Contact, Tenant
 from leasing.models.invoice import (
     Invoice,
@@ -95,9 +94,7 @@ class InvoicePaymentCreateUpdateSerializer(
 
 
 class InvoiceRowSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    serializers.ModelSerializer,
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
     tenant = TenantSerializer()
@@ -112,14 +109,11 @@ class InvoiceRowSerializer(
             "billing_period_end_date",
             "description",
             "amount",
-            "type",
         )
 
 
 class InvoiceRowCreateUpdateSerializer(
-    EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
-    serializers.ModelSerializer,
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     id = serializers.IntegerField(required=False)
     tenant = InstanceDictPrimaryKeyRelatedField(
@@ -145,7 +139,6 @@ class InvoiceRowCreateUpdateSerializer(
             "billing_period_end_date",
             "description",
             "amount",
-            "type",
         )
 
     def validate(self, data):
@@ -191,27 +184,6 @@ class InvoiceRowCreateUpdateSerializer(
             )
 
         return data
-
-    def create(self, validated_data):
-        data_with_row_type = self._add_row_type_to_data(validated_data)
-        return super().create(data_with_row_type)
-
-    def update(self, instance, validated_data):
-        data_with_row_type = self._add_row_type_to_data(validated_data)
-        return super().update(instance, data_with_row_type)
-
-    def _add_row_type_to_data(self, validated_data) -> dict:
-        """Add the invoice row type to validated data if not already present."""
-        amount = validated_data.get("amount", None)
-        incoming_type = validated_data.get("type", None)
-
-        if not incoming_type and amount is not None:
-            # Only set the type if it's not already passed into this serializer.
-            appended_data = copy.deepcopy(validated_data)
-            appended_data["type"] = InvoiceRow.get_type_from_amount(amount)
-            return appended_data
-        else:
-            return validated_data
 
 
 class InlineInvoiceSerializer(
@@ -651,7 +623,6 @@ class CreateChargeSerializer(serializers.Serializer):
                                 "billing_period_start_date": overlap[0],
                                 "billing_period_end_date": overlap[1],
                                 "amount": share_amount,
-                                "type": InvoiceRowType.CHARGE,
                             }
                         )
 
@@ -687,7 +658,6 @@ class CreateChargeSerializer(serializers.Serializer):
             if difference:
                 random_row = choice(all_rows)
                 random_row["amount"] += difference
-                random_row["type"] = InvoiceRowType.ROUNDING
 
         # Flatten rows, update totals and save the invoices
         for invoice_datum in invoice_data:
