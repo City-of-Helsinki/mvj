@@ -36,7 +36,7 @@ def get_import_dir() -> str:
     return settings.NLS_IMPORT_ROOT
 
 
-def get_name_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
+def get_name_from_xml_elem(elem: ElementTree.Element) -> str | None:
     name = ""
 
     first_names_xml = elem.find(".//y:etunimet", NS)
@@ -54,7 +54,7 @@ def get_name_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
     return name
 
 
-def get_business_id_or_none_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
+def get_business_id_or_none_from_xml_elem(elem: ElementTree.Element) -> str | None:
     business_id = None
 
     business_id_xml = elem.find(".//y:ytunnus", NS)
@@ -63,7 +63,7 @@ def get_business_id_or_none_from_xml_elem(elem: ElementTree.Element[str]) -> str
     return business_id
 
 
-def get_national_id_or_none_from_xml_elem(elem: ElementTree.Element[str]) -> str | None:
+def get_national_id_or_none_from_xml_elem(elem: ElementTree.Element) -> str | None:
     national_id = None
 
     national_id_xml = elem.find(".//y:henkilotunnus", NS)
@@ -212,7 +212,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def _handle_lease_properties(
-        transfer: LeaseholdTransfer, entry_xml: ElementTree.Element[str]
+        transfer: LeaseholdTransfer, entry_xml: ElementTree.Element
     ) -> None:
         properties_xml_elems = entry_xml.findall(
             "./trpt:laitoksenPerustiedot//trpt:EOKohde", NS
@@ -228,8 +228,8 @@ class Command(BaseCommand):
     @staticmethod
     def _handle_lease_parties(
         transfer: LeaseholdTransfer,
-        entry_xml: ElementTree.Element[str],
-        transfer_shares_xml: ElementTree.Element[str],
+        entry_xml: ElementTree.Element,
+        transfer_shares_xml: ElementTree.Element,
     ) -> None:
         lessors_xml_elems = entry_xml.findall(
             "./trpt:laitoksenPerustiedot/trpt:eoHenkilot/y:Henkilo", NS
