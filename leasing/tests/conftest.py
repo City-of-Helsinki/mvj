@@ -49,7 +49,12 @@ from leasing.models import (
     UiData,
 )
 from leasing.models.contact import Contact
-from leasing.models.contract import ContractChange, ContractType
+from leasing.models.contract import (
+    Collateral,
+    CollateralType,
+    ContractChange,
+    ContractType,
+)
 from leasing.models.decision import ConditionType
 from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
 from leasing.models.land_area import CustomDetailedPlan
@@ -422,6 +427,21 @@ class ContractChangeFactory(factory.django.DjangoModelFactory):
 class DecisionMakerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DecisionMaker
+
+
+@register
+class CollateralTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CollateralType
+
+
+@register
+class CollateralFactory(factory.django.DjangoModelFactory):
+
+    type = factory.SubFactory(CollateralTypeFactory)
+
+    class Meta:
+        model = Collateral
 
 
 @register
