@@ -523,10 +523,16 @@ class DecisionTypeKind(Enum):
 
     LEASE_CANCELLATION = "lease_cancellation"  # Vuokrasopimuksen purkaminen
     BASIS_OF_RENT = "basis_of_rent"  # Vuokrausperiaate
+    LEASE_SERVICE_UNIT_TRANSFER = (
+        "lease_service_unit_transfer"  # Vuokrauksen siirto palvelukokonaisuudelle
+    )
 
     class Labels:
         LEASE_CANCELLATION = pgettext_lazy("Decision type kind", "Lease cancellation")
         BASIS_OF_RENT = pgettext_lazy("Decision type kind", "Basis of Rent")
+        LEASE_SERVICE_UNIT_TRANSFER = pgettext_lazy(
+            "Decision type kind", "Lease service unit transfer"
+        )
 
 
 class DetailedPlanClass(Enum):
