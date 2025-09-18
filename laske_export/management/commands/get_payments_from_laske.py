@@ -130,10 +130,10 @@ class Command(BaseCommand):
         ftp.quit()
 
     def download_payments(self):
-        if (
-            "key_type" in settings.LASKE_SERVERS["payments"]
-            and "key" in settings.LASKE_SERVERS["payments"]
-        ):
+        key_type = settings.LASKE_SERVERS["payments"].get("key_type")
+        key = settings.LASKE_SERVERS["payments"].get("key")
+
+        if key_type and key:
             logger.info("Key found, using SFTP")
             self.download_payments_sftp()
         else:
