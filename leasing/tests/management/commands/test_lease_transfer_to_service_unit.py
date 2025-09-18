@@ -3,6 +3,7 @@ from typing import TypeAlias
 
 import pytest
 from auditlog.models import LogEntry
+from auditlog.registry import auditlog
 from django.core.management.base import CommandError
 from django.db.models import QuerySet
 
@@ -33,7 +34,7 @@ def command_instance():
     return Command()
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def single_lease_transfer_setup(
     lease_factory,
     contact_factory: ContactFactory,
@@ -59,6 +60,13 @@ def single_lease_transfer_setup(
     str,
     str,
 ]:
+    # Django fixture loading in `leasing/tests/conftest.py:django_db_setup` is messing up django-auditlog
+    # The only way to recover for this test I found is registering the models again.
+    models = [Lease, Contact, Rent, Collateral, Decision]
+    for model in models:
+        if not auditlog.contains(model):
+            auditlog.register(model)
+
     source_service_unit: ServiceUnit = service_unit_factory()
     source_lessor: Contact = contact_factory(
         type=ContactType.UNIT, service_unit=source_service_unit
@@ -115,6 +123,7 @@ def single_lease_transfer_setup(
     decision_maker = decision_maker_factory()
     decision_date = "2025-09-30"
     decision_section = "0123"
+
     return (
         lease,
         target_service_unit,

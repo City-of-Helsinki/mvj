@@ -45,7 +45,7 @@ REQUIRED_HEADERS = [
 ]
 
 """Example CSV content:   # noqa: E501
-lease_identifier,target_service_unit_name,target_lessor_name,target_receivable_type_name,target_intended_use,transferrer_email,decision_reference_number,decision_maker_name,decision_date,decision_section
+lease_identifier,target_service_unit_name,target_lessor_name,target_receivable_type_name,target_intended_use_name,transferrer_email,decision_reference_number,decision_maker_name,decision_date,decision_section
 A1234-123,Alueiden käyttö ja valvonta,Alueiden käyttö ja valvonta,Pysäköinti,Sähköauton latauspaikka,first.last@example.com,HEL 2025-0123456,Alueidenkäyttöpäällikkö,2025-03-30,123
 """
 
