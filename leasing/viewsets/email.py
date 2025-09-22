@@ -7,9 +7,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from leasing.enums import EmailLogType
+from leasing.enums import EmailLogType, PollutedLandRentConditionState
 from leasing.metadata import FieldsMetadata
 from leasing.models.email import EmailLog
+from leasing.models.lease import Lease
 from leasing.permissions import PerMethodPermission
 from leasing.serializers.email import SendEmailSerializer
 from utils.email import EmailMessageInput, send_email
@@ -64,7 +65,7 @@ class SendEmailView(APIView):
             email_log.recipients.add(recipient)
 
             if email_type == EmailLogType.CONSTRUCTABILITY:
-                self._schedule_constructability_reminder_email(email_input)
+                self._schedule_constructability_reminder_email(email_input, lease.pk)
 
         result = {"sent": True}
 
@@ -81,15 +82,38 @@ class SendEmailView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
     def _schedule_constructability_reminder_email(
-        self, email_input: EmailMessageInput
+        self, email_input: EmailMessageInput, lease_id: int
     ) -> None:
         """Constructability emails come with a reminder email."""
         reminder_subject = _("Reminder: {}").format(email_input["subject"])
         email_input["subject"] = reminder_subject
         reminder_time = timezone.now() + relativedelta(days=14)
         schedule(
-            "utils.email.send_email",
+            "leasing.viewsets.email.send_constructability_reminder_email",
             email_input,
+            lease_id,
             next_run=reminder_time,
             schedule_type="O",  # Once
         )
+
+
+def send_constructability_reminder_email(
+    email_input: EmailMessageInput, lease_id: int
+) -> None:
+    """
+    Only send the constructability reminder email if polluted rent condition
+    state is not READY for any active lease area. Otherwise the reminder would
+    be unnecessary.
+    """
+    lease = Lease.objects.get(pk=lease_id)
+
+    if (
+        lease.lease_areas.filter(
+            archived_at__isnull=True,
+        )
+        .exclude(
+            polluted_land_rent_condition_state=PollutedLandRentConditionState.READY,
+        )
+        .exists()
+    ):
+        send_email(email_input)

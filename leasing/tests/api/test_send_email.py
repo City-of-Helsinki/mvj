@@ -6,10 +6,13 @@ from django.contrib.auth.models import Permission
 from django.core import mail
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 
-from leasing.enums import EmailLogType
+from leasing.enums import EmailLogType, PollutedLandRentConditionState
 from leasing.models import EmailLog
+from leasing.viewsets.email import send_constructability_reminder_email
+from utils.email import EmailMessageInput
 
 
 @pytest.mark.django_db
@@ -141,3 +144,65 @@ def test_constructability_reminder_email_not_sent(
     --> Write this test when more EmailLogTypes are added.
     """
     pass
+
+
+def test_constructability_reminder_email_conditions(
+    admin_client, lease_test_data, lease_area_factory
+):
+    """
+    Constructability reminder email is only sent if any active lease area has
+    a polluted land rent condition state that is not READY.
+    """
+    lease = lease_test_data["lease"]
+
+    email_input_dummy: EmailMessageInput = {
+        "from_email": "test@example.com",
+        "to": ["recipient@example.com"],
+        "subject": "Test constructability email",
+        "body": "Test email body",
+        "attachments": [],
+    }
+
+    # Case 1: All active areas have READY state - no email should be sent
+    lease.lease_areas.all().update(
+        polluted_land_rent_condition_state=PollutedLandRentConditionState.READY,
+        archived_at=None,
+    )
+    with patch("leasing.viewsets.email.send_email") as mock_send_email:
+        send_constructability_reminder_email(email_input_dummy, lease.id)
+        mock_send_email.assert_not_called()
+
+    # Case 2: At least one active area has non-READY state - email should be sent
+    lease.lease_areas.all().update(
+        polluted_land_rent_condition_state=PollutedLandRentConditionState.READY,
+        archived_at=None,
+    )
+    nonready_area = lease.lease_areas.first()
+    nonready_area.polluted_land_rent_condition_state = (
+        PollutedLandRentConditionState.ASKED
+    )
+    nonready_area.save()
+    with patch("leasing.viewsets.email.send_email") as mock_send_email:
+        send_constructability_reminder_email(email_input_dummy, lease.id)
+        mock_send_email.assert_called_once_with(email_input_dummy)
+
+    # Case 3: Archived areas are ignored, even if they have non-READY state
+    lease.lease_areas.all().update(
+        polluted_land_rent_condition_state=PollutedLandRentConditionState.READY,
+        archived_at=None,
+    )
+    lease_area_factory(
+        lease=lease,
+        identifier="archived-area1",
+        polluted_land_rent_condition_state=PollutedLandRentConditionState.ASKED,
+        archived_at=timezone.now(),
+    )
+    lease_area_factory(
+        lease=lease,
+        identifier="archived-area2",
+        polluted_land_rent_condition_state=None,
+        archived_at=timezone.now(),
+    )
+    with patch("leasing.viewsets.email.send_email") as mock_send_email:
+        send_constructability_reminder_email(email_input_dummy, lease.id)
+        mock_send_email.assert_not_called()
