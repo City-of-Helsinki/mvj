@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 from django.core.serializers.json import DjangoJSONEncoder
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -67,6 +68,7 @@ def test_set_invoicing_state_inputs(
         assert lease.invoicing_enabled_at is expected_invoicing_enabled_at
 
 
+@override_settings(LANGUAGE_CODE="en")
 def test_set_invoicing_state_without_lease_start_date(
     django_db_setup, admin_client, lease_test_data
 ):
