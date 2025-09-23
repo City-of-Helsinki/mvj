@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/devcontainers/python:3.10-bookworm
+FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update
 
