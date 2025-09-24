@@ -3,24 +3,8 @@ name: MVJ CI
 on:
   push:
     branches: [master, develop]
-    paths-ignore:
-      - '.devcontainer/**'
-      - '.editorconfig'
-      - '.gitignore'
-      - 'docker-compose.env.template'
-      - 'LICENSE'
-      - 'local_settings.py.template'
-      - 'README.md'
   pull_request:
     branches: [master, develop]
-    paths-ignore:
-      - '.devcontainer/**'
-      - '.editorconfig'
-      - '.gitignore'
-      - 'docker-compose.env.template'
-      - 'LICENSE'
-      - 'local_settings.py.template'
-      - 'README.md'
 
 env:
   SECRET_KEY: 'notasecret-for-ci'
@@ -107,7 +91,7 @@ jobs:
         run: |
           python manage.py compilemessages
           pytest -ra -vvv --cov=. --migrations
-      
+
       - name: Mypy type checks
         run: ./run-type-checks
 
