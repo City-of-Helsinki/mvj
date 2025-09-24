@@ -13,10 +13,10 @@
 				"python.defaultInterpreterPath": "/usr/local/bin/python",
 				"isort.path": ["/usr/local/bin/isort"],
 				"isort.args":["--profile", "black"],
-				"isort.interpreter": ["/usr/bin/python3.11"],
+				"isort.interpreter": ["/usr/local/bin/python3"],
 				"flake8.path": ["/usr/local/bin/flake8"],
 				"black-formatter.path": ["/usr/local/bin/black"],
-				"black-formatter.interpreter": ["/usr/bin/python3.11"],
+				"black-formatter.interpreter": ["/usr/local/bin/python3"],
 				"editor.codeActionsOnSave": {
 					"source.fixAll.eslint": "never"
 				},
