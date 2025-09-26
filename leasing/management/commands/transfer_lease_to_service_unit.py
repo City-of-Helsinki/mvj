@@ -340,12 +340,13 @@ class Command(BaseCommand):
         for contract in contracts.all():
             collaterals: QuerySet[Collateral] = contract.collaterals
             for collateral in collaterals.all():
-                collateral.note = " - ".join(
-                    [
-                        collateral.note,
-                        COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER,
-                    ]
-                )
+                if collateral.note:
+                    collateral.note = (
+                        f"{collateral.note} - {COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER}"
+                    )
+                else:
+                    collateral.note = COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER
+
                 collateral.save(update_fields=["note"])
 
         # Add a Comment about the transfer on the Lease
