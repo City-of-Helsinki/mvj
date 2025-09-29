@@ -1,16 +1,17 @@
 import datetime
 from typing import TypeAlias
+from unittest.mock import patch
 
 import pytest
 from auditlog.models import LogEntry
 from auditlog.registry import auditlog
 from django.core.management.base import CommandError
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from conftest import ContactFactory, TenantFactory
 from leasing.enums import ContactType, DecisionTypeKind, TenantContactType
 from leasing.management.commands.transfer_lease_to_service_unit import (
-    COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER,
     Command,
 )
 from leasing.models.comment import Comment
@@ -139,7 +140,10 @@ def single_lease_transfer_setup(
 
 
 @pytest.mark.django_db
-def test_perform_single_transfer(single_lease_transfer_setup, command_instance):
+def test_perform_single_transfer(
+    single_lease_transfer_setup, command_instance: Command
+):
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
     (
         lease,
         target_service_unit,
@@ -157,18 +161,19 @@ def test_perform_single_transfer(single_lease_transfer_setup, command_instance):
     source_intended_use = lease.intended_use
     source_receivable_type = lease.rents.first().override_receivable_type
 
-    command_instance.perform_single_transfer(
-        lease,
-        target_service_unit,
-        target_lessor,
-        target_receivable_type,
-        target_intended_use,
-        transferrer_user,
-        decision_reference_number,
-        decision_maker,
-        decision_date,
-        decision_section,
-    )
+    with patch("django.utils.timezone.now", return_value=mock_now):
+        command_instance.perform_single_transfer(
+            lease,
+            target_service_unit,
+            target_lessor,
+            target_receivable_type,
+            target_intended_use,
+            transferrer_user,
+            decision_reference_number,
+            decision_maker,
+            decision_date,
+            decision_section,
+        )
     lease: Lease
     lease.refresh_from_db()
     assert lease.service_unit == target_service_unit
@@ -228,22 +233,29 @@ def test_perform_single_transfer(single_lease_transfer_setup, command_instance):
         collaterals.count() == 1
     ), "There should be one collateral associated with the contract."
 
+    transfer_note = command_instance.get_service_unit_transfer_note(
+        target_service_unit, source_service_unit, mock_now
+    )
     for collateral in collaterals:
-        assert COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER in collateral.note
+        assert (
+            command_instance.get_service_unit_transfer_note(
+                target_service_unit, source_service_unit, mock_now
+            )
+            in collateral.note
+        )
         collateral_log_entry = LogEntry.objects.get_for_object(collateral).first()
         assert collateral_log_entry.action == LogEntry.Action.UPDATE
         collateral_changes = collateral_log_entry.changes
         assert [
             COLLATERAL_NOTES_INITIAL,
-            f"{COLLATERAL_NOTES_INITIAL} - {COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER}",
+            f"{COLLATERAL_NOTES_INITIAL} - {transfer_note}",
         ] == collateral_changes["note"]
 
     latest_comment: Comment = lease.comments.last()
     assert latest_comment.user == transferrer_user
     assert latest_comment.lease == lease
     latest_comment_text: str = latest_comment.text
-    assert latest_comment_text.startswith("Vuokraus on siirretty")
-    assert latest_comment_text.endswith(f"{target_service_unit}.")
+    assert latest_comment_text == transfer_note
 
     decision: Decision = lease.decisions.last()
     assert decision.lease == lease
@@ -264,7 +276,9 @@ def test_perform_single_transfer(single_lease_transfer_setup, command_instance):
     assert lease_custom_log_entry.action == LogEntry.Action.UPDATE
     assert [
         None,
-        f"Vuokraus siirretty palveluyksiköstä {source_service_unit} → {target_service_unit}",
+        command_instance.get_service_unit_transfer_note(
+            target_service_unit, source_service_unit, mock_now
+        ),
     ] == lease_custom_log_entry.changes["service_unit_transfer"]
 
 

@@ -27,9 +27,6 @@ stdout_handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(stdout_handler)
 logger.setLevel(logging.INFO)
 
-COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER = (
-    "Tämä vakuus on siirtynyt vuokrauksen myötä toiseen palveluyksikköön."
-)
 
 REQUIRED_HEADERS = [
     "lease_identifier",
@@ -305,6 +302,7 @@ class Command(BaseCommand):
         decision_date: datetime.date,
         decision_section: str,
     ):
+        now = timezone.now()
         old_service_unit = lease.service_unit
 
         lease.service_unit = target_service_unit
@@ -339,26 +337,25 @@ class Command(BaseCommand):
         contracts: QuerySet[Contract] = lease.contracts
         for contract in contracts.all():
             collaterals: QuerySet[Collateral] = contract.collaterals
+            transfer_note = self.get_service_unit_transfer_note(
+                target_service_unit, old_service_unit, now
+            )
             for collateral in collaterals.all():
                 if collateral.note:
-                    collateral.note = (
-                        f"{collateral.note} - {COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER}"
-                    )
+                    collateral.note = f"{collateral.note} - {transfer_note}"
                 else:
-                    collateral.note = COLLATERAL_NOTE_SERVICE_UNIT_TRANSFER
+                    collateral.note = transfer_note
 
                 collateral.save(update_fields=["note"])
 
         # Add a Comment about the transfer on the Lease
-        now = timezone.now()
         comment_topic, _ = CommentTopic.objects.get_or_create(name="Vuokrauksen siirto")
         Comment.objects.create(
             lease=lease,
             topic=comment_topic,
             user=transferrer_user,
-            text=(
-                f"Vuokraus on siirretty {now.strftime('%d.%m.%Y')} palveluyksiköstä "
-                f"{old_service_unit} palveluyksikköön {target_service_unit}."
+            text=self.get_service_unit_transfer_note(
+                target_service_unit, old_service_unit, now
             ),
         )
 
@@ -386,7 +383,9 @@ class Command(BaseCommand):
             changes={
                 "service_unit_transfer": [
                     None,
-                    f"Vuokraus siirretty palveluyksiköstä {old_service_unit} → {target_service_unit}",
+                    self.get_service_unit_transfer_note(
+                        target_service_unit, old_service_unit, now
+                    ),
                 ]
             },
         )
@@ -396,3 +395,8 @@ class Command(BaseCommand):
         )
 
         return
+
+    def get_service_unit_transfer_note(
+        self, target_service_unit, old_service_unit, now: datetime
+    ):
+        return f"Vuokraus siirretty {now.strftime('%d.%m.%Y')} palveluyksiköstä {old_service_unit} → {target_service_unit}"  # noqa: E501
