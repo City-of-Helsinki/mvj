@@ -33,6 +33,7 @@ python-daemon~=3.1.2
 python-dateutil~=2.9.0
 sentry-sdk~=2.32.0
 requests~=2.32.4
+tzdata==2025.2 # Required for platform independent consistent timezones for zoneinfo
 xhtml2pdf~=0.2.17
 xlsxwriter~=3.2.5
 zeep~=4.3.1
