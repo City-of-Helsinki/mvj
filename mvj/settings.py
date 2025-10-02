@@ -58,6 +58,7 @@ env = environ.Env(
     FROM_EMAIL_AREA_SEARCH=(str, ""),
     MAILGUN_API_KEY=(str, ""),
     MAILGUN_API_URL=(str, ""),
+    MAILGUN_SENDER_DOMAIN=(str, ""),
     KTJ_PRINT_ROOT_URL=(str, "https://ktjws.nls.fi"),
     KTJ_PRINT_USERNAME=(str, ""),
     KTJ_PRINT_PASSWORD=(str, ""),
@@ -307,6 +308,8 @@ ANYMAIL = {
     "MAILGUN_API_KEY": env.str("MAILGUN_API_KEY"),
     "MAILGUN_API_URL": env.str("MAILGUN_API_URL"),
 }
+if env.str("MAILGUN_SENDER_DOMAIN"):
+    ANYMAIL["MAILGUN_SENDER_DOMAIN"] = env.str("MAILGUN_SENDER_DOMAIN")
 
 EMAIL_BACKEND = env.str("EMAIL_BACKEND")
 if EMAIL_BACKEND == "django.core.mail.backends.filebased.EmailBackend":
