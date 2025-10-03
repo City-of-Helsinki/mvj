@@ -20,7 +20,6 @@ trigger:
     - '*.md'
     - '.github/'
     - 'pipelines/mvj-api-release.yml'
-    - 'pipelines/mvj-api-review.yml'
     - 'docker-compose*'
 
 # Pull request (PR) triggers cause a pipeline to run whenever a pull request is
