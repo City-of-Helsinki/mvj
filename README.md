@@ -264,19 +264,6 @@ No need to run.
 
 You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/) view by selecting the invoices and chosing Resend invoice action from dropdown.
 
-### Virre integration
-
-Virre integration requires certificates to be installed to servers. Current certificates are installed using following commands.
-
-```bash
-cd /usr/local/share/ca-certificates/virre # Create folder, if it doesn't exist.
-sudo touch virre_intermediate.crt
-sudo touch virre_root.crt
-sudo touch virre_server_certificate.crt
-* Copy-paste content from the files provided to you to the files you just created.
-sudo update-ca-certificates # This is the actual command that registers certificates.
-```
-
 ### Database backup
 
 Before doing extensive deployments, backup the database:
