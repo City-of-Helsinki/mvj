@@ -3,13 +3,31 @@ batchrun - App for scheduling and running batch jobs
 
 Implements batch running functionality as a Django app.
 
-Scheduled Jobs and Run Logs
+Scheduled Jobs
 ---------------------------
 
 Scheduled jobs and the run logs are stored into database via Django
 models.
 
 The scheduled jobs can be managed via Django Admin.
+
+Run logs
+--------------
+
+There are two tables for run logs:
+
+- batchrun_jobrunlogentry (class JobRunLogEntry)
+- batchrun_jobrunlog (class JobRunLog)
+
+A JobRunLogEntry is a single logged line of output (stdout or stderr).
+After two weeks, they are compacted into a single JobRunLog row, and deleted
+from this table.
+
+A JobRunLog is a single run of a scheduled job. Because they are only created
+from log entries 14 days after the actual date of the run, don't be alarmed when
+you don't see last two weeks' runlogs in the table.
+
+See JobHistoryRetentionPolicy for more information about cleaning schedules.
 
 The run logs are visible in the Django Admin, and in addition there is
 an API end point for listing them.
