@@ -1,0 +1,9 @@
+{
+    "[python]" : {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "editor.formatOnSave": true,
+    "gitlens.advanced.blame.customArguments": [
+        "--ignore-revs-file .git-blame-ignore-revs"
+    ]
+}

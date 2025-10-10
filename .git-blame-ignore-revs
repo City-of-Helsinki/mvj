@@ -1,0 +1,7 @@
+# Ignore blame from commits about formatting with `black` formatter:
+# "Run black on codebase"
+7103b7a505eac471420e95dc9026bc9116f866da
+# "Formatted forms/admin.py with black"
+40d4fc41027d25e1a6119c902104aa9740babd96
+# "Reformatted with black and isort. Removed one unused variable."
+e31cbe85f40a9359f94b2b58664fba1fc43171a7
