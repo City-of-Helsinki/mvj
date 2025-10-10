@@ -20,8 +20,9 @@ There are two tables for run logs:
 - batchrun_jobrunlog (class JobRunLog)
 
 A JobRunLogEntry is a single logged line of output (stdout or stderr).
-After two weeks, they are compacted into a single JobRunLog row, and deleted
-from this table.
+After the retention period ends (for example 14 days), they are compacted into a
+single JobRunLog row, and deleted from this table by the management command
+`batchrun_log_rotate`.
 
 A JobRunLog is a single run of a scheduled job. Because they are only created
 from log entries 14 days after the actual date of the run, don't be alarmed when
