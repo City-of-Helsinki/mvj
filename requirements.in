@@ -22,7 +22,7 @@ django-stubs[compatible-mypy]~=4.2.7
 djangorestframework~=3.16.0
 djangorestframework-gis~=1.2.0
 drf-yasg[validation]~=1.21.10
-docxtpl~=0.20.0
+docxtpl==0.20.1
 helsinki-profile-gdpr-api~=0.2.0
 lxml~=5.2.2
 oracledb~=2.5.1
