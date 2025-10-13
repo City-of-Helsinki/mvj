@@ -141,7 +141,7 @@ djangorestframework-gis==1.2.0
     # via -r requirements.in
 docxcompose==1.4.0
     # via docxtpl
-docxtpl==0.20.0
+docxtpl==0.20.1
     # via -r requirements.in
 drf-oidc-auth==3.0.0
     # via helsinki-profile-gdpr-api
