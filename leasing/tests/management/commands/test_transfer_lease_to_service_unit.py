@@ -82,6 +82,7 @@ def single_lease_transfer_setup(
         service_unit=source_service_unit,
         lessor=source_lessor,
         intended_use=source_intended_use,
+        end_date=datetime.date(2030, 12, 31),
     )
     rent_factory(
         lease=lease,
@@ -352,3 +353,69 @@ def test_validate_headers_extra_column(command_instance):
     with pytest.raises(CommandError) as exc:
         command_instance.validate_headers(headers)
     assert "Must provide" in str(exc.value)
+
+
+@pytest.mark.django_db
+def test_validate_target_objects_lease_end_date(
+    single_lease_transfer_setup, command_instance: Command
+):
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
+    (
+        lease,
+        target_service_unit,
+        target_lessor,
+        target_receivable_type,
+        target_intended_use,
+        _transferrer_user,
+        _decision_reference_number,
+        _decision_maker,
+        _decision_date,
+        _decision_section,
+    ) = single_lease_transfer_setup
+
+    # 1. End_date in the future
+    with patch("django.utils.timezone.now", return_value=mock_now):
+        # Should not raise
+        result = command_instance.validate_target_objects(
+            lease,
+            target_service_unit,
+            target_lessor,
+            target_receivable_type,
+            target_intended_use,
+            0,
+        )
+        assert result is None
+
+    # 2. End_date in the past
+    lease.end_date = timezone.datetime(2025, 9, 29, 1, 59, 0, tzinfo=timezone.utc)
+    lease.save()
+    lease.refresh_from_db()
+
+    with patch("django.utils.timezone.now", return_value=mock_now):
+        with pytest.raises(CommandError) as exc:
+            command_instance.validate_target_objects(
+                lease,
+                target_service_unit,
+                target_lessor,
+                target_receivable_type,
+                target_intended_use,
+                0,
+            )
+    assert f"Lease {lease.identifier} has ended already!" in str(exc.value)
+
+    # 3. No end_date set
+    lease.end_date = None
+    lease.save()
+    lease.refresh_from_db()
+
+    with patch("django.utils.timezone.now", return_value=mock_now):
+        # Should not raise
+        result = command_instance.validate_target_objects(
+            lease,
+            target_service_unit,
+            target_lessor,
+            target_receivable_type,
+            target_intended_use,
+            0,
+        )
+        assert result is None
