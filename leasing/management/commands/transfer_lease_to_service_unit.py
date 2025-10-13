@@ -243,6 +243,12 @@ class Command(BaseCommand):
                 f"Row {row_number}: Intended use {target_intended_use} does not belong to service unit "
                 f"{target_service_unit}"
             )
+        if lease.end_date is not None and lease.end_date <= timezone.now().date():
+            raise CommandError(
+                f"Row {row_number}: Lease {lease.identifier} has ended already! "
+                f"'end_date' is {lease.end_date}"
+            )
+
         return
 
     def get_decision_info_from_row(self, row: TransferRow, row_number=None):
