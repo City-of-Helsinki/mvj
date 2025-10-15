@@ -250,7 +250,7 @@ class Command(BaseCommand):
 
         return errors
 
-    def get_decision_info_from_row(self, row: TransferRow, row_number=None):
+    def get_decision_info_from_row(self, row: TransferRow):
         (
             decision_reference_number,
             decision_date,
@@ -275,7 +275,9 @@ class Command(BaseCommand):
         validation_errors: Errors = []
 
         for i, row in enumerate(rows, start=2):
-            target_objects, lookup_errors = self.get_target_objects_from_row(row, i)
+            target_objects, lookup_errors = self.get_target_objects_from_row(
+                row, row_number=i
+            )
             validation_errors.extend(lookup_errors)
 
             if target_objects is not None:
@@ -285,8 +287,8 @@ class Command(BaseCommand):
                     target_lessor,
                     target_receivable_type,
                     target_intended_use,
-                    decision_maker,
-                    transferrer_user,
+                    _decision_maker,
+                    _transferrer_user,
                 ) = target_objects
 
                 target_object_errors = self.validate_target_objects(
@@ -295,11 +297,13 @@ class Command(BaseCommand):
                     target_lessor,
                     target_receivable_type,
                     target_intended_use,
-                    i,
+                    row_number=i,
                 )
                 validation_errors.extend(target_object_errors)
 
-            decision_info_errors = self.validate_decision_info_from_row(row, i)
+            decision_info_errors = self.validate_decision_info_from_row(
+                row, row_number=i
+            )
             validation_errors.extend(decision_info_errors)
 
         if len(validation_errors) > 0:
@@ -423,7 +427,7 @@ class Command(BaseCommand):
                     (
                         target_objects,
                         target_errors,
-                    ) = self.get_target_objects_from_row(row, i)
+                    ) = self.get_target_objects_from_row(row, row_number=i)
                     if target_objects is None:
                         for error in target_errors:
                             logger.error(f"- {error}")
@@ -444,7 +448,7 @@ class Command(BaseCommand):
                         decision_reference_number,
                         decision_date,
                         decision_section,
-                    ) = self.get_decision_info_from_row(row, i)
+                    ) = self.get_decision_info_from_row(row)
 
                     logger.info(
                         f"{i}: Transferring {lease.identifier} to service unit {target_service_unit}"
