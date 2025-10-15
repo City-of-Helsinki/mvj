@@ -481,6 +481,10 @@ class Command(BaseCommand):
             return lease, []
         except Lease.DoesNotExist:
             return None, [f"Row {row_number}: Lease {lease_identifier} does not exist"]
+        except Lease.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple leases with identifier {lease_identifier} exist"
+            ]
 
     def _get_service_unit(
         self, name: str, row_number: int
@@ -491,6 +495,10 @@ class Command(BaseCommand):
             return service_unit, []
         except ServiceUnit.DoesNotExist:
             return None, [f"Row {row_number}: Service unit {name} does not exist"]
+        except ServiceUnit.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple service units named {name} exist"
+            ]
 
     def _get_lessor(
         self, name: str, service_unit: ServiceUnit | None, row_number: int
@@ -507,6 +515,10 @@ class Command(BaseCommand):
         except Contact.DoesNotExist:
             return None, [
                 f"Row {row_number}: Lessor {name} does not exist for service unit {service_unit}"
+            ]
+        except Contact.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple lessors named {name} exist for service unit {service_unit}"
             ]
 
     def _get_receivable_type(
@@ -525,6 +537,10 @@ class Command(BaseCommand):
             return None, [
                 f"Row {row_number}: Receivable type {name} does not exist for service unit {service_unit}"
             ]
+        except ReceivableType.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple receivable types named {name} exist for service unit {service_unit}"
+            ]
 
     def _get_intended_use(
         self, name: str, service_unit: ServiceUnit | None, row_number: int
@@ -542,6 +558,10 @@ class Command(BaseCommand):
             return None, [
                 f"Row {row_number}: Intended use {name} does not exist for service unit {service_unit}"
             ]
+        except IntendedUse.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple intended uses named {name} exist for service unit {service_unit}"
+            ]
 
     def _get_decision_maker(
         self, name: str, row_number: int
@@ -552,12 +572,19 @@ class Command(BaseCommand):
             return decision_maker, []
         except DecisionMaker.DoesNotExist:
             return None, [f"Row {row_number}: Decision maker {name} does not exist"]
+        except DecisionMaker.MultipleObjectsReturned:
+            return None, [
+                f"Row {row_number}: Multiple decision makers named {name} exist"
+            ]
 
     def _get_transferrer_user(
         self, email: str, row_number: int
     ) -> tuple[User | None, Errors]:
         """Get user by email. Returns (user, errors)."""
-        user = User.objects.filter(email=email).first()
-        if not user:
+        try:
+            user = User.objects.get(email=email)
+            return user, []
+        except User.DoesNotExist:
             return None, [f"Row {row_number}: User with email {email} does not exist"]
-        return user, []
+        except User.MultipleObjectsReturned:
+            return None, [f"Row {row_number}: Multiple users with email {email} exist"]
