@@ -13,6 +13,7 @@ from conftest import ContactFactory, TenantFactory
 from leasing.enums import ContactType, DecisionTypeKind, TenantContactType
 from leasing.management.commands.transfer_lease_to_service_unit import (
     Command,
+    TransferRow,
 )
 from leasing.models.comment import Comment
 from leasing.models.contact import Contact
@@ -109,20 +110,23 @@ def single_lease_transfer_setup(
         start_date=datetime.date(2025, 1, 1),
     )
 
-    target_service_unit: ServiceUnit = service_unit_factory()
+    target_service_unit: ServiceUnit = service_unit_factory(name="Target Service Unit")
     target_lessor: Contact = contact_factory(
-        type=ContactType.UNIT, service_unit=target_service_unit
+        name="Target Lessor",
+        type=ContactType.UNIT,
+        service_unit=target_service_unit,
+        is_lessor=True,
     )
     target_receivable_type: ReceivableType = receivable_type_factory(
-        service_unit=target_service_unit
+        name="Target Receivable Type", service_unit=target_service_unit
     )
     target_intended_use: IntendedUse = intended_use_factory(
-        service_unit=target_service_unit
+        name="Target Intended Use", service_unit=target_service_unit
     )
     transferrer_user = user_factory(email="transferrer@localhost")
 
     decision_reference_number = "HEL 2025-001122"
-    decision_maker = decision_maker_factory()
+    decision_maker = decision_maker_factory(name="Decision Maker")
     decision_date = "2025-09-30"
     decision_section = "0123"
 
@@ -315,7 +319,7 @@ def test_validate_headers_wrong_length(command_instance):
     ]
     with pytest.raises(CommandError) as exc:
         command_instance.validate_headers(headers)
-    assert "Must provide" in str(exc.value)
+    assert "Invalid CSV headers" in str(exc.value)
 
 
 def test_validate_headers_wrong_order(command_instance):
@@ -333,7 +337,7 @@ def test_validate_headers_wrong_order(command_instance):
     ]
     with pytest.raises(CommandError) as exc:
         command_instance.validate_headers(headers)
-    assert "must be 'decision_maker_name', but found 'decision_date'" in str(exc.value)
+    assert "Invalid CSV headers, found 2 errors!" in str(exc.value)
 
 
 def test_validate_headers_extra_column(command_instance):
@@ -352,7 +356,7 @@ def test_validate_headers_extra_column(command_instance):
     ]
     with pytest.raises(CommandError) as exc:
         command_instance.validate_headers(headers)
-    assert "Must provide" in str(exc.value)
+    assert "Invalid CSV headers, found 1 errors!" in str(exc.value)
 
 
 @pytest.mark.django_db
@@ -373,10 +377,10 @@ def test_validate_target_objects_lease_end_date(
         _decision_section,
     ) = single_lease_transfer_setup
 
-    # 1. End_date in the future
+    # `end_date` in the future
     with patch("django.utils.timezone.now", return_value=mock_now):
         # Should not raise
-        result = command_instance.validate_target_objects(
+        errors = command_instance.validate_target_objects(
             lease,
             target_service_unit,
             target_lessor,
@@ -384,33 +388,33 @@ def test_validate_target_objects_lease_end_date(
             target_intended_use,
             0,
         )
-        assert result is None
+    assert len(errors) == 0
 
-    # 2. End_date in the past
+    # `end_date` in the past
     lease.end_date = timezone.datetime(2025, 9, 29, 1, 59, 0, tzinfo=timezone.utc)
     lease.save()
     lease.refresh_from_db()
 
     with patch("django.utils.timezone.now", return_value=mock_now):
-        with pytest.raises(CommandError) as exc:
-            command_instance.validate_target_objects(
-                lease,
-                target_service_unit,
-                target_lessor,
-                target_receivable_type,
-                target_intended_use,
-                0,
-            )
-    assert f"Lease {lease.identifier} has ended already!" in str(exc.value)
+        errors = command_instance.validate_target_objects(
+            lease,
+            target_service_unit,
+            target_lessor,
+            target_receivable_type,
+            target_intended_use,
+            0,
+        )
+    assert len(errors) == 1
+    assert f"Lease {lease.identifier} has ended already!" in errors[0]
 
-    # 3. No end_date set
+    # `end_date` not set
     lease.end_date = None
     lease.save()
     lease.refresh_from_db()
 
     with patch("django.utils.timezone.now", return_value=mock_now):
         # Should not raise
-        result = command_instance.validate_target_objects(
+        errors = command_instance.validate_target_objects(
             lease,
             target_service_unit,
             target_lessor,
@@ -418,4 +422,171 @@ def test_validate_target_objects_lease_end_date(
             target_intended_use,
             0,
         )
-        assert result is None
+    assert len(errors) == 0
+
+
+@pytest.mark.django_db
+def test_perform_transfer_leases(
+    single_lease_transfer_setup, command_instance: Command
+):
+    """Test the transfer_leases method with a complete CSV row transfer."""
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
+    (
+        lease,
+        target_service_unit,
+        target_lessor,
+        target_receivable_type,
+        target_intended_use,
+        transferrer_user,
+        decision_reference_number,
+        decision_maker,
+        decision_date,
+        decision_section,
+    ) = single_lease_transfer_setup
+
+    test_row: TransferRow = {
+        "lease_identifier": lease.identifier.identifier,
+        "target_service_unit_name": target_service_unit.name,
+        "target_lessor_name": target_lessor.name,
+        "target_receivable_type_name": target_receivable_type.name,
+        "target_intended_use_name": target_intended_use.name,
+        "transferrer_email": transferrer_user.email,
+        "decision_reference_number": decision_reference_number,
+        "decision_maker_name": decision_maker.name,
+        "decision_date": decision_date,
+        "decision_section": decision_section,
+    }
+
+    original_service_unit = lease.service_unit
+
+    with patch("django.utils.timezone.now", return_value=mock_now):
+        command_instance.perform_transfer_leases([test_row])
+
+    # Lease was transferred
+    lease.refresh_from_db()
+    assert lease.service_unit == target_service_unit
+    assert lease.lessor == target_lessor
+    assert lease.intended_use == target_intended_use
+
+    # Rents were updated
+    for rent in lease.rents.all():
+        assert rent.override_receivable_type == target_receivable_type
+
+    # Contacts were copied to new service unit
+    for tenant in lease.tenants.all():
+        for contact in tenant.contacts.all():
+            assert contact.service_unit == target_service_unit
+
+    # Comment was added
+    latest_comment = lease.comments.last()
+    assert latest_comment.user == transferrer_user
+    expected_note = command_instance.get_service_unit_transfer_note(
+        target_service_unit, original_service_unit, mock_now
+    )
+    assert latest_comment.text == expected_note
+
+    # Decision was created
+    decision = lease.decisions.last()
+    assert decision.reference_number == decision_reference_number
+    assert decision.decision_maker == decision_maker
+    assert decision.section == decision_section
+
+    # Collateral notes were updated
+    for contract in lease.contracts.all():
+        for collateral in contract.collaterals.all():
+            assert expected_note in collateral.note
+
+
+@pytest.mark.django_db
+def test_perform_transfer_leases_with_validation_error(
+    single_lease_transfer_setup, command_instance: Command
+):
+    """Test that transfer_leases rolls back transaction on validation errors."""
+    (
+        lease,
+        target_service_unit,
+        target_lessor,
+        target_receivable_type,
+        target_intended_use,
+        transferrer_user,
+        decision_reference_number,
+        decision_maker,
+        decision_date,
+        decision_section,
+    ) = single_lease_transfer_setup
+
+    # Row with invalid lease identifier
+    invalid_row: TransferRow = {
+        "lease_identifier": "INVALID-LEASE-ID",
+        "target_service_unit_name": target_service_unit.name,
+        "target_lessor_name": target_lessor.name,
+        "target_receivable_type_name": target_receivable_type.name,
+        "target_intended_use_name": target_intended_use.name,
+        "transferrer_email": transferrer_user.email,
+        "decision_reference_number": decision_reference_number,
+        "decision_maker_name": decision_maker.name,
+        "decision_date": decision_date,
+        "decision_section": decision_section,
+    }
+
+    original_service_unit = lease.service_unit
+    original_comment_count = lease.comments.count()
+    original_decision_count = lease.decisions.count()
+
+    with pytest.raises(CommandError) as exc_info:
+        command_instance.perform_transfer_leases([invalid_row])
+
+    assert "Could not get target objects" in str(exc_info.value)
+
+    # Verify transaction was rolled back
+    lease.refresh_from_db()
+    assert lease.service_unit == original_service_unit
+    assert lease.comments.count() == original_comment_count
+    assert lease.decisions.count() == original_decision_count
+
+
+@pytest.mark.django_db
+def test_perform_transfer_leases_exception_handling(
+    single_lease_transfer_setup, command_instance: Command
+):
+    """Test that unexpected exceptions are wrapped in CommandError."""
+    (
+        lease,
+        target_service_unit,
+        target_lessor,
+        target_receivable_type,
+        target_intended_use,
+        transferrer_user,
+        decision_reference_number,
+        decision_maker,
+        decision_date,
+        decision_section,
+    ) = single_lease_transfer_setup
+
+    test_row: TransferRow = {
+        "lease_identifier": lease.identifier.identifier,
+        "target_service_unit_name": target_service_unit.name,
+        "target_lessor_name": target_lessor.name,
+        "target_receivable_type_name": target_receivable_type.name,
+        "target_intended_use_name": target_intended_use.name,
+        "transferrer_email": transferrer_user.email,
+        "decision_reference_number": decision_reference_number,
+        "decision_maker_name": decision_maker.name,
+        "decision_date": decision_date,
+        "decision_section": decision_section,
+    }
+
+    # Mock perform_single_transfer to raise an unexpected exception
+    with patch.object(
+        command_instance,
+        "perform_single_transfer",
+        side_effect=ValueError("Unexpected error"),
+    ):
+        with pytest.raises(CommandError) as exc_info:
+            command_instance.perform_transfer_leases([test_row])
+
+        assert "Transfer failed: Unexpected error" in str(exc_info.value)
+
+    # Verify transaction was rolled back
+    lease.refresh_from_db()
+    assert lease.service_unit != target_service_unit  # Should not have changed
