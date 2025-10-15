@@ -2,7 +2,7 @@ import csv
 import logging
 import sys
 from datetime import datetime
-from typing import TypedDict
+from typing import TypeAlias, TypedDict
 
 from auditlog.models import LogEntry, LogEntryManager
 from django.core.management.base import BaseCommand, CommandError
@@ -46,6 +46,8 @@ lease_identifier,target_service_unit_name,target_lessor_name,target_receivable_t
 A1234-123,Alueiden käyttö ja valvonta,Alueiden käyttö ja valvonta,Pysäköinti,Sähköauton latauspaikka,first.last@example.com,HEL 2025-0123456,Alueidenkäyttöpäällikkö,2025-03-30,123
 """
 
+Errors: TypeAlias = list[str]
+
 
 class TransferRow(TypedDict):
     lease_identifier: str
@@ -69,144 +71,92 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with open(options["csv"], "r") as file:
             reader: list[TransferRow] = csv.DictReader(file, delimiter=",")
-
             self.validate_headers(reader.fieldnames)
+            rows = list(reader)
 
-            confirm = input("\nProceed with transfer? [y/N]: ")
-            if confirm.lower() != "y":
-                logger.info("Transfer cancelled.")
-                return
+        self.validate_rows(rows)
 
-            try:
-                with transaction.atomic():
-                    for i, row in enumerate(reader, start=2):
-                        (
-                            lease,
-                            target_service_unit,
-                            target_lessor,
-                            target_receivable_type,
-                            target_intended_use,
-                            decision_maker,
-                            transferrer_email,
-                        ) = self.get_target_objects_from_row(row, i)
-                        self.validate_target_objects(
-                            lease,
-                            target_service_unit,
-                            target_lessor,
-                            target_receivable_type,
-                            target_intended_use,
-                            i,
-                        )
-                        (
-                            decision_reference_number,
-                            decision_date,
-                            decision_section,
-                        ) = self.get_decision_info_from_row(row, i)
+        confirm = input("\nProceed with transfer? [y/N]: ")
+        if confirm.lower() != "y":
+            logger.info("Transfer cancelled.")
+            return
 
-                        logger.info(
-                            f"{i}: Transferring {lease.identifier} to service unit {target_service_unit}"
-                        )
-                        self.perform_single_transfer(
-                            lease,
-                            target_service_unit,
-                            target_lessor,
-                            target_receivable_type,
-                            target_intended_use,
-                            transferrer_email,
-                            decision_reference_number,
-                            decision_maker,
-                            decision_date,
-                            decision_section,
-                        )
+        self.perform_transfer_leases(rows)
 
-            except CommandError:
-                raise
-            except Exception as e:
-                raise CommandError(f"Transfer failed: {str(e)}")
+    def validate_headers(self, fieldnames) -> None:
+        """Validate that the CSV headers match the expected REQUIRED_HEADERS exactly.
 
-    def validate_headers(self, fieldnames):
+        Raises:
+            CommandError: If the headers do not match the expected format.
+        """
+        errors: Errors = []
+
         if len(fieldnames) != len(REQUIRED_HEADERS):
-            raise CommandError(
+            errors.append(
                 f"Must provide {len(REQUIRED_HEADERS)} headers, provided: {len(fieldnames)}"
             )
         for i, (expected, actual) in enumerate(zip(REQUIRED_HEADERS, fieldnames)):
             if expected != actual:
-                raise CommandError(
+                errors.append(
                     f"CSV column {i+1} must be '{expected}', but found '{actual}'. "
                     f"Expected exact order: {REQUIRED_HEADERS}"
                 )
-        return
 
-    def get_target_objects_from_row(self, row: TransferRow, row_number=None):
-        (
-            lease_identifier,
-            target_service_unit_name,
-            target_lessor_name,
-            target_receivable_type_name,
-            target_intended_use_name,
-            decision_maker_name,
-            transferrer_email,
-        ) = (
-            row["lease_identifier"],
-            row["target_service_unit_name"],
-            row["target_lessor_name"],
-            row["target_receivable_type_name"],
-            row["target_intended_use_name"],
-            row["decision_maker_name"],
-            row["transferrer_email"],
+        if len(errors) > 0:
+            for error in errors:
+                logger.error(f"- {error}")
+            raise CommandError(f"Invalid CSV headers, found {len(errors)} errors!")
+
+    def get_target_objects_from_row(
+        self, row: TransferRow, row_number=None
+    ) -> tuple[tuple | None, Errors]:
+        errors: Errors = []
+
+        lease_identifier = row["lease_identifier"]
+        target_service_unit_name = row["target_service_unit_name"]
+        target_lessor_name = row["target_lessor_name"]
+        target_receivable_type_name = row["target_receivable_type_name"]
+        target_intended_use_name = row["target_intended_use_name"]
+        decision_maker_name = row["decision_maker_name"]
+        transferrer_email = row["transferrer_email"]
+
+        lease, lease_errors = self._get_lease(lease_identifier, row_number)
+        errors.extend(lease_errors)
+
+        target_service_unit, service_unit_errors = self._get_service_unit(
+            target_service_unit_name, row_number
         )
-        try:
-            lease = Lease.objects.get(identifier__identifier=lease_identifier)
-            target_service_unit = ServiceUnit.objects.get(name=target_service_unit_name)
-            target_lessor = Contact.objects.get(
-                name=target_lessor_name,
-                is_lessor=True,
-                service_unit=target_service_unit,
-            )
-            target_receivable_type = ReceivableType.objects.get(
-                name=target_receivable_type_name,
-                service_unit=target_service_unit,
-                is_active=True,
-            )
-            target_intended_use = IntendedUse.objects.get(
-                name=target_intended_use_name,
-                service_unit=target_service_unit,
-                is_active=True,
-            )
-            decision_maker = DecisionMaker.objects.get(name=decision_maker_name)
-            transferrer_user = User.objects.get(email=transferrer_email)
-        except Lease.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Lease {lease_identifier} does not exist"
-            )
-        except ServiceUnit.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Service unit {target_service_unit_name} does not exist"
-            )
-        except Contact.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Lessor {target_lessor_name} does not exist for service unit {target_service_unit}"
-            )
-        except ReceivableType.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Receivable type {target_receivable_type_name} does not exist for service unit "
-                f"{target_service_unit}"
-            )
-        except IntendedUse.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Intended use {target_intended_use_name} does not exist for service unit "
-                f"{target_service_unit}"
-            )
-        except DecisionMaker.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: Decision maker {decision_maker_name} does not exist"
-            )
-        except User.DoesNotExist:
-            raise CommandError(
-                f"Row {row_number}: User with email {row['transferrer_email']} does not exist"
-            )
+        errors.extend(service_unit_errors)
 
-        return (
+        target_lessor, lessor_errors = self._get_lessor(
+            target_lessor_name, target_service_unit, row_number
+        )
+        errors.extend(lessor_errors)
+
+        target_receivable_type, receivable_type_errors = self._get_receivable_type(
+            target_receivable_type_name, target_service_unit, row_number
+        )
+        errors.extend(receivable_type_errors)
+
+        target_intended_use, intended_use_errors = self._get_intended_use(
+            target_intended_use_name, target_service_unit, row_number
+        )
+        errors.extend(intended_use_errors)
+
+        decision_maker, decision_maker_errors = self._get_decision_maker(
+            decision_maker_name, row_number
+        )
+        errors.extend(decision_maker_errors)
+
+        transferrer_user, user_errors = self._get_transferrer_user(
+            transferrer_email, row_number
+        )
+        errors.extend(user_errors)
+
+        if len(errors) > 0:
+            return (None, errors)
+
+        target_objects = (
             lease,
             target_service_unit,
             target_lessor,
@@ -214,6 +164,11 @@ class Command(BaseCommand):
             target_intended_use,
             decision_maker,
             transferrer_user,
+        )
+
+        return (
+            target_objects,
+            [],
         )
 
     def validate_target_objects(
@@ -224,34 +179,40 @@ class Command(BaseCommand):
         target_receivable_type: ReceivableType,
         target_intended_use: IntendedUse,
         row_number=None,
-    ):
+    ) -> Errors:
+        errors: Errors = []
+
         if lease.service_unit == target_service_unit:
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Lease {lease.identifier} is already assigned to {target_service_unit}"
             )
         if target_lessor.service_unit != target_service_unit:
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Lessor {target_lessor} does not belong to service unit {target_service_unit}"
             )
         if target_receivable_type.service_unit != target_service_unit:
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Receivable type {target_receivable_type} does not belong to service unit "
                 f"{target_service_unit}"
             )
         if target_intended_use.service_unit != target_service_unit:
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Intended use {target_intended_use} does not belong to service unit "
                 f"{target_service_unit}"
             )
         if lease.end_date is not None and lease.end_date <= timezone.now().date():
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Lease {lease.identifier} has ended already! "
                 f"'end_date' is {lease.end_date}"
             )
 
-        return
+        return errors
 
-    def get_decision_info_from_row(self, row: TransferRow, row_number=None):
+    def validate_decision_info_from_row(
+        self, row: TransferRow, row_number=None
+    ) -> Errors:
+        errors: Errors = []
+
         (
             decision_reference_number,
             decision_date,
@@ -268,32 +229,85 @@ class Command(BaseCommand):
                 decision_section,
             ]
         ):
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: All decision fields must be provided (reference number, date, section)"
             )
 
         try:
-            decision_date_parsed = timezone.datetime.strptime(
-                decision_date, "%Y-%m-%d"
-            ).date()
+            timezone.datetime.strptime(decision_date, "%Y-%m-%d").date()
         except ValueError:
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Decision date '{decision_date}' is not in the format YYYY-MM-DD"
             )
         if not decision_reference_number.startswith("HEL"):
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Decision reference number '{decision_reference_number}' must start with 'HEL'"
             )
         if not decision_section.isdigit():
-            raise CommandError(
+            errors.append(
                 f"Row {row_number}: Decision section '{decision_section}' must contain only numbers"
             )
+
+        return errors
+
+    def get_decision_info_from_row(self, row: TransferRow, row_number=None):
+        (
+            decision_reference_number,
+            decision_date,
+            decision_section,
+        ) = (
+            row["decision_reference_number"],
+            row["decision_date"],
+            row["decision_section"],
+        )
+
+        decision_date_parsed = timezone.datetime.strptime(
+            decision_date, "%Y-%m-%d"
+        ).date()
 
         return (
             decision_reference_number,
             decision_date_parsed,
             decision_section,
         )
+
+    def validate_rows(self, rows: list[TransferRow]) -> None:
+        validation_errors: Errors = []
+
+        for i, row in enumerate(rows, start=2):
+            target_objects, lookup_errors = self.get_target_objects_from_row(row, i)
+            validation_errors.extend(lookup_errors)
+
+            if target_objects is not None:
+                (
+                    lease,
+                    target_service_unit,
+                    target_lessor,
+                    target_receivable_type,
+                    target_intended_use,
+                    decision_maker,
+                    transferrer_user,
+                ) = target_objects
+
+                target_object_errors = self.validate_target_objects(
+                    lease,
+                    target_service_unit,
+                    target_lessor,
+                    target_receivable_type,
+                    target_intended_use,
+                    i,
+                )
+                validation_errors.extend(target_object_errors)
+
+            decision_info_errors = self.validate_decision_info_from_row(row, i)
+            validation_errors.extend(decision_info_errors)
+
+        if len(validation_errors) > 0:
+            for error in validation_errors:
+                logger.error(f"- {error}")
+            raise CommandError(
+                f"Validation failed with {len(validation_errors)} errors!"
+            )
 
     def perform_single_transfer(
         self,
@@ -402,7 +416,148 @@ class Command(BaseCommand):
 
         return
 
+    def perform_transfer_leases(self, rows: list[TransferRow]) -> None:
+        try:
+            with transaction.atomic():
+                for i, row in enumerate(rows, start=2):
+                    (
+                        target_objects,
+                        target_errors,
+                    ) = self.get_target_objects_from_row(row, i)
+                    if target_objects is None:
+                        for error in target_errors:
+                            logger.error(f"- {error}")
+                        raise CommandError(
+                            f"Row {i}: Could not get target objects, found {len(target_errors)} errors!"
+                        )
+                    (
+                        lease,
+                        target_service_unit,
+                        target_lessor,
+                        target_receivable_type,
+                        target_intended_use,
+                        decision_maker,
+                        transferrer_user,
+                    ) = target_objects
+
+                    (
+                        decision_reference_number,
+                        decision_date,
+                        decision_section,
+                    ) = self.get_decision_info_from_row(row, i)
+
+                    logger.info(
+                        f"{i}: Transferring {lease.identifier} to service unit {target_service_unit}"
+                    )
+                    self.perform_single_transfer(
+                        lease,
+                        target_service_unit,
+                        target_lessor,
+                        target_receivable_type,
+                        target_intended_use,
+                        transferrer_user,
+                        decision_reference_number,
+                        decision_maker,
+                        decision_date,
+                        decision_section,
+                    )
+
+        except CommandError:
+            raise
+        except Exception as e:
+            raise CommandError(f"Transfer failed: {str(e)}")
+
     def get_service_unit_transfer_note(
         self, target_service_unit, old_service_unit, now: datetime
     ):
         return f"Vuokraus siirretty {now.strftime('%d.%m.%Y')} palveluyksiköstä {old_service_unit} → {target_service_unit}"  # noqa: E501
+
+    def _get_lease(
+        self, lease_identifier: str, row_number: int
+    ) -> tuple[Lease | None, Errors]:
+        """Get lease by identifier. Returns (lease, errors)."""
+        try:
+            lease = Lease.objects.get(identifier__identifier=lease_identifier)
+            return lease, []
+        except Lease.DoesNotExist:
+            return None, [f"Row {row_number}: Lease {lease_identifier} does not exist"]
+
+    def _get_service_unit(
+        self, name: str, row_number: int
+    ) -> tuple[ServiceUnit | None, Errors]:
+        """Get service unit by name. Returns (service_unit, errors)."""
+        try:
+            service_unit = ServiceUnit.objects.get(name=name)
+            return service_unit, []
+        except ServiceUnit.DoesNotExist:
+            return None, [f"Row {row_number}: Service unit {name} does not exist"]
+
+    def _get_lessor(
+        self, name: str, service_unit: ServiceUnit | None, row_number: int
+    ) -> tuple[Contact | None, Errors]:
+        """Get lessor by name and service unit. Returns (contact, errors)."""
+        if not service_unit:
+            return None, []  # Error already captured in service unit lookup
+
+        try:
+            contact = Contact.objects.get(
+                name=name, is_lessor=True, service_unit=service_unit
+            )
+            return contact, []
+        except Contact.DoesNotExist:
+            return None, [
+                f"Row {row_number}: Lessor {name} does not exist for service unit {service_unit}"
+            ]
+
+    def _get_receivable_type(
+        self, name: str, service_unit: ServiceUnit | None, row_number: int
+    ) -> tuple[ReceivableType | None, Errors]:
+        """Get receivable type by name and service unit. Returns (receivable_type, errors)."""
+        if not service_unit:
+            return None, []  # Error already captured in service unit lookup
+
+        try:
+            receivable_type = ReceivableType.objects.get(
+                name=name, service_unit=service_unit, is_active=True
+            )
+            return receivable_type, []
+        except ReceivableType.DoesNotExist:
+            return None, [
+                f"Row {row_number}: Receivable type {name} does not exist for service unit {service_unit}"
+            ]
+
+    def _get_intended_use(
+        self, name: str, service_unit: ServiceUnit | None, row_number: int
+    ) -> tuple[IntendedUse | None, Errors]:
+        """Get intended use by name and service unit. Returns (intended_use, errors)."""
+        if not service_unit:
+            return None, []  # Error already captured in service unit lookup
+
+        try:
+            intended_use = IntendedUse.objects.get(
+                name=name, service_unit=service_unit, is_active=True
+            )
+            return intended_use, []
+        except IntendedUse.DoesNotExist:
+            return None, [
+                f"Row {row_number}: Intended use {name} does not exist for service unit {service_unit}"
+            ]
+
+    def _get_decision_maker(
+        self, name: str, row_number: int
+    ) -> tuple[DecisionMaker | None, Errors]:
+        """Get decision maker by name. Returns (decision_maker, errors)."""
+        try:
+            decision_maker = DecisionMaker.objects.get(name=name)
+            return decision_maker, []
+        except DecisionMaker.DoesNotExist:
+            return None, [f"Row {row_number}: Decision maker {name} does not exist"]
+
+    def _get_transferrer_user(
+        self, email: str, row_number: int
+    ) -> tuple[User | None, Errors]:
+        """Get user by email. Returns (user, errors)."""
+        user = User.objects.filter(email=email).first()
+        if not user:
+            return None, [f"Row {row_number}: User with email {email} does not exist"]
+        return user, []
