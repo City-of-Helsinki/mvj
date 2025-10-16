@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import connection, models, transaction
-from django.db.models import Max, Q, QuerySet
+from django.db.models import Max, Q, QuerySet, UniqueConstraint
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
@@ -182,6 +182,12 @@ class IntendedUse(NameModel):
     class Meta(NameModel.Meta):
         verbose_name = pgettext_lazy("Model name", "Intended use")
         verbose_name_plural = pgettext_lazy("Model name", "Intended uses")
+        constraints = [
+            UniqueConstraint(
+                fields=["name", "service_unit"],
+                name="unique_intendeduse_name_serviceunit",
+            ),
+        ]
 
     def get_service_unit(self):
         return self.service_unit
