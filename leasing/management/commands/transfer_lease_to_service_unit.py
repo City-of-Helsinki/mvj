@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 from typing import TypeAlias, TypedDict
 
+import sentry_sdk
 from auditlog.models import LogEntry, LogEntryManager
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -69,19 +70,23 @@ class Command(BaseCommand):
         parser.add_argument("csv", type=str, help="Path to CSV file")
 
     def handle(self, *args, **options):
-        with open(options["csv"], "r") as file:
-            reader: list[TransferRow] = csv.DictReader(file, delimiter=",")
-            self.validate_headers(reader.fieldnames)
-            rows = list(reader)
+        with sentry_sdk.new_scope() as sentry_scope:
+            sentry_scope.set_tag("management_command", "transfer_lease_to_service_unit")
+            sentry_scope.stop_auto_session_tracking()
 
-        self.validate_rows(rows)
+            with open(options["csv"], "r") as file:
+                reader: list[TransferRow] = csv.DictReader(file, delimiter=",")
+                self.validate_headers(reader.fieldnames)
+                rows = list(reader)
 
-        confirm = input("\nProceed with transfer? [y/N]: ")
-        if confirm.lower() != "y":
-            logger.info("Transfer cancelled.")
-            return
+            self.validate_rows(rows)
 
-        self.perform_transfer_leases(rows)
+            confirm = input("\nProceed with transfer? [y/N]: ")
+            if confirm.lower() != "y":
+                logger.info("Transfer cancelled.")
+                return
+
+            self.perform_transfer_leases(rows)
 
     def validate_headers(self, fieldnames) -> None:
         """Validate that the CSV headers match the expected REQUIRED_HEADERS exactly.
