@@ -790,5 +790,53 @@
       "is_active": true,
       "service_unit": 2
     }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 68,
+    "fields": {
+      "name": "Viljelypalsta",
+      "sap_material_code": null,
+      "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 69,
+    "fields": {
+      "name": "Muuntamo, laitetila, masto",
+      "sap_material_code": null,
+      "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 70,
+    "fields": {
+      "name": "Rakennelma",
+      "sap_material_code": null,
+      "sap_order_item_number": "2831300000",
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
+  },
+  {
+    "model": "leasing.receivabletype",
+    "pk": 71,
+    "fields": {
+      "name": "Maa-aineksen varastointi",
+      "sap_material_code": "10004152",
+      "sap_order_item_number": null,
+      "sap_project_number": "2830K002831300",
+      "is_active": true,
+      "service_unit": 2
+    }
   }
 ]
