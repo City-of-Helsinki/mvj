@@ -944,7 +944,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "tenant": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view",),
+        UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view",),
@@ -953,7 +953,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "tenantcontact": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view",),
+        UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view",),
@@ -962,7 +962,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "tenantrentshare": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view",),
+        UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view",),
