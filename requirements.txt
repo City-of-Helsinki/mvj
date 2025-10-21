@@ -21,7 +21,7 @@ attrs==23.2.0
     #   jsonschema
     #   referencing
     #   zeep
-authlib==1.3.2
+authlib==1.6.5
     # via drf-oidc-auth
 babel==2.15.0
     # via docxcompose
