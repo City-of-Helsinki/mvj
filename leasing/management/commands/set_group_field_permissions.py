@@ -158,7 +158,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "contact": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -428,7 +428,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "tenant": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -437,7 +437,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "tenantcontact": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -446,7 +446,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "tenantrentshare": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -511,7 +511,7 @@ CUSTOM_FIELD_PERMS = {
     "contact": {
         "national_identification_number": {
             UG.SELAILIJA: None,
-            UG.VALMISTELIJA: None,
+            UG.VALMISTELIJA: "change",
             UG.SOPIMUSVALMISTELIJA: "view",
             UG.SYOTTAJA: "change",
             UG.PERINTALAKIMIES: "view",
