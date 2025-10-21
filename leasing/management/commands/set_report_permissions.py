@@ -1,37 +1,122 @@
+from enum import IntEnum
+
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from leasing.report.viewset import ENABLED_REPORTS
 
-# 1 Selailija
-# 2 Valmistelija
-# 3 Sopimusvalmistelija
-# 4 Syöttäjä
-# 5 Perintälakimies
-# 6 Laskuttaja
-# 7 Pääkäyttäjä
+
+class UserGroup(IntEnum):
+    SELAILIJA = 1
+    VALMISTELIJA = 2
+    SOPIMUSVALMISTELIJA = 3
+    SYOTTAJA = 4
+    PERINTALAKIMIES = 5
+    LASKUTTAJA = 6
+    PAAKAYTTAJA = 7
+
+
+UG = UserGroup
+
 
 DEFAULT_REPORT_PERMS = {
-    "collaterals": [5, 6, 7],
-    "contact_rents": [2, 3, 4, 5, 6, 7],
-    "decision_conditions": [2, 3, 4, 5, 6, 7],
-    "extra_city_rent": [2, 3, 4, 5, 6, 7],
-    "index_types": [2, 3, 4, 5, 6, 7],
-    "invoice_payments": [5, 6, 7],
-    "invoices_in_period": [5, 6, 7],
-    "invoicing_review": [5, 6, 7],
-    "laske_invoice_count": [5, 6, 7],
-    "lease_count": [2, 3, 4, 5, 6, 7],
-    "lease_invoicing_disabled": [5, 6, 7],
-    "lease_statistic": [2, 3, 4, 5, 6, 7],
-    "open_invoices": [5, 6, 7],
-    "rent_adjustments": [2, 3, 4, 5, 6, 7],
-    "rent_compare": [2, 3, 4, 5, 6, 7],
-    "rent_forecast": [2, 3, 4, 5, 6, 7],
-    "rent_type": [2, 3, 4, 5, 6, 7],
-    "rents_paid_contact": [5, 6, 7],
-    "reservations": [2, 3, 4, 5, 6, 7],
+    "collaterals": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "contact_rents": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "decision_conditions": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "extra_city_rent": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "index_types": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "invoice_payments": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "invoices_in_period": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "invoicing_review": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "laske_invoice_count": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "lease_count": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "lease_invoicing_disabled": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "lease_statistic": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "open_invoices": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "rent_adjustments": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "rent_compare": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "rent_forecast": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "rent_type": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "rents_paid_contact": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "reservations": [
+        UG.VALMISTELIJA,
+        UG.SOPIMUSVALMISTELIJA,
+        UG.SYOTTAJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
 }
 
 # Reports that are removed can be added here. The permissions for these reports will be
