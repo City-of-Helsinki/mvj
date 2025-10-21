@@ -5,3 +5,6 @@
 40d4fc41027d25e1a6119c902104aa9740babd96
 # "Reformatted with black and isort. Removed one unused variable."
 e31cbe85f40a9359f94b2b58664fba1fc43171a7
+
+# Ignore Enum adding to permissions to keep changes readable: "improve permission group readability"
+321ac01b07deb6b4d6749954fc741c9b650d1596
