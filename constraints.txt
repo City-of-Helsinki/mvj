@@ -31,3 +31,10 @@ cryptography>=43.0.1
 # Vulnerability in versions below 2024.7.4
 # - CVE-2024-39689 https://security.snyk.io/vuln/SNYK-PYTHON-CERTIFI-7430173
 certifi>=2024.7.4
+
+# Vulnerability in versions below 3.1.6
+# - CVE-2025-27516 https://security.snyk.io/vuln/SNYK-PYTHON-JINJA2-9292516
+# Vulnerabilities in versions below 3.1.5
+# - CVE-2024-56326 https://security.snyk.io/vuln/SNYK-PYTHON-JINJA2-8548181
+# - CVE-2024-56201 https://security.snyk.io/vuln/SNYK-PYTHON-JINJA2-8548987
+jinja2>=3.1.6
