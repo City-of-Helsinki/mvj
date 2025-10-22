@@ -51,7 +51,7 @@ class Command(BaseCommand):
             exporter = LaskeExporter(service_unit=service_unit)
             exporter.message_output = self.stdout
 
-            today = datetime.date.today()
+            today = timezone.now().date()
             one_month_in_the_future = today + relativedelta(months=1)
 
             self.stdout.write(

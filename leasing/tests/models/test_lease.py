@@ -5,6 +5,7 @@ from typing import Callable
 import pytest
 from django.core.exceptions import ValidationError
 from django.db.models.aggregates import Sum
+from django.utils import timezone
 from rest_framework import exceptions
 
 from leasing.enums import (
@@ -602,7 +603,7 @@ def test_add_rounded_amount(
             invoice_row_data = invoice_data.pop("rows")
 
             invoice_data["generated"] = True
-            invoice_data["invoicing_date"] = datetime.date.today()
+            invoice_data["invoicing_date"] = timezone.now().date()
             invoice_data["outstanding_amount"] = invoice_data["billed_amount"]
 
             invoice = Invoice.objects.create(**invoice_data)
@@ -685,7 +686,7 @@ def test_add_rounded_amount_previous_invoices(
             invoice_row_data = invoice_data.pop("rows")
 
             invoice_data["generated"] = True
-            invoice_data["invoicing_date"] = datetime.date.today()
+            invoice_data["invoicing_date"] = timezone.now().date()
             invoice_data["outstanding_amount"] = invoice_data["billed_amount"]
 
             invoice = Invoice.objects.create(**invoice_data)
@@ -727,7 +728,7 @@ def test_add_rounded_amount_previous_invoices(
             invoice_row_data = invoice_data.pop("rows")
 
             invoice_data["generated"] = True
-            invoice_data["invoicing_date"] = datetime.date.today()
+            invoice_data["invoicing_date"] = timezone.now().date()
             invoice_data["outstanding_amount"] = invoice_data["billed_amount"]
 
             invoice = Invoice.objects.create(**invoice_data)

@@ -1,10 +1,10 @@
-import datetime
 from decimal import Decimal
 from itertools import groupby
 from operator import itemgetter
 
 from django import forms
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -70,7 +70,7 @@ def get_address(obj):
 
 
 def get_tenants(obj):
-    today = datetime.date.today()
+    today = timezone.now().date()
 
     contacts = set()
 

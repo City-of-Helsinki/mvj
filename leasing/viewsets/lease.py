@@ -1,9 +1,9 @@
-import datetime
 import re
 
 from dateutil.parser import parse, parserinfo
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -356,18 +356,18 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     )
 
                 if search_form.cleaned_data.get("only_past_tenants"):
-                    q &= Q(tenants__tenantcontact__end_date__lte=datetime.date.today())
+                    q &= Q(tenants__tenantcontact__end_date__lte=timezone.now().date())
 
                 if search_form.cleaned_data.get("tenant_activity"):
                     if search_form.cleaned_data.get("tenant_activity") == "past":
                         q &= Q(
-                            tenants__tenantcontact__end_date__lte=datetime.date.today()
+                            tenants__tenantcontact__end_date__lte=timezone.now().date()
                         )
 
                     if search_form.cleaned_data.get("tenant_activity") == "active":
                         # No need to filter by start date because future start dates are also considered active
                         q &= Q(tenants__tenantcontact__end_date=None) | Q(
-                            tenants__tenantcontact__end_date__gte=datetime.date.today()
+                            tenants__tenantcontact__end_date__gte=timezone.now().date()
                         )
 
                 queryset = queryset.filter(q)
@@ -407,11 +407,11 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     # No need to filter by start date because future start dates are also considered active
                     queryset = queryset.filter(
                         Q(end_date__isnull=True)
-                        | Q(end_date__gte=datetime.date.today())
+                        | Q(end_date__gte=timezone.now().date())
                     )
 
                 if search_form.cleaned_data.get("only_expired_leases"):
-                    queryset = queryset.filter(end_date__lte=datetime.date.today())
+                    queryset = queryset.filter(end_date__lte=timezone.now().date())
 
             if "has_geometry" in search_form.cleaned_data:
                 if search_form.cleaned_data.get("has_geometry") is True:

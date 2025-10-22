@@ -7,7 +7,7 @@ from typing import Any, Type, TypedDict
 import xlsxwriter
 from django import forms
 from django.db.models import Q, QuerySet
-from django.utils import formats
+from django.utils import formats, timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django_q.conf import Conf
@@ -178,7 +178,7 @@ def _get_rent_amount_for_year(lease: Lease, year):
 
 
 def get_rent_amount_residential(obj):
-    year = datetime.date.today().year
+    year = timezone.now().year
     total_amount = Decimal(0)
     for intended_use, amount in (
         _get_rent_amount_for_year(obj, year)
@@ -196,7 +196,7 @@ def get_rent_amount_residential(obj):
 
 
 def get_rent_amount_business(obj):
-    year = datetime.date.today().year
+    year = timezone.now().year
     total_amount = Decimal(0)
     for intended_use, amount in (
         _get_rent_amount_for_year(obj, year)
@@ -214,7 +214,7 @@ def get_rent_amount_business(obj):
 
 
 def get_total_rent_amount_for_year(obj):
-    year = datetime.date.today().year
+    year = timezone.now().year
     total_rent_for_year = _get_rent_amount_for_year(obj, year).get_total_amount()
     return formats.number_format(
         total_rent_for_year,
@@ -861,7 +861,7 @@ class LeaseStatisticReport(AsyncReportBase):
 
         if input_data["only_active_leases"]:
             qs = qs.filter(
-                Q(end_date__isnull=True) | Q(end_date__gte=datetime.date.today())
+                Q(end_date__isnull=True) | Q(end_date__gte=timezone.now().date())
             )
 
         return qs

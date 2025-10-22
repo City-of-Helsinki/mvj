@@ -8,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q, QuerySet
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -352,7 +353,7 @@ class Rent(TimeStampedSafeDeleteModel):
         if self.cycle is None:
             return
 
-        current_year = datetime.date.today().year
+        current_year = timezone.now().year
         if self.cycle == RentCycle.JANUARY_TO_DECEMBER:
             start_date = datetime.date(year=current_year, month=1, day=1)
             end_date = datetime.date(year=current_year, month=12, day=31)
@@ -1592,7 +1593,7 @@ class IndexManager(models.Manager):
     def get_latest_for_date(self, the_date=None):
         """Returns the latest year average index"""
         if the_date is None:
-            the_date = datetime.date.today()
+            the_date = timezone.now().date()
 
         return (
             self.get_queryset()
@@ -1604,7 +1605,7 @@ class IndexManager(models.Manager):
     def get_latest_for_year(self, year=None):
         """Returns the latest year average index for year"""
         if year is None:
-            year = datetime.date.today().year
+            year = timezone.now().year
 
         return (
             self.get_queryset()

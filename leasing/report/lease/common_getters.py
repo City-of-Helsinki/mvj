@@ -2,6 +2,7 @@ import datetime
 from typing import Any, Protocol, TypedDict
 
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from leasing.enums import TenantContactType
 from leasing.models import Contract
@@ -75,7 +76,7 @@ def get_identifier_string_from_lease_link_data(
 def get_tenants(
     lease, include_future_tenants=False, report=None, anonymize_person=False
 ):
-    today = datetime.date.today()
+    today = timezone.now().date()
 
     contacts: set[Contact] = set()
 

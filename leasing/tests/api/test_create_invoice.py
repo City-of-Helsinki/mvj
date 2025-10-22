@@ -107,13 +107,13 @@ def test_create_invoice_before_tenant_contract_is_activated(
         type=TenantContactType.TENANT,
         tenant=tenant1,
         contact=contact1,
-        start_date=datetime.date.today() + datetime.timedelta(days=30),
+        start_date=timezone.now().date() + datetime.timedelta(days=30),
     )
 
     data = {
         "lease": lease.id,
         "recipient": contact1.id,
-        "due_date": datetime.date.today() + datetime.timedelta(days=2),
+        "due_date": timezone.now().date() + datetime.timedelta(days=2),
         "rows": [{"amount": Decimal(10), "receivable_type": 1}],
     }
 

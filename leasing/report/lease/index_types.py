@@ -1,8 +1,8 @@
-import datetime
 from typing import Any
 
 from django import forms
 from django.db.models import Q, QuerySet
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import IndexType, TenantContactType
@@ -12,7 +12,7 @@ from leasing.report.report_base import ReportBase
 
 
 def get_tenants(rent: Rent) -> str:
-    today = datetime.date.today()
+    today = timezone.now().date()
     contacts = set()
     for tenant in rent.lease.tenants.all():
         for tc in tenant.tenantcontact_set.all():
@@ -158,6 +158,6 @@ class IndexTypesReport(ReportBase):
         if input_data["only_active_leases"]:
             qs = qs.filter(
                 Q(lease__end_date__isnull=True)
-                | Q(lease__end_date__gte=datetime.date.today())
+                | Q(lease__end_date__gte=timezone.now().date())
             )
         return qs

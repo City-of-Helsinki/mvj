@@ -1,4 +1,3 @@
-import datetime
 from decimal import ROUND_HALF_UP, Decimal
 
 from auditlog.registry import auditlog
@@ -6,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
@@ -14,7 +14,7 @@ class VatManager(models.Manager):
     def get_for_date(self, the_date=None):
         """Returns the VAT for the date"""
         if the_date is None:
-            the_date = datetime.date.today()
+            the_date = timezone.now().date()
 
         return (
             self.get_queryset()

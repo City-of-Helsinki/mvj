@@ -888,7 +888,7 @@ class Lease(TimeStampedSafeDeleteModel):
         return shares
 
     def get_lease_info_text(self, tenants=None):
-        today = datetime.date.today()
+        today = timezone.now().date()
         result = []
 
         if tenants is None:
@@ -1398,7 +1398,7 @@ class Lease(TimeStampedSafeDeleteModel):
     def generate_first_invoices(self, end_date=None):  # noqa C901 TODO
         from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
 
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         if not self.start_date:
             raise DjangoValidationError(
