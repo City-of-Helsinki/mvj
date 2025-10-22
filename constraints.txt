@@ -12,3 +12,10 @@
 # - CVE-2024-33664 https://security.snyk.io/vuln/SNYK-PYTHON-PYTHONJOSE-6674054
 # Keep version below 4 to avoid breaking changes, just in case.
 python-jose>=3.4.0, <4
+
+# Vulnerabilities in versions below 1.6.5:
+# - CVE-2025-61920 https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13535080
+# - https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13535082
+# Vulnerability in versions below 1.6.4:
+# - CVE-2025-59420 https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13003878
+authlib>=1.6.5
