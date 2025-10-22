@@ -460,7 +460,7 @@ CUSTOM_FIELD_PERMS = {
         "start_date": {UG.VALMISTELIJA: "view"},
         "end_date": {UG.VALMISTELIJA: "view"},
         "tenants": {
-            UG.VALMISTELIJA: "view",
+            UG.VALMISTELIJA: "change",
             UG.PERINTALAKIMIES: "view",
             UG.LASKUTTAJA: "change",
         },

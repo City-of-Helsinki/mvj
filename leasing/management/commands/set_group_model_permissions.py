@@ -349,7 +349,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "contact": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view", "change"),
+        UG.VALMISTELIJA: ("view", "add", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view", "change"),
