@@ -23,3 +23,7 @@ authlib>=1.6.5
 # Vulnerability in versions below 6.0.0:
 # - CVE-2025-55197 https://security.snyk.io/vuln/SNYK-PYTHON-PYPDF-11798040
 pypdf>=6.0.0
+
+# Vulnerability in versions below 43.0.1
+# - CVE-2024-6119 https://security.snyk.io/vuln/SNYK-PYTHON-CRYPTOGRAPHY-7886970
+cryptography>=43.0.1
