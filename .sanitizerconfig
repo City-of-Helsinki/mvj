@@ -90,7 +90,6 @@ strategy:
   batchrun_timezone:
     id: null
     name: null
-  constance_constance: skip_rows
   credit_integration_creditdecision:
     address: mvj.address_if_exist
     business_entity: null

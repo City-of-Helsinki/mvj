@@ -3,7 +3,7 @@ from decimal import Decimal
 from glob import glob
 
 import pytest
-from constance.test import override_config
+from django.test import override_settings
 from django.urls import reverse
 
 from laske_export.exporter import LaskeExporter
@@ -11,7 +11,7 @@ from leasing.enums import ContactType
 
 
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_export_one_invoice(
     settings,
     tmp_path,

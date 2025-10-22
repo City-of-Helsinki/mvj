@@ -6,8 +6,8 @@ from decimal import Decimal
 from glob import glob
 
 import pytest
-from constance.test import override_config
 from django.core import mail
+from django.test import override_settings
 
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
@@ -196,7 +196,7 @@ def test_send_invoices_to_laske_command_handle_with_unexpected_error(
 
 
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 @pytest.mark.parametrize("service_unit_to_use", [0, 1])
 def test_send_invoices_service_unit(
     settings,
@@ -376,7 +376,7 @@ def _order_number_test_setup(
 
 
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_send_invoices_order_num_from_lease_type(
     settings,
     _order_number_test_setup,
@@ -401,7 +401,7 @@ def test_send_invoices_order_num_from_lease_type(
 
 
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_send_invoices_order_num_from_receivable_type(
     settings,
     _order_number_test_setup,
@@ -427,7 +427,7 @@ def test_send_invoices_order_num_from_receivable_type(
 
 
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_send_invoices_order_num_from_lease(
     settings,
     _order_number_test_setup,

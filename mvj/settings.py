@@ -48,7 +48,6 @@ env = environ.Env(
     ADMINS=(list, []),
     DATABASE_URL=(str, "postgis:///mvj"),
     CACHE_URL=(str, "locmemcache://"),
-    CONSTANCE_DATABASE_CACHE_BACKEND=(str, ""),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     EMAIL_BACKEND=(str, "anymail.backends.mailgun.EmailBackend"),
@@ -215,7 +214,6 @@ INSTALLED_APPS = [
     "audittrail",
     "field_permissions",
     "batchrun",
-    "constance",
     "sanitized_dump",
     "utils",
     "django_q",
@@ -256,22 +254,6 @@ AUTH_USER_MODEL = "users.User"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MODELTRANSLATION_TRANSLATION_FILES = ("forms.translation",)
-
-CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
-CONSTANCE_DATABASE_CACHE_BACKEND = env.str("CONSTANCE_DATABASE_CACHE_BACKEND")
-CONSTANCE_CONFIG = {
-    "LASKE_EXPORT_FROM_EMAIL": (
-        env.str("LASKE_EXPORT_FROM_EMAIL"),
-        _("Sender email address. Example: john@example.com"),
-    ),
-    "LASKE_EXPORT_ANNOUNCE_EMAIL": (
-        env.str("LASKE_EXPORT_ANNOUNCE_EMAIL"),
-        _("Recipients of announce emails. Example: john@example.com,jane@example.com"),
-    ),
-}
-CONSTANCE_CONFIG_FIELDSETS = {
-    "Laske Export": ("LASKE_EXPORT_FROM_EMAIL", "LASKE_EXPORT_ANNOUNCE_EMAIL"),
-}
 
 REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",

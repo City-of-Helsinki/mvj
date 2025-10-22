@@ -2,7 +2,6 @@ import datetime
 import logging
 import re
 
-from constance import config
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -98,82 +97,83 @@ class Command(BaseCommand):
             )
             logging.exception(err)
 
-        if config.LASKE_EXPORT_ANNOUNCE_EMAIL:
-            email_headers = None
-
-            if error_flag:
-                self.stdout.write(
-                    "Sending error email to {}".format(
-                        config.LASKE_EXPORT_ANNOUNCE_EMAIL
-                    )
-                )
-                email_headers = {"X-Priority": "1"}  # High
-                email_subject = _("MVJ ({}) transfer failed!").format(
-                    service_unit.laske_sender_id
-                )
-                email_body = _(
-                    "Sending invoices to the Laske system has been crashed during the processing. "
-                    "Please contact your administrator.\n"
-                    "Service unit: {}\n"
-                    "\nError message: {}"
-                ).format(service_unit.name, error_message)
-            else:
-                self.stdout.write(
-                    "Sending announce email to {}".format(
-                        config.LASKE_EXPORT_ANNOUNCE_EMAIL
-                    )
-                )
-
-                export_invoice_log_items = (
-                    laske_export_log_entry.laskeexportloginvoiceitem_set
-                )
-                sent_count = export_invoice_log_items.filter(
-                    status=LaskeExportLogInvoiceStatus.SENT
-                ).count()
-                failed_count = export_invoice_log_items.filter(
-                    status=LaskeExportLogInvoiceStatus.FAILED
-                ).count()
-
-                email_subject = _("MVJ ({}) transfer").format(
-                    service_unit.laske_sender_id
-                )
-
-                email_body = _(
-                    "MVJ ({}) processed a total of {} invoices to Laske system on {}. "
-                    "Of the invoices, {} succeeded and {} failed.\n"
-                    "Service unit: {}"
-                ).format(
-                    service_unit.laske_sender_id,
-                    laske_export_log_entry.invoices.count(),
-                    laske_export_log_entry.ended_at.astimezone(
-                        timezone.get_current_timezone()
-                    ).strftime("%d.%m.%Y %H.%M %Z"),
-                    sent_count,
-                    failed_count,
-                    service_unit.name,
-                )
-
-                if failed_count > 0:
-                    email_body += "\n\n"
-                    email_body += _("Failed invoice numbers:") + ""
-                    for invoice in laske_export_log_entry.invoices.filter(
-                        laskeexportloginvoiceitem__status=LaskeExportLogInvoiceStatus.FAILED
-                    ):
-                        email_body += "\n* #{} ({})".format(
-                            invoice.number, invoice.lease.identifier
-                        )
-
-            from_email = settings.DEFAULT_FROM_EMAIL
-            if hasattr(settings, "MVJ_EMAIL_FROM"):
-                from_email = settings.MVJ_EMAIL_FROM
-            if hasattr(settings, "LASKE_EXPORT_FROM_EMAIL"):
-                from_email = config.LASKE_EXPORT_FROM_EMAIL
-
-            msg = EmailMultiAlternatives(
-                email_subject,
-                email_body,
-                from_email,
-                re.split("[;,]", config.LASKE_EXPORT_ANNOUNCE_EMAIL),
-                headers=email_headers,
+        if not getattr(settings, "LASKE_EXPORT_ANNOUNCE_EMAIL", None):
+            self.stderr.write(
+                "`settings.LASKE_EXPORT_ANNOUNCE_EMAIL` not set, not sending email."
             )
-            msg.send(fail_silently=False)
+            return
+
+        email_headers = None
+
+        if error_flag:
+            self.stdout.write(
+                "Sending error email to {}".format(settings.LASKE_EXPORT_ANNOUNCE_EMAIL)
+            )
+            email_headers = {"X-Priority": "1"}  # High
+            email_subject = _("MVJ ({}) transfer failed!").format(
+                service_unit.laske_sender_id
+            )
+            email_body = _(
+                "Sending invoices to the Laske system has been crashed during the processing. "
+                "Please contact your administrator.\n"
+                "Service unit: {}\n"
+                "\nError message: {}"
+            ).format(service_unit.name, error_message)
+        else:
+            self.stdout.write(
+                "Sending announce email to {}".format(
+                    settings.LASKE_EXPORT_ANNOUNCE_EMAIL
+                )
+            )
+
+            export_invoice_log_items = (
+                laske_export_log_entry.laskeexportloginvoiceitem_set
+            )
+            sent_count = export_invoice_log_items.filter(
+                status=LaskeExportLogInvoiceStatus.SENT
+            ).count()
+            failed_count = export_invoice_log_items.filter(
+                status=LaskeExportLogInvoiceStatus.FAILED
+            ).count()
+
+            email_subject = _("MVJ ({}) transfer").format(service_unit.laske_sender_id)
+
+            email_body = _(
+                "MVJ ({}) processed a total of {} invoices to Laske system on {}. "
+                "Of the invoices, {} succeeded and {} failed.\n"
+                "Service unit: {}"
+            ).format(
+                service_unit.laske_sender_id,
+                laske_export_log_entry.invoices.count(),
+                laske_export_log_entry.ended_at.astimezone(
+                    timezone.get_current_timezone()
+                ).strftime("%d.%m.%Y %H.%M %Z"),
+                sent_count,
+                failed_count,
+                service_unit.name,
+            )
+
+            if failed_count > 0:
+                email_body += "\n\n"
+                email_body += _("Failed invoice numbers:") + ""
+                for invoice in laske_export_log_entry.invoices.filter(
+                    laskeexportloginvoiceitem__status=LaskeExportLogInvoiceStatus.FAILED
+                ):
+                    email_body += "\n* #{} ({})".format(
+                        invoice.number, invoice.lease.identifier
+                    )
+
+        from_email = settings.DEFAULT_FROM_EMAIL
+        if hasattr(settings, "MVJ_EMAIL_FROM"):
+            from_email = settings.MVJ_EMAIL_FROM
+        if hasattr(settings, "LASKE_EXPORT_FROM_EMAIL"):
+            from_email = settings.LASKE_EXPORT_FROM_EMAIL
+
+        msg = EmailMultiAlternatives(
+            email_subject,
+            email_body,
+            from_email,
+            re.split("[;,]", settings.LASKE_EXPORT_ANNOUNCE_EMAIL),
+            headers=email_headers,
+        )
+        msg.send(fail_silently=False)
