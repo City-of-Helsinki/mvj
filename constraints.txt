@@ -27,3 +27,7 @@ pypdf>=6.0.0
 # Vulnerability in versions below 43.0.1
 # - CVE-2024-6119 https://security.snyk.io/vuln/SNYK-PYTHON-CRYPTOGRAPHY-7886970
 cryptography>=43.0.1
+
+# Vulnerability in versions below 2024.7.4
+# - CVE-2024-39689 https://security.snyk.io/vuln/SNYK-PYTHON-CERTIFI-7430173
+certifi>=2024.7.4

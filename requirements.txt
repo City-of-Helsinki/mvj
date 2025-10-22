@@ -33,8 +33,9 @@ beautifulsoup4==4.13.4
     # via -r requirements.in
 cachetools==5.3.3
     # via django-helusers
-certifi==2024.2.2
+certifi==2025.10.5
     # via
+    #   -c constraints.txt
     #   pyproj
     #   requests
     #   sentry-sdk
