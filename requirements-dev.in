@@ -1,4 +1,10 @@
+# Load the known constraints for subdependencies
+-c constraints.txt
+
+# Align library versions with the main requirements
 -c requirements.txt
+
+# For top-level dependencies, just edit this .in file
 blessed~=1.21.0
 django-debug-toolbar~=4.4.6
 django-extensions~=4.1
