@@ -12,8 +12,9 @@ black==25.1.0
     # via -r requirements-dev.in
 blessed==1.21.0
     # via -r requirements-dev.in
-certifi==2024.2.2
+certifi==2025.10.5
     # via
+    #   -c constraints.txt
     #   -c requirements.txt
     #   requests
 charset-normalizer==3.3.2
