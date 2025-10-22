@@ -338,8 +338,9 @@ uritemplate==4.1.1
     # via drf-yasg
 uritools==4.0.2
     # via pyhanko-certvalidator
-urllib3==2.2.1
+urllib3==2.5.0
     # via
+    #   -c constraints.txt
     #   django-anymail
     #   requests
     #   sentry-sdk
