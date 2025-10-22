@@ -38,3 +38,9 @@ certifi>=2024.7.4
 # - CVE-2024-56326 https://security.snyk.io/vuln/SNYK-PYTHON-JINJA2-8548181
 # - CVE-2024-56201 https://security.snyk.io/vuln/SNYK-PYTHON-JINJA2-8548987
 jinja2>=3.1.6
+
+# Vulnerabilities in versions below 2.5.0
+# - CVE-2024-37891 https://security.snyk.io/vuln/SNYK-PYTHON-URLLIB3-7267250
+# - CVE-2025-50182 https://security.snyk.io/vuln/SNYK-PYTHON-URLLIB3-10390193
+# - CVE-2025-50181 https://security.snyk.io/vuln/SNYK-PYTHON-URLLIB3-10390194
+urllib3>=2.5.0
