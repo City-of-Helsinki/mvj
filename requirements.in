@@ -1,3 +1,7 @@
+# Load the known constraints for subdependencies
+-c constraints.txt
+
+# For top-level dependencies, just edit this .in file
 beautifulsoup4~=4.13.4
 deepmerge~=2.0
 Django~=4.2.23

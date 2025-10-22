@@ -1,0 +1,14 @@
+# Use this file to define constraints for sub-dependencies, for example to avoid
+# package resolution conflicts or vulnerable versions.
+#
+# Packages mentioned in this file are not installed separately, but only used to
+# constrain versions of dependencies installed via requirements.in or other
+# requirement files.
+#
+# For constraining top-level dependencies, just edit the .in-files directly.
+
+# Vulnerabilities in versions below 3.4.0:
+# - CVE-2024-33663 https://security.snyk.io/vuln/SNYK-PYTHON-PYTHONJOSE-6674053
+# - CVE-2024-33664 https://security.snyk.io/vuln/SNYK-PYTHON-PYTHONJOSE-6674054
+# Keep version below 4 to avoid breaking changes, just in case.
+python-jose>=3.4.0, <4
