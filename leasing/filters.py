@@ -1,6 +1,5 @@
-import datetime
-
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
@@ -170,7 +169,7 @@ class InvoiceFilter(FilterSet):
     def filter_going_to_sap(self, queryset, name, value):
         if value:
             return queryset.filter(
-                due_date__gte=datetime.date.today(), sent_to_sap_at__isnull=True
+                due_date__gte=timezone.now().date(), sent_to_sap_at__isnull=True
             )
         return queryset
 
@@ -219,7 +218,7 @@ class LandUseAgreementInvoiceFilter(FilterSet):
     def filter_going_to_sap(self, queryset, name, value):
         if value:
             return queryset.filter(
-                due_date__gte=datetime.date.today(), sent_to_sap_at__isnull=True
+                due_date__gte=timezone.now().date(), sent_to_sap_at__isnull=True
             )
         return queryset
 

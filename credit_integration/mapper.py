@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 from credit_integration.enums import CreditDecisionStatus
 
@@ -24,7 +24,7 @@ def map_consumer_response(json_data, request):
                 "customerData"
             ]["name"],
             "claimant": request.user,
-            "created_at": datetime.datetime.now(),
+            "created_at": timezone.now(),
             "reasons": [],
         }
     ]

@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 
 from leasing.enums import InvoiceState
 from leasing.models import Invoice, Lease
@@ -65,7 +66,7 @@ class Command(BaseCommand):
 
 def get_today() -> datetime.date:
     """Decoupled function to make testing easier."""
-    return datetime.date.today()
+    return timezone.now().date()
 
 
 def _get_start_of_next_month(today: datetime.date) -> datetime.date:

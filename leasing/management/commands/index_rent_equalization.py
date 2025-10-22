@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils import timezone
 
 from leasing.calculation.result import CalculationAmount, CalculationResult
 from leasing.enums import InvoiceState, InvoiceType
@@ -16,7 +17,7 @@ class Command(BaseCommand):
     help = "Creates credit notes or invoices if index number has changed after the invoices are sent"
 
     def handle(self, *args, **options):  # noqa: C901 TODO
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         december_last_year = datetime.date(year=today.year - 1, month=12, day=1)
 

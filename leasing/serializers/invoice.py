@@ -1,4 +1,3 @@
-import datetime
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from random import choice
@@ -324,7 +323,7 @@ class InvoiceCreateSerializer(
             validated_data["type"] = InvoiceType.CHARGE
 
         if validated_data.get("tenant"):
-            today = datetime.date.today()
+            today = timezone.now().date()
             tenant = validated_data.pop("tenant")
             billing_tenantcontact = tenant.get_billing_tenantcontacts(
                 start_date=today, end_date=None

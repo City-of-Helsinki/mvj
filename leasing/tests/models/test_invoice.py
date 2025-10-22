@@ -6,6 +6,7 @@ import pytest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.urls import reverse
+from django.utils import timezone
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
 from leasing.models import Invoice, ReceivableType, ServiceUnit, Vat
@@ -2052,7 +2053,7 @@ def test_invoice_get_vat_if_subject_to_vat(lease_factory, invoice_factory):
         **invoice_kwargs,
     )
     vat = invoice_with_vat.get_vat_if_subject_to_vat(payment_date, total_amount)
-    vat_for_today = Vat.objects.get_for_date(datetime.date.today())
+    vat_for_today = Vat.objects.get_for_date(timezone.now().date())
     assert (
         vat == vat_for_today
     ), "Should return VAT of today when no invoicing_date or billing_period_end_date is set"

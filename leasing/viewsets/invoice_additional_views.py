@@ -1,7 +1,7 @@
-import datetime
 from decimal import Decimal, InvalidOperation
 
 from dateutil import parser
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from paramiko import SSHException
 from pysftp import ConnectionException, CredentialException, HostKeysException
@@ -97,7 +97,7 @@ class InvoiceCalculatePenaltyInterestView(APIView):
     def get(self, request, format=None):
         invoice = get_object_from_query_params("invoice", request.query_params)
 
-        end_date = datetime.date.today()
+        end_date = timezone.now().date()
         if request.query_params.get("end_date"):
             end_date = parser.parse(request.query_params["end_date"]).date()
 

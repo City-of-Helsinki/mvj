@@ -1,4 +1,3 @@
-import datetime
 from collections import defaultdict
 from fractions import Fraction
 from io import BytesIO
@@ -8,6 +7,7 @@ import xlsxwriter
 from django import forms
 from django.db import DataError, connection
 from django.db.backends.utils import CursorWrapper
+from django.utils import timezone
 from django.utils.translation import gettext_lazy, pgettext_lazy
 from enumfields import Enum
 from enumfields.drf import EnumField
@@ -334,7 +334,7 @@ class InvoicingReviewReport(ReportBase):
     def get_incorrect_rent_shares_data(
         self, service_unit_ids: list[int], cursor: CursorWrapper
     ):
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         query = """
             SELECT li.identifier as lease_identifier,
@@ -397,7 +397,7 @@ class InvoicingReviewReport(ReportBase):
         return data
 
     def get_ongoing_rent_without_rent_shares_data(self, service_unit_ids, cursor):
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         query = """
             SELECT li.identifier as lease_identifier,
@@ -454,7 +454,7 @@ class InvoicingReviewReport(ReportBase):
         return data
 
     def get_incorrect_management_shares_data(self, service_unit_ids, cursor):
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         query = """
             SELECT li.identifier as "lease_identifier",
@@ -602,7 +602,7 @@ ORDER BY
     lease_id, gap_start_date;
         """
 
-        today = datetime.date.today()
+        today = timezone.now().date()
         cursor.execute(
             query,
             {
@@ -637,7 +637,7 @@ ORDER BY
         return data
 
     def get_data(self, input_data):
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         if input_data["service_unit"]:
             service_unit_ids = [su.id for su in input_data["service_unit"]]

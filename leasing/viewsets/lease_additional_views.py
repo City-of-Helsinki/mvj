@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.exceptions import APIException
@@ -111,7 +112,7 @@ class LeaseCreateCollectionLetterDocumentViewSet(
         return _("Create collection letter document")
 
     def create(self, request, *args, **kwargs):
-        today = datetime.date.today()
+        today = timezone.now().date()
 
         serializer = CreateCollectionLetterDocumentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -325,7 +326,7 @@ class LeaseBillingPeriodsView(APIView):
             except (ValueError, OverflowError):
                 raise APIException(_("Year parameter is not valid"))
         else:
-            year = datetime.date.today().year
+            year = timezone.now().year
 
         try:
             start_date = datetime.date(year=year, month=1, day=1)
@@ -359,7 +360,7 @@ class LeasePreviewInvoicesForYearView(APIView):
             except (ValueError, OverflowError):
                 raise APIException(_("Year parameter is not valid"))
         else:
-            year = datetime.date.today().year
+            year = timezone.now().year
 
         try:
             first_day_of_year = datetime.date(year=year, month=1, day=1)

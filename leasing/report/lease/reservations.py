@@ -1,9 +1,9 @@
-import datetime
 import itertools
 
 from django import forms
 from django.db import connection
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, LeaseState, TenantContactType
@@ -30,7 +30,7 @@ def get_address(lease):
 
 
 def get_tenants(lease):
-    today = datetime.date.today()
+    today = timezone.now().date()
 
     contacts = set()
 

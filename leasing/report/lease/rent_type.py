@@ -1,9 +1,9 @@
-import datetime
 from typing import Protocol
 
 from django import forms
 from django.db.models import CharField, Q
 from django.db.models.expressions import RawSQL
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, RentType, TenantContactType
@@ -122,7 +122,7 @@ class RentTypeReport(ReportBase):
     }
 
     def get_data(self, input_data):
-        current_date = datetime.date.today()
+        current_date = timezone.now().date()
         # RawSQL is used in order to make the report load faster, it was and still is extremely slow with 10k+ entries
         # This SQL uses PostgreSQL expression STRING_AGG to concatenate contact names into a single string
         # The CASE statement is used to to select the name in SQL instead of doing it in Django

@@ -1,9 +1,9 @@
-import datetime
 import hashlib
 from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
+from django.utils import timezone
 
 from credit_integration.exceptions import AsiakastietoAPIError
 from credit_integration.types import (
@@ -207,5 +207,5 @@ def _calculate_checksum(user_id, end_user, timestamp, key):
 
 
 def _get_timestamp():
-    now = datetime.datetime.now().astimezone()
+    now = timezone.now().astimezone()
     return now.strftime("%Y%m%d%H%M%S%f")[:-4] + now.strftime("%z")[:-2] + "00000"
