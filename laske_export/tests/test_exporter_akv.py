@@ -1,5 +1,5 @@
 import pytest
-from constance.test import override_config
+from django.test import override_settings
 
 from leasing.enums import ServiceUnitId
 from leasing.tests.conftest import *  # noqa
@@ -14,7 +14,7 @@ from .conftest import get_exported_file_as_tree
     indirect=True,
 )
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_xml_elements_exist(
     settings,
     monkeypatch_laske_exporter_send,
@@ -65,7 +65,7 @@ def test_akv_xml_elements_exist(
     indirect=True,
 )
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_from_invoicerow(
     settings,
     monkeypatch_laske_exporter_send,
@@ -99,7 +99,7 @@ def test_akv_sap_codes_from_invoicerow(
     indirect=True,
 )
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_from_leasetype(
     monkeypatch_laske_exporter_send,
     settings,
@@ -141,7 +141,7 @@ def test_akv_sap_codes_from_leasetype(
     indirect=True,
 )
 @pytest.mark.django_db
-@override_config(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
+@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
 def test_akv_sap_codes_when_collateral(
     monkeypatch_laske_exporter_send,
     settings,

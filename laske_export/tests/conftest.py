@@ -9,6 +9,7 @@ from typing import Any, Callable
 import pytest
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.test import override_settings
 
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
@@ -94,15 +95,15 @@ def use_ftp():
 
 
 @pytest.fixture(scope="function", autouse=True)
-def laske_export_from_email(override_config):
-    with override_config(LASKE_EXPORT_FROM_EMAIL="john@example.com"):
+def laske_export_from_email():
+    with override_settings(LASKE_EXPORT_FROM_EMAIL="john@example.com"):
         yield
 
 
 @pytest.fixture(scope="function", autouse=True)
 @pytest.mark.django_db
-def laske_export_announce_email(override_config):
-    with override_config(
+def laske_export_announce_email():
+    with override_settings(
         LASKE_EXPORT_ANNOUNCE_EMAIL="john@example.com,jane@example.com"
     ):
         yield
