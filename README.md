@@ -74,21 +74,63 @@ Activate virtualenv
 
     python3 venv/bin/activate
 
+### Installing Python requirements
+
+Upgrade pip, and install `pip-tools` to get `pip-compile` and `pip-sync`:
+
+```shell
+pip install --upgrade pip
+pip install pip-tools
+```
+
+Install the requirements with `pip`:
+
+```shell
+pip install -r requirements.txt -r requirements-dev.txt
+```
+
+... or `pip-sync`. Pip-sync will add, update, and **remove** packages to ensure
+the environment matches the requirements file. This makes the environment
+repeatable, but make sure you are in a virtual environment or container before
+running this, or your global python requirements will be overridden, which might
+break your system.
+
+```shell
+# Activate the venv, if not already
+python3 venv/bin/activate
+
+# Sync your environment with the requirements.
+pip-sync requirements.txt requirements-dev.txt
+```
+
 ### Creating Python requirements files
 
-- Run `pip install pip-tools`
-- Run `pip-compile requirements.in`
-- Run `pip-compile requirements-dev.in`
+To regenerate the `requirements.txt` files if needed, use pip-compile:
+
+```shell
+pip-compile requirements.in
+pip-compile requirements-dev.in
+```
 
 ### Updating Python requirements files
 
-- Run `pip-compile --upgrade requirements.in`
-- Run `pip-compile --upgrade requirements-dev.in`
+To update a single package:
 
-### Installing Python requirements
+```shell
+pip-compile --upgrade-package <package name>
+```
 
-- Run `pip install -r requirements.txt`
-- For development also run `pip install -r requirements-dev.txt`
+To update all packages:
+
+```shell
+pip-compile --upgrade requirements.in
+pip-compile --upgrade requirements-dev.in
+pip-compile --upgrade requirements-prod.in
+```
+
+If you need to pin a library version, use the `.in` files for your direct
+dependencies, and `constraints.txt` for subdependencies.
+
 
 ### Database
 
