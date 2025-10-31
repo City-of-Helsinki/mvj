@@ -4,11 +4,6 @@ Q_CLUSTER = {
     "retry": 60 * 60,  # 1 hour
     "orm": "default",
     "workers": 1,
-    "error_reporter": {
-        "sentry": {
-            "dsn": "https://******@sentry.io/<project>"
-        }
-    }
 }
 
 PRIVATE_FILES_LOCATION = "/code/private_files"
