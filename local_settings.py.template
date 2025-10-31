@@ -1,7 +1,9 @@
+HOUR_IN_SECONDS = 60 * 60
+
 Q_CLUSTER = {
     "name": "DjangORM",
     "timeout": 90,
-    "retry": 60 * 60,  # 1 hour
+    "retry": HOUR_IN_SECONDS,
     "orm": "default",
     "workers": 1,
 }
@@ -10,8 +12,9 @@ PRIVATE_FILES_LOCATION = "/code/private_files"
 
 # qcluster configs for generating email reports locally
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = "/tmp/mvj-emails"
+EMAIL_FILE_PATH = "/tmp/emails"
 
+# Areasearch map layer for Helsinki owned areas
 MAP_SERVICE_WMS_URL = ""
 MAP_SERVICE_WMS_USERNAME = ""
 MAP_SERVICE_WMS_PASSWORD = ""
