@@ -5,7 +5,9 @@
 City of Helsinki land lease system
 
 
-## Development with development container (devcontainer)
+## Local development setup
+
+### Set up a devcontainer
 
 Code editors (e.g. VSCode, Pycharm) that support devcontainer spec should be able to build and run your development environment from `.devcontainer`, either locally or remotely.
 See: [https://containers.dev/](https://containers.dev/)
@@ -13,106 +15,85 @@ See: [https://containers.dev/](https://containers.dev/)
 The devcontainer setup will build and run containers for the database and django.
 Integrated to the editor you gain access to the shell within the django container, running code with debugger or run tests in debugging mode should work without much hassle.
 
+1. Copy-paste the file `./devcontainer/docker-compose.env.template` as `./devcontainer/docker-compose.env`
+2. Copy-paste the file `local_settings.py.template` as `local_settings.py`
+3. Install some container runtime on your machine. For example: some Docker offering, or `colima` on macOS.
+4. Install devcontainer extension in your IDE
+5. Reopen the repository in devcontainer in your IDE. This creates the necessary containers.
 
-## Development with Docker
 
-If using Apple M1/M2 chip (or equivalent), you need to add `platform: linux/amd64` to `django` service in `docker-compose.yml` file.
+### Database setup
 
-1. Run `docker-compose up`
+Have an existing developer send you a sanitized development database dump,
+and load it into your local database in the container.
+If you use a devcontainer, you should have built the necessary containers before
+the following steps.
 
-2. Run migrations if needed (if you have sanitized.sql file then skip 2. and 3. Continue to "Settings for development environment"):
+See instructions "Database backup" in this README for commands to dump and load
+the data.
+You can find the local connection details e.g. in `.devcontainer/docker-compose.env.template`
 
-   - `docker exec mvj python manage.py migrate`
+Verify that the loading worked by connecting to the database with `psql`.
+You can for example run the command `\dt` to see a list of imported tables.
 
-3. Create superuser if needed:
-   - `docker exec -it mvj python manage.py createsuperuser`
+At this point, you should be able to run the API locally with
+`python manage.py runserver 0:8001`. If that works, data should be fine.
 
-The project is now running at [localhost:8000](http://localhost:8000).
+### Django admin user
 
-### Settings for development environment
+Create an admin user for yourself with `manage.py`:
 
-```bash
-cd mvj
-# copy sanitized.sql to root
-docker-compose exec django bash
-psql -h postgres -U mvj -d mvj < sanitized.sql
-docker-compose exec django python manage.py migrate
-docker-compose exec django python manage.py createsuperuser #(github email)
+```shell
+python manage.py createsuperuser
 ```
 
-- Create TEST groups by:
-```bash
-python manage.py copy_groups_and_service_unit_mappings
-```
+You can use this user to login to the Django admin page at
+`http://<local API address>/admin`
 
-- Add "TEST Pääkäyttäjä" -group to created user at Django admin.
+### Regular MVJ user
+
+1. Set up and run the MVJ frontend `mvj-ui`, and navigate to the front page to log in.
+2. Log in with your email
+
+If you have the permission to access the site, you will be logged in, but will
+still see permission errors, which are expected.
+Logging in for the first time creates a user for you in MVJ database, but you
+need to add correct user groups for it:
+
+1. Log in to admin interface
+2. Navigate to `Users` listing
+3. Find your generated user by searching with your email address, and edit it
+4. In the groups section ("Ryhmät"), select all the `TEST <group name>` groups,
+  and click the right arrow to add them to your user.
+    * If you don't see any "TEST _" groups, run `python manage.py copy_groups_and_service_unit_mappings`
+5. In service units section at the bottom of the page, select any group.
+6. Save the user
+7. Refresh the UI page. This time you should see data without errors.
 
 
-## Development without Docker
+## Django configuration
 
-### Install required system packages
+Environment variables are used to customize configuration in `mvj/settings.py`.
+If you wish to override any settings, you can place them in `local_settings.py`
+which is executed at the end of the `mvj/settings.py`.
 
-#### PostgreSQL and PostGIS
+If using a devcontainer, be wary of overlap in variable values between
+`local_settings.py` and `docker-compose.env`.
+Docker env is updated when you build the container, and local settings is read
+on every restart of the Django app.
 
-Install PostgreSQL and PostGIS.
+## Managing Python libraries
 
-    # Ubuntu
-    sudo apt-get install python3-dev libpq-dev postgresql postgis
+### Install pip-tools
 
-#### GeoDjango extra packages
-
-    # Ubuntu
-    sudo apt-get install binutils libproj-dev gdal-bin
-
-### Creating a Python virtualenv
-
-Create a Python 3 virtualenv either using the [`venv`](https://docs.python.org/3/library/venv.html) tool.
-
-    python3 -m venv /path/to/venv
-
-Activate virtualenv
-
-    python3 venv/bin/activate
-
-### Installing Python requirements
-
-Upgrade pip, and install `pip-tools` to get `pip-compile` and `pip-sync`:
+If you don't use a devcontainer, install `pip-tools` to get `pip-compile` and `pip-sync`:
 
 ```shell
 pip install --upgrade pip
 pip install pip-tools
 ```
 
-Install the requirements with `pip`:
-
-```shell
-pip install -r requirements.txt -r requirements-dev.txt
-```
-
-... or `pip-sync`. Pip-sync will add, update, and **remove** packages to ensure
-the environment matches the requirements file. This makes the environment
-repeatable, but make sure you are in a virtual environment or container before
-running this, or your global python requirements will be overridden, which might
-break your system.
-
-```shell
-# Activate the venv, if not already
-python3 venv/bin/activate
-
-# Sync your environment with the requirements.
-pip-sync requirements.txt requirements-dev.txt
-```
-
-### Creating Python requirements files
-
-To regenerate the `requirements.txt` files if needed, use pip-compile:
-
-```shell
-pip-compile requirements.in
-pip-compile requirements-dev.in
-```
-
-### Updating Python requirements files
+### Update Python requirements files
 
 To update a single package:
 
@@ -131,65 +112,135 @@ pip-compile --upgrade requirements-prod.in
 If you need to pin a library version, use the `.in` files for your direct
 dependencies, and `constraints.txt` for subdependencies.
 
+### Update requirements.txt files from .in files
 
-### Database
+When you change the libraries in the`.in` files, regenerate the `.txt` files
+with `pip-compile`:
 
-To setup a database compatible with the default database settings:
+```shell
+pip-compile requirements.in
+pip-compile requirements-dev.in
+```
 
-Create user and database
+### Update your environment from requirements files
 
-    sudo -u postgres createuser -P -R -S mvj  # use password `mvj`
-    sudo -u postgres createdb -O mvj mvj
+Install the requirements with `pip`:
 
-Enable PostGIS
+```shell
+pip install -r requirements.txt -r requirements-dev.txt
+```
 
-    sudo -u postgres psql -d "mvj" -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+... or with `pip-sync`. Pip-sync will add, update, and **remove** packages to
+ensure the environment matches the requirements file. This makes the environment
+repeatable, but make sure you are in a virtual environment or container before
+running this, or your global python requirements will be overridden, which might
+break your system.
 
-Allow the mvj user to create databases when running tests
+```shell
+# Activate the venv if not using a devcontainer:
+python3 venv/bin/activate
 
-    sudo -u postgres psql -d "mvj" -c "ALTER USER mvj CREATEDB;"
+# Sync your environment with the requirements.
+pip-sync requirements.txt requirements-dev.txt
+```
 
-Tests also require that PostGIS extension is installed on the test database. This can be achieved the easiest by
-adding PostGIS extension to the default template which is then used when the test databases are created:
 
-    sudo -u postgres psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+## Database setup from scratch
 
-### Django configuration
+!! This instruction is for setting up a database compatible with the default
+database settings from scratch, without using a recent database dump.
+This process has not been tested in a long while, so expect troubleshooting !!
 
-Environment variables are used to customize configuration in `mvj/settings.py`. If you wish to override any
-settings, you can place them in a local `.env` file which will automatically be sourced when Django imports
-the settings file.
+Create a database user and the database:
 
-Alternatively you can create a `local_settings.py` which is executed at the end of the `mvj/settings.py` in the
-same context so that the variables defined in the settings are available.
+```shell
+sudo -u postgres createuser -P -R -S mvj
+sudo -u postgres createdb -O mvj mvj-db
+```
 
-#### Notice!
+Enable the PostGIS extension:
 
-The "idc_attachments"-folder under the media root must be excluded when serving media files. The files are
-protected by permission checks on a different URL.
+```shell
+sudo -u postgres psql -d "mvj" -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+```
 
-### Running development environment
+Allow the mvj user to create databases when running tests:
 
-- Enable debug `echo 'DEBUG=True' >> .env`
-- Run `python manage.py migrate`
-- Run `python manage.py loaddata */fixtures/*.json`
-- Run `python manage.py runserver 0.0.0.0:8000`
+```shell
+sudo -u postgres psql -d "mvj" -c "ALTER USER mvj CREATEDB;"
+```
+
+Tests also require that PostGIS extension is installed on the test database.
+This can be achieved the easiest by adding PostGIS extension to the default
+template which is then used when the test databases are created:
+
+```shell
+sudo -u postgres psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+```
+
+Run Django migrations:
+
+```shell
+python manage.py migrate
+```
+
+Load data from fixtures:
+
+```shell
+python manage.py loaddata */fixtures/*.json
+```
+
+Run the necessary install-time management commands. Might not be exhaustive:
+
+```shell
+python manage.py compilemessages
+python manage.py set_report_permissions
+python manage.py set_group_field_permissions
+python manage.py set_group_model_permissions
+python manage.py copy_groups_and_service_unit_mappings   # Only for non-prod environments.
+```
+
 
 ## Running tests
 
-- Run `pytest`
+Use your IDE's test runner capabilities, or run `pytest` from terminal.
+
 
 ## Update translation files
 
+Generate empty keys for the new translation entries:
+
 - Run `python manage.py app_makemessages --locale fi`
 - Run `python manage.py app_makemessages --locale sv`
+
+Write the translations for the new translation entries in `django.po` files.
+
+Compile translations binaries for Django:
+
 - Run `python manage.py compilemessages`
+
 
 ## Management commands
 
-There are multiple management commands that are required to run. Either when first installing the software or regularly.
+Some management commands should be run regularly, some on new deployments, and
+some only in specific circumstances.
+
+The following list is not exhaustive. Check the latest list with `python manage.py`.
 
 ### Install time commands
+
+#### `app_makemessages`
+
+Generate `django.po` localization files based on the latest code.
+Needs to to be run every time you change/add/remove translated text in code.
+Then you write your translations to the newly generated keys in the `.po` files.
+
+Afterwards, run the `compilemessages` command to generate translation binaries.
+
+#### `compilemessages`
+
+Compiles translation binaries from `django.po` files.
+Needs to be run every time `.po` files are changed.
 
 #### `set_report_permissions`
 
@@ -202,6 +253,12 @@ Sets the default model specific permissions (view, add, change, delete) to the p
 #### `set_group_field_permissions`
 
 Sets field specific permissions (view, change) to the pre-defined groups.
+
+#### `copy_groups_and_service_unit_mappings`
+
+Creates copies of all user groups and service unit groups with prefix `TEST <groupname>`.
+This is needed in non-prod environments for developers, because the original groups
+are synced/wiped based on AD groups that are not in MVJ control.
 
 #### `set_ad_group_mappings`
 
@@ -248,7 +305,7 @@ one, run `create_filescanstatus_for_missing_files`.
 
 Creates invoices for rents that are due in the next month.
 
-_Should be run on the first day of every month_
+_In production, should be run on the first day of every month_
 
 Has a variant for single lease, for manual actions: `create_invoices_for_single_lease`
 
@@ -256,31 +313,43 @@ Has a variant for single lease, for manual actions: `create_invoices_for_single_
 
 Sends unsent invoices to Laske SAP for invoicing.
 
-_Should be run every night_
+_In production, should be run every night_
 
 #### `import_index`
 
 Imports index from stat.fi.
 
-_Should be run monthly after stat.fi update day_
+_In production, should be run monthly after stat.fi update day_
 
 #### `import_interest_rate`
 
 Imports reference interest rates from the Bank of Finland.
 
-_Should be run after the Bank of Finland releases new rates_
+_In production, should be run after the Bank of Finland releases new rates_
 
 #### `index_rent_equalization`
 
 Creates credit notes or invoices if index number has changed after the invoices are sent.
 
-_Should be run once a year after the previous years index has been released_
+_In production, should be run once a year after the previous years index has been released_
 
 #### `import_leasehold_transfers`
 
 Imports leasehold transfers from National Land Survey of Finland (Maanmittauslaitos).
 
-_Should be run every week_
+_In production, should be run every week_
+
+#### `mvj_import`
+
+Imports areas and usage distributions.
+
+_In production, should be run daily_
+
+#### `attach_areas`
+
+Attaches imported areas to MVJ model instances.
+
+_In production, should be run daily_
 
 #### `generate_export_report_lease_statistic`
 
@@ -288,154 +357,20 @@ Generates Lease statistics report for Export API.
 
 Can be generated in desired intervals, how often the report should need to be updated. For now daily.
 
-### Development commands
+#### `qcluster`
 
-No need to run.
+The asynchronous task runner in MVJ. Used for example for PDF and report generation,
+sending scheduled emails, scanning files for viruses, etc.
 
-#### `attach_areas`
+Not a management command as such, but is started the exact same way with `manage.py`
 
-#### `compare_rent_amounts`
-
-#### `mvj_import`
-
-#### `set_contact_cities_from_postcodes`
 
 ## Other useful information
 
 ### Resend Invoices
 
-You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/) view by selecting the invoices and chosing Resend invoice action from dropdown.
-
-### Database backup
-
-Before doing extensive deployments, backup the database:
-
-```bash
-pg_dump <db name> --host <db host address> --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
-```
-
-To restore the database from backup, run:
-
-```bash
-pg_restore --username <db username> --host <db host address> --clean --if-exists mvj-ENVIRONMENT_DATETIME.dump
-```
-
-### Sanitized database dump
-
-When taking a database dump from production to be used for development or testing
-purposes, sensitive fields must be sanitized. We use
-[Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
-for sanitizing the data.
-
-#### 0. Activate virtual environment with development dependencies
-
-Sanitizer requires some Python packages that are listed as development dependencies.
-
-If the source environment already has development dependencies installed,
-continue to next topic.
-
-```bash
-sudo su <api user>
-cd
-# <Here you should load the environment variables required by API user>
-
-# Create the virtual environment, if it doesn't exist yet:
-python -m venv venv-dev
-
-# Activate the venv-dev environment
-source venv-dev/bin/activate
-
-# Install all dependencies, if not installed yet:
-pip install -r <api directory>/requirements-dev.txt
-pip install -r <api directory>/requirements.txt
-```
-
-#### 1. Validate sanitizer configuration
-
-Sanitizer configuration is specified in `.sanitizerconfig`.
-First, validate if the current configuration is up to date with Django models:
-
-```bash
-cd <api user directory>
-# <Here you should load the environment variables required by API user>
-python manage.py validate_sanitizerconfig
-```
-
-This will tell you if any models or model fields are missing from the
-configuration based on current state of the models.
-
-#### 2. Update sanitizer configuration
-
-If you have any deficiencies in the configuration, update the configuration file.
-
-Our custom sanitizer functions are specified in `sanitizers/mvj.py`.
-The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers) are also available.
-
-`skip_rows` strategy can be used to entirely avoid dumping rows from a table
-that contains data unnecessary for development purposes.
-The table schema is still included in the dump
-
-If you need lots of changes, you can fully reset the configuration file.
-Afterwards, only stage the updates you need to version control, and avoid
-setting row sanitizers to null if they specified a sanitization function before.
-
-```bash
-# Only run this if you need the reset
-python manage.py init_sanitizer
-```
-
-#### 3. Create sanitized dump
-
-```bash
-python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%M).sql
-```
-
-Then copy the SQL file from source server to destination server, e.g. with `scp` tool.
-
-#### 4. Backup the destination database
-
-```bash
-python manage.py database_backup_before_load <db name> <db host> <db port> <db user>
-```
-
-#### 5. Load the sanitized dump
-
-Load the SQL dump with `psql`:
-
-```bash
-psql --username <db username> --dbname <db name> --host <db hostname> --port <db port> --file mvj-sanitized-ENVIRONMENT_DATETIME.sql > dump_loading.log
-```
-
-#### 6. Restore environment-specific settings
-
-```bash
-python manage.py environment_specific_restore_after_database_load <db name> <db host> <db port> <db user>
-```
-
-#### 7. Restore user access to MVJ
-
-Sanitized dump will overwrite or drop existing users, including admin users.
-Admin users were restored in previous step, but regular users will require more actions.
-
-```bash
-# Create TEST groups for non-AD users
-python manage.py copy_groups_and_service_unit_mappings
-```
-
-On first login to MVJ, your regular user will be created.
-After that, login to Django admin as your superuser and grant your regular user
-at least:
-- one group
-- one service unit
-
-#### 8. Additional restoration tasks and cleanup
-
-Some other environment-specific data might need to be restored, for daily
-work to continue as before.
-Review the generated backups and the new contents of the DB, and restore any
-tables or their rows as you require.
-
-When no longer needed, delete the backups.
+You can resend the failed invoices in [Django admin Invoices](https://mvj.dev.hel.ninja/admin/leasing/invoice/)
+view by selecting the invoices and chosing Resend invoice action from dropdown.
 
 ### Token authentication
 
@@ -446,8 +381,7 @@ From client perspective token is sent in HTTP headers (Authorization header) wit
 ### Virus scanning
 
 All uploaded files are scanned for viruses by using an external file scanning
-service, currently ClamAV Antivirus API service on Platta. The app
-`file_operations` is responsible for orchestrating the scans.
+service. The app `file_operations` is responsible for orchestrating the scans.
 
 In models, file scanning can be added through `FileScanMixin`. In viewsets, file
 downloads can be restricted to only safe files through `FileDownloadMixin` or
@@ -470,3 +404,137 @@ python manage.py qcluster
 ```
 
 Now the emails can be created as `.log` files in the given `EMAIL_FILE_PATH`. Change the file extension into `.eml` to open the email in an email application.
+### Database backup
+
+Before doing extensive deployments, backup the database:
+
+```bash
+pg_dump --dbname <dbname> --username <username> --host <db address> --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
+```
+
+To restore the database from backup, run:
+
+```bash
+pg_restore --dbname <dbname> --username <username> --host <db address> --clean --if-exists mvj-ENVIRONMENT_DATETIME.dump
+```
+
+
+## Sanitized database dump
+
+!! This instruction was written for the old on-premises server, and doesn't work
+as-is in other environments !!
+
+When taking a database dump from production to be used for development or testing
+purposes, sensitive fields must be sanitized. We use
+[Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
+for sanitizing the data.
+
+### 0. Activate virtual environment with development dependencies
+
+Sanitizer requires some Python packages that are listed as development dependencies.
+
+If the source environment already has development dependencies installed,
+continue to next topic.
+
+```bash
+sudo su <api user>
+cd
+# <Here you should load the environment variables required by API user>
+
+# Create the virtual environment, if it doesn't exist yet:
+python -m venv venv-dev
+
+# Activate the venv-dev environment
+source venv-dev/bin/activate
+
+# Install all dependencies, if not installed yet:
+pip install -r <api directory>/requirements-dev.txt
+pip install -r <api directory>/requirements.txt
+```
+
+### 1. Validate sanitizer configuration
+
+Sanitizer configuration is specified in `.sanitizerconfig`.
+First, validate if the current configuration is up to date with Django models:
+
+```bash
+cd <api user directory>
+# <Here you should load the environment variables required by API user>
+python manage.py validate_sanitizerconfig
+```
+
+This will tell you if any models or model fields are missing from the
+configuration based on current state of the models.
+
+### 2. Update sanitizer configuration
+
+If you have any deficiencies in the configuration, update the configuration file.
+
+Our custom sanitizer functions are specified in `sanitizers/mvj.py`.
+The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers) are also available.
+
+`skip_rows` strategy can be used to entirely avoid dumping rows from a table
+that contains data unnecessary for development purposes.
+The table schema is still included in the dump
+
+If you need lots of changes, you can fully reset the configuration file.
+Afterwards, only stage the updates you need to version control, and avoid
+setting row sanitizers to null if they specified a sanitization function before.
+
+```bash
+# Only run this if you need the reset
+python manage.py init_sanitizer
+```
+
+### 3. Create sanitized dump
+
+```bash
+python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%M).sql
+```
+
+Then copy the SQL file from source server to destination server, e.g. with `scp` tool.
+
+### 4. Backup the destination database
+
+```bash
+python manage.py database_backup_before_load <db name> <db host> <db port> <db user>
+```
+
+### 5. Load the sanitized dump
+
+Load the SQL dump with `psql`:
+
+```bash
+psql --username <db username> --dbname <db name> --host <db hostname> --port <db port> --file mvj-sanitized-ENVIRONMENT_DATETIME.sql > dump_loading.log
+```
+
+### 6. Restore environment-specific settings
+
+```bash
+python manage.py environment_specific_restore_after_database_load <db name> <db host> <db port> <db user>
+```
+
+### 7. Restore user access to MVJ
+
+Sanitized dump will overwrite or drop existing users, including admin users.
+Admin users were restored in previous step, but regular users will require more actions.
+
+```bash
+# Create TEST groups for non-AD users
+python manage.py copy_groups_and_service_unit_mappings
+```
+
+On first login to MVJ, your regular user will be created.
+After that, login to Django admin as your superuser and grant your regular user
+at least:
+- one group
+- one service unit
+
+### 8. Additional restoration tasks and cleanup
+
+Some other environment-specific data might need to be restored, for daily
+work to continue as before.
+Review the generated backups and the new contents of the DB, and restore any
+tables or their rows as you require.
+
+When no longer needed, delete the backups.
