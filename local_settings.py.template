@@ -11,12 +11,6 @@ Q_CLUSTER = {
     }
 }
 
-# File virus scan settings
-FLAG_FILE_SCAN = True
-FILE_SCAN_SERVICE_URL = (
-    "https://*****/api/v1/scan"  # Prefer the devtest endpoint
-)
-
 PRIVATE_FILES_LOCATION = "/code/private_files"
 
 # qcluster configs for generating email reports locally
