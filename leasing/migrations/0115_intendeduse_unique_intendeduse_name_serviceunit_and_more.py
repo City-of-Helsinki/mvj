@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("leasing", "0113_remove_vipunen_view_20250922_1103"),
+        ("leasing", "0114_remove_constance_tables"),
     ]
 
     operations = [
