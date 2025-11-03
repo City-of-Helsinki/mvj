@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     once it is added to INSTALLED_APPS again."""
 
     dependencies = [
-        ("leasing", "0113_remove_vipunen_view_20250922_1103"),
+        ("leasing", "0114_intendeduse_unique_intendeduse_name_serviceunit_and_more"),
     ]
 
     operations = [
