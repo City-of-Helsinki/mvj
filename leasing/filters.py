@@ -16,6 +16,7 @@ from leasing.models.land_use_agreement import (
     LandUseAgreementInvoiceRow,
     LandUseAgreementInvoiceSet,
 )
+from leasing.models.lease import LeaseType
 from leasing.models.receivable_type import ReceivableType
 
 from .models import (
@@ -153,6 +154,14 @@ class IntendedUseFilter(FilterSet):
     class Meta:
         model = IntendedUse
         fields = ["service_unit", "is_active"]
+
+
+class LeaseTypeFilter(FilterSet):
+    search = filters.CharFilter(field_name="name", lookup_expr="icontains")
+
+    class Meta:
+        model = LeaseType
+        fields = ["is_active"]
 
 
 class InvoiceFilter(FilterSet):

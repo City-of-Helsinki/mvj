@@ -357,7 +357,8 @@ class InspectionAdmin(FieldPermissionsModelAdmin):
 
 
 class LeaseTypeAdmin(admin.ModelAdmin):
-    list_display = ("name", "identifier", "id")
+    list_display = ("name", "identifier", "id", "is_active")
+    list_filter = ("is_active",)
     search_fields = ["name", "identifier", "id"]
     ordering = ("identifier",)
 

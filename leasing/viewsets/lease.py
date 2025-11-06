@@ -14,7 +14,12 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.filters import DistrictFilter, IntendedUseFilter, LeaseFilter
+from leasing.filters import (
+    DistrictFilter,
+    IntendedUseFilter,
+    LeaseFilter,
+    LeaseTypeFilter,
+)
 from leasing.forms import LeaseSearchForm
 from leasing.models import (
     District,
@@ -86,6 +91,7 @@ class IntendedUseViewSet(AtomicTransactionModelViewSet):
 class LeaseTypeViewSet(AtomicTransactionModelViewSet):
     queryset = LeaseType.objects.all()
     serializer_class = LeaseTypeSerializer
+    filterset_class = LeaseTypeFilter
 
 
 class ManagementViewSet(AtomicTransactionModelViewSet):
