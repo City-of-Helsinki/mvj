@@ -102,6 +102,12 @@ class LeaseType(NameModel):
         default=DueDatesPosition.START_OF_MONTH,
         max_length=30,
     )
+    # Determines whether to show the LeaseType in the UI selection list
+    is_active = models.BooleanField(
+        default=True,
+        help_text=_("Is the Lease Type active?"),
+        verbose_name=_("Is active?"),
+    )
 
     recursive_get_related_skip_relations = [
         "map_layers",
