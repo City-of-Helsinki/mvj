@@ -1147,6 +1147,7 @@ strategy:
     sap_material_code: null
     sap_order_item_number: null
     sap_project_number: null
+    is_active: null
   leasing_legacyindex:
     id: null
     index_id: null
