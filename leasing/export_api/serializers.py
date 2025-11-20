@@ -9,6 +9,7 @@ from leasing.models.contact import Contact
 from leasing.models.land_area import LeaseArea
 from leasing.models.lease import Lease
 from leasing.models.map_layers import VipunenMapLayer
+from users.models import User
 
 
 class ExportLeaseAreaSerializer(serializers.ModelSerializer):
@@ -61,6 +62,9 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
     vuokranantaja = serializers.SerializerMethodField()
     tree_ids = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField()
+    alueen_tyyppi = serializers.CharField(source="type")
+    valmistelija = serializers.SerializerMethodField()
+    vuokraus_valmisteilla = serializers.SerializerMethodField()
 
     class Meta:
         model = LeaseArea
@@ -98,6 +102,9 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
             "vuokranantaja",
             "tree_ids",
             "created_at",
+            "alueen_tyyppi",
+            "valmistelija",
+            "vuokraus_valmisteilla",
         ]
         # Make all fields read only
         read_only_fields = fields
@@ -208,6 +215,19 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
 
     def get_tree_ids(self, lease_area: LeaseArea):
         return VipunenMapLayer.get_map_layer_ids_for_lease_area(lease_area)
+
+    def get_valmistelija(self, lease_area: LeaseArea) -> str:
+        preparer: User | None = lease_area.lease.preparer
+        return f"{preparer.first_name} {preparer.last_name}" if preparer else ""
+
+    def get_vuokraus_valmisteilla(self, lease_area: LeaseArea) -> str:
+        """Is lease in preparation?
+
+        Note: Different from the UI field "Olotila" in the lease banner, which
+        is only "Valmisteilla" if start date is null.
+        """
+        start_date = lease_area.lease.start_date
+        return "kyllä" if (not start_date or start_date > self.now_date) else "ei"
 
 
 class ExportVipunenMapLayerSerializer(serializers.ModelSerializer):
