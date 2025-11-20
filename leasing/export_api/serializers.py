@@ -158,13 +158,12 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
         return ", ".join(filter(None, names))
 
     def get_vuokraus_voimassa(self, lease_area: LeaseArea):
-        is_active = (
-            lease_area.lease.end_date is None
-            or lease_area.lease.end_date > self.now_date
+        start_date = lease_area.lease.start_date
+        end_date = lease_area.lease.end_date
+        is_active = (end_date is None or end_date > self.now_date) and (
+            start_date is not None
         )
-        if is_active:
-            return "kyllä"
-        return "ei"
+        return "kyllä" if is_active else "ei"
 
     def get_perittava_vuokra_jakso(self, lease_area: LeaseArea):
         latest_payable_rent_start_date = lease_area.latest_payable_rent_start_date
