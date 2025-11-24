@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.lease.common_getters import LeaseLinkData, get_identifier_string_from_lease_link_data
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
@@ -730,6 +730,10 @@ ORDER BY
             worksheet = workbook.add_worksheet(worksheet_name)
             row_num = self.write_worksheet_heading(worksheet, formats, key)
             for row in rows:
+                if isinstance(row, dict):
+                    row["lease_identifier"] = get_identifier_string_from_lease_link_data(
+                        row
+                    )
                 self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
                 row_num += 1
 
