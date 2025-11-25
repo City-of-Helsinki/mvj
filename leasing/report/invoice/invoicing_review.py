@@ -16,7 +16,10 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import LeaseLinkData, get_identifier_string_from_lease_link_data
+from leasing.report.lease.common_getters import (
+    LeaseLinkData,
+    get_identifier_string_from_lease_link_data,
+)
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
