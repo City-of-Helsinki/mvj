@@ -60,6 +60,7 @@ RESIDENTIAL_INTENDED_USE_IDS = [
 class LeaseStatisticReportInputData(TypedDict):
     service_unit: list[int] | None
     start_date: datetime.date | None
+    end_date: datetime.date | None
     only_active_leases: bool | None
     state: str | None
 
