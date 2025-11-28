@@ -140,8 +140,8 @@ msgid "jobs"
 msgstr "Työt"
 
 msgid ""
-"Name of the timezone, e.g. \"Europe/Helsinki\" or \"UTC\". See https://en."
-"wikipedia.org/wiki/List_of_tz_database_time_zones for a list of possible "
+"Name of the timezone, e.g. \"Europe/Helsinki\" or \"UTC\". See https://"
+"en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of possible "
 "values."
 msgstr ""
 "Aikavyöhykkeen nimi. esim. \"Europe/Helsinki\" tai \"UTC\". Katso lista "
@@ -2310,6 +2310,9 @@ msgstr ""
 msgid "Due dates position"
 msgstr "Eräpäivien sijainti"
 
+msgid "Is the Lease Type active?"
+msgstr "Onko vuokraustyyppi aktiivinen?"
+
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Laji"
@@ -3835,15 +3838,6 @@ msgstr "Ruotsi"
 
 msgid "English"
 msgstr "Englanti"
-
-msgid "Sender email address. Example: john@example.com"
-msgstr "Lähettäjän sähköpostiosoite. Esimerkki: matti@example.com"
-
-msgid ""
-"Recipients of announce emails. Example: john@example.com,jane@example.com"
-msgstr ""
-"Ilmoitusviestien vastaanottajat. Esimerkki: matti@example.com,maija@example."
-"com"
 
 msgctxt "Area search lessor"
 msgid "Area use and control"

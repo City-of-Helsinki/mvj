@@ -19,11 +19,6 @@ class InvoiceRowType(Enum):
     CREDIT = "credit"
     ROUNDING = "rounding"
 
-    class Labels:
-        CHARGE = pgettext_lazy("Invoice row type", "Charge")
-        CREDIT = pgettext_lazy("Invoice row type", "Credit")
-        ROUNDING = pgettext_lazy("Invoice row type", "Rounding")
-
 
 class Migration(migrations.Migration):
 

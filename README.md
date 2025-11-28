@@ -210,15 +210,24 @@ Use your IDE's test runner capabilities, or run `pytest` from terminal.
 
 Generate empty keys for the new translation entries:
 
-- Run `python manage.py app_makemessages --locale fi`
-- Run `python manage.py app_makemessages --locale sv`
+```shell
+python manage.py app_makemessages --locale fi --locale sv
+```
 
-Write the translations for the new translation entries in `django.po` files.
+Write your translations in the new translation entries in `django.po` files...
 
-Compile translations binaries for Django:
+... and then generate the locales again, so that app_makemessages can format
+your translations in the .po files, avoiding automatic formatting changes later:
 
-- Run `python manage.py compilemessages`
+```shell
+python manage.py app_makemessages --locale fi --locale sv
+```
 
+Finally, compile translations binaries for Django:
+
+```shell
+python manage.py compilemessages
+```
 
 ## Management commands
 

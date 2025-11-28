@@ -151,8 +151,8 @@ msgid "jobs"
 msgstr "Arbeten"
 
 msgid ""
-"Name of the timezone, e.g. \"Europe/Helsinki\" or \"UTC\". See https://en."
-"wikipedia.org/wiki/List_of_tz_database_time_zones for a list of possible "
+"Name of the timezone, e.g. \"Europe/Helsinki\" or \"UTC\". See https://"
+"en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of possible "
 "values."
 msgstr ""
 "Namn på tidszonen, t.ex. \"Europe/Helsinki\" eller \"UTC\". Se en lista över "
@@ -2311,6 +2311,9 @@ msgstr ""
 msgid "Due dates position"
 msgstr "Läge för förfallodatum"
 
+msgid "Is the Lease Type active?"
+msgstr ""
+
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Art"
@@ -3604,7 +3607,6 @@ msgid ""
 "generate automatic invoices. Please contact MVJ developers about this error."
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Override receivable type is required for this rent type in service unit {}"
 msgstr ""
@@ -3832,15 +3834,6 @@ msgstr "Svenska"
 
 msgid "English"
 msgstr "Engelska"
-
-msgid "Sender email address. Example: john@example.com"
-msgstr "Avsändarens e-postadress. Exempel: matti@example.com"
-
-msgid ""
-"Recipients of announce emails. Example: john@example.com,jane@example.com"
-msgstr ""
-"Anmälningsmeddelandenas mottagare. Exempel: matti@example.com,maija@example."
-"com"
 
 msgctxt "Area search lessor"
 msgid "Area use and control"
