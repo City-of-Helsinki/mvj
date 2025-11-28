@@ -421,20 +421,17 @@ msgstr ""
 "Filskanning misslyckades. Filen är osäker att ladda ner innan den har "
 "genomsökts framgångsrikt efter virus och skadlig programvara."
 
-#, python-brace-format
-msgid "Unknown error related to virus scanning: '{error_str}'"
-msgstr "Okänt fel relaterat till virusskanning: '{error_str}'"
+msgid "Unknown error related to virus scanning: '{}'"
+msgstr "Okänt fel relaterat till virusskanning: '{}'"
 
-#, python-brace-format
-msgid "File '{file.name}' does not have an extension."
+msgid "File '{}' does not have an extension."
+msgstr ""
+
+msgid "File extension '.{}' is not allowed."
 msgstr ""
 
 #, python-brace-format
-msgid "File extension '.{ext}' is not allowed."
-msgstr ""
-
-#, python-brace-format
-msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
+msgid "File '{filename}' exceeds maximum file size of {max_size} MB."
 msgstr ""
 
 msgctxt "Form state"
@@ -3597,16 +3594,19 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"Override receivable type \"{override_receivable_type.name}\" was unexpected. "
+"Override receivable type '{type_name}' was unexpected. Service unit "
+"'{unit_name}' does not use this feature. Please contact MVJ developers about "
+"this error."
 msgstr ""
 
 msgid ""
-"Override receivable type is required for this rent type in service unit "
+"Override receivable type '{}' was unexpected. This rent type does not "
+"generate automatic invoices. Please contact MVJ developers about this error."
 msgstr ""
 
 #, python-brace-format
 msgid ""
-"Override receivabletype \"{override_receivable_type.name}\" was unexpected. "
+"Override receivable type is required for this rent type in service unit {}"
 msgstr ""
 
 msgid "Basis of rent item id {} not found"
