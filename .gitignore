@@ -5,6 +5,7 @@
 *.csv
 *.dump
 *.log
+*.xlsx
 .coverage*
 .DS_Store
 .vscode
