@@ -687,18 +687,21 @@ class RentCreateUpdateSerializer(
         if override_receivable_type and (not rents_service_unit_uses_override):
             raise serializers.ValidationError(
                 _(
-                    f'Override receivable type "{override_receivable_type.name}" was unexpected. '
-                    f'Service unit "{rent.lease.service_unit.name}" does not use this feature. '
+                    "Override receivable type '{type_name}' was unexpected. "
+                    "Service unit '{unit_name}' does not use this feature. "
                     "Please contact MVJ developers about this error."
+                ).format(
+                    type_name=override_receivable_type.name,
+                    unit_name=rent.lease.service_unit.name,
                 )
             )
         if override_receivable_type and (not rent_type_uses_override):
             raise serializers.ValidationError(
                 _(
-                    f'Override receivable type "{override_receivable_type.name}" was unexpected. '
-                    f"This rent type does not generate automatic invoices. "
+                    "Override receivable type '{}' was unexpected. "
+                    "This rent type does not generate automatic invoices. "
                     "Please contact MVJ developers about this error."
-                )
+                ).format(override_receivable_type.name)
             )
         if (
             rents_service_unit_uses_override
@@ -707,9 +710,8 @@ class RentCreateUpdateSerializer(
         ):
             raise serializers.ValidationError(
                 _(
-                    "Override receivable type is required for this rent type in service unit "
-                    f'"{rent.lease.service_unit.name}".'
-                )
+                    "Override receivable type is required for this rent type in service unit {}"
+                ).format(rent.lease.service_unit.name)
             )
 
     def minimal_validate_override_receivable_type(
@@ -745,17 +747,22 @@ class RentCreateUpdateSerializer(
         if not service_unit.use_rent_override_receivable_type:
             raise serializers.ValidationError(
                 _(
-                    f'Override receivabletype "{override_receivable_type.name}" was unexpected. '
-                    f'Override receivabletype is not used by service unit "{service_unit.name}". '
+                    "Override receivable type '{type_name}' was unexpected. "
+                    "Service unit '{unit_name}' does not use this feature. "
                     "Please contact MVJ developers about this error."
+                ).format(
+                    type_name=override_receivable_type.name,
+                    unit_name=service_unit.name,
                 )
             )
         if not rent_type_uses_override:
             raise serializers.ValidationError(
                 _(
-                    f'Override receivabletype "{override_receivable_type.name}" was unexpected. '
-                    f"This rent type does not generate automatic invoices. "
+                    "Override receivable type '{}' was unexpected. "
+                    "This rent type does not generate automatic invoices. "
                     "Please contact MVJ developers about this error."
+                ).format(
+                    override_receivable_type.name,
                 )
             )
 

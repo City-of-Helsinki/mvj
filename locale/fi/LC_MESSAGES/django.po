@@ -411,23 +411,19 @@ msgstr ""
 "Tiedoston skannaus epäonnistui. Tiedostoa ei ole turvallista ladata ennen "
 "kuin se on onnistuneesti skannattu virusten ja haittaohjelmien varalta."
 
-#, python-brace-format
-msgid "Unknown error related to virus scanning: '{error_str}'"
-msgstr "Tuntematon virhe virusskannaukseen liittyen: '{error_str}'"
+msgid "Unknown error related to virus scanning: '{}'"
+msgstr "Tuntematon virhe virusskannaukseen liittyen: '{}'"
+
+msgid "File '{}' does not have an extension."
+msgstr "Tiedostolta '{}' puuttuu tiedostopääte"
+
+msgid "File extension '.{}' is not allowed."
+msgstr "Tiedostomuoto '.{}' ei ole sallittu."
 
 #, python-brace-format
-msgid "File '{file.name}' does not have an extension."
-msgstr "Puuttuva tiedostopääte '{file.name}'"
-
-#, python-brace-format
-msgid "File extension '.{ext}' is not allowed."
-msgstr "Tiedostomuoto '.{ext}' ei ole sallittu."
-
-#, python-brace-format
-msgid "File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
+msgid "File '{filename}' exceeds maximum file size of {max_size} MB."
 msgstr ""
-"Tiedosto '{file.name}' ylittää suurimman sallitun tiedostokoon "
-"{MAX_FILE_SIZE_MB} MB"
+"Tiedosto '{filename}' ylittää suurimman sallitun tiedostokoon {max_size} MB"
 
 msgctxt "Form state"
 msgid "Work in progress"
@@ -3599,17 +3595,26 @@ msgstr "Tarkistuksen tyyppi vaaditaan kun tasotarkistus lisätään"
 
 #, python-brace-format
 msgid ""
-"Override receivable type \"{override_receivable_type.name}\" was unexpected. "
+"Override receivable type '{type_name}' was unexpected. Service unit "
+"'{unit_name}' does not use this feature. Please contact MVJ developers about "
+"this error."
 msgstr ""
+"Odottamaton automaattinen saamislaji '{type_name}'. Palvelukokonaisuus "
+"{unit_name} ei käytä tätä ominaisuutta. Ota yhteyttä MVJ:n kehittäjiin tästä "
+"virheestä."
 
 msgid ""
-"Override receivable type is required for this rent type in service unit "
+"Override receivable type '{}' was unexpected. This rent type does not "
+"generate automatic invoices. Please contact MVJ developers about this error."
 msgstr ""
+"Odottamaton saamislaji '{}'. Tämä vuokratyyppi ei luo automaattisia laskuja. "
+"Ota yhteyttä MVJ:n kehittäjiin tästä virheestä."
 
-#, python-brace-format
 msgid ""
-"Override receivabletype \"{override_receivable_type.name}\" was unexpected. "
+"Override receivable type is required for this rent type in service unit {}"
 msgstr ""
+"Automaattinen saamislaji vaaditaan tälle vuokratyypille "
+"palvelukokonaisuudessa {}"
 
 msgid "Basis of rent item id {} not found"
 msgstr "Vuokrausperiaatetta tunnisteella {} ei löydy"

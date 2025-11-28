@@ -114,7 +114,9 @@ def get_filescan_error_response(error: Exception) -> Response:
         return Response(
             status=status.HTTP_403_FORBIDDEN,
             data={
-                "error": _(f"Unknown error related to virus scanning: '{error_str}'")
+                "error": _("Unknown error related to virus scanning: '{}'").format(
+                    error_str
+                )
             },
         )
 
@@ -225,12 +227,14 @@ class FileExtensionFileMixin:
         for file in files.values():
             if "." not in file.name:
                 raise ValidationError(
-                    _(f"File '{file.name}' does not have an extension.")
+                    _("File '{}' does not have an extension.").format(file.name)
                 )
 
             ext = file.name.split(".")[-1]
             if ext not in allowed_extensions:
-                raise ValidationError(_(f"File extension '.{ext}' is not allowed."))
+                raise ValidationError(
+                    _("File extension '.{}' is not allowed.").format(ext)
+                )
 
     def _validate_file_size(self, files: MultiValueDict) -> NoReturn:
         """
@@ -243,8 +247,8 @@ class FileExtensionFileMixin:
             if file.size > MAX_FILE_SIZE_BYTES:
                 raise ValidationError(
                     _(
-                        f"File '{file.name}' exceeds maximum file size of {MAX_FILE_SIZE_MB} MB."
-                    )
+                        "File '{filename}' exceeds maximum file size of {max_size} MB."
+                    ).format(filename=file.name, max_size=MAX_FILE_SIZE_MB)
                 )
 
     def create(self, request, *args, **kwargs):
