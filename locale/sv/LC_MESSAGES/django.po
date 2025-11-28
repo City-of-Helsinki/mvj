@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 11:37+0300\n"
+"POT-Creation-Date: 2025-11-28 14:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3341,6 +3341,9 @@ msgstr ""
 "Visar en statistikrapport om alla arrenderingar eller om startdatum har "
 "angetts, de arrenderingar som har börjat vid startdatumet eller senare"
 
+msgid "Contract signing date"
+msgstr ""
+
 msgid "Lease state"
 msgstr "Status för arrenderingen"
 
@@ -3349,6 +3352,9 @@ msgstr "Senaste beslutsfattaren"
 
 msgid "Latest decision date"
 msgstr "Senaste beslutsdatum"
+
+msgid "Latest decision type"
+msgstr ""
 
 #, python-brace-format
 msgid "Permitted building volume {unit} (Residential)"

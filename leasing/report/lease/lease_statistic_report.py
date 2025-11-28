@@ -32,6 +32,7 @@ from leasing.report.lease.common_getters import (
     get_form_of_regulation,
     get_identifier_string_from_lease_link_data,
     get_latest_contract_number,
+    get_latest_contract_signing_date,
     get_lease_area_identifier,
     get_lease_identifier_string,
     get_lease_type,
@@ -116,6 +117,18 @@ def get_latest_decision_date(lease: Lease):
         return ""
 
     return latest_decision.decision_date
+
+
+def get_latest_decision_type_name(lease: Lease):
+    latest_decision = _get_latest_decision(lease)
+    if (
+        latest_decision is None
+        or latest_decision.type is None
+        or latest_decision.type.name is None
+    ):
+        return ""
+
+    return latest_decision.type.name
 
 
 def get_matti_report(obj):
@@ -469,6 +482,12 @@ class LeaseStatisticReport(AsyncReportBase):
             "label": _("Contract number"),
             "source": get_latest_contract_number,
         },
+        # Sopimuksen allekirjoituksen päivämäärä
+        "contract_signing_date": {
+            "label": _("Contract signing date"),
+            "source": get_latest_contract_signing_date,
+            "format": "date",
+        },
         # Vuokrauksen tyyppi
         "type": {"label": _("Lease type"), "source": get_lease_type, "width": 5},
         # Vuokrauksen tila
@@ -520,6 +539,12 @@ class LeaseStatisticReport(AsyncReportBase):
             "source": get_latest_decision_date,
             "format": "date",
             "width": 10,
+        },
+        # Viimeisin päätöksen tyyppi
+        "latest_decision_type_name": {
+            "label": _("Latest decision type"),
+            "source": get_latest_decision_type_name,
+            "width": 20,
         },
         # Start date
         "start_date": {"label": _("Start date"), "format": "date"},
@@ -841,11 +866,13 @@ class LeaseStatisticReport(AsyncReportBase):
             "rents",
             "rents__rent_adjustments",
             "contracts",
+            "contracts__type",
             "lease_areas",
             "lease_areas__addresses",
             "lease_areas__attachments",
             "decisions",
             "decisions__conditions",
+            "decisions__type",
             "tenants",
             "tenants__tenantcontact_set",
             "tenants__tenantcontact_set__contact",

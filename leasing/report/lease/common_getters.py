@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Protocol, TypedDict
+from typing import Any, Literal, Protocol, TypedDict
 
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -12,6 +12,8 @@ from leasing.models.lease import Lease
 RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
+
+LEASING_CONTRACT_TYPE_ID = 1  # 1 = Vuokrasopimus
 
 
 class LeaseLinkData(TypedDict):
@@ -115,17 +117,15 @@ def get_address(lease):
     return " / ".join(addresses)
 
 
-def get_latest_contract_number(lease: LeaseWithContracts):
+def _get_latest_contract(lease: LeaseWithContracts) -> Contract | None:
     contracts: list[Contract] = []
     for contract in lease.contracts.all():
-        if not contract.contract_number:
-            continue
-
-        # only accept contracts with lease contract type
-        if not contract.type_id == 1:
-            continue
-
-        contracts.append(contract)
+        is_valid_leasing_contract = (
+            contract.type.pk == LEASING_CONTRACT_TYPE_ID
+            and contract.contract_number is not None
+        )
+        if is_valid_leasing_contract:
+            contracts.append(contract)
 
     latest_contract = max(
         contracts,
@@ -136,11 +136,25 @@ def get_latest_contract_number(lease: LeaseWithContracts):
         ),
         default=None,
     )
+    return latest_contract
 
+
+def get_latest_contract_number(lease: LeaseWithContracts) -> str | int:
+    latest_contract = _get_latest_contract(lease)
     if latest_contract is None or not latest_contract.contract_number:
         return ""
 
     return latest_contract.contract_number
+
+
+def get_latest_contract_signing_date(
+    lease: LeaseWithContracts,
+) -> datetime.date | Literal[""]:
+    latest_contract = _get_latest_contract(lease)
+    if latest_contract is None or not latest_contract.signing_date:
+        return ""
+
+    return latest_contract.signing_date
 
 
 def get_preparer(obj):
