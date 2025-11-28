@@ -514,10 +514,11 @@ class LeaseStatisticReport(AsyncReportBase):
             "source": get_latest_decision_maker,
             "width": 20,
         },
-        # Viimeisin päätös
+        # Viimeisin päätöksen päivämäärä
         "latest_decision_date": {
             "label": _("Latest decision date"),
             "source": get_latest_decision_date,
+            "format": "date",
             "width": 10,
         },
         # Start date
