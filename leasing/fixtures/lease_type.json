@@ -8,7 +8,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
       "sap_project_number": "2810K00281310101",
-      "due_dates_position": "middle_of_month"
+      "due_dates_position": "middle_of_month",
+      "is_active": true
     }
   },
   {
@@ -20,7 +21,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
       "sap_project_number": "2810K00281310101",
-      "due_dates_position": "middle_of_month"
+      "due_dates_position": "middle_of_month",
+      "is_active": true
     }
   },
   {
@@ -32,7 +34,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813101001",
       "sap_project_number": "2810K00281310101",
-      "due_dates_position": "middle_of_month"
+      "due_dates_position": "middle_of_month",
+      "is_active": true
     }
   },
   {
@@ -44,7 +47,8 @@
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813101002",
       "sap_project_number": "2810K00281310102",
-      "due_dates_position": "middle_of_month"
+      "due_dates_position": "middle_of_month",
+      "is_active": true
     }
   },
   {
@@ -56,7 +60,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104106",
       "sap_project_number": "2810K00281310412",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -68,7 +73,8 @@
       "sap_material_code": "20002006",
       "sap_order_item_number": "2813104100",
       "sap_project_number": "2810K00281310406",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -80,7 +86,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
       "sap_project_number": "2810K00281310411",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -92,7 +99,8 @@
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813104101",
       "sap_project_number": "2810K00281310407",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -104,7 +112,8 @@
       "sap_material_code": "20002008",
       "sap_order_item_number": "2813104102",
       "sap_project_number": "2810K00281310408",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -116,7 +125,8 @@
       "sap_material_code": "20002008",
       "sap_order_item_number": "2813104102",
       "sap_project_number": "2810K00281310408",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -128,7 +138,8 @@
       "sap_material_code": "20002005",
       "sap_order_item_number": "2813104103",
       "sap_project_number": "2810K00281310409",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -140,7 +151,8 @@
       "sap_material_code": "20002005",
       "sap_order_item_number": "2813104103",
       "sap_project_number": "2810K00281310409",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -152,7 +164,8 @@
       "sap_material_code": "20002007",
       "sap_order_item_number": "2813104104",
       "sap_project_number": "2810K00281310410",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -164,19 +177,21 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
       "sap_project_number": "2810K00281310411",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 15,
     "fields": {
-      "name": "Kokoontumisluvat",
+      "name": "Kokoontumisluvat (ei käytössä)",
       "identifier": "O3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813102006",
       "sap_project_number": "2810K00281310206",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": false
     }
   },
   {
@@ -188,7 +203,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813104105",
       "sap_project_number": "2810K00281310411",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -200,7 +216,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100001",
       "sap_project_number": "2810K00281310001",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -212,19 +229,21 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 19,
     "fields": {
-      "name": "Helsingin Energia",
+      "name": "Helen (Helsingin Energia)",
       "identifier": "V2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
       "sap_project_number": "2810K00281310002",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -236,19 +255,21 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 21,
     "fields": {
-      "name": "Liikennelaitos",
+      "name": "HKL (Liikennelaitos)",
       "identifier": "V4",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
       "sap_project_number": "2810K00281310002",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -260,115 +281,125 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
       "sap_project_number": "2810K00281310002",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 23,
     "fields": {
-      "name": "Keskuspesula",
+      "name": "Keskuspesula (ei käytössä)",
       "identifier": "V3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100002",
       "sap_project_number": "2810K00281310002",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": false
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 24,
     "fields": {
-      "name": "Liikuntavirasto",
+      "name": "KUVA (Liikuntavirasto)",
       "identifier": "Y3",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 25,
     "fields": {
-      "name": "Rakennusvirasto",
+      "name": "Muut sisäiset (Rakennusvirasto - ei käytössä)",
       "identifier": "Y5",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": false
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 26,
     "fields": {
-      "name": "Sosiaalivirasto",
+      "name": "SOTEPE (Sosiaalivirasto)",
       "identifier": "Y6",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 27,
     "fields": {
-      "name": "Terveysvirasto",
+      "name": "SOTEPE (Terveysvirasto)",
       "identifier": "Y7",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 28,
     "fields": {
-      "name": "Opetusvirasto",
+      "name": "KASKO (Opetusvirasto)",
       "identifier": "Y2",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 29,
     "fields": {
-      "name": "Pelastuslaitos",
+      "name": "SOTEPE (Pelastuslaitos)",
       "identifier": "Y4",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 30,
     "fields": {
-      "name": "Korkeasaari",
+      "name": "Korkeasaari (ei käytössä)",
       "identifier": "Y1",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": false
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 31,
     "fields": {
-      "name": "Nuorisoasiainkeskus",
+      "name": "KUVA (Nuorisoasiainkeskus)",
       "identifier": "Y8",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -380,7 +411,8 @@
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -392,7 +424,8 @@
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -404,7 +437,8 @@
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -416,19 +450,21 @@
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 36,
     "fields": {
-      "name": "SIIRTOLAPUUTARHA ei käytössä",
+      "name": "Siirtolapuutarha (ei käytössä)",
       "identifier": "R0",
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": false
     }
   },
   {
@@ -440,19 +476,21 @@
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 38,
     "fields": {
-      "name": "Varhaiskasvatusvirasto",
+      "name": "KASKO (Varhaiskasvatusvirasto)",
       "identifier": "Y0",
       "sap_material_code": "20002009",
       "sap_order_item_number": "2813100003",
       "sap_project_number": "2810K00281310003",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
@@ -464,19 +502,21 @@
       "sap_material_code": "10003610",
       "sap_order_item_number": "2813104100",
       "sap_project_number": "2810K00281310406",
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   },
   {
     "model": "leasing.leasetype",
     "pk": 40,
     "fields": {
-      "name": "Liikuntaviraston ulosvuokraus",
+      "name": "KUVA:n ulosvuokraus",
       "identifier": "S1",
       "sap_material_code": null,
       "sap_order_item_number": null,
       "sap_project_number": null,
-      "due_dates_position": "start_of_month"
+      "due_dates_position": "start_of_month",
+      "is_active": true
     }
   }
 ]
