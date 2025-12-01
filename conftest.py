@@ -25,6 +25,7 @@ from leasing.models import (
     Contact,
     CustomDetailedPlan,
     Decision,
+    DecisionType,
     District,
     InfillDevelopmentCompensation,
     InfillDevelopmentCompensationLease,
@@ -548,6 +549,12 @@ class FormFactory(factory.django.DjangoModelFactory):
 class DecisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Decision
+
+
+@register
+class DecisionTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = DecisionType
 
 
 @register
