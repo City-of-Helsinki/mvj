@@ -145,36 +145,39 @@ class CreditDecision(TimeStampedModel):
         Create credit decision object by the Asiakastieto JSON data.
         """
 
-        customer_data = json_data["companyResponse"]["decisionProposalData"][
-            "customerData"
-        ]
-        official_name = customer_data["name"]
-        business_id = customer_data["businessId"]
+        customer_data = (
+            json_data.get("companyResponse")
+            .get("decisionProposalData", {})
+            .get("customerData", {})
+        )
+        official_name = customer_data.get("name", "")
+        business_id = customer_data.get("businessId", "")
+        company_data = json_data.get("companyResponse", {}).get("companyData", {})
+        identification_data = company_data.get("identificationData", {})
 
-        if "companyData" in json_data["companyResponse"]:
-            company_data = json_data["companyResponse"]["companyData"]
-            address = company_data["identificationData"]["address"]["street"]
-            address += ", " + company_data["identificationData"]["address"]["zip"]
-            address += " " + company_data["identificationData"]["address"]["town"]
-            phone_number = ""
-            if company_data["identificationData"]["contactInformation"]:
-                phone_number = company_data["identificationData"]["contactInformation"][
-                    "phone"
-                ]
-            industry_code = company_data["identificationData"]["lineOfBusiness"][
-                "lineOfBusinessCode"
-            ]
-            business_entity = company_data["identificationData"]["companyFormText"]
-            operation_start_date = None
-            if company_data["startDate"]:
-                operation_start_date = datetime.fromtimestamp(
-                    company_data["startDate"] / 1000.0
-                )
+        address = identification_data.get("address", {}).get("street", "")
+        address += ", " + identification_data.get("address", {}).get("zip", "")
+        address += " " + identification_data.get("address", {}).get("town", "")
+        phone_number = identification_data.get("contactInformation", {}).get(
+            "phone", ""
+        )
+        industry_code = identification_data.get("lineOfBusiness", {}).get(
+            "lineOfBusinessCode", ""
+        )
+        business_entity = identification_data.get("companyFormText", "")
+        operation_start_date = None
+        if company_data.get("startDate"):
+            operation_start_date = datetime.fromtimestamp(
+                company_data.get("startDate") / 1000.0
+            )
 
-        proposal_data = json_data["companyResponse"]["decisionProposalData"][
-            "decisionProposal"
-        ]["proposal"]
-        status = map_credit_decision_status(proposal_data["code"])
+        proposal_data = (
+            json_data.get("companyResponse", {})
+            .get("decisionProposalData", {})
+            .get("decisionProposal", {})
+            .get("proposal", "")
+        )
+        status = map_credit_decision_status(proposal_data.get("code"))
 
         credit_decision = CreditDecision.objects.create(
             customer=customer,
