@@ -752,6 +752,10 @@ msgctxt "Lease state"
 msgid "Power of attorney"
 msgstr "Fullmakt"
 
+msgctxt "Lease state"
+msgid "Preliminary"
+msgstr "Föravtal"
+
 msgctxt "Lease relation"
 msgid "Transfer"
 msgstr "Överföring"
