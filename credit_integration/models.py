@@ -145,37 +145,50 @@ class CreditDecision(TimeStampedModel):
         Create credit decision object by the Asiakastieto JSON data.
         """
 
-        customer_data = (
-            json_data.get("companyResponse")
-            .get("decisionProposalData", {})
-            .get("customerData", {})
+        def get_nested(d, *keys, default={}):
+            cur = d
+            for k in keys:
+                cur = cur.get(k, {}) or {}
+            if cur == {}:
+                cur = default
+            return cur
+
+        customer_data = get_nested(
+            json_data, "companyResponse", "decisionProposalData", "customerData"
         )
+
         official_name = customer_data.get("name", "")
         business_id = customer_data.get("businessId", "")
-        company_data = json_data.get("companyResponse", {}).get("companyData", {})
+        company_data = get_nested(json_data, "companyResponse", "companyData")
         identification_data = company_data.get("identificationData", {})
+        address_data = identification_data.get("address", {})
 
-        address = identification_data.get("address", {}).get("street", "")
-        address += ", " + identification_data.get("address", {}).get("zip", "")
-        address += " " + identification_data.get("address", {}).get("town", "")
-        phone_number = identification_data.get("contactInformation", {}).get(
-            "phone", ""
+        address = ""
+        if address_data:
+            street = address_data.get("street", "")
+            zip_code = address_data.get("zip", "")
+            town = address_data.get("town", "")
+            address = f"{street}, {zip_code} {town}"
+
+        phone_number = get_nested(
+            identification_data, "contactInformation", "phone", default=""
         )
-        industry_code = identification_data.get("lineOfBusiness", {}).get(
-            "lineOfBusinessCode", ""
+        industry_code = get_nested(
+            identification_data, "lineOfBusiness", "lineOfBusinessCode", default=""
         )
         business_entity = identification_data.get("companyFormText", "")
-        operation_start_date = None
-        if company_data.get("startDate"):
-            operation_start_date = datetime.fromtimestamp(
-                company_data.get("startDate") / 1000.0
-            )
 
-        proposal_data = (
-            json_data.get("companyResponse", {})
-            .get("decisionProposalData", {})
-            .get("decisionProposal", {})
-            .get("proposal", "")
+        start_date = company_data.get("startDate")
+        operation_start_date = None
+        if start_date:
+            operation_start_date = datetime.fromtimestamp(start_date / 1000.0)
+
+        proposal_data = get_nested(
+            json_data,
+            "companyResponse",
+            "decisionProposalData",
+            "decisionProposal",
+            "proposal",
         )
         status = map_credit_decision_status(proposal_data.get("code"))
 
@@ -193,7 +206,7 @@ class CreditDecision(TimeStampedModel):
             original_data=json_data,
         )
 
-        for factor in proposal_data["factorRow"]:
+        for factor in proposal_data.get("factorRow", {}):
             reason, _ = CreditDecisionReason.objects.update_or_create(
                 reason_code=factor["code"], defaults={"reason": factor["text"]}
             )
