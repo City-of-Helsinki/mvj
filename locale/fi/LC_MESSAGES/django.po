@@ -752,6 +752,10 @@ msgctxt "Lease state"
 msgid "Power of attorney"
 msgstr "Valtakirja"
 
+msgctxt "Lease state"
+msgid "Preliminary"
+msgstr "Esisopimus"
+
 msgctxt "Lease relation"
 msgid "Transfer"
 msgstr "Siirto"
