@@ -145,36 +145,38 @@ class CreditDecision(TimeStampedModel):
         Create credit decision object by the Asiakastieto JSON data.
         """
 
-        customer_data = json_data["companyResponse"]["decisionProposalData"][
-            "customerData"
-        ]
-        official_name = customer_data["name"]
-        business_id = customer_data["businessId"]
+        company_response = json_data.get("companyResponse", {}) or {}
+        decision_proposal_data = company_response.get("decisionProposalData", {}) or {}
+        customer_data = decision_proposal_data.get("customerData", {}) or {}
+        company_data = company_response.get("companyData", {}) or {}
+        identification_data = company_data.get("identificationData", {}) or {}
+        address_data = identification_data.get("address", {}) or {}
 
-        if "companyData" in json_data["companyResponse"]:
-            company_data = json_data["companyResponse"]["companyData"]
-            address = company_data["identificationData"]["address"]["street"]
-            address += ", " + company_data["identificationData"]["address"]["zip"]
-            address += " " + company_data["identificationData"]["address"]["town"]
-            phone_number = ""
-            if company_data["identificationData"]["contactInformation"]:
-                phone_number = company_data["identificationData"]["contactInformation"][
-                    "phone"
-                ]
-            industry_code = company_data["identificationData"]["lineOfBusiness"][
-                "lineOfBusinessCode"
-            ]
-            business_entity = company_data["identificationData"]["companyFormText"]
-            operation_start_date = None
-            if company_data["startDate"]:
-                operation_start_date = datetime.fromtimestamp(
-                    company_data["startDate"] / 1000.0
-                )
+        official_name = customer_data.get("name", "")
+        business_id = customer_data.get("businessId", "")
 
-        proposal_data = json_data["companyResponse"]["decisionProposalData"][
-            "decisionProposal"
-        ]["proposal"]
-        status = map_credit_decision_status(proposal_data["code"])
+        address = ""
+        if address_data:
+            street = address_data.get("street", "")
+            zip_code = address_data.get("zip", "")
+            town = address_data.get("town", "")
+            address = f"{street}, {zip_code} {town}"
+
+        contact_information = identification_data.get("contactInformation", {}) or {}
+        phone_number = contact_information.get("phone", "")
+
+        line_of_business = identification_data.get("lineOfBusiness", {}) or {}
+        industry_code = line_of_business.get("lineOfBusinessCode", "")
+        business_entity = identification_data.get("companyFormText", "")
+
+        start_date = company_data.get("startDate")
+        operation_start_date = None
+        if start_date:
+            operation_start_date = datetime.fromtimestamp(start_date / 1000.0)
+
+        decision_proposal = decision_proposal_data.get("decisionProposal", {}) or {}
+        proposal_data = decision_proposal.get("proposal", {}) or {}
+        status = map_credit_decision_status(proposal_data.get("code"))
 
         credit_decision = CreditDecision.objects.create(
             customer=customer,
@@ -190,7 +192,7 @@ class CreditDecision(TimeStampedModel):
             original_data=json_data,
         )
 
-        for factor in proposal_data["factorRow"]:
+        for factor in proposal_data.get("factorRow", []):
             reason, _ = CreditDecisionReason.objects.update_or_create(
                 reason_code=factor["code"], defaults={"reason": factor["text"]}
             )

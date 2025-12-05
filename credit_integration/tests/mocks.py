@@ -128,6 +128,48 @@ def mock_return_company_json_data(business_id):
     }
 
 
+def mock_return_minimal_company_json_data(business_id):
+    return {
+        "companyResponse": {
+            "responseHeader": {
+                "languageCode": "FI",
+                "timeStamp": {"date": 1634590800000, "time": 23365000},
+                "responseStatus": "0",
+                "currencyCode": "EUR",
+            },
+            "decisionProposalData": {
+                "usecode": "1",
+                "model": {"code": "HEASYR", "name": "Yritysluottopäätökset"},
+                "customerData": {
+                    "customerDataRow": [],
+                    "customerProductDataRow": [],
+                    "name": "Solid Corporation Oy",
+                    "businessId": business_id,
+                    "personId": None,
+                    "insertedInMonitoringText": None,
+                    "customerKey": None,
+                },
+                "decisionProposal": None,
+            },
+            "companyData": {
+                "identificationData": {
+                    "businessId": "30101929",
+                    "name": "Solid Corporation Oy",
+                    "domicileCode": None,
+                    "domicile": None,
+                    "companyLanguageCode": None,
+                    "companyLanguageText": None,
+                    "postalAddress": None,
+                    "address": None,
+                    "companyForm": "OY",
+                },
+                "startDate": None,
+            },
+        },
+        "groupResponse": None,
+    }
+
+
 def mock_return_consumer_json_data(identity_number):
     return {
         "consumerResponse": {

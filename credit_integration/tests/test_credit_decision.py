@@ -15,6 +15,7 @@ from credit_integration.tests.mocks import (
     mock_return_company_sanctions_json_data,
     mock_return_consumer_json_data,
     mock_return_consumer_sanctions_json_data,
+    mock_return_minimal_company_json_data,
 )
 from credit_integration.views import (
     _sort_dict,
@@ -144,6 +145,37 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
     assert result_credit_decision.claimant == user
     assert result_credit_decision.original_data
     assert CreditDecisionLog.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_credit_decision_by_json_with_partial_data(
+    user_factory,
+):
+    user_first_name = "John"
+    user_last_name = "Doe"
+    user = user_factory(first_name=user_first_name, last_name=user_last_name)
+    business_id = "12345678"
+
+    json_data = mock_return_minimal_company_json_data(business_id)
+    minimal_credit_decision = CreditDecision.create_credit_decision_by_json(
+        json_data, user
+    )
+    empty_credit_decision = CreditDecision.create_credit_decision_by_json({}, user)
+
+    assert minimal_credit_decision.official_name
+    assert minimal_credit_decision.business_id == business_id
+    assert minimal_credit_decision.address == ""
+    assert minimal_credit_decision.phone_number == ""
+    assert minimal_credit_decision.industry_code == ""
+    assert minimal_credit_decision.reasons
+    assert minimal_credit_decision.claimant == user
+    assert minimal_credit_decision.original_data
+
+    assert empty_credit_decision.official_name == ""
+    assert empty_credit_decision.address == ""
+    assert empty_credit_decision.phone_number == ""
+    assert empty_credit_decision.industry_code == ""
+    assert empty_credit_decision.claimant == user
 
 
 @pytest.mark.django_db
