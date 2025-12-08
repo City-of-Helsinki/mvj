@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from leasing.enums import InvoiceState
 from leasing.models import Invoice, LeaseType, ServiceUnit
-from leasing.report.excel import ExcelCell, ExcelRow, SumCell
+from leasing.report.excel import ExcelCell, ExcelRow, FormatType, SumCell
 from leasing.report.lease.common_getters import get_lease_link_data_from_related_object
 from leasing.report.report_base import ReportBase
 
@@ -66,17 +66,26 @@ class InvoicesInPeriodReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_related_object,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
         "state": {
             "label": _("State"),
             "serializer_field": EnumField(enum=InvoiceState),
         },
-        "due_date": {"label": _("Due date"), "format": "date"},
-        "total_amount": {"label": _("Total amount"), "format": "money", "width": 13},
-        "billed_amount": {"label": _("Billed amount"), "format": "money", "width": 13},
+        "due_date": {"label": _("Due date"), "format": FormatType.DATE.value},
+        "total_amount": {
+            "label": _("Total amount"),
+            "format": FormatType.MONEY.value,
+            "width": 13,
+        },
+        "billed_amount": {
+            "label": _("Billed amount"),
+            "format": FormatType.MONEY.value,
+            "width": 13,
+        },
         "outstanding_amount": {
             "label": _("Outstanding amount"),
-            "format": "money",
+            "format": FormatType.MONEY.value,
             "width": 13,
         },
         "recipient_name": {

@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, LeaseState, TenantContactType
 from leasing.models import Lease, ServiceUnit
+from leasing.report.excel import FormatType
 from leasing.report.lease.common_getters import get_lease_link_data
 from leasing.report.report_base import ReportBase
 
@@ -173,8 +174,13 @@ class ReservationsReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data,
             "label": _("Reservation id"),
+            "format": FormatType.URL.value,
         },
-        "area": {"source": get_area, "label": _("Lease area"), "width": 30},
+        "area": {
+            "source": get_area,
+            "label": _("Lease area"),
+            "width": 30,
+        },
         "address": {"source": get_address, "label": _("Address"), "width": 50},
         "reservee_name": {
             "source": get_tenants,
@@ -186,8 +192,8 @@ class ReservationsReport(ReportBase):
             "label": _("Reservation procedure"),
             "width": 50,
         },
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
+        "start_date": {"label": _("Start date"), "format": FormatType.DATE.value},
+        "end_date": {"label": _("End date"), "format": FormatType.DATE.value},
         "plan_unit_intended_uses": {
             "source": get_plan_unit_intended_uses,
             "label": _("Plan unit intended use"),

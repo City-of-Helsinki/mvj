@@ -30,7 +30,6 @@ from leasing.report.lease.common_getters import (
     get_district,
     get_form_of_management,
     get_form_of_regulation,
-    get_identifier_string_from_lease_link_data,
     get_latest_contract_number,
     get_latest_contract_signing_date,
     get_lease_area_identifier,
@@ -1004,9 +1003,9 @@ class LeaseStatisticReport(AsyncReportBase):
         first_data_row_num = row_number
         for row in data:
             if isinstance(row, dict):
-                row["lease_identifier"] = get_identifier_string_from_lease_link_data(
-                    row
-                )
+                # row["lease_identifier"] = get_identifier_string_from_lease_link_data(
+                #    row
+                # )
                 self.write_dict_row_to_worksheet(worksheet, formats, row_number, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:

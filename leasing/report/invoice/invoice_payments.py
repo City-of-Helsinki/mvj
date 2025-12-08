@@ -1,12 +1,13 @@
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.models.invoice import InvoicePayment
-from leasing.report.excel import ExcelCell, ExcelRow, SumCell
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.excel import ExcelCell, ExcelRow, FormatType, SumCell
+from leasing.report.lease.common_getters import ReportURL
 from leasing.report.report_base import ReportBase
 
 
@@ -16,16 +17,16 @@ def get_invoice_number(obj):
 
 def get_lease_link_data_from_invoice_payment(
     invoice_payment: InvoicePayment,
-) -> LeaseLinkData:
+) -> ReportURL:
     try:
         return {
-            "id": invoice_payment.invoice.lease.id,
-            "identifier": invoice_payment.invoice.lease.get_identifier_string(),
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{invoice_payment.invoice.lease.id}",
+            "name": invoice_payment.invoice.lease.get_identifier_string(),
         }
     except AttributeError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -53,9 +54,14 @@ class InvoicePaymentsReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_invoice_payment,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
-        "paid_date": {"label": _("Paid date"), "format": "date"},
-        "paid_amount": {"label": _("Paid amount"), "format": "money", "width": 13},
+        "paid_date": {"label": _("Paid date"), "format": FormatType.DATE.value},
+        "paid_amount": {
+            "label": _("Paid amount"),
+            "format": FormatType.MONEY.value,
+            "width": 13,
+        },
         "filing_code": {"label": _("Filing code")},
     }
 

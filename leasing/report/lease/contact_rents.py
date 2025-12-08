@@ -10,6 +10,7 @@ from leasing.enums import TenantContactType
 from leasing.models import Contact, Lease
 from leasing.models.tenant import Tenant, TenantContact
 from leasing.models.types import TenantShares
+from leasing.report.excel import FormatType
 from leasing.report.lease.common_getters import (
     get_address,
     get_lease_area_identifier,
@@ -35,26 +36,27 @@ class ContactRentsReport(ReportBase):
             "label": _("Lease identifier"),
             "source": get_lease_link_data,
             "width": 13,
+            "format": FormatType.URL.value,
         },
         "lease_area_identifier": {
             "label": _("Lease area identifier"),
             "source": get_lease_area_identifier,
             "width": 20,
         },
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
+        "start_date": {"label": _("Start date"), "format": FormatType.DATE.value},
+        "end_date": {"label": _("End date"), "format": FormatType.DATE.value},
         "address": {"label": _("Address"), "source": get_address, "width": 20},
         "tenants": {"label": _("Tenants"), "source": get_tenants, "width": 40},
         "rent_amount": {
             "label": _("Rent amount"),
             "source": "_report__rent_for_period",
-            "format": "money",
+            "format": FormatType.MONEY.value,
             "width": 13,
         },
         "rent_amount_for_contact": {
             "label": _("Rent amount for contact"),
             "source": "_report__tenants_rent_for_period",
-            "format": "money",
+            "format": FormatType.MONEY.value,
             "width": 13,
         },
     }

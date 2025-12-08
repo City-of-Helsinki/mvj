@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -6,22 +7,23 @@ from enumfields.drf import EnumField
 
 from leasing.enums import RentAdjustmentAmountType, RentAdjustmentType, SubventionType
 from leasing.models import RentAdjustment, ServiceUnit
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.excel import FormatType
+from leasing.report.lease.common_getters import ReportURL
 from leasing.report.report_base import ReportBase
 
 
 def get_lease_link_data_from_rent_adjustment(
     rent_adjustment: RentAdjustment,
-) -> LeaseLinkData:
+) -> ReportURL:
     try:
         return {
-            "id": rent_adjustment.rent.lease.id,
-            "identifier": rent_adjustment.rent.lease.get_identifier_string(),
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{rent_adjustment.rent.lease.id}",
+            "name": rent_adjustment.rent.lease.get_identifier_string(),
         }
     except AttributeError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -64,20 +66,21 @@ class RentAdjustmentsReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_rent_adjustment,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
         "type": {
             "label": _("Type"),
             "serializer_field": EnumField(enum=RentAdjustmentType),
         },
         "intended_use": {"source": get_intended_use, "label": _("Intended use")},
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
+        "start_date": {"label": _("Start date"), "format": FormatType.DATE.value},
+        "end_date": {"label": _("End date"), "format": FormatType.DATE.value},
         "full_amount": {"label": _("Full amount")},
         "amount_type": {
             "label": _("Amount type"),
             "serializer_field": EnumField(enum=RentAdjustmentAmountType),
         },
-        "amount_left": {"label": _("Amount left"), "format": "money"},
+        "amount_left": {"label": _("Amount left"), "format": FormatType.MONEY.value},
         "subvention_type": {
             "label": _("Subvention type"),
             "serializer_field": EnumField(enum=SubventionType),
@@ -85,11 +88,11 @@ class RentAdjustmentsReport(ReportBase):
         },
         "subvention_base_percent": {
             "label": _("Subvention base percent"),
-            "format": "percent",
+            "format": FormatType.PERCENTAGE.value,
         },
         "subvention_graduated_percent": {
             "label": _("Graduated subvention percent"),
-            "format": "percent",
+            "format": FormatType.PERCENTAGE.value,
         },
         "management_subvention": {
             "source": get_management_subventions,
