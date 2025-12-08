@@ -6,11 +6,13 @@ from xlsxwriter.utility import xl_range, xl_rowcol_to_cell
 
 class FormatType(Enum):
     BOLD = "bold"
+    BOOLEAN = "boolean"
     DATE = "date"
     MONEY = "money"
     BOLD_MONEY = "bold_money"
     PERCENTAGE = "percentage"
     AREA = "area"
+    URL = "url"
 
 
 class ExcelCell:

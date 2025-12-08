@@ -112,20 +112,20 @@ class ExtraCityRentReport(ReportBase):
         "end_date": forms.DateField(label=_("End date"), required=True),
     }
     output_fields = {
-        "lease_identifier": {"label": _("Lease id")},
+        "lease_identifier": {"label": _("Lease id"), "format": FormatType.URL.value},
         "tenant_name": {"label": _("Tenant name"), "width": 50},
         "area_identifier": {"label": _("Area identifier"), "width": 50},
-        "area": {"label": _("Area amount"), "format": "area"},
+        "area": {"label": _("Area amount"), "format": FormatType.AREA.value},
         "area_address": {"label": _("Address"), "width": 50},
-        "rent": {"label": _("Rent"), "format": "money", "width": 13},
+        "rent": {"label": _("Rent"), "format": FormatType.MONEY.value, "width": 13},
         "contract_number": {"label": _("Contract number"), "is_numeric": True},
         "lease_area_identifier": {"label": _("Lease area identifier"), "width": 20},
         "address": {"label": _("Address"), "width": 20},
         "tenants": {"label": _("Tenants"), "width": 40},
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
+        "start_date": {"label": _("Start date"), "format": FormatType.DATE.value},
+        "end_date": {"label": _("End date"), "format": FormatType.DATE.value},
         "intended_use": {"label": _("Intended use")},
-        "total_area": {"label": _("Total area"), "format": "area"},
+        "total_area": {"label": _("Total area"), "format": FormatType.AREA.value},
     }
     automatic_excel_column_labels = False
 

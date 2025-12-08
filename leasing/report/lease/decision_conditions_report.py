@@ -1,21 +1,23 @@
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Condition, ConditionType, ServiceUnit
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.excel import FormatType
+from leasing.report.lease.common_getters import ReportURL
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_link_data_from_decision_condition(condition: Condition) -> LeaseLinkData:
+def get_lease_link_data_from_decision_condition(condition: Condition) -> ReportURL:
     try:
         return {
-            "id": condition.decision.lease.id,
-            "identifier": condition.decision.lease.get_identifier_string(),
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{condition.decision.lease.id}",
+            "name": condition.decision.lease.get_identifier_string(),
         }
     except AttributeError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -92,9 +94,14 @@ class DecisionConditionsReport(ReportBase):
     output_fields = {
         "lease_identifier": {
             "source": get_lease_link_data_from_decision_condition,
-            "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
-        "area": {"source": get_area, "label": _("Lease area"), "width": 30},
+        "area": {
+            "source": get_area,
+            "label": _("Lease area"),
+            "format": FormatType.AREA.value,
+            "width": 30,
+        },
         "address": {"source": get_address, "label": _("Address"), "width": 50},
         "type": {"source": get_condition_type, "label": _("Type"), "width": 25},
         "supervision_date": {

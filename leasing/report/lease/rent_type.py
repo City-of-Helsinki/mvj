@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import ContactType, RentType, TenantContactType
 from leasing.models import Rent, ServiceUnit
+from leasing.report.excel import FormatType
 from leasing.report.lease.common_getters import get_lease_link_data_from_related_object
 from leasing.report.report_base import ReportBase
 
@@ -68,6 +69,9 @@ def get_rent_type(obj: Rent):
     return str(obj.type.label)
 
 
+# TODO: Not in use?
+
+
 class RentTypeReport(ReportBase):
     name = _("Rent type leases")
     description = _("Show leases with a certain rent type")
@@ -89,6 +93,7 @@ class RentTypeReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_related_object,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
         "tenant_name": {
             "source": get_tenants,
@@ -114,9 +119,13 @@ class RentTypeReport(ReportBase):
         "start_date": {
             "source": get_start_date,
             "label": _("Start date"),
-            "format": "date",
+            "format": FormatType.DATE.value,
         },
-        "end_date": {"source": get_end_date, "label": _("End date"), "format": "date"},
+        "end_date": {
+            "source": get_end_date,
+            "label": _("End date"),
+            "format": FormatType.DATE.value,
+        },
         "intended_use": {"source": get_intended_use, "label": _("Intended use")},
         "rent_type": {"source": get_rent_type, "label": _("Rent type")},
     }

@@ -5,6 +5,7 @@ from operator import itemgetter
 
 import xlsxwriter
 from django import forms
+from django.conf import settings
 from django.db import DataError, connection
 from django.db.backends.utils import CursorWrapper
 from django.utils import timezone
@@ -16,7 +17,7 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.lease.common_getters import ReportURL
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
@@ -39,21 +40,21 @@ EXCLUDED_RECEIVABLE_TYPE_NAMES = [
 
 def get_lease_link_data_from_report_row(
     row: InvoicingReviewReportRow | InvoicingGapsRow,
-) -> LeaseLinkData:
+) -> ReportURL:
     try:
         if row["section"]:
             return {
-                "id": None,
-                "identifier": None,
+                "url": None,
+                "name": None,
             }
         return {
-            "id": row["lease_id"],
-            "identifier": row["lease_identifier"],
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{row.get('lease_id')}",
+            "name": row.get("lease_identifier"),
         }
     except KeyError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -323,9 +324,16 @@ class InvoicingReviewReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_report_row,
             "label": gettext_lazy("Lease id"),
+            "format": FormatType.URL.value,
         },
-        "start_date": {"label": gettext_lazy("Start date"), "format": "date"},
-        "end_date": {"label": gettext_lazy("End date"), "format": "date"},
+        "start_date": {
+            "label": gettext_lazy("Start date"),
+            "format": FormatType.DATE.value,
+        },
+        "end_date": {
+            "label": gettext_lazy("End date"),
+            "format": FormatType.DATE.value,
+        },
         "note": {"label": gettext_lazy("Note")},
     }
     automatic_excel_column_labels = False

@@ -19,9 +19,6 @@ from rest_framework.response import Response
 
 from leasing.report.excel import ExcelRow, FormatType
 from leasing.report.forms import ReportFormBase
-from leasing.report.lease.common_getters import (
-    get_identifier_string_from_lease_link_data,
-)
 from leasing.report.serializers import ReportOutputSerializer
 
 
@@ -100,10 +97,10 @@ class ReportBase:
             if output_field.get("is_numeric") is None:
                 is_numeric = False
                 if output_field.get("format") in [
-                    "money",
-                    "bold_money",
-                    "percentage",
-                    "area",
+                    FormatType.MONEY.value,
+                    FormatType.BOLD_MONEY.value,
+                    FormatType.PERCENTAGE.value,
+                    FormatType.AREA.value,
                 ]:
                     is_numeric = True
                 metadata[field_name]["is_numeric"] = is_numeric
@@ -248,9 +245,6 @@ class ReportBase:
         first_data_row_num = row_num
         for row in data:
             if isinstance(row, dict):
-                row["lease_identifier"] = get_identifier_string_from_lease_link_data(
-                    row
-                )
                 self.write_dict_row_to_worksheet(worksheet, formats, row_num, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:
@@ -273,7 +267,7 @@ class ReportBase:
 
         return output.getvalue()
 
-    def write_dict_row_to_worksheet(self, worksheet, formats, row_num, row):
+    def write_dict_row_to_worksheet(self, worksheet, formats, row_num, row: dict):
         """
         Writes row on worksheet on given row number from dict with relevant formatting.
         """
@@ -284,25 +278,28 @@ class ReportBase:
             field_format_name = self.get_output_field_attr(field_name, "format")
 
             match field_format_name:
-                case "date":
+                case FormatType.DATE.value:
                     field_format = formats[FormatType.DATE]
-                case "percentage":
+                case FormatType.PERCENTAGE.value:
                     field_format = formats[FormatType.PERCENTAGE]
                     if field_value:
                         try:
                             field_value = field_value / 100
                         except TypeError:
                             field_value = 0
-                case "money":
+                case FormatType.MONEY.value:
                     if field_value != 0:
                         field_format = formats[FormatType.MONEY]
-                case "boolean":
+                case FormatType.BOOLEAN.value:
                     if field_value:
                         field_value = str(_("Yes"))
                     else:
                         field_value = str(_("No"))
-                case "area":
+                case FormatType.AREA.value:
                     field_format = formats[FormatType.AREA]
+                case FormatType.URL.value:
+                    field_value = field_value["name"] if "name" in field_value else "-"
+                    field_format = ""
 
             field_serializer_field = self.get_output_field_attr(
                 field_name, "serializer_field"

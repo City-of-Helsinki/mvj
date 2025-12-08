@@ -1,26 +1,31 @@
 from django import forms
+from django.conf import settings
 from django.db import DataError, connection
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import ServiceUnit
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.excel import FormatType
+from leasing.report.lease.common_getters import (
+    ReportURL,
+)
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import InvoicingDisabledReportRow, dictfetchall
 
 
 def get_lease_link_data_from_invoicing_disabled_report_row(
     disabled_report_row: InvoicingDisabledReportRow,
-) -> LeaseLinkData:
+) -> ReportURL:
     try:
+        id = disabled_report_row["lease_id"]
         return {
-            "id": disabled_report_row["lease_id"],
-            "identifier": disabled_report_row["lease_identifier"],
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{id}",
+            "name": disabled_report_row["lease_identifier"],
         }
     except KeyError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -67,9 +72,10 @@ class LeaseInvoicingDisabledReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_invoicing_disabled_report_row,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
-        "start_date": {"label": _("Start date"), "format": "date"},
-        "end_date": {"label": _("End date"), "format": "date"},
+        "start_date": {"label": _("Start date"), "format": FormatType.DATE.value},
+        "end_date": {"label": _("End date"), "format": FormatType.DATE.value},
     }
 
     def get_data(self, input_data):

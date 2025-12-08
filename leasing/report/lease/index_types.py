@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.enums import IndexType, TenantContactType
 from leasing.models import Rent, ServiceUnit
+from leasing.report.excel import FormatType
 from leasing.report.lease.common_getters import get_lease_link_data_from_related_object
 from leasing.report.report_base import ReportBase
 
@@ -94,6 +95,7 @@ class IndexTypesReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_related_object,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
         "tenant_name": {"source": get_tenants, "label": _("Tenant name"), "width": 50},
         "lease_area_identifier": {
@@ -115,9 +117,13 @@ class IndexTypesReport(ReportBase):
         "start_date": {
             "source": get_start_date,
             "label": _("Start date"),
-            "format": "date",
+            "format": FormatType.DATE.value,
         },
-        "end_date": {"source": get_end_date, "label": _("End date"), "format": "date"},
+        "end_date": {
+            "source": get_end_date,
+            "label": _("End date"),
+            "format": FormatType.DATE.value,
+        },
         "intended_use": {"source": get_intended_use, "label": _("Intended use")},
         "index_type": {"source": get_index_type, "label": _("Index type")},
     }

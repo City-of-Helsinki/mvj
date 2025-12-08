@@ -1,21 +1,23 @@
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Collateral, CollateralType, ServiceUnit
-from leasing.report.lease.common_getters import LeaseLinkData
+from leasing.report.excel import FormatType
+from leasing.report.lease.common_getters import ReportURL
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_link_data_from_collateral(collateral: Collateral) -> LeaseLinkData:
+def get_lease_link_data_from_collateral(collateral: Collateral) -> ReportURL:
     try:
         return {
-            "id": collateral.contract.lease.id,
-            "identifier": collateral.contract.lease.get_identifier_string(),
+            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{collateral.contract.lease.id}",
+            "name": collateral.contract.lease.get_identifier_string(),
         }
     except AttributeError:
         return {
-            "id": None,
-            "identifier": None,
+            "url": None,
+            "name": None,
         }
 
 
@@ -56,20 +58,25 @@ class CollateralsReport(ReportBase):
         "lease_identifier": {
             "source": get_lease_link_data_from_collateral,
             "label": _("Lease id"),
+            "format": FormatType.URL.value,
         },
         "start_date": {
             "source": get_start_date,
             "label": _("Lease start date"),
-            "format": "date",
+            "format": FormatType.DATE.value,
         },
         "end_date": {
             "source": get_end_date,
             "label": _("Lease end date"),
-            "format": "date",
+            "format": FormatType.DATE.value,
         },
-        "total_amount": {"label": _("Total amount"), "format": "money", "width": 13},
-        "paid_date": {"label": _("Paid date"), "format": "date"},
-        "returned_date": {"label": _("Returned date"), "format": "date"},
+        "total_amount": {
+            "label": _("Total amount"),
+            "format": FormatType.MONEY.value,
+            "width": 13,
+        },
+        "paid_date": {"label": _("Paid date"), "format": FormatType.DATE.value},
+        "returned_date": {"label": _("Returned date"), "format": FormatType.DATE.value},
         "note": {"label": _("Note"), "width": 50},
     }
 
