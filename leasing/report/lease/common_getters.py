@@ -13,7 +13,7 @@ RE_LEASE_DECISION_TYPE_ID = 29  # Vuokraus (sopimuksen uusiminen/jatkam.)
 
 OPTION_TO_PURCHASE_CONDITION_TYPE_ID = 24  # 24 = Osto-optioehto
 
-LEASING_CONTRACT_TYPE_ID = 1  # 1 = Vuokrasopimus
+LEASING_CONTRACT_TYPE_NAME = "Vuokrasopimus"
 
 
 class LeaseLinkData(TypedDict):
@@ -121,7 +121,7 @@ def _get_latest_contract(lease: LeaseWithContracts) -> Contract | None:
     contracts: list[Contract] = []
     for contract in lease.contracts.all():
         is_valid_leasing_contract = (
-            contract.type.pk == LEASING_CONTRACT_TYPE_ID
+            contract.type.name == LEASING_CONTRACT_TYPE_NAME
             and contract.contract_number is not None
         )
         if is_valid_leasing_contract:
