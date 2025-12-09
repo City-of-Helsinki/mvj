@@ -69,9 +69,6 @@ def get_rent_type(obj: Rent):
     return str(obj.type.label)
 
 
-# TODO: Not in use?
-
-
 class RentTypeReport(ReportBase):
     name = _("Rent type leases")
     description = _("Show leases with a certain rent type")

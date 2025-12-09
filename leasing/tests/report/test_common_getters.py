@@ -34,13 +34,13 @@ def test_get_lease_link_data_from_related_object(
 
     lease_link_data = get_lease_link_data_from_related_object(contract)
 
-    assert lease_link_data["id"] == lease.id
-    assert lease_link_data["identifier"] == lease.get_identifier_string()
+    assert lease_link_data["url"] == lease.id
+    assert lease_link_data["name"] == lease.get_identifier_string()
 
     contract_without_lease = contract_factory(lease=None, type=leasing_contract_type)
     lease_link_data = get_lease_link_data_from_related_object(contract_without_lease)
-    assert lease_link_data["id"] is None
-    assert lease_link_data["identifier"] is None
+    assert lease_link_data["url"] is None
+    assert lease_link_data["name"] is None
 
 
 @pytest.mark.django_db
@@ -59,9 +59,9 @@ def test_get_identifier_string_from_lease_link_data(lease_factory):
         "123",
         {"lease_identifier": {}},
         {"lease_identifier": None},
-        {"lease_identifier": {"id": None, "identifier": None}},
-        {"lease_identifier": {"identifier": {}}},
-        {"lease_identifier": {"identifier": ""}},
+        {"lease_identifier": {"url": None, "name": None}},
+        {"lease_identifier": {"name": {}}},
+        {"lease_identifier": {"name": ""}},
     ]
     for row in non_lease_link_data_rows:
         assert get_identifier_string_from_lease_link_data(row) == "-"

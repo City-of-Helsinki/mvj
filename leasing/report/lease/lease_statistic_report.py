@@ -1003,9 +1003,6 @@ class LeaseStatisticReport(AsyncReportBase):
         first_data_row_num = row_number
         for row in data:
             if isinstance(row, dict):
-                # row["lease_identifier"] = get_identifier_string_from_lease_link_data(
-                #    row
-                # )
                 self.write_dict_row_to_worksheet(worksheet, formats, row_number, row)
             elif isinstance(row, ExcelRow):
                 for cell in row.cells:
