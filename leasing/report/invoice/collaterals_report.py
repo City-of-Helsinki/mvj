@@ -1,17 +1,16 @@
 from django import forms
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Collateral, CollateralType, ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import ReportURL
+from leasing.report.lease.common_getters import ReportURL, form_lease_url
 from leasing.report.report_base import ReportBase
 
 
 def get_lease_link_data_from_collateral(collateral: Collateral) -> ReportURL:
     try:
         return {
-            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{collateral.contract.lease.id}",
+            "url": form_lease_url(collateral.contract.lease.id),
             "name": collateral.contract.lease.get_identifier_string(),
         }
     except AttributeError:
