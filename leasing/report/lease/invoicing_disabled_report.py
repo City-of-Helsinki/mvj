@@ -1,14 +1,11 @@
 from django import forms
-from django.conf import settings
 from django.db import DataError, connection
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import (
-    ReportURL,
-)
+from leasing.report.lease.common_getters import ReportURL, form_lease_url
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import InvoicingDisabledReportRow, dictfetchall
 
@@ -19,7 +16,7 @@ def get_lease_link_data_from_invoicing_disabled_report_row(
     try:
         id = disabled_report_row["lease_id"]
         return {
-            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{id}",
+            "url": form_lease_url(id),
             "name": disabled_report_row["lease_identifier"],
         }
     except KeyError:

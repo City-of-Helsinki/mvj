@@ -5,7 +5,6 @@ from operator import itemgetter
 
 import xlsxwriter
 from django import forms
-from django.conf import settings
 from django.db import DataError, connection
 from django.db.backends.utils import CursorWrapper
 from django.utils import timezone
@@ -17,7 +16,7 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import ReportURL
+from leasing.report.lease.common_getters import ReportURL, form_lease_url
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
@@ -48,7 +47,7 @@ def get_lease_link_data_from_report_row(
                 "name": None,
             }
         return {
-            "url": f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{row.get('lease_id')}",
+            "url": form_lease_url(row.get("lease_id")),
             "name": row.get("lease_identifier"),
         }
     except KeyError:
