@@ -104,7 +104,7 @@ django-filter==25.1
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-django-helusers==0.13.3
+django-helusers==0.14.4
     # via
     #   -r requirements.in
     #   helsinki-profile-gdpr-api
