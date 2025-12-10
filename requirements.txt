@@ -25,11 +25,9 @@ authlib==1.6.5
     # via
     #   -c constraints.txt
     #   drf-oidc-auth
-babel==2.15.0
-    # via docxcompose
 bcrypt==4.1.3
     # via paramiko
-beautifulsoup4==4.13.4
+beautifulsoup4==4.14.3
     # via -r requirements.in
 cachetools==5.3.3
     # via django-helusers
@@ -141,9 +139,7 @@ djangorestframework==3.16.0
     #   helsinki-profile-gdpr-api
 djangorestframework-gis==1.2.0
     # via -r requirements.in
-docxcompose==1.4.0
-    # via docxtpl
-docxtpl==0.20.1
+docxtpl==0.20.2
     # via -r requirements.in
 drf-oidc-auth==3.0.0
     # via helsinki-profile-gdpr-api
@@ -173,10 +169,9 @@ jsonschema-specifications==2023.12.1
     # via jsonschema
 lockfile==0.12.2
     # via python-daemon
-lxml==5.2.2
+lxml==6.0.2
     # via
     #   -r requirements.in
-    #   docxcompose
     #   docxtpl
     #   python-docx
     #   svglib
@@ -187,7 +182,7 @@ mypy==1.7.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
-oracledb==2.5.1
+oracledb==3.4.1
     # via -r requirements.in
 oscrypto==1.3.0
     # via pyhanko-certvalidator
@@ -204,9 +199,9 @@ pillow==10.3.0
     #   xhtml2pdf
 platformdirs==4.2.2
     # via zeep
-psycopg[binary]==3.2.9
+psycopg[binary]==3.3.2
     # via -r requirements.in
-psycopg-binary==3.2.9
+psycopg-binary==3.3.2
     # via psycopg
 pyasn1==0.6.0
     # via
@@ -228,7 +223,7 @@ pypdf==6.1.3
     #   xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
-pyproj==3.7.1
+pyproj==3.7.2
     # via -r requirements.in
 python-bidi==0.6.6
     # via xhtml2pdf
@@ -239,9 +234,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   django-auditlog
 python-docx==1.1.2
-    # via
-    #   docxcompose
-    #   docxtpl
+    # via docxtpl
 python-jose==3.5.0
     # via
     #   -c constraints.txt
@@ -267,7 +260,7 @@ reportlab==4.0.9
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.32.4
+requests==2.32.5
     # via
     #   -r requirements.in
     #   django-anymail
@@ -288,7 +281,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via python-jose
-sentry-sdk==2.32.0
+sentry-sdk==2.47.0
     # via
     #   -r requirements.in
     #   django-q-sentry
@@ -296,7 +289,6 @@ six==1.16.0
     # via
     #   database-sanitizer
     #   django-sanitized-dump
-    #   docxcompose
     #   ecdsa
     #   html5lib
     #   isodate
@@ -317,13 +309,14 @@ types-pytz==2025.2.0.20250516
     # via django-stubs
 types-pyyaml==6.0.12.20240311
     # via django-stubs
-typing-extensions==4.11.0
+typing-extensions==4.15.0
     # via
     #   beautifulsoup4
     #   django-countries
     #   django-stubs
     #   django-stubs-ext
     #   mypy
+    #   oracledb
     #   psycopg
     #   python-docx
     #   qrcode
@@ -349,10 +342,7 @@ webencodings==0.5.1
     #   tinycss2
 xhtml2pdf==0.2.17
     # via -r requirements.in
-xlsxwriter==3.2.5
+xlsxwriter==3.2.9
     # via -r requirements.in
-zeep==4.3.1
+zeep==4.3.2
     # via -r requirements.in
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
