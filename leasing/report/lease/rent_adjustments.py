@@ -7,7 +7,7 @@ from enumfields.drf import EnumField
 from leasing.enums import RentAdjustmentAmountType, RentAdjustmentType, SubventionType
 from leasing.models import RentAdjustment, ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import ReportURL, form_lease_url
+from leasing.report.lease.common_getters import ReportURL, get_lease_url
 from leasing.report.report_base import ReportBase
 
 
@@ -16,7 +16,7 @@ def get_lease_link_data_from_rent_adjustment(
 ) -> ReportURL:
     try:
         return {
-            "url": form_lease_url(rent_adjustment.rent.lease.id),
+            "url": get_lease_url(rent_adjustment.rent.lease.id),
             "name": rent_adjustment.rent.lease.get_identifier_string(),
         }
     except AttributeError:

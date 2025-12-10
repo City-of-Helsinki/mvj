@@ -3,10 +3,10 @@
 import pytest
 
 from leasing.report.lease.common_getters import (
-    form_lease_url,
     get_identifier_string_from_lease_link_data,
     get_lease_link_data,
     get_lease_link_data_from_related_object,
+    get_lease_url,
 )
 
 
@@ -16,7 +16,7 @@ def test_get_lease_link_data_from_related_object(contract_factory, lease_factory
     contract = contract_factory(lease=lease, type_id=1)
 
     lease_link_data = get_lease_link_data_from_related_object(contract)
-    lease_url = form_lease_url(lease.id)
+    lease_url = get_lease_url(lease.id)
 
     assert lease_link_data["url"] == lease_url
     assert lease_link_data["name"] == lease.get_identifier_string()
