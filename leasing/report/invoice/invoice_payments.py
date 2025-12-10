@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from leasing.models import ServiceUnit
 from leasing.models.invoice import InvoicePayment
 from leasing.report.excel import ExcelCell, ExcelRow, FormatType, SumCell
-from leasing.report.lease.common_getters import ReportURL, form_lease_url
+from leasing.report.lease.common_getters import ReportURL, get_lease_url
 from leasing.report.report_base import ReportBase
 
 
@@ -19,7 +19,7 @@ def get_lease_link_data_from_invoice_payment(
 ) -> ReportURL:
     try:
         return {
-            "url": form_lease_url(invoice_payment.invoice.lease.id),
+            "url": get_lease_url(invoice_payment.invoice.lease.id),
             "name": invoice_payment.invoice.lease.get_identifier_string(),
         }
     except AttributeError:

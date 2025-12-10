@@ -3,14 +3,14 @@ from django.utils.translation import gettext_lazy as _
 
 from leasing.models import Condition, ConditionType, ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import ReportURL, form_lease_url
+from leasing.report.lease.common_getters import ReportURL, get_lease_url
 from leasing.report.report_base import ReportBase
 
 
 def get_lease_link_data_from_decision_condition(condition: Condition) -> ReportURL:
     try:
         return {
-            "url": form_lease_url(condition.decision.lease.id),
+            "url": get_lease_url(condition.decision.lease.id),
             "name": condition.decision.lease.get_identifier_string(),
         }
     except AttributeError:

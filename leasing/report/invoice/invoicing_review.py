@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from leasing.models import ServiceUnit
 from leasing.report.excel import FormatType
-from leasing.report.lease.common_getters import ReportURL, form_lease_url
+from leasing.report.lease.common_getters import ReportURL, get_lease_url
 from leasing.report.lease.invoicing_disabled_report import INVOICING_DISABLED_REPORT_SQL
 from leasing.report.report_base import ReportBase
 from leasing.report.utils import (
@@ -47,7 +47,7 @@ def get_lease_link_data_from_report_row(
                 "name": None,
             }
         return {
-            "url": form_lease_url(row.get("lease_id")),
+            "url": get_lease_url(row.get("lease_id")),
             "name": row.get("lease_identifier"),
         }
     except KeyError:
