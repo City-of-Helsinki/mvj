@@ -136,7 +136,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c requirements.txt
     #   faker
-requests==2.32.4
+requests==2.32.5
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
@@ -162,7 +162,7 @@ types-pyyaml==6.0.12.20240311
     #   djangorestframework-stubs
 types-requests==2.32.0.20240523
     # via djangorestframework-stubs
-typing-extensions==4.11.0
+typing-extensions==4.15.0
     # via
     #   -c requirements.txt
     #   django-stubs
