@@ -29,7 +29,7 @@ coverage[toml]==7.5.1
     # via pytest-cov
 debugpy==1.8.14
     # via -r requirements-dev.in
-django==4.2.25
+django==4.2.27
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
