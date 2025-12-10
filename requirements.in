@@ -2,8 +2,8 @@
 -c constraints.txt
 
 # For top-level dependencies, just edit this .in file
-beautifulsoup4~=4.13.4
-deepmerge~=2.0
+beautifulsoup4~=4.14.3
+deepmerge==2.0
 Django~=4.2.27
 django-anymail~=13.0
 django-auditlog~=3.2.0
@@ -25,18 +25,18 @@ django-stubs[compatible-mypy]~=4.2.7
 djangorestframework~=3.16.0
 djangorestframework-gis~=1.2.0
 drf-yasg[validation]~=1.21.10
-docxtpl==0.20.1
+docxtpl==0.20.2
 helsinki-profile-gdpr-api~=0.2.0
-lxml~=5.2.2
-oracledb~=2.5.1
-psycopg[binary]~=3.2.9
+lxml==6.0.2
+oracledb==3.4.1
 paramiko==4.0.0
-pyproj~=3.7.1
+psycopg[binary]==3.3.2
+pyproj==3.7.2
 python-daemon~=3.1.2
-python-dateutil~=2.9.0
-sentry-sdk~=2.32.0
-requests~=2.32.4
+python-dateutil==2.9.0.post0
+sentry-sdk==2.47.0
+requests==2.32.5
 tzdata==2025.2 # Required for platform independent consistent timezones for zoneinfo
 xhtml2pdf~=0.2.17
-xlsxwriter~=3.2.5
-zeep~=4.3.1
+xlsxwriter==3.2.9
+zeep==4.3.2
