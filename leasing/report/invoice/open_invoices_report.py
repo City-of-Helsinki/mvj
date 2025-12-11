@@ -7,7 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from leasing.enums import InvoiceState
-from leasing.models import Invoice, ServiceUnit
+from leasing.models import Invoice, Lease, ServiceUnit
 from leasing.report.excel import (
     ExcelCell,
     ExcelRow,
@@ -40,6 +40,20 @@ def get_recipient_address(invoice: Invoice) -> str:
     )
 
 
+def get_due_dates_per_year(invoice: Invoice) -> int:
+    first_day_of_year = invoice.due_date.replace(month=1, day=1)
+    last_day_of_year = invoice.due_date.replace(month=12, day=31)
+    lease: Lease = invoice.lease
+    due_dates_this_year = lease.get_due_dates_for_period(
+        first_day_of_year, last_day_of_year
+    )
+    return len(due_dates_this_year)
+
+
+def get_lease_id(invoice: Invoice) -> int:
+    return invoice.lease.id
+
+
 class OpenInvoicesReport(ReportBase):
     name = _("Open invoices")
     description = _('Show all the invoices that have their state as "open"')
@@ -62,6 +76,10 @@ class OpenInvoicesReport(ReportBase):
             "format": FormatType.URL.value,
         },
         "due_date": {"label": _("Due date"), "format": FormatType.DATE.value},
+        "due_dates_per_year": {
+            "source": get_due_dates_per_year,
+            "label": _("Due dates per year"),
+        },
         "total_amount": {
             "label": _("Total amount"),
             "format": FormatType.MONEY.value,
@@ -86,6 +104,10 @@ class OpenInvoicesReport(ReportBase):
             "source": get_recipient_address,
             "label": _("Recipient address"),
             "width": 50,
+        },
+        "lease_database_id": {
+            "source": get_lease_id,
+            "label": _("Lease database id"),
         },
     }
 
