@@ -298,7 +298,11 @@ class ReportBase:
                 case FormatType.AREA.value:
                     field_format = formats[FormatType.AREA]
                 case FormatType.URL.value:
-                    field_value = field_value["name"] if "name" in field_value else "-"
+                    field_value = (
+                        field_value.get("name", "-")
+                        if isinstance(field_value, dict)
+                        else "-"
+                    )
                     field_format = ""
 
             field_serializer_field = self.get_output_field_attr(
