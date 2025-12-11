@@ -802,7 +802,7 @@ class Lease(TimeStampedSafeDeleteModel):
 
         super().save(*args, **kwargs)
 
-    def get_due_dates_for_period(self, start_date, end_date):
+    def get_due_dates_for_period(self, start_date, end_date) -> list[datetime.date]:
         due_dates = set()
         rents: QuerySet[Rent] = self.rents.all()
         for rent in rents:

@@ -19,18 +19,23 @@ from leasing.report.lease.common_getters import get_lease_link_data_from_related
 from leasing.report.report_base import ReportBase
 
 
-def get_lease_type(obj):
-    return obj.lease.identifier.type.identifier
+def get_lease_type(invoice: Invoice) -> str:
+    return invoice.lease.identifier.type.identifier
 
 
-def get_recipient_name(obj):
-    return obj.recipient.get_name()
+def get_recipient_name(invoice: Invoice) -> str:
+    return invoice.recipient.get_name()
 
 
-def get_recipient_address(obj):
+def get_recipient_address(invoice: Invoice) -> str:
     return ", ".join(
         filter(
-            None, [obj.recipient.address, obj.recipient.postal_code, obj.recipient.city]
+            None,
+            [
+                invoice.recipient.address,
+                invoice.recipient.postal_code,
+                invoice.recipient.city,
+            ],
         )
     )
 
