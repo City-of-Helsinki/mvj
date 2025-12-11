@@ -201,7 +201,7 @@ class Rent(TimeStampedSafeDeleteModel):
         max_length=30,
     )
 
-    # In Finnish: Laskut kpl / vuodessa
+    # In Finnish: Eräpäiviä vuodessa
     due_dates_per_year = models.PositiveIntegerField(
         verbose_name=_("Due dates per year"), null=True, blank=True
     )

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-28 14:02+0200\n"
+"POT-Creation-Date: 2025-12-11 17:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2647,7 +2647,7 @@ msgid "Due dates type"
 msgstr "Faktureringsfördelning"
 
 msgid "Due dates per year"
-msgstr "Fakturor st./år"
+msgstr "Förfallodagar per år"
 
 msgid "Elementary index"
 msgstr "Basindex "
@@ -3211,6 +3211,9 @@ msgstr "Öppna fakturor"
 
 msgid "Show all the invoices that have their state as \"open\""
 msgstr "Visar alla fakturor för vilka status är \"öppen\""
+
+msgid "Lease database id"
+msgstr ""
 
 msgid "Grand total"
 msgstr "Alla sammanlagt"

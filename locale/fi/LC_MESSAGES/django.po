@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-28 14:02+0200\n"
+"POT-Creation-Date: 2025-12-11 17:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -2647,7 +2647,7 @@ msgid "Due dates type"
 msgstr "Laskutusjako"
 
 msgid "Due dates per year"
-msgstr "Laskut kpl / vuosi"
+msgstr "Eräpäiviä vuodessa"
 
 msgid "Elementary index"
 msgstr "Perusindeksi"
@@ -3212,6 +3212,9 @@ msgstr "Avoimet laskut"
 
 msgid "Show all the invoices that have their state as \"open\""
 msgstr "Näyttää kaikki laskut joiden tila on \"avoin\""
+
+msgid "Lease database id"
+msgstr "Vuokrauksen tietokanta-id"
 
 msgid "Grand total"
 msgstr "Kaikki yhteensä"
