@@ -1,6 +1,6 @@
 import re
 
-from dateutil.parser import parse, parserinfo
+from dateutil.parser import ParserError, parse, parserinfo
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
 from django.utils import timezone
@@ -312,6 +312,12 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                         other_q |= Q(start_date=search_date.date())
                         other_q |= Q(end_date=search_date.date())
                 except ValueError:
+                    pass
+                # Raised for invalid or unknown string formats --> not a date
+                except ParserError:
+                    pass
+                # Raised if the parsed date exceeds the largest valid C integer on your system --> not a date
+                except OverflowError:
                     pass
 
             queryset = queryset.filter(identifier_q | other_q)
