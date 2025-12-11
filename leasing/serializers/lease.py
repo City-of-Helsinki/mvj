@@ -707,6 +707,21 @@ class LeaseUpdateSerializer(
 
         return value
 
+    def validate_application_metadata(self, value):
+        application_received_at = (
+            value.get("application_received_at") if value else None
+        )
+
+        if self.instance.service_unit.is_received_date_mandatory and (
+            value is None or application_received_at is None
+        ):
+            raise serializers.ValidationError(
+                _(
+                    "'Application received at' is a mandatory field for this service unit"
+                )
+            )
+        return value
+
     class Meta:
         model = Lease
         fields = "__all__"
@@ -733,6 +748,26 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
         if value not in request.user.service_units.all():
             raise serializers.ValidationError(
                 _("Can only add leases to service units the user is a member of")
+            )
+
+        return value
+
+    def validate_application_metadata(self, value):
+        service_unit_id = self.initial_data.get("service_unit")
+        service_unit = ServiceUnit.objects.get(pk=service_unit_id)
+        application_received_at = (
+            value.get("application_received_at") if value else None
+        )
+
+        if (
+            service_unit
+            and service_unit.is_received_date_mandatory
+            and (value is None or application_received_at is None)
+        ):
+            raise serializers.ValidationError(
+                _(
+                    "'Application received at' is a mandatory field for this service unit"
+                )
             )
 
         return value

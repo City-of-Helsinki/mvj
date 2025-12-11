@@ -87,6 +87,16 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         ),
         default=False,
     )
+    is_received_date_mandatory = models.BooleanField(
+        verbose_name=_(
+            "Require 'Application received at' field on lease summary page?"
+        ),
+        help_text=_(
+            "Make 'Application received at' / 'Hakemuksen saapumispäivä' "
+            "a required field on lease summary page."
+        ),
+        default=False,
+    )
     hex_color = models.CharField(
         max_length=7,
         blank=True,
