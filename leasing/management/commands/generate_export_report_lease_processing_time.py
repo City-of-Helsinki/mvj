@@ -105,6 +105,7 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
 def get_lease_processing_time_report():
 
     now = timezone.now()
+    two_years_back = now - relativedelta(years=2)
 
     has_geometry_subquery = Exists(
         LeaseArea.objects.filter(lease=OuterRef("pk"), geometry__isnull=False)
@@ -112,7 +113,7 @@ def get_lease_processing_time_report():
 
     queryset = (
         Lease.objects.filter(deleted__isnull=True)
-        .filter(Q(end_date__gte=now) | Q(end_date__isnull=True))
+        .filter(Q(end_date__gte=two_years_back) | Q(end_date__isnull=True))
         .select_related("identifier", "district", "preparer", "application_metadata")
         .prefetch_related(
             "lease_areas",
