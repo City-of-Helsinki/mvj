@@ -1630,6 +1630,7 @@ strategy:
     password: constant.invalid_django_password
     username: user.username
     uuid: null
+    last_api_use: null
   users_user_ad_groups:
     adgroup_id: null
     id: null
