@@ -93,6 +93,7 @@ class DecisionConditionsReport(ReportBase):
     output_fields = {
         "lease_identifier": {
             "source": get_lease_link_data_from_decision_condition,
+            "label": _("Lease identifier"),
             "format": FormatType.URL.value,
         },
         "area": {

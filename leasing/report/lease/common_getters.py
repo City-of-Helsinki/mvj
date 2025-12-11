@@ -38,8 +38,8 @@ def get_lease_identifier_string(lease: Lease) -> str:
     return lease.get_identifier_string()
 
 
-def form_lease_url(id: str):
-    return f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{id}"
+def form_lease_url(lease_id: str):
+    return f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{lease_id}"
 
 
 def get_lease_link_data(lease: Lease) -> ReportURL:
