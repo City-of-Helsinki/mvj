@@ -87,7 +87,7 @@ class ServiceUnit(TimeStampedSafeDeleteModel):
         ),
         default=False,
     )
-    is_received_date_mandatory = models.BooleanField(
+    is_application_received_at_mandatory = models.BooleanField(
         verbose_name=_(
             "Require 'Application received at' field on lease summary page?"
         ),

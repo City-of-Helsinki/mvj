@@ -1358,7 +1358,7 @@ strategy:
     modified_at: null
     name: null
     use_rent_override_receivable_type: null
-    is_received_date_mandatory: null
+    is_application_received_at_mandatory: null
   leasing_serviceunitgroupmapping:
     group_id: null
     id: null

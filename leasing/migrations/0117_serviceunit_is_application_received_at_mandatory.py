@@ -3,13 +3,13 @@
 from django.db import migrations, models
 
 
-def enable_is_received_date_mandatory_for_akv(apps, schema_editor):
+def enable_is_application_received_at_mandatory_for_akv(apps, schema_editor):
     service_unit = apps.get_model("leasing", "ServiceUnit")
     akv_service_unit_id = 2
 
     service_unit.objects.filter(
         id=akv_service_unit_id,
-    ).update(is_received_date_mandatory=True)
+    ).update(is_application_received_at_mandatory=True)
 
 
 class Migration(migrations.Migration):
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="serviceunit",
-            name="is_received_date_mandatory",
+            name="is_application_received_at_mandatory",
             field=models.BooleanField(
                 default=False,
                 help_text="Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field on lease summary page.",
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(
-            code=enable_is_received_date_mandatory_for_akv,
+            code=enable_is_application_received_at_mandatory_for_akv,
             reverse_code=migrations.RunPython.noop,
         ),
     ]
