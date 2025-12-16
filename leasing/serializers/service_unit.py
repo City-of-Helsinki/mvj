@@ -13,4 +13,5 @@ class ServiceUnitSerializer(serializers.ModelSerializer):
             "name",
             # "description",
             "use_rent_override_receivable_type",
+            "is_application_received_at_mandatory",
         )
