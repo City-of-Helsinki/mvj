@@ -22,3 +22,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(pk=self.request.user.pk)
 
         return qs.distinct()
+
+
+class OfficerViewSet(UserViewSet):
+    queryset = User.officers.all()

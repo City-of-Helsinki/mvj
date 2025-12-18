@@ -152,7 +152,7 @@ from plotsearch.views.plot_search import (
     TargetStatusGeneratePDF,
 )
 from users.views import UsersPermissions
-from users.viewsets import UserViewSet
+from users.viewsets import OfficerViewSet, UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r"area_note", AreaNoteViewSet)
@@ -254,6 +254,7 @@ router.register(
 )
 router.register(r"ui_data", UiDataViewSet, basename="ui_data")
 router.register(r"user", UserViewSet)
+router.register(r"officer", OfficerViewSet, basename="officer")
 router.register(r"vat", VatViewSet)
 
 router.register(r"land_use_agreement", LandUseAgreementViewSet)
