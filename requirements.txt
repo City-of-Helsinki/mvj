@@ -159,6 +159,8 @@ idna==3.7
     # via requests
 inflection==0.5.1
     # via drf-yasg
+invoke==2.2.1
+    # via paramiko
 isodate==0.6.1
     # via zeep
 jinja2==3.1.6
@@ -194,8 +196,8 @@ packaging==24.0
     #   deprecation
     #   django-safedelete
     #   drf-yasg
-paramiko==3.4.0
-    # via pysftp
+paramiko==4.0.0
+    # via -r requirements.in
 pillow==10.3.0
     # via
     #   reportlab
@@ -227,8 +229,6 @@ pypdf==6.1.3
 pypng==0.20220715.0
     # via qrcode
 pyproj==3.7.1
-    # via -r requirements.in
-pysftp==0.2.9
     # via -r requirements.in
 python-bidi==0.6.6
     # via xhtml2pdf

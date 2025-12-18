@@ -30,7 +30,7 @@ helsinki-profile-gdpr-api~=0.2.0
 lxml~=5.2.2
 oracledb~=2.5.1
 psycopg[binary]~=3.2.9
-pysftp~=0.2.9
+paramiko==4.0.0
 pyproj~=3.7.1
 python-daemon~=3.1.2
 python-dateutil~=2.9.0

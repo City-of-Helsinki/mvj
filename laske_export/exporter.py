@@ -5,7 +5,6 @@ import tempfile
 from base64 import decodebytes
 
 import paramiko
-import pysftp
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -85,6 +84,7 @@ class LaskeExporter:
             fp.write(xml_string)
 
     def send(self, filename):
+
         # Add destination server host key
         if settings.LASKE_SERVERS["export"]["key_type"] == "ssh-ed25519":
             key = paramiko.ed25519key.Ed25519Key(
@@ -99,27 +99,31 @@ class LaskeExporter:
                 data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
             )
 
-        hostkeys = paramiko.hostkeys.HostKeys()
+        client = paramiko.SSHClient()
+        hostkeys = client.get_host_keys()
         hostkeys.add(
             settings.LASKE_SERVERS["export"]["host"],
             settings.LASKE_SERVERS["export"]["key_type"],
             key,
         )
+        try:
+            with client.connect(
+                hostname=settings.LASKE_SERVERS["export"]["host"],
+                port=settings.LASKE_SERVERS["export"]["port"],
+                username=settings.LASKE_SERVERS["export"]["username"],
+                password=settings.LASKE_SERVERS["export"]["password"],
+            ):
+                with client.open_sftp() as sftp:
+                    sftp.put(
+                        localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
+                        remotepath=os.path.join(
+                            settings.LASKE_SERVERS["export"]["directory"], filename
+                        ),
+                    )
 
-        cnopts = pysftp.CnOpts()
-        cnopts.hostkeys = hostkeys
-        # Or Disable key check:
-        # cnopts.hostkeys = None
-
-        with pysftp.Connection(
-            settings.LASKE_SERVERS["export"]["host"],
-            port=settings.LASKE_SERVERS["export"]["port"],
-            username=settings.LASKE_SERVERS["export"]["username"],
-            password=settings.LASKE_SERVERS["export"]["password"],
-            cnopts=cnopts,
-        ) as sftp:
-            with sftp.cd(settings.LASKE_SERVERS["export"]["directory"]):
-                sftp.put(os.path.join(settings.LASKE_EXPORT_ROOT, filename))
+        except Exception as e:
+            self.write_to_output("Error connecting to remote, send failed.: ", e)
+            raise e
 
     def write_to_output(self, message):
         if not self.message_output:

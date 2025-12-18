@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 import re
+import stat
 import sys
 import tempfile
 from decimal import Decimal
@@ -35,49 +36,50 @@ class Command(BaseCommand):
         from base64 import decodebytes
 
         import paramiko
-        import pysftp
-        from paramiko import SSHException
 
-        try:
-            # Add destination server host key
-            if settings.LASKE_SERVERS["payments"]["key_type"] == "ssh-ed25519":
-                key = paramiko.ed25519key.Ed25519Key(
-                    data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-                )
-            elif "ecdsa" in settings.LASKE_SERVERS["payments"]["key_type"]:
-                key = paramiko.ecdsakey.ECDSAKey(
-                    data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-                )
-            else:
-                key = paramiko.rsakey.RSAKey(
-                    data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-                )
-
-            hostkeys = paramiko.hostkeys.HostKeys()
-            hostkeys.add(
-                settings.LASKE_SERVERS["payments"]["host"],
-                settings.LASKE_SERVERS["payments"]["key_type"],
-                key,
+        # Add destination server host key
+        if settings.LASKE_SERVERS["payments"]["key_type"] == "ssh-ed25519":
+            key = paramiko.ed25519key.Ed25519Key(
+                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
+            )
+        elif "ecdsa" in settings.LASKE_SERVERS["payments"]["key_type"]:
+            key = paramiko.ecdsakey.ECDSAKey(
+                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
+            )
+        else:
+            key = paramiko.rsakey.RSAKey(
+                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
             )
 
-            cnopts = pysftp.CnOpts()
-            cnopts.hostkeys = hostkeys
-            # Or Disable key check:
-            # cnopts.hostkeys = None
+        client = paramiko.SSHClient()
+        hostkeys = client.get_host_keys()
+        hostkeys.add(
+            settings.LASKE_SERVERS["payments"]["host"],
+            settings.LASKE_SERVERS["payments"]["key_type"],
+            key,
+        )
 
-            with pysftp.Connection(
-                settings.LASKE_SERVERS["payments"]["host"],
+        lpath = get_import_dir()
+        rpath = settings.LASKE_SERVERS["payments"]["directory"]
+        try:
+            with client.connect(
+                hostname=settings.LASKE_SERVERS["payments"]["host"],
                 port=settings.LASKE_SERVERS["payments"]["port"],
                 username=settings.LASKE_SERVERS["payments"]["username"],
                 password=settings.LASKE_SERVERS["payments"]["password"],
-                cnopts=cnopts,
-            ) as sftp:
-                sftp.get_d(
-                    settings.LASKE_SERVERS["payments"]["directory"],
-                    get_import_dir(),
-                    preserve_mtime=False,
-                )
-        except SSHException as e:
+            ):
+                with client.open_sftp() as sftp:
+                    for item in sftp.listdir_attr(rpath):
+                        # Just in case...
+                        if stat.S_ISDIR(item.st_mode):
+                            pass
+                        else:
+                            sftp.get(
+                                os.path.join(rpath, item.filename),
+                                os.path.join(lpath, item.filename),
+                            )
+
+        except Exception as e:
             logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
 
