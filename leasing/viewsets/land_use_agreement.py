@@ -3,8 +3,6 @@ from decimal import Decimal, InvalidOperation
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.widgets import BooleanWidget
-from paramiko import SSHException
-from pysftp import ConnectionException, CredentialException, HostKeysException
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -15,7 +13,7 @@ from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
 from file_operations.viewsets.mixins import FileMixin
-from laske_export.exporter import LaskeExporter, LaskeExporterError
+from laske_export.exporter import LaskeExporter
 from leasing.enums import InvoiceState, InvoiceType
 from leasing.filters import (
     CoalesceOrderingFilter,
@@ -434,13 +432,7 @@ class LandUseAgreementInvoiceExportToLaskeView(APIView):
         try:
             exporter = LaskeExporter(service_unit=invoice.service_unit)
             exporter.export_land_use_agreement_invoices([invoice])
-        except (
-            LaskeExporterError,
-            ConnectionException,
-            CredentialException,
-            SSHException,
-            HostKeysException,
-        ) as e:
+        except Exception as e:
             raise APIException(str(e))
 
         return Response({"success": True})
