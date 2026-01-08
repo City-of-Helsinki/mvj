@@ -1,5 +1,7 @@
 import datetime
 import json
+import logging
+import sys
 from collections.abc import Callable
 from typing import TypedDict
 
@@ -11,6 +13,11 @@ from leasing.models.rent import (
     IndexPointFigureYearly,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class IndexInput(TypedDict):
@@ -113,30 +120,28 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for index_input in INDEXES_TO_IMPORT:
-            self.stdout.write(f'Index: "{index_input["name"]}"')
+            logger.info(f'Index: "{index_input["name"]}"')
 
             index_data = _get_index_data(index_input["url"], index_input["code"])
             try:
                 _check_that_response_data_is_valid(index_input, index_data)
             except ResponseDataError as e:
-                self.stderr.write(
+                logger.error(
                     f"Error: {e}. Skipping import of index {index_input['name']}"
                 )
                 continue
 
             index, created = _update_or_create_index(index_input, index_data)
-            self.stdout.write(
-                "Added new index." if created else "Updated existing index."
-            )
+            logger.info("Added new index." if created else "Updated existing index.")
 
             figures_updated, figures_created = _update_or_create_point_figures(
                 index_input, index_data, index
             )
-            self.stdout.write(
+            logger.info(
                 f"Updated {figures_updated} and created {figures_created} point figures."
             )
 
-        self.stdout.write("Done")
+        logger.info("Done")
 
 
 def _get_index_data(url: str, code: str) -> ResponseData:
@@ -322,11 +327,19 @@ def _update_or_create_point_figures(
         )
         region = dp["key"][region_key_pos]
         comment = _find_comment_for_value(dp, comments, columns)
-        # Preliminary figure point values (indeksipistelukujen ennakkoarvot)
-        # will be released by StatFin ahead of the final values. These
-        # preliminary values will contain a comment like "* ennakkotieto\r\n".
-        # If future requirements state that preliminary values should not be
-        # saved or used in our system, add exclusion logic here.
+
+        if comment and "ennakkotieto" in comment:
+            # Preliminary point figure values (indeksipistelukujen ennakkoarvot)
+            # will be released by StatFin ahead of the final values. These
+            # preliminary values will contain a comment like "* ennakkotieto\r\n".
+            # Requirement is to only use final values, so the preliminary
+            # values are skipped here.
+            logger.info(
+                f"Skipping a preliminary value {value} for index {index.pk}, "
+                f'year {year}, region {region} based on comment "{comment}".'
+            )
+            continue
+
         _, created = IndexPointFigureYearly.objects.update_or_create(
             index=index,
             year=year,
