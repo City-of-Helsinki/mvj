@@ -1,4 +1,5 @@
 import json
+from collections.abc import Callable
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import cast
@@ -21,6 +22,9 @@ from leasing.management.commands.import_periodic_rent_adjustment_index import (
     _get_update_date,
     _update_or_create_index,
     _update_or_create_point_figures,
+)
+from leasing.models.rent import (
+    OldDwellingsInHousingCompaniesPriceIndex,
 )
 
 
@@ -217,7 +221,11 @@ def test_create_or_update_index():
 
 
 @pytest.mark.django_db
-def test_create_or_update_point_figure(old_dwellings_price_index_factory):
+def test_create_or_update_point_figure(
+    old_dwellings_price_index_factory: Callable[
+        ..., OldDwellingsInHousingCompaniesPriceIndex
+    ],
+):
     """Happy path: new point figures are saved to DB, and are updated when using
     the same index id and year.
     """
@@ -277,6 +285,71 @@ def test_create_or_update_point_figure(old_dwellings_price_index_factory):
     # If you want to avoid unnecessary updates, write logic to skip update when nothing changes.
     assert figures_updated == 4
     assert figures_created == 0
+
+
+@pytest.mark.django_db
+def test_skip_preliminary_point_figures(
+    old_dwellings_price_index_factory: Callable[
+        ..., OldDwellingsInHousingCompaniesPriceIndex
+    ],
+):
+    """Preliminary point figures with 'ennakkotieto' in comment are skipped."""
+    index_input = cast(
+        IndexInput,
+        {
+            "name": "",
+            "url": "",
+            "code": "test_index_code_1",
+        },
+    )
+    response_data = cast(
+        ResponseData,
+        {
+            "columns": [
+                {
+                    "code": "Vuosi",
+                    "text": "",
+                    "comment": "",
+                    "type": "t",
+                },
+                {"code": "Alue", "text": "", "type": "d"},
+                {
+                    "code": "test_index_code_1",
+                    "text": "",
+                    "comment": "",
+                    "type": "c",
+                },
+            ],
+            "comments": [
+                {
+                    "variable": "Vuosi",
+                    "value": "2023",
+                    "comment": "* ennakkotieto\r\n",
+                },
+                {
+                    "variable": "Vuosi",
+                    "value": "2024",
+                    "comment": "* ennakkotieto\r\n",
+                },
+            ],
+            "data": [
+                {"key": ["2021", "pks"], "values": ["100.1"]},
+                {"key": ["2022", "pks"], "values": ["100.2"]},
+                {"key": ["2023", "pks"], "values": ["100.3"]},
+                {"key": ["2024", "pks"], "values": ["100.4"]},
+            ],
+            "metadata": [],
+        },
+    )
+    index = old_dwellings_price_index_factory(
+        code="test_index_code_1", name="Test index 1", url="https://test.url.1"
+    )
+    figures_updated, figures_created = _update_or_create_point_figures(
+        index_input, response_data, index
+    )
+    # Only two should be created; 2023 and 2024 have preliminary data and are skipped
+    assert figures_updated == 0
+    assert figures_created == 2
 
 
 @pytest.fixture
