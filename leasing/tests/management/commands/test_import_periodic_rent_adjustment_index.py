@@ -222,7 +222,7 @@ def test_create_or_update_index():
 
 @pytest.mark.django_db
 def test_create_or_update_point_figure(
-    old_dwellings_price_index_factory: Callable[
+    old_dwellings_in_housing_companies_price_index_factory: Callable[
         ..., OldDwellingsInHousingCompaniesPriceIndex
     ],
 ):
@@ -266,7 +266,7 @@ def test_create_or_update_point_figure(
             "metadata": [],
         },
     )
-    index = old_dwellings_price_index_factory(
+    index = old_dwellings_in_housing_companies_price_index_factory(
         code="test_index_code_1", name="Test index 1", url="https://test.url.1"
     )
     figures_updated, figures_created = _update_or_create_point_figures(
@@ -289,7 +289,7 @@ def test_create_or_update_point_figure(
 
 @pytest.mark.django_db
 def test_skip_preliminary_point_figures(
-    old_dwellings_price_index_factory: Callable[
+    old_dwellings_in_housing_companies_price_index_factory: Callable[
         ..., OldDwellingsInHousingCompaniesPriceIndex
     ],
 ):
@@ -341,7 +341,7 @@ def test_skip_preliminary_point_figures(
             "metadata": [],
         },
     )
-    index = old_dwellings_price_index_factory(
+    index = old_dwellings_in_housing_companies_price_index_factory(
         code="test_index_code_1", name="Test index 1", url="https://test.url.1"
     )
     figures_updated, figures_created = _update_or_create_point_figures(
