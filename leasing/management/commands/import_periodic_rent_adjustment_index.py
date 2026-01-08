@@ -106,8 +106,10 @@ class ResponseDataError(Exception):
 # The keys are arbitrary, and only for internal reference in this file.
 INDEXES_TO_IMPORT: list[IndexInput] = [
     {
-        "name": "13mq -- Price index of old dwellings in housing companies \
-                (2020=100) and numbers of transactions, yearly, 2020-2023",
+        "name": (
+            "13mq -- Price index of old dwellings in housing companies (2020=100) "
+            "and numbers of transactions, yearly, 2020-2023"
+        ),
         "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mq.px",
         "code": "ketj_P_QA_T",
     },
@@ -131,8 +133,7 @@ class Command(BaseCommand):
                 )
                 continue
 
-            index, created = _update_or_create_index(index_input, index_data)
-            logger.info("Added new index." if created else "Updated existing index.")
+            index, _ = _update_or_create_index(index_input, index_data)
 
             figures_updated, figures_created = _update_or_create_point_figures(
                 index_input, index_data, index
@@ -268,7 +269,7 @@ def _find_column_position(
     for c in columns:
         if condition(c):
             position += 1
-            if c["code"] == code:
+            if c.get("code") == code:
                 return position
 
     raise ResponseDataError(f'Did not find the column "{code}" in API response data')
@@ -285,16 +286,42 @@ def _update_or_create_index(
     table_metadata = index_data.get("metadata", [])
     metadata = table_metadata[0] if table_metadata else {}
 
+    code = index_column_details.get("code", None)
+    url = index_input["url"]
+    name = index_column_details.get("text", "")
+    comment = index_column_details.get("comment", "")
+    source = metadata.get("source", "")
+    source_table_updated = _get_update_date(metadata)
+    source_table_label = metadata.get("label", "")
+
+    identical_index_exists = OldDwellingsInHousingCompaniesPriceIndex.objects.filter(
+        code=code,
+        url=url,
+        name=name,
+        comment=comment,
+        source=source,
+        source_table_updated=source_table_updated,
+        source_table_label=source_table_label,
+    ).exists()
+    if identical_index_exists:
+        logger.info(f'Found existing identical index {name} for code "{code}".')
+        return OldDwellingsInHousingCompaniesPriceIndex.objects.get(code=code), False
+
     index, created = OldDwellingsInHousingCompaniesPriceIndex.objects.update_or_create(
-        code=index_column_details.get("code", None),
+        code=code,
         defaults={
-            "url": index_input["url"],
-            "name": index_column_details.get("text", ""),
-            "comment": index_column_details.get("comment", ""),
-            "source": metadata.get("source", ""),
-            "source_table_updated": _get_update_date(metadata),
-            "source_table_label": metadata.get("label", ""),
+            "url": url,
+            "name": name,
+            "comment": comment,
+            "source": source,
+            "source_table_updated": source_table_updated,
+            "source_table_label": source_table_label,
         },
+    )
+    logger.info(
+        f"Added new index {name} for code '{code}'."
+        if created
+        else f"Updated existing index {name} for code '{code}'."
     )
     return index, created
 
@@ -337,6 +364,20 @@ def _update_or_create_point_figures(
             logger.info(
                 f"Skipping a preliminary value {value} for index {index.pk}, "
                 f'year {year}, region {region} based on comment "{comment}".'
+            )
+            continue
+
+        identical_figure_exists = IndexPointFigureYearly.objects.filter(
+            index=index,
+            year=year,
+            value=value,
+            region=region,
+            comment=comment,
+        ).exists()
+
+        if identical_figure_exists:
+            logger.info(
+                f"Found existing identical point figure for index {index.pk}, year {year}, region {region}. Skipping."
             )
             continue
 
