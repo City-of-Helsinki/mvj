@@ -281,9 +281,9 @@ def test_create_or_update_point_figure(
     figures_updated, figures_created = _update_or_create_point_figures(
         creation_input, update_data, index
     )
-    # Currently all point figures are updated every time, regardless of changes in content.
-    # If you want to avoid unnecessary updates, write logic to skip update when nothing changes.
-    assert figures_updated == 4
+    # Only year 2023 should be updated because its value changed.
+    # Years 2021, 2022, and 2024 are skipped because they are identical to existing figures.
+    assert figures_updated == 1
     assert figures_created == 0
 
 
