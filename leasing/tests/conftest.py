@@ -480,12 +480,6 @@ class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
 
 
 @register
-class OldDwellingsPriceIndexFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = OldDwellingsInHousingCompaniesPriceIndex
-
-
-@register
 class VipunenMapLayerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = VipunenMapLayer
