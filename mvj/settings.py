@@ -130,7 +130,6 @@ env = environ.Env(
     FLAG_PLOTSEARCH=(bool, False),
     FLAG_SANCTIONS_INQUIRY=(bool, False),
     FLAG_SKIP_FILE_UPLOAD_PERMISSIONS=(bool, False),
-    FLAG_LEASEAREA_DRAFT_GEOMETRY=(bool, False),
 )
 
 env_file = project_root(".env")
@@ -441,7 +440,6 @@ FLAG_SANCTIONS_INQUIRY = env.bool("FLAG_SANCTIONS_INQUIRY")
 FLAG_SKIP_FILE_UPLOAD_PERMISSIONS = env.bool(
     "FLAG_SKIP_FILE_UPLOAD_PERMISSIONS", default=False
 )
-FLAG_LEASEAREA_DRAFT_GEOMETRY = env.bool("FLAG_LEASEAREA_DRAFT_GEOMETRY", default=False)
 
 if FLAG_SKIP_FILE_UPLOAD_PERMISSIONS:
     # Use operating-system dependent behavior
