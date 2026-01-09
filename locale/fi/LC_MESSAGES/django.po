@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-11 17:05+0200\n"
+"POT-Creation-Date: 2026-01-09 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1956,9 +1956,6 @@ msgstr "Selvitysaste (Muut)"
 msgid "Archived decision"
 msgstr "Arkistointipäätös"
 
-msgid "Draft geometry"
-msgstr ""
-
 msgctxt "Model name"
 msgid "Lease area"
 msgstr "Vuokra-alue"
@@ -3007,6 +3004,14 @@ msgid ""
 "leasetype's receivable type."
 msgstr ""
 
+msgid "Require 'Application received at' field on lease summary page?"
+msgstr ""
+
+msgid ""
+"Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field "
+"on lease summary page."
+msgstr ""
+
 msgctxt "Model name"
 msgid "Service unit"
 msgstr "Palvelukokonaisuus"
@@ -3582,6 +3587,9 @@ msgstr "Ei voi olla sama vuokraus"
 
 msgid "Must be from the same service unit as the parent"
 msgstr "Palvelukokonaisuuden pitää olla sama kuin isäntätietueessa"
+
+msgid "'Application received at' is a mandatory field for this service unit"
+msgstr ""
 
 msgid "Can only add leases to service units the user is a member of"
 msgstr "Vuokrauksia voi lisätä vain omaan palvelukokonaisuuteen"
