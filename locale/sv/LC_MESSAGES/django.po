@@ -3005,12 +3005,13 @@ msgid ""
 msgstr ""
 
 msgid "Require 'Application received at' field on lease summary page?"
-msgstr ""
+msgstr "Är det obligatoriskt att fylla i fältet 'Ansökan inkom kl'?"
 
 msgid ""
 "Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field "
 "on lease summary page."
 msgstr ""
+"Gör 'Ansökan inkom kl' / 'Application received at' till ett obligatoriskt fält på översiktssidan för hyresavtalet."
 
 msgctxt "Model name"
 msgid "Service unit"
@@ -3586,7 +3587,7 @@ msgid "Must be from the same service unit as the parent"
 msgstr ""
 
 msgid "'Application received at' is a mandatory field for this service unit"
-msgstr ""
+msgstr "'Ansökan inkom kl' är ett obligatoriskt fält för denna serviceenhet."
 
 msgid "Can only add leases to service units the user is a member of"
 msgstr ""

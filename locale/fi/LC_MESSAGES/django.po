@@ -3005,12 +3005,13 @@ msgid ""
 msgstr ""
 
 msgid "Require 'Application received at' field on lease summary page?"
-msgstr ""
+msgstr "Vaadi 'Hakemuksen saapumispäivämäärä' kentän täyttäminen vuokrauksen yhteenvetosivulla?"
 
 msgid ""
 "Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field "
 "on lease summary page."
 msgstr ""
+"Tee 'Hakemuksen saapumispäivämäärä' / 'Application received at' kentästä pakollinen vuokrauksen yhteenvetosivulla"
 
 msgctxt "Model name"
 msgid "Service unit"
@@ -3589,7 +3590,7 @@ msgid "Must be from the same service unit as the parent"
 msgstr "Palvelukokonaisuuden pitää olla sama kuin isäntätietueessa"
 
 msgid "'Application received at' is a mandatory field for this service unit"
-msgstr ""
+msgstr "'Hakemuksen saapumispäivämäärä' on pakollinen kenttä vuokrauksen palvelukokonaisuudella"
 
 msgid "Can only add leases to service units the user is a member of"
 msgstr "Vuokrauksia voi lisätä vain omaan palvelukokonaisuuteen"
