@@ -13,15 +13,11 @@ from django.utils.translation import gettext_lazy as _
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
 )
-from laske_export.document.land_use_agreement_invoice_sales_order_adapter import (
-    LandUseAgreementInvoiceSalesOrderAdapter,
-)
 from laske_export.document.sales_order import SalesOrder, SalesOrderContainer
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
 from leasing.enums import InvoiceType
 from leasing.models import Invoice, ServiceUnit
-from leasing.models.land_use_agreement import LandUseAgreementInvoice
 
 logger = logging.getLogger(__name__)
 
@@ -252,84 +248,6 @@ class LaskeExporter:
 
             # Mark only valid invoices `sent_to_sap_at`
             Invoice.objects.filter(id__in=valid_invoice_ids).update(sent_to_sap_at=now)
-
-        # TODO: Log errors
-        laske_export_log_entry.ended_at = timezone.now()
-        laske_export_log_entry.is_finished = True
-        laske_export_log_entry.save()
-
-        return laske_export_log_entry
-
-    def export_land_use_agreement_invoices(
-        self, invoices: list[LandUseAgreementInvoice]
-    ) -> LaskeExportLog:
-        now = timezone.now()
-        laske_export_log_entry = LaskeExportLog.objects.create(
-            started_at=now, filename="", service_unit=self.service_unit
-        )
-
-        sales_orders: list[SalesOrder] = []
-        log_invoices: list[LandUseAgreementInvoice] = []
-        invoice_count = 0
-
-        self.write_to_output(
-            "Going through {} land use agreement invoices".format(len(invoices))
-        )
-
-        for invoice in invoices:
-            self.write_to_output(" Land use agreement invoice id {}".format(invoice.id))
-
-            sales_order = create_sales_order_with_laske_values(self.service_unit)
-
-            adapter = LandUseAgreementInvoiceSalesOrderAdapter(
-                invoice=invoice,
-                sales_order=sales_order,
-            )
-            adapter.set_values()
-
-            sales_orders.append(sales_order)
-            log_invoices.append(invoice)
-
-            invoice_count += 1
-
-            self.write_to_output(
-                " Added invoice id {} as invoice number {}".format(
-                    invoice.id, invoice.number
-                )
-            )
-
-        if invoice_count > 0:
-            self.write_to_output(
-                "Added {} invoices to the export".format(invoice_count)
-            )
-
-            sales_order_container = SalesOrderContainer()
-            sales_order_container.sales_orders = sales_orders
-
-            laske_export_log_entry.land_use_agreement_invoices.set(log_invoices)
-
-            export_filename = "MTIL_IN_{}_{}_{:08}.xml".format(
-                self.service_unit.laske_sender_id,
-                self.service_unit.laske_sales_org,
-                laske_export_log_entry.id,
-            )
-            laske_export_log_entry.filename = export_filename
-
-            self.write_to_output("Export filename: {}".format(export_filename))
-
-            xml_string = sales_order_container.to_xml_string()
-
-            self.save_to_file(xml_string, export_filename)
-
-            self.write_to_output("Sending...")
-
-            self.send(export_filename)
-
-            self.write_to_output("Done.")
-
-            LandUseAgreementInvoice.objects.filter(
-                id__in=[o.id for o in invoices]
-            ).update(sent_to_sap_at=now)
 
         # TODO: Log errors
         laske_export_log_entry.ended_at = timezone.now()

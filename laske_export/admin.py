@@ -90,7 +90,6 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "invoice_count",
-        "land_use_agreement_invoice_count",
         "started_at",
         "ended_at",
         "is_finished",
@@ -113,7 +112,6 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
 
         return qs.annotate(
             invoice_count=Count("invoices"),
-            land_use_agreement_invoice_count=Count("land_use_agreement_invoices"),
         )
 
     def has_add_permission(self, request, obj=None):
@@ -129,13 +127,6 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
         return obj.invoice_count
 
     invoice_count.short_description = _("Invoice count")
-
-    def land_use_agreement_invoice_count(self, obj):
-        return obj.land_use_agreement_invoice_count
-
-    land_use_agreement_invoice_count.short_description = _(
-        "Land use agreement invoice count"
-    )
 
 
 class InvoicePaymentInline(admin.TabularInline):

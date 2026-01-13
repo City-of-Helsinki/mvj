@@ -32,14 +32,6 @@ class Contract(TimeStampedSafeDeleteModel):
         on_delete=models.PROTECT,
     )
 
-    land_use_agreement = models.ForeignKey(
-        "leasing.LandUseAgreement",
-        verbose_name=_("Land use agreement"),
-        related_name="contracts",
-        null=True,
-        on_delete=models.PROTECT,
-    )
-
     # In Finnish: Sopimuksen tyyppi
     type = models.ForeignKey(
         ContractType,

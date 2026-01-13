@@ -472,7 +472,6 @@ class AreaType(Enum):
     INFILL_DEVELOPMENT_COMPENSATION = (
         "infill_development_compensation"  # Täydennysrakentamiskorvaus
     )
-    LAND_USE_AGREEMENT = "land_use_agreement"  # Maankäyttösopimus
     DETAILED_PLAN = "detailed_plan"  # Voimassa oleva asemakaava
     PRE_DETAILED_PLAN = "pre_detailed_plan"  # Vireillä tai tuleva asemakaava
     OTHER = "other"
@@ -487,7 +486,6 @@ class AreaType(Enum):
         INFILL_DEVELOPMENT_COMPENSATION = pgettext_lazy(
             "Area type", "Infill development compensation"
         )
-        LAND_USE_AGREEMENT = pgettext_lazy("Area type", "Land use agreement")
         DETAILED_PLAN = pgettext_lazy("Area type", "Detailed plan")
         OTHER = pgettext_lazy("Area type", "Other")
 
@@ -584,53 +582,6 @@ class BasisOfRentZone(Enum):
         ZONE_1 = pgettext_lazy("Basis of rent zone", "Zone 1")
         ZONE_2 = pgettext_lazy("Basis of rent zone", "Zone 2")
         ZONE_3 = pgettext_lazy("Basis of rent zone", "Zone 3")
-
-
-class LandUseContractType(Enum):
-    """
-    In Finnish: Maankäyttösopimus tyyppi
-    """
-
-    LAND_USE_AGREEMENT = "Land use agreement"
-    AGREEMENT_ON_APPRECIATION = "Agreement on appreciation"
-    NO_AGREEMENT = "No agreement"
-
-    class Labels:
-        LAND_USE_AGREEMENT = pgettext_lazy(
-            "Land Use Contract Type", "Land use agreement"
-        )
-        AGREEMENT_ON_APPRECIATION = pgettext_lazy(
-            "Land Use Contract Type", "Agreement on appreciation"
-        )
-        NO_AGREEMENT = pgettext_lazy("Land Use Contract Type", "No agreement")
-
-
-class LandUseAgreementAttachmentType(Enum):
-    """
-    In Finnish: Maankäyttösopimuksen liitetiedoston tyyppi
-    """
-
-    GENERAL = "general"
-    COMPENSATION_CALCULATION = "compensation_calculation"
-
-    class Labels:
-        GENERAL = pgettext_lazy("Land use agreement attachment type", "General")
-        COMPENSATION_CALCULATION = pgettext_lazy(
-            "Land use agreement attachment type", "Compensation calculation"
-        )
-
-
-class LandUseAgreementLitigantContactType(Enum):
-    """
-    In Finnish: Maankäyttösopimuksen osapuolen yhteystiedon tyyppi
-    """
-
-    TENANT = "tenant"
-    BILLING = "billing"
-
-    class Labels:
-        TENANT = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Tenant")
-        BILLING = pgettext_lazy("Land Use Agreement Litigant Contact Type", "Billing")
 
 
 class PlanUnitStatus(Enum):
