@@ -91,18 +91,6 @@ from leasing.models.land_area import (
     PlanUnitIntendedUse,
     PlotDivisionState,
 )
-from leasing.models.land_use_agreement import (
-    LandUseAgreement,
-    LandUseAgreementAddress,
-    LandUseAgreementConditionFormOfManagement,
-    LandUseAgreementDecision,
-    LandUseAgreementDecisionCondition,
-    LandUseAgreementDecisionConditionType,
-    LandUseAgreementDecisionType,
-    LandUseAgreementDefinition,
-    LandUseAgreementStatus,
-    LandUseAgreementType,
-)
 from leasing.models.lease import ReservationProcedure
 from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.service_unit import ServiceUnitGroupMapping
@@ -736,26 +724,6 @@ class LeaseholdTransferImportLogAdmin(admin.ModelAdmin):
     ordering = ("id",)
 
 
-class LandUseAgreementAddressInline(admin.TabularInline):
-    model = LandUseAgreementAddress
-    extra = 0
-
-
-class LandUseAgreementDecisionConditionInline(
-    FieldPermissionsAdminMixin, admin.StackedInline
-):
-    model = LandUseAgreementDecisionCondition
-    extra = 0
-
-
-class LandUseAgreementDecisionAdmin(admin.ModelAdmin):
-    inlines = [LandUseAgreementDecisionConditionInline]
-
-
-class LandUseAgreementAdmin(admin.ModelAdmin):
-    inlines = [LandUseAgreementAddressInline]
-
-
 class ServiceUnitGroupMappingInline(admin.TabularInline):
     model = ServiceUnitGroupMapping
     extra = 0
@@ -896,12 +864,4 @@ admin.site.register(BasisOfRentBuildPermissionType, NameAdmin)
 admin.site.register(UiData, UiDataAdmin)
 admin.site.register(Vat, VatAdmin)
 
-admin.site.register(LandUseAgreementType, NameAdmin)
-admin.site.register(LandUseAgreementStatus, NameAdmin)
-admin.site.register(LandUseAgreementDefinition, NameAdmin)
-admin.site.register(LandUseAgreementDecisionType, NameAdmin)
-admin.site.register(LandUseAgreementConditionFormOfManagement, NameAdmin)
-admin.site.register(LandUseAgreementDecisionConditionType, NameAdmin)
-admin.site.register(LandUseAgreementDecision, LandUseAgreementDecisionAdmin)
-admin.site.register(LandUseAgreement, LandUseAgreementAdmin)
 admin.site.register(VipunenMapLayer, VipunenMapLayerAdmin)

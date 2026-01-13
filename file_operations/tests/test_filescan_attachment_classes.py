@@ -12,33 +12,22 @@ from django.urls import reverse
 from rest_framework import status as http_status
 
 from conftest import (
-    DistrictFactory,
     InfillDevelopmentCompensationLeaseFactory,
     InspectionFactory,
     LeaseAreaFactory,
     LeaseFactory,
-    MunicipalityFactory,
     TargetStatusFactory,
 )
 from file_operations.enums import FileScanResult
 from file_operations.models.filescan import FileScanStatus, _scan_file_task
 from forms.models.form import Attachment, Field
-from leasing.enums import LandUseAgreementAttachmentType, LeaseAreaAttachmentType
+from leasing.enums import LeaseAreaAttachmentType
 from leasing.models.debt_collection import CollectionCourtDecision, CollectionLetter
 from leasing.models.infill_development_compensation import (
     InfillDevelopmentCompensationAttachment,
 )
 from leasing.models.inspection import InspectionAttachment
 from leasing.models.land_area import LeaseAreaAttachment
-from leasing.models.land_use_agreement import (
-    LandUseAgreement,
-    LandUseAgreementAttachment,
-)
-from leasing.tests.conftest import (
-    LandUseAgreementFactory,
-    LandUseAgreementStatusFactory,
-    LandUseAgreementTypeFactory,
-)
 from plotsearch.models.plot_search import AreaSearchAttachment, MeetingMemo
 
 # Attachment classes, with their API routes
@@ -52,7 +41,6 @@ attachment_class_details = [
         "v1:infilldevelopmentcompensationattachment",
     ),
     (InspectionAttachment, "v1:inspectionattachment"),
-    (LandUseAgreementAttachment, "v1:landuseagreementattachment"),
     (LeaseAreaAttachment, "v1:leaseareaattachment"),
     (MeetingMemo, "v1:meetingmemo"),
 ]
@@ -64,7 +52,6 @@ def test_attachment_classes(
     django_db_setup,
     admin_client: Client,
     _attachment_test_data,
-    _landuseagreementattachment_test_data,
     file_class: type[models.Model],
     api_route_root: str,
 ):
@@ -92,7 +79,6 @@ def test_attachment_classes(
                 file_class,
                 uploaded_file,
                 _attachment_test_data,
-                _landuseagreementattachment_test_data,
             )
             response = admin_client.post(
                 path,
@@ -146,7 +132,6 @@ def _get_request_details(
     file_class: type[models.Model],
     file: SimpleUploadedFile,
     attachment_test_data: Field,
-    landuseagreementattachment_test_data: LandUseAgreement,
 ) -> dict:
     match file_class.__name__:
         case Attachment.__name__:
@@ -164,10 +149,6 @@ def _get_request_details(
         case InspectionAttachment.__name__:
             return _get_inspectionattachment_request_details(file)
 
-        case LandUseAgreementAttachment.__name__:
-            return _get_landuseagreement_request_details(
-                file, landuseagreementattachment_test_data
-            )
         case LeaseAreaAttachment.__name__:
             return _get_leaseareaattachmment_request_details(file)
 
@@ -233,24 +214,6 @@ def _get_inspectionattachment_request_details(
         "data": json.dumps(
             {
                 "inspection": inspection.pk,
-            }
-        ),
-        "file": file,
-    }
-
-
-def _get_landuseagreement_request_details(
-    file: SimpleUploadedFile, landuseagreement_test_data: LandUseAgreement
-) -> dict:
-    """
-    ViewSet uses a MultiPartJsonParser.
-    """
-    attachment_type = LandUseAgreementAttachmentType.GENERAL.value
-    return {
-        "data": json.dumps(
-            {
-                "land_use_agreement": landuseagreement_test_data.pk,
-                "type": attachment_type,
             }
         ),
         "file": file,
@@ -329,26 +292,6 @@ def _mock_scan_file_task_unsafe(scan_status_id: int) -> None:
             },
         }
         _scan_file_task(scan_status_id)
-
-
-@pytest.fixture
-def _landuseagreementattachment_test_data() -> LandUseAgreement:
-    """
-    Minimal dependency setup for a LandUseAgreementAttachment.
-    """
-    municipality = MunicipalityFactory(name="Helsinki")
-    district = DistrictFactory(
-        name="TestDistrict", identifier=999, municipality=municipality
-    )
-    land_use_agreement_type = LandUseAgreementTypeFactory(name="Test type")
-    land_use_agreement_status = LandUseAgreementStatusFactory(name="Test status")
-    land_use_agreement = LandUseAgreementFactory(
-        type_id=land_use_agreement_type.pk,
-        municipality=municipality,
-        district=district,
-        status_id=land_use_agreement_status.pk,
-    )
-    return land_use_agreement
 
 
 @pytest.fixture

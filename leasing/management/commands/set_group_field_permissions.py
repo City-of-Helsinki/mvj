@@ -630,46 +630,6 @@ CUSTOM_FIELD_PERMS = {
             UG.PAAKAYTTAJA: "change",
         }
     },
-    "landuseagreement": {
-        "landuseagreementlitigant": {
-            UG.SELAILIJA: "view",
-            UG.VALMISTELIJA: "view",
-            UG.SOPIMUSVALMISTELIJA: "view",
-            UG.SYOTTAJA: "change",
-            UG.PERINTALAKIMIES: "view",
-            UG.LASKUTTAJA: "change",
-            UG.PAAKAYTTAJA: "change",
-        },
-        "landuseagreementaddress": {
-            UG.SELAILIJA: "change",
-            UG.VALMISTELIJA: "change",
-            UG.SOPIMUSVALMISTELIJA: "change",
-            UG.SYOTTAJA: "change",
-            UG.PERINTALAKIMIES: "change",
-            UG.LASKUTTAJA: "change",
-            UG.PAAKAYTTAJA: "change",
-        },
-        "landuseagreementdecision": {
-            UG.SELAILIJA: "view",
-            UG.VALMISTELIJA: "view",
-            UG.SOPIMUSVALMISTELIJA: "view",
-            UG.SYOTTAJA: "change",
-            UG.PERINTALAKIMIES: "view",
-            UG.LASKUTTAJA: "view",
-            UG.PAAKAYTTAJA: "change",
-        },
-    },
-    "landuseagreementlitigant": {
-        "landuseagreementlitigantcontact": {
-            UG.SELAILIJA: "view",
-            UG.VALMISTELIJA: "view",
-            UG.SOPIMUSVALMISTELIJA: "view",
-            UG.SYOTTAJA: "change",
-            UG.PERINTALAKIMIES: "view",
-            UG.LASKUTTAJA: "change",
-            UG.PAAKAYTTAJA: "change",
-        },
-    },
 }
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 12:43+0200\n"
+"POT-Creation-Date: 2026-01-13 12:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -556,9 +556,6 @@ msgstr "Palvelukokonaisuus"
 msgid "Invoice count"
 msgstr "Laskujen määrä"
 
-msgid "Land use agreement invoice count"
-msgstr "Maankäyttösopimuslaskujen määrä"
-
 msgid "Invoice payment"
 msgstr "Maksusuoritus"
 
@@ -1105,10 +1102,6 @@ msgid "Infill development compensation"
 msgstr "Täydennysrakentamiskorvaus"
 
 msgctxt "Area type"
-msgid "Land use agreement"
-msgstr "Maankäyttösopimus"
-
-msgctxt "Area type"
 msgid "Detailed plan"
 msgstr "Asemakaava"
 
@@ -1187,34 +1180,6 @@ msgstr "Vyöhyke 2"
 msgctxt "Basis of rent zone"
 msgid "Zone 3"
 msgstr "Vyöhyke 3"
-
-msgctxt "Land Use Contract Type"
-msgid "Land use agreement"
-msgstr "Maankäyttösopimus"
-
-msgctxt "Land Use Contract Type"
-msgid "Agreement on appreciation"
-msgstr "Sopimus arvonnoususta"
-
-msgctxt "Land Use Contract Type"
-msgid "No agreement"
-msgstr "Ei sopimusta"
-
-msgctxt "Land use agreement attachment type"
-msgid "General"
-msgstr "Yleinen"
-
-msgctxt "Land use agreement attachment type"
-msgid "Compensation calculation"
-msgstr "Korvauslaskelma"
-
-msgctxt "Land Use Agreement Litigant Contact Type"
-msgid "Tenant"
-msgstr "Vuokralainen"
-
-msgctxt "Land Use Agreement Litigant Contact Type"
-msgid "Billing"
-msgstr "Laskunsaaja"
 
 msgctxt "Plan Unit Status"
 msgid "Present"
@@ -1460,9 +1425,6 @@ msgstr "Sopimuksen tyyppi"
 msgctxt "Model name"
 msgid "Contract types"
 msgstr "Sopimuksen tyypit"
-
-msgid "Land use agreement"
-msgstr "Maankäyttösopimus"
 
 msgid "Contract type"
 msgstr "Sopimuksen tyyppi"
@@ -2084,214 +2046,11 @@ msgctxt "Model name"
 msgid "Plan units"
 msgstr "Kaavayksiköt"
 
-msgid "Land use agreement type"
-msgstr "Maankäyttösopimuksen tyyppi"
-
-msgid "Municipality"
-msgstr "Kaupunki"
-
-msgid "Sequence number"
-msgstr "Juokseva numero"
-
-msgctxt "Model name"
-msgid "Land use agreement identifier"
-msgstr "Maankäyttösopimustunnus"
-
-msgctxt "Model name"
-msgid "Land use agreement identifiers"
-msgstr "Maankäyttösopimustunnukset"
-
-msgid "Land use agreement identifier"
-msgstr "Maankäyttösopimuksen tunnus"
-
-msgid "Land use agreement definition"
-msgstr "Maankäyttösopimuksen määritelmä"
-
-msgid "Land use agreement status"
-msgstr "Maankäyttösopimuksen tila"
-
-msgid "Estimated completion year"
-msgstr "Arvioitu toteutumisvuosi"
-
-msgid "Estimated introduction year"
-msgstr "Arvioitu esittelyvuosi"
-
-msgid "Project area"
-msgstr "Hankealue"
-
-msgid "Plan reference number"
-msgstr "Asemakaavan diaarinumero"
-
-msgid "Plan number"
-msgstr "Asemakaavan nro"
-
-msgid "Plan acceptor"
-msgstr "Päättäjä"
-
-msgid "Plan lawfulness date"
-msgstr "Asemakaavan lainvoimaisuuspvm"
-
-msgctxt "Model name"
-msgid "Land use agreement"
-msgstr "Maankäyttösopimus"
-
-msgctxt "Model name"
-msgid "Land use agreements"
-msgstr "Maankäyttösopimukset"
-
-msgctxt "Model name"
-msgid "Land use agreement attachment"
-msgstr "Maankäyttösopimuksen liitetiedosto"
-
-msgctxt "Model name"
-msgid "Land use agreement attachments"
-msgstr "Maankäyttösopimuksen liitetiedostot"
-
-msgid "Cash compensation"
-msgstr "Rahakorvaus"
-
-msgid "Land compensation"
-msgstr "Täydennysrakentamiskorvaus"
-
-msgid "Other compensation"
-msgstr "Muu korvaus"
-
-msgid "First installment increase"
-msgstr "Ensimmäisen erän nousu"
-
-msgid "Street acquisition value"
-msgstr "Katu hankinta-arvo"
-
-msgid "Park acquisition value"
-msgstr "Puisto hankinta-arvo"
-
-msgid "Other acquisition value"
-msgstr "Muu hankinta-arvo"
-
-msgid "Usage"
-msgstr ""
-
-msgid "Management"
-msgstr ""
-
-msgid "Protected"
-msgstr ""
-
-msgid "Area"
-msgstr ""
-
-msgid "Unit value"
-msgstr ""
-
-msgid "Discount"
-msgstr ""
-
-msgid "Used price"
-msgstr ""
-
-msgid "Estate id"
-msgstr "Kohteen tunniste"
-
-msgctxt "Model name"
-msgid "Land use agreement decision type"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement decision types"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement decision"
-msgstr "Maankäyttösopimus päätös"
-
-msgctxt "Model name"
-msgid "Land use agreement decisions"
-msgstr "Maankäyttösopimus päätökset"
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition type"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition types"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement decision conditions"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement address"
-msgstr "Maankäyttösopimus osoite"
-
-msgctxt "Model name"
-msgid "Land use agreement addresses"
-msgstr "Maankäyttösopimus osoitteet"
-
-msgid "Obligated area (f-m2)"
-msgstr ""
-
-msgid "Actualized area (f-m2)"
-msgstr ""
-
-msgid "Subvention amount"
-msgstr "Subvention määrä"
-
-msgid "Compensation percent"
-msgstr ""
-
-msgctxt "Model name"
-msgid "Land use agreement litigant"
-msgstr "Maankäyttösopimuksen osapuolet"
-
-msgctxt "Model name"
-msgid "Land use agreement litigants"
-msgstr "Maankäyttösopimuksen osapuolet"
-
-msgid "Land use agreement litigant"
-msgstr "Maankäyttösopimuksen osapuoli"
-
-msgid "Contact"
-msgstr "Yhteystieto"
-
-msgid "Contact type"
-msgstr "Yhteystiedon tyyppi"
-
 msgid "SAP material code"
 msgstr "SAP materiaalinumero"
 
 msgid "SAP order item number"
 msgstr "SAP tilausnumero"
-
-msgid "Is active?"
-msgstr "Käytettävissä?"
-
-msgctxt "Model name"
-msgid "Receivable type"
-msgstr "Saamislaji"
-
-msgctxt "Model name"
-msgid "Receivable types"
-msgstr "Saamislajit"
-
-msgid "Sent date"
-msgstr "Lähetyspvm"
-
-msgid "Litigant"
-msgstr ""
-
-msgid "Compensation amount"
-msgstr "Korvausinvestoinnit"
-
-msgid "Increase percentage"
-msgstr ""
-
-msgid "Sign date"
-msgstr "Allekirjoitettava mennessä"
 
 msgid "If 'SAP project number' is set, it will be used instead of this value."
 msgstr ""
@@ -2310,6 +2069,9 @@ msgstr "Eräpäivien sijainti"
 msgid "Is the Lease Type active?"
 msgstr "Onko vuokraustyyppi aktiivinen?"
 
+msgid "Is active?"
+msgstr "Käytettävissä?"
+
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Laji"
@@ -2324,6 +2086,9 @@ msgstr "Kaupunki"
 
 msgctxt "Model name"
 msgid "Municipalities"
+msgstr "Kaupunki"
+
+msgid "Municipality"
 msgstr "Kaupunki"
 
 msgctxt "Model name"
@@ -2424,6 +2189,9 @@ msgstr "Varauksen menettelyt"
 
 msgid "Lease type"
 msgstr "Laji"
+
+msgid "Sequence number"
+msgstr "Juokseva numero"
 
 msgctxt "Model name"
 msgid "Lease identifier"
@@ -2596,6 +2364,14 @@ msgstr "Arkistointiaika"
 
 msgid "Archived note"
 msgstr "Arkistointihuomautus"
+
+msgctxt "Model name"
+msgid "Receivable type"
+msgstr "Saamislaji"
+
+msgctxt "Model name"
+msgid "Receivable types"
+msgstr "Saamislajit"
 
 msgctxt "Model name"
 msgid "Rent intended use"
@@ -2807,6 +2583,9 @@ msgstr "Hallintamuoto (Subventio)"
 msgid "Rent adjustment"
 msgstr "Alennus/Korotus"
 
+msgid "Subvention amount"
+msgstr "Subvention määrä"
+
 msgctxt "Model name"
 msgid "Management subvention (Rent adjustment)"
 msgstr "Hallintamuotosubventio (Alennus)"
@@ -3005,13 +2784,16 @@ msgid ""
 msgstr ""
 
 msgid "Require 'Application received at' field on lease summary page?"
-msgstr "Vaadi 'Hakemuksen saapumispäivämäärä' kentän täyttäminen vuokrauksen yhteenvetosivulla?"
+msgstr ""
+"Vaadi 'Hakemuksen saapumispäivämäärä' kentän täyttäminen vuokrauksen "
+"yhteenvetosivulla?"
 
 msgid ""
 "Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field "
 "on lease summary page."
 msgstr ""
-"Tee 'Hakemuksen saapumispäivämäärä' / 'Application received at' kentästä pakollinen vuokrauksen yhteenvetosivulla"
+"Tee 'Hakemuksen saapumispäivämäärä' / 'Application received at' kentästä "
+"pakollinen vuokrauksen yhteenvetosivulla"
 
 msgctxt "Model name"
 msgid "Service unit"
@@ -3039,6 +2821,9 @@ msgstr "Vuokralainen"
 msgctxt "Model name"
 msgid "Tenants"
 msgstr "Vuokralaiset"
+
+msgid "Contact"
+msgstr "Yhteystieto"
 
 msgctxt "Model name"
 msgid "Tenant contact"
@@ -3515,6 +3300,9 @@ msgstr "Varaustunnus"
 msgid "Reservee name"
 msgstr "Varauksensaaja"
 
+msgid "Plan number"
+msgstr "Asemakaavan nro"
+
 msgid "Main permitted build area (floor-m²)"
 msgstr "Pääkäyttötarkoituksellinen rakennusoikeus (k-m²)"
 
@@ -3590,7 +3378,9 @@ msgid "Must be from the same service unit as the parent"
 msgstr "Palvelukokonaisuuden pitää olla sama kuin isäntätietueessa"
 
 msgid "'Application received at' is a mandatory field for this service unit"
-msgstr "'Hakemuksen saapumispäivämäärä' on pakollinen kenttä vuokrauksen palvelukokonaisuudella"
+msgstr ""
+"'Hakemuksen saapumispäivämäärä' on pakollinen kenttä vuokrauksen "
+"palvelukokonaisuudella"
 
 msgid "Can only add leases to service units the user is a member of"
 msgstr "Vuokrauksia voi lisätä vain omaan palvelukokonaisuuteen"

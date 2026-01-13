@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 12:43+0200\n"
+"POT-Creation-Date: 2026-01-13 12:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -565,9 +565,6 @@ msgstr ""
 msgid "Invoice count"
 msgstr "Antal fakturor"
 
-msgid "Land use agreement invoice count"
-msgstr ""
-
 msgid "Invoice payment"
 msgstr ""
 
@@ -1106,10 +1103,6 @@ msgid "Infill development compensation"
 msgstr "Ersättning för kompletteringsbyggande"
 
 msgctxt "Area type"
-msgid "Land use agreement"
-msgstr "Markanvändningsavtal"
-
-msgctxt "Area type"
 msgid "Detailed plan"
 msgstr "Detaljplan"
 
@@ -1188,34 +1181,6 @@ msgstr "Zon 2"
 msgctxt "Basis of rent zone"
 msgid "Zone 3"
 msgstr "Zon 3"
-
-msgctxt "Land Use Contract Type"
-msgid "Land use agreement"
-msgstr "Markanvändningsavtal"
-
-msgctxt "Land Use Contract Type"
-msgid "Agreement on appreciation"
-msgstr "Avtal om värdeökning"
-
-msgctxt "Land Use Contract Type"
-msgid "No agreement"
-msgstr "Inget avtal"
-
-msgctxt "Land use agreement attachment type"
-msgid "General"
-msgstr "Allmänt"
-
-msgctxt "Land use agreement attachment type"
-msgid "Compensation calculation"
-msgstr "Ersättningsberäkning"
-
-msgctxt "Land Use Agreement Litigant Contact Type"
-msgid "Tenant"
-msgstr "Arrendator"
-
-msgctxt "Land Use Agreement Litigant Contact Type"
-msgid "Billing"
-msgstr "Fakturamottagare"
 
 msgctxt "Plan Unit Status"
 msgid "Present"
@@ -1461,9 +1426,6 @@ msgstr "Typ av avtal"
 msgctxt "Model name"
 msgid "Contract types"
 msgstr "Typer av avtal"
-
-msgid "Land use agreement"
-msgstr "Markanvändningsavtal"
 
 msgid "Contract type"
 msgstr "Typ av avtal"
@@ -2087,214 +2049,11 @@ msgctxt "Model name"
 msgid "Plan units"
 msgstr "Planenheter"
 
-msgid "Land use agreement type"
-msgstr "Typ av markanvändningsavtal"
-
-msgid "Municipality"
-msgstr "Stad"
-
-msgid "Sequence number"
-msgstr "Löpande nummer"
-
-msgctxt "Model name"
-msgid "Land use agreement identifier"
-msgstr "Identifierare för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement identifiers"
-msgstr "Identifierare för markanvändningsavtal"
-
-msgid "Land use agreement identifier"
-msgstr "Identifierare för markanvändningsavtal"
-
-msgid "Land use agreement definition"
-msgstr "Definition av markanvändningsavtal"
-
-msgid "Land use agreement status"
-msgstr "Status för markanvändningsavtal"
-
-msgid "Estimated completion year"
-msgstr "Uppskattat genomförandeår"
-
-msgid "Estimated introduction year"
-msgstr "Uppskattat presentationsår"
-
-msgid "Project area"
-msgstr "Projektområde"
-
-msgid "Plan reference number"
-msgstr "Detaljplanens diarienummer"
-
-msgid "Plan number"
-msgstr "Detaljplanens nummer"
-
-msgid "Plan acceptor"
-msgstr "Beslutsfattare"
-
-msgid "Plan lawfulness date"
-msgstr "Datum för detaljplanens formella rättskraft"
-
-msgctxt "Model name"
-msgid "Land use agreement"
-msgstr "Markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreements"
-msgstr "Markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement attachment"
-msgstr "Bifogad fil till markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement attachments"
-msgstr "Bifogade filer till markanvändningsavtal"
-
-msgid "Cash compensation"
-msgstr "Penningersättning"
-
-msgid "Land compensation"
-msgstr "Ersättning för kompletteringsbyggande"
-
-msgid "Other compensation"
-msgstr "Annan ersättning"
-
-msgid "First installment increase"
-msgstr "Ökning av första raten"
-
-msgid "Street acquisition value"
-msgstr "Gata anskaffningsvärde"
-
-msgid "Park acquisition value"
-msgstr "Park anskaffningsvärde"
-
-msgid "Other acquisition value"
-msgstr "Annat anskaffningsvärde"
-
-msgid "Usage"
-msgstr "Användning"
-
-msgid "Management"
-msgstr "Hantering"
-
-msgid "Protected"
-msgstr "Skyddat"
-
-msgid "Area"
-msgstr "Område"
-
-msgid "Unit value"
-msgstr "Enhetens värde"
-
-msgid "Discount"
-msgstr "Rabatt"
-
-msgid "Used price"
-msgstr "Använda priset"
-
-msgid "Estate id"
-msgstr "Objektets identifierare"
-
-msgctxt "Model name"
-msgid "Land use agreement decision type"
-msgstr "Beslutstyp av markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision types"
-msgstr "Beslutstyper av markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision"
-msgstr "Beslut om markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decisions"
-msgstr "Beslut om markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition type"
-msgstr "Typ av beslutsvillkor för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition types"
-msgstr "Typer av beslutsvillkor för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision condition"
-msgstr "Beslutsvillkor för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement decision conditions"
-msgstr "Beslutsvillkor för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement address"
-msgstr "Adress för markanvändningsavtal"
-
-msgctxt "Model name"
-msgid "Land use agreement addresses"
-msgstr "Adresser för markanvändningsavtal"
-
-msgid "Obligated area (f-m2)"
-msgstr "Område som omfattas av åläggandet (f-m2)"
-
-msgid "Actualized area (f-m2)"
-msgstr "Faktiska området (f-m2)"
-
-msgid "Subvention amount"
-msgstr "Subventionens mängd"
-
-msgid "Compensation percent"
-msgstr "Ersättningsprocent"
-
-msgctxt "Model name"
-msgid "Land use agreement litigant"
-msgstr "Markanvändningsavtalets parter"
-
-msgctxt "Model name"
-msgid "Land use agreement litigants"
-msgstr "Markanvändningsavtalets parter"
-
-msgid "Land use agreement litigant"
-msgstr "Markanvändningsavtalets part"
-
-msgid "Contact"
-msgstr "Kontaktuppgift"
-
-msgid "Contact type"
-msgstr "Typ av kontaktuppgift"
-
 msgid "SAP material code"
 msgstr "SAP materialnummer"
 
 msgid "SAP order item number"
 msgstr "SAP beställningsnummer"
-
-msgid "Is active?"
-msgstr "Disponibelt?"
-
-msgctxt "Model name"
-msgid "Receivable type"
-msgstr "Fordringsart"
-
-msgctxt "Model name"
-msgid "Receivable types"
-msgstr "Fordringsarter"
-
-msgid "Sent date"
-msgstr "Datum för sändning"
-
-msgid "Litigant"
-msgstr "Part"
-
-msgid "Compensation amount"
-msgstr "Ersättningsinvesteringar"
-
-msgid "Increase percentage"
-msgstr "Öka procenten"
-
-msgid "Sign date"
-msgstr "Ska undertecknas senast"
 
 msgid "If 'SAP project number' is set, it will be used instead of this value."
 msgstr ""
@@ -2311,6 +2070,9 @@ msgstr "Läge för förfallodatum"
 msgid "Is the Lease Type active?"
 msgstr ""
 
+msgid "Is active?"
+msgstr "Disponibelt?"
+
 msgctxt "Model name"
 msgid "Lease type"
 msgstr "Art"
@@ -2325,6 +2087,9 @@ msgstr "Stad"
 
 msgctxt "Model name"
 msgid "Municipalities"
+msgstr "Stad"
+
+msgid "Municipality"
 msgstr "Stad"
 
 msgctxt "Model name"
@@ -2425,6 +2190,9 @@ msgstr "Förfaringar för anvisningen"
 
 msgid "Lease type"
 msgstr "Art"
+
+msgid "Sequence number"
+msgstr "Löpande nummer"
 
 msgctxt "Model name"
 msgid "Lease identifier"
@@ -2596,6 +2364,14 @@ msgstr "Arkiveringstid"
 
 msgid "Archived note"
 msgstr "Arkiveringsanmärkning"
+
+msgctxt "Model name"
+msgid "Receivable type"
+msgstr "Fordringsart"
+
+msgctxt "Model name"
+msgid "Receivable types"
+msgstr "Fordringsarter"
 
 msgctxt "Model name"
 msgid "Rent intended use"
@@ -2809,6 +2585,9 @@ msgstr "Upplåtelseform (Subvention)"
 msgid "Rent adjustment"
 msgstr "Rabatt/Höjning"
 
+msgid "Subvention amount"
+msgstr "Subventionens mängd"
+
 msgctxt "Model name"
 msgid "Management subvention (Rent adjustment)"
 msgstr "Subvention för upplåtelseformen (Rabatt)"
@@ -3011,7 +2790,8 @@ msgid ""
 "Make 'Application received at' / 'Hakemuksen saapumispäivä' a required field "
 "on lease summary page."
 msgstr ""
-"Gör 'Ansökan inkom kl' / 'Application received at' till ett obligatoriskt fält på översiktssidan för hyresavtalet."
+"Gör 'Ansökan inkom kl' / 'Application received at' till ett obligatoriskt "
+"fält på översiktssidan för hyresavtalet."
 
 msgctxt "Model name"
 msgid "Service unit"
@@ -3039,6 +2819,9 @@ msgstr "Arrendator"
 msgctxt "Model name"
 msgid "Tenants"
 msgstr "Arrendatorer"
+
+msgid "Contact"
+msgstr "Kontaktuppgift"
 
 msgctxt "Model name"
 msgid "Tenant contact"
@@ -3512,6 +3295,9 @@ msgstr "Anvisningskod"
 
 msgid "Reservee name"
 msgstr "Anvisningens mottagare"
+
+msgid "Plan number"
+msgstr "Detaljplanens nummer"
 
 msgid "Main permitted build area (floor-m²)"
 msgstr "Huvudbostadsbyggsrätt (k-m²)"

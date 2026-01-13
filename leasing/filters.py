@@ -11,11 +11,6 @@ from leasing.models import (
     OldDwellingsInHousingCompaniesPriceIndex,
 )
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
-from leasing.models.land_use_agreement import (
-    LandUseAgreementInvoice,
-    LandUseAgreementInvoiceRow,
-    LandUseAgreementInvoiceSet,
-)
 from leasing.models.lease import LeaseType
 from leasing.models.receivable_type import ReceivableType
 
@@ -212,40 +207,6 @@ class LeaseFilter(FilterSet):
     class Meta:
         model = Lease
         fields = ["type", "municipality", "district"]
-
-
-class LandUseAgreementInvoiceFilter(FilterSet):
-    land_use_agreement = filters.NumberFilter()
-    going_to_sap = filters.BooleanFilter(
-        method="filter_going_to_sap", label=_("Going to SAP")
-    )
-
-    class Meta:
-        model = LandUseAgreementInvoice
-        fields = ["land_use_agreement", "state", "type"]
-
-    def filter_going_to_sap(self, queryset, name, value):
-        if value:
-            return queryset.filter(
-                due_date__gte=timezone.now().date(), sent_to_sap_at__isnull=True
-            )
-        return queryset
-
-
-class LandUseAgreementInvoiceSetFilter(FilterSet):
-    land_use_agreement = filters.NumberFilter()
-
-    class Meta:
-        model = LandUseAgreementInvoiceSet
-        fields = ["land_use_agreement"]
-
-
-class LandUseAgreementInvoiceRowFilter(FilterSet):
-    invoice = filters.NumberFilter()
-
-    class Meta:
-        model = LandUseAgreementInvoiceRow
-        fields = ["invoice"]
 
 
 class OldDwellingsInHousingCompaniesPriceIndexFilter(FilterSet):

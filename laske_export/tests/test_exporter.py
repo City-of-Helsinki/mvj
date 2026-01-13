@@ -82,37 +82,17 @@ def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
     return broken_invoice
 
 
-@pytest.fixture
-def land_use_agreement_invoice(
-    contact_factory, land_use_agreement_invoice_factory, land_use_agreement_test_data
-):
-    contact = contact_factory(
-        name="Company",
-        type=ContactType.BUSINESS,
-        business_id="1234567-8",
-    )
-
-    invoice = land_use_agreement_invoice_factory(
-        land_use_agreement=land_use_agreement_test_data,
-        total_amount=Decimal("123.45"),
-        recipient=contact,
-    )
-
-    return invoice
-
-
 @pytest.mark.django_db
 def test_invalid_export_invoice(
-    broken_invoice, invoice, land_use_agreement_invoice, monkeypatch_laske_exporter_send
+    broken_invoice, invoice, monkeypatch_laske_exporter_send
 ):
     exporter = LaskeExporter(service_unit=invoice.service_unit)
     exporter.export_invoices([broken_invoice, invoice])
-    exporter.export_land_use_agreement_invoices([land_use_agreement_invoice])
 
     logs = LaskeExportLog.objects.all()
-    assert logs.count() == 2
+    assert logs.count() == 1
 
-    log = logs[1]
+    log = logs[0]
     assert log.invoices.count() == 2
 
     log_items = log.laskeexportloginvoiceitem_set.all()

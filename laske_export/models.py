@@ -7,7 +7,6 @@ from enumfields import EnumField
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from leasing.models import Invoice
 from leasing.models.invoice import InvoicePayment
-from leasing.models.land_use_agreement import LandUseAgreementInvoice
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 
 
@@ -37,8 +36,6 @@ class LaskeExportLog(TimeStampedSafeDeleteModel):
     )
 
     invoices = models.ManyToManyField(Invoice, through="LaskeExportLogInvoiceItem")
-
-    land_use_agreement_invoices = models.ManyToManyField(LandUseAgreementInvoice)
 
     recursive_get_related_skip_relations = [
         "service_unit",
