@@ -2,12 +2,37 @@
 
 import django.core.files.storage
 from django.db import migrations
-import leasing.models.debt_collection
-import leasing.models.infill_development_compensation
-import leasing.models.inspection
-import leasing.models.land_area
-import leasing.models.land_use_agreement
 import file_operations.private_files
+
+
+def get_collection_court_decision_file_upload_to(instance, filename):
+    return "/".join(["court_decisions", str(instance.lease.id), filename])
+
+
+def get_collection_letter_file_upload_to(instance, filename):
+    return "/".join(["collection_letters", str(instance.lease.id), filename])
+
+
+def get_infill_development_compensation_attachment_file_upload_to(instance, filename):
+    return "/".join(
+        [
+            "idc_attachments",
+            str(instance.infill_development_compensation_lease.id),
+            filename,
+        ]
+    )
+
+
+def get_inspection_attachment_file_upload_to(instance, filename):
+    return "/".join(["inspection_attachments", str(instance.inspection.id), filename])
+
+
+def get_land_use_agreement_attachment_file_upload_to(instance, filename):
+    return "/".join(["lease_area_attachments", str(instance.lease_area.id), filename])
+
+
+def get_leasearea_attachment_file_upload_to(instance, filename):
+    return "/".join(["lease_area_attachments", str(instance.lease_area.id), filename])
 
 
 class Migration(migrations.Migration):
@@ -27,7 +52,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.debt_collection.get_collection_court_decision_file_upload_to,
+                upload_to=get_collection_court_decision_file_upload_to,
                 verbose_name="File",
             ),
         ),
@@ -38,7 +63,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.debt_collection.get_collection_letter_file_upload_to,
+                upload_to=get_collection_letter_file_upload_to,
                 verbose_name="File",
             ),
         ),
@@ -60,7 +85,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.infill_development_compensation.get_attachment_file_upload_to,
+                upload_to=get_infill_development_compensation_attachment_file_upload_to,
             ),
         ),
         migrations.AlterField(
@@ -70,7 +95,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.inspection.get_inspection_attachment_file_upload_to,
+                upload_to=get_inspection_attachment_file_upload_to,
             ),
         ),
         migrations.AlterField(
@@ -80,7 +105,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.land_use_agreement.get_attachment_file_upload_to,
+                upload_to=get_land_use_agreement_attachment_file_upload_to,
             ),
         ),
         migrations.AlterField(
@@ -90,7 +115,7 @@ class Migration(migrations.Migration):
                 storage=django.core.files.storage.FileSystemStorage(
                     base_url="/attachments/", location="attachments"
                 ),
-                upload_to=leasing.models.land_area.get_attachment_file_upload_to,
+                upload_to=get_leasearea_attachment_file_upload_to,
             ),
         ),
     ]

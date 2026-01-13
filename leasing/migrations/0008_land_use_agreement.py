@@ -4,7 +4,66 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import enumfields.fields
-import leasing.enums
+from enum import Enum
+
+
+class LandUseContractTypeLegacy(Enum):
+    """
+    In Finnish: Maankäyttösopimus tyyppi
+    """
+
+    LAND_USE_AGREEMENT = "Land use agreement"
+    AGREEMENT_ON_APPRECIATION = "Agreement on appreciation"
+    NO_AGREEMENT = "No agreement"
+
+    class Labels:
+        LAND_USE_AGREEMENT = "Land Use Contract Type", "Land use agreement"
+        AGREEMENT_ON_APPRECIATION = (
+            "Land Use Contract Type",
+            "Agreement on appreciation",
+        )
+        NO_AGREEMENT = "Land Use Contract Type", "No agreement"
+
+
+class InfillDevelopmentCompensationStateLegacy(Enum):
+    """
+    In Finnish: Täydennysrakentamiskorvauksen neuvotteluvaihe
+    """
+
+    ONGOING = "ongoing"
+    NEGOTIATING = "negotiating"
+    DECISION = "decision"
+
+    class Labels:
+        ONGOING = "Infill development compensation", "Ongoing"
+        NEGOTIATING = "Infill development compensation", "Negotiating"
+        DECISION = "Infill development compensation", "Decision"
+
+
+class LandUseAgreementLitigantContactTypeLegacy(Enum):
+    """
+    In Finnish: Maankäyttösopimuksen osapuolen yhteystiedon tyyppi
+    """
+
+    TENANT = "tenant"
+    BILLING = "billing"
+
+    class Labels:
+        TENANT = "Land Use Agreement Litigant Contact Type", "Tenant"
+        BILLING = "Land Use Agreement Litigant Contact Type", "Billing"
+
+
+class DueDatesPositionLegacy(Enum):
+    """
+    In Finnish: Eräpäivän sijainti
+    """
+
+    START_OF_MONTH = "start_of_month"
+    MIDDLE_OF_MONTH = "middle_of_month"
+
+    class Labels:
+        START_OF_MONTH = "Due dates position", "Start of month"
+        MIDDLE_OF_MONTH = "Due dates position", "Middle of month"
 
 
 class Migration(migrations.Migration):
@@ -89,7 +148,7 @@ class Migration(migrations.Migration):
                     "state",
                     enumfields.fields.EnumField(
                         blank=True,
-                        enum=leasing.enums.InfillDevelopmentCompensationState,
+                        enum=InfillDevelopmentCompensationStateLegacy,
                         max_length=30,
                         null=True,
                         verbose_name="State",
@@ -99,7 +158,7 @@ class Migration(migrations.Migration):
                     "land_use_contract_type",
                     enumfields.fields.EnumField(
                         blank=True,
-                        enum=leasing.enums.LandUseContractType,
+                        enum=LandUseContractTypeLegacy,
                         max_length=30,
                         null=True,
                         verbose_name="Contract type",
@@ -319,7 +378,7 @@ class Migration(migrations.Migration):
                     "due_dates_position",
                     enumfields.fields.EnumField(
                         default="start_of_month",
-                        enum=leasing.enums.DueDatesPosition,
+                        enum=DueDatesPositionLegacy,
                         max_length=30,
                         verbose_name="Due dates position",
                     ),
@@ -365,7 +424,7 @@ class Migration(migrations.Migration):
                     "type",
                     enumfields.fields.EnumField(
                         blank=True,
-                        enum=leasing.enums.LandUseAgreementLitigantContactType,
+                        enum=LandUseAgreementLitigantContactTypeLegacy,
                         max_length=30,
                         null=True,
                         verbose_name="Contact type",
