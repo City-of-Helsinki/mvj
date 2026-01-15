@@ -61,7 +61,7 @@ from .land_area import (
     LeaseAreaCreateUpdateSerializer,
     LeaseAreaListSerializer,
     LeaseAreaSerializer,
-    LeaseAreaWithGeometryListSerializer,
+    LeaseAreaSuccinctWithGeometryListSerializer,
 )
 from .rent import (
     LeaseBasisOfRentCreateUpdateSerializer,
@@ -358,7 +358,7 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
 
 
 class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
-    lease_areas = LeaseAreaWithGeometryListSerializer(
+    lease_areas = LeaseAreaSuccinctWithGeometryListSerializer(
         many=True, required=False, allow_null=True
     )
 
@@ -366,22 +366,10 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
         model = Lease
         fields = (
             "id",
-            "deleted",
-            "created_at",
-            "modified_at",
-            "type",
-            "municipality",
-            "district",
             "identifier",
             "start_date",
             "end_date",
             "state",
-            "rent_info_completed_at",
-            "invoicing_enabled_at",
-            "reference_number",
-            "note",
-            "preparer",
-            "is_subject_to_vat",
             "lease_areas",
         )
 

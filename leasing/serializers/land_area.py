@@ -540,6 +540,18 @@ class LeaseAreaWithGeometryListSerializer(LeaseAreaListSerializer):
         )
 
 
+class LeaseAreaSuccinctWithGeometryListSerializer(LeaseAreaListSerializer):
+    geometry = GeometryField(precision=6)
+
+    class Meta:
+        model = LeaseArea
+        fields = (
+            "id",
+            "identifier",
+            "geometry",
+        )
+
+
 class LeaseAreaCreateUpdateSerializer(
     EnumSupportSerializerMixin,
     UpdateNestedMixin,
