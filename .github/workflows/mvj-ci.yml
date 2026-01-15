@@ -48,10 +48,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
 
@@ -90,10 +90,42 @@ jobs:
           FTP_HOST: localhost
         run: |
           python manage.py compilemessages
-          pytest -ra -vvv --cov=. --migrations
+          pytest -ra -vvv --cov=. --cov-report xml:coverage.xml --migrations
+
+      - name: Store coverage.xml
+        uses: actions/cache/save@v5
+        with:
+          path: coverage.xml
+          key: cache-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Mypy type checks
         run: ./run-type-checks
 
       - name: Run codecov
         run: codecov
+  
+  sonarcloud:
+    name: Run SonarQube Cloud Scan
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v6
+    - name: Restore coverage.xml
+      uses: actions/cache/restore@v5
+      with:
+        path: coverage.xml
+        key: cache-${{ github.run_id }}-${{ github.run_attempt }}
+        fail-on-cache-miss: true
+    # Without this workaround, SonarQube Cloud reports a warning about an incorrect source path
+    - name: Override coverage report source path for SonarQube Cloud
+      run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
+    - name: SonarQube Cloud Scan
+      uses: SonarSource/sonarqube-scan-action@v6
+      with:
+        args: >
+          -Dsonar.organization=city-of-helsinki
+          -Dsonar.projectKey=City-of-Helsinki_mvj
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.python.coverage.reportPaths=coverage.xml
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
