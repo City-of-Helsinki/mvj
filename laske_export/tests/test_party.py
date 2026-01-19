@@ -69,6 +69,16 @@ from leasing.enums import ContactType
             "klm Super super super super hyper m",
             "ega long last name 123456789abcdefg",
         ),
+        (  # Does not output lines with only one character excluding whitespace
+            # Name
+            "Super long first name 123456789abcd 1",
+            None,
+            # Expected
+            "Super long first name 123456789abcd",
+            " 1.",
+            None,
+            None,
+        ),
     ],
 )
 def test_party_from_contact_person_name(
@@ -332,6 +342,15 @@ def test_party_from_contact_person_name_with_long_care_of(
             "hijklmSuper super super super hyper",
             " mega long business name 123456789a",
         ),
+        (  # Does not output lines with only one character excluding whitespace
+            # Name
+            "Super long first name 123456789abcd 1",
+            # Expected
+            "Super long first name 123456789abcd",
+            " 1.",
+            None,
+            None,
+        ),
     ],
 )
 def test_party_from_contact_name(
@@ -391,6 +410,16 @@ def test_party_from_contact_name(
             "Super super super super hyper mega ",
             "long business name 123456789abcdefg",
             "hijklmSuper super super super hyper",
+            "c/o Something random",
+        ),
+        (
+            # Name
+            "Super super super super hyper 123456789abcdefg"
+            "Other one or two thingsy 0",
+            # Expected mega long business name
+            "Super super super super hyper 12345",
+            "6789abcdefgOther one or two thingsy",
+            " 0.",  # <- One character line (excluding whitespace) gets a dot appended
             "c/o Something random",
         ),
     ],

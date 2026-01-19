@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from laske_export.document.sales_order import LineItem
+from laske_export.document.sales_order import LineItem, normalize_short_lines
 
 
 # Skip fixture marked `autouse=True`
@@ -54,3 +54,27 @@ def test_line_item_only_one_of_set_validation():
     line_item = LineItem()
     line_item.wbs_element = "1"
     line_item.validate()
+
+
+def test_normalize_short_lines_single_char():
+    """Tests that a single non-whitespace character gets a dot appended."""
+    assert normalize_short_lines("1") == "1."
+    assert normalize_short_lines("a") == "a."
+    assert normalize_short_lines(" 1") == " 1."
+    assert normalize_short_lines("1 ") == "1 ."
+    assert normalize_short_lines("  a  ") == "  a  ."
+
+
+def test_normalize_short_lines_multiple_chars():
+    """Tests that strings with more than one non-whitespace character remain unchanged."""
+    assert normalize_short_lines("ab") == "ab"
+    assert normalize_short_lines("123") == "123"
+    assert normalize_short_lines("hello") == "hello"
+    assert normalize_short_lines("  ab  ") == "  ab  "
+
+
+def test_normalize_short_lines_empty_or_whitespace():
+    """Tests that empty strings or whitespace-only strings remain unchanged."""
+    assert normalize_short_lines("") == ""
+    assert normalize_short_lines(" ") == ""
+    assert normalize_short_lines("   ") == ""

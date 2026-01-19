@@ -4,8 +4,22 @@ from django.utils.translation import gettext_lazy as _
 
 from laske_export.document.custom_validators import validate_payment_reference
 from leasing.enums import ContactType
+from leasing.models.contact import Contact
 
 from .fields import Field, FieldGroup
+
+
+def normalize_short_lines(text: str) -> str:
+    """
+    If the given line would contain only a single non-whitespace character (e.g. ' 1'),
+    return a longer string with a dot appended string (e.g. ' 1.') to avoid emitting a 1-char line.
+    Note: Whitespace is not counted for the length.
+    """
+    if len(text.strip()) == 1:
+        return f"{text}."
+    if len(text.strip()) == 0:
+        return ""
+    return text
 
 
 class Party(FieldGroup):
@@ -76,7 +90,9 @@ class Party(FieldGroup):
         super().__init__()
         self.fill_priority_and_info = fill_priority_and_info
 
-    def from_contact(self, contact):  # NOQA C901 'Party.from_contact' is too complex
+    def from_contact(  # NOQA C901 'Party.from_contact' is too complex
+        self, contact: Contact
+    ):
         if not contact:
             raise ValidationError(_("Contact information cannot be null."))
 
@@ -106,10 +122,9 @@ class Party(FieldGroup):
             n += 1
         else:
             for i in range(0, len(name), 35):
-                name_text_line = name[i : i + 35]
-                # If only one character would be inserted on a line (e.g. len(name) == 36), just skip it
-                if len(name[i : i + 35]) == 1:
-                    name_text_line = ""
+                # If only one character would be inserted on a line (e.g. len(name) == 36), append a dot.
+                # These lines must not be length of 1 character excluding whitespaces!
+                name_text_line = normalize_short_lines(name[i : i + 35])
                 setattr(self, "priority_name{}".format(n), name_text_line)
                 setattr(self, "info_name{}".format(n), name_text_line)
                 n += 1
@@ -122,10 +137,9 @@ class Party(FieldGroup):
                 n = 4
 
             for i in range(0, len(care_of), 35):
-                care_of_text_line = care_of[i : i + 35]
-                # As above, skip one character lines
-                if len(care_of[i : i + 35]) == 1:
-                    care_of_text_line = ""
+                # As above, append a dot on one character lines.
+                # These lines must not be length of 1 character excluding whitespaces!
+                care_of_text_line = normalize_short_lines(care_of[i : i + 35])
                 setattr(self, "priority_name{}".format(n), care_of_text_line)
                 setattr(self, "info_name{}".format(n), care_of_text_line)
                 n += 1
