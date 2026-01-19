@@ -103,23 +103,25 @@ class LaskeExporter:
             key,
         )
         try:
-            with client.connect(
+            client.connect(
                 hostname=settings.LASKE_SERVERS["export"]["host"],
                 port=settings.LASKE_SERVERS["export"]["port"],
                 username=settings.LASKE_SERVERS["export"]["username"],
                 password=settings.LASKE_SERVERS["export"]["password"],
-            ):
-                with client.open_sftp() as sftp:
-                    sftp.put(
-                        localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
-                        remotepath=os.path.join(
-                            settings.LASKE_SERVERS["export"]["directory"], filename
-                        ),
-                    )
-
+            )
+            sftp = client.open_sftp()
+            sftp.put(
+                localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
+                remotepath=os.path.join(
+                    settings.LASKE_SERVERS["export"]["directory"], filename
+                ),
+            )
         except Exception as e:
             self.write_to_output("Error connecting to remote, send failed.: ", e)
             raise e
+        finally:
+            sftp.close()
+            client.close()
 
     def write_to_output(self, message):
         if not self.message_output:
