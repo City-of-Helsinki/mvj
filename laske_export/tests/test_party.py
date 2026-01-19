@@ -415,7 +415,7 @@ def test_party_from_contact_name(
         (
             # Name
             "Super super super super hyper 123456789abcdefg"
-            "Other one or two thingsy 0",
+            + "Other one or two thingsy 0",
             # Expected mega long business name
             "Super super super super hyper 12345",
             "6789abcdefgOther one or two thingsy",

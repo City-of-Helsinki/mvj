@@ -90,66 +90,92 @@ class Party(FieldGroup):
         super().__init__()
         self.fill_priority_and_info = fill_priority_and_info
 
-    def from_contact(  # NOQA C901 'Party.from_contact' is too complex
-        self, contact: Contact
-    ):
+    def from_contact(self, contact: Contact | None):
         if not contact:
             raise ValidationError(_("Contact information cannot be null."))
 
-        self.customer_ovt = contact.electronic_billing_address
+        self._set_customer_identifiers(contact)
 
+        if self.fill_priority_and_info:
+            self._set_info_identifiers(contact)
+            self._set_name_fields(contact)
+            self._set_address_fields(contact)
+
+    def _set_customer_identifiers(self, contact: Contact):
+        """Set basic customer identification fields."""
+        self.customer_ovt = contact.electronic_billing_address
         self.sap_customer_id = contact.sap_customer_number
+
         if contact.type == ContactType.PERSON:
             self.customer_id = contact.national_identification_number
         else:
             self.customer_yid = contact.business_id
 
-        if not self.fill_priority_and_info:
-            return
-
+    def _set_info_identifiers(self, contact: Contact):
+        """Set info party identification fields."""
         self.info_customer_ovt = contact.electronic_billing_address
+
         if contact.type == ContactType.PERSON:
             self.info_customer_id = contact.national_identification_number
         else:
             self.info_customer_yid = contact.business_id
 
-        name = contact.get_name()[:140]  # PriorityName1-4 max length = 4 * 35 chars
+    def _set_name_fields(self, contact: Contact):
+        """Set priority and info name fields, including care_of if present."""
+        name = contact.get_name()[:140]  # Max 4 * 35 chars
+        line = self._write_name_lines(name)
 
-        n = 1
+        if contact.care_of:
+            self._write_care_of_lines(contact.care_of, line)
+
+    def _write_name_lines(self, name: str) -> int:
+        """
+        Write name across multiple priority/info name fields.
+        Returns the next available line number.
+        """
+        line = 1
+
         if not name:
             self.priority_name1 = ""
             self.info_name1 = ""
-            n += 1
-        else:
-            for i in range(0, len(name), 35):
-                # If only one character would be inserted on a line (e.g. len(name) == 36), append a dot.
-                # These lines must not be length of 1 character excluding whitespaces!
-                name_text_line = normalize_short_lines(name[i : i + 35])
-                setattr(self, "priority_name{}".format(n), name_text_line)
-                setattr(self, "info_name{}".format(n), name_text_line)
-                n += 1
+            return 2
 
-        # Add care of to the priority name overwriting part of the name if necessary
-        if contact.care_of:
-            care_of = "c/o {}".format(contact.care_of)
+        for i in range(0, len(name), 35):
+            name_text_line = normalize_short_lines(name[i : i + 35])
+            setattr(self, f"priority_name{line}", name_text_line)
+            setattr(self, f"info_name{line}", name_text_line)
+            line += 1
 
-            if n == 5:
-                n = 4
+        return line
 
-            for i in range(0, len(care_of), 35):
-                # As above, append a dot on one character lines.
-                # These lines must not be length of 1 character excluding whitespaces!
-                care_of_text_line = normalize_short_lines(care_of[i : i + 35])
-                setattr(self, "priority_name{}".format(n), care_of_text_line)
-                setattr(self, "info_name{}".format(n), care_of_text_line)
-                n += 1
-                if n >= 5:
-                    break
+    def _write_care_of_lines(self, care_of: str, start_line: int):
+        """
+        Write care_of information to priority/info name fields.
+        May overwrite last name line if at line 5.
+        """
+        care_of_text = f"c/o {care_of}"
 
-        self.priority_address1 = contact.address[:35] if contact.address else ""
+        # If we're at line 5, overwrite line 4 instead
+        line = 4 if start_line == 5 else start_line
+
+        for i in range(0, len(care_of_text), 35):
+            if line >= 5:
+                break
+
+            care_of_line = normalize_short_lines(care_of_text[i : i + 35])
+            setattr(self, f"priority_name{line}", care_of_line)
+            setattr(self, f"info_name{line}", care_of_line)
+            line += 1
+
+    def _set_address_fields(self, contact: Contact):
+        """Set priority and info address fields."""
+        address = contact.address[:35] if contact.address else ""
+
+        self.priority_address1 = address
         self.priority_city = contact.city
         self.priority_postalcode = contact.postal_code
-        self.info_address1 = contact.address[:35] if contact.address else ""
+
+        self.info_address1 = address
         self.info_city = contact.city
         self.info_postalcode = contact.postal_code
 
