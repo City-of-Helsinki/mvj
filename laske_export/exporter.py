@@ -94,33 +94,32 @@ class LaskeExporter:
             key = paramiko.rsakey.RSAKey(
                 data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
             )
-
-        client = paramiko.SSHClient()
-        hostkeys = client.get_host_keys()
-        hostkeys.add(
-            settings.LASKE_SERVERS["export"]["host"],
-            settings.LASKE_SERVERS["export"]["key_type"],
-            key,
-        )
         try:
+            client = paramiko.SSHClient()
+            hostkeys = client.get_host_keys()
+            hostkeys.add(
+                settings.LASKE_SERVERS["export"]["host"],
+                settings.LASKE_SERVERS["export"]["key_type"],
+                key,
+            )
+
             client.connect(
                 hostname=settings.LASKE_SERVERS["export"]["host"],
                 port=settings.LASKE_SERVERS["export"]["port"],
                 username=settings.LASKE_SERVERS["export"]["username"],
                 password=settings.LASKE_SERVERS["export"]["password"],
             )
-            sftp = client.open_sftp()
-            sftp.put(
-                localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
-                remotepath=os.path.join(
-                    settings.LASKE_SERVERS["export"]["directory"], filename
-                ),
-            )
+            with client.open_sftp() as sftp:
+                sftp.put(
+                    localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
+                    remotepath=os.path.join(
+                        settings.LASKE_SERVERS["export"]["directory"], filename
+                    ),
+                )
         except Exception as e:
             self.write_to_output("Error connecting to remote, send failed.: ", e)
             raise e
         finally:
-            sftp.close()
             client.close()
 
     def write_to_output(self, message):
