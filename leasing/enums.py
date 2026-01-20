@@ -666,3 +666,24 @@ class PeriodicRentAdjustmentType(Enum):
             "Periodic Rent Adjustment Type",
             "Periodic Rent Adjustment 20y/10y",
         )
+
+
+class CollectionStage(Enum):
+    """
+    In Finnish: Perintävaiheen tyyppi
+    """
+
+    RISK_OF_DEMOLITION = "risk_of_demolition"
+    RISK_OF_DEMOLITION_AND_LITIGATION = "risk_of_demolition_and_litigation"
+    RISK_OF_LITIGATION = "risk_of_litigation"
+    RISK_OF_TERMINATION_AND_LITIGATION = "risk_of_termination_and_litigation"
+
+    class Labels:
+        RISK_OF_DEMOLITION = pgettext_lazy("Collection stage", "Risk of demolition")
+        RISK_OF_DEMOLITION_AND_LITIGATION = pgettext_lazy(
+            "Collection stage", "Risk of demolition and litigation"
+        )
+        RISK_OF_LITIGATION = pgettext_lazy("Collection stage", "Risk of litigation")
+        RISK_OF_TERMINATION_AND_LITIGATION = pgettext_lazy(
+            "Collection stage", "Risk of termination and litigation"
+        )

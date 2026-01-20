@@ -367,6 +367,7 @@ strategy:
     lease_id: null
     modified_at: null
     note: mvj.paragraph_if_exist
+    collection_stage: null
     user_id: null
   leasing_comment:
     created_at: null

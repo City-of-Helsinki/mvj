@@ -428,6 +428,15 @@ DEFAULT_MODEL_PERMS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
+    "collectioncollectionstage": {
+        UG.SELAILIJA: None,
+        UG.VALMISTELIJA: ("view",),
+        UG.SOPIMUSVALMISTELIJA: ("view",),
+        UG.SYOTTAJA: ("view",),
+        UG.PERINTALAKIMIES: ("view", "add", "change", "delete"),
+        UG.LASKUTTAJA: ("view", "add", "change", "delete"),
+        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+    },
     "collectioncourtdecision": {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),

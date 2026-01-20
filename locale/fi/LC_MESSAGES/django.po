@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13 12:33+0200\n"
+"POT-Creation-Date: 2026-01-21 09:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1197,6 +1197,22 @@ msgctxt "Periodic Rent Adjustment Type"
 msgid "Periodic Rent Adjustment 20y/10y"
 msgstr "Tasotarkistus 20v/10v"
 
+msgctxt "Collection stage"
+msgid "Risk of demolition"
+msgstr "Purku-uhkainen"
+
+msgctxt "Collection stage"
+msgid "Risk of demolition and litigation"
+msgstr "Purku- ja oikeudenkäyntiuhkainen"
+
+msgctxt "Collection stage"
+msgid "Risk of litigation"
+msgstr "Oikeudenkäyntiuhkainen"
+
+msgctxt "Collection stage"
+msgid "Risk of termination and litigation"
+msgstr "Irtisanomis- ja oikeudenkäyntiuhkainen"
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
@@ -1545,6 +1561,9 @@ msgstr "Perintäkirjepohja"
 msgctxt "Model name"
 msgid "Collection letter templates"
 msgstr "Perintäkirjepohjat"
+
+msgid "Collection stage"
+msgstr "Perintävaihe"
 
 msgctxt "Model name"
 msgid "Collection letter note"
