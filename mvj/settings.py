@@ -130,6 +130,12 @@ env = environ.Env(
     FLAG_PLOTSEARCH=(bool, False),
     FLAG_SANCTIONS_INQUIRY=(bool, False),
     FLAG_SKIP_FILE_UPLOAD_PERMISSIONS=(bool, False),
+    ENABLE_AUDITLOG_ELASTICSEARCH_SYNC=(bool, False),
+    AUDIT_LOG_ENV=(str, ""),
+    AUDIT_LOG_ES_URL=(str, ""),
+    AUDIT_LOG_ES_USERNAME=(str, ""),
+    AUDIT_LOG_ES_PASSWORD=(str, ""),
+    AUDIT_LOG_ES_INDEX=(str, ""),
 )
 
 env_file = project_root(".env")
@@ -217,6 +223,7 @@ INSTALLED_APPS = [
     "utils",
     "django_q",
     "file_operations",
+    "resilient_logger",
 ]
 
 MIDDLEWARE = [
@@ -311,6 +318,32 @@ Q_CLUSTER = {
             "dsn": env.str("SENTRY_DSN"),
         }
     },
+}
+
+ENABLE_AUDITLOG_ELASTICSEARCH_SYNC = env.bool(
+    "ENABLE_AUDITLOG_ELASTICSEARCH_SYNC", False
+)
+RESILIENT_LOGGER = {
+    "origin": "MVJ",
+    "environment": env.str("AUDIT_LOG_ENV"),
+    "sources": [
+        {"class": "resilient_logger.sources.DjangoAuditLogSource"},
+    ],
+    "targets": [
+        {
+            "class": "resilient_logger.targets.ElasticsearchLogTarget",
+            "es_url": env.str("AUDIT_LOG_ES_URL"),
+            "es_username": env.str("AUDIT_LOG_ES_USERNAME"),
+            "es_password": env.str("AUDIT_LOG_ES_PASSWORD"),
+            "es_index": env.str("AUDIT_LOG_ES_INDEX"),
+            "required": True,
+        }
+    ],
+    "batch_limit": 5000,
+    "chunk_size": 500,
+    "submit_unsent_entries": ENABLE_AUDITLOG_ELASTICSEARCH_SYNC,
+    # Enabling could lead to audit log entries being deleted.
+    "clear_sent_entries": False,
 }
 
 KTJ_PRINT_ROOT_URL = env.str("KTJ_PRINT_ROOT_URL")

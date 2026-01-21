@@ -1430,3 +1430,4 @@ strategy:
     id: null
     permission_id: null
     user_id: null
+  resilient_logger_resilientlogentry: skip_rows
