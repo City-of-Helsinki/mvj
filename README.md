@@ -373,6 +373,11 @@ sending scheduled emails, scanning files for viruses, etc.
 
 Not a management command as such, but is started the exact same way with `manage.py`
 
+#### `submit_unsent_entries`
+
+A management command of `django-resilient-logger` used to push `django-auditlog`
+auditlogs to permanent storage.
+
 
 ## Other useful information
 
