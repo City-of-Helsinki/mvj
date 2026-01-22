@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13 12:33+0200\n"
+"POT-Creation-Date: 2026-01-21 09:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1198,6 +1198,22 @@ msgctxt "Periodic Rent Adjustment Type"
 msgid "Periodic Rent Adjustment 20y/10y"
 msgstr ""
 
+msgctxt "Collection stage"
+msgid "Risk of demolition"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Risk of demolition and litigation"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Risk of litigation"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Risk of termination and litigation"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
@@ -1546,6 +1562,9 @@ msgstr "Mall för inkassobrev"
 msgctxt "Model name"
 msgid "Collection letter templates"
 msgstr "Mallar för inkassobrev"
+
+msgid "Collection stage"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Collection letter note"

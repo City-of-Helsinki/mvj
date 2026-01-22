@@ -210,6 +210,15 @@ DEFAULT_FIELD_PERMS = {
         UG.LASKUTTAJA: "change",
         UG.PAAKAYTTAJA: "change",
     },
+    "collectioncollectionstage": {
+        UG.SELAILIJA: None,
+        UG.VALMISTELIJA: "view",
+        UG.SOPIMUSVALMISTELIJA: "view",
+        UG.SYOTTAJA: "view",
+        UG.PERINTALAKIMIES: "change",
+        UG.LASKUTTAJA: "change",
+        UG.PAAKAYTTAJA: "change",
+    },
     "collectioncourtdecision": {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: "view",

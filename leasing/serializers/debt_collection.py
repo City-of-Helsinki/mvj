@@ -1,3 +1,4 @@
+from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
@@ -104,7 +105,9 @@ class CollectionLetterTemplateSerializer(serializers.ModelSerializer):
 
 
 class CollectionNoteSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
     user = UserSerializer(read_only=True)
@@ -115,7 +118,9 @@ class CollectionNoteSerializer(
 
 
 class CollectionNoteCreateUpdateSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())

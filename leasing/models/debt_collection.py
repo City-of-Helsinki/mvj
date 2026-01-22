@@ -5,10 +5,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from docxtpl import DocxTemplate
+from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from file_operations.private_files import PrivateFileField
 from file_operations.viewsets.mixins import FileScanMixin
+from leasing.enums import CollectionStage
 from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
 
@@ -101,6 +103,14 @@ class CollectionNote(TimeStampedSafeDeleteModel):
 
     user = models.ForeignKey(
         User, verbose_name=_("User"), related_name="+", on_delete=models.PROTECT
+    )
+
+    collection_stage = EnumField(
+        CollectionStage,
+        verbose_name=_("Collection stage"),
+        null=True,
+        blank=True,
+        max_length=50,
     )
 
     recursive_get_related_skip_relations = ["lease"]
