@@ -55,9 +55,11 @@ def get_lease_id(invoice: Invoice) -> int:
 
 
 def get_collection_stage(invoice: Invoice) -> str | None:
-    latest_note = invoice.lease.collection_notes.filter(
-        collection_stage__isnull=False
-    ).first()
+    latest_note = (
+        invoice.lease.collection_notes.filter(collection_stage__isnull=False)
+        .order_by("-created_at")
+        .first()
+    )
 
     if latest_note:
         return str(latest_note.collection_stage.label)
