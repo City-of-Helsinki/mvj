@@ -26,7 +26,7 @@ def push_auditlogs_to_elasticsearch():
 
     if not lock_acquired:
         logger.info(
-            "Another instance of `push_auditlogs_to_elasticsearch`is already running. Skipping."
+            "Another instance of `push_auditlogs_to_elasticsearch` is already running. Skipping."
         )
         return
 
