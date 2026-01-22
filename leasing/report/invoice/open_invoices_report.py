@@ -54,6 +54,15 @@ def get_lease_id(invoice: Invoice) -> int:
     return invoice.lease.id
 
 
+def get_collection_stage(invoice: Invoice) -> str | None:
+    latest_note = invoice.lease.collection_notes.filter(
+        collection_stage__isnull=False
+    ).first()
+
+    if latest_note:
+        return str(latest_note.collection_stage.label)
+
+
 class OpenInvoicesReport(ReportBase):
     name = _("Open invoices")
     description = _('Show all the invoices that have their state as "open"')
@@ -76,6 +85,10 @@ class OpenInvoicesReport(ReportBase):
             "format": FormatType.URL.value,
         },
         "due_date": {"label": _("Due date"), "format": FormatType.DATE.value},
+        "postpone_date": {
+            "label": _("Postpone date"),
+            "format": FormatType.DATE.value,
+        },
         "due_dates_per_year": {
             "source": get_due_dates_per_year,
             "label": _("Due dates per year"),
@@ -104,6 +117,11 @@ class OpenInvoicesReport(ReportBase):
             "source": get_recipient_address,
             "label": _("Recipient address"),
             "width": 50,
+        },
+        "collection_stage": {
+            "source": get_collection_stage,
+            "label": _("Collection stage"),
+            "width": 35,
         },
         "lease_database_id": {
             "source": get_lease_id,
