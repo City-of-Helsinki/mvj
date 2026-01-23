@@ -369,9 +369,15 @@ Can be generated in desired intervals, how often the report should need to be up
 #### `qcluster`
 
 The asynchronous task runner in MVJ. Used for example for PDF and report generation,
-sending scheduled emails, scanning files for viruses, etc.
+sending scheduled emails, scanning files for viruses, scheduling sending auditlogs
+to permanent storage etc.
 
 Not a management command as such, but is started the exact same way with `manage.py`
+
+#### `submit_unsent_entries`
+
+A management command of `django-resilient-logger` used to push `django-auditlog`
+auditlogs to permanent storage.
 
 
 ## Other useful information

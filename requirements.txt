@@ -34,6 +34,7 @@ cachetools==5.3.3
 certifi==2025.10.5
     # via
     #   -c constraints.txt
+    #   elastic-transport
     #   pyproj
     #   requests
     #   sentry-sdk
@@ -77,6 +78,7 @@ django==4.2.27
     #   django-modeltranslation
     #   django-picklefield
     #   django-q2
+    #   django-resilient-logger
     #   django-safedelete
     #   django-sequences
     #   django-stubs
@@ -120,6 +122,8 @@ django-q-sentry==0.1.6
     # via django-q2
 django-q2[sentry]==1.9.0
     # via -r requirements.in
+django-resilient-logger==1.2.0
+    # via -r requirements.in
 django-safedelete==1.4.1
     # via -r requirements.in
 django-sanitized-dump==1.2.2
@@ -147,6 +151,10 @@ drf-yasg[validation]==1.21.11
     # via -r requirements.in
 ecdsa==0.19.0
     # via python-jose
+elastic-transport==8.17.1
+    # via elasticsearch8
+elasticsearch8==8.19.3
+    # via django-resilient-logger
 helsinki-profile-gdpr-api==0.2.0
     # via -r requirements.in
 html5lib==1.1
@@ -233,6 +241,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   django-auditlog
+    #   elasticsearch8
 python-docx==1.1.2
     # via docxtpl
 python-jose==3.5.0
@@ -315,6 +324,7 @@ typing-extensions==4.15.0
     #   django-countries
     #   django-stubs
     #   django-stubs-ext
+    #   elasticsearch8
     #   mypy
     #   oracledb
     #   psycopg
@@ -333,6 +343,7 @@ urllib3==2.5.0
     # via
     #   -c constraints.txt
     #   django-anymail
+    #   elastic-transport
     #   requests
     #   sentry-sdk
 webencodings==0.5.1

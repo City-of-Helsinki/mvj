@@ -8,6 +8,9 @@ Q_CLUSTER = {
     "workers": 1,
 }
 
+# Disable automatic pushing of auditlogs to Elasticsearch
+ENABLE_AUDITLOG_ELASTICSEARCH_SYNC = False
+
 PRIVATE_FILES_LOCATION = "/code/private_files"
 
 # qcluster configs for generating email reports locally
