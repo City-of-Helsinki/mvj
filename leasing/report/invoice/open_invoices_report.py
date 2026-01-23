@@ -201,7 +201,7 @@ class OpenInvoicesReport(ReportBase):
                 (totals_row_num, 5, totals_row_num, 5)
             )
             outstanding_amount_sum_cell.add_target_range(
-                (totals_row_num, 5, totals_row_num, 5)
+                (totals_row_num, 6, totals_row_num, 6)
             )
 
         totals_row.cells.append(total_amount_sum_cell)
