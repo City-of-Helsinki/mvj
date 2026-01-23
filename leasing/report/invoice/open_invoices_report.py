@@ -87,10 +87,6 @@ class OpenInvoicesReport(ReportBase):
             "format": FormatType.URL.value,
         },
         "due_date": {"label": _("Due date"), "format": FormatType.DATE.value},
-        "postpone_date": {
-            "label": _("Postpone date"),
-            "format": FormatType.DATE.value,
-        },
         "due_dates_per_year": {
             "source": get_due_dates_per_year,
             "label": _("Due dates per year"),
@@ -120,14 +116,18 @@ class OpenInvoicesReport(ReportBase):
             "label": _("Recipient address"),
             "width": 50,
         },
+        "lease_database_id": {
+            "source": get_lease_id,
+            "label": _("Lease database id"),
+        },
         "collection_stage": {
             "source": get_collection_stage,
             "label": _("Collection stage"),
             "width": 35,
         },
-        "lease_database_id": {
-            "source": get_lease_id,
-            "label": _("Lease database id"),
+        "postpone_date": {
+            "label": _("Postpone date"),
+            "format": FormatType.DATE.value,
         },
     }
 
@@ -179,9 +179,9 @@ class OpenInvoicesReport(ReportBase):
             totals_row.cells.append(
                 ExcelCell(column=0, value="{} {}".format(lease_type, _("Total")))
             )
+            totals_row.cells.append(PreviousRowsSumCell(column=4, count=invoice_count))
             totals_row.cells.append(PreviousRowsSumCell(column=5, count=invoice_count))
             totals_row.cells.append(PreviousRowsSumCell(column=6, count=invoice_count))
-            totals_row.cells.append(PreviousRowsSumCell(column=7, count=invoice_count))
             result.append(totals_row)
             totals_row_nums.append(data_row_num)
 
@@ -190,18 +190,18 @@ class OpenInvoicesReport(ReportBase):
         totals_row = ExcelRow()
         totals_row.cells.append(ExcelCell(column=0, value=str(_("Grand total"))))
 
-        total_amount_sum_cell = SumCell(column=5)
-        billed_amount_sum_cell = SumCell(column=6)
-        outstanding_amount_sum_cell = SumCell(column=7)
+        total_amount_sum_cell = SumCell(column=4)
+        billed_amount_sum_cell = SumCell(column=5)
+        outstanding_amount_sum_cell = SumCell(column=6)
         for totals_row_num in totals_row_nums:
             total_amount_sum_cell.add_target_range(
-                (totals_row_num, 5, totals_row_num, 5)
+                (totals_row_num, 4, totals_row_num, 4)
             )
             billed_amount_sum_cell.add_target_range(
-                (totals_row_num, 6, totals_row_num, 6)
+                (totals_row_num, 5, totals_row_num, 5)
             )
             outstanding_amount_sum_cell.add_target_range(
-                (totals_row_num, 7, totals_row_num, 7)
+                (totals_row_num, 5, totals_row_num, 5)
             )
 
         totals_row.cells.append(total_amount_sum_cell)
