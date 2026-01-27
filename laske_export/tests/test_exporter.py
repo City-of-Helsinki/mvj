@@ -1,17 +1,21 @@
 import datetime
 import json
 import logging
+import os
+import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
 
 import pytest
+from django.conf import settings
 from django.core import mail
 from django.test import override_settings
 
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from laske_export.models import LaskeExportLog
+from leasing.enums import ServiceUnitId
 from leasing.models.contact import ContactType
 from leasing.models.invoice import Invoice
 
@@ -433,3 +437,31 @@ def test_send_invoices_order_num_from_lease(
         == _order_number_test_setup["lease"].type.sap_material_code
     )
     assert line_item.find("OrderItemNumber").text == "lease-ordern"
+
+
+def test_export_sftp(monkeypatch, mock_sftp):
+    """Mocked SFTP export, does not raise errors."""
+
+    with tempfile.TemporaryDirectory() as directory:
+        file_path = os.path.join(directory, "test_file")
+        with open(file_path, "w") as f:
+            f.write("<test>data</test>")
+
+        monkeypatch.setattr(settings, "LASKE_EXPORT_ROOT", directory)
+        monkeypatch.setattr(
+            settings,
+            "LASKE_SERVERS",
+            {
+                "export": {
+                    "host": "localhost",
+                    "port": 22,
+                    "username": "testuser",
+                    "password": "testpass",
+                    "directory": "/export",
+                    "key_type": "rsa",
+                    "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
+                }
+            },
+        )
+        laske_exporter = LaskeExporter(service_unit=ServiceUnitId.MAKE)
+        laske_exporter.send(file_path)

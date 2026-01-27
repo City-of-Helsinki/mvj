@@ -5,6 +5,7 @@ import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
 from typing import Any, Callable
+from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -55,6 +56,16 @@ ftp_settings = {
     }
 }
 
+sftp_settings = {
+    "export": {
+        "host": "localhost",
+        "port": 22,
+        "username": "test",
+        "password": "test",
+        "directory": "/export",
+    }
+}
+
 
 @pytest.fixture
 def setup_ftp(monkeypatch, use_ftp):
@@ -92,6 +103,47 @@ def use_ftp():
         timeout=100,
     )
     return ftp
+
+
+@pytest.fixture
+def mock_sftp():
+    from paramiko import HostKeys
+    from paramiko_mock import ParamikoMockEnviron, SSHClientMock
+
+    # Setup mock host
+    ParamikoMockEnviron().add_responses_for_host(
+        host="localhost",
+        port=22,
+        responses={},
+        username="testuser",
+        password="testpass",
+    )
+
+    class MockSFTPClient:
+        """A simple mock SFTP client with context manager support."""
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            return None
+
+        def put(self, localpath, remotepath):
+            pass
+
+    class MockSSHClient(SSHClientMock):
+        """
+        We extend the paramiko_mock's SSHClientMock to add context manager
+        support for SFTP.
+        """
+
+        def open_sftp(self):
+            return MockSFTPClient()
+
+    with patch("paramiko.SSHClient", new=MockSSHClient), patch(
+        "paramiko.rsakey.RSAKey", return_value="somekey"
+    ), patch("paramiko.SSHClient.get_host_keys", return_value=HostKeys()):
+        yield
 
 
 @pytest.fixture(scope="function", autouse=True)
