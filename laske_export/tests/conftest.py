@@ -141,22 +141,6 @@ def mock_sftp():
         yield
 
 
-@pytest.fixture
-def use_sftp():
-    import paramiko
-
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(
-        hostname=sftp_settings["export"]["host"],
-        port=sftp_settings["export"]["port"],
-        username=sftp_settings["export"]["username"],
-        password=sftp_settings["export"]["password"],
-    )
-    sftp = client.open_sftp()
-    return sftp
-
-
 @pytest.fixture(scope="function", autouse=True)
 def laske_export_from_email():
     with override_settings(LASKE_EXPORT_FROM_EMAIL="john@example.com"):
