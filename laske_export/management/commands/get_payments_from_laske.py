@@ -51,8 +51,8 @@ class Command(BaseCommand):
                 data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
             )
 
-        client = paramiko.SSHClient()
-        hostkeys = client.get_host_keys()
+        ssh = paramiko.SSHClient()
+        hostkeys = ssh.get_host_keys()
         hostkeys.add(
             settings.LASKE_SERVERS["payments"]["host"],
             settings.LASKE_SERVERS["payments"]["key_type"],
@@ -62,26 +62,32 @@ class Command(BaseCommand):
         lpath = get_import_dir()
         rpath = settings.LASKE_SERVERS["payments"]["directory"]
         try:
-            with client.connect(
+            ssh.connect(
                 hostname=settings.LASKE_SERVERS["payments"]["host"],
                 port=settings.LASKE_SERVERS["payments"]["port"],
                 username=settings.LASKE_SERVERS["payments"]["username"],
                 password=settings.LASKE_SERVERS["payments"]["password"],
-            ):
-                with client.open_sftp() as sftp:
-                    for item in sftp.listdir_attr(rpath):
-                        # Just in case...
-                        if stat.S_ISDIR(item.st_mode):
-                            pass
-                        else:
-                            sftp.get(
-                                os.path.join(rpath, item.filename),
-                                os.path.join(lpath, item.filename),
-                            )
+            )
+            with ssh.open_sftp() as sftp:
+                for item in sftp.listdir_attr(rpath):
+                    # Just in case...
+                    if stat.S_ISDIR(item.st_mode):
+                        pass
+                    else:
+                        sftp.get(
+                            os.path.join(rpath, item.filename),
+                            os.path.join(lpath, item.filename),
+                        )
+                        sftp.rename(
+                            os.path.join(rpath, item.filename),
+                            os.path.join(rpath, "arch", item.filename),
+                        )
 
         except Exception as e:
             logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
+        finally:
+            ssh.close()
 
     def download_payments_ftp(self):
         from ftplib import FTP
