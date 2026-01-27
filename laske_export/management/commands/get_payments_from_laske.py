@@ -59,16 +59,17 @@ class Command(BaseCommand):
             key,
         )
 
-        lpath = get_import_dir()
+        lpath = getattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION", "")
         rpath = settings.LASKE_SERVERS["payments"]["directory"]
         try:
-            client.connect(
+
+            ssh = client.connect(
                 hostname=settings.LASKE_SERVERS["payments"]["host"],
                 port=settings.LASKE_SERVERS["payments"]["port"],
                 username=settings.LASKE_SERVERS["payments"]["username"],
                 password=settings.LASKE_SERVERS["payments"]["password"],
             )
-            with client.open_sftp() as sftp:
+            with ssh.open_sftp() as sftp:
                 for item in sftp.listdir_attr(rpath):
                     # Just in case...
                     if stat.S_ISDIR(item.st_mode):
