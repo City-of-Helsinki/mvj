@@ -119,8 +119,9 @@ def mock_sftp():
         password="testpass",
     )
 
-    # Create a simple SFTP mock with context manager support
     class MockSFTPClient:
+        """A simple mock SFTP client with context manager support."""
+
         def __enter__(self):
             return self
 
@@ -130,8 +131,12 @@ def mock_sftp():
         def put(self, localpath, remotepath):
             pass
 
-    # Mock SSHClient to return our context-manager-enabled SFTP client
     class MockSSHClient(SSHClientMock):
+        """
+        We extend the paramiko_mock's SSHClientMock to add context manager
+        support for SFTP.
+        """
+
         def open_sftp(self):
             return MockSFTPClient()
 
