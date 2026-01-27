@@ -51,8 +51,8 @@ class Command(BaseCommand):
                 data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
             )
 
-        ssh = paramiko.SSHClient()
-        hostkeys = ssh.get_host_keys()
+        client = paramiko.SSHClient()
+        hostkeys = client.get_host_keys()
         hostkeys.add(
             settings.LASKE_SERVERS["payments"]["host"],
             settings.LASKE_SERVERS["payments"]["key_type"],
@@ -62,13 +62,13 @@ class Command(BaseCommand):
         lpath = get_import_dir()
         rpath = settings.LASKE_SERVERS["payments"]["directory"]
         try:
-            ssh.connect(
+            client.connect(
                 hostname=settings.LASKE_SERVERS["payments"]["host"],
                 port=settings.LASKE_SERVERS["payments"]["port"],
                 username=settings.LASKE_SERVERS["payments"]["username"],
                 password=settings.LASKE_SERVERS["payments"]["password"],
             )
-            with ssh.open_sftp() as sftp:
+            with client.open_sftp() as sftp:
                 for item in sftp.listdir_attr(rpath):
                     # Just in case...
                     if stat.S_ISDIR(item.st_mode):
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
         finally:
-            ssh.close()
+            client.close()
 
     def download_payments_ftp(self):
         from ftplib import FTP
