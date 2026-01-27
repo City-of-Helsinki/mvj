@@ -93,6 +93,19 @@ def setup_ftp(monkeypatch, use_ftp):
 
 
 @pytest.fixture
+def use_ftp():
+    from ftplib import FTP
+
+    ftp = FTP(
+        host=ftp_settings["payments"]["host"],
+        user=ftp_settings["payments"]["username"],
+        passwd=ftp_settings["payments"]["password"],
+        timeout=100,
+    )
+    return ftp
+
+
+@pytest.fixture
 def mock_sftp():
     from paramiko import HostKeys
     from paramiko_mock import ParamikoMockEnviron, SSHClientMock
