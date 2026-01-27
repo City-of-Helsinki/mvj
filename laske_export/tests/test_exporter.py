@@ -6,9 +6,7 @@ import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
-from unittest.mock import patch
 
-import paramiko
 import pytest
 from django.conf import settings
 from django.core import mail
