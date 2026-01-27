@@ -1,6 +1,7 @@
 import datetime
 import os
 import tempfile
+from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -132,3 +133,27 @@ def test_get_payment_date():
     assert (
         get_payment_date(value_date, date_of_entry, invoice_number) is None
     ), "Should pick nothing"
+
+
+def test_import_sftp(monkeypatch, mock_sftp):
+    """Test mocked SFTP import, does not raise errors."""
+
+    with tempfile.TemporaryDirectory() as directory:
+        monkeypatch.setattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION", directory)
+        monkeypatch.setattr(
+            settings,
+            "LASKE_SERVERS",
+            {
+                "payments": {
+                    "host": "localhost",
+                    "port": 22,
+                    "username": "testuser",
+                    "password": "testpass",
+                    "directory": "/",
+                    "key_type": "rsa",
+                    "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
+                }
+            },
+        )
+        laske_command = get_payments_from_laske.Command()
+        laske_command.download_payments_sftp()

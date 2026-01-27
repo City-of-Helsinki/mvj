@@ -5,6 +5,7 @@ import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
 from typing import Any, Callable
+from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -55,6 +56,16 @@ ftp_settings = {
     }
 }
 
+sftp_settings = {
+    "export": {
+        "host": "localhost",
+        "port": 22,
+        "username": "test",
+        "password": "test",
+        "directory": "/export",
+    }
+}
+
 
 @pytest.fixture
 def setup_ftp(monkeypatch, use_ftp):
@@ -82,16 +93,55 @@ def setup_ftp(monkeypatch, use_ftp):
 
 
 @pytest.fixture
-def use_ftp():
-    from ftplib import FTP
+def mock_sftp():
+    from paramiko import HostKeys
+    from paramiko_mock import ParamikoMockEnviron, SSHClientMock
 
-    ftp = FTP(
-        host=ftp_settings["payments"]["host"],
-        user=ftp_settings["payments"]["username"],
-        passwd=ftp_settings["payments"]["password"],
-        timeout=100,
+    # Setup mock host
+    ParamikoMockEnviron().add_responses_for_host(
+        host="localhost",
+        port=22,
+        responses={},
+        username="testuser",
+        password="testpass",
     )
-    return ftp
+
+    # Create a simple SFTP mock with context manager support
+    class MockSFTPClient:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            return None
+
+        def put(self, localpath, remotepath):
+            pass
+
+    # Mock SSHClient to return our context-manager-enabled SFTP client
+    class MockSSHClient(SSHClientMock):
+        def open_sftp(self):
+            return MockSFTPClient()
+
+    with patch("paramiko.SSHClient", new=MockSSHClient), patch(
+        "paramiko.rsakey.RSAKey", return_value="somekey"
+    ), patch("paramiko.SSHClient.get_host_keys", return_value=HostKeys()):
+        yield
+
+
+@pytest.fixture
+def use_sftp():
+    import paramiko
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(
+        hostname=sftp_settings["export"]["host"],
+        port=sftp_settings["export"]["port"],
+        username=sftp_settings["export"]["username"],
+        password=sftp_settings["export"]["password"],
+    )
+    sftp = client.open_sftp()
+    return sftp
 
 
 @pytest.fixture(scope="function", autouse=True)
