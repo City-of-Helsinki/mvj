@@ -7,7 +7,7 @@ and processes the domain concepts related to Tasotarkistus / Periodic Rent
 Adjustment.
 
 Future systems should treat these code references as historical context only.
-The authoritative description of behavior is in the `spec` directory.
+The authoritative description of behavior is in [specification.md](./specification.md)
 
 ### Concept: Periodic rent adjustment (Tasotarkistus)
 
@@ -20,7 +20,7 @@ See all following concepts in this file for more detailed code references.
 In a nutshell, tasotarkistus is a procedure to periodically (e.g. every 20 or 10
 years) adjust the rent amount based on price index development.
 
-For more details, see the documentation in `./spec` directory.
+For more details, see the documentation in [specification.md](./specification.md)
 
 #### Notes on current code
 

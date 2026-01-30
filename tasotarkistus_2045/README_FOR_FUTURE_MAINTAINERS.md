@@ -1,4 +1,6 @@
-# Periodic Rent Adjustment / Tasotarkistus 2045
+# Tasotarkistus 2045 / Periodic Rent Adjustment
+
+For original source material, please see [specification.md](./specification.md)
 
 ## Who is this directory for
 
@@ -42,8 +44,7 @@ reversibility:
 - other details that affected this calculation result
 - ... repeat for all adjustments across the years
 
-For more detailed and accurate information, please see the documents in
-`./spec` directory.
+For original source material, please see [specification.md](./specification.md)
 
 
 ## Official specification

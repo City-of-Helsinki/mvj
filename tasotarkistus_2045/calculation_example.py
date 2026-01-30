@@ -7,7 +7,7 @@ specification.
 
 It is for illustration purposes only and is not used in the actual application.
 
-Please refer to the `./spec` directory for the official specification of tasotarkistus.
+Please refer to [specification.md](./specification.md)
 """
 
 from decimal import Decimal
