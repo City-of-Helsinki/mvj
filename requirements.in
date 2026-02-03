@@ -4,7 +4,7 @@
 # For top-level dependencies, just edit this .in file
 beautifulsoup4~=4.14.3
 deepmerge==2.0
-Django~=4.2.27
+Django~=4.2.28
 django-anymail==13.1
 django-auditlog==3.4.0
 django-admin-rangefilter==0.13.3
