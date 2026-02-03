@@ -122,6 +122,7 @@ class SFTPManager:
             raise se
         except AttributeError as e:
             raise SFTPManagerError(f"Error setting up directories: {str(e)}")
+<<<<<<< Updated upstream
 
 ####################################################
 
@@ -180,3 +181,5 @@ def test_export_sftp():
     finally:
         if os.path.exists(filename):
             os.remove(filename)
+=======
+>>>>>>> Stashed changes

@@ -155,4 +155,4 @@ def test_import_sftp(monkeypatch, mock_sftp):
             },
         )
         laske_command = get_payments_from_laske.Command()
-        laske_command.download_payments_sftp()
+        laske_command.download_payments()

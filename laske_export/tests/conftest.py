@@ -131,6 +131,9 @@ def mock_sftp():
         def put(self, localpath, remotepath):
             pass
 
+        def close(self):
+            pass
+
     class MockSSHClient(SSHClientMock):
         """
         We extend the paramiko_mock's SSHClientMock to add context manager

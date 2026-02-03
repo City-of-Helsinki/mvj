@@ -2,14 +2,13 @@ import json
 import logging
 import os
 import tempfile
-from base64 import decodebytes
 
-import paramiko
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from laske_export import sftp_manager
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
 )
@@ -41,8 +40,8 @@ class LaskeExporter:
     def __init__(self, service_unit: ServiceUnit):
         self.message_output = None
         self.service_unit = service_unit
+        self.sftp_manager = sftp_manager.SFTPManager(profile="export")
         self._check_export_directory()
-        self._check_settings()
 
     def _check_export_directory(self):
         if not os.path.isdir(settings.LASKE_EXPORT_ROOT):
@@ -62,17 +61,6 @@ class LaskeExporter:
                 )
             )
 
-    def _check_settings(self):
-        if (
-            not hasattr(settings, "LASKE_SERVERS")
-            or "export" not in settings.LASKE_SERVERS
-            or not settings.LASKE_SERVERS.get("export")
-            or not settings.LASKE_SERVERS["export"].get("host")
-            or not settings.LASKE_SERVERS["export"].get("username")
-            or not settings.LASKE_SERVERS["export"].get("password")
-        ):
-            raise LaskeExporterError(_('LASKE_SERVERS["export"] settings missing'))
-
     def save_to_file(self, xml_string, filename):
         full_path = os.path.join(settings.LASKE_EXPORT_ROOT, filename)
 
@@ -80,49 +68,17 @@ class LaskeExporter:
             fp.write(xml_string)
 
     def send(self, filename):
-
-        # Add destination server host key
-        if settings.LASKE_SERVERS["export"]["key_type"] == "ssh-ed25519":
-            key = paramiko.ed25519key.Ed25519Key(
-                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
-            )
-        elif "ecdsa" in settings.LASKE_SERVERS["export"]["key_type"]:
-            key = paramiko.ecdsakey.ECDSAKey(
-                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
-            )
-        else:
-            key = paramiko.rsakey.RSAKey(
-                data=decodebytes(settings.LASKE_SERVERS["export"]["key"])
-            )
-
-        ssh = paramiko.SSHClient()
-        hostkeys = ssh.get_host_keys()
-        hostkeys.add(
-            settings.LASKE_SERVERS["export"]["host"],
-            settings.LASKE_SERVERS["export"]["key_type"],
-            key,
-        )
         try:
-            ssh.connect(
-                hostname=settings.LASKE_SERVERS["export"]["host"],
-                port=settings.LASKE_SERVERS["export"]["port"],
-                username=settings.LASKE_SERVERS["export"]["username"],
-                password=settings.LASKE_SERVERS["export"]["password"],
-            )
-
-            with ssh.open_sftp() as sftp:
+            with self.sftp_manager as sftp:
                 sftp.put(
                     localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
                     remotepath=os.path.join(
                         settings.LASKE_SERVERS["export"]["directory"], filename
                     ),
                 )
-
         except Exception as e:
-            self.write_to_output("Error connecting to remote, send failed.: ", e)
+            self.write_to_output("Error connecting to remote, send failed.: " + str(e))
             raise e
-        finally:
-            client.close()
 
     def write_to_output(self, message):
         if not self.message_output:
