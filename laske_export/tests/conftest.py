@@ -5,7 +5,6 @@ import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
 from typing import Any, Callable
-from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -35,7 +34,15 @@ def pytest_configure():
     settings.LANGUAGE_CODE = "en"
     settings.LASKE_EXPORT_ROOT = laske_export_root
     settings.LASKE_SERVERS = {
-        "export": {"host": "localhost", "username": "test", "password": "test"}
+        "export": {
+            "host": "localhost",
+            "port": 22,
+            "username": "test",
+            "password": "test",
+            "directory": "/",
+            "key_type": "rsa",
+            "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
+        }
     }
 
 
@@ -53,16 +60,6 @@ ftp_settings = {
         "username": "test",
         "password": "test",
         "directory": "/payments",
-    }
-}
-
-sftp_settings = {
-    "export": {
-        "host": "localhost",
-        "port": 22,
-        "username": "test",
-        "password": "test",
-        "directory": "/export",
     }
 }
 
@@ -103,50 +100,6 @@ def use_ftp():
         timeout=100,
     )
     return ftp
-
-
-@pytest.fixture
-def mock_sftp():
-    from paramiko import HostKeys
-    from paramiko_mock import ParamikoMockEnviron, SSHClientMock
-
-    # Setup mock host
-    ParamikoMockEnviron().add_responses_for_host(
-        host="localhost",
-        port=22,
-        responses={},
-        username="testuser",
-        password="testpass",
-    )
-
-    class MockSFTPClient:
-        """A simple mock SFTP client with context manager support."""
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            return None
-
-        def put(self, localpath, remotepath):
-            pass
-
-        def close(self):
-            pass
-
-    class MockSSHClient(SSHClientMock):
-        """
-        We extend the paramiko_mock's SSHClientMock to add context manager
-        support for SFTP.
-        """
-
-        def open_sftp(self):
-            return MockSFTPClient()
-
-    with patch("paramiko.SSHClient", new=MockSSHClient), patch(
-        "paramiko.rsakey.RSAKey", return_value="somekey"
-    ), patch("paramiko.SSHClient.get_host_keys", return_value=HostKeys()):
-        yield
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -221,6 +174,7 @@ def send_invoices_to_laske_command_handle(
     invoice,
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.MAKE)
@@ -232,6 +186,7 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     invoice,
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send_with_error,
+    mock_sftp,
 ):
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.MAKE)

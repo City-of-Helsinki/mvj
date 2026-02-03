@@ -21,6 +21,7 @@ def test_export_one_invoice(
     lease_factory,
     contact_factory,
     invoice_factory,
+    mock_sftp,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
     if any(
@@ -29,10 +30,22 @@ def test_export_one_invoice(
             not settings.LASKE_SERVERS.get("export", {}).get("host"),
             not settings.LASKE_SERVERS.get("export", {}).get("username"),
             not settings.LASKE_SERVERS.get("export", {}).get("password"),
+            not settings.LASKE_SERVERS.get("export", {}).get("port"),
+            not settings.LASKE_SERVERS.get("export", {}).get("key_type"),
+            not settings.LASKE_SERVERS.get("export", {}).get("key"),
+            not settings.LASKE_SERVERS.get("export", {}).get("directory"),
         ]
     ):
         settings.LASKE_SERVERS = {
-            "export": {"host": "localhost", "username": "test", "password": "test"}
+            "export": {
+                "host": "localhost",
+                "username": "test",
+                "password": "test",
+                "port": 22,
+                "key_type": "rsa",
+                "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
+                "directory": "/",
+            }
         }
 
     service_unit = service_unit_factory(

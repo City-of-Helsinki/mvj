@@ -19,7 +19,7 @@ class SFTPManager:
                 "SFTP profile must be specified: 'payments' or 'export'"
             )
 
-        # Check that settings are available, will raise SFTPManagerError if not
+        # Check that all relevant settings are available, will raise SFTPManagerError if not
         self._check_settings(profile)
 
         # Setup and check local and remote directories
@@ -122,27 +122,34 @@ class SFTPManager:
             raise se
         except AttributeError as e:
             raise SFTPManagerError(f"Error setting up directories: {str(e)}")
-<<<<<<< Updated upstream
+
 
 ####################################################
 
+
 def test_import_sftp():
-    
-    from laske_export.sftp_manager import SFTPManager, SFTPManagerError
-    from django.conf import settings
+
     import os
     import stat
+
+    from django.conf import settings
+
+    from laske_export.sftp_manager import SFTPManager, SFTPManagerError
+
     try:
         lpath = getattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION")
         rpath = settings.LASKE_SERVERS["payments"]["directory"]
         trfs = []
         with SFTPManager(profile="payments") as sftp:
-              
+
             for item in sftp.listdir_attr(rpath):
                 if stat.S_ISDIR(item.st_mode):
                     pass
                 else:
-                    sftp.get(os.path.join(rpath, item.filename), os.path.join(lpath, item.filename))
+                    sftp.get(
+                        os.path.join(rpath, item.filename),
+                        os.path.join(lpath, item.filename),
+                    )
                     trfs.append(item.filename)
     except SFTPManagerError as e:
         raise e
@@ -153,27 +160,27 @@ def test_import_sftp():
             fp = os.path.join(lpath, f)
             if os.path.exists(fp):
                 os.remove(fp)
-    
+
+
 def test_export_sftp():
-    from laske_export.sftp_manager import SFTPManager, SFTPManagerError
-    from django.conf import settings
     import os
 
-    try:        
+    from django.conf import settings
+
+    from laske_export.sftp_manager import SFTPManager, SFTPManagerError
+
+    try:
         filename = "test_export_file.txt"
-        with open(filename, 'w') as f:
+        with open(filename, "w") as f:
             f.write("This is a test file for SFTP export.\n")
 
         remote_filepath = settings.LASKE_SERVERS["export"]["directory"]
 
         with SFTPManager(profile="export") as sftp:
             remote = os.path.join(remote_filepath, filename)
-            sftp.put(
-                localpath=filename,
-                remotepath=remote
-            )
+            sftp.put(localpath=filename, remotepath=remote)
             sftp.remove(remote)
-    
+
     except SFTPManagerError as e:
         raise e
     except Exception as e:
@@ -181,5 +188,3 @@ def test_export_sftp():
     finally:
         if os.path.exists(filename):
             os.remove(filename)
-=======
->>>>>>> Stashed changes

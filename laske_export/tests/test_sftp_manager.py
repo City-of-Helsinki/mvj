@@ -24,8 +24,8 @@ def test_sftp_valid_profile_export(monkeypatch, mock_sftp):
             "export": {
                 "host": "localhost",
                 "port": 22,
-                "username": "testuser",
-                "password": "testpass",
+                "username": "test",
+                "password": "test",
                 "directory": "/",
                 "key_type": "rsa",
                 "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
@@ -55,8 +55,8 @@ def test_sftp_valid_profile_payments(monkeypatch, mock_sftp):
             "payments": {
                 "host": "localhost",
                 "port": 22,
-                "username": "testuser",
-                "password": "testpass",
+                "username": "test",
+                "password": "test",
                 "directory": "/tmp/payments",
                 "key_type": "rsa",
                 "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",

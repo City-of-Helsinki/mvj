@@ -20,6 +20,7 @@ def test_akv_xml_elements_exist(
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
     exporter_full_test_setup,
+    mock_sftp,
 ):
     """
     Sanity check: verify that the necessary XML elements are populated in AKV's
@@ -71,6 +72,7 @@ def test_akv_sap_codes_from_invoicerow(
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
     exporter_full_test_setup,
+    mock_sftp,
 ):
     """
     By default, AKV SAP codes should be added to the line item from invoicerow's
@@ -106,6 +108,7 @@ def test_akv_sap_codes_from_leasetype(
     send_invoices_to_laske_command,
     exporter_full_test_setup,
     receivable_type_factory,
+    mock_sftp,
 ):
     """
     AKV SAP codes should be added to the line item from LeaseType when the
@@ -147,6 +150,7 @@ def test_akv_sap_codes_when_collateral(
     settings,
     send_invoices_to_laske_command,
     exporter_full_test_setup,
+    mock_sftp,
 ):
     """
     AKV SAP codes should be added to the line item from invoicerow's receivable

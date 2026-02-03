@@ -88,7 +88,7 @@ def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
 
 @pytest.mark.django_db
 def test_invalid_export_invoice(
-    broken_invoice, invoice, monkeypatch_laske_exporter_send
+    broken_invoice, invoice, monkeypatch_laske_exporter_send, mock_sftp
 ):
     exporter = LaskeExporter(service_unit=invoice.service_unit)
     exporter.export_invoices([broken_invoice, invoice])
@@ -121,6 +121,7 @@ def test_export_invalid_invoice_not_marked_sent(
     lease_factory,
     monkeypatch_laske_exporter_send,
     caplog: pytest.LogCaptureFixture,
+    mock_sftp,
 ):
     service_unit = service_unit_factory()
     valid_invoice: Invoice = invoice_factory(
@@ -153,7 +154,7 @@ def test_export_invalid_invoice_not_marked_sent(
 
 @pytest.mark.django_db
 def test_send_invoices_to_laske_command_handle(
-    broken_invoice, send_invoices_to_laske_command_handle
+    broken_invoice, send_invoices_to_laske_command_handle, mock_sftp
 ):
     broken_invoice.refresh_from_db()
 
@@ -193,6 +194,7 @@ def test_send_invoices_service_unit(
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
     service_unit_to_use,
+    mock_sftp,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
 
@@ -366,6 +368,7 @@ def test_send_invoices_order_num_from_lease_type(
     _order_number_test_setup,
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     send_invoices_to_laske_command.handle(
         service_unit_id=_order_number_test_setup["service_unit"].id
@@ -391,6 +394,7 @@ def test_send_invoices_order_num_from_receivable_type(
     _order_number_test_setup,
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     receivable_type_rent = _order_number_test_setup[
         "service_unit"
@@ -417,6 +421,7 @@ def test_send_invoices_order_num_from_lease(
     _order_number_test_setup,
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     """
     Make/Tontit SAP order item number should be populated from lease's internal
