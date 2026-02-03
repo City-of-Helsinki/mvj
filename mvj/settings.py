@@ -47,6 +47,7 @@ env = environ.Env(
     OFFICER_UI_URL=(str, ""),
     ADMINS=(list, []),
     DATABASE_URL=(str, "postgis:///mvj"),
+    DATABASE_PASSWORD=(str, ""),
     CACHE_URL=(str, "locmemcache://"),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
@@ -147,6 +148,9 @@ OFFICER_UI_URL = env.str("OFFICER_UI_URL")
 ADMINS = env.list("ADMINS")
 
 DATABASES = {"default": env.db()}
+if env("DATABASE_PASSWORD"):
+    DATABASES["default"]["PASSWORD"] = env("DATABASE_PASSWORD")
+
 
 CACHES = {"default": env.cache()}
 
