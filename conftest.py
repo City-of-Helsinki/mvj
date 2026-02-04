@@ -1406,6 +1406,8 @@ def mock_sftp():
     )
 
     class MockSFTPClient:
+        """Mock SFTP client used in tests to simulate SFTP interactions without
+        performing any real network or file transfer operations."""
 
         def __enter__(self):
             return self

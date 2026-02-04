@@ -104,7 +104,6 @@ class SFTPManager:
             raise SFTPManagerError("No SFTP profile specified")
         try:
             match profile:
-
                 case self._payments:
                     self._localpath = getattr(
                         settings, "LASKE_PAYMENTS_IMPORT_LOCATION"

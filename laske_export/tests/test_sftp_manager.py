@@ -11,7 +11,7 @@ def test_sftp_invalid_profile():
 
 
 def test_sftp_missing_settings(monkeypatch):
-    # Provide mock settings for invelid 'export' profile
+    # Provide mock settings for invalid 'export' profile
     # missing 'key' setting
     monkeypatch.setattr(
         settings,
