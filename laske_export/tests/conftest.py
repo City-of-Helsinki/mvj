@@ -1,5 +1,4 @@
 import datetime
-import os
 import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
@@ -52,13 +51,6 @@ def pytest_configure():
             + b"Q2YrPSTLkQl+Y+2hWJhbnCDLwQLm1PbYOCG/os= test@example.com",
         }
     }
-
-
-# def pytest_runtest_setup(item):
-#    if item.get_closest_marker("ftp") and os.environ.get(
-#        "TEST_FTP_ACTIVE", False
-#    ) not in [1, "1", True, "True"]:
-#        pytest.skip("test requires TEST_FTP_ACTIVE to be true")
 
 
 @pytest.fixture(scope="function", autouse=True)
