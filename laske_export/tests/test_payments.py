@@ -33,65 +33,6 @@ def test_unimported_files(monkeypatch):
 
 
 @pytest.mark.django_db
-@pytest.mark.ftp
-def test_download_and_archive_payments_ftp(monkeypatch, setup_ftp, use_ftp):
-    ftp = use_ftp
-    test_files = [
-        "MR_OUT_ID256_8000_20190923_014512.TXT",
-        "MR_OUT_ID256_8000_20191002_014527.TXT",
-        "MR_OUT_ID256_8000_20191011_014517.TXT",
-        "ML_OUT_ID256_8000_20191126_085824.TXT",
-    ]
-    with tempfile.TemporaryDirectory() as directory:
-        for test_file in test_files:
-            with open(f"{directory}/{test_file}", "wb+") as f:
-                ftp.storbinary(f"STOR {test_file}", f)
-    laske_command = get_payments_from_laske.Command()
-    with tempfile.TemporaryDirectory() as directory:
-        temp_payments_path = f"{directory}/payments"
-        monkeypatch.setattr(
-            settings, "LASKE_PAYMENTS_IMPORT_LOCATION", temp_payments_path
-        )
-        os.mkdir(temp_payments_path)
-        laske_command.download_payments_ftp()
-        archived_files = ftp.nlst("arch/")
-        assert "arch/MR_OUT_ID256_8000_20190923_014512.TXT" in archived_files
-        assert "arch/ML_OUT_ID256_8000_20191126_085824.TXT" not in archived_files
-
-
-@pytest.mark.django_db
-@pytest.mark.ftp
-def test_handle(monkeypatch, setup_ftp, use_ftp):
-    ftp = use_ftp
-    test_files = [
-        "MR_OUT_ID256_8000_20190923_014512.TXT",
-        "MR_OUT_ID256_8000_20191002_014527.TXT",
-        "MR_OUT_ID256_8000_20191011_014517.TXT",
-        "ML_OUT_ID256_8000_20191126_085824.TXT",
-    ]
-    with tempfile.TemporaryDirectory() as directory:
-        for test_file in test_files:
-            with open(f"{directory}/{test_file}", "wb+") as f:
-                ftp.storbinary(f"STOR {test_file}", f)
-    laske_command = get_payments_from_laske.Command()
-    with tempfile.TemporaryDirectory() as directory:
-        temp_payments_path = f"{directory}/payments"
-        monkeypatch.setattr(
-            settings, "LASKE_PAYMENTS_IMPORT_LOCATION", temp_payments_path
-        )
-        os.mkdir(temp_payments_path)
-        laske_command.handle()
-        ignored_files = ftp.nlst()
-        assert ["ML_OUT_ID256_8000_20191126_085824.TXT", "arch"] == ignored_files
-        archived_files = ftp.nlst("arch/")
-        assert [
-            "arch/MR_OUT_ID256_8000_20190923_014512.TXT",
-            "arch/MR_OUT_ID256_8000_20191002_014527.TXT",
-            "arch/MR_OUT_ID256_8000_20191011_014517.TXT",
-        ] == archived_files
-
-
-@pytest.mark.django_db
 def test_parse_date():
     laske_command = get_payments_from_laske.Command()
     parse_date = laske_command.parse_date
@@ -150,9 +91,16 @@ def test_import_sftp(monkeypatch, mock_sftp):
                     "password": "testpass",
                     "directory": "/",
                     "key_type": "rsa",
-                    "key": b"-----BEGIN RSA PRIVATE KEY-----\nABCDF\n-----END RSA PRIVATE",
+                    "key": b"AAAAB3NzaC1yc2EAAAADAQABAAABgQCwd76MQfUDhAm7mkKNjT1LEsIdd4Xcx690jGm"
+                    + b"p2dDQZz3z3fUZoAOdZDsVlbAOY5JkiERgs54I01Rgfjw3ns66jaZdE7CO0xGLnqM8peVm72m7"
+                    + b"GBCAx8LR5oMJGETrcqcIEl7z6rAKP0Xml+TdwXVhPVH+kdnxfhL/51l0u+GZ50nL0FkGBbmAq"
+                    + b"uY99dPzDg3SjgFKI+FkpctsjDjtCkq7JKJDALk+spKq2arZ1QZVonyMa6N/S87d8gECscSnJn"
+                    + b"ZxuY1JCXj6KyiVq5NuTSR03YcLh2wrTS9VaU5ttu3lSUxBMWX9weSZwCzrD9xejYqTv2YNTms"
+                    + b"Zb0U1nwyoiHIA8Iq3sA65UxQ/bODcVQBGvmyM3+TFoZr5pkq07i9jEWHNbZynkTHJSjI5T8fE"
+                    + b"dIvBw3bmnFYDs4ZudxiF5Y5ZIsbtitQef/vh15npOgC5mpy5BPxlrYFr1PGynDbry4NFPJDBA"
+                    + b"Q2YrPSTLkQl+Y+2hWJhbnCDLwQLm1PbYOCG/os= test@example.com",
                 }
             },
         )
         laske_command = get_payments_from_laske.Command()
-        laske_command.download_payments_sftp()
+        laske_command.download_payments()

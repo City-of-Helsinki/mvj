@@ -21,6 +21,7 @@ def test_export_one_invoice(
     lease_factory,
     contact_factory,
     invoice_factory,
+    mock_sftp,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
     if any(
@@ -29,10 +30,29 @@ def test_export_one_invoice(
             not settings.LASKE_SERVERS.get("export", {}).get("host"),
             not settings.LASKE_SERVERS.get("export", {}).get("username"),
             not settings.LASKE_SERVERS.get("export", {}).get("password"),
+            not settings.LASKE_SERVERS.get("export", {}).get("port"),
+            not settings.LASKE_SERVERS.get("export", {}).get("key_type"),
+            not settings.LASKE_SERVERS.get("export", {}).get("key"),
+            not settings.LASKE_SERVERS.get("export", {}).get("directory"),
         ]
     ):
         settings.LASKE_SERVERS = {
-            "export": {"host": "localhost", "username": "test", "password": "test"}
+            "export": {
+                "host": "localhost",
+                "username": "test",
+                "password": "test",
+                "port": 22,
+                "directory": "/",
+                "key_type": "rsa",
+                "key": b"AAAAB3NzaC1yc2EAAAADAQABAAABgQCwd76MQfUDhAm7mkKNjT1LEsIdd4Xcx690jGm"
+                + b"p2dDQZz3z3fUZoAOdZDsVlbAOY5JkiERgs54I01Rgfjw3ns66jaZdE7CO0xGLnqM8peVm72m7"
+                + b"GBCAx8LR5oMJGETrcqcIEl7z6rAKP0Xml+TdwXVhPVH+kdnxfhL/51l0u+GZ50nL0FkGBbmAq"
+                + b"uY99dPzDg3SjgFKI+FkpctsjDjtCkq7JKJDALk+spKq2arZ1QZVonyMa6N/S87d8gECscSnJn"
+                + b"ZxuY1JCXj6KyiVq5NuTSR03YcLh2wrTS9VaU5ttu3lSUxBMWX9weSZwCzrD9xejYqTv2YNTms"
+                + b"Zb0U1nwyoiHIA8Iq3sA65UxQ/bODcVQBGvmyM3+TFoZr5pkq07i9jEWHNbZynkTHJSjI5T8fE"
+                + b"dIvBw3bmnFYDs4ZudxiF5Y5ZIsbtitQef/vh15npOgC5mpy5BPxlrYFr1PGynDbry4NFPJDBA"
+                + b"Q2YrPSTLkQl+Y+2hWJhbnCDLwQLm1PbYOCG/os= test@example.com",
+            }
         }
 
     service_unit = service_unit_factory(

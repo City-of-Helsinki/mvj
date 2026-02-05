@@ -1,11 +1,9 @@
 import datetime
-import os
 import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
 from typing import Any, Callable
-from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -31,119 +29,28 @@ def pytest_configure():
     If you require a unique directory for your test, use the `tmp_path` fixture:
     https://docs.pytest.org/en/stable/how-to/tmp_path.html
     """
+
     laske_export_root = tempfile.mkdtemp(prefix="laske-export-")
     settings.LANGUAGE_CODE = "en"
     settings.LASKE_EXPORT_ROOT = laske_export_root
     settings.LASKE_SERVERS = {
-        "export": {"host": "localhost", "username": "test", "password": "test"}
+        "export": {
+            "host": "localhost",
+            "port": 22,
+            "username": "test",
+            "password": "test",
+            "directory": "/",
+            "key_type": "rsa",
+            "key": b"AAAAB3NzaC1yc2EAAAADAQABAAABgQCwd76MQfUDhAm7mkKNjT1LEsIdd4Xcx690jGm"
+            + b"p2dDQZz3z3fUZoAOdZDsVlbAOY5JkiERgs54I01Rgfjw3ns66jaZdE7CO0xGLnqM8peVm72m7"
+            + b"GBCAx8LR5oMJGETrcqcIEl7z6rAKP0Xml+TdwXVhPVH+kdnxfhL/51l0u+GZ50nL0FkGBbmAq"
+            + b"uY99dPzDg3SjgFKI+FkpctsjDjtCkq7JKJDALk+spKq2arZ1QZVonyMa6N/S87d8gECscSnJn"
+            + b"ZxuY1JCXj6KyiVq5NuTSR03YcLh2wrTS9VaU5ttu3lSUxBMWX9weSZwCzrD9xejYqTv2YNTms"
+            + b"Zb0U1nwyoiHIA8Iq3sA65UxQ/bODcVQBGvmyM3+TFoZr5pkq07i9jEWHNbZynkTHJSjI5T8fE"
+            + b"dIvBw3bmnFYDs4ZudxiF5Y5ZIsbtitQef/vh15npOgC5mpy5BPxlrYFr1PGynDbry4NFPJDBA"
+            + b"Q2YrPSTLkQl+Y+2hWJhbnCDLwQLm1PbYOCG/os= test@example.com",
+        }
     }
-
-
-def pytest_runtest_setup(item):
-    if item.get_closest_marker("ftp") and os.environ.get(
-        "TEST_FTP_ACTIVE", False
-    ) not in [1, "1", True, "True"]:
-        pytest.skip("test requires TEST_FTP_ACTIVE to be true")
-
-
-ftp_settings = {
-    "payments": {
-        "host": os.getenv("FTP_HOST", "ftp"),
-        "port": 21,
-        "username": "test",
-        "password": "test",
-        "directory": "/payments",
-    }
-}
-
-sftp_settings = {
-    "export": {
-        "host": "localhost",
-        "port": 22,
-        "username": "test",
-        "password": "test",
-        "directory": "/export",
-    }
-}
-
-
-@pytest.fixture
-def setup_ftp(monkeypatch, use_ftp):
-    monkeypatch.setattr(settings, "LASKE_SERVERS", ftp_settings)
-    ftp = use_ftp
-    ftp.mkd("/payments")
-    ftp.cwd("/payments")
-    ftp.mkd("arch/")
-    yield
-    # Cleanup all the folders / files from ftp after test
-    ftp.cwd("/payments")
-    arch_files = ftp.nlst("arch/")
-    payment_files = ftp.nlst()
-    for obj in arch_files:
-        ftp.delete(obj)
-    for payment_file in payment_files:
-        try:
-            ftp.delete(payment_file)
-        except Exception:
-            ftp.rmd(payment_file)
-            continue
-    ftp.cwd("/")
-    ftp.rmd("payments/")
-    ftp.quit()
-
-
-@pytest.fixture
-def use_ftp():
-    from ftplib import FTP
-
-    ftp = FTP(
-        host=ftp_settings["payments"]["host"],
-        user=ftp_settings["payments"]["username"],
-        passwd=ftp_settings["payments"]["password"],
-        timeout=100,
-    )
-    return ftp
-
-
-@pytest.fixture
-def mock_sftp():
-    from paramiko import HostKeys
-    from paramiko_mock import ParamikoMockEnviron, SSHClientMock
-
-    # Setup mock host
-    ParamikoMockEnviron().add_responses_for_host(
-        host="localhost",
-        port=22,
-        responses={},
-        username="testuser",
-        password="testpass",
-    )
-
-    class MockSFTPClient:
-        """A simple mock SFTP client with context manager support."""
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            return None
-
-        def put(self, localpath, remotepath):
-            pass
-
-    class MockSSHClient(SSHClientMock):
-        """
-        We extend the paramiko_mock's SSHClientMock to add context manager
-        support for SFTP.
-        """
-
-        def open_sftp(self):
-            return MockSFTPClient()
-
-    with patch("paramiko.SSHClient", new=MockSSHClient), patch(
-        "paramiko.rsakey.RSAKey", return_value="somekey"
-    ), patch("paramiko.SSHClient.get_host_keys", return_value=HostKeys()):
-        yield
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -218,6 +125,7 @@ def send_invoices_to_laske_command_handle(
     invoice,
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.MAKE)
@@ -229,6 +137,7 @@ def send_invoices_to_laske_command_handle_with_unexpected_error(
     invoice,
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send_with_error,
+    mock_sftp,
 ):
     command = send_invoices_to_laske_command
     command.handle(service_unit_id=ServiceUnitId.MAKE)

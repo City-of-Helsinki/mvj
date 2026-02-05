@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 import factory
 import pytest
@@ -1388,3 +1389,44 @@ class InspectionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Inspection
+
+
+@pytest.fixture
+def mock_sftp():
+    from paramiko import HostKeys
+    from paramiko_mock import ParamikoMockEnviron, SSHClientMock
+
+    # Setup mock host
+    ParamikoMockEnviron().add_responses_for_host(
+        host="localhost",
+        port=22,
+        responses={},
+        username="test",
+        password="test",
+    )
+
+    class MockSFTPClient:
+        """Mock SFTP client used in tests to simulate SFTP interactions without
+        performing any real network or file transfer operations."""
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            return None
+
+        def put(self, localpath, remotepath):
+            pass
+
+        def close(self):
+            pass
+
+    class MockSSHClient(SSHClientMock):
+
+        def open_sftp(self):
+            return MockSFTPClient()
+
+    with patch("paramiko.SSHClient", new=MockSSHClient), patch(
+        "paramiko.rsakey.RSAKey", return_value="somekey"
+    ), patch("paramiko.SSHClient.get_host_keys", return_value=HostKeys()):
+        yield

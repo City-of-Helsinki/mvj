@@ -15,6 +15,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from sentry_sdk import capture_exception
 
+from laske_export import sftp_manager
 from laske_export.models import LaskePaymentsLog
 from leasing.models import Invoice, Lease, ServiceUnit, Vat
 from leasing.models.invoice import InvoicePayment
@@ -32,43 +33,12 @@ def get_import_dir() -> str:
 class Command(BaseCommand):
     help = "Get payments from Laske"
 
-    def download_payments_sftp(self):
-        from base64 import decodebytes
-
-        import paramiko
-
-        # Add destination server host key
-        if settings.LASKE_SERVERS["payments"]["key_type"] == "ssh-ed25519":
-            key = paramiko.ed25519key.Ed25519Key(
-                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-            )
-        elif "ecdsa" in settings.LASKE_SERVERS["payments"]["key_type"]:
-            key = paramiko.ecdsakey.ECDSAKey(
-                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-            )
-        else:
-            key = paramiko.rsakey.RSAKey(
-                data=decodebytes(settings.LASKE_SERVERS["payments"]["key"])
-            )
-
-        client = paramiko.SSHClient()
-        hostkeys = client.get_host_keys()
-        hostkeys.add(
-            settings.LASKE_SERVERS["payments"]["host"],
-            settings.LASKE_SERVERS["payments"]["key_type"],
-            key,
-        )
-
-        lpath = get_import_dir()
-        rpath = settings.LASKE_SERVERS["payments"]["directory"]
+    def download_payments(self):
         try:
-            client.connect(
-                hostname=settings.LASKE_SERVERS["payments"]["host"],
-                port=settings.LASKE_SERVERS["payments"]["port"],
-                username=settings.LASKE_SERVERS["payments"]["username"],
-                password=settings.LASKE_SERVERS["payments"]["password"],
-            )
-            with client.open_sftp() as sftp:
+            with sftp_manager.SFTPManager(profile="payments") as sftp:
+                lpath = get_import_dir()
+                rpath = settings.LASKE_SERVERS["payments"]["directory"]
+
                 for item in sftp.listdir_attr(rpath):
                     # Just in case...
                     if stat.S_ISDIR(item.st_mode):
@@ -82,71 +52,9 @@ class Command(BaseCommand):
                             os.path.join(rpath, item.filename),
                             os.path.join(rpath, "arch", item.filename),
                         )
-
         except Exception as e:
             logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
-        finally:
-            client.close()
-
-    def download_payments_ftp(self):
-        from ftplib import FTP
-
-        try:
-            ftp = FTP()
-            ftp.connect(
-                host=settings.LASKE_SERVERS["payments"]["host"],
-                port=settings.LASKE_SERVERS["payments"]["port"],
-            )
-            ftp.login(
-                user=settings.LASKE_SERVERS["payments"]["username"],
-                passwd=settings.LASKE_SERVERS["payments"]["password"],
-            )
-            ftp.cwd(settings.LASKE_SERVERS["payments"]["directory"])
-        except Exception as e:
-            logger.error(f"Could connect to the server. Error: {str(e)}")
-            capture_exception(e)
-            return
-
-        try:
-            file_list = ftp.nlst()
-        except Exception as e:
-            logger.error(f"Could not get file list. Error: {str(e)}")
-            capture_exception(e)
-            return
-
-        for file_name in file_list:
-            if not file_name.lower().startswith("mr_out_"):
-                logger.info(
-                    f'Skipping the file "{file_name}" because its name does not start with "MR_OUT_"'
-                )
-                continue
-
-            logger.info(f'Downloading file "{file_name}".')
-            try:
-                fp = open(os.path.join(get_import_dir(), file_name), "wb")
-                ftp.retrbinary(f"RETR {file_name}", fp.write)
-                logger.info(
-                    "Download complete. Moving it to arch directory on the FTP server."
-                )
-                ftp.rename(file_name, f"arch/{file_name}")
-                logger.info("Done.")
-            except Exception as e:
-                logger.error(f'Could not download file "{file_name}". Error: {str(e)}')
-                capture_exception(e)
-
-        ftp.quit()
-
-    def download_payments(self):
-        key_type = settings.LASKE_SERVERS["payments"].get("key_type")
-        key = settings.LASKE_SERVERS["payments"].get("key")
-
-        if key_type and key:
-            logger.info("Key found, using SFTP")
-            self.download_payments_sftp()
-        else:
-            logger.info("No key found, using FTP")
-            self.download_payments_ftp()
 
     def check_import_directory(self):
         if not os.path.isdir(get_import_dir()):

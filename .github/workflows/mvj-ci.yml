@@ -33,20 +33,6 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      ftp:
-        image: fauria/vsftpd
-        env:
-          PASV_ADDRESS: localhost
-          PASV_ADDR_RESOLVE: "YES"
-          PASV_MIN_PORT: 21100
-          PASV_MAX_PORT: 21200
-          FTP_USER: test
-          FTP_PASS: test
-          LOG_STDOUT: "true"
-        ports:
-          - "21:21"
-          - "21100-21200:21100-21200"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -87,9 +73,6 @@ jobs:
           python manage.py validate_sanitizerconfig --silent
 
       - name: Run tests, compile translations
-        env:
-          TEST_FTP_ACTIVE: 1
-          FTP_HOST: localhost
         run: |
           python manage.py compilemessages
           pytest -ra -vvv --cov=. --cov-report xml:coverage.xml --migrations
