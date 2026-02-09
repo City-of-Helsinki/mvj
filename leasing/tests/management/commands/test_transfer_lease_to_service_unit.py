@@ -148,7 +148,7 @@ def single_lease_transfer_setup(
 def test_perform_single_transfer(
     single_lease_transfer_setup, command_instance: Command
 ):
-    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=datetime.timezone.utc)
     (
         lease,
         target_service_unit,
@@ -363,7 +363,7 @@ def test_validate_headers_extra_column(command_instance):
 def test_validate_target_objects_lease_end_date(
     single_lease_transfer_setup, command_instance: Command
 ):
-    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=datetime.timezone.utc)
     (
         lease,
         target_service_unit,
@@ -391,7 +391,9 @@ def test_validate_target_objects_lease_end_date(
     assert len(errors) == 0
 
     # `end_date` in the past
-    lease.end_date = timezone.datetime(2025, 9, 29, 1, 59, 0, tzinfo=timezone.utc)
+    lease.end_date = timezone.datetime(
+        2025, 9, 29, 1, 59, 0, tzinfo=datetime.timezone.utc
+    )
     lease.save()
     lease.refresh_from_db()
 
@@ -430,7 +432,7 @@ def test_perform_transfer_leases(
     single_lease_transfer_setup, command_instance: Command
 ):
     """Test the transfer_leases method with a complete CSV row transfer."""
-    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=timezone.utc)
+    mock_now = timezone.datetime(2025, 9, 30, 9, 30, 0, tzinfo=datetime.timezone.utc)
     (
         lease,
         target_service_unit,
