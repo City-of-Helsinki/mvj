@@ -280,7 +280,7 @@ def test_perform_single_transfer(
     lease_custom_log_entry = LogEntry.objects.get_for_object(lease).first()
     assert lease_custom_log_entry.action == LogEntry.Action.UPDATE
     assert [
-        None,
+        "None",
         command_instance.get_service_unit_transfer_note(
             target_service_unit, source_service_unit, mock_now
         ),

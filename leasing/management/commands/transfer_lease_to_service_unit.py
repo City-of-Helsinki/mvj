@@ -411,7 +411,7 @@ class Command(BaseCommand):
             actor=transferrer_user,
             changes={
                 "service_unit_transfer": [
-                    None,
+                    "None",
                     self.get_service_unit_transfer_note(
                         target_service_unit, old_service_unit, now
                     ),
