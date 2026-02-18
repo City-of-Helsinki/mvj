@@ -122,7 +122,7 @@ django-q-sentry==0.1.6
     # via django-q2
 django-q2[sentry]==1.9.0
     # via -r requirements.in
-django-resilient-logger==2.0.0
+django-resilient-logger==2.1.0
     # via -r requirements.in
 django-safedelete==1.4.1
     # via -r requirements.in
