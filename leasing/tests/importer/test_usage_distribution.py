@@ -47,28 +47,25 @@ def test_usage_distribution_count(
         return_value=[
             {
                 "KG_KKAAVYKS": 5043111,
-                "C_KAAVAYKSIKKOTUNNUS": "1234",
+                "KAAVAYKSIKKOTUNNUS": "1234",
                 "C_KAYTJAKAUMA": "1",
-                "MV_KOODISTO0_C_SELITE": "Pääkäyttötarkoitus",
-                "C_PAASIVUK": "P",
+                "SELITE": "Pääkäyttötarkoitus",
                 "C_RAKOIKEUS": "795",
                 "I_RAKOIKEUS": "1000",
             },
             {
                 "KG_KKAAVYKS": 5031395,
-                "C_KAAVAYKSIKKOTUNNUS": "1234",
+                "KAAVAYKSIKKOTUNNUS": "1234",
                 "C_KAYTJAKAUMA": "1",
-                "MV_KOODISTO0_C_SELITE": "Pääkäyttötarkoitus",
-                "C_PAASIVUK": "P",
+                "SELITE": "Pääkäyttötarkoitus",
                 "C_RAKOIKEUS": "8100",
                 "I_RAKOIKEUS": "1000",
             },
             {
                 "KG_KKAAVYKS": 5031395,
-                "C_KAAVAYKSIKKOTUNNUS": "1234",
+                "KAAVAYKSIKKOTUNNUS": "1234",
                 "C_KAYTJAKAUMA": "3BB",
-                "MV_KOODISTO0_C_SELITE": "Liike- tai toimistotilat",
-                "C_PAASIVUK": "S",
+                "SELITE": "Liike- tai toimistotilat",
                 "C_RAKOIKEUS": "650",
                 "I_RAKOIKEUS": "1000",
             },
@@ -85,10 +82,9 @@ def test_usage_distribution_count(
         return_value=[
             {
                 "KG_KKAAVYKS": 5043111,
-                "C_KAAVAYKSIKKOTUNNUS": "1234",
+                "KAAVAYKSIKKOTUNNUS": "1234",
                 "C_KAYTJAKAUMA": "1",
-                "MV_KOODISTO0_C_SELITE": "Pääkäyttötarkoitus",
-                "C_PAASIVUK": "P",
+                "SELITE": "Pääkäyttötarkoitus",
                 "C_RAKOIKEUS": "795",
                 "I_RAKOIKEUS": "1000",
             },
@@ -127,46 +123,41 @@ def test_build_permission_amount(plan_unit_factory, lease_area_factory, lease_fa
         return_value=[
             {
                 "KG_KKAAVYKS": 1111111,
-                "C_KAAVAYKSIKKOTUNNUS": "5678",
+                "KAAVAYKSIKKOTUNNUS": "5678",
                 "C_KAYTJAKAUMA": "case1",  # I use these as "identifiers" for each usage distribution. Not a real value.
-                "MV_KOODISTO0_C_SELITE": "Case 1",
-                "C_PAASIVUK": "P",
+                "SELITE": "Case 1",
                 "C_RAKOIKEUS": "100",  # This should be picked
                 "I_RAKOIKEUS": "1001",
             },
             {
                 "KG_KKAAVYKS": 2222222,
-                "C_KAAVAYKSIKKOTUNNUS": "5678",
+                "KAAVAYKSIKKOTUNNUS": "5678",
                 "C_KAYTJAKAUMA": "case2",
-                "MV_KOODISTO0_C_SELITE": "Case 2",
-                "C_PAASIVUK": "P",
+                "SELITE": "Case 2",
                 "C_RAKOIKEUS": "200",  # This should be picked
                 "I_RAKOIKEUS": None,
             },
             {
                 "KG_KKAAVYKS": 3333333,
-                "C_KAAVAYKSIKKOTUNNUS": "5678",
+                "KAAVAYKSIKKOTUNNUS": "5678",
                 "C_KAYTJAKAUMA": "case3",
-                "MV_KOODISTO0_C_SELITE": "Case 3",
-                "C_PAASIVUK": "S",
+                "SELITE": "Case 3",
                 "C_RAKOIKEUS": None,
                 "I_RAKOIKEUS": "3001",  # This should be picked
             },
             {
                 "KG_KKAAVYKS": 4444444,
-                "C_KAAVAYKSIKKOTUNNUS": "5678",
+                "KAAVAYKSIKKOTUNNUS": "5678",
                 "C_KAYTJAKAUMA": "case4",
-                "MV_KOODISTO0_C_SELITE": "Case 4",
-                "C_PAASIVUK": "S",
+                "SELITE": "Case 4",
                 "C_RAKOIKEUS": None,
                 "I_RAKOIKEUS": None,  # Build permission should be "-" as no valid values exist
             },
             {
                 "KG_KKAAVYKS": 5555555,
-                "C_KAAVAYKSIKKOTUNNUS": "5678",
+                "KAAVAYKSIKKOTUNNUS": "5678",
                 "C_KAYTJAKAUMA": "case5",
-                "MV_KOODISTO0_C_SELITE": "Case 5",
-                "C_PAASIVUK": "S",
+                "SELITE": "Case 5",
                 "C_RAKOIKEUS": "0",  # This should be picked
                 "I_RAKOIKEUS": "5005",
             },
