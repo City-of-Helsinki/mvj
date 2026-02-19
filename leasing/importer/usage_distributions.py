@@ -48,30 +48,32 @@ class UsageDistributionImporter(BaseImporter):
     def import_usage_distributions(self):
         self.initialize_importer()
         cursor = self.cursor
+
+        # Note: selite is not saved to MVJ, but is helpful for understanding the Facta output.
         query = """
-        SELECT DISTINCT A.kg_kkaavyks,
-            A.c_kaavayksikkotunnus,
-            COALESCE(NULLIF(A.c_kaytjakauma, '1'), mv_kaavayksikko.c_kayttota, A.c_kaytjakauma) AS c_kaytjakauma,
+        SELECT DISTINCT
+            COALESCE(A.kg_kkaavyks, B.kg_kkaavyks) AS kg_kkaavyks,
+            COALESCE(A.c_kaavayksikkotunnus, B.kaavayksikko) AS kaavayksikkotunnus,
+            COALESCE(NULLIF(A.c_kaytjakauma, '1'), B.c_kayttota, A.c_kaytjakauma) AS c_kaytjakauma,
             CASE
-                WHEN A.c_kaytjakauma = '1' THEN COALESCE(mv_kaavayksikko.c_ktarsel, mv_koodisto0.c_selite)
-                ELSE mv_koodisto0.c_selite
-            END AS mv_koodisto0_c_selite,
-            A.c_paasivuk,
+                WHEN A.c_kaytjakauma = '1' THEN COALESCE(B.c_ktarsel, C.c_selite)
+                ELSE C.c_selite
+            END AS selite,
             A.c_rakoikeus,
-            mv_kaavayksikko.i_rakoikeus
+            B.i_rakoikeus
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
-        LEFT OUTER JOIN mv_koodisto mv_koodisto0 ON (A.c_kaytjakauma=mv_koodisto0.c_koodi AND mv_koodisto0.c_koodisto='SU_KAYTJAKAUMA')
-        LEFT OUTER JOIN mv_kaavayksikko ON A.kg_kkaavyks = mv_kaavayksikko.kg_kkaavyks
-        ORDER BY A.c_kaavayksikkotunnus ASC
+        LEFT OUTER JOIN mv_koodisto C ON (A.c_kaytjakauma=C.c_koodi AND C.c_koodisto='SU_KAYTJAKAUMA')
+        FULL OUTER JOIN mv_kaavayksikko B ON A.kg_kkaavyks = B.kg_kkaavyks
+        ORDER BY kaavayksikkotunnus ASC
         """
 
         cursor.execute(query)
 
         usage_distribution_rows = rows_to_dict_list(cursor)
 
-        # Ensure that the rows are ordered by C_KAAVAYKSIKKOTUNNUS for itertools.groupby()
+        # Ensure that the rows are ordered by KAAVAYKSIKKOTUNNUS for itertools.groupby()
         for row_plan_unit_identifier, usage_distributions_group in groupby(
-            usage_distribution_rows, key=lambda row: row["C_KAAVAYKSIKKOTUNNUS"]
+            usage_distribution_rows, key=lambda row: row["KAAVAYKSIKKOTUNNUS"]
         ):
             plan_unit_identifier = self._strip_leading_zeros_from_identifier(
                 row_plan_unit_identifier
