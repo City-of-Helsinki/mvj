@@ -71,7 +71,7 @@ class UsageDistributionImporter(BaseImporter):
 
         usage_distribution_rows = rows_to_dict_list(cursor)
 
-        # Ensure that the rows are ordered by C_KAAVAYKSIKKOTUNNUS for itertools.groupby()
+        # Ensure that the rows are ordered by KAAVAYKSIKKOTUNNUS for itertools.groupby()
         for row_plan_unit_identifier, usage_distributions_group in groupby(
             usage_distribution_rows, key=lambda row: row["KAAVAYKSIKKOTUNNUS"]
         ):
