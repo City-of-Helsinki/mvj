@@ -1,5 +1,5 @@
 # ==============================
-FROM helsinki.azurecr.io/ubi9/python-311-gdal:latest AS appbase
+FROM helsinki.azurecr.io/ubi9/python-312-gdal:latest AS appbase
 # ==============================
 
 ENV PYTHONUNBUFFERED=1
