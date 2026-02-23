@@ -103,7 +103,7 @@ class Command(BaseCommand):
         for i, (expected, actual) in enumerate(zip(REQUIRED_HEADERS, fieldnames)):
             if expected != actual:
                 errors.append(
-                    f"CSV column {i+1} must be '{expected}', but found '{actual}'. "
+                    f"CSV column {i + 1} must be '{expected}', but found '{actual}'. "
                     f"Expected exact order: {REQUIRED_HEADERS}"
                 )
 
