@@ -1,3 +1,5 @@
+import logging
+import sys
 from itertools import groupby
 from typing import List
 
@@ -7,6 +9,11 @@ from leasing.importer.base import BaseImporter
 from leasing.importer.utils import rows_to_dict_list
 from leasing.models import PlanUnit
 from leasing.models.land_area import UsageDistribution
+
+logger = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
 
 
 class UsageDistributionImporter(BaseImporter):
@@ -24,6 +31,7 @@ class UsageDistributionImporter(BaseImporter):
             password=getattr(settings, "FACTA_DATABASE_PASSWORD", None),
             dsn=getattr(settings, "FACTA_DATABASE_DSN", None),
         )
+        logger.info("Connected to Facta database")
 
         self.cursor = connection.cursor()
         self.lease_ids = None
@@ -70,6 +78,7 @@ class UsageDistributionImporter(BaseImporter):
         cursor.execute(query)
 
         usage_distribution_rows = rows_to_dict_list(cursor)
+        logger.info(f"Fetched {len(usage_distribution_rows)} rows")
 
         # Ensure that the rows are ordered by KAAVAYKSIKKOTUNNUS for itertools.groupby()
         for row_plan_unit_identifier, usage_distributions_group in groupby(
@@ -101,10 +110,20 @@ class UsageDistributionImporter(BaseImporter):
                     existing_or_created_usage_distributions_ids.append(
                         usage_distribution.id
                     )
+                    if _created:
+                        logger.info(
+                            f"Created a usage distribution with id {usage_distribution.id} "
+                            f"for plan unit {plan_unit.identifier}"
+                        )
 
                 redundant_usage_distributions = plan_unit.usage_distributions.exclude(
                     id__in=existing_or_created_usage_distributions_ids
                 )
+                if redundant_usage_distributions.exists():
+                    logger.info(
+                        f"Deleting {redundant_usage_distributions.count()} redundant "
+                        f"usage distributions from plan unit {plan_unit.identifier}"
+                    )
                 redundant_usage_distributions.delete()
 
     def _strip_leading_zeros_from_identifier(self, identifier: str) -> str:
