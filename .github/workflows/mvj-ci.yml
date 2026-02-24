@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ["3.11"]
+        python: ["3.12"]
 
     services:
       postgres:
@@ -114,3 +114,4 @@ jobs:
           -Dsonar.python.coverage.reportPaths=coverage.xml
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        

@@ -421,7 +421,7 @@ class InvoiceSalesOrderAdapter:
         # Set the linetexts to the lineitem
         for i in range(0, number_of_linetext_lines):
             line = text_lines[i] if i < len(text_lines) else ""
-            setattr(line_item, f"line_text_l{i+1}", line)
+            setattr(line_item, f"line_text_l{i + 1}", line)
 
     def get_order_type(self) -> str | None:
         if self.invoice.type == InvoiceType.CHARGE:
@@ -620,7 +620,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         )
         for i in range(0, number_of_linetext_lines):
             line = text_lines[i] if i < len(text_lines) else ""
-            setattr(line_item, f"line_text_l{i+1}", line)
+            setattr(line_item, f"line_text_l{i + 1}", line)
 
 
 def invoice_sales_order_adapter_factory(
