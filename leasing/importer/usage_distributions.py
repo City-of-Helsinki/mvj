@@ -52,6 +52,7 @@ class UsageDistributionImporter(BaseImporter):
             auditlog.unregister(model)
 
         self.import_usage_distributions()
+        logger.info("Done")
 
     def import_usage_distributions(self):
         self.initialize_importer()
