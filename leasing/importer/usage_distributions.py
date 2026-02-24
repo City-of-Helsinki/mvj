@@ -58,7 +58,10 @@ class UsageDistributionImporter(BaseImporter):
         self.initialize_importer()
         cursor = self.cursor
 
-        # Note: selite is not saved to MVJ, but is helpful for understanding the Facta output.
+        # Notes:
+        # * selite is not saved to MVJ, but is helpful for understanding the Facta output.
+        # * mv_kaavayksikko.c_olotila = 5 means that the plan unit is repealed (kumottu),
+        #   and we should not use it for importing usage distributions.
         query = """
         SELECT DISTINCT
             COALESCE(A.kg_kkaavyks, B.kg_kkaavyks) AS kg_kkaavyks,
@@ -72,7 +75,7 @@ class UsageDistributionImporter(BaseImporter):
             B.i_rakoikeus
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
         LEFT OUTER JOIN mv_koodisto C ON (A.c_kaytjakauma=C.c_koodi AND C.c_koodisto='SU_KAYTJAKAUMA')
-        FULL OUTER JOIN mv_kaavayksikko B ON A.kg_kkaavyks = B.kg_kkaavyks
+        LEFT OUTER JOIN mv_kaavayksikko B ON (A.kg_kkaavyks = B.kg_kkaavyks AND B.c_olotila <> 5)
         ORDER BY kaavayksikkotunnus ASC
         """
 
