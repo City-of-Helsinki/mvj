@@ -161,9 +161,4 @@ class UsageDistributionImporter(BaseImporter):
         ):
             return plan_unit_build_permission
         else:
-            logger.warning(
-                "Both the usage distribution's and plan unit's build permissions are None for "
-                f"plan unit identifier {usage_distribution_row['KAAVAYKSIKKOTUNNUS']}. "
-                f"Returning '-' as build permission value."
-            )
             return "-"
