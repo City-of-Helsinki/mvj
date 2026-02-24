@@ -174,7 +174,7 @@
       "deleted_by_cascade": false,
       "created_at": "2023-09-13T09:46:50.380Z",
       "modified_at": "2023-09-13T09:46:50.380Z",
-      "name": "Usage distribution importer",
+      "name": "Käyttöjakaumien tuonti",
       "comment": "",
       "command": 12,
       "arguments": {},
