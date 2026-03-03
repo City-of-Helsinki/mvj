@@ -75,7 +75,7 @@ class UsageDistributionImporter(BaseImporter):
             B.i_rakoikeus
         FROM MV_KAAVAYKSIKON_RAKOIKJAKAUMA A
         LEFT OUTER JOIN mv_koodisto C ON (A.c_kaytjakauma=C.c_koodi AND C.c_koodisto='SU_KAYTJAKAUMA')
-        LEFT OUTER JOIN mv_kaavayksikko B ON (A.kg_kkaavyks = B.kg_kkaavyks AND B.c_olotila <> 5)
+        LEFT OUTER JOIN mv_kaavayksikko B ON (a.c_kaavayksikkotunnus = b.c_kaavatunnus AND B.c_olotila <> 5)
         ORDER BY kaavayksikkotunnus ASC
         """
 
