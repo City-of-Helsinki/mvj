@@ -286,6 +286,8 @@ class CollectionLetterAdmin(FieldPermissionsModelAdmin):
 @admin.register(CollectionNote)
 class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "created_at", "note", "user")
+    search_fields = ["lease__identifier", "user__first_name", "user__last_name",]
+    list_filter = ("collection_stage")
     raw_id_fields = ("lease",)
     ordering = ("-created_at",)
 
