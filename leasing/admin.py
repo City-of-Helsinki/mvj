@@ -213,6 +213,7 @@ class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 
 class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
+    search_fields = ["identifier"]
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
