@@ -209,7 +209,7 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease",)
+    list_display = ("lease", "tenantcontact__contact__name")
     inlines = [TenantContactInline]
     raw_id_fields = ("lease",)
 
