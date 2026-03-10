@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 09:53+0200\n"
+"POT-Creation-Date: 2026-03-05 11:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -611,9 +611,6 @@ msgstr "Index {} finns inte. Skapa ett index."
 
 msgid "Can not create file in directory \"{}\"."
 msgstr "Fil kan inte skapas till indexet {}."
-
-msgid "LASKE_SERVERS[\"export\"] settings missing"
-msgstr "Inställningar för objektet LASKE_SERVERS[\"export\"] saknas"
 
 msgid "MVJ ({}) transfer failed!"
 msgstr "Överföringen av MVJ ({}) misslyckades!"
@@ -3357,6 +3354,20 @@ msgstr ""
 msgid "Cannot change service unit"
 msgstr ""
 
+msgid ""
+"Can not add a court decision for an invoice belonging to another service unit"
+msgstr ""
+
+msgid ""
+"Can not add a collection letter for an invoice belonging to another service "
+"unit"
+msgstr ""
+
+msgid ""
+"Can not create a collection note for an invoice belonging to another service "
+"unit"
+msgstr ""
+
 msgid "Cannot use an inactive receivable type"
 msgstr "Fordringsarten är inte tillgänglig"
 
@@ -3523,6 +3534,9 @@ msgstr "Gottskriv fakturan"
 msgid "Credit invoice or part of it"
 msgstr "Gottskriv fakturan eller en del av den"
 
+msgid "Cannot credit invoices belonging to a different service unit"
+msgstr ""
+
 msgid "Cannot credit invoices that have not been sent to SAP"
 msgstr "Fakturor som har skickats till SAP går inte att gottskriva"
 
@@ -3627,6 +3641,9 @@ msgstr "Starta eller avbryt fakturering"
 
 msgid "Sets invoicing state for lease to true or false"
 msgstr "Startar eller avbryter faktureringen"
+
+msgid "Cannot change invoicing state belonging to a different service unit"
+msgstr ""
 
 msgid "Cannot enable invoicing if rent info is not completed"
 msgstr "Faktureringen kan inte startas om arrendeuppgifterna är ofullständiga"

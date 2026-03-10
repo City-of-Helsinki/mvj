@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from dateutil import parser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from rest_framework.exceptions import APIException, ValidationError
+from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -115,6 +115,10 @@ class InvoiceCreditView(APIView):
     def post(self, request, format=None):
         invoice = get_object_from_query_params("invoice", request.query_params)
 
+        if invoice.lease.service_unit not in request.user.service_units.all():
+            raise PermissionDenied(
+                _("Cannot credit invoices belonging to a different service unit")
+            )
         if not invoice.sent_to_sap_at:
             raise ValidationError(
                 _("Cannot credit invoices that have not been sent to SAP")
