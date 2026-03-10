@@ -1,13 +1,8 @@
 import datetime
 import json
+from zoneinfo import ZoneInfo
 
 import pytest
-
-try:
-    from zoneinfo import ZoneInfo  # type: ignore
-except ImportError:
-    from backports.zoneinfo import ZoneInfo
-
 from django.contrib.auth.models import Permission
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse

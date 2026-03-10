@@ -103,6 +103,7 @@ class CenterOnHelsinkiGISAdmin(admin.GISModelAdmin):
     default_zoom = 11
 
 
+@admin.register(AreaNote)
 class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiGISAdmin):
     pass
 
@@ -111,11 +112,13 @@ class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
 
 
+@admin.register(BasisOfRentBuildPermissionType, BasisOfRentPlotType, CollateralType, CommentTopic, ConditionType, ContractType, DecisionMaker, Financing, Hitas, Management, PlanUnitIntendedUse, PlanUnitState, PlanUnitType, PlotDivisionState, Regulation, RentIntendedUse, ReservationProcedure, SpecialProject, StatisticalUse, SupportiveHousing)
 class NameAdmin(FieldPermissionsModelAdmin):
     list_display = ("name",)
     search_fields = ["name"]
 
 
+@admin.register(Area)
 class AreaAdmin(CenterOnHelsinkiGISAdmin):
     list_display = ("identifier", "type", "source")
     list_filter = (("type", EnumFieldListFilter), "source")
@@ -127,36 +130,43 @@ class AreaAdmin(CenterOnHelsinkiGISAdmin):
         return qs.select_related("source")
 
 
+@admin.register(AreaSource)
 class AreaSourceAdmin(admin.ModelAdmin):
     list_display = ("name", "identifier")
     search_fields = ["name", "identifier"]
 
 
+@admin.register(Contact)
 class ContactAdmin(FieldPermissionsModelAdmin):
     list_display = ("__str__", "type", "service_unit", "is_lessor")
     list_filter = (("type", EnumFieldListFilter), "service_unit", "is_lessor")
     search_fields = ["first_name", "last_name", "name"]
 
 
+@admin.register(Municipality)
 class MunicipalityAdmin(admin.ModelAdmin):
     list_display = ("name", "identifier")
     search_fields = ["name", "identifier"]
     readonly_fields = ("id",)
 
 
+@admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ("name", "municipality", "identifier")
     search_fields = ["name", "municipality__name", "identifier"]
 
 
+@admin.register(TenantContact)
 class TenantContactAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "tenant", "type", "contact")
     raw_id_fields = ("tenant", "contact")
 
+    @admin.display(
+        description=_("Lease")
+    )
     def get_lease_identifier(self, obj):
         return str(obj.tenant.lease)
 
-    get_lease_identifier.short_description = _("Lease")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -179,6 +189,7 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease",)
     inlines = [TenantContactInline]
@@ -210,6 +221,7 @@ class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(LeaseIdentifier)
 class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -217,6 +229,7 @@ class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
         return qs.select_related("type", "municipality", "district")
 
 
+@admin.register(Lease)
 class LeaseAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     inlines = [RelatedLeaseInline, LeaseBasisOfRentInline]
     raw_id_fields = ("identifier",)
@@ -238,29 +251,34 @@ class LeaseAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
         )
 
 
+@admin.register(CollectionCourtDecision)
 class CollectionCourtDecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "file", "uploaded_at", "uploader")
     raw_id_fields = ("lease",)
     ordering = ("-uploaded_at",)
 
 
+@admin.register(CollectionLetter)
 class CollectionLetterAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "file", "uploaded_at", "uploader")
     raw_id_fields = ("lease",)
     ordering = ("-uploaded_at",)
 
 
+@admin.register(CollectionNote)
 class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "created_at", "note", "user")
     raw_id_fields = ("lease",)
     ordering = ("-created_at",)
 
 
+@admin.register(CollectionLetterTemplate)
 class CollectionLetterTemplateAdmin(admin.ModelAdmin):
     list_display = ("name", "modified_at")
     ordering = ("name",)
 
 
+@admin.register(Comment)
 class CommentAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "topic", "user", "created_at", "modified_at")
     raw_id_fields = ("lease",)
@@ -276,6 +294,7 @@ class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
     extra = 0
 
 
+@admin.register(Contract)
 class ContractAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type", "contract_number")
     inlines = [ContractChangeInline, CollateralInline]
@@ -301,6 +320,7 @@ class ConditionInline(FieldPermissionsAdminMixin, admin.StackedInline):
     extra = 0
 
 
+@admin.register(Decision)
 class DecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "reference_number", "decision_maker", "type")
     inlines = [ConditionInline]
@@ -322,10 +342,12 @@ class DecisionAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(DecisionType)
 class DecisionTypeAdmin(NameAdmin):
     list_display = ("name", "kind")
 
 
+@admin.register(Inspection)
 class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "inspector", "supervision_date", "supervised_date")
     raw_id_fields = ("lease",)
@@ -344,6 +366,7 @@ class InspectionAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(LeaseType)
 class LeaseTypeAdmin(admin.ModelAdmin):
     list_display = ("name", "identifier", "id", "is_active")
     list_filter = ("is_active",)
@@ -371,6 +394,7 @@ class RentAdjustmentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(Rent)
 class RentAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type")
     inlines = [
@@ -412,6 +436,7 @@ class BasisOfRentRateInline(FieldPermissionsAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(BasisOfRent)
 class BasisOfRentAdmin(FieldPermissionsModelAdmin):
     list_display = ("id", "plot_type", "management", "financing")
     inlines = [
@@ -433,10 +458,12 @@ class BasisOfRentAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(Index)
 class IndexAdmin(admin.ModelAdmin):
     list_display = ("year", "month", "number")
 
 
+@admin.register(InfillDevelopmentCompensation)
 class InfillDevelopmentCompensationAdmin(FieldPermissionsModelAdmin):
     list_display = ("name", "reference_number", "state")
 
@@ -462,6 +489,7 @@ class InfillDevelopmentCompensationAttachmentInline(
     extra = 0
 
 
+@admin.register(InfillDevelopmentCompensationLease)
 class InfillDevelopmentCompensationLeaseAdmin(FieldPermissionsModelAdmin):
     raw_id_fields = ("lease",)
     inlines = [
@@ -485,6 +513,7 @@ class InfillDevelopmentCompensationLeaseAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(InterestRate)
 class InterestRateAdmin(admin.ModelAdmin):
     list_display = ("start_date", "end_date", "reference_rate", "penalty_rate")
     ordering = ("-start_date", "-end_date")
@@ -501,6 +530,7 @@ class InvoiceRowInline(FieldPermissionsAdminMixin, admin.TabularInline):
     raw_id_fields = ("tenant",)
 
 
+@admin.register(Invoice)
 class InvoiceAdmin(FieldPermissionsModelAdmin):
     actions = ["resend_invoice"]
 
@@ -543,6 +573,7 @@ class InvoiceAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(InvoiceSet)
 class InvoiceSetAdmin(admin.ModelAdmin):
     list_display = ("lease", "billing_period_start_date", "billing_period_end_date")
     raw_id_fields = ("lease",)
@@ -561,6 +592,7 @@ class InvoiceSetAdmin(admin.ModelAdmin):
         )
 
 
+@admin.register(InvoiceNote)
 class InvoiceNoteAdmin(admin.ModelAdmin):
     list_display = (
         "lease",
@@ -584,6 +616,7 @@ class InvoiceNoteAdmin(admin.ModelAdmin):
         )
 
 
+@admin.register(ReceivableType)
 class ReceivableTypeAdmin(admin.ModelAdmin):
     list_display = ("name", "service_unit", "is_active")
     list_filter = ("service_unit", "is_active")
@@ -622,6 +655,7 @@ class LeaseAreaAddressInline(FieldPermissionsAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(LeaseArea)
 class LeaseAreaAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type")
     inlines = [
@@ -646,11 +680,13 @@ class LeaseAreaAdmin(FieldPermissionsModelAdmin):
         )
 
 
+@admin.register(Plot)
 class PlotAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease_area", "type")
     raw_id_fields = ("lease_area",)
 
 
+@admin.register(LeaseStateLog)
 class LeaseStateLogAdmin(admin.ModelAdmin):
     list_display = ("lease", "state")
     raw_id_fields = ("lease",)
@@ -670,14 +706,17 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
         )
 
 
+@admin.register(PlanUnit)
 class PlanUnitAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "lease_area")
     raw_id_fields = ("lease_area",)
 
+    @admin.display(
+        description=_("Lease")
+    )
     def get_lease_identifier(self, obj):
         return str(obj.lease_area.lease)
 
-    get_lease_identifier.short_description = _("Lease")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -685,10 +724,12 @@ class PlanUnitAdmin(FieldPermissionsModelAdmin):
         return qs.select_related("lease_area", "lease_area__lease")
 
 
+@admin.register(Vat)
 class VatAdmin(admin.ModelAdmin):
     list_display = ("percent", "start_date", "end_date")
 
 
+@admin.register(UiData)
 class UiDataAdmin(admin.ModelAdmin):
     list_display = ("user", "key")
     list_filter = ("user", "key")
@@ -713,11 +754,13 @@ class LeaseholdTransferPropertyInline(ReadOnlyTabularInline):
     model = LeaseholdTransferProperty
 
 
+@admin.register(LeaseholdTransfer)
 class LeaseholdTransferAdmin(admin.ModelAdmin):
     inlines = [LeaseholdTransferPartyInline, LeaseholdTransferPropertyInline]
     readonly_fields = ("institution_identifier", "decision_date")
 
 
+@admin.register(LeaseholdTransferImportLog)
 class LeaseholdTransferImportLogAdmin(admin.ModelAdmin):
     list_display = ("file_name", "created_at", "modified_at")
     readonly_fields = ("created_at", "modified_at")
@@ -729,6 +772,7 @@ class ServiceUnitGroupMappingInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(ServiceUnit)
 class ServiceUnitAdmin(admin.ModelAdmin):
     readonly_fields = ("color_display",)
     list_display = ("name", "created_at", "modified_at", "color_display")
@@ -736,6 +780,9 @@ class ServiceUnitAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "modified_at")
     ordering = ("name",)
 
+    @admin.display(
+        description=_("Color")
+    )
     def color_display(self, obj: ServiceUnit):
         """Displays `hex_color` as a square."""
         return format_html(
@@ -743,13 +790,14 @@ class ServiceUnitAdmin(admin.ModelAdmin):
             obj.hex_color,
         )
 
-    color_display.short_description = _("Color")
 
 
+@admin.register(ServiceUnitGroupMapping)
 class ServiceUnitGroupMappingAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(IntendedUse)
 class IntendedUseAdmin(admin.ModelAdmin):
     list_display = (
         "name",
@@ -767,6 +815,7 @@ class IntendedUseAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(VipunenMapLayer)
 class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
     readonly_fields = ("color_display",)
     list_display = (
@@ -780,6 +829,9 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
     search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
     autocomplete_fields = ["filter_by_lease_type", "filter_by_intended_use"]
 
+    @admin.display(
+        description="Hierarchical name"
+    )
     def hierarchical_name(self, obj: VipunenMapLayer):
         return str(obj)
 
@@ -787,8 +839,10 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
         qs = super().get_queryset(request).order_by("parent")
         return qs.select_related("parent")
 
-    hierarchical_name.short_description = "Hierarchical name"
 
+    @admin.display(
+        description="Color"
+    )
     def color_display(self, obj: VipunenMapLayer):
         """Displays `hex_color` as a square."""
         return format_html(
@@ -796,72 +850,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
             obj.hex_color,
         )
 
-    color_display.short_description = "Color"
 
 
-admin.site.register(Area, AreaAdmin)
-admin.site.register(AreaSource, AreaSourceAdmin)
-admin.site.register(AreaNote, AreaNoteAdmin)
-admin.site.register(Contact, ContactAdmin)
-admin.site.register(Comment, CommentAdmin)
-admin.site.register(CommentTopic, NameAdmin)
-admin.site.register(CollateralType, NameAdmin)
-admin.site.register(CollectionCourtDecision, CollectionCourtDecisionAdmin)
-admin.site.register(CollectionLetter, CollectionLetterAdmin)
-admin.site.register(CollectionLetterTemplate, CollectionLetterTemplateAdmin)
-admin.site.register(CollectionNote, CollectionNoteAdmin)
-admin.site.register(District, DistrictAdmin)
-admin.site.register(Financing, NameAdmin)
-admin.site.register(Hitas, NameAdmin)
-admin.site.register(Index, IndexAdmin)
-admin.site.register(InfillDevelopmentCompensation, InfillDevelopmentCompensationAdmin)
-admin.site.register(
-    InfillDevelopmentCompensationLease, InfillDevelopmentCompensationLeaseAdmin
-)
-admin.site.register(IntendedUse, IntendedUseAdmin)
-admin.site.register(InterestRate, InterestRateAdmin)
-admin.site.register(Inspection, InspectionAdmin)
-admin.site.register(Invoice, InvoiceAdmin)
-admin.site.register(InvoiceNote, InvoiceNoteAdmin)
-admin.site.register(InvoiceSet, InvoiceSetAdmin)
-admin.site.register(Lease, LeaseAdmin)
-admin.site.register(LeaseArea, LeaseAreaAdmin)
-admin.site.register(LeaseIdentifier, LeaseIdentifierAdmin)
-admin.site.register(LeaseStateLog, LeaseStateLogAdmin)
-admin.site.register(LeaseType, LeaseTypeAdmin)
-admin.site.register(LeaseholdTransfer, LeaseholdTransferAdmin)
-admin.site.register(LeaseholdTransferImportLog, LeaseholdTransferImportLogAdmin)
-admin.site.register(Management, NameAdmin)
-admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(NoticePeriod)
-admin.site.register(Plot, PlotAdmin)
-admin.site.register(PlanUnit, PlanUnitAdmin)
-admin.site.register(PlanUnitState, NameAdmin)
-admin.site.register(PlanUnitIntendedUse, NameAdmin)
-admin.site.register(PlanUnitType, NameAdmin)
-admin.site.register(PlotDivisionState, NameAdmin)
-admin.site.register(ReceivableType, ReceivableTypeAdmin)
-admin.site.register(Regulation, NameAdmin)
-admin.site.register(Rent, RentAdmin)
-admin.site.register(RentIntendedUse, NameAdmin)
-admin.site.register(ReservationProcedure, NameAdmin)
-admin.site.register(ServiceUnit, ServiceUnitAdmin)
-admin.site.register(ServiceUnitGroupMapping, ServiceUnitGroupMappingAdmin)
-admin.site.register(SpecialProject, NameAdmin)
-admin.site.register(StatisticalUse, NameAdmin)
-admin.site.register(SupportiveHousing, NameAdmin)
-admin.site.register(Tenant, TenantAdmin)
-admin.site.register(TenantContact, TenantContactAdmin)
-admin.site.register(Contract, ContractAdmin)
-admin.site.register(ContractType, NameAdmin)
-admin.site.register(Decision, DecisionAdmin)
-admin.site.register(DecisionType, DecisionTypeAdmin)
-admin.site.register(DecisionMaker, NameAdmin)
-admin.site.register(ConditionType, NameAdmin)
-admin.site.register(BasisOfRent, BasisOfRentAdmin)
-admin.site.register(BasisOfRentPlotType, NameAdmin)
-admin.site.register(BasisOfRentBuildPermissionType, NameAdmin)
-admin.site.register(UiData, UiDataAdmin)
-admin.site.register(Vat, VatAdmin)
 
-admin.site.register(VipunenMapLayer, VipunenMapLayerAdmin)

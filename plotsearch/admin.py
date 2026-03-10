@@ -15,6 +15,7 @@ from plotsearch.models import (
 from plotsearch.models.plot_search import FAQ
 
 
+@admin.register(PlotSearch)
 class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     list_display = ("name",)
 
@@ -30,11 +31,13 @@ class FavouriteTargetInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = FavouriteTarget
 
 
+@admin.register(Favourite)
 class FavouriteAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     list_display = ("user", "created_at", "modified_at")
     inlines = [FavouriteTargetInline]
 
 
+@admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
     list_display = (
         "question_truncate",
@@ -42,10 +45,7 @@ class FAQAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(PlotSearch, PlotSearchAdmin)
 admin.site.register(PlotSearchStage, NameAdmin)
-admin.site.register(Favourite, FavouriteAdmin)
 admin.site.register(PlotSearchType, NameAdmin)
 admin.site.register(AreaSearchIntendedUse, NameAdmin)
 admin.site.register(PlotSearchSubtype, NameAdmin)
-admin.site.register(FAQ, FAQAdmin)

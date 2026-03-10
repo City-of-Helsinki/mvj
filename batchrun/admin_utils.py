@@ -78,6 +78,7 @@ class WithDownloadableContent(admin.ModelAdmin[JobRunLog]):
             )
         ] + super().get_urls()
 
+    @admin.display(description="Download content")
     def download_content(self, obj: Any) -> str:
         site_name = self.admin_site.name
         url_name = self.download_content_url_name
@@ -86,8 +87,6 @@ class WithDownloadableContent(admin.ModelAdmin[JobRunLog]):
             reverse(f"{site_name}:{url_name}", args=[obj.pk]),
             "Download content",
         )
-
-    download_content.short_description = "Download content"  # type: ignore
 
     def download_content_view(
         self, request: HttpRequest, object_id: int

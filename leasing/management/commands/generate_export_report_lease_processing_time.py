@@ -139,7 +139,7 @@ def get_lease_processing_time_report():
             tenant_types=StringAgg(
                 "tenants__contacts__type",
                 delimiter=",",
-                ordering="tenants__contacts__type",
+                order_by="tenants__contacts__type",
             ),
             geometria_value=Case(
                 When(has_geometry_subquery, then=1),
