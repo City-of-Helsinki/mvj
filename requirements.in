@@ -4,7 +4,7 @@
 # For top-level dependencies, just edit this .in file
 beautifulsoup4~=4.14.3
 deepmerge==2.0
-Django==5.1
+Django~=5.2
 django-anymail==13.1
 django-auditlog==3.4.0
 django-admin-rangefilter==0.13.3
@@ -22,7 +22,7 @@ django-resilient-logger==2.1.0
 django-safedelete==1.4.1
 django-sanitized-dump==1.2.2
 django-sequences==3.0
-django-stubs[compatible-mypy]==5.0.4
+django-stubs[compatible-mypy]~=5.2
 djangorestframework==3.16.1
 djangorestframework-gis==1.2.0
 drf-yasg[validation]==1.21.11

@@ -11,7 +11,6 @@ asgiref==3.8.1
     #   django
     #   django-cors-headers
     #   django-countries
-    #   django-stubs
 asn1crypto==1.5.1
     # via
     #   oscrypto
@@ -66,7 +65,7 @@ deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==5.1
+django==5.2.12
     # via
     #   -r requirements.in
     #   django-anymail
@@ -131,7 +130,7 @@ django-sanitized-dump==1.2.2
     # via -r requirements.in
 django-sequences==3.0
     # via -r requirements.in
-django-stubs[compatible-mypy]==5.0.4
+django-stubs[compatible-mypy]==5.2.9
     # via -r requirements.in
 django-stubs-ext==5.2.9
     # via django-stubs
@@ -176,6 +175,8 @@ jsonschema==4.22.0
     # via swagger-spec-validator
 jsonschema-specifications==2023.12.1
     # via jsonschema
+librt==0.8.1
+    # via mypy
 lockfile==0.12.2
     # via python-daemon
 lxml==6.0.2
@@ -187,7 +188,7 @@ lxml==6.0.2
     #   zeep
 markupsafe==2.1.5
     # via jinja2
-mypy==1.11.2
+mypy==1.19.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
@@ -202,6 +203,8 @@ packaging==24.0
     #   drf-yasg
 paramiko==4.0.0
     # via -r requirements.in
+pathspec==1.0.4
+    # via mypy
 pillow==10.3.0
     # via
     #   reportlab
