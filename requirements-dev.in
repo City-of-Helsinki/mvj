@@ -16,7 +16,7 @@ flake8-print~=5.0.0
 httpretty~=1.1.4
 isort~=6.0.1
 lxml-stubs~=0.5.1
-mypy~=1.7.1
+mypy~=1.19
 openpyxl~=3.1.2
 paramiko-mock==2.0.1
 pep8-naming~=0.15.1
