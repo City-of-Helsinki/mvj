@@ -343,6 +343,7 @@ class ConditionInline(FieldPermissionsAdminMixin, admin.StackedInline):
 @admin.register(Decision)
 class DecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "reference_number", "decision_maker", "type")
+    search_fields = ["reference_number", "decision_maker__name","lease__identifier__identifier"]
     inlines = [ConditionInline]
     raw_id_fields = ("lease",)
 
@@ -370,6 +371,7 @@ class DecisionTypeAdmin(NameAdmin):
 @admin.register(Inspection)
 class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "inspector", "supervision_date", "supervised_date")
+    search_fields = ["lease__identifier__identifier", "inspector__name"]
     raw_id_fields = ("lease",)
 
     def get_queryset(self, request):
