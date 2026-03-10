@@ -671,8 +671,10 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
 
 
 class PlanUnitAdmin(FieldPermissionsModelAdmin):
-    list_display = ("get_lease_identifier", "lease_area")
+    list_display = ("identifier","get_lease_identifier", "lease_area")
+    list_filter = ("type__name",)
     raw_id_fields = ("lease_area",)
+    search_fields = ["identifier"]
 
     def get_lease_identifier(self, obj):
         return str(obj.lease_area.lease)
