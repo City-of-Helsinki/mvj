@@ -104,8 +104,8 @@ class CenterOnHelsinkiGISAdmin(admin.GISModelAdmin):
 
 
 class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiGISAdmin):
-    pass
-
+    list_display = ("created_at", "user")
+    search_fields = ["note", "user__first_name", "user__last_name", "user__username"]
 
 class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
