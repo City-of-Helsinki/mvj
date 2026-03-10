@@ -112,7 +112,28 @@ class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
 
 
-@admin.register(BasisOfRentBuildPermissionType, BasisOfRentPlotType, CollateralType, CommentTopic, ConditionType, ContractType, DecisionMaker, Financing, Hitas, Management, PlanUnitIntendedUse, PlanUnitState, PlanUnitType, PlotDivisionState, Regulation, RentIntendedUse, ReservationProcedure, SpecialProject, StatisticalUse, SupportiveHousing)
+@admin.register(
+    BasisOfRentBuildPermissionType,
+    BasisOfRentPlotType,
+    CollateralType,
+    CommentTopic,
+    ConditionType,
+    ContractType,
+    DecisionMaker,
+    Financing,
+    Hitas,
+    Management,
+    PlanUnitIntendedUse,
+    PlanUnitState,
+    PlanUnitType,
+    PlotDivisionState,
+    Regulation,
+    RentIntendedUse,
+    ReservationProcedure,
+    SpecialProject,
+    StatisticalUse,
+    SupportiveHousing,
+)
 class NameAdmin(FieldPermissionsModelAdmin):
     list_display = ("name",)
     search_fields = ["name"]
@@ -161,12 +182,9 @@ class TenantContactAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "tenant", "type", "contact")
     raw_id_fields = ("tenant", "contact")
 
-    @admin.display(
-        description=_("Lease")
-    )
+    @admin.display(description=_("Lease"))
     def get_lease_identifier(self, obj):
         return str(obj.tenant.lease)
-
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -711,12 +729,9 @@ class PlanUnitAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "lease_area")
     raw_id_fields = ("lease_area",)
 
-    @admin.display(
-        description=_("Lease")
-    )
+    @admin.display(description=_("Lease"))
     def get_lease_identifier(self, obj):
         return str(obj.lease_area.lease)
-
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -780,16 +795,13 @@ class ServiceUnitAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "modified_at")
     ordering = ("name",)
 
-    @admin.display(
-        description=_("Color")
-    )
+    @admin.display(description=_("Color"))
     def color_display(self, obj: ServiceUnit):
         """Displays `hex_color` as a square."""
         return format_html(
             '<div style="width: 20px; height: 20px; background-color: {};"></div>',
             obj.hex_color,
         )
-
 
 
 @admin.register(ServiceUnitGroupMapping)
@@ -829,9 +841,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
     search_fields = ["name_fi", "name_sv", "name_en", "keywords"]
     autocomplete_fields = ["filter_by_lease_type", "filter_by_intended_use"]
 
-    @admin.display(
-        description="Hierarchical name"
-    )
+    @admin.display(description="Hierarchical name")
     def hierarchical_name(self, obj: VipunenMapLayer):
         return str(obj)
 
@@ -839,10 +849,7 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
         qs = super().get_queryset(request).order_by("parent")
         return qs.select_related("parent")
 
-
-    @admin.display(
-        description="Color"
-    )
+    @admin.display(description="Color")
     def color_display(self, obj: VipunenMapLayer):
         """Displays `hex_color` as a square."""
         return format_html(
@@ -851,6 +858,4 @@ class VipunenMapLayerAdmin(FieldPermissionsModelAdmin):
         )
 
 
-
 admin.site.register(NoticePeriod)
-

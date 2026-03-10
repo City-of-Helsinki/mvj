@@ -54,16 +54,11 @@ class InvoiceInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.display(
-        description=_("Lease identifier")
-    )
+    @admin.display(description=_("Lease identifier"))
     def lease(self, obj):
         return obj.invoice.lease.get_identifier_string()
 
-
-    @admin.display(
-        description=_("Invoice number")
-    )
+    @admin.display(description=_("Invoice number"))
     def invoice_number(self, obj):
         invoice_url = reverse(
             "admin:{}_{}_change".format(
@@ -78,20 +73,13 @@ class InvoiceInline(admin.TabularInline):
             )
         )
 
-
-    @admin.display(
-        description=_("Due date")
-    )
+    @admin.display(description=_("Due date"))
     def due_date(self, obj):
         return obj.invoice.due_date
 
-
-    @admin.display(
-        description=_("Service unit")
-    )
+    @admin.display(description=_("Service unit"))
     def service_unit(self, obj):
         return obj.invoice.service_unit
-
 
 
 @admin.register(LaskeExportLog)
@@ -132,12 +120,9 @@ class LaskeExportLogAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.display(
-        description=_("Invoice count")
-    )
+    @admin.display(description=_("Invoice count"))
     def invoice_count(self, obj):
         return obj.invoice_count
-
 
 
 class InvoicePaymentInline(admin.TabularInline):
@@ -180,16 +165,11 @@ class InvoicePaymentInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.display(
-        description=_("Lease identifier")
-    )
+    @admin.display(description=_("Lease identifier"))
     def lease(self, obj):
         return obj.invoicepayment.invoice.lease.get_identifier_string()
 
-
-    @admin.display(
-        description=_("Invoice number")
-    )
+    @admin.display(description=_("Invoice number"))
     def invoice_number(self, obj):
         invoice_url = reverse(
             "admin:{}_{}_change".format(
@@ -205,34 +185,21 @@ class InvoicePaymentInline(admin.TabularInline):
             )
         )
 
-
-    @admin.display(
-        description=_("Paid amount")
-    )
+    @admin.display(description=_("Paid amount"))
     def paid_amount(self, obj):
         return obj.invoicepayment.paid_amount
 
-
-    @admin.display(
-        description=_("Paid date")
-    )
+    @admin.display(description=_("Paid date"))
     def paid_date(self, obj):
         return obj.invoicepayment.paid_date
 
-
-    @admin.display(
-        description=_("Service unit")
-    )
+    @admin.display(description=_("Service unit"))
     def service_unit(self, obj):
         return obj.invoicepayment.invoice.service_unit
 
-
-    @admin.display(
-        description=_("Filing code")
-    )
+    @admin.display(description=_("Filing code"))
     def filing_code(self, obj):
         return obj.invoicepayment.filing_code
-
 
 
 @admin.register(LaskePaymentsLog)
@@ -259,11 +226,6 @@ class LaskePaymentsLogAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.display(
-        description=_("Payment count")
-    )
+    @admin.display(description=_("Payment count"))
     def payment_count(self, obj):
         return obj.payment_count
-
-
-
