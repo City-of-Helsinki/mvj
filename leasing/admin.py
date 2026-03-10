@@ -243,6 +243,7 @@ class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(LeaseIdentifier)
 class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
+    search_fields = ["identifier"]
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
