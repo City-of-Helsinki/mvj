@@ -704,8 +704,13 @@ class LeaseAreaAdmin(FieldPermissionsModelAdmin):
 
 @admin.register(Plot)
 class PlotAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease_area", "type")
+    list_display = ("get_lease_area_identifier", "type")
     raw_id_fields = ("lease_area",)
+
+    def get_lease_area_identifier(self, obj):
+        return str(obj.lease_area.identifier)
+
+    get_lease_area_identifier.short_description = _("Lease Area Identifier")
 
 
 @admin.register(LeaseStateLog)
