@@ -24,6 +24,7 @@ class FormChoiceField(forms.ModelChoiceField):
         return obj.name
 
 
+@admin.register(Field)
 class FieldModelAdmin(admin.ModelAdmin):
     search_fields = [
         "label_fi",
@@ -40,6 +41,7 @@ class FieldModelAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+@admin.register(Section)
 class SectionModelAdmin(admin.ModelAdmin):
     list_display = (
         "title",
@@ -60,6 +62,7 @@ class SectionModelAdmin(admin.ModelAdmin):
         return qs.select_related("form")
 
 
+@admin.register(Choice)
 class ChoiceModelAdmin(admin.ModelAdmin):
     list_display = ("text",)
 
@@ -89,13 +92,10 @@ class SectionInline(NestedStackedInline):
     inlines = [FieldInline]
 
 
+@admin.register(Form)
 class FormModelAdmin(NestedModelAdmin):
     list_display = ("name",)
     model = Form
     inlines = [SectionInline]
 
 
-admin.site.register(Field, FieldModelAdmin)
-admin.site.register(Form, FormModelAdmin)
-admin.site.register(Section, SectionModelAdmin)
-admin.site.register(Choice, ChoiceModelAdmin)

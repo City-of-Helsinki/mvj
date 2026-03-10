@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 User = get_user_model()
 
 
+@admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     fieldsets = DjangoUserAdmin.fieldsets + (
         (None, {"fields": ("service_units",)}),
@@ -20,4 +21,3 @@ class UserAdmin(DjangoUserAdmin):
     )
 
 
-admin.site.register(User, UserAdmin)
