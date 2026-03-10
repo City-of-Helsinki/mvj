@@ -181,6 +181,7 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 class TenantAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "tenantcontact__contact__name")
+    search_fields = ["lease__identifier__identifier",]    
     inlines = [TenantContactInline]
     raw_id_fields = ("lease",)
 
