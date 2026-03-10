@@ -627,7 +627,7 @@ class LeaseAreaAddressInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 
 class LeaseAreaAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "type")
+    list_display = ("lease", "identifier","type")
     inlines = [
         LeaseAreaAddressInline,
         ConstructabilityDescriptionInline,
