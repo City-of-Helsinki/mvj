@@ -180,6 +180,7 @@ class DistrictAdmin(admin.ModelAdmin):
 @admin.register(TenantContact)
 class TenantContactAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "tenant", "type", "contact")
+    search_fields = ["tenant__lease__identifier__identifier", "contact__name"]
     raw_id_fields = ("tenant", "contact")
 
     @admin.display(description=_("Lease"))
