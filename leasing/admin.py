@@ -379,6 +379,7 @@ class RentAdjustmentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 class RentAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type")
+    search_fields = ["lease__identifier__identifier"]
     inlines = [
         RentDueDateInline,
         FixedInitialYearRentInline,
