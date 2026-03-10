@@ -97,5 +97,3 @@ class FormModelAdmin(NestedModelAdmin):
     list_display = ("name",)
     model = Form
     inlines = [SectionInline]
-
-

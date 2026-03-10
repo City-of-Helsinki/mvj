@@ -19,5 +19,3 @@ class UserAdmin(DjangoUserAdmin):
         "is_staff",
         "has_token",
     )
-
-
