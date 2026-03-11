@@ -65,7 +65,6 @@ from leasing.viewsets.invoice_additional_views import (
     InvoiceCalculatePenaltyInterestView,
     InvoiceCreditView,
     InvoiceExportToLaskeView,
-    InvoiceRowCreditView,
     InvoiceSetCreditView,
 )
 from leasing.viewsets.land_area import (
@@ -346,9 +345,6 @@ additional_api_paths = [
         "invoice_export_to_laske/",
         InvoiceExportToLaskeView.as_view(),
         name="invoice-export-to-laske",
-    ),
-    path(
-        "invoice_row_credit/", InvoiceRowCreditView.as_view(), name="invoice-row-credit"
     ),
     path(
         "invoice_set_credit/", InvoiceSetCreditView.as_view(), name="invoice-set-credit"

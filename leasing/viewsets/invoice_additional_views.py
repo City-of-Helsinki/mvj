@@ -143,53 +143,6 @@ class InvoiceCreditView(APIView):
         return Response(result)
 
 
-class InvoiceRowCreditView(APIView):
-    permission_classes = (PerMethodPermission,)
-    perms_map = {"POST": ["leasing.add_invoice"]}
-
-    def get_view_name(self):
-        return _("Credit invoice row")
-
-    def get_view_description(self, html=False):
-        return _("Credit invoice row or part of it")
-
-    def post(self, request, format=None):
-        invoice_row = get_object_from_query_params("invoice_row", request.query_params)
-
-        if (
-            invoice_row.invoice.lease.service_unit
-            not in request.user.service_units.all()
-            and not request.user.is_superuser
-        ):
-            raise PermissionDenied(
-                _("Cannot credit invoices belonging to a different service unit")
-            )
-
-        amount = request.data.get("amount", None)
-
-        if amount is not None:
-            try:
-                amount = Decimal(amount)
-            except InvalidOperation:
-                raise ValidationError(_("Invalid amount"))
-
-            if amount.compare(Decimal(0)) != Decimal(1):
-                raise ValidationError(_("Amount must be bigger than zero"))
-
-        try:
-            credit_invoice = invoice_row.invoice.create_credit_invoice(
-                row_ids=[invoice_row.id], amount=amount
-            )
-        except RuntimeError as e:
-            raise APIException(str(e))
-
-        credit_invoice_serializer = InvoiceSerializer(credit_invoice)
-
-        result = {"invoice": credit_invoice_serializer.data}
-
-        return Response(result)
-
-
 class InvoiceSetCreditView(APIView):
     permission_classes = (PerMethodPermission,)
     perms_map = {"POST": ["leasing.add_invoice"]}
