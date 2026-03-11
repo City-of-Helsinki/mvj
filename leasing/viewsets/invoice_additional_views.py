@@ -115,7 +115,10 @@ class InvoiceCreditView(APIView):
     def post(self, request, format=None):
         invoice = get_object_from_query_params("invoice", request.query_params)
 
-        if invoice.lease.service_unit not in request.user.service_units.all():
+        if (
+            invoice.lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
             raise PermissionDenied(
                 _("Cannot credit invoices belonging to a different service unit")
             )
@@ -152,6 +155,15 @@ class InvoiceRowCreditView(APIView):
 
     def post(self, request, format=None):
         invoice_row = get_object_from_query_params("invoice_row", request.query_params)
+
+        if (
+            invoice_row.invoice.lease.service_unit
+            not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _("Cannot credit invoices belonging to a different service unit")
+            )
 
         amount = request.data.get("amount", None)
 
@@ -190,6 +202,14 @@ class InvoiceSetCreditView(APIView):
 
     def post(self, request, format=None):
         invoiceset = get_object_from_query_params("invoice_set", request.query_params)
+
+        if (
+            invoiceset.lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _("Cannot credit invoices belonging to a different service unit")
+            )
 
         amount, receivable_type, notes = get_values_from_credit_request(request.data)
 

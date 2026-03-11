@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from file_operations.serializers.mixins import FileSerializerMixin
@@ -116,7 +116,7 @@ class CollectionLetterCreateUpdateSerializer(
             data.get("lease").service_unit not in request.user.service_units.all()
             and not request.user.is_superuser
         ):
-            raise ValidationError(  # TODO this needs to be a permissiondenied
+            raise PermissionDenied(
                 _(
                     "Can not add a collection letter for an invoice belonging to another service unit"
                 )

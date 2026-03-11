@@ -456,7 +456,10 @@ class LeaseSetInvoicingStateView(APIView):
     def post(self, request, format=None):
         lease = get_lease_from_query_params(request.query_params)
 
-        if lease.service_unit not in request.user.service_units.all():
+        if (
+            lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
             raise PermissionDenied(
                 _("Cannot change invoicing state belonging to a different service unit")
             )
