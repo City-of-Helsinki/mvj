@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
 
-        verbosity = options.get("verbosity")
+        verbosity = options.get("verbosity", 0)
         if verbosity == 0:
             LOG.setLevel(logging.WARNING)
         elif verbosity >= 2:
@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         leases = Lease.objects.all()
 
-        LOG.info("Processing %s objects.", leases.count())
+        LOG.info("Processing %s leases.", leases.count())
 
         for lease in leases:
             LOG.debug("Lease #%s %s:", lease.id, lease.identifier)
