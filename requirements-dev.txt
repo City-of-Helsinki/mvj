@@ -128,11 +128,8 @@ paramiko==4.0.0
     #   paramiko-mock
 paramiko-mock==2.0.1
     # via -r requirements-dev.in
-pathspec==1.0.4
-    # via
-    #   -c requirements.txt
-    #   black
-    #   mypy
+pathspec==0.12.1
+    # via black
 pep8-naming==0.15.1
     # via -r requirements-dev.in
 platformdirs==4.2.2
@@ -190,12 +187,16 @@ sqlparse==0.5.0
     #   django-debug-toolbar
 types-python-dateutil==2.9.0.20250708
     # via -r requirements-dev.in
+types-pytz==2025.2.0.20250516
+    # via
+    #   -c requirements.txt
+    #   django-stubs
 types-pyyaml==6.0.12.20240311
     # via
     #   -c requirements.txt
     #   django-stubs
     #   djangorestframework-stubs
-types-requests==2.32.0.20240523
+types-requests==2.32.4.20260107
     # via djangorestframework-stubs
 typing-extensions==4.15.0
     # via
