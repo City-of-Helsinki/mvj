@@ -22,7 +22,7 @@ django-resilient-logger==2.1.0
 django-safedelete==1.4.1
 django-sanitized-dump==1.2.2
 django-sequences==3.0
-django-stubs[compatible-mypy]~=5.2.9
+django-stubs[compatible-mypy]==4.2.7
 djangorestframework==3.16.1
 djangorestframework-gis==1.2.0
 drf-yasg[validation]==1.21.11
