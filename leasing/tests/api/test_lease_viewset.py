@@ -203,3 +203,57 @@ def test_copy_areas_to_contract(
 
     assert response.status_code == 200, f"{response.status_code}, {response.data}"
     assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("user_has_correct_service_unit", [False, True])
+def test_set_invoicing_state_checks_service_unit(
+    django_db_setup,
+    client,
+    lease_factory,
+    user_factory,
+    service_unit_factory,
+    user_has_correct_service_unit,
+):
+    """
+    LeaseSetInvoicingStateView should deny the request when the user does not
+    belong to the same service unit as the lease.
+    """
+
+    lease = lease_factory()
+    lease.start_date = timezone.now()
+    lease.rent_info_completed_at = timezone.now()
+    lease.save()
+    other_service_unit = service_unit_factory()
+    user = user_factory(
+        username="test_user",
+        service_units=[
+            lease.service_unit if user_has_correct_service_unit else other_service_unit
+        ],
+        permissions=["change_lease_invoicing_enabled_at"],
+    )
+    client.force_login(user)
+
+    data = {"invoicing_enabled": True}
+    url = reverse("v1:lease-set-invoicing-state") + "?lease={}".format(lease.id)
+
+    response = client.post(
+        url,
+        data=json.dumps(data, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    if user_has_correct_service_unit:
+        assert response.status_code == 200, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+        lease.refresh_from_db()
+        assert lease.invoicing_enabled_at is not None
+    else:
+        assert response.status_code == 403, "%s %s" % (
+            response.status_code,
+            response.data,
+        )
+        lease.refresh_from_db()
+        assert lease.invoicing_enabled_at is None

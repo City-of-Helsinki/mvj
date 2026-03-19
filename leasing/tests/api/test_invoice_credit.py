@@ -139,3 +139,54 @@ def test_invoice_set_credit_rounding(
         ),
         [Decimal("33.33"), Decimal("33.33"), Decimal("33.34")],
     )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("user_has_correct_service_unit", [False, True])
+def test_invoice_credit_service_unit_access(
+    client,
+    service_unit_factory,
+    invoice_row_factory,
+    invoice_factory,
+    user_factory,
+    lease_test_data,
+    user_has_correct_service_unit,
+):
+    """
+    InvoiceCreditView should allow crediting only when the user belongs
+    to the same service unit as the invoice's lease.
+    """
+
+    lease = lease_test_data["lease"]
+    other_service_unit = service_unit_factory()
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal(100),
+        billed_amount=Decimal(100),
+        sent_to_sap_at=timezone.now(),
+    )
+    row = invoice_row_factory(
+        invoice=invoice, receivable_type_id=1, amount=Decimal(100)
+    )
+    invoice.rows.add(row)
+
+    user = user_factory(
+        service_units=[
+            lease.service_unit if user_has_correct_service_unit else other_service_unit
+        ],
+        permissions=["add_invoice"],
+    )
+    client.force_login(user)
+
+    url = reverse("v1:invoice-credit") + "?invoice={}".format(invoice.id)
+    response = client.post(
+        url,
+        data=json.dumps({"receivable_type": 1, "amount": "100"}, cls=DjangoJSONEncoder),
+        content_type="application/json",
+    )
+
+    expected_status = 200 if user_has_correct_service_unit else 403
+    assert response.status_code == expected_status, "%s %s" % (
+        response.status_code,
+        response.data,
+    )
