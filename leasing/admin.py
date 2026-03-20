@@ -211,7 +211,7 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "tenantcontact")
+    list_display = ("lease", "tenantcontact__contact__name")
     search_fields = [
         "lease__identifier__identifier",
     ]
@@ -752,7 +752,7 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
 @admin.register(PlanUnit)
 class PlanUnitAdmin(FieldPermissionsModelAdmin):
     list_display = ("identifier", "get_lease_identifier", "lease_area")
-    list_filter = ("plan_unit_type",)
+    list_filter = ("plan_unit_type__name",)
     raw_id_fields = ("lease_area",)
     search_fields = ["identifier"]
 
