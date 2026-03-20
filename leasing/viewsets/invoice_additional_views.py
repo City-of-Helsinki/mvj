@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from dateutil import parser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from rest_framework.exceptions import APIException, ValidationError
+from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -115,6 +115,13 @@ class InvoiceCreditView(APIView):
     def post(self, request, format=None):
         invoice = get_object_from_query_params("invoice", request.query_params)
 
+        if (
+            invoice.lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _("Cannot credit invoices belonging to a different service unit")
+            )
         if not invoice.sent_to_sap_at:
             raise ValidationError(
                 _("Cannot credit invoices that have not been sent to SAP")
@@ -125,44 +132,6 @@ class InvoiceCreditView(APIView):
         try:
             credit_invoice = invoice.create_credit_invoice(
                 amount=amount, receivable_type=receivable_type, notes=notes
-            )
-        except RuntimeError as e:
-            raise APIException(str(e))
-
-        credit_invoice_serializer = InvoiceSerializer(credit_invoice)
-
-        result = {"invoice": credit_invoice_serializer.data}
-
-        return Response(result)
-
-
-class InvoiceRowCreditView(APIView):
-    permission_classes = (PerMethodPermission,)
-    perms_map = {"POST": ["leasing.add_invoice"]}
-
-    def get_view_name(self):
-        return _("Credit invoice row")
-
-    def get_view_description(self, html=False):
-        return _("Credit invoice row or part of it")
-
-    def post(self, request, format=None):
-        invoice_row = get_object_from_query_params("invoice_row", request.query_params)
-
-        amount = request.data.get("amount", None)
-
-        if amount is not None:
-            try:
-                amount = Decimal(amount)
-            except InvalidOperation:
-                raise ValidationError(_("Invalid amount"))
-
-            if amount.compare(Decimal(0)) != Decimal(1):
-                raise ValidationError(_("Amount must be bigger than zero"))
-
-        try:
-            credit_invoice = invoice_row.invoice.create_credit_invoice(
-                row_ids=[invoice_row.id], amount=amount
             )
         except RuntimeError as e:
             raise APIException(str(e))
@@ -186,6 +155,14 @@ class InvoiceSetCreditView(APIView):
 
     def post(self, request, format=None):
         invoiceset = get_object_from_query_params("invoice_set", request.query_params)
+
+        if (
+            invoiceset.lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _("Cannot credit invoices belonging to a different service unit")
+            )
 
         amount, receivable_type, notes = get_values_from_credit_request(request.data)
 

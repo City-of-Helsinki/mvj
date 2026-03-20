@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -455,6 +455,14 @@ class LeaseSetInvoicingStateView(APIView):
 
     def post(self, request, format=None):
         lease = get_lease_from_query_params(request.query_params)
+
+        if (
+            lease.service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _("Cannot change invoicing state belonging to a different service unit")
+            )
 
         if "invoicing_enabled" not in request.data:
             raise APIException('"invoicing_enabled" key is required')

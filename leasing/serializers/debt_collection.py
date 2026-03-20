@@ -1,5 +1,7 @@
+from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from file_operations.serializers.mixins import FileSerializerMixin
@@ -63,6 +65,19 @@ class CollectionCourtDecisionCreateUpdateSerializer(
         )
         read_only_fields = ("uploaded_at",)
 
+    def validate(self, data):
+        request = self.context.get("request")
+        if (
+            data.get("lease").service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise ValidationError(
+                _(
+                    "Can not add a court decision for an invoice belonging to another service unit"
+                )
+            )
+        return data
+
 
 class CollectionLetterSerializer(
     FileSerializerMixin, FieldPermissionsSerializerMixin, serializers.ModelSerializer
@@ -94,6 +109,19 @@ class CollectionLetterCreateUpdateSerializer(
         model = CollectionLetter
         fields = ("id", "lease", "file", "uploader", "uploaded_at")
         read_only_fields = ("uploaded_at",)
+
+    def validate(self, data):
+        request = self.context.get("request")
+        if (
+            data.get("lease").service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise PermissionDenied(
+                _(
+                    "Can not add a collection letter for an invoice belonging to another service unit"
+                )
+            )
+        return data
 
 
 class CollectionLetterTemplateSerializer(serializers.ModelSerializer):
@@ -128,6 +156,19 @@ class CollectionNoteCreateUpdateSerializer(
     class Meta:
         model = CollectionNote
         fields = "__all__"
+
+    def validate(self, data):
+        request = self.context.get("request")
+        if (
+            data.get("lease").service_unit not in request.user.service_units.all()
+            and not request.user.is_superuser
+        ):
+            raise ValidationError(
+                _(
+                    "Can not create a collection note for an invoice belonging to another service unit"
+                )
+            )
+        return data
 
 
 class CreateCollectionLetterDocumentInvoiceSerializer(serializers.Serializer):
