@@ -487,6 +487,13 @@ class PlotSearchSerializerBase(
         fields = ("__all__", "opening_record")
 
     @staticmethod
+    def override_permission_check_field_name(field_name):
+        """`type` is not in the PlotSearch model, so it doesn't have a permission created for it."""
+        if field_name == "type":
+            return "subtype"
+        return field_name
+
+    @staticmethod
     def get_opening_record(instance):
         pst_qs = instance.plot_search_targets.all()
         opening_record = (
@@ -585,6 +592,13 @@ class PlotSearchPublicSerializer(
             "begin_at",
             "end_at",
         )
+
+    @staticmethod
+    def override_permission_check_field_name(field_name):
+        """`type` is not in the PlotSearch model, so it doesn't have a permission created for it."""
+        if field_name == "type":
+            return "subtype"
+        return field_name
 
 
 class PlotSearchUpdateSerializer(
