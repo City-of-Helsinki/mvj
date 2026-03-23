@@ -211,7 +211,7 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "tenantcontact__contact__name")
+    list_display = ("lease", "get_tenant_names")
     search_fields = [
         "lease__identifier__identifier",
     ]
@@ -229,7 +229,12 @@ class TenantAdmin(FieldPermissionsModelAdmin):
             "lease__identifier__type",
             "lease__identifier__municipality",
             "lease__identifier__district",
-        )
+        ).prefetch_related("contacts")
+
+    @admin.display(description=_("Tenant names"))
+    def get_tenant_names(self, obj: Tenant):
+        tenant_names: list[str] = [contact.get_name() for contact in obj.contacts.all()]
+        return " / ".join(tenant_names) or "-"
 
 
 class RelatedLeaseInline(FieldPermissionsAdminMixin, admin.TabularInline):
