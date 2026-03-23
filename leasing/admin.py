@@ -108,6 +108,7 @@ class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiGISAdmin):
     list_display = ("created_at", "user")
     search_fields = ["note", "user__first_name", "user__last_name", "user__username"]
 
+
 class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     pass
 
@@ -210,8 +211,10 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "tenantcontact__contact__name")
-    search_fields = ["lease__identifier__identifier",]    
+    list_display = ("lease", "tenantcontact")
+    search_fields = [
+        "lease__identifier__identifier",
+    ]
     inlines = [TenantContactInline]
     raw_id_fields = ("lease",)
 
@@ -244,6 +247,7 @@ class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 @admin.register(LeaseIdentifier)
 class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
     search_fields = ["identifier"]
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
@@ -289,8 +293,12 @@ class CollectionLetterAdmin(FieldPermissionsModelAdmin):
 @admin.register(CollectionNote)
 class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "created_at", "note", "user")
-    search_fields = ["lease__identifier", "user__first_name", "user__last_name",]
-    list_filter = ("collection_stage")
+    search_fields = [
+        "lease__identifier",
+        "user__first_name",
+        "user__last_name",
+    ]
+    list_filter = ("collection_stage",)
     raw_id_fields = ("lease",)
     ordering = ("-created_at",)
 
@@ -346,7 +354,11 @@ class ConditionInline(FieldPermissionsAdminMixin, admin.StackedInline):
 @admin.register(Decision)
 class DecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "reference_number", "decision_maker", "type")
-    search_fields = ["reference_number", "decision_maker__name","lease__identifier__identifier"]
+    search_fields = [
+        "reference_number",
+        "decision_maker__name",
+        "lease__identifier__identifier",
+    ]
     inlines = [ConditionInline]
     raw_id_fields = ("lease",)
 
@@ -683,7 +695,7 @@ class LeaseAreaAddressInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(LeaseArea)
 class LeaseAreaAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "identifier","type")
+    list_display = ("lease", "identifier", "type")
     inlines = [
         LeaseAreaAddressInline,
         ConstructabilityDescriptionInline,
@@ -739,8 +751,8 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
 
 @admin.register(PlanUnit)
 class PlanUnitAdmin(FieldPermissionsModelAdmin):
-    list_display = ("identifier","get_lease_identifier", "lease_area")
-    list_filter = ("type__name",)
+    list_display = ("identifier", "get_lease_identifier", "lease_area")
+    list_filter = ("plan_unit_type",)
     raw_id_fields = ("lease_area",)
     search_fields = ["identifier"]
 
