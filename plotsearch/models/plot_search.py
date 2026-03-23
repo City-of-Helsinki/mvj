@@ -75,6 +75,9 @@ class PlotSearchSubtype(NameModel):
         "plotsearch",
     ]
 
+    def __str__(self):
+        return f"{self.name}: {self.plot_search_type}"
+
 
 class PlotSearchStage(NameModel):
     """

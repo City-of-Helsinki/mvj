@@ -77,15 +77,21 @@ EXCLUDED_AREA_SEARCH_ATTACHMENT_FIELDS = [
 
 
 class PlotSearchSubTypeLinkedSerializer(NameModelSerializer):
+    display_name = serializers.SerializerMethodField()
+
     class Meta:
         model = PlotSearchSubtype
         fields = (
             "id",
             "name",
+            "display_name",
             "ordering",
             "show_district",
             "require_opening_record",
         )
+
+    def get_display_name(self, obj: PlotSearchSubtype):
+        return str(obj)
 
 
 class PlotSearchTypeLinkedSerializer(NameModelSerializer):
@@ -100,18 +106,23 @@ class PlotSearchTypeLinkedSerializer(NameModelSerializer):
 
 class PlotSearchSubtypeSerializer(NameModelSerializer):
     plot_search_type = PlotSearchTypeLinkedSerializer()
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = PlotSearchSubtype
         fields = (
             "id",
             "name",
+            "display_name",
             "show_district",
             "target_selection",
             "ordering",
             "plot_search_type",
             "require_opening_record",
         )
+
+    def get_display_name(self, obj: PlotSearchSubtype):
+        return str(obj)
 
 
 class IntendedUseLinkedSerializer(NameModelSerializer):
