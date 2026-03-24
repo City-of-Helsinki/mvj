@@ -583,6 +583,11 @@ class CreateChargeSerializer(serializers.Serializer):
             billing_period_start_date, billing_period_end_date
         )
 
+        if not shares:
+            raise serializers.ValidationError(
+                _("No active tenants found for the lease during the billing period")
+            )
+
         invoice = None
         invoiceset = None
 
