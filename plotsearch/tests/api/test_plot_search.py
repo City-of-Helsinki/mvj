@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
@@ -62,6 +63,36 @@ def test_plot_search_list(django_db_setup, admin_client, plot_search_test_data):
     response = admin_client.get(url, content_type="application/json")
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert response.data["count"] > 0
+
+
+@pytest.mark.django_db
+def test_plot_search_detail_shows_type_with_subtype_field_permissions(
+    django_db_setup,
+    client,
+    plot_search_test_data,
+    user_factory,
+):
+    user = user_factory(username="test_user")
+    user.set_password("test_password")
+    user.save()
+
+    for codename in (
+        "view_plotsearch",
+        "view_plotsearch_subtype",
+        "change_plotsearch_subtype",
+    ):
+        user.user_permissions.add(Permission.objects.get(codename=codename))
+
+    client.login(username="test_user", password="test_password")
+
+    url = reverse("v1:plotsearch-detail", kwargs={"pk": plot_search_test_data.id})
+    response = client.get(url, content_type="application/json")
+
+    assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
+    assert "type" in response.data
+    assert (
+        response.data["type"]["id"] == plot_search_test_data.subtype.plot_search_type.id
+    )
 
 
 @pytest.mark.django_db
