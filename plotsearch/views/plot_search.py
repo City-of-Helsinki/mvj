@@ -106,6 +106,10 @@ class PlotSearchSubtypeViewSet(
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ["plot_search_type"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.select_related("plot_search_type")
+
 
 class PlotSearchSubtypePublicViewSet(PlotSearchSubtypeViewSet):
     permission_classes = (MvjDjangoModelPermissionsOrAnonReadOnly,)
@@ -155,7 +159,7 @@ class PlotSearchViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelView
             "plot_search_targets__plan_unit__lease_area__lease__decisions__type",
             "plot_search_targets__plan_unit__lease_area__lease__decisions__conditions",
             "plot_search_targets__plan_unit__lease_area__addresses",
-        ).select_related("form")
+        ).select_related("form", "stage", "subtype__plot_search_type")
 
     def get_serializer_class(self):
         if (
@@ -247,7 +251,7 @@ class PlotSearchPublicViewSet(viewsets.ReadOnlyModelViewSet):
             "plot_search_targets__plan_unit__lease_area__lease__decisions__type",
             "plot_search_targets__plan_unit__lease_area__lease__decisions__conditions",
             "plot_search_targets__plan_unit__lease_area__addresses",
-        ).select_related("form")
+        ).select_related("form", "stage", "subtype__plot_search_type")
 
     def get_serializer_class(self):
         return PlotSearchPublicSerializer
