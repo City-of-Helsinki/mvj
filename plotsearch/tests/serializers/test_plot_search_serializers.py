@@ -16,6 +16,8 @@ from plotsearch.serializers.plot_search import (
     AreaSearchAttachmentPublicSerializer,
     AreaSearchAttachmentSerializer,
     AreaSearchSerializer,
+    PlotSearchSubTypeLinkedSerializer,
+    PlotSearchSubtypeSerializer,
     PlotSearchTargetCreateUpdateSerializer,
 )
 
@@ -255,6 +257,26 @@ def test_get_address_and_district_as_none():
     )
     assert address is None
     assert district is None
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "serializer_class",
+    [PlotSearchSubtypeSerializer, PlotSearchSubTypeLinkedSerializer],
+)
+def test_plot_search_subtype_display_name_matches_string_representation(
+    serializer_class,
+    plot_search_type_factory,
+    plot_search_subtype_factory,
+):
+    plot_search_type = plot_search_type_factory(name="Type A")
+    subtype = plot_search_subtype_factory(
+        name="Subtype A", plot_search_type=plot_search_type
+    )
+
+    data = serializer_class(subtype).data
+
+    assert data["display_name"] == str(subtype)
 
 
 @pytest.mark.django_db
