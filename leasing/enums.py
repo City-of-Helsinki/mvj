@@ -559,7 +559,6 @@ class BasisOfRentType(Enum):
     ADDITIONAL_YARD = "additional_yard"  # In Finnish: Lisäpiha
     FIELD = "field"  # In Finnish: Pelto
     MAST = "mast"  # In Finnish: Masto
-    ALLOTMENT = "allotment"  # In Finnish: Siirtolapuutarha
 
     class Labels:
         LEASE2022 = pgettext_lazy("Basis of rent type", "Lease")
@@ -568,7 +567,6 @@ class BasisOfRentType(Enum):
         ADDITIONAL_YARD = pgettext_lazy("Basis of rent type", "Additional yard")
         FIELD = pgettext_lazy("Basis of rent type", "Field")
         MAST = pgettext_lazy("Basis of rent type", "Mast")
-        ALLOTMENT = pgettext_lazy("Basis of rent type", "Allotment")
 
 
 class BasisOfRentZone(Enum):
