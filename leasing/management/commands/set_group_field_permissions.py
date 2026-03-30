@@ -401,7 +401,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "plot": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -428,7 +428,7 @@ DEFAULT_FIELD_PERMS = {
     },
     "planunit": {
         UG.SELAILIJA: "view",
-        UG.VALMISTELIJA: "view",
+        UG.VALMISTELIJA: "change",
         UG.SOPIMUSVALMISTELIJA: "view",
         UG.SYOTTAJA: "change",
         UG.PERINTALAKIMIES: "view",
@@ -615,8 +615,8 @@ CUSTOM_FIELD_PERMS = {
         "tenantcontact_set": {UG.LASKUTTAJA: "change"},
     },
     "leasearea": {
-        "plots": {UG.VALMISTELIJA: "view", UG.PERINTALAKIMIES: "view"},
-        "plan_units": {UG.VALMISTELIJA: "view", UG.PERINTALAKIMIES: "view"},
+        "plots": {UG.PERINTALAKIMIES: "view"},
+        "plan_units": {UG.PERINTALAKIMIES: "view"},
         "archived_at": {UG.VALMISTELIJA: "view", UG.PERINTALAKIMIES: "view"},
         "archived_note": {UG.VALMISTELIJA: "view", UG.PERINTALAKIMIES: "view"},
         "archived_decision": {UG.VALMISTELIJA: "view", UG.PERINTALAKIMIES: "view"},
