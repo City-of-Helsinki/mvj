@@ -808,7 +808,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "plot": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view",),
+        UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view",),
@@ -935,7 +935,7 @@ DEFAULT_MODEL_PERMS = {
     },
     "planunit": {
         UG.SELAILIJA: ("view",),
-        UG.VALMISTELIJA: ("view",),
+        UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
         UG.SYOTTAJA: ("view", "add", "change", "delete"),
         UG.PERINTALAKIMIES: ("view",),
