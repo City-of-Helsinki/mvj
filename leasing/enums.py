@@ -644,7 +644,7 @@ class ServiceUnitId(IntEnum):
     """
 
     MAKE = 1
-    AKV = 2
+    KAMA = 2
     KUVA_LIPA = 3
     KUVA_UPA = 4
     KUVA_NUP = 5
@@ -652,7 +652,7 @@ class ServiceUnitId(IntEnum):
     @member
     class Labels:
         MAKE = "Maaomaisuuden kehittäminen ja tontit"
-        AKV = "Alueiden käyttö ja valvonta"
+        KAMA = "Palu / Kaupunkitilan käyttö ja maanvuokraus"
         KUVA_LIPA = "KuVa / Liikuntapaikkapalvelut"
         KUVA_UPA = "KuVa / Ulkoilupalvelut"
         KUVA_NUP = "KuVa / Nuorisopalvelut"
@@ -667,7 +667,7 @@ class SapSalesOfficeNumber(Enum):
     """
 
     MAKE = "2826"
-    AKV = "2805"
+    KAMA = "2805"
     KUVA = "2951"
 
 
@@ -680,7 +680,7 @@ class SapSalesOrgNumber(Enum):
     """
 
     MAKE = "2800"
-    AKV = "2800"
+    KAMA = "2800"
     KUVA = "2900"
 
 

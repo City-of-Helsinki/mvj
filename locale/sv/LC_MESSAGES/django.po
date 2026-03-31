@@ -2791,7 +2791,7 @@ msgstr ""
 
 msgid ""
 "Use the override receivable type from rent in automatic invoices, if it is "
-"present. When creating a rent, some service units (such as AKV and KuVa) "
+"present. When creating a rent, some service units (such as KAMA and KuVa) "
 "want to select a receivable type to be used in future automatic invoices. "
 "This helps avoid some technical difficulties in invoice XML generation. "
 "Generation logic would otherwise be unaware of the desired receivable type, "

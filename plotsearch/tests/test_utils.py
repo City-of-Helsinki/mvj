@@ -13,10 +13,10 @@ from plotsearch.utils import (
 @pytest.mark.parametrize(
     "intended_use_name,lessor",
     [
-        ("Ravitsemus, myynti ja mainonta", "AKV"),
-        ("Taide ja kulttuuri", "AKV"),
-        ("Varastointi ja jakelu", "AKV"),
-        ("Työmaat", "AKV"),
+        ("Ravitsemus, myynti ja mainonta", "KAMA"),
+        ("Taide ja kulttuuri", "KAMA"),
+        ("Varastointi ja jakelu", "KAMA"),
+        ("Työmaat", "KAMA"),
         ("Muu alueen käyttö", "MAKE"),
         ("Veneily ja laiturit", "UPA"),
         ("Urheilu ja Liikunta", "LIPA"),
@@ -61,7 +61,7 @@ def test_get_lessor_email_address(
         _get_lessor_email_to_address(lessor_no_contact)
 
     # Case where contact exists but email address doesn't
-    lessor_no_email = AreaSearchLessor.AKV
+    lessor_no_email = AreaSearchLessor.KAMA
     unit_id = map_lessor_enum_to_service_unit_id(lessor_no_email)
     contact = Contact.objects.get(service_unit_id=unit_id, is_lessor=True)
     contact.email = None

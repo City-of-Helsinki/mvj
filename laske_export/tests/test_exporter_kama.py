@@ -10,12 +10,12 @@ from .conftest import get_exported_file_as_tree
 @pytest.mark.parametrize(
     # Pass the ID to test setup fixture
     "exporter_full_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
 @override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_akv_xml_elements_exist(
+def test_kama_xml_elements_exist(
     settings,
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
@@ -23,14 +23,14 @@ def test_akv_xml_elements_exist(
     mock_sftp,
 ):
     """
-    Sanity check: verify that the necessary XML elements are populated in AKV's
+    Sanity check: verify that the necessary XML elements are populated in KAMA's
     export XML, no matter what value.
 
     Note: this might not be all. If you find out more mandatory fields that are
     expected to be populated in every XML export, please add to this test.
     """
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.AKV)
+    command.handle(service_unit_id=ServiceUnitId.KAMA)
 
     xml_tree = get_exported_file_as_tree(settings)
     sales_order = xml_tree.find("./SBO_SalesOrder")
@@ -62,12 +62,12 @@ def test_akv_xml_elements_exist(
 @pytest.mark.parametrize(
     # Pass the ID to test setup fixture
     "exporter_full_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
 @override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_akv_sap_codes_from_invoicerow(
+def test_kama_sap_codes_from_invoicerow(
     settings,
     monkeypatch_laske_exporter_send,
     send_invoices_to_laske_command,
@@ -75,11 +75,11 @@ def test_akv_sap_codes_from_invoicerow(
     mock_sftp,
 ):
     """
-    By default, AKV SAP codes should be added to the line item from invoicerow's
+    By default, KAMA SAP codes should be added to the line item from invoicerow's
     receivable type.
     """
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.AKV)
+    command.handle(service_unit_id=ServiceUnitId.KAMA)
 
     xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
@@ -97,12 +97,12 @@ def test_akv_sap_codes_from_invoicerow(
 @pytest.mark.parametrize(
     # Pass the ID to test setup fixture
     "exporter_full_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
 @override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_akv_sap_codes_from_leasetype(
+def test_kama_sap_codes_from_leasetype(
     monkeypatch_laske_exporter_send,
     settings,
     send_invoices_to_laske_command,
@@ -111,7 +111,7 @@ def test_akv_sap_codes_from_leasetype(
     mock_sftp,
 ):
     """
-    AKV SAP codes should be added to the line item from LeaseType when the
+    KAMA SAP codes should be added to the line item from LeaseType when the
     invoicerow's receivable type is the service unit's default receivable type
     for rents, and that default doesn't have its own SAP codes.
     """
@@ -122,7 +122,7 @@ def test_akv_sap_codes_from_leasetype(
     invoice_row.save()
 
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.AKV)
+    command.handle(service_unit_id=ServiceUnitId.KAMA)
 
     xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")
@@ -140,12 +140,12 @@ def test_akv_sap_codes_from_leasetype(
 @pytest.mark.parametrize(
     # Pass the ID to test setup fixture
     "exporter_full_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
 @override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_akv_sap_codes_when_collateral(
+def test_kama_sap_codes_when_collateral(
     monkeypatch_laske_exporter_send,
     settings,
     send_invoices_to_laske_command,
@@ -153,7 +153,7 @@ def test_akv_sap_codes_when_collateral(
     mock_sftp,
 ):
     """
-    AKV SAP codes should be added to the line item from invoicerow's receivable
+    KAMA SAP codes should be added to the line item from invoicerow's receivable
     type when when invoicerow's receivable type is the service unit's default
     receivable type for collateral.
 
@@ -167,7 +167,7 @@ def test_akv_sap_codes_when_collateral(
     invoice_row.save()
 
     command = send_invoices_to_laske_command
-    command.handle(service_unit_id=ServiceUnitId.AKV)
+    command.handle(service_unit_id=ServiceUnitId.KAMA)
 
     xml_tree = get_exported_file_as_tree(settings)
     line_item = xml_tree.find("./SBO_SalesOrder/LineItem")

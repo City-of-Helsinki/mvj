@@ -178,9 +178,9 @@ AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
         AND yksikko IS NOT NULL
         """,
     },
-    # Vuokra-alueet: AKV & KUVA / vuokrausalue_lyhyt_paa
-    "lease_area_akv_kuva": {
-        "source_dsn_setting_name": "AKV_KUVA_LEASE_AREA_DATABASE_DSN",
+    # Vuokra-alueet: KAMA & KUVA / vuokrausalue_lyhyt_paa
+    "lease_area_kama_kuva": {
+        "source_dsn_setting_name": "KAMA_KUVA_LEASE_AREA_DATABASE_DSN",
         "source_name": "Tonttiosasto: vuokrausalue_lyhyt_paa",
         "source_identifier": "tonttiosasto.vuokrausalue_lyhyt_paa",
         "area_type": AreaType.LEASE_AREA,

@@ -339,16 +339,16 @@ def test_one_primary_and_nonprimary_addresses_in_leasearea(
 
 
 @pytest.mark.django_db
-def test_akv_bill_text(
+def test_kama_bill_text(
     django_db_setup,
     lease_factory,
     contact_factory,
     invoice_factory,
     receivable_type_factory,
 ):
-    """Bill text should be empty for SAP laske exports for the AKV service unit."""
-    # Set service unit to AKV
-    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.AKV)
+    """Bill text should be empty for SAP laske exports for the KAMA service unit."""
+    # Set service unit to KAMA
+    service_unit = ServiceUnit.objects.get(pk=ServiceUnitId.KAMA)
     lease = lease_factory(service_unit=service_unit)
 
     # Setup necessary objects with placeholder values

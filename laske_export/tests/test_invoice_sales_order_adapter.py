@@ -18,7 +18,7 @@ from leasing.models.service_unit import ServiceUnit
 @pytest.mark.parametrize(
     # Pass the ID to the test setup fixture
     "exporter_lacking_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
@@ -65,7 +65,7 @@ def test_set_line_item_common_values_sap_receivable_type(
 @pytest.mark.parametrize(
     # Pass the ID to the test setup fixture
     "exporter_lacking_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
@@ -115,7 +115,7 @@ def test_set_line_item_common_values_sap_lease_type(
 @pytest.mark.parametrize(
     # Pass the ID to the test setup fixture
     "exporter_lacking_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
@@ -162,7 +162,7 @@ def test_set_line_item_common_values_sap_lease_internal_order(
 
 @pytest.mark.parametrize(
     "exporter_full_test_setup",
-    [ServiceUnitId.MAKE, ServiceUnitId.AKV],
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db

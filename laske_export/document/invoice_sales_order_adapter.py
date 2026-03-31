@@ -33,7 +33,7 @@ class InvoiceSalesOrderAdapter:
     """Adapter for invoice sales orders to use in Laske exports.
 
     Currently contains the MaKe service unit logic, which is the default logic
-    until a service unit requests customizations to their exports, like AKV did.
+    until a service unit requests customizations to their exports, like KAMA did.
 
     For service-unit-aware instantiation of class objects, please use the
     factory function invoice_sales_order_adapter_factory
@@ -220,7 +220,7 @@ class InvoiceSalesOrderAdapter:
         payment_reference = ""
 
         service_unit_prefix = ""
-        if self.service_unit.id in [ServiceUnitId.MAKE, ServiceUnitId.AKV]:
+        if self.service_unit.id in [ServiceUnitId.MAKE, ServiceUnitId.KAMA]:
             service_unit_prefix = "288"
         elif self.service_unit.id in [
             ServiceUnitId.KUVA_LIPA,
@@ -473,19 +473,19 @@ class InvoiceSalesOrderAdapter:
         self.sales_order.line_items = self.get_line_items()
 
 
-class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
-    """Adapter for service unit Alueiden käyttö ja valvonta.
+class KamaInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
+    """Adapter for service unit Kaupunkitilan käyttö ja maanvuokraus.
 
     For service-unit-aware instantiation of class objects, please use the
     factory function invoice_sales_order_adapter_factory
     """
 
-    AKV_DATE_FORMAT = "%d.%m.%Y"
+    KAMA_DATE_FORMAT = "%d.%m.%Y"
 
     def get_bill_text(self) -> str:
-        """Create billtext for AKV service unit.
+        """Create billtext for KAMA service unit.
 
-        AKV requested that "Hki otsikko ulkoinen" is left empty in their SAP.
+        KAMA requested that "Hki otsikko ulkoinen" is left empty in their SAP.
         "Hki otsikko ulkoinen" corresponds to XML elements BillTextL<number> in
         the MVJ export.
         """
@@ -493,7 +493,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         return "\n" * number_of_billtext_lines
 
     def get_line_items(self) -> list[LineItem]:
-        """Create LineItems for AKV service unit."""
+        """Create LineItems for KAMA service unit."""
         line_items: list[LineItem] = []
         invoice_rows: QuerySet[InvoiceRow] = self.invoice.rows.all()
         sorted_invoice_rows = _sort_invoice_rows_for_lineitems(invoice_rows)
@@ -511,7 +511,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
 
     def get_line_text(self, invoice_row: InvoiceRow) -> str:
         """Generates contents of the LineTextL<number> elements in LineItem for
-        AKV service unit."""
+        KAMA service unit."""
         # Intended use text
         intended_use = invoice_row.intended_use
         intended_use_text = intended_use.name if intended_use else ""
@@ -559,7 +559,7 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
         decision_text = (
             (
                 f"Päätös: {decision.reference_number}, "
-                f"{decision.decision_date.strftime(self.AKV_DATE_FORMAT)} "
+                f"{decision.decision_date.strftime(self.KAMA_DATE_FORMAT)} "
                 f"§ {decision.section}. "
             )
             if decision
@@ -570,12 +570,12 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
 
         # Billing period text
         billing_period_start_date_text = (
-            (invoice_row.billing_period_start_date.strftime(self.AKV_DATE_FORMAT))
+            (invoice_row.billing_period_start_date.strftime(self.KAMA_DATE_FORMAT))
             if invoice_row.billing_period_start_date
             else ""
         )
         billing_period_end_date_text = (
-            invoice_row.billing_period_end_date.strftime(self.AKV_DATE_FORMAT)
+            invoice_row.billing_period_end_date.strftime(self.KAMA_DATE_FORMAT)
             if invoice_row.billing_period_end_date
             else ""
         )
@@ -595,10 +595,10 @@ class AkvInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
     def set_linetexts_from_string(
         self, line_item: LineItem, text: str, is_last_invoicerow: bool = False
     ) -> None:
-        """Set the LineTextL<number> XML elements in the LineItem for AKV
+        """Set the LineTextL<number> XML elements in the LineItem for KAMA
         service unit.
 
-        AKV doesn't need the invoicing instructions that are added to the last
+        KAMA doesn't need the invoicing instructions that are added to the last
         invoicerow in Make/Tontit invoices.
 
         Linetext will be wrapped to a maximum line length, and number of lines.
@@ -628,14 +628,14 @@ def invoice_sales_order_adapter_factory(
     sales_order: SalesOrder,
     service_unit: ServiceUnit,
     fill_priority_and_info: bool = True,
-) -> InvoiceSalesOrderAdapter | AkvInvoiceSalesOrderAdapter:
+) -> InvoiceSalesOrderAdapter | KamaInvoiceSalesOrderAdapter:
     """Instantiates an invoice sales order adapter based on invoice's service unit.
 
-    AKV SAP export requires billtext and linetext to be different from the
+    KAMA SAP export requires billtext and linetext to be different from the
     previously used Make/Tontit logic.
     """
-    if invoice.service_unit.id == ServiceUnitId.AKV:
-        return AkvInvoiceSalesOrderAdapter(
+    if invoice.service_unit.id == ServiceUnitId.KAMA:
+        return KamaInvoiceSalesOrderAdapter(
             invoice=invoice,
             sales_order=sales_order,
             service_unit=service_unit,

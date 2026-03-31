@@ -288,7 +288,7 @@ def test_areasearch_update_email_is_sent(
 ):
     """When areasearch is updated with a new lessor, email is sent to the correct lessor contacts."""
     old_lessor = AreaSearchLessor.MAKE
-    new_lessor = AreaSearchLessor.AKV
+    new_lessor = AreaSearchLessor.KAMA
 
     name = "Muu alueen käyttö"
     intended_use = area_search_intended_use_factory(name=name, name_fi=name)

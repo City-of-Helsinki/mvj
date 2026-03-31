@@ -617,7 +617,7 @@ class RentCreateUpdateSerializer(
         self, rent_data: dict[str, Any]
     ) -> None:
         """
-        Currently, the rent override receivabletype is mandatory for AKV and
+        Currently, the rent override receivabletype is mandatory for KAMA and
         KuVa leases, and not used by MaKe/Tontit.
 
         It is only used in index rents, fixed rents, and manual rents, because
