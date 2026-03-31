@@ -7,14 +7,14 @@ class AreaSearchLessor(str, Enum):
     In Finnish: Vuokranantaja
     """
 
-    AKV = "AKV"
+    KAMA = "KAMA"
     MAKE = "MAKE"
     LIPA = "LIPA"
     UPA = "UPA"
     NUP = "NUP"
 
     class Labels:
-        AKV = pgettext_lazy("Area search lessor", "Area use and control")
+        KAMA = pgettext_lazy("Area search lessor", "Area use and control")
         MAKE = pgettext_lazy("Area search lessor", "Development of land assets")
         LIPA = pgettext_lazy("Area search lessor", "Sports venue services")
         UPA = pgettext_lazy("Area search lessor", "Outdoor services")

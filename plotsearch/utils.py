@@ -21,10 +21,10 @@ def map_intended_use_to_lessor(
 ) -> AreaSearchLessor | None:
     """Maps AreaSearchIntendedUse to AreaSearchLessor."""
     intended_uses_with_lessors = {
-        "ravitsemus, myynti ja mainonta": AreaSearchLessor.AKV,
-        "taide ja kulttuuri": AreaSearchLessor.AKV,
-        "varastointi ja jakelu": AreaSearchLessor.AKV,
-        "työmaat": AreaSearchLessor.AKV,
+        "ravitsemus, myynti ja mainonta": AreaSearchLessor.KAMA,
+        "taide ja kulttuuri": AreaSearchLessor.KAMA,
+        "varastointi ja jakelu": AreaSearchLessor.KAMA,
+        "työmaat": AreaSearchLessor.KAMA,
         "muu alueen käyttö": AreaSearchLessor.MAKE,
         "veneily ja laiturit": AreaSearchLessor.UPA,
         "urheilu ja liikunta": AreaSearchLessor.LIPA,
@@ -41,7 +41,7 @@ def map_lessor_enum_to_service_unit_id(lessor: AreaSearchLessor) -> int:
     """Maps AreaSearchLessor to service unit ID."""
     lessor_to_service_unit_id = {
         AreaSearchLessor.MAKE: int(ServiceUnitId.MAKE),
-        AreaSearchLessor.AKV: int(ServiceUnitId.AKV),
+        AreaSearchLessor.KAMA: int(ServiceUnitId.KAMA),
         AreaSearchLessor.LIPA: int(ServiceUnitId.KUVA_LIPA),
         AreaSearchLessor.UPA: int(ServiceUnitId.KUVA_UPA),
         AreaSearchLessor.NUP: int(ServiceUnitId.KUVA_NUP),

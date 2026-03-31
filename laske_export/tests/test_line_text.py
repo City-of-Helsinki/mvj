@@ -1,8 +1,8 @@
 import pytest
 
 from laske_export.document.invoice_sales_order_adapter import (
-    AkvInvoiceSalesOrderAdapter,
     InvoiceSalesOrderAdapter,
+    KamaInvoiceSalesOrderAdapter,
 )
 from leasing.enums import ServiceUnitId
 
@@ -10,20 +10,20 @@ from leasing.enums import ServiceUnitId
 @pytest.mark.parametrize(
     # Pass the ID to the test setup fixture
     "exporter_full_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
-def test_akv_line_text(
+def test_kama_line_text(
     django_db_setup,
     exporter_full_test_setup,
 ):
     """
     Verify that invoicerow lineitem linetext contains all details
-    requested by AKV when invoice's service unit is AKV.
+    requested by KAMA when invoice's service unit is KAMA.
     """
     # Set up the values
-    adapter: AkvInvoiceSalesOrderAdapter = exporter_full_test_setup["adapter"]
+    adapter: KamaInvoiceSalesOrderAdapter = exporter_full_test_setup["adapter"]
 
     # Extract the results from initialized objects
     invoicerow_intended_use = exporter_full_test_setup["invoicerow1_intended_use"]
@@ -37,7 +37,7 @@ def test_akv_line_text(
     billing_period_end_date = exporter_full_test_setup[
         "invoice1_billing_period_end_date"
     ]
-    date_format = AkvInvoiceSalesOrderAdapter.AKV_DATE_FORMAT
+    date_format = KamaInvoiceSalesOrderAdapter.KAMA_DATE_FORMAT
 
     combined_linetext = get_combined_linetext_from_adapter(adapter)
 
@@ -58,7 +58,7 @@ def test_akv_line_text(
 @pytest.mark.parametrize(
     # Pass the ID to the test setup fixture
     "exporter_lacking_test_setup",
-    [ServiceUnitId.AKV],
+    [ServiceUnitId.KAMA],
     indirect=True,
 )
 @pytest.mark.django_db
@@ -74,7 +74,7 @@ def test_missing_sections_not_added(
     This cleanup of text with missing sections is for corner cases.
     The actual invoices are expected to contain all necessary details.
     """
-    adapter: AkvInvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    adapter: KamaInvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
     linetext_without_area = get_combined_linetext_from_adapter(adapter)
 
     # Lease area is missing
