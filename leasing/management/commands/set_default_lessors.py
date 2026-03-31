@@ -11,10 +11,10 @@ SERVICE_UNITS = [
         "email": "MAKE@example.com",
     },
     {
-        "id": ServiceUnitId.AKV.value,
-        "contact_name": "KYMP/Alueiden käyttö ja valvonta",
-        "sap_sales_office": SapSalesOfficeNumber.AKV.value,
-        "email": "AKV@example.com",
+        "id": ServiceUnitId.KAMA.value,
+        "contact_name": "PALU/Kaupunkitilan käyttö ja maanvuokraus",
+        "sap_sales_office": SapSalesOfficeNumber.KAMA.value,
+        "email": "KAMA@example.com",
     },
     {
         "id": ServiceUnitId.KUVA_LIPA.value,

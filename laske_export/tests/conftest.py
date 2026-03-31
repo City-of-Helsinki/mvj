@@ -339,7 +339,7 @@ def exporter_lacking_test_setup(
     tenant_contact_factory,
 ) -> dict[str, Any]:
     """
-    Testing data fixture for AKV-related exporter tests.
+    Testing data fixture for KAMA-related exporter tests.
     Is purposefully lacking some details that should be part of all invoice
     exports, such as:
     - lease areas
