@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import factory
 import pytest
@@ -96,7 +97,14 @@ def answer_with_email(
     }
 
     url = reverse("v1:pub_area_search-list")
-    response = admin_client.post(url, data=area_search_payload)
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_get_address_and_district:
+        mock_get_address_and_district.return_value = (
+            "Mocked address",
+            "Mocked district",
+        )
+        response = admin_client.post(url, data=area_search_payload)
     area_search = AreaSearch.objects.get(id=response.data["id"])
 
     def _get_company_applicants(count=1):

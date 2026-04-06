@@ -1,5 +1,6 @@
 import json
 import os
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import Permission
@@ -820,9 +821,18 @@ def test_area_search_create_simple(
         "geometry": area_search_test_data.geometry.geojson,
     }
 
-    response = admin_client.post(
-        url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
-    )
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_get_address_and_district:
+        mock_get_address_and_district.return_value = (
+            "Mocked address",
+            "Mocked district",
+        )
+        response = admin_client.post(
+            url,
+            json.dumps(data, cls=DjangoJSONEncoder),
+            content_type="application/json",
+        )
     assert response.status_code == 201, "%s %s" % (response.status_code, response.data)
     assert AreaSearch.objects.filter(id=response.data["id"]).exists()
 
@@ -848,9 +858,18 @@ def test_area_search_create_simple_public(
         "area_search_attachments": [attachment.id],
     }
 
-    response = admin_client.post(
-        url, json.dumps(data, cls=DjangoJSONEncoder), content_type="application/json"
-    )
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel"
+    ) as mock_get_address_and_district:
+        mock_get_address_and_district.return_value = (
+            "Mocked address",
+            "Mocked district",
+        )
+        response = admin_client.post(
+            url,
+            json.dumps(data, cls=DjangoJSONEncoder),
+            content_type="application/json",
+        )
 
     # When attachments are created,
     # the HTTP response should not return any sensitive or unnecessary data
