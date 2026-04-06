@@ -423,48 +423,22 @@ Now the emails can be created as `.log` files in the given `EMAIL_FILE_PATH`. Ch
 Before doing extensive deployments, backup the database:
 
 ```bash
-pg_dump --dbname <dbname> --username <username> --host <db address> --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
+pg_dump --dbname DB_NAME --username USERNAME --host DB_HOST --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
 ```
 
 To restore the database from backup, run:
 
 ```bash
-pg_restore --dbname <dbname> --username <username> --host <db address> --clean --if-exists mvj-ENVIRONMENT_DATETIME.dump
+pg_restore --dbname DB_NAME --username USERNAME --host DB_HOST --clean --if-exists mvj-ENVIRONMENT_DATETIME.dump
 ```
 
 
 ## Sanitized database dump
 
-!! This instruction was written for the old on-premises server, and doesn't work
-as-is in other environments !!
-
 When taking a database dump from production to be used for development or testing
 purposes, sensitive fields must be sanitized. We use
 [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
 for sanitizing the data.
-
-### 0. Activate virtual environment with development dependencies
-
-Sanitizer requires some Python packages that are listed as development dependencies.
-
-If the source environment already has development dependencies installed,
-continue to next topic.
-
-```bash
-sudo su <api user>
-cd
-# <Here you should load the environment variables required by API user>
-
-# Create the virtual environment, if it doesn't exist yet:
-python -m venv venv-dev
-
-# Activate the venv-dev environment
-source venv-dev/bin/activate
-
-# Install all dependencies, if not installed yet:
-pip install -r <api directory>/requirements-dev.txt
-pip install -r <api directory>/requirements.txt
-```
 
 ### 1. Validate sanitizer configuration
 
@@ -472,8 +446,7 @@ Sanitizer configuration is specified in `.sanitizerconfig`.
 First, validate if the current configuration is up to date with Django models:
 
 ```bash
-cd <api user directory>
-# <Here you should load the environment variables required by API user>
+cd <app root>
 python manage.py validate_sanitizerconfig
 ```
 
@@ -482,10 +455,12 @@ configuration based on current state of the models.
 
 ### 2. Update sanitizer configuration
 
-If you have any deficiencies in the configuration, update the configuration file.
+If you have any deficiencies in the sanitizer's configuration, update the config
+file.
 
 Our custom sanitizer functions are specified in `sanitizers/mvj.py`.
-The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers) are also available.
+The [library's own sanitizer functions](https://github.com/andersinno/python-database-sanitizer/tree/master/database_sanitizer/sanitizers)
+are also available.
 
 `skip_rows` strategy can be used to entirely avoid dumping rows from a table
 that contains data unnecessary for development purposes.
@@ -503,7 +478,7 @@ python manage.py init_sanitizer
 ### 3. Create sanitized dump
 
 ```bash
-python manage.py create_sanitized_dump > mvj-sanitized-<ENVIRONMENT>_$(date +%Y%m%d%H%M).sql
+python manage.py create_sanitized_dump > /tmp/sanitized_$(date +%Y%m%d%H%M).sql
 ```
 
 Then copy the SQL file from source server to destination server, e.g. with `scp` tool.
@@ -519,7 +494,7 @@ python manage.py database_backup_before_load DB_NAME DB_HOST DB_PORT DB_USER BAC
 Load the SQL dump with `psql`:
 
 ```bash
-psql --username <db username> --dbname <db name> --host <db hostname> --port <db port> --file mvj-sanitized-ENVIRONMENT_DATETIME.sql > dump_loading.log
+psql --username DB_USER --dbname DB_NAME --host DB_HOST --port DB_PORT --file /path/to/sanitized_DATETIME.sql > dump_loading.log
 ```
 
 ### 6. Restore environment-specific settings
