@@ -1,3 +1,5 @@
+from enum import member
+
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
@@ -13,6 +15,7 @@ class AreaSearchLessor(str, Enum):
     UPA = "UPA"
     NUP = "NUP"
 
+    @member
     class Labels:
         AKV = pgettext_lazy("Area search lessor", "Area use and control")
         MAKE = pgettext_lazy("Area search lessor", "Development of land assets")
@@ -29,6 +32,7 @@ class SearchClass(str, Enum):
     PLOT_SEARCH = "plot_search"
     OTHER = "other_search"
 
+    @member
     class Labels:
         PLOT_SEARCH = pgettext_lazy("Search class", "Plot search")
         OTHER = pgettext_lazy("Search class", "Other")
@@ -45,6 +49,7 @@ class SearchStage(str, Enum):
     DECISION = "decision"
     SETTLED = "settled"
 
+    @member
     class Labels:
         IN_PREPARATION = pgettext_lazy("Search stage", "In preparation")
         IN_ACTION = pgettext_lazy("Search stage", "In action")
@@ -63,6 +68,7 @@ class InformationState(str, Enum):
     NOT_NEEDED = "not_needed"
     FURTHER_ACTION = "further_action"
 
+    @member
     class Labels:
         CHECKED = pgettext_lazy("Information state", "Checked")
         NOT_CHECKED = pgettext_lazy("Information state", "Not checked")
@@ -83,6 +89,7 @@ class InformationCheckName(str, Enum):
     TAX_DEBT = "tax_debt"
     EMPLOYER_REGISTER = "employer_register"
 
+    @member
     class Labels:
         TRADE_REGISTER = pgettext_lazy(
             "Information check name", "Trade register extract"
@@ -122,6 +129,7 @@ class DeclineReason(str, Enum):
     NOT_AVAILABLE_LEASE = "not_available_for_lease"
     OTHER = "other"
 
+    @member
     class Labels:
         APPLICATION_EXPIRED = pgettext_lazy("Decline reason", "Application expired")
         APPLICATION_MISSED_DEADLINE = pgettext_lazy(
@@ -155,6 +163,7 @@ class AreaSearchState(str, Enum):
     REVOKED = "revoked"
     DECLINED = "declined"
 
+    @member
     class Labels:
         RECEIVED = pgettext_lazy("Area search state", "Received")
         PENDING_INFORMATION = pgettext_lazy(

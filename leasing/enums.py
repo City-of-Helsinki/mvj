@@ -1,3 +1,5 @@
+from enum import member
+
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum, IntEnum
 
@@ -11,6 +13,7 @@ class Classification(Enum):
     CONFIDENTIAL = "confidential"
     OFFICIAL = "official"
 
+    @member
     class Labels:
         PUBLIC = pgettext_lazy("Classification", "Public")
         CONFIDENTIAL = pgettext_lazy("Classification", "Confidential")
@@ -33,6 +36,7 @@ class LeaseState(Enum):
     POWER_OF_ATTORNEY = "power_of_attorney"
     PRELIMINARY = "preliminary"
 
+    @member
     class Labels:
         LEASE = pgettext_lazy("Lease state", "Lease")
         SHORT_TERM_LEASE = pgettext_lazy("Lease state", "Short term lease")
@@ -54,6 +58,7 @@ class LeaseRelationType(Enum):
     TRANSFER = "transfer"
     OTHER = "other"
 
+    @member
     class Labels:
         TRANSFER = pgettext_lazy("Lease relation", "Transfer")
         OTHER = pgettext_lazy("Lease relation", "Other")
@@ -68,6 +73,7 @@ class NoticePeriodType(Enum):
     TIME_PERIOD = "time_period"
     OTHER = "other"
 
+    @member
     class Labels:
         NO_PERIOD = pgettext_lazy("Notice period", "No period")
         TIME_PERIOD = pgettext_lazy("Notice period", "Time period")
@@ -83,6 +89,7 @@ class TenantContactType(Enum):
     BILLING = "billing"
     CONTACT = "contact"
 
+    @member
     class Labels:
         TENANT = pgettext_lazy("Tenant contact type", "Tenant")
         BILLING = pgettext_lazy("Tenant contact type", "Billing contact")
@@ -97,6 +104,7 @@ class LocationType(Enum):
     SURFACE = "surface"
     UNDERGROUND = "underground"
 
+    @member
     class Labels:
         SURFACE = pgettext_lazy("Location type", "Surface")
         UNDERGROUND = pgettext_lazy("Location type", "Underground")
@@ -112,6 +120,7 @@ class LeaseAreaType(Enum):
     UNSEPARATED_PARCEL = "unseparated_parcel"
     OTHER = "other"
 
+    @member
     class Labels:
         PLAN_UNIT = pgettext_lazy("Lease area type", "Plan unit")
         REAL_PROPERTY = pgettext_lazy("Lease area type", "Real property")
@@ -127,6 +136,7 @@ class LeaseAreaAttachmentType(Enum):
     MATTI_REPORT = "matti_report"
     GEOTECHNICAL = "geotechnical"
 
+    @member
     class Labels:
         MATTI_REPORT = pgettext_lazy("Lease area attachment type", "MATTI report")
         GEOTECHNICAL = pgettext_lazy("Lease area attachment type", "Geotechnical")
@@ -140,6 +150,7 @@ class PlotType(Enum):
     REAL_PROPERTY = "real_property"
     UNSEPARATED_PARCEL = "unseparated_parcel"
 
+    @member
     class Labels:
         REAL_PROPERTY = pgettext_lazy("Plot type", "Real property")
         UNSEPARATED_PARCEL = pgettext_lazy("Plot type", "Unseparated parcel")
@@ -154,6 +165,7 @@ class PlotSearchTargetType(Enum):
     PROCEDURAL_RESERVATION = "procedural_reservation"
     DIRECT_RESERVATION = "direct_reservation"
 
+    @member
     class Labels:
         SEARCHABLE = pgettext_lazy("Plot type", "Searchable")
         PROCEDURAL_RESERVATION = pgettext_lazy("Plot type", "Procedural reservation")
@@ -168,6 +180,7 @@ class PeriodType(Enum):
     PER_MONTH = "per_month"
     PER_YEAR = "per_year"
 
+    @member
     class Labels:
         PER_MONTH = pgettext_lazy("Period type", "/ month")
         PER_YEAR = pgettext_lazy("Period type", "/ year")
@@ -185,6 +198,7 @@ class AreaUnit(Enum):
     # In Finnish: Huoneistoneliömetri
     APARTMENT_SQUARE_METRE = "hm2"
 
+    @member
     class Labels:
         SQUARE_METRE = pgettext_lazy("Area unit", "m^2")
         FLOOR_SQUARE_METRE = pgettext_lazy("Area unit", "Floor area m^2")
@@ -201,6 +215,7 @@ class ConstructabilityState(Enum):
     ENQUIRY_SENT = "enquiry_sent"
     COMPLETE = "complete"
 
+    @member
     class Labels:
         UNVERIFIED = pgettext_lazy("Constructability state", "Unverified")
         REQUIRES_MEASURES = pgettext_lazy("Constructability state", "Requires measures")
@@ -219,6 +234,7 @@ class ConstructabilityType(Enum):
     REPORT = "report"
     OTHER = "other"
 
+    @member
     class Labels:
         PRECONSTRUCTION = pgettext_lazy("Constructability type", "Preconstruction")
         DEMOLITION = pgettext_lazy("Constructability type", "Demolition")
@@ -235,6 +251,7 @@ class PollutedLandRentConditionState(Enum):
     ASKED = "asked"
     READY = "ready"
 
+    @member
     class Labels:
         ASKED = pgettext_lazy("Polluted Land rent condition state", "Asked")
         READY = pgettext_lazy("Polluted Land rent condition state", "Ready")
@@ -249,6 +266,7 @@ class ConstructabilityReportInvestigationState(Enum):
     ONGOING = "ongoing"
     READY = "ready"
 
+    @member
     class Labels:
         NO_NEED = pgettext_lazy(
             "Constructability Report investigation state", "No need"
@@ -271,6 +289,7 @@ class RentType(Enum):
     FREE = "free"  # Korvauksetta
     MANUAL = "manual"  # Käsinlaskenta
 
+    @member
     class Labels:
         INDEX2022 = pgettext_lazy("Rent type", "Index")
         INDEX = pgettext_lazy("Rent type", "Index (old)")
@@ -288,6 +307,7 @@ class RentCycle(Enum):
     JANUARY_TO_DECEMBER = "january_to_december"
     APRIL_TO_MARCH = "april_to_march"
 
+    @member
     class Labels:
         JANUARY_TO_DECEMBER = pgettext_lazy("Rent cycle", "January to december")
         APRIL_TO_MARCH = pgettext_lazy("Rent cycle", "April to march")
@@ -306,6 +326,7 @@ class IndexType(Enum):
     TYPE_6 = "type_6"
     TYPE_7 = "type_7"
 
+    @member
     class Labels:
         TYPE_1 = pgettext_lazy("Index type", "ind 50620 / 10/20%:n vaihtelut")
         TYPE_2 = pgettext_lazy("Index type", "ind 4661 / 10/20%:n vaihtelut")
@@ -324,6 +345,7 @@ class DueDatesType(Enum):
     CUSTOM = "custom"
     FIXED = "fixed"
 
+    @member
     class Labels:
         CUSTOM = pgettext_lazy("Due dates type", "Custom")
         FIXED = pgettext_lazy("Due dates type", "Fixed")
@@ -337,6 +359,7 @@ class DueDatesPosition(Enum):
     START_OF_MONTH = "start_of_month"
     MIDDLE_OF_MONTH = "middle_of_month"
 
+    @member
     class Labels:
         START_OF_MONTH = pgettext_lazy("Due dates position", "Start of month")
         MIDDLE_OF_MONTH = pgettext_lazy("Due dates position", "Middle of month")
@@ -350,6 +373,7 @@ class RentAdjustmentType(Enum):
     DISCOUNT = "discount"
     INCREASE = "increase"
 
+    @member
     class Labels:
         DISCOUNT = pgettext_lazy("Rent adjustment type", "Discount")
         INCREASE = pgettext_lazy("Rent adjustment type", "Increase")
@@ -364,6 +388,7 @@ class RentAdjustmentAmountType(Enum):
     AMOUNT_PER_YEAR = "amount_per_year"
     AMOUNT_TOTAL = "amount_total"
 
+    @member
     class Labels:
         PERCENT_PER_YEAR = pgettext_lazy("Rent Adjustment amount type", "% per year")
         AMOUNT_PER_YEAR = pgettext_lazy("Rent Adjustment amount type", "€ per year")
@@ -378,6 +403,7 @@ class SubventionType(Enum):
     FORM_OF_MANAGEMENT = "form_of_management"  # In Finnish: Hallintamuoto
     RE_LEASE = "re_lease"  # In Finnish: Uudelleenvuokraus
 
+    @member
     class Labels:
         FORM_OF_MANAGEMENT = pgettext_lazy("Subvention type", "Form of management")
         RE_LEASE = pgettext_lazy("Subvention type", "Re-lease")
@@ -391,6 +417,7 @@ class InvoiceDeliveryMethod(Enum):
     MAIL = "mail"
     ELECTRONIC = "electronic"
 
+    @member
     class Labels:
         MAIL = pgettext_lazy("Invoice delivery method", "Mail")
         ELECTRONIC = pgettext_lazy("Invoice delivery method", "Electronic")
@@ -405,6 +432,7 @@ class InvoiceState(Enum):
     PAID = "paid"
     REFUNDED = "refunded"
 
+    @member
     class Labels:
         OPEN = pgettext_lazy("Invoice state", "Open")
         PAID = pgettext_lazy("Invoice state", "Paid")
@@ -419,6 +447,7 @@ class InvoiceType(Enum):
     CHARGE = "charge"
     CREDIT_NOTE = "credit_note"
 
+    @member
     class Labels:
         CHARGE = pgettext_lazy("Invoice type", "Charge")
         CREDIT_NOTE = pgettext_lazy("Invoice type", "Credit note")
@@ -435,6 +464,7 @@ class ContactType(Enum):
     ASSOCIATION = "association"
     OTHER = "other"
 
+    @member
     class Labels:
         PERSON = pgettext_lazy("Contact type", "Person")
         BUSINESS = pgettext_lazy("Contact type", "Business")
@@ -452,6 +482,7 @@ class InfillDevelopmentCompensationState(Enum):
     NEGOTIATING = "negotiating"
     DECISION = "decision"
 
+    @member
     class Labels:
         ONGOING = pgettext_lazy("Infill development compensation", "Ongoing")
         NEGOTIATING = pgettext_lazy("Infill development compensation", "Negotiating")
@@ -476,6 +507,7 @@ class AreaType(Enum):
     PRE_DETAILED_PLAN = "pre_detailed_plan"  # Vireillä tai tuleva asemakaava
     OTHER = "other"
 
+    @member
     class Labels:
         LEASE_AREA = pgettext_lazy("Area type", "Lease area")
         PLAN_UNIT = pgettext_lazy("Area type", "Plan unit")
@@ -497,6 +529,7 @@ class EmailLogType(str, Enum):
 
     CONSTRUCTABILITY = "constructability"
 
+    @member
     class Labels:
         CONSTRUCTABILITY = pgettext_lazy("Email log type", "Constructability")
 
@@ -510,6 +543,7 @@ class LeaseholdTransferPartyType(Enum):
     CONVEYOR = "conveyor"  # Luovuttaja
     ACQUIRER = "acquirer"  # Vuokralainen
 
+    @member
     class Labels:
         LESSOR = pgettext_lazy("Leasehold transfer party type", "Lessor")
         CONVEYOR = pgettext_lazy("Leasehold transfer party type", "Conveyor")
@@ -527,6 +561,7 @@ class DecisionTypeKind(Enum):
         "lease_service_unit_transfer"  # Vuokrauksen siirto palvelukokonaisuudelle
     )
 
+    @member
     class Labels:
         LEASE_CANCELLATION = pgettext_lazy("Decision type kind", "Lease cancellation")
         BASIS_OF_RENT = pgettext_lazy("Decision type kind", "Basis of Rent")
@@ -543,6 +578,7 @@ class DetailedPlanClass(Enum):
     PENDING = "pending"
     EFFECTIVE = "effective"
 
+    @member
     class Labels:
         PENDING = pgettext_lazy("Detailed plan class", "Pending")
         EFFECTIVE = pgettext_lazy("Detailed plan class", "Effective")
@@ -560,6 +596,7 @@ class BasisOfRentType(Enum):
     FIELD = "field"  # In Finnish: Pelto
     MAST = "mast"  # In Finnish: Masto
 
+    @member
     class Labels:
         LEASE2022 = pgettext_lazy("Basis of rent type", "Lease")
         LEASE = pgettext_lazy("Basis of rent type", "Lease (old)")
@@ -578,6 +615,7 @@ class BasisOfRentZone(Enum):
     ZONE_2 = "zone_2"
     ZONE_3 = "zone_3"
 
+    @member
     class Labels:
         ZONE_1 = pgettext_lazy("Basis of rent zone", "Zone 1")
         ZONE_2 = pgettext_lazy("Basis of rent zone", "Zone 2")
@@ -592,6 +630,7 @@ class PlanUnitStatus(Enum):
     PRESENT = "present"
     PENDING = "pending"
 
+    @member
     class Labels:
         PRESENT = pgettext_lazy("Plan Unit Status", "Present")
         PENDING = pgettext_lazy("Plan Unit Status", "Pending")
@@ -610,6 +649,7 @@ class ServiceUnitId(IntEnum):
     KUVA_UPA = 4
     KUVA_NUP = 5
 
+    @member
     class Labels:
         MAKE = "Maaomaisuuden kehittäminen ja tontit"
         AKV = "Alueiden käyttö ja valvonta"
@@ -657,6 +697,7 @@ class PeriodicRentAdjustmentType(Enum):
     TASOTARKISTUS_20_20 = "TASOTARKISTUS_20_20"
     TASOTARKISTUS_20_10 = "TASOTARKISTUS_20_10"
 
+    @member
     class Labels:
         TASOTARKISTUS_20_20 = pgettext_lazy(
             "Periodic Rent Adjustment Type",
@@ -678,6 +719,7 @@ class CollectionStage(Enum):
     RISK_OF_LITIGATION = "risk_of_litigation"
     RISK_OF_TERMINATION_AND_LITIGATION = "risk_of_termination_and_litigation"
 
+    @member
     class Labels:
         RISK_OF_DEMOLITION = pgettext_lazy("Collection stage", "Risk of demolition")
         RISK_OF_DEMOLITION_AND_LITIGATION = pgettext_lazy(

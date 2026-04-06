@@ -1,3 +1,5 @@
+from enum import member
+
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
@@ -11,6 +13,7 @@ class FormState(str, Enum):
     READY = "ready"
     DELETED = "deleted"
 
+    @member
     class Labels:
         WORK_IN_PROGRESS = pgettext_lazy("Form state", "Work in progress")
         READY = pgettext_lazy("Form state", "Ready")
@@ -25,6 +28,7 @@ class SectionType(str, Enum):
     SHOW_ALWAYS = "show_always"
     SHOW_IF = "show_if"
 
+    @member
     class Labels:
         SHOW_ALWAYS = pgettext_lazy("Section type", "Show always")
         SHOW_IF = pgettext_lazy("Section type", "Show if")
@@ -39,6 +43,7 @@ class ApplicantType(str, Enum):
     COMPANY = "company"
     BOTH = "both"
 
+    @member
     class Labels:
         PERSON = pgettext_lazy("Applicant type", "Person")
         COMPANY = pgettext_lazy("Applicant type", "Company")
