@@ -4,7 +4,7 @@ import subprocess
 
 from django.contrib.auth.models import Permission
 from django.core import serializers
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from rest_framework.authtoken.models import Token
 
 from batchrun.models import ScheduledJob
@@ -21,59 +21,65 @@ class Command(BaseCommand):
         parser.add_argument("db_host", help="Database host")
         parser.add_argument("db_port", help="Database port")
         parser.add_argument("db_user", help="Database user")
+        parser.add_argument(
+            "backup_dir", help="Path where the temporary backup files are stored"
+        )
 
     def handle(self, *args, **options):
-        # Get arguments
         target_db = options["target_db"]
         db_host = options["db_host"]
         db_port = options["db_port"]
         db_user = options["db_user"]
+        backup_dir = options["backup_dir"]
 
-        self._ensure_backup_directory(constants.TMP_DIR)
+        self._ensure_backup_directory(backup_dir)
 
         self.stdout.write(
-            "Starting database backup operations. You may be prompted for the database password."
+            "Starting environment-specific database restore operations. You may be prompted for the database password."
         )
         self._restore_object_ownerships_and_permissions(
-            constants.TMP_DIR,
+            backup_dir,
             target_db,
             db_host,
             db_port,
             db_user,
             constants.OWNERSHIPS_BACKUP_FILENAME,
         )
-        self._restore_admin_users(
-            constants.TMP_DIR, constants.ADMIN_USERS_BACKUP_FILENAME
-        )
+        self._restore_admin_users(backup_dir, constants.ADMIN_USERS_BACKUP_FILENAME)
         self._restore_export_api_users(
-            constants.TMP_DIR, constants.EXPORT_API_USERS_BACKUP_FILENAME
+            backup_dir, constants.EXPORT_API_USERS_BACKUP_FILENAME
         )
         self._restore_lessor_contacts(
-            constants.TMP_DIR, constants.LESSOR_CONTACTS_BACKUP_FILENAME
+            backup_dir, constants.LESSOR_CONTACTS_BACKUP_FILENAME
         )
         self._restore_batchrun_schedules(
-            constants.TMP_DIR, constants.BATCHRUN_SCHEDULEDJOB_BACKUP_FILENAME
+            backup_dir, constants.BATCHRUN_SCHEDULEDJOB_BACKUP_FILENAME
         )
 
-        self._print_follow_up_instructions(constants.TMP_DIR)
+        self._print_follow_up_instructions(backup_dir)
 
-    def _ensure_backup_directory(self, tmp_dir_name: str) -> None:
-        if not os.path.exists(tmp_dir_name):
-            os.makedirs(tmp_dir_name)
-            self.stdout.write(f"Temporary directory created at: {tmp_dir_name}")
+    def _ensure_backup_directory(self, backup_dir: str) -> None:
+        if not os.path.exists(backup_dir):
+            os.makedirs(backup_dir)
+            self.stdout.write(f"Backup directory created at: {backup_dir}")
         else:
-            self.stdout.write(f"Temporary directory already exists at: {tmp_dir_name}")
+            if os.path.isdir(backup_dir):
+                self.stdout.write(f"Backup directory already exists at: {backup_dir}")
+            elif not os.path.isdir(backup_dir):
+                raise CommandError(
+                    f"Backup path '{backup_dir}' exists but is not a directory."
+                )
 
     def _restore_object_ownerships_and_permissions(
         self,
-        tmp_dir: str,
+        backup_dir: str,
         target_db: str,
         db_host: str,
         db_port: str,
         db_user: str,
         ownerships_backup_filename: str,
     ) -> None:
-        ownerships_backup_path = os.path.join(tmp_dir, ownerships_backup_filename)
+        ownerships_backup_path = os.path.join(backup_dir, ownerships_backup_filename)
         self.stdout.write(
             f"Restoring ownerships and permissions from {ownerships_backup_filename}..."
         )
@@ -95,8 +101,8 @@ class Command(BaseCommand):
             check=True,
         )
 
-    def _restore_admin_users(self, tmp_dir: str, filename: str) -> None:
-        admin_users_backup_path = os.path.join(tmp_dir, filename)
+    def _restore_admin_users(self, backup_dir: str, filename: str) -> None:
+        admin_users_backup_path = os.path.join(backup_dir, filename)
         self.stdout.write(f"Restoring admin users from {filename}...")
 
         with open(admin_users_backup_path, "r") as f:
@@ -125,8 +131,8 @@ class Command(BaseCommand):
                         f"Admin user already exists: {user.username} (ID: {user.pk})"
                     )
 
-    def _restore_export_api_users(self, tmp_dir: str, filename: str) -> None:
-        export_api_users_backup_path = os.path.join(tmp_dir, filename)
+    def _restore_export_api_users(self, backup_dir: str, filename: str) -> None:
+        export_api_users_backup_path = os.path.join(backup_dir, filename)
         self.stdout.write(f"Restoring Export API users from {filename}...")
 
         with open(export_api_users_backup_path, "r") as f:
@@ -166,8 +172,8 @@ class Command(BaseCommand):
                     f"Export API user restored: {user.username} (ID: {user.pk})"
                 )
 
-    def _restore_lessor_contacts(self, tmp_dir: str, filename: str) -> None:
-        lessor_contacts_backup_path = os.path.join(tmp_dir, filename)
+    def _restore_lessor_contacts(self, backup_dir: str, filename: str) -> None:
+        lessor_contacts_backup_path = os.path.join(backup_dir, filename)
         self.stdout.write(f"Restoring lessor contacts from {filename}...")
 
         with open(lessor_contacts_backup_path, "r") as f:
@@ -208,8 +214,8 @@ class Command(BaseCommand):
                         f"Lessor contact created: {lessor.name} (ID: {lessor.pk})"
                     )
 
-    def _restore_batchrun_schedules(self, tmp_dir: str, filename: str) -> None:
-        batchrun_scheduledjob_backup_path = os.path.join(tmp_dir, filename)
+    def _restore_batchrun_schedules(self, backup_dir: str, filename: str) -> None:
+        batchrun_scheduledjob_backup_path = os.path.join(backup_dir, filename)
         self.stdout.write(f"Restoring batchrun job schedules from {filename}...")
 
         # Drop existing schedules that were loaded from dump
@@ -224,16 +230,16 @@ class Command(BaseCommand):
                     f"Batchrun schedule restored: {schedule.comment} (ID: {schedule.pk})"
                 )
 
-    def _print_follow_up_instructions(self, tmp_dir: str) -> None:
+    def _print_follow_up_instructions(self, backup_dir: str) -> None:
         self.stdout.write(
             self.style.SUCCESS(
-                "Automated repair completed!\n"
+                "Automated partial restore completed!\n"
                 "Next steps for you: review the temporary backups, "
                 "and restore whatever you think is necessary either manually or with psql or pg_restore."
             )
         )
         self.stdout.write(
             self.style.WARNING(
-                f"Then lastly, delete the temporary backups in {tmp_dir}."
+                f"Then lastly, delete the temporary backups in {backup_dir}."
             )
         )

@@ -511,7 +511,7 @@ Then copy the SQL file from source server to destination server, e.g. with `scp`
 ### 4. Backup the destination database
 
 ```bash
-python manage.py database_backup_before_load <db name> <db host> <db port> <db user>
+python manage.py database_backup_before_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR
 ```
 
 ### 5. Load the sanitized dump
@@ -525,7 +525,7 @@ psql --username <db username> --dbname <db name> --host <db hostname> --port <db
 ### 6. Restore environment-specific settings
 
 ```bash
-python manage.py environment_specific_restore_after_database_load <db name> <db host> <db port> <db user>
+python manage.py environment_specific_restore_after_database_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR
 ```
 
 ### 7. Restore user access to MVJ

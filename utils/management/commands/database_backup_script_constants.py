@@ -1,4 +1,3 @@
-TMP_DIR = "tmp_backups_for_db_restore"
 BINARY_DUMP_FILENAME = "database.dump"
 SCHEMA_BACKUP_FILENAME = "schema_backup.sql"
 OWNERSHIPS_BACKUP_FILENAME = "ownerships_backup.sql"
