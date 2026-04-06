@@ -1,3 +1,5 @@
+from enum import member
+
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
@@ -10,6 +12,7 @@ class LaskeExportLogInvoiceStatus(Enum):
     SENT = "sent"
     FAILED = "failed"
 
+    @member
     class Labels:
         SENT = pgettext_lazy("Laske export log invoice status", "Sent")
         FAILED = pgettext_lazy("Laske export log invoice status", "Failed")

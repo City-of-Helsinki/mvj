@@ -1,3 +1,5 @@
+from enum import member
+
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum
 
@@ -11,6 +13,7 @@ class CreditDecisionStatus(Enum):
     NO = "no"
     CONSIDERATION = "consideration"
 
+    @member
     class Labels:
         YES = pgettext_lazy("Credit decision status", "Yes")
         NO = pgettext_lazy("Credit decision status", "No")

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import enumfields.fields
-from enum import Enum
+from enum import Enum, member
 
 
 class LandUseContractTypeLegacy(Enum):
@@ -16,6 +16,7 @@ class LandUseContractTypeLegacy(Enum):
     AGREEMENT_ON_APPRECIATION = "Agreement on appreciation"
     NO_AGREEMENT = "No agreement"
 
+    @member
     class Labels:
         LAND_USE_AGREEMENT = "Land Use Contract Type", "Land use agreement"
         AGREEMENT_ON_APPRECIATION = (
@@ -34,6 +35,7 @@ class InfillDevelopmentCompensationStateLegacy(Enum):
     NEGOTIATING = "negotiating"
     DECISION = "decision"
 
+    @member
     class Labels:
         ONGOING = "Infill development compensation", "Ongoing"
         NEGOTIATING = "Infill development compensation", "Negotiating"
@@ -48,6 +50,7 @@ class LandUseAgreementLitigantContactTypeLegacy(Enum):
     TENANT = "tenant"
     BILLING = "billing"
 
+    @member
     class Labels:
         TENANT = "Land Use Agreement Litigant Contact Type", "Tenant"
         BILLING = "Land Use Agreement Litigant Contact Type", "Billing"
@@ -61,6 +64,7 @@ class DueDatesPositionLegacy(Enum):
     START_OF_MONTH = "start_of_month"
     MIDDLE_OF_MONTH = "middle_of_month"
 
+    @member
     class Labels:
         START_OF_MONTH = "Due dates position", "Start of month"
         MIDDLE_OF_MONTH = "Due dates position", "Middle of month"
