@@ -1,4 +1,5 @@
 from collections import defaultdict
+from enum import member
 from fractions import Fraction
 from io import BytesIO
 from operator import itemgetter
@@ -73,6 +74,7 @@ class InvoicingReviewSection(Enum):
     ONGOING_RENT_WITHOUT_RENT_SHARES = "ongoing_rent_without_rent_shares"
     GAPS_IN_BILLING_PERIODS_LAST_5YEARS = "gaps_in_billing_periods_last_5years"
 
+    @member
     class Labels:
         INVOICING_NOT_ENABLED = pgettext_lazy(
             "Invoicing review", "Invoicing not enabled"
