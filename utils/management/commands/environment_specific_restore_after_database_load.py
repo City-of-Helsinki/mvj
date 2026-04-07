@@ -59,16 +59,18 @@ class Command(BaseCommand):
         self._print_follow_up_instructions(backup_dir)
 
     def _ensure_backup_directory(self, backup_dir: str) -> None:
+        if os.path.isdir(backup_dir):
+            self.stdout.write(f"Backup directory already exists at: {backup_dir}")
+            return
+
         if not os.path.exists(backup_dir):
             os.makedirs(backup_dir)
             self.stdout.write(f"Backup directory created at: {backup_dir}")
-        else:
-            if os.path.isdir(backup_dir):
-                self.stdout.write(f"Backup directory already exists at: {backup_dir}")
-            elif not os.path.isdir(backup_dir):
-                raise CommandError(
-                    f"Backup path '{backup_dir}' exists but is not a directory."
-                )
+            return
+
+        raise CommandError(
+            f"Backup path '{backup_dir}' exists but is not a directory."
+        )
 
     def _restore_object_ownerships_and_permissions(
         self,
