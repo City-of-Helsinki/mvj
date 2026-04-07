@@ -80,9 +80,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Backup directory created at: {backup_dir}")
             return
 
-        raise CommandError(
-            f"Backup path '{backup_dir}' exists but is not a directory."
-        )
+        raise CommandError(f"Backup path '{backup_dir}' exists but is not a directory.")
 
     def _backup_admin_users(self, backup_dir: str, filename: str) -> None:
         """Back up active admin users, excluding those with password set to '!'.

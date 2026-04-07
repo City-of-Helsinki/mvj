@@ -68,9 +68,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Backup directory created at: {backup_dir}")
             return
 
-        raise CommandError(
-            f"Backup path '{backup_dir}' exists but is not a directory."
-        )
+        raise CommandError(f"Backup path '{backup_dir}' exists but is not a directory.")
 
     def _restore_object_ownerships_and_permissions(
         self,
