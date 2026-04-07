@@ -71,16 +71,18 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Backup completed."))
 
     def _ensure_backup_directory(self, backup_dir: str) -> None:
+        if os.path.isdir(backup_dir):
+            self.stdout.write(f"Backup directory already exists at: {backup_dir}")
+            return
+
         if not os.path.exists(backup_dir):
             os.makedirs(backup_dir)
             self.stdout.write(f"Backup directory created at: {backup_dir}")
-        else:
-            if os.path.isdir(backup_dir):
-                self.stdout.write(f"Backup directory already exists at: {backup_dir}")
-            elif not os.path.isdir(backup_dir):
-                raise CommandError(
-                    f"Backup path '{backup_dir}' exists but is not a directory."
-                )
+            return
+
+        raise CommandError(
+            f"Backup path '{backup_dir}' exists but is not a directory."
+        )
 
     def _backup_admin_users(self, backup_dir: str, filename: str) -> None:
         """Back up active admin users, excluding those with password set to '!'.
