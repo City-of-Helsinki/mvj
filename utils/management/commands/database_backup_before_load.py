@@ -24,6 +24,11 @@ class Command(BaseCommand):
         parser.add_argument(
             "backup_dir", help="Path where to store these temporary backup files"
         )
+        parser.add_argument(
+            "--binary-dump",
+            action="store_true",
+            help="Also create a binary database dump with pg_dump --format=custom",
+        )
 
     def handle(self, *args, **options):
         target_db = options["target_db"]
@@ -31,6 +36,7 @@ class Command(BaseCommand):
         db_port = options["db_port"]
         db_user = options["db_user"]
         backup_dir = options["backup_dir"]
+        backup_binary_dump = options["binary_dump"]
 
         self._ensure_backup_directory(backup_dir)
 
@@ -59,14 +65,19 @@ class Command(BaseCommand):
         self._backup_ownerships_and_permissions(
             backup_dir, schema_backup_path, constants.OWNERSHIPS_BACKUP_FILENAME
         )
-        self._backup_database_binary(
-            backup_dir,
-            target_db,
-            db_host,
-            db_port,
-            db_user,
-            constants.BINARY_DUMP_FILENAME,
-        )
+        if backup_binary_dump:
+            self._backup_database_binary(
+                backup_dir,
+                target_db,
+                db_host,
+                db_port,
+                db_user,
+                constants.BINARY_DUMP_FILENAME,
+            )
+        else:
+            self.stdout.write(
+                "Skipping binary database dump. Use --binary-dump to enable it."
+            )
 
         self.stdout.write(self.style.SUCCESS("Backup completed."))
 
