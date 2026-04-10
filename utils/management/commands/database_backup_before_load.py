@@ -27,6 +27,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--binary-dump",
             action="store_true",
+            default=False,
             help="Also create a binary database dump with pg_dump --format=custom",
         )
 

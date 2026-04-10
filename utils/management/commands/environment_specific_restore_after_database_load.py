@@ -24,6 +24,15 @@ class Command(BaseCommand):
         parser.add_argument(
             "backup_dir", help="Path where the temporary backup files are stored"
         )
+        parser.add_argument(
+            "--restore-object-ownerships-and-permissions",
+            action="store_true",
+            default=False,
+            help=(
+                "Restore object ownerships and permissions."
+                " Uses PSQL, which might not be available in all environments."
+            ),
+        )
 
     def handle(self, *args, **options):
         target_db = options["target_db"]
@@ -31,20 +40,29 @@ class Command(BaseCommand):
         db_port = options["db_port"]
         db_user = options["db_user"]
         backup_dir = options["backup_dir"]
+        restore_object_ownerships_and_permissions = options[
+            "restore_object_ownerships_and_permissions"
+        ]
 
         self._ensure_backup_directory(backup_dir)
 
         self.stdout.write(
             "Starting environment-specific database restore operations. You may be prompted for the database password."
         )
-        self._restore_object_ownerships_and_permissions(
-            backup_dir,
-            target_db,
-            db_host,
-            db_port,
-            db_user,
-            constants.OWNERSHIPS_BACKUP_FILENAME,
-        )
+        if restore_object_ownerships_and_permissions:
+            self._restore_object_ownerships_and_permissions(
+                backup_dir,
+                target_db,
+                db_host,
+                db_port,
+                db_user,
+                constants.OWNERSHIPS_BACKUP_FILENAME,
+            )
+        else:
+            self.stdout.write(
+                "Skipping ownership and permission restore."
+                " Use --restore-object-ownerships-and-permissions to enable it."
+            )
         self._restore_admin_users(backup_dir, constants.ADMIN_USERS_BACKUP_FILENAME)
         self._restore_export_api_users(
             backup_dir, constants.EXPORT_API_USERS_BACKUP_FILENAME
