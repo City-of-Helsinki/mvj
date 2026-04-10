@@ -198,39 +198,23 @@ class Command(BaseCommand):
             contact_backups = serializers.deserialize("json", f)
 
             for backup in contact_backups:
-                try:
-                    lessor = Contact.objects.get(
-                        is_lessor=True,
-                        type=backup.object.type,
-                        service_unit=backup.object.service_unit,
-                    )
-                    lessor.type = backup.object.type
-                    lessor.name = backup.object.name
-                    lessor.address = backup.object.address
-                    lessor.postal_code = backup.object.postal_code
-                    lessor.city = backup.object.city
-                    lessor.email = backup.object.email
-                    lessor.sap_sales_office = backup.object.sap_sales_office
-                    lessor.service_unit = backup.object.service_unit
-                    lessor.save()
-                    self.stdout.write(
-                        f"Lessor contact restored: {lessor.name} (ID: {lessor.pk})"
-                    )
-                except (Contact.DoesNotExist, Contact.MultipleObjectsReturned):
-                    lessor = Contact.objects.create(
-                        type=backup.object.type,
-                        name=backup.object.name,
-                        address=backup.object.address,
-                        postal_code=backup.object.postal_code,
-                        city=backup.object.city,
-                        email=backup.object.email,
-                        is_lessor=True,
-                        sap_sales_office=backup.object.sap_sales_office,
-                        service_unit=backup.object.service_unit,
-                    )
-                    self.stdout.write(
-                        f"Lessor contact created: {lessor.name} (ID: {lessor.pk})"
-                    )
+                lessor, created = Contact.objects.update_or_create(
+                    is_lessor=True,
+                    type=backup.object.type,
+                    service_unit=backup.object.service_unit,
+                    defaults={
+                        "name": backup.object.name,
+                        "address": backup.object.address,
+                        "postal_code": backup.object.postal_code,
+                        "city": backup.object.city,
+                        "email": backup.object.email,
+                        "sap_sales_office": backup.object.sap_sales_office,
+                    },
+                )
+                action = "created" if created else "restored"
+                self.stdout.write(
+                    f"Lessor contact {action}: {lessor.name} (ID: {lessor.pk})"
+                )
 
     def _restore_batchrun_schedules(self, backup_dir: str, filename: str) -> None:
         batchrun_scheduledjob_backup_path = os.path.join(backup_dir, filename)
