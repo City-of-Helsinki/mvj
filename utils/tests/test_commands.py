@@ -201,6 +201,8 @@ def test_restore_export_api_users_restores_user_token_and_permissions(tmp_path: 
         )
 
     mock_get_or_create_user.assert_called_once_with(username="export-user")
-    mock_get_or_create_token.assert_called_once_with(user=user, key="abc123")
+    mock_get_or_create_token.assert_called_once_with(
+        user=user, defaults={"key": "abc123"}
+    )
     mock_permission_get.assert_called_once_with(codename="view_thing")
     user.user_permissions.add.assert_called_once_with(permission)
