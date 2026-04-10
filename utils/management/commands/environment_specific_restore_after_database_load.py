@@ -178,7 +178,7 @@ class Command(BaseCommand):
 
                 # Restore API token
                 api_key = backup["api_key"]
-                Token.objects.get_or_create(user=user, key=api_key)
+                Token.objects.get_or_create(user=user, defaults={"key": api_key})
 
                 # Restore API permissions
                 permissions = backup.get("permissions", [])
