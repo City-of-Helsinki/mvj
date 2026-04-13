@@ -25,6 +25,13 @@ class Command(BaseCommand):
             "backup_dir", help="Path where to store these temporary backup files"
         )
         parser.add_argument(
+            "--schema",
+            action="store_true",
+            default=False,
+            help="Also create a schema backup with pg_dump in plain sql."
+            " This is needed if you want to restore object ownerships and permissions after loading the database dump.",
+        )
+        parser.add_argument(
             "--binary-dump",
             action="store_true",
             default=False,
@@ -37,7 +44,8 @@ class Command(BaseCommand):
         db_port = options["db_port"]
         db_user = options["db_user"]
         backup_dir = options["backup_dir"]
-        backup_binary_dump = options["binary_dump"]
+        do_schema_backup = options["schema"]
+        do_binary_dump = options["binary_dump"]
 
         self._ensure_backup_directory(backup_dir)
 
@@ -55,18 +63,24 @@ class Command(BaseCommand):
             backup_dir, constants.LESSOR_CONTACTS_BACKUP_FILENAME
         )
 
-        schema_backup_path = self._backup_schema(
-            backup_dir,
-            target_db,
-            db_host,
-            db_port,
-            db_user,
-            constants.SCHEMA_BACKUP_FILENAME,
-        )
-        self._backup_ownerships_and_permissions(
-            backup_dir, schema_backup_path, constants.OWNERSHIPS_BACKUP_FILENAME
-        )
-        if backup_binary_dump:
+        if do_schema_backup:
+            schema_backup_path = self._backup_schema(
+                backup_dir,
+                target_db,
+                db_host,
+                db_port,
+                db_user,
+                constants.SCHEMA_BACKUP_FILENAME,
+            )
+            self._backup_ownerships_and_permissions(
+                backup_dir, schema_backup_path, constants.OWNERSHIPS_BACKUP_FILENAME
+            )
+        else:
+            self.stdout.write(
+                "Skipping schema backup and ownership/permission extraction."
+                " Use --schema to enable them."
+            )
+        if do_binary_dump:
             self._backup_database_binary(
                 backup_dir,
                 target_db,
@@ -192,6 +206,11 @@ class Command(BaseCommand):
         schema_backup_path: str,
         ownerships_backup_filename: str,
     ) -> None:
+        """
+        Extract and back up only the ownership and permission modifications from the schema backup.
+
+        Requires the schema backup to exist.
+        """
         if not os.path.exists(schema_backup_path):
             raise CommandError(
                 f"Schema backup file {schema_backup_path} does not exist."

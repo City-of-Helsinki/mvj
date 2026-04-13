@@ -116,6 +116,11 @@ def test_restore_object_ownerships_and_permissions_uses_psql(tmp_path: Path):
     db_port = "5432"
     db_user = "db_user_placeholder"
 
+    # Create the backup file so the existence check passes
+    (tmp_path / constants.OWNERSHIPS_BACKUP_FILENAME).write_text(
+        "GRANT SELECT ON foo TO bar;\n"
+    )
+
     with patch(
         "utils.management.commands.environment_specific_restore_after_database_load.subprocess.run"
     ) as mock_run:
@@ -145,6 +150,22 @@ def test_restore_object_ownerships_and_permissions_uses_psql(tmp_path: Path):
         ],
         check=True,
     )
+
+
+def test_restore_object_ownerships_and_permissions_raises_if_backup_file_missing(
+    tmp_path: Path,
+):
+    command = RestoreAfterLoadCommand()
+
+    with pytest.raises(CommandError, match="backup file not found"):
+        command._restore_object_ownerships_and_permissions(
+            backup_dir=str(tmp_path),
+            target_db="placeholder",
+            db_host="placeholder",
+            db_port="placeholder",
+            db_user="placeholder",
+            ownerships_backup_filename=constants.OWNERSHIPS_BACKUP_FILENAME,
+        )
 
 
 def test_restore_export_api_users_skips_heluser_accounts(tmp_path: Path):
@@ -206,3 +227,101 @@ def test_restore_export_api_users_restores_user_token_and_permissions(tmp_path: 
     )
     mock_permission_get.assert_called_once_with(codename="view_thing")
     user.user_permissions.add.assert_called_once_with(permission)
+
+
+# Placeholder parameter values for the common database connection options used
+# in the backup and restore command tests, to avoid unnecessary repetition.
+_DB_SCRIPTS_CONNECTION_OPTIONS = {
+    "target_db": "placeholder",
+    "db_host": "placeholder",
+    "db_port": "placeholder",
+    "db_user": "placeholder",
+}
+
+
+@pytest.mark.parametrize("schema_flag", [True, False])
+def test_backup_handle_schema_flag_enables_schema_and_ownership_backup(
+    tmp_path: Path, schema_flag: bool
+):
+    command = BackupBeforeLoadCommand()
+    options = {
+        **_DB_SCRIPTS_CONNECTION_OPTIONS,
+        "backup_dir": str(tmp_path),
+        "schema": schema_flag,
+        "binary_dump": False,
+    }
+
+    with patch.object(command, "_backup_admin_users"), patch.object(
+        command, "_backup_export_api_users"
+    ), patch.object(command, "_backup_batchrun_schedules"), patch.object(
+        command, "_backup_lessor_contacts"
+    ), patch.object(
+        command, "_backup_schema"
+    ) as mock_schema, patch.object(
+        command, "_backup_ownerships_and_permissions"
+    ) as mock_ownerships:
+        command.handle(**options)
+
+    if schema_flag:
+        mock_schema.assert_called_once()
+        mock_ownerships.assert_called_once()
+    else:
+        mock_schema.assert_not_called()
+        mock_ownerships.assert_not_called()
+
+
+@pytest.mark.parametrize("binary_dump_flag", [True, False])
+def test_backup_handle_binary_dump_flag_enables_database_binary_backup(
+    tmp_path: Path, binary_dump_flag: bool
+):
+    command = BackupBeforeLoadCommand()
+    options = {
+        **_DB_SCRIPTS_CONNECTION_OPTIONS,
+        "backup_dir": str(tmp_path),
+        "schema": False,
+        "binary_dump": binary_dump_flag,
+    }
+
+    with patch.object(command, "_backup_admin_users"), patch.object(
+        command, "_backup_export_api_users"
+    ), patch.object(command, "_backup_batchrun_schedules"), patch.object(
+        command, "_backup_lessor_contacts"
+    ), patch.object(
+        command, "_backup_database_binary"
+    ) as mock_binary:
+        command.handle(**options)
+
+    if binary_dump_flag:
+        mock_binary.assert_called_once()
+    else:
+        mock_binary.assert_not_called()
+
+
+@pytest.mark.parametrize("ownerships_flag", [True, False])
+def test_restore_handle_ownerships_flag_enables_ownership_restore(
+    tmp_path: Path, ownerships_flag: bool
+):
+    command = RestoreAfterLoadCommand()
+    options = {
+        **_DB_SCRIPTS_CONNECTION_OPTIONS,
+        "backup_dir": str(tmp_path),
+        "ownerships_and_permissions": ownerships_flag,
+    }
+
+    with patch.object(
+        command, "_restore_object_ownerships_and_permissions"
+    ) as mock_ownerships, patch.object(command, "_restore_admin_users"), patch.object(
+        command, "_restore_export_api_users"
+    ), patch.object(
+        command, "_restore_lessor_contacts"
+    ), patch.object(
+        command, "_restore_batchrun_schedules"
+    ), patch.object(
+        command, "_print_follow_up_instructions"
+    ):
+        command.handle(**options)
+
+    if ownerships_flag:
+        mock_ownerships.assert_called_once()
+    else:
+        mock_ownerships.assert_not_called()
