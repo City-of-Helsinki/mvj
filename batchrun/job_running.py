@@ -5,6 +5,7 @@ from shutil import copyfileobj
 from typing import BinaryIO, cast
 
 from django import db
+from django.db import OperationalError
 
 from ._times import utc_now
 from .constants import LINE_END_CHARACTERS
@@ -34,11 +35,20 @@ def execute_job_run(job_run: JobRun) -> None:
     stdout_collector_thread.start()
     stderr_collector_thread.start()
 
+    # Close main processes db connection while waiting for child process to finish.
+    db.connection.close()
+
     pipe.wait()
 
     job_run.stopped_at = utc_now()
     job_run.exit_code = pipe.returncode
-    job_run.save(update_fields=["stopped_at", "exit_code"])
+
+    try:
+        job_run.save(update_fields=["stopped_at", "exit_code"])
+    except OperationalError:
+        # In case the database connection is closed by the server, retry after closing the old connection
+        db.close_old_connections()
+        job_run.save(update_fields=["stopped_at", "exit_code"])
 
     stdout_collector_thread.join()
     stderr_collector_thread.join()
