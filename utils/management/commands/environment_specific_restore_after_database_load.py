@@ -25,7 +25,7 @@ class Command(BaseCommand):
             "backup_dir", help="Path where the temporary backup files are stored"
         )
         parser.add_argument(
-            "--restore-object-ownerships-and-permissions",
+            "--ownerships-and-permissions",
             action="store_true",
             default=False,
             help=(
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         db_user = options["db_user"]
         backup_dir = options["backup_dir"]
         restore_object_ownerships_and_permissions = options[
-            "restore_object_ownerships_and_permissions"
+            "ownerships_and_permissions"
         ]
 
         self._ensure_backup_directory(backup_dir)
@@ -61,7 +61,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 "Skipping ownership and permission restore."
-                " Use --restore-object-ownerships-and-permissions to enable it."
+                " Use --ownerships-and-permissions to enable it."
             )
         self._restore_admin_users(backup_dir, constants.ADMIN_USERS_BACKUP_FILENAME)
         self._restore_export_api_users(
@@ -102,6 +102,11 @@ class Command(BaseCommand):
             f"Restoring ownerships and permissions from {ownerships_backup_filename}..."
         )
 
+        if not os.path.exists(ownerships_backup_path):
+            raise CommandError(
+                f"Ownerships backup file not found at '{ownerships_backup_path}'. "
+                "Make sure to run the backup command with --schema before restoring ownerships and permissions."
+            )
         subprocess.run(
             [
                 "psql",

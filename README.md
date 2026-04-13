@@ -435,7 +435,7 @@ pg_restore --dbname DB_NAME --username USERNAME --host DB_HOST --clean --if-exis
 
 ## Sanitized database dump
 
-When taking a database dump from production to be used for development or testing
+When creating a database dump from production to be used for development or testing
 purposes, sensitive fields must be sanitized. We use
 [Django sanitized dump](https://github.com/andersinno/django-sanitized-dump/#django-management-commands)
 for sanitizing the data.
@@ -485,19 +485,27 @@ Then copy the SQL file from source server to destination server, e.g. with `scp`
 
 ### 4. Backup the destination database
 
+Back up the entire database just in case:
+
+```bash
+pg_dump --dbname DB_NAME --host DB_HOST --username USERNAME --format custom --file mvj-ENVIRONMENT_$(date +%Y%m%d%H%m).dump
+```
+
+Back up environment-specific data, for easier automatic restoration later with
+another management command. Read the command's input parameters for more things to
+back up, if you see necessary:
+
 ```bash
 python manage.py database_backup_before_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR
 ```
 
 ### 5. Load the sanitized dump
 
-Load the SQL dump with `psql`:
-
 ```bash
-psql --username DB_USER --dbname DB_NAME --host DB_HOST --port DB_PORT --file /path/to/sanitized_DATETIME.sql > dump_loading.log
+psql --dbname DB_NAME --host DB_HOST -port DB_PORT ---username DB_USER --file /path/to/sanitized_DATETIME.sql > dump_loading.log
 ```
 
-### 6. Restore environment-specific settings
+### 6. Restore environment-specific data
 
 ```bash
 python manage.py environment_specific_restore_after_database_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR
