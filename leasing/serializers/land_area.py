@@ -409,8 +409,8 @@ class CustomDetailedPlanSerializer(
         instance_class=PlanUnitIntendedUse,
         queryset=PlanUnitIntendedUse.objects.all(),
         related_serializer=PlanUnitIntendedUseSerializer,
-        allow_null=True,
-        required=False,
+        allow_null=False,
+        required=True,
     )
     state = InstanceDictPrimaryKeyRelatedField(
         instance_class=PlanUnitState,
