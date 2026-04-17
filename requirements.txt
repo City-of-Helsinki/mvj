@@ -155,6 +155,8 @@ elastic-transport==8.17.1
     # via elasticsearch8
 elasticsearch8==8.19.3
     # via django-resilient-logger
+faker==40.13.0
+    # via -r requirements.in
 helsinki-profile-gdpr-api==0.2.0
     # via -r requirements.in
 html5lib==1.1
@@ -242,6 +244,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   django-auditlog
     #   elasticsearch8
+    #   faker
 python-docx==1.1.2
     # via docxtpl
 python-jose==3.5.0

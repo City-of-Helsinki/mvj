@@ -70,8 +70,10 @@ factory-boy==3.3.3
     # via
     #   -r requirements-dev.in
     #   pytest-factoryboy
-faker==25.2.0
-    # via factory-boy
+faker==40.13.0
+    # via
+    #   -c requirements.txt
+    #   factory-boy
 flake8==7.3.0
     # via
     #   -r requirements-dev.in
@@ -164,18 +166,10 @@ pytest-django==4.11.1
     # via -r requirements-dev.in
 pytest-factoryboy==2.8.1
     # via -r requirements-dev.in
-python-dateutil==2.9.0.post0
-    # via
-    #   -c requirements.txt
-    #   faker
 requests==2.32.5
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
-six==1.16.0
-    # via
-    #   -c requirements.txt
-    #   python-dateutil
 sqlparse==0.5.0
     # via
     #   -c requirements.txt
