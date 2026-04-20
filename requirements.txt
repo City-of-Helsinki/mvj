@@ -65,7 +65,7 @@ deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==5.2.12
+django==5.2.13
     # via
     #   -r requirements.in
     #   django-anymail
@@ -88,21 +88,21 @@ django==5.2.12
     #   drf-oidc-auth
     #   drf-yasg
     #   helsinki-profile-gdpr-api
-django-admin-rangefilter==0.13.3
+django-admin-rangefilter==0.13.5
     # via -r requirements.in
-django-anymail==13.1
+django-anymail==15.0
     # via -r requirements.in
-django-auditlog==3.4.0
+django-auditlog==3.4.1
     # via -r requirements.in
 django-cors-headers==4.9.0
     # via -r requirements.in
 django-countries==8.2.0
     # via -r requirements.in
-django-enumfields2==3.0.2
+django-enumfields2==4.0
     # via -r requirements.in
-django-environ==0.12.0
+django-environ==0.13.0
     # via -r requirements.in
-django-filter==25.1
+django-filter==25.2
     # via
     #   -r requirements.in
     #   djangorestframework-gis
@@ -112,7 +112,7 @@ django-helusers==0.14.4
     #   helsinki-profile-gdpr-api
 django-model-utils==5.0.0
     # via -r requirements.in
-django-modeltranslation==0.19.17
+django-modeltranslation==0.19.19
     # via -r requirements.in
 django-nested-inline==0.4.6
     # via -r requirements.in
@@ -147,7 +147,7 @@ docxtpl==0.20.2
     # via -r requirements.in
 drf-oidc-auth==3.0.0
     # via helsinki-profile-gdpr-api
-drf-yasg[validation]==1.21.11
+drf-yasg[validation]==1.21.15
     # via -r requirements.in
 ecdsa==0.19.0
     # via python-jose
@@ -162,7 +162,9 @@ helsinki-profile-gdpr-api==0.2.0
 html5lib==1.1
     # via xhtml2pdf
 idna==3.7
-    # via requests
+    # via
+    #   django-anymail
+    #   requests
 inflection==0.5.1
     # via drf-yasg
 invoke==2.2.1
@@ -179,7 +181,7 @@ jsonschema-specifications==2023.12.1
     # via jsonschema
 lockfile==0.12.2
     # via python-daemon
-lxml==6.0.2
+lxml==6.1.0
     # via
     #   -r requirements.in
     #   docxtpl
@@ -192,7 +194,7 @@ mypy==1.7.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
-oracledb==3.4.1
+oracledb==3.4.2
     # via -r requirements.in
 oscrypto==1.3.0
     # via pyhanko-certvalidator
@@ -244,7 +246,6 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   django-auditlog
     #   elasticsearch8
-    #   faker
 python-docx==1.1.2
     # via docxtpl
 python-jose==3.5.0
@@ -272,7 +273,7 @@ reportlab==4.0.9
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.32.5
+requests==2.33.1
     # via
     #   -r requirements.in
     #   django-anymail
@@ -293,7 +294,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.9
     # via python-jose
-sentry-sdk==2.47.0
+sentry-sdk==2.58.0
     # via
     #   -r requirements.in
     #   django-q-sentry
@@ -325,6 +326,7 @@ typing-extensions==4.15.0
     # via
     #   beautifulsoup4
     #   django-countries
+    #   django-modeltranslation
     #   django-stubs
     #   django-stubs-ext
     #   elasticsearch8
@@ -334,7 +336,7 @@ typing-extensions==4.15.0
     #   python-docx
     #   qrcode
     #   swagger-spec-validator
-tzdata==2025.2
+tzdata==2026.1
     # via -r requirements.in
 tzlocal==5.2
     # via pyhanko
