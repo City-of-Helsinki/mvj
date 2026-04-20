@@ -106,7 +106,7 @@ django-filter==25.2
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-django-helusers==0.14.4
+django-helusers==1.1.0
     # via
     #   -r requirements.in
     #   helsinki-profile-gdpr-api
@@ -157,7 +157,7 @@ elasticsearch8==8.19.3
     # via django-resilient-logger
 faker==40.13.0
     # via -r requirements.in
-helsinki-profile-gdpr-api==0.2.0
+helsinki-profile-gdpr-api==1.1.0
     # via -r requirements.in
 html5lib==1.1
     # via xhtml2pdf
