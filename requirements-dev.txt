@@ -43,7 +43,7 @@ cryptography==46.0.0
     #   paramiko
 debugpy==1.8.14
     # via -r requirements-dev.in
-django==5.2.12
+django==5.2.13
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -166,7 +166,7 @@ pytest-django==4.11.1
     # via -r requirements-dev.in
 pytest-factoryboy==2.8.1
     # via -r requirements-dev.in
-requests==2.32.5
+requests==2.33.1
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
