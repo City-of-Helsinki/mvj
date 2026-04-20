@@ -299,7 +299,7 @@ class CollectionLetterAdmin(FieldPermissionsModelAdmin):
 class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "created_at", "note", "user")
     search_fields = [
-        "lease__identifier",
+        "lease__identifier__identifier",
         "user__first_name",
         "user__last_name",
     ]
@@ -391,7 +391,7 @@ class DecisionTypeAdmin(NameAdmin):
 @admin.register(Inspection)
 class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "inspector", "supervision_date", "supervised_date")
-    search_fields = ["lease__identifier__identifier", "inspector__name"]
+    search_fields = ["lease__identifier__identifier", "inspector"]
     raw_id_fields = ("lease",)
 
     def get_queryset(self, request):
