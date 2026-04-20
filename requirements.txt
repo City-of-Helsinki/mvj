@@ -65,7 +65,7 @@ deepmerge==2.0
     # via -r requirements.in
 deprecation==2.1.0
     # via django-helusers
-django==5.2.12
+django==5.2.13
     # via
     #   -r requirements.in
     #   django-anymail
@@ -244,7 +244,6 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   django-auditlog
     #   elasticsearch8
-    #   faker
 python-docx==1.1.2
     # via docxtpl
 python-jose==3.5.0
