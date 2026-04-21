@@ -105,7 +105,8 @@ class CenterOnHelsinkiGISAdmin(admin.GISModelAdmin):
 
 @admin.register(AreaNote)
 class AreaNoteAdmin(FieldPermissionsAdminMixin, CenterOnHelsinkiGISAdmin):
-    pass
+    list_display = ("created_at", "user")
+    search_fields = ["note", "user__first_name", "user__last_name", "user__username"]
 
 
 class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
@@ -180,6 +181,7 @@ class DistrictAdmin(admin.ModelAdmin):
 @admin.register(TenantContact)
 class TenantContactAdmin(FieldPermissionsModelAdmin):
     list_display = ("get_lease_identifier", "tenant", "type", "contact")
+    search_fields = ["tenant__lease__identifier__identifier", "contact__name"]
     raw_id_fields = ("tenant", "contact")
 
     @admin.display(description=_("Lease"))
@@ -209,7 +211,10 @@ class TenantContactInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(Tenant)
 class TenantAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease",)
+    list_display = ("lease", "get_tenant_names")
+    search_fields = [
+        "lease__identifier__identifier",
+    ]
     inlines = [TenantContactInline]
     raw_id_fields = ("lease",)
 
@@ -224,7 +229,12 @@ class TenantAdmin(FieldPermissionsModelAdmin):
             "lease__identifier__type",
             "lease__identifier__municipality",
             "lease__identifier__district",
-        )
+        ).prefetch_related("contacts")
+
+    @admin.display(description=_("Tenant names"))
+    def get_tenant_names(self, obj: Tenant):
+        tenant_names: list[str] = [contact.get_name() for contact in obj.contacts.all()]
+        return " / ".join(tenant_names) or "-"
 
 
 class RelatedLeaseInline(FieldPermissionsAdminMixin, admin.TabularInline):
@@ -241,6 +251,8 @@ class LeaseBasisOfRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(LeaseIdentifier)
 class LeaseIdentifierAdmin(FieldPermissionsModelAdmin):
+    search_fields = ["identifier"]
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
@@ -286,6 +298,12 @@ class CollectionLetterAdmin(FieldPermissionsModelAdmin):
 @admin.register(CollectionNote)
 class CollectionNoteAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "created_at", "note", "user")
+    search_fields = [
+        "lease__identifier__identifier",
+        "user__first_name",
+        "user__last_name",
+    ]
+    list_filter = ("collection_stage",)
     raw_id_fields = ("lease",)
     ordering = ("-created_at",)
 
@@ -341,6 +359,11 @@ class ConditionInline(FieldPermissionsAdminMixin, admin.StackedInline):
 @admin.register(Decision)
 class DecisionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "reference_number", "decision_maker", "type")
+    search_fields = [
+        "reference_number",
+        "decision_maker__name",
+        "lease__identifier__identifier",
+    ]
     inlines = [ConditionInline]
     raw_id_fields = ("lease",)
 
@@ -368,6 +391,7 @@ class DecisionTypeAdmin(NameAdmin):
 @admin.register(Inspection)
 class InspectionAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "inspector", "supervision_date", "supervised_date")
+    search_fields = ["lease__identifier__identifier", "inspector"]
     raw_id_fields = ("lease",)
 
     def get_queryset(self, request):
@@ -415,6 +439,7 @@ class RentAdjustmentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 @admin.register(Rent)
 class RentAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type")
+    search_fields = ["lease__identifier__identifier"]
     inlines = [
         RentDueDateInline,
         FixedInitialYearRentInline,
@@ -675,7 +700,9 @@ class LeaseAreaAddressInline(FieldPermissionsAdminMixin, admin.TabularInline):
 
 @admin.register(LeaseArea)
 class LeaseAreaAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease", "type")
+    list_display = ("lease", "identifier", "type")
+    search_fields = ["lease__identifier__identifier", "identifier"]
+    list_filter = ("type",)
     inlines = [
         LeaseAreaAddressInline,
         ConstructabilityDescriptionInline,
@@ -700,8 +727,15 @@ class LeaseAreaAdmin(FieldPermissionsModelAdmin):
 
 @admin.register(Plot)
 class PlotAdmin(FieldPermissionsModelAdmin):
-    list_display = ("lease_area", "type")
+    list_display = ("get_lease_area_identifier", "type")
+    search_fields = ["lease_area__identifier", "type"]
+    list_filter = ("type",)
     raw_id_fields = ("lease_area",)
+
+    def get_lease_area_identifier(self, obj):
+        return str(obj.lease_area.identifier)
+
+    get_lease_area_identifier.short_description = _("Lease Area Identifier")
 
 
 @admin.register(LeaseStateLog)
@@ -726,8 +760,10 @@ class LeaseStateLogAdmin(admin.ModelAdmin):
 
 @admin.register(PlanUnit)
 class PlanUnitAdmin(FieldPermissionsModelAdmin):
-    list_display = ("get_lease_identifier", "lease_area")
+    list_display = ("identifier", "get_lease_identifier", "lease_area")
+    list_filter = ("plan_unit_type__name",)
     raw_id_fields = ("lease_area",)
+    search_fields = ["identifier"]
 
     @admin.display(description=_("Lease"))
     def get_lease_identifier(self, obj):
