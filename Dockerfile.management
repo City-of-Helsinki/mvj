@@ -1,0 +1,34 @@
+# Dockerfile for the Django management commands pod.
+# No services are exposed or started.
+# See the mvj-pipelines repo for instructions how to run this container.
+
+FROM helsinki.azurecr.io/ubi9/python-312-gdal:latest
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY --chown=default:root requirements*.txt /app/
+
+USER default
+
+RUN pip install --no-cache-dir -r /app/requirements.txt \
+    && pip install --no-cache-dir -r /app/requirements-dev.txt
+
+USER root
+
+# Install PostgreSQL 17 client tools (pg_dump, pg_restore, psql).
+# The default UBI9 AppStream only ships PG13; use the PGDG repo to get PG17.
+RUN dnf install -y https://ftp.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-42.0-64.rhel9PGDG.noarch.rpm \
+    && dnf install -y postgresql17 \
+    && dnf clean all
+
+COPY --chown=default:root . /app/
+
+# Compile translation files so management commands that use translations work correctly.
+RUN python manage.py compilemessages
+
+USER default
+
+# Keep the container alive so developers can exec into it.
+CMD ["sleep", "infinity"]
