@@ -154,7 +154,7 @@ pynacl==1.5.0
     # via
     #   -c requirements.txt
     #   paramiko
-pytest==8.4.1
+pytest==9.0.3
     # via
     #   -r requirements-dev.in
     #   pytest-cov

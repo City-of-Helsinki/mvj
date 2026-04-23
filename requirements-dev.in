@@ -20,7 +20,7 @@ mypy==1.7.1
 openpyxl~=3.1.2
 paramiko-mock==2.0.1
 pep8-naming~=0.15.1
-pytest~=8.4.1
+pytest~=9.0.3
 pytest-cov~=6.2.1
 pytest-django~=4.11.1
 pytest-factoryboy~=2.8.1
