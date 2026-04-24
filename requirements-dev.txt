@@ -75,10 +75,7 @@ faker==40.13.0
 flake8==7.3.0
     # via
     #   -r requirements-dev.in
-    #   flake8-print
     #   pep8-naming
-flake8-print==5.0.0
-    # via -r requirements-dev.in
 httpretty==1.1.4
     # via -r requirements-dev.in
 idna==3.7
@@ -137,9 +134,7 @@ pluggy==1.5.0
     #   pytest
     #   pytest-cov
 pycodestyle==2.14.0
-    # via
-    #   flake8
-    #   flake8-print
+    # via flake8
 pycparser==2.22
     # via
     #   -c requirements.txt
