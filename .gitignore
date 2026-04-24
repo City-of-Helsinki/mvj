@@ -26,5 +26,4 @@
 /nls_leasehold_transfers/
 /tmp_backups_for_db_restore/
 .mypy_cache
-PCF_20181128.dat
 coverage.xml
