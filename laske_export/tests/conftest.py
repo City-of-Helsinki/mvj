@@ -60,7 +60,6 @@ def laske_export_from_email():
 
 
 @pytest.fixture(scope="function", autouse=True)
-@pytest.mark.django_db
 def laske_export_announce_email():
     with override_settings(
         LASKE_EXPORT_ANNOUNCE_EMAIL="john@example.com,jane@example.com"
