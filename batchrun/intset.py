@@ -186,10 +186,10 @@ def _parse_spec_part(part: str, min_value: int, max_value: int) -> range:
     match = re.match(r"^(?:\*|(\d+)(?:-(\d+))?)(?:/(\d+))?$", part)
     if not match:
         raise ValueError("Invalid spec part: {}".format(part))
-    (start_str, stop_str, step_str) = match.groups()
+    start_str, stop_str, step_str = match.groups()
     step = int(step_str) if step_str else 1
     if start_str and stop_str:
-        (start, stop) = (int(start_str), int(stop_str))
+        start, stop = (int(start_str), int(stop_str))
         if start > stop:
             raise ValueError("Invalid value range in spec")
     elif start_str:

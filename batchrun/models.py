@@ -356,9 +356,9 @@ class JobRunQuerySet(QuerySet["JobRun"]):
 
         Return the amounts of deleted compacted logs and log entries.
         """
-        (total_deleted_logs, total_deleted_entries) = (0, 0)
+        total_deleted_logs, total_deleted_entries = (0, 0)
         for run in self:
-            (deleted_logs, deleted_entries) = run.delete_logs()
+            deleted_logs, deleted_entries = run.delete_logs()
             total_deleted_logs += deleted_logs
             total_deleted_entries += deleted_entries
         return (total_deleted_logs, total_deleted_entries)
@@ -375,10 +375,10 @@ class JobRunQuerySet(QuerySet["JobRun"]):
         and log entries.
         """
         log_entries = JobRunLogEntry.objects.filter(run_id__in=self)
-        (entries_deleted, _delete_info1) = log_entries.delete()
+        entries_deleted, _delete_info1 = log_entries.delete()
         logs = JobRunLog.objects.filter(run_id__in=self)
-        (logs_deleted, _delete_info2) = logs.delete()
-        (runs_deleted, _delete_info3) = self.delete()
+        logs_deleted, _delete_info2 = logs.delete()
+        runs_deleted, _delete_info3 = self.delete()
         return (runs_deleted, logs_deleted, entries_deleted)
 
 
@@ -417,7 +417,7 @@ class JobRun(models.Model):
         LOG.info("Compacting logs of %s", f"job run {self.pk} / {self}")
         with transaction.atomic():
             JobRunLog.create_for_run_if_not_exists(self)
-            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+            deleted_entries, _delete_map = self.log_entries.all().delete()
         return deleted_entries
 
     def delete_logs(self) -> Tuple[int, int]:
@@ -425,7 +425,7 @@ class JobRun(models.Model):
 
         if self.log_entries.exists():
             LOG.info("Deleting log entries of %s", me)
-            (deleted_entries, _delete_map) = self.log_entries.all().delete()
+            deleted_entries, _delete_map = self.log_entries.all().delete()
         else:
             deleted_entries = 0
 
@@ -514,7 +514,7 @@ class JobRunLog(models.Model):
 
     @classmethod
     def create_for_run_if_not_exists(cls, run: JobRun) -> Tuple[int, bool]:
-        (job_run_log, created) = cls.objects.get_or_create(
+        job_run_log, created = cls.objects.get_or_create(
             run=run,
             defaults=dict(
                 start=run.started_at,

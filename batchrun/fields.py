@@ -23,7 +23,7 @@ class IntegerSetSpecifierField(models.CharField):  # type: ignore
         super().__init__(default=default, **kwargs)
 
     def deconstruct(self) -> Tuple[str, str, Sequence[Any], Dict[str, Any]]:
-        (name, path, args, kwargs) = super().deconstruct()
+        name, path, args, kwargs = super().deconstruct()
 
         kwargs["value_range"] = self.value_range
         kwargs["validators"] = [

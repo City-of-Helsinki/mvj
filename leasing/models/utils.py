@@ -253,8 +253,8 @@ def denormalize_identifier(identifier):
 
 def subtract_range_from_range(the_range, subtract_range):
     # TODO: check argument validity
-    (range1_start, range1_end) = the_range
-    (range2_start, range2_end) = subtract_range
+    range1_start, range1_end = the_range
+    range2_start, range2_end = subtract_range
 
     if range2_start > range1_end or range1_start > range2_end:
         return [(range1_start, range1_end)]

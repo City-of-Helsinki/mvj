@@ -22,7 +22,7 @@ def rr(
         spec_parts = spec_parts[1:]
     else:
         years = "*"
-    (months, days_of_month, hours, minutes) = spec_parts
+    months, days_of_month, hours, minutes = spec_parts
 
     return RecurrenceRule.create(
         tz,

@@ -43,16 +43,13 @@ def test_backup_ownerships_and_permissions_filters_only_grant_related_lines(
     tmp_path: Path,
 ):
     schema_backup = tmp_path / constants.SCHEMA_BACKUP_FILENAME
-    schema_backup.write_text(
-        """
+    schema_backup.write_text("""
 CREATE TABLE test_table (id int);
 ALTER TABLE public.test_table OWNER TO app_user;
 COMMENT ON TABLE public.test_table IS 'sample';
 REVOKE ALL ON TABLE public.test_table FROM public;
 GRANT SELECT ON TABLE public.test_table TO readonly;
-""".strip()
-        + "\n"
-    )
+""".strip() + "\n")
 
     command = BackupBeforeLoadCommand()
     command._backup_ownerships_and_permissions(
