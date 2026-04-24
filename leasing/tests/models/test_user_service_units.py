@@ -32,7 +32,7 @@ def test_api_access_updates_service_units(
     ServiceUnitGroupMapping.objects.create(group=group, service_unit=service_unit)
 
     # Generate JWT
-    (_public_rsa_key, private_rsa_key) = rsa_newkeys(2048)
+    _public_rsa_key, private_rsa_key = rsa_newkeys(2048)
     private_pem = private_rsa_key.save_pkcs1(format="PEM")
     rsa_key = RSAKey(key=private_pem, algorithm=ALGORITHMS.RS256)
 

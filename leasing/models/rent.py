@@ -500,7 +500,7 @@ class Rent(TimeStampedSafeDeleteModel):
         )
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
-            (fixed_overlap, fixed_remainders) = get_range_overlap_and_remainder(
+            fixed_overlap, fixed_remainders = get_range_overlap_and_remainder(
                 date_range_start, date_range_end, *fixed_initial_year_rent.date_range
             )
 
@@ -555,7 +555,7 @@ class Rent(TimeStampedSafeDeleteModel):
         )
 
         for contract_rent in contract_rents:
-            (contract_overlap, _remainder) = get_range_overlap_and_remainder(
+            contract_overlap, _remainder = get_range_overlap_and_remainder(
                 date_range_start, date_range_end, *contract_rent.date_range
             )
 
@@ -676,7 +676,7 @@ class Rent(TimeStampedSafeDeleteModel):
             return calculation_result
 
         # Limit the date range based on the rent start and end dates
-        (clamped_date_range_start, clamped_date_range_end) = self.clamp_date_range(
+        clamped_date_range_start, clamped_date_range_end = self.clamp_date_range(
             date_range_start, date_range_end
         )
 

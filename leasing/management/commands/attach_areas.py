@@ -155,7 +155,7 @@ class Command(BaseCommand):
                             "geometry": intersect_area.geometry,
                             "master_timestamp": timezone.now(),
                         }
-                        (plot, plot_created) = Plot.objects.get_or_create(
+                        plot, plot_created = Plot.objects.get_or_create(
                             defaults=rest_data, **match_data
                         )
                         if not plot_created:

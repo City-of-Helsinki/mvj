@@ -501,7 +501,7 @@ class InvoicingReviewReport(ReportBase):
         for row in dictfetchall(cursor):
             shares_total = Fraction()
             for share in row["shares"]:
-                (numerator, denominator) = share.split("/")
+                numerator, denominator = share.split("/")
                 shares_total += Fraction(int(numerator), int(denominator))
 
             if shares_total != Fraction(1):

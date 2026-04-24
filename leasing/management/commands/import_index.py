@@ -73,7 +73,7 @@ class Command(BaseCommand):
             data = get_data(index_import["url"])
 
             for row in data:
-                (year, month, number) = get_values_from_row(row)
+                year, month, number = get_values_from_row(row)
 
                 if number is None:
                     continue

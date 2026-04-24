@@ -123,7 +123,7 @@ class JobRunHistoryCleaner:
             LOG.info(f"{deleting} information of job runs: %s", batch_run_ids)
             if not self.dry_run:
                 delete_counts = batch.delete_with_logs()
-                (runs_deleted, logs_deleted, entries_deleted) = delete_counts
+                runs_deleted, logs_deleted, entries_deleted = delete_counts
                 self.runs_deleted += runs_deleted
                 self.compact_logs_deleted += logs_deleted
                 self.log_entries_deleted += entries_deleted
@@ -138,7 +138,7 @@ class JobRunHistoryCleaner:
     def _execute_delete_logs(self, run_ids: Iterable[int]) -> None:
         runs: JobRunQuerySet = JobRun.objects.filter(pk__in=run_ids)
         if not self.dry_run:
-            (deleted_logs, deleted_entries) = runs.delete_logs()
+            deleted_logs, deleted_entries = runs.delete_logs()
             self.compact_logs_deleted += deleted_logs
             self.log_entries_deleted += deleted_entries
 
