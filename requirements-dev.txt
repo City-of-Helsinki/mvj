@@ -71,9 +71,7 @@ faker==40.13.0
     #   -c requirements.txt
     #   factory-boy
 flake8==7.3.0
-    # via
-    #   -r requirements-dev.in
-    #   pep8-naming
+    # via -r requirements-dev.in
 idna==3.7
     # via
     #   -c requirements.txt
@@ -117,8 +115,6 @@ paramiko-mock==2.0.1
     # via -r requirements-dev.in
 pathspec==0.12.1
     # via black
-pep8-naming==0.15.1
-    # via -r requirements-dev.in
 platformdirs==4.2.2
     # via
     #   -c requirements.txt
