@@ -62,8 +62,6 @@ django-stubs-ext==5.2.1
     #   django-stubs
 djangorestframework-stubs==3.14.5
     # via -r requirements-dev.in
-et-xmlfile==1.1.0
-    # via openpyxl
 factory-boy==3.3.3
     # via
     #   -r requirements-dev.in
@@ -105,8 +103,6 @@ mypy-extensions==1.0.0
     #   -c requirements.txt
     #   black
     #   mypy
-openpyxl==3.1.2
-    # via -r requirements-dev.in
 packaging==24.0
     # via
     #   -c requirements.txt
