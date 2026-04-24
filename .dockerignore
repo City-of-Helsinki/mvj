@@ -10,7 +10,7 @@
 
 # Local settings and secrets
 local_settings.py
-.env
+.env*
 *.env.yaml
 
 # Python build artifacts
