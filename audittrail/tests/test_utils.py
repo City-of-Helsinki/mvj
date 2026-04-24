@@ -10,7 +10,7 @@ from leasing.models import ServiceUnit
 
 @pytest.mark.django_db
 def test_recursive_get_related(lease_factory, contact_factory, user_factory):
-    service_unit, created = ServiceUnit.objects.get_or_create(id=1)
+    service_unit, _ = ServiceUnit.objects.get_or_create(id=1)
     contact = contact_factory(
         first_name="Jane",
         last_name="Doe",

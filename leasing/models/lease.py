@@ -843,7 +843,7 @@ class Lease(TimeStampedSafeDeleteModel):
                     )
                 )
 
-            tenant_overlap, tenant_remainders = get_range_overlap_and_remainder(
+            tenant_overlap, _tenant_remainders = get_range_overlap_and_remainder(
                 period_start_date, period_end_date, *tenant_tenantcontacts[0].date_range
             )
 
@@ -851,7 +851,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 continue
 
             for billing_tenantcontact in billing_tenantcontacts:
-                billing_overlap, billing_remainders = get_range_overlap_and_remainder(
+                billing_overlap, _billing_remainders = get_range_overlap_and_remainder(
                     tenant_overlap[0],
                     tenant_overlap[1],
                     *billing_tenantcontact.date_range,

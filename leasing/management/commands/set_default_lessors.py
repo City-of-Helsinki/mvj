@@ -58,7 +58,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 " Contact name: {}".format(service_unit_data["contact_name"])
             )
-            contact, contact_created = Contact.objects.get_or_create(
+            _, contact_created = Contact.objects.get_or_create(
                 service_unit=service_units[service_unit_data["id"]],
                 is_lessor=True,
                 name=service_unit_data["contact_name"],

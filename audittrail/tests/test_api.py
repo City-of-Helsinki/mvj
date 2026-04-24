@@ -9,7 +9,7 @@ from leasing.models import ServiceUnit
 
 @pytest.mark.django_db
 def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory):
-    service_unit, created = ServiceUnit.objects.get_or_create(id=1)
+    service_unit, _ = ServiceUnit.objects.get_or_create(id=1)
     contact = contact_factory(
         first_name="Jane",
         last_name="Doe",
@@ -64,7 +64,7 @@ def test_audittrail_get_permissions(lease_factory, contact_factory, user_factory
 def test_audittrail_get_types(
     user_factory, lease_factory, contact_factory, area_search_factory
 ):
-    service_unit, created = ServiceUnit.objects.get_or_create(id=1)
+    service_unit, _ = ServiceUnit.objects.get_or_create(id=1)
     user = user_factory()
     user.service_units.add(service_unit)
     lease = lease_factory(service_unit=service_unit)
