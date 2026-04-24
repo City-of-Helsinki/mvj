@@ -41,8 +41,6 @@ cryptography==46.0.0
     #   -c constraints.txt
     #   -c requirements.txt
     #   paramiko
-debugpy==1.8.14
-    # via -r requirements-dev.in
 django==5.2.13
     # via
     #   -c requirements.txt
