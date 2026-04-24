@@ -5,19 +5,19 @@
 -c requirements.txt
 
 # For top-level dependencies, just edit this .in file
-blessed~=1.21.0
-django-debug-toolbar~=4.4.6
-django-extensions~=4.1
+blessed==1.38.0 # Used for django-q2 `qinfo`
+django-debug-toolbar==6.3.0
+django-extensions==4.1 # Used for command `show_urls` in a test
 djangorestframework-stubs==3.14.5
-black~=25.1.0
-flake8~=7.3.0
-isort~=6.0.1
-lxml-stubs~=0.5.1
+black==26.3.1
+flake8==7.3.0
+isort==8.0.1
+lxml-stubs==0.5.1
 mypy==1.7.1
 paramiko-mock==2.0.1
-pytest~=8.4.1
-pytest-cov~=6.2.1
-pytest-django~=4.11.1
-pytest-factoryboy~=2.8.1
-factory-boy~=3.3.3
-types-python-dateutil~=2.9.0.20250708
+pytest==9.0.3
+pytest-cov==7.1.0
+pytest-django==4.11.1
+pytest-factoryboy==2.8.1
+factory-boy==3.3.3
+types-python-dateutil==2.9.0.20260408
