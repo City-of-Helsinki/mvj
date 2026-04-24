@@ -1,0 +1,44 @@
+# Version control
+.git/
+.github/
+
+# Local development / IDE
+.devcontainer/
+.vscode/
+.idea/
+.DS_Store
+
+# Local settings and secrets
+local_settings.py
+.env
+*.env.yaml
+
+# Python build artifacts
+*.py[cod]
+*.mo
+.mypy_cache/
+.cache/
+.pytest_cache/
+.tox/
+.coverage*
+coverage.xml
+
+# Runtime / generated directories
+/media/
+/private_files/
+/static/
+/venv/
+/.venv/
+
+# Data files that should not be in the image
+*.sql
+*.dump
+*.csv
+*.xlsx
+*.log
+/laske_export_files/
+/nls_leasehold_transfers/
+/tmp_backups_for_db_restore/
+
+# Pipelines (not needed at runtime)
+pipelines/
