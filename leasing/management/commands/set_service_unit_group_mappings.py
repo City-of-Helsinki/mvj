@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 )
 
         for service_unit_data in SERVICE_UNITS:
-            service_unit_group, created = Group.objects.get_or_create(
+            service_unit_group, _ = Group.objects.get_or_create(
                 name=service_unit_data["group_name"]
             )
 

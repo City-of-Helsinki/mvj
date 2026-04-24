@@ -500,7 +500,7 @@ class Rent(TimeStampedSafeDeleteModel):
         )
 
         for fixed_initial_year_rent in fixed_initial_year_rents:
-            fixed_overlap, fixed_remainders = get_range_overlap_and_remainder(
+            fixed_overlap, _fixed_remainders = get_range_overlap_and_remainder(
                 date_range_start, date_range_end, *fixed_initial_year_rent.date_range
             )
 

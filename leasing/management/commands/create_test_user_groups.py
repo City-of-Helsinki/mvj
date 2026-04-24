@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for group in Group.objects.filter(id__in=GROUPS.keys()):
-            new_group, created = Group.objects.get_or_create(
+            new_group, _ = Group.objects.get_or_create(
                 id=group.id + 10, defaults={"name": GROUPS[group.id]}
             )
             new_group.permissions.set(group.permissions.all())

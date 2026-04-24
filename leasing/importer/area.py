@@ -591,7 +591,7 @@ class AreaImporter(BaseImporter):
         cursor = conn.cursor(row_factory=namedtuple_row)
 
         self.stdout.write(area_import["source_name"])
-        source, source_created = AreaSource.objects.get_or_create(
+        source, _ = AreaSource.objects.get_or_create(
             identifier=area_import["source_identifier"],
             defaults={"name": area_import["source_name"]},
         )

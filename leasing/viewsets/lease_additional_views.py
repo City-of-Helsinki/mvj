@@ -436,7 +436,7 @@ class LeaseCopyAreasToContractView(APIView):
                             continue
                         defaults[field.name] = getattr(item, field.name)
 
-                    new_item, new_item_created = item_type[
+                    _new_item, _new_item_created = item_type[
                         "class"
                     ].objects.update_or_create(defaults=defaults, **match_data)
 

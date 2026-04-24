@@ -38,7 +38,7 @@ class Command(BaseCommand):
             self._create_service_unit_group_mappings(group, test_group)
 
     def _copy_test_group(self, group, test_group_name):
-        test_group, created = Group.objects.get_or_create(
+        test_group, _ = Group.objects.get_or_create(
             name=test_group_name,
             defaults={"id": group.id + 1000, "name": test_group_name},
         )
