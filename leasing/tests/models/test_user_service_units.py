@@ -1,11 +1,10 @@
-import json
 from time import time
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from helusers.models import ADGroup, ADGroupMapping
-from httpretty import httprettified, httpretty
 from jose.backends import RSAKey
 from jose.constants import ALGORITHMS
 from jose.jwt import encode
@@ -18,7 +17,6 @@ JWKS_URI = "https://example.com/openid/jwks"
 
 
 @pytest.mark.django_db
-@httprettified
 def test_api_access_updates_service_units(
     settings, client, user, lease_test_data, group
 ):
@@ -33,7 +31,7 @@ def test_api_access_updates_service_units(
     ADGroupMapping.objects.create(group=group, ad_group=ad_group)
     ServiceUnitGroupMapping.objects.create(group=group, service_unit=service_unit)
 
-    # Generate JWT and setup httpretty
+    # Generate JWT
     (_public_rsa_key, private_rsa_key) = rsa_newkeys(2048)
     private_pem = private_rsa_key.save_pkcs1(format="PEM")
     rsa_key = RSAKey(key=private_pem, algorithm=ALGORITHMS.RS256)
@@ -48,20 +46,15 @@ def test_api_access_updates_service_units(
 
     api_token_auth_settings._load()
 
-    httpretty.register_uri(
-        httpretty.GET,
-        f"{OIDC_ISSUER}/.well-known/openid-configuration",
-        body=json.dumps({"issuer": OIDC_ISSUER, "jwks_uri": JWKS_URI}),
-        content_type="application/json",
-    )
-
     jwk = rsa_key.public_key().to_dict()
 
-    httpretty.register_uri(
-        httpretty.GET,
-        JWKS_URI,
-        body=json.dumps({"keys": [jwk]}),
-    )
+    def mock_oidc_get(url, *args, **kwargs):
+        response = MagicMock()
+        if "openid-configuration" in url:
+            response.json.return_value = {"issuer": OIDC_ISSUER, "jwks_uri": JWKS_URI}
+        else:
+            response.json.return_value = {"keys": [jwk]}
+        return response
 
     time_now = time()
     payload = {
@@ -85,7 +78,8 @@ def test_api_access_updates_service_units(
     jwt_token = encode(payload, rsa_key.to_dict(), algorithm="RS256")
 
     url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
-    response = client.get(url, HTTP_AUTHORIZATION=f"Bearer {jwt_token}")
+    with patch("helusers.oidc.requests.get", side_effect=mock_oidc_get):
+        response = client.get(url, HTTP_AUTHORIZATION=f"Bearer {jwt_token}")
 
     assert response.status_code == 200, "%s %s" % (response.status_code, response.data)
     assert user.service_units.count() == 1

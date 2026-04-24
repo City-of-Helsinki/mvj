@@ -76,8 +76,6 @@ flake8==7.3.0
     # via
     #   -r requirements-dev.in
     #   pep8-naming
-httpretty==1.1.4
-    # via -r requirements-dev.in
 idna==3.7
     # via
     #   -c requirements.txt
