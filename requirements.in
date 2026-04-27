@@ -27,7 +27,6 @@ djangorestframework==3.16.1
 djangorestframework-gis==1.2.0
 drf-yasg[validation]==1.21.15
 docxtpl==0.20.2
-faker==40.13.0
 helsinki-profile-gdpr-api==1.1.0
 lxml==6.1.0
 oracledb==3.4.2

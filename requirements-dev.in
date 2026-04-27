@@ -10,6 +10,7 @@ django-debug-toolbar==6.3.0
 django-extensions==4.1 # Used for command `show_urls` in a test
 djangorestframework-stubs==3.14.5
 black==26.3.1
+faker==40.15.0
 flake8==7.3.0
 isort==8.0.1
 lxml-stubs==0.5.1

@@ -66,9 +66,9 @@ factory-boy==3.3.3
     # via
     #   -r requirements-dev.in
     #   pytest-factoryboy
-faker==40.13.0
+faker==40.15.0
     # via
-    #   -c requirements.txt
+    #   -r requirements-dev.in
     #   factory-boy
 flake8==7.3.0
     # via -r requirements-dev.in
