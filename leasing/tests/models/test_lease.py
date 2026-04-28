@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 from typing import Callable
+from unittest.mock import patch
 
 import pytest
 from django.core.exceptions import ValidationError
@@ -25,8 +26,11 @@ from leasing.models import (
     Rent,
     RentDueDate,
 )
+from leasing.models.contact import Contact
 from leasing.models.invoice import InvoiceRow
+from leasing.models.rent import ContractRent
 from leasing.models.service_unit import ServiceUnit
+from leasing.models.tenant import Tenant, TenantContact, TenantRentShare
 
 
 @pytest.mark.django_db
@@ -490,6 +494,100 @@ def test_calculate_invoices_invoice_note(
     invoice_data = period_invoice_data[0][0]
 
     assert invoice_data["notes"] == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "mock_today, expected_invoice_count, expected_due_date",
+    [
+        # today = Jan 1: only Q1 billing period is invoiceable (invoicing date Dec 1 <= Jan 1).
+        # Configured due date Jan 2 is BEFORE today+17 (Jan 18) → clamp to today+17.
+        (
+            datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc),
+            1,
+            datetime.date(2026, 1, 18),
+        ),
+        # today = Mar 10: Q1 (due Jan 2) and Q2 (due Apr 1) billing periods are both invoiceable.
+        # They are merged into one invoice. Max configured due date is Apr 1.
+        # today+17 = Mar 27, which is BEFORE Apr 1 → use Apr 1 (the configured due date).
+        (
+            datetime.datetime(2026, 3, 10, tzinfo=datetime.timezone.utc),
+            1,
+            datetime.date(2026, 4, 1),
+        ),
+        # today = Apr 15: Q1+Q2 invoiceable. Max configured due date is Apr 1.
+        # today+17 = May 2, which is AFTER Apr 1 → clamp to today+17.
+        (
+            datetime.datetime(2026, 4, 15, tzinfo=datetime.timezone.utc),
+            1,
+            datetime.date(2026, 5, 2),
+        ),
+    ],
+)
+def test_generate_first_invoices(
+    django_db_setup,
+    receivable_type_factory: Callable[..., ReceivableType],
+    service_unit_factory: Callable[..., ServiceUnit],
+    lease_factory: Callable[..., Lease],
+    rent_factory: Callable[..., Rent],
+    contract_rent_factory: Callable[..., ContractRent],
+    contact_factory: Callable[..., Contact],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+    tenant_rent_share_factory: Callable[..., TenantRentShare],
+    mock_today,
+    expected_invoice_count,
+    expected_due_date,
+):
+    receivable_type = receivable_type_factory()
+    service_unit = service_unit_factory(default_receivable_type_rent=receivable_type)
+    lease = lease_factory(
+        service_unit=service_unit,
+        type_id=1,
+        municipality_id=1,
+        district_id=1,
+        notice_period_id=1,
+        start_date=datetime.date(year=2026, month=1, day=1),
+    )
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=4,
+        start_date=datetime.date(year=2026, month=1, day=1),
+    )
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(1000),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(1000),
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+    contact = contact_factory(
+        service_unit=service_unit,
+        type=ContactType.BUSINESS,
+        name="Company123",
+        business_id="1234567-8",
+    )
+    tenant = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    tenant_rent_share_factory(
+        tenant=tenant, intended_use_id=1, share_numerator=1, share_denominator=1
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=contact,
+        start_date=datetime.date(year=2026, month=1, day=1),
+    )
+
+    with patch("django.utils.timezone.now", return_value=mock_today):
+        invoices = lease.generate_first_invoices()
+
+    assert len(invoices) == expected_invoice_count
+    assert invoices[0].due_date == expected_due_date
 
 
 @pytest.mark.django_db
