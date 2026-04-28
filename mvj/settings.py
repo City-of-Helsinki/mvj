@@ -443,6 +443,8 @@ LASKE_SERVERS = {
 LASKE_EXPORT_FROM_EMAIL = env.str("LASKE_EXPORT_FROM_EMAIL")
 LASKE_EXPORT_ANNOUNCE_EMAIL = env.str("LASKE_EXPORT_ANNOUNCE_EMAIL")
 
+# Minimum offset in days from invoice date to due date for generated invoices.
+# Ensures that the due date is always in the future.
 MVJ_DUE_DATE_OFFSET_DAYS = 17
 
 AREA_DATABASE_DSN = env.str("AREA_DATABASE_DSN")
