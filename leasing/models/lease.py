@@ -33,7 +33,7 @@ from leasing.enums import (
     TenantContactType,
 )
 from leasing.models import Contact
-from leasing.models.invoice import InvoiceRow
+from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
 from leasing.models.mixins import (
     NameModel,
     TimeStampedModel,
@@ -1407,9 +1407,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 for period_invoice in period_invoices:
                     period_invoice["total_amount"] = total_period_amount
 
-    def generate_first_invoices(self, end_date=None):  # noqa C901 TODO
-        from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
-
+    def generate_first_invoices(self, end_date: datetime.date | None = None):
         today = timezone.now().date()
 
         if not self.start_date:
@@ -1440,6 +1438,11 @@ class Lease(TimeStampedSafeDeleteModel):
         if not amounts_for_billing_periods:
             return []
 
+        return self._calculate_first_invoices(today, amounts_for_billing_periods)
+
+    def _calculate_first_invoices(
+        self, today: datetime.date, amounts_for_billing_periods: PayableRentsInPeriods
+    ):
         invoice_data = self.calculate_invoices(amounts_for_billing_periods)
 
         # Flatten and sort the data
@@ -1485,6 +1488,9 @@ class Lease(TimeStampedSafeDeleteModel):
             total_billed_amount = Decimal(0)
             billing_period_start_date = datetime.date(year=2500, day=1, month=1)
             billing_period_end_date = datetime.date(year=2000, day=1, month=1)
+            # Start with the minimum (today + offset). Increase if the configured
+            # due date is further away, so the tenant always gets at least that much notice.
+            recipient_due_date = new_due_date
             rows = []
 
             for recipient_invoice_datum in recipient_invoice_data:
@@ -1495,6 +1501,11 @@ class Lease(TimeStampedSafeDeleteModel):
                 billing_period_end_date = max(
                     recipient_invoice_datum["billing_period_end_date"],
                     billing_period_end_date,
+                )
+                # Find the maximum due date from the invoice data,
+                # so the tenant gets enough notice for all the invoiced periods.
+                recipient_due_date = max(
+                    recipient_invoice_datum["due_date"], recipient_due_date
                 )
                 total_billed_amount += recipient_invoice_datum["billed_amount"]
                 rows.extend(recipient_invoice_datum["rows"])
@@ -1510,7 +1521,7 @@ class Lease(TimeStampedSafeDeleteModel):
                 "total_amount": total_total_amount,
                 "state": InvoiceState.OPEN,
                 "type": InvoiceType.CHARGE,
-                "due_date": new_due_date,
+                "due_date": recipient_due_date,
                 "recipient": recipient,
                 "invoiceset": invoiceset,
                 "generated": True,
