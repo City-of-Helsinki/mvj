@@ -496,13 +496,13 @@ another management command. Read the command's input parameters for more things 
 back up, if you see necessary:
 
 ```bash
-python manage.py database_backup_before_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR
+python manage.py database_backup_before_load DB_NAME DB_HOST DB_PORT DB_USER BACKUP_DIR --binary-dump
 ```
 
 ### 5. Load the sanitized dump
 
 ```bash
-psql --dbname DB_NAME --host DB_HOST -port DB_PORT ---username DB_USER --file /path/to/sanitized_DATETIME.sql > dump_loading.log
+psql --dbname DB_NAME --host DB_HOST --port DB_PORT ---username DB_USER --file /path/to/sanitized_DATETIME.sql > dump_loading.log
 ```
 
 ### 6. Restore environment-specific data
