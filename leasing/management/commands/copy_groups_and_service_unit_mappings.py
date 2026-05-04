@@ -14,7 +14,7 @@ GROUPS = [
     "Pääkäyttäjä",
     # Service units
     "Maaomaisuuden kehittäminen ja tontit",
-    "Palu / Kaupunkitilan käyttö ja maanvuokraus",
+    "Kaupunkitilan käyttö ja maanvuokraus",
     "KuVa / Liikuntapaikkapalvelut",
     "KuVa / Ulkoilupalvelut",
     "KuVa / Nuorisopalvelut",

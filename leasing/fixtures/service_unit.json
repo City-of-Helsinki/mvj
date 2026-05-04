@@ -25,7 +25,7 @@
         "model": "leasing.serviceunit",
         "pk": 2,
         "fields": {
-            "name": "Palu / Kaupunkitilan käyttö ja maanvuokraus",
+            "name": "Palu/Kaupunkitilan käyttö ja maanvuokraus",
             "description": null,
             "invoice_number_sequence_name": "akv_invoice_number_sequence",
             "first_invoice_number": 5000000,
