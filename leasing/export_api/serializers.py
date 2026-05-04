@@ -200,7 +200,7 @@ class ExportLeaseAreaSerializer(serializers.ModelSerializer):
         service_unit_name = lease_area.lease.service_unit.name
         service_unit_mapping = {
             "Maaomaisuuden kehittäminen ja tontit": "MAKE/Tontit",
-            "Palu / Kaupunkitilan käyttö ja maanvuokraus": "PALU/MAVE",
+            "Palu/Kaupunkitilan käyttö ja maanvuokraus": "PALU/MAVE",
             "KuVa / Liikuntapaikkapalvelut": "KUVA (LIPA)",
             "KuVa / Ulkoilupalvelut": "KUVA (UPA)",
             "KuVa / Nuorisopalvelut": "KUVA (NUP)",

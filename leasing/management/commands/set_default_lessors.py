@@ -12,7 +12,7 @@ SERVICE_UNITS = [
     },
     {
         "id": ServiceUnitId.KAMA.value,
-        "contact_name": "PALU/Kaupunkitilan käyttö ja maanvuokraus",
+        "contact_name": "KYMP/Kaupunkitilan käyttö ja maanvuokraus",
         "sap_sales_office": SapSalesOfficeNumber.KAMA.value,
         "email": "KAMA@example.com",
     },
