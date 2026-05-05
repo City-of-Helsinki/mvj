@@ -981,9 +981,12 @@ class LeaseSubBasisOfRentCreateUpdateSerializer(
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        return super(LeaseSubBasisOfRentCreateUpdateSerializer, self).to_representation(
-            instance
-        )["id"]
+        result = super(
+            LeaseSubBasisOfRentCreateUpdateSerializer, self
+        ).to_representation(instance)
+        if self.parent is not None:
+            return result["id"]
+        return result
 
 
 class LeaseBasisOfRentCreateUpdateSerializer(
