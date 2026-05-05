@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OneToOneField, OneToOneRel
+from django.db.models import ManyToOneRel, OneToOneField, OneToOneRel
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -121,13 +121,13 @@ def instance_create_or_update_related(
 ):
     manager = getattr(instance, related_name)
     new_items = set()
+    model_class = serializer_class.Meta.model
 
     if validated_data is None:
         validated_data = []
 
     for item in validated_data:
         pk = item.pop("id", None)
-        model_class = serializer_class.Meta.model
 
         serializer_params = {
             "data": item,
@@ -151,6 +151,15 @@ def instance_create_or_update_related(
 
         item_instance = serializer.save(**{manager.field.name: instance})
         new_items.add(item_instance)
+
+    # Handle children in a self-referential many-to-one relationship.
+    for rel in model_class._meta.get_fields():
+        if isinstance(rel, ManyToOneRel) and rel.related_model is model_class:
+            children = model_class._default_manager.filter(
+                **{rel.field.name + "__in": new_items}
+            )
+            new_items.update(children)
+            break
 
     sync_new_items_to_manager(new_items, manager, context)
 
