@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from safedelete.models import SafeDeleteModel
@@ -12,6 +14,11 @@ class TimeStampedModel(models.Model):
 
 
 class TimeStampedSafeDeleteModel(TimeStampedModel, SafeDeleteModel):
+    # `deleted` is added dynamically by safedelete via add_to_class(), which
+    # static analysers like Pylance cannot infer from the py.typed source.
+    # Redeclare it here.
+    deleted: datetime.datetime | None
+
     class Meta:
         abstract = True
 
