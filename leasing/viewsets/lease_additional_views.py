@@ -18,7 +18,7 @@ from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from leasing.models import Lease, PlanUnit, Plot
+from leasing.models import Lease
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.permissions import PerMethodPermission
 from leasing.serializers.debt_collection import CreateCollectionLetterDocumentSerializer
@@ -389,58 +389,6 @@ class LeasePreviewInvoicesForYearView(APIView):
                 result.append(period_invoices)
 
         return Response(result)
-
-
-class LeaseCopyAreasToContractView(APIView):
-    permission_classes = (PerMethodPermission,)
-    perms_map = {"POST": ["leasing.add_leasearea"]}
-
-    def get_view_name(self):
-        return _("Copy areas to contract")
-
-    def get_view_description(self, html=False):
-        return _('Duplicates current areas and marks them "in contract"')
-
-    def post(self, request, format=None):
-        lease = get_lease_from_query_params(request.query_params)
-
-        item_types = [
-            {"class": Plot, "manager_name": "plots"},
-            {"class": PlanUnit, "manager_name": "plan_units"},
-        ]
-
-        for lease_area in lease.lease_areas.all():
-            for item_type in item_types:
-                for item in getattr(lease_area, item_type["manager_name"]).filter(
-                    in_contract=False, is_master=True
-                ):
-                    match_data = {
-                        "lease_area": lease_area,
-                        "identifier": item.identifier,
-                        "in_contract": True,
-                    }
-
-                    defaults = {}
-                    for field in item_type["class"]._meta.get_fields():
-                        if field.name in [
-                            "id",
-                            "lease_area",
-                            "created_at",
-                            "modified_at",
-                            "in_contract",
-                            "is_master",
-                            "plotsearch",
-                            "plotsearchtarget",
-                            "usage_distributions",
-                        ]:
-                            continue
-                        defaults[field.name] = getattr(item, field.name)
-
-                    _new_item, _new_item_created = item_type[
-                        "class"
-                    ].objects.update_or_create(defaults=defaults, **match_data)
-
-        return Response({"success": True})
 
 
 class LeaseSetInvoicingStateView(APIView):

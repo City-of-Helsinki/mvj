@@ -8,7 +8,7 @@ from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from leasing.models import Lease, PlanUnit
+from leasing.models import Lease
 
 
 @pytest.mark.django_db
@@ -176,33 +176,6 @@ def test_lease_details_contains_future_tenants(
                 break
 
     assert found is True
-
-
-@pytest.mark.django_db
-def test_copy_areas_to_contract(
-    django_db_setup, admin_client, plan_unit_factory, lease_test_data
-):
-    lease = lease_test_data["lease"]
-    lease_area = lease_test_data["lease_area"]
-
-    plan_unit_factory(
-        identifier="PU1",
-        area=1000,
-        lease_area=lease_area,
-        in_contract=False,
-        is_master=True,
-    )
-
-    assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 0
-
-    url = reverse("v1:lease-copy-areas-to-contract") + "?lease={}".format(lease.id)
-    response = admin_client.post(
-        url,
-        content_type="application/json",
-    )
-
-    assert response.status_code == 200, f"{response.status_code}, {response.data}"
-    assert PlanUnit.objects.filter(lease_area=lease_area, in_contract=True).count() == 1
 
 
 @pytest.mark.django_db
