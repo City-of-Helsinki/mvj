@@ -94,7 +94,6 @@ from leasing.viewsets.lease import (
 )
 from leasing.viewsets.lease_additional_views import (
     LeaseBillingPeriodsView,
-    LeaseCopyAreasToContractView,
     LeaseCreateChargeViewSet,
     LeaseCreateCollectionLetterDocumentViewSet,
     LeasePreviewInvoicesForYearView,
@@ -353,11 +352,6 @@ additional_api_paths = [
         "lease_billing_periods/",
         LeaseBillingPeriodsView.as_view(),
         name="lease-billing-periods",
-    ),
-    path(
-        "lease_copy_areas_to_contract/",
-        LeaseCopyAreasToContractView.as_view(),
-        name="lease-copy-areas-to-contract",
     ),
     path(
         "lease_preview_invoices_for_year/",
