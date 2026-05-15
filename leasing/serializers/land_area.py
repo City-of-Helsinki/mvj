@@ -549,6 +549,7 @@ class LeaseAreaSuccinctWithGeometryListSerializer(LeaseAreaListSerializer):
             "id",
             "identifier",
             "geometry",
+            "archived_at",
         )
 
 
