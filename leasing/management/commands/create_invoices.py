@@ -9,7 +9,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from leasing.enums import InvoiceState
+from leasing.enums import InvoiceState, InvoiceType
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.models.types import InvoiceDatum
@@ -164,6 +164,7 @@ def _invoice_period_is_already_covered(
         lease=lease,
         recipient=recipient,
         generated=True,
+        type=InvoiceType.CHARGE,
         deleted__isnull=True,
         billing_period_start_date__lte=billing_period_start_date,
         billing_period_end_date__gte=billing_period_end_date,
