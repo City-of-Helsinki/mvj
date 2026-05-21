@@ -9,7 +9,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from leasing.enums import InvoiceState, InvoiceType
+from leasing.enums import InvoiceState
 from leasing.models import Invoice, Lease
 from leasing.models.invoice import InvoiceRow, InvoiceSet
 from leasing.models.types import InvoiceDatum
@@ -144,33 +144,6 @@ def _get_or_create_invoiceset(
     return invoiceset
 
 
-def _invoice_period_is_already_covered(
-    lease: Lease, invoice_datum: InvoiceDatum
-) -> bool:
-    """
-    Checks if there already exists a generated invoice for the same lease and recipient,
-    with a billing period that covers the billing period of the given invoice_datum.
-    This is a safeguard for generate_first_invoices that can merge invoices to one,
-    hiding the billing period of the original invoices.
-    """
-    recipient = invoice_datum.get("recipient")
-    billing_period_start_date = invoice_datum.get("billing_period_start_date")
-    billing_period_end_date = invoice_datum.get("billing_period_end_date")
-
-    if not recipient or not billing_period_start_date or not billing_period_end_date:
-        return False
-
-    return Invoice.objects.filter(
-        lease=lease,
-        recipient=recipient,
-        generated=True,
-        type=InvoiceType.CHARGE,
-        deleted__isnull=True,
-        billing_period_start_date__lte=billing_period_start_date,
-        billing_period_end_date__gte=billing_period_end_date,
-    ).exists()
-
-
 def _create_invoice(
     lease: Lease,
     invoice_datum: InvoiceDatum,
@@ -184,15 +157,6 @@ def _create_invoice(
 
     invoice_datum["generated"] = True
     invoice_datum["invoiceset"] = invoiceset
-
-    if _invoice_period_is_already_covered(lease, invoice_datum):
-        logger.info(
-            (
-                f"Lease #{lease.id} {lease.identifier}: Invoice period is already covered "
-                "by an existing generated invoice."
-            )
-        )
-        return False
 
     try:
         invoice = Invoice.objects.get(
