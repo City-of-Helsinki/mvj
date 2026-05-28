@@ -74,6 +74,7 @@ class User(AbstractUser, SerializableMixin):
         "targetstatus",
         "informationcheck",
         "service_units",
+        "credit_decisions",
     ]
 
     @admin.display(boolean=True, description=_("Token exists"))

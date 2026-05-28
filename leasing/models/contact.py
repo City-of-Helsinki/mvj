@@ -149,7 +149,6 @@ class Contact(TimeStampedSafeDeleteModel):
         "tenants",
         "tenantcontact",
         "litigants",
-        "credit_decisions",
     ]
 
     class Meta:
