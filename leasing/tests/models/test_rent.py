@@ -6,6 +6,7 @@ import pytest
 
 from leasing.enums import (
     DueDatesType,
+    IndexType,
     PeriodType,
     RentAdjustmentAmountType,
     RentAdjustmentType,
@@ -459,6 +460,153 @@ def test_get_amount_for_date_range_two_rents_new_index(
 
     calculation_result = rent.get_amount_for_date_range(range_start, range_end)
     assert calculation_result.get_total_amount() == Decimal("136510.06")
+
+
+@pytest.mark.django_db
+def test_get_amount_for_date_range_changes_index_value_mid_year_index2022(
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    index_factory,
+):
+    """
+    If rent cycle is APRIL_TO_MARCH, the index value should change mid-year,
+    instead of calculating the whole year with the same index value in index2022 rent.
+    """
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX2022,
+        cycle=RentCycle.APRIL_TO_MARCH,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    amount = Decimal(300)
+    index_ratio_previous = Decimal(2332)
+    index_ratio = Decimal(2339)  # Indexes from years 2024 and 2025
+    index = index_factory(year=2024, month=None, number=index_ratio_previous)
+    index_factory(year=2025, month=None, number=index_ratio)
+    range_start = date(year=2026, month=1, day=1)
+    range_end = date(year=2026, month=12, day=31)
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=amount,
+        period=PeriodType.PER_YEAR,
+        base_amount=amount,
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    # Calculate expected amount by calculating the first 3 months with the previous index
+    # and the rest of the year with the new index ratio.
+    monthly = amount / 12
+    jan_mar = monthly * 3
+    apr_dec = monthly * 9 * (index_ratio / index_ratio_previous)
+    expected = (jan_mar + apr_dec).quantize(Decimal(".01"))
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
+
+
+@pytest.mark.django_db
+def test_get_amount_for_date_range_changes_index_value_mid_year_index(
+    lease_test_data,
+    rent_factory,
+    contract_rent_factory,
+    index_factory,
+):
+    """
+    If rent cycle is APRIL_TO_MARCH, the index should change mid-year,
+    instead of calculating the whole year with the same index in index(old) rent.
+    Using index type 7 (ind 100).
+    """
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX,
+        cycle=RentCycle.APRIL_TO_MARCH,
+        index_type=IndexType.TYPE_7,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    amount = Decimal(300)
+    index_previous = Decimal(2332)
+    index_current = Decimal(2339)  # Indexes from years 2024 and 2025
+    index = index_factory(year=2024, month=None, number=index_previous)
+    index_factory(year=2025, month=None, number=index_current)
+    range_start = date(year=2026, month=1, day=1)
+    range_end = date(year=2026, month=12, day=31)
+    index_type_7_multiplier = Decimal(100)
+    monthly = amount / 12
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=amount,
+        period=PeriodType.PER_YEAR,
+        base_amount=amount,
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    # Calculate expected:
+    # monthly * months in period * (index value / index multiplier)
+    jan_mar = monthly * 3 * (index_previous / index_type_7_multiplier)
+    apr_dec = monthly * 9 * (index_current / index_type_7_multiplier)
+    expected = jan_mar + apr_dec
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == expected
+
+
+@pytest.mark.django_db
+def test_get_amount_for_date_range_changes_index_value_mid_year_manual(
+    lease_test_data, rent_factory, contract_rent_factory
+):
+    """
+    If rent cycle is APRIL_TO_MARCH, the manual index ratio should change mid-year,
+    instead of calculating the whole year with the same index ratio in manual rent.
+    """
+    amount = Decimal(100)
+    manual_ratio = Decimal(2)
+    manual_ratio_previous = Decimal(1)
+
+    lease = lease_test_data["lease"]
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.MANUAL,
+        cycle=RentCycle.APRIL_TO_MARCH,
+        manual_ratio=manual_ratio,
+        manual_ratio_previous=manual_ratio_previous,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=amount,
+        period=PeriodType.PER_YEAR,
+        base_amount=amount,
+        base_amount_period=PeriodType.PER_YEAR,
+    )
+
+    monthly = amount / 12
+    jan_mar = monthly * 3 * manual_ratio_previous
+    apr_dec = monthly * 9 * manual_ratio
+    expected = jan_mar + apr_dec
+
+    range_start = date(year=2026, month=1, day=1)
+    range_end = date(year=2026, month=12, day=31)
+
+    result = rent.get_amount_for_date_range(range_start, range_end)
+    assert result.get_total_amount() == expected
 
 
 @pytest.mark.django_db
