@@ -713,7 +713,7 @@ class Rent(TimeStampedSafeDeleteModel):
             # We may need to calculate multiple separate ranges if the rent
             # type is index or manual because the index number could be different
             # in different years.
-            if self.type in [RentType.INDEX, RentType.MANUAL]:
+            if self.type in [RentType.INDEX, RentType.INDEX2022, RentType.MANUAL]:
                 date_ranges = self.split_ranges_by_cycle(date_ranges)
 
             for range_start, range_end in date_ranges:
