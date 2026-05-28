@@ -125,6 +125,7 @@ class CreditDecision(TimeStampedModel):
 
     recursive_get_related_skip_relations = [
         "reasons",
+        "claimant",
     ]
 
     class Meta:
