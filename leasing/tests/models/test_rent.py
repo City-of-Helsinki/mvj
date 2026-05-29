@@ -462,6 +462,44 @@ def test_get_amount_for_date_range_two_rents_new_index(
 
 
 @pytest.mark.django_db
+def test_get_amount_for_date_range_changes_index_value_mid_year_new_index(
+    lease_test_data, rent_factory, contract_rent_factory
+):
+    """
+    If rent cycle is APRIL_TO_MARCH, the index value for calculating rent value
+    should change mid-year, instead of calculating the whole year with the same index value.
+    """
+    lease = lease_test_data["lease"]
+
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.INDEX2022,
+        cycle=RentCycle.APRIL_TO_MARCH,
+        due_dates_type=DueDatesType.FIXED,
+        due_dates_per_year=1,
+    )
+
+    index = Index.objects.create(year=2024, month=None, number=2332)
+    Index.objects.create(year=2025, month=None, number=2339)
+
+    contract_rent_factory(
+        rent=rent,
+        intended_use_id=1,
+        amount=Decimal(300),
+        period=PeriodType.PER_YEAR,
+        base_amount=Decimal(300),
+        base_amount_period=PeriodType.PER_YEAR,
+        index=index,
+    )
+
+    range_start = date(year=2026, month=1, day=1)
+    range_end = date(year=2026, month=12, day=31)
+
+    calculation_result = rent.get_amount_for_date_range(range_start, range_end)
+    assert calculation_result.get_total_amount() == Decimal("300.68")
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "range_start, range_end, expected",
     [
