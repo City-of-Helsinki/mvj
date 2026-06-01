@@ -54,10 +54,30 @@ DEFAULT_REPORT_PERMS = {
         UG.LASKUTTAJA,
         UG.PAAKAYTTAJA,
     ],
-    "invoice_payments": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
-    "invoices_in_period": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
-    "invoicing_review": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
-    "laske_invoice_count": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "invoice_payments": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "invoices_in_period": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "invoicing_review": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
+    "laske_invoice_count": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
     "lease_count": [
         UG.VALMISTELIJA,
         UG.SOPIMUSVALMISTELIJA,
@@ -66,7 +86,12 @@ DEFAULT_REPORT_PERMS = {
         UG.LASKUTTAJA,
         UG.PAAKAYTTAJA,
     ],
-    "lease_invoicing_disabled": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "lease_invoicing_disabled": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
     "lease_statistic": [
         UG.VALMISTELIJA,
         UG.SOPIMUSVALMISTELIJA,
@@ -75,7 +100,12 @@ DEFAULT_REPORT_PERMS = {
         UG.LASKUTTAJA,
         UG.PAAKAYTTAJA,
     ],
-    "open_invoices": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+    "open_invoices": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
     "rent_adjustments": [
         UG.VALMISTELIJA,
         UG.SOPIMUSVALMISTELIJA,
