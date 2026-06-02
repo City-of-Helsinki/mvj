@@ -2,9 +2,9 @@ name: MVJ CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
-    branches: [master, develop]
+    branches: [master]
 
 env:
   SECRET_KEY: 'notasecret-for-ci'
