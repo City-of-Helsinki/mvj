@@ -2,6 +2,8 @@ from itertools import groupby
 from operator import itemgetter
 
 from django import forms
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -44,10 +46,17 @@ def get_due_dates_per_year(invoice: Invoice) -> int:
     first_day_of_year = invoice.due_date.replace(month=1, day=1)
     last_day_of_year = invoice.due_date.replace(month=12, day=31)
     lease: Lease = invoice.lease
-    due_dates_this_year = lease.get_due_dates_for_period(
-        first_day_of_year, last_day_of_year
-    )
-    return len(due_dates_this_year)
+    today = timezone.now().date()
+
+    active_rents = lease.rents.filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+
+    due_dates = set()
+    for rent in active_rents:
+        due_dates.update(
+            rent.get_due_dates_for_period(first_day_of_year, last_day_of_year)
+        )
+
+    return len(due_dates)
 
 
 def get_lease_id(invoice: Invoice) -> int:
