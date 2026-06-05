@@ -660,9 +660,9 @@ def _sort_invoice_rows_for_lineitems(
     Credit note rows (negative amounts) should be second.
     Rounding rows (very small amounts, positive or negative) should be last.
     """
-    charges = []
-    credits = []
-    roundings = []
+    charges: list[InvoiceRow] = []
+    credits: list[InvoiceRow] = []
+    roundings: list[InvoiceRow] = []
     # The rounding threshold is a guesstimate by the developer.
     # It should be small enough to not include "real" invoice rows,
     # but large enough to include all rounding rows.
@@ -681,6 +681,6 @@ def _sort_invoice_rows_for_lineitems(
     sorted_charges = sorted(charges, key=lambda r: r.amount, reverse=True)
     # Example: -50, -25, -10
     sorted_credits = sorted(credits, key=lambda r: abs(r.amount), reverse=True)
-    # Example: 0.05, -0.01
+    # Example: 0.01, -0.05
     sorted_roundings = sorted(roundings, key=lambda r: r.amount, reverse=True)
     return sorted_charges + sorted_credits + sorted_roundings

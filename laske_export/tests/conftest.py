@@ -397,6 +397,7 @@ def exporter_lacking_test_setup(
         total_amount=Decimal("123.45"),
         billed_amount=Decimal("123.45"),
         outstanding_amount=Decimal("123.45"),
+        invoicing_date=datetime.date(year=2024, month=1, day=1),
         recipient=contact_factory(
             first_name=None,
             last_name=None,
@@ -461,3 +462,52 @@ def _setup_service_unit_for_tests(
     service_unit.default_receivable_type_collateral = default_receivable_type_collateral
     service_unit.save()
     return service_unit
+
+
+@pytest.fixture
+def invoice_sales_order_adapter_billing_contact_test_setup(
+    request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
+    contact_factory,
+    district_factory,
+    intended_use_factory,
+    lease_factory,
+    lease_type_factory,
+    receivable_type_factory,
+    rent_intended_use_factory,
+) -> dict[str, Any]:
+    """
+    Default test data fixture for invoice_sales_order_adapter tests relating to
+    billing contact resolution.
+    """
+    service_unit_id: ServiceUnitId = request.param
+    service_unit = _setup_service_unit_for_tests(
+        service_unit_id, receivable_type_factory
+    )
+    lease = lease_factory(
+        service_unit=service_unit,
+        lessor=contact_factory(service_unit=service_unit, sap_sales_office="1234"),
+        district=district_factory(identifier="99", name="District name"),
+        intended_use=intended_use_factory(
+            name="Lease Intended Use name", service_unit=service_unit
+        ),
+        type=lease_type_factory(
+            name="Lease Type name",
+            sap_material_code="11111111",
+            sap_project_number="1111111111",
+        ),
+    )
+    invoicerow_receivable_type = receivable_type_factory(
+        name="Invoice Row Receivable Type name",
+        service_unit=service_unit,
+        sap_material_code="11111111",
+        sap_project_number="1111111111",
+    )
+    invoicerow_intended_use = rent_intended_use_factory(
+        name="Invoice Row Intended Use name"
+    )
+    return {
+        "service_unit": service_unit,
+        "lease": lease,
+        "invoicerow_receivable_type": invoicerow_receivable_type,
+        "invoicerow_intended_use": invoicerow_intended_use,
+    }
