@@ -80,7 +80,7 @@ class InvoiceDatum(TypedDict):
     service_unit: "ServiceUnit"
     generated: bool
     invoicing_date: datetime.date
-    invoiceset: "InvoiceSet"
+    invoiceset: "InvoiceSet | None"
     outstanding_amount: Decimal
 
 
