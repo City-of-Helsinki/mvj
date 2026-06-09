@@ -68,6 +68,12 @@ env = environ.Env(
     VIRRE_API_URL=(str, ""),
     VIRRE_USERNAME=(str, ""),
     VIRRE_PASSWORD=(str, ""),
+    RYYTI_AUTH_URL=(str, ""),
+    RYYTI_CLIENT_ID=(str, ""),
+    RYYTI_SECRET=(str, ""),
+    RYYTI_USERNAME=(str, ""),
+    RYYTI_PASSWORD=(str, ""),
+    RYYTI_BASE_URL=(str, ""),
     NLS_HELSINKI_FOLDER_URL=(str, ""),
     NLS_HELSINKI_USERNAME=(str, ""),
     NLS_HELSINKI_PASSWORD=(str, ""),
@@ -359,6 +365,15 @@ CLOUDIA_PASSWORD = env.str("CLOUDIA_PASSWORD")
 VIRRE_API_URL = env.str("VIRRE_API_URL")
 VIRRE_USERNAME = env.str("VIRRE_USERNAME")
 VIRRE_PASSWORD = env.str("VIRRE_PASSWORD")
+
+RYYTI_CONFIG = {
+    "AUTH_URL": env.str("RYYTI_AUTH_URL"),
+    "CLIENT_ID": env.str("RYYTI_CLIENT_ID"),
+    "SECRET": env.str("RYYTI_SECRET"),
+    "USERNAME": env.str("RYYTI_USERNAME"),
+    "PASSWORD": env.str("RYYTI_PASSWORD"),
+    "BASE_URL": env.str("RYYTI_BASE_URL"),
+}
 
 NLS_HELSINKI_FOLDER_URL = env.str("NLS_HELSINKI_FOLDER_URL")
 NLS_HELSINKI_USERNAME = env.str("NLS_HELSINKI_USERNAME")
