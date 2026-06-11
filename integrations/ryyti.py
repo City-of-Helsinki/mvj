@@ -8,6 +8,8 @@ from django.conf import LazySettings, settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 
+RYYTI_ACCESS_TOKEN_CACHE_KEY = "ryyti_access_token"
+
 
 class RyytiException(Exception):
     """Base exception for Ryyti API integration."""
@@ -89,10 +91,10 @@ class RyytiClient:
         self.base_url = ryyti_config["BASE_URL"]
 
     def get_access_token(self) -> str:
-        token: str | None = cache.get("ryyti_access_token")
+        token: str | None = cache.get(RYYTI_ACCESS_TOKEN_CACHE_KEY)
         if token is None:
             self._authenticate()
-            token = cache.get("ryyti_access_token")
+            token = cache.get(RYYTI_ACCESS_TOKEN_CACHE_KEY)
         return token
 
     def _authenticate(self) -> None:
@@ -133,7 +135,7 @@ class RyytiClient:
             60, expires_in - 60
         )  # Subtract 60 seconds to ensure token is refreshed before it expires
 
-        cache.set("ryyti_access_token", token, timeout=expire_time)
+        cache.set(RYYTI_ACCESS_TOKEN_CACHE_KEY, token, timeout=expire_time)
 
     def _get(self, url: str, params: dict[str, str] | None = None) -> ResponseData:
         token = self.get_access_token()
