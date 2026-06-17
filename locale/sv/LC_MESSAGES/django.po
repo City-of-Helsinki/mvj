@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 09:38+0200\n"
+"POT-Creation-Date: 2026-06-17 13:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -672,8 +672,14 @@ msgstr "Loggar för Laske-exporten"
 msgid "Lease"
 msgstr "Arrendering"
 
+msgid "Tenant names"
+msgstr ""
+
 msgid "Search by identifier"
 msgstr "Sök med identifieringskod"
+
+msgid "Lease Area Identifier"
+msgstr ""
 
 msgid "Color"
 msgstr "Färg"
@@ -3478,6 +3484,20 @@ msgstr "FO-numret är felaktigt"
 msgid "File not available"
 msgstr "Filen hittas inte"
 
+msgid "Ryyti API Proxy"
+msgstr ""
+
+#, python-brace-format
+msgid "Unknown API: {api_name}"
+msgstr ""
+
+#, python-brace-format
+msgid "Ryyti API error: {error_msg}"
+msgstr ""
+
+msgid "Data not available"
+msgstr ""
+
 msgid "Check if contact already exist"
 msgstr "Granska huruvida kontakten redan finns"
 
@@ -3632,12 +3652,6 @@ msgstr "Årsparametern är felaktig"
 
 msgid "Preview invoices for year"
 msgstr "Förhandsgranska årets fakturor"
-
-msgid "Copy areas to contract"
-msgstr "Kopiera områdena i avtalet"
-
-msgid "Duplicates current areas and marks them \"in contract\""
-msgstr "Kopiera de nuvarande områdena och anteckna dem \"i avtalet\""
 
 msgid "Set invoicing state"
 msgstr "Starta eller avbryt fakturering"
