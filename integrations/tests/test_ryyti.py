@@ -100,7 +100,8 @@ def test_get_company_info_success(ryyti_client):
 
             result = ryyti_client.get_company_info("1234567-8")
 
-            assert result == {"name": "Test Company"}
+            assert result.status_code == 200
+            assert result.json() == {"name": "Test Company"}
             mock_get.assert_called_once_with(
                 "https://api.example.com/company-basic-data/v1/company",
                 headers={
@@ -110,6 +111,7 @@ def test_get_company_info_success(ryyti_client):
                 },
                 params={"businessId": "1234567-8"},
                 timeout=30,
+                stream=False,
             )
 
 
@@ -118,11 +120,14 @@ def test_get_company_info_404(ryyti_client):
         with patch("requests.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status_code = 404
+            # A Response object with status_code 404 is falsy
+            mock_response.__bool__.return_value = False
             mock_get.return_value = mock_response
 
             result = ryyti_client.get_company_info("1234567-8")
 
-            assert result == {}
+            assert result.status_code == 404
+            assert not result
 
 
 def test_get_trade_register_extract_success(ryyti_client):
@@ -135,7 +140,8 @@ def test_get_trade_register_extract_success(ryyti_client):
 
             result = ryyti_client.get_trade_register_extract(business_id="1234567-8")
 
-            assert result == {"trade_name": "Test Trade Name"}
+            assert result.status_code == 200
+            assert result.json() == {"trade_name": "Test Trade Name"}
             mock_get.assert_called_once_with(
                 "https://api.example.com/company-structured-extract/v1/trade-register-extract",
                 headers={
@@ -145,6 +151,7 @@ def test_get_trade_register_extract_success(ryyti_client):
                 },
                 params={"businessId": "1234567-8"},
                 timeout=30,
+                stream=False,
             )
 
 
@@ -162,7 +169,8 @@ def test_get_pdf_document_success(ryyti_client):
                 register=RegisterOption.TRADE_REGISTER,
             )
 
-            assert result == b"PDF_CONTENT"
+            assert result.status_code == 200
+            assert result.content == b"PDF_CONTENT"
             mock_get.assert_called_once_with(
                 "https://api.example.com/document-search/v1/document",
                 headers={
@@ -177,6 +185,7 @@ def test_get_pdf_document_success(ryyti_client):
                     "onlyMetadata": "false",
                 },
                 timeout=30,
+                stream=False,
             )
 
 
