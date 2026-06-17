@@ -60,10 +60,17 @@ class RyytiClient:
     base_url: str
 
     def __init__(self) -> None:
-        try:
-            ryyti_config: RyytiConfig = getattr(settings, "RYYTI_CONFIG")
-        except AttributeError:
-            ryyti_config = None  # type: ignore
+        ryyti_config = self._get_config()
+
+        self.auth_url = ryyti_config["AUTH_URL"]
+        self.client_id = ryyti_config["CLIENT_ID"]
+        self.secret = ryyti_config["SECRET"]
+        self.username = ryyti_config["USERNAME"]
+        self.password = ryyti_config["PASSWORD"]
+        self.base_url = ryyti_config["BASE_URL"]
+
+    def _get_config(self) -> RyytiConfig:
+        ryyti_config: RyytiConfig = getattr(settings, "RYYTI_CONFIG", None)
 
         if not ryyti_config:
             raise ImproperlyConfigured(
@@ -91,12 +98,7 @@ class RyytiClient:
                 f"Check RYYTI_CONFIG in Django settings."
             )
 
-        self.auth_url = ryyti_config["AUTH_URL"]
-        self.client_id = ryyti_config["CLIENT_ID"]
-        self.secret = ryyti_config["SECRET"]
-        self.username = ryyti_config["USERNAME"]
-        self.password = ryyti_config["PASSWORD"]
-        self.base_url = ryyti_config["BASE_URL"]
+        return ryyti_config
 
     def get_access_token(self) -> str:
         token: str | None = cache.get(RYYTI_ACCESS_TOKEN_CACHE_KEY)
@@ -145,6 +147,9 @@ class RyytiClient:
 
         cache.set(RYYTI_ACCESS_TOKEN_CACHE_KEY, token, timeout=expire_time)
 
+    def _filter_params(self, params: dict) -> dict:
+        return {k: v for k, v in params.items() if v is not None}
+
     def _get(
         self,
         url: str,
@@ -177,18 +182,23 @@ class RyytiClient:
         return response
 
     def get_company_info(
-        self, business_id: str, **options: Unpack[RyytiRequestOptions]
+        self,
+        business_id: str,
+        accept: MediaType = MediaType.JSON,
+        **options: Unpack[RyytiRequestOptions],
     ) -> requests.Response:
         if not business_id:
             raise ValueError("business_id must be provided.")
         url = f"{self.base_url}/company-basic-data/v1/company"
         params = {"businessId": business_id}
-        return self._get(url, params=params, **options)
+
+        return self._get(url, params=params, accept=accept, **options)
 
     def get_trade_register_extract(
         self,
         business_id: str | None = None,
         registration_number: str | None = None,
+        accept: MediaType = MediaType.JSON,
         **options: Unpack[RyytiRequestOptions],
     ) -> requests.Response:
         if not any([business_id, registration_number]):
@@ -196,12 +206,14 @@ class RyytiClient:
                 "Either business_id or registration_number must be provided."
             )
         url = f"{self.base_url}/company-structured-extract/v1/trade-register-extract"
-        raw_params = {
-            "businessId": business_id,
-            "registrationNumber": registration_number,
-        }
-        params = {k: v for k, v in raw_params.items() if v is not None}
-        return self._get(url, params=params, **options)
+        params = self._filter_params(
+            {
+                "businessId": business_id,
+                "registrationNumber": registration_number,
+            }
+        )
+
+        return self._get(url, params=params, accept=accept, **options)
 
     def get_pdf_document(
         self,
@@ -222,14 +234,16 @@ class RyytiClient:
                 "Either business_id or registration_number must be provided."
             )
         url = f"{self.base_url}/document-search/v1/document"
-        raw_params = {
-            "businessId": business_id,
-            "register": register,
-            "documentOption": document_option,
-            "onlyMetadata": str(only_metadata).lower(),
-            "registrationNumber": registration_number,
-            "notificationRecordNumber": notification_record_number,
-            "date": date,
-        }
-        params = {k: v for k, v in raw_params.items() if v is not None}
+        params = self._filter_params(
+            {
+                "businessId": business_id,
+                "register": register,
+                "documentOption": document_option,
+                "onlyMetadata": str(only_metadata).lower(),
+                "registrationNumber": registration_number,
+                "notificationRecordNumber": notification_record_number,
+                "date": date,
+            }
+        )
+
         return self._get(url, params=params, accept=MediaType.PDF, **options)
