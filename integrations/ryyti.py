@@ -1,6 +1,6 @@
 import base64
 from enum import StrEnum
-from typing import Annotated, Required, TypeAlias, TypedDict, Unpack
+from typing import Annotated, Any, Required, TypeAlias, TypedDict, Unpack, cast
 from uuid import uuid4
 
 import requests
@@ -70,7 +70,7 @@ class RyytiClient:
         self.base_url = ryyti_config["BASE_URL"]
 
     def _get_config(self) -> RyytiConfig:
-        ryyti_config: RyytiConfig = getattr(settings, "RYYTI_CONFIG", None)
+        ryyti_config = getattr(settings, "RYYTI_CONFIG", None)
 
         if not ryyti_config:
             raise ImproperlyConfigured(
@@ -98,7 +98,7 @@ class RyytiClient:
                 f"Check RYYTI_CONFIG in Django settings."
             )
 
-        return ryyti_config
+        return cast(RyytiConfig, ryyti_config)
 
     def get_access_token(self) -> str:
         token: str | None = cache.get(RYYTI_ACCESS_TOKEN_CACHE_KEY)
@@ -147,7 +147,7 @@ class RyytiClient:
 
         cache.set(RYYTI_ACCESS_TOKEN_CACHE_KEY, token, timeout=expire_time)
 
-    def _filter_params(self, params: dict) -> dict:
+    def _filter_params(self, params: dict[str, Any]) -> dict[str, Any]:
         return {k: v for k, v in params.items() if v is not None}
 
     def _get(

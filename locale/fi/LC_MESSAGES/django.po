@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 09:38+0200\n"
+"POT-Creation-Date: 2026-06-17 13:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -671,8 +671,14 @@ msgstr "Laske-maksujen lokit"
 msgid "Lease"
 msgstr "Vuokraus"
 
+msgid "Tenant names"
+msgstr ""
+
 msgid "Search by identifier"
 msgstr "Etsi tunnisteella"
+
+msgid "Lease Area Identifier"
+msgstr ""
 
 msgid "Color"
 msgstr "Väri"
@@ -3496,6 +3502,20 @@ msgstr "Y-tunnus on viallinen"
 msgid "File not available"
 msgstr "Tiedostoa ei löydy"
 
+msgid "Ryyti API Proxy"
+msgstr ""
+
+#, python-brace-format
+msgid "Unknown API: {api_name}"
+msgstr ""
+
+#, python-brace-format
+msgid "Ryyti API error: {error_msg}"
+msgstr ""
+
+msgid "Data not available"
+msgstr ""
+
 msgid "Check if contact already exist"
 msgstr "Tarkista onko kontakti jo olemassa"
 
@@ -3646,12 +3666,6 @@ msgstr "Vuosi-parametri on viallinen"
 
 msgid "Preview invoices for year"
 msgstr "Esikatsele vuoden laskuja"
-
-msgid "Copy areas to contract"
-msgstr "Kopioi alueet sopimukseen"
-
-msgid "Duplicates current areas and marks them \"in contract\""
-msgstr "Kopioi tämän hetkiset alueet ja merkitsee ne \"sopimuksessa\""
 
 msgid "Set invoicing state"
 msgstr "Käynnistä tai keskeytä laskutus"

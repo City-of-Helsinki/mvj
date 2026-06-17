@@ -29,7 +29,7 @@ from leasing.export_api.viewsets import (
     ExportVipunenMapLayerViewSet,
 )
 from leasing.report.viewset import ReportViewSet
-from leasing.views import CloudiaProxy, VirreProxy, ktj_proxy
+from leasing.views import CloudiaProxy, RyytiApiProxy, VirreProxy, ktj_proxy
 from leasing.viewsets.area_note import AreaNoteViewSet
 from leasing.viewsets.basis_of_rent import BasisOfRentViewSet
 from leasing.viewsets.batchrun import (
@@ -452,6 +452,7 @@ urlpatterns = [
     path("contract_file/<contract_id>/", CloudiaProxy.as_view()),
     path("contract_file/<contract_id>/<file_id>/", CloudiaProxy.as_view()),
     path("trade_register/<service>/<business_id>/", VirreProxy.as_view()),
+    path("ryyti/<api>/<business_id>/", RyytiApiProxy.as_view(), name="ryyti-api-proxy"),
     path("admin/", admin.site.urls),
     path("auth/", include(rest_framework.urls)),
 ]

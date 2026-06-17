@@ -18,6 +18,7 @@ from zeep import Client, Settings
 from zeep.helpers import serialize_object
 from zeep.transports import Transport
 
+from integrations.ryyti import DocumentOption, MediaType, RyytiClient, RyytiException
 from leasing.permissions import PerMethodPermission
 
 
@@ -236,3 +237,59 @@ class VirreProxy(APIView):
 
         else:
             return JsonResponse(serialize_object(result))
+
+
+class RyytiApiProxy(APIView):
+    permission_classes = (PerMethodPermission,)
+    perms_map = {"GET": ["leasing.view_invoice"]}
+    STREAM_CHUNK_SIZE = 8 * 1024  # 8 * 1024 = 8192 bytes
+
+    def get_view_name(self):
+        return _("Ryyti API Proxy")
+
+    def get(self, request, api=None, business_id=None):
+        client = RyytiClient()
+        available_apis = self._get_api_registry(client, business_id)
+
+        if api not in available_apis:
+            raise APIException(_("Unknown API: {api_name}").format(api_name=api))
+
+        api_method = available_apis[api]
+
+        try:
+            api_response = api_method()
+        except RyytiException as e:
+            raise APIException(
+                _("Ryyti API error: {error_msg}").format(error_msg=str(e))
+            )
+
+        if not api_response or api_response.status_code != 200:
+            raise APIException(_("Data not available"))
+
+        content_type: str = api_response.headers.get("Content-Type", "")
+        response = StreamingHttpResponse(
+            api_response.iter_content(chunk_size=self.STREAM_CHUNK_SIZE),
+            content_type=content_type,
+        )
+
+        if content_type.startswith(MediaType.PDF):
+            response["Content-Disposition"] = (
+                f"inline; filename=ryyti_{business_id}.pdf"
+            )
+
+        return response
+
+    def _get_api_registry(self, client, business_id):
+        return {
+            "organisation_rules_pdf": lambda: client.get_pdf_document(
+                document_option=DocumentOption.ORGANISATION_RULES,
+                business_id=business_id,
+                stream=True,
+            ),
+            "company_info_json": lambda: client.get_company_info(
+                business_id, stream=True
+            ),
+            "trade_register_json": lambda: client.get_trade_register_extract(
+                business_id=business_id, stream=True
+            ),
+        }
