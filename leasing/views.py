@@ -18,7 +18,12 @@ from zeep import Client, Settings
 from zeep.helpers import serialize_object
 from zeep.transports import Transport
 
-from integrations.ryyti import DocumentOption, MediaType, RyytiClient, RyytiException
+from integrations.ryyti import (
+    DocumentOption,
+    MediaType,
+    RyytiClient,
+    RyytiException,
+)
 from leasing.permissions import PerMethodPermission
 
 
@@ -288,6 +293,10 @@ class RyytiApiProxy(APIView):
             ),
             "company_info_json": lambda: client.get_company_info(
                 business_id, stream=True
+            ),
+            "get_company_notifications_json": lambda: client.get_notifications(
+                business_id=business_id,
+                stream=True,
             ),
             "trade_register_json": lambda: client.get_trade_register_extract(
                 business_id=business_id, stream=True

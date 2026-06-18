@@ -8,6 +8,7 @@ from django.test import override_settings
 
 from integrations.ryyti import (
     DocumentOption,
+    NotificationState,
     RegisterOption,
     RyytiClient,
     RyytiException,
@@ -201,3 +202,35 @@ def test_get_exception_handling(ryyti_client):
 
             with pytest.raises(RyytiException, match="Ryyti API error"):
                 ryyti_client.get_company_info("1234567-8")
+
+
+def test_get_notifications_success(ryyti_client):
+    with patch.object(RyytiClient, "get_access_token", return_value="token"):
+        with patch("requests.get") as mock_get:
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {"notifications": []}
+            mock_get.return_value = mock_response
+
+            result = ryyti_client.get_notifications(
+                business_id="1234567-8",
+                notification_state=NotificationState.PENDING,
+                stream=True,
+            )
+
+            assert result.status_code == 200
+            assert result.json() == {"notifications": []}
+            mock_get.assert_called_once_with(
+                "https://api.example.com/notification-search/v1/notifications",
+                headers={
+                    "Authorization": "Bearer token",
+                    "X-RyytiAuth-ClientCorrelationId": ANY,
+                    "Accept": "application/json",
+                },
+                params={
+                    "businessId": "1234567-8",
+                    "notificationState": NotificationState.PENDING,
+                },
+                timeout=30,
+                stream=True,
+            )
