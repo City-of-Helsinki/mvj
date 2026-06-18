@@ -38,6 +38,11 @@ class RegisterOption(StrEnum):
     REGISTER_OF_FOUNDATIONS = "SREK"
 
 
+class NotificationState(StrEnum):
+    PENDING = "V"
+    HANDLED = "F"
+
+
 class MediaType(StrEnum):
     JSON = "application/json"
     PDF = "application/pdf"
@@ -247,3 +252,29 @@ class RyytiClient:
         )
 
         return self._get(url, params=params, accept=MediaType.PDF, **options)
+
+    def get_notifications(
+        self,
+        business_id: str,
+        registration_number: str | None = None,
+        notification_state: NotificationState | None = None,
+        start_date: DateISOStr | None = None,
+        end_date: DateISOStr | None = None,
+        results_limit: int | None = None,
+        **options: Unpack[RyytiRequestOptions],
+    ) -> requests.Response:
+        if not business_id:
+            raise ValueError("business_id must be provided.")
+        url = f"{self.base_url}/notification-search/v1/notifications"
+        params = self._filter_params(
+            {
+                "businessId": business_id,
+                "registrationNumber": registration_number,
+                "notificationState": notification_state,
+                "startDate": start_date,
+                "endDate": end_date,
+                "resultsLimit": results_limit,
+            }
+        )
+
+        return self._get(url, params=params, accept=MediaType.JSON, **options)
