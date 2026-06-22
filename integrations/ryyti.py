@@ -153,6 +153,7 @@ class RyytiClient:
         cache.set(RYYTI_ACCESS_TOKEN_CACHE_KEY, token, timeout=expire_time)
 
     def _filter_params(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Remove keys with None values from the parameters dictionary."""
         return {k: v for k, v in params.items() if v is not None}
 
     def _get(
@@ -203,12 +204,15 @@ class RyytiClient:
         self,
         business_id: str | None = None,
         registration_number: str | None = None,
-        accept: MediaType = MediaType.JSON,
         **options: Unpack[RyytiRequestOptions],
     ) -> requests.Response:
         if not any([business_id, registration_number]):
             raise ValueError(
                 "Either business_id or registration_number must be provided."
+            )
+        if all([business_id, registration_number]):
+            raise ValueError(
+                "Only one of business_id or registration_number should be provided, not both."
             )
         url = f"{self.base_url}/company-structured-extract/v1/trade-register-extract"
         params = self._filter_params(
@@ -218,7 +222,31 @@ class RyytiClient:
             }
         )
 
-        return self._get(url, params=params, accept=accept, **options)
+        return self._get(url, params=params, accept=MediaType.JSON, **options)
+
+    def get_trade_register_extract_pdf(
+        self,
+        business_id: str | None = None,
+        registration_number: str | None = None,
+        **options: Unpack[RyytiRequestOptions],
+    ) -> requests.Response:
+        if not any([business_id, registration_number]):
+            raise ValueError(
+                "Either business_id or registration_number must be provided."
+            )
+        if all([business_id, registration_number]):
+            raise ValueError(
+                "Only one of business_id or registration_number should be provided, not both."
+            )
+        url = f"{self.base_url}/generate-extract/v1/trade-register-extract"
+        params = self._filter_params(
+            {
+                "businessId": business_id,
+                "registrationNumber": registration_number,
+            }
+        )
+
+        return self._get(url, params=params, accept=MediaType.PDF, **options)
 
     def get_pdf_document(
         self,

@@ -236,3 +236,60 @@ def test_get_notifications_success(ryyti_client):
                 timeout=30,
                 stream=True,
             )
+
+
+def test_get_trade_register_extract_json_validation(ryyti_client):
+    with pytest.raises(
+        ValueError, match="Either business_id or registration_number must be provided."
+    ):
+        ryyti_client.get_trade_register_extract_json()
+
+    with pytest.raises(
+        ValueError,
+        match="Only one of business_id or registration_number should be provided, not both.",
+    ):
+        ryyti_client.get_trade_register_extract_json(
+            business_id="1234567-8", registration_number="1.234.567"
+        )
+
+
+def test_get_trade_register_extract_pdf_success(ryyti_client):
+    with patch.object(RyytiClient, "get_access_token", return_value="token"):
+        with patch("requests.get") as mock_get:
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.content = b"PDF_CONTENT"
+            mock_get.return_value = mock_response
+
+            result = ryyti_client.get_trade_register_extract_pdf(
+                business_id="1234567-8"
+            )
+
+            assert result.status_code == 200
+            assert result.content == b"PDF_CONTENT"
+            mock_get.assert_called_once_with(
+                "https://api.example.com/generate-extract/v1/trade-register-extract",
+                headers={
+                    "Authorization": "Bearer token",
+                    "X-RyytiAuth-ClientCorrelationId": ANY,
+                    "Accept": "application/pdf",
+                },
+                params={"businessId": "1234567-8"},
+                timeout=30,
+                stream=False,
+            )
+
+
+def test_get_trade_register_extract_pdf_validation(ryyti_client):
+    with pytest.raises(
+        ValueError, match="Either business_id or registration_number must be provided."
+    ):
+        ryyti_client.get_trade_register_extract_pdf()
+
+    with pytest.raises(
+        ValueError,
+        match="Only one of business_id or registration_number should be provided, not both.",
+    ):
+        ryyti_client.get_trade_register_extract_pdf(
+            business_id="1234567-8", registration_number="1.234.567"
+        )

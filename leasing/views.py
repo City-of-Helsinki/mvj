@@ -301,4 +301,7 @@ class RyytiApiProxy(APIView):
             "trade_register_json": lambda: client.get_trade_register_extract_json(
                 business_id=business_id, stream=True
             ),
+            "trade_register_pdf": lambda: client.get_trade_register_extract_pdf(
+                business_id=business_id, stream=True
+            ),
         }
