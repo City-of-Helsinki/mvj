@@ -515,6 +515,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennus-oikeus kem2 (asuminen)
         "permitted_building_volume_residential_kem2": {
@@ -525,6 +526,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennus-oikeus hm2 (asuminen)
         "permitted_building_volume_residential_hm2": {
@@ -535,6 +537,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra (asuminen)
         "rent_amount_residential": {
@@ -550,6 +553,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennusoikeus kem2 (yritystila)
         "permitted_building_volume_business_kem2": {
@@ -560,6 +564,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennusoikeus hm2 (yritystila)
         "permitted_building_volume_business_hm2": {
@@ -570,6 +575,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra (yritystila)
         "rent_amount_business": {
@@ -585,6 +591,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Kokonaisrakennusoikeus kem2
         "permitted_building_volume_total_kem2": {
@@ -593,6 +600,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Kokonaisrakennusoikeus hm2
         "permitted_building_volume_total_hm2": {
@@ -601,6 +609,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra yhteensä
         "total_rent_amount_for_year": {
@@ -618,6 +627,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/kem2 Asuminen
         "average_amount_per_area_residential_€/kem2": {
@@ -628,6 +638,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/hm2 Asuminen
         "average_amount_per_area_residential_€/hm2": {
@@ -638,6 +649,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/m2 Yritystila
         "average_amount_per_area_business_€/m2": {
@@ -646,6 +658,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/kem2 Yritystila
         "average_amount_per_area_business_€/kem2": {
@@ -656,6 +669,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/hm2 Yritystila
         "average_amount_per_area_business_€/hm2": {
@@ -666,6 +680,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/m2 (ind)
         "amount_per_area_index_adjusted_€/m2": {
@@ -674,6 +689,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/kem2 (ind)
         "amount_per_area_index_adjusted_€/kem2": {
@@ -682,6 +698,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/hm2 (ind)
         "amount_per_area_index_adjusted_€/hm2": {
@@ -690,6 +707,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Alkuvuosivuokra (ind)
         "initial_year_rent": {
@@ -900,6 +918,7 @@ class LeaseStatisticReport(AsyncReportBase):
             ),
             FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
             FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+            FormatType.NUMBER: workbook.add_format({"num_format": "0.00"}),
         }
 
         row_number = 0
