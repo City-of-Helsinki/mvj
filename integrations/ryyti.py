@@ -199,7 +199,7 @@ class RyytiClient:
 
         return self._get(url, params=params, accept=accept, **options)
 
-    def get_trade_register_extract(
+    def get_trade_register_extract_json(
         self,
         business_id: str | None = None,
         registration_number: str | None = None,
