@@ -13,6 +13,7 @@ class FormatType(Enum):
     PERCENTAGE = "percentage"
     AREA = "area"
     URL = "url"
+    NUMBER = "number"
 
 
 class ExcelCell:

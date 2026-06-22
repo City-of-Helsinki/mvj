@@ -195,6 +195,7 @@ class ReportBase:
             ),
             FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
             FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+            FormatType.NUMBER: workbook.add_format({"num_format": "0.00"}),
         }
 
         row_num = 0
@@ -304,6 +305,8 @@ class ReportBase:
                         else "-"
                     )
                     field_format = ""
+                case FormatType.NUMBER.value:
+                    field_format = formats[FormatType.NUMBER]
 
             field_serializer_field = self.get_output_field_attr(
                 field_name, "serializer_field"
