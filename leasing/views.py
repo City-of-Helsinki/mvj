@@ -284,7 +284,7 @@ class RyytiApiProxy(APIView):
 
         return response
 
-    def _get_api_registry(self, client, business_id):
+    def _get_api_registry(self, client: RyytiClient, business_id: str):
         return {
             "organisation_rules_pdf": lambda: client.get_pdf_document(
                 document_option=DocumentOption.ORGANISATION_RULES,
@@ -292,9 +292,9 @@ class RyytiApiProxy(APIView):
                 stream=True,
             ),
             "company_info_json": lambda: client.get_company_info(
-                business_id, stream=True
+                business_id=business_id, stream=True
             ),
-            "get_company_notifications_json": lambda: client.get_notifications(
+            "company_notifications_json": lambda: client.get_notifications(
                 business_id=business_id,
                 stream=True,
             ),

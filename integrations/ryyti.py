@@ -238,7 +238,7 @@ class RyytiClient:
             raise ValueError(
                 "Either business_id or registration_number must be provided."
             )
-        url = f"{self.base_url}/document-search/v1/document"
+        url = f"{self.base_url}/document-search/v1/documents"
         params = self._filter_params(
             {
                 "businessId": business_id,
