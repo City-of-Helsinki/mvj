@@ -139,7 +139,9 @@ def test_get_trade_register_extract_success(ryyti_client):
             mock_response.json.return_value = {"trade_name": "Test Trade Name"}
             mock_get.return_value = mock_response
 
-            result = ryyti_client.get_trade_register_extract(business_id="1234567-8")
+            result = ryyti_client.get_trade_register_extract_json(
+                business_id="1234567-8"
+            )
 
             assert result.status_code == 200
             assert result.json() == {"trade_name": "Test Trade Name"}
@@ -173,7 +175,7 @@ def test_get_pdf_document_success(ryyti_client):
             assert result.status_code == 200
             assert result.content == b"PDF_CONTENT"
             mock_get.assert_called_once_with(
-                "https://api.example.com/document-search/v1/document",
+                "https://api.example.com/document-search/v1/documents",
                 headers={
                     "Authorization": "Bearer token",
                     "X-RyytiAuth-ClientCorrelationId": ANY,
