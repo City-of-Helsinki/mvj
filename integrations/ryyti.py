@@ -1,4 +1,5 @@
 import base64
+import re
 from enum import StrEnum
 from typing import Annotated, Any, Required, TypeAlias, TypedDict, Unpack, cast
 from uuid import uuid4
@@ -7,6 +8,7 @@ import requests
 from django.conf import LazySettings, settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
+from rest_framework import status
 
 RYYTI_ACCESS_TOKEN_CACHE_KEY = "ryyti_access_token"
 
@@ -46,6 +48,7 @@ class NotificationState(StrEnum):
 class MediaType(StrEnum):
     JSON = "application/json"
     PDF = "application/pdf"
+    MULTIPART_FORM_DATA = "multipart/form-data"
 
 
 class RyytiRequestOptions(TypedDict, total=False):
@@ -156,6 +159,21 @@ class RyytiClient:
         """Remove keys with None values from the parameters dictionary."""
         return {k: v for k, v in params.items() if v is not None}
 
+    def _extract_boundary(self, response: requests.Response) -> bytes | None:
+        """Extract the multipart boundary from headers or detect it from content."""
+        # 1. Try to find the boundary in the Content-Type header
+        content_type = response.headers.get("Content-Type", "")
+        boundary_match = re.search(r"boundary=([^; ]+)", content_type)
+        if boundary_match:
+            return boundary_match.group(1).strip().strip('"').encode("utf-8")
+
+        # 2. Fallback: Detect from content (some APIs are non-compliant and omit the header parameter)
+        if response.content.startswith(b"--"):
+            first_line = response.content.split(b"\r\n", 1)[0]
+            return first_line[2:].rstrip(b"\r\n")
+
+        return None
+
     def _get(
         self,
         url: str,
@@ -175,7 +193,7 @@ class RyytiClient:
                 headers={
                     "Authorization": f"Bearer {token}",
                     "X-RyytiAuth-ClientCorrelationId": str(client_correlation_id),
-                    "Accept": accept.value,
+                    "Accept": accept,
                 },
                 params=params,
                 **options,
@@ -184,6 +202,36 @@ class RyytiClient:
                 response.raise_for_status()
         except requests.RequestException as e:
             raise RyytiException(f"Ryyti API error: {e}") from e
+
+        content_type = response.headers.get("Content-Type", "")
+        if (
+            response.status_code == status.HTTP_200_OK
+            and MediaType.MULTIPART_FORM_DATA in content_type
+        ):
+            boundary = self._extract_boundary(response)
+
+            if boundary:
+                # Note: Accessing response.content stores it in memory,
+                # when streaming the response the data comes from memory, negating any memory savings from streaming.
+                parts = response.content.split(b"--" + boundary)
+                target_content_type = accept.lower().encode("utf-8")
+
+                for part in parts:
+                    if b"\r\n\r\n" not in part:
+                        continue
+
+                    # Split headers and content
+                    header_body = part.split(b"\r\n\r\n", 1)
+                    if len(header_body) < 2:
+                        continue
+
+                    headers_raw, body = header_body
+                    if target_content_type in headers_raw.lower():
+                        # Clean up the body (parts often end with \r\n)
+                        # The last part is expected to have \r\n at the end before the closing boundary
+                        response._content = body.rstrip(b"\r\n")
+                        response.headers["Content-Type"] = accept
+                        break
 
         return response
 
