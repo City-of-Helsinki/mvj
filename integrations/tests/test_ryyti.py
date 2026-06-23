@@ -293,3 +293,93 @@ def test_get_trade_register_extract_pdf_validation(ryyti_client):
         ryyti_client.get_trade_register_extract_pdf(
             business_id="1234567-8", registration_number="1.234.567"
         )
+
+
+def test_get_trade_register_extract_pdf_multipart(ryyti_client):
+    boundary = "n0jYsE8KwUtWuQ9FmzmO8LHTgIXQOv-PZZ6Iy1"
+    content = (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="metadata"\r\n'
+        "Content-Type: application/json\r\n\r\n"
+        '{"numberOfResults": 1}\r\n'
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="file"; filename="1.pdf"\r\n'
+        "Content-Type: application/pdf\r\n\r\n"
+        "%PDF-1.4-REAL-DATA\r\n"
+        f"--{boundary}--\r\n"
+    ).encode("utf-8")
+
+    with patch.object(RyytiClient, "get_access_token", return_value="token"):
+        with patch("requests.get") as mock_get:
+            mock_response = requests.Response()
+            mock_response.status_code = 200
+            mock_response.headers["Content-Type"] = (
+                f"multipart/form-data; boundary={boundary}"
+            )
+            mock_response._content = content
+            mock_get.return_value = mock_response
+
+            result = ryyti_client.get_trade_register_extract_pdf(
+                business_id="1234567-8"
+            )
+
+            assert result.status_code == 200
+            assert result.headers["Content-Type"] == "application/pdf"
+            assert result.content == b"%PDF-1.4-REAL-DATA"
+
+
+def test_get_trade_register_extract_pdf_multipart_no_boundary_header(ryyti_client):
+    boundary = "detected-boundary"
+    content = (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="file"\r\n'
+        "Content-Type: application/pdf\r\n\r\n"
+        "%PDF-1.4-DETECTED\r\n"
+        f"--{boundary}--\r\n"
+    ).encode("utf-8")
+
+    with patch.object(RyytiClient, "get_access_token", return_value="token"):
+        with patch("requests.get") as mock_get:
+            mock_response = requests.Response()
+            mock_response.status_code = 200
+            # Missing boundary in header
+            mock_response.headers["Content-Type"] = "multipart/form-data;charset=UTF-8"
+            mock_response._content = content
+            mock_get.return_value = mock_response
+
+            result = ryyti_client.get_trade_register_extract_pdf(
+                business_id="1234567-8"
+            )
+
+            assert result.status_code == 200
+            assert result.headers["Content-Type"] == "application/pdf"
+            assert result.content == b"%PDF-1.4-DETECTED"
+
+
+def test_get_trade_register_extract_json_multipart(ryyti_client):
+    boundary = "n0jYsE8KwUtWuQ9FmzmO8LHTgIXQOv-PZZ6Iy1"
+    content = (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="metadata"\r\n'
+        "Content-Type: application/json\r\n\r\n"
+        '{"name": "Extract Content"}\r\n'
+        f"--{boundary}--\r\n"
+    ).encode("utf-8")
+
+    with patch.object(RyytiClient, "get_access_token", return_value="token"):
+        with patch("requests.get") as mock_get:
+            mock_response = requests.Response()
+            mock_response.status_code = 200
+            mock_response.headers["Content-Type"] = (
+                f"multipart/form-data; boundary={boundary}"
+            )
+            mock_response._content = content
+            mock_get.return_value = mock_response
+
+            result = ryyti_client.get_trade_register_extract_json(
+                business_id="1234567-8"
+            )
+
+            assert result.status_code == 200
+            assert result.headers["Content-Type"] == "application/json"
+            assert result.json() == {"name": "Extract Content"}
