@@ -73,6 +73,7 @@ class RentForecastReport(AsyncReportBase):
                     LeaseState.SHORT_TERM_LEASE,
                     LeaseState.LONG_TERM_LEASE,
                     LeaseState.RYA,
+                    LeaseState.PERMISSION,
                 ]
             )
             .select_related("type")

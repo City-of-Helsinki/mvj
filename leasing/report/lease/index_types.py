@@ -131,7 +131,9 @@ class IndexTypesReport(ReportBase):
     def get_data(self, input_data: dict[str, Any]) -> QuerySet:
         qs = (
             Rent.objects.filter(
-                index_type=input_data["index_type"], lease__deleted__isnull=True
+                Q(end_date__isnull=True) | Q(end_date__gte=timezone.now().date()),
+                index_type=input_data["index_type"],
+                lease__deleted__isnull=True,
             )
             .select_related(
                 "lease",
