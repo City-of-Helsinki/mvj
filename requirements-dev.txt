@@ -107,7 +107,7 @@ packaging==24.0
     #   black
     #   pytest
     #   pytest-factoryboy
-paramiko==4.0.0
+paramiko==5.0.0
     # via
     #   -c requirements.txt
     #   paramiko-mock
