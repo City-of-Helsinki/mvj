@@ -2,23 +2,23 @@
 -c constraints.txt
 
 # For top-level dependencies, just edit this .in file
-beautifulsoup4~=4.14.3
-deepmerge==2.0
-Django==5.2.13
+beautifulsoup4==4.15.0
+deepmerge==2.1.0
+Django==5.2.15
 django-anymail==15.0
 django-auditlog==3.4.1
 django-admin-rangefilter==0.13.5
 django-cors-headers==4.9.0
-django-countries==8.2.0
+django-countries==9.0.0
 django-enumfields2==4.0
-django-environ==0.13.0
+django-environ==0.14.0
 django-filter==25.2
 django-helusers==1.1.0
 django-model-utils==5.0.0
 django-modeltranslation==0.19.19
 django-nested-inline==0.4.6
-django-q2[sentry]==1.9.0
-django-resilient-logger==2.1.0
+django-q2[sentry]==1.10.0
+django-resilient-logger==2.3.0
 django-safedelete==1.4.1
 django-sanitized-dump==1.2.2
 django-sequences==3.0
@@ -28,16 +28,16 @@ djangorestframework-gis==1.2.0
 drf-yasg[validation]==1.21.15
 docxtpl==0.20.2
 helsinki-profile-gdpr-api==1.1.0
-lxml==6.1.0
-oracledb==3.4.2
+lxml==6.1.1
+oracledb==4.0.1
 paramiko==4.0.0
-psycopg[binary]==3.3.2
+psycopg[binary]==3.3.4
 pyproj==3.7.2
 python-daemon~=3.1.2
 python-dateutil==2.9.0.post0
-sentry-sdk==2.58.0
-requests==2.33.1
-tzdata==2026.1 # Required for platform independent consistent timezones for zoneinfo
+sentry-sdk==2.63.0
+requests==2.34.2
+tzdata==2026.2 # Required for platform independent consistent timezones for zoneinfo
 xhtml2pdf~=0.2.17
 xlsxwriter==3.2.9
 zeep==4.3.2
