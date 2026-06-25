@@ -201,7 +201,7 @@ packaging==24.0
     #   deprecation
     #   django-safedelete
     #   drf-yasg
-paramiko==4.0.0
+paramiko==5.0.0
     # via -r requirements.in
 pillow==10.3.0
     # via
