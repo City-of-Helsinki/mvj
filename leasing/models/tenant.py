@@ -60,6 +60,10 @@ class Tenant(TimeStampedSafeDeleteModel):
         start_date: datetime.date,
         end_date: datetime.date | None,
     ) -> QuerySet["TenantContact"]:
+        """
+        Returns tenant contacts of the given type for the given period, sorted
+        by start_date descending
+        """
         if not end_date:
             range_filter = Q(Q(end_date=None) | Q(end_date__gte=start_date))
         else:
