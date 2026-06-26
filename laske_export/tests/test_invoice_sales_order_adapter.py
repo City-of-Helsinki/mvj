@@ -230,8 +230,12 @@ def test_get_sorted_invoice_rows(exporter_full_test_setup: dict[str, Any]):
     assert sorted_rows == expected_order
 
 
+# =============================================================================
+# Billing contact resolution tests
+# =============================================================================
+
+
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
@@ -239,11 +243,7 @@ def test_get_sorted_invoice_rows(exporter_full_test_setup: dict[str, Any]):
 @pytest.mark.django_db
 def test_get_contact_to_bill_returns_billing_contacts_new_contact(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
-    tenant_contact_factory: Callable[..., TenantContact],
     contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact's contact (laskunsaajan asiakas) is changed to another
@@ -255,12 +255,6 @@ def test_get_contact_to_bill_returns_billing_contacts_new_contact(
     The preferred way is to end the existing billing contact and create a new
     one, which is tested in another test case.
 
-    Given:
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
-
     When:
     - the billing contact's contact is changed to a new contact,
 
@@ -269,79 +263,19 @@ def test_get_contact_to_bill_returns_billing_contacts_new_contact(
         because they are the designated billing contact for the lease during the
         invoice's billing period.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    # Tenantcontacts that are active for whole year of 2026.
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_contact = contact_factory(
-        first_name="Billing", last_name="Contact Original"
-    )
-
-    billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=original_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_contact,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    billing_contact: TenantContact = setup["billing_contact"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
-    new_contact = contact_factory(
-        first_name="Billing",
-        last_name="Contact New",
-    )
+    new_contact = contact_factory(first_name="New", last_name="Billing Contact")
     billing_contact.contact = new_contact
     billing_contact.save()
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
@@ -350,28 +284,15 @@ def test_get_contact_to_bill_returns_billing_contacts_new_contact(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_covers_billing_period_but_ends_afterwards(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
-    tenant_contact_factory: Callable[..., TenantContact],
-    contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact covers the invoice's billing period, but it ends afterwards.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
 
     When:
     - billing contact ends after the billing period,
@@ -380,61 +301,11 @@ def test_get_contact_to_bill_when_billing_contact_covers_billing_period_but_ends
     - get_contact_to_bill() should return the billing contact's contact, because
         they are still responsible for the invoice's billing period.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    billing_contact_person = contact_factory(first_name="Billing", last_name="Contact")
-    billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=billing_contact_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=billing_contact_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    billing_contact: TenantContact = setup["billing_contact"]
+    original_billing_contacts_contact: Contact = setup["billing_contacts_contact"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     billing_contact.end_date = datetime.date(2027, 1, 31)
@@ -442,18 +313,15 @@ def test_get_contact_to_bill_when_billing_contact_covers_billing_period_but_ends
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    assert adapter.get_contact_to_bill() == billing_contact_person
+    assert adapter.get_contact_to_bill() == original_billing_contacts_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
@@ -463,8 +331,6 @@ def test_get_contact_to_bill_when_no_active_tenants(
     tenant_factory: Callable[..., Tenant],
     tenant_contact_factory: Callable[..., TenantContact],
     contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Invoice was created for a tenant, but afterwards that tenant was ended.
@@ -478,14 +344,6 @@ def test_get_contact_to_bill_when_no_active_tenants(
     conditions are likely different from the previous tenant's conditions, which
     means the existing invoice's contents might not be valid anymore.
 
-    Given:
-    - tenant,
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
-
     When:
     - the tenant ends (== tenantcontact of type=tenant ends),
     - billing contact ends,
@@ -495,83 +353,27 @@ def test_get_contact_to_bill_when_no_active_tenants(
     - get_contact_to_bill() should return the invoice's original recipient,
       because any changes cannot be automatically handled at this point.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    original_tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    # Tenantcontacts that are active for whole year of 2026.
-    tenant_contacts_contact = contact_factory(
-        first_name="Original Tenant", last_name="Contact"
-    )
-    original_tenant_contact = tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=original_tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_contact = contact_factory(
-        first_name="Original Billing", last_name="Contact"
-    )
-    original_billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=original_tenant,
-        contact=original_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_contact,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=original_tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    lease: Lease = setup["lease"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    tenant_contact: TenantContact = setup["tenant_contact"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    original_billing_contacts_contact: Contact = setup["billing_contacts_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Old tenant is ended before invoice's billing period
-    original_tenant_contact.end_date = datetime.date(2026, 11, 30)
-    original_tenant_contact.save()
-    original_billing_contact.end_date = datetime.date(2026, 11, 30)
-    original_billing_contact.save()
+    tenant_contact.end_date = datetime.date(2026, 11, 30)
+    tenant_contact.save()
+    billing_contact.end_date = datetime.date(2026, 11, 30)
+    billing_contact.save()
 
     # New tenant starts during invoice's billing period.
     new_tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
+        lease=lease, share_numerator=1, share_denominator=1, reference=None
     )
     new_tenant_contacts_contact = contact_factory(
-        first_name="New Tenant", last_name="Contact"
+        first_name="New", last_name="Tenant Contact"
     )
     tenant_contact_factory(
         type=TenantContactType.TENANT,
@@ -580,8 +382,7 @@ def test_get_contact_to_bill_when_no_active_tenants(
         start_date=datetime.date(2026, 12, 1),
     )
     new_billing_contacts_contact = contact_factory(
-        first_name="New Billing",
-        last_name="Contact",
+        first_name="New", last_name="Billing Contact"
     )
     tenant_contact_factory(
         type=TenantContactType.BILLING,
@@ -589,43 +390,31 @@ def test_get_contact_to_bill_when_no_active_tenants(
         contact=new_billing_contacts_contact,
         start_date=datetime.date(2026, 12, 1),
     )
+
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
     assert adapter.get_contact_to_bill() == invoice.recipient
-    assert invoice.recipient == original_contact
+    assert invoice.recipient == original_billing_contacts_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_ends_but_another_billing_contact_covers_billing_period(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
     tenant_contact_factory: Callable[..., TenantContact],
     contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact is ended before the invoice's billing period.
           There is another billing contact.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
 
     When:
     - billing contact ends before the invoice's billing period,
@@ -636,114 +425,47 @@ def test_get_contact_to_bill_when_billing_contact_ends_but_another_billing_conta
       because they are the designated billing contact for the lease during the
       invoice's billing period.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_billing_person = contact_factory(
-        first_name="Billing Original", last_name="Contact"
-    )
-    original_billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=original_billing_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_billing_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    tenant: Tenant = setup["tenant"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Original billing contact is ended before the billing period.
-    original_billing_contact.end_date = datetime.date(2026, 11, 30)
-    original_billing_contact.save()
+    billing_contact.end_date = datetime.date(2026, 11, 30)
+    billing_contact.save()
 
     # A new billing contact is added that covers the billing period.
-    new_billing_person = contact_factory(first_name="Billing New", last_name="Contact")
+    new_contact = contact_factory(first_name="New", last_name="Billing Contact")
     tenant_contact_factory(
         type=TenantContactType.BILLING,
         tenant=tenant,
-        contact=new_billing_person,
+        contact=new_contact,
         start_date=datetime.date(2026, 12, 1),
     )
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    assert adapter.get_contact_to_bill() == new_billing_person
+    assert adapter.get_contact_to_bill() == new_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_ends_but_tenant_contact_covers_billing_period(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
-    tenant_contact_factory: Callable[..., TenantContact],
-    contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact is ended before the invoice's billing period.
           No other billing contacts remain. Only the tenant contact remains.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
 
     When:
     - billing contact ends before the invoice's billing period,
@@ -755,62 +477,11 @@ def test_get_contact_to_bill_when_billing_contact_ends_but_tenant_contact_covers
       because they are the main responsible party for the lease during the
       invoice's billing period when no billing contacts are active.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    # Tenant contact: active throughout 2026 and beyond.
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_billing_person = contact_factory(first_name="Billing", last_name="Contact")
-    billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=original_billing_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_billing_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    service_unit: ServiceUnit = setup["service_unit"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    original_tenant_contacts_contact: Contact = setup["tenant_contacts_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Billing contact is ended before the billing period; no new billing contact is added.
@@ -819,30 +490,22 @@ def test_get_contact_to_bill_when_billing_contact_ends_but_tenant_contact_covers
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    # get_billing_tenantcontacts finds no billing contacts for Dec → falls back to tenant contacts.
-    assert adapter.get_contact_to_bill() == tenant_contacts_contact
+    # No billing contacts for Dec → falls back to tenant contacts.
+    assert adapter.get_contact_to_bill() == original_tenant_contacts_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_ends_and_no_other_contacts_exist(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
-    tenant_contact_factory: Callable[..., TenantContact],
-    contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact is ended before the invoice's billing period.
@@ -852,13 +515,6 @@ def test_get_contact_to_bill_when_billing_contact_ends_and_no_other_contacts_exi
     least one active tenant contact for the lease, but it is technically
     possible.
 
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this billing contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
-
     When:
     - billing contact ends before the invoice's billing period,
     - no active billing contacts remain,
@@ -867,63 +523,13 @@ def test_get_contact_to_bill_when_billing_contact_ends_and_no_other_contacts_exi
     Then:
     - get_contact_to_bill() should return the invoice's original recipient,
         because there are no other contacts to send the invoice to.
-
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact = tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_billing_person = contact_factory(first_name="Billing", last_name="Contact")
-    billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=original_billing_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_billing_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    service_unit: ServiceUnit = setup["service_unit"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    original_billing_contacts_contact: Contact = setup["billing_contacts_contact"]
+    tenant_contact: TenantContact = setup["tenant_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Both billing and tenant contacts are ended before the billing period.
@@ -934,43 +540,29 @@ def test_get_contact_to_bill_when_billing_contact_ends_and_no_other_contacts_exi
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    # get_billing_tenantcontacts finds no billing contacts → falls back to tenant contacts → also none.
-    # Falls through to invoice.recipient.
+    # No billing contacts → no tenant contacts → falls through to invoice.recipient.
     assert adapter.get_contact_to_bill() == invoice.recipient
-    assert invoice.recipient == original_billing_person
+    assert invoice.recipient == original_billing_contacts_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_newer_billing_contact_covers_billing_period_and_another_begins_midway(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
     tenant_contact_factory: Callable[..., TenantContact],
     contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact covers the entire billing period, but another billing
     contact begins midway through the invoice's billing period.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
 
     When:
     - billing contact covers the billing period,
@@ -981,113 +573,45 @@ def test_get_contact_to_bill_when_newer_billing_contact_covers_billing_period_an
       because it is responsible for part of the invoice's billing period, and
       newer contacts are preferred over older contacts.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    older_billing_person = contact_factory(
-        first_name="Billing Older", last_name="Contact"
-    )
-    # Billing contact at invoice creation time: active from Jan 1, no end date.
-    tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=older_billing_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=older_billing_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    tenant: Tenant = setup["tenant"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # A newer billing contact is added that starts midway through the billing period.
-    newer_billing_person = contact_factory(
-        first_name="Billing Newer", last_name="Contact"
-    )
+    new_contact = contact_factory(first_name="New", last_name="Billing Contact")
     tenant_contact_factory(
         type=TenantContactType.BILLING,
         tenant=tenant,
-        contact=newer_billing_person,
+        contact=new_contact,
         start_date=datetime.date(2026, 12, 15),
     )
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    # get_billing_tenantcontacts returns both, ordered by -start_date → newer (Dec 15) is first.
-    assert adapter.get_contact_to_bill() == newer_billing_person
+    # Both billing contacts overlap Dec; ordered by -start_date → newer (Dec 15) is first.
+    assert adapter.get_contact_to_bill() == new_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and_another_begins(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
     tenant_contact_factory: Callable[..., TenantContact],
     contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
-    Case: Billing contact ends during the invoice's billing period, but another billing contact begins.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
+    Case: Billing contact ends during the invoice's billing period, but another
+    billing contact begins.
 
     When:
     - billing contact ends during the invoice's billing period,
@@ -1098,117 +622,47 @@ def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and
       because it is responsible for part of the invoice's billing period, and
       newer contacts are preferred over older contacts.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    original_billing_person = contact_factory(
-        first_name="Billing Original", last_name="Contact"
-    )
-    # Billing contact at invoice creation time: active from Jan 1, no end date.
-    original_billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=original_billing_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=original_billing_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    tenant: Tenant = setup["tenant"]
+    service_unit: ServiceUnit = setup["service_unit"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Original billing contact ends mid-period; a newer billing contact picks up immediately.
-    original_billing_contact.end_date = datetime.date(2026, 12, 15)
-    original_billing_contact.save()
+    billing_contact.end_date = datetime.date(2026, 12, 15)
+    billing_contact.save()
 
-    newer_billing_person = contact_factory(
-        first_name="Billing Newer", last_name="Contact"
-    )
+    new_contact = contact_factory(first_name="New", last_name="Billing Contact")
     tenant_contact_factory(
         type=TenantContactType.BILLING,
         tenant=tenant,
-        contact=newer_billing_person,
+        contact=new_contact,
         start_date=datetime.date(2026, 12, 16),
     )
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    # Both billing contacts overlap the Dec period; ordered by -start_date → newer (Dec 16) is first.
-    assert adapter.get_contact_to_bill() == newer_billing_person
+    # Both billing contacts overlap Dec; ordered by -start_date → newer (Dec 16) is first.
+    assert adapter.get_contact_to_bill() == new_contact
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    # Pass the ID to the test setup fixture
     "invoice_sales_order_adapter_billing_contact_test_setup",
     [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
     indirect=True,
 )
 def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and_only_tenant_contact_remains(
     invoice_sales_order_adapter_billing_contact_test_setup: dict[str, Any],
-    tenant_factory: Callable[..., Tenant],
-    tenant_contact_factory: Callable[..., TenantContact],
-    contact_factory: Callable[..., Contact],
-    invoice_factory: Callable[..., Invoice],
-    invoice_row_factory: Callable[..., InvoiceRow],
 ):
     """
     Case: Billing contact ends during the invoice's billing period.
           No other billing contacts remain. Only the tenant contact remains.
-
-    Given:
-    - tenant contact (type=tenant),
-    - billing contact (type=billing),
-    - invoice for this contact,
-    - invoice rows for this tenant,
-    - billing period when the contacts are active,
 
     When:
     - billing contact ends during the invoice's billing period,
@@ -1222,63 +676,11 @@ def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and
       The tenant contact is the main responsible party for the lease during the
       invoice's billing period.
     """
-    # Given...
-    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
-    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
-        "service_unit"
-    ]
-
-    tenant = tenant_factory(
-        lease=lease,
-        share_numerator=1,
-        share_denominator=1,
-        reference=None,
-    )
-
-    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
-    # Tenant contact: active throughout the billing period.
-    tenant_contact_factory(
-        type=TenantContactType.TENANT,
-        tenant=tenant,
-        contact=tenant_contacts_contact,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    billing_contact_person = contact_factory(first_name="Billing", last_name="Contact")
-    # Billing contact at invoice creation time: active from Jan 1, no end date.
-    billing_contact = tenant_contact_factory(
-        type=TenantContactType.BILLING,
-        tenant=tenant,
-        contact=billing_contact_person,
-        start_date=datetime.date(2026, 1, 1),
-    )
-
-    # Invoice for December 2026, originally issued to the active billing contact.
-    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
-    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
-
-    invoice = invoice_factory(
-        lease=lease,
-        total_amount=Decimal("111.11"),
-        billed_amount=Decimal("111.11"),
-        outstanding_amount=Decimal("111.11"),
-        recipient=billing_contact_person,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-    )
-    invoicerow_receivable_type: ReceivableType = (
-        invoice_sales_order_adapter_billing_contact_test_setup[
-            "invoicerow_receivable_type"
-        ]
-    )
-    invoice_row_factory(
-        invoice=invoice,
-        tenant=tenant,
-        receivable_type=invoicerow_receivable_type,
-        billing_period_start_date=billing_period_start_date,
-        billing_period_end_date=billing_period_end_date,
-        amount=Decimal("111.11"),
-    )
+    setup = invoice_sales_order_adapter_billing_contact_test_setup
+    service_unit: ServiceUnit = setup["service_unit"]
+    billing_contact: TenantContact = setup["billing_contact"]
+    original_tenant_contacts_contact: Contact = setup["tenant_contacts_contact"]
+    invoice: Invoice = setup["invoice"]
 
     # When...
     # Billing contact ends mid-period; no replacement is added.
@@ -1287,10 +689,8 @@ def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and
 
     sales_order = create_sales_order_with_laske_values(service_unit)
     adapter = invoice_sales_order_adapter_factory(
-        invoice=invoice,
-        sales_order=sales_order,
-        service_unit=service_unit,
+        invoice=invoice, sales_order=sales_order, service_unit=service_unit
     )
 
     # Then...
-    assert adapter.get_contact_to_bill() == tenant_contacts_contact
+    assert adapter.get_contact_to_bill() == original_tenant_contacts_contact
