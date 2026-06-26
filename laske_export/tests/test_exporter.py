@@ -6,6 +6,7 @@ import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
+from typing import Callable
 
 import pytest
 from django.conf import settings
@@ -15,9 +16,13 @@ from django.test import override_settings
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.exporter import LaskeExporter
 from laske_export.models import LaskeExportLog
-from leasing.enums import ServiceUnitId
-from leasing.models.contact import ContactType
-from leasing.models.invoice import Invoice
+from leasing.enums import ServiceUnitId, TenantContactType
+from leasing.models.contact import Contact, ContactType
+from leasing.models.invoice import Invoice, InvoiceRow
+from leasing.models.lease import Lease
+from leasing.models.receivable_type import ReceivableType
+from leasing.models.service_unit import ServiceUnit
+from leasing.models.tenant import Tenant, TenantContact
 
 from .conftest import (
     get_exported_file_as_tree,
@@ -26,14 +31,14 @@ from .conftest import (
 
 
 @pytest.fixture
-def billing_period():
+def billing_period() -> tuple[datetime.date, datetime.date]:
     billing_period_start_date = datetime.date(year=2017, month=7, day=1)
     billing_period_end_date = datetime.date(year=2017, month=12, day=31)
     return billing_period_start_date, billing_period_end_date
 
 
 @pytest.fixture
-def lease(lease_factory):
+def lease(lease_factory: Callable[..., Lease]) -> Lease:
     lease = lease_factory(
         type_id=1, municipality_id=1, district_id=5, notice_period_id=1
     )
@@ -41,7 +46,12 @@ def lease(lease_factory):
 
 
 @pytest.fixture
-def invoice(contact_factory, invoice_factory, lease, billing_period):
+def invoice(
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    lease,
+    billing_period,
+):
     billing_period_start_date, billing_period_end_date = billing_period
 
     contact = contact_factory(
@@ -64,7 +74,12 @@ def invoice(contact_factory, invoice_factory, lease, billing_period):
 
 
 @pytest.fixture
-def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
+def broken_invoice(
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    lease,
+    billing_period,
+):
     billing_period_start_date, billing_period_end_date = billing_period
 
     broken_contact = contact_factory(
@@ -88,7 +103,10 @@ def broken_invoice(contact_factory, invoice_factory, lease, billing_period):
 
 @pytest.mark.django_db
 def test_invalid_export_invoice(
-    broken_invoice, invoice, monkeypatch_laske_exporter_send, mock_sftp
+    broken_invoice,
+    invoice,
+    monkeypatch_laske_exporter_send,
+    mock_sftp,
 ):
     exporter = LaskeExporter(service_unit=invoice.service_unit)
     exporter.export_invoices([broken_invoice, invoice])
@@ -115,10 +133,10 @@ def test_invalid_export_invoice(
 
 @pytest.mark.django_db
 def test_export_invalid_invoice_not_marked_sent(
-    service_unit_factory,
-    contact_factory,
-    invoice_factory,
-    lease_factory,
+    service_unit_factory: Callable[..., ServiceUnit],
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    lease_factory: Callable[..., Lease],
     monkeypatch_laske_exporter_send,
     caplog: pytest.LogCaptureFixture,
     mock_sftp,
@@ -186,14 +204,14 @@ def test_send_invoices_to_laske_command_handle_with_unexpected_error(
 def test_send_invoices_service_unit(
     settings,
     tmp_path,
-    service_unit_factory,
-    receivable_type_factory,
-    lease_factory,
-    contact_factory,
-    invoice_factory,
+    service_unit_factory: Callable[..., ServiceUnit],
+    receivable_type_factory: Callable[..., ReceivableType],
+    lease_factory: Callable[..., Lease],
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
     send_invoices_to_laske_command,
     monkeypatch_laske_exporter_send,
-    service_unit_to_use,
+    service_unit_to_use: int,
     mock_sftp,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
@@ -298,13 +316,12 @@ def test_send_invoices_service_unit(
 def _order_number_test_setup(
     settings,
     tmp_path,
-    service_unit_factory,
-    receivable_type_factory,
-    lease_factory,
-    contact_factory,
-    invoice_factory,
-    invoice_row_factory,
-    send_invoices_to_laske_command,
+    service_unit_factory: Callable[..., ServiceUnit],
+    receivable_type_factory: Callable[..., ReceivableType],
+    lease_factory: Callable[..., Lease],
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
     monkeypatch_laske_exporter_send,
 ):
     settings.LASKE_EXPORT_ROOT = str(tmp_path)
@@ -477,3 +494,137 @@ def test_export_sftp(monkeypatch, mock_sftp):
         )
         laske_exporter = LaskeExporter(service_unit=ServiceUnitId.MAKE)
         laske_exporter.send(file_path)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "invoice_sales_order_adapter_billing_contact_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
+    indirect=True,
+)
+def test_export_updates_invoice_recipient_when_billing_contact_changed(
+    settings,
+    tmp_path,
+    invoice_sales_order_adapter_billing_contact_test_setup,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+    monkeypatch_laske_exporter_send,
+    mock_sftp,
+):
+    """
+    When a BILLING TenantContact differs from invoice.recipient,
+    export_invoices() must update invoice.recipient in the database to the
+    current billing contact before sending to SAP.
+
+    This helps to keep MVJ and SAP in sync with the same billing information.
+    """
+    # Set up a temporary directory for the export files, so we can check the exported XML.
+    settings.LASKE_EXPORT_ROOT = str(tmp_path)
+
+    # Given...
+    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
+    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
+        "service_unit"
+    ]
+    tenant = tenant_factory(
+        lease=lease,
+        share_numerator=1,
+        share_denominator=1,
+        reference=None,
+    )
+    tenant_contact_person = contact_factory(
+        first_name="Tenant", last_name="Contact Person", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=tenant_contact_person,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    original_billing_person = contact_factory(
+        first_name="Original",
+        last_name="Billing Person",
+        sap_customer_number="1111111111",
+        type=ContactType.PERSON,
+    )
+    original_billing_contact = tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=original_billing_person,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    # Invoice for December 2026, originally issued to the active billing contact.
+    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
+    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("111.11"),
+        billed_amount=Decimal("111.11"),
+        outstanding_amount=Decimal("111.11"),
+        recipient=original_billing_person,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+    invoicerow_receivable_type: ReceivableType = (
+        invoice_sales_order_adapter_billing_contact_test_setup[
+            "invoicerow_receivable_type"
+        ]
+    )
+    invoice_row_factory(
+        invoice=invoice,
+        tenant=tenant,
+        receivable_type=invoicerow_receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal("111.11"),
+    )
+
+    # When...
+    # Original billing contact is ended before the billing period.
+    original_billing_contact.end_date = datetime.date(2026, 11, 30)
+    original_billing_contact.save()
+
+    new_billing_person = contact_factory(
+        first_name="New",
+        last_name="Billing Person",
+        sap_customer_number="2222222222",
+        type=ContactType.PERSON,
+    )
+    tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=new_billing_person,
+        start_date=billing_period_start_date,
+    )
+
+    exporter = LaskeExporter(service_unit=service_unit)
+    exporter.export_invoices([invoice])
+
+    # Then...
+    # The invoice recipient in database should be updated to the new billing contact.
+    invoice_from_db = Invoice.objects.get(id=invoice.pk)
+    assert invoice_from_db.recipient == new_billing_person
+    assert new_billing_person != original_billing_person
+
+    # Invoice export should have the same recipient as the updated invoice recipient.
+    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
+    assert len(files) == 1
+    exported_file = files[0]
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder/BillingParty1")) == 1
+
+    assert (
+        xml_tree.find("./SBO_SalesOrder/BillingParty1/SAPCustomerID").text
+        == new_billing_person.sap_customer_number
+    )
+    assert (
+        new_billing_person.sap_customer_number
+        != original_billing_person.sap_customer_number
+    )
