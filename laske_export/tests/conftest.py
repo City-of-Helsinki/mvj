@@ -478,14 +478,23 @@ def invoice_sales_order_adapter_billing_contact_test_setup(
     contact_factory: Callable[..., Contact],
     district_factory: Callable[..., District],
     intended_use_factory: Callable[..., IntendedUse],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
     lease_factory: Callable[..., Lease],
     lease_type_factory: Callable[..., LeaseType],
     receivable_type_factory: Callable[..., ReceivableType],
-    rent_intended_use_factory: Callable[..., RentIntendedUse],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
 ) -> dict[str, Any]:
     """
-    Default test data fixture for invoice_sales_order_adapter tests relating to
-    billing contact resolution.
+    Default test data fixture for billing contact resolution tests.
+
+    Creates a shared setup with:
+    - service unit with required receivable types,
+    - lease with required related objects,
+    - tenant with tenant contact and billing contact, both starting Jan 1 2026,
+    - invoice for December 2026 billing period,
+    - invoice row for the tenant.
     """
     service_unit_id: ServiceUnitId = request.param
     service_unit = _setup_service_unit_for_tests(
@@ -510,12 +519,67 @@ def invoice_sales_order_adapter_billing_contact_test_setup(
         sap_material_code="11111111",
         sap_project_number="1111111111",
     )
-    invoicerow_intended_use = rent_intended_use_factory(
-        name="Invoice Row Intended Use name"
+
+    # Common tenant setup starting Jan 1 2026, with no end date
+    tenant = tenant_factory(
+        lease=lease,
+        share_numerator=1,
+        share_denominator=1,
+        reference=None,
     )
+
+    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
+    tenant_contact = tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=tenant_contacts_contact,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    billing_contacts_contact = contact_factory(
+        first_name="Original",
+        last_name="Billing Contact",
+        sap_customer_number="1111111111",
+    )
+    billing_contact = tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=billing_contacts_contact,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    # Common invoice setup for December 2026 billing period
+    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
+    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("111.11"),
+        billed_amount=Decimal("111.11"),
+        outstanding_amount=Decimal("111.11"),
+        recipient=billing_contacts_contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+    invoice_row_factory(
+        invoice=invoice,
+        tenant=tenant,
+        receivable_type=invoicerow_receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal("111.11"),
+    )
+
     return {
         "service_unit": service_unit,
         "lease": lease,
         "invoicerow_receivable_type": invoicerow_receivable_type,
-        "invoicerow_intended_use": invoicerow_intended_use,
+        "tenant": tenant,
+        "tenant_contact": tenant_contact,
+        "tenant_contacts_contact": tenant_contacts_contact,
+        "billing_contact": billing_contact,
+        "billing_contacts_contact": billing_contacts_contact,
+        "invoice": invoice,
+        "billing_period_start_date": billing_period_start_date,
+        "billing_period_end_date": billing_period_end_date,
     }
