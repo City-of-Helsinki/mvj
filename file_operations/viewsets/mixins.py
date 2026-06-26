@@ -216,7 +216,7 @@ class FileExtensionFileMixin:
     def _validate_file_extensions(self, files: MultiValueDict) -> NoReturn:
         """
         Validate file extensions of uploaded files from the file extension.
-        Does not validate the the file type from the first bytes of the tile,
+        Does not validate the file type from the first bytes of the tile,
         nor does it validate the content type / mimetype of the file.
 
         Raises:
