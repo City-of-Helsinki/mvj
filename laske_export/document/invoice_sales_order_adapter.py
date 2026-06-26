@@ -156,7 +156,7 @@ class InvoiceSalesOrderAdapter:
 
         return "\n".join(bill_texts)
 
-    def get_first_tenant(self) -> Tenant | None:
+    def get_first_tenant_from_invoicerows(self) -> Tenant | None:
         for invoice_row in self.invoice.rows.all():
             if not invoice_row.tenant:
                 continue
@@ -166,7 +166,7 @@ class InvoiceSalesOrderAdapter:
         return None
 
     def get_contact_to_bill(self) -> Contact:
-        tenant = self.get_first_tenant()
+        tenant = self.get_first_tenant_from_invoicerows()
         # We need a tenant and time period to find the BILLING contact
         if not tenant or not self.invoice.billing_period_start_date:
             return self.invoice.recipient
@@ -445,7 +445,12 @@ class InvoiceSalesOrderAdapter:
         #       Make, or something else? Maybe return empty string instead?
         return SapSalesOfficeNumber.MAKE.value  # type: ignore[no-any-return]
 
-    def set_values(self) -> None:
+    def set_values(self) -> Contact:
+        """
+        Sets the values of the sales order based on the invoice and service unit.
+
+        Returns: The contact to be billed for the invoice.
+        """
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
 
         contact_to_be_billed = self.get_contact_to_bill()
@@ -471,6 +476,8 @@ class InvoiceSalesOrderAdapter:
         self.set_payment_reference()
 
         self.sales_order.line_items = self.get_line_items()
+
+        return contact_to_be_billed
 
 
 class KamaInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):

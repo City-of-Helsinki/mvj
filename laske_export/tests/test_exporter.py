@@ -494,3 +494,137 @@ def test_export_sftp(monkeypatch, mock_sftp):
         )
         laske_exporter = LaskeExporter(service_unit=ServiceUnitId.MAKE)
         laske_exporter.send(file_path)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    # Pass the ID to the test setup fixture
+    "invoice_sales_order_adapter_billing_contact_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
+    indirect=True,
+)
+def test_export_updates_invoice_recipient_when_billing_contact_changed(
+    settings,
+    tmp_path,
+    invoice_sales_order_adapter_billing_contact_test_setup,
+    contact_factory: Callable[..., Contact],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+    monkeypatch_laske_exporter_send,
+    mock_sftp,
+):
+    """
+    When a BILLING TenantContact differs from invoice.recipient,
+    export_invoices() must update invoice.recipient in the database to the
+    current billing contact before sending to SAP.
+
+    This helps to keep MVJ and SAP in sync with the same billing information.
+    """
+    # Set up a temporary directory for the export files, so we can check the exported XML.
+    settings.LASKE_EXPORT_ROOT = str(tmp_path)
+
+    # Given...
+    lease: Lease = invoice_sales_order_adapter_billing_contact_test_setup["lease"]
+    service_unit: ServiceUnit = invoice_sales_order_adapter_billing_contact_test_setup[
+        "service_unit"
+    ]
+    tenant = tenant_factory(
+        lease=lease,
+        share_numerator=1,
+        share_denominator=1,
+        reference=None,
+    )
+    tenant_contact_person = contact_factory(
+        first_name="Tenant", last_name="Contact Person", type=ContactType.PERSON
+    )
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=tenant_contact_person,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    original_billing_person = contact_factory(
+        first_name="Original",
+        last_name="Billing Person",
+        sap_customer_number="1111111111",
+        type=ContactType.PERSON,
+    )
+    original_billing_contact = tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=original_billing_person,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    # Invoice for December 2026, originally issued to the active billing contact.
+    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
+    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("111.11"),
+        billed_amount=Decimal("111.11"),
+        outstanding_amount=Decimal("111.11"),
+        recipient=original_billing_person,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+    invoicerow_receivable_type: ReceivableType = (
+        invoice_sales_order_adapter_billing_contact_test_setup[
+            "invoicerow_receivable_type"
+        ]
+    )
+    invoice_row_factory(
+        invoice=invoice,
+        tenant=tenant,
+        receivable_type=invoicerow_receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal("111.11"),
+    )
+
+    # When...
+    # Original billing contact is ended before the billing period.
+    original_billing_contact.end_date = datetime.date(2026, 11, 30)
+    original_billing_contact.save()
+
+    new_billing_person = contact_factory(
+        first_name="New",
+        last_name="Billing Person",
+        sap_customer_number="2222222222",
+        type=ContactType.PERSON,
+    )
+    tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=new_billing_person,
+        start_date=billing_period_start_date,
+    )
+
+    exporter = LaskeExporter(service_unit=service_unit)
+    exporter.export_invoices([invoice])
+
+    # Then...
+    # The invoice recipient in database should be updated to the new billing contact.
+    invoice_from_db = Invoice.objects.get(id=invoice.pk)
+    assert invoice_from_db.recipient == new_billing_person
+    assert new_billing_person != original_billing_person
+
+    # Invoice export should have the same recipient as the updated invoice recipient.
+    files = glob(settings.LASKE_EXPORT_ROOT + "/MTIL_IN_*.xml")
+    assert len(files) == 1
+    exported_file = files[0]
+    xml_tree = et.parse(exported_file)
+    assert len(xml_tree.findall("./SBO_SalesOrder/BillingParty1")) == 1
+
+    assert (
+        xml_tree.find("./SBO_SalesOrder/BillingParty1/SAPCustomerID").text
+        == new_billing_person.sap_customer_number
+    )
+    assert (
+        new_billing_person.sap_customer_number
+        != original_billing_person.sap_customer_number
+    )
