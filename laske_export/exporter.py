@@ -17,7 +17,6 @@ from laske_export.enums import LaskeExportLogInvoiceStatus
 from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
 from leasing.enums import InvoiceType
 from leasing.models import Invoice, ServiceUnit
-from leasing.models.contact import Contact
 
 logger = logging.getLogger(__name__)
 
@@ -145,8 +144,7 @@ class LaskeExporter:
                 service_unit=self.service_unit,
                 fill_priority_and_info=self.service_unit.laske_fill_priority_and_info,
             )
-            contact_to_be_billed = adapter.set_values()
-            self._update_invoice_recipient_if_changed(invoice, contact_to_be_billed)
+            adapter.set_values(update_invoice_recipient=True)
 
             try:
                 sales_order.validate()
@@ -215,22 +213,3 @@ class LaskeExporter:
         laske_export_log_entry.save()
 
         return laske_export_log_entry
-
-    def _update_invoice_recipient_if_changed(
-        self,
-        invoice: Invoice,
-        contact_to_be_billed: Contact,
-    ) -> None:
-        """
-        Update the invoice recipient to the contact to be billed, if they are different.
-
-        This ensures that MVJ database and SAP have the same invoice recipient.
-        """
-        if invoice.recipient != contact_to_be_billed:
-            invoice.recipient = contact_to_be_billed
-            invoice.save()
-            self.write_to_output(
-                " Updated invoice recipient to contact id {}.".format(
-                    contact_to_be_billed.pk
-                )
-            )
