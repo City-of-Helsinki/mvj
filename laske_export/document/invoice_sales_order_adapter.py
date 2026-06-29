@@ -482,15 +482,39 @@ class InvoiceSalesOrderAdapter:
         #       Make, or something else? Maybe return empty string instead?
         return SapSalesOfficeNumber.MAKE.value  # type: ignore[no-any-return]
 
-    def set_values(self) -> Contact:
+    def _update_invoice_recipient_if_changed(
+        self,
+        contact_to_be_billed: Contact,
+    ) -> None:
+        """
+        Update the invoice recipient to the contact to be billed, if they are different.
+
+        This ensures that MVJ database and SAP have the same invoice recipient.
+        """
+        if self.invoice.recipient != contact_to_be_billed:
+            self.invoice.recipient = contact_to_be_billed
+            self.invoice.save()
+            self.write_to_output(
+                " Updated invoice recipient to contact id {}.".format(
+                    contact_to_be_billed.pk
+                )
+            )
+
+    def set_values(self, update_invoice_recipient: bool = False) -> None:
         """
         Sets the values of the sales order based on the invoice and service unit.
 
-        Returns: The contact to be billed for the invoice.
+        Args:
+            update_invoice_recipient: Whether to update the self.invoice.recipient to the contact to be billed
+
+        Returns: None
         """
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
 
         contact_to_be_billed = self.get_contact_to_bill()
+
+        if update_invoice_recipient:
+            self._update_invoice_recipient_if_changed(contact_to_be_billed)
 
         order_party = OrderParty(fill_priority_and_info=self.fill_priority_and_info)
         order_party.from_contact(contact_to_be_billed)
@@ -513,8 +537,6 @@ class InvoiceSalesOrderAdapter:
         self.set_payment_reference()
 
         self.sales_order.line_items = self.get_line_items()
-
-        return contact_to_be_billed
 
 
 class KamaInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
