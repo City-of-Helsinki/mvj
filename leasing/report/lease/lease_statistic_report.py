@@ -7,7 +7,7 @@ from typing import Any, Type, TypedDict
 import xlsxwriter
 from django import forms
 from django.db.models import Q, QuerySet
-from django.utils import formats, timezone
+from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django_q.conf import Conf
@@ -178,11 +178,7 @@ def _get_permitted_building_volume(
         (basis.area for basis in basis_of_rents),
         start=Decimal(0),
     )
-    return formats.number_format(
-        area_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return area_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 @lru_cache(maxsize=1)
@@ -201,11 +197,7 @@ def get_rent_amount_residential(obj):
         if intended_use.id in RESIDENTIAL_INTENDED_USE_IDS:
             total_amount += amount
 
-    return formats.number_format(
-        total_amount,
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return total_amount
 
 
 def get_rent_amount_business(obj):
@@ -219,21 +211,13 @@ def get_rent_amount_business(obj):
         if intended_use.id not in RESIDENTIAL_INTENDED_USE_IDS:
             total_amount += amount
 
-    return formats.number_format(
-        total_amount,
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return total_amount
 
 
 def get_total_rent_amount_for_year(obj):
     year = timezone.now().year
     total_rent_for_year = _get_rent_amount_for_year(obj, year).get_total_amount()
-    return formats.number_format(
-        total_rent_for_year,
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return total_rent_for_year
 
 
 def _get_average_amount_per_area(
@@ -269,12 +253,7 @@ def _get_average_amount_per_area(
     )
     try:
         average_amount = area_amount_total / len(basis_of_rents)
-
-        return formats.number_format(
-            Decimal(average_amount).quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-            decimal_pos=2,
-            use_l10n=True,
-        )
+        return Decimal(average_amount).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
     except ZeroDivisionError:
         return Decimal(0)
 
@@ -298,11 +277,7 @@ def _get_amount_per_area_index_adjusted(lease: Lease, area_unit: AreaUnit):
         ),
         start=Decimal(0).quantize(Decimal(".01")),
     )
-    return formats.number_format(
-        index_adjusted_area_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return index_adjusted_area_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_initial_year_rent(lease):
@@ -313,11 +288,7 @@ def get_initial_year_rent(lease):
     ):
         amount += basis_of_rent.calculate_initial_year_rent()
 
-    return formats.number_format(
-        amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_subvented_initial_year_rent(lease):
@@ -327,11 +298,7 @@ def get_subvented_initial_year_rent(lease):
     ):
         subvented_rent_total += basis_of_rent.calculate_subvented_initial_year_rent()
 
-    return formats.number_format(
-        subvented_rent_total.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return subvented_rent_total.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_subvention_euros_per_year(lease):
@@ -346,11 +313,7 @@ def get_subvention_euros_per_year(lease):
             basis_of_rent.calculate_subvented_initial_year_rent()
         )
     subvention_per_year = initial_year_rent_total - subvented_initial_year_rent_total
-    return formats.number_format(
-        subvention_per_year.quantize(Decimal(".001"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return subvention_per_year.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_subsidy_percent(lease):
@@ -371,11 +334,7 @@ def get_subsidy_percent(lease):
 
     subsidy_percent = subvention_amount * 100 / initial_year_rent
 
-    return formats.number_format(
-        subsidy_percent.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return subsidy_percent.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_subvention_amount_per_area(lease):
@@ -386,11 +345,7 @@ def get_subvention_amount_per_area(lease):
     ):
         subvention_amount += basis_of_rent.calculate_subvention_amount_per_area()
 
-    return formats.number_format(
-        subvention_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP),
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return subvention_amount.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_temporary_subvention_percentage(lease):
@@ -407,11 +362,7 @@ def get_temporary_subvention_percentage(lease):
             base *= (100 - temporary_subvention.subvention_percent) / 100
 
     subvention_percentage = (1 - base) * 100
-    return formats.number_format(
-        subvention_percentage,
-        decimal_pos=2,
-        use_l10n=True,
-    )
+    return subvention_percentage.quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
 
 
 def get_temporary_discount_amount_euros_per_year(lease):
@@ -427,12 +378,8 @@ def get_temporary_discount_amount_euros_per_year(lease):
             ]
         )
 
-    return formats.number_format(
-        temporary_discount_amount_total.quantize(
-            Decimal(".01"), rounding=ROUND_HALF_UP
-        ),
-        decimal_pos=2,
-        use_l10n=True,
+    return temporary_discount_amount_total.quantize(
+        Decimal(".01"), rounding=ROUND_HALF_UP
     )
 
 
@@ -568,6 +515,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennus-oikeus kem2 (asuminen)
         "permitted_building_volume_residential_kem2": {
@@ -578,6 +526,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennus-oikeus hm2 (asuminen)
         "permitted_building_volume_residential_hm2": {
@@ -588,6 +537,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra (asuminen)
         "rent_amount_residential": {
@@ -603,6 +553,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennusoikeus kem2 (yritystila)
         "permitted_building_volume_business_kem2": {
@@ -613,6 +564,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Rakennusoikeus hm2 (yritystila)
         "permitted_building_volume_business_hm2": {
@@ -623,6 +575,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra (yritystila)
         "rent_amount_business": {
@@ -638,22 +591,25 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Kokonaisrakennusoikeus kem2
         "permitted_building_volume_total_kem2": {
             "label": _("Permitted building volume total {unit}").format(unit="kem2"),
             "source": lambda lease: _get_permitted_building_volume(
-                lease, AreaUnit.SQUARE_METRE, is_residential=None
+                lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Kokonaisrakennusoikeus hm2
         "permitted_building_volume_total_hm2": {
             "label": _("Permitted building volume total {unit}").format(unit="hm2"),
             "source": lambda lease: _get_permitted_building_volume(
-                lease, AreaUnit.SQUARE_METRE, is_residential=None
+                lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=None
             ),
             "width": 10,
+            "format": "number",
         },
         # Vuosivuokra yhteensä
         "total_rent_amount_for_year": {
@@ -671,6 +627,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/kem2 Asuminen
         "average_amount_per_area_residential_€/kem2": {
@@ -681,6 +638,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/hm2 Asuminen
         "average_amount_per_area_residential_€/hm2": {
@@ -691,6 +649,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=True
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/m2 Yritystila
         "average_amount_per_area_business_€/m2": {
@@ -699,6 +658,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/kem2 Yritystila
         "average_amount_per_area_business_€/kem2": {
@@ -709,6 +669,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Keskiarvo €/hm2 Yritystila
         "average_amount_per_area_business_€/hm2": {
@@ -719,6 +680,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE, is_residential=False
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/m2 (ind)
         "amount_per_area_index_adjusted_€/m2": {
@@ -727,6 +689,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/kem2 (ind)
         "amount_per_area_index_adjusted_€/kem2": {
@@ -735,6 +698,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.FLOOR_SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Yksikköhinta €/hm2 (ind)
         "amount_per_area_index_adjusted_€/hm2": {
@@ -743,6 +707,7 @@ class LeaseStatisticReport(AsyncReportBase):
                 lease, AreaUnit.APARTMENT_SQUARE_METRE
             ),
             "width": 10,
+            "format": "number",
         },
         # Alkuvuosivuokra (ind)
         "initial_year_rent": {
@@ -941,7 +906,7 @@ class LeaseStatisticReport(AsyncReportBase):
         report = self
 
         output = BytesIO()
-        workbook = xlsxwriter.Workbook(output)
+        workbook = xlsxwriter.Workbook(output, {"strings_to_numbers": True})
         worksheet = workbook.add_worksheet(gettext("Lease statistics report"))
 
         formats = {
@@ -953,6 +918,7 @@ class LeaseStatisticReport(AsyncReportBase):
             ),
             FormatType.PERCENTAGE: workbook.add_format({"num_format": "0.0 %"}),
             FormatType.AREA: workbook.add_format({"num_format": r"#,##0.00 \m\²"}),
+            FormatType.NUMBER: workbook.add_format({"num_format": "0.00"}),
         }
 
         row_number = 0
@@ -1090,7 +1056,9 @@ def get_basis_of_rent_rows_from_report_data(
     report_data: list[dict[str, Any]],
 ) -> list[Any]:
     basis_of_rents = []
+    lease: Lease
     for lease in report_data:
+        basis_of_rent: LeaseBasisOfRent
         for basis_of_rent in lease.basis_of_rents.all() or []:
             if basis_of_rent.archived_at or not basis_of_rent.locked_at:
                 continue
