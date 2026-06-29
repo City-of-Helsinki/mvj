@@ -43,7 +43,9 @@ def handle_async_task(input_data: LeaseStatisticReportInputData):
     try:
         # Generate report data and create a ReportStorage
         report_data = lease_statistics_report.get_data(input_data)
-        serialized_report_data = lease_statistics_report.serialize_data(report_data)
+        serialized_report_data = lease_statistics_report.serialize_data(
+            report_data, localize_output=True
+        )
         ReportStorage.objects.create(
             report_data=serialized_report_data,
             input_data=input_data,
