@@ -16,8 +16,16 @@ from laske_export.document.invoice_sales_order_adapter import (
 from laske_export.exporter import LaskeExporter, create_sales_order_with_laske_values
 from laske_export.management.commands import send_invoices_to_laske
 from leasing.enums import ContactType, ServiceUnitId, TenantContactType
+from leasing.models import District
+from leasing.models.contact import Contact
+from leasing.models.decision import Decision
+from leasing.models.invoice import Invoice, InvoiceRow
+from leasing.models.land_area import LeaseArea, LeaseAreaAddress
+from leasing.models.lease import IntendedUse, Lease, LeaseType
 from leasing.models.receivable_type import ReceivableType
+from leasing.models.rent import RentIntendedUse
 from leasing.models.service_unit import ServiceUnit
+from leasing.models.tenant import Tenant, TenantContact
 from leasing.tests.conftest import *  # noqa
 
 
@@ -120,8 +128,8 @@ def send_invoices_to_laske_command() -> BaseCommand:
 
 @pytest.fixture
 def send_invoices_to_laske_command_handle(
-    broken_invoice,
-    invoice,
+    broken_invoice,  # Fixture initialized in test file
+    invoice,  # Fixture initialized in test file
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send,
     mock_sftp,
@@ -132,8 +140,8 @@ def send_invoices_to_laske_command_handle(
 
 @pytest.fixture
 def send_invoices_to_laske_command_handle_with_unexpected_error(
-    broken_invoice,
-    invoice,
+    broken_invoice,  # Fixture initialized in test file
+    invoice,  # Fixture initialized in test file
     send_invoices_to_laske_command: BaseCommand,
     monkeypatch_laske_exporter_send_with_error,
     mock_sftp,
@@ -148,20 +156,20 @@ def exporter_full_test_setup(
     settings,
     tmp_path,  # Unique path provided by pytest: /tmp/pytest-of-vscode/pytest-<num>
     request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
-    contact_factory,
-    decision_factory,
-    district_factory,
-    intended_use_factory,
-    invoice_factory,
-    invoice_row_factory,
-    lease_factory,
-    lease_area_factory,
-    lease_area_address_factory,
-    lease_type_factory,
-    receivable_type_factory,
-    rent_intended_use_factory,
-    tenant_factory,
-    tenant_contact_factory,
+    contact_factory: Callable[..., Contact],
+    decision_factory: Callable[..., Decision],
+    district_factory: Callable[..., District],
+    intended_use_factory: Callable[..., IntendedUse],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+    lease_factory: Callable[..., Lease],
+    lease_area_factory: Callable[..., LeaseArea],
+    lease_area_address_factory: Callable[..., LeaseAreaAddress],
+    lease_type_factory: Callable[..., LeaseType],
+    receivable_type_factory: Callable[..., ReceivableType],
+    rent_intended_use_factory: Callable[..., RentIntendedUse],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
 ) -> dict[str, Any]:
     """Default test data fixture for exporter tests."""
     # Ensure a unique directory for each test, so that the export XML can be
@@ -327,15 +335,15 @@ def exporter_lacking_test_setup(
     settings,
     tmp_path,  # Unique path provided by pytest: /tmp/pytest-of-vscode/pytest-<num>
     request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
-    contact_factory,
-    district_factory,
-    invoice_factory,
-    invoice_row_factory,
-    lease_factory,
-    lease_type_factory,
-    receivable_type_factory,
-    tenant_factory,
-    tenant_contact_factory,
+    contact_factory: Callable[..., Contact],
+    district_factory: Callable[..., District],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+    lease_factory: Callable[..., Lease],
+    lease_type_factory: Callable[..., LeaseType],
+    receivable_type_factory: Callable[..., ReceivableType],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
 ) -> dict[str, Any]:
     """
     Testing data fixture for KAMA-related exporter tests.
@@ -397,6 +405,7 @@ def exporter_lacking_test_setup(
         total_amount=Decimal("123.45"),
         billed_amount=Decimal("123.45"),
         outstanding_amount=Decimal("123.45"),
+        invoicing_date=datetime.date(year=2024, month=1, day=1),
         recipient=contact_factory(
             first_name=None,
             last_name=None,
@@ -461,3 +470,116 @@ def _setup_service_unit_for_tests(
     service_unit.default_receivable_type_collateral = default_receivable_type_collateral
     service_unit.save()
     return service_unit
+
+
+@pytest.fixture
+def invoice_sales_order_adapter_billing_contact_test_setup(
+    request: pytest.FixtureRequest,  # will be indirectly passed via pytest.mark.parametrize
+    contact_factory: Callable[..., Contact],
+    district_factory: Callable[..., District],
+    intended_use_factory: Callable[..., IntendedUse],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+    lease_factory: Callable[..., Lease],
+    lease_type_factory: Callable[..., LeaseType],
+    receivable_type_factory: Callable[..., ReceivableType],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+) -> dict[str, Any]:
+    """
+    Default test data fixture for billing contact resolution tests.
+
+    Creates a shared setup with:
+    - service unit with required receivable types,
+    - lease with required related objects,
+    - tenant with tenant contact and billing contact, both starting Jan 1 2026,
+    - invoice for December 2026 billing period,
+    - invoice row for the tenant.
+    """
+    service_unit_id: ServiceUnitId = request.param
+    service_unit = _setup_service_unit_for_tests(
+        service_unit_id, receivable_type_factory
+    )
+    lease = lease_factory(
+        service_unit=service_unit,
+        lessor=contact_factory(service_unit=service_unit, sap_sales_office="1234"),
+        district=district_factory(identifier="99", name="District name"),
+        intended_use=intended_use_factory(
+            name="Lease Intended Use name", service_unit=service_unit
+        ),
+        type=lease_type_factory(
+            name="Lease Type name",
+            sap_material_code="11111111",
+            sap_project_number="1111111111",
+        ),
+    )
+    invoicerow_receivable_type = receivable_type_factory(
+        name="Invoice Row Receivable Type name",
+        service_unit=service_unit,
+        sap_material_code="11111111",
+        sap_project_number="1111111111",
+    )
+
+    # Common tenant setup starting Jan 1 2026, with no end date
+    tenant = tenant_factory(
+        lease=lease,
+        share_numerator=1,
+        share_denominator=1,
+        reference=None,
+    )
+
+    tenant_contacts_contact = contact_factory(first_name="Tenant", last_name="Contact")
+    tenant_contact = tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=tenant_contacts_contact,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    billing_contacts_contact = contact_factory(
+        first_name="Original",
+        last_name="Billing Contact",
+        sap_customer_number="1111111111",
+    )
+    billing_contact = tenant_contact_factory(
+        type=TenantContactType.BILLING,
+        tenant=tenant,
+        contact=billing_contacts_contact,
+        start_date=datetime.date(2026, 1, 1),
+    )
+
+    # Common invoice setup for December 2026 billing period
+    billing_period_start_date = datetime.date(year=2026, month=12, day=1)
+    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("111.11"),
+        billed_amount=Decimal("111.11"),
+        outstanding_amount=Decimal("111.11"),
+        recipient=billing_contacts_contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+    invoice_row_factory(
+        invoice=invoice,
+        tenant=tenant,
+        receivable_type=invoicerow_receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal("111.11"),
+    )
+
+    return {
+        "service_unit": service_unit,
+        "lease": lease,
+        "invoicerow_receivable_type": invoicerow_receivable_type,
+        "tenant": tenant,
+        "tenant_contact": tenant_contact,
+        "tenant_contacts_contact": tenant_contacts_contact,
+        "billing_contact": billing_contact,
+        "billing_contacts_contact": billing_contacts_contact,
+        "invoice": invoice,
+        "billing_period_start_date": billing_period_start_date,
+        "billing_period_end_date": billing_period_end_date,
+    }

@@ -58,8 +58,12 @@ class Tenant(TimeStampedSafeDeleteModel):
         self,
         contact_type: TenantContactType,
         start_date: datetime.date,
-        end_date: datetime.date,
+        end_date: datetime.date | None,
     ) -> QuerySet["TenantContact"]:
+        """
+        Returns tenant contacts of the given type for the given period, sorted
+        by start_date descending
+        """
         if not end_date:
             range_filter = Q(Q(end_date=None) | Q(end_date__gte=start_date))
         else:
@@ -77,15 +81,19 @@ class Tenant(TimeStampedSafeDeleteModel):
         return tenantcontacts
 
     def get_tenant_tenantcontacts(
-        self, start_date: datetime.date, end_date: datetime.date
-    ):
+        self, start_date: datetime.date, end_date: datetime.date | None
+    ) -> QuerySet["TenantContact"]:
         return self.get_tenantcontacts_for_period(
             TenantContactType.TENANT, start_date, end_date
         )
 
     def get_billing_tenantcontacts(
-        self, start_date: datetime.date, end_date: datetime.date
+        self, start_date: datetime.date, end_date: datetime.date | None
     ) -> QuerySet["TenantContact"]:
+        """
+        Returns billing-type contacts for the tenant for the given period, if available.
+        If not available, returns tenant-type contacts for the same period.
+        """
         billing_contacts = self.get_tenantcontacts_for_period(
             TenantContactType.BILLING, start_date, end_date
         )

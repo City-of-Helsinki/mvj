@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
 from laske_export.document.custom_validators import calculate_checksum
 from leasing.enums import (
@@ -14,6 +14,7 @@ from leasing.enums import (
     SapSalesOfficeNumber,
     SapSalesOrgNumber,
     ServiceUnitId,
+    TenantContactType,
 )
 from leasing.models import Contact, Invoice, InvoiceRow, ServiceUnit, Tenant
 from leasing.models.lease import LeaseType
@@ -156,7 +157,7 @@ class InvoiceSalesOrderAdapter:
 
         return "\n".join(bill_texts)
 
-    def get_first_tenant(self) -> Tenant | None:
+    def get_first_tenant_from_invoicerows(self) -> Tenant | None:
         for invoice_row in self.invoice.rows.all():
             if not invoice_row.tenant:
                 continue
@@ -166,20 +167,56 @@ class InvoiceSalesOrderAdapter:
         return None
 
     def get_contact_to_bill(self) -> Contact:
-        tenant = self.get_first_tenant()
+        tenant = self.get_first_tenant_from_invoicerows()
         # We need a tenant and time period to find the BILLING contact
         if not tenant or not self.invoice.billing_period_start_date:
             return self.invoice.recipient
 
-        # This method returns the TENANT contact if there's no BILLING contact
-        tenant_billingcontact = tenant.get_billing_tenantcontacts(
-            self.invoice.billing_period_start_date, self.invoice.billing_period_end_date
+        billing_period_start = self.invoice.billing_period_start_date
+        billing_period_end = self.invoice.billing_period_end_date
+
+        billing_tenantcontacts = tenant.get_tenantcontacts_for_period(
+            TenantContactType.BILLING, billing_period_start, billing_period_end
+        )
+        newest_billing_contact = billing_tenantcontacts.first()
+
+        if newest_billing_contact:
+            # If the most recent billing contact ends during the billing period
+            # and no other billing contact covers through the end of the period,
+            # fall back to tenant contacts instead of using a partially-covering
+            # billing contact.
+            if (
+                newest_billing_contact.end_date
+                and billing_period_end
+                and newest_billing_contact.end_date < billing_period_end
+            ):
+                any_billing_contact_has_full_coverage = billing_tenantcontacts.filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=billing_period_end)
+                ).exists()
+
+                if not any_billing_contact_has_full_coverage:
+                    # ... then fall back to tenant contacts.
+                    tenant_contact = tenant.get_tenant_tenantcontacts(
+                        billing_period_start, billing_period_end
+                    ).first()
+                    if tenant_contact:
+                        return tenant_contact.contact
+
+                    # No valid tenant contacts either, so fall back to invoice recipient.
+                    return self.invoice.recipient
+
+            # Most recent billing contact has full coverage for the billing period, so use it.
+            return newest_billing_contact.contact
+
+        # No billing contacts at all for the period; try tenant contacts.
+        tenant_contact = tenant.get_tenant_tenantcontacts(
+            billing_period_start, billing_period_end
         ).first()
 
-        if not tenant_billingcontact:
-            return self.invoice.recipient
+        if tenant_contact:
+            return tenant_contact.contact
 
-        return tenant_billingcontact.contact
+        return self.invoice.recipient
 
     def get_po_number(self) -> str | None:
         # Simply return the first reference ("viite") we come across
@@ -445,7 +482,12 @@ class InvoiceSalesOrderAdapter:
         #       Make, or something else? Maybe return empty string instead?
         return SapSalesOfficeNumber.MAKE.value  # type: ignore[no-any-return]
 
-    def set_values(self) -> None:
+    def set_values(self) -> Contact:
+        """
+        Sets the values of the sales order based on the invoice and service unit.
+
+        Returns: The contact to be billed for the invoice.
+        """
         self.sales_order.set_bill_texts_from_string(self.get_bill_text())
 
         contact_to_be_billed = self.get_contact_to_bill()
@@ -471,6 +513,8 @@ class InvoiceSalesOrderAdapter:
         self.set_payment_reference()
 
         self.sales_order.line_items = self.get_line_items()
+
+        return contact_to_be_billed
 
 
 class KamaInvoiceSalesOrderAdapter(InvoiceSalesOrderAdapter):
@@ -660,9 +704,9 @@ def _sort_invoice_rows_for_lineitems(
     Credit note rows (negative amounts) should be second.
     Rounding rows (very small amounts, positive or negative) should be last.
     """
-    charges = []
-    credits = []
-    roundings = []
+    charges: list[InvoiceRow] = []
+    credits: list[InvoiceRow] = []
+    roundings: list[InvoiceRow] = []
     # The rounding threshold is a guesstimate by the developer.
     # It should be small enough to not include "real" invoice rows,
     # but large enough to include all rounding rows.
@@ -681,6 +725,6 @@ def _sort_invoice_rows_for_lineitems(
     sorted_charges = sorted(charges, key=lambda r: r.amount, reverse=True)
     # Example: -50, -25, -10
     sorted_credits = sorted(credits, key=lambda r: abs(r.amount), reverse=True)
-    # Example: 0.05, -0.01
+    # Example: 0.01, -0.05
     sorted_roundings = sorted(roundings, key=lambda r: r.amount, reverse=True)
     return sorted_charges + sorted_credits + sorted_roundings
