@@ -140,10 +140,13 @@ class ReportBase:
 
         return input_form.cleaned_data
 
-    def serialize_data(self, report_data):
+    def serialize_data(self, report_data, localize_output=False):
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(
-            report_data, output_fields=self.output_fields, many=True
+            report_data,
+            output_fields=self.output_fields,
+            localize_output=localize_output,
+            many=True,
         )
         return serializer.data
 
