@@ -304,7 +304,7 @@ six==1.16.0
     #   html5lib
     #   isodate
     #   python-dateutil
-soupsieve==2.5
+soupsieve==2.8.4
     # via beautifulsoup4
 sqlparse==0.5.0
     # via django
