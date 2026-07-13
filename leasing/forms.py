@@ -17,6 +17,7 @@ from leasing.models import (
     ServiceUnit,
 )
 from leasing.validators import validate_business_id
+from users.models import User
 
 
 class CommaSeparatedChoiceField(forms.ChoiceField):
@@ -137,6 +138,11 @@ class LeaseSearchForm(forms.Form):
     )
     preparers_own_leases = forms.NullBooleanField(
         label="Preparer's own leases", required=False
+    )
+    preparer = forms.ModelChoiceField(
+        label="Preparer",
+        queryset=User.objects.all(),
+        required=False,
     )
 
 
