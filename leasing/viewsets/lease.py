@@ -326,38 +326,59 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
         search_form = LeaseSearchForm(self.request.query_params)
 
         if search_form.is_valid():
-            if search_form.cleaned_data.get("tenant_name"):
+            if (
+                search_form.cleaned_data.get("tenant_name")
+                or search_form.cleaned_data.get("business_id")
+                or search_form.cleaned_data.get("national_identification_number")
+            ):
+                q = Q()
                 tenant_name = search_form.cleaned_data.get("tenant_name")
 
                 # Tenantcontact name
-                q = Q(tenants__tenantcontact__contact__name__icontains=tenant_name)
+                if tenant_name:
+                    q = Q(tenants__tenantcontact__contact__name__icontains=tenant_name)
 
-                if " " in tenant_name:
-                    tenant_name_parts = tenant_name.split(" ", 2)
-                    q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
-                            0
-                        ]
-                    ) & Q(
-                        tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
-                            1
-                        ]
+                    if " " in tenant_name:
+                        tenant_name_parts = tenant_name.split(" ", 2)
+                        q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
+                                0
+                            ]
+                        ) & Q(
+                            tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
+                                1
+                            ]
+                        )
+                        q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
+                                1
+                            ]
+                        ) & Q(
+                            tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
+                                0
+                            ]
+                        )
+                    else:
+                        q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=tenant_name
+                        )
+                        q |= Q(
+                            tenants__tenantcontact__contact__last_name__icontains=tenant_name
+                        )
+
+                if search_form.cleaned_data.get("business_id"):
+                    q &= Q(
+                        tenants__tenantcontact__contact__business_id__icontains=search_form.cleaned_data.get(
+                            "business_id"
+                        )
                     )
-                    q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
-                            1
-                        ]
-                    ) & Q(
-                        tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
-                            0
-                        ]
+
+                if search_form.cleaned_data.get("national_identification_number"):
+                    nat_id = search_form.cleaned_data.get(
+                        "national_identification_number"
                     )
-                else:
-                    q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=tenant_name
-                    )
-                    q |= Q(
-                        tenants__tenantcontact__contact__last_name__icontains=tenant_name
+                    q &= Q(
+                        tenants__tenantcontact__contact__national_identification_number__icontains=nat_id
                     )
 
                 if search_form.cleaned_data.get("tenantcontact_type"):
@@ -458,19 +479,6 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             if search_form.cleaned_data.get("lease_state"):
                 queryset = queryset.filter(
                     state__in=search_form.cleaned_data.get("lease_state")
-                )
-
-            if search_form.cleaned_data.get("business_id"):
-                queryset = queryset.filter(
-                    tenants__tenantcontact__contact__business_id__icontains=search_form.cleaned_data.get(
-                        "business_id"
-                    )
-                )
-
-            if search_form.cleaned_data.get("national_identification_number"):
-                nat_id = search_form.cleaned_data.get("national_identification_number")
-                queryset = queryset.filter(
-                    tenants__tenantcontact__contact__national_identification_number__icontains=nat_id
                 )
 
             if search_form.cleaned_data.get("lessor"):
