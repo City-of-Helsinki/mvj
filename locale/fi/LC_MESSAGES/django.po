@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-17 13:34+0300\n"
+"POT-Creation-Date: 2026-07-16 11:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1215,6 +1215,42 @@ msgstr "Oikeudenkäyntiuhkainen"
 msgctxt "Collection stage"
 msgid "Risk of termination and litigation"
 msgstr "Irtisanomis- ja oikeudenkäyntiuhkainen"
+
+msgctxt "Preparation state"
+msgid "Missing lease property"
+msgstr "Vuokrakohde puuttuu"
+
+msgctxt "Preparation state"
+msgid "Missing lease area geometry"
+msgstr "Vuokra-alueen geometria puuttuu"
+
+msgctxt "Preparation state"
+msgid "Missing tenant"
+msgstr "Vuokralainen puuttuu"
+
+msgctxt "Preparation state"
+msgid "Missing rent"
+msgstr "Vuokra puuttuu"
+
+msgctxt "Preparation state"
+msgid "Missing decision"
+msgstr "Päätös puuttuu"
+
+msgctxt "Preparation state"
+msgid "Missing constructability"
+msgstr "Rakentamiskelpoisuus puuttuu"
+
+msgctxt "Preparation state"
+msgid "Contract not signed"
+msgstr "Sopimusta ei allekirjoitettu"
+
+msgctxt "Preparation state"
+msgid "Rent not marked ready"
+msgstr "Vuokraus ei merkitty valmiiksi"
+
+msgctxt "Preparation state"
+msgid "Invoicing not started"
+msgstr "Laskutus ei käynnistetty"
 
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"

@@ -1,7 +1,7 @@
 import re
 
 from dateutil.parser import ParserError, parse, parserinfo
-from django.db.models import DurationField, Q
+from django.db.models import DurationField, Exists, OuterRef, Q
 from django.db.models.functions import Cast
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
+from leasing.enums import LeaseState, PreparationState
 from leasing.filters import (
     DistrictFilter,
     IntendedUseFilter,
@@ -38,6 +39,8 @@ from leasing.models import (
     StatisticalUse,
     SupportiveHousing,
 )
+from leasing.models.contract import Contract
+from leasing.models.land_area import ConstructabilityDescription, LeaseArea
 from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
 from leasing.serializers.lease import (
@@ -542,10 +545,70 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     preparer=search_form.cleaned_data.get("preparer")
                 )
 
+            if search_form.cleaned_data.get("preparation_state"):
+                queryset = self.get_preparation_state_filters(
+                    queryset, search_form.cleaned_data.get("preparation_state")
+                )
+
         final_query = str(queryset.query)
         queryset_has_filters_applied = initial_query != final_query
         if queryset_has_filters_applied:
             return queryset.distinct()
+
+        return queryset
+
+    def get_preparation_state_filters(self, queryset, preparation_state):
+        if PreparationState.MISSING_LEASE_PROPERTY.value in preparation_state:
+            queryset = queryset.filter(lease_areas__isnull=True)
+
+        if PreparationState.MISSING_LEASE_AREA_GEOMETRY.value in preparation_state:
+            queryset = queryset.filter(lease_areas__geometry__isnull=True)
+
+        if PreparationState.MISSING_TENANT.value in preparation_state:
+            queryset = queryset.filter(tenants__isnull=True).exclude(
+                state__in=[
+                    LeaseState.RESERVATION,
+                    LeaseState.PRELIMINARY,
+                ]
+            )
+
+        if PreparationState.MISSING_RENT.value in preparation_state:
+            queryset = queryset.filter(rents__isnull=True).exclude(
+                state__in=[
+                    LeaseState.RESERVATION,
+                    LeaseState.PRELIMINARY,
+                ]
+            )
+
+        if PreparationState.MISSING_DECISION.value in preparation_state:
+            queryset = queryset.filter(decisions__isnull=True)
+
+        if PreparationState.MISSING_CONSTRUCTABILITY.value in preparation_state:
+            has_no_description = ~Exists(
+                ConstructabilityDescription.objects.filter(lease_area_id=OuterRef("pk"))
+            )
+            queryset = queryset.filter(
+                lease_areas__in=LeaseArea.objects.filter(has_no_description)
+            )
+
+        if PreparationState.CONTRACT_NOT_SIGNED.value in preparation_state:
+            latest_unsigned_contract = Contract.objects.filter(
+                lease=OuterRef("pk"), signing_date__isnull=True
+            ).order_by("-created_at")
+            queryset = queryset.filter(Exists(latest_unsigned_contract[:1])).exclude(
+                state=LeaseState.RESERVATION
+            )
+
+        if PreparationState.RENT_NOT_MARKED_READY.value in preparation_state:
+            queryset = queryset.filter(rent_info_completed_at__isnull=True)
+
+        if PreparationState.INVOICING_NOT_STARTED.value in preparation_state:
+            queryset = queryset.filter(invoicing_enabled_at__isnull=True).exclude(
+                state__in=[
+                    LeaseState.RESERVATION,
+                    LeaseState.PRELIMINARY,
+                ]
+            )
 
         return queryset
 
