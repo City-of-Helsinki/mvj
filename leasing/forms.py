@@ -83,8 +83,10 @@ class LeaseSearchForm(forms.Form):
     lease_type = forms.ModelChoiceField(
         label="Lease type", queryset=LeaseType.objects.all(), required=False
     )
-    municipality = forms.ModelChoiceField(
-        label="Municipality", queryset=Municipality.objects.all(), required=False
+    municipality = CommaSeparatedChoiceField(
+        label="Municipality",
+        choices=lambda: ((str(x.id), x.name) for x in Municipality.objects.all()),
+        required=False,
     )
     district = forms.ModelChoiceField(
         label="District", queryset=District.objects.all(), required=False

@@ -484,6 +484,11 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     state__in=search_form.cleaned_data.get("lease_state")
                 )
 
+            if search_form.cleaned_data.get("municipality"):
+                queryset = queryset.filter(
+                    municipality_id__in=search_form.cleaned_data.get("municipality")
+                )
+
             if search_form.cleaned_data.get("lessor"):
                 queryset = queryset.filter(
                     lessor=search_form.cleaned_data.get("lessor")

@@ -206,7 +206,7 @@ class InvoiceRowFilter(FilterSet):
 class LeaseFilter(FilterSet):
     class Meta:
         model = Lease
-        fields = ["type", "municipality", "district"]
+        fields = ["type", "district"]
 
 
 class OldDwellingsInHousingCompaniesPriceIndexFilter(FilterSet):
