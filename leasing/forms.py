@@ -131,9 +131,9 @@ class LeaseSearchForm(forms.Form):
         choices=lambda: ((str(x.id), x.name) for x in ServiceUnit.objects.all()),
         required=False,
     )
-    intended_use = forms.ModelChoiceField(
+    intended_use = CommaSeparatedChoiceField(
         label="Intended use",
-        queryset=IntendedUse.objects.all(),
+        choices=lambda: ((str(x.id), x.name) for x in IntendedUse.objects.all()),
         required=False,
     )
     preparers_own_leases = forms.NullBooleanField(

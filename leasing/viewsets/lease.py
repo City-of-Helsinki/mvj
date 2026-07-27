@@ -534,7 +534,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
             if search_form.cleaned_data.get("intended_use"):
                 queryset = queryset.filter(
-                    intended_use=search_form.cleaned_data.get("intended_use")
+                    intended_use_id__in=search_form.cleaned_data.get("intended_use")
                 )
 
             if search_form.cleaned_data.get("preparer"):
