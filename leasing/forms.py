@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from leasing.enums import (
     InfillDevelopmentCompensationState,
     LeaseState,
+    PreparationState,
     TenantContactType,
 )
 from leasing.models import (
@@ -143,6 +144,11 @@ class LeaseSearchForm(forms.Form):
         label="Preparer",
         queryset=User.objects.all(),
         required=False,
+    )
+    preparation_state = CommaSeparatedChoiceField(
+        label="Preparation state",
+        required=False,
+        choices=tuple((x.value, str(x)) for x in PreparationState),
     )
 
 

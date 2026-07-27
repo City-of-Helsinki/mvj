@@ -729,3 +729,41 @@ class CollectionStage(Enum):
         RISK_OF_TERMINATION_AND_LITIGATION = pgettext_lazy(
             "Collection stage", "Risk of termination and litigation"
         )
+
+
+class PreparationState(Enum):
+    """
+    In Finnish: Valmistelun tila
+    """
+
+    MISSING_LEASE_PROPERTY = "missing_lease_property"
+    MISSING_LEASE_AREA_GEOMETRY = "missing_lease_area_geometry"
+    MISSING_TENANT = "missing_tenant"
+    MISSING_RENT = "missing_rent"
+    MISSING_DECISION = "missing_decision"
+    MISSING_CONSTRUCTABILITY = "missing_constructability"
+    CONTRACT_NOT_SIGNED = "contract_not_signed"
+    RENT_NOT_MARKED_READY = "rent_not_marked_ready"
+    INVOICING_NOT_STARTED = "invoicing_not_started"
+
+    @member
+    class Labels:
+        MISSING_LEASE_PROPERTY = pgettext_lazy(
+            "Preparation state", "Missing lease property"
+        )
+        MISSING_LEASE_AREA_GEOMETRY = pgettext_lazy(
+            "Preparation state", "Missing lease area geometry"
+        )
+        MISSING_TENANT = pgettext_lazy("Preparation state", "Missing tenant")
+        MISSING_RENT = pgettext_lazy("Preparation state", "Missing rent")
+        MISSING_DECISION = pgettext_lazy("Preparation state", "Missing decision")
+        MISSING_CONSTRUCTABILITY = pgettext_lazy(
+            "Preparation state", "Missing constructability"
+        )
+        CONTRACT_NOT_SIGNED = pgettext_lazy("Preparation state", "Contract not signed")
+        RENT_NOT_MARKED_READY = pgettext_lazy(
+            "Preparation state", "Rent not marked ready"
+        )
+        INVOICING_NOT_STARTED = pgettext_lazy(
+            "Preparation state", "Invoicing not started"
+        )
