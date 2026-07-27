@@ -178,17 +178,17 @@ class InvoiceSalesOrderAdapter:
         billing_tenantcontacts = tenant.get_tenantcontacts_for_period(
             TenantContactType.BILLING, billing_period_start, billing_period_end
         )
-        newest_billing_contact = billing_tenantcontacts.first()
+        billing_contact_with_latest_start_date = billing_tenantcontacts.first()
 
-        if newest_billing_contact:
+        if billing_contact_with_latest_start_date:
             # If the most recent billing contact ends during the billing period
             # and no other billing contact covers through the end of the period,
             # fall back to tenant contacts instead of using a partially-covering
             # billing contact.
             if (
-                newest_billing_contact.end_date
+                billing_contact_with_latest_start_date.end_date
                 and billing_period_end
-                and newest_billing_contact.end_date < billing_period_end
+                and billing_contact_with_latest_start_date.end_date < billing_period_end
             ):
                 any_billing_contact_has_full_coverage = billing_tenantcontacts.filter(
                     (
@@ -210,7 +210,7 @@ class InvoiceSalesOrderAdapter:
                     return self.invoice.recipient
 
             # Most recent billing contact has full coverage for the billing period, so use it.
-            return newest_billing_contact.contact
+            return billing_contact_with_latest_start_date.contact
 
         # No billing contacts at all for the period; try tenant contacts.
         tenant_contact = tenant.get_tenant_tenantcontacts(
