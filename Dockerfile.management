@@ -19,7 +19,7 @@ USER root
 
 # Install PostgreSQL 17 client tools (pg_dump, pg_restore, psql).
 # The default UBI9 AppStream only ships PG13; use the PGDG repo to get PG17.
-RUN dnf install -y https://ftp.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-42.0-64.rhel9PGDG.noarch.rpm \
+RUN dnf install -y https://ftp.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && dnf install -y postgresql17 \
     && dnf clean all
 
