@@ -191,7 +191,11 @@ class InvoiceSalesOrderAdapter:
                 and newest_billing_contact.end_date < billing_period_end
             ):
                 any_billing_contact_has_full_coverage = billing_tenantcontacts.filter(
-                    Q(end_date__isnull=True) | Q(end_date__gte=billing_period_end)
+                    (
+                        Q(start_date__lte=billing_period_start)
+                        | Q(start_date__isnull=True)
+                    )
+                    & (Q(end_date__isnull=True) | Q(end_date__gte=billing_period_end))
                 ).exists()
 
                 if not any_billing_contact_has_full_coverage:
