@@ -566,6 +566,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         if PreparationState.MISSING_TENANT.value in preparation_state:
             queryset = queryset.filter(tenants__isnull=True).exclude(
+                # Reservations and preliminary leases are excluded from results, as they're not expected to have tenants
                 state__in=[
                     LeaseState.RESERVATION,
                     LeaseState.PRELIMINARY,
@@ -574,6 +575,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         if PreparationState.MISSING_RENT.value in preparation_state:
             queryset = queryset.filter(rents__isnull=True).exclude(
+                # Reservations and preliminary leases are excluded from results, as they're not expected to have rents.
                 state__in=[
                     LeaseState.RESERVATION,
                     LeaseState.PRELIMINARY,
@@ -596,6 +598,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 lease=OuterRef("pk"), signing_date__isnull=True
             ).order_by("-created_at")
             queryset = queryset.filter(Exists(latest_unsigned_contract[:1])).exclude(
+                # Reservations are excluded from results, as they're not expected to have rents.
                 state=LeaseState.RESERVATION
             )
 
@@ -604,6 +607,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         if PreparationState.INVOICING_NOT_STARTED.value in preparation_state:
             queryset = queryset.filter(invoicing_enabled_at__isnull=True).exclude(
+                # Reservations and preliminary leases are excluded from results, as they're not expected be invoiced.
                 state__in=[
                     LeaseState.RESERVATION,
                     LeaseState.PRELIMINARY,
