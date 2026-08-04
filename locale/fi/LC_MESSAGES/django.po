@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-16 11:32+0300\n"
+"POT-Creation-Date: 2026-08-04 12:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3439,6 +3439,12 @@ msgstr "Vuokrauksesta ei löytynyt vuokralaista"
 msgid "Billing contact not found for tenant"
 msgstr "Vuokralaisen laskutusyhteystietoa ei löytynyt"
 
+msgid "Tenant share"
+msgstr "Laskutusosuus"
+
+msgid "Rent share"
+msgstr "Hallintaosuus"
+
 msgid ""
 "Both Billing period start and end are required if one of them is provided"
 msgstr ""
@@ -3451,6 +3457,9 @@ msgstr ""
 
 msgid "No active tenants found for the lease during the billing period"
 msgstr "Ei aktiivisia vuokralaisia laskutuskaudella"
+
+msgid "No rent share found for invoice recipient"
+msgstr "Laskunsaajalle ei löytynyt laskutusosuutta"
 
 msgid "from_lease and to_lease cannot be the same Lease"
 msgstr "Ei voi olla sama vuokraus"
