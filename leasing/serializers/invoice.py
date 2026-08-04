@@ -505,11 +505,19 @@ class InvoiceSetSerializer(serializers.ModelSerializer):
 
 
 class CreateChargeInvoiceRowSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     receivable_type = InstanceDictPrimaryKeyRelatedField(
         instance_class=ReceivableType,
         queryset=ReceivableType.objects.all(),
         related_serializer=ReceivableTypeSerializer,
+    )
+    share_basis = serializers.ChoiceField(
+        choices=[
+            ("tenant_share", _("Tenant share")),
+            ("rent_share", _("Rent share")),
+        ],
+        required=False,
+        allow_null=True,
     )
 
 
@@ -614,11 +622,28 @@ class CreateChargeSerializer(serializers.Serializer):
                             subtract_ranges_from_ranges([billing_period], [overlap]),
                         )
 
-                        # Notice! Custom charge uses tenant share, not rent share
-                        share_amount = Decimal(
-                            overlap_amount
-                            * Decimal(tenant.share_numerator / tenant.share_denominator)
-                        ).quantize(Decimal(".01"), rounding=ROUND_HALF_UP)
+                        share_basis = row.get("share_basis")
+                        if share_basis and share_basis == "tenant_share":
+                            # TODO: If a tenant has more than one share, and those shares do not match
+                            # (eg. one is x/3 and other is x/2), and those shares were added to two different tenants
+                            # in a mixed order, the sharing would not correctly share the invoice between the tenants.
+                            rent_share = tenant.rent_shares.first()
+                            if rent_share is None:
+                                raise serializers.ValidationError(
+                                    _("No rent share found for invoice recipient")
+                                )
+                            share_ratio = Decimal(
+                                rent_share.share_numerator
+                                / rent_share.share_denominator
+                            )
+                        else:
+                            share_ratio = Decimal(
+                                tenant.share_numerator / tenant.share_denominator
+                            )
+
+                        share_amount = Decimal(overlap_amount * share_ratio).quantize(
+                            Decimal(".01"), rounding=ROUND_HALF_UP
+                        )
 
                         invoice_rows_by_index[row_index].append(
                             {
