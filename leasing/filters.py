@@ -1,9 +1,11 @@
+from django.db.models import Q, QuerySet
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import OrderingFilter
 
+from leasing.enums import TenantContactType
 from leasing.models import (
     CollectionCourtDecision,
     CollectionLetter,
@@ -98,6 +100,41 @@ class CommentFilter(FilterSet):
 
 class ContactFilter(FilterSet):
     service_unit = NumberInFilter(field_name="service_unit_id")
+    lease = filters.CharFilter(method="filter_lease")
+    is_tenant = filters.BooleanFilter(method="filter_is_tenant")
+    is_active = filters.BooleanFilter(method="filter_is_active")
+
+    def filter_lease(self, queryset: QuerySet, parameter_name: str, value: str):
+        if value:
+            return queryset.filter(
+                tenants__lease__identifier__identifier__icontains=value
+            ).distinct()
+        return queryset
+
+    def filter_is_tenant(self, queryset: QuerySet, parameter_name: str, value: bool):
+        if value:
+            return queryset.filter(
+                Q(tenantcontact__type=TenantContactType.TENANT)
+            ).distinct()
+        return queryset
+
+    def filter_is_active(self, queryset: QuerySet, parameter_name: str, value: bool):
+        today = timezone.now().date()
+        q_tenant_is_active = (
+            Q(tenantcontact__start_date__lte=today)
+            | Q(tenantcontact__start_date__isnull=True)
+        ) & (
+            Q(tenantcontact__end_date__gte=today)
+            | Q(tenantcontact__end_date__isnull=True)
+        )
+        # Also limit to active leases only.
+        # Active contacts in inactive leases are not interesting to the users.
+        q_lease_is_active = Q(tenants__lease__end_date__gte=today) | Q(
+            tenants__lease__end_date__isnull=True
+        )
+        if value:
+            return queryset.filter(q_tenant_is_active & q_lease_is_active).distinct()
+        return queryset
 
     class Meta:
         model = Contact
@@ -170,7 +207,7 @@ class InvoiceFilter(FilterSet):
         model = Invoice
         fields = ["lease", "state", "type"]
 
-    def filter_going_to_sap(self, queryset, name, value):
+    def filter_going_to_sap(self, queryset: QuerySet, parameter_name: str, value: bool):
         if value:
             return queryset.filter(
                 due_date__gte=timezone.now().date(), sent_to_sap_at__isnull=True
