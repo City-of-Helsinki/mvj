@@ -46,6 +46,8 @@ class ContactViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet
         return Contact.objects.select_related("service_unit").prefetch_related(
             # Required for `contacts_active_leases` serializer method field
             "tenants__lease__identifier",
+            # Improve performance of contact list filters.
+            "tenantcontact_set",
         )
 
     def get_serializer_class(self):
