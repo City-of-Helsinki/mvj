@@ -1,4 +1,4 @@
-from django.db.models import Q, QuerySet
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -15,6 +15,7 @@ from leasing.models import (
 from leasing.models.invoice import InvoiceNote, InvoiceRow, InvoiceSet
 from leasing.models.lease import LeaseType
 from leasing.models.receivable_type import ReceivableType
+from leasing.models.tenant import Tenant, TenantContact
 
 from .models import (
     Comment,
@@ -105,36 +106,61 @@ class ContactFilter(FilterSet):
     is_active = filters.BooleanFilter(method="filter_is_active")
 
     def filter_lease(self, queryset: QuerySet, parameter_name: str, value: str):
-        if value:
-            return queryset.filter(
-                tenants__lease__identifier__identifier__icontains=value
-            ).distinct()
-        return queryset
+        if not value:
+            return queryset
+
+        return queryset.filter(
+            # Use Exists subquery for performance when combining with other filters.
+            Exists(
+                Tenant.objects.filter(
+                    contacts=OuterRef("pk"),
+                    lease__identifier__identifier__icontains=value,
+                    deleted__isnull=True,
+                )
+            )
+        )
 
     def filter_is_tenant(self, queryset: QuerySet, parameter_name: str, value: bool):
-        if value:
-            return queryset.filter(
-                Q(tenantcontact__type=TenantContactType.TENANT)
-            ).distinct()
-        return queryset
+        if not value:
+            return queryset
+
+        return queryset.filter(
+            # Use Exists subquery for performance when combining with other filters.
+            Exists(
+                TenantContact.objects.filter(
+                    contact_id=OuterRef("pk"),
+                    type=TenantContactType.TENANT,
+                    deleted__isnull=True,
+                )
+            )
+        )
 
     def filter_is_active(self, queryset: QuerySet, parameter_name: str, value: bool):
+        if not value:
+            return queryset
+
         today = timezone.now().date()
-        q_tenant_is_active = (
-            Q(tenantcontact__start_date__lte=today)
-            | Q(tenantcontact__start_date__isnull=True)
-        ) & (
-            Q(tenantcontact__end_date__gte=today)
-            | Q(tenantcontact__end_date__isnull=True)
+
+        active_tenantcontact = TenantContact.objects.filter(
+            contact_id=OuterRef("pk"),
+            deleted__isnull=True,
+        ).filter(
+            Q(start_date__lte=today, end_date__isnull=True)
+            | Q(start_date__lte=today, end_date__gte=today)
+            | Q(start_date__isnull=True, end_date__isnull=True)
+            | Q(start_date__isnull=True, end_date__gte=today)
         )
-        # Also limit to active leases only.
-        # Active contacts in inactive leases are not interesting to the users.
-        q_lease_is_active = Q(tenants__lease__end_date__gte=today) | Q(
-            tenants__lease__end_date__isnull=True
+
+        active_lease = Tenant.objects.filter(
+            contacts=OuterRef("pk"),
+            deleted__isnull=True,
+        ).filter(Q(lease__end_date__isnull=True) | Q(lease__end_date__gte=today))
+
+        return queryset.filter(
+            # Use Exists subquery for performance when combining with other filters.
+            Exists(active_tenantcontact),
+            Exists(active_lease),
         )
-        if value:
-            return queryset.filter(q_tenant_is_active & q_lease_is_active).distinct()
-        return queryset
 
     class Meta:
         model = Contact
