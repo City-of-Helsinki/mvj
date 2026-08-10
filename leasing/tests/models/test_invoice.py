@@ -221,6 +221,64 @@ def test_create_credit_invoice_fails(
 
 
 @pytest.mark.django_db
+def test_create_credit_invoice_refunded_state_blocks_credit(
+    django_db_setup,
+    lease_factory,
+    contact_factory,
+    invoice_factory,
+    invoice_row_factory,
+):
+    """Test that invoices with REFUNDED state cannot be credited again"""
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=5, notice_period_id=1
+    )
+
+    contact = contact_factory(
+        first_name="First name", last_name="Last name", type=ContactType.PERSON
+    )
+
+    billing_period_start_date = datetime.date(year=2026, month=7, day=1)
+    billing_period_end_date = datetime.date(year=2026, month=12, day=31)
+
+    invoice = invoice_factory(
+        lease=lease,
+        total_amount=Decimal("123.37"),
+        billed_amount=Decimal("123.37"),
+        outstanding_amount=Decimal("123.37"),
+        recipient=contact,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+    )
+
+    receivable_type = ReceivableType.objects.first()
+
+    invoice_row_factory(
+        invoice=invoice,
+        receivable_type=receivable_type,
+        billing_period_start_date=billing_period_start_date,
+        billing_period_end_date=billing_period_end_date,
+        amount=Decimal("123.37"),
+    )
+
+    # First credit with full amount
+    invoice.create_credit_invoice()
+
+    # Verify state is REFUNDED
+    invoice.refresh_from_db()
+    assert invoice.state == InvoiceState.REFUNDED
+    assert invoice.outstanding_amount == Decimal(0)
+
+    # Try to credit again - should fail because state is REFUNDED
+    with pytest.raises(RuntimeError) as e:
+        invoice.create_credit_invoice()
+
+    assert (
+        str(e.value)
+        == "Cannot credit an invoice that has been fully refunded or has no outstanding amount."
+    )
+
+
+@pytest.mark.django_db
 def test_create_credit_invoice_full_two_rows(
     django_db_setup,
     lease_factory,
