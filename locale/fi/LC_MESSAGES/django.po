@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:36+0300\n"
+"POT-Creation-Date: 2026-08-05 14:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1216,6 +1216,42 @@ msgctxt "Collection stage"
 msgid "Risk of termination and litigation"
 msgstr "Irtisanomis- ja oikeudenkäyntiuhkainen"
 
+msgctxt "Collection stage"
+msgid "Simple payment reminder"
+msgstr "Yksinkertainen maksukehotus"
+
+msgctxt "Collection stage"
+msgid "Payment demand"
+msgstr "Svean maksuvaatimus"
+
+msgctxt "Collection stage"
+msgid "Payment deferral"
+msgstr "Maksulykkäys"
+
+msgctxt "Collection stage"
+msgid "Contract change"
+msgstr "Sopimusmuutos"
+
+msgctxt "Collection stage"
+msgid "Bankruptcy or reorganization"
+msgstr "Konkurssi, saneeraus tmv."
+
+msgctxt "Collection stage"
+msgid "Distraint"
+msgstr "Ulosotto (estää Svea perintään siirron)"
+
+msgctxt "Collection stage"
+msgid "Distraint notice"
+msgstr "Ulosotto (huomautus)"
+
+msgctxt "Collection stage"
+msgid "Notice"
+msgstr "Huomautus"
+
+msgctxt "Collection stage"
+msgid "Complaint or other obstruction"
+msgstr "Reklamaatio tai muu este"
+
 msgctxt "Preparation state"
 msgid "Missing lease property"
 msgstr "Vuokrakohde puuttuu"
@@ -1603,6 +1639,12 @@ msgstr "Perintäkirjepohjat"
 
 msgid "Collection stage"
 msgstr "Perintävaihe"
+
+msgid "Entire lease"
+msgstr "Koko vuokraus"
+
+msgid "Sent date"
+msgstr "Lähetyspäivämäärä"
 
 msgctxt "Model name"
 msgid "Collection letter note"

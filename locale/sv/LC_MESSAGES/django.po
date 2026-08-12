@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:36+0300\n"
+"POT-Creation-Date: 2026-08-05 14:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1217,6 +1217,42 @@ msgctxt "Collection stage"
 msgid "Risk of termination and litigation"
 msgstr ""
 
+msgctxt "Collection stage"
+msgid "Simple payment reminder"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Payment demand"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Payment deferral"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Contract change"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Bankruptcy or reorganization"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Distraint"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Distraint notice"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Notice"
+msgstr ""
+
+msgctxt "Collection stage"
+msgid "Complaint or other obstruction"
+msgstr ""
+
 msgctxt "Preparation state"
 msgid "Missing lease property"
 msgstr ""
@@ -1603,6 +1639,12 @@ msgid "Collection letter templates"
 msgstr "Mallar för inkassobrev"
 
 msgid "Collection stage"
+msgstr ""
+
+msgid "Entire lease"
+msgstr ""
+
+msgid "Sent date"
 msgstr ""
 
 msgctxt "Model name"

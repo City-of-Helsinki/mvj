@@ -718,6 +718,15 @@ class CollectionStage(Enum):
     RISK_OF_DEMOLITION_AND_LITIGATION = "risk_of_demolition_and_litigation"
     RISK_OF_LITIGATION = "risk_of_litigation"
     RISK_OF_TERMINATION_AND_LITIGATION = "risk_of_termination_and_litigation"
+    SIMPLE_PAYMENT_REMINDER = "simple_payment_reminder"
+    PAYMENT_DEMAND = "payment_demand"
+    PAYMENT_DEFERRAL = "payment_deferral"
+    CONTRACT_CHANGE = "contract_change"
+    BANKRUPTCY_OR_REORGANIZATION = "bankruptcy_or_reorganization"
+    DISTRAINT = "distraint"
+    DISTRAINT_NOTICE = "distraint_notice"
+    NOTICE = "notice"
+    COMPLAINT_OR_OTHER_OBSTRUCTION = "complaint_or_other_obstruction"
 
     @member
     class Labels:
@@ -728,6 +737,21 @@ class CollectionStage(Enum):
         RISK_OF_LITIGATION = pgettext_lazy("Collection stage", "Risk of litigation")
         RISK_OF_TERMINATION_AND_LITIGATION = pgettext_lazy(
             "Collection stage", "Risk of termination and litigation"
+        )
+        SIMPLE_PAYMENT_REMINDER = pgettext_lazy(
+            "Collection stage", "Simple payment reminder"
+        )
+        PAYMENT_DEMAND = pgettext_lazy("Collection stage", "Payment demand")
+        PAYMENT_DEFERRAL = pgettext_lazy("Collection stage", "Payment deferral")
+        CONTRACT_CHANGE = pgettext_lazy("Collection stage", "Contract change")
+        BANKRUPTCY_OR_REORGANIZATION = pgettext_lazy(
+            "Collection stage", "Bankruptcy or reorganization"
+        )
+        DISTRAINT = pgettext_lazy("Collection stage", "Distraint")
+        DISTRAINT_NOTICE = pgettext_lazy("Collection stage", "Distraint notice")
+        NOTICE = pgettext_lazy("Collection stage", "Notice")
+        COMPLAINT_OR_OTHER_OBSTRUCTION = pgettext_lazy(
+            "Collection stage", "Complaint or other obstruction"
         )
 
 
