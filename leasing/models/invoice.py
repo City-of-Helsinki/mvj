@@ -462,7 +462,9 @@ class Invoice(TimeStampedSafeDeleteModel):
 
         if self.outstanding_amount == Decimal(0) or self.state == InvoiceState.REFUNDED:
             raise RuntimeError(
-                "Cannot credit an invoice that has been fully refunded or has no outstanding amount."
+                _(
+                    "Cannot credit an invoice that has been fully refunded or has no outstanding amount."
+                )
             )
         row_queryset = self.rows.all()
         if row_ids:
