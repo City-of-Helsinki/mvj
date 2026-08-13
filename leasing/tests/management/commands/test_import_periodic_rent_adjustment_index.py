@@ -52,8 +52,8 @@ def test_missing_column_raises(real_input_data: IndexInput, real_data: ResponseD
 
 def test_key_position_found(columns_real_data: list[ColumnItem]):
     """Happy path: key positions are correctly identified in the data."""
-    assert _find_key_position(columns_real_data, "Vuosi") == 0
-    assert _find_key_position(columns_real_data, "Alue") == 1
+    assert _find_key_position(columns_real_data, "timeperiod_y") == 0
+    assert _find_key_position(columns_real_data, "alue_43_20220407") == 1
 
 
 def test_key_column_missing_code_raises(
@@ -65,7 +65,7 @@ def test_key_column_missing_code_raises(
         column["code"] = "Something else"
 
     with pytest.raises(ResponseDataError):
-        _find_key_position(columns, "Vuosi")
+        _find_key_position(columns, "timeperiod_y")
 
 
 def test_key_column_wrong_type_raises(
@@ -78,7 +78,7 @@ def test_key_column_wrong_type_raises(
         column["type"] = "c"
 
     with pytest.raises(ResponseDataError):
-        _find_key_position(columns, "Vuosineljännes")
+        _find_key_position(columns, "timeperiod_q")
 
 
 def test_value_position_found(
@@ -243,12 +243,12 @@ def test_create_or_update_point_figure(
         {
             "columns": [
                 {
-                    "code": "Vuosi",
+                    "code": "timeperiod_y",
                     "text": "",
                     "comment": "",
                     "type": "t",
                 },
-                {"code": "Alue", "text": "", "type": "d"},
+                {"code": "alue_43_20220407", "text": "", "type": "d"},
                 {
                     "code": "test_index_code_1",
                     "text": "",
@@ -307,12 +307,12 @@ def test_skip_preliminary_point_figures(
         {
             "columns": [
                 {
-                    "code": "Vuosi",
+                    "code": "timeperiod_y",
                     "text": "",
                     "comment": "",
                     "type": "t",
                 },
-                {"code": "Alue", "text": "", "type": "d"},
+                {"code": "alue_43_20220407", "text": "", "type": "d"},
                 {
                     "code": "test_index_code_1",
                     "text": "",
@@ -322,12 +322,12 @@ def test_skip_preliminary_point_figures(
             ],
             "comments": [
                 {
-                    "variable": "Vuosi",
+                    "variable": "timeperiod_y",
                     "value": "2023",
                     "comment": "* ennakkotieto\r\n",
                 },
                 {
-                    "variable": "Vuosi",
+                    "variable": "timeperiod_y",
                     "value": "2024",
                     "comment": "* ennakkotieto\r\n",
                 },
@@ -363,7 +363,7 @@ def real_input_data() -> IndexInput:
     return {
         "name": "13mq -- Vanhojen osakeasuntojen hintaindeksi (2020=100) ja \
                 kauppojen lukumäärät, vuositasolla, 2020-2023",
-        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/statfin_ashi_pxt_13mq.px",
+        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/ashi/13mq.px",
         "code": "ketj_P_QA_T",
     }
 
@@ -372,8 +372,8 @@ def real_input_data() -> IndexInput:
 def columns_real_data() -> list[ColumnItem]:
     """Column items from real API response data."""
     return [
-        {"code": "Vuosi", "text": "Year", "type": "t"},
-        {"code": "Alue", "text": "Region", "type": "d"},
+        {"code": "timeperiod_y", "text": "Year", "type": "t"},
+        {"code": "alue_43_20220407", "text": "Region", "type": "d"},
         {
             "code": "ketj_P_QA_T",
             "text": "Index (2020=100)",
@@ -394,12 +394,12 @@ def comments_test_data() -> list[CommentItem]:
     """Hypothetical comment items."""
     return [
         {
-            "variable": "Vuosi",
+            "variable": "timeperiod_y",
             "value": "2022",
             "comment": "* preliminary data\r\n",
         },
         {
-            "variable": "Vuosi",
+            "variable": "timeperiod_y",
             "value": "2023",
             "comment": "* preliminary data\r\n",
         },

@@ -110,7 +110,7 @@ INDEXES_TO_IMPORT: list[IndexInput] = [
             "13mq -- Price index of old dwellings in housing companies (2020=100) "
             "and numbers of transactions, yearly, 2020-2023"
         ),
-        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mq.px",
+        "url": "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/13mq.px",
         "code": "ketj_P_QA_T",
     },
 ]
@@ -150,15 +150,15 @@ def _get_index_data(url: str, code: str) -> ResponseData:
 
     Example CURL command how to get the data manually:
 
-curl -X POST "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_ashi_pxt_13mq.px" \
+curl -X POST "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/13mq.px" \
 -d  '{
         "query": [
             {
-                "code":"Alue",
+                "code":"alue_43_20220407",
                 "selection":{"filter":"item","values":["pks"]}
             },
             {
-                "code":"Tiedot",
+                "code":"contentscode",
                 "selection":{"filter":"item","values":["ketj_P_QA_T"]}
             }
         ],
@@ -170,11 +170,11 @@ curl -X POST "https://pxdata.stat.fi:443/PxWeb/api/v1/fi/StatFin/ashi/statfin_as
         code: Identifier for the price index column.
     """
     filter_greater_helsinki_area = {
-        "code": "Alue",
+        "code": "alue_43_20220407",
         "selection": {"filter": "item", "values": ["pks"]},
     }
     filter_price_index = {
-        "code": "Tiedot",
+        "code": "contentscode",
         "selection": {"filter": "item", "values": [code]},
     }
     query = {
@@ -201,8 +201,8 @@ def _check_that_response_data_is_valid(
     """
     columns = index_data.get("columns", [])
     try:
-        _find_key_position(columns, "Vuosi")
-        _find_key_position(columns, "Alue")
+        _find_key_position(columns, "timeperiod_y")
+        _find_key_position(columns, "alue_43_20220407")
         _find_column_position(columns, index_input["code"])
         _find_value_position(columns, index_input["code"])
     except ResponseDataError as e:
@@ -338,9 +338,9 @@ def _update_or_create_point_figures(
         Count of updated point figures, and count of created point figures.
     """
     columns = index_data.get("columns", [])
-    year_key_pos = _find_key_position(columns, "Vuosi")
+    year_key_pos = _find_key_position(columns, "timeperiod_y")
     figure_value_pos = _find_value_position(columns, index_input["code"])
-    region_key_pos = _find_key_position(columns, "Alue")
+    region_key_pos = _find_key_position(columns, "alue_43_20220407")
 
     data_points = index_data.get("data", [])
     comments = index_data.get("comments", [])
