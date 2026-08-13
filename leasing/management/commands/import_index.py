@@ -9,25 +9,25 @@ from leasing.models.rent import LegacyIndex
 INDEX_IMPORTS = [
     {
         "name": "Elinkustannusindeksi 1951:100 (kuukasittaiset)",
-        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/statfin_khi_pxt_11xl.px",
+        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/11xl.px",
     },
     {
         "name": "Elinkustannusindeksi 1951:100 (vuosittaiset)",
-        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/statfin_khi_pxt_11xm.px",
+        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/11xm.px",
     },
     {
         "name": "Elinkustannusindeksi 1938:8-1939:7 = 100 (kuukausittaiset)",
-        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/statfin_khi_pxt_11xn.px",
+        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/11xn.px",
         "legacy": "number_1938",
     },
     {
         "name": "Elinkustannusindeksi 1938:8-1939:7 = 100 (vuosittaiset)",
-        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/statfin_khi_pxt_11xp.px",
+        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/11xp.px",
         "legacy": "number_1938",
     },
     {
         "name": "Elinkustannusindeksi 1914:1-6 = 100 (vuosittaiset)",
-        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/statfin_khi_pxt_11xy.px",
+        "url": "https://statfin.stat.fi/PXWeb/api/v1/fi/StatFin/11xy.px",
         "legacy": "number_1914",
     },
 ]
