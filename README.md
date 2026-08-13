@@ -82,6 +82,24 @@ If using a devcontainer, be wary of overlap in variable values between
 Docker env is updated when you build the container, and local settings is read
 on every restart of the Django app.
 
+### Django debug toolbar
+
+The django-debug-toolbar is helpful for deeper debugging of e.g. SQL query
+performance. If you want to enable it temporarily in your local environment, add
+the following to your main `settings.py` file, after the mentioned variables
+have been initialized with their usual contents:
+
+```python
+# Only run toolbar in debug environments, and not during tests.
+if DEBUG and "test" not in sys.argv:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+    INTERNAL_IPS = [
+        "127.0.0.1",
+        "localhost",
+    ]
+```
+
 ## Managing Python libraries
 
 ### Install pip-tools
