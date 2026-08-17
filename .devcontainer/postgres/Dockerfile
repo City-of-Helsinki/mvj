@@ -1,4 +1,4 @@
-FROM postgres:14-trixie
+FROM docker.io/library/postgres:14-trixie
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
