@@ -1,6 +1,8 @@
 import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
+from typing import TYPE_CHECKING, Protocol, TypeAlias, TypedDict, Union
+
+from django.db.models import QuerySet
 
 from leasing.calculation.explanation import Explanation
 from leasing.enums import InvoiceState, InvoiceType
@@ -105,3 +107,10 @@ class DayMonthDatum(TypedDict):
     id: int
     day: int
     month: int
+
+
+class LeaseWithTenants(Protocol):
+    """A Lease with a tenants attribute, for use in type hints.
+    It is available via Tenant class's lease reference."""
+
+    tenants: QuerySet["Tenant"]

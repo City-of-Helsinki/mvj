@@ -9,6 +9,18 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY, rrule
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import (
+    BooleanField,
+    Case,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +30,11 @@ from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from leasing.enums import InvoiceState
+from leasing.filters import LeasesForContactOrderingFilter
 from leasing.models import Lease
+from leasing.models.invoice import Invoice
+from leasing.models.tenant import TenantContact
 from leasing.models.utils import get_billing_periods_for_year
 from leasing.permissions import PerMethodPermission
 from leasing.serializers.debt_collection import CreateCollectionLetterDocumentSerializer
@@ -27,6 +43,7 @@ from leasing.serializers.invoice import (
     CreateChargeSerializer,
     InvoiceSerializerWithExplanations,
 )
+from leasing.serializers.lease import LeasesForContactSerializer
 from leasing.viewsets.utils import AtomicTransactionMixin
 
 logger = logging.getLogger(__name__)
@@ -476,4 +493,70 @@ class LeaseSetRentInfoCompletionStateView(APIView):
 
         return Response(
             {"success": True, "rent_info_completed_at": lease.rent_info_completed_at}
+        )
+
+
+class LeasesForContactViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = LeasesForContactSerializer
+    permission_classes = (PerMethodPermission,)
+    perms_map = {"GET": ["leasing.view_lease"]}
+    filter_backends = (LeasesForContactOrderingFilter,)
+
+    ordering_fields = (
+        "lease_identifier",
+        "is_active",
+        "contact_roles",
+        "contact_role_active",
+        "has_overdue_invoices",
+    )
+    ordering = ("lease_identifier", "is_active")
+
+    def get_queryset(self):
+        contact_id = self.request.query_params.get("contact")
+        if not contact_id:
+            raise DrfValidationError(
+                {"contact": _("This query parameter is required.")}
+            )
+        try:
+            contact_id = int(contact_id)
+        except (TypeError, ValueError):
+            raise DrfValidationError({"contact": _("Must be an integer.")})
+
+        today = timezone.now().date()
+        contact_tenantcontacts = TenantContact.objects.filter(
+            tenant__lease=OuterRef("pk"),
+            tenant__deleted__isnull=True,
+            contact_id=contact_id,
+            deleted__isnull=True,
+        )
+        roles_count_subquery = (
+            contact_tenantcontacts.order_by()
+            .values("tenant__lease")
+            .annotate(count=Count("type", distinct=True))
+            .values("count")
+        )
+        return Lease.objects.filter(Exists(contact_tenantcontacts)).annotate(
+            has_overdue_invoices=Exists(
+                Invoice.objects.filter(
+                    lease=OuterRef("pk"),
+                    state=InvoiceState.OPEN,
+                    due_date__lt=today,
+                    outstanding_amount__gt=0,
+                )
+            ),
+            is_active=Case(
+                When(start_date__gt=today, then=Value(False)),
+                When(end_date__isnull=True, then=Value(True)),
+                When(end_date__gte=today, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+            contact_role_active=Exists(
+                contact_tenantcontacts.filter(start_date__lte=today).filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=today)
+                )
+            ),
+            contact_roles_count=Subquery(
+                roles_count_subquery, output_field=IntegerField()
+            ),
         )

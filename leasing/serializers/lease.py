@@ -18,6 +18,7 @@ from leasing.models import (
     ServiceUnit,
 )
 from leasing.models.lease import ApplicationMetadata
+from leasing.models.types import LeaseWithTenants
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer,
     CollectionLetterSerializer,
@@ -762,3 +763,49 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
         model = Lease
         fields = "__all__"
         read_only_fields = ("invoicing_enabled_at", "rent_info_completed_at")
+
+
+class LeasesForContactSerializer(serializers.ModelSerializer):
+    identifier = LeaseIdentifierSerializer(read_only=True)
+    # is_active, has_overdue_invoices and contact_role_active are annotated in
+    # LeasesForContactViewSet.get_queryset() so the same values drive both the
+    # response and the ordering.
+    is_active = serializers.BooleanField(read_only=True)
+    has_overdue_invoices = serializers.BooleanField(read_only=True)
+    contact_roles = serializers.SerializerMethodField()
+    contact_role_active = serializers.BooleanField(read_only=True)
+
+    def _get_contact_id(self):
+        contact_id = self.context["request"].query_params.get("contact")
+        try:
+            return int(contact_id)
+        except (TypeError, ValueError):
+            return None
+
+    def get_contact_roles(self, obj: LeaseWithTenants):
+        contact_id = self._get_contact_id()
+        if not contact_id:
+            return []
+        role_values = (
+            obj.tenants.filter(
+                deleted__isnull=True,
+                tenantcontact__contact_id=contact_id,
+                tenantcontact__deleted__isnull=True,
+            )
+            .values_list("tenantcontact__type", flat=True)
+            .distinct()
+        )
+        return sorted({getattr(v, "value", v) for v in role_values})
+
+    class Meta:
+        model = Lease
+        fields = (
+            "id",
+            "identifier",
+            "start_date",
+            "end_date",
+            "is_active",
+            "has_overdue_invoices",
+            "contact_roles",
+            "contact_role_active",
+        )
