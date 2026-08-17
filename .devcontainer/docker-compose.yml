@@ -11,8 +11,8 @@ services:
     container_name: mvj
     restart: unless-stopped
     volumes:
-      - ..:/code:cached
-      - mvj-django-media-volume:/var/media/
+      - ..:/code:cached,Z
+      - mvj-django-media-volume:/var/media/:Z
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:postgres
