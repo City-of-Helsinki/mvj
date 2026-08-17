@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models import Union
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -762,3 +763,51 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
         model = Lease
         fields = "__all__"
         read_only_fields = ("invoicing_enabled_at", "rent_info_completed_at")
+
+
+class LeasesForContactSerializer(serializers.ModelSerializer):
+    identifier = LeaseIdentifierSerializer(read_only=True)
+    is_active = serializers.SerializerMethodField()
+    has_overdue_invoices = serializers.BooleanField(read_only=True)
+    contact_roles = serializers.SerializerMethodField()
+    contact_role_active = serializers.SerializerMethodField()
+
+    def get_is_active(self, obj):
+        today = timezone.now().date()
+        if obj.start_date and obj.start_date > today:
+            return False
+        return obj.end_date is None or obj.end_date >= today
+
+    def _get_contact_tenantcontacts(self, obj):
+        contact_id = self.context["request"].query_params.get("contact")
+        result = []
+        for tenant in obj.tenants.filter(deleted__isnull=True):
+            result.extend(
+                tenant.tenantcontact_set.filter(
+                    contact_id=contact_id, deleted__isnull=True
+                )
+            )
+        return result
+
+    def get_contact_roles(self, obj):
+        return list({tc.type.value for tc in self._get_contact_tenantcontacts(obj)})
+
+    def get_contact_role_active(self, obj):
+        today = timezone.now().date()
+        for tc in self._get_contact_tenantcontacts(obj):
+            if tc.start_date <= today and (tc.end_date is None or tc.end_date >= today):
+                return True
+        return False
+
+    class Meta:
+        model = Lease
+        fields = (
+            "id",
+            "identifier",
+            "start_date",
+            "end_date",
+            "is_active",
+            "has_overdue_invoices",
+            "contact_roles",
+            "contact_role_active",
+        )
