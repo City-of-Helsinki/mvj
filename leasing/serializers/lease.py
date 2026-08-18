@@ -19,6 +19,7 @@ from leasing.models import (
     ServiceUnit,
 )
 from leasing.models.lease import ApplicationMetadata
+from leasing.models.types import LeaseWithTenants
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer,
     CollectionLetterSerializer,
@@ -772,32 +773,53 @@ class LeasesForContactSerializer(serializers.ModelSerializer):
     contact_roles = serializers.SerializerMethodField()
     contact_role_active = serializers.SerializerMethodField()
 
-    def get_is_active(self, obj):
+    def get_is_active(self, obj: Lease):
         today = timezone.now().date()
         if obj.start_date and obj.start_date > today:
             return False
         return obj.end_date is None or obj.end_date >= today
 
-    def _get_contact_tenantcontacts(self, obj):
+    def _get_contact_id(self):
         contact_id = self.context["request"].query_params.get("contact")
-        result = []
-        for tenant in obj.tenants.filter(deleted__isnull=True):
-            result.extend(
-                tenant.tenantcontact_set.filter(
-                    contact_id=contact_id, deleted__isnull=True
-                )
+        try:
+            return int(contact_id)
+        except (TypeError, ValueError):
+            return None
+
+    def get_contact_roles(self, obj: LeaseWithTenants):
+        contact_id = self._get_contact_id()
+        if not contact_id:
+            return []
+        role_values = (
+            obj.tenants.filter(
+                deleted__isnull=True,
+                tenantcontact__contact_id=contact_id,
+                tenantcontact__deleted__isnull=True,
             )
-        return result
+            .values_list("tenantcontact__type", flat=True)
+            .distinct()
+        )
+        return sorted({getattr(v, "value", v) for v in role_values})
 
-    def get_contact_roles(self, obj):
-        return list({tc.type.value for tc in self._get_contact_tenantcontacts(obj)})
+    def get_contact_role_active(self, obj: LeaseWithTenants):
+        contact_id = self._get_contact_id()
+        if not contact_id:
+            return False
 
-    def get_contact_role_active(self, obj):
         today = timezone.now().date()
-        for tc in self._get_contact_tenantcontacts(obj):
-            if tc.start_date <= today and (tc.end_date is None or tc.end_date >= today):
-                return True
-        return False
+        return (
+            obj.tenants.filter(
+                deleted__isnull=True,
+                tenantcontact__contact_id=contact_id,
+                tenantcontact__deleted__isnull=True,
+                tenantcontact__start_date__lte=today,
+            )
+            .filter(
+                Q(tenantcontact__end_date__isnull=True)
+                | Q(tenantcontact__end_date__gte=today)
+            )
+            .exists()
+        )
 
     class Meta:
         model = Lease
