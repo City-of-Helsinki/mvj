@@ -3,13 +3,8 @@ from decimal import Decimal
 
 import pytest
 from django.urls import reverse
-from django.utils import timezone
 
 from leasing.enums import InvoiceState, TenantContactType
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 LEASES_FOR_CONTACT_URL = "v1:leases_for_contact-list"
 
@@ -19,19 +14,19 @@ def _url(contact_id):
 
 
 # ---------------------------------------------------------------------------
-# LeasesForContactViewSet – get_queryset
+# LeasesForContactViewSet
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.django_db
-def test_leases_for_contact_missing_param(django_db_setup, admin_client):
+def test_leases_for_contact_missing_param(admin_client):
     """Missing contact param should return 500."""
     response = admin_client.get(reverse(LEASES_FOR_CONTACT_URL))
     assert response.status_code == 500
 
 
 @pytest.mark.django_db
-def test_leases_for_contact_invalid_param(django_db_setup, admin_client):
+def test_leases_for_contact_invalid_param(admin_client):
     """Non-integer contact param should return 500."""
     response = admin_client.get(reverse(LEASES_FOR_CONTACT_URL) + "?contact=abc")
     assert response.status_code == 500
@@ -39,7 +34,6 @@ def test_leases_for_contact_invalid_param(django_db_setup, admin_client):
 
 @pytest.mark.django_db
 def test_leases_for_contact_returns_only_matching_lease(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -81,7 +75,6 @@ def test_leases_for_contact_returns_only_matching_lease(
 
 @pytest.mark.django_db
 def test_leases_for_contact_excludes_soft_deleted_tenants(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -110,7 +103,6 @@ def test_leases_for_contact_excludes_soft_deleted_tenants(
 
 @pytest.mark.django_db
 def test_leases_for_contact_no_duplicates(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -143,7 +135,6 @@ def test_leases_for_contact_no_duplicates(
 
 @pytest.mark.django_db
 def test_leases_for_contact_has_overdue_invoices_true(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -179,7 +170,6 @@ def test_leases_for_contact_has_overdue_invoices_true(
 
 @pytest.mark.django_db
 def test_leases_for_contact_has_overdue_invoices_false_when_no_invoice(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -205,7 +195,6 @@ def test_leases_for_contact_has_overdue_invoices_false_when_no_invoice(
 
 @pytest.mark.django_db
 def test_leases_for_contact_has_overdue_invoices_false_when_zero_outstanding(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
@@ -241,7 +230,6 @@ def test_leases_for_contact_has_overdue_invoices_false_when_zero_outstanding(
 
 @pytest.mark.django_db
 def test_leases_for_contact_has_overdue_invoices_false_when_future_due_date(
-    django_db_setup,
     admin_client,
     lease_factory,
     contact_factory,
