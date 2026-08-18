@@ -491,11 +491,13 @@ class LeasesForContactViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         contact_id = self.request.query_params.get("contact")
         if not contact_id:
-            raise APIException("contact parameter is mandatory")
+            raise DrfValidationError(
+                {"contact": _("This query parameter is required.")}
+            )
         try:
             contact_id = int(contact_id)
-        except ValueError:
-            raise APIException("Invalid contact")
+        except (TypeError, ValueError):
+            raise DrfValidationError({"contact": _("Must be an integer.")})
 
         today = timezone.now().date()
         has_overdue = Exists(
