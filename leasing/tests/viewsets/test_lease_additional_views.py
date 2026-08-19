@@ -20,16 +20,16 @@ def _url(contact_id):
 
 @pytest.mark.django_db
 def test_leases_for_contact_missing_param(admin_client):
-    """Missing contact param should return 500."""
+    """Missing contact param should return 400."""
     response = admin_client.get(reverse(LEASES_FOR_CONTACT_URL))
-    assert response.status_code == 500
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db
 def test_leases_for_contact_invalid_param(admin_client):
-    """Non-integer contact param should return 500."""
+    """Non-integer contact param should return 400."""
     response = admin_client.get(reverse(LEASES_FOR_CONTACT_URL) + "?contact=abc")
-    assert response.status_code == 500
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db
