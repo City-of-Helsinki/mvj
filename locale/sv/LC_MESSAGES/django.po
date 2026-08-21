@@ -1641,10 +1641,16 @@ msgstr "Mallar för inkassobrev"
 msgid "Collection stage"
 msgstr ""
 
-msgid "Entire lease"
+msgid "Sent date"
 msgstr ""
 
-msgid "Sent date"
+msgid "Inspection date"
+msgstr ""
+
+msgid "Postpone date"
+msgstr "Uppskovsdatum"
+
+msgid "Entire lease"
 msgstr ""
 
 msgctxt "Model name"
@@ -1882,9 +1888,6 @@ msgstr "Förfallodatum (överfört)"
 
 msgid "Invoicing date"
 msgstr "Faktureringsdatum"
-
-msgid "Postpone date"
-msgstr "Uppskovsdatum"
 
 msgid "Billed amount"
 msgstr "Fakturerat antal"
@@ -3455,6 +3458,21 @@ msgstr ""
 msgid ""
 "Can not create a collection note for an invoice belonging to another service "
 "unit"
+msgstr ""
+
+msgid "Invoices must be provided for this type of collection note"
+msgstr ""
+
+msgid "Payment deferrals must be targeted to a single invoice"
+msgstr ""
+
+msgid "Postpone date can only be set for payment deferrals"
+msgstr ""
+
+msgid "'Entire lease' can only be set for contract changes"
+msgstr ""
+
+msgid "Inspection date can only be set for contract changes"
 msgstr ""
 
 msgid "Cannot use an inactive receivable type"

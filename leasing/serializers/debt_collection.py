@@ -5,6 +5,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from file_operations.serializers.mixins import FileSerializerMixin
+from leasing.enums import CollectionStage
 from leasing.models import Invoice, Lease, Tenant
 from users.serializers import UserSerializer
 
@@ -159,8 +160,9 @@ class CollectionNoteCreateUpdateSerializer(
 
     def validate(self, data):
         request = self.context.get("request")
+        lease = data.get("lease") or (self.instance and self.instance.lease)
         if (
-            data.get("lease").service_unit not in request.user.service_units.all()
+            lease.service_unit not in request.user.service_units.all()
             and not request.user.is_superuser
         ):
             raise ValidationError(
@@ -168,6 +170,61 @@ class CollectionNoteCreateUpdateSerializer(
                     "Can not create a collection note for an invoice belonging to another service unit"
                 )
             )
+        # Fall back to the existing values if they are not provided in the request data.
+        collection_stage = (
+            data["collection_stage"]
+            if "collection_stage" in data
+            else (self.instance and self.instance.collection_stage)
+        )
+        invoices = (
+            data["invoices"]
+            if "invoices" in data
+            else (self.instance and list(self.instance.invoices.all()))
+        )
+
+        # Validation to ensure that conditional fields are not filled incorrectly:
+
+        # Invoices are required for all types except for a simple NOTICE.
+        if (
+            collection_stage
+            and collection_stage != CollectionStage.NOTICE
+            and not invoices
+        ):
+            raise ValidationError(
+                _("Invoices must be provided for this type of collection note")
+            )
+
+        # Payment deferrals accept only one invoice.
+        if (
+            collection_stage == CollectionStage.PAYMENT_DEFERRAL
+            and invoices
+            and len(invoices) != 1
+        ):
+            raise ValidationError(
+                _("Payment deferrals must be targeted to a single invoice")
+            )
+
+        if collection_stage != CollectionStage.PAYMENT_DEFERRAL and data.get(
+            "postpone_date"
+        ):
+            raise ValidationError(
+                _("Postpone date can only be set for payment deferrals")
+            )
+
+        if collection_stage != CollectionStage.CONTRACT_CHANGE and data.get(
+            "entire_lease"
+        ):
+            raise ValidationError(
+                _("'Entire lease' can only be set for contract changes")
+            )
+
+        if collection_stage != CollectionStage.CONTRACT_CHANGE and data.get(
+            "inspection_date"
+        ):
+            raise ValidationError(
+                _("Inspection date can only be set for contract changes")
+            )
+
         return data
 
 

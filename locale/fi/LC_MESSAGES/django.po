@@ -1640,11 +1640,17 @@ msgstr "Perintäkirjepohjat"
 msgid "Collection stage"
 msgstr "Perintävaihe"
 
-msgid "Entire lease"
-msgstr "Koko vuokraus"
-
 msgid "Sent date"
 msgstr "Lähetyspäivämäärä"
+
+msgid "Inspection date"
+msgstr "Valvontapvm"
+
+msgid "Postpone date"
+msgstr "Lykkäyspvm"
+
+msgid "Entire lease"
+msgstr "Koko vuokraus"
 
 msgctxt "Model name"
 msgid "Collection letter note"
@@ -1881,9 +1887,6 @@ msgstr "Eräpäivä (siirretty)"
 
 msgid "Invoicing date"
 msgstr "Laskutuspvm"
-
-msgid "Postpone date"
-msgstr "Lykkäyspvm"
 
 msgid "Billed amount"
 msgstr "Laskutettu määrä"
@@ -3468,6 +3471,21 @@ msgid ""
 msgstr ""
 "Ei voi luoda perintähuomautusta toiselle palvelukokonaisuudelle kuuluvalle "
 "laskulle"
+
+msgid "Invoices must be provided for this type of collection note"
+msgstr "Laskut täytyy määrittää tälle perintähuomautukselle"
+
+msgid "Payment deferrals must be targeted to a single invoice"
+msgstr "Maksulykkäyksen tulee kohdistaa yhteen laskuun"
+
+msgid "Postpone date can only be set for payment deferrals"
+msgstr "Lykkäyspäivämäärän voi asettaa vain maksulykkäyksille"
+
+msgid "'Entire lease' can only be set for contract changes"
+msgstr "'Koko vuokraus' voidaan asettaa vain sopimusmuutokseen"
+
+msgid "Inspection date can only be set for contract changes"
+msgstr "Valvontapäivämäärän voi asettaa vain sopimusmuutokseen"
 
 msgid "Cannot use an inactive receivable type"
 msgstr "Saamislaji ei ole käytettävissä"
