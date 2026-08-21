@@ -290,6 +290,7 @@ class ReceivableTypeFilter(FilterSet):
             "service_unit__name",
         ]
 
+
 class LeasesForContactOrderingFilter(OrderingFilter):
     """Standard `?ordering=` filter that maps serializer field names to the
     queryset fields/annotations that actually sort correctly.
@@ -318,4 +319,3 @@ class LeasesForContactOrderingFilter(OrderingFilter):
         if not any(term.lstrip("-") == "pk" for term in resolved):
             resolved.append("pk")
         return resolved
-
