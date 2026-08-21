@@ -289,3 +289,33 @@ class ReceivableTypeFilter(FilterSet):
             "is_active",
             "service_unit__name",
         ]
+
+class LeasesForContactOrderingFilter(OrderingFilter):
+    """Standard `?ordering=` filter that maps serializer field names to the
+    queryset fields/annotations that actually sort correctly.
+
+    `identifier` is a relation, so it must sort by its string column;
+    `contact_roles` is a list, so it sorts by the role count annotation.
+    """
+
+    ordering_aliases = {
+        "lease_identifier": "identifier__identifier",
+        "contact_roles": "contact_roles_count",
+    }
+
+    def get_ordering(self, request, queryset, view):
+        ordering = super().get_ordering(request, queryset, view) or []
+        resolved = [
+            (
+                f"-{self.ordering_aliases[term[1:]]}"
+                if term.startswith("-") and term[1:] in self.ordering_aliases
+                else self.ordering_aliases.get(term, term)
+            )
+            for term in ordering
+        ]
+        # Append a unique tiebreaker so paginated ordering is deterministic;
+        # boolean/count fields have many ties that otherwise shuffle per page.
+        if not any(term.lstrip("-") == "pk" for term in resolved):
+            resolved.append("pk")
+        return resolved
+

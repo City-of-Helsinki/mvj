@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models import Union
 from django.db.models import DurationField, Q
 from django.db.models.functions import Cast
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
@@ -768,16 +767,13 @@ class LeaseCreateSerializer(LeaseUpdateSerializer):
 
 class LeasesForContactSerializer(serializers.ModelSerializer):
     identifier = LeaseIdentifierSerializer(read_only=True)
-    is_active = serializers.SerializerMethodField()
+    # is_active, has_overdue_invoices and contact_role_active are annotated in
+    # LeasesForContactViewSet.get_queryset() so the same values drive both the
+    # response and the ordering.
+    is_active = serializers.BooleanField(read_only=True)
     has_overdue_invoices = serializers.BooleanField(read_only=True)
     contact_roles = serializers.SerializerMethodField()
-    contact_role_active = serializers.SerializerMethodField()
-
-    def get_is_active(self, obj: Lease):
-        today = timezone.now().date()
-        if obj.start_date and obj.start_date > today:
-            return False
-        return obj.end_date is None or obj.end_date >= today
+    contact_role_active = serializers.BooleanField(read_only=True)
 
     def _get_contact_id(self):
         contact_id = self.context["request"].query_params.get("contact")
@@ -800,26 +796,6 @@ class LeasesForContactSerializer(serializers.ModelSerializer):
             .distinct()
         )
         return sorted({getattr(v, "value", v) for v in role_values})
-
-    def get_contact_role_active(self, obj: LeaseWithTenants):
-        contact_id = self._get_contact_id()
-        if not contact_id:
-            return False
-
-        today = timezone.now().date()
-        return (
-            obj.tenants.filter(
-                deleted__isnull=True,
-                tenantcontact__contact_id=contact_id,
-                tenantcontact__deleted__isnull=True,
-                tenantcontact__start_date__lte=today,
-            )
-            .filter(
-                Q(tenantcontact__end_date__isnull=True)
-                | Q(tenantcontact__end_date__gte=today)
-            )
-            .exists()
-        )
 
     class Meta:
         model = Lease
