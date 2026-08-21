@@ -694,3 +694,98 @@ def test_get_contact_to_bill_when_billing_contact_ends_during_billing_period_and
 
     # Then...
     assert adapter.get_contact_to_bill() == original_tenant_contacts_contact
+
+
+# =============================================================================
+# Update invoice recipient tests
+# =============================================================================
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
+    indirect=True,
+)
+def test_update_invoice_recipient_if_changed_when_recipient_is_none(
+    exporter_lacking_test_setup: dict[str, Any],
+):
+    """
+    When:
+    - contact_to_be_billed is None,
+
+    Then:
+    - method should return early without updating the invoice recipient,
+    - a warning should be logged.
+    """
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice: Invoice = exporter_lacking_test_setup["invoice1"]
+    original_recipient = invoice.recipient
+
+    # When...
+    adapter._update_invoice_recipient_if_changed(None)  # type: ignore[call-arg]
+
+    # Then...
+    invoice.refresh_from_db()
+    assert invoice.recipient == original_recipient
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
+    indirect=True,
+)
+def test_update_invoice_recipient_if_changed_when_recipient_is_same(
+    exporter_lacking_test_setup: dict[str, Any],
+):
+    """
+    When:
+    - contact_to_be_billed is the same as invoice.recipient,
+
+    Then:
+    - method should not save the invoice, as nothing changed.
+    """
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice: Invoice = exporter_lacking_test_setup["invoice1"]
+    original_recipient = invoice.recipient
+
+    # When...
+    adapter._update_invoice_recipient_if_changed(original_recipient)
+
+    # Then...
+    invoice.refresh_from_db()
+    assert invoice.recipient == original_recipient
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "exporter_lacking_test_setup",
+    [ServiceUnitId.MAKE, ServiceUnitId.KAMA],
+    indirect=True,
+)
+def test_update_invoice_recipient_if_changed_when_recipient_is_different(
+    exporter_lacking_test_setup: dict[str, Any],
+    contact_factory: Callable[..., Contact],
+):
+    """
+    When:
+    - contact_to_be_billed is different from invoice.recipient,
+
+    Then:
+    - method should update invoice.recipient to the new contact,
+    - invoice should be saved,
+    - an info log should be created.
+    """
+    adapter: InvoiceSalesOrderAdapter = exporter_lacking_test_setup["adapter"]
+    invoice: Invoice = exporter_lacking_test_setup["invoice1"]
+    original_recipient = invoice.recipient
+
+    # When...
+    new_contact = contact_factory(first_name="New", last_name="Contact")
+    adapter._update_invoice_recipient_if_changed(new_contact)
+
+    # Then...
+    invoice.refresh_from_db()
+    assert invoice.recipient == new_contact
+    assert invoice.recipient != original_recipient

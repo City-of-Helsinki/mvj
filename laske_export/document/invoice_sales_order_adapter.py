@@ -495,6 +495,12 @@ class InvoiceSalesOrderAdapter:
 
         This ensures that MVJ database and SAP have the same invoice recipient.
         """
+        if contact_to_be_billed is None:
+            logger.warning(
+                "No contact to be billed found, invoice recipient will not be updated."
+            )
+            return
+
         if self.invoice.recipient != contact_to_be_billed:
             self.invoice.recipient = contact_to_be_billed
             self.invoice.save()
