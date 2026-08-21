@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 15:37+0300\n"
+"POT-Creation-Date: 2026-08-18 16:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3722,6 +3722,12 @@ msgid "Set rent info completion state"
 msgstr "Fastställ uppgiften arrendeuppgifterna i ordning"
 
 msgid "Cannot complete rent info: {}"
+msgstr ""
+
+msgid "This query parameter is required."
+msgstr ""
+
+msgid "Must be an integer."
 msgstr ""
 
 msgid "Can't create global ui data"

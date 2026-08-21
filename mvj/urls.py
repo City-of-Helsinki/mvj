@@ -100,6 +100,7 @@ from leasing.viewsets.lease_additional_views import (
     LeaseRentForPeriodView,
     LeaseSetInvoicingStateView,
     LeaseSetRentInfoCompletionStateView,
+    LeasesForContactViewSet,
 )
 from leasing.viewsets.leasehold_transfer import LeaseholdTransferViewSet
 from leasing.viewsets.old_dwellings_in_housing_companies_price_index import (
@@ -196,6 +197,11 @@ router.register(
     r"lease_create_collection_letter",
     LeaseCreateCollectionLetterDocumentViewSet,
     basename="lease_create_collection_letter",
+)
+router.register(
+    r"leases_for_contact",
+    LeasesForContactViewSet,
+    basename="leases_for_contact",
 )
 router.register(r"lease_type", LeaseTypeViewSet)
 router.register(r"leasehold_transfer", LeaseholdTransferViewSet)
