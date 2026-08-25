@@ -1,7 +1,7 @@
 import re
 
 from dateutil.parser import ParserError, parse, parserinfo
-from django.db.models import DurationField, Exists, OuterRef, Q
+from django.db.models import DurationField, Exists, OuterRef, Q, Subquery
 from django.db.models.functions import Cast
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.enums import LeaseState, PreparationState
+from leasing.enums import LeaseState, PreparationState, RentType
 from leasing.filters import (
     DistrictFilter,
     IntendedUseFilter,
@@ -41,6 +41,7 @@ from leasing.models import (
 )
 from leasing.models.contract import Contract
 from leasing.models.land_area import ConstructabilityDescription, LeaseArea
+from leasing.models.rent import Rent
 from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
 from leasing.serializers.lease import (
@@ -567,56 +568,103 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             queryset = queryset.filter(lease_areas__isnull=True)
 
         if PreparationState.MISSING_LEASE_AREA_GEOMETRY.value in preparation_state:
-            queryset = queryset.filter(lease_areas__geometry__isnull=True)
+            queryset = queryset.filter(
+                Exists(LeaseArea.objects.filter(lease_id=OuterRef("pk"))),
+                lease_areas__geometry__isnull=True,
+            )
 
         if PreparationState.MISSING_TENANT.value in preparation_state:
             queryset = queryset.filter(tenants__isnull=True).exclude(
-                # Reservations and preliminary leases are excluded from results, as they're not expected to have tenants
+                # Reservations and reserves are excluded from results, as they don't have tenants.
                 state__in=[
                     LeaseState.RESERVATION,
-                    LeaseState.PRELIMINARY,
+                    LeaseState.RESERVE,
                 ]
             )
 
         if PreparationState.MISSING_RENT.value in preparation_state:
             queryset = queryset.filter(rents__isnull=True).exclude(
-                # Reservations and preliminary leases are excluded from results, as they're not expected to have rents.
+                # Reservations, preliminaries, reserves and POA's are excluded from results, as they don't have rents.
                 state__in=[
                     LeaseState.RESERVATION,
                     LeaseState.PRELIMINARY,
+                    LeaseState.RESERVE,
+                    LeaseState.POWER_OF_ATTORNEY,
                 ]
             )
 
         if PreparationState.MISSING_DECISION.value in preparation_state:
-            queryset = queryset.filter(decisions__isnull=True)
+            queryset = queryset.filter(decisions__isnull=True).exclude(
+                state__in=[
+                    # Reserves don't have decisions.
+                    LeaseState.RESERVE,
+                ]
+            )
 
+        # Filter for missing constructability description. (PIMA, etc.)
         if PreparationState.MISSING_CONSTRUCTABILITY.value in preparation_state:
             has_no_description = ~Exists(
                 ConstructabilityDescription.objects.filter(lease_area_id=OuterRef("pk"))
             )
-            queryset = queryset.filter(
-                lease_areas__in=LeaseArea.objects.filter(has_no_description)
+            queryset = (
+                queryset.filter(
+                    lease_areas__in=LeaseArea.objects.filter(has_no_description)
+                )
+                .filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=timezone.now().date())
+                )
+                .exclude(
+                    state__in=[
+                        # Reserves don't have constructability descriptions.
+                        LeaseState.RESERVE,
+                    ]
+                )
             )
 
         if PreparationState.CONTRACT_NOT_SIGNED.value in preparation_state:
-            latest_unsigned_contract = Contract.objects.filter(
-                lease=OuterRef("pk"), signing_date__isnull=True
-            ).order_by("-created_at")
-            queryset = queryset.filter(Exists(latest_unsigned_contract[:1])).exclude(
-                # Reservations are excluded from results, as they're not expected to have rents.
-                state=LeaseState.RESERVATION
+            # Find leases where the newest contract exists and is unsigned.
+            latest_contract_signing_date = Subquery(
+                Contract.objects.filter(lease=OuterRef("pk"))
+                .order_by("-pk")
+                .values("signing_date")[:1]
+            )
+            queryset = (
+                queryset.filter(Exists(Contract.objects.filter(lease=OuterRef("pk"))))
+                .annotate(latest_contract_signing_date=latest_contract_signing_date)
+                .filter(latest_contract_signing_date__isnull=True)
             )
 
         if PreparationState.RENT_NOT_MARKED_READY.value in preparation_state:
-            queryset = queryset.filter(rent_info_completed_at__isnull=True)
+            queryset = queryset.filter(
+                Exists(Rent.objects.filter(lease=OuterRef("pk"))),
+                rent_info_completed_at__isnull=True,
+            )
 
         if PreparationState.INVOICING_NOT_STARTED.value in preparation_state:
-            queryset = queryset.filter(invoicing_enabled_at__isnull=True).exclude(
+            queryset = (
+                queryset.filter(invoicing_enabled_at__isnull=True)
+                # Filter out leases with only archived rents and leases with only FREE rents.
+                .filter(
+                    Exists(
+                        Rent.objects.filter(
+                            lease=OuterRef("pk"),
+                        )
+                        .exclude(type=RentType.FREE)
+                        .filter(
+                            Q(end_date__isnull=True)
+                            | Q(end_date__gte=timezone.now().date())
+                        )
+                    )
+                )
+                # Filter out leases not marked ready for invoicing.
+                .filter(rent_info_completed_at__isnull=False)
                 # Reservations and preliminary leases are excluded from results, as they're not expected be invoiced.
-                state__in=[
-                    LeaseState.RESERVATION,
-                    LeaseState.PRELIMINARY,
-                ]
+                .exclude(
+                    state__in=[
+                        LeaseState.RESERVATION,
+                        LeaseState.PRELIMINARY,
+                    ]
+                )
             )
 
         return queryset
