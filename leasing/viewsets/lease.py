@@ -501,6 +501,13 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     )
                 )
 
+            if search_form.cleaned_data.get("institution_identifier"):
+                queryset = queryset.filter(
+                    contracts__institution_identifier__icontains=search_form.cleaned_data.get(
+                        "institution_identifier"
+                    )
+                )
+
             if search_form.cleaned_data.get("decision_maker"):
                 queryset = queryset.filter(
                     decisions__decision_maker=search_form.cleaned_data.get(
