@@ -116,6 +116,9 @@ class LeaseSearchForm(forms.Form):
     contract_number = forms.CharField(
         label="Contract number", max_length=255, required=False, empty_value=None
     )
+    institution_identifier = forms.CharField(
+        label="Institution identifier", max_length=255, required=False, empty_value=None
+    )
     decision_maker = forms.ModelChoiceField(
         label="Decision maker", queryset=DecisionMaker.objects.all(), required=False
     )
