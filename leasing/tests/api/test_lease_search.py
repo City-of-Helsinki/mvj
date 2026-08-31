@@ -16,6 +16,7 @@ def test_search_finds_one_lease_by_full_identifier(
         type_id=1, municipality_id=1, district_id=29, notice_period_id=1
     )
     lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
+    assert str(lease.identifier) == "A1128-1"
 
     response = admin_client.get(reverse("v1:lease-list"), data={param_name: value})
 
@@ -37,6 +38,7 @@ def test_search_finds_one_lease_by_full_identifier_where_type_has_two_letters(
         type_id=33, municipality_id=1, district_id=1, notice_period_id=1
     )
     lease_factory(type_id=33, municipality_id=1, district_id=2, notice_period_id=1)
+    assert str(lease.identifier) == "MA100-1"
 
     response = admin_client.get(reverse("v1:lease-list"), data={param_name: "MA100-1"})
 
@@ -47,6 +49,34 @@ def test_search_finds_one_lease_by_full_identifier_where_type_has_two_letters(
 
     assert response.data["count"] == 1
     assert response.data["results"][0]["id"] == lease.id
+
+
+def test_search_finds_multiple_leases_by_comma_separated_identifiers(
+    admin_client,
+    lease_factory,
+):
+    lease1 = lease_factory(
+        type_id=1, municipality_id=1, district_id=29, notice_period_id=1
+    )
+    lease2 = lease_factory(
+        type_id=1, municipality_id=1, district_id=30, notice_period_id=1
+    )
+    lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
+    assert str(lease1.identifier) == "A1128-1"
+    assert str(lease2.identifier) == "A1129-1"
+
+    response = admin_client.get(
+        reverse("v1:lease-list"), data={"search": "A1128-1,A1129-1"}
+    )
+
+    assert response.status_code == 200, "%s %s" % (
+        response.status_code,
+        response.data,
+    )
+
+    assert response.data["count"] == 2
+    result_ids = {result["id"] for result in response.data["results"]}
+    assert result_ids == {lease1.id, lease2.id}
 
 
 @pytest.mark.parametrize(
