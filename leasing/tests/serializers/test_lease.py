@@ -2,6 +2,7 @@ import datetime
 from unittest.mock import MagicMock
 
 import pytest
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -124,52 +125,40 @@ def _make_serializer(lease, contact_id):
     return LeasesForContactSerializer(annotated_lease, context={"request": request})
 
 
+@pytest.mark.parametrize(
+    "start_date, end_date, expected_is_active",
+    [
+        # Future start date --> not active
+        (timezone.now().date() + relativedelta(days=1), None, False),
+        # Start date in the past, no end date --> active
+        (datetime.date(2000, 1, 1), None, True),
+        # Start date in the past, end date in the future --> active
+        (
+            datetime.date(2000, 1, 1),
+            timezone.now().date() + relativedelta(days=1),
+            True,
+        ),
+        # Start date in the past, end date today --> active
+        (datetime.date(2000, 1, 1), timezone.now().date(), True),
+        # Start date in the past, end date yesterday --> not active
+        (
+            datetime.date(2000, 1, 1),
+            timezone.now().date() - relativedelta(days=1),
+            False,
+        ),
+    ],
+)
 @pytest.mark.django_db
-def test_is_active_future_start_date(lease_test_data):
+def test_is_active(lease_test_data, start_date, end_date, expected_is_active):
+    """Serializer should return correct is_active value based on lease start and end dates."""
     lease = lease_test_data["lease"]
     contact = lease_test_data["tenantcontacts"][0].contact
-    lease.start_date = timezone.now().date() + datetime.timedelta(days=1)
-    lease.end_date = None
+    lease.start_date = start_date
+    lease.end_date = end_date
     lease.save()
 
     serializer = _make_serializer(lease, contact.id)
-    assert serializer.data["is_active"] is False
-
-
-@pytest.mark.django_db
-def test_is_active_no_end_date(lease_test_data):
-    lease = lease_test_data["lease"]
-    contact = lease_test_data["tenantcontacts"][0].contact
-    lease.start_date = datetime.date(2000, 1, 1)
-    lease.end_date = None
-    lease.save()
-
-    serializer = _make_serializer(lease, contact.id)
-    assert serializer.data["is_active"] is True
-
-
-@pytest.mark.django_db
-def test_is_active_end_date_today(lease_test_data):
-    lease = lease_test_data["lease"]
-    contact = lease_test_data["tenantcontacts"][0].contact
-    lease.start_date = datetime.date(2000, 1, 1)
-    lease.end_date = timezone.now().date()
-    lease.save()
-
-    serializer = _make_serializer(lease, contact.id)
-    assert serializer.data["is_active"] is True
-
-
-@pytest.mark.django_db
-def test_is_active_end_date_yesterday(lease_test_data):
-    lease = lease_test_data["lease"]
-    contact = lease_test_data["tenantcontacts"][0].contact
-    lease.start_date = datetime.date(2000, 1, 1)
-    lease.end_date = timezone.now().date() - datetime.timedelta(days=1)
-    lease.save()
-
-    serializer = _make_serializer(lease, contact.id)
-    assert serializer.data["is_active"] is False
+    assert serializer.data["is_active"] is expected_is_active
 
 
 @pytest.mark.django_db
