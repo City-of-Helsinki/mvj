@@ -171,25 +171,22 @@ class CollectionNoteCreateUpdateSerializer(
                 )
             )
         # Fall back to the existing values if they are not provided in the request data.
-        collection_stage = (
-            data["collection_stage"]
-            if "collection_stage" in data
-            else (self.instance and self.instance.collection_stage)
+        collection_stage = data.get("collection_stage") or (
+            self.instance.collection_stage if self.instance else None
         )
-        invoices = (
-            data["invoices"]
-            if "invoices" in data
-            else (self.instance and list(self.instance.invoices.all()))
+        invoices = data.get("invoices") or (
+            self.instance and list(self.instance.invoices.all())
         )
+
+        # If collection stage does not exist, do not validate conditional fields.
+        # Can happen when editing old collection notes that were created before the collection stage field was added.
+        if not collection_stage:
+            return data
 
         # Validation to ensure that conditional fields are not filled incorrectly:
 
         # Invoices are required for all types except for a simple NOTICE.
-        if (
-            collection_stage
-            and collection_stage != CollectionStage.NOTICE
-            and not invoices
-        ):
+        if collection_stage != CollectionStage.NOTICE and not invoices:
             raise ValidationError(
                 _("Invoices must be provided for this type of collection note")
             )

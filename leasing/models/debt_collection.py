@@ -116,7 +116,7 @@ class CollectionNote(TimeStampedSafeDeleteModel):
     invoices = models.ManyToManyField(
         "leasing.Invoice",
         verbose_name=_("Invoices"),
-        related_name="collection_notes",
+        related_name="+",
         blank=True,
     )
 
