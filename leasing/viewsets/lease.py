@@ -201,33 +201,50 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         if identifier is not None or search is not None:
             if search is None:
-                search_string = identifier.strip()
+                raw_search = identifier.strip()
                 search_by_other = False
             else:
-                search_string = search.strip()
+                raw_search = search.strip()
                 search_by_other = True
 
-            looks_like_identifier = bool(
-                re.match(r"[A-Z]+\d{3,4}-\d+$", search_string, re.IGNORECASE)
-            )
+            # Separate comma-separated search values to individual search strings, e.g. "A1111-1,A1111-2"
+            search_strings = [s.strip() for s in raw_search.split(",") if s.strip()]
 
-            # Search by identifier or parts of it
-            if len(search_string) < 3:
-                identifier_q = Q(type__identifier__istartswith=search_string)
-            elif len(search_string) == 3:
-                identifier_q = Q(
-                    type__identifier__iexact=search_string[:2],
-                    municipality__identifier=search_string[2:3],
+            combined_q = Q()
+            for search_string in search_strings:
+                looks_like_identifier = bool(
+                    re.match(r"[A-Z]+\d{3,4}-\d+$", search_string, re.IGNORECASE)
                 )
-            elif len(search_string) < 7:
-                district_identifier = search_string[3:5]
-                if district_identifier == "0":
+
+                # Search by identifier or parts of it
+                if len(search_string) < 3:
+                    identifier_q = Q(type__identifier__istartswith=search_string)
+                elif len(search_string) == 3:
                     identifier_q = Q(
                         type__identifier__iexact=search_string[:2],
                         municipality__identifier=search_string[2:3],
-                        district__identifier__in=range(0, 10),
                     )
-                else:
+                elif len(search_string) < 7:
+                    district_identifier = search_string[3:5]
+                    if district_identifier == "0":
+                        identifier_q = Q(
+                            type__identifier__iexact=search_string[:2],
+                            municipality__identifier=search_string[2:3],
+                            district__identifier__in=range(0, 10),
+                        )
+                    else:
+                        if district_identifier == "00":
+                            district_identifier = "0"
+                        else:
+                            district_identifier = district_identifier.lstrip("0")
+
+                        identifier_q = Q(
+                            type__identifier__iexact=search_string[:2],
+                            municipality__identifier=search_string[2:3],
+                            district__identifier__startswith=district_identifier,
+                        )
+                elif looks_like_identifier:
+                    district_identifier = search_string[3:5]
                     if district_identifier == "00":
                         district_identifier = "0"
                     else:
@@ -236,95 +253,87 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                     identifier_q = Q(
                         type__identifier__iexact=search_string[:2],
                         municipality__identifier=search_string[2:3],
-                        district__identifier__startswith=district_identifier,
-                    )
-            elif looks_like_identifier:
-                district_identifier = search_string[3:5]
-                if district_identifier == "00":
-                    district_identifier = "0"
-                else:
-                    district_identifier = district_identifier.lstrip("0")
-
-                identifier_q = Q(
-                    type__identifier__iexact=search_string[:2],
-                    municipality__identifier=search_string[2:3],
-                    district__identifier=district_identifier,
-                    identifier__sequence__startswith=search_string[6:],
-                )
-            else:
-                identifier_q = Q()
-
-            other_q = Q()
-
-            # Search also by other fields if the search string is clearly not a lease identifier
-            if search_by_other and not looks_like_identifier:
-                # Address
-                other_q |= Q(lease_areas__addresses__address__icontains=search_string)
-
-                # Property identifier
-                other_q |= Q(lease_areas__identifier__icontains=search_string)
-                normalized_identifier = normalize_property_identifier(search_string)
-                if search_string != normalized_identifier:
-                    other_q |= Q(
-                        lease_areas__identifier__icontains=normalized_identifier
-                    )
-
-                # Tenantcontact name
-                other_q |= Q(
-                    tenants__tenantcontact__contact__name__icontains=search_string
-                )
-
-                if " " in search_string:
-                    tenant_name_parts = search_string.split(" ", 2)
-                    other_q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
-                            0
-                        ]
-                    ) & Q(
-                        tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
-                            1
-                        ]
-                    )
-                    other_q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
-                            1
-                        ]
-                    ) & Q(
-                        tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
-                            0
-                        ]
+                        district__identifier=district_identifier,
+                        identifier__sequence__startswith=search_string[6:],
                     )
                 else:
+                    identifier_q = Q()
+
+                other_q = Q()
+
+                # Search also by other fields if the search string is clearly not a lease identifier
+                if search_by_other and not looks_like_identifier:
+                    # Address
                     other_q |= Q(
-                        tenants__tenantcontact__contact__first_name__icontains=search_string
+                        lease_areas__addresses__address__icontains=search_string
                     )
+
+                    # Property identifier
+                    other_q |= Q(lease_areas__identifier__icontains=search_string)
+                    normalized_identifier = normalize_property_identifier(search_string)
+                    if search_string != normalized_identifier:
+                        other_q |= Q(
+                            lease_areas__identifier__icontains=normalized_identifier
+                        )
+
+                    # Tenantcontact name
                     other_q |= Q(
-                        tenants__tenantcontact__contact__last_name__icontains=search_string
+                        tenants__tenantcontact__contact__name__icontains=search_string
                     )
 
-                # Lessor
-                other_q |= Q(lessor__name__icontains=search_string)
-                other_q |= Q(lessor__first_name__icontains=search_string)
-                other_q |= Q(lessor__last_name__icontains=search_string)
+                    if " " in search_string:
+                        tenant_name_parts = search_string.split(" ", 2)
+                        other_q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
+                                0
+                            ]
+                        ) & Q(
+                            tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
+                                1
+                            ]
+                        )
+                        other_q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=tenant_name_parts[
+                                1
+                            ]
+                        ) & Q(
+                            tenants__tenantcontact__contact__last_name__icontains=tenant_name_parts[
+                                0
+                            ]
+                        )
+                    else:
+                        other_q |= Q(
+                            tenants__tenantcontact__contact__first_name__icontains=search_string
+                        )
+                        other_q |= Q(
+                            tenants__tenantcontact__contact__last_name__icontains=search_string
+                        )
 
-                # Date
-                try:
-                    search_date = parse(
-                        search_string, parserinfo=parserinfo(dayfirst=True)
-                    )
-                    if search_date:
-                        other_q |= Q(start_date=search_date.date())
-                        other_q |= Q(end_date=search_date.date())
-                except ValueError:
-                    pass
-                # Raised for invalid or unknown string formats --> not a date
-                except ParserError:
-                    pass
-                # Raised if the parsed date exceeds the largest valid C integer on your system --> not a date
-                except OverflowError:
-                    pass
+                    # Lessor
+                    other_q |= Q(lessor__name__icontains=search_string)
+                    other_q |= Q(lessor__first_name__icontains=search_string)
+                    other_q |= Q(lessor__last_name__icontains=search_string)
 
-            queryset = queryset.filter(identifier_q | other_q)
+                    # Date
+                    try:
+                        search_date = parse(
+                            search_string, parserinfo=parserinfo(dayfirst=True)
+                        )
+                        if search_date:
+                            other_q |= Q(start_date=search_date.date())
+                            other_q |= Q(end_date=search_date.date())
+                    except ValueError:
+                        pass
+                    # Raised for invalid or unknown string formats --> not a date
+                    except ParserError:
+                        pass
+                    # Raised if the parsed date exceeds the largest valid C integer on your system --> not a date
+                    except OverflowError:
+                        pass
+
+                combined_q |= identifier_q | other_q
+
+            queryset = queryset.filter(combined_q)
 
         # Advanced search
         search_form = LeaseSearchForm(self.request.query_params)
