@@ -113,6 +113,28 @@ class CollectionNote(TimeStampedSafeDeleteModel):
         max_length=50,
     )
 
+    invoices = models.ManyToManyField(
+        "leasing.Invoice",
+        verbose_name=_("Invoices"),
+        related_name="+",
+        blank=True,
+    )
+
+    sent_date = models.DateField(verbose_name=_("Sent date"), null=True, blank=True)
+
+    inspection_date = models.DateField(
+        verbose_name=_("Inspection date"), null=True, blank=True
+    )
+
+    postpone_date = models.DateField(
+        verbose_name=_("Postpone date"), null=True, blank=True
+    )
+
+    entire_lease = models.BooleanField(
+        verbose_name=_("Entire lease"),
+        default=False,
+    )
+
     recursive_get_related_skip_relations = ["lease"]
 
     class Meta:

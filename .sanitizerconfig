@@ -370,6 +370,11 @@ strategy:
     modified_at: null
     note: mvj.paragraph_if_exist
     collection_stage: null
+    invoices: null
+    sent_date: null
+    inspection_date: null
+    postpone_date: null
+    entire_lease: null
     user_id: null
   leasing_comment:
     created_at: null
