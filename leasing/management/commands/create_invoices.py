@@ -43,10 +43,8 @@ class Command(BaseCommand):
             f"Finding leases with possible due dates between {start_of_next_month} and {end_of_next_month}\n"
         )
         leases = Lease.objects.filter(invoicing_enabled_at__isnull=False).filter(
-            q_lease_is_active_in_period(
-                start_date=today.replace(
-                    day=1
-                ),  # ensure whole month is included when forced
+            q_lease_can_be_invoiced_for_month(
+                start_date=today.replace(day=1),  # ensure whole month is included
                 end_date=end_of_next_month,
             )
         )
@@ -85,6 +83,24 @@ def q_lease_is_active_in_period(
 ) -> Q:
     return Q(Q(end_date=None) | Q(end_date__gte=start_date)) & Q(
         Q(start_date=None) | Q(start_date__lte=end_date)
+    )
+
+
+def q_lease_can_be_invoiced_for_month(
+    start_date: datetime.date, end_date: datetime.date
+) -> Q:
+    """
+    Coarse pre-filter for selecting candidate leases for an invoicing run.
+
+    The filter window is widened to the start of the invoiced month's year
+    so that leases which ended earlier in the same year are still considered when
+    their due date falls in the invoiced month (e.g. a lease ending in February
+    with a single annual due date in June).
+    """
+    start_of_invoiced_year = end_date.replace(month=1, day=1)
+    return q_lease_is_active_in_period(
+        start_date=min(start_of_invoiced_year, start_date),
+        end_date=end_date,
     )
 
 
