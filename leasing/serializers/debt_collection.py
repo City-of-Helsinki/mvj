@@ -158,6 +158,26 @@ class CollectionNoteCreateUpdateSerializer(
         model = CollectionNote
         fields = "__all__"
 
+    def create(self, validated_data):
+        if validated_data.get(
+            "collection_stage"
+        ) == CollectionStage.PAYMENT_DEFERRAL and not validated_data.get(
+            "postpone_date"
+        ):
+            raise ValidationError(_("Missing postpone date for payment deferral"))
+
+        collection_note: CollectionNote = super().create(validated_data)
+
+        if (
+            collection_note.collection_stage == CollectionStage.PAYMENT_DEFERRAL
+            and collection_note.postpone_date
+        ):
+            invoice: Invoice = collection_note.invoices.first()
+            invoice.postpone_date = collection_note.postpone_date
+            invoice.save()
+
+        return collection_note
+
     def validate(self, data):
         request = self.context.get("request")
         lease = data.get("lease") or (self.instance and self.instance.lease)
