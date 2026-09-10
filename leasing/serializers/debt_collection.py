@@ -159,13 +159,6 @@ class CollectionNoteCreateUpdateSerializer(
         fields = "__all__"
 
     def create(self, validated_data):
-        if validated_data.get(
-            "collection_stage"
-        ) == CollectionStage.PAYMENT_DEFERRAL and not validated_data.get(
-            "postpone_date"
-        ):
-            raise ValidationError(_("Missing postpone date for payment deferral"))
-
         collection_note: CollectionNote = super().create(validated_data)
 
         if (
@@ -179,6 +172,23 @@ class CollectionNoteCreateUpdateSerializer(
         return collection_note
 
     def validate(self, data):
+        self._validate_service_unit(data)
+
+        collection_stage = data.get("collection_stage")
+        invoices = data.get("invoices")
+
+        # If collection stage does not exist, do not validate conditional fields.
+        # Can happen when editing old collection notes that were created before the collection stage field was added.
+        if not collection_stage:
+            return data
+
+        self._validate_invoices(collection_stage, invoices)
+        self._validate_payment_deferral(collection_stage, data, invoices)
+        self._validate_contract_change(collection_stage, data)
+
+        return data
+
+    def _validate_service_unit(self, data):
         request = self.context.get("request")
         lease = data.get("lease") or (self.instance and self.instance.lease)
         if (
@@ -190,59 +200,39 @@ class CollectionNoteCreateUpdateSerializer(
                     "Can not create a collection note for an invoice belonging to another service unit"
                 )
             )
-        # Fall back to the existing values if they are not provided in the request data.
-        collection_stage = data.get("collection_stage") or (
-            self.instance.collection_stage if self.instance else None
-        )
-        invoices = data.get("invoices") or (
-            self.instance and list(self.instance.invoices.all())
-        )
 
-        # If collection stage does not exist, do not validate conditional fields.
-        # Can happen when editing old collection notes that were created before the collection stage field was added.
-        if not collection_stage:
-            return data
-
-        # Validation to ensure that conditional fields are not filled incorrectly:
-
+    def _validate_invoices(self, collection_stage, invoices):
         # Invoices are required for all types except for a simple NOTICE.
         if collection_stage != CollectionStage.NOTICE and not invoices:
             raise ValidationError(
                 _("Invoices must be provided for this type of collection note")
             )
 
-        # Payment deferrals accept only one invoice.
-        if (
-            collection_stage == CollectionStage.PAYMENT_DEFERRAL
-            and invoices
-            and len(invoices) != 1
-        ):
-            raise ValidationError(
-                _("Payment deferrals must be targeted to a single invoice")
-            )
-
-        if collection_stage != CollectionStage.PAYMENT_DEFERRAL and data.get(
-            "postpone_date"
-        ):
+    def _validate_payment_deferral(self, collection_stage, data, invoices):
+        postpone_date = data.get("postpone_date")
+        if collection_stage == CollectionStage.PAYMENT_DEFERRAL:
+            # Payment deferrals accept only one invoice.
+            if invoices and len(invoices) != 1:
+                raise ValidationError(
+                    _("Payment deferrals must be targeted to a single invoice")
+                )
+            if not postpone_date:
+                raise ValidationError(_("Missing postpone date for payment deferral"))
+        elif postpone_date:
             raise ValidationError(
                 _("Postpone date can only be set for payment deferrals")
             )
 
-        if collection_stage != CollectionStage.CONTRACT_CHANGE and data.get(
-            "entire_lease"
-        ):
-            raise ValidationError(
-                _("'Entire lease' can only be set for contract changes")
-            )
-
-        if collection_stage != CollectionStage.CONTRACT_CHANGE and data.get(
-            "inspection_date"
-        ):
-            raise ValidationError(
-                _("Inspection date can only be set for contract changes")
-            )
-
-        return data
+    def _validate_contract_change(self, collection_stage, data):
+        if collection_stage != CollectionStage.CONTRACT_CHANGE:
+            if data.get("entire_lease"):
+                raise ValidationError(
+                    _("'Entire lease' can only be set for contract changes")
+                )
+            if data.get("inspection_date"):
+                raise ValidationError(
+                    _("Inspection date can only be set for contract changes")
+                )
 
 
 class CreateCollectionLetterDocumentInvoiceSerializer(serializers.Serializer):
