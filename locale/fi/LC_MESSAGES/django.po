@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-18 16:50+0300\n"
+"POT-Creation-Date: 2026-09-10 12:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3477,6 +3477,9 @@ msgstr "Laskut täytyy määrittää tälle perintähuomautukselle"
 
 msgid "Payment deferrals must be targeted to a single invoice"
 msgstr "Maksulykkäyksen tulee kohdistaa yhteen laskuun"
+
+msgid "Missing postpone date for payment deferral"
+msgstr "Lykkäyspäivämäärä puuttuu maksulykkäykseltä"
 
 msgid "Postpone date can only be set for payment deferrals"
 msgstr "Lykkäyspäivämäärän voi asettaa vain maksulykkäyksille"
