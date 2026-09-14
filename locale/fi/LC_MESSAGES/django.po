@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 12:55+0300\n"
+"POT-Creation-Date: 2026-09-14 13:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3207,20 +3207,26 @@ msgstr "Vuokraukset joissa laskutus ei ole käynnissä"
 msgid "Shows active leases where invoicing is not enabled"
 msgstr "Näyttää käynnissä olevat vuokraukset joissa laskutus ei ole käynnissä"
 
-msgid "Lease count"
-msgstr "Vuokrausten määrä"
+msgid "Lease bases of rent"
+msgstr "Vuokrausten perusteet"
 
-msgid "Show the count of leases by type"
-msgstr "Näyttää vuokrausten lukumäärän per vuokrauslaji"
+msgid "Shows lease bases of rent"
+msgstr "Näyttää vuokrausten perusteet"
 
-msgid "Count"
-msgstr "Lukumäärä"
+msgid "Lease intended use"
+msgstr "Vuokrauksen käyttötarkoitus"
+
+msgid "Active lease"
+msgstr "Aktiivinen vuokraus"
 
 msgid "Unit price (index)"
 msgstr "Yksikköhinta (ind)"
 
 msgid "Initial year rent"
 msgstr "Alkuvuosivuokra"
+
+msgid "Discounted rent"
+msgstr "Alennettu vuokra"
 
 msgid "Subvented initial year rent"
 msgstr "Subventoitu alkuvuosivuokra (ind)"
@@ -3231,11 +3237,23 @@ msgstr "Subventio euroina / vuosi"
 msgid "Subvention amount per area"
 msgstr "Subventoitu yksikköhinta"
 
-msgid "Temporary subvention percentage (short)"
-msgstr "Tilapäisalennuksen prosentti"
+msgid "Temporary subvention percentage"
+msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
 msgid "Temporary discount amount euros per year"
 msgstr "Tilapäisalennus euroa/vuosi"
+
+msgid "Lease count"
+msgstr "Vuokrausten määrä"
+
+msgid "Show the count of leases by type"
+msgstr "Näyttää vuokrausten lukumäärän per vuokrauslaji"
+
+msgid "Count"
+msgstr "Lukumäärä"
+
+msgid "Temporary subvention percentage (short)"
+msgstr "Tilapäisalennuksen prosentti"
 
 msgid "Lease statistics report"
 msgstr "Vuokrausten tilastoraportti"
@@ -3297,9 +3315,6 @@ msgstr "Yksikköhinta {unit} (ind)"
 
 msgid "Subsidy percent"
 msgstr "Subventio prosentteina"
-
-msgid "Temporary subvention percentage"
-msgstr "Tilapäisalennus subventoidusta alkuvuosivuokrasta %"
 
 msgid "Form of management (Subvention)"
 msgstr "Hallintamuotosubventio"
