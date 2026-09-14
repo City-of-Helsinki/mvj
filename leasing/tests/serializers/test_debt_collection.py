@@ -6,6 +6,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from leasing.enums import CollectionStage
+from leasing.models.decision import Decision
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionCreateUpdateSerializer,
     CollectionNoteCreateUpdateSerializer,
@@ -307,3 +308,78 @@ def test_collection_note_entire_lease_and_inspection_date_validation(
     else:
         with pytest.raises(ValidationError):
             serializer.validate(data)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "collection_stage,should_create_decision",
+    [
+        (
+            stage,
+            stage
+            in {
+                CollectionStage.RISK_OF_DEMOLITION,
+                CollectionStage.RISK_OF_DEMOLITION_AND_LITIGATION,
+                CollectionStage.RISK_OF_LITIGATION,
+                CollectionStage.RISK_OF_TERMINATION_AND_LITIGATION,
+                CollectionStage.SIMPLE_PAYMENT_REMINDER,
+            },
+        )
+        for stage in CollectionStage
+    ],
+)
+def test_create_decision_on_collection_note_creation(
+    lease_test_data,
+    user_factory,
+    invoice_factory,
+    collection_stage,
+    should_create_decision,
+):
+    """
+    Collection notes with stages in STAGES_CREATING_DECISION should create a decision upon creation
+    with a type, decision maker, date, and description. Other types should not create a decision.
+    """
+    lease = lease_test_data["lease"]
+    user = user_factory(service_units=[lease.service_unit])
+    request = MagicMock()
+    request.user = user
+    serializer = CollectionNoteCreateUpdateSerializer(context={"request": request})
+
+    collection_note_sent_date = datetime.date(2026, 1, 1)
+    collection_note_note = "text"
+
+    data = {
+        "lease": lease,
+        "collection_stage": collection_stage,
+        "user": user,
+        "note": collection_note_note,
+        "sent_date": collection_note_sent_date,
+        "postpone_date": (
+            datetime.date(2026, 1, 1)
+            if collection_stage == CollectionStage.PAYMENT_DEFERRAL
+            else None
+        ),
+        "invoices": [
+            invoice_factory(
+                lease=lease,
+                total_amount=Decimal("123.45"),
+                billed_amount=Decimal("123.45"),
+                outstanding_amount=Decimal("123.45"),
+            )
+        ],
+    }
+
+    validated_data = serializer.validate(data)
+    serializer.create(validated_data)
+
+    decisions = Decision.objects.filter(lease=lease)
+    decision = decisions.first()
+    if should_create_decision:
+        assert decisions.count() == 1
+        assert decision is not None
+        assert decision.decision_date == collection_note_sent_date
+        assert decision.description == collection_note_note
+        assert decision.type is not None
+        assert decision.decision_maker is not None
+    else:
+        assert decisions.count() == 0

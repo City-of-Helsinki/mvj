@@ -7,6 +7,7 @@ from field_permissions.serializers import FieldPermissionsSerializerMixin
 from file_operations.serializers.mixins import FileSerializerMixin
 from leasing.enums import CollectionStage
 from leasing.models import Invoice, Lease, Tenant
+from leasing.models.decision import Decision, DecisionMaker, DecisionType
 from users.serializers import UserSerializer
 
 from ..models.debt_collection import (
@@ -161,6 +162,12 @@ class CollectionNoteCreateUpdateSerializer(
     def create(self, validated_data):
         collection_note: CollectionNote = super().create(validated_data)
 
+        self._handle_payment_deferral_creation(collection_note)
+        self._handle_decision_creation(collection_note)
+
+        return collection_note
+
+    def _handle_payment_deferral_creation(self, collection_note: CollectionNote):
         if (
             collection_note.collection_stage == CollectionStage.PAYMENT_DEFERRAL
             and collection_note.postpone_date
@@ -169,7 +176,30 @@ class CollectionNoteCreateUpdateSerializer(
             invoice.postpone_date = collection_note.postpone_date
             invoice.save()
 
-        return collection_note
+    def _handle_decision_creation(self, collection_note: CollectionNote):
+        stages_creating_decision = {
+            CollectionStage.RISK_OF_DEMOLITION,
+            CollectionStage.RISK_OF_DEMOLITION_AND_LITIGATION,
+            CollectionStage.RISK_OF_LITIGATION,
+            CollectionStage.RISK_OF_TERMINATION_AND_LITIGATION,
+            CollectionStage.SIMPLE_PAYMENT_REMINDER,
+        }
+        if collection_note.collection_stage in stages_creating_decision:
+            # Currently always selects fixed decision maker and type
+            decision_maker = DecisionMaker.objects.filter(
+                name="Tontit-yksikön kirje"
+            ).first()
+            decision_type = DecisionType.objects.filter(
+                name="Maanvuokrien maksukehotus purku-uhalla"
+            ).first()
+
+            Decision.objects.create(
+                lease=collection_note.lease,
+                decision_date=collection_note.sent_date,
+                description=collection_note.note,
+                type=decision_type,
+                decision_maker=decision_maker,
+            )
 
     def validate(self, data):
         self._validate_service_unit(data)
