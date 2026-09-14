@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 12:55+0300\n"
+"POT-Creation-Date: 2026-09-14 13:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3201,20 +3201,26 @@ msgstr "Arrenderingar för vilka fakturering inte pågår"
 msgid "Shows active leases where invoicing is not enabled"
 msgstr "Visar pågående arrenderingar för vilka fakturering inte pågår"
 
-msgid "Lease count"
-msgstr "Antal arrenderingar"
+msgid "Lease bases of rent"
+msgstr ""
 
-msgid "Show the count of leases by type"
-msgstr "Visar antalet arrenderingar per arrenderingsart"
+msgid "Shows lease bases of rent"
+msgstr ""
 
-msgid "Count"
-msgstr "Antal"
+msgid "Lease intended use"
+msgstr ""
+
+msgid "Active lease"
+msgstr ""
 
 msgid "Unit price (index)"
 msgstr "Enhetspris (ind)"
 
 msgid "Initial year rent"
 msgstr "Arrende för början av året"
+
+msgid "Discounted rent"
+msgstr ""
 
 msgid "Subvented initial year rent"
 msgstr "Subventionerat arrende för början av året (ind)"
@@ -3225,11 +3231,23 @@ msgstr "Subvention i euro/år"
 msgid "Subvention amount per area"
 msgstr "Subventionerat enhetspris"
 
-msgid "Temporary subvention percentage (short)"
-msgstr ""
+msgid "Temporary subvention percentage"
+msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
 msgid "Temporary discount amount euros per year"
 msgstr "Tillfällig rabatt i euro/år"
+
+msgid "Lease count"
+msgstr "Antal arrenderingar"
+
+msgid "Show the count of leases by type"
+msgstr "Visar antalet arrenderingar per arrenderingsart"
+
+msgid "Count"
+msgstr "Antal"
+
+msgid "Temporary subvention percentage (short)"
+msgstr ""
 
 msgid "Lease statistics report"
 msgstr "Statistikrapport för arrenderingar"
@@ -3291,9 +3309,6 @@ msgstr "Enhetspris {unit} (ind)"
 
 msgid "Subsidy percent"
 msgstr "Subvention i procent"
-
-msgid "Temporary subvention percentage"
-msgstr "Tillfällig rabatt på subventionerat arrende för början av året %"
 
 msgid "Form of management (Subvention)"
 msgstr "Subvention för upplåtelseform"
