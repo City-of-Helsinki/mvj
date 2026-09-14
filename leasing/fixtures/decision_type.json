@@ -443,7 +443,7 @@
     "model": "leasing.DecisionType",
     "pk": 56,
     "fields": {
-      "name": "Maanvuorien maksukehotus purku-uhalla",
+      "name": "Maanvuokrien maksukehotus purku-uhalla",
       "kind": null
     }
   },
