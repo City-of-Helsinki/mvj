@@ -103,6 +103,7 @@ class Field(models.Model):
         ("radiobuttoninline", _("Radiopainike linjassa")),
         ("uploadfiles", _("Lataa tiedosto")),
         ("fractional", _("Murtoluku")),
+        ("hidden", _("Piilotettu")),
     )
     label = models.CharField(max_length=255)
     hint_text = models.CharField(max_length=1024, null=True, blank=True)

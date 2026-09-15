@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 12:55+0300\n"
+"POT-Creation-Date: 2026-09-15 13:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -485,6 +485,9 @@ msgid "Lataa tiedosto"
 msgstr ""
 
 msgid "Murtoluku"
+msgstr ""
+
+msgid "Piilotettu"
 msgstr ""
 
 msgid "Lessor"
