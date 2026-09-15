@@ -902,7 +902,8 @@ class AnswerListSerializer(serializers.ModelSerializer):
         form = obj.form
         if form is None or not hasattr(form, "plotsearch"):
             return None
-        return form.plotsearch.end_at.isoformat()
+        end_at = form.plotsearch.end_at
+        return end_at.isoformat() if end_at else None
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
