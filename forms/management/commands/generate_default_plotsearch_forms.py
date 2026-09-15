@@ -17,18 +17,6 @@ class Command(BaseCommand):
         "person": "Tonttihaun peruslomake vain yksityishenkilöille",
     }
 
-    DEFAULT_FIELD_TYPES = (
-        {"name": "Murtoluku", "identifier": "fractional"},
-        {"name": "Lataa tiedosto", "identifier": "uploadfiles"},
-        {"name": "Radiopainike linjassa", "identifier": "radiobuttoninline"},
-        {"name": "Radiopainike", "identifier": "radiobutton"},
-        {"name": "Valintaruutu", "identifier": "checkbox"},
-        {"name": "Alasvetovalikko", "identifier": "dropdown"},
-        {"name": "Tekstialue", "identifier": "textarea"},
-        {"name": "Tekstikenttä", "identifier": "textbox"},
-        {"name": "Piilotettu", "identifier": "hidden"},
-    )
-
     with open(
         "forms/management/commands/default_plotsearch_form_sections.json"
     ) as sections_json:
