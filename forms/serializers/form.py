@@ -902,6 +902,8 @@ class AnswerListSerializer(serializers.ModelSerializer):
         form = obj.form
         if form is None or not hasattr(form, "plotsearch"):
             return None
+        if not form.plotsearch.end_at:
+            return None
         return form.plotsearch.end_at.isoformat()
 
 
