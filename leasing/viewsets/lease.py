@@ -337,8 +337,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         # Advanced search
         search_form = LeaseSearchForm(self.request.query_params)
+        search_form.is_valid()
 
-        if search_form.is_valid():
+        if search_form.cleaned_data:
             if (
                 search_form.cleaned_data.get("tenant_name")
                 or search_form.cleaned_data.get("business_id")
