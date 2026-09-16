@@ -543,7 +543,6 @@ class PlotSearchRetrieveSerializer(PlotSearchSerializerBase):
 
 class PlotSearchPublicSerializer(
     EnumSupportSerializerMixin,
-    FieldPermissionsSerializerMixin,
     serializers.ModelSerializer,
 ):
     id = serializers.ReadOnlyField()
@@ -564,15 +563,6 @@ class PlotSearchPublicSerializer(
         allow_null=True,
     )
 
-    decisions = InstanceDictPrimaryKeyRelatedField(
-        instance_class=Decision,
-        queryset=Decision.objects.all(),
-        related_serializer=DecisionSerializer,
-        required=False,
-        allow_null=True,
-        many=True,
-    )
-
     plot_search_targets = PlotSearchTargetSerializer(many=True, read_only=True)
 
     class Meta:
@@ -584,7 +574,6 @@ class PlotSearchPublicSerializer(
             "stage",
             "search_class",
             "form",
-            "decisions",
             "plot_search_targets",
             "created_at",
             "modified_at",
@@ -592,13 +581,6 @@ class PlotSearchPublicSerializer(
             "begin_at",
             "end_at",
         )
-
-    @staticmethod
-    def override_permission_check_field_name(field_name):
-        """`type` is not in the PlotSearch model, so it doesn't have a permission created for it."""
-        if field_name == "type":
-            return "subtype"
-        return field_name
 
 
 class PlotSearchUpdateSerializer(
