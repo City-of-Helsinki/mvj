@@ -134,3 +134,63 @@ def test_business_id_affects_tenantcontact_type_and_tenant_activity_filters(
 
     assert response.status_code == 200
     assert response.data["count"] == expected_result_count
+
+
+@pytest.mark.django_db
+def test_invalid_business_id_does_not_bypass_other_search_filters(
+    django_db_setup,
+    admin_client,
+    lease_factory,
+):
+    lease_factory(type_id=1, municipality_id=1, district_id=1, notice_period_id=1)
+
+    response = admin_client.get(
+        reverse("v1:lease-list"),
+        data={"address": "no such address", "business_id": "invalid"},
+    )
+    assert response.status_code == 200
+    assert response.data["count"] == 0
+
+
+@pytest.mark.django_db
+def test_invalid_advanced_filter_does_not_bypass_valid_search_filters(
+    django_db_setup,
+    admin_client,
+    lease_factory,
+    tenant_factory,
+    tenant_contact_factory,
+    contact_factory,
+):
+    business_id = "1234567-8"
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=1, notice_period_id=1
+    )
+    tenant = tenant_factory(lease=lease)
+    contact = contact_factory(business_id=business_id, type=ContactType.BUSINESS)
+    tenant_contact_factory(
+        type=TenantContactType.TENANT,
+        tenant=tenant,
+        contact=contact,
+        start_date=datetime.date(2000, 1, 1),
+    )
+    # Query with only valid filters
+    response = admin_client.get(
+        reverse("v1:lease-list"),
+        data={
+            "business_id": business_id,
+        },
+    )
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+
+    # Query with a mix of valid and invalid filters
+    response = admin_client.get(
+        reverse("v1:lease-list"),
+        data={
+            "address": "no such address",
+            "business_id": business_id,
+            "lessor": -1,
+        },
+    )
+    assert response.status_code == 200
+    assert response.data["count"] == 0
