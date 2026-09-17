@@ -2,6 +2,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 from deepmerge import always_merger
+from django.utils.translation import gettext_lazy as _
 from enumfields.drf.serializers import EnumSerializerField
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
@@ -565,9 +566,13 @@ class AnswerSerializer(serializers.ModelSerializer):
                 "^[0-9]{6}[+AaBbCcDdEeFfYyXxWwVvUu-][0-9]{3}[A-z0-9]$",
                 "invalid_ssn",
                 "henkilotunnus",
+                _("Invalid personal identity code"),
             ),
             FieldRegexValidator(
-                "[0-9]{6,7}-?[0-9]{1}$", "invalid_company_id", "y-tunnus"
+                "[0-9]{6,7}-?[0-9]{1}$",
+                "invalid_company_id",
+                "y-tunnus",
+                _("Invalid business ID"),
             ),
             ControlShareValidation(),
         ]
@@ -607,14 +612,14 @@ class AnswerSerializer(serializers.ModelSerializer):
     ):
         if "metadata" in entries:
             metadata.update(entries["metadata"])
-        if "sections" in entries:
+        if "sections" in entries and entries["sections"] is not None:
             yield from self.entry_generator(
                 entries["sections"],
                 sections=[entry for entry in entries["sections"]],
                 metadata=metadata,
                 path=path,
             )
-        if "fields" in entries:
+        if "fields" in entries and entries["fields"] is not None:
             yield from self.entry_generator(
                 entries["fields"],
                 sections=sections,
