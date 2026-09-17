@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-15 13:57+0300\n"
+"POT-Creation-Date: 2026-09-17 10:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -499,6 +499,12 @@ msgstr "Bråktal"
 msgid "Piilotettu"
 msgstr ""
 
+msgid "Invalid personal identity code"
+msgstr ""
+
+msgid "Invalid business ID"
+msgstr ""
+
 msgid "Lessor"
 msgstr "Arrendegivare"
 
@@ -546,6 +552,12 @@ msgstr "Kopia av tomtansökningar {}"
 
 msgid "Copy of area rental application {}"
 msgstr "Kopia av ansökningar för områdessökning {}"
+
+msgid "This field is required"
+msgstr ""
+
+msgid "Control share is not even"
+msgstr ""
 
 msgid "Invoice"
 msgstr "Faktura"

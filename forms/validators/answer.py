@@ -1,6 +1,7 @@
 import re
 from typing import Iterable
 
+from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ValidationError
 
 from forms.models import Field
@@ -45,10 +46,11 @@ class FieldRegexValidator:
     Do Regex validation for form answer entries
     """
 
-    def __init__(self, regex, error_code, identifier):
+    def __init__(self, regex, error_code, identifier, message):
         self._regex = regex
         self._error_code = error_code
         self._identifier = identifier
+        self._message = message
 
     def __call__(self, value):
         self.regex_validator(
@@ -98,12 +100,12 @@ class FieldRegexValidator:
             if regex_exists and self._identifier == "henkilotunnus":
                 self.ssn_checker(entries[entry]["value"])
             if not regex_exists:
-                raise ValidationError(code=self._error_code)
+                raise ValidationError(detail=self._message, code=self._error_code)
 
     def ssn_checker(self, ssn_parts):
         ssn_number = int(ssn_parts[0:6] + ssn_parts[7:-1])
         if SSN_CHECK[ssn_number % 31] != ssn_parts[-1].upper():
-            raise ValidationError(code=self._error_code)
+            raise ValidationError(detail=self._message, code=self._error_code)
 
 
 class RequiredFormFieldValidator:
@@ -140,7 +142,10 @@ class RequiredFormFieldValidator:
                     ).exists()
                     and entries[entry]["value"] in self.EMPTY_VALUES
                 ):
-                    raise ValidationError(code="required")
+                    raise ValidationError(
+                        detail=_("This field is required"),
+                        code="required",
+                    )
         for entry in entries:
             section_identifier = re.sub(r"\[\d+]", "", entry)
             self.required_validator(
@@ -157,7 +162,10 @@ class ControlShareValidation:
             result += int(values[0]) / int(values[1])
             result_found = True
         if result_found and round(result, 10) != 1:
-            raise ValidationError(code="control share is not even")
+            raise ValidationError(
+                detail=_("Control share is not even"),
+                code="control share is not even",
+            )
 
     def control_share_finder_generator(self, entries):
         if not isinstance(entries, Iterable) or isinstance(entries, str):

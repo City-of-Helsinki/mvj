@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-15 13:57+0300\n"
+"POT-Creation-Date: 2026-09-17 10:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -490,6 +490,12 @@ msgstr ""
 msgid "Piilotettu"
 msgstr ""
 
+msgid "Invalid personal identity code"
+msgstr "Virheellinen henkilötunnus"
+
+msgid "Invalid business ID"
+msgstr "Virheellinen Y-tunnus"
+
 msgid "Lessor"
 msgstr "Vuokranantaja"
 
@@ -537,6 +543,12 @@ msgstr "Kopio tonttihakemuksista {}"
 
 msgid "Copy of area rental application {}"
 msgstr "Kopio aluehaun hakemuksista {}"
+
+msgid "This field is required"
+msgstr "Tämä kenttä vaaditaan"
+
+msgid "Control share is not even"
+msgstr "Hallintaosuutta ei ole jaettu tasan"
 
 msgid "Invoice"
 msgstr "Lasku"
