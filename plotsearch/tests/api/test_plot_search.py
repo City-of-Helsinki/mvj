@@ -119,6 +119,31 @@ def test_plot_search_stage_public(client):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("stage", list(SearchStage))
+def test_plot_search_public_fields(client, plot_search_test_data, stage):
+    """Public endpoint should return populated fields (only) for IN_ACTION stage."""
+
+    plot_search: PlotSearch = plot_search_test_data
+    plot_search.stage = PlotSearchStage.objects.filter(stage=stage).first()
+    plot_search.save()
+
+    url = reverse("v1:pub_plot_search-list")
+    response = client.get(url, content_type="application/json")
+
+    if stage == SearchStage.IN_ACTION:
+        assert response.status_code == 200
+        assert response.data["count"] == 1
+        result = response.data["results"][0]
+        assert result["id"] == plot_search.id
+        assert result["name"] == plot_search.name
+        assert result["subtype"]["id"] == plot_search.subtype.id
+        assert result["stage"]["id"] == plot_search.stage.id
+    else:
+        assert response.status_code == 200
+        assert response.data["count"] == 0
+
+
+@pytest.mark.django_db
 def test_plot_search_create_simple(
     django_db_setup,
     admin_client,
