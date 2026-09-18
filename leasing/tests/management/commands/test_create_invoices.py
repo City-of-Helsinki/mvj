@@ -5,6 +5,13 @@ from unittest.mock import patch
 import pytest
 from django.core.management import CommandError, call_command
 
+from leasing.enums import (
+    DueDatesType,
+    PeriodType,
+    RentCycle,
+    RentType,
+    TenantContactType,
+)
 from leasing.models.invoice import Invoice, InvoiceRow
 from leasing.models.lease import Lease
 
@@ -164,7 +171,9 @@ def test_lease_activity_periods(
         assert rows_qs.count() == 0
         assert "0 invoices created" in caplog.text
 
-    # Because the lease ends in September, it won't be detected from October onwards.
+    # The lease ended in September. From October onwards the widened pre-filter
+    # may still include it as a candidate (until the window's start passes the
+    # lease end date)
     for month_of_run in [10, 11, 12]:
         with patch(
             "leasing.management.commands.create_invoices.get_today"
@@ -174,8 +183,6 @@ def test_lease_activity_periods(
 
             call_command("create_invoices")
 
-            assert "Found 0 leases" in caplog.text
-
             invoices_qs = Invoice.objects.filter(
                 lease=lease, billing_period_start_date__month=month_of_run
             )
@@ -183,3 +190,93 @@ def test_lease_activity_periods(
 
             assert invoices_qs.count() == 0
             assert rows_qs.count() == 0
+            assert "0 invoices created" in caplog.text
+
+
+@pytest.mark.django_db
+def test_annual_due_date_after_lease_end(
+    lease_factory: Callable[..., Lease],
+    rent_factory,
+    contract_rent_factory,
+    rent_intended_use_factory,
+    rent_due_date_factory,
+    contact_factory,
+    tenant_factory,
+    tenant_contact_factory,
+    tenant_rent_share_factory,
+    caplog: pytest.LogCaptureFixture,
+):
+    """A lease active Jan-Mar with a single annual due date in June must generate
+    an invoice when the command runs on May 1st (targeting June)."""
+    lease = lease_factory(
+        start_date=datetime.date(2025, 1, 1),
+        end_date=datetime.date(2025, 2, 28),
+        invoicing_enabled_at=datetime.date(2025, 1, 1),
+    )
+    rent = rent_factory(
+        lease=lease,
+        type=RentType.FIXED,
+        cycle=RentCycle.JANUARY_TO_DECEMBER,
+        due_dates_type=DueDatesType.CUSTOM,
+        start_date=lease.start_date,
+        end_date=lease.end_date,
+    )
+    # Single annual due date on June 30
+    rent_due_date_factory(rent=rent, day=30, month=6)
+    rent_intended_use = rent_intended_use_factory()
+    contract_rent_factory(
+        rent=rent,
+        amount=1000,
+        period=PeriodType.PER_MONTH,
+        base_amount=1000,
+        base_amount_period=PeriodType.PER_MONTH,
+        intended_use=rent_intended_use,
+        start_date=lease.start_date,
+        end_date=lease.end_date,
+    )
+    tenant = tenant_factory(lease=lease, share_numerator=1, share_denominator=1)
+    contact = contact_factory()
+    tenant_contact_factory(
+        contact=contact,
+        tenant=tenant,
+        start_date=lease.start_date,
+        end_date=lease.end_date,
+        type=TenantContactType.TENANT,
+    )
+    tenant_rent_share_factory(
+        tenant=tenant,
+        intended_use=rent_intended_use,
+        share_numerator=1,
+        share_denominator=1,
+    )
+
+    # Runs that don't target June must not create the invoice
+    for month_of_run in [1, 2, 3, 6, 7]:
+        with patch(
+            "leasing.management.commands.create_invoices.get_today"
+        ) as mock_today:
+            mock_today.return_value = datetime.date(2025, month_of_run, 1)
+            caplog.clear()
+
+            call_command("create_invoices")
+
+            assert Invoice.objects.filter(lease=lease).count() == 0
+            assert "0 invoices created" in caplog.text
+
+    # The run on May 1st targets June, where the single annual due date falls.
+    with patch("leasing.management.commands.create_invoices.get_today") as mock_today:
+        mock_today.return_value = datetime.date(2025, 5, 1)
+        caplog.clear()
+
+        call_command("create_invoices")
+
+        invoices_qs = Invoice.objects.filter(lease=lease)
+        assert invoices_qs.count() == 1
+
+        assert "Found 1 leases" in caplog.text
+        assert "1 invoices created" in caplog.text
+
+        # Billing period should be clipped to the lease's active months
+        invoice = invoices_qs.first()
+        assert invoice.billing_period_start_date == datetime.date(2025, 1, 1)
+        assert invoice.billing_period_end_date == datetime.date(2025, 2, 28)

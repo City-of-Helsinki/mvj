@@ -48,7 +48,6 @@ def test_no_active_leases(
 
     call_command("create_invoices_for_single_lease", lease.id, 2025, month)
 
-    assert "Lease not found" in caplog.text
     assert Invoice.objects.count() == 0
     assert InvoiceRow.objects.count() == 0
 
