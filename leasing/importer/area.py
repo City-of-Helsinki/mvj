@@ -395,24 +395,26 @@ class AreaImporter(BaseImporter):
         row: Any,
         area_import: AreaImport,
         column_name_map: Dict[str, str],
-        errors: list[str],
-        error_count: int,
+        error_messages: list[str],
+        failure_count: int,
     ) -> Tuple[Optional[Metadata], int]:
         try:
             metadata: Metadata = {
                 column_name_map[column_name]: getattr(row, column_name)
                 for column_name in area_import["metadata_columns"]
             }
-            return metadata, error_count
+            return metadata, failure_count
         except AttributeError as e:
-            errors.append(f"id #{row.id}, metadata field missing. Error: {str(e)}\n")
+            error_messages.append(
+                f"id #{row.id}, metadata field missing. Error: {str(e)}\n"
+            )
 
-            error_count += 1
+            failure_count += 1
             self.stdout.write("E")
-            if error_count % 1000 == 0:
-                self.stdout.write(f" {error_count}")
+            if failure_count % 1000 == 0:
+                self.stdout.write(f" {failure_count}")
                 self.stdout.flush()
-            return None, error_count
+            return None, failure_count
 
     def get_match_data(
         self,
@@ -466,44 +468,44 @@ class AreaImporter(BaseImporter):
         )
 
     def get_geometry(
-        self, row: Any, errors: list[str], error_count: int
+        self, row: Any, error_messages: list[str], failure_count: int
     ) -> Tuple[Optional[geos.GEOSGeometry], int]:
         try:
             geom = geos.GEOSGeometry(row.geom_text)
-            return geom, error_count
+            return geom, failure_count
         except GEOSException as e:
-            errors.append(f"id #{row.id} error: {str(e)}\n")
+            error_messages.append(f"id #{row.id} error: {str(e)}\n")
 
-            error_count += 1
+            failure_count += 1
             self.stdout.write("E")
-            if error_count % 1000 == 0:
-                self.stdout.write(f" {error_count}")
+            if failure_count % 1000 == 0:
+                self.stdout.write(f" {failure_count}")
                 self.stdout.flush()
-            return None, error_count
+            return None, failure_count
 
     def handle_geometry(
         self,
         geom: geos.GEOSGeometry,
         row: Any,
-        errors: list[str],
-        error_count: int,
+        error_messages: list[str],
+        failure_count: int,
     ) -> Tuple[Optional[geos.MultiPolygon], int]:
         if geom and isinstance(geom, geos.Polygon):
             geom = geos.MultiPolygon(geom)
 
         if geom and not isinstance(geom, geos.MultiPolygon):
-            errors.append(
+            error_messages.append(
                 f'id #{row.id} Error! Geometry is not a Multipolygon but "{geom}"\n'
             )
 
-            error_count += 1
+            failure_count += 1
             self.stdout.write("E")
-            if error_count % 1000 == 0:
-                self.stdout.write(f" {error_count}")
+            if failure_count % 1000 == 0:
+                self.stdout.write(f" {failure_count}")
                 self.stdout.flush()
-            return None, error_count
+            return None, failure_count
 
-        return cast(geos.MultiPolygon, geom), error_count
+        return cast(geos.MultiPolygon, geom), failure_count
 
     def update_or_create_areas(
         self,
@@ -559,7 +561,7 @@ class AreaImporter(BaseImporter):
         cursor: Iterable[Any],
         area_import: AreaImport,
         source: AreaSource,
-        errors: list[str],
+        error_messages: list[str],
     ) -> list[str]:
         imported_identifiers: list[str] = []
         counters = AreaImportCounters()
@@ -569,10 +571,14 @@ class AreaImporter(BaseImporter):
             counters.processed += 1
             row_start = perf_counter()
 
-            metadata, failed_count = self.get_metadata(
-                row, area_import, METADATA_COLUMN_NAME_MAP, errors, counters.failed
+            metadata, failure_count = self.get_metadata(
+                row,
+                area_import,
+                METADATA_COLUMN_NAME_MAP,
+                error_messages,
+                counters.failed,
             )
-            counters.failed = failed_count
+            counters.failed = failure_count
             if metadata is None:
                 continue
 
@@ -589,15 +595,17 @@ class AreaImporter(BaseImporter):
                     counters.skipped += 1
                     continue
 
-            geom, failed_count = self.get_geometry(row, errors, counters.failed)
-            counters.failed = failed_count
+            geom, failure_count = self.get_geometry(
+                row, error_messages, counters.failed
+            )
+            counters.failed = failure_count
             if geom is None:
                 continue
 
-            geom, failed_count = self.handle_geometry(
-                geom, row, errors, counters.failed
+            geom, failure_count = self.handle_geometry(
+                geom, row, error_messages, counters.failed
             )
-            counters.failed = failed_count
+            counters.failed = failure_count
             if geom is None:
                 continue
 
@@ -632,7 +640,7 @@ class AreaImporter(BaseImporter):
     def process_area_import_type(self, area_import_type: str) -> None:
         type_start = perf_counter()
 
-        errors: list[str] = []
+        error_messages: list[str] = []
         self.stdout.write(f'Starting to import the area type "{area_import_type}"...\n')
 
         area_import = AREA_IMPORT_TYPES[area_import_type]
@@ -656,16 +664,18 @@ class AreaImporter(BaseImporter):
             logger.error(str(e))
             return
 
-        imported_identifiers = self.process_rows(cursor, area_import, source, errors)
+        imported_identifiers = self.process_rows(
+            cursor, area_import, source, error_messages
+        )
         self.handle_stale_areas(area_import, source, imported_identifiers)
 
-        if errors:
-            self.stdout.write(f" {len(errors)} errors:\n")
-            for error in errors:
-                self.stdout.write(error)
+        if error_messages:
+            self.stdout.write(f" {len(error_messages)} errors:\n")
+            for error_message in error_messages:
+                self.stdout.write(error_message)
 
             # Use logger to trigger sentry capturing
-            logger.error(f"Errors occurred during area import: {len(errors)}")
+            logger.error(f"Errors occurred during area import: {len(error_messages)}")
 
         type_end = perf_counter()
         self.stdout.write(

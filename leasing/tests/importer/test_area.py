@@ -76,29 +76,29 @@ def test_get_metadata_maps_configured_columns(area_importer):
         second_column=second_column_value,
     )
 
-    metadata, error_count = area_importer.get_metadata(
+    metadata, failure_count = area_importer.get_metadata(
         row, AREA_IMPORT, COLUMN_NAME_MAP, [], 0
     )
     assert metadata == {
         "first_column_mapped": first_column_value,
         "second_column_mapped": second_column_value,
     }
-    assert error_count == 0
+    assert failure_count == 0
 
 
 def test_get_metadata_reports_missing_source_column(area_importer):
-    errors = []
+    error_messages = []
     row = SimpleNamespace(id=5, third_column="4321")
 
-    metadata, error_count = area_importer.get_metadata(
-        row, AREA_IMPORT, COLUMN_NAME_MAP, errors, 0
+    metadata, failure_count = area_importer.get_metadata(
+        row, AREA_IMPORT, COLUMN_NAME_MAP, error_messages, 0
     )
 
     assert metadata is None
-    assert error_count == 1
-    assert len(errors) == 1
-    assert "id #5, metadata field missing" in errors[0]
-    assert "first_column" in errors[0]
+    assert failure_count == 1
+    assert len(error_messages) == 1
+    assert "id #5, metadata field missing" in error_messages[0]
+    assert "first_column" in error_messages[0]
     assert area_importer.stdout.getvalue() == "E"
 
 
@@ -144,50 +144,53 @@ def test_get_update_data_contains_geometry_metadata_and_external_id(area_importe
 
 
 def test_get_geometry_parses_valid_wkt(area_importer):
-    geometry, error_count = area_importer.get_geometry(
+    geometry, failure_count = area_importer.get_geometry(
         SimpleNamespace(id=1, geom_text="MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))"),
         [],
         0,
     )
     assert isinstance(geometry, geos.MultiPolygon)
-    assert error_count == 0
+    assert failure_count == 0
 
 
 def test_get_geometry_reports_geos_error(area_importer, monkeypatch):
-    errors = []
+    error_messages = []
     monkeypatch.setattr(
         "leasing.importer.area.geos.GEOSGeometry",
         MagicMock(side_effect=geos.GEOSException("Invalid geometry")),
     )
 
-    geometry, error_count = area_importer.get_geometry(
-        SimpleNamespace(id=7, geom_text="POLYGON EMPTY"), errors, 0
+    geometry, failure_count = area_importer.get_geometry(
+        SimpleNamespace(id=7, geom_text="POLYGON EMPTY"), error_messages, 0
     )
     assert geometry is None
-    assert error_count == 1
-    assert errors and errors[0].startswith("id #7 error:")
+    assert failure_count == 1
+    assert error_messages and error_messages[0].startswith("id #7 error:")
     assert area_importer.stdout.getvalue() == "E"
 
 
 def test_handle_geometry_promotes_polygon_to_multipolygon(area_importer):
     polygon = geos.Polygon(((0, 0), (0, 1), (1, 1), (0, 0)), srid=4326)
 
-    geometry, error_count = area_importer.handle_geometry(
+    geometry, failure_count = area_importer.handle_geometry(
         polygon, SimpleNamespace(id=1), [], 0
     )
     assert isinstance(geometry, geos.MultiPolygon)
-    assert error_count == 0
+    assert failure_count == 0
 
 
 def test_handle_geometry_rejects_non_polygonal_geometry(area_importer):
-    errors = []
+    error_messages = []
 
-    geometry, error_count = area_importer.handle_geometry(
-        geos.Point(0, 0, srid=4326), SimpleNamespace(id=8), errors, 0
+    geometry, failure_count = area_importer.handle_geometry(
+        geos.Point(0, 0, srid=4326),
+        SimpleNamespace(id=8),
+        error_messages,
+        0,
     )
     assert geometry is None
-    assert error_count == 1
-    assert errors and "Geometry is not a Multipolygon" in errors[0]
+    assert failure_count == 1
+    assert error_messages and "Geometry is not a Multipolygon" in error_messages[0]
     assert area_importer.stdout.getvalue() == "E"
 
 
