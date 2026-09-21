@@ -131,14 +131,14 @@ django-stubs[compatible-mypy]==4.2.7
     # via -r requirements.in
 django-stubs-ext==5.2.1
     # via django-stubs
-djangorestframework==3.16.1
+djangorestframework==3.18.1
     # via
     #   -r requirements.in
     #   djangorestframework-gis
     #   drf-oidc-auth
     #   drf-yasg
     #   helsinki-profile-gdpr-api
-djangorestframework-gis==1.2.0
+djangorestframework-gis==1.3.0
     # via -r requirements.in
 docxtpl==0.20.2
     # via -r requirements.in
