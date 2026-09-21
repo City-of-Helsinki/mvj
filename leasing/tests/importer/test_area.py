@@ -221,13 +221,48 @@ def test_update_or_create_areas_persists_valid_area(area_importer):
         "external_id": "source-123",
     }
 
-    imported_identifiers, _ = area_importer.update_or_create_areas(
-        areas, update_data, match_data, [], 0
+    areas.update_or_create.return_value = (MagicMock(), True)
+
+    imported_identifiers, created = area_importer.update_or_create_areas(
+        areas, update_data, match_data, []
     )
     areas.update_or_create.assert_called_once_with(
         defaults=dict(update_data), **match_data
     )
     assert imported_identifiers == ["lease-456"]
+    assert created is True
+
+
+def test_process_rows_reports_separate_counters(area_importer, monkeypatch):
+    area_import = dict(AREA_IMPORT, metadata_columns=["sopimusnumero"])
+    rows = [
+        SimpleNamespace(
+            id="source-1",
+            vuokratunnus="lease-1",
+            sopimusnumero="contract-1",
+            geom_text="MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))",
+        ),
+        SimpleNamespace(
+            id="source-2",
+            vuokratunnus="lease-2",
+            sopimusnumero="contract-2",
+            geom_text="MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))",
+        ),
+        SimpleNamespace(id="source-3", vuokratunnus="lease-3"),
+    ]
+    areas = MagicMock()
+    areas.update_or_create.side_effect = [(MagicMock(), True), (MagicMock(), False)]
+    monkeypatch.setattr("leasing.importer.area.Area.objects.all", lambda: areas)
+
+    imported_identifiers = area_importer.process_rows(
+        rows, area_import, MagicMock(), []
+    )
+
+    assert imported_identifiers == ["lease-1", "lease-2"]
+    assert (
+        "Processed 3 areas: created 1, updated 1, skipped 0, failed 1."
+        in area_importer.stdout.getvalue()
+    )
 
 
 @pytest.mark.django_db
