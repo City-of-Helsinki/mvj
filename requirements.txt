@@ -121,7 +121,7 @@ django-q2[sentry]==1.10.0
     # via -r requirements.in
 django-resilient-logger==2.3.0
     # via -r requirements.in
-django-safedelete==1.4.1
+django-safedelete==1.5.0
     # via -r requirements.in
 django-sanitized-dump==1.2.2
     # via -r requirements.in
