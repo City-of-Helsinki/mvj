@@ -1,7 +1,17 @@
 import logging
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from time import perf_counter
-from typing import Any, Dict, NamedTuple, Optional, Tuple, TypedDict
+from typing import (
+    Any,
+    Dict,
+    LiteralString,
+    NotRequired,
+    Optional,
+    Tuple,
+    TypedDict,
+    cast,
+)
 
 import psycopg
 from django.conf import settings
@@ -10,6 +20,7 @@ from django.contrib.gis.geos.error import GEOSException
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
 from django.db.models import QuerySet
+from psycopg import sql
 from psycopg.rows import namedtuple_row
 
 from leasing.enums import AreaType
@@ -19,39 +30,34 @@ from .base import BaseImporter
 
 logger = logging.getLogger(__name__)
 
-Metadata = Dict[str, str]
+Metadata = Dict[str, Any]
 
 
-class AreaImport(TypedDict, total=False):
+class AreaImport(TypedDict):
     source_dsn_setting_name: str
     source_name: str
     source_identifier: str
     area_type: AreaType
     identifier_field_name: str
     metadata_columns: list[str]
-    query: str
+    query: LiteralString
 
 
-MatchDataIdentifier = str
+MatchDataIdentifier = Any
 
 
-class MatchData(TypedDict, total=False):
-    type: str
+class MatchData(TypedDict):
+    type: AreaType
     identifier: MatchDataIdentifier
-    source: str
-    external_id: Optional[str]
-    detailed_plan_identifier: Optional[str]
+    source: AreaSource
+    external_id: NotRequired[Any]
+    detailed_plan_identifier: NotRequired[Optional[str]]
 
 
-class UpdateData(TypedDict, total=False):
+class UpdateData(TypedDict):
     geometry: geos.MultiPolygon
     metadata: Metadata
-    external_id: Optional[str]
-
-
-class NamedTupleUnknown(NamedTuple):
-    def __getattr__(self, name: str) -> Any:
-        pass
+    external_id: NotRequired[Any]
 
 
 @dataclass
@@ -325,13 +331,13 @@ AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
 class AreaImporter(BaseImporter):
     type_name = "area"
 
-    def __init__(self, stdout=None, stderr=None):
+    def __init__(self, stdout: Any = None, stderr: Any = None) -> None:
         self.stdout = stdout
         self.stderr = stderr
-        self.area_types: list[AreaType] = []
+        self.area_types: list[str] = []
 
     @classmethod
-    def add_arguments(cls, parser):
+    def add_arguments(cls, parser: Any) -> None:
         parser.add_argument(
             "--area-types",
             dest="area_types",
@@ -340,7 +346,7 @@ class AreaImporter(BaseImporter):
             help="comma separated list of area types to import (default: all)",
         )
 
-    def read_options(self, options):
+    def read_options(self, options: Mapping[str, Any]) -> None:
         if options["area_types"]:
             self.area_types = []
             for area_type in options["area_types"].split(","):
@@ -350,8 +356,8 @@ class AreaImporter(BaseImporter):
                 self.area_types.append(area_type)
 
     def get_database_connection(
-        self, area_import: AreaImport, area_import_type: AreaType
-    ):
+        self, area_import: AreaImport, area_import_type: str
+    ) -> Optional[psycopg.Connection[Any]]:
         try:
             conn = psycopg.connect(
                 getattr(settings, area_import["source_dsn_setting_name"]),
@@ -370,7 +376,7 @@ class AreaImporter(BaseImporter):
             logger.error(error_msg)
             return None
 
-    def execute(self):
+    def execute(self) -> None:
         func_start = perf_counter()
 
         if not self.area_types:
@@ -386,7 +392,7 @@ class AreaImporter(BaseImporter):
 
     def get_metadata(
         self,
-        row: NamedTupleUnknown,
+        row: Any,
         area_import: AreaImport,
         column_name_map: Dict[str, str],
         errors: list[str],
@@ -410,7 +416,7 @@ class AreaImporter(BaseImporter):
 
     def get_match_data(
         self,
-        row: NamedTupleUnknown,
+        row: Any,
         area_import: AreaImport,
         source: AreaSource,
     ) -> MatchData:
@@ -427,10 +433,10 @@ class AreaImporter(BaseImporter):
 
     def get_update_data(
         self,
-        row: NamedTupleUnknown,
+        row: Any,
         metadata: Metadata,
         geom: geos.MultiPolygon,
-    ):
+    ) -> UpdateData:
         update_data: UpdateData = {
             "geometry": geom,
             "metadata": metadata,
@@ -443,7 +449,9 @@ class AreaImporter(BaseImporter):
 
         return update_data
 
-    def get_plan_unit_areas(self, metadata: Metadata, identifier: MatchDataIdentifier):
+    def get_plan_unit_areas(
+        self, metadata: Metadata, identifier: MatchDataIdentifier
+    ) -> Optional[QuerySet[Area]]:
         areas = Area.objects.all()
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
@@ -452,9 +460,14 @@ class AreaImporter(BaseImporter):
             )
             return None
 
-        return areas.filter(metadata__detailed_plan_identifier=dp_id)
+        return cast(
+            QuerySet[Area],
+            areas.filter(metadata__detailed_plan_identifier=dp_id),
+        )
 
-    def get_geometry(self, row: NamedTupleUnknown, errors: list[str], error_count: int):
+    def get_geometry(
+        self, row: Any, errors: list[str], error_count: int
+    ) -> Tuple[Optional[geos.GEOSGeometry], int]:
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, error_count
@@ -470,11 +483,11 @@ class AreaImporter(BaseImporter):
 
     def handle_geometry(
         self,
-        geom: geos.MultiPolygon,
-        row: NamedTuple,
+        geom: geos.GEOSGeometry,
+        row: Any,
         errors: list[str],
         error_count: int,
-    ):
+    ) -> Tuple[Optional[geos.MultiPolygon], int]:
         if geom and isinstance(geom, geos.Polygon):
             geom = geos.MultiPolygon(geom)
 
@@ -490,7 +503,7 @@ class AreaImporter(BaseImporter):
                 self.stdout.flush()
             return None, error_count
 
-        return geom, error_count
+        return cast(geos.MultiPolygon, geom), error_count
 
     def update_or_create_areas(
         self,
@@ -527,7 +540,7 @@ class AreaImporter(BaseImporter):
 
     def record_persistence_result(
         self, counters: AreaImportCounters, created: Optional[bool]
-    ):
+    ) -> None:
         if created is True:
             counters.created += 1
         elif created is False:
@@ -543,11 +556,11 @@ class AreaImporter(BaseImporter):
 
     def process_rows(
         self,
-        cursor: psycopg.Cursor[NamedTuple],
+        cursor: Iterable[Any],
         area_import: AreaImport,
         source: AreaSource,
         errors: list[str],
-    ):
+    ) -> list[str]:
         imported_identifiers: list[str] = []
         counters = AreaImportCounters()
         sum_row_time, avg_row_time, min_row_time, max_row_time = (0.0,) * 4
@@ -572,6 +585,9 @@ class AreaImporter(BaseImporter):
                     counters.skipped += 1
                     continue
                 areas = self.get_plan_unit_areas(metadata, match_data["identifier"])
+                if areas is None:
+                    counters.skipped += 1
+                    continue
 
             geom, failed_count = self.get_geometry(row, errors, counters.failed)
             counters.failed = failed_count
@@ -613,7 +629,7 @@ class AreaImporter(BaseImporter):
         )
         return imported_identifiers
 
-    def process_area_import_type(self, area_import_type: AreaType):
+    def process_area_import_type(self, area_import_type: str) -> None:
         type_start = perf_counter()
 
         errors: list[str] = []
@@ -634,7 +650,7 @@ class AreaImporter(BaseImporter):
         )
 
         try:
-            cursor.execute(area_import["query"])
+            cursor.execute(sql.SQL(area_import["query"]))
         except psycopg.ProgrammingError as e:
             self.stderr.write(str(e))
             logger.error(str(e))
@@ -657,8 +673,11 @@ class AreaImporter(BaseImporter):
         )
 
     def handle_stale_areas(
-        self, area_import: AreaImport, source: str, imported_identifiers: list[str]
-    ):
+        self,
+        area_import: AreaImport,
+        source: AreaSource,
+        imported_identifiers: list[str],
+    ) -> None:
         self.stdout.write("Starting to remove stales...\n")
         stale_time_start = perf_counter()
         stale = Area.objects.filter(

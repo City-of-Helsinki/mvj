@@ -1,4 +1,5 @@
 import datetime
+from typing import Callable
 from unittest.mock import patch
 
 import factory
@@ -393,12 +394,12 @@ class ReceivableTypeFactory(factory.django.DjangoModelFactory):
 
 @pytest.fixture
 def lease_test_data(
-    lease_factory,
-    contact_factory,
-    tenant_factory,
-    tenant_contact_factory,
-    lease_area_factory,
-    lease_area_address_factory,
+    lease_factory: Callable[..., Lease],
+    contact_factory: Callable[..., Contact],
+    tenant_factory: Callable[..., Tenant],
+    tenant_contact_factory: Callable[..., TenantContact],
+    lease_area_factory: Callable[..., LeaseArea],
+    lease_area_address_factory: Callable[..., LeaseAreaAddress],
 ):
     lease = lease_factory(
         type_id=1, municipality_id=1, district_id=29, notice_period_id=1
