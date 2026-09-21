@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from time import perf_counter
 from typing import Any, Dict, NamedTuple, Optional, Tuple, TypedDict
 
@@ -51,6 +52,19 @@ class UpdateData(TypedDict, total=False):
 class NamedTupleUnknown(NamedTuple):
     def __getattr__(self, name: str) -> Any:
         pass
+
+
+@dataclass
+class AreaImportCounters:
+    processed: int = 0
+    created: int = 0
+    updated: int = 0
+    skipped: int = 0
+    failed: int = 0
+
+    @property
+    def persisted(self) -> int:
+        return self.created + self.updated
 
 
 METADATA_COLUMN_NAME_MAP = {
@@ -484,10 +498,12 @@ class AreaImporter(BaseImporter):
         update_data: UpdateData,
         match_data: MatchData,
         imported_identifiers: list[str],
-        error_count: int,
-    ) -> Tuple[list[str], int]:
+    ) -> Tuple[list[str], Optional[bool]]:
+        created = None
         try:
-            areas.update_or_create(defaults=dict(update_data), **match_data)
+            _, created = areas.update_or_create(
+                defaults=dict(update_data), **match_data
+            )
         except (
             MultipleObjectsReturned,
             IntegrityError,
@@ -502,17 +518,28 @@ class AreaImporter(BaseImporter):
                 # external_id (if it happens to exist)
                 Area.objects.filter(**match_data).exclude(external_id=ext_id).delete()
                 match_data["external_id"] = ext_id
-                Area.objects.update_or_create(defaults=update_data, **match_data)
+                _, created = Area.objects.update_or_create(
+                    defaults=dict(update_data), **match_data
+                )
 
         imported_identifiers.append(match_data["identifier"])
+        return imported_identifiers, created
 
-        error_count += 1
-        if error_count % 100 == 0:
+    def record_persistence_result(
+        self, counters: AreaImportCounters, created: Optional[bool]
+    ):
+        if created is True:
+            counters.created += 1
+        elif created is False:
+            counters.updated += 1
+        else:
+            counters.failed += 1
+
+        if counters.persisted % 100 == 0 and counters.persisted > 0:
             self.stdout.write(".")
-        if error_count % 1000 == 0:
-            self.stdout.write(f" {error_count}")
+        if counters.persisted % 1000 == 0 and counters.persisted > 0:
+            self.stdout.write(f" {counters.persisted}")
             self.stdout.flush()
-        return imported_identifiers, error_count
 
     def process_rows(
         self,
@@ -522,15 +549,17 @@ class AreaImporter(BaseImporter):
         errors: list[str],
     ):
         imported_identifiers: list[str] = []
-        error_count = 0
+        counters = AreaImportCounters()
         sum_row_time, avg_row_time, min_row_time, max_row_time = (0.0,) * 4
         self.stdout.write("Starting to update areas...\n")
         for row in cursor:
+            counters.processed += 1
             row_start = perf_counter()
 
-            metadata, error_count = self.get_metadata(
-                row, area_import, METADATA_COLUMN_NAME_MAP, errors, error_count
+            metadata, failed_count = self.get_metadata(
+                row, area_import, METADATA_COLUMN_NAME_MAP, errors, counters.failed
             )
+            counters.failed = failed_count
             if metadata is None:
                 continue
 
@@ -540,22 +569,28 @@ class AreaImporter(BaseImporter):
 
             if area_import["area_type"] == AreaType.PLAN_UNIT:
                 if not metadata.get("detailed_plan_identifier"):
+                    counters.skipped += 1
                     continue
                 areas = self.get_plan_unit_areas(metadata, match_data["identifier"])
 
-            geom, error_count = self.get_geometry(row, errors, error_count)
+            geom, failed_count = self.get_geometry(row, errors, counters.failed)
+            counters.failed = failed_count
             if geom is None:
                 continue
 
-            geom, error_count = self.handle_geometry(geom, row, errors, error_count)
+            geom, failed_count = self.handle_geometry(
+                geom, row, errors, counters.failed
+            )
+            counters.failed = failed_count
             if geom is None:
                 continue
 
             update_data: UpdateData = self.get_update_data(row, metadata, geom)
 
-            imported_identifiers, error_count = self.update_or_create_areas(
-                areas, update_data, match_data, imported_identifiers, error_count
+            imported_identifiers, created = self.update_or_create_areas(
+                areas, update_data, match_data, imported_identifiers
             )
+            self.record_persistence_result(counters, created)
 
             row_end = perf_counter()
             row_time = row_end - row_start
@@ -567,11 +602,13 @@ class AreaImporter(BaseImporter):
             )
             max_row_time = row_time if row_time > max_row_time else max_row_time
 
-        if error_count > 0:
-            avg_row_time = sum_row_time / error_count
+        if counters.persisted > 0:
+            avg_row_time = sum_row_time / counters.persisted
 
         self.stdout.write(
-            f"Updated area count {error_count}. Execution time: {sum_row_time:.2f}s "
+            f"Processed {counters.processed} areas: created {counters.created}, "
+            f"updated {counters.updated}, skipped {counters.skipped}, "
+            f"failed {counters.failed}. Execution time: {sum_row_time:.2f}s "
             f"(Row time avg: {avg_row_time:.2f}s, min: {min_row_time:.2f}s, max: {max_row_time:.2f}s)\n"
         )
         return imported_identifiers
