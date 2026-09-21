@@ -22,9 +22,7 @@ attrs==23.2.0
     #   referencing
     #   zeep
 authlib==1.6.5
-    # via
-    #   -c constraints.txt
-    #   drf-oidc-auth
+    # via drf-oidc-auth
 bcrypt==4.1.3
     # via paramiko
 beautifulsoup4==4.15.0
@@ -33,7 +31,6 @@ cachetools==5.3.3
     # via django-helusers
 certifi==2025.10.5
     # via
-    #   -c constraints.txt
     #   elastic-transport
     #   pyproj
     #   requests
@@ -50,7 +47,6 @@ click==8.1.7
     # via pyhanko
 cryptography==46.0.0
     # via
-    #   -c constraints.txt
     #   authlib
     #   django-helusers
     #   drf-oidc-auth
