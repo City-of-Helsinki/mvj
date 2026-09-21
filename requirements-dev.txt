@@ -41,7 +41,7 @@ cryptography==46.0.0
     #   -c constraints.txt
     #   -c requirements.txt
     #   paramiko
-django==5.2.15
+django==5.2.17
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
