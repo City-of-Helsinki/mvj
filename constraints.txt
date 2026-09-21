@@ -18,7 +18,7 @@ python-jose>=3.4.0, <4
 # - https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13535082
 # Vulnerability in versions below 1.6.4:
 # - CVE-2025-59420 https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13003878
-authlib>=1.6.5
+authlib>=1.6.12
 
 # Vulnerability in versions below 6.0.0:
 # - CVE-2025-55197 https://security.snyk.io/vuln/SNYK-PYTHON-PYPDF-11798040
