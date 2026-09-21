@@ -87,7 +87,7 @@ django==5.2.17
     #   helsinki-profile-gdpr-api
 django-admin-rangefilter==0.13.5
     # via -r requirements.in
-django-anymail==15.0
+django-anymail==15.2
     # via -r requirements.in
 django-auditlog==3.4.1
     # via -r requirements.in
