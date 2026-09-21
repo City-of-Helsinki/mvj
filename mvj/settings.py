@@ -291,7 +291,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 30,
     "EXCEPTION_HANDLER": "leasing.viewsets.utils.integrityerror_exception_handler",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
 }
 
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")

@@ -23,8 +23,8 @@ django-safedelete==1.5.0
 django-sanitized-dump==1.2.2
 django-sequences==3.0
 django-stubs[compatible-mypy]==4.2.7 # Newer versions will not work - typechecks will fail.
-djangorestframework==3.16.1
-djangorestframework-gis==1.2.0
+djangorestframework==3.18.1
+djangorestframework-gis==1.3.0
 drf-yasg[validation]==1.21.15
 docxtpl==0.20.2
 helsinki-profile-gdpr-api==1.1.0
