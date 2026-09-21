@@ -176,4 +176,4 @@ class Command(BaseCommand):
             re.split("[;,]", settings.LASKE_EXPORT_ANNOUNCE_EMAIL),
             headers=email_headers,
         )
-        msg.send(fail_silently=False)
+        msg.send()
