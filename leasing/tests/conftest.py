@@ -2,7 +2,7 @@ import datetime
 import unittest
 from decimal import Decimal
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable
 
 import factory
 import pytest
@@ -67,7 +67,7 @@ from leasing.models.rent import (
     ManagementSubventionFormOfManagement,
     OldDwellingsInHousingCompaniesPriceIndex,
 )
-from leasing.models.service_unit import ServiceUnitGroupMapping
+from leasing.models.service_unit import ServiceUnit, ServiceUnitGroupMapping
 from leasing.models.tenant import (
     Tenant,
     TenantContact,
@@ -360,9 +360,9 @@ class VipunenMapLayerFactory(factory.django.DjangoModelFactory):
 
 @pytest.fixture
 def area_test_data(
-    area_factory,
-    area_source_factory,
-):
+    area_factory: Callable[..., Area],
+    area_source_factory: Callable[..., AreaSource],
+) -> dict[str, Area | AreaSource]:
     area_source = area_source_factory(
         name="Tonttiosasto: vuokrausalue_paa",
         identifier="tonttiosasto.vuokrausalue_paa",
@@ -394,8 +394,8 @@ def area_test_data(
 @pytest.fixture
 def area_with_intersects_test_data(
     area_test_data,
-    area_factory,
-):
+    area_factory: Callable[..., Area],
+) -> dict[str, Area | AreaSource | list[Area]]:
     area_source = area_test_data["area_source"]
     intersect_areas = [
         area_factory(
@@ -546,8 +546,12 @@ def area_with_intersects_test_data(
 
 @pytest.fixture
 def invoices_test_data(
-    lease_factory, contact_factory, tenant_factory, invoice_factory, invoice_row_factory
-):
+    lease_factory: Callable[..., Lease],
+    contact_factory: Callable[..., Contact],
+    tenant_factory: Callable[..., Tenant],
+    invoice_factory: Callable[..., Invoice],
+    invoice_row_factory: Callable[..., InvoiceRow],
+) -> dict[str, Lease | Contact | Tenant | Invoice]:
     receivable_type = ReceivableType.objects.get(pk=1)
 
     lease = lease_factory(
@@ -621,11 +625,11 @@ def invoices_test_data(
 
 @pytest.fixture
 def lease_data_dict_with_contacts(
-    contact_factory,
-    intended_use_factory,
-    rent_intended_use_factory,
-    service_unit_factory,
-):
+    contact_factory: Callable[..., Contact],
+    intended_use_factory: Callable[..., IntendedUse],
+    rent_intended_use_factory: Callable[..., RentIntendedUse],
+    service_unit_factory: Callable[..., ServiceUnit],
+) -> dict[str, Any]:
     test_contacts = [
         contact_factory(
             first_name="First name",
@@ -728,7 +732,9 @@ def lease_data_dict_with_contacts(
 
 
 @pytest.fixture
-def custom_area_in_lease(lease_data_dict_with_contacts):
+def custom_area_in_lease(
+    lease_data_dict_with_contacts: dict[str, Any],
+) -> dict[str, Any]:
     lease_data_dict_with_contacts["lease_areas"][0]["custom_detailed_plan"] = {
         "identifier": "54321",
         "intended_use": lease_data_dict_with_contacts["intended_use"],
