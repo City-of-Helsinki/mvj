@@ -52,6 +52,7 @@ cryptography==46.0.0
     # via
     #   -c constraints.txt
     #   authlib
+    #   django-helusers
     #   drf-oidc-auth
     #   oracledb
     #   paramiko
@@ -106,7 +107,7 @@ django-filter==25.2
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-django-helusers==1.1.0
+django-helusers==1.3.0
     # via
     #   -r requirements.in
     #   helsinki-profile-gdpr-api
@@ -149,8 +150,6 @@ drf-oidc-auth==3.0.0
     # via helsinki-profile-gdpr-api
 drf-yasg[validation]==1.21.15
     # via -r requirements.in
-ecdsa==0.19.0
-    # via python-jose
 elastic-transport==8.17.1
     # via elasticsearch8
 elasticsearch8==8.19.3
@@ -213,10 +212,6 @@ psycopg[binary]==3.3.4
     # via -r requirements.in
 psycopg-binary==3.3.4
     # via psycopg
-pyasn1==0.6.0
-    # via
-    #   python-jose
-    #   rsa
 pycparser==2.22
     # via cffi
 pyhanko==0.25.0
@@ -225,6 +220,8 @@ pyhanko-certvalidator==0.26.3
     # via
     #   pyhanko
     #   xhtml2pdf
+pyjwt==2.14.0
+    # via django-helusers
 pynacl==1.5.0
     # via paramiko
 pypdf==6.1.3
@@ -246,10 +243,6 @@ python-dateutil==2.9.0.post0
     #   elasticsearch8
 python-docx==1.1.2
     # via docxtpl
-python-jose==3.5.0
-    # via
-    #   -c constraints.txt
-    #   django-helusers
 pytz==2024.1
     # via
     #   drf-yasg
@@ -290,8 +283,6 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-rsa==4.9
-    # via python-jose
 sentry-sdk==2.63.0
     # via
     #   -r requirements.in
@@ -300,7 +291,6 @@ six==1.16.0
     # via
     #   database-sanitizer
     #   django-sanitized-dump
-    #   ecdsa
     #   html5lib
     #   isodate
     #   python-dateutil
