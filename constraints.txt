@@ -7,12 +7,6 @@
 #
 # For constraining top-level dependencies, just edit the .in-files directly.
 
-# Vulnerabilities in versions below 3.4.0:
-# - CVE-2024-33663 https://security.snyk.io/vuln/SNYK-PYTHON-PYTHONJOSE-6674053
-# - CVE-2024-33664 https://security.snyk.io/vuln/SNYK-PYTHON-PYTHONJOSE-6674054
-# Keep version below 4 to avoid breaking changes, just in case.
-python-jose>=3.4.0, <4
-
 # Vulnerabilities in versions below 1.6.5:
 # - CVE-2025-61920 https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13535080
 # - https://security.snyk.io/vuln/SNYK-PYTHON-AUTHLIB-13535082
