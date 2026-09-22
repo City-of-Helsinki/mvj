@@ -3,6 +3,8 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+      args:
+          PIP_UPLOADED_PRIOR_TO: "P3D"
     command: sh -c "sleep infinity"
     env_file:
       - docker-compose.env

@@ -11,6 +11,8 @@ RUN apt-get install --no-install-recommends -y gdal-bin python3-gdal \
 RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt requirements-dev.txt ./
+
+ARG PIP_UPLOADED_PRIOR_TO=P3D
 RUN pip install --upgrade pip \
     && pip install -r /code/requirements.txt \
     && pip install -r /code/requirements-dev.txt \
