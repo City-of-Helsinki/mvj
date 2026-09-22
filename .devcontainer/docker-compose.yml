@@ -6,6 +6,9 @@ services:
     command: sh -c "sleep infinity"
     env_file:
       - docker-compose.env
+    environment:
+      # Restrict pip install to packages uploaded at least 3 days ago
+      PIP_UPLOADED_PRIOR_TO: "P3D"
     depends_on:
       - postgres
     container_name: mvj
