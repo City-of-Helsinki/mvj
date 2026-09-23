@@ -27,6 +27,9 @@ class District(models.Model):
     # In Finnish: Kaupunginosan nimi
     name = models.CharField(blank=False)
 
+    # In Finnish: Kaupunginosan tunniste
+    identifier = models.CharField(blank=False)
+
 
 class AuthorizedSignatory(models.Model):
     """
@@ -41,6 +44,9 @@ class LandUseAgreement(models.Model):
     """
     In Finnish: Maankäyttösopimus
     """
+
+    # In Finnish: Maankäyttösopimuksen tunniste
+    identifier = models.CharField(unique=True)
 
     # In Finnish: Maankäyttösopimuksen tyyppi
     agreement_type = models.CharField(blank=True)
