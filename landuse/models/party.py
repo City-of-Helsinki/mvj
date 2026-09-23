@@ -15,7 +15,7 @@ class AgreementPartyRole(models.TextChoices):
     DEVELOPER = ("DEVELOPER", "Toteuttaja")
 
 
-class PartyDetails(models.Model):
+class PartyDetailsBase(models.Model):
     """
     Shared fields for a contract party and an invoice recipient.
     """
@@ -67,7 +67,24 @@ class PartyDetails(models.Model):
         abstract = True
 
 
-class AgreementParty(PartyDetails):
+class InvoiceRecipient(PartyDetailsBase):
+    """
+    In Finnish: Laskunsaaja
+    """
+
+    # Explicitly declare the type of the default manager for type checking purposes.
+    # Django doesn't guarantee that the objects property exists when inheriting from Model.
+    objects: models.Manager["InvoiceRecipient"]
+
+    # In Finnish: Sopimusosapuoli
+    agreement_party = models.OneToOneField(
+        "AgreementParty",
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+
+class AgreementParty(PartyDetailsBase):
     """
     In Finnish: Sopimusosapuoli
     """
@@ -86,18 +103,18 @@ class AgreementParty(PartyDetails):
         related_name="parties",
     )
 
-
-class InvoiceRecipient(PartyDetails):
-    """
-    In Finnish: Laskunsaaja
-    """
-
-    # In Finnish: Sopimusosapuoli
-    agreement_party = models.OneToOneField(
-        AgreementParty,
-        on_delete=models.CASCADE,
-        related_name="invoice_recipient",
-    )
+    def get_primary_invoice_recipient(self) -> "AgreementParty | InvoiceRecipient":
+        """
+        When invoice recipient exists, they are the primary recipient.
+        When they don't exist, agreement party is the recipient.
+        """
+        try:
+            return InvoiceRecipient.objects.get(agreement_party=self)
+        except InvoiceRecipient.DoesNotExist:
+            return self
+        except InvoiceRecipient.MultipleObjectsReturned as error:
+            # Multiple recipients should not exist
+            raise error
 
 
 class ContactPerson(models.Model):
