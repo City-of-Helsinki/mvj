@@ -709,7 +709,7 @@ class LeaseAreaAdmin(FieldPermissionsModelAdmin):
         PlotInline,
         PlanUnitInline,
     ]
-    raw_id_fields = ("lease",)
+    raw_id_fields = ("lease", "archived_decision")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
