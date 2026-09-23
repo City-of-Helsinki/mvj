@@ -81,8 +81,6 @@ class AgreementSite(models.Model):
     # In Finnish: Hallintamuoto
     tenure_types = models.ManyToManyField(
         SiteTenureType,
-        blank=True,
-        null=True,
         related_name="agreement_sites",
     )
 
