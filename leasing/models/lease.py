@@ -34,11 +34,6 @@ from leasing.enums import (
 )
 from leasing.models import Contact
 from leasing.models.invoice import Invoice, InvoiceRow, InvoiceSet
-from leasing.models.mixins import (
-    NameModel,
-    TimeStampedModel,
-    TimeStampedSafeDeleteModel,
-)
 from leasing.models.rent import Rent
 from leasing.models.types import (
     BillingPeriod,
@@ -57,6 +52,11 @@ from leasing.models.utils import (
     subtract_ranges_from_ranges,
 )
 from users.models import User
+from utils.mixins import (
+    NameModel,
+    TimeStampedModel,
+    TimeStampedSafeDeleteModel,
+)
 
 if TYPE_CHECKING:
     from leasing.models.tenant import Tenant

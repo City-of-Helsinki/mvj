@@ -10,8 +10,7 @@ from field_permissions.registry import field_permissions
 from leasing.enums import CollateralType, DocumentType
 from leasing.validators import validate_business_id
 from users.models import User
-
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class ContractType(NameModel):

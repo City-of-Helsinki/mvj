@@ -11,8 +11,8 @@ from credit_integration.enums import CreditDecisionStatus
 from credit_integration.mapper import map_credit_decision_status
 from leasing.enums import ContactType
 from leasing.models import Contact
-from leasing.models.mixins import TimeStampedModel
 from users.models import User
+from utils.mixins import TimeStampedModel
 
 
 class CreditDecisionReason(TimeStampedModel):

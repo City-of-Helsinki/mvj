@@ -6,8 +6,7 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.enums import DecisionTypeKind
-
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class DecisionMaker(NameModel):

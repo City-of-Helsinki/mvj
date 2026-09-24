@@ -3,8 +3,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
-from leasing.models.mixins import TimeStampedSafeDeleteModel
 from leasing.validators import HexColorValidator
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class ServiceUnit(TimeStampedSafeDeleteModel):

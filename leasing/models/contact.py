@@ -14,8 +14,7 @@ from field_permissions.registry import field_permissions
 from leasing.enums import ContactType
 from leasing.models.types import ContactsActiveLeases
 from leasing.validators import validate_business_id
-
-from .mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 if TYPE_CHECKING:
     from leasing.models.tenant import Tenant

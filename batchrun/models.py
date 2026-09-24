@@ -14,12 +14,14 @@ from django.utils.translation import gettext_lazy as _
 from enumfields import EnumField, EnumIntegerField
 from safedelete.models import SafeDeleteModel
 
+from utils.mixins import TimeStampedModel, TimeStampedSafeDeleteModel
+
 from ._times import utc_now
 from .compactor import CompactLog
 from .constants import GRACE_PERIOD_LENGTH, LINE_END_CHARACTERS
 from .enums import CommandType, LogEntryKind
 from .fields import IntegerSetSpecifierField, TextJSONField
-from .model_mixins import CleansOnSave, TimeStampedModel, TimeStampedSafeDeleteModel
+from .model_mixins import CleansOnSave
 from .scheduling import RecurrenceRule
 from .utils import get_django_manage_py
 

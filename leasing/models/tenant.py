@@ -11,7 +11,7 @@ from enumfields import EnumField
 from field_permissions.registry import field_permissions
 from leasing.enums import TenantContactType
 from leasing.models import Contact, RentIntendedUse
-from leasing.models.mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class Tenant(TimeStampedSafeDeleteModel):
