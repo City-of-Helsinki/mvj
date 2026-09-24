@@ -3,28 +3,28 @@
 
 # For top-level dependencies, just edit this .in file
 beautifulsoup4==4.15.0
-deepmerge==2.1.0
-Django==5.2.15
-django-anymail==15.0
+deepmerge==3.0.1
+Django==5.2.17
+django-anymail==15.2
 django-auditlog==3.4.1
-django-admin-rangefilter==0.13.5
+django-admin-rangefilter==0.15.0
 django-cors-headers==4.9.0
-django-countries==9.0.0
+django-countries==9.1.0
 django-enumfields2==4.0
 django-environ==0.14.0
 django-filter==25.2
-django-helusers==1.1.0
+django-helusers==1.3.0
 django-model-utils==5.0.0
 django-modeltranslation==0.19.19
 django-nested-inline==0.4.6
 django-q2[sentry]==1.10.0
 django-resilient-logger==2.3.0
-django-safedelete==1.4.1
+django-safedelete==1.5.0
 django-sanitized-dump==1.2.2
 django-sequences==3.0
 django-stubs[compatible-mypy]==4.2.7 # Newer versions will not work - typechecks will fail.
-djangorestframework==3.16.1
-djangorestframework-gis==1.2.0
+djangorestframework==3.18.1
+djangorestframework-gis==1.3.0
 drf-yasg[validation]==1.21.15
 docxtpl==0.20.2
 helsinki-profile-gdpr-api==1.1.0
@@ -38,6 +38,6 @@ python-dateutil==2.9.0.post0
 sentry-sdk==2.63.0
 requests==2.34.2
 tzdata==2026.2 # Required for platform independent consistent timezones for zoneinfo
-xhtml2pdf~=0.2.17
+xhtml2pdf==0.2.20
 xlsxwriter==3.2.9
 zeep==4.3.2
