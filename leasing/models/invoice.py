@@ -16,9 +16,9 @@ from sequences import get_next_value
 from field_permissions.registry import field_permissions
 from leasing.enums import InvoiceDeliveryMethod, InvoiceState, InvoiceType
 from leasing.models import Contact
-from leasing.models.mixins import TimeStampedSafeDeleteModel
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.utils import get_next_business_day, get_range_overlap
+from utils.mixins import TimeStampedSafeDeleteModel
 
 # Avoids circular imports
 if TYPE_CHECKING:

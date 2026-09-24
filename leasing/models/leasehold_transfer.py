@@ -5,9 +5,9 @@ from enumfields import EnumField
 
 from field_permissions.registry import field_permissions
 from leasing.validators import validate_business_id
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 from ..enums import LeaseholdTransferPartyType
-from .mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class LeaseholdTransferImportLog(TimeStampedSafeDeleteModel):
