@@ -23,7 +23,6 @@ from forms.models.form import EntrySection
 from forms.utils import get_answer_worksheet, get_area_search_answer_worksheet
 from leasing.enums import PlotSearchTargetType
 from leasing.models import Financing, Hitas, Lease, Management, ServiceUnit
-from leasing.models.mixins import NameModel, TimeStampedSafeDeleteModel
 from plotsearch.enums import (
     AreaSearchLessor,
     AreaSearchState,
@@ -36,6 +35,7 @@ from plotsearch.enums import (
 )
 from plotsearch.utils import map_intended_use_to_lessor
 from users.models import User
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class PlotSearchType(NameModel):
