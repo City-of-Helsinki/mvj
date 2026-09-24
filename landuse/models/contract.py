@@ -100,10 +100,6 @@ class CollateralBase(models.Model):
         DEPOSIT_PLEDGE = ("DEPOSIT_PLEDGE", "Tilivarojen panttaus")
         OTHER = ("OTHER", "Muu vakuus")
 
-    class ThirdPartyPledge(models.TextChoices):
-        YES = ("YES", "Kyllä")
-        NO = ("NO", "Ei")
-
     # In Finnish: Sopimus
     contract = models.ForeignKey(
         Contract,
@@ -121,11 +117,13 @@ class CollateralBase(models.Model):
         blank=True,
     )
 
-    # In Finnish: Vierasvelkapanttaus
-    third_party_pledge = models.CharField(
-        choices=ThirdPartyPledge.choices,
+    # In Finnish: Vierasvelkapanttauksen antajan nimi
+    third_party_pledger_name = models.CharField(
+        null=True,
         blank=True,
     )
+    # In Finnish: Vierasvelkapanttauksen antajan y-tunnus
+    third_party_pledger_business_id = models.CharField(null=True, blank=True)
 
     # In Finnish: Alkupäivämäärä
     start_date = models.DateField(null=True, blank=True)
@@ -149,6 +147,14 @@ class CollateralBase(models.Model):
 
     class Meta:
         abstract = True
+
+    def is_third_party_pledge(self) -> bool:
+        """
+        In Finnish: Onko kyseessä vierasvelkapanttaus?
+        """
+        return bool(
+            self.third_party_pledger_name or self.third_party_pledger_business_id
+        )
 
 
 class CollateralDocumentDetailsBase(models.Model):
