@@ -2,6 +2,7 @@ from django.db import models
 
 from landuse.models.site import DetailedPlanSite
 from users.models import User
+from utils.mixins import TimeStampedModel
 
 
 class LandUseAgreementStatus(models.TextChoices):
@@ -19,7 +20,7 @@ class DetailedPlanProcessingStage(models.TextChoices):
     REVOKED = ("REVOKED", "Kumottu")
 
 
-class District(models.Model):
+class District(TimeStampedModel):
     """
     In Finnish: Kaupunginosa
     """
@@ -31,7 +32,7 @@ class District(models.Model):
     identifier = models.CharField(blank=False)
 
 
-class AuthorizedSignatory(models.Model):
+class AuthorizedSignatory(TimeStampedModel):
     """
     In Finnish: Toimivaltainen päättäjä
     """
@@ -40,7 +41,7 @@ class AuthorizedSignatory(models.Model):
     name = models.CharField(blank=False)
 
 
-class LandUseAgreement(models.Model):
+class LandUseAgreement(TimeStampedModel):
     """
     In Finnish: Maankäyttösopimus
     """
@@ -117,7 +118,7 @@ class LandUseAgreement(models.Model):
     )
 
 
-class AgreementAddress(models.Model):
+class AgreementAddress(TimeStampedModel):
     """
     In Finnish: Maankäyttösopimuksen osoite
     """
@@ -139,7 +140,7 @@ class AgreementAddress(models.Model):
     city = models.CharField()
 
 
-class AgreementPreparer(models.Model):
+class AgreementPreparer(TimeStampedModel):
     """
     In Finnish: Maankäyttösopimuksen valmistelija
     """
@@ -157,7 +158,7 @@ class AgreementPreparer(models.Model):
     )
 
 
-class DetailedPlan(models.Model):
+class DetailedPlan(TimeStampedModel):
     """
     In Finnish: Asemakaava
     """
