@@ -25,6 +25,12 @@ class PartyDetailsBase(models.Model):
     # In Finnish: Asiakastyyppi
     party_type = models.CharField(blank=True, choices=PartyType, max_length=255)
 
+    # In Finnish: Omistusosuus osoittaja
+    ownership_share_numerator = models.PositiveIntegerField(blank=True, null=True)
+
+    # In Finnish: Omistusosuus nimittäjä
+    ownership_share_denominator = models.PositiveIntegerField(blank=True, null=True)
+
     # In Finnish: Nimi
     name = models.CharField(blank=True)
 
