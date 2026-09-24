@@ -1,9 +1,10 @@
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
+from utils.mixins import TimeStampedModel
 
 
-class Decision(models.Model):
+class Decision(TimeStampedModel):
     """
     In Finnish: Päätös
     """
@@ -61,7 +62,7 @@ class Decision(models.Model):
     note = models.TextField(blank=True)
 
 
-class DecisionCondition(models.Model):
+class DecisionCondition(TimeStampedModel):
     """
     In Finnish: Päätöksen ehto
     """

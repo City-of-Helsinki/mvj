@@ -1,9 +1,10 @@
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
+from utils.mixins import TimeStampedModel
 
 
-class LandPolicyProgram(models.Model):
+class LandPolicyProgram(TimeStampedModel):
     """
     In Finnish: Maapoliittinen ohjelma
     """
@@ -20,7 +21,7 @@ class LandPolicyProgram(models.Model):
     )
 
 
-class LandUseCompensation(models.Model):
+class LandUseCompensation(TimeStampedModel):
     """
     In Finnish: Maankäyttökorvauslaskelma
     """
