@@ -4,6 +4,7 @@ from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
 from landuse.models.invoice import InvoiceItemType
 from landuse.models.party import AgreementParty
+from utils.mixins import TimeStampedModel
 
 # English interest calculation method.
 # Leap years not considered.
@@ -34,7 +35,7 @@ class PaymentScheduleStatus(models.TextChoices):
     REJECTED = ("REJECTED", "Hylätty")
 
 
-class PaymentSchedule(models.Model):
+class PaymentSchedule(TimeStampedModel):
     """
     In Finnish: Maksusuunnitelma
     """
@@ -102,7 +103,7 @@ class PaymentSchedule(models.Model):
         return INTEREST_CALCULATION_DAYS_IN_YEAR
 
 
-class PaymentScheduleInstallment(models.Model):
+class PaymentScheduleInstallment(TimeStampedModel):
     """
     In Finnish: Maksusuunnitelman erä
     """
@@ -139,7 +140,7 @@ class PaymentScheduleInstallment(models.Model):
         ]
 
 
-class PaymentScheduleInstallmentItem(models.Model):
+class PaymentScheduleInstallmentItem(TimeStampedModel):
     """
     In Finnish: Maksusuunnitelman erän maksurivi
     """

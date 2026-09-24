@@ -1,9 +1,10 @@
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
+from utils.mixins import TimeStampedModel
 
 
-class DetailedPlanSite(models.Model):
+class DetailedPlanSite(TimeStampedModel):
     """
     In Finnish: Kaava-alueen kohde
     """
@@ -12,7 +13,7 @@ class DetailedPlanSite(models.Model):
     identifier = models.CharField(blank=True)
 
 
-class SiteIntendedUse(models.Model):
+class SiteIntendedUse(TimeStampedModel):
     """
     In Finnish: Kaava-alueen kohteen käyttötarkoitus
     """
@@ -21,7 +22,7 @@ class SiteIntendedUse(models.Model):
     name = models.CharField(blank=False)
 
 
-class SiteTenureType(models.Model):
+class SiteTenureType(TimeStampedModel):
     """
     In Finnish: Kaava-alueen kohteen hallintamuoto
     """
@@ -30,7 +31,7 @@ class SiteTenureType(models.Model):
     name = models.CharField(blank=False)
 
 
-class AgreementSite(models.Model):
+class AgreementSite(TimeStampedModel):
     """
     In Finnish: Maankäyttösopimuksen kohde
     """

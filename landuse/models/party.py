@@ -3,6 +3,7 @@ from django.db import models
 from django_countries.fields import CountryField
 
 from landuse.models.agreement import LandUseAgreement
+from utils.mixins import TimeStampedModel
 
 
 class PartyType(models.TextChoices):
@@ -15,7 +16,7 @@ class AgreementPartyRole(models.TextChoices):
     DEVELOPER = ("DEVELOPER", "Toteuttaja")
 
 
-class PartyDetailsBase(models.Model):
+class PartyDetailsBase(TimeStampedModel):
     """
     Shared fields for a contract party and an invoice recipient.
     """
@@ -117,7 +118,7 @@ class AgreementParty(PartyDetailsBase):
             raise error
 
 
-class ContactPerson(models.Model):
+class ContactPerson(TimeStampedModel):
     """
     In Finnish: Yhteyshenkilö/neuvottelija
     """
@@ -139,7 +140,7 @@ class ContactPerson(models.Model):
     email = models.EmailField(blank=True)
 
 
-class BillingDetails(models.Model):
+class BillingDetails(TimeStampedModel):
     """
     In Finnish: Laskutustiedot
     """

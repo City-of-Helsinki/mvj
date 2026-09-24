@@ -3,9 +3,10 @@ from django.db import models
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.decision import Decision
 from landuse.models.party import AgreementParty
+from utils.mixins import TimeStampedModel
 
 
-class ContractScheduleDetailsBase(models.Model):
+class ContractScheduleDetailsBase(TimeStampedModel):
     """
     Shared signing and invitation dates for contracts and contract changes.
     """
@@ -87,7 +88,7 @@ class ContractChange(ContractScheduleDetailsBase):
     )
 
 
-class CollateralBase(models.Model):
+class CollateralBase(TimeStampedModel):
     """
     Shared fields for all collateral types.
     """
@@ -150,7 +151,7 @@ class CollateralBase(models.Model):
         abstract = True
 
 
-class CollateralDocumentDetailsBase(models.Model):
+class CollateralDocumentDetailsBase(TimeStampedModel):
     """
     Shared document fields for documented collateral types.
     """
@@ -169,7 +170,7 @@ class CollateralDocumentDetailsBase(models.Model):
         abstract = True
 
 
-class GuarantorDetailsBase(models.Model):
+class GuarantorDetailsBase(TimeStampedModel):
     """
     Shared guarantor fields for collateral types that require them.
     """
@@ -212,7 +213,7 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     mortgage_deed_date = models.DateField(null=True, blank=True)
 
 
-class MortgageDeedPropertyIdentifier(models.Model):
+class MortgageDeedPropertyIdentifier(TimeStampedModel):
     """
     In Finnish: Panttikirjan kiinteistötunnus
     """
