@@ -97,6 +97,18 @@ class Invoice(TimeStampedModel):
     if TYPE_CHECKING:
         payments: models.Manager["ShadowSalesLedgerEntry"]
 
+    def save(self, *args, **kwargs):
+        if (
+            self.installment_count_total
+            and self.installment_sequence_number
+            and self.installment_sequence_number > self.installment_count_total
+        ):
+            raise ValueError(
+                "Installment sequence number cannot be greater than the total installment count."
+            )
+
+        super().save(*args, **kwargs)
+
     def get_remaining_amount(self) -> Decimal | None:
         """How much is left unpaid on this invoice."""
         if self.billed_amount is None:

@@ -139,6 +139,18 @@ class PaymentScheduleInstallment(TimeStampedModel):
             )
         ]
 
+    def save(self, *args, **kwargs):
+        if (
+            self.installment_count_total
+            and self.installment_sequence_number
+            and self.installment_sequence_number > self.installment_count_total
+        ):
+            raise ValueError(
+                "Installment sequence number cannot be greater than the total installment count."
+            )
+
+        super().save(*args, **kwargs)
+
 
 class PaymentScheduleInstallmentItem(TimeStampedModel):
     """
