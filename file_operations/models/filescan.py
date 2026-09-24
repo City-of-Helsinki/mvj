@@ -16,7 +16,7 @@ from safedelete.models import SafeDeleteModel
 from file_operations.enums import FileScanResult
 from file_operations.private_files import PrivateFieldFile, PrivateFileField
 from file_operations.types import PlattaClamAvResponse, PlattaClamAvResult
-from leasing.models.mixins import TimeStampedModel
+from utils.mixins import TimeStampedModel
 
 logger = logging.getLogger(__name__)
 

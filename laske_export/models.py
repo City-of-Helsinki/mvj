@@ -7,7 +7,7 @@ from enumfields import EnumField
 from laske_export.enums import LaskeExportLogInvoiceStatus
 from leasing.models import Invoice
 from leasing.models.invoice import InvoicePayment
-from leasing.models.mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class LaskeExportLog(TimeStampedSafeDeleteModel):

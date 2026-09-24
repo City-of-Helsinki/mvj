@@ -8,8 +8,7 @@ from field_permissions.registry import field_permissions
 from leasing.enums import AreaUnit
 from leasing.models.decision import DecisionMaker
 from leasing.models.rent import Index
-
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class BasisOfRentPlotType(NameModel):

@@ -11,8 +11,7 @@ from leasing.enums import InfillDevelopmentCompensationState
 from leasing.models.decision import DecisionMaker
 from leasing.models.lease import IntendedUse
 from users.models import User
-
-from .mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class InfillDevelopmentCompensation(TimeStampedSafeDeleteModel):

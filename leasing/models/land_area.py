@@ -26,8 +26,7 @@ from leasing.enums import (
 from leasing.models.lease import Lease
 from leasing.models.utils import normalize_identifier
 from users.models import User
-
-from .mixins import (
+from utils.mixins import (
     ArchivableModel,
     NameModel,
     TimeStampedModel,

@@ -5,8 +5,7 @@ from django.utils.translation import pgettext_lazy
 from sequences import get_next_value
 
 from field_permissions.registry import field_permissions
-
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class ContractType(NameModel):
