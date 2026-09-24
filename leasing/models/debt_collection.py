@@ -11,8 +11,8 @@ from field_permissions.registry import field_permissions
 from file_operations.private_files import PrivateFileField
 from file_operations.viewsets.mixins import FileScanMixin
 from leasing.enums import CollectionStage
-from leasing.models.mixins import TimeStampedSafeDeleteModel
 from users.models import User
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 def get_collection_letter_file_upload_to(instance, filename):

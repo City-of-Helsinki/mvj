@@ -50,14 +50,14 @@ from leasing.models.utils import (
     subtract_ranges_from_ranges,
 )
 from users.models import User
-
-from .decision import Decision
-from .mixins import (
+from utils.mixins import (
     ArchivableModel,
     NameModel,
     TimeStampedModel,
     TimeStampedSafeDeleteModel,
 )
+
+from .decision import Decision
 
 first_day_of_every_month = []
 

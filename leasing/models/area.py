@@ -7,8 +7,7 @@ from enumfields import EnumField
 
 from leasing.enums import AreaType
 from leasing.models.utils import denormalize_identifier, normalize_identifier
-
-from .mixins import NameModel, TimeStampedModel
+from utils.mixins import NameModel, TimeStampedModel
 
 
 class AreaSource(NameModel):

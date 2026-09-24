@@ -7,8 +7,7 @@ from enumfields import EnumField
 
 from leasing.enums import EmailLogType
 from users.models import User
-
-from .mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class EmailLog(TimeStampedSafeDeleteModel):
