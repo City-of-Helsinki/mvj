@@ -6,6 +6,7 @@ from django.db.models import Sum
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.party import AgreementParty
+from utils.mixins import TimeStampedModel
 
 
 class InvoiceType(models.TextChoices):
@@ -30,7 +31,7 @@ class InvoiceItemType(models.TextChoices):
     PENALTY = ("PENALTY", "Sakko")
 
 
-class Invoice(models.Model):
+class Invoice(TimeStampedModel):
     """
     In Finnish: Lasku
     """
@@ -105,7 +106,7 @@ class Invoice(models.Model):
         return self.billed_amount - (paid_amount or Decimal("0"))
 
 
-class InvoiceItem(models.Model):
+class InvoiceItem(TimeStampedModel):
     """
     In Finnish: Laskurivi
     """
@@ -142,7 +143,7 @@ class InvoiceItem(models.Model):
         )
 
 
-class ShadowSalesLedgerEntry(models.Model):
+class ShadowSalesLedgerEntry(TimeStampedModel):
     """
     A payment reported by the master ledger system (SAP) for an invoice.
 
