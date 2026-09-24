@@ -6,7 +6,7 @@ from landuse.models.party import AgreementParty
 from utils.mixins import TimeStampedModel
 
 
-class ContractScheduleDetailsBase(TimeStampedModel):
+class ContractScheduleDetailsBase(models.Model):
     """
     Shared signing and invitation dates for contracts and contract changes.
     """
@@ -88,7 +88,7 @@ class ContractChange(ContractScheduleDetailsBase):
     )
 
 
-class CollateralBase(TimeStampedModel):
+class CollateralBase(models.Model):
     """
     Shared fields for all collateral types.
     """
@@ -151,7 +151,7 @@ class CollateralBase(TimeStampedModel):
         abstract = True
 
 
-class CollateralDocumentDetailsBase(TimeStampedModel):
+class CollateralDocumentDetailsBase(models.Model):
     """
     Shared document fields for documented collateral types.
     """
@@ -170,7 +170,7 @@ class CollateralDocumentDetailsBase(TimeStampedModel):
         abstract = True
 
 
-class GuarantorDetailsBase(TimeStampedModel):
+class GuarantorDetailsBase(models.Model):
     """
     Shared guarantor fields for collateral types that require them.
     """

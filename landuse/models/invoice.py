@@ -1,11 +1,16 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Sum
 
 from landuse.models.agreement import LandUseAgreement
-from landuse.models.party import AgreementParty
+from landuse.models.party import (
+    AgreementParty,
+    BillingDetails,
+    BillingDetailsBase,
+    PartyDetailsBase,
+)
 from utils.mixins import TimeStampedModel
 
 
@@ -53,9 +58,6 @@ class Invoice(TimeStampedModel):
     )
 
     # In Finnish: Laskunsaajaosapuoli
-    # TODO: duplicate all invoice-specific fields to invoice?
-    # --> avoids recipient resolution at export time, and protects historical
-    #     invoice data if party details change.
     recipient_party = models.ForeignKey(
         AgreementParty,
         on_delete=models.PROTECT,
@@ -97,7 +99,10 @@ class Invoice(TimeStampedModel):
     if TYPE_CHECKING:
         payments: models.Manager["ShadowSalesLedgerEntry"]
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
+        create_recipient_snapshot = self._state.adding
+
         if (
             self.installment_count_total
             and self.installment_sequence_number
@@ -109,6 +114,9 @@ class Invoice(TimeStampedModel):
 
         super().save(*args, **kwargs)
 
+        if create_recipient_snapshot:
+            InvoiceRecipientSnapshot.create_for_invoice(self)
+
     def get_remaining_amount(self) -> Decimal | None:
         """How much is left unpaid on this invoice."""
         if self.billed_amount is None:
@@ -116,6 +124,41 @@ class Invoice(TimeStampedModel):
 
         paid_amount = self.payments.aggregate(total=Sum("paid_amount"))["total"]
         return self.billed_amount - (paid_amount or Decimal("0"))
+
+
+class InvoiceRecipientSnapshot(PartyDetailsBase, BillingDetailsBase):
+    """Recipient and billing details as they were when the invoice was created."""
+
+    invoice = models.OneToOneField(
+        Invoice,
+        on_delete=models.CASCADE,
+        related_name="recipient_snapshot",
+    )
+
+    @classmethod
+    def create_for_invoice(cls, invoice: Invoice) -> "InvoiceRecipientSnapshot":
+        recipient = invoice.recipient_party.get_primary_invoice_recipient()
+        snapshot_fields = (
+            PartyDetailsBase._meta.get_fields() + BillingDetailsBase._meta.get_fields()
+        )
+        snapshot_values = {
+            field_name: getattr(recipient, field_name) for field_name in snapshot_fields
+        }
+
+        try:
+            billing_details: BillingDetails | None = (
+                invoice.recipient_party.billing_details
+            )
+            snapshot_values.update(
+                ovt_code=billing_details.ovt_code,
+                sap_customer_number=billing_details.sap_customer_number,
+                customer_reference=billing_details.customer_reference,
+            )
+        except BillingDetails.DoesNotExist:
+            # Currently the BillingDetails model contains only optional fields.
+            pass
+
+        return cls.objects.create(invoice=invoice, **snapshot_values)
 
 
 class InvoiceItem(TimeStampedModel):

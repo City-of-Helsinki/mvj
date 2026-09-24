@@ -16,9 +16,10 @@ class AgreementPartyRole(models.TextChoices):
     DEVELOPER = ("DEVELOPER", "Toteuttaja")
 
 
-class PartyDetailsBase(TimeStampedModel):
+class PartyDetailsBase(models.Model):
     """
     Shared fields for a contract party and an invoice recipient.
+    IMPORTANT: Changes here also change historical records of InvoiceRecipientSnapshot.
     """
 
     # In Finnish: Asiakastyyppi
@@ -140,7 +141,25 @@ class ContactPerson(TimeStampedModel):
     email = models.EmailField(blank=True)
 
 
-class BillingDetails(TimeStampedModel):
+class BillingDetailsBase(models.Model):
+    """
+    Abstract base class for billing details fields.
+    """
+
+    # In Finnish: Ovt-tunnus
+    ovt_code = models.CharField(blank=True)
+
+    # In Finnish: SAP-asiakasnumero
+    sap_customer_number = models.CharField(blank=True)
+
+    # In Finnish: Asiakkaan viite
+    customer_reference = models.CharField(blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class BillingDetails(BillingDetailsBase, TimeStampedModel):
     """
     In Finnish: Laskutustiedot
     """
@@ -151,12 +170,3 @@ class BillingDetails(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="billing_details",
     )
-
-    # In Finnish: Ovt-tunnus
-    ovt_code = models.CharField(blank=True)
-
-    # In Finnish: SAP-asiakasnumero
-    sap_customer_number = models.CharField(blank=True)
-
-    # In Finnish: Asiakkaan viite
-    customer_reference = models.CharField(blank=True)
