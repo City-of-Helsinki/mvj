@@ -3,8 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
 from users.models import User
-
-from .mixins import TimeStampedModel
+from utils.mixins import TimeStampedModel
 
 
 class UiData(TimeStampedModel):

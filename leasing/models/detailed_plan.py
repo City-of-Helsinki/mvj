@@ -4,8 +4,7 @@ from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
 
 from leasing.enums import DetailedPlanClass
-
-from .mixins import TimeStampedSafeDeleteModel
+from utils.mixins import TimeStampedSafeDeleteModel
 
 
 class DetailedPlan(TimeStampedSafeDeleteModel):

@@ -5,8 +5,7 @@ from django.utils.translation import pgettext_lazy
 
 from field_permissions.registry import field_permissions
 from users.models import User
-
-from .mixins import NameModel, TimeStampedSafeDeleteModel
+from utils.mixins import NameModel, TimeStampedSafeDeleteModel
 
 
 class CommentTopic(NameModel):
