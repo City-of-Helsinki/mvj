@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SBO_SalesOrderContainer>
+  <SBO_SalesOrder>
+    <SenderId>{{ order.sender_id }}</SenderId>
+    <Reference>{{ order.reference }}</Reference>
+    <OriginalOrder></OriginalOrder>
+    <ContractNumber>{{ order.contract_number }}</ContractNumber>
+    <OrderType>{{ order.order_type }}</OrderType>
+    <SalesOrg>{{ order.sales_org }}</SalesOrg>
+    <DistributionChannel>{{ order.distribution_channel }}</DistributionChannel>
+    <Division>{{ order.division }}</Division>
+    <SalesOffice>{{ order.sales_office }}</SalesOffice>
+    <SalesGroup></SalesGroup>
+    <PONumber>{{ order.po_number }}</PONumber>
+    <BillingBlock></BillingBlock>
+    <SalesDistrict></SalesDistrict>
+    <HiddenTextL1></HiddenTextL1>
+    <HiddenTextL2></HiddenTextL2>
+    <HiddenTextL3></HiddenTextL3>
+    <HiddenTextL4></HiddenTextL4>
+    <HiddenTextL5></HiddenTextL5>
+    <HiddenTextL6></HiddenTextL6>
+    <BillTextL1></BillTextL1>
+    <BillTextL2></BillTextL2>
+    <BillTextL3></BillTextL3>
+    <BillTextL4></BillTextL4>
+    <BillTextL5></BillTextL5>
+    <BillTextL6></BillTextL6>
+    <ReferenceText>{{ order.reference_text }}</ReferenceText>
+    <PMNTTERM>{{ order.pmntterm }}</PMNTTERM>
+    <OrderReason></OrderReason>
+    <BillingDate>{{ order.billing_date }}</BillingDate>
+    <PricingDate></PricingDate>
+    <ValueDate>{{ order.value_date }}</ValueDate>
+    <PaymentReference></PaymentReference>
+    <AlreadyPrintedFlag></AlreadyPrintedFlag>
+    {% include "landuse/sap_party.xml" with element_name="OrderParty" party=order.order_party %}
+    {% include "landuse/sap_party.xml" with element_name="BillingParty1" party=order.billing_party1 %}
+    <BillingParty2></BillingParty2>
+    <PayerParty></PayerParty>{% for item in order.line_items %}
+    <LineItem>
+      <GroupingFactor></GroupingFactor>
+      <Material></Material>
+      <MaterialDescription>{{ item.material_description }}</MaterialDescription>
+      <Quantity>{{ item.quantity }}</Quantity>
+      <Unit></Unit>
+      <NetPrice>{{ item.net_price }}</NetPrice>
+      <TaxCode></TaxCode>
+      <LineTextL1>{{ item.line_text_l1 }}</LineTextL1>
+      <LineTextL2></LineTextL2>
+      <LineTextL3></LineTextL3>
+      <LineTextL4></LineTextL4>
+      <LineTextL5></LineTextL5>
+      <LineTextL6></LineTextL6>
+      <ProfitCenter></ProfitCenter>
+      <OrderItemNumber></OrderItemNumber>
+      <WBS_Element></WBS_Element>
+      <FunctionalArea></FunctionalArea>
+      <BusinessEntity></BusinessEntity>
+      <Building></Building>
+      <RentalObject></RentalObject>
+    </LineItem>{% endfor %}
+  </SBO_SalesOrder>
+</SBO_SalesOrderContainer>

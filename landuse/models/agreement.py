@@ -1,6 +1,5 @@
 from django.db import models
 
-from landuse.models.site import DetailedPlanSite
 from users.models import User
 from utils.mixins import TimeStampedModel
 
@@ -103,10 +102,6 @@ class LandUseAgreement(TimeStampedModel):
         related_name="land_use_agreements",
         null=True,
         blank=True,
-    )
-
-    detailed_plan_sites = models.ManyToManyField(
-        DetailedPlanSite, related_name="land_use_agreements"
     )
 
     # In Finnish: Vakuustarpeen korotuskerroin

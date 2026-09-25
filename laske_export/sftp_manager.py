@@ -11,12 +11,19 @@ class SFTPManagerError(Exception):
 class SFTPManager:
     _payments = "payments"
     _export = "export"
+    _landuse_export = "landuse_export"
+    _landuse_payments = "landuse_payments"
 
     def __init__(self, profile: str = None):
         # Profile check
-        if profile is None or profile not in [self._payments, self._export]:
+        if profile is None or profile not in [
+            self._payments,
+            self._export,
+            self._landuse_export,
+            self._landuse_payments,
+        ]:
             raise SFTPManagerError(
-                "SFTP profile must be specified: 'payments' or 'export'"
+                "SFTP profile must be specified: 'payments', 'export', 'landuse_export' or 'landuse_payments'"
             )
 
         # Check that all relevant settings are available, will raise SFTPManagerError if not
@@ -88,6 +95,10 @@ class SFTPManager:
                 and not hasattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION")
             )
             or (profile == self._export and not hasattr(settings, "LASKE_EXPORT_ROOT"))
+            or (
+                profile == self._landuse_payments
+                and not hasattr(settings, "SAP_PAYMENTS_LANDUSE_ROOT")
+            )
             or not settings.LASKE_SERVERS.get(profile)
             or not settings.LASKE_SERVERS[profile].get("host")
             or not settings.LASKE_SERVERS[profile].get("port")
@@ -115,6 +126,16 @@ class SFTPManager:
                 case self._export:
                     self._localpath = getattr(settings, "LASKE_EXPORT_ROOT")
                     self._remotepath = settings.LASKE_SERVERS[self._export]["directory"]
+                case self._landuse_export:
+                    self._localpath = None
+                    self._remotepath = settings.LASKE_SERVERS[self._landuse_export][
+                        "directory"
+                    ]
+                case self._landuse_payments:
+                    self._localpath = getattr(settings, "SAP_PAYMENTS_LANDUSE_ROOT")
+                    self._remotepath = settings.LASKE_SERVERS[self._landuse_payments][
+                        "directory"
+                    ]
                 case _:
                     raise SFTPManagerError("Invalid SFTP profile specified")
         except SFTPManagerError as se:

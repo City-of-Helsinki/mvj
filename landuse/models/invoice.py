@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING
 
 from django.db import models, transaction
 from django.db.models import Sum
+from django.utils import timezone
 
+from landuse.invoice_xml import render_invoice_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.party import (
     AgreementParty,
@@ -11,6 +13,7 @@ from landuse.models.party import (
     BillingDetailsBase,
     PartyDetailsBase,
 )
+from landuse.sap_export import send_invoice_xml
 from utils.mixins import TimeStampedModel
 
 
@@ -96,13 +99,15 @@ class Invoice(TimeStampedModel):
         blank=True,
     )
 
+    # In Finnish: SAP-integraation XML-dokumentin sisältö
+    sap_xml = models.TextField(null=True, blank=True)
+
     if TYPE_CHECKING:
         payments: models.Manager["ShadowSalesLedgerEntry"]
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        create_recipient_snapshot = self._state.adding
-
+        is_creating = self._state.adding
         if (
             self.installment_count_total
             and self.installment_sequence_number
@@ -114,7 +119,7 @@ class Invoice(TimeStampedModel):
 
         super().save(*args, **kwargs)
 
-        if create_recipient_snapshot:
+        if is_creating:
             InvoiceRecipientSnapshot.create_for_invoice(self)
 
     def get_remaining_amount(self) -> Decimal | None:
@@ -124,6 +129,35 @@ class Invoice(TimeStampedModel):
 
         paid_amount = self.payments.aggregate(total=Sum("paid_amount"))["total"]
         return self.billed_amount - (paid_amount or Decimal("0"))
+
+    def get_sap_xml(self) -> str:
+        if not self.pk:
+            raise ValueError("Invoice must be saved before generating SAP XML.")
+
+        if self.sap_xml:
+            return self.sap_xml
+
+        return render_invoice_xml(self)
+
+    @transaction.atomic
+    def send_to_sap(self) -> None:
+        """Send the invoice XML to SAP."""
+        if self.sent_at:
+            # Must not re-send a sent invoice.
+            return
+
+        sap_xml = self.get_sap_xml()
+        send_invoice_xml(self.pk, sap_xml)
+
+        self.sap_xml = sap_xml
+        self.sent_at = timezone.now()
+        super().save(
+            update_fields=(
+                "sap_xml",
+                "sent_at",
+                "modified_at",
+            )
+        )
 
 
 class InvoiceRecipientSnapshot(PartyDetailsBase, BillingDetailsBase):
@@ -138,25 +172,25 @@ class InvoiceRecipientSnapshot(PartyDetailsBase, BillingDetailsBase):
     @classmethod
     def create_for_invoice(cls, invoice: Invoice) -> "InvoiceRecipientSnapshot":
         recipient = invoice.recipient_party.get_primary_invoice_recipient()
-        snapshot_fields = (
-            PartyDetailsBase._meta.get_fields() + BillingDetailsBase._meta.get_fields()
-        )
         snapshot_values = {
-            field_name: getattr(recipient, field_name) for field_name in snapshot_fields
+            str(field.name): getattr(recipient, str(field.name))
+            for field in PartyDetailsBase._meta.get_fields()
         }
 
         try:
             billing_details: BillingDetails | None = (
                 invoice.recipient_party.billing_details
             )
-            snapshot_values.update(
-                ovt_code=billing_details.ovt_code,
-                sap_customer_number=billing_details.sap_customer_number,
-                customer_reference=billing_details.customer_reference,
-            )
         except BillingDetails.DoesNotExist:
             # Currently the BillingDetails model contains only optional fields.
             pass
+        else:
+            snapshot_values.update(
+                {
+                    str(field.name): getattr(billing_details, str(field.name))
+                    for field in BillingDetailsBase._meta.get_fields()
+                }
+            )
 
         return cls.objects.create(invoice=invoice, **snapshot_values)
 
