@@ -12,6 +12,12 @@ class DetailedPlanSite(TimeStampedModel):
     # In Finnish: Kohteen tunnus
     identifier = models.CharField(blank=True)
 
+    # In Finnish: Kaava-alueen kohteen liittyvät maankäyttösopimukset
+    # Note: specified in this model instead the other way around to avoid a circular import.
+    agreements = models.ManyToManyField(
+        LandUseAgreement, related_name="detailed_plan_sites"
+    )
+
 
 class SiteIntendedUse(TimeStampedModel):
     """

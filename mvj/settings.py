@@ -114,6 +114,13 @@ env = environ.Env(
     LASKE_EXPORT_DIRECTORY=(str, ""),
     LASKE_EXPORT_KEY_TYPE=(str, ""),
     LASKE_EXPORT_KEY=(bytes, ""),
+    SAP_EXPORT_LANDUSE_HOST=(str, ""),
+    SAP_EXPORT_LANDUSE_PORT=(int, ""),
+    SAP_EXPORT_LANDUSE_USERNAME=(str, ""),
+    SAP_EXPORT_LANDUSE_PASSWORD=(str, ""),
+    SAP_EXPORT_LANDUSE_DIRECTORY=(str, ""),
+    SAP_EXPORT_LANDUSE_KEY_TYPE=(str, ""),
+    SAP_EXPORT_LANDUSE_KEY=(bytes, ""),
     LASKE_PAYMENTS_HOST=(str, ""),
     LASKE_PAYMENTS_PORT=(int, ""),
     LASKE_PAYMENTS_USERNAME=(str, ""),
@@ -122,6 +129,14 @@ env = environ.Env(
     LASKE_PAYMENTS_KEY_TYPE=(str, ""),
     LASKE_PAYMENTS_KEY=(bytes, ""),
     LASKE_PAYMENTS_IMPORT_LOCATION=(str, ""),
+    SAP_PAYMENTS_LANDUSE_ROOT=(str, ""),
+    SAP_PAYMENTS_LANDUSE_HOST=(str, ""),
+    SAP_PAYMENTS_LANDUSE_PORT=(int, ""),
+    SAP_PAYMENTS_LANDUSE_USERNAME=(str, ""),
+    SAP_PAYMENTS_LANDUSE_PASSWORD=(str, ""),
+    SAP_PAYMENTS_LANDUSE_DIRECTORY=(str, ""),
+    SAP_PAYMENTS_LANDUSE_KEY_TYPE=(str, ""),
+    SAP_PAYMENTS_LANDUSE_KEY=(bytes, ""),
     GDPR_API_URL_PATTERN=(str, "v1/profiles/<uuid:uuid>"),
     GDPR_API_MODEL=(str, "users.User"),
     GDPR_API_MODEL_LOOKUP=(str, "uuid"),
@@ -134,6 +149,7 @@ env = environ.Env(
     MEDIA_ROOT=(str, ""),
     STATIC_ROOT=(str, ""),
     FLAG_FILE_SCAN=(bool, False),
+    FLAG_LANDUSE_SAP_EXPORT_ENABLED=(bool, False),
     FLAG_PLOTSEARCH=(bool, False),
     FLAG_SANCTIONS_INQUIRY=(bool, False),
     FLAG_SKIP_FILE_UPLOAD_PERMISSIONS=(bool, False),
@@ -219,6 +235,7 @@ INSTALLED_APPS = [
     "django_countries",
     "anymail",
     "users",
+    "landuse",
     "forms",
     "leasing",
     "plotsearch",
@@ -422,6 +439,9 @@ LASKE_VALUES = {
     "pmntterm": "Z100",
 }
 
+# TODO ask TALPA if needed
+SAP_LANDUSE_VALUES = None
+
 # Directory where SAP export files are stored on the MVJ system.
 LASKE_EXPORT_ROOT = env.str(
     "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
@@ -452,6 +472,24 @@ LASKE_SERVERS = {
         "directory": env.str("LASKE_PAYMENTS_DIRECTORY"),
         "key_type": env.str("LASKE_PAYMENTS_KEY_TYPE"),
         "key": env.bytes("LASKE_PAYMENTS_KEY"),
+    },
+    "landuse_export": {
+        "host": env.str("SAP_EXPORT_LANDUSE_HOST"),
+        "port": env.int("SAP_EXPORT_LANDUSE_PORT"),
+        "username": env.str("SAP_EXPORT_LANDUSE_USERNAME"),
+        "password": env.str("SAP_EXPORT_LANDUSE_PASSWORD"),
+        "directory": env.str("SAP_EXPORT_LANDUSE_DIRECTORY"),
+        "key_type": env.str("SAP_EXPORT_LANDUSE_KEY_TYPE"),
+        "key": env.bytes("SAP_EXPORT_LANDUSE_KEY"),
+    },
+    "landuse_payments": {
+        "host": env.str("SAP_PAYMENTS_LANDUSE_HOST"),
+        "port": env.int("SAP_PAYMENTS_LANDUSE_PORT"),
+        "username": env.str("SAP_PAYMENTS_LANDUSE_USERNAME"),
+        "password": env.str("SAP_PAYMENTS_LANDUSE_PASSWORD"),
+        "directory": env.str("SAP_PAYMENTS_LANDUSE_DIRECTORY"),
+        "key_type": env.str("SAP_PAYMENTS_LANDUSE_KEY_TYPE"),
+        "key": env.bytes("SAP_PAYMENTS_LANDUSE_KEY"),
     },
 }
 
@@ -487,6 +525,7 @@ FILE_SCAN_SERVICE_URL = env.str("FILE_SCAN_SERVICE_URL")
 
 # Feature flags
 FLAG_FILE_SCAN = env.bool("FLAG_FILE_SCAN")
+FLAG_LANDUSE_SAP_EXPORT_ENABLED = env.bool("FLAG_LANDUSE_SAP_EXPORT_ENABLED")
 FLAG_PLOTSEARCH = env.bool("FLAG_PLOTSEARCH")
 FLAG_SANCTIONS_INQUIRY = env.bool("FLAG_SANCTIONS_INQUIRY")
 FLAG_SKIP_FILE_UPLOAD_PERMISSIONS = env.bool(
