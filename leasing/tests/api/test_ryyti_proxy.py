@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from rest_framework import status
 
@@ -23,7 +24,10 @@ def dummy_ryyti_config(settings):
 @pytest.fixture
 def user_with_perm(django_user_model):
     user = django_user_model.objects.create_user(username="testuser")
-    permission = Permission.objects.get(codename="view_invoice")
+    content_type = ContentType.objects.get(app_label="leasing", model="invoice")
+    permission = Permission.objects.get(
+        codename="view_invoice", content_type=content_type
+    )
     user.user_permissions.add(permission)
     return user
 

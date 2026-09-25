@@ -1,0 +1,38 @@
+<{{ element_name }}>
+      <SAPCustomerID>{{ party.sap_customer_id }}</SAPCustomerID>
+      <CustomerID>{{ party.customer_id }}</CustomerID>
+      <CustomerYID>{{ party.customer_yid }}</CustomerYID>
+      <CustomerOVT>{{ party.customer_ovt }}</CustomerOVT>
+      <TemporaryAddress1></TemporaryAddress1>
+      <TemporaryAddress2></TemporaryAddress2>
+      <TemporaryPOCode></TemporaryPOCode>
+      <TemporaryPOCity></TemporaryPOCity>
+      <TemporaryPOPostalcode></TemporaryPOPostalcode>
+      <TemporaryCity></TemporaryCity>
+      <TemporaryPostalcode></TemporaryPostalcode>
+      <PriorityName1>{{ party.priority_name1 }}</PriorityName1>
+      <PriorityName2></PriorityName2>
+      <PriorityName3></PriorityName3>
+      <PriorityName4></PriorityName4>
+      <PriorityAddress1>{{ party.priority_address1 }}</PriorityAddress1>
+      <PriorityAddress2></PriorityAddress2>
+      <PriorityPOCode></PriorityPOCode>
+      <PriorityPOCity></PriorityPOCity>
+      <PriorityPOPostalcode></PriorityPOPostalcode>
+      <PriorityCity>{{ party.priority_city }}</PriorityCity>
+      <PriorityPostalcode>{{ party.priority_postalcode }}</PriorityPostalcode>
+      <InfoCustomerID>{{ party.info_customer_id }}</InfoCustomerID>
+      <InfoCustomerYID>{{ party.info_customer_yid }}</InfoCustomerYID>
+      <InfoCustomerOVT>{{ party.info_customer_ovt }}</InfoCustomerOVT>
+      <InfoName1>{{ party.info_name1 }}</InfoName1>
+      <InfoName2></InfoName2>
+      <InfoName3></InfoName3>
+      <InfoName4></InfoName4>
+      <InfoAddress1>{{ party.info_address1 }}</InfoAddress1>
+      <InfoAddress2></InfoAddress2>
+      <InfoPOCode></InfoPOCode>
+      <InfoPOCity></InfoPOCity>
+      <InfoPOPostalcode></InfoPOPostalcode>
+      <InfoCity>{{ party.info_city }}</InfoCity>
+      <InfoPostalcode>{{ party.info_postalcode }}</InfoPostalcode>
+    </{{ element_name }}>
