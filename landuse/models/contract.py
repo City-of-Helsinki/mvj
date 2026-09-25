@@ -30,7 +30,7 @@ class ContractScheduleDetailsBase(models.Model):
     decision = models.ForeignKey(
         Decision,
         on_delete=models.CASCADE,
-        related_name="contract_schedule_details",
+        related_name="%(class)s_contract_schedule_details",
         null=True,
         blank=True,
     )
