@@ -17,7 +17,11 @@ def test_create_own_uidata(django_db_setup, client, user_factory):
     permission_names = ["add_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
     url = reverse("v1:ui_data-list")
@@ -45,7 +49,11 @@ def test_cant_create_others_uidata(django_db_setup, client, user_factory):
     permission_names = ["add_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
     url = reverse("v1:ui_data-list")
@@ -72,7 +80,11 @@ def test_can_create_global_uidata(django_db_setup, client, user_factory):
     permission_names = ["add_uidata", "edit_global_ui_data"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
     url = reverse("v1:ui_data-list")
@@ -100,7 +112,11 @@ def test_cant_create_global_uidata(django_db_setup, client, user_factory):
     permission_names = ["add_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
     url = reverse("v1:ui_data-list")
@@ -126,7 +142,11 @@ def test_can_edit_own_uidata(django_db_setup, client, user_factory, ui_data_fact
     permission_names = ["change_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     ui_data = ui_data_factory(user=user, key="testkey", value="testvalue")
 
@@ -158,7 +178,11 @@ def test_cant_edit_others_uidata(
     permission_names = ["change_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     user2 = user_factory(username="test_user2", email="test_user2@example.com")
 
@@ -187,7 +211,11 @@ def test_can_edit_global_uidata(django_db_setup, client, user_factory, ui_data_f
     permission_names = ["change_uidata", "edit_global_ui_data"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     ui_data = ui_data_factory(user=None, key="testkey", value="testvalue")
 
@@ -219,7 +247,11 @@ def test_cant_edit_global_uidata(
     permission_names = ["change_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     ui_data = ui_data_factory(user=None, key="testkey", value="testvalue")
 
@@ -246,7 +278,11 @@ def test_delete_own_uidata(django_db_setup, client, user_factory, ui_data_factor
     permission_names = ["delete_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     ui_data = ui_data_factory(user=user, key="testkey", value="testvalue")
 
@@ -269,7 +305,11 @@ def test_cant_delete_others_uidata(
     permission_names = ["delete_uidata"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     user2 = user_factory(username="test_user2", email="test_user2@example.com")
 

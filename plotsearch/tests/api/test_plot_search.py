@@ -81,7 +81,11 @@ def test_plot_search_detail_shows_type_with_subtype_field_permissions(
         "view_plotsearch_subtype",
         "change_plotsearch_subtype",
     ):
-        user.user_permissions.add(Permission.objects.get(codename=codename))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=codename, content_type__app_label="plotsearch"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
 
