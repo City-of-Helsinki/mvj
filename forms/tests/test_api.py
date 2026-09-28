@@ -649,7 +649,9 @@ def test_opening_record_permissions(
     assert response.status_code == 403
 
     not_authorized_user.user_permissions.add(
-        Permission.objects.get(codename="add_answeropeningrecord")
+        Permission.objects.get(
+            codename="add_answeropeningrecord", content_type__app_label="forms"
+        )
     )
 
     client.force_login(not_authorized_user)
@@ -665,7 +667,9 @@ def test_opening_record_permissions(
     assert response.status_code == 403
 
     not_authorized_user.user_permissions.add(
-        Permission.objects.get(codename="change_answeropeningrecord")
+        Permission.objects.get(
+            codename="change_answeropeningrecord", content_type__app_label="forms"
+        )
     )
 
     client.force_login(not_authorized_user)

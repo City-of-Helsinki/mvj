@@ -14,7 +14,9 @@ def test_user_cant_view_any_fields(
     user.set_password("test_password")
     user.save()
 
-    permission = Permission.objects.get(codename="view_lease")
+    permission = Permission.objects.get(
+        codename="view_lease", content_type__app_label="leasing"
+    )
     user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -60,12 +62,16 @@ def test_user_can_view_some_fields(
     user.set_password("test_password")
     user.save()
 
-    user.user_permissions.add(Permission.objects.get(codename="view_lease"))
+    user.user_permissions.add(
+        Permission.objects.get(codename="view_lease", content_type__app_label="leasing")
+    )
 
     field_names = ["id", "start_date", "end_date", "state"]
     for field_name in field_names:
         codename = "view_lease_{}".format(field_name)
-        user.user_permissions.add(Permission.objects.get(codename=codename))
+        user.user_permissions.add(
+            Permission.objects.get(codename=codename, content_type__app_label="leasing")
+        )
 
     client.login(username="test_user", password="test_password")
 
@@ -88,8 +94,16 @@ def test_user_cannot_modify_field(
     user.save()
     user.service_units.add(lease_test_data["lease"].service_unit)
 
-    user.user_permissions.add(Permission.objects.get(codename="change_lease"))
-    user.user_permissions.add(Permission.objects.get(codename="view_lease_type"))
+    user.user_permissions.add(
+        Permission.objects.get(
+            codename="change_lease", content_type__app_label="leasing"
+        )
+    )
+    user.user_permissions.add(
+        Permission.objects.get(
+            codename="view_lease_type", content_type__app_label="leasing"
+        )
+    )
 
     client.login(username="test_user", password="test_password")
 
@@ -116,8 +130,16 @@ def test_user_can_modify_field(django_db_setup, client, lease_test_data, user_fa
     user.save()
     user.service_units.add(lease_test_data["lease"].service_unit)
 
-    user.user_permissions.add(Permission.objects.get(codename="change_lease"))
-    user.user_permissions.add(Permission.objects.get(codename="change_lease_type"))
+    user.user_permissions.add(
+        Permission.objects.get(
+            codename="change_lease", content_type__app_label="leasing"
+        )
+    )
+    user.user_permissions.add(
+        Permission.objects.get(
+            codename="change_lease_type", content_type__app_label="leasing"
+        )
+    )
 
     client.login(username="test_user", password="test_password")
 
