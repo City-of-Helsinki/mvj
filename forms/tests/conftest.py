@@ -1,13 +1,11 @@
 import json
 from pathlib import Path
 
-import factory
 import pytest
 from django.core.management import call_command
 from django.urls import reverse
 from faker import Faker
 
-from forms.models import Answer
 from plotsearch.models.plot_search import AreaSearch
 from plotsearch.tests.conftest import (  # noqa:F401
     setup_lessor_contacts_and_service_units,
@@ -60,11 +58,6 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
     with django_db_blocker.unblock():
         call_command("loaddata", *fixture_filenames)
-
-
-class AnswerFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Answer
 
 
 @pytest.fixture

@@ -1,10 +1,8 @@
 import pytest
 from django.test import override_settings
 
+from laske_export.tests.conftest import get_exported_file_as_tree
 from leasing.enums import ServiceUnitId
-from leasing.tests.conftest import *  # noqa
-
-from .conftest import get_exported_file_as_tree
 
 
 @pytest.mark.parametrize(
