@@ -25,7 +25,11 @@ def test_patch_decision_condition_cannot_change_fields(
     permission_names = ["change_decision", "change_decision_conditions"]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     lease = lease_test_data["lease"]
 
@@ -90,7 +94,11 @@ def test_patch_decision_condition_can_change_some_fields(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     lease = lease_test_data["lease"]
 
@@ -151,7 +159,12 @@ def test_patch_decision_add_decision(
     user.save()
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="leasing",
+            )
+        )
 
     lease = lease_test_data["lease"]
 
@@ -221,7 +234,11 @@ def test_patch_decision_remove_decision(
     user.save()
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            ),
+        )
 
     lease = lease_test_data["lease"]
 

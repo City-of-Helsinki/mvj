@@ -22,7 +22,9 @@ def test_api_access_updates_service_units(
     """Test that the service units are updated when the user accesses the API
     using a JWT"""
     # User and permissions
-    permission = Permission.objects.get(codename="view_lease")
+    permission = Permission.objects.get(
+        codename="view_lease", content_type__app_label="leasing"
+    )
     user.user_permissions.add(permission)
     service_unit = lease_test_data["lease"].service_unit
     ad_group_name = "test_ad_group"

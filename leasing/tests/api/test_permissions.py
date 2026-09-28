@@ -39,7 +39,9 @@ def test_user_with_permission_can_view_lease(
     user.set_password("test_password")
     user.save()
 
-    permission = Permission.objects.get(codename="view_lease")
+    permission = Permission.objects.get(
+        codename="view_lease", content_type__app_label="leasing"
+    )
     user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -78,7 +80,9 @@ def test_field_permission(
     field_permissions.append("view_contact")
 
     for field_permission in field_permissions:
-        permission = Permission.objects.get(codename=field_permission)
+        permission = Permission.objects.get(
+            codename=field_permission, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")

@@ -51,7 +51,12 @@ def test_get_credit_decisions_endpoint(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     business_id = "12345678"
     business_credit_decision_factory(
@@ -111,7 +116,12 @@ def test_send_credit_decision_inquiry_endpoint_with_business_id(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 
@@ -195,7 +205,12 @@ def test_send_credit_decision_inquiry_endpoint_with_identity_number(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 
@@ -239,7 +254,12 @@ def test_send_credit_decision_inquiry_endpoint_with_person_contact(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 
@@ -321,7 +341,12 @@ def test_send_send_sanctions_inquiry_endpoint_with_business_id(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 
@@ -367,7 +392,12 @@ def test_send_send_sanctions_inquiry_endpoint_with_last_name(client, user_factor
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 
@@ -435,7 +465,12 @@ def test_send_send_sanctions_inquiry_endpoint_disallowed_method(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name,
+                content_type__app_label="credit_integration",
+            )
+        )
 
     client.login(username=user.username, password=password)
 

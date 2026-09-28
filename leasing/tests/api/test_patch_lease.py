@@ -530,7 +530,11 @@ def test_patch_lease_checks_service_unit(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
 
@@ -597,7 +601,11 @@ def test_patch_lease_checks_service_unit_on_related_contact(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
 
