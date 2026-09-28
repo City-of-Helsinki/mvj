@@ -62,7 +62,11 @@ def test_create_lease_relate_to_with_permission(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
 
@@ -114,7 +118,11 @@ def test_create_lease_relate_to_without_permission(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.login(username="test_user", password="test_password")
 
@@ -243,7 +251,11 @@ def test_create_lease_should_validate_service_unit(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
 

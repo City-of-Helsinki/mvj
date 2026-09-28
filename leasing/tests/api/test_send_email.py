@@ -29,7 +29,11 @@ def test_send_email(django_db_setup, client, lease_test_data, user_factory):
 
     permission_names = ["view_lease"]
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     lease = lease_test_data["lease"]
     email_body = "Test email text"

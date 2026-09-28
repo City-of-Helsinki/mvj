@@ -23,7 +23,9 @@ from users.models import User
 @pytest.mark.django_db
 def test_export_endpoint_permission_with_permission(urlname, permission_codename):
     user = User.objects.create_user(username="testuser", password="testpassword")
-    permission = Permission.objects.get(codename=permission_codename)
+    permission = Permission.objects.get(
+        codename=permission_codename, content_type__app_label="leasing"
+    )
     user.user_permissions.add(permission)
     token = Token.objects.create(user=user)
 
