@@ -1,10 +1,10 @@
 import pytest
 from requests import Request
 
-from conftest import UserFactory
 from forms.models import Answer
 from plotsearch.models.plot_search import AreaSearch
 from plotsearch.permissions import AreaSearchPublicPermissions
+from users.tests.factories import UserFactory
 
 
 @pytest.mark.django_db

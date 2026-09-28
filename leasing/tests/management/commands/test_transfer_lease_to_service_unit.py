@@ -9,7 +9,6 @@ from django.core.management.base import CommandError
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from conftest import ContactFactory, TenantFactory
 from leasing.enums import ContactType, DecisionTypeKind, TenantContactType
 from leasing.management.commands.transfer_lease_to_service_unit import (
     Command,
@@ -23,6 +22,7 @@ from leasing.models.lease import IntendedUse, Lease
 from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import Rent
 from leasing.models.service_unit import ServiceUnit
+from leasing.tests.factories import ContactFactory, TenantFactory
 from users.models import User
 
 OldValue: TypeAlias = str

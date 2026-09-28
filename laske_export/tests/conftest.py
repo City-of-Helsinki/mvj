@@ -3,12 +3,15 @@ import tempfile
 import xml.etree.ElementTree as et  # noqa
 from decimal import Decimal
 from glob import glob
+from pathlib import Path
 from typing import Any, Callable
 
 import pytest
 from django.conf import settings
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.test import override_settings
+from pytest_factoryboy import register
 
 from laske_export.document.invoice_sales_order_adapter import (
     invoice_sales_order_adapter_factory,
@@ -26,7 +29,37 @@ from leasing.models.receivable_type import ReceivableType
 from leasing.models.rent import RentIntendedUse
 from leasing.models.service_unit import ServiceUnit
 from leasing.models.tenant import Tenant, TenantContact
-from leasing.tests.conftest import *  # noqa
+from leasing.tests.factories import (
+    ContactFactory,
+    InvoiceFactory,
+    InvoiceRowFactory,
+    LeaseFactory,
+    ReceivableTypeFactory,
+    RentFactory,
+    TenantContactFactory,
+    TenantFactory,
+    TenantRentShareFactory,
+)
+
+register(RentFactory)
+register(LeaseFactory)
+register(ReceivableTypeFactory)
+register(RentFactory)
+register(ContactFactory)
+register(TenantFactory)
+register(TenantRentShareFactory)
+register(TenantContactFactory)
+register(InvoiceFactory)
+register(InvoiceRowFactory)
+
+
+@pytest.fixture(scope="session")
+def django_db_setup(django_db_setup, django_db_blocker):
+    fixture_path = Path(__file__).parents[1].parent / "leasing/fixtures"
+    fixture_filenames = [path for path in fixture_path.glob("*") if not path.is_dir()]
+
+    with django_db_blocker.unblock():
+        call_command("loaddata", *fixture_filenames)
 
 
 def pytest_configure():
