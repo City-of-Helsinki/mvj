@@ -17,6 +17,12 @@ from landuse.sap_export import send_invoice_xml
 from utils.mixins import TimeStampedModel
 
 
+class LandUseInvoiceExportError(Exception):
+    """Errors for LandUse SAP Export logic."""
+
+    pass
+
+
 class InvoiceType(models.TextChoices):
     LAND_USE_COMPENSATION = ("LAND_USE_COMPENSATION", "Maankäyttökorvaus")
     PENALTY = ("PENALTY", "Sakko")
@@ -144,7 +150,7 @@ class Invoice(TimeStampedModel):
         """Send the invoice XML to SAP."""
         if self.sent_at:
             # Must not re-send a sent invoice.
-            return
+            raise LandUseInvoiceExportError("Invoice has already been sent to SAP.")
 
         sap_xml = self.get_sap_xml()
         send_invoice_xml(self.pk, sap_xml)

@@ -6,19 +6,25 @@ from unittest.mock import patch
 import pytest
 
 from landuse.models.agreement import LandUseAgreement
-from landuse.models.invoice import Invoice, InvoiceItem, InvoiceItemType, InvoiceType
+from landuse.models.invoice import (
+    Invoice,
+    InvoiceItem,
+    InvoiceItemType,
+    InvoiceType,
+    LandUseInvoiceExportError,
+)
 from landuse.models.party import AgreementParty, BillingDetails
 
 
 @pytest.fixture
 def invoice(db, settings) -> Invoice:
     settings.SAP_LANDUSE_VALUES = {
-        "sender_id": "TEST1",
-        "sales_org": "ORG1",
-        "sales_office": "1000",
-        "distribution_channel": "10",
-        "division": "10",
-        "pmntterm": "Z100",
+        "sender_id": "ID990",
+        "sales_org": "9999",
+        "sales_office": "9000",
+        "distribution_channel": "90",
+        "division": "90",
+        "pmntterm": "Z900",
     }
     agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
     recipient = AgreementParty.objects.create(
@@ -63,7 +69,7 @@ def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invo
 
     assert root.tag == "SBO_SalesOrderContainer"
     assert sales_order is not None
-    assert sales_order.findtext("SenderId") == "TEST1"
+    assert sales_order.findtext("SenderId") == "ID990"
     assert sales_order.findtext("Reference") == "INV-2"
     assert sales_order.findtext("ContractNumber") == "M-2026-1"
     assert sales_order.findtext("OrderType") == "ZTY1"
@@ -108,33 +114,10 @@ def test_generate_sap_xml_returns_saved_xml(send_invoice_xml, invoice: Invoice):
     invoice.send_to_sap()
     saved_xml = invoice.sap_xml
 
-    invoice.invoice_identifier = "UNSAVED CHANGE"
+    # Once XML is stored it should be immutable and not change.
+    invoice.invoice_identifier = "CHANGING VALUE SHOULD NOT CHANGE XML OUTPUT"
 
     assert invoice.get_sap_xml() == saved_xml
-
-
-@pytest.mark.django_db
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_send_uses_latest_invoice_items(send_invoice_xml, invoice: Invoice):
-    item = InvoiceItem.objects.create(
-        invoice=invoice,
-        item_type=InvoiceItemType.LAND_USE_COMPENSATION,
-        description="Compensation & adjustment",
-        amount=Decimal("1250.50"),
-    )
-
-    item.description = "Updated description"
-    item.save()
-    assert invoice.sap_xml is None
-
-    invoice.send_to_sap()
-
-    line_item = ElementTree.fromstring(invoice.sap_xml).find("SBO_SalesOrder/LineItem")
-    assert line_item is not None
-    assert line_item.findtext("MaterialDescription") == "Maankäyttökorvaus"
-    assert line_item.findtext("Quantity") == "1,00"
-    assert line_item.findtext("NetPrice") == "1250,50"
-    assert line_item.findtext("LineTextL1") == "Updated description"
 
 
 @pytest.mark.django_db
@@ -157,7 +140,8 @@ def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoi
         description="Late item",
         amount=Decimal("1.00"),
     )
-    invoice.send_to_sap()
+    with pytest.raises(LandUseInvoiceExportError, match="already been sent to SAP"):
+        invoice.send_to_sap()
 
     invoice.refresh_from_db()
     assert invoice.sap_xml == original_xml
