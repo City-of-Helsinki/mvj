@@ -1,64 +1,136 @@
 import datetime
 from unittest.mock import patch
 
-import factory
 import pytest
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import timezone
+from faker import Faker
 from pytest_factoryboy import register
 
-from batchrun.models import Command, Job, JobRun, JobRunLog
-from file_operations.models.filescan import FileScanStatus
-from forms.models import Answer, Choice, Entry, Field, Form, Section
-from forms.models.form import Attachment, EntrySection
-from forms.tests.conftest import fake
+from batchrun.tests.factories import (
+    CommandFactory,
+    JobFactory,
+    JobRunFactory,
+    JobRunLogFactory,
+)
+from file_operations.tests.factories import FileScanStatusFactory
+from forms.models.form import EntrySection
+from forms.tests.factories import (
+    AnswerFactory,
+    AttachmentFactory,
+    ChoiceFactory,
+    EntryFactory,
+    EntrySectionFactory,
+    FieldFactory,
+    FormFactory,
+    SectionFactory,
+)
 from leasing.enums import (
     ContactType,
-    LeaseAreaType,
-    LocationType,
     PlotSearchTargetType,
     TenantContactType,
 )
-from leasing.models import (
-    CollectionLetter,
-    Contact,
-    CustomDetailedPlan,
-    Decision,
-    DecisionType,
-    District,
-    InfillDevelopmentCompensation,
-    InfillDevelopmentCompensationLease,
-    Inspection,
-    Lease,
-    LeaseArea,
-    LeaseType,
-    Municipality,
-    PlanUnit,
-    PlanUnitIntendedUse,
-    ServiceUnit,
-    Tenant,
-    TenantContact,
+from leasing.tests.factories import (
+    CollectionLetterFactory,
+    ContactFactory,
+    CustomDetailedPlanFactory,
+    DecisionFactory,
+    DecisionTypeFactory,
+    DistrictFactory,
+    InfillDevelopmentCompensationFactory,
+    InfillDevelopmentCompensationLeaseFactory,
+    InspectionFactory,
+    IntendedUseFactory,
+    InvoiceFactory,
+    InvoiceRowFactory,
+    LeaseAreaAddressFactory,
+    LeaseAreaFactory,
+    LeaseFactory,
+    LeaseTypeFactory,
+    LeaseWithGeneratedServiceUnitFactory,
+    MunicipalityFactory,
+    PlanUnitFactory,
+    PlanUnitIntendedUseFactory,
+    ReceivableTypeFactory,
+    RentIntendedUseFactory,
+    ServiceUnitFactory,
+    TenantContactFactory,
+    TenantFactory,
 )
-from leasing.models.land_area import LeaseAreaAddress
-from leasing.models.receivable_type import ReceivableType
-from plotsearch.models import (
-    AreaSearch,
-    AreaSearchAttachment,
-    AreaSearchIntendedUse,
-    Favourite,
-    InformationCheck,
-    PlotSearch,
-    PlotSearchStage,
-    PlotSearchSubtype,
-    PlotSearchTarget,
-    PlotSearchType,
-    RelatedPlotApplication,
-    TargetInfoLink,
-    TargetStatus,
+from plotsearch.tests.factories import (
+    AreaSearchAttachmentFactory,
+    AreaSearchFactory,
+    AreaSearchIntendedUseFactory,
+    FavouriteFactory,
+    InfoLinkFactory,
+    InformationCheckFactory,
+    PlotSearchFactory,
+    PlotSearchStageFactory,
+    PlotSearchSubtypeFactory,
+    PlotSearchTargetFactory,
+    PlotSearchTargetFactoryWithSubFactories,
+    PlotSearchTypeFactory,
+    RelatedPlotApplicationFactory,
+    TargetStatusFactory,
 )
-from users.models import User
+from users.tests.factories import GroupFactory, UserFactory
+
+fake = Faker("fi_FI")
+
+register(AnswerFactory)
+register(AreaSearchAttachmentFactory)
+register(AreaSearchFactory)
+register(AreaSearchIntendedUseFactory)
+register(AttachmentFactory)
+register(ChoiceFactory)
+register(CollectionLetterFactory)
+register(CommandFactory)
+register(ContactFactory)
+register(CustomDetailedPlanFactory)
+register(DecisionFactory)
+register(DecisionTypeFactory)
+register(DistrictFactory)
+register(EntryFactory)
+register(EntrySectionFactory)
+register(FavouriteFactory)
+register(FieldFactory)
+register(FileScanStatusFactory)
+register(FormFactory)
+register(GroupFactory)
+register(InfillDevelopmentCompensationFactory)
+register(InfillDevelopmentCompensationLeaseFactory)
+register(InfoLinkFactory)
+register(InformationCheckFactory)
+register(InspectionFactory)
+register(IntendedUseFactory)
+register(InvoiceFactory)
+register(InvoiceRowFactory)
+register(JobFactory)
+register(JobRunFactory)
+register(JobRunLogFactory)
+register(LeaseAreaAddressFactory)
+register(LeaseAreaFactory)
+register(LeaseFactory)
+register(LeaseTypeFactory)
+register(LeaseWithGeneratedServiceUnitFactory)
+register(MunicipalityFactory)
+register(PlanUnitFactory)
+register(PlanUnitIntendedUseFactory)
+register(PlotSearchFactory)
+register(PlotSearchStageFactory)
+register(PlotSearchSubtypeFactory)
+register(PlotSearchTargetFactory)
+register(PlotSearchTargetFactoryWithSubFactories)
+register(PlotSearchTypeFactory)
+register(ReceivableTypeFactory)
+register(RelatedPlotApplicationFactory)
+register(RentIntendedUseFactory)
+register(SectionFactory)
+register(ServiceUnitFactory)
+register(TargetStatusFactory)
+register(TenantContactFactory)
+register(TenantFactory)
+register(UserFactory)
 
 
 @pytest.fixture()
@@ -135,260 +207,6 @@ def area_search_test_data(
     )
 
     return area_search
-
-
-# Batchrun model factories
-@register
-class CommandFactory(factory.django.DjangoModelFactory):
-    type = "django-manage"
-
-    class Meta:
-        model = Command
-
-
-@register
-class JobFactory(factory.django.DjangoModelFactory):
-    command = factory.SubFactory(CommandFactory)
-
-    class Meta:
-        model = Job
-
-
-@register
-class JobRunFactory(factory.django.DjangoModelFactory):
-    job = factory.SubFactory(JobFactory)
-
-    class Meta:
-        model = JobRun
-
-
-@register
-class JobRunLogFactory(factory.django.DjangoModelFactory):
-    run = factory.SubFactory(JobRunFactory)
-
-    class Meta:
-        model = JobRunLog
-
-
-@register
-class AreaSearchIntendedUseFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = AreaSearchIntendedUse
-
-
-@register
-class AreaSearchFactory(factory.django.DjangoModelFactory):
-    intended_use = factory.SubFactory(AreaSearchIntendedUseFactory)
-
-    class Meta:
-        model = AreaSearch
-
-
-@register
-class AreaSearchAttachmentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = AreaSearchAttachment
-
-
-@register
-class FavouriteFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Favourite
-
-
-@register
-class LeaseTypeFactory(factory.django.DjangoModelFactory):
-    identifier = factory.Sequence(lambda n: "A%10d" % n)
-
-    class Meta:
-        model = LeaseType
-
-
-@register
-class MunicipalityFactory(factory.django.DjangoModelFactory):
-    identifier = factory.Sequence(lambda n: "1%1d" % n)
-
-    class Meta:
-        model = Municipality
-
-
-@register
-class DistrictFactory(factory.django.DjangoModelFactory):
-    identifier = factory.Sequence(lambda n: "10%1d" % n)
-    municipality = factory.SubFactory(MunicipalityFactory)
-
-    class Meta:
-        model = District
-
-
-@register
-class PlotSearchFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearch
-
-
-@register
-class LeaseFactory(factory.django.DjangoModelFactory):
-    type = factory.SubFactory(LeaseTypeFactory)
-    municipality = factory.SubFactory(MunicipalityFactory)
-    district = factory.SubFactory(DistrictFactory)
-
-    @factory.lazy_attribute
-    def service_unit(self):
-        from leasing.models import ServiceUnit
-
-        try:
-            return ServiceUnit.objects.get(pk=1)
-        except ServiceUnit.DoesNotExist:
-            return ServiceUnitFactory()
-
-    class Meta:
-        model = Lease
-
-
-@register
-class ServiceUnitFactory(factory.django.DjangoModelFactory):
-    id = factory.Sequence(lambda n: n + 100)
-
-    class Meta:
-        model = ServiceUnit
-
-
-@register
-class LeaseWithGeneratedServiceUnitFactory(factory.django.DjangoModelFactory):
-    """
-    Created to circumvent the existing LeaseFactory, which hardcodes the
-    service unit id to 1, which is expected to match service unit "MaKe".
-
-    Feel free to replace that implementation with this one, and fix all the old
-    tests at the same time.
-    """
-
-    type = factory.SubFactory(LeaseTypeFactory)
-    municipality = factory.SubFactory(MunicipalityFactory)
-    district = factory.SubFactory(DistrictFactory)
-    service_unit = factory.SubFactory(ServiceUnitFactory)
-
-    class Meta:
-        model = Lease
-
-
-@register
-class LeaseAreaFactory(factory.django.DjangoModelFactory):
-    type = LeaseAreaType.REAL_PROPERTY
-    location = LocationType.SURFACE
-    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
-    lease = factory.SubFactory(LeaseFactory)
-
-    class Meta:
-        model = LeaseArea
-
-
-@register
-class PlanUnitIntendedUseFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlanUnitIntendedUse
-
-
-@register
-class PlanUnitFactory(factory.django.DjangoModelFactory):
-    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
-    lease_area = factory.SubFactory(LeaseAreaFactory)
-    plan_unit_intended_use = factory.SubFactory(PlanUnitIntendedUseFactory)
-    identifier = factory.Iterator(
-        ["91-1-30-1", "91-1-30-2", "91-1-30-3", "91-1-30-4", "91-1-30-5"]
-    )
-
-    class Meta:
-        model = PlanUnit
-
-
-@register
-class CustomDetailedPlanFactory(factory.django.DjangoModelFactory):
-    area = factory.Iterator([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
-    lease_area = factory.SubFactory(LeaseAreaFactory)
-    rent_build_permission = factory.Sequence(lambda n: n)
-    intended_use = factory.SubFactory(PlanUnitIntendedUseFactory)
-
-    class Meta:
-        model = CustomDetailedPlan
-
-
-@register
-class PlotSearchTargetFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchTarget
-
-
-@register
-class PlotSearchTargetFactoryWithSubFactories(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchTarget
-
-    plot_search = factory.SubFactory(PlotSearchFactory)
-    plan_unit = factory.SubFactory(PlanUnitFactory)
-    target_type = PlotSearchTargetType.SEARCHABLE
-
-
-@register
-class PlotSearchTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchType
-
-
-@register
-class PlotSearchSubtypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchSubtype
-
-
-@register
-class PlotSearchStageFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = PlotSearchStage
-
-
-@register
-class UserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = User
-        skip_postgeneration_save = True
-
-    @factory.post_generation
-    def service_units(self, create, extracted, **kwargs):
-        if not create or not extracted:
-            return
-
-        for service_unit in extracted:
-            self.service_units.add(service_unit)
-
-    @factory.post_generation
-    def permissions(self, create, extracted, **kwargs):
-        if not create or not extracted:
-            return
-
-        self.user_permissions.set(Permission.objects.filter(codename__in=extracted))
-
-
-@register
-class GroupFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Group
-
-
-@register
-class ReceivableTypeFactory(factory.django.DjangoModelFactory):
-    @factory.lazy_attribute
-    def service_unit(self):
-        from leasing.models import ServiceUnit
-
-        try:
-            return ServiceUnit.objects.get(pk=1)
-        except ServiceUnit.DoesNotExist:
-            return ServiceUnitFactory()
-
-    class Meta:
-        model = ReceivableType
 
 
 @pytest.fixture
@@ -498,88 +316,6 @@ def plot_search_target(
     return plot_search_target
 
 
-@register
-class ContactFactory(factory.django.DjangoModelFactory):
-    type = ContactType.PERSON
-
-    @factory.lazy_attribute
-    def service_unit(self):
-        from leasing.models import ServiceUnit
-
-        try:
-            return ServiceUnit.objects.get(pk=1)
-        except ServiceUnit.DoesNotExist:
-            return ServiceUnitFactory()
-
-    class Meta:
-        model = Contact
-
-
-@register
-class TenantFactory(factory.django.DjangoModelFactory):
-    lease = factory.SubFactory(LeaseFactory)
-    share_numerator = 1
-    share_denominator = 5
-
-    class Meta:
-        model = Tenant
-
-
-@register
-class TenantContactFactory(factory.django.DjangoModelFactory):
-    tenant = factory.SubFactory(TenantFactory)
-    contact = factory.SubFactory(ContactFactory)
-
-    class Meta:
-        model = TenantContact
-
-
-@register
-class LeaseAreaAddressFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = LeaseAreaAddress
-
-
-@register
-class FormFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Form
-
-
-@register
-class DecisionFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Decision
-
-
-@register
-class DecisionTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = DecisionType
-
-
-@register
-class InfoLinkFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = TargetInfoLink
-
-
-@register
-class SectionFactory(factory.django.DjangoModelFactory):
-    form = factory.SubFactory(FormFactory)
-
-    class Meta:
-        model = Section
-
-
-@register
-class FieldFactory(factory.django.DjangoModelFactory):
-    section = factory.SubFactory(SectionFactory)
-
-    class Meta:
-        model = Field
-
-
 @pytest.fixture
 def basic_answer(
     answer_factory,
@@ -604,36 +340,6 @@ def basic_answer(
             entry_factory(entry_section=entry_section, field=field, value=fake.name())
 
     return answer
-
-
-@register
-class EntryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Entry
-
-
-@register
-class EntrySectionFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = EntrySection
-
-
-@register
-class AnswerFactory(factory.django.DjangoModelFactory):
-    form = factory.SubFactory(FormFactory)
-    user = factory.SubFactory(UserFactory)
-
-    class Meta:
-        model = Answer
-
-
-@register
-class AttachmentFactory(factory.django.DjangoModelFactory):
-
-    field = factory.SubFactory(FieldFactory)
-
-    class Meta:
-        model = Attachment
 
 
 @pytest.fixture
@@ -1264,38 +970,6 @@ def area_search_form(area_search_template_form):
     return form
 
 
-@register
-class ChoiceFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Choice
-
-
-@register
-class TargetStatusFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = TargetStatus
-
-    plot_search_target = factory.SubFactory(PlotSearchTargetFactoryWithSubFactories)
-    answer = factory.SubFactory(AnswerFactory)
-
-
-@register
-class InformationCheckFactory(factory.django.DjangoModelFactory):
-    entry_section = factory.SubFactory(EntrySectionFactory)
-
-    class Meta:
-        model = InformationCheck
-
-
-@register
-class RelatedPlotApplicationFactory(factory.django.DjangoModelFactory):
-    lease = factory.SubFactory(LeaseFactory)
-    content_object = factory.SubFactory(AreaSearchFactory, description_area="test")
-
-    class Meta:
-        model = RelatedPlotApplication
-
-
 @pytest.fixture
 def related_plot_application_test_data(
     lease_factory,
@@ -1334,61 +1008,6 @@ def related_plot_application_test_data(
         "target_status": target_status,
         "related_plot_applications": related_plot_applications,
     }
-
-
-@register
-class FileScanStatusFactory(factory.django.DjangoModelFactory):
-    # Use plotsearch_areasearchattachment as a default content object,
-    # because that model might be most relevant to this use case.
-    content_object = factory.SubFactory(AreaSearchAttachmentFactory)
-
-    # The remaining required properties can be derived from the referenced object
-    @factory.lazy_attribute
-    def content_type(self):
-        return ContentType.objects.get_for_model(self.content_object)
-
-    @factory.lazy_attribute
-    def object_id(self):
-        return self.content_object.id
-
-    class Meta:
-        model = FileScanStatus
-
-
-@register
-class CollectionLetterFactory(factory.django.DjangoModelFactory):
-    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
-    uploader = factory.SubFactory(UserFactory)
-
-    class Meta:
-        model = CollectionLetter
-
-
-@register
-class InfillDevelopmentCompensationFactory(factory.django.DjangoModelFactory):
-    user = factory.SubFactory(UserFactory)
-
-    class Meta:
-        model = InfillDevelopmentCompensation
-
-
-@register
-class InfillDevelopmentCompensationLeaseFactory(factory.django.DjangoModelFactory):
-    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
-    infill_development_compensation = factory.SubFactory(
-        InfillDevelopmentCompensationFactory
-    )
-
-    class Meta:
-        model = InfillDevelopmentCompensationLease
-
-
-@register
-class InspectionFactory(factory.django.DjangoModelFactory):
-    lease = factory.SubFactory(LeaseWithGeneratedServiceUnitFactory)
-
-    class Meta:
-        model = Inspection
 
 
 @pytest.fixture
