@@ -4,7 +4,6 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Callable
 
-import factory
 import pytest
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
@@ -12,68 +11,124 @@ from django.utils import timezone
 from faker import Faker
 from pytest_factoryboy import register
 
-from conftest import ContactFactory, ServiceUnitFactory
 from leasing.enums import (
     AreaType,
     ContactType,
     DueDatesType,
-    IndexType,
-    InvoiceState,
-    InvoiceType,
     PeriodType,
-    RentAdjustmentType,
     RentCycle,
     RentType,
 )
 from leasing.models import (
-    Area,
-    AreaSource,
-    Condition,
-    Contract,
     ContractRent,
-    DecisionMaker,
-    FixedInitialYearRent,
-    IntendedUse,
-    Invoice,
-    LeaseBasisOfRent,
-    LeaseType,
-    NoticePeriod,
-    Plot,
-    RelatedLease,
     Rent,
-    RentAdjustment,
-    RentDueDate,
     RentIntendedUse,
-    UiData,
 )
 from leasing.models.contact import Contact
-from leasing.models.contract import (
-    Collateral,
-    CollateralType,
-    ContractChange,
-    ContractType,
-)
-from leasing.models.decision import ConditionType
-from leasing.models.invoice import InvoiceNote, InvoicePayment, InvoiceRow, InvoiceSet
-from leasing.models.land_area import CustomDetailedPlan
 from leasing.models.lease import Lease
-from leasing.models.map_layers import VipunenMapLayer
 from leasing.models.receivable_type import ReceivableType
-from leasing.models.rent import (
-    Index,
-    IndexPointFigureYearly,
-    LeaseBasisOfRentManagementSubvention,
-    LeaseBasisOfRentTemporarySubvention,
-    ManagementSubventionFormOfManagement,
-    OldDwellingsInHousingCompaniesPriceIndex,
-)
-from leasing.models.service_unit import ServiceUnitGroupMapping
 from leasing.models.tenant import (
     Tenant,
     TenantContact,
     TenantContactType,
     TenantRentShare,
 )
+from leasing.tests.factories import (
+    AreaFactory,
+    AreaSourceFactory,
+    CollateralFactory,
+    CollateralTypeFactory,
+    ConditionFactory,
+    ConditionTypeFactory,
+    ContactFactory,
+    ContractChangeFactory,
+    ContractFactory,
+    ContractRentFactory,
+    ContractTypeFactory,
+    CustomDetailedPlanFactory,
+    DecisionMakerFactory,
+    DistrictFactory,
+    FixedInitialYearRentFactory,
+    IndexFactory,
+    IndexPointFigureYearlyFactory,
+    IntendedUseFactory,
+    InvoiceFactory,
+    InvoiceNoteFactory,
+    InvoicePaymentFactory,
+    InvoiceRowFactory,
+    InvoiceSetFactory,
+    LeaseAreaAddressFactory,
+    LeaseAreaFactory,
+    LeaseBasisOfRentFactory,
+    LeaseBasisOfRentManagementSubventionFactory,
+    LeaseBasisOfRentTemporarySubventionFactory,
+    LeaseFactory,
+    LeaseTypeFactory,
+    ManagementSubventionFormOfManagementFactory,
+    NoticePeriodFactory,
+    OldDwellingsInHousingCompaniesPriceIndexFactory,
+    PlotFactory,
+    RelatedLeaseFactory,
+    RentAdjustmentFactory,
+    RentDueDateFactory,
+    RentFactory,
+    RentIntendedUseFactory,
+    ServiceUnitFactory,
+    ServiceUnitGroupMappingFactory,
+    TenantContactFactory,
+    TenantFactory,
+    TenantRentShareFactory,
+    UiDataFactory,
+    VipunenMapLayerFactory,
+)
+
+register(AreaFactory)
+register(AreaSourceFactory)
+register(CollateralFactory)
+register(CollateralTypeFactory)
+register(ConditionFactory)
+register(ConditionTypeFactory)
+register(ContactFactory)
+register(ContractChangeFactory)
+register(ContractFactory)
+register(ContractRentFactory)
+register(ContractTypeFactory)
+register(CustomDetailedPlanFactory)
+register(DecisionMakerFactory)
+register(DistrictFactory)
+register(FixedInitialYearRentFactory)
+register(IndexFactory)
+register(IndexPointFigureYearlyFactory)
+register(IntendedUseFactory)
+register(InvoiceFactory)
+register(InvoiceNoteFactory)
+register(InvoicePaymentFactory)
+register(InvoiceRowFactory)
+register(InvoiceSetFactory)
+register(LeaseAreaAddressFactory)
+register(LeaseAreaFactory)
+register(LeaseBasisOfRentFactory)
+register(LeaseBasisOfRentManagementSubventionFactory)
+register(LeaseBasisOfRentTemporarySubventionFactory)
+register(LeaseFactory)
+register(LeaseTypeFactory)
+register(ManagementSubventionFormOfManagementFactory)
+register(NoticePeriodFactory)
+register(OldDwellingsInHousingCompaniesPriceIndexFactory)
+register(PlotFactory)
+register(RelatedLeaseFactory)
+register(RentAdjustmentFactory)
+register(RentDueDateFactory)
+register(RentFactory)
+register(RentIntendedUseFactory)
+register(ServiceUnitFactory)
+register(ServiceUnitGroupMappingFactory)
+register(TenantContactFactory)
+register(TenantFactory)
+register(TenantRentShareFactory)
+register(UiDataFactory)
+register(VipunenMapLayerFactory)
+
 
 fake = Faker("fi_FI")
 
@@ -95,267 +150,6 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
     with django_db_blocker.unblock():
         call_command("loaddata", *fixture_filenames)
-
-
-@register
-class AreaFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Area
-
-
-@register
-class AreaSourceFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = AreaSource
-
-
-@register
-class IndexFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Index
-
-
-@register
-class PlotFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Plot
-
-
-@register
-class RelatedLeaseFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = RelatedLease
-
-
-@register
-class TenantRentShareFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = TenantRentShare
-
-
-@register
-class LeaseTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = LeaseType
-
-
-@register
-class NoticePeriodFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = NoticePeriod
-
-
-@register
-class RentFactory(factory.django.DjangoModelFactory):
-    type = RentType.INDEX
-    cycle = RentCycle.JANUARY_TO_DECEMBER
-    index_type = IndexType.TYPE_7
-
-    class Meta:
-        model = Rent
-
-
-@register
-class RentDueDateFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = RentDueDate
-
-
-@register
-class OldDwellingsInHousingCompaniesPriceIndexFactory(
-    factory.django.DjangoModelFactory
-):
-    class Meta:
-        model = OldDwellingsInHousingCompaniesPriceIndex
-
-
-@register
-class IndexPointFigureYearlyFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = IndexPointFigureYearly
-
-
-@register
-class ContractRentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ContractRent
-
-
-@register
-class RentAdjustmentFactory(factory.django.DjangoModelFactory):
-    type = RentAdjustmentType.DISCOUNT
-
-    class Meta:
-        model = RentAdjustment
-
-
-@register
-class FixedInitialYearRentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = FixedInitialYearRent
-
-
-@register
-class InvoiceFactory(factory.django.DjangoModelFactory):
-    state = InvoiceState.OPEN
-    due_date = timezone.now().date()
-    type = InvoiceType.CHARGE
-    recipient = factory.SubFactory(ContactFactory)
-
-    @factory.lazy_attribute
-    def service_unit(self):
-        if self.lease and self.lease.service_unit:
-            return self.lease.service_unit
-
-        return None
-
-    class Meta:
-        model = Invoice
-
-
-@register
-class InvoiceNoteFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = InvoiceNote
-
-
-@register
-class InvoiceRowFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = InvoiceRow
-
-
-@register
-class InvoiceSetFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = InvoiceSet
-
-
-@register
-class InvoicePaymentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = InvoicePayment
-
-
-@register
-class ConditionTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ConditionType
-
-
-@register
-class ConditionFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Condition
-
-
-@register
-class UiDataFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = UiData
-
-
-@register
-class ManagementSubventionFormOfManagementFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ManagementSubventionFormOfManagement
-
-
-@register
-class LeaseBasisOfRentManagementSubventionFactory(factory.django.DjangoModelFactory):
-    management = factory.SubFactory(ManagementSubventionFormOfManagementFactory)
-
-    class Meta:
-        model = LeaseBasisOfRentManagementSubvention
-
-
-@register
-class LeaseBasisOfRentTemporarySubventionFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = LeaseBasisOfRentTemporarySubvention
-
-
-@register
-class ContractTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ContractType
-
-
-@register
-class ContractFactory(factory.django.DjangoModelFactory):
-
-    type = factory.SubFactory(ContractTypeFactory)
-
-    class Meta:
-        model = Contract
-
-
-@register
-class ContractChangeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ContractChange
-
-
-@register
-class DecisionMakerFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = DecisionMaker
-
-
-@register
-class CollateralTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CollateralType
-
-
-@register
-class CollateralFactory(factory.django.DjangoModelFactory):
-
-    type = factory.SubFactory(CollateralTypeFactory)
-
-    class Meta:
-        model = Collateral
-
-
-@register
-class CustomDetailedPlanFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CustomDetailedPlan
-
-
-@register
-class ServiceUnitGroupMappingFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ServiceUnitGroupMapping
-
-
-@register
-class IntendedUseFactory(factory.django.DjangoModelFactory):
-    name = fake.word()
-    service_unit = factory.SubFactory(ServiceUnitFactory)
-
-    class Meta:
-        model = IntendedUse
-
-
-@register
-class RentIntendedUseFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = RentIntendedUse
-
-
-@register
-class LeaseBasisOfRentFactory(factory.django.DjangoModelFactory):
-    intended_use = factory.SubFactory(RentIntendedUseFactory)
-
-    class Meta:
-        model = LeaseBasisOfRent
-
-
-@register
-class VipunenMapLayerFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = VipunenMapLayer
 
 
 @pytest.fixture

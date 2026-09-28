@@ -11,13 +11,6 @@ from django.test.client import Client
 from django.urls import reverse
 from rest_framework import status as http_status
 
-from conftest import (
-    InfillDevelopmentCompensationLeaseFactory,
-    InspectionFactory,
-    LeaseAreaFactory,
-    LeaseFactory,
-    TargetStatusFactory,
-)
 from file_operations.enums import FileScanResult
 from file_operations.models.filescan import FileScanStatus, _scan_file_task
 from forms.models.form import Attachment, Field
@@ -28,7 +21,16 @@ from leasing.models.infill_development_compensation import (
 )
 from leasing.models.inspection import InspectionAttachment
 from leasing.models.land_area import LeaseAreaAttachment
+from leasing.tests.factories import (
+    InfillDevelopmentCompensationLeaseFactory,
+    InspectionFactory,
+    LeaseAreaFactory,
+    LeaseFactory,
+)
 from plotsearch.models.plot_search import AreaSearchAttachment, MeetingMemo
+from plotsearch.tests.factories import (
+    TargetStatusFactory,
+)
 
 # Attachment classes, with their API routes
 attachment_class_details = [
