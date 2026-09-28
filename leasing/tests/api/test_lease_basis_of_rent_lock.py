@@ -28,7 +28,9 @@ def test_lock_lease_basis_of_rent(
         "change_leasebasisofrent_locked_at",
     ]
     for permission_codename in permission_codenames:
-        permission = Permission.objects.get(codename=permission_codename)
+        permission = Permission.objects.get(
+            codename=permission_codename, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -86,7 +88,9 @@ def test_cannot_change_locked_lease_basis_of_rent(
         "change_leasebasisofrent_locked_at",
     ]
     for permission_codename in permission_codenames:
-        permission = Permission.objects.get(codename=permission_codename)
+        permission = Permission.objects.get(
+            codename=permission_codename, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -148,7 +152,9 @@ def test_cannot_unclock_locked_lease_basis_of_rent(
         "change_leasebasisofrent",
     ]
     for permission_codename in permission_codenames:
-        permission = Permission.objects.get(codename=permission_codename)
+        permission = Permission.objects.get(
+            codename=permission_codename, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -211,7 +217,9 @@ def test_can_unclock_locked_lease_basis_of_rent(
         "change_leasebasisofrent_locked_at",
     ]
     for permission_codename in permission_codenames:
-        permission = Permission.objects.get(codename=permission_codename)
+        permission = Permission.objects.get(
+            codename=permission_codename, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")
@@ -275,7 +283,9 @@ def test_cannot_remove_locked_lease_basis_of_rent(
         "change_leasebasisofrent_locked_at",
     ]
     for permission_codename in permission_codenames:
-        permission = Permission.objects.get(codename=permission_codename)
+        permission = Permission.objects.get(
+            codename=permission_codename, content_type__app_label="leasing"
+        )
         user.user_permissions.add(permission)
 
     client.login(username="test_user", password="test_password")

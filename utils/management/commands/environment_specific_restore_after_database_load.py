@@ -188,6 +188,8 @@ class Command(BaseCommand):
                 # Restore API permissions
                 permissions = backup.get("permissions", [])
                 for codename in permissions:
+                    # TODO: Permissions filtering with codename only can collide with duplicate model names withing separate apps
+                    # The backup script needs fixing so that it stores also the ContentType of the permission, or the app_label of the ContentType.
                     permission = Permission.objects.get(codename=codename)
                     user.user_permissions.add(permission)
 

@@ -29,7 +29,11 @@ def test_user_can_delete_empty_lease(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
@@ -66,7 +70,11 @@ def test_user_can_delete_non_empty_lease_with_permission(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})
@@ -103,7 +111,11 @@ def test_user_cannot_delete_empty_lease_from_another_service_unit(
     ]
 
     for permission_name in permission_names:
-        user.user_permissions.add(Permission.objects.get(codename=permission_name))
+        user.user_permissions.add(
+            Permission.objects.get(
+                codename=permission_name, content_type__app_label="leasing"
+            )
+        )
 
     client.force_login(user)
     url = reverse("v1:lease-detail", kwargs={"pk": lease.id})

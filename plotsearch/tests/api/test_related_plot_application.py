@@ -67,7 +67,9 @@ class TestRelatedPlotApplicationViews:
             response.status_code == status.HTTP_403_FORBIDDEN
         ), "Anonymous user should not be able to create"
 
-        permission = Permission.objects.get(codename="add_relatedplotapplication")
+        permission = Permission.objects.get(
+            codename="add_relatedplotapplication", content_type__app_label="plotsearch"
+        )
         user.user_permissions.add(permission)
         client.force_login(user)
         response = client.post(url, data=data)
@@ -134,7 +136,10 @@ class TestRelatedPlotApplicationViews:
             response.status_code == status.HTTP_403_FORBIDDEN
         ), "Anonymous user should not be able to delete"
 
-        permission = Permission.objects.get(codename="delete_relatedplotapplication")
+        permission = Permission.objects.get(
+            codename="delete_relatedplotapplication",
+            content_type__app_label="plotsearch",
+        )
         user.user_permissions.add(permission)
         client.force_login(user)
         response = client.delete(url)
