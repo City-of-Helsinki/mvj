@@ -97,7 +97,7 @@ def test_sftp_valid_profile_landuse_export(monkeypatch, mock_sftp):
         sftp_mgr = sftp_manager.SFTPManager(profile="landuse_export")
 
         assert sftp_mgr._profile == "landuse_export"
-        assert sftp_mgr._localpath == settings.SAP_EXPORT_LANDUSE_ROOT
+        assert sftp_mgr._localpath is None  # Landuse export does not save files locally
         with sftp_mgr as sftp:
             assert sftp is not None
 
