@@ -2,9 +2,10 @@ import json
 import os
 import re
 import subprocess
+from typing import Any
 
 from django.core import serializers
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 from rest_framework.authtoken.models import Token
 
 from batchrun.models import ScheduledJob
@@ -16,7 +17,7 @@ from utils.management.commands import database_backup_script_constants as consta
 class Command(BaseCommand):
     help = "Creates temporary database backups before loading data from a dump from another environment"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument("target_db", help="Target database name")
         parser.add_argument("db_host", help="Database host")
         parser.add_argument("db_port", help="Database port")
@@ -38,7 +39,7 @@ class Command(BaseCommand):
             help="Also create a binary database dump with pg_dump --format=custom",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         target_db = options["target_db"]
         db_host = options["db_host"]
         db_port = options["db_port"]
@@ -135,7 +136,7 @@ class Command(BaseCommand):
 
         api_tokens = Token.objects.all()
 
-        user_data: list[dict] = []
+        user_data: list[dict[str, Any]] = []
         for token in api_tokens:
             user = token.user
             user_permissions_codenames = [
