@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.db import models, transaction
 from django.db.models import Sum
@@ -110,9 +110,11 @@ class Invoice(TimeStampedModel):
 
     if TYPE_CHECKING:
         payments: models.Manager["ShadowSalesLedgerEntry"]
+        recipient_snapshot: "InvoiceRecipientSnapshot"
+        items: models.Manager["InvoiceItem"]
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         is_creating = self._state.adding
         if (
             self.installment_count_total

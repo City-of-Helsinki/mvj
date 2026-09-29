@@ -30,7 +30,7 @@ class NameModel(models.Model):
         abstract = True
         ordering = ["name"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -44,7 +44,7 @@ class ArchivableModel(models.Model):
         verbose_name=_("Archived note"), null=True, blank=True
     )
 
-    def is_archived(self):
+    def is_archived(self) -> bool:
         return bool(self.archived_at)
 
     class Meta:
