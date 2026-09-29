@@ -7,6 +7,8 @@ import sentry_sdk
 from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from landuse.types import SapLanduseExportValues
+
 django_stubs_ext.monkeypatch()
 project_root = environ.Path(__file__) - 2
 BASE_DIR = project_root
@@ -439,8 +441,14 @@ LASKE_VALUES = {
     "pmntterm": "Z100",
 }
 
-# TODO ask TALPA if needed
-SAP_LANDUSE_VALUES = None
+SAP_LANDUSE_VALUES: SapLanduseExportValues = {
+    "sender_id": "ID340",
+    "sales_org": "2800",
+    "sales_office": "2826",
+    "distribution_channel": "10",
+    "division": "10",
+    "pmntterm": None,
+}
 
 # Directory where SAP export files are stored on the MVJ system.
 LASKE_EXPORT_ROOT = env.str(
