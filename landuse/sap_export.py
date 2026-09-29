@@ -27,11 +27,12 @@ def _get_export_filename(invoice_id: int) -> str:
 
 def send_invoice_xml(invoice_id: int, xml: str) -> None:
     """Upload an in-memory land-use invoice XML document to SAP."""
-    if not settings.FLAG_LANDUSE_SAP_EXPORT_ENABLED:
+    if not getattr(settings, "FLAG_LANDUSE_SAP_EXPORT_ENABLED", False):
         raise LanduseSapExportDisabledError("Land-use SAP export is disabled.")
 
     filename = _get_export_filename(invoice_id)
-    remote_path = str(PurePosixPath(settings.LANDUSE_SAP_EXPORT_DIRECTORY) / filename)
+    export_directory = getattr(settings, "LANDUSE_SAP_EXPORT_DIRECTORY")
+    remote_path = str(PurePosixPath(export_directory) / filename)
 
     with SFTPManager(profile="landuse_export") as sftp:
         sftp.putfo(BytesIO(xml.encode("utf-8")), remote_path)
