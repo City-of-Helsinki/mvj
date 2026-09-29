@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
@@ -139,7 +141,7 @@ class PaymentScheduleInstallment(TimeStampedModel):
             )
         ]
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if (
             self.installment_count_total
             and self.installment_sequence_number

@@ -2,25 +2,30 @@ import sys
 from typing import Any, Optional, Union
 
 import yaml
-from django.apps import apps
-from django.core.management.base import BaseCommand
+from django.apps import AppConfig, apps
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.management.base import BaseCommand, CommandParser
 from django.db import models
+
+FieldOrForeignObjectReference = (
+    models.Field[Any, Any] | models.ForeignObjectRel | GenericForeignKey
+)
 
 
 class Command(BaseCommand):
     help = "Validates the database sanitizer configuration file against defined Django models"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--silent",
             action="store_true",
             help="Only output final result, errors, and return non-zero exit code if issues found",
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: Any, **options: Any) -> None:
         config_file = ".sanitizerconfig"
         ignored_apps = ["admin", "contenttypes", "sessions"]
-        ignored_models = []
+        ignored_models: list[str] = []
         silent = options["silent"]
 
         config = self._load_config(config_file)
@@ -42,7 +47,7 @@ class Command(BaseCommand):
         """Load sanitizer config from file and validate basic structure."""
         try:
             with open(config_file, "r") as f:
-                config = yaml.safe_load(f)
+                config: Optional[dict[str, Any]] = yaml.safe_load(f)
         except FileNotFoundError:
             self.stderr.write(self.style.ERROR(f"Config file not found: {config_file}"))
             return None
@@ -108,7 +113,7 @@ class Command(BaseCommand):
 
     def _extract_app_models(
         self,
-        app_config,
+        app_config: AppConfig,
         app_name: str,
         ignored_models: list[str],
         system_models: list[str],
@@ -127,8 +132,8 @@ class Command(BaseCommand):
                 continue
 
             # Extract fields for this model
-            fields = self._extract_model_fields(model)
-            app_models[model_name] = fields
+            field_names = self._extract_model_field_names(model)
+            app_models[model_name] = field_names
 
         return app_models
 
@@ -136,7 +141,7 @@ class Command(BaseCommand):
         self,
         model_name: str,
         model_dotted: str,
-        model,
+        model: type[models.Model],
         ignored_models: list[str],
         system_models: list[str],
         silent: bool,
@@ -168,8 +173,8 @@ class Command(BaseCommand):
 
         return False
 
-    def _extract_model_fields(self, model) -> set[str]:
-        """Extract fields from a Django model."""
+    def _extract_model_field_names(self, model: type[models.Model]) -> set[str]:
+        """Extract field names from a Django model."""
         fields = set()
 
         for field in model._meta.get_fields():
@@ -183,7 +188,7 @@ class Command(BaseCommand):
 
         return fields
 
-    def _should_skip_field(self, field) -> bool:
+    def _should_skip_field(self, field: FieldOrForeignObjectReference) -> bool:
         """Determine if a field should be skipped in validation."""
         # Skip auto-created fields
         if getattr(field, "auto_created", False):
@@ -206,7 +211,7 @@ class Command(BaseCommand):
 
         return False
 
-    def _get_field_name(self, field) -> str:
+    def _get_field_name(self, field: FieldOrForeignObjectReference) -> str:
         """Get the appropriate field name, handling foreign keys."""
         field_name = field.name
         if isinstance(field, models.ForeignKey):
@@ -257,9 +262,13 @@ class Command(BaseCommand):
             return set()
 
         # Find fields in Django model but missing in config
+        configured_fields = config_models[model_name]
+        if isinstance(configured_fields, str) and configured_fields == "skip_rows":
+            return set()
+
         missing_fields = set()
         for field in fields:
-            if field not in config_models[model_name]:  # type: ignore
+            if field not in configured_fields:
                 missing_fields.add(field)
 
         return missing_fields

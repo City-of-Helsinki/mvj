@@ -2,7 +2,7 @@ from io import BytesIO
 from typing import Any
 
 from django.template.loader import render_to_string
-from django.template.response import TemplateResponse
+from django.template.response import SimpleTemplateResponse, TemplateResponse
 from xhtml2pdf import pisa
 
 
@@ -26,9 +26,13 @@ def generate_pdf(context: dict[str, Any], template_name: str) -> BytesIO:
 
 
 class PdfResponse(TemplateResponse):
-    def render(self):
+    def render(self) -> SimpleTemplateResponse:
         retval = super(PdfResponse, self).render()
-        pdf = generate_pdf(self.context_data, self.template_name)
+        context = self.context_data or {}
+        template_name = self.template_name
+        if not isinstance(template_name, str):
+            raise TypeError("PdfResponse requires a single template name.")
+        pdf = generate_pdf(context, template_name)
         self.content = pdf.getvalue()
         return retval
 

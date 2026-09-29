@@ -1,10 +1,11 @@
 import json
 import os
 import subprocess
+from typing import Any
 
 from django.contrib.auth.models import Permission
 from django.core import serializers
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 from rest_framework.authtoken.models import Token
 
 from batchrun.models import ScheduledJob
@@ -16,7 +17,7 @@ from utils.management.commands import database_backup_script_constants as consta
 class Command(BaseCommand):
     help = "Restore environment-specific database objects and settings after loading data from another environment"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument("target_db", help="Target database name")
         parser.add_argument("db_host", help="Database host")
         parser.add_argument("db_port", help="Database port")
@@ -34,7 +35,7 @@ class Command(BaseCommand):
             ),
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         target_db = options["target_db"]
         db_host = options["db_host"]
         db_port = options["db_port"]
