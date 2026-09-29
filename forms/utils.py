@@ -610,7 +610,7 @@ def _generate_applicant_target_status_email(answer: "Answer") -> EmailMessageInp
 
         email_pdf: bytes = pdf.getvalue()
         attachment_filename = f"{target_status.application_identifier}.pdf"
-        attachments.append([attachment_filename, email_pdf, "application/pdf"])
+        attachments.append((attachment_filename, email_pdf, "application/pdf"))
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,
@@ -644,7 +644,7 @@ def _generate_applicant_area_search_email(answer: "Answer") -> EmailMessageInput
 
     email_pdf: bytes = pdf.getvalue()
     attachment_filename = f"{getattr(area_search, 'identifier', email_subject)}.pdf"
-    attachments.append([attachment_filename, email_pdf, "application/pdf"])
+    attachments.append((attachment_filename, email_pdf, "application/pdf"))
 
     email_message: EmailMessageInput = {
         "from_email": from_email or settings.MVJ_EMAIL_FROM,

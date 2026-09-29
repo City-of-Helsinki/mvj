@@ -1,8 +1,12 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.template.loader import render_to_string
+
+if TYPE_CHECKING:
+    from landuse.models.invoice import Invoice, InvoiceRecipientSnapshot
 
 
 @dataclass(frozen=True)
@@ -26,7 +30,6 @@ class SapPartyContext:
 
 @dataclass(frozen=True)
 class SapLineItemContext:
-    material_description: str
     quantity: str
     net_price: str
     line_text_l1: str
@@ -60,7 +63,7 @@ def _sap_value(name: str) -> str:
     return str(values.get(name, ""))
 
 
-def _party_context(recipient) -> SapPartyContext:
+def _party_context(recipient: "InvoiceRecipientSnapshot") -> SapPartyContext:
     customer_id = recipient.national_identification_number
     customer_yid = recipient.business_id
     return SapPartyContext(
@@ -86,7 +89,7 @@ def _format_amount(amount: Decimal) -> str:
     return f"{amount:.2f}".replace(".", ",")
 
 
-def render_invoice_xml(invoice) -> str:
+def render_invoice_xml(invoice: "Invoice") -> str:
     """Render the current invoice as an in-memory SAP sales-order document."""
     recipient = invoice.recipient_snapshot
     party = _party_context(recipient)
@@ -109,7 +112,6 @@ def render_invoice_xml(invoice) -> str:
         billing_party1=party,
         line_items=tuple(
             SapLineItemContext(
-                material_description=item.get_item_type_display(),
                 quantity="1,00",
                 net_price=_format_amount(item.amount),
                 line_text_l1=item.description,

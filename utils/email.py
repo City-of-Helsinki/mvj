@@ -16,13 +16,15 @@ class EmailMessageInput(TypedDict):
     to: list[str]
     subject: str
     body: str
-    attachments: list[tuple[str, bytes | BytesIO, str]]
+    attachments: list[tuple[str, bytes, str]]
 
 
 logger = logging.getLogger(__name__)
 
 
-def send_email(email_message_input: EmailMessageInput, body_is_html=False) -> None:
+def send_email(
+    email_message_input: EmailMessageInput, body_is_html: bool = False
+) -> None:
     """Creates an EmailMessage from the input and sends it with error handling."""
     email_message = _create_email_from_input(email_message_input, body_is_html)
 

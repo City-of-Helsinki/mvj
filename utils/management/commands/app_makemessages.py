@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.core.management.commands import makemessages
 
 
@@ -10,7 +12,7 @@ class Command(makemessages.Command):
         "--no-fuzzy-matching",
     ]
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         options["no_location"] = True
         options["no_obsolete"] = True
         options["ignore_patterns"] = ["venv"]
