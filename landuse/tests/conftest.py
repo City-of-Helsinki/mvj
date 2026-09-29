@@ -1,8 +1,9 @@
-from django.conf import settings
+import pytest
 
 
-def pytest_configure():
-    """Overwrite invoicing settings to avoid mistakes during testing."""
+@pytest.fixture(autouse=True)
+def block_landuse_external_services(settings):
+    """Prevent land-use tests from using real invoicing integrations."""
     settings.FLAG_LANDUSE_SAP_EXPORT_ENABLED = False
     settings.SAP_LANDUSE_VALUES = None
     settings.LANDUSE_SAP_EXPORT_DIRECTORY = "/blocked-in-tests"
