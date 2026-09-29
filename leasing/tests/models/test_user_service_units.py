@@ -1,14 +1,13 @@
 from time import time
 from unittest.mock import MagicMock, patch
 
+import jwt
 import pytest
+from cryptography.hazmat.primitives.asymmetric import rsa
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from helusers.models import ADGroup, ADGroupMapping
-from jose.backends import RSAKey
-from jose.constants import ALGORITHMS
-from jose.jwt import encode
-from rsa import newkeys as rsa_newkeys
+from jwt.algorithms import RSAAlgorithm
 
 from leasing.models.service_unit import ServiceUnitGroupMapping
 
@@ -31,11 +30,6 @@ def test_api_access_updates_service_units(
     ADGroupMapping.objects.create(group=group, ad_group=ad_group)
     ServiceUnitGroupMapping.objects.create(group=group, service_unit=service_unit)
 
-    # Generate JWT
-    _public_rsa_key, private_rsa_key = rsa_newkeys(2048)
-    private_pem = private_rsa_key.save_pkcs1(format="PEM")
-    rsa_key = RSAKey(key=private_pem, algorithm=ALGORITHMS.RS256)
-
     settings.OIDC_API_TOKEN_AUTH["ISSUER"] = OIDC_ISSUER
     settings.OIDC_API_TOKEN_AUTH["AUDIENCE"] = "test_client_id"
     settings.OIDC_API_TOKEN_AUTH["API_AUTHORIZATION_FIELD"] = "test_api_host"
@@ -46,7 +40,8 @@ def test_api_access_updates_service_units(
 
     api_token_auth_settings._load()
 
-    jwk = rsa_key.public_key().to_dict()
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    jwk = RSAAlgorithm.to_jwk(private_key.public_key(), as_dict=True)
 
     def mock_oidc_get(url, *args, **kwargs):
         response = MagicMock()
@@ -75,7 +70,7 @@ def test_api_access_updates_service_units(
         ],
     }
 
-    jwt_token = encode(payload, rsa_key.to_dict(), algorithm="RS256")
+    jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
 
     url = reverse("v1:lease-detail", kwargs={"pk": lease_test_data["lease"].id})
     with patch("helusers.oidc.requests.get", side_effect=mock_oidc_get):
