@@ -77,6 +77,9 @@ jobs:
           python manage.py compilemessages
           pytest -ra -vvv --cov=. --cov-report xml:coverage.xml --migrations
 
+      - name: Run field_permissions app tests
+        run: pytest field_permissions
+
       - name: Store coverage.xml
         uses: actions/cache/save@v5
         with:
