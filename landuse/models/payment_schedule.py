@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
@@ -103,6 +104,49 @@ class PaymentSchedule(TimeStampedModel):
     def get_interest_calculation_days_in_year() -> int:
         """In Finnish: Päiviä vuodessa korkolaskennassa"""
         return INTEREST_CALCULATION_DAYS_IN_YEAR
+
+    def clean(self) -> None:
+        errors = {}
+        if self.recipient_party_id and self.agreement_id:
+            if self.recipient_party.agreement_id != self.agreement_id:
+                errors["recipient_party"] = (
+                    "Recipient party must belong to the payment schedule agreement."
+                )
+        if self.contract_id and self.agreement_id:
+            if self.contract.agreement_id != self.agreement_id:
+                errors["contract"] = (
+                    "Contract must belong to the payment schedule agreement."
+                )
+        if errors:
+            raise ValidationError(errors)
+
+    def submit(self) -> None:
+        if self.status not in (
+            PaymentScheduleStatus.DRAFT,
+            PaymentScheduleStatus.REJECTED,
+        ):
+            raise ValidationError("Only draft or rejected schedules can be submitted.")
+        self.status = PaymentScheduleStatus.PENDING_APPROVAL
+        self.rejected_reason = ""
+        self.save(update_fields=("status", "rejected_reason", "modified_at"))
+
+    def approve(self) -> None:
+        if self.status != PaymentScheduleStatus.PENDING_APPROVAL:
+            raise ValidationError("Only pending schedules can be approved.")
+        self.status = PaymentScheduleStatus.APPROVED
+        self.rejected_reason = ""
+        self.save(update_fields=("status", "rejected_reason", "modified_at"))
+
+    def reject(self, reason: str) -> None:
+        if self.status != PaymentScheduleStatus.PENDING_APPROVAL:
+            raise ValidationError("Only pending schedules can be rejected.")
+        if not reason.strip():
+            raise ValidationError(
+                {"rejected_reason": "A rejection reason is required."}
+            )
+        self.status = PaymentScheduleStatus.REJECTED
+        self.rejected_reason = reason.strip()
+        self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
 
 class PaymentScheduleInstallment(TimeStampedModel):
