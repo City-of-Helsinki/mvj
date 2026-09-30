@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Sum
 from django.utils import timezone
@@ -129,6 +130,20 @@ class Invoice(TimeStampedModel):
 
         if is_creating:
             InvoiceRecipientSnapshot.create_for_invoice(self)
+
+    def clean(self) -> None:
+        if (
+            self.recipient_party_id
+            and self.agreement_id
+            and self.recipient_party.agreement_id != self.agreement_id
+        ):
+            raise ValidationError(
+                {
+                    "recipient_party": (
+                        "Recipient party must belong to the invoice agreement."
+                    )
+                }
+            )
 
     def get_remaining_amount(self) -> Decimal | None:
         """How much is left unpaid on this invoice."""
