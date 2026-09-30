@@ -107,7 +107,7 @@ class LandUseCompensation(TimeStampedModel):
     )
 
     # In Finnish: Maapoliittinen ohjelma
-    land_policy_program = models.OneToOneField(
+    land_policy_program = models.ForeignKey(
         LandPolicyProgram,
         on_delete=models.SET_NULL,
         null=True,

@@ -30,6 +30,9 @@ class District(TimeStampedModel):
     # In Finnish: Kaupunginosan tunniste
     identifier = models.CharField(blank=False)
 
+    class Meta:
+        ordering = ("name",)
+
 
 class AuthorizedSignatory(TimeStampedModel):
     """
