@@ -20,6 +20,20 @@ from forms.viewsets.form import (
     TargetStatusViewset,
 )
 from gdpr.views import MvjGDPRAPIView
+from landuse.views.agreement import LandUseAgreementViewSet
+from landuse.views.lookups import (
+    AuthorizedSignatoryViewSet as LandUseAuthorizedSignatoryViewSet,
+)
+from landuse.views.lookups import DetailedPlanViewSet as LandUseDetailedPlanViewSet
+from landuse.views.lookups import DistrictViewSet as LandUseDistrictViewSet
+from landuse.views.lookups import (
+    LandPolicyProgramViewSet,
+    SiteIntendedUseViewSet,
+    SiteTenureTypeViewSet,
+)
+from landuse.views.operations import InvoiceViewSet as LandUseInvoiceViewSet
+from landuse.views.operations import PaymentScheduleViewSet
+from landuse.views.ui_metadata import LandUseUiMetadataView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
 from leasing.export_api.viewsets import (
     ExportExpiredLeaseViewSet,
@@ -326,6 +340,33 @@ router.register("job", JobViewSet)
 router.register("job_run", JobRunViewSet)
 router.register("job_run_log_entry", JobRunLogEntryViewSet)
 
+
+# LandUse Agreements
+landuse_router = routers.DefaultRouter()
+landuse_router.register("agreements", LandUseAgreementViewSet, basename="agreement")
+landuse_router.register("districts", LandUseDistrictViewSet, basename="district")
+landuse_router.register(
+    "authorized-signatories",
+    LandUseAuthorizedSignatoryViewSet,
+    basename="authorized-signatory",
+)
+landuse_router.register(
+    "detailed-plans", LandUseDetailedPlanViewSet, basename="detailed-plan"
+)
+landuse_router.register(
+    "land-policy-programs", LandPolicyProgramViewSet, basename="land-policy-program"
+)
+landuse_router.register(
+    "site-intended-uses", SiteIntendedUseViewSet, basename="site-intended-use"
+)
+landuse_router.register(
+    "site-tenure-types", SiteTenureTypeViewSet, basename="site-tenure-type"
+)
+landuse_router.register(
+    "payment-schedules", PaymentScheduleViewSet, basename="payment-schedule"
+)
+landuse_router.register("invoices", LandUseInvoiceViewSet, basename="invoice")
+
 additional_api_paths = [
     path(
         "target_status_pdf/",
@@ -439,8 +480,16 @@ pub_api_urls = [
 credit_integration_urls = [
     path("", include((credit_integration_urlpatterns, "credit_integration")))
 ]
+landuse_urls = [
+    path(
+        "landuse/ui-metadata/",
+        LandUseUiMetadataView.as_view(),
+        name="landuse-ui-metadata",
+    ),
+    path("landuse/", include((landuse_router.urls, "landuse"))),
+]
 
-v1_urls = api_urls + credit_integration_urls + pub_api_urls
+v1_urls = api_urls + credit_integration_urls + pub_api_urls + landuse_urls
 
 urlpatterns = [
     path(
