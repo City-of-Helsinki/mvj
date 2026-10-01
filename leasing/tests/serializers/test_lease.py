@@ -12,6 +12,7 @@ from leasing.serializers.lease import (
     LeaseCreateSerializer,
     LeasesForContactSerializer,
     LeaseUpdateSerializer,
+    get_related_leases,
 )
 from leasing.viewsets.lease_additional_views import LeasesForContactViewSet
 
@@ -289,3 +290,40 @@ def test_contact_role_active_false_when_future_start(
 
     serializer = _make_serializer(lease, contact.id)
     assert serializer.data["contact_role_active"] is False
+
+
+@pytest.mark.django_db
+def test_get_related_leases_edges_are_oriented_predecessor_to_successor(
+    lease_factory, related_lease_factory
+):
+    """Each edge in a Y-shaped tree keeps its from_lease -> to_lease orientation.
+    Also ensures the entire tree is correctly collected."""
+
+    # A -> B -> C <- E <- D
+    leases = {
+        letter: lease_factory(type_id=1, municipality_id=1, district_id=5)
+        for letter in "ABCDE"
+    }
+    related_lease_factory(from_lease=leases["A"], to_lease=leases["B"])
+    related_lease_factory(from_lease=leases["B"], to_lease=leases["C"])
+    related_lease_factory(from_lease=leases["D"], to_lease=leases["E"])
+    related_lease_factory(from_lease=leases["E"], to_lease=leases["C"])
+
+    result_from_root = get_related_leases(leases["C"])
+
+    edge_pairs_from_root = {
+        (edge["predecessor"], edge["successor"]) for edge in result_from_root["edges"]
+    }
+    assert edge_pairs_from_root == {
+        (leases["A"].id, leases["B"].id),
+        (leases["B"].id, leases["C"].id),
+        (leases["D"].id, leases["E"].id),
+        (leases["E"].id, leases["C"].id),
+    }
+
+    # Ensure that starting from a leaf node still collects the entire tree.
+    result_from_leaf = get_related_leases(leases["A"])
+    edge_pairs_from_leaf = {
+        (edge["predecessor"], edge["successor"]) for edge in result_from_leaf["edges"]
+    }
+    assert edge_pairs_from_leaf == edge_pairs_from_root
