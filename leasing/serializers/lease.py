@@ -28,6 +28,7 @@ from leasing.serializers.invoice import (
     InvoiceNoteCreateUpdateSerializer,
     InvoiceNoteSerializer,
 )
+from leasing.serializers.types import RelatedLeases
 from plotsearch.models import (
     AreaSearch,
     PlotSearch,
@@ -351,6 +352,7 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "note",
             "preparer",
             "is_subject_to_vat",
+            "service_unit",
             "target_statuses",
             "plot_searches",
             "area_searches",
@@ -461,47 +463,55 @@ class LeaseListSerializer(LeaseSerializerBase):
     collection_notes = None
 
 
-def get_related_lease_predecessors(to_lease_id, accumulator=None):
-    if accumulator is None:
-        accumulator = []
+def get_related_lease_edges(lease_id) -> tuple[set[RelatedLease], set[int]]:
+    visited_lease_ids = {lease_id}
+    edges = set()
+    queue = [lease_id]
 
-    accumulator.append(to_lease_id)
+    while queue:
+        current_id = queue.pop()
 
-    result = set()
-    predecessors = RelatedLease.objects.filter(to_lease=to_lease_id).select_related(
-        "to_lease", "from_lease"
-    )
+        related = RelatedLease.objects.filter(
+            Q(from_lease=current_id) | Q(to_lease=current_id)
+        ).select_related("to_lease", "from_lease")
 
-    if predecessors:
-        for predecessor in predecessors:
-            result.add(predecessor)
-
-            if predecessor.from_lease_id == predecessor.to_lease_id:
+        for edge in related:
+            if edge.from_lease_id == edge.to_lease_id:
                 continue
 
-            if predecessor.from_lease_id in accumulator:
-                continue
+            edges.add(edge)
 
-            result.update(
-                get_related_lease_predecessors(predecessor.from_lease_id, accumulator)
-            )
+            for neighbor_id in (edge.from_lease_id, edge.to_lease_id):
+                if neighbor_id not in visited_lease_ids:
+                    visited_lease_ids.add(neighbor_id)
+                    queue.append(neighbor_id)
 
-    return result
+    return edges, visited_lease_ids
 
 
-def get_related_leases(obj):
-    # Immediate successors
-    related_to_leases = set(
-        RelatedLease.objects.filter(from_lease=obj).select_related(
-            "to_lease", "from_lease"
-        )
+def get_related_leases(obj) -> RelatedLeases:
+    """Builds related lease graph as a flat lease dict with oriented edges
+    so the full graph structure is easily understood.
+    """
+    edges, lease_ids = get_related_lease_edges(obj.id)
+
+    leases = Lease.objects.filter(id__in=lease_ids).select_related(
+        "type", "municipality", "district", "identifier", "service_unit"
     )
-    # All predecessors
-    related_from_leases = get_related_lease_predecessors(obj.id)
+    serialized_leases = LeaseSuccinctWithPlotSearchInformationSerializer(
+        leases, many=True
+    ).data
 
     return {
-        "related_to": RelatedToLeaseSerializer(related_to_leases, many=True).data,
-        "related_from": RelatedFromLeaseSerializer(related_from_leases, many=True).data,
+        "leases": {str(lease["id"]): lease for lease in serialized_leases},
+        "edges": [
+            {
+                "predecessor": edge.from_lease_id,
+                "successor": edge.to_lease_id,
+                "related_lease_id": edge.id,
+            }
+            for edge in edges
+        ],
     }
 
 
