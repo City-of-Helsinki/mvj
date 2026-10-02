@@ -476,6 +476,7 @@ def get_related_lease_edges(lease_id) -> tuple[set[RelatedLease], set[int]]:
         ).select_related("to_lease", "from_lease")
 
         for edge in related:
+            # Skip theoretically possible self referential edges to avoid unnecessary loops
             if edge.from_lease_id == edge.to_lease_id:
                 continue
 
@@ -489,7 +490,7 @@ def get_related_lease_edges(lease_id) -> tuple[set[RelatedLease], set[int]]:
     return edges, visited_lease_ids
 
 
-def get_related_leases(obj) -> RelatedLeases:
+def get_related_leases(obj: Lease, context: dict) -> RelatedLeases:
     """Builds related lease graph as a flat lease dict with oriented edges
     so the full graph structure is easily understood.
     """
@@ -499,7 +500,7 @@ def get_related_leases(obj) -> RelatedLeases:
         "type", "municipality", "district", "identifier", "service_unit"
     )
     serialized_leases = LeaseSuccinctWithPlotSearchInformationSerializer(
-        leases, many=True
+        leases, many=True, context=context
     ).data
 
     return {
@@ -533,8 +534,8 @@ class LeaseRetrieveSerializer(LeaseSerializerBase):
     area_notes = serializers.SerializerMethodField()
     matching_basis_of_rents = serializers.SerializerMethodField()
 
-    def get_related_leases(self, obj):
-        return get_related_leases(obj)
+    def get_related_leases(self, obj: Lease):
+        return get_related_leases(obj, self.context)
 
     def get_plot_searches(self, obj: Lease):
         return LeaseSuccinctWithPlotSearchInformationSerializer.get_plot_searches(
@@ -692,8 +693,8 @@ class LeaseUpdateSerializer(
         required=True,
     )
 
-    def get_related_leases(self, obj):
-        return get_related_leases(obj)
+    def get_related_leases(self, obj: Lease):
+        return get_related_leases(obj, self.context)
 
     def validate_service_unit(self, value):
         request = self.context.get("request")

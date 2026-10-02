@@ -293,9 +293,7 @@ def test_contact_role_active_false_when_future_start(
 
 
 @pytest.mark.django_db
-def test_get_related_leases_edges_are_oriented_predecessor_to_successor(
-    lease_factory, related_lease_factory
-):
+def test_get_related_leases_returns_full_tree(lease_factory, related_lease_factory):
     """Each edge in a Y-shaped tree keeps its from_lease -> to_lease orientation.
     Also ensures the entire tree is correctly collected."""
 
@@ -309,7 +307,7 @@ def test_get_related_leases_edges_are_oriented_predecessor_to_successor(
     related_lease_factory(from_lease=leases["D"], to_lease=leases["E"])
     related_lease_factory(from_lease=leases["E"], to_lease=leases["C"])
 
-    result_from_root = get_related_leases(leases["C"])
+    result_from_root = get_related_leases(leases["C"], context={})
 
     edge_pairs_from_root = {
         (edge["predecessor"], edge["successor"]) for edge in result_from_root["edges"]
@@ -321,8 +319,12 @@ def test_get_related_leases_edges_are_oriented_predecessor_to_successor(
         (leases["E"].id, leases["C"].id),
     }
 
+    assert {int(lease_id) for lease_id in result_from_root["leases"]} == {
+        lease.id for lease in leases.values()
+    }
+
     # Ensure that starting from a leaf node still collects the entire tree.
-    result_from_leaf = get_related_leases(leases["A"])
+    result_from_leaf = get_related_leases(leases["A"], context={})
     edge_pairs_from_leaf = {
         (edge["predecessor"], edge["successor"]) for edge in result_from_leaf["edges"]
     }

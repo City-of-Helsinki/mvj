@@ -25,6 +25,5 @@ class RelatedLeaseEdge(TypedDict):
 
 
 class RelatedLeases(TypedDict):
-    current_lease_id: int
     leases: dict[str, Any]
     edges: list[RelatedLeaseEdge]
