@@ -87,7 +87,7 @@ def test_create_lease_relate_to_with_permission(
 
     lease = Lease.objects.get(pk=response.data["id"])
 
-    assert len(response.data["related_leases"]["related_from"]) == 1
+    assert len(response.data["related_leases"]["edges"]) == 1
     assert lease_test_data["lease"].related_leases.count() == 1
     assert lease_test_data["lease"].related_leases.first().id == lease.id
 
