@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -86,11 +87,27 @@ class PaymentScheduleInline(admin.TabularInline):
     show_change_link = True
 
 
-class InvoiceInline(admin.TabularInline):
+class SapXmlDisplayMixin:
+    @admin.display(description="SAP XML")
+    def formatted_sap_xml(self, invoice):
+        if not invoice or not invoice.pk:
+            return "-"
+
+        if invoice.sap_xml:
+            return format_html("<pre>{}</pre>", invoice.sap_xml)
+
+        return format_html(
+            "<p><strong>PREVIEW NOT YET GENERATED</strong></p><pre>{}</pre>",
+            invoice.get_sap_xml(),
+        )
+
+
+class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline):
     model = Invoice
     extra = 0
     show_change_link = True
-    readonly_fields = ("sent_at",)
+    exclude = ("sap_xml",)
+    readonly_fields = ("formatted_sap_xml", "sent_at")
 
 
 @admin.register(LandUseAgreement)
@@ -494,7 +511,7 @@ class InvoiceRecipientSnapshotInline(admin.StackedInline):
 
 
 @admin.register(Invoice)
-class InvoiceAdmin(admin.ModelAdmin):
+class InvoiceAdmin(SapXmlDisplayMixin, admin.ModelAdmin):
     list_display = (
         "invoice_identifier",
         "agreement",
@@ -515,7 +532,13 @@ class InvoiceAdmin(admin.ModelAdmin):
         "recipient_party",
         "source_payment_schedule_installment",
     )
-    readonly_fields = ("sap_xml", "sent_at", "created_at", "modified_at")
+    exclude = ("sap_xml",)
+    readonly_fields = (
+        "formatted_sap_xml",
+        "sent_at",
+        "created_at",
+        "modified_at",
+    )
     inlines = (
         InvoiceRecipientSnapshotInline,
         InvoiceItemInline,
