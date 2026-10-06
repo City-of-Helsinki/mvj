@@ -323,6 +323,7 @@ class CommentAdmin(FieldPermissionsModelAdmin):
 class ContractChangeInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = ContractChange
     extra = 0
+    raw_id_fields = ("decision",)
 
 
 class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
@@ -334,7 +335,7 @@ class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
 class ContractAdmin(FieldPermissionsModelAdmin):
     list_display = ("lease", "type", "contract_number")
     inlines = [ContractChangeInline, CollateralInline]
-    raw_id_fields = ("lease",)
+    raw_id_fields = ("lease", "decision")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -434,6 +435,7 @@ class ContractRentInline(FieldPermissionsAdminMixin, admin.TabularInline):
 class RentAdjustmentInline(FieldPermissionsAdminMixin, admin.TabularInline):
     model = RentAdjustment
     extra = 0
+    raw_id_fields = ("decision",)
 
 
 @admin.register(Rent)

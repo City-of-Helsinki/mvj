@@ -18,6 +18,7 @@ from plotsearch.models.plot_search import FAQ
 @admin.register(PlotSearch)
 class PlotSearchAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
     list_display = ("name",)
+    raw_id_fields = ("decisions",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
