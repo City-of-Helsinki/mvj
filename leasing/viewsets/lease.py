@@ -1,7 +1,8 @@
+import datetime
 import re
 
 from dateutil.parser import ParserError, parse, parserinfo
-from django.db.models import DurationField, Exists, OuterRef, Q, Subquery
+from django.db.models import DurationField, Exists, OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import Cast
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -183,6 +184,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
         `search` query parameter can be used to find leases by identifier and multiple other fields
         """
         succinct = self.request.query_params.get("succinct")
+        queryset: QuerySet[Lease]
 
         if succinct:
             queryset = Lease.objects.succinct_select_related_and_prefetch_related()
@@ -580,7 +582,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
 
         return queryset
 
-    def get_preparation_state_filters(self, queryset, preparation_state):
+    def get_preparation_state_filters(
+        self, queryset: QuerySet[Lease], preparation_state: PreparationState
+    ):
         if PreparationState.MISSING_LEASE_PROPERTY.value in preparation_state:
             queryset = queryset.filter(lease_areas__isnull=True)
 
@@ -618,7 +622,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 ]
             )
 
-        # Filter for missing constructability description. (PIMA, etc.)
+        # Filter for missing constructability description.
         if PreparationState.MISSING_CONSTRUCTABILITY.value in preparation_state:
             has_no_description = ~Exists(
                 ConstructabilityDescription.objects.filter(lease_area_id=OuterRef("pk"))
@@ -630,11 +634,20 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 .filter(
                     Q(end_date__isnull=True) | Q(end_date__gte=timezone.now().date())
                 )
-                .exclude(
-                    state__in=[
-                        # Reserves don't have constructability descriptions.
-                        LeaseState.RESERVE,
-                    ]
+                # Constructability descriptions started being recorded on leases created from 1.1.2020 onwards.
+                .filter(
+                    Q(created_at__isnull=True)
+                    | Q(created_at__gte=datetime.date(2020, 1, 1))
+                )
+                .filter(
+                    Q(
+                        state__in=[
+                            # Only lease-type leases have constructability descriptions.
+                            LeaseState.LEASE,
+                            LeaseState.LONG_TERM_LEASE,
+                            LeaseState.SHORT_TERM_LEASE,
+                        ]
+                    )
                 )
             )
 
