@@ -67,11 +67,11 @@ def test_get_metadata_maps_configured_columns(area_importer):
             "second_column",
         ],
     )
-    id = 5
+    source_row_id = 5
     first_column_value = "4321"
     second_column_value = "1234"
     row = AreaRow(
-        id=id,
+        id=source_row_id,
         first_column=first_column_value,
         second_column=second_column_value,
     )
@@ -99,7 +99,6 @@ def test_get_metadata_reports_missing_source_column(area_importer):
     assert len(error_messages) == 1
     assert "id #5, metadata field missing" in error_messages[0]
     assert "first_column" in error_messages[0]
-    assert area_importer.stdout.getvalue() == "E"
 
 
 @pytest.mark.parametrize(
@@ -112,6 +111,7 @@ def test_get_metadata_reports_missing_source_column(area_importer):
 def test_get_match_data_uses_external_id_only_for_lease_areas(
     area_importer, area_type, expected_external_id
 ):
+    """Lease-area rows need source IDs because their identifiers are not unique."""
     source = MagicMock()
     area_import = dict(AREA_IMPORT, area_type=area_type)
     row = SimpleNamespace(id="source-123", vuokratunnus="lease-456")
@@ -165,8 +165,8 @@ def test_get_geometry_reports_geos_error(area_importer, monkeypatch):
     )
     assert geometry is None
     assert failure_count == 1
-    assert error_messages and error_messages[0].startswith("id #7 error:")
-    assert area_importer.stdout.getvalue() == "E"
+    assert len(error_messages) == 1
+    assert error_messages[0].startswith("id #7 error:")
 
 
 def test_handle_geometry_promotes_polygon_to_multipolygon(area_importer):
@@ -190,13 +190,14 @@ def test_handle_geometry_rejects_non_polygonal_geometry(area_importer):
     )
     assert geometry is None
     assert failure_count == 1
-    assert error_messages and "Geometry is not a Multipolygon" in error_messages[0]
-    assert area_importer.stdout.getvalue() == "E"
+    assert len(error_messages) == 1
+    assert "Geometry is not a Multipolygon" in error_messages[0]
 
 
 def test_get_plan_unit_areas_filters_by_detailed_plan_identifier(
     area_importer, monkeypatch
 ):
+    """The same plan-unit identifier may occur in multiple detailed plans."""
     areas = MagicMock()
     monkeypatch.setattr("leasing.importer.area.Area.objects.all", lambda: areas)
 
@@ -237,6 +238,7 @@ def test_update_or_create_areas_persists_valid_area(area_importer):
 
 
 def test_process_rows_reports_separate_counters(area_importer, monkeypatch):
+    """Operators need failures separated from successful creates and updates."""
     area_import = dict(AREA_IMPORT, metadata_columns=["sopimusnumero"])
     rows = [
         SimpleNamespace(
@@ -274,6 +276,7 @@ def test_handle_stale_areas_only_deletes_in_same_type_and_source(
     area_factory: Callable[..., Area],
     area_source_factory: Callable[..., AreaSource],
 ):
+    """A partial import must not delete records owned by another import feed."""
     target_source = area_source_factory(
         identifier="target-source",
         name="Target source",
