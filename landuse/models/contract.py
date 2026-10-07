@@ -29,6 +29,9 @@ class ContractDetailsBase(models.Model):
     # In Finnish: 3. kutsu lähetetty
     third_invitation_sent_date = models.DateField(null=True, blank=True)
 
+    # In Finnish: Toimeenpanija
+    executor = models.CharField(null=True, blank=True)
+
     # In Finnish: Päätös
     decision = models.ForeignKey(
         Decision,
