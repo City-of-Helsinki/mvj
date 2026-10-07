@@ -4,7 +4,7 @@ from typing import Callable
 import pytest
 from django.core.management import call_command
 
-from leasing.enums import PlanUnitStatus, PlotType
+from leasing.enums import AreaType, PlanUnitStatus, PlotType
 from leasing.models import LeaseArea, PlanUnit, Plot
 from leasing.models.area import Area
 from leasing.models.lease import Lease
@@ -169,8 +169,7 @@ def test_attach_areas_ignores_candidates_without_area_metadata(
     area_with_intersects_test_data,
     lease_test_data,
 ):
-    """A case from 2020: sometimes the source DB has misformed area records
-    without area metadata. We don't want to import these"""
+    """Malformed real properties without area metadata must not be imported."""
     lease: Lease = lease_test_data["lease"]
     area: Area = area_with_intersects_test_data["area"]
     lease_area = lease_area_factory(
@@ -182,8 +181,10 @@ def test_attach_areas_ignores_candidates_without_area_metadata(
     area_without_area_metadata = next(
         intersect_area
         for intersect_area in area_with_intersects_test_data["intersect_areas"]
-        if intersect_area.metadata.get("area") is None
+        if intersect_area.external_id == "13986"
     )
+    assert area_without_area_metadata.type == AreaType.REAL_PROPERTY
+    assert area_without_area_metadata.metadata.get("area") is None
     ignored_plot_identifier = area_without_area_metadata.get_denormalized_identifier()
 
     call_command("attach_areas", stdout=StringIO())
