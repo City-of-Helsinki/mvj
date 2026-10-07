@@ -169,7 +169,7 @@ def test_attach_areas_ignores_candidates_without_area_metadata(
     area_with_intersects_test_data,
     lease_test_data,
 ):
-    """Test a case from 2020: sometimes the source DB has misformed area records
+    """A case from 2020: sometimes the source DB has misformed area records
     without area metadata. We don't want to import these"""
     lease: Lease = lease_test_data["lease"]
     area: Area = area_with_intersects_test_data["area"]
