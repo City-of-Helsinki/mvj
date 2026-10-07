@@ -210,13 +210,33 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     )
 
     # In Finnish: Laitostunnus
-    facility_identifier = models.CharField(blank=True)
+    facility_identifier = models.CharField(null=True, blank=True)
 
     # In Finnish: Panttikirjan numero
-    mortgage_deed_number = models.CharField(blank=True)
+    mortgage_deed_number = models.CharField()
 
     # In Finnish: Panttikirjan päiväys
-    mortgage_deed_date = models.DateField(null=True, blank=True)
+    mortgage_deed_date = models.DateField()
+
+    # In Finnish: Jälkipantin saajan nimi
+    subsequent_pledgee_name = models.CharField(null=True, blank=True)
+
+    # In Finnish: Jälkipantin saajan y-tunnus
+    subsequent_pledgee_business_id = models.CharField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if (
+            self.target == MortgageDeedCollateral.CollateralTarget.PROPERTY
+            and self.facility_identifier
+        ):
+            raise ValueError("Facility identifier cannot be set for property target.")
+        if (
+            self.target == MortgageDeedCollateral.CollateralTarget.FACILITY
+            and not self.facility_identifier
+        ):
+            raise ValueError("Facility identifier must be set for facility target.")
+
+        super().save(*args, **kwargs)
 
 
 class MortgageDeedPropertyIdentifier(TimeStampedModel):
@@ -233,6 +253,12 @@ class MortgageDeedPropertyIdentifier(TimeStampedModel):
 
     # In Finnish: Kiinteistötunnus
     identifier = models.CharField(blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.collateral.target == MortgageDeedCollateral.CollateralTarget.FACILITY:
+            raise ValueError("Property identifier cannot be set for facility target.")
+
+        super().save(*args, **kwargs)
 
 
 class CashDepositCollateral(CollateralBase, GuarantorDetailsBase):
