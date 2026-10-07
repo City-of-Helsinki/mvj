@@ -142,6 +142,47 @@ def test_invoice_set_credit_rounding(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("url_name", "query_parameter"),
+    [
+        ("v1:invoice-credit", "invoice"),
+        ("v1:invoice-set-credit", "invoice_set"),
+    ],
+)
+def test_credit_validation_error_includes_domain_error_message(
+    admin_client,
+    invoice_factory,
+    invoice_set_factory,
+    lease_test_data,
+    query_parameter,
+    url_name,
+):
+    lease = lease_test_data["lease"]
+    invoiceset = invoice_set_factory(lease=lease)
+    invoice = invoice_factory(
+        lease=lease,
+        invoiceset=invoiceset,
+        type=InvoiceType.CREDIT_NOTE,
+        sent_to_sap_at=timezone.now(),
+        total_amount=Decimal(100),
+        billed_amount=Decimal(100),
+    )
+
+    credit_target = invoice if query_parameter == "invoice" else invoiceset
+    url = reverse(url_name) + "?{}={}".format(query_parameter, credit_target.id)
+    response = admin_client.post(url, data={}, content_type="application/json")
+
+    assert response.status_code == 400
+    assert response.data == [
+        (
+            'No refundable invoices found (no invoices with the type "charge" found)'
+            if query_parameter == "invoice_set"
+            else 'Can not credit invoice with the type "credit_note". Only type "charge" allowed.'
+        )
+    ]
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize("user_has_correct_service_unit", [False, True])
 def test_invoice_credit_service_unit_access(
     client,
