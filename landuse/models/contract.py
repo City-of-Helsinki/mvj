@@ -6,10 +6,13 @@ from landuse.models.party import AgreementParty
 from utils.mixins import TimeStampedModel
 
 
-class ContractScheduleDetailsBase(models.Model):
+class ContractDetailsBase(models.Model):
     """
-    Shared signing and invitation dates for contracts and contract changes.
+    Shared properties for contracts and contract changes.
     """
+
+    # In Finnish: Sopimusnumero
+    identifier = models.CharField(blank=True)
 
     # In Finnish: Allekirjoituspäivämäärä
     signing_date = models.DateField(null=True, blank=True)
@@ -42,7 +45,7 @@ class ContractScheduleDetailsBase(models.Model):
         abstract = True
 
 
-class Contract(ContractScheduleDetailsBase):
+class Contract(ContractDetailsBase):
     """
     In Finnish: Sopimus
     """
@@ -71,11 +74,8 @@ class Contract(ContractScheduleDetailsBase):
         blank=True,
     )
 
-    # In Finnish: Sopimusnumero
-    contract_number = models.CharField(blank=True)
 
-
-class ContractChange(ContractScheduleDetailsBase):
+class ContractChange(ContractDetailsBase):
     """
     In Finnish: Sopimuksen muutos
     """
