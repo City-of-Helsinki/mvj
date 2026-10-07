@@ -549,6 +549,7 @@ class AreaImporter(BaseImporter):
             counters.updated += 1
         else:
             counters.failed += 1
+            return
 
         if counters.persisted % 100 == 0 and counters.persisted > 0:
             self.stdout.write(".")
