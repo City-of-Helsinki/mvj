@@ -142,11 +142,24 @@ class CollateralBase(models.Model):
     # In Finnish: Palautettu päivämäärällä
     returned_date = models.DateField(null=True, blank=True)
 
+    # In Finnish: Palautuksen merkitsijä
+    marked_returned_by = models.CharField(null=True, blank=True)
+
     # In Finnish: Lisätiedot
     additional_information = models.TextField(blank=True)
 
     class Meta:
         abstract = True
+
+    def save(self, *args, **kwargs):
+        if any([self.returned_date, self.marked_returned_by]) and not all(
+            [self.returned_date, self.marked_returned_by]
+        ):
+            raise ValueError(
+                "Both returned date and marked returned by must be set together."
+            )
+
+        super().save(*args, **kwargs)
 
     def is_third_party_pledge(self) -> bool:
         """
