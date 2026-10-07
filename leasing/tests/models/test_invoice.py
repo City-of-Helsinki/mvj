@@ -3,6 +3,7 @@ import json
 from decimal import Decimal
 
 import pytest
+from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.urls import reverse
@@ -208,11 +209,11 @@ def test_create_credit_invoice_fails(
         amount=Decimal("123.45"),
     )
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice()
 
     assert (
-        str(e.value)
+        str(e.value.message)
         == 'Can not credit invoice with the type "credit_note". Only type "charge" allowed.'
     )
 
@@ -269,13 +270,10 @@ def test_create_credit_invoice_refunded_state_blocks_credit(
     assert invoice.outstanding_amount == Decimal(0)
 
     # Try to credit again - should fail because state is REFUNDED
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice()
 
-    assert (
-        str(e.value)
-        == "Cannot credit an invoice that has been fully refunded or has no outstanding amount."
-    )
+    assert str(e.value.message) == "Cannot credit an invoice that has been refunded."
 
 
 @pytest.mark.django_db
@@ -537,10 +535,10 @@ def test_create_credit_invoice_one_row_too_much(
         amount=Decimal(70),
     )
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(row_ids=[invoice_row2.id], amount=200)
 
-    assert str(e.value) == "Cannot credit more than invoice row amount"
+    assert str(e.value.message) == "Cannot credit more than invoice row amount"
 
 
 @pytest.mark.django_db
@@ -697,11 +695,11 @@ def test_create_credit_invoiceset_fails(
         amount=Decimal(50),
     )
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice_set.create_credit_invoiceset()
 
     assert (
-        str(e.value)
+        str(e.value.message)
         == 'No refundable invoices found (no invoices with the type "charge" found)'
     )
 
@@ -1361,10 +1359,10 @@ def test_create_credit_invoice_too_much(
         amount=Decimal(200),
     )
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(amount=205)
 
-    assert str(e.value) == "Cannot credit more than invoice row amount"
+    assert str(e.value.message) == "Cannot credit more than invoice row amount"
 
 
 @pytest.mark.django_db
@@ -1409,11 +1407,11 @@ def test_create_credit_invoice_too_much_already_credited(
     invoice.create_credit_invoice(amount=100)
     assert invoice.outstanding_amount == Decimal(100)
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(amount=105)
 
     assert (
-        str(e.value)
+        str(e.value.message)
         == "Cannot credit more than total amount minus already credited amount"
     )
 

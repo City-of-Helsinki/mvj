@@ -1,6 +1,7 @@
 from decimal import Decimal, InvalidOperation
 
 from dateutil import parser
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
@@ -133,8 +134,8 @@ class InvoiceCreditView(APIView):
             credit_invoice = invoice.create_credit_invoice(
                 amount=amount, receivable_type=receivable_type, notes=notes
             )
-        except RuntimeError as e:
-            raise APIException(str(e))
+        except DjangoValidationError as e:
+            raise ValidationError(e.messages)
 
         credit_invoice_serializer = InvoiceSerializer(credit_invoice)
 
@@ -175,8 +176,8 @@ class InvoiceSetCreditView(APIView):
                 credit_invoiceset = invoiceset.create_credit_invoiceset(
                     receivable_type=receivable_type, notes=notes
                 )
-        except RuntimeError as e:
-            raise APIException(str(e))
+        except DjangoValidationError as e:
+            raise ValidationError(e.messages)
 
         credit_invoiceset_serializer = InvoiceSetSerializer(credit_invoiceset)
 

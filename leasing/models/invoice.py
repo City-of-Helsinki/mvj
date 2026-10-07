@@ -5,6 +5,7 @@ from fractions import Fraction
 from typing import TYPE_CHECKING, Optional
 
 from auditlog.registry import auditlog
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Sum
 from django.utils import timezone
@@ -53,7 +54,7 @@ class InvoiceSet(models.Model):
         all_invoices = self.invoices.filter(type=InvoiceType.CHARGE)
 
         if not all_invoices:
-            raise RuntimeError(
+            raise ValidationError(
                 'No refundable invoices found (no invoices with the type "{}" found)'.format(
                     InvoiceType.CHARGE.value
                 )
@@ -78,12 +79,12 @@ class InvoiceSet(models.Model):
         self, amount=None, receivable_type=None, notes=""
     ):
         if amount and not receivable_type:
-            raise RuntimeError("receivable_type is required if amount is provided.")
+            raise ValidationError("receivable_type is required if amount is provided.")
 
         all_invoices = self.invoices.filter(type=InvoiceType.CHARGE)
 
         if not all_invoices:
-            raise RuntimeError(
+            raise ValidationError(
                 'No refundable invoices found (no invoices with the type "{}" found)'.format(
                     InvoiceType.CHARGE.value
                 )
@@ -110,7 +111,7 @@ class InvoiceSet(models.Model):
         ).aggregate(total_row_amount=Sum("amount"))["total_row_amount"]
 
         if amount > total_row_amount:
-            raise RuntimeError(
+            raise ValidationError(
                 'Credit amount "{}" is more that total row amount "{}"!'.format(
                     amount, total_row_amount
                 )
@@ -130,7 +131,7 @@ class InvoiceSet(models.Model):
             all_shares += shares[invoice]
 
         if all_shares != 1:
-            raise RuntimeError("Shares together do not equal 1/1")
+            raise ValidationError("Shares together do not equal 1/1")
 
         credit_invoiceset = InvoiceSet.objects.create(
             lease=self.lease,
@@ -453,19 +454,16 @@ class Invoice(TimeStampedSafeDeleteModel):
     ):
         """Create a credit note for this invoice"""
         if self.type != InvoiceType.CHARGE:
-            raise RuntimeError(
+            raise ValidationError(
                 'Can not credit invoice with the type "{}". Only type "{}" allowed.'.format(
                     self.type.value if self.type else self.type,
                     InvoiceType.CHARGE.value,
                 )
             )
 
-        if self.outstanding_amount == Decimal(0) or self.state == InvoiceState.REFUNDED:
-            raise RuntimeError(
-                _(
-                    "Cannot credit an invoice that has been fully refunded or has no outstanding amount."
-                )
-            )
+        if self.state == InvoiceState.REFUNDED:
+            raise ValidationError(_("Cannot credit an invoice that has been refunded."))
+
         row_queryset = self.rows.all()
         if row_ids:
             row_queryset = row_queryset.filter(id__in=row_ids)
@@ -476,7 +474,7 @@ class Invoice(TimeStampedSafeDeleteModel):
         row_count = row_queryset.count()
 
         if not row_count:
-            raise RuntimeError("No rows to credit")
+            raise ValidationError("No rows to credit")
 
         total_row_amount = row_queryset.aggregate(sum=Sum("amount"))["sum"]
 
@@ -490,12 +488,12 @@ class Invoice(TimeStampedSafeDeleteModel):
 
         if amount:
             if total_row_amount.compare(amount) == Decimal(-1):
-                raise RuntimeError("Cannot credit more than invoice row amount")
+                raise ValidationError("Cannot credit more than invoice row amount")
 
             non_credited_amount = total_row_amount - previously_credited_amount
 
             if non_credited_amount.compare(amount) == Decimal(-1):
-                raise RuntimeError(
+                raise ValidationError(
                     "Cannot credit more than total amount minus already credited amount"
                 )
         elif previously_credited_amount:
