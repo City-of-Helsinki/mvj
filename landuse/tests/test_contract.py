@@ -26,6 +26,28 @@ def mortgage_deed_collateral(contract):
     )
 
 
+@pytest.mark.parametrize(
+    ("returned_date", "marked_returned_by"),
+    [
+        (datetime.date(2026, 1, 2), None),
+        (None, "Test user"),
+    ],
+)
+def test_collateral_requires_return_date_and_marker_together(
+    mortgage_deed_collateral,
+    returned_date,
+    marked_returned_by,
+):
+    mortgage_deed_collateral.returned_date = returned_date
+    mortgage_deed_collateral.marked_returned_by = marked_returned_by
+
+    with pytest.raises(
+        ValueError,
+        match="Both returned date and marked returned by must be set together.",
+    ):
+        mortgage_deed_collateral.save()
+
+
 def test_mortgage_deed_collateral_rejects_facility_identifier_for_property_target(
     mortgage_deed_collateral,
 ):
