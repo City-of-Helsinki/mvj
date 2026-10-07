@@ -282,13 +282,13 @@ class OtherCollateralInline(admin.StackedInline):
 class ContractAdmin(admin.ModelAdmin):
     list_display = (
         "title",
-        "contract_number",
+        "identifier",
         "contract_type",
         "agreement",
         "signing_date",
     )
     list_filter = ("contract_type",)
-    search_fields = ("title", "contract_number", "agreement__identifier")
+    search_fields = ("title", "identifier", "agreement__identifier")
     autocomplete_fields = ("agreement", "decision")
     inlines = (
         ContractChangeInline,
@@ -303,14 +303,14 @@ class ContractAdmin(admin.ModelAdmin):
 @admin.register(ContractChange)
 class ContractChangeAdmin(admin.ModelAdmin):
     list_display = ("contract", "signing_date", "signing_deadline")
-    search_fields = ("contract__contract_number", "contract__agreement__identifier")
+    search_fields = ("contract__identifier", "contract__agreement__identifier")
     autocomplete_fields = ("contract", "decision")
 
 
 @admin.register(MortgageDeedCollateral)
 class MortgageDeedCollateralAdmin(admin.ModelAdmin):
     list_display = ("mortgage_deed_number", "contract", "amount", "returned_date")
-    search_fields = ("mortgage_deed_number", "contract__contract_number")
+    search_fields = ("mortgage_deed_number", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
@@ -324,7 +324,7 @@ class CashDepositCollateralAdmin(admin.ModelAdmin):
         "paid_at_date",
         "returned_date",
     )
-    search_fields = ("account_number", "contract__contract_number")
+    search_fields = ("account_number", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
@@ -335,7 +335,7 @@ class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin):
     search_fields = (
         "guarantee_identifier",
         "guarantor_name",
-        "contract__contract_number",
+        "contract__identifier",
     )
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
@@ -344,7 +344,7 @@ class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin):
 @admin.register(DepositPledgeCollateral)
 class DepositPledgeCollateralAdmin(admin.ModelAdmin):
     list_display = ("account_number", "guarantor_name", "contract", "amount")
-    search_fields = ("account_number", "guarantor_name", "contract__contract_number")
+    search_fields = ("account_number", "guarantor_name", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
@@ -352,7 +352,7 @@ class DepositPledgeCollateralAdmin(admin.ModelAdmin):
 @admin.register(OtherCollateral)
 class OtherCollateralAdmin(admin.ModelAdmin):
     list_display = ("guarantor_name", "contract", "amount", "returned_date")
-    search_fields = ("guarantor_name", "contract__contract_number")
+    search_fields = ("guarantor_name", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
@@ -360,7 +360,7 @@ class OtherCollateralAdmin(admin.ModelAdmin):
 @admin.register(MortgageDeedPropertyIdentifier)
 class MortgageDeedPropertyIdentifierAdmin(admin.ModelAdmin):
     list_display = ("identifier", "collateral")
-    search_fields = ("identifier", "collateral__mortgage_deed_number")
+    search_fields = ("identifier", "collateral__contract__identifier")
     autocomplete_fields = ("collateral",)
 
 
@@ -490,8 +490,6 @@ class InvoiceRecipientSnapshotInline(admin.StackedInline):
     can_delete = False
     readonly_fields = (
         "party_type",
-        "ownership_share_numerator",
-        "ownership_share_denominator",
         "name",
         "national_identification_number",
         "business_id",
@@ -569,8 +567,6 @@ class InvoiceRecipientSnapshotAdmin(admin.ModelAdmin):
     readonly_fields = (
         "invoice",
         "party_type",
-        "ownership_share_numerator",
-        "ownership_share_denominator",
         "name",
         "national_identification_number",
         "business_id",
