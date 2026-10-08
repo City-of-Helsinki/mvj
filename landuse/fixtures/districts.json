@@ -1,0 +1,542 @@
+[
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "0",
+      "name": "Koko Helsinki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "1",
+      "name": "Kruununhaka",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "2",
+      "name": "Kluuvi",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "3",
+      "name": "Kaartinkaupunki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "4",
+      "name": "Kamppi",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "5",
+      "name": "Punavuori",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "6",
+      "name": "Eira",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "7",
+      "name": "Ullanlinna",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "8",
+      "name": "Katajanokka",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "9",
+      "name": "Kaivopuisto",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "10",
+      "name": "Sörnäinen",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "11",
+      "name": "Kallio",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "12",
+      "name": "Alppiharju",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "13",
+      "name": "Etu-töölö",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "14",
+      "name": "Taka-töölö",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "15",
+      "name": "Meilahti",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "16",
+      "name": "Ruskeasuo",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "17",
+      "name": "Pasila",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "18",
+      "name": "Laakso",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "19",
+      "name": "Mustikkamaa-Korkeasaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "20",
+      "name": "Länsisatama",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "21",
+      "name": "Hermanni",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "22",
+      "name": "Vallila",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "23",
+      "name": "Toukola",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "24",
+      "name": "Kumpula",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "25",
+      "name": "Käpylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "26",
+      "name": "Koskela",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "27",
+      "name": "Vanhakaupunki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "28",
+      "name": "Oulunkylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "29",
+      "name": "Haaga",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "30",
+      "name": "Munkkiniemi",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "31",
+      "name": "Lauttasaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "32",
+      "name": "Konala",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "33",
+      "name": "Kaarela",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "34",
+      "name": "Pakila",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "35",
+      "name": "Tuomarinkylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "36",
+      "name": "Viikki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "37",
+      "name": "Pukinmäki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "38",
+      "name": "Malmi",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "39",
+      "name": "Tapaninkylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "40",
+      "name": "Suutarila",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "41",
+      "name": "Suurmetsä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "42",
+      "name": "Kulosaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "43",
+      "name": "Herttoniemi",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "44",
+      "name": "Tammisalo",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "45",
+      "name": "Vartiokylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "46",
+      "name": "Pitäjänmäki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "47",
+      "name": "Mellunkylä",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "48",
+      "name": "Vartiosaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "49",
+      "name": "Laajasalo",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "50",
+      "name": "Villinki",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "51",
+      "name": "Santahamina",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "52",
+      "name": "Suomenlinna",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "53",
+      "name": "Ulkosaaret",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "54",
+      "name": "Vuosaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "55",
+      "name": "Östersundom",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "56",
+      "name": "Salmenkallio",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "57",
+      "name": "Talosaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "58",
+      "name": "Karhusaari",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "landuse.district",
+    "fields": {
+      "identifier": "59",
+      "name": "Ultuna",
+      "created_at": "2026-10-08T00:00:00Z",
+      "modified_at": "2026-10-08T00:00:00Z"
+    }
+  }
+]
