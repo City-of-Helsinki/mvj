@@ -19,7 +19,7 @@ class LandUseLookupViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelVie
 
 
 class DistrictViewSet(LandUseLookupViewSet):
-    queryset = District.objects.order_by("identifier", "pk")
+    queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filterset_fields = ("identifier", "name")
 
