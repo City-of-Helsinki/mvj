@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 10:16+0300\n"
+"POT-Creation-Date: 2026-10-08 10:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1304,6 +1304,14 @@ msgctxt "Preparation state"
 msgid "Invoicing not started"
 msgstr ""
 
+msgctxt "Document type"
+msgid "Paper"
+msgstr ""
+
+msgctxt "Document type"
+msgid "Electronic"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
@@ -1608,6 +1616,24 @@ msgstr "Kapital"
 
 msgid "Returned date"
 msgstr "Returnerat datum"
+
+msgid "Returned by"
+msgstr ""
+
+msgid "Third party pledge"
+msgstr ""
+
+msgid "Pledgor name"
+msgstr ""
+
+msgid "Tenant"
+msgstr "Arrendator"
+
+msgid "Account number"
+msgstr ""
+
+msgid "Document type"
+msgstr ""
 
 msgctxt "Model name"
 msgid "Collateral"
@@ -1954,9 +1980,6 @@ msgstr "Fakturans meddelande"
 msgctxt "Model name"
 msgid "Invoice notes"
 msgstr "Fakturans meddelanden"
-
-msgid "Tenant"
-msgstr "Arrendator"
 
 msgid "Receivable type"
 msgstr "Fordringsart"
