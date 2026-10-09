@@ -453,7 +453,7 @@ class AreaImporter(BaseImporter):
     def get_plan_unit_areas(
         self, metadata: Metadata, identifier: MatchDataIdentifier
     ) -> QuerySet[Area] | None:
-        areas = Area.objects.all()
+        areas: QuerySet[Area] = Area.objects.all()
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
             self.stderr.write(
