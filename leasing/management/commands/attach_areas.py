@@ -334,11 +334,22 @@ def get_most_overlapping_plot_division(
 
 def get_detailed_plan_identifier(imported_area: Area) -> str | None:
     """Resolve the plan identifier associated with an imported plan unit."""
-    detailed_plan_area = Area.objects.filter(
+    detailed_plan_areas = Area.objects.filter(
         type=AreaType.DETAILED_PLAN,
         identifier=imported_area.metadata.get("detailed_plan_identifier"),
-    ).first()
-    return detailed_plan_area.identifier if detailed_plan_area else None
+    )
+    first_detailed_plan_area = detailed_plan_areas.first()
+    identifier = (
+        first_detailed_plan_area.identifier if first_detailed_plan_area else None
+    )
+
+    if detailed_plan_areas.count() > 1:
+        LOG.warning(
+            "Multiple detailed plan areas found for imported area #%s, using the first one with identifier '%s'",
+            imported_area.pk,
+            identifier,
+        )
+    return identifier
 
 
 def get_plan_unit_intended_use(imported_area: Area) -> PlanUnitIntendedUse | None:
