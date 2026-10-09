@@ -7,7 +7,6 @@ from typing import (
     Dict,
     LiteralString,
     NotRequired,
-    Optional,
     Tuple,
     TypedDict,
     cast,
@@ -51,7 +50,7 @@ class MatchData(TypedDict):
     identifier: MatchDataIdentifier
     source: AreaSource
     external_id: NotRequired[Any]
-    detailed_plan_identifier: NotRequired[Optional[str]]
+    detailed_plan_identifier: NotRequired[str | None]
 
 
 class UpdateData(TypedDict):
@@ -357,7 +356,7 @@ class AreaImporter(BaseImporter):
 
     def get_database_connection(
         self, area_import: AreaImport, area_import_type: str
-    ) -> Optional[psycopg.Connection[Any]]:
+    ) -> psycopg.Connection[Any] | None:
         try:
             conn = psycopg.connect(
                 getattr(settings, area_import["source_dsn_setting_name"]),
@@ -397,7 +396,7 @@ class AreaImporter(BaseImporter):
         column_name_map: Dict[str, str],
         error_messages: list[str],
         failure_count: int,
-    ) -> Tuple[Optional[Metadata], int]:
+    ) -> Tuple[Metadata | None, int]:
         try:
             metadata: Metadata = {
                 column_name_map[column_name]: getattr(row, column_name)
@@ -453,7 +452,7 @@ class AreaImporter(BaseImporter):
 
     def get_plan_unit_areas(
         self, metadata: Metadata, identifier: MatchDataIdentifier
-    ) -> Optional[QuerySet[Area]]:
+    ) -> QuerySet[Area] | None:
         areas = Area.objects.all()
         dp_id = metadata.get("detailed_plan_identifier")
         if dp_id is None:
@@ -462,14 +461,11 @@ class AreaImporter(BaseImporter):
             )
             return None
 
-        return cast(
-            QuerySet[Area],
-            areas.filter(metadata__detailed_plan_identifier=dp_id),
-        )
+        return areas.filter(metadata__detailed_plan_identifier=dp_id)
 
     def get_geometry(
         self, row: Any, error_messages: list[str], failure_count: int
-    ) -> Tuple[Optional[geos.GEOSGeometry], int]:
+    ) -> Tuple[geos.GEOSGeometry | None, int]:
         try:
             geom = geos.GEOSGeometry(row.geom_text)
             return geom, failure_count
@@ -489,7 +485,7 @@ class AreaImporter(BaseImporter):
         row: Any,
         error_messages: list[str],
         failure_count: int,
-    ) -> Tuple[Optional[geos.MultiPolygon], int]:
+    ) -> Tuple[geos.MultiPolygon | None, int]:
         if geom and isinstance(geom, geos.Polygon):
             geom = geos.MultiPolygon(geom)
 
@@ -513,7 +509,7 @@ class AreaImporter(BaseImporter):
         update_data: UpdateData,
         match_data: MatchData,
         imported_identifiers: list[str],
-    ) -> Tuple[list[str], Optional[bool]]:
+    ) -> Tuple[list[str], bool | None]:
         created = None
         try:
             _, created = areas.update_or_create(
@@ -541,7 +537,7 @@ class AreaImporter(BaseImporter):
         return imported_identifiers, created
 
     def record_persistence_result(
-        self, counters: AreaImportCounters, created: Optional[bool]
+        self, counters: AreaImportCounters, created: bool | None
     ) -> None:
         if created is True:
             counters.created += 1
