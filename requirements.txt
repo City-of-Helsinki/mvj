@@ -240,9 +240,7 @@ python-dateutil==2.9.0.post0
 python-docx==1.1.2
     # via docxtpl
 pytz==2024.1
-    # via
-    #   drf-yasg
-    #   zeep
+    # via drf-yasg
 pyyaml==6.0.1
     # via
     #   database-sanitizer
@@ -344,5 +342,5 @@ xhtml2pdf==0.2.20
     # via -r requirements.in
 xlsxwriter==3.2.9
     # via -r requirements.in
-zeep==4.3.2
+zeep==4.3.3
     # via -r requirements.in
