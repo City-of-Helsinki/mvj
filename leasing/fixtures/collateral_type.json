@@ -19,5 +19,19 @@
     "fields": {
       "name": "Muu vakuus"
     }
+  },
+  {
+    "model": "leasing.CollateralType",
+    "pk": 4,
+    "fields": {
+      "name": "Omavelkainen takaus"
+    }
+  },
+  {
+    "model": "leasing.CollateralType",
+    "pk": 5,
+    "fields": {
+      "name": "Tilivarojen panttaus"
+    }
   }
 ]

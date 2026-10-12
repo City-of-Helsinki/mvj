@@ -1,7 +1,13 @@
+from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models.contract import Collateral, CollateralType
+from leasing.models.contract import (
+    Collateral,
+    CollateralType,
+)
+from leasing.models.tenant import Tenant
+from leasing.serializers.tenant import TenantSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -76,9 +82,12 @@ class CollateralTypeSerializer(NameModelSerializer):
 
 
 class CollateralSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
+    returned_by = UserSerializer(read_only=True)
 
     class Meta:
         model = Collateral
@@ -86,13 +95,30 @@ class CollateralSerializer(
 
 
 class CollateralCreateUpdateSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+    UpdateNestedMixin,
+    EnumSupportSerializerMixin,
+    FieldPermissionsSerializerMixin,
+    serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
     type = InstanceDictPrimaryKeyRelatedField(
         instance_class=CollateralType,
         queryset=CollateralType.objects.all(),
         related_serializer=CollateralTypeSerializer,
+    )
+    returned_by = InstanceDictPrimaryKeyRelatedField(
+        instance_class=User,
+        queryset=User.objects.all(),
+        related_serializer=UserSerializer,
+        required=False,
+        allow_null=True,
+    )
+    contract_party = InstanceDictPrimaryKeyRelatedField(
+        instance_class=Tenant,
+        queryset=Tenant.objects.all(),
+        related_serializer=TenantSerializer,
+        many=True,
+        required=False,
     )
 
     class Meta:

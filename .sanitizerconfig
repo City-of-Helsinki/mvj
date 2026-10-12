@@ -342,12 +342,28 @@ strategy:
     id: null
     note: mvj.paragraph_if_exist
     number: null
-    other_type: null
     paid_date: null
     returned_date: null
     start_date: null
     total_amount: null
     type_id: null
+    document_type: null
+    account_number: mvj.generate_random_numbers_if_exist
+    contract_party_business_id: mvj.business_id_if_exist
+    contract_party_national_identification_number: mvj.national_identification_number_if_exist
+    guarantee_number: null
+    is_legacy: null
+    number_mortgage_document: null
+    pledgor_business_id: mvj.business_id_if_exist
+    pledgor_name: mvj.company_if_exist
+    pledgor_national_identification_number: mvj.national_identification_number_if_exist
+    returned_by_id: null
+    subordinate_pledgee_business_id: mvj.business_id_if_exist
+    subordinate_pledgee_name: mvj.company_if_exist
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+    institution_identifier: null
+    property_identifier: null
   leasing_collateraltype:
     id: null
     name: null

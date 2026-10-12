@@ -791,3 +791,17 @@ class PreparationState(Enum):
         INVOICING_NOT_STARTED = pgettext_lazy(
             "Preparation state", "Invoicing not started"
         )
+
+
+class DocumentType(Enum):
+    """
+    In Finnish: Asiakirjan laji
+    """
+
+    PAPER = "paper"
+    ELECTRONIC = "electronic"
+
+    @member
+    class Labels:
+        PAPER = pgettext_lazy("Document type", "Paper")
+        ELECTRONIC = pgettext_lazy("Document type", "Electronic")
