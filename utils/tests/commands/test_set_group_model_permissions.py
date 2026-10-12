@@ -69,6 +69,13 @@ def configure_group_model_permissions(monkeypatch, permissions_by_app):
     )
 
 
+def permission_config(model_permissions, field_permissions=None):
+    return {
+        "model": model_permissions,
+        "fields": field_permissions or {},
+    }
+
+
 @pytest.mark.django_db
 def test_permissions_for_identically_named_models_are_separated_by_app(monkeypatch):
     """Keep permissions distinct when different apps use the same model name."""
@@ -86,7 +93,11 @@ def test_permissions_for_identically_named_models_are_separated_by_app(monkeypat
     configure_group_model_permissions(
         monkeypatch,
         {
-            app_label: {models_by_app[app_label][0]: {UG.SELAILIJA: ("view",)}}
+            app_label: {
+                models_by_app[app_label][0]: permission_config(
+                    {UG.SELAILIJA: ("view",)}
+                )
+            }
             for app_label in app_labels
         },
     )
@@ -119,14 +130,16 @@ def test_assigns_configured_standard_and_custom_permissions(monkeypatch):
         monkeypatch,
         {
             app_label: {
-                model: {
-                    UG.SELAILIJA: None,
-                    UG.PAAKAYTTAJA: (
-                        "view",
-                        "change",
-                        custom_permission,
-                    ),
-                }
+                model: permission_config(
+                    {
+                        UG.SELAILIJA: None,
+                        UG.PAAKAYTTAJA: (
+                            "view",
+                            "change",
+                            custom_permission,
+                        ),
+                    }
+                )
             }
         },
     )
@@ -156,7 +169,7 @@ def test_resolves_custom_permission_prefix_with_model_name(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: {UG.PAAKAYTTAJA: ("delete_nonempty",)}}},
+        {app_label: {model: permission_config({UG.PAAKAYTTAJA: ("delete_nonempty",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -194,7 +207,7 @@ def test_replaces_only_managed_groups_model_permissions(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: {UG.SELAILIJA: ("view",)}}},
+        {app_label: {model: permission_config({UG.SELAILIJA: ("view",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -237,7 +250,7 @@ def test_command_is_repeatable_and_logs_assignments(monkeypatch):
     group = Group.objects.create(id=1, name="Test group")
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: {UG.SELAILIJA: ("view",)}}},
+        {app_label: {model: permission_config({UG.SELAILIJA: ("view",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
     stdout = StringIO()
