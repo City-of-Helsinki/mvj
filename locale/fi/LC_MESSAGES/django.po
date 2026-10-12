@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 10:16+0300\n"
+"POT-Creation-Date: 2026-10-08 10:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1303,6 +1303,14 @@ msgctxt "Preparation state"
 msgid "Invoicing not started"
 msgstr "Laskutus ei käynnistetty"
 
+msgctxt "Document type"
+msgid "Paper"
+msgstr "Paperinen"
+
+msgctxt "Document type"
+msgid "Electronic"
+msgstr "Sähköinen"
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
@@ -1607,6 +1615,24 @@ msgstr "Pääoma"
 
 msgid "Returned date"
 msgstr "Palautettu pvm"
+
+msgid "Returned by"
+msgstr "Palautuksen merkitsijä"
+
+msgid "Third party pledge"
+msgstr "Vierasvelkapanttaus"
+
+msgid "Pledgor name"
+msgstr "Vakuuden antajan nimi"
+
+msgid "Tenant"
+msgstr "Vuokralainen"
+
+msgid "Account number"
+msgstr "Tilinumero"
+
+msgid "Document type"
+msgstr "Vakuusasiakirjan laji"
 
 msgctxt "Model name"
 msgid "Collateral"
@@ -1955,9 +1981,6 @@ msgstr "Laskun tiedote"
 msgctxt "Model name"
 msgid "Invoice notes"
 msgstr "Laskun tiedotteet"
-
-msgid "Tenant"
-msgstr "Vuokralainen"
 
 msgid "Receivable type"
 msgstr "Saamislaji"

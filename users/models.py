@@ -24,12 +24,9 @@ class OfficerUserManager(models.Manager):
             .get_queryset()
             .filter(
                 is_active=True,
-                ad_groups__isnull=False,
                 # Ensure that the ADGroup the user has does have ADGroupMapping,
                 # meaning a group that the system expects to be an officer.
-                ad_groups__id__in=ADGroupMapping.objects.values_list(
-                    "ad_group_id", flat=True
-                ),
+                ad_groups__groups__isnull=False,
             )
             .distinct()
         )
