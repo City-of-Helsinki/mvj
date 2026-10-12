@@ -1,7 +1,16 @@
+from batchrun.models import (
+    Command,
+    Job,
+    JobRun,
+    JobRunLogEntry,
+    JobRunQueueItem,
+    ScheduledJob,
+    Timezone,
+)
 from utils.group_permissions import UG
 
 BATCHRUN_GROUP_MODEL_PERMISSIONS = {
-    "command": {
+    Command: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: None,
         UG.SOPIMUSVALMISTELIJA: None,
@@ -10,7 +19,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: None,
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "job": {
+    Job: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -19,7 +28,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "jobrun": {
+    JobRun: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -28,7 +37,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view",),
     },
-    "jobrunlogentry": {
+    JobRunLogEntry: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -37,7 +46,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view",),
     },
-    "jobrunqueueitem": {
+    JobRunQueueItem: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: None,
         UG.SOPIMUSVALMISTELIJA: None,
@@ -46,7 +55,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: None,
         UG.PAAKAYTTAJA: ("view",),
     },
-    "scheduledjob": {
+    ScheduledJob: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -55,7 +64,7 @@ BATCHRUN_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "timezone": {
+    Timezone: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: None,
         UG.SOPIMUSVALMISTELIJA: None,

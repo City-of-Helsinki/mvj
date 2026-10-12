@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
 
-                if model_name not in default_model_perms:
+                if model not in default_model_perms:
                     self.stdout.write(
                         'Model "{}" not in {}.GROUP_MODEL_PERMISSIONS. Skipping.'.format(
                             model_name,
@@ -74,9 +74,7 @@ class Command(BaseCommand):
                         permissions[(app_label, custom_model_permission_name)]
                     )
 
-                for group_id, permission_types in default_model_perms[
-                    model_name
-                ].items():
+                for group_id, permission_types in default_model_perms[model].items():
                     if not permission_types:
                         continue
 

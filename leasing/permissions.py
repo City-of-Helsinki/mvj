@@ -1,10 +1,121 @@
 from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
+from leasing.models.area_note import AreaNote
+from leasing.models.basis_of_rent import (
+    BasisOfRent,
+    BasisOfRentBuildPermissionType,
+    BasisOfRentDecision,
+    BasisOfRentPlotType,
+    BasisOfRentPropertyIdentifier,
+    BasisOfRentRate,
+)
+from leasing.models.comment import Comment, CommentTopic
+from leasing.models.contact import Contact
+from leasing.models.contract import (
+    Collateral,
+    CollateralType,
+    Contract,
+    ContractChange,
+    ContractType,
+)
+from leasing.models.debt_collection import (
+    CollectionCourtDecision,
+    CollectionLetter,
+    CollectionLetterTemplate,
+    CollectionNote,
+    InterestRate,
+)
+from leasing.models.decision import (
+    Condition,
+    ConditionType,
+    Decision,
+    DecisionMaker,
+    DecisionType,
+)
+from leasing.models.infill_development_compensation import (
+    InfillDevelopmentCompensation,
+    InfillDevelopmentCompensationAttachment,
+    InfillDevelopmentCompensationDecision,
+    InfillDevelopmentCompensationIntendedUse,
+    InfillDevelopmentCompensationLease,
+)
+from leasing.models.inspection import Inspection, InspectionAttachment
+from leasing.models.invoice import (
+    Invoice,
+    InvoiceNote,
+    InvoicePayment,
+    InvoiceRow,
+    InvoiceSet,
+)
+from leasing.models.land_area import (
+    ConstructabilityDescription,
+    CustomDetailedPlan,
+    LeaseArea,
+    LeaseAreaAddress,
+    LeaseAreaAttachment,
+    PlanUnit,
+    PlanUnitIntendedUse,
+    PlanUnitState,
+    PlanUnitType,
+    Plot,
+    PlotDivisionState,
+    UsageDistribution,
+)
+from leasing.models.lease import (
+    ApplicationMetadata,
+    District,
+    Financing,
+    Hitas,
+    IntendedUse,
+    Lease,
+    LeaseIdentifier,
+    LeaseStateLog,
+    LeaseType,
+    Management,
+    Municipality,
+    NoticePeriod,
+    Regulation,
+    RelatedLease,
+    ReservationProcedure,
+    SpecialProject,
+    StatisticalUse,
+    SupportiveHousing,
+)
+from leasing.models.leasehold_transfer import (
+    LeaseholdTransfer,
+    LeaseholdTransferParty,
+    LeaseholdTransferProperty,
+)
+from leasing.models.receivable_type import ReceivableType
+from leasing.models.rent import (
+    ContractRent,
+    EqualizedRent,
+    FixedInitialYearRent,
+    Index,
+    IndexAdjustedRent,
+    LeaseBasisOfRent,
+    LeaseBasisOfRentManagementSubvention,
+    LeaseBasisOfRentTemporarySubvention,
+    ManagementSubvention,
+    ManagementSubventionFormOfManagement,
+    OldDwellingsInHousingCompaniesPriceIndex,
+    PayableRent,
+    Rent,
+    RentAdjustment,
+    RentDueDate,
+    RentIntendedUse,
+    TemporarySubvention,
+)
+from leasing.models.report_storage import ReportStorage
+from leasing.models.service_unit import ServiceUnit
+from leasing.models.tenant import Tenant, TenantContact, TenantRentShare
+from leasing.models.ui_data import UiData
+from leasing.models.vat import Vat
 from utils.group_permissions import UG
 
 LEASING_GROUP_MODEL_PERMISSIONS = {
-    "areanote": {
+    AreaNote: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -13,7 +124,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "decisionmaker": {
+    DecisionMaker: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -22,7 +133,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "decisiontype": {
+    DecisionType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -31,7 +142,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "decision": {
+    Decision: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view", "change"),
@@ -40,7 +151,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "conditiontype": {
+    ConditionType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -49,7 +160,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "condition": {
+    Condition: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view", "change"),
@@ -58,7 +169,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "rentintendeduse": {
+    RentIntendedUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -67,7 +178,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "rent": {
+    Rent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view", "change"),
@@ -76,7 +187,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "rentduedate": {
+    RentDueDate: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -85,7 +196,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "fixedinitialyearrent": {
+    FixedInitialYearRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -94,7 +205,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "contractrent": {
+    ContractRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -103,7 +214,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "indexadjustedrent": {
+    IndexAdjustedRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -112,7 +223,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "equalizedrent": {
+    EqualizedRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -121,7 +232,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view",),
     },
-    "rentadjustment": {
+    RentAdjustment: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -130,7 +241,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "managementsubvention": {
+    ManagementSubvention: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -139,7 +250,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "managementsubventionformofmanagement": {
+    ManagementSubventionFormOfManagement: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -148,7 +259,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "temporarysubvention": {
+    TemporarySubvention: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -157,7 +268,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "payablerent": {
+    PayableRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -166,7 +277,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "index": {
+    Index: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -175,7 +286,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leasebasisofrent": {
+    LeaseBasisOfRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -184,7 +295,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leasebasisofrentmanagementsubvention": {
+    LeaseBasisOfRentManagementSubvention: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -193,7 +304,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leasebasisofrenttemporarysubvention": {
+    LeaseBasisOfRentTemporarySubvention: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -202,7 +313,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrentplottype": {
+    BasisOfRentPlotType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -211,7 +322,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrentbuildpermissiontype": {
+    BasisOfRentBuildPermissionType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -220,7 +331,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrent": {
+    BasisOfRent: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -229,7 +340,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrentrate": {
+    BasisOfRentRate: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -238,7 +349,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrentpropertyidentifier": {
+    BasisOfRentPropertyIdentifier: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -247,7 +358,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "basisofrentdecision": {
+    BasisOfRentDecision: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -256,7 +367,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "commenttopic": {
+    CommentTopic: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -265,7 +376,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "comment": {
+    Comment: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -274,7 +385,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "contact": {
+    Contact: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -283,7 +394,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "contracttype": {
+    ContractType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -292,7 +403,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "contract": {
+    Contract: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "change"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -301,7 +412,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collateral": {
+    Collateral: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -310,7 +421,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collateraltype": {
+    CollateralType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -319,7 +430,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "contractchange": {
+    ContractChange: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -328,7 +439,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collectionletter": {
+    CollectionLetter: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -337,7 +448,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collectionlettertemplate": {
+    CollectionLetterTemplate: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -346,16 +457,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collectionnote": {
-        UG.SELAILIJA: None,
-        UG.VALMISTELIJA: ("view",),
-        UG.SOPIMUSVALMISTELIJA: ("view",),
-        UG.SYOTTAJA: ("view",),
-        UG.PERINTALAKIMIES: ("view", "add", "change", "delete"),
-        UG.LASKUTTAJA: ("view", "add", "change", "delete"),
-        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-    },
-    "collectioncollectionstage": {
+    CollectionNote: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -364,7 +466,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "collectioncourtdecision": {
+    CollectionCourtDecision: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -373,7 +475,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "customdetailedplan": {
+    CustomDetailedPlan: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -382,7 +484,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "interestrate": {
+    InterestRate: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -391,7 +493,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leasetype": {
+    LeaseType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -400,7 +502,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "municipality": {
+    Municipality: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -409,7 +511,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "district": {
+    District: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -418,7 +520,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "intendeduse": {
+    IntendedUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -427,7 +529,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "statisticaluse": {
+    StatisticalUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -436,7 +538,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "supportivehousing": {
+    SupportiveHousing: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -445,7 +547,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "financing": {
+    Financing: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -454,7 +556,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "management": {
+    Management: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -463,7 +565,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "regulation": {
+    Regulation: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -472,7 +574,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "hitas": {
+    Hitas: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -481,7 +583,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "noticeperiod": {
+    NoticePeriod: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -490,7 +592,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "specialproject": {
+    SpecialProject: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -499,7 +601,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "reservationprocedure": {
+    ReservationProcedure: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -508,7 +610,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leaseidentifier": {
+    LeaseIdentifier: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -517,7 +619,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "lease": {
+    Lease: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "change"),
@@ -526,7 +628,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete", "delete_nonempty"),
     },
-    "leasestatelog": {
+    LeaseStateLog: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -535,7 +637,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view",),
     },
-    "relatedlease": {
+    RelatedLease: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -544,7 +646,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "infilldevelopmentcompensation": {
+    InfillDevelopmentCompensation: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -553,7 +655,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "infilldevelopmentcompensationlease": {
+    InfillDevelopmentCompensationLease: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -562,7 +664,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "infilldevelopmentcompensationdecision": {
+    InfillDevelopmentCompensationDecision: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -571,7 +673,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "infilldevelopmentcompensationintendeduse": {
+    InfillDevelopmentCompensationIntendedUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -580,7 +682,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "infilldevelopmentcompensationattachment": {
+    InfillDevelopmentCompensationAttachment: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -589,7 +691,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "inspection": {
+    Inspection: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -598,7 +700,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "inspectionattachment": {
+    InspectionAttachment: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -607,7 +709,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "receivabletype": {
+    ReceivableType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -616,7 +718,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "invoiceset": {
+    InvoiceSet: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -625,7 +727,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "invoice": {
+    Invoice: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -634,7 +736,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "invoicerow": {
+    InvoiceRow: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -643,7 +745,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "invoicenote": {
+    InvoiceNote: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -652,7 +754,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "invoicepayment": {
+    InvoicePayment: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -661,7 +763,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change", "delete"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leasearea": {
+    LeaseArea: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -670,7 +772,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leaseholdtransfer": {
+    LeaseholdTransfer: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view", "delete"),
@@ -679,7 +781,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "delete"),
     },
-    "leaseholdtransferparty": {
+    LeaseholdTransferParty: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view", "delete"),
@@ -688,7 +790,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "delete"),
     },
-    "leaseholdtransferproperty": {
+    LeaseholdTransferProperty: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view", "delete"),
@@ -697,7 +799,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "delete"),
     },
-    "leaseareaaddress": {
+    LeaseAreaAddress: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -706,7 +808,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "leaseareaattachment": {
+    LeaseAreaAttachment: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -715,7 +817,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "constructabilitydescription": {
+    ConstructabilityDescription: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -724,7 +826,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plot": {
+    Plot: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -733,7 +835,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "usagedistribution": {
+    UsageDistribution: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -742,7 +844,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "planunittype": {
+    PlanUnitType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -751,7 +853,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plotdivisionstate": {
+    PlotDivisionState: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -760,7 +862,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "planunitstate": {
+    PlanUnitState: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -769,7 +871,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "planunitintendeduse": {
+    PlanUnitIntendedUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -778,7 +880,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "planunit": {
+    PlanUnit: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -787,7 +889,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "serviceunit": {
+    ServiceUnit: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -796,7 +898,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view",),
     },
-    "tenant": {
+    Tenant: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -805,7 +907,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "tenantcontact": {
+    TenantContact: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -814,7 +916,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "tenantrentshare": {
+    TenantRentShare: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -823,7 +925,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view", "add", "change"),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "vat": {
+    Vat: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -832,7 +934,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "olddwellingsinhousingcompaniespriceindex": {
+    OldDwellingsInHousingCompaniesPriceIndex: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -841,7 +943,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "applicationmetadata": {
+    ApplicationMetadata: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -850,7 +952,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "uidata": {
+    UiData: {
         UG.SELAILIJA: ("view", "add", "change", "delete"),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
@@ -860,7 +962,7 @@ LEASING_GROUP_MODEL_PERMISSIONS = {
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete", "edit_global_ui_data"),
     },
     # leasing.report_storage
-    "reportstorage": {
+    ReportStorage: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: None,
         UG.SOPIMUSVALMISTELIJA: None,
