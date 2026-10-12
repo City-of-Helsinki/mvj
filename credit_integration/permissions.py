@@ -5,62 +5,71 @@ from credit_integration.models import (
     CreditDecisionLog,
     CreditDecisionReason,
 )
-from utils.group_permissions import UG
+from utils.group_permissions import UG, GroupModelPermissions
 
-CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS = {
+CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     CreditDecision: {
-        UG.SELAILIJA: None,
-        UG.VALMISTELIJA: (
-            "view",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
-        UG.SOPIMUSVALMISTELIJA: (
-            "view",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
-        UG.SYOTTAJA: (
-            "view",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
-        UG.PERINTALAKIMIES: (
-            "view",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
-        UG.LASKUTTAJA: (
-            "view",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
-        UG.PAAKAYTTAJA: (
-            "view",
-            "add",
-            "change",
-            "delete",
-            "send_creditdecision_inquiry",
-            "send_sanctions_inquiry",
-        ),
+        "model": {
+            UG.SELAILIJA: None,
+            UG.VALMISTELIJA: (
+                "view",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+            UG.SOPIMUSVALMISTELIJA: (
+                "view",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+            UG.SYOTTAJA: (
+                "view",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+            UG.PERINTALAKIMIES: (
+                "view",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+            UG.LASKUTTAJA: (
+                "view",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+            UG.PAAKAYTTAJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+                "send_creditdecision_inquiry",
+                "send_sanctions_inquiry",
+            ),
+        },
+        "fields": {},
     },
     CreditDecisionReason: {
-        UG.SELAILIJA: None,
-        UG.VALMISTELIJA: ("view",),
-        UG.SOPIMUSVALMISTELIJA: ("view",),
-        UG.SYOTTAJA: ("view",),
-        UG.PERINTALAKIMIES: ("view",),
-        UG.LASKUTTAJA: ("view",),
-        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        "model": {
+            UG.SELAILIJA: None,
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.SYOTTAJA: ("view",),
+            UG.PERINTALAKIMIES: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
     },
     CreditDecisionLog: {
-        UG.SELAILIJA: None,
-        UG.VALMISTELIJA: ("view",),
-        UG.SOPIMUSVALMISTELIJA: ("view",),
-        UG.SYOTTAJA: ("view",),
-        UG.PERINTALAKIMIES: ("view",),
-        UG.LASKUTTAJA: ("view",),
-        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        "model": {
+            UG.SELAILIJA: None,
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.SYOTTAJA: ("view",),
+            UG.PERINTALAKIMIES: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
     },
 }
 

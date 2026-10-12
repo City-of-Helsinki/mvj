@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db.models import Model
 
+from api.utils.group_permissions import MANAGED_USER_GROUP_ID_RANGE
 from batchrun.permissions import BATCHRUN_GROUP_MODEL_PERMISSIONS
 from credit_integration.permissions import CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS
 from forms.permissions import FORMS_GROUP_MODEL_PERMISSIONS
@@ -16,7 +17,7 @@ from users.permissions import USERS_GROUP_MODEL_PERMISSIONS
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
 
-DEFAULT_MODEL_PERMS = {
+APP_PERMISSION_CONFIGS = {
     "credit_integration": CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS,
     "leasing": LEASING_GROUP_MODEL_PERMISSIONS,
     "users": USERS_GROUP_MODEL_PERMISSIONS,
@@ -25,7 +26,7 @@ DEFAULT_MODEL_PERMS = {
     "forms": FORMS_GROUP_MODEL_PERMISSIONS,
 }
 
-APP_LABELS = tuple(DEFAULT_MODEL_PERMS.keys())
+APP_LABELS = tuple(APP_PERMISSION_CONFIGS.keys())
 
 
 class Command(BaseCommand):
@@ -38,13 +39,13 @@ class Command(BaseCommand):
         all_group_permissions = []
 
         for app_name in APP_LABELS:
-            default_model_perms = DEFAULT_MODEL_PERMS[app_name]
+            app_permission_config = APP_PERMISSION_CONFIGS[app_name]
             for model in apps.get_app_config(app_name).get_models(
                 include_auto_created=True
             ):
                 model_name = model._meta.model_name
 
-                if model not in default_model_perms:
+                if model not in app_permission_config:
                     self.stdout.write(
                         'Model "{}" not in {}.GROUP_MODEL_PERMISSIONS. Skipping.'.format(
                             model_name,
@@ -62,13 +63,15 @@ class Command(BaseCommand):
                 group_permissions = get_group_permissions(
                     groups,
                     model,
-                    default_model_perms[model],
+                    app_permission_config[model]["model"],
                     permissions_by_codename,
                 )
                 all_group_permissions.extend(group_permissions)
 
         # Delete existing group permissions from the pre-defined groups
-        mvj_groups = [grp for grp in groups.values() if grp.id in range(1, 8)]
+        mvj_groups = [
+            grp for grp in groups.values() if grp.id in MANAGED_USER_GROUP_ID_RANGE
+        ]
         Group.permissions.through.objects.filter(
             group__in=mvj_groups, permission__in=all_model_permissions
         ).delete()
