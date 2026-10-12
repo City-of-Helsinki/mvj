@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 10:29+0300\n"
+"POT-Creation-Date: 2026-10-20 13:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1303,6 +1303,14 @@ msgctxt "Preparation state"
 msgid "Invoicing not started"
 msgstr "Laskutus ei käynnistetty"
 
+msgctxt "Document type"
+msgid "Paper"
+msgstr "Paperinen"
+
+msgctxt "Document type"
+msgid "Electronic"
+msgstr "Sähköinen"
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
@@ -1593,9 +1601,6 @@ msgstr "Sopimus"
 msgid "Collateral type"
 msgstr "Vakuuden tyyppi"
 
-msgid "Other type"
-msgstr "Muu vakuuden tyyppi"
-
 msgid "Number"
 msgstr "Numero"
 
@@ -1607,6 +1612,55 @@ msgstr "Pääoma"
 
 msgid "Returned date"
 msgstr "Palautettu pvm"
+
+msgid "Returned by"
+msgstr "Palautuksen merkitsijä"
+
+msgid "Third party pledgor name"
+msgstr "Vierasvelkapanttauksen antajan nimi"
+
+msgid "Third party pledgor Business ID"
+msgstr "Vierasvelkapanttauksen antajan Y-tunnus"
+
+msgid "Pledgor name"
+msgstr "Vakuuden antajan nimi"
+
+msgid "Pledgor National identification number"
+msgstr "Vakuuden antajan henkilötunnus"
+
+msgid "Pledgor Business ID"
+msgstr "Vakuuden antajan Y-tunnus"
+
+msgid "Subordinate pledgee name"
+msgstr "Jälkipantin saajan nimi"
+
+msgid "Subordinate pledgee business ID"
+msgstr "Jälkipantin saajan y-tunnus"
+
+msgid "Account number"
+msgstr "Tilinumero"
+
+msgid "Document type"
+msgstr "Vakuusasiakirjan laji"
+
+msgid "Guarantee number"
+msgstr "Takausnumero"
+
+msgid "Mortgage document number"
+msgstr "Panttikirjan numero"
+
+msgid "Property identifier"
+msgstr "Kiinteistötunnus"
+
+msgid "Form version"
+msgstr "Lomakkeen versio"
+
+msgid ""
+"Used in the background to determine collateral form validation to ensure "
+"backwards compatibility in case of breaking changes."
+msgstr ""
+"Järjestelmä käyttää arvoa määrittelemään vakuuslomakkeen pakolliset kentät "
+"takaakseen taaksepäin yhteensopivuuden."
 
 msgctxt "Model name"
 msgid "Collateral"
@@ -1942,8 +1996,7 @@ msgid "Invoices"
 msgstr "Laskut"
 
 msgid "Cannot credit an invoice that has been refunded."
-msgstr ""
-"Hyvitettyä laskua ei voida hyvittää uudelleen."
+msgstr "Hyvitettyä laskua ei voida hyvittää uudelleen."
 
 msgctxt "Model name"
 msgid "Invoice note"

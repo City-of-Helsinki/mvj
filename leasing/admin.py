@@ -328,6 +328,7 @@ class ContractChangeInline(FieldPermissionsAdminMixin, admin.StackedInline):
 
 class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = Collateral
+    raw_id_fields = ("contract_party",)
     extra = 0
 
 
