@@ -1,10 +1,22 @@
 from leasing.permissions import PerMethodPermission
-from plotsearch.models import PlotSearch
+from plotsearch.models import (
+    AreaSearch,
+    AreaSearchAttachment,
+    AreaSearchIntendedUse,
+    InformationCheck,
+    PlotSearch,
+    PlotSearchStage,
+    PlotSearchSubtype,
+    PlotSearchType,
+    RelatedPlotApplication,
+    TargetStatus,
+)
+from plotsearch.models.plot_search import MeetingMemo
 from users.models import User
 from utils.group_permissions import UG
 
 PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
-    "areasearchintendeduse": {
+    AreaSearchIntendedUse: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -13,7 +25,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plotsearch": {
+    PlotSearch: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -22,7 +34,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plotsearchstage": {
+    PlotSearchStage: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -31,7 +43,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plotsearchtype": {
+    PlotSearchType: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -40,7 +52,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "plotsearchsubtype": {
+    PlotSearchSubtype: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -49,7 +61,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "targetstatus": {
+    TargetStatus: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -58,7 +70,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "areasearch": {
+    AreaSearch: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -67,7 +79,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "informationcheck": {
+    InformationCheck: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -76,7 +88,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "relatedplotapplication": {
+    RelatedPlotApplication: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -85,7 +97,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "areasearchattachment": {
+    AreaSearchAttachment: {
         UG.SELAILIJA: ("view",),
         UG.VALMISTELIJA: ("view", "add"),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -94,7 +106,7 @@ PLOTSEARCH_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add"),
     },
-    "meetingmemo": {
+    MeetingMemo: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view", "add", "change", "delete"),
         UG.SOPIMUSVALMISTELIJA: ("view",),

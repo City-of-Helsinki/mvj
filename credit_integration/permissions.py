@@ -1,9 +1,14 @@
 from rest_framework import permissions
 
+from credit_integration.models import (
+    CreditDecision,
+    CreditDecisionLog,
+    CreditDecisionReason,
+)
 from utils.group_permissions import UG
 
 CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS = {
-    "creditdecision": {
+    CreditDecision: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: (
             "view",
@@ -39,7 +44,7 @@ CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS = {
             "send_sanctions_inquiry",
         ),
     },
-    "creditdecisionreason": {
+    CreditDecisionReason: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),
@@ -48,7 +53,7 @@ CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS = {
         UG.LASKUTTAJA: ("view",),
         UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
     },
-    "creditdecisionlog": {
+    CreditDecisionLog: {
         UG.SELAILIJA: None,
         UG.VALMISTELIJA: ("view",),
         UG.SOPIMUSVALMISTELIJA: ("view",),

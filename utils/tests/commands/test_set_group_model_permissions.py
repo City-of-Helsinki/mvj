@@ -12,14 +12,18 @@ from utils.management.commands import set_group_model_permissions
 
 
 def make_model(app_label, model_name, custom_permissions=()):
-    return SimpleNamespace(
-        _meta=SimpleNamespace(
-            app_label=app_label,
-            model_name=model_name,
-            permissions=tuple(
-                (codename, f"Can {codename}") for codename in custom_permissions
-            ),
-        )
+    return type(
+        model_name.title(),
+        (),
+        {
+            "_meta": SimpleNamespace(
+                app_label=app_label,
+                model_name=model_name,
+                permissions=tuple(
+                    (codename, f"Can {codename}") for codename in custom_permissions
+                ),
+            )
+        },
     )
 
 
@@ -57,8 +61,11 @@ def configure_models(monkeypatch, models_by_app):
 def configure_group_model_permissions(monkeypatch, permissions_by_app):
     monkeypatch.setattr(
         set_group_model_permissions,
-        "get_group_model_permissions",
-        lambda app_name: permissions_by_app.get(app_name, {}),
+        "DEFAULT_MODEL_PERMS",
+        {
+            app_label: permissions_by_app.get(app_label, {})
+            for app_label in set_group_model_permissions.APP_LABELS
+        },
     )
 
 
@@ -79,7 +86,7 @@ def test_permissions_for_identically_named_models_are_separated_by_app(monkeypat
     configure_group_model_permissions(
         monkeypatch,
         {
-            app_label: {model_name: {UG.SELAILIJA: ("view",)}}
+            app_label: {models_by_app[app_label][0]: {UG.SELAILIJA: ("view",)}}
             for app_label in app_labels
         },
     )
@@ -112,7 +119,7 @@ def test_assigns_configured_standard_and_custom_permissions(monkeypatch):
         monkeypatch,
         {
             app_label: {
-                model_name: {
+                model: {
                     UG.SELAILIJA: None,
                     UG.PAAKAYTTAJA: (
                         "view",
@@ -149,7 +156,7 @@ def test_resolves_custom_permission_prefix_with_model_name(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model_name: {UG.PAAKAYTTAJA: ("delete_nonempty",)}}},
+        {app_label: {model: {UG.PAAKAYTTAJA: ("delete_nonempty",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -187,7 +194,7 @@ def test_replaces_only_managed_groups_model_permissions(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model_name: {UG.SELAILIJA: ("view",)}}},
+        {app_label: {model: {UG.SELAILIJA: ("view",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -230,7 +237,7 @@ def test_command_is_repeatable_and_logs_assignments(monkeypatch):
     group = Group.objects.create(id=1, name="Test group")
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model_name: {UG.SELAILIJA: ("view",)}}},
+        {app_label: {model: {UG.SELAILIJA: ("view",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
     stdout = StringIO()
