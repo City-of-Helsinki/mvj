@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
+from utils.group_permissions import UG
 from utils.management.commands import set_group_model_permissions
 
 
@@ -53,6 +54,14 @@ def configure_models(monkeypatch, models_by_app):
     )
 
 
+def configure_group_model_permissions(monkeypatch, permissions_by_app):
+    monkeypatch.setattr(
+        set_group_model_permissions,
+        "get_group_model_permissions",
+        lambda app_name: permissions_by_app.get(app_name, {}),
+    )
+
+
 @pytest.mark.django_db
 def test_permissions_for_identically_named_models_are_separated_by_app(monkeypatch):
     """Keep permissions distinct when different apps use the same model name."""
@@ -67,13 +76,10 @@ def test_permissions_for_identically_named_models_are_separated_by_app(monkeypat
         create_permissions(app_label, model_name)
 
     group = Group.objects.create(id=1, name="Test group")
-    monkeypatch.setattr(
-        set_group_model_permissions,
-        "DEFAULT_APP_PERMS",
+    configure_group_model_permissions(
+        monkeypatch,
         {
-            app_label: {
-                model_name: {set_group_model_permissions.UG.SELAILIJA: ("view",)}
-            }
+            app_label: {model_name: {UG.SELAILIJA: ("view",)}}
             for app_label in app_labels
         },
     )
@@ -102,14 +108,13 @@ def test_assigns_configured_standard_and_custom_permissions(monkeypatch):
     viewer = Group.objects.create(id=1, name="Viewer")
     administrator = Group.objects.create(id=7, name="Administrator")
 
-    monkeypatch.setattr(
-        set_group_model_permissions,
-        "DEFAULT_APP_PERMS",
+    configure_group_model_permissions(
+        monkeypatch,
         {
             app_label: {
                 model_name: {
-                    set_group_model_permissions.UG.SELAILIJA: None,
-                    set_group_model_permissions.UG.PAAKAYTTAJA: (
+                    UG.SELAILIJA: None,
+                    UG.PAAKAYTTAJA: (
                         "view",
                         "change",
                         custom_permission,
@@ -142,16 +147,9 @@ def test_resolves_custom_permission_prefix_with_model_name(monkeypatch):
     create_permissions(app_label, model_name, (custom_permission,))
     administrator = Group.objects.create(id=7, name="Administrator")
 
-    monkeypatch.setattr(
-        set_group_model_permissions,
-        "DEFAULT_APP_PERMS",
-        {
-            app_label: {
-                model_name: {
-                    set_group_model_permissions.UG.PAAKAYTTAJA: ("delete_nonempty",)
-                }
-            }
-        },
+    configure_group_model_permissions(
+        monkeypatch,
+        {app_label: {model_name: {UG.PAAKAYTTAJA: ("delete_nonempty",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -187,14 +185,9 @@ def test_replaces_only_managed_groups_model_permissions(monkeypatch):
     )
     unmanaged_group.permissions.add(permissions[f"add_{model_name}"])
 
-    monkeypatch.setattr(
-        set_group_model_permissions,
-        "DEFAULT_APP_PERMS",
-        {
-            app_label: {
-                model_name: {set_group_model_permissions.UG.SELAILIJA: ("view",)}
-            }
-        },
+    configure_group_model_permissions(
+        monkeypatch,
+        {app_label: {model_name: {UG.SELAILIJA: ("view",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -215,16 +208,14 @@ def test_skips_models_without_default_permissions(monkeypatch):
     model_name = "unconfiguredtestmodel"
     model = make_model(app_label, model_name)
     Group.objects.create(id=1, name="Test group")
-    monkeypatch.setattr(
-        set_group_model_permissions, "DEFAULT_APP_PERMS", {app_label: {}}
-    )
+    configure_group_model_permissions(monkeypatch, {app_label: {}})
     configure_models(monkeypatch, {app_label: [model]})
     stdout = StringIO()
 
     call_command("set_group_model_permissions", stdout=stdout)
 
     assert (
-        f'Model "{model_name}" not in DEFAULT_APP_PERMS["{app_label}"]. Skipping.'
+        f'Model "{model_name}" not in {app_label}.GROUP_MODEL_PERMISSIONS. Skipping.'
         in stdout.getvalue()
     )
 
@@ -237,14 +228,9 @@ def test_command_is_repeatable_and_logs_assignments(monkeypatch):
     model = make_model(app_label, model_name)
     create_permissions(app_label, model_name)
     group = Group.objects.create(id=1, name="Test group")
-    monkeypatch.setattr(
-        set_group_model_permissions,
-        "DEFAULT_APP_PERMS",
-        {
-            app_label: {
-                model_name: {set_group_model_permissions.UG.SELAILIJA: ("view",)}
-            }
-        },
+    configure_group_model_permissions(
+        monkeypatch,
+        {app_label: {model_name: {UG.SELAILIJA: ("view",)}}},
     )
     configure_models(monkeypatch, {app_label: [model]})
     stdout = StringIO()
