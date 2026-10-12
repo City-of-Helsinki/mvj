@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from django.apps import apps
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from batchrun.permissions import BATCHRUN_GROUP_MODEL_PERMISSIONS
@@ -10,15 +11,6 @@ from forms.permissions import FORMS_GROUP_MODEL_PERMISSIONS
 from leasing.permissions import LEASING_GROUP_MODEL_PERMISSIONS
 from plotsearch.permissions import PLOTSEARCH_GROUP_MODEL_PERMISSIONS
 from users.permissions import USERS_GROUP_MODEL_PERMISSIONS
-
-APP_LABELS = (
-    "batchrun",
-    "credit_integration",
-    "forms",
-    "leasing",
-    "plotsearch",
-    "users",
-)
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
 
@@ -31,16 +23,14 @@ DEFAULT_MODEL_PERMS = {
     "forms": FORMS_GROUP_MODEL_PERMISSIONS,
 }
 
+APP_LABELS = tuple(DEFAULT_MODEL_PERMS.keys())
+
 
 class Command(BaseCommand):
     help = "Sets predefined model permissions for the predefined MVJ groups"
 
     def handle(self, *args, **options):  # NOQA
         groups = {group.id: group for group in Group.objects.all()}
-        permissions = {
-            (permission.content_type.app_label, permission.codename): permission
-            for permission in Permission.objects.select_related("content_type")
-        }
 
         all_model_permissions = []
         group_permissions = []
@@ -50,7 +40,6 @@ class Command(BaseCommand):
             for model in apps.get_app_config(app_name).get_models(
                 include_auto_created=True
             ):
-                app_label = model._meta.app_label
                 model_name = model._meta.model_name
 
                 if model not in default_model_perms:
@@ -62,16 +51,24 @@ class Command(BaseCommand):
                     )
                     continue
 
+                content_type = ContentType.objects.get_for_model(
+                    model, for_concrete_model=False
+                )
+                permissions = {
+                    permission.codename: permission
+                    for permission in Permission.objects.filter(
+                        content_type=content_type
+                    )
+                }
+
                 for permission_type in PERMISSION_TYPES:
                     all_model_permissions.append(
-                        permissions[
-                            (app_label, "{}_{}".format(permission_type, model_name))
-                        ]
+                        permissions["{}_{}".format(permission_type, model_name)]
                     )
 
                 for custom_model_permission_name, desc in model._meta.permissions:
                     all_model_permissions.append(
-                        permissions[(app_label, custom_model_permission_name)]
+                        permissions[custom_model_permission_name]
                     )
 
                 for group_id, permission_types in default_model_perms[model].items():
@@ -83,14 +80,14 @@ class Command(BaseCommand):
                             permission_name = "{}_{}".format(
                                 permission_type, model_name
                             )
-                        elif (app_label, permission_type) in permissions:
+                        elif permission_type in permissions:
                             permission_name = permission_type
                         else:
                             permission_name = "{}_{}".format(
                                 permission_type, model_name
                             )
 
-                        permission = permissions[(app_label, permission_name)]
+                        permission = permissions[permission_name]
 
                         group_permissions.append(
                             Group.permissions.through(
