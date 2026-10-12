@@ -1,6 +1,37 @@
 from leasing.permissions import MvjDjangoModelPermissions, PerMethodPermission
 from plotsearch.models import PlotSearch
 from users.models import User
+from utils.group_permissions import UG
+
+FORMS_GROUP_MODEL_PERMISSIONS = {
+    "form": {
+        UG.SELAILIJA: None,
+        UG.VALMISTELIJA: ("view", "add", "change", "delete"),
+        UG.SOPIMUSVALMISTELIJA: ("view",),
+        UG.SYOTTAJA: ("view", "add", "change", "delete"),
+        UG.PERINTALAKIMIES: ("view", "add", "change", "delete"),
+        UG.LASKUTTAJA: ("view",),
+        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+    },
+    "answer": {
+        UG.SELAILIJA: None,
+        UG.VALMISTELIJA: ("view", "add", "change", "delete"),
+        UG.SOPIMUSVALMISTELIJA: ("view",),
+        UG.SYOTTAJA: ("view", "add", "change", "delete"),
+        UG.PERINTALAKIMIES: ("view", "add", "change", "delete"),
+        UG.LASKUTTAJA: ("view",),
+        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+    },
+    "attachment": {
+        UG.SELAILIJA: None,
+        UG.VALMISTELIJA: ("view", "add", "change", "delete"),
+        UG.SOPIMUSVALMISTELIJA: ("view",),
+        UG.SYOTTAJA: ("view", "add", "change", "delete"),
+        UG.PERINTALAKIMIES: ("view", "add", "change", "delete"),
+        UG.LASKUTTAJA: ("view",),
+        UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+    },
+}
 
 
 class AnswerPermissions(PerMethodPermission):
