@@ -7,13 +7,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db.models import Model
 
-from api.utils.group_permissions import MANAGED_USER_GROUP_ID_RANGE
 from batchrun.permissions import BATCHRUN_GROUP_MODEL_PERMISSIONS
 from credit_integration.permissions import CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS
 from forms.permissions import FORMS_GROUP_MODEL_PERMISSIONS
 from leasing.permissions import LEASING_GROUP_MODEL_PERMISSIONS
 from plotsearch.permissions import PLOTSEARCH_GROUP_MODEL_PERMISSIONS
 from users.permissions import USERS_GROUP_MODEL_PERMISSIONS
+from utils.group_permissions import MANAGED_USER_GROUP_ID_RANGE
 
 PERMISSION_TYPES = ("view", "add", "change", "delete")
 

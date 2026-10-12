@@ -61,7 +61,7 @@ def configure_models(monkeypatch, models_by_app):
 def configure_group_model_permissions(monkeypatch, permissions_by_app):
     monkeypatch.setattr(
         set_group_model_permissions,
-        "DEFAULT_MODEL_PERMS",
+        "APP_PERMISSION_CONFIGS",
         {
             app_label: permissions_by_app.get(app_label, {})
             for app_label in set_group_model_permissions.APP_LABELS
