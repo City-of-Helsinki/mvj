@@ -6,8 +6,8 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from leasing.management.commands import set_group_field_permissions
 from utils.group_permissions import UG
+from utils.management.commands import set_group_field_permissions
 
 
 def make_model(model_name):
