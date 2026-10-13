@@ -1,24 +1,9 @@
-from enum import IntEnum
-
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from leasing.report.viewset import ENABLED_REPORTS
-
-
-class UserGroup(IntEnum):
-    SELAILIJA = 1
-    VALMISTELIJA = 2
-    SOPIMUSVALMISTELIJA = 3
-    SYOTTAJA = 4
-    PERINTALAKIMIES = 5
-    LASKUTTAJA = 6
-    PAAKAYTTAJA = 7
-
-
-UG = UserGroup
-
+from utils.group_permissions import UG
 
 DEFAULT_REPORT_PERMS = {
     "collaterals": [UG.PERINTALAKIMIES, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
