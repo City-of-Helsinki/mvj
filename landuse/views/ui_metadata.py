@@ -1,8 +1,4 @@
-import hashlib
-import json
-
 from django.conf import settings
-from django.http import HttpResponseNotModified
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -31,7 +27,6 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin
 class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
     """Provides the static choice lists required to render Land Use forms."""
 
-    cache_control = "public, max-age=86400, stale-while-revalidate=604800"
     permission_classes = [LanduseDjangoModelPermissions]
 
     @staticmethod
@@ -70,16 +65,4 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
                 for value, label in settings.LANGUAGES
             ],
         }
-        serialized_payload = json.dumps(
-            payload, ensure_ascii=True, separators=(",", ":"), sort_keys=True
-        )
-        etag = f'"{hashlib.sha256(serialized_payload.encode()).hexdigest()}"'
-
-        if request.headers.get("If-None-Match") == etag:
-            response = HttpResponseNotModified()
-        else:
-            response = Response(payload)
-
-        response["Cache-Control"] = self.cache_control
-        response["ETag"] = etag
-        return response
+        return Response(payload)
