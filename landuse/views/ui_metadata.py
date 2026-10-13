@@ -3,7 +3,6 @@ import json
 
 from django.conf import settings
 from django.http import HttpResponseNotModified
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -25,6 +24,7 @@ from landuse.models.payment_schedule import (
     PaymentScheduleStatus,
 )
 from landuse.models.site import AgreementSite
+from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.views.mixins import LandUseApiEnabledFlagMixin
 
 
@@ -32,7 +32,7 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
     """Provides the static choice lists required to render Land Use forms."""
 
     cache_control = "public, max-age=86400, stale-while-revalidate=604800"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [LanduseDjangoModelPermissions]
 
     @staticmethod
     def _choices(enum):

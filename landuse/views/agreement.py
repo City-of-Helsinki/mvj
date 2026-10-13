@@ -11,6 +11,7 @@ from landuse.models.invoice import Invoice
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import PaymentSchedule
 from landuse.models.site import AgreementSite
+from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.serializers.agreement import (
     AgreementPartySerializer,
     AgreementSiteSerializer,
@@ -44,6 +45,7 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
         "estimated_presentation_year",
         "estimated_payment_year",
     )
+    permission_classes = [LanduseDjangoModelPermissions]
 
     def get_queryset(self):
         queryset = LandUseAgreement.objects.order_by("-modified_at", "pk")

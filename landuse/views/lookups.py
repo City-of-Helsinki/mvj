@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from landuse.models.agreement import AuthorizedSignatory, DetailedPlan, District
 from landuse.models.compensation import LandPolicyProgram
 from landuse.models.site import SiteIntendedUse, SiteTenureType
+from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.serializers.agreement import (
     AuthorizedSignatorySerializer,
     DetailedPlanSerializer,
@@ -16,6 +17,7 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin
 
 class LandUseLookupViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelViewSet):
     pagination_class = None
+    permission_classes = [LanduseDjangoModelPermissions]
 
 
 class DistrictViewSet(LandUseLookupViewSet):
