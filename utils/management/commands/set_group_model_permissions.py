@@ -10,6 +10,7 @@ from django.db.models import Model
 from batchrun.permissions import BATCHRUN_GROUP_MODEL_PERMISSIONS
 from credit_integration.permissions import CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS
 from forms.permissions import FORMS_GROUP_MODEL_PERMISSIONS
+from landuse.permissions import LANDUSE_GROUP_MODEL_PERMISSIONS
 from leasing.permissions import LEASING_GROUP_MODEL_PERMISSIONS
 from plotsearch.permissions import PLOTSEARCH_GROUP_MODEL_PERMISSIONS
 from users.permissions import USERS_GROUP_MODEL_PERMISSIONS
@@ -24,6 +25,7 @@ APP_PERMISSION_CONFIGS = {
     "batchrun": BATCHRUN_GROUP_MODEL_PERMISSIONS,
     "plotsearch": PLOTSEARCH_GROUP_MODEL_PERMISSIONS,
     "forms": FORMS_GROUP_MODEL_PERMISSIONS,
+    "landuse": LANDUSE_GROUP_MODEL_PERMISSIONS,
 }
 
 APP_LABELS = tuple(APP_PERMISSION_CONFIGS.keys())
