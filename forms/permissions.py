@@ -2,7 +2,7 @@ from forms.models.form import Answer, Attachment, Form
 from leasing.permissions import MvjDjangoModelPermissions, PerMethodPermission
 from plotsearch.models import PlotSearch
 from users.models import User
-from utils.group_permissions import GroupModelPermissions, UG
+from utils.group_permissions import UG, GroupModelPermissions
 
 FORMS_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     Form: {
