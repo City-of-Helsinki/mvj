@@ -51,28 +51,6 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
 
     assert overview_response.status_code == status.HTTP_200_OK
     assert overview_response.json()["addresses"][0]["street_address"] == "Testikatu 1"
-    assert "ETag" in overview_response
     assert parties_response.status_code == status.HTTP_200_OK
     assert parties_response.json()[0]["name"] == "Test Oy"
     assert parties_response.json()[0]["contact_persons"][0]["name"] == "Test Person"
-
-
-def test_agreement_update_requires_current_etag(admin_client):
-    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
-    detail_url = reverse("v1:landuse:agreement-detail", args=(agreement.pk,))
-    detail_response = admin_client.get(detail_url)
-
-    missing_etag_response = admin_client.patch(
-        detail_url, {"agreement_type": "TEST"}, content_type="application/json"
-    )
-    current_etag_response = admin_client.patch(
-        detail_url,
-        {"agreement_type": "TEST"},
-        content_type="application/json",
-        HTTP_IF_MATCH=detail_response["ETag"],
-    )
-
-    assert missing_etag_response.status_code == status.HTTP_412_PRECONDITION_FAILED
-    assert current_etag_response.status_code == status.HTTP_200_OK
-    assert current_etag_response.json()["agreement_type"] == "TEST"
-    assert current_etag_response["ETag"] != detail_response["ETag"]

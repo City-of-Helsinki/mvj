@@ -1,37 +1,42 @@
+from django.db import transaction
 from django.db.models import Prefetch
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from landuse.models.agreement import LandUseAgreement
+from landuse.models.compensation import LandUseCompensation
 from landuse.models.contract import Contract
-from landuse.models.decision import Decision
+from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice
-from landuse.models.party import AgreementParty
+from landuse.models.party import (
+    AgreementParty,
+    BillingDetails,
+    ContactPerson,
+    InvoiceRecipient,
+)
 from landuse.models.payment_schedule import PaymentSchedule
 from landuse.models.site import AgreementSite
 from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.serializers.agreement import (
     AgreementPartySerializer,
+    AgreementPartyWriteSerializer,
     AgreementSiteSerializer,
+    AgreementSiteWriteSerializer,
     ContractSerializer,
     DecisionSerializer,
+    DecisionWriteSerializer,
     DetailedPlanSiteSerializer,
     InvoiceSerializer,
     LandUseAgreementListSerializer,
     LandUseAgreementOverviewSerializer,
     LandUseAgreementSerializer,
     LandUseCompensationSerializer,
+    LandUseCompensationWriteSerializer,
     PaymentScheduleSerializer,
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin
-
-
-class PreconditionFailed(APIException):
-    status_code = status.HTTP_412_PRECONDITION_FAILED
-    default_detail = "The agreement has changed. Reload it before saving."
-    default_code = "precondition_failed"
 
 
 class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet):
@@ -127,49 +132,110 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
             return LandUseAgreementOverviewSerializer
         return LandUseAgreementSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        response = super().retrieve(request, *args, **kwargs)
-        response["ETag"] = self._etag(self.get_object())
-        return response
-
-    def update(self, request, *args, **kwargs):
-        agreement = self.get_object()
-        if request.headers.get("If-Match") != self._etag(agreement):
-            raise PreconditionFailed
-        response = super().update(request, *args, **kwargs)
-        response["ETag"] = self._etag(self.get_object())
-        return response
-
-    @staticmethod
-    def _etag(agreement):
-        return f'"{agreement.modified_at.isoformat()}"'
-
     @action(detail=True, methods=("get",))
     def overview(self, request, pk=None):
         agreement = self.get_object()
-        response = Response(LandUseAgreementOverviewSerializer(agreement).data)
-        response["ETag"] = self._etag(agreement)
-        return response
+        return Response(LandUseAgreementOverviewSerializer(agreement).data)
 
-    @action(detail=True, methods=("get",))
+    @action(detail=True, methods=("get", "put"))
     def parties(self, request, pk=None):
         agreement = self.get_object()
+
+        if request.method == "PUT":
+            serializer = AgreementPartyWriteSerializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            return self._replace_parties(agreement, serializer.validated_data)
+
         return Response(
             AgreementPartySerializer(agreement.parties.all(), many=True).data
         )
 
-    @action(detail=True, methods=("get",))
+    @transaction.atomic
+    def _replace_parties(self, agreement, parties_data):
+        existing_parties = {
+            party.pk: party for party in agreement.parties.select_for_update()
+        }
+        retained_party_ids = set()
+        saved_parties = []
+
+        for party_data in parties_data:
+            party_id = party_data.pop("id", None)
+            contact_persons = party_data.pop("contact_persons", [])
+            billing_details = party_data.pop("billing_details", None)
+            invoice_recipient = party_data.pop("invoice_recipient", None)
+
+            if party_id is None:
+                party = AgreementParty.objects.create(agreement=agreement, **party_data)
+            else:
+                party = existing_parties.get(party_id)
+                if party is None:
+                    raise ValidationError(
+                        {"id": f"Party {party_id} does not belong to this agreement."}
+                    )
+                for field, value in party_data.items():
+                    setattr(party, field, value)
+                party.save()
+
+            retained_party_ids.add(party.pk)
+            ContactPerson.objects.filter(agreement_party=party).delete()
+            ContactPerson.objects.bulk_create(
+                [
+                    ContactPerson(agreement_party=party, **contact)
+                    for contact in contact_persons
+                ]
+            )
+
+            if billing_details is None:
+                BillingDetails.objects.filter(agreement_party=party).delete()
+            else:
+                billing_details.pop("id", None)
+                BillingDetails.objects.update_or_create(
+                    agreement_party=party, defaults=billing_details
+                )
+
+            if invoice_recipient is None:
+                InvoiceRecipient.objects.filter(agreement_party=party).delete()
+            else:
+                invoice_recipient.pop("id", None)
+                InvoiceRecipient.objects.update_or_create(
+                    agreement_party=party, defaults=invoice_recipient
+                )
+
+            saved_parties.append(party)
+
+        agreement.parties.exclude(pk__in=retained_party_ids).delete()
+        saved_parties = AgreementParty.objects.filter(
+            pk__in=[party.pk for party in saved_parties]
+        ).prefetch_related("contact_persons", "billing_details")
+        return Response(AgreementPartySerializer(saved_parties, many=True).data)
+
+    @action(detail=True, methods=("get", "put"))
     def compensation(self, request, pk=None):
         agreement = self.get_object()
+
+        if request.method == "PUT":
+            serializer = LandUseCompensationWriteSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            compensation, _ = LandUseCompensation.objects.update_or_create(
+                agreement=agreement, defaults=serializer.validated_data
+            )
+            return Response(LandUseCompensationSerializer(compensation).data)
+
         try:
             compensation = agreement.compensation
-        except LandUseAgreement.compensation.RelatedObjectDoesNotExist:
+        except LandUseCompensation.DoesNotExist:
             return Response(None)
         return Response(LandUseCompensationSerializer(compensation).data)
 
-    @action(detail=True, methods=("get",))
+    @action(detail=True, methods=("get", "put"))
     def sites(self, request, pk=None):
         agreement = self.get_object()
+
+        if request.method == "PUT":
+            serializer = AgreementSiteWriteSerializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            return self._replace_sites(agreement, serializer.validated_data)
+
         return Response(
             {
                 "detailed_plan_sites": DetailedPlanSiteSerializer(
@@ -181,10 +247,95 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
             }
         )
 
-    @action(detail=True, methods=("get",))
+    @transaction.atomic
+    def _replace_sites(self, agreement, sites_data):
+        existing_sites = {
+            site.pk: site for site in agreement.compensation_sites.select_for_update()
+        }
+        retained_site_ids = set()
+        saved_sites = []
+
+        for site_data in sites_data:
+            site_id = site_data.pop("id", None)
+            tenure_types = site_data.pop("tenure_types", [])
+
+            if site_id is None:
+                site = AgreementSite.objects.create(agreement=agreement, **site_data)
+            else:
+                site = existing_sites.get(site_id)
+                if site is None:
+                    raise ValidationError(
+                        {"id": f"Site {site_id} does not belong to this agreement."}
+                    )
+                for field, value in site_data.items():
+                    setattr(site, field, value)
+                site.save()
+
+            site.tenure_types.set(tenure_types)
+            retained_site_ids.add(site.pk)
+            saved_sites.append(site.pk)
+
+        agreement.compensation_sites.exclude(pk__in=retained_site_ids).delete()
+        sites = (
+            AgreementSite.objects.filter(pk__in=saved_sites)
+            .select_related("intended_use")
+            .prefetch_related("tenure_types")
+        )
+        return Response(AgreementSiteSerializer(sites, many=True).data)
+
+    @action(detail=True, methods=("get", "put"))
     def decisions(self, request, pk=None):
         agreement = self.get_object()
+
+        if request.method == "PUT":
+            serializer = DecisionWriteSerializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            return self._replace_decisions(agreement, serializer.validated_data)
+
         return Response(DecisionSerializer(agreement.decisions.all(), many=True).data)
+
+    @transaction.atomic
+    def _replace_decisions(self, agreement, decisions_data):
+        existing_decisions = {
+            decision.pk: decision
+            for decision in agreement.decisions.select_for_update()
+        }
+        retained_decision_ids = set()
+        saved_decision_ids = []
+
+        for decision_data in decisions_data:
+            decision_id = decision_data.pop("id", None)
+            conditions = decision_data.pop("conditions", [])
+
+            if decision_id is None:
+                decision = Decision.objects.create(agreement=agreement, **decision_data)
+            else:
+                decision = existing_decisions.get(decision_id)
+                if decision is None:
+                    raise ValidationError(
+                        {
+                            "id": f"Decision {decision_id} does not belong to this agreement."
+                        }
+                    )
+                for field, value in decision_data.items():
+                    setattr(decision, field, value)
+                decision.save()
+
+            DecisionCondition.objects.filter(decision=decision).delete()
+            DecisionCondition.objects.bulk_create(
+                [
+                    DecisionCondition(decision=decision, **condition)
+                    for condition in conditions
+                ]
+            )
+            retained_decision_ids.add(decision.pk)
+            saved_decision_ids.append(decision.pk)
+
+        agreement.decisions.exclude(pk__in=retained_decision_ids).delete()
+        decisions = Decision.objects.filter(pk__in=saved_decision_ids).prefetch_related(
+            "conditions"
+        )
+        return Response(DecisionSerializer(decisions, many=True).data)
 
     @action(detail=True, methods=("get",))
     def contracts(self, request, pk=None):

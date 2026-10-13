@@ -221,6 +221,36 @@ class AgreementPartySerializer(serializers.ModelSerializer):
         return InvoiceRecipientSerializer(recipient).data
 
 
+class AgreementPartyWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    contact_persons = ContactPersonSerializer(many=True, required=False)
+    billing_details = BillingDetailsSerializer(required=False, allow_null=True)
+    invoice_recipient = InvoiceRecipientSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = AgreementParty
+        fields = (
+            "id",
+            "party_type",
+            "name",
+            "national_identification_number",
+            "business_id",
+            "language",
+            "street_address",
+            "postal_code",
+            "city",
+            "country",
+            "care_of",
+            "phone",
+            "email",
+            "note",
+            "role",
+            "contact_persons",
+            "billing_details",
+            "invoice_recipient",
+        )
+
+
 class LandPolicyProgramSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandPolicyProgram
@@ -236,6 +266,28 @@ class LandUseCompensationSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "modified_at",
+            "excel_calculation_url",
+            "monetary_compensation",
+            "land_compensation",
+            "other_compensation",
+            "total_compensation",
+            "base_price",
+            "land_compensation_description",
+            "other_compensation_description",
+            "value_before_detailed_plan_proposal",
+            "demolition_or_other_deduction",
+            "land_use_compensation",
+            "land_policy_program",
+            "land_policy_program_discount_percentage",
+            "public_areas_m2",
+            "public_areas_acquisition_value",
+        )
+
+
+class LandUseCompensationWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUseCompensation
+        fields = (
             "excel_calculation_url",
             "monetary_compensation",
             "land_compensation",
@@ -293,6 +345,24 @@ class AgreementSiteSerializer(serializers.ModelSerializer):
         )
 
 
+class AgreementSiteWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = AgreementSite
+        fields = (
+            "id",
+            "identifier",
+            "area_m2",
+            "floor_area_kem2",
+            "intended_use",
+            "tenure_types",
+            "preservation_designation",
+            "has_housing_obligation",
+            "unit_price_euro_per_kem2",
+        )
+
+
 class DecisionConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DecisionCondition
@@ -316,6 +386,39 @@ class DecisionSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "modified_at",
+            "title",
+            "decision_maker",
+            "decision_date",
+            "section",
+            "decision_type",
+            "diary_number",
+            "note",
+            "conditions",
+        )
+
+
+class DecisionConditionWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = DecisionCondition
+        fields = (
+            "id",
+            "condition_type",
+            "supervision_date",
+            "supervised_date",
+            "note",
+        )
+
+
+class DecisionWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    conditions = DecisionConditionWriteSerializer(many=True, required=False)
+
+    class Meta:
+        model = Decision
+        fields = (
+            "id",
             "title",
             "decision_maker",
             "decision_date",
