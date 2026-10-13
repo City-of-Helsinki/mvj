@@ -682,12 +682,39 @@ LEASING_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     Contact: {
         "model": {
             UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view", "add", "change"),
+            UG.VALMISTELIJA: (
+                "view",
+                "add",
+                "change",
+                "view_contact_contacts_active_leases",
+            ),
             UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.SYOTTAJA: ("view", "add", "change", "delete"),
-            UG.PERINTALAKIMIES: ("view", "change"),
-            UG.LASKUTTAJA: ("view", "add", "change", "delete"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            UG.SYOTTAJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+                "view_contact_contacts_active_leases",
+            ),
+            UG.PERINTALAKIMIES: (
+                "view",
+                "change",
+                "view_contact_contacts_active_leases",
+            ),
+            UG.LASKUTTAJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+                "view_contact_contacts_active_leases",
+            ),
+            UG.PAAKAYTTAJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+                "view_contact_contacts_active_leases",
+            ),
         },
         "fields": {
             "_default": {
