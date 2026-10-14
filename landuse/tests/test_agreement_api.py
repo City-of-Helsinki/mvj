@@ -8,7 +8,9 @@ from landuse.models.agreement import (
     District,
     LandUseAgreement,
 )
+from landuse.models.compensation import LandPolicyProgram
 from landuse.models.party import AgreementParty, ContactPerson
+from landuse.models.site import SiteIntendedUse, SiteTenureType
 
 pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 
@@ -75,3 +77,45 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
         parties_response.json()["results"][0]["contact_persons"][0]["name"]
         == "Test Person"
     )
+
+
+def test_compensation_and_sites_accept_related_object_ids(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+    land_policy_program = LandPolicyProgram.objects.create(name="MAPO2")
+    intended_use = SiteIntendedUse.objects.create(name="Residential")
+    tenure_type = SiteTenureType.objects.create(name="Rental")
+
+    compensation_response = admin_client.put(
+        reverse("v1:landuse:agreement-compensation", args=(agreement.pk,)),
+        {
+            "land_policy_program": land_policy_program.pk,
+            "land_policy_program_discount_percentage": "25",
+        },
+        content_type="application/json",
+    )
+    sites_response = admin_client.put(
+        reverse("v1:landuse:agreement-sites", args=(agreement.pk,)),
+        [
+            {
+                "identifier": "91-10-100-1",
+                "intended_use": intended_use.pk,
+                "tenure_types": [tenure_type.pk],
+            }
+        ],
+        content_type="application/json",
+    )
+
+    assert compensation_response.status_code == status.HTTP_200_OK
+    assert compensation_response.json()["land_policy_program"] == {
+        "id": land_policy_program.pk,
+        "name": "MAPO2",
+        "default_discount_percentage": None,
+    }
+    assert sites_response.status_code == status.HTTP_200_OK
+    assert sites_response.json()[0]["intended_use"] == {
+        "id": intended_use.pk,
+        "name": "Residential",
+    }
+    assert sites_response.json()[0]["tenure_types"] == [
+        {"id": tenure_type.pk, "name": "Rental"}
+    ]

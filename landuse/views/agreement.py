@@ -258,7 +258,8 @@ class LandUseAgreementViewSet(
     @transaction.atomic
     def _replace_sites(self, agreement, sites_data):
         existing_sites = {
-            site.pk: site for site in agreement.compensation_sites.select_for_update()
+            site.pk: site
+            for site in agreement.compensation_sites.select_for_update(of=("self",))
         }
         retained_site_ids = set()
         saved_sites = []
