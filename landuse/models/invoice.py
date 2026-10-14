@@ -182,6 +182,11 @@ class Invoice(TimeStampedModel):
             )
         )
 
+    class Meta:
+        permissions = [
+            ("send_invoice_to_sap", "Can send invoice to SAP"),
+        ]
+
 
 class InvoiceRecipientSnapshot(PartyDetailsBase, BillingDetailsBase):
     """Recipient and billing details as they were when the invoice was created."""

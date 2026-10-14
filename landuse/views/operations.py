@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.response import Response
 
 from landuse.models.invoice import Invoice, LandUseInvoiceExportError
@@ -16,28 +17,30 @@ from landuse.serializers.agreement import (
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
 
-class PaymentSchedulePermission(permissions.BasePermission):
+class PaymentSchedulePermission(BasePermission):
     message = "You do not have permission to perform this payment schedule operation."
 
-    # TODO: define permissions
-    # def has_permission(self, request, view):
-    #     permission = {
-    #         "submit": "landuse.change_paymentschedule",
-    #         "approve": "landuse.approve_paymentschedule",
-    #         "reject": "landuse.approve_paymentschedule",
-    #     }.get(view.action, "landuse.view_paymentschedule")
-    #     return request.user.has_perm(permission)
+    def has_permission(self, request, view):
+        permission = {
+            "list": "landuse.view_paymentschedule",
+            "retrieve": "landuse.view_paymentschedule",
+            "submit": "landuse.change_paymentschedule",
+            "approve": "landuse.approve_paymentschedule",
+            "reject": "landuse.approve_paymentschedule",
+        }.get(view.action)
+        return permission is not None and request.user.has_perm(permission)
 
 
-class InvoicePermission(permissions.BasePermission):
+class InvoicePermission(BasePermission):
     message = "You do not have permission to perform this invoice operation."
 
-    # TODO: define permissions
-    # def has_permission(self, request, view):
-    #     permission = {
-    #         "send_to_sap": "landuse.send_invoice_to_sap",
-    #     }.get(view.action, "landuse.view_invoice")
-    #     return request.user.has_perm(permission)
+    def has_permission(self, request, view):
+        permission = {
+            "list": "landuse.view_invoice",
+            "retrieve": "landuse.view_invoice",
+            "send_to_sap": "landuse.send_invoice_to_sap",
+        }.get(view.action)
+        return permission is not None and request.user.has_perm(permission)
 
 
 class PaymentScheduleViewSet(
@@ -47,8 +50,7 @@ class PaymentScheduleViewSet(
         "agreement", "recipient_party", "contract"
     ).prefetch_related("installments__items")
     serializer_class = PaymentScheduleSerializer
-    # TODO: define permissions
-    # permission_classes = (permissions.IsAuthenticated, PaymentSchedulePermission)
+    permission_classes = (IsAuthenticated, PaymentSchedulePermission)
 
     @action(detail=True, methods=("post",))
     def submit(self, request, pk=None):
@@ -84,8 +86,7 @@ class InvoiceViewSet(
         "agreement", "recipient_party", "recipient_snapshot"
     ).prefetch_related("items", "payments")
     serializer_class = InvoiceSerializer
-    # TODO: define permissions
-    # permission_classes = (permissions.IsAuthenticated, InvoicePermission)
+    permission_classes = (IsAuthenticated, InvoicePermission)
 
     @action(detail=True, methods=("post",), url_path="send-to-sap")
     @transaction.atomic

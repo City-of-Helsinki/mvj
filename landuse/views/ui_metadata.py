@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,14 +21,20 @@ from landuse.models.payment_schedule import (
     PaymentScheduleStatus,
 )
 from landuse.models.site import AgreementSite
-from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.views.mixins import LandUseApiEnabledFlagMixin
+
+
+class CanViewLandUseUiMetadata(BasePermission):
+    message = "You do not have permission to access Land Use metadata."
+
+    def has_permission(self, request, view):
+        return request.user.has_perm("landuse.view_landuseagreement")
 
 
 class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
     """Provides the static choice lists required to render Land Use forms."""
 
-    permission_classes = [LanduseDjangoModelPermissions]
+    permission_classes = [CanViewLandUseUiMetadata]
 
     @staticmethod
     def _choices(enum):

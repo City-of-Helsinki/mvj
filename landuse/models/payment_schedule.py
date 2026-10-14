@@ -148,6 +148,11 @@ class PaymentSchedule(TimeStampedModel):
         self.rejected_reason = reason.strip()
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
+    class Meta:
+        permissions = [
+            ("approve_paymentschedule", "Can approve payment schedule"),
+        ]
+
 
 class PaymentScheduleInstallment(TimeStampedModel):
     """

@@ -10,6 +10,7 @@ from landuse.models.contract import Contract
 from landuse.models.invoice import Invoice
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
+from landuse.views.operations import InvoicePermission, PaymentSchedulePermission
 
 pytestmark = pytest.mark.django_db
 
@@ -50,6 +51,19 @@ def get_landuse_permission(codename):
 def clear_permission_cache(user):
     for attribute in ("_perm_cache", "_user_perm_cache", "_group_perm_cache"):
         user.__dict__.pop(attribute, None)
+
+
+@pytest.mark.parametrize(
+    "permission_class", [PaymentSchedulePermission, InvoicePermission]
+)
+def test_operation_permissions_deny_unrecognized_actions(
+    permission_class, rf, user_factory
+):
+    request = rf.post("/")
+    request.user = user_factory(is_superuser=True)
+    view = type("View", (), {"action": "unrecognized_action"})()
+
+    assert permission_class().has_permission(request, view) is False
 
 
 def test_approve_payment_schedule_requires_operation_permission(client, user_factory):
