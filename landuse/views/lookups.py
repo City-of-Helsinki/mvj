@@ -12,11 +12,12 @@ from landuse.serializers.agreement import (
     SiteIntendedUseSerializer,
     SiteTenureTypeSerializer,
 )
-from landuse.views.mixins import LandUseApiEnabledFlagMixin
+from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
 
-class LandUseLookupViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelViewSet):
-    pagination_class = None
+class LandUseLookupViewSet(
+    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+):
     permission_classes = [LanduseDjangoModelPermissions]
 
 

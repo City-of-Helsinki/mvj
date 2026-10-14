@@ -31,6 +31,10 @@ from leasing.enums import (
     PlotSearchTargetType,
     TenantContactType,
 )
+from leasing.models.contact import Contact
+from leasing.models.land_area import LeaseArea, LeaseAreaAddress
+from leasing.models.lease import Lease
+from leasing.models.tenant import Tenant, TenantContact
 from leasing.tests.factories import (
     CollectionLetterFactory,
     ContactFactory,

@@ -1,5 +1,6 @@
 from django.conf import settings
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class LandUseApiEnabledFlagMixin:
@@ -13,3 +14,12 @@ class LandUseApiEnabledFlagMixin:
             raise PermissionDenied
 
         super().initial(request, *args, **kwargs)
+
+
+class LandUseLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 100
+
+
+class LandUsePaginationMixin:
+    pagination_class = LandUseLimitOffsetPagination
+    default_limit = 100

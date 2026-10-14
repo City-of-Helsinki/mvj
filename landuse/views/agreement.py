@@ -36,10 +36,12 @@ from landuse.serializers.agreement import (
     LandUseCompensationWriteSerializer,
     PaymentScheduleSerializer,
 )
-from landuse.views.mixins import LandUseApiEnabledFlagMixin
+from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
 
-class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet):
+class LandUseAgreementViewSet(
+    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ModelViewSet
+):
     serializer_class = LandUseAgreementSerializer
     filterset_fields = (
         "identifier",
@@ -132,6 +134,12 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
             return LandUseAgreementOverviewSerializer
         return LandUseAgreementSerializer
 
+    def get_paginated_serializer_response(self, queryset, serializer_class):
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            return self.get_paginated_response(serializer_class(page, many=True).data)
+        return Response(serializer_class(queryset, many=True).data)
+
     @action(detail=True, methods=("get",))
     def overview(self, request, pk=None):
         agreement = self.get_object()
@@ -146,8 +154,8 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
             serializer.is_valid(raise_exception=True)
             return self._replace_parties(agreement, serializer.validated_data)
 
-        return Response(
-            AgreementPartySerializer(agreement.parties.all(), many=True).data
+        return self.get_paginated_serializer_response(
+            agreement.parties.all(), AgreementPartySerializer
         )
 
     @transaction.atomic
@@ -292,7 +300,9 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
             serializer.is_valid(raise_exception=True)
             return self._replace_decisions(agreement, serializer.validated_data)
 
-        return Response(DecisionSerializer(agreement.decisions.all(), many=True).data)
+        return self.get_paginated_serializer_response(
+            agreement.decisions.all(), DecisionSerializer
+        )
 
     @transaction.atomic
     def _replace_decisions(self, agreement, decisions_data):
@@ -340,16 +350,20 @@ class LandUseAgreementViewSet(LandUseApiEnabledFlagMixin, viewsets.ModelViewSet)
     @action(detail=True, methods=("get",))
     def contracts(self, request, pk=None):
         agreement = self.get_object()
-        return Response(ContractSerializer(agreement.contracts.all(), many=True).data)
+        return self.get_paginated_serializer_response(
+            agreement.contracts.all(), ContractSerializer
+        )
 
     @action(detail=True, methods=("get",), url_path="payment-schedules")
     def payment_schedules(self, request, pk=None):
         agreement = self.get_object()
-        return Response(
-            PaymentScheduleSerializer(agreement.payment_schedules.all(), many=True).data
+        return self.get_paginated_serializer_response(
+            agreement.payment_schedules.all(), PaymentScheduleSerializer
         )
 
     @action(detail=True, methods=("get",))
     def invoices(self, request, pk=None):
         agreement = self.get_object()
-        return Response(InvoiceSerializer(agreement.invoices.all(), many=True).data)
+        return self.get_paginated_serializer_response(
+            agreement.invoices.all(), InvoiceSerializer
+        )
