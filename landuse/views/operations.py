@@ -13,7 +13,7 @@ from landuse.serializers.agreement import (
     PaymentScheduleRejectionSerializer,
     PaymentScheduleSerializer,
 )
-from landuse.views.mixins import LandUseApiEnabledFlagMixin
+from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
 
 class PaymentSchedulePermission(permissions.BasePermission):
@@ -40,7 +40,9 @@ class InvoicePermission(permissions.BasePermission):
     #     return request.user.has_perm(permission)
 
 
-class PaymentScheduleViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelViewSet):
+class PaymentScheduleViewSet(
+    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+):
     queryset = PaymentSchedule.objects.select_related(
         "agreement", "recipient_party", "contract"
     ).prefetch_related("installments__items")
@@ -75,7 +77,9 @@ class PaymentScheduleViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelV
         return Response(PaymentScheduleSerializer(schedule).data)
 
 
-class InvoiceViewSet(LandUseApiEnabledFlagMixin, viewsets.ReadOnlyModelViewSet):
+class InvoiceViewSet(
+    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+):
     queryset = Invoice.objects.select_related(
         "agreement", "recipient_party", "recipient_snapshot"
     ).prefetch_related("items", "payments")
