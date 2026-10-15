@@ -179,12 +179,7 @@ class Collateral(models.Model):
         on_delete=models.PROTECT,
     )
 
-    # In Finnish: Vakuuden laji
-    other_type = models.CharField(
-        verbose_name=_("Other type"), null=True, blank=True, max_length=255
-    )
-
-    # In Finnish: Numero
+    # In Finnish: Vuokravakuusnumero
     number = models.CharField(
         verbose_name=_("Number"), null=True, blank=True, max_length=255
     )
@@ -228,11 +223,6 @@ class Collateral(models.Model):
     # In Finnish: Huomautus
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
 
-    # In Finnish: Vierasvelkapanttaus
-    third_party_pledge = models.BooleanField(
-        verbose_name=_("Third party pledge"), default=False
-    )
-
     # In Finnish: Vierasvelkapanttauksen antajan nimi
     third_party_pledgor_name = models.CharField(
         verbose_name=_("Third party pledgor name"),
@@ -270,12 +260,6 @@ class Collateral(models.Model):
         blank=True,
         max_length=255,
         validators=[validate_business_id],
-    )
-
-    # In Finnish: Jälkipanttaus
-    subordinate_pledge = models.BooleanField(
-        verbose_name=_("Subordinate pledge"),
-        default=False,
     )
 
     # In Finnish: Jälkipantin saajan nimi
@@ -346,11 +330,54 @@ class Collateral(models.Model):
         max_length=255,
     )
 
+    # In Finnish: Panttikirjan numero
+    number_mortgage_document = models.CharField(
+        verbose_name=_("Mortgage document number"),
+        null=True,
+        blank=True,
+        max_length=255,
+    )
+
     recursive_get_related_skip_relations = ["contract"]
 
     class Meta:
         verbose_name = pgettext_lazy("Model name", "Collateral")
         verbose_name_plural = pgettext_lazy("Model name", "Collaterals")
+
+
+class CollateralPropertyIdentifier(models.Model):
+    """
+    In Finnish: Vakuuden kiinteistötunnus ja laitostunnus
+    """
+
+    collateral = models.ForeignKey(
+        Collateral,
+        verbose_name=_("Collateral"),
+        related_name="property_identifiers",
+        on_delete=models.CASCADE,
+    )
+
+    # In Finnish: Kiinteistötunnus
+    property_identifier = models.CharField(
+        verbose_name=_("Property identifier"),
+        null=True,
+        blank=True,
+        max_length=255,
+    )
+
+    # In Finnish: Laitostunnus
+    institution_identifier = models.CharField(
+        verbose_name=_("Institution identifier"),
+        null=True,
+        blank=True,
+        max_length=255,
+    )
+
+    class Meta:
+        verbose_name = pgettext_lazy("Model name", "Collateral property identifier")
+        verbose_name_plural = pgettext_lazy(
+            "Model name", "Collateral property identifiers"
+        )
 
 
 class ContractChange(models.Model):
@@ -426,3 +453,4 @@ auditlog.register(Collateral)
 field_permissions.register(Contract, exclude_fields=["lease"])
 field_permissions.register(ContractChange, exclude_fields=["contract"])
 field_permissions.register(Collateral, exclude_fields=["contract"])
+field_permissions.register(CollateralPropertyIdentifier, exclude_fields=["collateral"])

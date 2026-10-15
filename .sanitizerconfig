@@ -342,7 +342,6 @@ strategy:
     id: null
     note: mvj.paragraph_if_exist
     number: null
-    other_type: null
     paid_date: null
     returned_date: null
     start_date: null

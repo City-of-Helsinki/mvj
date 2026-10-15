@@ -2,7 +2,11 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models.contract import Collateral, CollateralType
+from leasing.models.contract import (
+    Collateral,
+    CollateralPropertyIdentifier,
+    CollateralType,
+)
 from leasing.models.tenant import Tenant
 from leasing.serializers.tenant import TenantSerializer
 from users.models import User
@@ -72,6 +76,16 @@ class ContractChangeCreateUpdateSerializer(
         )
 
 
+class CollateralPropertyIdentifierSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = CollateralPropertyIdentifier
+        exclude = ("collateral",)
+
+
 class CollateralTypeSerializer(NameModelSerializer):
     class Meta:
         model = CollateralType
@@ -85,6 +99,9 @@ class CollateralSerializer(
 ):
     id = serializers.IntegerField(required=False)
     returned_by = UserSerializer(read_only=True)
+    property_identifiers = CollateralPropertyIdentifierSerializer(
+        many=True, required=False
+    )
 
     class Meta:
         model = Collateral
@@ -92,6 +109,7 @@ class CollateralSerializer(
 
 
 class CollateralCreateUpdateSerializer(
+    UpdateNestedMixin,
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
     serializers.ModelSerializer,
@@ -115,6 +133,9 @@ class CollateralCreateUpdateSerializer(
         related_serializer=TenantSerializer,
         many=True,
         required=False,
+    )
+    property_identifiers = CollateralPropertyIdentifierSerializer(
+        many=True, required=False
     )
 
     class Meta:

@@ -15,13 +15,37 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ("username", "first_name", "last_name")
     permission_classes = (IsAuthenticated,)
 
+    # DEBUG TO SEE WHAT IS GOING ON
+    def perform_authentication(self, request):
+        try:
+            super().perform_authentication(request)
+        except Exception as e:
+            print(
+                "Authentication failed on {} {}: {} | User-Agent: {}".format(
+                    request.method,
+                    request.get_full_path(),
+                    str(e),
+                    request.META.get("HTTP_USER_AGENT", ""),
+                )
+            )
+
     def get_queryset(self):
-        qs = super().get_queryset()
+        try:
+            qs = super().get_queryset()
 
-        if not self.request.user.has_perm("users.view_user"):
-            qs = qs.filter(pk=self.request.user.pk)
+            if not self.request.user.has_perm("users.view_user"):
+                qs = qs.filter(pk=self.request.user.pk)
 
-        return qs.distinct()
+            return qs.distinct()
+        except Exception as e:
+            print(
+                "Failed to get queryset on {} {}: {} | User-Agent: {}".format(
+                    self.request.method,
+                    self.request.get_full_path(),
+                    str(e),
+                    self.request.META.get("HTTP_USER_AGENT", ""),
+                )
+            )
 
 
 class OfficerViewSet(UserViewSet):
