@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django_countries import countries
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -163,7 +164,7 @@ class BillingDetailsSerializer(serializers.ModelSerializer):
 
 
 class InvoiceRecipientSerializer(serializers.ModelSerializer):
-    country = serializers.CharField()
+    country = serializers.ChoiceField(choices=countries, allow_blank=True, required=False)
 
     class Meta:
         model = InvoiceRecipient
@@ -224,6 +225,7 @@ class AgreementPartySerializer(serializers.ModelSerializer):
 
 class AgreementPartyWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    country = serializers.ChoiceField(choices=countries, allow_blank=True, required=False)
     contact_persons = ContactPersonSerializer(many=True, required=False)
     billing_details = BillingDetailsSerializer(required=False, allow_null=True)
     invoice_recipient = InvoiceRecipientSerializer(required=False, allow_null=True)

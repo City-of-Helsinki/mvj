@@ -24,3 +24,9 @@ def test_ui_metadata_returns_choices(admin_client):
         {"value": "SIGNATURE", "label": "Allekirjoitus"},
         {"value": "NO_AGREEMENT", "label": "Ei sopimusta"},
     ]
+
+
+def test_ui_metadata_provides_country_and_language_codes(admin_client):
+    response = admin_client.get(reverse("v1:landuse-ui-metadata"))
+    assert "FI" in {option["value"] for option in response.json()["countries"]}
+    assert "fi" in {option["value"] for option in response.json()["languages"]}
