@@ -39,7 +39,6 @@ from landuse.models.payment_schedule import (
 )
 from landuse.models.site import (
     AgreementSite,
-    DetailedPlanSite,
     SiteIntendedUse,
     SiteTenureType,
 )
@@ -170,15 +169,6 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         "fields": {},
     },
     DetailedPlan: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
-        },
-        "fields": {},
-    },
-    DetailedPlanSite: {
         "model": {
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),

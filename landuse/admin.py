@@ -40,7 +40,6 @@ from landuse.models.payment_schedule import (
 )
 from landuse.models.site import (
     AgreementSite,
-    DetailedPlanSite,
     SiteIntendedUse,
     SiteTenureType,
 )
@@ -405,13 +404,6 @@ class AgreementSiteAdmin(admin.ModelAdmin):
     search_fields = ("identifier", "agreement__identifier")
     autocomplete_fields = ("agreement", "intended_use")
     filter_horizontal = ("tenure_types",)
-
-
-@admin.register(DetailedPlanSite)
-class DetailedPlanSiteAdmin(admin.ModelAdmin):
-    list_display = ("identifier",)
-    search_fields = ("identifier",)
-    filter_horizontal = ("agreements",)
 
 
 @admin.register(SiteIntendedUse)

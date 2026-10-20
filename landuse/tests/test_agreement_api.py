@@ -51,7 +51,9 @@ def test_detailed_plan_list_is_paginated(admin_client):
 
 
 def test_overview_and_parties_are_separate_tab_documents(admin_client):
-    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+    agreement = LandUseAgreement.objects.create(
+        identifier="M-2026-1", detailed_plan_sites=["91-10-100-1"]
+    )
     AgreementAddress.objects.create(
         agreement=agreement,
         street_address="Testikatu 1",
@@ -70,6 +72,7 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
 
     assert overview_response.status_code == status.HTTP_200_OK
     assert overview_response.json()["addresses"][0]["street_address"] == "Testikatu 1"
+    assert overview_response.json()["detailed_plan_sites"] == ["91-10-100-1"]
     assert parties_response.status_code == status.HTTP_200_OK
     assert parties_response.json()["count"] == 1
     assert parties_response.json()["results"][0]["name"] == "Test Oy"
@@ -77,6 +80,20 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
         parties_response.json()["results"][0]["contact_persons"][0]["name"]
         == "Test Person"
     )
+
+
+def test_agreement_updates_detailed_plan_sites(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+
+    response = admin_client.patch(
+        reverse("v1:landuse:agreement-detail", args=(agreement.pk,)),
+        {"detailed_plan_sites": ["91-10-100-1", "91-10-100-2"]},
+        content_type="application/json",
+    )
+
+    agreement.refresh_from_db()
+    assert response.status_code == status.HTTP_200_OK
+    assert agreement.detailed_plan_sites == ["91-10-100-1", "91-10-100-2"]
 
 
 def test_compensation_and_sites_accept_related_object_ids(admin_client):

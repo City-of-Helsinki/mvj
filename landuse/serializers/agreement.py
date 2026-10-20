@@ -39,7 +39,6 @@ from landuse.models.payment_schedule import (
 )
 from landuse.models.site import (
     AgreementSite,
-    DetailedPlanSite,
     SiteIntendedUse,
     SiteTenureType,
 )
@@ -121,6 +120,7 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
             "obligations_deadline",
             "authorized_signatory",
             "detailed_plan",
+            "detailed_plan_sites",
             "collateral_multiplier",
             "created_at",
             "modified_at",
@@ -143,6 +143,7 @@ class LandUseAgreementOverviewSerializer(LandUseAgreementListSerializer):
             "obligations_deadline",
             "authorized_signatory",
             "detailed_plan",
+            "detailed_plan_sites",
             "collateral_multiplier",
             "addresses",
             "preparers",
@@ -316,12 +317,6 @@ class SiteTenureTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteTenureType
         fields = ("id", "name")
-
-
-class DetailedPlanSiteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DetailedPlanSite
-        fields = ("id", "identifier")
 
 
 class AgreementSiteSerializer(serializers.ModelSerializer):
