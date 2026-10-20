@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.exceptions import PermissionDenied
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -340,6 +341,21 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         "fields": {},
     },
 }
+
+
+def check_collection_permissions(user, model, existing_ids, records):
+    retained_ids = {record["id"] for record in records if record.get("id") is not None}
+    operations = set()
+    if any(record.get("id") is None for record in records):
+        operations.add("add")
+    if retained_ids:
+        operations.add("change")
+    if set(existing_ids) - retained_ids:
+        operations.add("delete")
+    for operation in sorted(operations):
+        permission = f"{model._meta.app_label}.{operation}_{model._meta.model_name}"
+        if not user.has_perm(permission):
+            raise PermissionDenied(f"Missing permission: {permission}")
 
 
 class LanduseDjangoModelPermissions(permissions.DjangoModelPermissions):
