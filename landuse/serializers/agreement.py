@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django_countries import countries
+from django.db import transaction
+from landuse.permissions import check_collection_permissions
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -72,12 +74,15 @@ class DetailedPlanSerializer(serializers.ModelSerializer):
 
 
 class AgreementAddressSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = AgreementAddress
         fields = ("id", "street_address", "postal_code", "city")
 
 
 class AgreementPreparerSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     preparer_name = serializers.CharField(
         source="preparer.get_full_name", read_only=True
     )
@@ -106,6 +111,57 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
 
 
 class LandUseAgreementSerializer(serializers.ModelSerializer):
+    addresses = AgreementAddressSerializer(many=True, required=False)
+    preparers = AgreementPreparerSerializer(many=True, required=False)
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        collections = []
+        for name, model in (
+            ("addresses", AgreementAddress),
+            ("preparers", AgreementPreparer),
+        ):
+            if name in validated_data:
+                records = validated_data.pop(name)
+                manager = getattr(instance, name)
+                current = list(manager.all())
+                fields = (
+                    ("street_address", "postal_code", "city")
+                    if name == "addresses"
+                    else ("preparer",)
+                )
+                if [
+                    tuple(getattr(record, field) for field in fields)
+                    for record in current
+                ] != [tuple(record[field] for field in fields) for record in records]:
+                    check_collection_permissions(
+                        self.context["request"].user,
+                        model,
+                        {record.pk for record in current},
+                        records,
+                    )
+                    collections.append((manager, model, records))
+        instance = super().update(instance, validated_data)
+        for manager, model, records in collections:
+            existing = {record.pk: record for record in manager.all()}
+            retained = set()
+            for record in records:
+                record_id = record.pop("id", None)
+                if record_id is None:
+                    saved = model.objects.create(agreement=instance, **record)
+                else:
+                    saved = existing.get(record_id)
+                    if saved is None:
+                        raise serializers.ValidationError(
+                            {"id": "Record does not belong to this agreement."}
+                        )
+                    for field, value in record.items():
+                        setattr(saved, field, value)
+                    saved.save()
+                retained.add(saved.pk)
+            manager.exclude(pk__in=retained).delete()
+        return instance
+
     class Meta:
         model = LandUseAgreement
         fields = (
@@ -123,6 +179,8 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
             "detailed_plan",
             "detailed_plan_sites",
             "collateral_multiplier",
+            "addresses",
+            "preparers",
             "created_at",
             "modified_at",
         )
@@ -164,7 +222,9 @@ class BillingDetailsSerializer(serializers.ModelSerializer):
 
 
 class InvoiceRecipientSerializer(serializers.ModelSerializer):
-    country = serializers.ChoiceField(choices=countries, allow_blank=True, required=False)
+    country = serializers.ChoiceField(
+        choices=countries, allow_blank=True, required=False
+    )
 
     class Meta:
         model = InvoiceRecipient
@@ -225,7 +285,9 @@ class AgreementPartySerializer(serializers.ModelSerializer):
 
 class AgreementPartyWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    country = serializers.ChoiceField(choices=countries, allow_blank=True, required=False)
+    country = serializers.ChoiceField(
+        choices=countries, allow_blank=True, required=False
+    )
     contact_persons = ContactPersonSerializer(many=True, required=False)
     billing_details = BillingDetailsSerializer(required=False, allow_null=True)
     invoice_recipient = InvoiceRecipientSerializer(required=False, allow_null=True)

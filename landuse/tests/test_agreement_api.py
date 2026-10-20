@@ -4,6 +4,8 @@ from rest_framework import status
 
 from landuse.models.agreement import (
     AgreementAddress,
+    AgreementPreparer,
+    AuthorizedSignatory,
     DetailedPlan,
     District,
     LandUseAgreement,
@@ -112,6 +114,34 @@ def test_referenced_decision_is_preserved_when_replacing_decisions(admin_client)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert Decision.objects.filter(pk=decision.pk).exists()
     assert Contract.objects.filter(pk=contract.pk).exists()
+
+
+def test_summary_saves_relationships_and_collections(admin_client, user_factory):
+    agreement = LandUseAgreement.objects.create(identifier="MA101-2")
+    preparer = user_factory()
+    signatory = AuthorizedSignatory.objects.create(name="Signatory")
+    plan = DetailedPlan.objects.create(plan_number="12345")
+
+    response = admin_client.patch(
+        reverse("v1:landuse:agreement-detail", args=(agreement.pk,)),
+        {
+            "authorized_signatory": signatory.pk,
+            "detailed_plan": plan.pk,
+            "addresses": [
+                {
+                    "street_address": "Testikatu 1",
+                    "postal_code": "00100",
+                    "city": "Helsinki",
+                }
+            ],
+            "preparers": [{"preparer": preparer.pk}],
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert agreement.addresses.get().street_address == "Testikatu 1"
+    assert agreement.preparers.get().preparer_id == preparer.pk
 
 
 def test_compensation_and_sites_accept_related_object_ids(admin_client):

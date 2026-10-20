@@ -1,5 +1,6 @@
 from django.conf import settings
 from django_countries import countries
+from users.models import User
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -74,6 +75,12 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
             ],
             "countries": [
                 {"value": value, "label": str(label)} for value, label in countries
+            ],
+            "preparers": [
+                {"value": str(user.pk), "label": user.get_full_name() or user.username}
+                for user in User.objects.filter(is_active=True).order_by(
+                    "first_name", "last_name", "pk"
+                )
             ],
         }
         return Response(payload)
