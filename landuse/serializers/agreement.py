@@ -94,6 +94,11 @@ class AgreementPreparerSerializer(serializers.ModelSerializer):
 
 class LandUseAgreementListSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(read_only=True)
+    party_names = serializers.SerializerMethodField()
+    detailed_plan_number = serializers.CharField(source="detailed_plan.plan_number", default="", read_only=True)
+
+    def get_party_names(self, agreement):
+        return [party.name for party in agreement.parties.all() if party.name]
 
     class Meta:
         model = LandUseAgreement
@@ -102,6 +107,10 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
             "identifier",
             "agreement_type",
             "district",
+            "party_names",
+            "detailed_plan_number",
+            "detailed_plan_sites",
+            "is_promotion_area",
             "status",
             "estimated_presentation_year",
             "estimated_payment_year",

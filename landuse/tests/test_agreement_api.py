@@ -42,6 +42,20 @@ def test_agreement_list_uses_compact_representation(admin_client):
     assert "collateral_multiplier" not in response.json()["results"][0]
 
 
+def test_agreement_list_includes_searchable_related_fields(admin_client):
+    plan = DetailedPlan.objects.create(plan_number="12345")
+    agreement = LandUseAgreement.objects.create(
+        identifier="MA101-3", detailed_plan=plan,
+        detailed_plan_sites=["91-1-1-1"], is_promotion_area=True,
+    )
+    AgreementParty.objects.create(agreement=agreement, name="Test Oy")
+    row = admin_client.get(reverse("v1:landuse:agreement-list")).json()["results"][0]
+    assert row["party_names"] == ["Test Oy"]
+    assert row["detailed_plan_number"] == "12345"
+    assert row["detailed_plan_sites"] == ["91-1-1-1"]
+    assert row["is_promotion_area"] is True
+
+
 def test_detailed_plan_list_is_paginated(admin_client):
     for index in range(101):
         DetailedPlan.objects.create(plan_number=str(index))
