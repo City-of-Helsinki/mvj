@@ -3,6 +3,7 @@ from typing import Callable
 
 import pytest
 from django.core.management import call_command
+from django.utils import timezone
 
 from leasing.enums import AreaType, PlanUnitStatus, PlotType
 from leasing.models import LeaseArea, PlanUnit, Plot
@@ -241,6 +242,36 @@ def test_attach_areas_leaves_lease_area_without_imported_area_unchanged(
     lease_area.refresh_from_db()
     assert lease_area.geometry is None
     assert Plot.objects.filter(pk=existing_plot.pk).exists()
+
+
+@pytest.mark.django_db
+def test_attach_areas_prefers_active_lease_area_over_archived_duplicate(
+    lease_area_factory: Callable[..., LeaseArea],
+    area_with_intersects_test_data,
+    lease_test_data,
+):
+    """If both an archived and unarchived lease area exist with the same
+    identifier in the same lease, only update the active lease area."""
+    area: Area = area_with_intersects_test_data["area"]
+    lease: Lease = lease_test_data["lease"]
+    identifier = area.get_land_identifier()
+    shared_values = {
+        "lease": lease,
+        "identifier": identifier,
+        "area": 1000,
+        "section_area": 1000,
+    }
+    archived_lease_area = lease_area_factory(
+        **shared_values, archived_at=timezone.now()
+    )
+    active_lease_area = lease_area_factory(**shared_values, archived_at=None)
+
+    call_command("attach_areas", stdout=StringIO())
+
+    archived_lease_area.refresh_from_db()
+    active_lease_area.refresh_from_db()
+    assert archived_lease_area.geometry is None
+    assert active_lease_area.geometry == area.geometry
 
 
 @pytest.mark.django_db
