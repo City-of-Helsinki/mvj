@@ -44,6 +44,11 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
 
     def get(self, request):
         payload = {
+            "permissions": [
+                {"value": permission, "label": permission}
+                for permission in sorted(request.user.get_all_permissions())
+                if permission.startswith("landuse.")
+            ],
             "agreement_statuses": self._choices(LandUseAgreementStatus),
             "detailed_plan_processing_stages": self._choices(
                 DetailedPlanProcessingStage

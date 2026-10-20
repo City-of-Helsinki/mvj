@@ -30,3 +30,10 @@ def test_ui_metadata_provides_country_and_language_codes(admin_client):
     response = admin_client.get(reverse("v1:landuse-ui-metadata"))
     assert "FI" in {option["value"] for option in response.json()["countries"]}
     assert "fi" in {option["value"] for option in response.json()["languages"]}
+
+
+def test_ui_metadata_includes_current_user_operation_permissions(admin_client):
+    payload = admin_client.get(reverse("v1:landuse-ui-metadata")).json()
+    assert "landuse.approve_paymentschedule" in {
+        option["value"] for option in payload["permissions"]
+    }
