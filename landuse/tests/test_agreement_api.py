@@ -9,6 +9,8 @@ from landuse.models.agreement import (
     LandUseAgreement,
 )
 from landuse.models.compensation import LandPolicyProgram
+from landuse.models.contract import Contract
+from landuse.models.decision import Decision
 from landuse.models.party import AgreementParty, ContactPerson
 from landuse.models.site import SiteIntendedUse, SiteTenureType
 
@@ -94,6 +96,22 @@ def test_agreement_updates_detailed_plan_sites(admin_client):
     agreement.refresh_from_db()
     assert response.status_code == status.HTTP_200_OK
     assert agreement.detailed_plan_sites == ["91-10-100-1", "91-10-100-2"]
+
+
+def test_referenced_decision_is_preserved_when_replacing_decisions(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="MA101-1")
+    decision = Decision.objects.create(agreement=agreement)
+    contract = Contract.objects.create(agreement=agreement, decision=decision)
+
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-decisions", args=(agreement.pk,)),
+        [],
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert Decision.objects.filter(pk=decision.pk).exists()
+    assert Contract.objects.filter(pk=contract.pk).exists()
 
 
 def test_compensation_and_sites_accept_related_object_ids(admin_client):

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
-from landuse.models.contract import Contract
+from landuse.models.contract import Contract, ContractChange
 from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice
 from landuse.models.party import (
@@ -374,6 +374,14 @@ class LandUseAgreementViewSet(
             self.request.user, Decision, existing_decisions, decisions_data
         )
         retained_ids = {record.get("id") for record in decisions_data}
+        removed_ids = set(existing_decisions) - retained_ids
+        if (
+            Contract.objects.filter(decision_id__in=removed_ids).exists()
+            or ContractChange.objects.filter(decision_id__in=removed_ids).exists()
+        ):
+            raise ValidationError(
+                {"decisions": "A decision referenced by a contract cannot be removed."}
+            )
         for decision_id, decision in existing_decisions.items():
             if decision_id not in retained_ids:
                 check_collection_permissions(
