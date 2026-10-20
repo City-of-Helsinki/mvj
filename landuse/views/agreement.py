@@ -27,7 +27,6 @@ from landuse.serializers.agreement import (
     ContractSerializer,
     DecisionSerializer,
     DecisionWriteSerializer,
-    DetailedPlanSiteSerializer,
     InvoiceSerializer,
     LandUseAgreementListSerializer,
     LandUseAgreementOverviewSerializer,
@@ -76,7 +75,6 @@ class LandUseAgreementViewSet(
             )
         if self.action == "sites":
             return queryset.prefetch_related(
-                "detailed_plan_sites",
                 Prefetch(
                     "compensation_sites",
                     queryset=AgreementSite.objects.select_related(
@@ -246,9 +244,6 @@ class LandUseAgreementViewSet(
 
         return Response(
             {
-                "detailed_plan_sites": DetailedPlanSiteSerializer(
-                    agreement.detailed_plan_sites.all(), many=True
-                ).data,
                 "agreement_sites": AgreementSiteSerializer(
                     agreement.compensation_sites.all(), many=True
                 ).data,

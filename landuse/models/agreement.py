@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from users.models import User
@@ -105,6 +106,13 @@ class LandUseAgreement(TimeStampedModel):
         related_name="land_use_agreements",
         null=True,
         blank=True,
+    )
+
+    # In Finnish: Kaava-alueen kohteet
+    detailed_plan_sites = ArrayField(
+        models.CharField(blank=True),
+        blank=True,
+        default=list,
     )
 
     # In Finnish: Vakuustarpeen korotuskerroin
