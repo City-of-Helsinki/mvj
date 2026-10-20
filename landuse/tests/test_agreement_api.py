@@ -45,8 +45,10 @@ def test_agreement_list_uses_compact_representation(admin_client):
 def test_agreement_list_includes_searchable_related_fields(admin_client):
     plan = DetailedPlan.objects.create(plan_number="12345")
     agreement = LandUseAgreement.objects.create(
-        identifier="MA101-3", detailed_plan=plan,
-        detailed_plan_sites=["91-1-1-1"], is_promotion_area=True,
+        identifier="MA101-3",
+        detailed_plan=plan,
+        detailed_plan_sites=["91-1-1-1"],
+        is_promotion_area=True,
     )
     AgreementParty.objects.create(agreement=agreement, name="Test Oy")
     row = admin_client.get(reverse("v1:landuse:agreement-list")).json()["results"][0]
@@ -54,6 +56,24 @@ def test_agreement_list_includes_searchable_related_fields(admin_client):
     assert row["detailed_plan_number"] == "12345"
     assert row["detailed_plan_sites"] == ["91-1-1-1"]
     assert row["is_promotion_area"] is True
+
+
+def test_creation_allocates_identifiers_using_district_code(admin_client):
+    district = District.objects.create(name="Kallio", identifier="11")
+    url = reverse("v1:landuse:agreement-list")
+    first = admin_client.post(
+        url,
+        {"district": district.pk, "municipality": "1"},
+        content_type="application/json",
+    )
+    second = admin_client.post(
+        url,
+        {"district": district.pk, "municipality": "1"},
+        content_type="application/json",
+    )
+    assert first.status_code == status.HTTP_201_CREATED
+    assert first.json()["identifier"] == "MA111-1"
+    assert second.json()["identifier"] == "MA111-2"
 
 
 def test_detailed_plan_list_is_paginated(admin_client):

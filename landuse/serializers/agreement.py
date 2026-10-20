@@ -95,7 +95,9 @@ class AgreementPreparerSerializer(serializers.ModelSerializer):
 class LandUseAgreementListSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(read_only=True)
     party_names = serializers.SerializerMethodField()
-    detailed_plan_number = serializers.CharField(source="detailed_plan.plan_number", default="", read_only=True)
+    detailed_plan_number = serializers.CharField(
+        source="detailed_plan.plan_number", default="", read_only=True
+    )
 
     def get_party_names(self, agreement):
         return [party.name for party in agreement.parties.all() if party.name]
@@ -120,11 +122,40 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
 
 
 class LandUseAgreementSerializer(serializers.ModelSerializer):
+    identifier = serializers.CharField(read_only=True)
+    municipality = serializers.ChoiceField(
+        choices=("1",), write_only=True, required=False, default="1"
+    )
     addresses = AgreementAddressSerializer(many=True, required=False)
     preparers = AgreementPreparerSerializer(many=True, required=False)
 
     @transaction.atomic
+    def create(self, validated_data):
+        municipality = validated_data.pop("municipality", "1")
+        district = validated_data.get("district")
+        if district is None:
+            raise serializers.ValidationError({"district": "This field is required."})
+        district = District.objects.select_for_update().get(pk=district.pk)
+        prefix = f"MA{municipality}{district.identifier.zfill(2)}-"
+        sequences = [
+            int(identifier[len(prefix) :])
+            for identifier in LandUseAgreement.objects.filter(
+                identifier__startswith=prefix
+            ).values_list("identifier", flat=True)
+            if identifier[len(prefix) :].isdigit()
+        ]
+        validated_data["identifier"] = f"{prefix}{max(sequences, default=0) + 1}"
+        addresses = validated_data.pop("addresses", [])
+        preparers = validated_data.pop("preparers", [])
+        if addresses or preparers:
+            raise serializers.ValidationError(
+                "Save summary collections after creating the agreement."
+            )
+        return super().create(validated_data)
+
+    @transaction.atomic
     def update(self, instance, validated_data):
+        validated_data.pop("municipality", None)
         collections = []
         for name, model in (
             ("addresses", AgreementAddress),
@@ -176,6 +207,7 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "identifier",
+            "municipality",
             "agreement_type",
             "district",
             "is_promotion_area",
