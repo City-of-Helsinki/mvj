@@ -329,6 +329,35 @@ class LandUseAgreementViewSet(
             }
         )
 
+    @action(detail=True, methods=("put",), url_path="compensation-document")
+    @transaction.atomic
+    def compensation_document(self, request, pk=None):
+        agreement = self.get_object()
+        compensation = LandUseCompensationWriteSerializer(
+            data=request.data.get("compensation", {})
+        )
+        sites = AgreementSiteWriteSerializer(
+            data=request.data.get("sites", []), many=True
+        )
+        compensation.is_valid(raise_exception=True)
+        sites.is_valid(raise_exception=True)
+        existing_id = (
+            LandUseCompensation.objects.filter(agreement=agreement)
+            .values_list("pk", flat=True)
+            .first()
+        )
+        check_collection_permissions(
+            request.user,
+            LandUseCompensation,
+            {existing_id} if existing_id else set(),
+            [{"id": existing_id}] if existing_id else [{}],
+        )
+        self._replace_sites(agreement, sites.validated_data)
+        saved, _ = LandUseCompensation.objects.update_or_create(
+            agreement=agreement, defaults=compensation.validated_data
+        )
+        return Response(LandUseCompensationSerializer(saved).data)
+
     @transaction.atomic
     def _replace_sites(self, agreement, sites_data):
         existing_sites = {

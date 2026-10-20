@@ -447,6 +447,12 @@ class AgreementSiteSerializer(serializers.ModelSerializer):
 
 class AgreementSiteWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    tenure_types = serializers.PrimaryKeyRelatedField(
+        queryset=SiteTenureType.objects.all(),
+        many=True,
+        required=False,
+        allow_empty=True,
+    )
 
     class Meta:
         model = AgreementSite

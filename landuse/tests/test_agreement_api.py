@@ -133,6 +133,21 @@ def test_payment_schedule_saves_draft_installments(admin_client):
     assert schedule.installments.get().items.get().amount == 100
 
 
+def test_compensation_document_saves_amounts_and_sites_together(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="MA101-6")
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-compensation-document", args=(agreement.pk,)),
+        {
+            "compensation": {"monetary_compensation": "100.00"},
+            "sites": [{"identifier": "91-1-1-1"}],
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert agreement.compensation.monetary_compensation == 100
+    assert agreement.compensation_sites.get().identifier == "91-1-1-1"
+
+
 def test_detailed_plan_list_is_paginated(admin_client):
     for index in range(101):
         DetailedPlan.objects.create(plan_number=str(index))
