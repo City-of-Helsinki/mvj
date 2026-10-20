@@ -1,5 +1,5 @@
-from typing import Any
 from decimal import Decimal
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction

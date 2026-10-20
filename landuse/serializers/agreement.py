@@ -1,7 +1,6 @@
-from rest_framework import serializers
-from django_countries import countries
 from django.db import transaction
-from landuse.permissions import check_collection_permissions
+from django_countries import countries
+from rest_framework import serializers
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -45,6 +44,7 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
+from landuse.permissions import check_collection_permissions
 
 
 class DistrictSerializer(serializers.ModelSerializer):

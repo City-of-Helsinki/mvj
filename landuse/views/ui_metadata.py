@@ -1,6 +1,5 @@
 from django.conf import settings
 from django_countries import countries
-from users.models import User
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,6 +23,7 @@ from landuse.models.payment_schedule import (
 )
 from landuse.models.site import AgreementSite
 from landuse.views.mixins import LandUseApiEnabledFlagMixin
+from users.models import User
 
 
 class CanViewLandUseUiMetadata(BasePermission):

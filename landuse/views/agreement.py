@@ -8,14 +8,14 @@ from rest_framework.response import Response
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
 from landuse.models.contract import (
+    CashDepositCollateral,
     Contract,
     ContractChange,
-    MortgageDeedCollateral,
-    CashDepositCollateral,
-    PersonalGuaranteeCollateral,
     DepositPledgeCollateral,
-    OtherCollateral,
+    MortgageDeedCollateral,
     MortgageDeedPropertyIdentifier,
+    OtherCollateral,
+    PersonalGuaranteeCollateral,
 )
 from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice

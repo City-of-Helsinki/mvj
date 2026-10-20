@@ -3,14 +3,14 @@ from django.core.exceptions import ValidationError
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
+from landuse.models.invoice import Invoice, InvoiceStatus
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import (
     PaymentSchedule,
-    PaymentScheduleStatus,
     PaymentScheduleInstallment,
     PaymentScheduleInstallmentItem,
+    PaymentScheduleStatus,
 )
-from landuse.models.invoice import Invoice, InvoiceStatus
 
 
 @pytest.mark.django_db
