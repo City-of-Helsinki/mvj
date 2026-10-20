@@ -644,18 +644,20 @@ class OtherCollateralSerializer(CollateralSerializer):
 class ContractSerializer(serializers.ModelSerializer):
     changes = ContractChangeSerializer(many=True, read_only=True)
     mortgage_deed_collaterals = MortgageDeedCollateralSerializer(
-        many=True, read_only=True
+        source="mortgagedeedcollateral_collaterals", many=True, read_only=True
     )
     cash_deposit_collaterals = CashDepositCollateralSerializer(
-        many=True, read_only=True
+        source="cashdepositcollateral_collaterals", many=True, read_only=True
     )
     personal_guarantee_collaterals = PersonalGuaranteeCollateralSerializer(
-        many=True, read_only=True
+        source="personalguaranteecollateral_collaterals", many=True, read_only=True
     )
     deposit_pledge_collaterals = DepositPledgeCollateralSerializer(
-        many=True, read_only=True
+        source="depositpledgecollateral_collaterals", many=True, read_only=True
     )
-    other_collaterals = OtherCollateralSerializer(many=True, read_only=True)
+    other_collaterals = OtherCollateralSerializer(
+        source="othercollateral_collaterals", many=True, read_only=True
+    )
 
     class Meta:
         model = Contract
@@ -679,6 +681,77 @@ class ContractSerializer(serializers.ModelSerializer):
             "deposit_pledge_collaterals",
             "other_collaterals",
         )
+
+
+class ContractChangeWriteSerializer(ContractChangeSerializer):
+    id = serializers.IntegerField(required=False)
+
+
+class MortgageDeedCollateralWriteSerializer(MortgageDeedCollateralSerializer):
+    id = serializers.IntegerField(required=False)
+    property_identifiers = MortgageDeedPropertyIdentifierSerializer(
+        many=True, required=False
+    )
+
+
+class CashDepositCollateralWriteSerializer(CashDepositCollateralSerializer):
+    id = serializers.IntegerField(required=False)
+
+
+class PersonalGuaranteeCollateralWriteSerializer(PersonalGuaranteeCollateralSerializer):
+    id = serializers.IntegerField(required=False)
+
+
+class DepositPledgeCollateralWriteSerializer(DepositPledgeCollateralSerializer):
+    id = serializers.IntegerField(required=False)
+
+
+class OtherCollateralWriteSerializer(OtherCollateralSerializer):
+    id = serializers.IntegerField(required=False)
+
+
+class ContractWriteSerializer(ContractSerializer):
+    id = serializers.IntegerField(required=False)
+    changes = ContractChangeWriteSerializer(many=True, required=False)
+    mortgage_deed_collaterals = MortgageDeedCollateralWriteSerializer(
+        many=True, required=False
+    )
+    cash_deposit_collaterals = CashDepositCollateralWriteSerializer(
+        many=True, required=False
+    )
+    personal_guarantee_collaterals = PersonalGuaranteeCollateralWriteSerializer(
+        many=True, required=False
+    )
+    deposit_pledge_collaterals = DepositPledgeCollateralWriteSerializer(
+        many=True, required=False
+    )
+    other_collaterals = OtherCollateralWriteSerializer(many=True, required=False)
+
+    def validate(self, data):
+        agreement = self.context["agreement"]
+        details = [data, *data.get("changes", [])]
+        for record in details:
+            decision = record.get("decision")
+            if decision and decision.agreement_id != agreement.pk:
+                raise serializers.ValidationError(
+                    "Decision must belong to this agreement."
+                )
+        for name in (
+            "mortgage_deed_collaterals",
+            "cash_deposit_collaterals",
+            "personal_guarantee_collaterals",
+            "deposit_pledge_collaterals",
+            "other_collaterals",
+        ):
+            for record in data.get(name, []):
+                if any(
+                    party.agreement_id != agreement.pk
+                    for party in record.get("parties", [])
+                ):
+                    raise serializers.ValidationError(
+                        "Collateral parties must belong to this agreement."
+                    )
+        return data
 
 
 class PaymentScheduleInstallmentItemSerializer(serializers.ModelSerializer):
@@ -732,6 +805,43 @@ class PaymentScheduleSerializer(serializers.ModelSerializer):
             "installments",
         )
         read_only_fields = ("status", "rejected_reason")
+
+
+class PaymentScheduleInstallmentItemWriteSerializer(
+    PaymentScheduleInstallmentItemSerializer
+):
+    id = serializers.IntegerField(required=False)
+
+
+class PaymentScheduleInstallmentWriteSerializer(PaymentScheduleInstallmentSerializer):
+    id = serializers.IntegerField(required=False)
+    items = PaymentScheduleInstallmentItemWriteSerializer(many=True, required=False)
+
+
+class PaymentScheduleWriteSerializer(PaymentScheduleSerializer):
+    id = serializers.IntegerField(required=False)
+    installments = PaymentScheduleInstallmentWriteSerializer(many=True, required=False)
+
+    def validate(self, data):
+        agreement = self.context["agreement"]
+        for field in ("recipient_party", "contract"):
+            if data[field].agreement_id != agreement.pk:
+                raise serializers.ValidationError(
+                    {field: "Must belong to this agreement."}
+                )
+        installments = data.get("installments", [])
+        numbers = [record["installment_sequence_number"] for record in installments]
+        if len(numbers) != len(set(numbers)):
+            raise serializers.ValidationError("Installment numbers must be unique.")
+        for record in installments:
+            if (
+                record["installment_sequence_number"]
+                > record["installment_count_total"]
+            ):
+                raise serializers.ValidationError(
+                    "Installment number exceeds total installments."
+                )
+        return data
 
 
 class PaymentScheduleRejectionSerializer(serializers.Serializer):

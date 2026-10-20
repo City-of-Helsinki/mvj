@@ -76,6 +76,63 @@ def test_creation_allocates_identifiers_using_district_code(admin_client):
     assert second.json()["identifier"] == "MA111-2"
 
 
+def test_contracts_save_amendments_and_collateral(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="MA101-4")
+    party = AgreementParty.objects.create(agreement=agreement)
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-contracts", args=(agreement.pk,)),
+        [
+            {
+                "identifier": "C1",
+                "contract_type": "LAND_USE_AGREEMENT",
+                "changes": [{"identifier": "C1-A1"}],
+                "cash_deposit_collaterals": [
+                    {
+                        "guarantee_type": "CASH_DEPOSIT",
+                        "parties": [party.pk],
+                        "amount": "100.00",
+                    }
+                ],
+            }
+        ],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    contract = agreement.contracts.get()
+    assert contract.changes.get().identifier == "C1-A1"
+    assert contract.cashdepositcollateral_collaterals.get().amount == 100
+
+
+def test_payment_schedule_saves_draft_installments(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="MA101-5")
+    party = AgreementParty.objects.create(agreement=agreement)
+    contract = Contract.objects.create(agreement=agreement)
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-payment-schedules", args=(agreement.pk,)),
+        [
+            {
+                "recipient_party": party.pk,
+                "contract": contract.pk,
+                "installments": [
+                    {
+                        "installment_sequence_number": 1,
+                        "installment_count_total": 1,
+                        "due_date": "2026-12-01",
+                        "items": [
+                            {"item_type": "LAND_USE_COMPENSATION", "amount": "100.00"}
+                        ],
+                    },
+                ],
+            }
+        ],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    schedule = agreement.payment_schedules.get()
+    assert schedule.status == "DRAFT"
+    assert schedule.installments.get().items.get().amount == 100
+
+
 def test_detailed_plan_list_is_paginated(admin_client):
     for index in range(101):
         DetailedPlan.objects.create(plan_number=str(index))

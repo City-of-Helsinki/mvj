@@ -7,7 +7,16 @@ from rest_framework.response import Response
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
-from landuse.models.contract import Contract, ContractChange
+from landuse.models.contract import (
+    Contract,
+    ContractChange,
+    MortgageDeedCollateral,
+    CashDepositCollateral,
+    PersonalGuaranteeCollateral,
+    DepositPledgeCollateral,
+    OtherCollateral,
+    MortgageDeedPropertyIdentifier,
+)
 from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice
 from landuse.models.party import (
@@ -16,7 +25,12 @@ from landuse.models.party import (
     ContactPerson,
     InvoiceRecipient,
 )
-from landuse.models.payment_schedule import PaymentSchedule
+from landuse.models.payment_schedule import (
+    PaymentSchedule,
+    PaymentScheduleInstallment,
+    PaymentScheduleInstallmentItem,
+    PaymentScheduleStatus,
+)
 from landuse.models.site import AgreementSite
 from landuse.permissions import (
     LanduseDjangoModelPermissions,
@@ -28,6 +42,7 @@ from landuse.serializers.agreement import (
     AgreementSiteSerializer,
     AgreementSiteWriteSerializer,
     ContractSerializer,
+    ContractWriteSerializer,
     DecisionSerializer,
     DecisionWriteSerializer,
     InvoiceSerializer,
@@ -37,6 +52,7 @@ from landuse.serializers.agreement import (
     LandUseCompensationSerializer,
     LandUseCompensationWriteSerializer,
     PaymentScheduleSerializer,
+    PaymentScheduleWriteSerializer,
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
@@ -60,7 +76,9 @@ class LandUseAgreementViewSet(
         queryset = LandUseAgreement.objects.order_by("-modified_at", "pk")
 
         if self.action == "list":
-            return queryset.select_related("district", "detailed_plan").prefetch_related("parties")
+            return queryset.select_related(
+                "district", "detailed_plan"
+            ).prefetch_related("parties")
 
         if self.action in ("retrieve", "overview"):
             return queryset.select_related(
@@ -98,12 +116,12 @@ class LandUseAgreementViewSet(
                     "contracts",
                     queryset=Contract.objects.prefetch_related(
                         "changes",
-                        "mortgage_deed_collaterals__parties",
-                        "mortgage_deed_collaterals__property_identifiers",
-                        "cash_deposit_collaterals__parties",
-                        "personal_guarantee_collaterals__parties",
-                        "deposit_pledge_collaterals__parties",
-                        "other_collaterals__parties",
+                        "mortgagedeedcollateral_collaterals__parties",
+                        "mortgagedeedcollateral_collaterals__property_identifiers",
+                        "cashdepositcollateral_collaterals__parties",
+                        "personalguaranteecollateral_collaterals__parties",
+                        "depositpledgecollateral_collaterals__parties",
+                        "othercollateral_collaterals__parties",
                     ),
                 )
             )
@@ -438,19 +456,139 @@ class LandUseAgreementViewSet(
         )
         return Response(DecisionSerializer(decisions, many=True).data)
 
-    @action(detail=True, methods=("get",))
+    @action(detail=True, methods=("get", "put"))
     def contracts(self, request, pk=None):
         agreement = self.get_object()
+        if request.method == "PUT":
+            serializer = ContractWriteSerializer(
+                data=request.data, many=True, context={"agreement": agreement}
+            )
+            serializer.is_valid(raise_exception=True)
+            return self._replace_contracts(agreement, serializer.validated_data)
         return self.get_paginated_serializer_response(
             agreement.contracts.all(), ContractSerializer
         )
 
-    @action(detail=True, methods=("get",), url_path="payment-schedules")
+    def _save_collection(self, manager, model, parent, records, nested=None):
+        existing = {record.pk: record for record in manager.select_for_update()}
+        check_collection_permissions(self.request.user, model, existing, records)
+        retained_ids = {record.get("id") for record in records}
+        for record_id, record in existing.items():
+            if record_id not in retained_ids:
+                for name, (child_model, parent_field, children) in (
+                    nested or {}
+                ).items():
+                    self._save_collection(
+                        child_model.objects.filter(**{parent_field: record}),
+                        child_model,
+                        {parent_field: record},
+                        [],
+                        children,
+                    )
+        retained = []
+        for record in records:
+            record_id = record.pop("id", None)
+            nested_data = {name: record.pop(name, []) for name in (nested or {})}
+            parties = record.pop("parties", None)
+            try:
+                if record_id is None:
+                    saved = model.objects.create(**parent, **record)
+                else:
+                    saved = existing.get(record_id)
+                    if saved is None:
+                        raise ValidationError(
+                            {"id": "Record does not belong to this parent."}
+                        )
+                    for field, value in record.items():
+                        setattr(saved, field, value)
+                    saved.save()
+            except ValueError as error:
+                raise ValidationError({"detail": str(error)})
+            if parties is not None:
+                saved.parties.set(parties)
+            for name, (child_model, parent_field, children) in (nested or {}).items():
+                child_queryset = child_model.objects.filter(**{parent_field: saved})
+                self._save_collection(
+                    child_queryset,
+                    child_model,
+                    {parent_field: saved},
+                    nested_data[name],
+                    children,
+                )
+            retained.append(saved.pk)
+        manager.exclude(pk__in=retained).delete()
+        return manager.filter(pk__in=retained)
+
+    @transaction.atomic
+    def _replace_contracts(self, agreement, records):
+        nested = {
+            "changes": (ContractChange, "contract", None),
+            "mortgage_deed_collaterals": (
+                MortgageDeedCollateral,
+                "contract",
+                {
+                    "property_identifiers": (
+                        MortgageDeedPropertyIdentifier,
+                        "collateral",
+                        None,
+                    ),
+                },
+            ),
+            "cash_deposit_collaterals": (CashDepositCollateral, "contract", None),
+            "personal_guarantee_collaterals": (
+                PersonalGuaranteeCollateral,
+                "contract",
+                None,
+            ),
+            "deposit_pledge_collaterals": (DepositPledgeCollateral, "contract", None),
+            "other_collaterals": (OtherCollateral, "contract", None),
+        }
+        contracts = self._save_collection(
+            agreement.contracts, Contract, {"agreement": agreement}, records, nested
+        )
+        return Response(ContractSerializer(contracts, many=True).data)
+
+    @action(detail=True, methods=("get", "put"), url_path="payment-schedules")
     def payment_schedules(self, request, pk=None):
         agreement = self.get_object()
+        if request.method == "PUT":
+            serializer = PaymentScheduleWriteSerializer(
+                data=request.data, many=True, context={"agreement": agreement}
+            )
+            serializer.is_valid(raise_exception=True)
+            return self._replace_payment_schedules(agreement, serializer.validated_data)
         return self.get_paginated_serializer_response(
             agreement.payment_schedules.all(), PaymentScheduleSerializer
         )
+
+    @transaction.atomic
+    def _replace_payment_schedules(self, agreement, records):
+        editable = agreement.payment_schedules.select_for_update().filter(
+            status__in=(PaymentScheduleStatus.DRAFT, PaymentScheduleStatus.REJECTED)
+        )
+        protected_ids = set(
+            agreement.payment_schedules.exclude(
+                status__in=(PaymentScheduleStatus.DRAFT, PaymentScheduleStatus.REJECTED)
+            ).values_list("pk", flat=True)
+        )
+        if any(record.get("id") in protected_ids for record in records):
+            raise ValidationError("Only draft or rejected schedules can be edited.")
+        schedules = self._save_collection(
+            editable,
+            PaymentSchedule,
+            {"agreement": agreement},
+            records,
+            {
+                "installments": (
+                    PaymentScheduleInstallment,
+                    "payment_schedule",
+                    {
+                        "items": (PaymentScheduleInstallmentItem, "installment", None),
+                    },
+                ),
+            },
+        )
+        return Response(PaymentScheduleSerializer(schedules, many=True).data)
 
     @action(detail=True, methods=("get",))
     def invoices(self, request, pk=None):
