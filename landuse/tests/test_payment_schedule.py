@@ -4,7 +4,13 @@ from django.core.exceptions import ValidationError
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
 from landuse.models.party import AgreementParty
-from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
+from landuse.models.payment_schedule import (
+    PaymentSchedule,
+    PaymentScheduleStatus,
+    PaymentScheduleInstallment,
+    PaymentScheduleInstallmentItem,
+)
+from landuse.models.invoice import Invoice, InvoiceStatus
 
 
 @pytest.mark.django_db
@@ -47,3 +53,34 @@ def test_payment_schedule_transition_rules():
 
     with pytest.raises(ValidationError, match="Only pending schedules"):
         schedule.reject("Too late")
+
+
+@pytest.mark.django_db
+def test_approval_creates_linked_invoice_drafts_and_snapshots():
+    agreement = LandUseAgreement.objects.create(identifier="MA101-1")
+    party = AgreementParty.objects.create(agreement=agreement, name="Test Oy")
+    contract = Contract.objects.create(agreement=agreement)
+    schedule = PaymentSchedule.objects.create(
+        agreement=agreement,
+        recipient_party=party,
+        contract=contract,
+        status=PaymentScheduleStatus.PENDING_APPROVAL,
+    )
+    installment = PaymentScheduleInstallment.objects.create(
+        payment_schedule=schedule,
+        installment_sequence_number=1,
+        installment_count_total=1,
+    )
+    PaymentScheduleInstallmentItem.objects.create(
+        installment=installment,
+        item_type="LAND_USE_COMPENSATION",
+        amount="100.00",
+    )
+
+    schedule.approve()
+
+    invoice = Invoice.objects.get(source_payment_schedule_installment=installment)
+    assert invoice.status == InvoiceStatus.DRAFT
+    assert invoice.billed_amount == 100
+    assert invoice.items.get().item_type == "LAND_USE_COMPENSATION"
+    assert invoice.recipient_snapshot.name == "Test Oy"

@@ -1,11 +1,12 @@
 from typing import Any
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
-from landuse.models.invoice import InvoiceItemType
+from landuse.models.invoice import Invoice, InvoiceItem, InvoiceItemType, InvoiceType
 from landuse.models.party import AgreementParty
 from utils.mixins import TimeStampedModel
 
@@ -130,9 +131,38 @@ class PaymentSchedule(TimeStampedModel):
         self.rejected_reason = ""
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
+    @transaction.atomic
     def approve(self) -> None:
-        if self.status != PaymentScheduleStatus.PENDING_APPROVAL:
+        current = PaymentSchedule.objects.select_for_update().get(pk=self.pk)
+        if current.status != PaymentScheduleStatus.PENDING_APPROVAL:
             raise ValidationError("Only pending schedules can be approved.")
+        for installment in current.installments.prefetch_related("items"):
+            items = list(installment.items.all())
+            invoice, created = Invoice.objects.get_or_create(
+                source_payment_schedule_installment=installment,
+                defaults={
+                    "agreement": current.agreement,
+                    "recipient_party": current.recipient_party,
+                    "installment_sequence_number": installment.installment_sequence_number,
+                    "installment_count_total": installment.installment_count_total,
+                    "due_date": installment.due_date,
+                    "invoice_identifier": f"LU-{self.pk}-{installment.pk}",
+                    "invoice_type": InvoiceType.LAND_USE_COMPENSATION,
+                    "billed_amount": sum((item.amount for item in items), Decimal("0")),
+                },
+            )
+            if created:
+                InvoiceItem.objects.bulk_create(
+                    [
+                        InvoiceItem(
+                            invoice=invoice,
+                            item_type=item.item_type,
+                            description=item.description,
+                            amount=item.amount,
+                        )
+                        for item in items
+                    ]
+                )
         self.status = PaymentScheduleStatus.APPROVED
         self.rejected_reason = ""
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
