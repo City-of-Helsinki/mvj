@@ -4,7 +4,6 @@ from rest_framework import serializers
 from field_permissions.serializers import FieldPermissionsSerializerMixin
 from leasing.models.contract import (
     Collateral,
-    CollateralType,
 )
 from leasing.models.tenant import Tenant
 from leasing.serializers.tenant import TenantSerializer
@@ -75,12 +74,6 @@ class ContractChangeCreateUpdateSerializer(
         )
 
 
-class CollateralTypeSerializer(NameModelSerializer):
-    class Meta:
-        model = CollateralType
-        fields = "__all__"
-
-
 class CollateralSerializer(
     EnumSupportSerializerMixin,
     FieldPermissionsSerializerMixin,
@@ -101,11 +94,6 @@ class CollateralCreateUpdateSerializer(
     serializers.ModelSerializer,
 ):
     id = serializers.IntegerField(required=False)
-    type = InstanceDictPrimaryKeyRelatedField(
-        instance_class=CollateralType,
-        queryset=CollateralType.objects.all(),
-        related_serializer=CollateralTypeSerializer,
-    )
     returned_by = InstanceDictPrimaryKeyRelatedField(
         instance_class=User,
         queryset=User.objects.all(),

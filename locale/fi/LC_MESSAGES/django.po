@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 13:25+0300\n"
+"POT-Creation-Date: 2026-10-21 10:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -1311,6 +1311,26 @@ msgctxt "Document type"
 msgid "Electronic"
 msgstr "Sähköinen"
 
+msgctxt "Collateral type"
+msgid "Financial guarantee"
+msgstr "Rahavakuus"
+
+msgctxt "Collateral type"
+msgid "Mortgage document"
+msgstr "Panttikirja"
+
+msgctxt "Collateral type"
+msgid "Self-debtor guarantee"
+msgstr "Omavelkainen takaus"
+
+msgctxt "Collateral type"
+msgid "Pledge of funds"
+msgstr "Tilivarojen panttaus"
+
+msgctxt "Collateral type"
+msgid "Other"
+msgstr "Muu vakuus"
+
 msgid "Going to SAP"
 msgstr "Lähdössä SAP:iin"
 
@@ -1586,14 +1606,6 @@ msgstr "Sopimus"
 msgctxt "Model name"
 msgid "Contracts"
 msgstr "Sopimukset"
-
-msgctxt "Model name"
-msgid "Collateral type"
-msgstr "Vakuuden tyyppi"
-
-msgctxt "Model name"
-msgid "Collateral types"
-msgstr "Vakuuden tyypit"
 
 msgid "Contract"
 msgstr "Sopimus"
