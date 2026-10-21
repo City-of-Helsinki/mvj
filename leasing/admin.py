@@ -18,7 +18,6 @@ from leasing.models import (
     BasisOfRentPropertyIdentifier,
     BasisOfRentRate,
     Collateral,
-    CollateralType,
     CollectionCourtDecision,
     CollectionLetter,
     CollectionLetterTemplate,
@@ -116,7 +115,6 @@ class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
 @admin.register(
     BasisOfRentBuildPermissionType,
     BasisOfRentPlotType,
-    CollateralType,
     CommentTopic,
     ConditionType,
     ContractType,

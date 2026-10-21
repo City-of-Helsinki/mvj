@@ -1,7 +1,9 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from leasing.models import Collateral, CollateralType, ServiceUnit
+from leasing.enums import CollateralType
+from leasing.models.contract import Collateral
+from leasing.models.service_unit import ServiceUnit
 from leasing.report.excel import FormatType
 from leasing.report.lease.common_getters import ReportURL, get_lease_url
 from leasing.report.report_base import ReportBase
@@ -44,10 +46,9 @@ class CollateralsReport(ReportBase):
             queryset=ServiceUnit.objects.all(),
             required=False,
         ),
-        "collateral_type": forms.ModelChoiceField(
+        "collateral_type": forms.ChoiceField(
             label=_("Type"),
-            queryset=CollateralType.objects.all(),
-            empty_label=None,
+            choices=CollateralType.choices(),
             required=False,
         ),
         "paid": forms.NullBooleanField(label=_("Paid"), required=False),

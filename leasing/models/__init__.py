@@ -12,7 +12,6 @@ from .comment import Comment, CommentTopic
 from .contact import Contact
 from .contract import (
     Collateral,
-    CollateralType,
     Contract,
     ContractChange,
     ContractType,
@@ -122,7 +121,6 @@ __all__ = [
     "BasisOfRentPropertyIdentifier",
     "BasisOfRentRate",
     "Collateral",
-    "CollateralType",
     "CollectionCourtDecision",
     "CollectionLetter",
     "CollectionLetterTemplate",

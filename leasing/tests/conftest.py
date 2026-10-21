@@ -15,6 +15,7 @@ from pytest_factoryboy import register
 from conftest import ContactFactory, ServiceUnitFactory
 from leasing.enums import (
     AreaType,
+    CollateralType,
     ContactType,
     DueDatesType,
     IndexType,
@@ -49,7 +50,6 @@ from leasing.models import (
 from leasing.models.contact import Contact
 from leasing.models.contract import (
     Collateral,
-    CollateralType,
     ContractChange,
     ContractType,
 )
@@ -303,15 +303,9 @@ class DecisionMakerFactory(factory.django.DjangoModelFactory):
 
 
 @register
-class CollateralTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CollateralType
-
-
-@register
 class CollateralFactory(factory.django.DjangoModelFactory):
 
-    type = factory.SubFactory(CollateralTypeFactory)
+    type = CollateralType.OTHER
 
     class Meta:
         model = Collateral

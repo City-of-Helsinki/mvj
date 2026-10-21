@@ -14,7 +14,6 @@ from leasing.models.comment import Comment, CommentTopic
 from leasing.models.contact import Contact
 from leasing.models.contract import (
     Collateral,
-    CollateralType,
     Contract,
     ContractChange,
     ContractType,
@@ -808,18 +807,6 @@ LEASING_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
                 UG.PAAKAYTTAJA: "change",
             },
         },
-    },
-    CollateralType: {
-        "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.SYOTTAJA: ("view",),
-            UG.PERINTALAKIMIES: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
     },
     ContractChange: {
         "model": {
