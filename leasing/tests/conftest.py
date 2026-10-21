@@ -49,7 +49,6 @@ from leasing.models import (
 from leasing.models.contact import Contact
 from leasing.models.contract import (
     Collateral,
-    CollateralType,
     ContractChange,
     ContractType,
 )
@@ -303,16 +302,7 @@ class DecisionMakerFactory(factory.django.DjangoModelFactory):
 
 
 @register
-class CollateralTypeFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CollateralType
-
-
-@register
 class CollateralFactory(factory.django.DjangoModelFactory):
-
-    type = factory.SubFactory(CollateralTypeFactory)
-
     class Meta:
         model = Collateral
 

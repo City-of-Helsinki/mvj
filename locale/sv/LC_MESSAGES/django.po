@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 13:25+0300\n"
+"POT-Creation-Date: 2026-10-21 10:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1312,6 +1312,26 @@ msgctxt "Document type"
 msgid "Electronic"
 msgstr ""
 
+msgctxt "Collateral type"
+msgid "Financial guarantee"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Mortgage document"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Self-debtor guarantee"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Pledge of funds"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Other"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
@@ -1587,14 +1607,6 @@ msgstr "Avtal"
 msgctxt "Model name"
 msgid "Contracts"
 msgstr "Avtal"
-
-msgctxt "Model name"
-msgid "Collateral type"
-msgstr "Typ av säkerhet"
-
-msgctxt "Model name"
-msgid "Collateral types"
-msgstr "Typer av säkerhet"
 
 msgid "Contract"
 msgstr "Avtal"

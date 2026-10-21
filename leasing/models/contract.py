@@ -7,7 +7,7 @@ from enumfields import EnumField
 from sequences import get_next_value
 
 from field_permissions.registry import field_permissions
-from leasing.enums import DocumentType
+from leasing.enums import CollateralType, DocumentType
 from leasing.validators import validate_business_id
 from users.models import User
 
@@ -150,16 +150,6 @@ class Contract(TimeStampedSafeDeleteModel):
             super().save(*args, **kwargs)
 
 
-class CollateralType(NameModel):
-    """
-    In Finnish: Vakuuden laji
-    """
-
-    class Meta(NameModel.Meta):
-        verbose_name = pgettext_lazy("Model name", "Collateral type")
-        verbose_name_plural = pgettext_lazy("Model name", "Collateral types")
-
-
 class Collateral(models.Model):
     """
     In Finnish: Vakuus
@@ -173,11 +163,12 @@ class Collateral(models.Model):
     )
 
     # In Finnish: Vakuuden tyyppi
-    type = models.ForeignKey(
+    type = EnumField(
         CollateralType,
         verbose_name=_("Collateral type"),
-        related_name="+",
-        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        max_length=255,
     )
 
     # In Finnish: Vuokravakuusnumero
