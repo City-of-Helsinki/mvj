@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.utils import timezone
 
 from leasing.enums import AreaType, PlanUnitStatus, PlotType
+from leasing.management.commands.attach_areas import get_lease_areas_by_identifier
 from leasing.models import LeaseArea, PlanUnit, Plot
 from leasing.models.area import Area
 from leasing.models.lease import Lease
@@ -272,6 +273,37 @@ def test_attach_areas_prefers_active_lease_area_over_archived_duplicate(
     active_lease_area.refresh_from_db()
     assert archived_lease_area.geometry is None
     assert active_lease_area.geometry == area.geometry
+
+
+@pytest.mark.django_db
+def test_get_lease_areas_by_identifier_reports_duplicate_active_identifiers(
+    lease_area_factory: Callable[..., LeaseArea],
+    area_with_intersects_test_data,
+    lease_test_data,
+    monkeypatch,
+):
+    lease: Lease = lease_test_data["lease"]
+    identifier = area_with_intersects_test_data["area"].get_land_identifier()
+    first_lease_area = lease_area_factory(
+        lease=lease, identifier=identifier, archived_at=None
+    )
+    second_lease_area = lease_area_factory(
+        lease=lease, identifier=identifier, archived_at=None
+    )
+    captured_errors: list[Exception] = []
+    monkeypatch.setattr(
+        "leasing.management.commands.attach_areas.sentry_sdk.capture_exception",
+        captured_errors.append,
+    )
+
+    lease_areas = get_lease_areas_by_identifier(lease)
+
+    assert lease_areas[first_lease_area.get_normalized_identifier()] == first_lease_area
+    assert len(captured_errors) == 1
+    assert isinstance(captured_errors[0], ValueError)
+    assert "multiple active lease areas" in str(captured_errors[0])
+    assert f"#{first_lease_area.pk}" in str(captured_errors[0])
+    assert f"#{second_lease_area.pk}" in str(captured_errors[0])
 
 
 @pytest.mark.django_db

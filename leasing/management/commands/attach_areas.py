@@ -2,6 +2,7 @@ import logging
 import sys
 from typing import Any, Protocol, cast
 
+import sentry_sdk
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand
@@ -21,6 +22,9 @@ from leasing.models.land_area import (
 )
 
 LOG = logging.getLogger(__name__)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+LOG.addHandler(stdout_handler)
+LOG.setLevel(logging.INFO)
 
 
 class PlotDivisionArea(Protocol):
@@ -85,10 +89,29 @@ def process_lease(lease: Lease) -> None:
 
 def get_lease_areas_by_identifier(lease: Lease) -> dict[str, LeaseArea]:
     """Index the lease's existing areas by the land identifier used by imports."""
-    return {
-        lease_area.get_normalized_identifier(): lease_area
-        for lease_area in LeaseArea.objects.filter(lease=lease)
-    }
+    lease_areas_by_identifier: dict[str, list[LeaseArea]] = {}
+    for lease_area in LeaseArea.objects.filter(
+        lease=lease, archived_at__isnull=True
+    ).order_by("id"):
+        identifier = lease_area.get_normalized_identifier()
+        lease_areas_by_identifier.setdefault(identifier, []).append(lease_area)
+
+    # Report cases of active lease areas with the same normalized identifier,
+    # which might cause weird behavior that is not easily detectable.
+    selected_lease_areas: dict[str, LeaseArea] = {}
+    for identifier, lease_areas in lease_areas_by_identifier.items():
+        if len(lease_areas) > 1:
+            error_message = (
+                f"Lease #{lease.pk} {lease.identifier} has multiple active lease "
+                f"areas with normalized identifier {identifier}: "
+                f"{', '.join(f'#{lease_area.pk}' for lease_area in lease_areas)}"
+            )
+            LOG.error(error_message)
+            sentry_sdk.capture_exception(ValueError(error_message))
+
+        selected_lease_areas[identifier] = lease_areas[0]
+
+    return selected_lease_areas
 
 
 def process_imported_lease_area(
