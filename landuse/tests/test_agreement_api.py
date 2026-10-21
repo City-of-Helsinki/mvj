@@ -4,6 +4,8 @@ from rest_framework import status
 
 from landuse.models.agreement import (
     AgreementAddress,
+    AgreementPreparer,
+    AuthorizedSignatory,
     DetailedPlan,
     District,
     LandUseAgreement,
@@ -94,6 +96,71 @@ def test_agreement_updates_detailed_plan_sites(admin_client):
     agreement.refresh_from_db()
     assert response.status_code == status.HTTP_200_OK
     assert agreement.detailed_plan_sites == ["91-10-100-1", "91-10-100-2"]
+
+
+def test_agreement_updates_summary_relations(admin_client, django_user_model):
+    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+    signatory = AuthorizedSignatory.objects.create(name="Signatory")
+    preparer = django_user_model.objects.create(username="summary-preparer")
+    AgreementAddress.objects.create(
+        agreement=agreement, street_address="Old", postal_code="00100", city="Helsinki"
+    )
+    AgreementPreparer.objects.create(agreement=agreement, preparer=preparer)
+    url = reverse("v1:landuse:agreement-detail", args=(agreement.pk,))
+
+    response = admin_client.patch(
+        url,
+        {
+            "authorized_signatory": signatory.pk,
+            "addresses": [
+                {"street_address": "New", "postal_code": "00200", "city": "Helsinki"}
+            ],
+            "preparers": [{"preparer": preparer.pk}],
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    agreement.refresh_from_db()
+    assert agreement.authorized_signatory_id == signatory.pk
+    assert list(agreement.addresses.values_list("street_address", flat=True)) == ["New"]
+    assert list(agreement.preparers.values_list("preparer_id", flat=True)) == [
+        preparer.pk
+    ]
+
+    overview = admin_client.get(
+        reverse("v1:landuse:agreement-overview", args=(agreement.pk,))
+    ).json()
+    assert overview["authorized_signatory"]["id"] == signatory.pk
+    assert overview["addresses"][0]["street_address"] == "New"
+    assert overview["preparers"][0]["preparer"] == preparer.pk
+
+    response = admin_client.patch(
+        url,
+        {"addresses": [], "preparers": [{"preparer": 0}]},
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert agreement.addresses.count() == 1
+    assert agreement.preparers.count() == 1
+
+    response = admin_client.patch(
+        url, {"status": "DRAFT"}, content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert agreement.addresses.count() == 1
+    assert agreement.preparers.count() == 1
+
+    response = admin_client.patch(
+        url,
+        {"authorized_signatory": None, "addresses": [], "preparers": []},
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    agreement.refresh_from_db()
+    assert agreement.authorized_signatory_id is None
+    assert not agreement.addresses.exists()
+    assert not agreement.preparers.exists()
 
 
 def test_compensation_and_sites_accept_related_object_ids(admin_client):

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django_countries import countries
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -70,6 +71,9 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
             "languages": [
                 {"value": value, "label": str(label)}
                 for value, label in settings.LANGUAGES
+            ],
+            "countries": [
+                {"value": code, "label": str(label)} for code, label in countries
             ],
         }
         return Response(payload)

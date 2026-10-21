@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from landuse.models.agreement import (
@@ -105,6 +106,9 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
 
 
 class LandUseAgreementSerializer(serializers.ModelSerializer):
+    addresses = AgreementAddressSerializer(many=True, required=False)
+    preparers = AgreementPreparerSerializer(many=True, required=False)
+
     class Meta:
         model = LandUseAgreement
         fields = (
@@ -119,6 +123,8 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
             "includes_housing_obligations",
             "obligations_deadline",
             "authorized_signatory",
+            "addresses",
+            "preparers",
             "detailed_plan",
             "detailed_plan_sites",
             "collateral_multiplier",
@@ -126,6 +132,40 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
             "modified_at",
         )
         read_only_fields = ("id", "created_at", "modified_at")
+
+    @transaction.atomic
+    def create(self, validated_data):
+        addresses = validated_data.pop("addresses", [])
+        preparers = validated_data.pop("preparers", [])
+        agreement = super().create(validated_data)
+        self._replace_summary_relations(agreement, addresses, preparers)
+        return agreement
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        addresses = validated_data.pop("addresses", None)
+        preparers = validated_data.pop("preparers", None)
+        agreement = super().update(instance, validated_data)
+        self._replace_summary_relations(agreement, addresses, preparers)
+        return agreement
+
+    def _replace_summary_relations(self, agreement, addresses, preparers):
+        if addresses is not None:
+            agreement.addresses.all().delete()
+            AgreementAddress.objects.bulk_create(
+                [
+                    AgreementAddress(agreement=agreement, **address)
+                    for address in addresses
+                ]
+            )
+        if preparers is not None:
+            agreement.preparers.all().delete()
+            AgreementPreparer.objects.bulk_create(
+                [
+                    AgreementPreparer(agreement=agreement, **preparer)
+                    for preparer in preparers
+                ]
+            )
 
 
 class LandUseAgreementOverviewSerializer(LandUseAgreementListSerializer):
