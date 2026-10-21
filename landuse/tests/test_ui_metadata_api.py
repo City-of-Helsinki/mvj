@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from django_countries import countries
 from rest_framework import status
 
 pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
@@ -16,6 +17,9 @@ def test_ui_metadata_returns_choices(admin_client):
     response = admin_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
+    assert response.json()["countries"] == [
+        {"value": code, "label": str(label)} for code, label in countries
+    ]
     assert response.json()["agreement_statuses"] == [
         {"value": "DRAFT", "label": "Luonnos"},
         {"value": "IN_PROGRESS", "label": "Vireillä"},
