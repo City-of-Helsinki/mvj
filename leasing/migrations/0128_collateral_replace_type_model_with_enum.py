@@ -15,9 +15,9 @@ COLLATERAL_TYPES = {
 
 
 def migrate_type_fk_to_enum(apps, schema_editor):
-    Collateral = apps.get_model("leasing", "Collateral")
+    collateral = apps.get_model("leasing", "Collateral")
     for pk, enum_value in COLLATERAL_TYPES.items():
-        Collateral.objects.filter(type_id=pk).update(type_enum=enum_value)
+        collateral.objects.filter(type_id=pk).update(type_enum=enum_value)
 
 
 COLLATERAL_TYPE_NAMES = {
@@ -30,13 +30,13 @@ COLLATERAL_TYPE_NAMES = {
 
 
 def reverse_migrate_type_enum_to_fk(apps, schema_editor):
-    Collateral = apps.get_model("leasing", "Collateral")
-    CollateralType = apps.get_model("leasing", "CollateralType")
+    collateral = apps.get_model("leasing", "Collateral")
+    collateral_type = apps.get_model("leasing", "CollateralType")
     for pk, name in COLLATERAL_TYPE_NAMES.items():
-        CollateralType.objects.get_or_create(pk=pk, defaults={"name": name})
+        collateral_type.objects.get_or_create(pk=pk, defaults={"name": name})
     enum_to_pk = {v: k for k, v in COLLATERAL_TYPES.items()}
     for enum_value, pk in enum_to_pk.items():
-        Collateral.objects.filter(type_enum=enum_value).update(type_id=pk)
+        collateral.objects.filter(type_enum=enum_value).update(type_id=pk)
 
 
 class Migration(migrations.Migration):

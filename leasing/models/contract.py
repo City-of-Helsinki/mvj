@@ -216,38 +216,38 @@ class Collateral(models.Model):
     # In Finnish: Vierasvelkapanttauksen antajan nimi
     third_party_pledgor_name = models.CharField(
         verbose_name=_("Third party pledgor name"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
     # In Finnish: Vierasvelkapanttauksen antajan Y-tunnus
     third_party_pledgor_business_id = models.CharField(
         verbose_name=_("Third party pledgor Business ID"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
 
     # In Finnish: Vakuuden antajan nimi
     pledgor_name = models.CharField(
-        verbose_name=_("Pledgor name"), null=True, blank=True, max_length=255
+        verbose_name=_("Pledgor name"), blank=True, null=True, max_length=255
     )
 
     # In Finnish: Vakuuden antajan henkilötunnus
     pledgor_national_identification_number = models.CharField(
         verbose_name=_("Pledgor National identification number"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
     # In Finnish: Vakuuden antajan Y-tunnus
     pledgor_business_id = models.CharField(
         verbose_name=_("Pledgor Business ID"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
@@ -255,16 +255,16 @@ class Collateral(models.Model):
     # In Finnish: Jälkipantin saajan nimi
     subordinate_pledgee_name = models.CharField(
         verbose_name=_("Subordinate pledgee name"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
     # In Finnish: Jälkipantin saajan y-tunnus
     subordinate_pledgee_business_id = models.CharField(
         verbose_name=_("Subordinate pledgee business ID"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
@@ -276,28 +276,11 @@ class Collateral(models.Model):
         blank=True,
     )
 
-    # In Finnish: Sopimusosapuolen henkilötunnus
-    contract_party_national_identification_number = models.CharField(
-        verbose_name=_("National identification number"),
-        null=True,
-        blank=True,
-        max_length=255,
-    )
-
-    # In Finnish: Sopimusosapuolen Y-tunnus
-    contract_party_business_id = models.CharField(
-        verbose_name=_("Business ID"),
-        null=True,
-        blank=True,
-        max_length=255,
-        validators=[validate_business_id],
-    )
-
     # In Finnish: Tilinumero
     account_number = models.CharField(
         verbose_name=_("Account number"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -313,22 +296,22 @@ class Collateral(models.Model):
     # In Finnish: Takausnumero
     guarantee_number = models.CharField(
         verbose_name=_("Guarantee number"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
     # In Finnish: Panttikirjan numero
     number_mortgage_document = models.CharField(
         verbose_name=_("Mortgage document number"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
     # In Finnish: Kiinteistötunnus
     property_identifiers = ArrayField(
-        models.CharField(max_length=255, null=True, blank=True),
+        models.CharField(max_length=255, blank=True),
         verbose_name=_("Property identifier"),
         null=True,
         blank=True,
@@ -337,8 +320,8 @@ class Collateral(models.Model):
     # In Finnish: Laitostunnus
     institution_identifier = models.CharField(
         verbose_name=_("Institution identifier"),
-        null=True,
         blank=True,
+        null=True,
         max_length=255,
     )
 
