@@ -219,6 +219,7 @@ class Collateral(models.Model):
     third_party_pledgor_name = models.CharField(
         verbose_name=_("Third party pledgor name"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -226,19 +227,21 @@ class Collateral(models.Model):
     third_party_pledgor_business_id = models.CharField(
         verbose_name=_("Third party pledgor Business ID"),
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
 
     # In Finnish: Vakuuden antajan nimi
     pledgor_name = models.CharField(
-        verbose_name=_("Pledgor name"), blank=True, max_length=255
+        verbose_name=_("Pledgor name"), blank=True, null=True, max_length=255
     )
 
     # In Finnish: Vakuuden antajan henkilötunnus
     pledgor_national_identification_number = models.CharField(
         verbose_name=_("Pledgor National identification number"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -246,6 +249,7 @@ class Collateral(models.Model):
     pledgor_business_id = models.CharField(
         verbose_name=_("Pledgor Business ID"),
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
@@ -254,6 +258,7 @@ class Collateral(models.Model):
     subordinate_pledgee_name = models.CharField(
         verbose_name=_("Subordinate pledgee name"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -261,6 +266,7 @@ class Collateral(models.Model):
     subordinate_pledgee_business_id = models.CharField(
         verbose_name=_("Subordinate pledgee business ID"),
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
@@ -276,6 +282,7 @@ class Collateral(models.Model):
     contract_party_national_identification_number = models.CharField(
         verbose_name=_("National identification number"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -283,6 +290,7 @@ class Collateral(models.Model):
     contract_party_business_id = models.CharField(
         verbose_name=_("Business ID"),
         blank=True,
+        null=True,
         max_length=255,
         validators=[validate_business_id],
     )
@@ -291,6 +299,7 @@ class Collateral(models.Model):
     account_number = models.CharField(
         verbose_name=_("Account number"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -307,6 +316,7 @@ class Collateral(models.Model):
     guarantee_number = models.CharField(
         verbose_name=_("Guarantee number"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -314,6 +324,7 @@ class Collateral(models.Model):
     number_mortgage_document = models.CharField(
         verbose_name=_("Mortgage document number"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
@@ -329,6 +340,7 @@ class Collateral(models.Model):
     institution_identifier = models.CharField(
         verbose_name=_("Institution identifier"),
         blank=True,
+        null=True,
         max_length=255,
     )
 
