@@ -407,6 +407,11 @@ class AgreementSiteWriteSerializer(serializers.ModelSerializer):
         )
 
 
+class CompensationWithSitesWriteSerializer(serializers.Serializer):
+    compensation = LandUseCompensationWriteSerializer()
+    sites = AgreementSiteWriteSerializer(many=True)
+
+
 class DecisionConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DecisionCondition
