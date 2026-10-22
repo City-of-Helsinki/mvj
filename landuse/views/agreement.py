@@ -8,7 +8,16 @@ from rest_framework.response import Response
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
-from landuse.models.contract import Contract, ContractChange
+from landuse.models.contract import (
+    CashDepositCollateral,
+    Contract,
+    ContractChange,
+    DepositPledgeCollateral,
+    MortgageDeedCollateral,
+    MortgageDeedPropertyIdentifier,
+    OtherCollateral,
+    PersonalGuaranteeCollateral,
+)
 from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice
 from landuse.models.party import (
@@ -17,7 +26,11 @@ from landuse.models.party import (
     ContactPerson,
     InvoiceRecipient,
 )
-from landuse.models.payment_schedule import PaymentSchedule
+from landuse.models.payment_schedule import (
+    PaymentSchedule,
+    PaymentScheduleInstallment,
+    PaymentScheduleInstallmentItem,
+)
 from landuse.models.site import AgreementSite
 from landuse.permissions import LanduseDjangoModelPermissions
 from landuse.serializers.agreement import (
@@ -27,6 +40,7 @@ from landuse.serializers.agreement import (
     AgreementSiteWriteSerializer,
     CompensationWithSitesWriteSerializer,
     ContractSerializer,
+    ContractWriteSerializer,
     DecisionSerializer,
     DecisionWriteSerializer,
     InvoiceSerializer,
@@ -36,6 +50,7 @@ from landuse.serializers.agreement import (
     LandUseCompensationSerializer,
     LandUseCompensationWriteSerializer,
     PaymentScheduleSerializer,
+    PaymentScheduleWriteSerializer,
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
@@ -102,12 +117,12 @@ class LandUseAgreementViewSet(
                     "contracts",
                     queryset=Contract.objects.prefetch_related(
                         "changes",
-                        "mortgage_deed_collaterals__parties",
-                        "mortgage_deed_collaterals__property_identifiers",
-                        "cash_deposit_collaterals__parties",
-                        "personal_guarantee_collaterals__parties",
-                        "deposit_pledge_collaterals__parties",
-                        "other_collaterals__parties",
+                        "mortgagedeedcollateral_collaterals__parties",
+                        "mortgagedeedcollateral_collaterals__property_identifiers",
+                        "cashdepositcollateral_collaterals__parties",
+                        "personalguaranteecollateral_collaterals__parties",
+                        "depositpledgecollateral_collaterals__parties",
+                        "othercollateral_collaterals__parties",
                     ),
                 )
             )
@@ -423,19 +438,314 @@ class LandUseAgreementViewSet(
         )
         return Response(DecisionSerializer(decisions, many=True).data)
 
-    @action(detail=True, methods=("get",))
+    @action(detail=True, methods=("get", "put"))
     def contracts(self, request, pk=None):
         agreement = self.get_object()
+        if request.method == "PUT":
+            serializer = ContractWriteSerializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            return self._replace_contracts(agreement, serializer.validated_data)
         return self.get_paginated_serializer_response(
             agreement.contracts.all(), ContractSerializer
         )
 
-    @action(detail=True, methods=("get",), url_path="payment-schedules")
+    @transaction.atomic
+    def _replace_contracts(self, agreement, contracts_data):  # noqa: C901
+        existing_contracts = {
+            contract.pk: contract
+            for contract in agreement.contracts.select_for_update()
+        }
+        retained_contract_ids = set()
+        saved_contract_ids = []
+        collateral_models = {
+            "MORTGAGE_DEED": MortgageDeedCollateral,
+            "CASH_DEPOSIT": CashDepositCollateral,
+            "PERSONAL_GUARANTEE": PersonalGuaranteeCollateral,
+            "DEPOSIT_PLEDGE": DepositPledgeCollateral,
+            "OTHER": OtherCollateral,
+        }
+
+        for contract_data in contracts_data:
+            contract_id = contract_data.pop("id", None)
+            changes_data = contract_data.pop("changes", [])
+            collaterals_data = contract_data.pop("collaterals", [])
+            self._validate_decisions(agreement, [contract_data, *changes_data])
+            if contract_id is None:
+                contract = Contract.objects.create(agreement=agreement, **contract_data)
+            else:
+                contract = existing_contracts.get(contract_id)
+                if contract is None:
+                    raise ValidationError(
+                        {
+                            "id": f"Contract {contract_id} does not belong to this agreement."
+                        }
+                    )
+                for field, value in contract_data.items():
+                    setattr(contract, field, value)
+                contract.save()
+
+            existing_changes = {
+                change.pk: change for change in contract.changes.select_for_update()
+            }
+            retained_change_ids = set()
+            for change_data in changes_data:
+                change_id = change_data.pop("id", None)
+                if change_id is None:
+                    change = ContractChange.objects.create(
+                        contract=contract, **change_data
+                    )
+                else:
+                    change = existing_changes.get(change_id)
+                    if change is None:
+                        raise ValidationError(
+                            {
+                                "id": (
+                                    f"Contract change {change_id} does not belong "
+                                    f"to contract {contract.pk}."
+                                )
+                            }
+                        )
+                    for field, value in change_data.items():
+                        setattr(change, field, value)
+                    change.save()
+                retained_change_ids.add(change.pk)
+            contract.changes.exclude(pk__in=retained_change_ids).delete()
+
+            existing_collaterals = {}
+            for model in collateral_models.values():
+                existing_collaterals.update(
+                    {
+                        collateral.pk: collateral
+                        for collateral in model.objects.select_for_update().filter(
+                            contract=contract
+                        )
+                    }
+                )
+            retained_collateral_ids = set()
+            for collateral_data in collaterals_data:
+                collateral_id = collateral_data.pop("id", None)
+                party_ids = collateral_data.pop("parties", [])
+                property_identifiers = collateral_data.pop("property_identifiers", [])
+                collateral_model = collateral_models.get(
+                    collateral_data["guarantee_type"]
+                )
+                if collateral_model is None:
+                    raise ValidationError(
+                        {"guarantee_type": "Unsupported collateral type."}
+                    )
+                if not set(party_ids).issubset(
+                    set(agreement.parties.values_list("pk", flat=True))
+                ):
+                    raise ValidationError(
+                        {"parties": "Collateral parties must belong to this agreement."}
+                    )
+                collateral_fields = {
+                    field.name
+                    for field in collateral_model._meta.get_fields()
+                    if getattr(field, "concrete", False) and field.name != "id"
+                }
+                collateral_data = {
+                    field: value
+                    for field, value in collateral_data.items()
+                    if field in collateral_fields
+                }
+                if collateral_id is None:
+                    collateral = collateral_model.objects.create(
+                        contract=contract, **collateral_data
+                    )
+                else:
+                    collateral = existing_collaterals.get(collateral_id)
+                    if collateral is None or not isinstance(
+                        collateral, collateral_model
+                    ):
+                        raise ValidationError(
+                            {
+                                "id": (
+                                    f"Collateral {collateral_id} does not belong "
+                                    f"to contract {contract.pk}."
+                                )
+                            }
+                        )
+                    for field, value in collateral_data.items():
+                        setattr(collateral, field, value)
+                    collateral.save()
+                collateral.parties.set(party_ids)
+                if isinstance(collateral, MortgageDeedCollateral):
+                    collateral.property_identifiers.all().delete()
+                    MortgageDeedPropertyIdentifier.objects.bulk_create(
+                        [
+                            MortgageDeedPropertyIdentifier(
+                                collateral=collateral, identifier=identifier
+                            )
+                            for identifier in property_identifiers
+                        ]
+                    )
+                retained_collateral_ids.add(collateral.pk)
+            for model in collateral_models.values():
+                model.objects.filter(contract=contract).exclude(
+                    pk__in=retained_collateral_ids
+                ).delete()
+            retained_contract_ids.add(contract.pk)
+            saved_contract_ids.append(contract.pk)
+        agreement.contracts.exclude(pk__in=retained_contract_ids).delete()
+        contracts = Contract.objects.filter(pk__in=saved_contract_ids).prefetch_related(
+            "changes",
+            "mortgagedeedcollateral_collaterals__parties",
+            "mortgagedeedcollateral_collaterals__property_identifiers",
+            "cashdepositcollateral_collaterals__parties",
+            "personalguaranteecollateral_collaterals__parties",
+            "depositpledgecollateral_collaterals__parties",
+            "othercollateral_collaterals__parties",
+        )
+        return Response(ContractSerializer(contracts, many=True).data)
+
+    def _validate_decisions(self, agreement, records):
+        decision_ids = {
+            record.get("decision").pk for record in records if record.get("decision")
+        }
+        valid_ids = set(
+            agreement.decisions.filter(pk__in=decision_ids).values_list("pk", flat=True)
+        )
+        if decision_ids != valid_ids:
+            raise ValidationError(
+                {"decision": "Contract decisions must belong to this agreement."}
+            )
+
+    @action(detail=True, methods=("get", "put"), url_path="payment-schedules")
     def payment_schedules(self, request, pk=None):
         agreement = self.get_object()
+        if request.method == "PUT":
+            serializer = PaymentScheduleWriteSerializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            return self._replace_payment_schedules(agreement, serializer.validated_data)
         return self.get_paginated_serializer_response(
             agreement.payment_schedules.all(), PaymentScheduleSerializer
         )
+
+    @transaction.atomic
+    def _replace_payment_schedules(self, agreement, schedules_data):  # noqa: C901
+        existing_schedules = {
+            schedule.pk: schedule
+            for schedule in agreement.payment_schedules.select_for_update()
+        }
+        retained_schedule_ids = set()
+        saved_schedule_ids = []
+        party_ids = set(agreement.parties.values_list("pk", flat=True))
+        contract_ids = set(agreement.contracts.values_list("pk", flat=True))
+        for schedule_data in schedules_data:
+            schedule_id = schedule_data.pop("id", None)
+            installments_data = schedule_data.pop("installments")
+            if (
+                schedule_data["recipient_party"].pk not in party_ids
+                or schedule_data["contract"].pk not in contract_ids
+            ):
+                raise ValidationError(
+                    {
+                        "detail": (
+                            "Payment schedule party and contract must belong to "
+                            "this agreement."
+                        )
+                    }
+                )
+            if schedule_id is None:
+                schedule = PaymentSchedule.objects.create(
+                    agreement=agreement, **schedule_data
+                )
+                schedule.full_clean()
+                schedule.save()
+            else:
+                schedule = existing_schedules.get(schedule_id)
+                if schedule is None:
+                    raise ValidationError(
+                        {
+                            "id": f"Payment schedule {schedule_id} does not belong to this agreement."
+                        }
+                    )
+                if schedule.status not in ("DRAFT", "REJECTED"):
+                    raise ValidationError(
+                        {"status": "Only draft or rejected schedules can be edited."}
+                    )
+                for field, value in schedule_data.items():
+                    setattr(schedule, field, value)
+                schedule.full_clean()
+                schedule.save()
+            existing_installments = {
+                installment.pk: installment
+                for installment in schedule.installments.select_for_update()
+            }
+            retained_installment_ids = set()
+            sequences = set()
+            for installment_data in installments_data:
+                installment_id = installment_data.pop("id", None)
+                items_data = installment_data.pop("items")
+                sequence = installment_data["installment_sequence_number"]
+                if sequence in sequences:
+                    raise ValidationError(
+                        {"installments": "Installment sequence numbers must be unique."}
+                    )
+                sequences.add(sequence)
+                if installment_id is None:
+                    installment = PaymentScheduleInstallment.objects.create(
+                        payment_schedule=schedule, **installment_data
+                    )
+                else:
+                    installment = existing_installments.get(installment_id)
+                    if installment is None:
+                        raise ValidationError(
+                            {
+                                "id": (
+                                    f"Installment {installment_id} does not belong "
+                                    f"to payment schedule {schedule.pk}."
+                                )
+                            }
+                        )
+                    for field, value in installment_data.items():
+                        setattr(installment, field, value)
+                    installment.save()
+                existing_items = {
+                    item.pk: item for item in installment.items.select_for_update()
+                }
+                retained_item_ids = set()
+                for item_data in items_data:
+                    item_id = item_data.pop("id", None)
+                    if item_id is None:
+                        item = PaymentScheduleInstallmentItem.objects.create(
+                            installment=installment, **item_data
+                        )
+                    else:
+                        item = existing_items.get(item_id)
+                        if item is None:
+                            raise ValidationError(
+                                {
+                                    "id": (
+                                        f"Installment item {item_id} does not belong "
+                                        f"to installment {installment.pk}."
+                                    )
+                                }
+                            )
+                        for field, value in item_data.items():
+                            setattr(item, field, value)
+                        item.save()
+                    retained_item_ids.add(item.pk)
+                installment.items.exclude(pk__in=retained_item_ids).delete()
+                retained_installment_ids.add(installment.pk)
+            schedule.installments.exclude(pk__in=retained_installment_ids).delete()
+            retained_schedule_ids.add(schedule.pk)
+            saved_schedule_ids.append(schedule.pk)
+        for schedule in agreement.payment_schedules.exclude(
+            pk__in=retained_schedule_ids
+        ):
+            if schedule.status not in ("DRAFT", "REJECTED"):
+                raise ValidationError(
+                    {"status": "Only draft or rejected schedules can be deleted."}
+                )
+            schedule.delete()
+        schedules = (
+            PaymentSchedule.objects.filter(pk__in=saved_schedule_ids)
+            .select_related("recipient_party", "contract")
+            .prefetch_related("installments__items")
+        )
+        return Response(PaymentScheduleSerializer(schedules, many=True).data)
 
     @action(detail=True, methods=("get",))
     def invoices(self, request, pk=None):

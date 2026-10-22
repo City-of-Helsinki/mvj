@@ -593,18 +593,30 @@ class OtherCollateralSerializer(CollateralSerializer):
 class ContractSerializer(serializers.ModelSerializer):
     changes = ContractChangeSerializer(many=True, read_only=True)
     mortgage_deed_collaterals = MortgageDeedCollateralSerializer(
-        many=True, read_only=True
+        many=True,
+        read_only=True,
+        source="mortgagedeedcollateral_collaterals",
     )
     cash_deposit_collaterals = CashDepositCollateralSerializer(
-        many=True, read_only=True
+        many=True,
+        read_only=True,
+        source="cashdepositcollateral_collaterals",
     )
     personal_guarantee_collaterals = PersonalGuaranteeCollateralSerializer(
-        many=True, read_only=True
+        many=True,
+        read_only=True,
+        source="personalguaranteecollateral_collaterals",
     )
     deposit_pledge_collaterals = DepositPledgeCollateralSerializer(
-        many=True, read_only=True
+        many=True,
+        read_only=True,
+        source="depositpledgecollateral_collaterals",
     )
-    other_collaterals = OtherCollateralSerializer(many=True, read_only=True)
+    other_collaterals = OtherCollateralSerializer(
+        many=True,
+        read_only=True,
+        source="othercollateral_collaterals",
+    )
 
     class Meta:
         model = Contract
@@ -627,6 +639,96 @@ class ContractSerializer(serializers.ModelSerializer):
             "personal_guarantee_collaterals",
             "deposit_pledge_collaterals",
             "other_collaterals",
+        )
+
+
+class ContractChangeWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = ContractChange
+        fields = (
+            "id",
+            "identifier",
+            "signing_date",
+            "signing_deadline",
+            "first_invitation_sent_date",
+            "second_invitation_sent_date",
+            "third_invitation_sent_date",
+            "executor",
+            "decision",
+            "note",
+        )
+
+
+class CollateralWriteSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    guarantee_type = serializers.CharField()
+    parties = serializers.ListField(child=serializers.IntegerField(), required=False)
+    third_party_pledger_name = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    third_party_pledger_business_id = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    start_date = serializers.DateField(required=False, allow_null=True)
+    end_date = serializers.DateField(required=False, allow_null=True)
+    amount = serializers.DecimalField(
+        max_digits=20, decimal_places=2, required=False, allow_null=True
+    )
+    returned_date = serializers.DateField(required=False, allow_null=True)
+    marked_returned_by = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    additional_information = serializers.CharField(required=False, allow_blank=True)
+    document_category = serializers.CharField(required=False, allow_blank=True)
+    target = serializers.CharField(required=False, allow_blank=True)
+    property_identifiers = serializers.ListField(
+        child=serializers.CharField(), required=False
+    )
+    facility_identifier = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    mortgage_deed_number = serializers.CharField(required=False, allow_blank=True)
+    mortgage_deed_date = serializers.DateField(required=False, allow_null=True)
+    subsequent_pledgee_name = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    subsequent_pledgee_business_id = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    guarantor_name = serializers.CharField(required=False, allow_blank=True)
+    guarantor_business_id = serializers.CharField(required=False, allow_blank=True)
+    guarantor_national_identification_number = serializers.CharField(
+        required=False, allow_blank=True
+    )
+    guarantee_identifier = serializers.CharField(required=False, allow_blank=True)
+    account_number = serializers.CharField(required=False, allow_blank=True)
+    paid_at_date = serializers.DateField(required=False, allow_null=True)
+
+
+class ContractWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    changes = ContractChangeWriteSerializer(many=True, required=False)
+    collaterals = CollateralWriteSerializer(many=True, required=False)
+
+    class Meta:
+        model = Contract
+        fields = (
+            "id",
+            "identifier",
+            "signing_date",
+            "signing_deadline",
+            "first_invitation_sent_date",
+            "second_invitation_sent_date",
+            "third_invitation_sent_date",
+            "executor",
+            "decision",
+            "note",
+            "title",
+            "contract_type",
+            "changes",
+            "collaterals",
         )
 
 
@@ -681,6 +783,49 @@ class PaymentScheduleSerializer(serializers.ModelSerializer):
             "installments",
         )
         read_only_fields = ("status", "rejected_reason")
+
+
+class PaymentScheduleInstallmentItemWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = PaymentScheduleInstallmentItem
+        fields = ("id", "item_type", "description", "amount")
+
+
+class PaymentScheduleInstallmentWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    items = PaymentScheduleInstallmentItemWriteSerializer(many=True)
+
+    class Meta:
+        model = PaymentScheduleInstallment
+        fields = (
+            "id",
+            "installment_sequence_number",
+            "installment_count_total",
+            "due_date",
+            "interest_calculation_period_start_date",
+            "interest_calculation_period_end_date",
+            "items",
+        )
+
+
+class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    installments = PaymentScheduleInstallmentWriteSerializer(many=True)
+
+    class Meta:
+        model = PaymentSchedule
+        fields = (
+            "id",
+            "recipient_party",
+            "contract",
+            "signing_date",
+            "increase_percentage",
+            "base_interest_rate",
+            "interest_margin",
+            "installments",
+        )
 
 
 class PaymentScheduleRejectionSerializer(serializers.Serializer):
