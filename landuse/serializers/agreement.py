@@ -89,6 +89,22 @@ class AgreementPreparerSerializer(serializers.ModelSerializer):
 
 class LandUseAgreementListSerializer(serializers.ModelSerializer):
     district = DistrictSerializer(read_only=True)
+    party = serializers.SerializerMethodField()
+    zoning_plan_number = serializers.CharField(
+        source="detailed_plan.plan_number", read_only=True, default=""
+    )
+    site = serializers.SerializerMethodField()
+    status_label = serializers.CharField(source="get_status_display", read_only=True)
+
+    def get_party(self, agreement):
+        return ", ".join(party.name for party in agreement.parties.all() if party.name)
+
+    def get_site(self, agreement):
+        return ", ".join(
+            site.identifier
+            for site in agreement.compensation_sites.all()
+            if site.identifier
+        )
 
     class Meta:
         model = LandUseAgreement
@@ -97,7 +113,12 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
             "identifier",
             "agreement_type",
             "district",
+            "party",
+            "zoning_plan_number",
+            "site",
+            "is_promotion_area",
             "status",
+            "status_label",
             "estimated_presentation_year",
             "estimated_payment_year",
             "created_at",
@@ -131,12 +152,27 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
         )
-        read_only_fields = ("id", "created_at", "modified_at")
+        read_only_fields = ("id", "identifier", "created_at", "modified_at")
 
     @transaction.atomic
     def create(self, validated_data):
         addresses = validated_data.pop("addresses", [])
         preparers = validated_data.pop("preparers", [])
+        district = validated_data.get("district")
+        if district is None:
+            raise serializers.ValidationError({"district": "This field is required."})
+
+        district = District.objects.select_for_update().get(pk=district.pk)
+        prefix = f"MA1{district.identifier.zfill(2)}-"
+        existing_identifiers = LandUseAgreement.objects.filter(
+            identifier__startswith=prefix
+        ).values_list("identifier", flat=True)
+        sequence_numbers = [
+            int(identifier.removeprefix(prefix))
+            for identifier in existing_identifiers
+            if identifier.removeprefix(prefix).isdigit()
+        ]
+        validated_data["identifier"] = f"{prefix}{max(sequence_numbers, default=0) + 1}"
         agreement = super().create(validated_data)
         self._replace_summary_relations(agreement, addresses, preparers)
         return agreement
