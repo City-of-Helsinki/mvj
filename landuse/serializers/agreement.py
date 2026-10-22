@@ -202,8 +202,17 @@ class BillingDetailsSerializer(serializers.ModelSerializer):
         fields = ("id", "ovt_code", "sap_customer_number", "customer_reference")
 
 
+class CountryCodeField(serializers.ChoiceField):
+    def to_representation(self, value):
+        return super().to_representation(str(value))
+
+
 class InvoiceRecipientSerializer(serializers.ModelSerializer):
-    country = serializers.CharField()
+    country = CountryCodeField(
+        choices=InvoiceRecipient._meta.get_field("country").get_choices(),
+        required=False,
+        allow_blank=True,
+    )
 
     class Meta:
         model = InvoiceRecipient
