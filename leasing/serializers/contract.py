@@ -2,9 +2,7 @@ from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.models.contract import (
-    Collateral,
-)
+from leasing.models.contract import Collateral
 from leasing.models.tenant import Tenant
 from leasing.serializers.tenant import TenantSerializer
 from users.models import User
@@ -112,6 +110,7 @@ class CollateralCreateUpdateSerializer(
     class Meta:
         model = Collateral
         exclude = ("contract",)
+        read_only_fields = ("form_version",)
 
 
 class ContractTypeSerializer(NameModelSerializer):

@@ -38,31 +38,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="collateral",
-            name="contract_party_business_id",
-            field=models.CharField(
-                blank=True,
-                max_length=255,
-                null=True,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        re.compile("^.{9}$"), "Enter a valid business id.", "invalid"
-                    )
-                ],
-                verbose_name="Business ID",
-            ),
-        ),
-        migrations.AddField(
-            model_name="collateral",
-            name="contract_party_national_identification_number",
-            field=models.CharField(
-                blank=True,
-                max_length=255,
-                null=True,
-                verbose_name="National identification number",
-            ),
-        ),
-        migrations.AddField(
-            model_name="collateral",
             name="document_type",
             field=enumfields.fields.EnumField(
                 blank=True,
@@ -85,7 +60,7 @@ class Migration(migrations.Migration):
             model_name="collateral",
             name="guarantee_number",
             field=models.CharField(
-                blank=True, max_length=255, null=True, verbose_name="Guarantee number"
+                blank=True, null=True, max_length=255, verbose_name="Guarantee number"
             ),
         ),
         migrations.AddField(
@@ -93,8 +68,8 @@ class Migration(migrations.Migration):
             name="institution_identifier",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 verbose_name="Institution identifier",
             ),
         ),
@@ -103,8 +78,8 @@ class Migration(migrations.Migration):
             name="number_mortgage_document",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 verbose_name="Mortgage document number",
             ),
         ),
@@ -113,8 +88,8 @@ class Migration(migrations.Migration):
             name="pledgor_business_id",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 validators=[
                     django.core.validators.RegexValidator(
                         re.compile("^.{9}$"), "Enter a valid business id.", "invalid"
@@ -127,7 +102,7 @@ class Migration(migrations.Migration):
             model_name="collateral",
             name="pledgor_name",
             field=models.CharField(
-                blank=True, max_length=255, null=True, verbose_name="Pledgor name"
+                blank=True, null=True, max_length=255, verbose_name="Pledgor name"
             ),
         ),
         migrations.AddField(
@@ -135,8 +110,8 @@ class Migration(migrations.Migration):
             name="pledgor_national_identification_number",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 verbose_name="Pledgor National identification number",
             ),
         ),
@@ -144,7 +119,7 @@ class Migration(migrations.Migration):
             model_name="collateral",
             name="property_identifiers",
             field=django.contrib.postgres.fields.ArrayField(
-                base_field=models.CharField(blank=True, max_length=255, null=True),
+                base_field=models.CharField(blank=True, max_length=255),
                 blank=True,
                 null=True,
                 size=None,
@@ -168,8 +143,8 @@ class Migration(migrations.Migration):
             name="subordinate_pledgee_business_id",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 validators=[
                     django.core.validators.RegexValidator(
                         re.compile("^.{9}$"), "Enter a valid business id.", "invalid"
@@ -183,8 +158,8 @@ class Migration(migrations.Migration):
             name="subordinate_pledgee_name",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 verbose_name="Subordinate pledgee name",
             ),
         ),
@@ -193,8 +168,8 @@ class Migration(migrations.Migration):
             name="third_party_pledgor_business_id",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 validators=[
                     django.core.validators.RegexValidator(
                         re.compile("^.{9}$"), "Enter a valid business id.", "invalid"
@@ -208,8 +183,8 @@ class Migration(migrations.Migration):
             name="third_party_pledgor_name",
             field=models.CharField(
                 blank=True,
-                max_length=255,
                 null=True,
+                max_length=255,
                 verbose_name="Third party pledgor name",
             ),
         ),
