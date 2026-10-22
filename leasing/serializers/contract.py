@@ -112,6 +112,7 @@ class CollateralCreateUpdateSerializer(
     class Meta:
         model = Collateral
         exclude = ("contract",)
+        read_only_fields = ("form_version",)
 
 
 class ContractTypeSerializer(NameModelSerializer):
