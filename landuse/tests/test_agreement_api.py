@@ -71,6 +71,45 @@ def test_party_codes_reject_labels(admin_client, field, value, alternate):
     assert not agreement.parties.exists()
 
 
+def test_agreement_list_includes_searchable_projections_and_status_label(
+    admin_client,
+):
+    plan = DetailedPlan.objects.create(plan_number="12345")
+    agreement = LandUseAgreement.objects.create(
+        identifier="M-LIST",
+        detailed_plan=plan,
+        is_promotion_area=True,
+        status="IN_PROGRESS",
+    )
+    AgreementParty.objects.create(agreement=agreement, name="List party")
+    AgreementSite.objects.create(agreement=agreement, identifier="List site")
+
+    response = admin_client.get(reverse("v1:landuse:agreement-list"))
+
+    assert response.status_code == status.HTTP_200_OK
+    listed = response.json()["results"][0]
+    assert listed["party"] == "List party"
+    assert listed["zoning_plan_number"] == "12345"
+    assert listed["site"] == "List site"
+    assert listed["is_promotion_area"] is True
+    assert listed["status"] == "IN_PROGRESS"
+    assert listed["status_label"] == "Vireillä"
+
+
+def test_agreement_creation_uses_official_district_identifier(admin_client):
+    district = District.objects.create(name="District", identifier="07")
+    LandUseAgreement.objects.create(identifier="MA107-2", district=district)
+
+    response = admin_client.post(
+        reverse("v1:landuse:agreement-list"),
+        {"district": district.pk, "identifier": "MA199-999"},
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["identifier"] == "MA107-3"
+
+
 def test_referenced_decision_removal_is_a_conflict_and_rolls_back(admin_client):
     from landuse.models.contract import Contract
     from landuse.models.decision import Decision

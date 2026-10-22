@@ -79,7 +79,9 @@ class LandUseAgreementViewSet(
         queryset = LandUseAgreement.objects.order_by("-modified_at", "pk")
 
         if self.action == "list":
-            return queryset.select_related("district")
+            return queryset.select_related(
+                "district", "detailed_plan"
+            ).prefetch_related("parties", "compensation_sites")
 
         if self.action in ("retrieve", "overview"):
             return queryset.select_related(
