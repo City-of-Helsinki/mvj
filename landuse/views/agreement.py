@@ -1,13 +1,14 @@
 from django.db import transaction
 from django.db.models import Prefetch
+from django.db.models.deletion import ProtectedError
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
-from landuse.models.contract import Contract
+from landuse.models.contract import Contract, ContractChange
 from landuse.models.decision import Decision, DecisionCondition
 from landuse.models.invoice import Invoice
 from landuse.models.party import (
@@ -36,6 +37,11 @@ from landuse.serializers.agreement import (
     PaymentScheduleSerializer,
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
+
+
+class ReferencedResourceConflict(APIException):
+    status_code = 409
+    default_code = "referenced_resource"
 
 
 class LandUseAgreementViewSet(
@@ -161,6 +167,26 @@ class LandUseAgreementViewSet(
         existing_parties = {
             party.pk: party for party in agreement.parties.select_for_update()
         }
+        removed_ids = set(existing_parties) - {
+            party.get("id") for party in parties_data
+        }
+        referenced_ids = set(
+            PaymentSchedule.objects.filter(
+                recipient_party_id__in=removed_ids
+            ).values_list("recipient_party_id", flat=True)
+        ) | set(
+            Invoice.objects.filter(recipient_party_id__in=removed_ids).values_list(
+                "recipient_party_id", flat=True
+            )
+        )
+        if referenced_ids:
+            raise ReferencedResourceConflict(
+                {
+                    "code": "referenced_parties",
+                    "ids": sorted(referenced_ids),
+                    "detail": "Remove financial references before deleting these parties.",
+                }
+            )
         retained_party_ids = set()
         saved_parties = []
 
@@ -209,7 +235,15 @@ class LandUseAgreementViewSet(
 
             saved_parties.append(party)
 
-        agreement.parties.exclude(pk__in=retained_party_ids).delete()
+        try:
+            agreement.parties.exclude(pk__in=retained_party_ids).delete()
+        except ProtectedError as error:
+            raise ReferencedResourceConflict(
+                {
+                    "code": "referenced_parties",
+                    "detail": "Remove financial references before deleting these parties.",
+                }
+            ) from error
         saved_parties = AgreementParty.objects.filter(
             pk__in=[party.pk for party in saved_parties]
         ).prefetch_related("contact_persons", "billing_details")
@@ -306,6 +340,27 @@ class LandUseAgreementViewSet(
             decision.pk: decision
             for decision in agreement.decisions.select_for_update()
         }
+        removed_ids = set(existing_decisions) - {
+            decision.get("id") for decision in decisions_data
+        }
+        referenced_ids = set(
+            Contract.objects.filter(decision_id__in=removed_ids).values_list(
+                "decision_id", flat=True
+            )
+        )
+        referenced_ids.update(
+            ContractChange.objects.filter(decision_id__in=removed_ids).values_list(
+                "decision_id", flat=True
+            )
+        )
+        if referenced_ids:
+            raise ReferencedResourceConflict(
+                {
+                    "code": "referenced_decisions",
+                    "ids": sorted(referenced_ids),
+                    "detail": "Unlink contracts before deleting these decisions.",
+                }
+            )
         retained_decision_ids = set()
         saved_decision_ids = []
 

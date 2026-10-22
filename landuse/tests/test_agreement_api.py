@@ -22,6 +22,186 @@ def enable_landuse_api(settings):
     settings.FLAG_LANDUSE_API_ENABLED = True
 
 
+@pytest.mark.parametrize(
+    "language,country", [("fi", "FI"), ("sv", "SE"), ("en", "DE"), ("", "")]
+)
+def test_party_and_alternate_recipient_codes_round_trip(
+    admin_client, language, country
+):
+    agreement = LandUseAgreement.objects.create(identifier="M-CODES")
+    url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
+    response = admin_client.put(
+        url,
+        [
+            {
+                "party_type": "COMPANY",
+                "language": language,
+                "country": country,
+                "invoice_recipient": {
+                    "party_type": "PERSON",
+                    "language": language,
+                    "country": country,
+                },
+            }
+        ],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    saved = response.json()[0]
+    assert saved["language"] == language
+    assert saved["country"] == country
+    assert saved["invoice_recipient"]["language"] == language
+    assert saved["invoice_recipient"]["country"] == country
+    response = admin_client.put(url, response.json(), content_type="application/json")
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.parametrize("field,value", [("language", "suomi"), ("country", "Suomi")])
+@pytest.mark.parametrize("alternate", [False, True])
+def test_party_codes_reject_labels(admin_client, field, value, alternate):
+    agreement = LandUseAgreement.objects.create(identifier="M-INVALID-CODES")
+    details = {field: value}
+    payload = {"invoice_recipient": details} if alternate else details
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-parties", args=(agreement.pk,)),
+        [payload],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert not agreement.parties.exists()
+
+
+def test_referenced_decision_removal_is_a_conflict_and_rolls_back(admin_client):
+    from landuse.models.contract import Contract
+    from landuse.models.decision import Decision
+
+    agreement = LandUseAgreement.objects.create(identifier="M-CONFLICT")
+    retained = Decision.objects.create(agreement=agreement, title="Original")
+    removed = Decision.objects.create(agreement=agreement)
+    contract = Contract.objects.create(agreement=agreement, decision=removed)
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-decisions", args=(agreement.pk,)),
+        [{"id": retained.pk, "title": "Changed"}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.json()["code"] == "referenced_decisions"
+    retained.refresh_from_db()
+    assert retained.title == "Original"
+    assert Decision.objects.filter(pk=removed.pk).exists()
+    assert Contract.objects.filter(pk=contract.pk).exists()
+
+
+def test_referenced_party_removal_is_a_conflict(admin_client):
+    from landuse.models.contract import Contract
+    from landuse.models.payment_schedule import PaymentSchedule
+
+    agreement = LandUseAgreement.objects.create(identifier="M-CONFLICT")
+    party = AgreementParty.objects.create(agreement=agreement, name="Retained")
+    contract = Contract.objects.create(agreement=agreement)
+    PaymentSchedule.objects.create(
+        agreement=agreement, recipient_party=party, contract=contract
+    )
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-parties", args=(agreement.pk,)),
+        [],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.json()["code"] == "referenced_parties"
+    assert AgreementParty.objects.filter(pk=party.pk).exists()
+
+
+def test_invoice_party_removal_rolls_back_retained_party_edits(admin_client):
+    from landuse.models.invoice import Invoice
+
+    agreement = LandUseAgreement.objects.create(identifier="M-INVOICE-CONFLICT")
+    retained = AgreementParty.objects.create(agreement=agreement, name="Original")
+    removed = AgreementParty.objects.create(agreement=agreement)
+    Invoice.objects.create(
+        agreement=agreement,
+        recipient_party=removed,
+        invoice_identifier="INV-CONFLICT",
+        installment_sequence_number=1,
+        installment_count_total=1,
+    )
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-parties", args=(agreement.pk,)),
+        [{"id": retained.pk, "name": "Changed"}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
+    retained.refresh_from_db()
+    assert retained.name == "Original"
+    assert AgreementParty.objects.filter(pk=removed.pk).exists()
+
+
+def test_contract_change_decision_removal_is_blocked(admin_client):
+    from landuse.models.contract import Contract, ContractChange
+    from landuse.models.decision import Decision
+
+    agreement = LandUseAgreement.objects.create(identifier="M-CHANGE-CONFLICT")
+    decision = Decision.objects.create(agreement=agreement)
+    contract = Contract.objects.create(agreement=agreement)
+    change = ContractChange.objects.create(contract=contract, decision=decision)
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-decisions", args=(agreement.pk,)),
+        [],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert ContractChange.objects.filter(pk=change.pk).exists()
+
+
+@pytest.mark.parametrize("resource", ["parties", "decisions"])
+def test_unreferenced_rows_can_be_removed(admin_client, resource):
+    from landuse.models.decision import Decision
+
+    agreement = LandUseAgreement.objects.create(identifier="M-REMOVE")
+    model = AgreementParty if resource == "parties" else Decision
+    model.objects.create(agreement=agreement)
+    response = admin_client.put(
+        reverse(f"v1:landuse:agreement-{resource}", args=(agreement.pk,)),
+        [],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert not model.objects.filter(agreement=agreement).exists()
+
+
+@pytest.mark.parametrize("designation", ["SR1", "SR2", "SR3", None, ""])
+def test_site_preservation_selection_and_clearing(admin_client, designation):
+    agreement = LandUseAgreement.objects.create(identifier="M-PRESERVATION")
+    tenure_type = SiteTenureType.objects.create(name="Rental")
+    url = reverse("v1:landuse:agreement-sites", args=(agreement.pk,))
+    response = admin_client.put(
+        url,
+        [{"tenure_types": [tenure_type.pk], "preservation_designation": designation}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()[0]["preservation_designation"] == designation
+    response = admin_client.put(
+        url,
+        [
+            {
+                "id": response.json()[0]["id"],
+                "tenure_types": [tenure_type.pk],
+                "preservation_designation": None,
+            }
+        ],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()[0]["preservation_designation"] is None
+    response = admin_client.put(
+        url,
+        [{"tenure_types": [tenure_type.pk], "preservation_designation": "-"}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
 def test_agreement_list_uses_compact_representation(admin_client):
     district = District.objects.create(name="Kallio", identifier="11")
     agreement = LandUseAgreement.objects.create(
