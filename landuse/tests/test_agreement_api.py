@@ -153,6 +153,101 @@ def test_contract_change_decision_removal_is_blocked(admin_client):
     assert ContractChange.objects.filter(pk=change.pk).exists()
 
 
+def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client):
+    from landuse.models.contract import OtherCollateral
+    from landuse.models.decision import Decision
+
+    agreement = LandUseAgreement.objects.create(identifier="M-CONTRACT-WRITE")
+    party = AgreementParty.objects.create(agreement=agreement, name="Party")
+    decision = Decision.objects.create(agreement=agreement, title="Decision")
+    url = reverse("v1:landuse:agreement-contracts", args=(agreement.pk,))
+    payload = [
+        {
+            "identifier": "C-1",
+            "title": "Contract",
+            "contract_type": "OTHER",
+            "decision": decision.pk,
+            "changes": [{"identifier": "C-1A", "decision": decision.pk}],
+            "collaterals": [
+                {
+                    "guarantee_type": "OTHER",
+                    "parties": [party.pk],
+                    "guarantor_name": "Guarantor",
+                }
+            ],
+        }
+    ]
+
+    response = admin_client.put(url, payload, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    saved = response.json()[0]
+    collateral = saved["other_collaterals"][0]
+    assert saved["changes"][0]["identifier"] == "C-1A"
+    assert collateral["parties"] == [party.pk]
+    response = admin_client.put(
+        url,
+        [
+            {
+                **payload[0],
+                "id": saved["id"],
+                "title": "Updated contract",
+                "changes": [{"id": saved["changes"][0]["id"], "identifier": "C-1B"}],
+                "collaterals": [{"id": collateral["id"], "guarantee_type": "OTHER"}],
+            }
+        ],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()[0]["title"] == "Updated contract"
+    assert OtherCollateral.objects.get(pk=collateral["id"]).contract_id == saved["id"]
+
+
+def test_payment_schedules_replace_nested_rows_and_reject_foreign_contract(
+    admin_client,
+):
+    from landuse.models.contract import Contract
+
+    agreement = LandUseAgreement.objects.create(identifier="M-SCHEDULE-WRITE")
+    party = AgreementParty.objects.create(agreement=agreement, name="Recipient")
+    contract = Contract.objects.create(agreement=agreement)
+    foreign_agreement = LandUseAgreement.objects.create(identifier="M-FOREIGN")
+    foreign_contract = Contract.objects.create(agreement=foreign_agreement)
+    url = reverse("v1:landuse:agreement-payment-schedules", args=(agreement.pk,))
+    payload = [
+        {
+            "recipient_party": party.pk,
+            "contract": contract.pk,
+            "installments": [
+                {
+                    "installment_sequence_number": 1,
+                    "installment_count_total": 1,
+                    "items": [
+                        {
+                            "item_type": "LAND_USE_COMPENSATION",
+                            "description": "Compensation",
+                            "amount": "10.00",
+                        }
+                    ],
+                }
+            ],
+        }
+    ]
+
+    response = admin_client.put(url, payload, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    saved = response.json()[0]
+    assert saved["installments"][0]["items"][0]["amount"] == "10.00"
+    response = admin_client.put(
+        url,
+        [{**payload[0], "contract": foreign_contract.pk}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert agreement.payment_schedules.count() == 1
+
+
 @pytest.mark.parametrize("resource", ["parties", "decisions"])
 def test_unreferenced_rows_can_be_removed(admin_client, resource):
     from landuse.models.decision import Decision
