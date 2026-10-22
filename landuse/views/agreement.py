@@ -25,6 +25,7 @@ from landuse.serializers.agreement import (
     AgreementPartyWriteSerializer,
     AgreementSiteSerializer,
     AgreementSiteWriteSerializer,
+    CompensationWithSitesWriteSerializer,
     ContractSerializer,
     DecisionSerializer,
     DecisionWriteSerializer,
@@ -266,6 +267,30 @@ class LandUseAgreementViewSet(
         except LandUseCompensation.DoesNotExist:
             return Response(None)
         return Response(LandUseCompensationSerializer(compensation).data)
+
+    @action(detail=True, methods=("put",), url_path="compensation-with-sites")
+    @transaction.atomic
+    def compensation_with_sites(self, request, pk=None):
+        agreement = self.get_object()
+        serializer = CompensationWithSitesWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        compensation_data = serializer.validated_data["compensation"]
+        sites_data = serializer.validated_data["sites"]
+        compensation, _ = LandUseCompensation.objects.update_or_create(
+            agreement=agreement, defaults=compensation_data
+        )
+        self._replace_sites(agreement, sites_data)
+        return Response(
+            {
+                "compensation": LandUseCompensationSerializer(compensation).data,
+                "sites": AgreementSiteSerializer(
+                    agreement.compensation_sites.select_related(
+                        "intended_use"
+                    ).prefetch_related("tenure_types"),
+                    many=True,
+                ).data,
+            }
+        )
 
     @action(detail=True, methods=("get", "put"))
     def sites(self, request, pk=None):

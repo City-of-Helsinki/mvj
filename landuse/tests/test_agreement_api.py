@@ -10,9 +10,9 @@ from landuse.models.agreement import (
     District,
     LandUseAgreement,
 )
-from landuse.models.compensation import LandPolicyProgram
+from landuse.models.compensation import LandPolicyProgram, LandUseCompensation
 from landuse.models.party import AgreementParty, ContactPerson
-from landuse.models.site import SiteIntendedUse, SiteTenureType
+from landuse.models.site import AgreementSite, SiteIntendedUse, SiteTenureType
 
 pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 
@@ -381,5 +381,74 @@ def test_compensation_and_sites_accept_related_object_ids(admin_client):
         "name": "Residential",
     }
     assert sites_response.json()[0]["tenure_types"] == [
+        {"id": tenure_type.pk, "name": "Rental"}
+    ]
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {
+            "compensation": {"monetary_compensation": "200.00"},
+            "sites": [{"intended_use": 999999, "tenure_types": []}],
+        },
+        {
+            "compensation": {"land_policy_program": 999999},
+            "sites": [
+                {
+                    "identifier": "New site",
+                    "intended_use": None,
+                    "tenure_types": [],
+                }
+            ],
+        },
+    ],
+)
+def test_compensation_with_sites_rejects_partial_writes(admin_client, payload):
+    agreement = LandUseAgreement.objects.create(identifier="M-ATOMIC")
+    LandUseCompensation.objects.create(
+        agreement=agreement, monetary_compensation="100.00"
+    )
+    AgreementSite.objects.create(agreement=agreement, identifier="Existing site")
+
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-compensation-with-sites", args=(agreement.pk,)),
+        payload,
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    agreement.refresh_from_db()
+    assert agreement.compensation.monetary_compensation == 100
+    assert list(agreement.compensation_sites.values_list("identifier", flat=True)) == [
+        "Existing site"
+    ]
+
+
+def test_compensation_with_sites_saves_both_resources(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="M-ATOMIC-SUCCESS")
+    intended_use = SiteIntendedUse.objects.create(name="Residential")
+    tenure_type = SiteTenureType.objects.create(name="Rental")
+
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-compensation-with-sites", args=(agreement.pk,)),
+        {
+            "compensation": {"monetary_compensation": "200.00"},
+            "sites": [
+                {
+                    "identifier": "New site",
+                    "intended_use": intended_use.pk,
+                    "tenure_types": [tenure_type.pk],
+                }
+            ],
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    agreement.refresh_from_db()
+    assert agreement.compensation.monetary_compensation == 200
+    assert response.json()["sites"][0]["intended_use"]["id"] == intended_use.pk
+    assert response.json()["sites"][0]["tenure_types"] == [
         {"id": tenure_type.pk, "name": "Rental"}
     ]
