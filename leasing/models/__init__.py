@@ -10,7 +10,12 @@ from .basis_of_rent import (
 )
 from .comment import Comment, CommentTopic
 from .contact import Contact
-from .contract import Collateral, CollateralType, Contract, ContractChange, ContractType
+from .contract import (
+    Collateral,
+    Contract,
+    ContractChange,
+    ContractType,
+)
 from .debt_collection import (
     CollectionCourtDecision,
     CollectionLetter,
@@ -116,7 +121,6 @@ __all__ = [
     "BasisOfRentPropertyIdentifier",
     "BasisOfRentRate",
     "Collateral",
-    "CollateralType",
     "CollectionCourtDecision",
     "CollectionLetter",
     "CollectionLetterTemplate",

@@ -791,3 +791,39 @@ class PreparationState(Enum):
         INVOICING_NOT_STARTED = pgettext_lazy(
             "Preparation state", "Invoicing not started"
         )
+
+
+class DocumentType(Enum):
+    """
+    In Finnish: Asiakirjan laji
+    """
+
+    PAPER = "paper"
+    ELECTRONIC = "electronic"
+
+    @member
+    class Labels:
+        PAPER = pgettext_lazy("Document type", "Paper")
+        ELECTRONIC = pgettext_lazy("Document type", "Electronic")
+
+
+class CollateralType(Enum):
+    """
+    In Finnish: Vakuuden tyyppi
+    """
+
+    FINANCIAL_GUARANTEE = "financial_guarantee"
+    MORTGAGE_DOCUMENT = "mortgage_document"
+    SELF_DEBTOR_GUARANTEE = "self_debtor_guarantee"
+    PLEDGE_OF_FUNDS = "pledge_of_funds"
+    OTHER = "other"
+
+    @member
+    class Labels:
+        FINANCIAL_GUARANTEE = pgettext_lazy("Collateral type", "Financial guarantee")
+        MORTGAGE_DOCUMENT = pgettext_lazy("Collateral type", "Mortgage document")
+        SELF_DEBTOR_GUARANTEE = pgettext_lazy(
+            "Collateral type", "Self-debtor guarantee"
+        )
+        PLEDGE_OF_FUNDS = pgettext_lazy("Collateral type", "Pledge of funds")
+        OTHER = pgettext_lazy("Collateral type", "Other")

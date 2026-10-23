@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 10:29+0300\n"
+"POT-Creation-Date: 2026-10-21 10:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1304,6 +1304,34 @@ msgctxt "Preparation state"
 msgid "Invoicing not started"
 msgstr ""
 
+msgctxt "Document type"
+msgid "Paper"
+msgstr ""
+
+msgctxt "Document type"
+msgid "Electronic"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Financial guarantee"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Mortgage document"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Self-debtor guarantee"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Pledge of funds"
+msgstr ""
+
+msgctxt "Collateral type"
+msgid "Other"
+msgstr ""
+
 msgid "Going to SAP"
 msgstr "På väg till SAP"
 
@@ -1580,22 +1608,11 @@ msgctxt "Model name"
 msgid "Contracts"
 msgstr "Avtal"
 
-msgctxt "Model name"
-msgid "Collateral type"
-msgstr "Typ av säkerhet"
-
-msgctxt "Model name"
-msgid "Collateral types"
-msgstr "Typer av säkerhet"
-
 msgid "Contract"
 msgstr "Avtal"
 
 msgid "Collateral type"
 msgstr "Typ av säkerhet"
-
-msgid "Other type"
-msgstr "Annan typ av säkerhet"
 
 msgid "Number"
 msgstr "Nummer"
@@ -1608,6 +1625,53 @@ msgstr "Kapital"
 
 msgid "Returned date"
 msgstr "Returnerat datum"
+
+msgid "Returned by"
+msgstr ""
+
+msgid "Third party pledgor name"
+msgstr ""
+
+msgid "Third party pledgor Business ID"
+msgstr ""
+
+msgid "Pledgor name"
+msgstr ""
+
+msgid "Pledgor National identification number"
+msgstr ""
+
+msgid "Pledgor Business ID"
+msgstr ""
+
+msgid "Subordinate pledgee name"
+msgstr ""
+
+msgid "Subordinate pledgee business ID"
+msgstr ""
+
+msgid "Account number"
+msgstr ""
+
+msgid "Document type"
+msgstr ""
+
+msgid "Guarantee number"
+msgstr ""
+
+msgid "Mortgage document number"
+msgstr ""
+
+msgid "Property identifier"
+msgstr ""
+
+msgid "Form version"
+msgstr ""
+
+msgid ""
+"Used in the background to determine collateral form validation to ensure "
+"backwards compatibility in case of breaking changes."
+msgstr ""
 
 msgctxt "Model name"
 msgid "Collateral"
