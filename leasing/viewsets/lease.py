@@ -462,13 +462,6 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 if search_form.cleaned_data.get("only_expired_leases"):
                     queryset = queryset.filter(end_date__lte=timezone.now().date())
 
-            if "has_geometry" in search_form.cleaned_data:
-                if search_form.cleaned_data.get("has_geometry") is True:
-                    queryset = queryset.exclude(lease_areas__geometry__isnull=True)
-
-                if search_form.cleaned_data.get("has_geometry") is False:
-                    queryset = queryset.exclude(lease_areas__geometry__isnull=False)
-
             if search_form.cleaned_data.get("preparers_own_leases", False) is True:
                 queryset = queryset.filter(preparer=self.request.user)
 
@@ -589,9 +582,27 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             queryset = queryset.filter(lease_areas__isnull=True)
 
         if PreparationState.MISSING_LEASE_AREA_GEOMETRY.value in preparation_state:
-            queryset = queryset.filter(
-                Exists(LeaseArea.objects.filter(lease_id=OuterRef("pk"))),
-                lease_areas__geometry__isnull=True,
+            queryset = (
+                # Only shows leases which have active lease areas with missing geometry.
+                queryset.filter(
+                    Exists(
+                        LeaseArea.objects.filter(
+                            lease_id=OuterRef("pk"),
+                            archived_at__isnull=True,
+                            geometry__isnull=True,
+                        )
+                    )
+                )
+                # Exclude archived leases, leases without start date and permission leases.
+                .filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=timezone.now().date())
+                )
+                .exclude(Q(start_date__isnull=True))
+                .exclude(
+                    state__in=[
+                        LeaseState.PERMISSION,
+                    ]
+                )
             )
 
         if PreparationState.MISSING_TENANT.value in preparation_state:
