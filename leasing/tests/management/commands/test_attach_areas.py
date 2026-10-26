@@ -290,9 +290,9 @@ def test_get_lease_areas_by_identifier_reports_duplicate_active_identifiers(
     second_lease_area = lease_area_factory(
         lease=lease, identifier=identifier, archived_at=None
     )
-    captured_errors: list[Exception] = []
+    captured_errors: list[str] = []
     monkeypatch.setattr(
-        "leasing.management.commands.attach_areas.sentry_sdk.capture_exception",
+        "leasing.management.commands.attach_areas.LOG.error",
         captured_errors.append,
     )
 
@@ -300,10 +300,9 @@ def test_get_lease_areas_by_identifier_reports_duplicate_active_identifiers(
 
     assert lease_areas[first_lease_area.get_normalized_identifier()] == first_lease_area
     assert len(captured_errors) == 1
-    assert isinstance(captured_errors[0], ValueError)
-    assert "multiple active lease areas" in str(captured_errors[0])
-    assert f"#{first_lease_area.pk}" in str(captured_errors[0])
-    assert f"#{second_lease_area.pk}" in str(captured_errors[0])
+    assert "multiple active lease areas" in captured_errors[0]
+    assert f"#{first_lease_area.pk}" in captured_errors[0]
+    assert f"#{second_lease_area.pk}" in captured_errors[0]
 
 
 @pytest.mark.django_db

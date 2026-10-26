@@ -2,7 +2,6 @@ import logging
 import sys
 from typing import Any, Protocol, cast
 
-import sentry_sdk
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand
@@ -107,7 +106,6 @@ def get_lease_areas_by_identifier(lease: Lease) -> dict[str, LeaseArea]:
                 f"{', '.join(f'#{lease_area.pk}' for lease_area in lease_areas)}"
             )
             LOG.error(error_message)
-            sentry_sdk.capture_exception(ValueError(error_message))
 
         selected_lease_areas[identifier] = lease_areas[0]
 
