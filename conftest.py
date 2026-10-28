@@ -62,6 +62,16 @@ from plotsearch.models import (
 from users.models import User
 
 
+@pytest.fixture(autouse=True)
+def mock_kartta_hel_address_lookup():
+    """Avoids outbound requests to Kartta HEL during tests."""
+    with patch(
+        "plotsearch.serializers.plot_search.AreaSearchSerializer.get_address_and_district_from_kartta_hel",
+        return_value=(None, None),
+    ):
+        yield
+
+
 @pytest.fixture()
 def admin_client(db, admin_user):
     """A Django test client logged in as an admin user.
