@@ -1,5 +1,10 @@
+from functools import partial
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.db.models.deletion import ProtectedError
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -16,7 +21,6 @@ from landuse.models.contract import (
     ContractChange,
     DepositPledgeCollateral,
     MortgageDeedCollateral,
-    MortgageDeedPropertyIdentifier,
     OtherCollateral,
     PersonalGuaranteeCollateral,
 )
@@ -43,6 +47,76 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
+
+
+class ReferencedResourceConflict(APIException):
+    status_code = 409
+    default_code = "referenced_resource"
+
+
+def set_one_to_one(model, parent_field, parent, data):
+    lookup = {parent_field: parent}
+    if data is None:
+        model.objects.filter(**lookup).delete()
+    else:
+        model.objects.update_or_create(**lookup, defaults=data)
+
+
+def sync_rows(queryset, rows, save_row):
+    """Updates rows listed with an id, creates the others, and deletes unlisted rows."""
+    existing = {row.pk: row for row in queryset.select_for_update(of=("self",))}
+    saved_ids = []
+    for data in rows:
+        row_id = data.pop("id", None)
+        if row_id is not None and row_id not in existing:
+            raise serializers.ValidationError(
+                {"id": f"Item {row_id} does not belong to this parent."}
+            )
+        saved_ids.append(save_row(existing.get(row_id), data).pk)
+    queryset.exclude(pk__in=saved_ids).delete()
+    return saved_ids
+
+
+def save_children(model, parent_field, parent, rows):
+    def save_row(obj, data):
+        if obj is None:
+            return model.objects.create(**{parent_field: parent}, **data)
+        for field, value in data.items():
+            setattr(obj, field, value)
+        obj.save()
+        return obj
+
+    sync_rows(model.objects.filter(**{parent_field: parent}), rows, save_row)
+
+
+class ReplaceListSerializer(serializers.ListSerializer):
+    conflict_code = "referenced_resource"
+    conflict_detail = "Remove references before deleting these rows."
+    read_related = ()
+    read_prefetch = ()
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        self.check_replacement(instance, validated_data)
+        try:
+            saved_ids = sync_rows(instance, validated_data, self.save_item)
+        except ProtectedError as error:
+            raise ReferencedResourceConflict(
+                {"code": self.conflict_code, "detail": self.conflict_detail}
+            ) from error
+        return (
+            self.child.Meta.model.objects.filter(pk__in=saved_ids)
+            .select_related(*self.read_related)
+            .prefetch_related(*self.read_prefetch)
+        )
+
+    def check_replacement(self, instance, validated_data):
+        """Runs reference and status checks before any write."""
+
+    def save_item(self, obj, data):
+        if obj is None:
+            return self.child.create(data)
+        return self.child.update(obj, data)
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -230,6 +304,14 @@ class ContactPersonSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "phone", "email")
 
 
+class ContactPersonWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = ContactPerson
+        fields = ("id", "name", "phone", "email")
+
+
 class BillingDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingDetails
@@ -305,14 +387,42 @@ class AgreementPartySerializer(serializers.ModelSerializer):
         return InvoiceRecipientSerializer(recipient).data
 
 
+class AgreementPartyListSerializer(ReplaceListSerializer):
+    conflict_code = "referenced_parties"
+    conflict_detail = "Remove financial references before deleting these parties."
+    read_prefetch = ("contact_persons", "billing_details")
+
+    def check_replacement(self, instance, validated_data):
+        retained_ids = {attrs.get("id") for attrs in validated_data}
+        removed_ids = set(instance.values_list("pk", flat=True)) - retained_ids
+        referenced_ids = set(
+            PaymentSchedule.objects.filter(
+                recipient_party_id__in=removed_ids
+            ).values_list("recipient_party_id", flat=True)
+        ) | set(
+            Invoice.objects.filter(recipient_party_id__in=removed_ids).values_list(
+                "recipient_party_id", flat=True
+            )
+        )
+        if referenced_ids:
+            raise ReferencedResourceConflict(
+                {
+                    "code": self.conflict_code,
+                    "ids": sorted(referenced_ids),
+                    "detail": self.conflict_detail,
+                }
+            )
+
+
 class AgreementPartyWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    contact_persons = ContactPersonSerializer(many=True, required=False)
+    contact_persons = ContactPersonWriteSerializer(many=True, required=False)
     billing_details = BillingDetailsSerializer(required=False, allow_null=True)
     invoice_recipient = InvoiceRecipientSerializer(required=False, allow_null=True)
 
     class Meta:
         model = AgreementParty
+        list_serializer_class = AgreementPartyListSerializer
         fields = (
             "id",
             "party_type",
@@ -333,6 +443,32 @@ class AgreementPartyWriteSerializer(serializers.ModelSerializer):
             "billing_details",
             "invoice_recipient",
         )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        nested = self._pop_nested(validated_data)
+        party = super().create(validated_data)
+        self._save_nested(party, **nested)
+        return party
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        nested = self._pop_nested(validated_data)
+        party = super().update(instance, validated_data)
+        self._save_nested(party, **nested)
+        return party
+
+    def _pop_nested(self, validated_data):
+        return {
+            "contact_persons": validated_data.pop("contact_persons", []),
+            "billing_details": validated_data.pop("billing_details", None),
+            "invoice_recipient": validated_data.pop("invoice_recipient", None),
+        }
+
+    def _save_nested(self, party, contact_persons, billing_details, invoice_recipient):
+        save_children(ContactPerson, "agreement_party", party, contact_persons)
+        set_one_to_one(BillingDetails, "agreement_party", party, billing_details)
+        set_one_to_one(InvoiceRecipient, "agreement_party", party, invoice_recipient)
 
 
 class LandPolicyProgramSerializer(serializers.ModelSerializer):
@@ -423,11 +559,17 @@ class AgreementSiteSerializer(serializers.ModelSerializer):
         )
 
 
+class AgreementSiteListSerializer(ReplaceListSerializer):
+    read_related = ("intended_use",)
+    read_prefetch = ("tenure_types",)
+
+
 class AgreementSiteWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = AgreementSite
+        list_serializer_class = AgreementSiteListSerializer
         fields = (
             "id",
             "identifier",
@@ -439,6 +581,18 @@ class AgreementSiteWriteSerializer(serializers.ModelSerializer):
             "has_housing_obligation",
             "unit_price_euro_per_kem2",
         )
+
+    def create(self, validated_data):
+        tenure_types = validated_data.pop("tenure_types", [])
+        site = super().create(validated_data)
+        site.tenure_types.set(tenure_types)
+        return site
+
+    def update(self, instance, validated_data):
+        tenure_types = validated_data.pop("tenure_types", [])
+        site = super().update(instance, validated_data)
+        site.tenure_types.set(tenure_types)
+        return site
 
 
 class CompensationWithSitesWriteSerializer(serializers.Serializer):
@@ -494,12 +648,41 @@ class DecisionConditionWriteSerializer(serializers.ModelSerializer):
         )
 
 
+class DecisionListSerializer(ReplaceListSerializer):
+    conflict_code = "referenced_decisions"
+    conflict_detail = "Unlink contracts before deleting these decisions."
+    read_prefetch = ("conditions",)
+
+    def check_replacement(self, instance, validated_data):
+        retained_ids = {attrs.get("id") for attrs in validated_data}
+        removed_ids = set(instance.values_list("pk", flat=True)) - retained_ids
+        referenced_ids = set(
+            Contract.objects.filter(decision_id__in=removed_ids).values_list(
+                "decision_id", flat=True
+            )
+        )
+        referenced_ids.update(
+            ContractChange.objects.filter(decision_id__in=removed_ids).values_list(
+                "decision_id", flat=True
+            )
+        )
+        if referenced_ids:
+            raise ReferencedResourceConflict(
+                {
+                    "code": self.conflict_code,
+                    "ids": sorted(referenced_ids),
+                    "detail": self.conflict_detail,
+                }
+            )
+
+
 class DecisionWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     conditions = DecisionConditionWriteSerializer(many=True, required=False)
 
     class Meta:
         model = Decision
+        list_serializer_class = DecisionListSerializer
         fields = (
             "id",
             "title",
@@ -511,6 +694,18 @@ class DecisionWriteSerializer(serializers.ModelSerializer):
             "note",
             "conditions",
         )
+
+    def create(self, validated_data):
+        conditions = validated_data.pop("conditions", [])
+        decision = super().create(validated_data)
+        save_children(DecisionCondition, "decision", decision, conditions)
+        return decision
+
+    def update(self, instance, validated_data):
+        conditions = validated_data.pop("conditions", [])
+        decision = super().update(instance, validated_data)
+        save_children(DecisionCondition, "decision", decision, conditions)
+        return decision
 
 
 class ContractChangeSerializer(serializers.ModelSerializer):
@@ -528,12 +723,6 @@ class ContractChangeSerializer(serializers.ModelSerializer):
             "decision",
             "note",
         )
-
-
-class MortgageDeedPropertyIdentifierSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MortgageDeedPropertyIdentifier
-        fields = ("id", "identifier")
 
 
 class CollateralSerializer(serializers.ModelSerializer):
@@ -554,10 +743,6 @@ class CollateralSerializer(serializers.ModelSerializer):
 
 
 class MortgageDeedCollateralSerializer(CollateralSerializer):
-    property_identifiers = MortgageDeedPropertyIdentifierSerializer(
-        many=True, read_only=True
-    )
-
     class Meta(CollateralSerializer.Meta):
         model = MortgageDeedCollateral
         fields = (
@@ -695,59 +880,226 @@ class ContractChangeWriteSerializer(serializers.ModelSerializer):
         )
 
 
-class CollateralWriteSerializer(serializers.Serializer):
+class CollateralWriteBaseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    guarantee_type = serializers.CharField()
-    parties = serializers.ListField(child=serializers.IntegerField(), required=False)
-    third_party_pledger_name = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
+
+    def to_internal_value(self, data):
+        if isinstance(data, dict):
+            not_applicable = {
+                key: "Not applicable to this collateral type."
+                for key, value in data.items()
+                if key not in self.fields and value not in (None, "", [])
+            }
+            if not_applicable:
+                raise serializers.ValidationError(not_applicable)
+        return super().to_internal_value(data)
+
+
+class MortgageDeedCollateralWriteSerializer(CollateralWriteBaseSerializer):
+    guarantee_type = serializers.HiddenField(
+        default=MortgageDeedCollateral.CollateralType.MORTGAGE_DEED
     )
-    third_party_pledger_business_id = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
+
+    class Meta:
+        model = MortgageDeedCollateral
+        fields = (
+            "id",
+            "guarantee_type",
+            "parties",
+            "third_party_pledger_name",
+            "third_party_pledger_business_id",
+            "start_date",
+            "end_date",
+            "amount",
+            "returned_date",
+            "marked_returned_by",
+            "additional_information",
+            "document_category",
+            "target",
+            "facility_identifier",
+            "mortgage_deed_number",
+            "mortgage_deed_date",
+            "subsequent_pledgee_name",
+            "subsequent_pledgee_business_id",
+            "property_identifiers",
+        )
+        extra_kwargs = {
+            "mortgage_deed_number": {"required": False, "allow_blank": True},
+            "mortgage_deed_date": {"required": False, "allow_null": True},
+        }
+
+
+class CashDepositCollateralWriteSerializer(CollateralWriteBaseSerializer):
+    guarantee_type = serializers.HiddenField(
+        default=CashDepositCollateral.CollateralType.CASH_DEPOSIT
     )
-    start_date = serializers.DateField(required=False, allow_null=True)
-    end_date = serializers.DateField(required=False, allow_null=True)
-    amount = serializers.DecimalField(
-        max_digits=20, decimal_places=2, required=False, allow_null=True
+
+    class Meta:
+        model = CashDepositCollateral
+        fields = (
+            "id",
+            "guarantee_type",
+            "parties",
+            "third_party_pledger_name",
+            "third_party_pledger_business_id",
+            "start_date",
+            "end_date",
+            "amount",
+            "returned_date",
+            "marked_returned_by",
+            "additional_information",
+            "guarantor_name",
+            "guarantor_business_id",
+            "guarantor_national_identification_number",
+            "account_number",
+            "paid_at_date",
+        )
+
+
+class PersonalGuaranteeCollateralWriteSerializer(CollateralWriteBaseSerializer):
+    guarantee_type = serializers.HiddenField(
+        default=PersonalGuaranteeCollateral.CollateralType.PERSONAL_GUARANTEE
     )
-    returned_date = serializers.DateField(required=False, allow_null=True)
-    marked_returned_by = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
+
+    class Meta:
+        model = PersonalGuaranteeCollateral
+        fields = (
+            "id",
+            "guarantee_type",
+            "parties",
+            "third_party_pledger_name",
+            "third_party_pledger_business_id",
+            "start_date",
+            "end_date",
+            "amount",
+            "returned_date",
+            "marked_returned_by",
+            "additional_information",
+            "document_category",
+            "guarantor_name",
+            "guarantor_business_id",
+            "guarantor_national_identification_number",
+            "guarantee_identifier",
+        )
+
+
+class DepositPledgeCollateralWriteSerializer(CollateralWriteBaseSerializer):
+    guarantee_type = serializers.HiddenField(
+        default=DepositPledgeCollateral.CollateralType.DEPOSIT_PLEDGE
     )
-    additional_information = serializers.CharField(required=False, allow_blank=True)
-    document_category = serializers.CharField(required=False, allow_blank=True)
-    target = serializers.CharField(required=False, allow_blank=True)
-    property_identifiers = serializers.ListField(
-        child=serializers.CharField(), required=False
+
+    class Meta:
+        model = DepositPledgeCollateral
+        fields = (
+            "id",
+            "guarantee_type",
+            "parties",
+            "third_party_pledger_name",
+            "third_party_pledger_business_id",
+            "start_date",
+            "end_date",
+            "amount",
+            "returned_date",
+            "marked_returned_by",
+            "additional_information",
+            "document_category",
+            "guarantor_name",
+            "guarantor_business_id",
+            "guarantor_national_identification_number",
+            "account_number",
+        )
+
+
+class OtherCollateralWriteSerializer(CollateralWriteBaseSerializer):
+    guarantee_type = serializers.HiddenField(
+        default=OtherCollateral.CollateralType.OTHER
     )
-    facility_identifier = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
+
+    class Meta:
+        model = OtherCollateral
+        fields = (
+            "id",
+            "guarantee_type",
+            "parties",
+            "third_party_pledger_name",
+            "third_party_pledger_business_id",
+            "start_date",
+            "end_date",
+            "amount",
+            "returned_date",
+            "marked_returned_by",
+            "additional_information",
+            "document_category",
+            "guarantor_name",
+            "guarantor_business_id",
+            "guarantor_national_identification_number",
+        )
+
+
+class ContractListSerializer(ReplaceListSerializer):
+    read_prefetch = (
+        "changes",
+        "mortgagedeedcollateral_collaterals__parties",
+        "cashdepositcollateral_collaterals__parties",
+        "personalguaranteecollateral_collaterals__parties",
+        "depositpledgecollateral_collaterals__parties",
+        "othercollateral_collaterals__parties",
     )
-    mortgage_deed_number = serializers.CharField(required=False, allow_blank=True)
-    mortgage_deed_date = serializers.DateField(required=False, allow_null=True)
-    subsequent_pledgee_name = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
-    subsequent_pledgee_business_id = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
-    guarantor_name = serializers.CharField(required=False, allow_blank=True)
-    guarantor_business_id = serializers.CharField(required=False, allow_blank=True)
-    guarantor_national_identification_number = serializers.CharField(
-        required=False, allow_blank=True
-    )
-    guarantee_identifier = serializers.CharField(required=False, allow_blank=True)
-    account_number = serializers.CharField(required=False, allow_blank=True)
-    paid_at_date = serializers.DateField(required=False, allow_null=True)
+
+    def check_replacement(self, instance, validated_data):
+        if not validated_data:
+            return
+        agreement = validated_data[0]["agreement"]
+        decision_ids = set()
+        party_ids = set()
+        for contract in validated_data:
+            records = [contract, *contract.get("changes", [])]
+            decision_ids |= {r["decision"].pk for r in records if r.get("decision")}
+            for key in ContractWriteSerializer.COLLATERAL_MODELS:
+                for collateral in contract.get(key, []):
+                    party_ids |= {party.pk for party in collateral.get("parties", [])}
+        valid_decision_ids = set(
+            agreement.decisions.filter(pk__in=decision_ids).values_list("pk", flat=True)
+        )
+        if decision_ids != valid_decision_ids:
+            raise serializers.ValidationError(
+                {"decision": "Contract decisions must belong to this agreement."}
+            )
+        valid_party_ids = set(agreement.parties.values_list("pk", flat=True))
+        if not party_ids <= valid_party_ids:
+            raise serializers.ValidationError(
+                {"parties": "Collateral parties must belong to this agreement."}
+            )
 
 
 class ContractWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     changes = ContractChangeWriteSerializer(many=True, required=False)
-    collaterals = CollateralWriteSerializer(many=True, required=False)
+    mortgage_deed_collaterals = MortgageDeedCollateralWriteSerializer(
+        many=True, required=False
+    )
+    cash_deposit_collaterals = CashDepositCollateralWriteSerializer(
+        many=True, required=False
+    )
+    personal_guarantee_collaterals = PersonalGuaranteeCollateralWriteSerializer(
+        many=True, required=False
+    )
+    deposit_pledge_collaterals = DepositPledgeCollateralWriteSerializer(
+        many=True, required=False
+    )
+    other_collaterals = OtherCollateralWriteSerializer(many=True, required=False)
+
+    COLLATERAL_MODELS = {
+        "mortgage_deed_collaterals": MortgageDeedCollateral,
+        "cash_deposit_collaterals": CashDepositCollateral,
+        "personal_guarantee_collaterals": PersonalGuaranteeCollateral,
+        "deposit_pledge_collaterals": DepositPledgeCollateral,
+        "other_collaterals": OtherCollateral,
+    }
 
     class Meta:
         model = Contract
+        list_serializer_class = ContractListSerializer
         fields = (
             "id",
             "identifier",
@@ -762,8 +1114,76 @@ class ContractWriteSerializer(serializers.ModelSerializer):
             "title",
             "contract_type",
             "changes",
-            "collaterals",
+            "mortgage_deed_collaterals",
+            "cash_deposit_collaterals",
+            "personal_guarantee_collaterals",
+            "deposit_pledge_collaterals",
+            "other_collaterals",
         )
+
+    def to_internal_value(self, data):
+        if isinstance(data, dict) and "collaterals" in data:
+            raise serializers.ValidationError(
+                {"collaterals": "Send collaterals under their per-type keys."}
+            )
+        return super().to_internal_value(data)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        changes = validated_data.pop("changes", [])
+        collaterals = {
+            key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
+        }
+        contract = super().create(validated_data)
+        self._save_children(contract, changes, collaterals)
+        return contract
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        changes = validated_data.pop("changes", [])
+        collaterals = {
+            key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
+        }
+        contract = super().update(instance, validated_data)
+        self._save_children(contract, changes, collaterals)
+        return contract
+
+    def _save_children(self, contract, changes, collaterals):
+        sync_rows(
+            contract.changes.all(),
+            changes,
+            partial(self._save_change, contract),
+        )
+        for key, model in self.COLLATERAL_MODELS.items():
+            sync_rows(
+                model.objects.filter(contract=contract),
+                collaterals[key],
+                partial(self._save_collateral, contract, model),
+            )
+
+    def _save_change(self, contract, change, data):
+        if change is None:
+            return ContractChange.objects.create(contract=contract, **data)
+        for field, value in data.items():
+            setattr(change, field, value)
+        change.save()
+        return change
+
+    def _save_collateral(self, contract, model, collateral, data):
+        party_ids = data.pop("parties", [])
+        if collateral is None:
+            collateral = model(contract=contract, **data)
+        else:
+            for field, value in data.items():
+                setattr(collateral, field, value)
+        try:
+            collateral.save()
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.message_dict) from error
+        except ValueError as error:
+            raise serializers.ValidationError({"detail": str(error)}) from error
+        collateral.parties.set(party_ids)
+        return collateral
 
 
 class PaymentScheduleInstallmentItemSerializer(serializers.ModelSerializer):
@@ -844,12 +1264,31 @@ class PaymentScheduleInstallmentWriteSerializer(serializers.ModelSerializer):
         )
 
 
+EDITABLE_SCHEDULE_STATUSES = ("DRAFT", "REJECTED")
+
+
+class PaymentScheduleListSerializer(ReplaceListSerializer):
+    read_related = ("recipient_party", "contract")
+    read_prefetch = ("installments__items",)
+
+    def check_replacement(self, instance, validated_data):
+        retained_ids = {attrs["id"] for attrs in validated_data if "id" in attrs}
+        removed = instance.exclude(pk__in=retained_ids).exclude(
+            status__in=EDITABLE_SCHEDULE_STATUSES
+        )
+        if removed.exists():
+            raise serializers.ValidationError(
+                {"status": "Only draft or rejected schedules can be deleted."}
+            )
+
+
 class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     installments = PaymentScheduleInstallmentWriteSerializer(many=True)
 
     class Meta:
         model = PaymentSchedule
+        list_serializer_class = PaymentScheduleListSerializer
         fields = (
             "id",
             "recipient_party",
@@ -860,6 +1299,85 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
             "interest_margin",
             "installments",
         )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        installments = validated_data.pop("installments")
+        self._check_references(validated_data["agreement"], validated_data)
+        schedule = super().create(validated_data)
+        self._finish(schedule, installments)
+        return schedule
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        if instance.status not in EDITABLE_SCHEDULE_STATUSES:
+            raise serializers.ValidationError(
+                {"status": "Only draft or rejected schedules can be edited."}
+            )
+        installments = validated_data.pop("installments")
+        self._check_references(instance.agreement, validated_data)
+        schedule = super().update(instance, validated_data)
+        self._finish(schedule, installments)
+        return schedule
+
+    def _check_references(self, agreement, data):
+        if (
+            data["recipient_party"].agreement_id != agreement.pk
+            or data["contract"].agreement_id != agreement.pk
+        ):
+            raise serializers.ValidationError(
+                {
+                    "detail": (
+                        "Payment schedule party and contract must belong to "
+                        "this agreement."
+                    )
+                }
+            )
+
+    def _finish(self, schedule, installments):
+        try:
+            schedule.full_clean()
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.message_dict) from error
+        schedule.save()
+
+        sequences = [i["installment_sequence_number"] for i in installments]
+        if len(sequences) != len(set(sequences)):
+            raise serializers.ValidationError(
+                {"installments": "Installment sequence numbers must be unique."}
+            )
+        sync_rows(
+            schedule.installments.all(),
+            installments,
+            lambda obj, data: self._save_installment(schedule, obj, data),
+        )
+
+    def _save_installment(self, schedule, installment, data):
+        items = data.pop("items")
+        if installment is None:
+            installment = PaymentScheduleInstallment.objects.create(
+                payment_schedule=schedule, **data
+            )
+        else:
+            for field, value in data.items():
+                setattr(installment, field, value)
+            installment.save()
+        sync_rows(
+            installment.items.all(),
+            items,
+            lambda obj, item: self._save_item(installment, obj, item),
+        )
+        return installment
+
+    def _save_item(self, installment, item, data):
+        if item is None:
+            return PaymentScheduleInstallmentItem.objects.create(
+                installment=installment, **data
+            )
+        for field, value in data.items():
+            setattr(item, field, value)
+        item.save()
+        return item
 
 
 class PaymentScheduleRejectionSerializer(serializers.Serializer):

@@ -16,7 +16,6 @@ from landuse.models.contract import (
     ContractChange,
     DepositPledgeCollateral,
     MortgageDeedCollateral,
-    MortgageDeedPropertyIdentifier,
     OtherCollateral,
     PersonalGuaranteeCollateral,
 )
@@ -353,13 +352,6 @@ class OtherCollateralAdmin(admin.ModelAdmin):
     search_fields = ("guarantor_name", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
-
-
-@admin.register(MortgageDeedPropertyIdentifier)
-class MortgageDeedPropertyIdentifierAdmin(admin.ModelAdmin):
-    list_display = ("identifier", "collateral")
-    search_fields = ("identifier", "collateral__contract__identifier")
-    autocomplete_fields = ("collateral",)
 
 
 class DecisionConditionInline(admin.TabularInline):

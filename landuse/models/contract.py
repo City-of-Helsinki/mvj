@@ -1,9 +1,9 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.decision import Decision
 from landuse.models.party import AgreementParty
-from utils.mixins import TimeStampedModel
 
 
 class ContractDetailsBase(models.Model):
@@ -240,6 +240,13 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     # In Finnish: Jälkipantin saajan y-tunnus
     subsequent_pledgee_business_id = models.CharField(null=True, blank=True)
 
+    # In Finnish: Panttikirjan kiinteistötunnukset
+    property_identifiers = ArrayField(
+        models.CharField(blank=True),
+        default=list,
+        blank=True,
+    )
+
     def save(self, *args, **kwargs):
         if (
             self.target == MortgageDeedCollateral.CollateralTarget.PROPERTY
@@ -251,27 +258,10 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
             and not self.facility_identifier
         ):
             raise ValueError("Facility identifier must be set for facility target.")
-
-        super().save(*args, **kwargs)
-
-
-class MortgageDeedPropertyIdentifier(TimeStampedModel):
-    """
-    In Finnish: Panttikirjan kiinteistötunnus
-    """
-
-    # In Finnish: Panttikirja
-    collateral = models.ForeignKey(
-        MortgageDeedCollateral,
-        on_delete=models.CASCADE,
-        related_name="property_identifiers",
-    )
-
-    # In Finnish: Kiinteistötunnus
-    identifier = models.CharField(blank=True)
-
-    def save(self, *args, **kwargs):
-        if self.collateral.target == MortgageDeedCollateral.CollateralTarget.FACILITY:
+        if (
+            self.target == MortgageDeedCollateral.CollateralTarget.FACILITY
+            and self.property_identifiers
+        ):
             raise ValueError("Property identifier cannot be set for facility target.")
 
         super().save(*args, **kwargs)

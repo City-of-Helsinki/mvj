@@ -3,11 +3,7 @@ import datetime
 import pytest
 
 from landuse.models.agreement import LandUseAgreement
-from landuse.models.contract import (
-    Contract,
-    MortgageDeedCollateral,
-    MortgageDeedPropertyIdentifier,
-)
+from landuse.models.contract import Contract, MortgageDeedCollateral
 
 
 @pytest.fixture
@@ -71,16 +67,12 @@ def test_mortgage_deed_collateral_requires_facility_identifier_for_facility_targ
         mortgage_deed_collateral.save()
 
 
-def test_property_identifier_rejects_facility_target(mortgage_deed_collateral):
+def test_property_identifiers_rejected_for_facility_target(mortgage_deed_collateral):
     mortgage_deed_collateral.target = MortgageDeedCollateral.CollateralTarget.FACILITY
     mortgage_deed_collateral.facility_identifier = "facility-123"
-    mortgage_deed_collateral.save()
-    property_identifier = MortgageDeedPropertyIdentifier(
-        collateral=mortgage_deed_collateral,
-        identifier="123-456-789-0",
-    )
+    mortgage_deed_collateral.property_identifiers = ["123-456-789-0"]
 
     with pytest.raises(
         ValueError, match="Property identifier cannot be set for facility target."
     ):
-        property_identifier.save()
+        mortgage_deed_collateral.save()

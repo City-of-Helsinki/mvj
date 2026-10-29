@@ -405,9 +405,8 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
             "contract_type": "OTHER",
             "decision": decision.pk,
             "changes": [{"identifier": "C-1A", "decision": decision.pk}],
-            "collaterals": [
+            "other_collaterals": [
                 {
-                    "guarantee_type": "OTHER",
                     "parties": [party.pk],
                     "guarantor_name": "Guarantor",
                 }
@@ -430,7 +429,7 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
                 "id": saved["id"],
                 "title": "Updated contract",
                 "changes": [{"id": saved["changes"][0]["id"], "identifier": "C-1B"}],
-                "collaterals": [{"id": collateral["id"], "guarantee_type": "OTHER"}],
+                "other_collaterals": [{"id": collateral["id"]}],
             }
         ],
         content_type="application/json",
@@ -483,6 +482,171 @@ def test_payment_schedules_replace_nested_rows_and_reject_foreign_contract(
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert agreement.payment_schedules.count() == 1
+
+
+def test_unchanged_contact_persons_keep_their_primary_key(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="M-KEEP-CONTACTS")
+    url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
+    payload = [
+        {
+            "party_type": "COMPANY",
+            "name": "Party",
+            "contact_persons": [{"name": "Alice", "phone": "1", "email": "a@x.fi"}],
+        }
+    ]
+    first = admin_client.put(url, payload, content_type="application/json").json()
+    contact_pk = ContactPerson.objects.get(agreement_party_id=first[0]["id"]).pk
+
+    response = admin_client.put(url, first, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert ContactPerson.objects.get(agreement_party_id=first[0]["id"]).pk == contact_pk
+
+
+def test_changed_contact_person_keeps_its_id(admin_client):
+    agreement = LandUseAgreement.objects.create(identifier="M-CHANGE-CONTACTS")
+    url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
+    first = admin_client.put(
+        url,
+        [
+            {
+                "party_type": "COMPANY",
+                "name": "Party",
+                "contact_persons": [{"name": "Alice"}],
+            }
+        ],
+        content_type="application/json",
+    ).json()
+    contact_pk = first[0]["contact_persons"][0]["id"]
+    first[0]["contact_persons"][0]["name"] = "Alicia"
+
+    response = admin_client.put(url, first, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    contact = ContactPerson.objects.get(agreement_party_id=first[0]["id"])
+    assert contact.pk == contact_pk
+    assert contact.name == "Alicia"
+
+
+def _put_contract(admin_client, agreement, contract, collaterals_by_key):
+    return admin_client.put(
+        reverse("v1:landuse:agreement-contracts", args=(agreement.pk,)),
+        [{"id": contract.pk, "identifier": "C-COLL", **collaterals_by_key}],
+        content_type="application/json",
+    )
+
+
+def test_legacy_flat_collaterals_key_is_rejected(admin_client):
+    from landuse.models.contract import Contract, OtherCollateral
+
+    agreement = LandUseAgreement.objects.create(identifier="M-COLL-LEGACY")
+    contract = Contract.objects.create(agreement=agreement)
+    collateral = OtherCollateral.objects.create(
+        contract=contract, guarantee_type="OTHER"
+    )
+
+    response = _put_contract(
+        admin_client,
+        agreement,
+        contract,
+        {"collaterals": [{"guarantee_type": "OTHER"}]},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert OtherCollateral.objects.filter(pk=collateral.pk).exists()
+
+
+def test_collateral_id_from_another_contract_is_rejected(admin_client):
+    from landuse.models.contract import Contract, OtherCollateral
+
+    agreement = LandUseAgreement.objects.create(identifier="M-COLL-FOREIGN")
+    contract = Contract.objects.create(agreement=agreement)
+    other_contract = Contract.objects.create(agreement=agreement)
+    foreign = OtherCollateral.objects.create(
+        contract=other_contract, guarantee_type="OTHER"
+    )
+
+    response = _put_contract(
+        admin_client,
+        agreement,
+        contract,
+        {"other_collaterals": [{"id": foreign.pk}]},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert OtherCollateral.objects.filter(pk=foreign.pk).exists()
+
+
+def test_invalid_collateral_party_rolls_back_whole_contract_write(admin_client):
+    from landuse.models.contract import Contract, OtherCollateral
+
+    agreement = LandUseAgreement.objects.create(identifier="M-COLL-ROLLBACK")
+    contract = Contract.objects.create(agreement=agreement)
+    kept = OtherCollateral.objects.create(
+        contract=contract, guarantee_type="OTHER", guarantor_name="Original"
+    )
+    foreign_party = AgreementParty.objects.create(
+        agreement=LandUseAgreement.objects.create(identifier="M-COLL-FOREIGN-PARTY"),
+        name="Foreign",
+    )
+
+    response = _put_contract(
+        admin_client,
+        agreement,
+        contract,
+        {
+            "other_collaterals": [
+                {"id": kept.pk, "guarantor_name": "Changed"},
+                {"parties": [foreign_party.pk]},
+            ]
+        },
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    kept.refresh_from_db()
+    assert kept.guarantor_name == "Original"
+    assert OtherCollateral.objects.filter(contract=contract).count() == 1
+
+
+def test_property_identifiers_rejected_for_facility_target(admin_client):
+    from landuse.models.contract import Contract, MortgageDeedCollateral
+
+    agreement = LandUseAgreement.objects.create(identifier="M-COLL-FACILITY")
+    contract = Contract.objects.create(agreement=agreement)
+
+    response = _put_contract(
+        admin_client,
+        agreement,
+        contract,
+        {
+            "mortgage_deed_collaterals": [
+                {
+                    "target": MortgageDeedCollateral.CollateralTarget.FACILITY,
+                    "property_identifiers": ["123-456"],
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert not MortgageDeedCollateral.objects.filter(contract=contract).exists()
+
+
+def test_fields_not_applicable_to_collateral_type_are_rejected(admin_client):
+    from landuse.models.contract import Contract
+
+    agreement = LandUseAgreement.objects.create(identifier="M-COLL-FIELDS")
+    contract = Contract.objects.create(agreement=agreement)
+
+    response = _put_contract(
+        admin_client,
+        agreement,
+        contract,
+        {"cash_deposit_collaterals": [{"document_category": "X"}]},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "document_category" in response.json()["0"]["cash_deposit_collaterals"]["0"]
 
 
 @pytest.mark.parametrize("resource", ["parties", "decisions"])
