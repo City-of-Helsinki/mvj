@@ -1,4 +1,9 @@
+from importlib import import_module
+from types import SimpleNamespace
+
 import pytest
+from django.apps import apps
+from django.contrib.auth.models import Group, Permission
 from django.urls import reverse
 from rest_framework import status
 
@@ -13,6 +18,8 @@ from landuse.models.agreement import (
 from landuse.models.compensation import LandPolicyProgram, LandUseCompensation
 from landuse.models.party import AgreementParty, ContactPerson
 from landuse.models.site import AgreementSite, SiteIntendedUse, SiteTenureType
+from landuse.permissions import tab_permission
+from utils.group_permissions import UG
 
 pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 
@@ -20,6 +27,197 @@ pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 @pytest.fixture(autouse=True)
 def enable_landuse_api(settings):
     settings.FLAG_LANDUSE_API_ENABLED = True
+
+
+@pytest.mark.parametrize(
+    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+)
+@pytest.mark.parametrize(
+    "tab,editors",
+    [
+        (
+            "parties",
+            [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+        ),
+        ("sites", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
+        ("compensation", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
+        ("decisions", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.PAAKAYTTAJA]),
+        ("contracts", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.PAAKAYTTAJA]),
+        ("payment-schedules", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
+        ("invoices", [UG.LASKUTTAJA, UG.PAAKAYTTAJA]),
+    ],
+)
+def test_tab_role_matrix(client, tab_role_user, role, tab, editors, rf):
+    user = tab_role_user(role)
+    client.force_login(user)
+    agreement = LandUseAgreement.objects.create(identifier="M-ROLE")
+    url = reverse(f"v1:landuse:agreement-{tab}", args=(agreement.pk,))
+    assert client.get(url).status_code == status.HTTP_200_OK
+    if tab == "invoices":
+        request = rf.put(url)
+        request.user = user
+        assert tab_permission("invoices")().has_permission(request, None) == (
+            role in editors
+        )
+        return
+    payload = {} if tab == "compensation" else []
+    response = client.put(url, payload, content_type="application/json")
+    assert response.status_code == (
+        status.HTTP_200_OK if role in editors else status.HTTP_403_FORBIDDEN
+    )
+    if tab == "compensation" and role not in editors:
+        assert not LandUseCompensation.objects.filter(agreement=agreement).exists()
+
+
+def test_agreement_permission_does_not_authorize_tab(client, user_factory):
+    user = user_factory(is_superuser=False)
+    user.user_permissions.set(
+        Permission.objects.filter(
+            content_type__app_label="landuse",
+            codename__in=["view_landuseagreement", "change_landuseagreement"],
+        )
+    )
+    client.force_login(user)
+    agreement = LandUseAgreement.objects.create(identifier="M-DENIED")
+    party = AgreementParty.objects.create(agreement=agreement, name="Original")
+    url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
+    assert client.get(url).status_code == status.HTTP_403_FORBIDDEN
+    response = client.put(
+        url, [{"id": party.pk, "name": "Changed"}], content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    party.refresh_from_db()
+    assert party.name == "Original"
+
+
+def test_tab_permission_does_not_require_agreement_permission(client, user_factory):
+    user = user_factory(is_superuser=False)
+    user.user_permissions.set(
+        Permission.objects.filter(
+            content_type__app_label="landuse",
+            codename__in=["view_tab_parties", "change_tab_parties"],
+        )
+    )
+    client.force_login(user)
+    agreement = LandUseAgreement.objects.create(identifier="M-INDEPENDENT")
+    url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
+    assert client.get(url).status_code == status.HTTP_200_OK
+    assert (
+        client.put(url, [{"name": "New"}], content_type="application/json").status_code
+        == status.HTTP_200_OK
+    )
+    assert (
+        client.get(
+            reverse("v1:landuse:agreement-detail", args=(agreement.pk,))
+        ).status_code
+        == status.HTTP_403_FORBIDDEN
+    )
+
+
+@pytest.mark.parametrize(
+    "permissions", [[], ["change_tab_compensation"], ["change_tab_sites"]]
+)
+def test_combined_compensation_write_requires_both_tabs(
+    client, user_factory, permissions
+):
+    user = user_factory(is_superuser=False)
+    user.user_permissions.set(
+        Permission.objects.filter(
+            content_type__app_label="landuse", codename__in=permissions
+        )
+    )
+    client.force_login(user)
+    agreement = LandUseAgreement.objects.create(identifier="M-COMBINED-DENIED")
+    response = client.put(
+        reverse("v1:landuse:agreement-compensation-with-sites", args=(agreement.pk,)),
+        {"compensation": {}, "sites": []},
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert not LandUseCompensation.objects.filter(agreement=agreement).exists()
+
+
+@pytest.mark.parametrize(
+    "method,action,permission,expected",
+    [
+        ("get", "list", "view", status.HTTP_200_OK),
+        ("get", "detail", "view", status.HTTP_200_OK),
+        ("get", "overview", "view", status.HTTP_200_OK),
+        ("post", "list", "add", status.HTTP_201_CREATED),
+        ("put", "detail", "change", status.HTTP_200_OK),
+        ("patch", "detail", "change", status.HTTP_200_OK),
+        ("delete", "detail", "delete", status.HTTP_204_NO_CONTENT),
+    ],
+)
+def test_agreement_crud_keeps_standard_permissions(
+    client, user_factory, method, action, permission, expected
+):
+    user = user_factory(is_superuser=False)
+    client.force_login(user)
+    district = District.objects.create(name="District", identifier="07")
+    agreement = LandUseAgreement.objects.create(
+        identifier="M-STANDARD", district=district
+    )
+    url = reverse(
+        f"v1:landuse:agreement-{action}",
+        args=() if action == "list" else (agreement.pk,),
+    )
+    payload = {"identifier": "M-STANDARD", "district": district.pk}
+    request = getattr(client, method)
+    assert (
+        request(url, payload, content_type="application/json").status_code
+        == status.HTTP_403_FORBIDDEN
+    )
+    user.user_permissions.add(
+        Permission.objects.get(
+            content_type__app_label="landuse", codename=f"{permission}_landuseagreement"
+        )
+    )
+    assert (
+        request(url, payload, content_type="application/json").status_code == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "tab",
+    [
+        "parties",
+        "sites",
+        "compensation",
+        "decisions",
+        "contracts",
+        "payment-schedules",
+        "invoices",
+    ],
+)
+def test_tab_requires_authentication(client, tab):
+    client.logout()
+    agreement = LandUseAgreement.objects.create(identifier="M-ANONYMOUS")
+    url = reverse(f"v1:landuse:agreement-{tab}", args=(agreement.pk,))
+    assert client.get(url).status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_stale_assignment_cleanup_preserves_permission_rows_and_other_groups():
+    migration = import_module("landuse.migrations.0011_agreement_tab_permissions")
+    managed, _ = Group.objects.get_or_create(
+        pk=UG.VALMISTELIJA, defaults={"name": "Managed"}
+    )
+    unmanaged = Group.objects.create(pk=9999, name="Unmanaged")
+    stale = Permission.objects.get(
+        content_type__app_label="landuse", codename="change_agreementparty"
+    )
+    retained = Permission.objects.get(
+        content_type__app_label="landuse", codename="view_landuseagreement"
+    )
+    managed.permissions.add(stale, retained)
+    unmanaged.permissions.add(stale)
+    migration.remove_obsolete_group_assignments(
+        apps, SimpleNamespace(connection=SimpleNamespace(alias="default"))
+    )
+    assert not managed.permissions.filter(pk=stale.pk).exists()
+    assert managed.permissions.filter(pk=retained.pk).exists()
+    assert unmanaged.permissions.filter(pk=stale.pk).exists()
+    assert Permission.objects.filter(pk=stale.pk).exists()
 
 
 @pytest.mark.parametrize(
