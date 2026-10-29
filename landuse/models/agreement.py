@@ -52,9 +52,6 @@ class LandUseAgreement(TimeStampedModel):
     # In Finnish: Maankäyttösopimuksen tunniste
     identifier = models.CharField(unique=True)
 
-    # In Finnish: Maankäyttösopimuksen tyyppi
-    agreement_type = models.CharField(blank=True)
-
     # In Finnish: Kaupunginosa
     district = models.ForeignKey(
         District,

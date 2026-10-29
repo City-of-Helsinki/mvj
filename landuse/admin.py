@@ -114,13 +114,12 @@ class LandUseAgreementAdmin(admin.ModelAdmin):
     list_display = (
         "identifier",
         "status",
-        "agreement_type",
         "district",
         "estimated_presentation_year",
         "estimated_payment_year",
         "modified_at",
     )
-    list_filter = ("status", "agreement_type", "district", "is_promotion_area")
+    list_filter = ("status", "district", "is_promotion_area")
     search_fields = ("identifier", "district__name", "detailed_plan__plan_number")
     autocomplete_fields = ("district", "authorized_signatory", "detailed_plan")
     readonly_fields = ("created_at", "modified_at")

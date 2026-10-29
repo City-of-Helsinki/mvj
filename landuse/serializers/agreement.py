@@ -111,7 +111,6 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "identifier",
-            "agreement_type",
             "district",
             "party",
             "zoning_plan_number",
@@ -135,7 +134,6 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "identifier",
-            "agreement_type",
             "district",
             "is_promotion_area",
             "status",
