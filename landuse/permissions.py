@@ -42,69 +42,17 @@ def tab_permission(tab):
 
 
 LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
-    AgreementAddress: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    AgreementPreparer: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
-        },
-        "fields": {},
-    },
-    AuthorizedSignatory: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    DetailedPlan: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
-        },
-        "fields": {},
-    },
-    District: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    Invoice: {
-        "model": {
-            UG.LASKUTTAJA: ("send_invoice_to_sap",),
-            UG.PAAKAYTTAJA: ("send_invoice_to_sap",),
-        },
-        "fields": {},
-    },
-    LandPolicyProgram: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
+    # LandUseAgreement holds tab specific permissions.
     LandUseAgreement: {
         "model": {
+            UG.SELAILIJA: (
+                "view",
+                "view_tab_parties",
+                "view_tab_sites",
+                "view_tab_compensation",
+                "view_tab_decisions",
+                "view_tab_contracts",
+            ),
             UG.VALMISTELIJA: (
                 "view",
                 "add",
@@ -172,6 +120,75 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         },
         "fields": {},
     },
+    # Other than LandUseAgreement, permissions are model specific only,
+    # unless there are custom operations defined.
+    AgreementAddress: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view", "add", "change"),
+            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change"),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
+    },
+    AgreementPreparer: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view",),
+        },
+        "fields": {},
+    },
+    AuthorizedSignatory: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
+    },
+    DetailedPlan: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view",),
+        },
+        "fields": {},
+    },
+    District: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
+    },
+    Invoice: {
+        "model": {
+            UG.LASKUTTAJA: ("send_invoice_to_sap",),
+            UG.PAAKAYTTAJA: ("send_invoice_to_sap",),
+        },
+        "fields": {},
+    },
+    LandPolicyProgram: {
+        "model": {
+            UG.SELAILIJA: ("view",),
+            UG.VALMISTELIJA: ("view",),
+            UG.SOPIMUSVALMISTELIJA: ("view",),
+            UG.LASKUTTAJA: ("view",),
+            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+        },
+        "fields": {},
+    },
     PaymentSchedule: {
         "model": {
             UG.LASKUTTAJA: ("approve_paymentschedule",),
@@ -190,6 +207,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     SiteIntendedUse: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -199,6 +217,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     SiteTenureType: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
