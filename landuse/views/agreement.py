@@ -67,7 +67,6 @@ class LandUseAgreementViewSet(
     filterset_fields = (
         "identifier",
         "status",
-        "agreement_type",
         "district",
         "detailed_plan",
         "estimated_presentation_year",
