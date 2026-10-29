@@ -246,7 +246,7 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         ]
         validated_data["identifier"] = f"{prefix}{max(sequence_numbers, default=0) + 1}"
         agreement = super().create(validated_data)
-        self._replace_summary_relations(agreement, addresses, preparers)
+        self._save_summary_relations(agreement, addresses, preparers)
         return agreement
 
     @transaction.atomic
@@ -254,26 +254,14 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         addresses = validated_data.pop("addresses", None)
         preparers = validated_data.pop("preparers", None)
         agreement = super().update(instance, validated_data)
-        self._replace_summary_relations(agreement, addresses, preparers)
+        self._save_summary_relations(agreement, addresses, preparers)
         return agreement
 
-    def _replace_summary_relations(self, agreement, addresses, preparers):
+    def _save_summary_relations(self, agreement, addresses, preparers):
         if addresses is not None:
-            agreement.addresses.all().delete()
-            AgreementAddress.objects.bulk_create(
-                [
-                    AgreementAddress(agreement=agreement, **address)
-                    for address in addresses
-                ]
-            )
+            save_children(AgreementAddress, "agreement", agreement, addresses)
         if preparers is not None:
-            agreement.preparers.all().delete()
-            AgreementPreparer.objects.bulk_create(
-                [
-                    AgreementPreparer(agreement=agreement, **preparer)
-                    for preparer in preparers
-                ]
-            )
+            save_children(AgreementPreparer, "agreement", agreement, preparers)
 
 
 class LandUseAgreementOverviewSerializer(LandUseAgreementListSerializer):
