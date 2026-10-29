@@ -8,45 +8,123 @@ from landuse.models.agreement import (
     District,
     LandUseAgreement,
 )
-from landuse.models.compensation import LandPolicyProgram, LandUseCompensation
-from landuse.models.contract import (
-    CashDepositCollateral,
-    Contract,
-    ContractChange,
-    DepositPledgeCollateral,
-    MortgageDeedCollateral,
-    MortgageDeedPropertyIdentifier,
-    OtherCollateral,
-    PersonalGuaranteeCollateral,
-)
-from landuse.models.decision import Decision, DecisionCondition
-from landuse.models.invoice import (
-    Invoice,
-    InvoiceItem,
-    InvoiceRecipientSnapshot,
-    ShadowSalesLedgerEntry,
-)
-from landuse.models.party import (
-    AgreementParty,
-    BillingDetails,
-    ContactPerson,
-    InvoiceRecipient,
-)
-from landuse.models.payment_schedule import (
-    PaymentSchedule,
-    PaymentScheduleInstallment,
-    PaymentScheduleInstallmentItem,
-)
+from landuse.models.compensation import LandPolicyProgram
+from landuse.models.invoice import Invoice, ShadowSalesLedgerEntry
+from landuse.models.payment_schedule import PaymentSchedule
 from landuse.models.site import (
-    AgreementSite,
     SiteIntendedUse,
     SiteTenureType,
 )
 from utils.group_permissions import UG, GroupModelPermissions
 
+
+def tab_permission(tab):
+    class HasTabPermission(permissions.BasePermission):
+        def has_permission(self, request, view):
+            if request.method == "OPTIONS":
+                return bool(request.user and request.user.is_authenticated)
+            verb = {
+                "GET": "view",
+                "HEAD": "view",
+                "PUT": "change",
+                "PATCH": "change",
+                "POST": "change",
+                "DELETE": "change",
+            }.get(request.method)
+            return bool(
+                verb
+                and request.user
+                and request.user.is_authenticated
+                and request.user.has_perm(f"landuse.{verb}_tab_{tab}")
+            )
+
+    return HasTabPermission
+
+
 LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
+    # LandUseAgreement holds tab specific permissions.
+    LandUseAgreement: {
+        "model": {
+            UG.SELAILIJA: (
+                "view",
+                "view_tab_parties",
+                "view_tab_sites",
+                "view_tab_compensation",
+                "view_tab_decisions",
+                "view_tab_contracts",
+            ),
+            UG.VALMISTELIJA: (
+                "view",
+                "add",
+                "change",
+                "view_tab_parties",
+                "change_tab_parties",
+                "view_tab_sites",
+                "change_tab_sites",
+                "view_tab_compensation",
+                "change_tab_compensation",
+                "view_tab_decisions",
+                "change_tab_decisions",
+                "view_tab_contracts",
+                "change_tab_contracts",
+                "view_tab_payment_schedules",
+                "change_tab_payment_schedules",
+                "view_tab_invoices",
+            ),
+            UG.SOPIMUSVALMISTELIJA: (
+                "view",
+                "change",
+                "view_tab_parties",
+                "change_tab_parties",
+                "view_tab_sites",
+                "view_tab_compensation",
+                "view_tab_decisions",
+                "change_tab_decisions",
+                "view_tab_contracts",
+                "change_tab_contracts",
+                "view_tab_payment_schedules",
+                "view_tab_invoices",
+            ),
+            UG.LASKUTTAJA: (
+                "view",
+                "view_tab_parties",
+                "change_tab_parties",
+                "view_tab_sites",
+                "view_tab_compensation",
+                "view_tab_decisions",
+                "view_tab_contracts",
+                "view_tab_payment_schedules",
+                "view_tab_invoices",
+                "change_tab_invoices",
+            ),
+            UG.PAAKAYTTAJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+                "view_tab_parties",
+                "change_tab_parties",
+                "view_tab_sites",
+                "change_tab_sites",
+                "view_tab_compensation",
+                "change_tab_compensation",
+                "view_tab_decisions",
+                "change_tab_decisions",
+                "view_tab_contracts",
+                "change_tab_contracts",
+                "view_tab_payment_schedules",
+                "change_tab_payment_schedules",
+                "view_tab_invoices",
+                "change_tab_invoices",
+            ),
+        },
+        "fields": {},
+    },
+    # Other than LandUseAgreement, permissions are model specific only,
+    # unless there are custom operations defined.
     AgreementAddress: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view", "add", "change"),
             UG.SOPIMUSVALMISTELIJA: ("view", "add", "change"),
             UG.LASKUTTAJA: ("view",),
@@ -54,17 +132,9 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         },
         "fields": {},
     },
-    AgreementParty: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "change"),
-            UG.LASKUTTAJA: ("view", "change"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
     AgreementPreparer: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -72,17 +142,9 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         },
         "fields": {},
     },
-    AgreementSite: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
     AuthorizedSignatory: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -90,86 +152,9 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
         },
         "fields": {},
     },
-    BillingDetails: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: (
-                "view",
-                "change",
-            ),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    CashDepositCollateral: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    ContactPerson: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: (
-                "view",
-                "change",
-            ),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    Contract: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    ContractChange: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    Decision: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    DecisionCondition: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    DepositPledgeCollateral: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
     DetailedPlan: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -179,6 +164,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     District: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -188,89 +174,16 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     Invoice: {
         "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view", "add", "change", "delete"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    InvoiceItem: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view", "add", "change", "delete"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    InvoiceRecipient: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view", "add", "change", "delete"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    InvoiceRecipientSnapshot: {
-        "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            UG.LASKUTTAJA: ("send_invoice_to_sap",),
+            UG.PAAKAYTTAJA: ("send_invoice_to_sap",),
         },
         "fields": {},
     },
     LandPolicyProgram: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    LandUseAgreement: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "change"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    LandUseCompensation: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    MortgageDeedCollateral: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    MortgageDeedPropertyIdentifier: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    OtherCollateral: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
             UG.LASKUTTAJA: ("view",),
             UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
@@ -278,37 +191,8 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     PaymentSchedule: {
         "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view", "change"),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    PaymentScheduleInstallment: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    PaymentScheduleInstallmentItem: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
-        },
-        "fields": {},
-    },
-    PersonalGuaranteeCollateral: {
-        "model": {
-            UG.VALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change", "delete"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            UG.LASKUTTAJA: ("approve_paymentschedule",),
+            UG.PAAKAYTTAJA: ("approve_paymentschedule",),
         },
         "fields": {},
     },
@@ -323,6 +207,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     SiteIntendedUse: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
@@ -332,6 +217,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     SiteTenureType: {
         "model": {
+            UG.SELAILIJA: ("view",),
             UG.VALMISTELIJA: ("view",),
             UG.SOPIMUSVALMISTELIJA: ("view",),
             UG.LASKUTTAJA: ("view",),
