@@ -22,9 +22,9 @@ class PaymentSchedulePermission(BasePermission):
 
     def has_permission(self, request, view):
         permission = {
-            "list": "landuse.view_paymentschedule",
-            "retrieve": "landuse.view_paymentschedule",
-            "submit": "landuse.change_paymentschedule",
+            "list": "landuse.view_tab_payment_schedules",
+            "retrieve": "landuse.view_tab_payment_schedules",
+            "submit": "landuse.change_tab_payment_schedules",
             "approve": "landuse.approve_paymentschedule",
             "reject": "landuse.approve_paymentschedule",
         }.get(view.action)
@@ -36,8 +36,8 @@ class InvoicePermission(BasePermission):
 
     def has_permission(self, request, view):
         permission = {
-            "list": "landuse.view_invoice",
-            "retrieve": "landuse.view_invoice",
+            "list": "landuse.view_tab_invoices",
+            "retrieve": "landuse.view_tab_invoices",
             "send_to_sap": "landuse.send_invoice_to_sap",
         }.get(view.action)
         return permission is not None and request.user.has_perm(permission)

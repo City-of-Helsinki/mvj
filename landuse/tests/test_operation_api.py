@@ -11,6 +11,7 @@ from landuse.models.invoice import Invoice
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
 from landuse.views.operations import InvoicePermission, PaymentSchedulePermission
+from utils.group_permissions import UG
 
 pytestmark = pytest.mark.django_db
 
@@ -104,3 +105,86 @@ def test_send_invoice_to_sap_requires_operation_permission(
     send_invoice_xml.assert_called_once()
     invoice.refresh_from_db()
     assert invoice.sent_at is not None
+
+
+def test_billing_role_can_reject_but_cannot_edit_schedule(client, tab_role_user):
+    schedule, _ = create_agreement_financial_data()
+    user = tab_role_user(UG.LASKUTTAJA)
+    client.force_login(user)
+    url = reverse("v1:landuse:payment-schedule-reject", args=(schedule.pk,))
+    assert client.post(url, {"reason": ""}).status_code == status.HTTP_400_BAD_REQUEST
+    schedule.refresh_from_db()
+    assert schedule.status == PaymentScheduleStatus.PENDING_APPROVAL
+    response = client.post(url, {"reason": "Incorrect amount"})
+    assert response.status_code == status.HTTP_200_OK
+    schedule.refresh_from_db()
+    assert schedule.status == PaymentScheduleStatus.REJECTED
+    assert schedule.rejected_reason == "Incorrect amount"
+    response = client.put(
+        reverse(
+            "v1:landuse:agreement-payment-schedules", args=(schedule.agreement_id,)
+        ),
+        [],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert PaymentSchedule.objects.filter(pk=schedule.pk).exists()
+
+
+@pytest.mark.parametrize("operation", ["approve", "reject"])
+def test_schedule_change_permission_does_not_authorize_approval(
+    client, user_factory, operation
+):
+    schedule, _ = create_agreement_financial_data()
+    user = user_factory(is_superuser=False)
+    user.user_permissions.add(get_landuse_permission("change_tab_payment_schedules"))
+    client.force_login(user)
+    response = client.post(
+        reverse(f"v1:landuse:payment-schedule-{operation}", args=(schedule.pk,)),
+        {"reason": "Not authorized"},
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    schedule.refresh_from_db()
+    assert schedule.status == PaymentScheduleStatus.PENDING_APPROVAL
+
+
+@pytest.mark.parametrize(
+    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+)
+def test_operation_reads_use_tab_permissions(client, tab_role_user, role):
+    schedule, invoice = create_agreement_financial_data()
+    client.force_login(tab_role_user(role))
+    for resource, instance in [("payment-schedule", schedule), ("invoice", invoice)]:
+        assert (
+            client.get(reverse(f"v1:landuse:{resource}-list")).status_code
+            == status.HTTP_200_OK
+        )
+        assert (
+            client.get(
+                reverse(f"v1:landuse:{resource}-detail", args=(instance.pk,))
+            ).status_code
+            == status.HTTP_200_OK
+        )
+
+
+@pytest.mark.parametrize(
+    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+)
+def test_schedule_submission_uses_tab_change_permission(client, tab_role_user, role):
+    schedule, _ = create_agreement_financial_data()
+    schedule.status = PaymentScheduleStatus.DRAFT
+    schedule.save()
+    client.force_login(tab_role_user(role))
+    response = client.post(
+        reverse("v1:landuse:payment-schedule-submit", args=(schedule.pk,))
+    )
+    allowed = role in (UG.VALMISTELIJA, UG.PAAKAYTTAJA)
+    assert response.status_code == (
+        status.HTTP_200_OK if allowed else status.HTTP_403_FORBIDDEN
+    )
+    schedule.refresh_from_db()
+    assert schedule.status == (
+        PaymentScheduleStatus.PENDING_APPROVAL
+        if allowed
+        else PaymentScheduleStatus.DRAFT
+    )

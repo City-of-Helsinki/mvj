@@ -123,6 +123,24 @@ class LandUseAgreement(TimeStampedModel):
         blank=True,
     )
 
+    class Meta:
+        permissions = [
+            ("view_tab_parties", "Can view parties tab"),
+            ("change_tab_parties", "Can change parties tab"),
+            ("view_tab_sites", "Can view sites tab"),
+            ("change_tab_sites", "Can change sites tab"),
+            ("view_tab_compensation", "Can view compensation tab"),
+            ("change_tab_compensation", "Can change compensation tab"),
+            ("view_tab_decisions", "Can view decisions tab"),
+            ("change_tab_decisions", "Can change decisions tab"),
+            ("view_tab_contracts", "Can view contracts tab"),
+            ("change_tab_contracts", "Can change contracts tab"),
+            ("view_tab_payment_schedules", "Can view payment schedules tab"),
+            ("change_tab_payment_schedules", "Can change payment schedules tab"),
+            ("view_tab_invoices", "Can view invoices tab"),
+            ("change_tab_invoices", "Can change invoices tab"),
+        ]
+
 
 class AgreementAddress(TimeStampedModel):
     """

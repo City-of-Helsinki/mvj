@@ -32,7 +32,7 @@ from landuse.models.payment_schedule import (
     PaymentScheduleInstallmentItem,
 )
 from landuse.models.site import AgreementSite
-from landuse.permissions import LanduseDjangoModelPermissions
+from landuse.permissions import LanduseDjangoModelPermissions, tab_permission
 from landuse.serializers.agreement import (
     AgreementPartySerializer,
     AgreementPartyWriteSerializer,
@@ -167,7 +167,11 @@ class LandUseAgreementViewSet(
         agreement = self.get_object()
         return Response(LandUseAgreementOverviewSerializer(agreement).data)
 
-    @action(detail=True, methods=("get", "put"))
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[tab_permission("parties")],
+    )
     def parties(self, request, pk=None):
         agreement = self.get_object()
 
@@ -267,7 +271,11 @@ class LandUseAgreementViewSet(
         ).prefetch_related("contact_persons", "billing_details")
         return Response(AgreementPartySerializer(saved_parties, many=True).data)
 
-    @action(detail=True, methods=("get", "put"))
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[tab_permission("compensation")],
+    )
     def compensation(self, request, pk=None):
         agreement = self.get_object()
 
@@ -285,7 +293,12 @@ class LandUseAgreementViewSet(
             return Response(None)
         return Response(LandUseCompensationSerializer(compensation).data)
 
-    @action(detail=True, methods=("put",), url_path="compensation-with-sites")
+    @action(
+        detail=True,
+        methods=("put",),
+        url_path="compensation-with-sites",
+        permission_classes=[tab_permission("compensation"), tab_permission("sites")],
+    )
     @transaction.atomic
     def compensation_with_sites(self, request, pk=None):
         agreement = self.get_object()
@@ -309,7 +322,11 @@ class LandUseAgreementViewSet(
             }
         )
 
-    @action(detail=True, methods=("get", "put"))
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[tab_permission("sites")],
+    )
     def sites(self, request, pk=None):
         agreement = self.get_object()
 
@@ -363,7 +380,11 @@ class LandUseAgreementViewSet(
         )
         return Response(AgreementSiteSerializer(sites, many=True).data)
 
-    @action(detail=True, methods=("get", "put"))
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[tab_permission("decisions")],
+    )
     def decisions(self, request, pk=None):
         agreement = self.get_object()
 
@@ -440,7 +461,11 @@ class LandUseAgreementViewSet(
         )
         return Response(DecisionSerializer(decisions, many=True).data)
 
-    @action(detail=True, methods=("get", "put"))
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[tab_permission("contracts")],
+    )
     def contracts(self, request, pk=None):
         agreement = self.get_object()
         if request.method == "PUT":
@@ -613,7 +638,12 @@ class LandUseAgreementViewSet(
                 {"decision": "Contract decisions must belong to this agreement."}
             )
 
-    @action(detail=True, methods=("get", "put"), url_path="payment-schedules")
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        url_path="payment-schedules",
+        permission_classes=[tab_permission("payment_schedules")],
+    )
     def payment_schedules(self, request, pk=None):
         agreement = self.get_object()
         if request.method == "PUT":
@@ -749,7 +779,9 @@ class LandUseAgreementViewSet(
         )
         return Response(PaymentScheduleSerializer(schedules, many=True).data)
 
-    @action(detail=True, methods=("get",))
+    @action(
+        detail=True, methods=("get",), permission_classes=[tab_permission("invoices")]
+    )
     def invoices(self, request, pk=None):
         agreement = self.get_object()
         return self.get_paginated_serializer_response(
