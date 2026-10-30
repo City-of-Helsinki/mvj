@@ -1,10 +1,15 @@
 from auditlog.registry import auditlog
+from django.contrib.postgres.fields import ArrayField
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
+from enumfields import EnumField
 from sequences import get_next_value
 
 from field_permissions.registry import field_permissions
+from leasing.enums import CollateralType, DocumentType
+from leasing.validators import validate_business_id
+from users.models import User
 
 from .mixins import NameModel, TimeStampedSafeDeleteModel
 
@@ -145,16 +150,6 @@ class Contract(TimeStampedSafeDeleteModel):
             super().save(*args, **kwargs)
 
 
-class CollateralType(NameModel):
-    """
-    In Finnish: Vakuuden laji
-    """
-
-    class Meta(NameModel.Meta):
-        verbose_name = pgettext_lazy("Model name", "Collateral type")
-        verbose_name_plural = pgettext_lazy("Model name", "Collateral types")
-
-
 class Collateral(models.Model):
     """
     In Finnish: Vakuus
@@ -168,19 +163,13 @@ class Collateral(models.Model):
     )
 
     # In Finnish: Vakuuden tyyppi
-    type = models.ForeignKey(
+    type = EnumField(
         CollateralType,
         verbose_name=_("Collateral type"),
-        related_name="+",
-        on_delete=models.PROTECT,
+        max_length=255,
     )
 
-    # In Finnish: Vakuuden laji
-    other_type = models.CharField(
-        verbose_name=_("Other type"), null=True, blank=True, max_length=255
-    )
-
-    # In Finnish: Numero
+    # In Finnish: Vuokravakuusnumero
     number = models.CharField(
         verbose_name=_("Number"), null=True, blank=True, max_length=255
     )
@@ -213,6 +202,139 @@ class Collateral(models.Model):
 
     # In Finnish: Huomautus
     note = models.TextField(verbose_name=_("Note"), null=True, blank=True)
+
+    # In Finnish: Palautuksen merkitsijä
+    returned_by = models.ForeignKey(
+        User,
+        verbose_name=_("Returned by"),
+        related_name="+",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Vierasvelkapanttauksen antajan nimi
+    third_party_pledgor_name = models.CharField(
+        verbose_name=_("Third party pledgor name"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Vierasvelkapanttauksen antajan Y-tunnus
+    third_party_pledgor_business_id = models.CharField(
+        verbose_name=_("Third party pledgor Business ID"),
+        blank=True,
+        null=True,
+        max_length=255,
+        validators=[validate_business_id],
+    )
+
+    # In Finnish: Vakuuden antajan nimi
+    pledgor_name = models.CharField(
+        verbose_name=_("Pledgor name"), blank=True, null=True, max_length=255
+    )
+
+    # In Finnish: Vakuuden antajan henkilötunnus
+    pledgor_national_identification_number = models.CharField(
+        verbose_name=_("Pledgor National identification number"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Vakuuden antajan Y-tunnus
+    pledgor_business_id = models.CharField(
+        verbose_name=_("Pledgor Business ID"),
+        blank=True,
+        null=True,
+        max_length=255,
+        validators=[validate_business_id],
+    )
+
+    # In Finnish: Jälkipantin saajan nimi
+    subordinate_pledgee_name = models.CharField(
+        verbose_name=_("Subordinate pledgee name"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Jälkipantin saajan y-tunnus
+    subordinate_pledgee_business_id = models.CharField(
+        verbose_name=_("Subordinate pledgee business ID"),
+        blank=True,
+        null=True,
+        max_length=255,
+        validators=[validate_business_id],
+    )
+
+    # In Finnish: Sopimusosapuoli
+    contract_party = models.ManyToManyField(
+        "leasing.Tenant",
+        related_name="+",
+        blank=True,
+    )
+
+    # In Finnish: Tilinumero
+    account_number = models.CharField(
+        verbose_name=_("Account number"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Vakuusasiakirjan laji
+    document_type = EnumField(
+        DocumentType,
+        verbose_name=_("Document type"),
+        max_length=30,
+        null=True,
+        blank=True,
+    )
+
+    # In Finnish: Takausnumero
+    guarantee_number = models.CharField(
+        verbose_name=_("Guarantee number"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Panttikirjan numero
+    number_mortgage_document = models.CharField(
+        verbose_name=_("Mortgage document number"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # In Finnish: Kiinteistötunnus
+    property_identifiers = ArrayField(
+        models.CharField(max_length=255, blank=True),
+        verbose_name=_("Property identifier"),
+        null=True,
+        blank=True,
+    )
+
+    # In Finnish: Laitostunnus
+    institution_identifier = models.CharField(
+        verbose_name=_("Institution identifier"),
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    # Collateral form / model version
+    # Used to manage UI form validation to ensure backwards compatibility.
+    form_version = models.IntegerField(
+        verbose_name=_("Form version"),
+        default=2,
+        help_text=_(
+            "Used in the background to determine collateral form validation to ensure backwards compatibility "
+            "in case of breaking changes."
+        ),
+    )
 
     recursive_get_related_skip_relations = ["contract"]
 

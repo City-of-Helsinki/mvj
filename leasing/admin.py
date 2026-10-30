@@ -18,7 +18,6 @@ from leasing.models import (
     BasisOfRentPropertyIdentifier,
     BasisOfRentRate,
     Collateral,
-    CollateralType,
     CollectionCourtDecision,
     CollectionLetter,
     CollectionLetterTemplate,
@@ -116,7 +115,6 @@ class FieldPermissionsModelAdmin(FieldPermissionsAdminMixin, admin.ModelAdmin):
 @admin.register(
     BasisOfRentBuildPermissionType,
     BasisOfRentPlotType,
-    CollateralType,
     CommentTopic,
     ConditionType,
     ContractType,
@@ -328,6 +326,7 @@ class ContractChangeInline(FieldPermissionsAdminMixin, admin.StackedInline):
 
 class CollateralInline(FieldPermissionsAdminMixin, admin.StackedInline):
     model = Collateral
+    raw_id_fields = ("contract_party",)
     extra = 0
 
 
