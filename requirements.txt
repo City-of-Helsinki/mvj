@@ -98,7 +98,7 @@ django-helusers==1.3.0
     #   helsinki-profile-gdpr-api
 django-model-utils==5.0.0
     # via -r requirements.in
-django-modeltranslation==0.19.19
+django-modeltranslation==0.20.6
     # via -r requirements.in
 django-nested-inline==0.4.6
     # via -r requirements.in
