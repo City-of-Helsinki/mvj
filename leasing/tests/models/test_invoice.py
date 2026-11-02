@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import make_aware
+from django.utils.translation import override as override_language
 
 from leasing.enums import ContactType, InvoiceState, InvoiceType
 from leasing.models import Invoice, ReceivableType, ServiceUnit, Vat
@@ -212,10 +213,11 @@ def test_create_credit_invoice_fails(
     with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice()
 
-    assert (
-        str(e.value.message)
-        == 'Can not credit invoice with the type "credit_note". Only type "charge" allowed.'
-    )
+    with override_language("en"):
+        assert (
+            str(e.value.message)
+            == 'Can not credit invoice with the type "credit_note". Only type "charge" allowed.'
+        )
 
     with pytest.raises(Invoice.DoesNotExist):
         Invoice.objects.get(credited_invoice=invoice)
@@ -273,7 +275,10 @@ def test_create_credit_invoice_refunded_state_blocks_credit(
     with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice()
 
-    assert str(e.value.message) == "Cannot credit an invoice that has been refunded."
+    with override_language("en"):
+        assert (
+            str(e.value.message) == "Cannot credit an invoice that has been refunded."
+        )
 
 
 @pytest.mark.django_db
@@ -538,7 +543,8 @@ def test_create_credit_invoice_one_row_too_much(
     with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(row_ids=[invoice_row2.id], amount=200)
 
-    assert str(e.value.message) == "Cannot credit more than invoice row amount"
+    with override_language("en"):
+        assert str(e.value.message) == "Cannot credit more than invoice row amount"
 
 
 @pytest.mark.django_db
@@ -698,10 +704,11 @@ def test_create_credit_invoiceset_fails(
     with pytest.raises(ValidationError) as e:
         invoice_set.create_credit_invoiceset()
 
-    assert (
-        str(e.value.message)
-        == 'No refundable invoices found (no invoices with the type "charge" found)'
-    )
+    with override_language("en"):
+        assert (
+            str(e.value.message)
+            == 'No refundable invoices found (no invoices with the type "charge" found)'
+        )
 
     assert InvoiceSet.objects.count() == 1
 
@@ -1362,7 +1369,8 @@ def test_create_credit_invoice_too_much(
     with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(amount=205)
 
-    assert str(e.value.message) == "Cannot credit more than invoice row amount"
+    with override_language("en"):
+        assert str(e.value.message) == "Cannot credit more than invoice row amount"
 
 
 @pytest.mark.django_db
@@ -1410,10 +1418,11 @@ def test_create_credit_invoice_too_much_already_credited(
     with pytest.raises(ValidationError) as e:
         invoice.create_credit_invoice(amount=105)
 
-    assert (
-        str(e.value.message)
-        == "Cannot credit more than total amount minus already credited amount"
-    )
+    with override_language("en"):
+        assert (
+            str(e.value.message)
+            == "Cannot credit more than total amount minus already credited amount"
+        )
 
 
 @pytest.mark.django_db
