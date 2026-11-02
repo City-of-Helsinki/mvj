@@ -212,7 +212,7 @@ pyproj==3.8.0
     # via -r requirements.in
 python-daemon==3.1.2
     # via -r requirements.in
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
     # via
     #   -r requirements.in
     #   django-auditlog
@@ -295,7 +295,9 @@ typing-extensions==4.15.0
     #   python-docx
     #   swagger-spec-validator
 tzdata==2026.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   python-dateutil
 uritemplate==4.1.1
     # via drf-yasg
 urllib3==2.8.0
