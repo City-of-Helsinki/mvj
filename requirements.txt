@@ -178,7 +178,7 @@ mypy==1.7.1
     # via django-stubs
 mypy-extensions==1.0.0
     # via mypy
-oracledb==4.0.1
+oracledb==26.1.0
     # via -r requirements.in
 packaging==24.0
     # via
