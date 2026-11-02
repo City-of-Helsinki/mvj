@@ -314,7 +314,7 @@ webencodings==0.5.1
     #   tinycss2
 xhtml2pdf==0.2.28
     # via -r requirements.in
-xlsxwriter==3.2.9
+xlsxwriter==3.3.1
     # via -r requirements.in
 zeep==4.3.2
     # via -r requirements.in
