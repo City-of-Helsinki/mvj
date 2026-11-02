@@ -35,7 +35,7 @@ psycopg[binary]==3.3.4
 pyproj==3.7.2
 python-daemon~=3.1.2
 python-dateutil==2.9.0.post0
-sentry-sdk==2.63.0
+sentry-sdk==2.73.0
 requests==2.34.2
 tzdata==2026.2 # Required for platform independent consistent timezones for zoneinfo
 xhtml2pdf==0.2.28
