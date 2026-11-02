@@ -8,7 +8,9 @@ def migrate_other_type_to_note(apps, schema_editor):
     collateral_model = apps.get_model("leasing", "Collateral")
     for collateral in collateral_model.objects.exclude(other_type__isnull=True):
         if collateral.note:
-            collateral.note = collateral.note + " \n" + collateral.other_type
+            collateral.note = (
+                collateral.note + " \nVakuuden laji: " + collateral.other_type
+            )
         else:
             collateral.note = collateral.other_type
         collateral.save()
