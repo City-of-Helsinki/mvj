@@ -194,9 +194,9 @@ pillow==13.0.0
     #   xhtml2pdf
 platformdirs==4.2.2
     # via zeep
-psycopg[binary]==3.3.4
+psycopg[binary]==3.3.6
     # via -r requirements.in
-psycopg-binary==3.3.4
+psycopg-binary==3.3.6
     # via psycopg
 pycparser==2.22
     # via cffi
