@@ -22,13 +22,14 @@ beautifulsoup4==4.15.0
     # via -r requirements.in
 cachetools==5.3.3
     # via django-helusers
-certifi==2025.10.5
+certifi==2026.10.23
     # via
+    #   -c constraints.txt
     #   elastic-transport
     #   pyproj
     #   requests
     #   sentry-sdk
-cffi==1.16.0
+cffi==2.1.1
     # via
     #   cryptography
     #   pynacl
@@ -36,7 +37,7 @@ charset-normalizer==3.3.2
     # via
     #   reportlab
     #   requests
-cryptography==46.0.0
+cryptography==50.0.2
     # via
     #   django-helusers
     #   joserfc
