@@ -23,3 +23,7 @@ jinja2>=3.1.6
 # - CVE-2025-50182 https://security.snyk.io/vuln/SNYK-PYTHON-URLLIB3-10390193
 # - CVE-2025-50181 https://security.snyk.io/vuln/SNYK-PYTHON-URLLIB3-10390194
 urllib3>=2.5.0
+
+# Fixes several CVEs
+# Subdependency of xhtml2pdf
+pillow>=13.0.0
