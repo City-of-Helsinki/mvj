@@ -27,3 +27,6 @@ urllib3>=2.5.0
 # Fixes several CVEs
 # Subdependency of xhtml2pdf
 pillow>=13.0.0
+
+# Fixes GHSA-6q48-6c7w-9gw2
+certifi>=2026.10.23
