@@ -22,3 +22,4 @@ pytest-django==4.14.0
 pytest-factoryboy==2.8.1
 factory-boy==3.3.3
 types-python-dateutil==2.9.0.20261029
+types-requests==2.33.0.20261030
