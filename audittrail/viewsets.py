@@ -40,7 +40,7 @@ TYPE_MAP = {
 
 
 class AuditTrailView(APIView):
-    metadata_class = SimpleMetadata()
+    metadata_class = SimpleMetadata
     permission_classes = (IsAuthenticated,)
 
     def get_view_name(self):
@@ -77,7 +77,9 @@ class AuditTrailView(APIView):
         serializer_context = {"request": request, "format": format, "view": self}
 
         paginator = LimitOffsetPagination()
-        page = paginator.paginate_queryset(queryset, request, view=self)
+        page: list[LogEntry] | None = paginator.paginate_queryset(
+            queryset, request, view=self
+        )
 
         if page is not None:
             serializer = LogEntrySerializer(page, many=True, context=serializer_context)
@@ -88,7 +90,7 @@ class AuditTrailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def options(self, request, *args, **kwargs):
-        metadata_class = self.metadata_class
+        metadata_class = self.metadata_class()
         metadata = metadata_class.determine_metadata(request, self)
         metadata["actions"] = {"GET": {}}
         for field_name, field in AuditTrailSearchForm().fields.items():

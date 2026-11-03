@@ -65,5 +65,5 @@ class TextJSONField(JSONField):
         if isinstance(value, dict):
             return value
 
-        value = super().from_db_value(value, expression, connection)  # type: ignore[misc]
+        value = super().from_db_value(value, expression, connection)
         return value
