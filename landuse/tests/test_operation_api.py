@@ -11,7 +11,7 @@ from landuse.models.invoice import Invoice
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
 from landuse.views.operations import InvoicePermission, PaymentSchedulePermission
-from utils.group_permissions import UG
+from utils.enums import AuthGroupId as AG
 
 pytestmark = pytest.mark.django_db
 
@@ -109,7 +109,7 @@ def test_send_invoice_to_sap_requires_operation_permission(
 
 def test_billing_role_can_reject_but_cannot_edit_schedule(client, tab_role_user):
     schedule, _ = create_agreement_financial_data()
-    user = tab_role_user(UG.LASKUTTAJA)
+    user = tab_role_user(AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA)
     client.force_login(user)
     url = reverse("v1:landuse:payment-schedule-reject", args=(schedule.pk,))
     assert client.post(url, {"reason": ""}).status_code == status.HTTP_400_BAD_REQUEST
@@ -149,7 +149,13 @@ def test_schedule_change_permission_does_not_authorize_approval(
 
 
 @pytest.mark.parametrize(
-    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+    "role",
+    [
+        AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA,
+        AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+    ],
 )
 def test_operation_reads_use_tab_permissions(client, tab_role_user, role):
     schedule, invoice = create_agreement_financial_data()
@@ -168,7 +174,13 @@ def test_operation_reads_use_tab_permissions(client, tab_role_user, role):
 
 
 @pytest.mark.parametrize(
-    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+    "role",
+    [
+        AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA,
+        AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+    ],
 )
 def test_schedule_submission_uses_tab_change_permission(client, tab_role_user, role):
     schedule, _ = create_agreement_financial_data()
@@ -178,7 +190,10 @@ def test_schedule_submission_uses_tab_change_permission(client, tab_role_user, r
     response = client.post(
         reverse("v1:landuse:payment-schedule-submit", args=(schedule.pk,))
     )
-    allowed = role in (UG.VALMISTELIJA, UG.PAAKAYTTAJA)
+    allowed = role in (
+        AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+    )
     assert response.status_code == (
         status.HTTP_200_OK if allowed else status.HTTP_403_FORBIDDEN
     )

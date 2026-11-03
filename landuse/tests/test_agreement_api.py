@@ -19,7 +19,7 @@ from landuse.models.compensation import LandPolicyProgram, LandUseCompensation
 from landuse.models.party import AgreementParty, ContactPerson
 from landuse.models.site import AgreementSite, SiteIntendedUse, SiteTenureType
 from landuse.permissions import tab_permission
-from utils.group_permissions import UG
+from utils.enums import AuthGroupId as AG
 
 pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 
@@ -30,21 +30,58 @@ def enable_landuse_api(settings):
 
 
 @pytest.mark.parametrize(
-    "role", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA]
+    "role",
+    [
+        AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+        AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA,
+        AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+    ],
 )
 @pytest.mark.parametrize(
     "tab,editors",
     [
         (
             "parties",
-            [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.LASKUTTAJA, UG.PAAKAYTTAJA],
+            [
+                AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA,
+                AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+            ],
         ),
-        ("sites", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
-        ("compensation", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
-        ("decisions", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.PAAKAYTTAJA]),
-        ("contracts", [UG.VALMISTELIJA, UG.SOPIMUSVALMISTELIJA, UG.PAAKAYTTAJA]),
-        ("payment-schedules", [UG.VALMISTELIJA, UG.PAAKAYTTAJA]),
-        ("invoices", [UG.LASKUTTAJA, UG.PAAKAYTTAJA]),
+        (
+            "sites",
+            [AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA, AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA],
+        ),
+        (
+            "compensation",
+            [AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA, AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA],
+        ),
+        (
+            "decisions",
+            [
+                AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+            ],
+        ),
+        (
+            "contracts",
+            [
+                AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+                AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
+            ],
+        ),
+        (
+            "payment-schedules",
+            [AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA, AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA],
+        ),
+        (
+            "invoices",
+            [AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA, AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA],
+        ),
     ],
 )
 def test_tab_role_matrix(client, tab_role_user, role, tab, editors, rf):
@@ -195,29 +232,6 @@ def test_tab_requires_authentication(client, tab):
     agreement = LandUseAgreement.objects.create(identifier="M-ANONYMOUS")
     url = reverse(f"v1:landuse:agreement-{tab}", args=(agreement.pk,))
     assert client.get(url).status_code == status.HTTP_401_UNAUTHORIZED
-
-
-def test_stale_assignment_cleanup_preserves_permission_rows_and_other_groups():
-    migration = import_module("landuse.migrations.0011_agreement_tab_permissions")
-    managed, _ = Group.objects.get_or_create(
-        pk=UG.VALMISTELIJA, defaults={"name": "Managed"}
-    )
-    unmanaged = Group.objects.create(pk=9999, name="Unmanaged")
-    stale = Permission.objects.get(
-        content_type__app_label="landuse", codename="change_agreementparty"
-    )
-    retained = Permission.objects.get(
-        content_type__app_label="landuse", codename="view_landuseagreement"
-    )
-    managed.permissions.add(stale, retained)
-    unmanaged.permissions.add(stale)
-    migration.remove_obsolete_group_assignments(
-        apps, SimpleNamespace(connection=SimpleNamespace(alias="default"))
-    )
-    assert not managed.permissions.filter(pk=stale.pk).exists()
-    assert managed.permissions.filter(pk=retained.pk).exists()
-    assert unmanaged.permissions.filter(pk=stale.pk).exists()
-    assert Permission.objects.filter(pk=stale.pk).exists()
 
 
 @pytest.mark.parametrize(

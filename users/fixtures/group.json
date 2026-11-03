@@ -71,7 +71,6 @@
       "permissions": []
     }
   },
-
   {
     "model": "auth.group",
     "pk": 103,
@@ -90,6 +89,14 @@
   },
   {
     "model": "auth.group",
+    "pk": 105,
+    "fields": {
+      "name": "Maankäyttösopimusten perintälakimies",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
     "pk": 106,
     "fields": {
       "name": "Maankäyttösopimusten laskuttaja",
@@ -101,6 +108,46 @@
     "pk": 107,
     "fields": {
       "name": "Maankäyttösopimusten pääkäyttäjä",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 201,
+    "fields": {
+      "name": "Maaomaisuuden kehittäminen ja tontit",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 202,
+    "fields": {
+      "name": "Palu/Kaupunkitilan käyttö ja maanvuokraus",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 203,
+    "fields": {
+      "name": "KuVa / Liikuntapaikkapalvelut",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 204,
+    "fields": {
+      "name": "KuVa / Ulkoilupalvelut",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 205,
+    "fields": {
+      "name": "KuVa / Nuorisopalvelut",
       "permissions": []
     }
   }

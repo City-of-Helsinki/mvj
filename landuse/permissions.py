@@ -15,7 +15,8 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
-from utils.group_permissions import UG, GroupModelPermissions
+from utils.group_permissions import AuthGroupId as AG
+from utils.group_permissions import GroupModelPermissions
 
 
 def tab_permission(tab):
@@ -45,7 +46,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     # LandUseAgreement holds tab specific permissions.
     LandUseAgreement: {
         "model": {
-            UG.SELAILIJA: (
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: (
                 "view",
                 "view_tab_parties",
                 "view_tab_sites",
@@ -53,7 +54,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
                 "view_tab_decisions",
                 "view_tab_contracts",
             ),
-            UG.VALMISTELIJA: (
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: (
                 "view",
                 "add",
                 "change",
@@ -71,7 +72,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
                 "change_tab_payment_schedules",
                 "view_tab_invoices",
             ),
-            UG.SOPIMUSVALMISTELIJA: (
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: (
                 "view",
                 "change",
                 "view_tab_parties",
@@ -85,7 +86,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
                 "view_tab_payment_schedules",
                 "view_tab_invoices",
             ),
-            UG.LASKUTTAJA: (
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: (
                 "view",
                 "view_tab_parties",
                 "change_tab_parties",
@@ -97,7 +98,7 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
                 "view_tab_invoices",
                 "change_tab_invoices",
             ),
-            UG.PAAKAYTTAJA: (
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: (
                 "view",
                 "add",
                 "change",
@@ -124,104 +125,104 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     # unless there are custom operations defined.
     AgreementAddress: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view", "add", "change"),
-            UG.SOPIMUSVALMISTELIJA: ("view", "add", "change"),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view", "add", "change"),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view", "add", "change"),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     AgreementPreparer: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view",),
         },
         "fields": {},
     },
     AuthorizedSignatory: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     DetailedPlan: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view",),
         },
         "fields": {},
     },
     District: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     Invoice: {
         "model": {
-            UG.LASKUTTAJA: ("send_invoice_to_sap",),
-            UG.PAAKAYTTAJA: ("send_invoice_to_sap",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("send_invoice_to_sap",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("send_invoice_to_sap",),
         },
         "fields": {},
     },
     LandPolicyProgram: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     PaymentSchedule: {
         "model": {
-            UG.LASKUTTAJA: ("approve_paymentschedule",),
-            UG.PAAKAYTTAJA: ("approve_paymentschedule",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("approve_paymentschedule",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("approve_paymentschedule",),
         },
         "fields": {},
     },
     ShadowSalesLedgerEntry: {
         "model": {
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view",),
         },
         "fields": {},
     },
     SiteIntendedUse: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     SiteTenureType: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },

@@ -1,16 +1,17 @@
 from users.models import User
-from utils.group_permissions import UG, GroupModelPermissions
+from utils.enums import AuthGroupId as AG
+from utils.group_permissions import GroupModelPermissions
 
 USERS_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     User: {
         "model": {
-            UG.SELAILIJA: ("view",),
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.SYOTTAJA: ("view",),
-            UG.PERINTALAKIMIES: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view",),
+            AG.SELAILIJA: ("view",),
+            AG.VALMISTELIJA: ("view",),
+            AG.SOPIMUSVALMISTELIJA: ("view",),
+            AG.SYOTTAJA: ("view",),
+            AG.PERINTALAKIMIES: ("view",),
+            AG.LASKUTTAJA: ("view",),
+            AG.PAAKAYTTAJA: ("view",),
         },
         "fields": {},
     },

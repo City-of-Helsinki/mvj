@@ -2,22 +2,30 @@ from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
 from leasing.models.service_unit import ServiceUnitGroupMapping
+from utils.enums import AuthGroupName
 
 GROUPS = [
     # User roles
-    "Selailija",
-    "Valmistelija",
-    "Sopimusvalmistelija",
-    "Syöttäjä",
-    "Perintälakimies",
-    "Laskuttaja",
-    "Pääkäyttäjä",
+    AuthGroupName.SELAILIJA,
+    AuthGroupName.VALMISTELIJA,
+    AuthGroupName.SOPIMUSVALMISTELIJA,
+    AuthGroupName.SYOTTAJA,
+    AuthGroupName.PERINTALAKIMIES,
+    AuthGroupName.LASKUTTAJA,
+    AuthGroupName.PAAKAYTTAJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_SELAILIJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_SYOTTAJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_PERINTALAKIMIES,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA,
+    AuthGroupName.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA,
     # Service units
-    "Maaomaisuuden kehittäminen ja tontit",
-    "Kaupunkitilan käyttö ja maanvuokraus",
-    "KuVa / Liikuntapaikkapalvelut",
-    "KuVa / Ulkoilupalvelut",
-    "KuVa / Nuorisopalvelut",
+    AuthGroupName.PALVELUKOKONAISUUS_MAKE,
+    AuthGroupName.PALVELUKOKONAISUUS_KAMA,
+    AuthGroupName.PALVELUKOKONAISUUS_KUVA_LIPA,
+    AuthGroupName.PALVELUKOKONAISUUS_KUVA_UPA,
+    AuthGroupName.PALVELUKOKONAISUUS_KUVA_NUP,
 ]
 
 
