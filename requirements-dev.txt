@@ -161,6 +161,8 @@ types-pyyaml==6.0.12.20240311
     #   -c requirements.txt
     #   django-stubs
     #   djangorestframework-stubs
+types-requests==2.33.0.20261030
+    # via -r requirements-dev.in
 typing-extensions==4.15.0
     # via
     #   -c requirements.txt
@@ -169,5 +171,10 @@ typing-extensions==4.15.0
     #   djangorestframework-stubs
     #   mypy
     #   pytest-factoryboy
+urllib3==2.8.0
+    # via
+    #   -c constraints.txt
+    #   -c requirements.txt
+    #   types-requests
 wcwidth==0.9.4
     # via blessed
