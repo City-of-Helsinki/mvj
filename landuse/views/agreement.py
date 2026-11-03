@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.db.models import Prefetch
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -24,9 +24,11 @@ from landuse.serializers.agreement import (
     DecisionSerializer,
     DecisionWriteSerializer,
     InvoiceSerializer,
+    LandUseAgreementCollateralSerializer,
+    LandUseAgreementCreateSerializer,
     LandUseAgreementListSerializer,
-    LandUseAgreementOverviewSerializer,
-    LandUseAgreementSerializer,
+    LandUseAgreementSummarySerializer,
+    LandUseAgreementSummaryWriteSerializer,
     LandUseCompensationSerializer,
     LandUseCompensationWriteSerializer,
     PaymentScheduleSerializer,
@@ -36,9 +38,13 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMi
 
 
 class LandUseAgreementViewSet(
-    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ModelViewSet
+    LandUseApiEnabledFlagMixin,
+    LandUsePaginationMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
-    serializer_class = LandUseAgreementSerializer
+    serializer_class = LandUseAgreementCreateSerializer
     filterset_fields = (
         "identifier",
         "status",
@@ -57,7 +63,7 @@ class LandUseAgreementViewSet(
                 "district", "detailed_plan"
             ).prefetch_related("parties", "compensation_sites")
 
-        if self.action in ("retrieve", "overview"):
+        if self.action == "summary":
             return queryset.select_related(
                 "district", "authorized_signatory", "detailed_plan"
             ).prefetch_related("addresses", "preparers__preparer")
@@ -125,9 +131,9 @@ class LandUseAgreementViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return LandUseAgreementListSerializer
-        if self.action in ("retrieve", "overview"):
-            return LandUseAgreementOverviewSerializer
-        return LandUseAgreementSerializer
+        if self.action == "create":
+            return LandUseAgreementCreateSerializer
+        return self.serializer_class
 
     def get_paginated_serializer_response(self, queryset, serializer_class):
         page = self.paginate_queryset(queryset)
@@ -135,10 +141,41 @@ class LandUseAgreementViewSet(
             return self.get_paginated_response(serializer_class(page, many=True).data)
         return Response(serializer_class(queryset, many=True).data)
 
-    @action(detail=True, methods=("get",))
-    def overview(self, request, pk=None):
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[LanduseDjangoModelPermissions],
+    )
+    def summary(self, request, pk=None):
         agreement = self.get_object()
-        return Response(LandUseAgreementOverviewSerializer(agreement).data)
+        if request.method == "PUT":
+            serializer = LandUseAgreementSummaryWriteSerializer(
+                agreement,
+                data=request.data,
+                context=self.get_serializer_context(),
+            )
+            serializer.is_valid(raise_exception=True)
+            agreement = serializer.save()
+            if getattr(agreement, "_prefetched_objects_cache", None):
+                agreement._prefetched_objects_cache = {}
+        return Response(LandUseAgreementSummarySerializer(agreement).data)
+
+    @action(
+        detail=True,
+        methods=("get", "put"),
+        permission_classes=[LanduseDjangoModelPermissions],
+    )
+    def collaterals(self, request, pk=None):
+        agreement = self.get_object()
+        if request.method == "PUT":
+            serializer = LandUseAgreementCollateralSerializer(
+                agreement, data=request.data
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        else:
+            serializer = LandUseAgreementCollateralSerializer(agreement)
+        return Response(serializer.data)
 
     @action(
         detail=True,
