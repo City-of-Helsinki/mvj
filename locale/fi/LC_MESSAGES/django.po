@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 10:13+0300\n"
+"POT-Creation-Date: 2026-11-03 16:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -30,12 +30,6 @@ msgstr "Django-komento"
 
 msgid "Invalid integer set specifier"
 msgstr "Virheellinen määrittely"
-
-msgid "creation time"
-msgstr "Luontiaika"
-
-msgid "modification time"
-msgstr "Muokkausaika"
 
 msgid "name"
 msgstr "Nimi"
@@ -2546,12 +2540,6 @@ msgctxt "Model name"
 msgid "Leasehold transfer parties"
 msgstr "Vuokraoikeuden siirtojen osapuolet"
 
-msgid "Time archived"
-msgstr "Arkistointiaika"
-
-msgid "Archived note"
-msgstr "Arkistointihuomautus"
-
 msgctxt "Model name"
 msgid "Receivable type"
 msgstr "Saamislaji"
@@ -4252,3 +4240,9 @@ msgstr "Token olemassa"
 
 msgid "Users permissions"
 msgstr "Käyttäjän oikeudet"
+
+msgid "Time archived"
+msgstr "Arkistointiaika"
+
+msgid "Archived note"
+msgstr "Arkistointihuomautus"

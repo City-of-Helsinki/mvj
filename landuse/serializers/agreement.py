@@ -1,7 +1,10 @@
+from collections.abc import Callable, Iterable
 from functools import partial
+from typing import Any, Protocol, TypeVar
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.db.models import Manager, Model, QuerySet
 from django.db.models.deletion import ProtectedError
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
@@ -48,21 +51,54 @@ from landuse.models.site import (
     SiteTenureType,
 )
 
+# Generic type hint for Django models with a manager
+ModelT = TypeVar("ModelT", bound=Model)
+
+
+class ModelWithManager(Protocol[ModelT]):
+    objects: Manager[ModelT]
+
 
 class ReferencedResourceConflict(APIException):
     status_code = 409
     default_code = "referenced_resource"
 
 
-def set_one_to_one(model, parent_field, parent, data):
-    lookup = {parent_field: parent}
+def set_one_to_one(
+    model: ModelWithManager[ModelT],
+    parent_field: str,
+    parent: Model,
+    data: dict[str, Any] | None,
+) -> None:
+    lookup: dict[str, Any] = {parent_field: parent}
     if data is None:
         model.objects.filter(**lookup).delete()
     else:
         model.objects.update_or_create(**lookup, defaults=data)
 
 
-def sync_rows(queryset, rows, save_row):
+def save_children(
+    model: ModelWithManager[ModelT],
+    parent_field: str,
+    parent: Model,
+    rows: list[dict[str, Any]],
+) -> None:
+    def save_row(obj: ModelT | None, data: dict[str, Any]) -> ModelT:
+        if obj is None:
+            return model.objects.create(**{parent_field: parent}, **data)
+        for field, value in data.items():
+            setattr(obj, field, value)
+        obj.save()
+        return obj
+
+    sync_rows(model.objects.filter(**{parent_field: parent}), rows, save_row)
+
+
+def sync_rows(
+    queryset: QuerySet[ModelT],
+    rows: list[dict[str, Any]],
+    save_row: Callable[[ModelT | None, dict[str, Any]], ModelT],
+) -> list[int]:
     """Updates rows listed with an id, creates the others, and deletes unlisted rows."""
     existing = {row.pk: row for row in queryset.select_for_update(of=("self",))}
     saved_ids = []
@@ -77,16 +113,13 @@ def sync_rows(queryset, rows, save_row):
     return saved_ids
 
 
-def save_children(model, parent_field, parent, rows):
-    def save_row(obj, data):
-        if obj is None:
-            return model.objects.create(**{parent_field: parent}, **data)
-        for field, value in data.items():
-            setattr(obj, field, value)
-        obj.save()
-        return obj
-
-    sync_rows(model.objects.filter(**{parent_field: parent}), rows, save_row)
+def set_all_meta_fields_as_required(
+    field_names: Iterable[str],
+    extra_kwargs: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    for field_name in field_names:
+        extra_kwargs.setdefault(field_name, {})["required"] = True
+    return extra_kwargs
 
 
 class ReplaceListSerializer(serializers.ListSerializer):
@@ -199,37 +232,21 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
         )
 
 
-class LandUseAgreementSerializer(serializers.ModelSerializer):
-    addresses = AgreementAddressSerializer(many=True, required=False)
-    preparers = AgreementPreparerSerializer(many=True, required=False)
+class LandUseAgreementCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LandUseAgreement
         fields = (
             "id",
             "identifier",
-            "district",
-            "is_promotion_area",
-            "status",
-            "estimated_presentation_year",
-            "estimated_payment_year",
-            "includes_housing_obligations",
-            "obligations_deadline",
-            "authorized_signatory",
-            "addresses",
-            "preparers",
-            "detailed_plan",
-            "detailed_plan_sites",
-            "collateral_multiplier",
             "created_at",
             "modified_at",
+            "district",
         )
         read_only_fields = ("id", "identifier", "created_at", "modified_at")
 
     @transaction.atomic
     def create(self, validated_data):
-        addresses = validated_data.pop("addresses", [])
-        preparers = validated_data.pop("preparers", [])
         district = validated_data.get("district")
         if district is None:
             raise serializers.ValidationError({"district": "This field is required."})
@@ -246,8 +263,30 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         ]
         validated_data["identifier"] = f"{prefix}{max(sequence_numbers, default=0) + 1}"
         agreement = super().create(validated_data)
-        self._save_summary_relations(agreement, addresses, preparers)
         return agreement
+
+
+class LandUseAgreementCollateralSerializer(serializers.ModelSerializer):
+    collateral_multiplier = serializers.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        allow_null=True,
+        required=True,
+    )
+
+    class Meta:
+        model = LandUseAgreement
+        fields = ("collateral_multiplier",)
+
+    def update(self, instance, validated_data):
+        instance.collateral_multiplier = validated_data["collateral_multiplier"]
+        instance.save(update_fields=("collateral_multiplier", "modified_at"))
+        return instance
+
+
+class LandUseAgreementSummaryWriteSerializer(serializers.ModelSerializer):
+    addresses = AgreementAddressSerializer(many=True, required=True)
+    preparers = AgreementPreparerSerializer(many=True, required=True)
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -263,8 +302,34 @@ class LandUseAgreementSerializer(serializers.ModelSerializer):
         if preparers is not None:
             save_children(AgreementPreparer, "agreement", agreement, preparers)
 
+    def get_extra_kwargs(self) -> dict[str, dict[str, Any]]:
+        """
+        PUT replaces the whole summary, so omitted fields must not be
+        treated as optional partial updates.
+        """
+        return set_all_meta_fields_as_required(
+            self.Meta.fields, super().get_extra_kwargs()
+        )
 
-class LandUseAgreementOverviewSerializer(LandUseAgreementListSerializer):
+    class Meta:
+        model = LandUseAgreement
+        fields = (
+            "is_promotion_area",
+            "status",
+            "estimated_presentation_year",
+            "estimated_payment_year",
+            "includes_housing_obligations",
+            "obligations_deadline",
+            "authorized_signatory",
+            "addresses",
+            "preparers",
+            "detailed_plan",
+            "detailed_plan_sites",
+        )
+
+
+class LandUseAgreementSummarySerializer(serializers.ModelSerializer):
+    district = DistrictSerializer(read_only=True)
     authorized_signatory = AuthorizedSignatorySerializer(read_only=True)
     detailed_plan = DetailedPlanSerializer(read_only=True)
     addresses = AgreementAddressSerializer(many=True, read_only=True)
@@ -273,14 +338,18 @@ class LandUseAgreementOverviewSerializer(LandUseAgreementListSerializer):
     class Meta:
         model = LandUseAgreement
         fields = (
-            *LandUseAgreementListSerializer.Meta.fields,
+            "id",
+            "identifier",
+            "district",
             "is_promotion_area",
+            "status",
+            "estimated_presentation_year",
+            "estimated_payment_year",
             "includes_housing_obligations",
             "obligations_deadline",
             "authorized_signatory",
             "detailed_plan",
             "detailed_plan_sites",
-            "collateral_multiplier",
             "addresses",
             "preparers",
         )

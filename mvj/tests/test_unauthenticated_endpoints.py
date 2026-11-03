@@ -2,6 +2,7 @@ import json
 import re
 
 import pytest
+from django.test import override_settings
 from django_extensions.management.commands import show_urls
 
 PK_REPLACEMENT = "12"
@@ -75,6 +76,7 @@ def get_url_paths():
     return paths
 
 
+@override_settings(FLAG_LANDUSE_API_ENABLED=True)
 @pytest.mark.django_db
 @pytest.mark.parametrize("path", get_url_paths())
 def test_urls(client, path):

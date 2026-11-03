@@ -1,9 +1,7 @@
-from importlib import import_module
-from types import SimpleNamespace
+from decimal import Decimal
 
 import pytest
-from django.apps import apps
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 from rest_framework import status
 
@@ -27,6 +25,23 @@ pytestmark = [pytest.mark.django_db, pytest.mark.usefixtures("admin_client")]
 @pytest.fixture(autouse=True)
 def enable_landuse_api(settings):
     settings.FLAG_LANDUSE_API_ENABLED = True
+
+
+def summary_payload(**overrides):
+    payload = {
+        "is_promotion_area": False,
+        "status": "",
+        "estimated_presentation_year": None,
+        "estimated_payment_year": None,
+        "includes_housing_obligations": False,
+        "obligations_deadline": None,
+        "authorized_signatory": None,
+        "addresses": [],
+        "preparers": [],
+        "detailed_plan": None,
+        "detailed_plan_sites": [],
+    }
+    return {**payload, **overrides}
 
 
 @pytest.mark.parametrize(
@@ -145,7 +160,7 @@ def test_tab_permission_does_not_require_agreement_permission(client, user_facto
     )
     assert (
         client.get(
-            reverse("v1:landuse:agreement-detail", args=(agreement.pk,))
+            reverse("v1:landuse:agreement-summary", args=(agreement.pk,))
         ).status_code
         == status.HTTP_403_FORBIDDEN
     )
@@ -178,12 +193,11 @@ def test_combined_compensation_write_requires_both_tabs(
     "method,action,permission,expected",
     [
         ("get", "list", "view", status.HTTP_200_OK),
-        ("get", "detail", "view", status.HTTP_200_OK),
-        ("get", "overview", "view", status.HTTP_200_OK),
+        ("get", "summary", "view", status.HTTP_200_OK),
+        ("get", "collaterals", "view", status.HTTP_200_OK),
         ("post", "list", "add", status.HTTP_201_CREATED),
-        ("put", "detail", "change", status.HTTP_200_OK),
-        ("patch", "detail", "change", status.HTTP_200_OK),
-        ("delete", "detail", "delete", status.HTTP_204_NO_CONTENT),
+        ("put", "summary", "change", status.HTTP_200_OK),
+        ("put", "collaterals", "change", status.HTTP_200_OK),
     ],
 )
 def test_agreement_crud_keeps_standard_permissions(
@@ -200,9 +214,14 @@ def test_agreement_crud_keeps_standard_permissions(
         args=() if action == "list" else (agreement.pk,),
     )
     payload = {"identifier": "M-STANDARD", "district": district.pk}
+    if action == "collaterals":
+        payload = {"collateral_multiplier": "1.25"}
+    elif action == "summary":
+        payload = summary_payload(status="DRAFT")
     request = getattr(client, method)
+    request_data = None if method == "get" else payload
     assert (
-        request(url, payload, content_type="application/json").status_code
+        request(url, request_data, content_type="application/json").status_code
         == status.HTTP_403_FORBIDDEN
     )
     user.user_permissions.add(
@@ -211,7 +230,8 @@ def test_agreement_crud_keeps_standard_permissions(
         )
     )
     assert (
-        request(url, payload, content_type="application/json").status_code == expected
+        request(url, request_data, content_type="application/json").status_code
+        == expected
     )
 
 
@@ -742,7 +762,7 @@ def test_detailed_plan_list_is_paginated(admin_client):
     assert response.json()["next"] is not None
 
 
-def test_overview_and_parties_are_separate_tab_documents(admin_client):
+def test_agreement_and_parties_are_separate_documents(admin_client):
     agreement = LandUseAgreement.objects.create(
         identifier="M-2026-1", detailed_plan_sites=["91-10-100-1"]
     )
@@ -755,16 +775,16 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
     party = AgreementParty.objects.create(agreement=agreement, name="Test Oy")
     ContactPerson.objects.create(agreement_party=party, name="Test Person")
 
-    overview_response = admin_client.get(
-        reverse("v1:landuse:agreement-overview", args=(agreement.pk,))
+    agreement_response = admin_client.get(
+        reverse("v1:landuse:agreement-summary", args=(agreement.pk,))
     )
     parties_response = admin_client.get(
         reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
     )
 
-    assert overview_response.status_code == status.HTTP_200_OK
-    assert overview_response.json()["addresses"][0]["street_address"] == "Testikatu 1"
-    assert overview_response.json()["detailed_plan_sites"] == ["91-10-100-1"]
+    assert agreement_response.status_code == status.HTTP_200_OK
+    assert agreement_response.json()["addresses"][0]["street_address"] == "Testikatu 1"
+    assert agreement_response.json()["detailed_plan_sites"] == ["91-10-100-1"]
     assert parties_response.status_code == status.HTTP_200_OK
     assert parties_response.json()["count"] == 1
     assert parties_response.json()["results"][0]["name"] == "Test Oy"
@@ -777,9 +797,9 @@ def test_overview_and_parties_are_separate_tab_documents(admin_client):
 def test_agreement_updates_detailed_plan_sites(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
 
-    response = admin_client.patch(
-        reverse("v1:landuse:agreement-detail", args=(agreement.pk,)),
-        {"detailed_plan_sites": ["91-10-100-1", "91-10-100-2"]},
+    response = admin_client.put(
+        reverse("v1:landuse:agreement-summary", args=(agreement.pk,)),
+        summary_payload(detailed_plan_sites=["91-10-100-1", "91-10-100-2"]),
         content_type="application/json",
     )
 
@@ -796,17 +816,17 @@ def test_agreement_updates_summary_relations(admin_client, django_user_model):
         agreement=agreement, street_address="Old", postal_code="00100", city="Helsinki"
     )
     AgreementPreparer.objects.create(agreement=agreement, preparer=preparer)
-    url = reverse("v1:landuse:agreement-detail", args=(agreement.pk,))
+    url = reverse("v1:landuse:agreement-summary", args=(agreement.pk,))
 
-    response = admin_client.patch(
+    response = admin_client.put(
         url,
-        {
-            "authorized_signatory": signatory.pk,
-            "addresses": [
+        summary_payload(
+            authorized_signatory=signatory.pk,
+            addresses=[
                 {"street_address": "New", "postal_code": "00200", "city": "Helsinki"}
             ],
-            "preparers": [{"preparer": preparer.pk}],
-        },
+            preparers=[{"preparer": preparer.pk}],
+        ),
         content_type="application/json",
     )
 
@@ -818,32 +838,39 @@ def test_agreement_updates_summary_relations(admin_client, django_user_model):
         preparer.pk
     ]
 
-    overview = admin_client.get(
-        reverse("v1:landuse:agreement-overview", args=(agreement.pk,))
-    ).json()
-    assert overview["authorized_signatory"]["id"] == signatory.pk
-    assert overview["addresses"][0]["street_address"] == "New"
-    assert overview["preparers"][0]["preparer"] == preparer.pk
+    result = response.json()
+    assert result == admin_client.get(url).json()
+    assert result["authorized_signatory"]["id"] == signatory.pk
+    assert result["addresses"][0]["street_address"] == "New"
+    assert result["preparers"][0]["preparer"] == preparer.pk
 
-    response = admin_client.patch(
+    response = admin_client.put(
         url,
-        {"addresses": [], "preparers": [{"preparer": 0}]},
+        summary_payload(addresses=[], preparers=[{"preparer": 0}]),
         content_type="application/json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert agreement.addresses.count() == 1
     assert agreement.preparers.count() == 1
 
-    response = admin_client.patch(
-        url, {"status": "DRAFT"}, content_type="application/json"
+    response = admin_client.put(
+        url,
+        summary_payload(
+            status="DRAFT",
+            addresses=[
+                {"street_address": "New", "postal_code": "00200", "city": "Helsinki"}
+            ],
+            preparers=[{"preparer": preparer.pk}],
+        ),
+        content_type="application/json",
     )
     assert response.status_code == status.HTTP_200_OK
     assert agreement.addresses.count() == 1
     assert agreement.preparers.count() == 1
 
-    response = admin_client.patch(
+    response = admin_client.put(
         url,
-        {"authorized_signatory": None, "addresses": [], "preparers": []},
+        summary_payload(authorized_signatory=None, addresses=[], preparers=[]),
         content_type="application/json",
     )
     assert response.status_code == status.HTTP_200_OK
@@ -851,6 +878,98 @@ def test_agreement_updates_summary_relations(admin_client, django_user_model):
     assert agreement.authorized_signatory_id is None
     assert not agreement.addresses.exists()
     assert not agreement.preparers.exists()
+
+
+def test_agreement_collaterals_endpoint_reads_and_updates_only_multiplier(admin_client):
+    agreement = LandUseAgreement.objects.create(
+        identifier="M-COLLATERALS", status="DRAFT", collateral_multiplier="1.25"
+    )
+    url = reverse("v1:landuse:agreement-collaterals", args=(agreement.pk,))
+
+    response = admin_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"collateral_multiplier": "1.25"}
+
+    response = admin_client.put(
+        url, {"collateral_multiplier": "1.50"}, content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"collateral_multiplier": "1.50"}
+    agreement.refresh_from_db()
+    assert agreement.collateral_multiplier == Decimal("1.50")
+    assert agreement.status == "DRAFT"
+
+    response = admin_client.put(
+        url, {"collateral_multiplier": None}, content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"collateral_multiplier": None}
+    agreement.refresh_from_db()
+    assert agreement.collateral_multiplier is None
+
+    response = admin_client.put(url, {}, content_type="application/json")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    response = admin_client.put(
+        url, {"collateral_multiplier": "invalid"}, content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    agreement.refresh_from_db()
+    assert agreement.collateral_multiplier is None
+
+
+def test_summary_put_replaces_summary_and_preserves_collateral_fields(admin_client):
+    agreement = LandUseAgreement.objects.create(
+        identifier="M-PARTIAL", status="DRAFT", collateral_multiplier="1.25"
+    )
+    summary_url = reverse("v1:landuse:agreement-summary", args=(agreement.pk,))
+    collateral_url = reverse("v1:landuse:agreement-collaterals", args=(agreement.pk,))
+
+    response = admin_client.put(
+        summary_url, {"status": "IN_PROGRESS"}, content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    response = admin_client.patch(
+        summary_url,
+        summary_payload(status="IN_PROGRESS"),
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+    response = admin_client.put(
+        summary_url,
+        summary_payload(status="IN_PROGRESS"),
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["status"] == "IN_PROGRESS"
+    assert response.json() == admin_client.get(summary_url).json()
+    agreement.refresh_from_db()
+    assert agreement.collateral_multiplier == Decimal("1.25")
+
+    response = admin_client.put(
+        collateral_url,
+        {"collateral_multiplier": "1.50"},
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["collateral_multiplier"] == "1.50"
+    agreement.refresh_from_db()
+    assert agreement.status == "IN_PROGRESS"
+
+
+def test_agreement_detail_route_is_not_exposed(admin_client):
+    district = District.objects.create(name="District", identifier="07")
+    agreement = LandUseAgreement.objects.create(identifier="M-ROOT", district=district)
+    url = f"{reverse('v1:landuse:agreement-list')}{agreement.pk}/"
+
+    assert admin_client.get(url).status_code == status.HTTP_404_NOT_FOUND
+    assert (
+        admin_client.patch(
+            url, {"status": "DRAFT"}, content_type="application/json"
+        ).status_code
+        == status.HTTP_404_NOT_FOUND
+    )
 
 
 def test_compensation_and_sites_accept_related_object_ids(admin_client):

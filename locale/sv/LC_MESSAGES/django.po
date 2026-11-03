@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 10:13+0300\n"
+"POT-Creation-Date: 2026-11-03 16:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,12 +31,6 @@ msgstr "Django-kommando"
 
 msgid "Invalid integer set specifier"
 msgstr "Felaktig definition"
-
-msgid "creation time"
-msgstr "Tidpunkt då skapades"
-
-msgid "modification time"
-msgstr "Tidpunkt då redigerades"
 
 msgid "name"
 msgstr "Namn"
@@ -2544,12 +2538,6 @@ msgctxt "Model name"
 msgid "Leasehold transfer parties"
 msgstr "Parter vid överföring av arrenderätt"
 
-msgid "Time archived"
-msgstr "Arkiveringstid"
-
-msgid "Archived note"
-msgstr "Arkiveringsanmärkning"
-
 msgctxt "Model name"
 msgid "Receivable type"
 msgstr "Fordringsart"
@@ -4236,3 +4224,9 @@ msgstr "Token existerar"
 
 msgid "Users permissions"
 msgstr "Användarens rättigheter"
+
+msgid "Time archived"
+msgstr "Arkiveringstid"
+
+msgid "Archived note"
+msgstr "Arkiveringsanmärkning"

@@ -13,7 +13,6 @@ from pytest_factoryboy import register
 
 from leasing.enums import (
     AreaType,
-    CollateralType,
     ContactType,
     DueDatesType,
     PeriodType,

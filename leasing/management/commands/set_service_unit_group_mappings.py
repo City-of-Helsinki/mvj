@@ -14,7 +14,9 @@ class Command(BaseCommand):
 
     def clear_service_unit_mappings(self):
         deleted_count, _ = ServiceUnitGroupMapping.objects.all().delete()
-        self.stdout.write(f"Deleted {deleted_count} existing service unit group mappings")
+        self.stdout.write(
+            f"Deleted {deleted_count} existing service unit group mappings"
+        )
 
     def handle(self, *args, **options):
         self.clear_service_unit_mappings()
