@@ -1,4 +1,4 @@
-from enum import member
+from enum import StrEnum, member
 
 from django.utils.translation import pgettext_lazy
 from enumfields import Enum, IntEnum
@@ -636,6 +636,18 @@ class PlanUnitStatus(Enum):
         PENDING = pgettext_lazy("Plan Unit Status", "Pending")
 
 
+class ServiceUnitName(StrEnum):
+    """
+    In Finnish: Palvelukokonaisuuden nimi
+    """
+
+    MAKE = "Maaomaisuuden kehittäminen ja tontit"
+    KAMA = "Palu/Kaupunkitilan käyttö ja maanvuokraus"
+    KUVA_LIPA = "KuVa / Liikuntapaikkapalvelut"
+    KUVA_UPA = "KuVa / Ulkoilupalvelut"
+    KUVA_NUP = "KuVa / Nuorisopalvelut"
+
+
 class ServiceUnitId(IntEnum):
     """
     In Finnish: Palvelukokonaisuuden tunniste
@@ -651,11 +663,11 @@ class ServiceUnitId(IntEnum):
 
     @member
     class Labels:
-        MAKE = "Maaomaisuuden kehittäminen ja tontit"
-        KAMA = "Palu/Kaupunkitilan käyttö ja maanvuokraus"
-        KUVA_LIPA = "KuVa / Liikuntapaikkapalvelut"
-        KUVA_UPA = "KuVa / Ulkoilupalvelut"
-        KUVA_NUP = "KuVa / Nuorisopalvelut"
+        MAKE = ServiceUnitName.MAKE
+        KAMA = ServiceUnitName.KAMA
+        KUVA_LIPA = ServiceUnitName.KUVA_LIPA
+        KUVA_UPA = ServiceUnitName.KUVA_UPA
+        KUVA_NUP = ServiceUnitName.KUVA_NUP
 
 
 class SapSalesOfficeNumber(Enum):

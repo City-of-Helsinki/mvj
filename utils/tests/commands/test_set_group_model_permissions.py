@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from utils.group_permissions import UG
+from utils.enums import AuthGroupId as AG
 from utils.management.commands import set_group_model_permissions
 
 
@@ -95,7 +95,7 @@ def test_permissions_for_identically_named_models_are_separated_by_app(monkeypat
         {
             app_label: {
                 models_by_app[app_label][0]: permission_config(
-                    {UG.SELAILIJA: ("view",)}
+                    {AG.SELAILIJA: ("view",)}
                 )
             }
             for app_label in app_labels
@@ -132,8 +132,8 @@ def test_assigns_configured_standard_and_custom_permissions(monkeypatch):
             app_label: {
                 model: permission_config(
                     {
-                        UG.SELAILIJA: None,
-                        UG.PAAKAYTTAJA: (
+                        AG.SELAILIJA: None,
+                        AG.PAAKAYTTAJA: (
                             "view",
                             "change",
                             custom_permission,
@@ -169,7 +169,7 @@ def test_resolves_custom_permission_prefix_with_model_name(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: permission_config({UG.PAAKAYTTAJA: ("delete_nonempty",)})}},
+        {app_label: {model: permission_config({AG.PAAKAYTTAJA: ("delete_nonempty",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -207,7 +207,7 @@ def test_replaces_only_managed_groups_model_permissions(monkeypatch):
 
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: permission_config({UG.SELAILIJA: ("view",)})}},
+        {app_label: {model: permission_config({AG.SELAILIJA: ("view",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
 
@@ -250,7 +250,7 @@ def test_command_is_repeatable_and_logs_assignments(monkeypatch):
     group = Group.objects.create(id=1, name="Test group")
     configure_group_model_permissions(
         monkeypatch,
-        {app_label: {model: permission_config({UG.SELAILIJA: ("view",)})}},
+        {app_label: {model: permission_config({AG.SELAILIJA: ("view",)})}},
     )
     configure_models(monkeypatch, {app_label: [model]})
     stdout = StringIO()

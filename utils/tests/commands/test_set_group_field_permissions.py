@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from utils.group_permissions import UG
+from utils.enums import AuthGroupId as AG
 from utils.management.commands import set_group_field_permissions
 
 
@@ -34,8 +34,8 @@ def test_applies_field_defaults_and_overrides_repeatably(monkeypatch):
     model_name = "fieldpermissiontest"
     model = make_model(model_name)
     create_field_permissions(model_name, ("title", "secret"))
-    viewer = Group.objects.create(id=UG.SELAILIJA, name="Viewer")
-    preparer = Group.objects.create(id=UG.VALMISTELIJA, name="Preparer")
+    viewer = Group.objects.create(id=AG.SELAILIJA, name="Viewer")
+    preparer = Group.objects.create(id=AG.VALMISTELIJA, name="Preparer")
     monkeypatch.setattr(
         set_group_field_permissions,
         "FIELD_PERMISSION_CONFIGS",
@@ -45,10 +45,10 @@ def test_applies_field_defaults_and_overrides_repeatably(monkeypatch):
                     "model": {},
                     "fields": {
                         "_default": {
-                            UG.SELAILIJA: "view",
-                            UG.VALMISTELIJA: "change",
+                            AG.SELAILIJA: "view",
+                            AG.VALMISTELIJA: "change",
                         },
-                        "secret": {UG.SELAILIJA: None},
+                        "secret": {AG.SELAILIJA: None},
                     },
                 }
             },

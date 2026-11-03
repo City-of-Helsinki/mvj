@@ -5,38 +5,39 @@ from credit_integration.models import (
     CreditDecisionLog,
     CreditDecisionReason,
 )
-from utils.group_permissions import UG, GroupModelPermissions
+from utils.enums import AuthGroupId as AG
+from utils.group_permissions import GroupModelPermissions
 
 CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     CreditDecision: {
         "model": {
-            UG.SELAILIJA: None,
-            UG.VALMISTELIJA: (
+            AG.SELAILIJA: None,
+            AG.VALMISTELIJA: (
                 "view",
                 "send_creditdecision_inquiry",
                 "send_sanctions_inquiry",
             ),
-            UG.SOPIMUSVALMISTELIJA: (
+            AG.SOPIMUSVALMISTELIJA: (
                 "view",
                 "send_creditdecision_inquiry",
                 "send_sanctions_inquiry",
             ),
-            UG.SYOTTAJA: (
+            AG.SYOTTAJA: (
                 "view",
                 "send_creditdecision_inquiry",
                 "send_sanctions_inquiry",
             ),
-            UG.PERINTALAKIMIES: (
+            AG.PERINTALAKIMIES: (
                 "view",
                 "send_creditdecision_inquiry",
                 "send_sanctions_inquiry",
             ),
-            UG.LASKUTTAJA: (
+            AG.LASKUTTAJA: (
                 "view",
                 "send_creditdecision_inquiry",
                 "send_sanctions_inquiry",
             ),
-            UG.PAAKAYTTAJA: (
+            AG.PAAKAYTTAJA: (
                 "view",
                 "add",
                 "change",
@@ -49,25 +50,25 @@ CREDIT_INTEGRATION_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     },
     CreditDecisionReason: {
         "model": {
-            UG.SELAILIJA: None,
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.SYOTTAJA: ("view",),
-            UG.PERINTALAKIMIES: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.SELAILIJA: None,
+            AG.VALMISTELIJA: ("view",),
+            AG.SOPIMUSVALMISTELIJA: ("view",),
+            AG.SYOTTAJA: ("view",),
+            AG.PERINTALAKIMIES: ("view",),
+            AG.LASKUTTAJA: ("view",),
+            AG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
     CreditDecisionLog: {
         "model": {
-            UG.SELAILIJA: None,
-            UG.VALMISTELIJA: ("view",),
-            UG.SOPIMUSVALMISTELIJA: ("view",),
-            UG.SYOTTAJA: ("view",),
-            UG.PERINTALAKIMIES: ("view",),
-            UG.LASKUTTAJA: ("view",),
-            UG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
+            AG.SELAILIJA: None,
+            AG.VALMISTELIJA: ("view",),
+            AG.SOPIMUSVALMISTELIJA: ("view",),
+            AG.SYOTTAJA: ("view",),
+            AG.PERINTALAKIMIES: ("view",),
+            AG.LASKUTTAJA: ("view",),
+            AG.PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
