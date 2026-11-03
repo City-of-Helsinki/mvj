@@ -1,10 +1,26 @@
+from types import SimpleNamespace
+
 import pytest
 from django.contrib.auth.models import Permission
 from django.urls import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 
+from audittrail.viewsets import AuditTrailView
 from leasing.enums import ContactType
 from leasing.models import ServiceUnit
+
+
+def test_audittrail_options():
+    request = APIRequestFactory().options("/audittrail/")
+    force_authenticate(request, user=SimpleNamespace(is_authenticated=True))
+
+    response = AuditTrailView.as_view()(request)
+
+    assert response.status_code == 200
+    fields = response.data["actions"]["GET"]
+    assert set(fields) == {"type", "id"}
+    assert fields["type"]["required"] is True
+    assert fields["id"]["required"] is True
 
 
 @pytest.mark.django_db

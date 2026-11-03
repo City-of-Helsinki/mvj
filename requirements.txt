@@ -180,7 +180,7 @@ markupsafe==2.1.5
     # via jinja2
 mypy==2.4.1
     # via django-stubs
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via mypy
 oracledb==26.1.0
     # via -r requirements.in
