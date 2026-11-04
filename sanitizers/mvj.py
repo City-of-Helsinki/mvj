@@ -147,6 +147,13 @@ def sanitize_name(value):
     return fake.name()
 
 
+def sanitize_name_if_exist(value):
+    if value:
+        return sanitize_name(value)
+    elif value == "":
+        return ""
+
+
 def sanitize_paragraph(value):
     return fake.paragraph()
 

@@ -242,6 +242,394 @@ strategy:
     group_id: null
     id: null
   helusers_oidcbackchannellogoutevent: skip_rows
+  landuse_agreementaddress:
+    agreement_id: null
+    city: null
+    created_at: null
+    id: null
+    modified_at: null
+    postal_code: null
+    street_address: null
+  landuse_agreementparty:
+    agreement_id: null
+    business_id: mvj.business_id_if_exist
+    care_of: mvj.company_if_exist
+    city: mvj.city_if_exist
+    country: null
+    email: mvj.email_if_exist
+    id: null
+    language: null
+    name: mvj.name_if_exist
+    national_identification_number: mvj.national_identification_number_if_exist
+    note: mvj.paragraph_if_exist
+    party_type: null
+    phone: mvj.phone_number_if_exist
+    postal_code: mvj.postcode_if_exist
+    role: null
+    street_address: mvj.street_address_if_exist
+  landuse_agreementpreparer:
+    agreement_id: null
+    created_at: null
+    id: null
+    modified_at: null
+    preparer_id: null
+  landuse_agreementsite:
+    agreement_id: null
+    area_m2: null
+    created_at: null
+    floor_area_kem2: null
+    has_housing_obligation: null
+    id: null
+    identifier: null
+    intended_use_id: null
+    modified_at: null
+    preservation_designation: null
+    unit_price_euro_per_kem2: null
+  landuse_agreementsite_tenure_types:
+    agreementsite_id: null
+    id: null
+    sitetenuretype_id: null
+  landuse_authorizedsignatory:
+    created_at: null
+    id: null
+    modified_at: null
+    name: null
+  landuse_billingdetails:
+    agreement_party_id: null
+    created_at: null
+    customer_reference: mvj.generate_random_numbers_if_exist
+    id: null
+    modified_at: null
+    ovt_code: mvj.generate_random_numbers_if_exist
+    sap_customer_number: mvj.generate_random_numbers_if_exist
+  landuse_cashdepositcollateral:
+    account_number: mvj.generate_random_numbers_if_exist
+    additional_information: mvj.paragraph_if_exist
+    amount: null
+    collateral_type: null
+    contract_id: null
+    end_date: null
+    id: null
+    marked_returned_by: mvj.name_if_exist
+    paid_at_date: null
+    pledgor_business_id: mvj.business_id_if_exist
+    pledgor_name: mvj.company_if_exist
+    pledgor_national_identification_number: mvj.national_identification_number_if_exist
+    returned_date: null
+    start_date: null
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+  landuse_cashdepositcollateral_parties:
+    agreementparty_id: null
+    cashdepositcollateral_id: null
+    id: null
+  landuse_contactperson:
+    agreement_party_id: null
+    created_at: null
+    email: mvj.email_if_exist
+    id: null
+    modified_at: null
+    name: mvj.name_if_exist
+    phone: mvj.phone_number_if_exist
+  landuse_contract:
+    agreement_id: null
+    contract_number: null
+    contract_type: null
+    decision_id: null
+    executor: null
+    first_call_sent: null
+    id: null
+    second_call_sent: null
+    signing_date: null
+    signing_deadline: null
+    signing_note: mvj.paragraph_if_exist
+    third_call_sent: null
+    title: null
+  landuse_contractchange:
+    contract_id: null
+    contract_number: null
+    decision_id: null
+    description: mvj.paragraph_if_exist
+    executor: null
+    first_call_sent: null
+    id: null
+    second_call_sent: null
+    signing_date: null
+    signing_deadline: null
+    third_call_sent: null
+  landuse_decision:
+    agreement_id: null
+    created_at: null
+    decision_date: null
+    decision_maker: null
+    decision_type: null
+    diary_number: null
+    id: null
+    modified_at: null
+    note: mvj.paragraph_if_exist
+    section: null
+    title: null
+  landuse_decisioncondition:
+    condition_type: null
+    created_at: null
+    decision_id: null
+    id: null
+    modified_at: null
+    note: mvj.paragraph_if_exist
+    supervised_date: null
+    supervision_date: null
+  landuse_depositpledgecollateral:
+    account_number: mvj.generate_random_numbers_if_exist
+    additional_information: mvj.paragraph_if_exist
+    amount: null
+    collateral_type: null
+    contract_id: null
+    document_type: null
+    end_date: null
+    id: null
+    marked_returned_by: mvj.name_if_exist
+    pledgor_business_id: mvj.business_id_if_exist
+    pledgor_name: mvj.company_if_exist
+    pledgor_national_identification_number: mvj.national_identification_number_if_exist
+    returned_date: null
+    start_date: null
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+  landuse_depositpledgecollateral_parties:
+    agreementparty_id: null
+    depositpledgecollateral_id: null
+    id: null
+  landuse_detailedplan:
+    approval_date: null
+    approver: mvj.name_if_exist
+    created_at: null
+    diary_number: null
+    effective_date: null
+    id: null
+    modified_at: null
+    plan_number: null
+    processing_stage: null
+  landuse_district:
+    created_at: null
+    id: null
+    identifier: null
+    modified_at: null
+    name: null
+  landuse_invoice:
+    agreement_id: null
+    billed_amount: null
+    created_at: null
+    due_date: null
+    id: null
+    installment_count_total: null
+    installment_sequence_number: null
+    invoice_identifier: null
+    invoice_type: null
+    modified_at: null
+    recipient_party_id: null
+    sap_xml: string.empty
+    sent_at: null
+    source_payment_schedule_installment_id: null
+    status: null
+  landuse_invoiceitem:
+    amount: null
+    created_at: null
+    description: null
+    id: null
+    invoice_id: null
+    item_type: null
+    modified_at: null
+  landuse_invoicerecipient:
+    agreement_party_id: null
+    business_id: mvj.business_id_if_exist
+    care_of: mvj.company_if_exist
+    city: mvj.city_if_exist
+    country: null
+    email: mvj.email_if_exist
+    id: null
+    language: null
+    name: mvj.name_if_exist
+    national_identification_number: mvj.national_identification_number_if_exist
+    note: mvj.paragraph_if_exist
+    party_type: null
+    phone: mvj.phone_number_if_exist
+    postal_code: mvj.postcode_if_exist
+    street_address: mvj.street_address_if_exist
+  landuse_invoicerecipientsnapshot:
+    business_id: mvj.business_id_if_exist
+    care_of: mvj.company_if_exist
+    city: mvj.city_if_exist
+    country: null
+    customer_reference: mvj.generate_random_numbers_if_exist
+    email: mvj.email_if_exist
+    id: null
+    invoice_id: null
+    language: null
+    name: mvj.name_if_exist
+    national_identification_number: mvj.national_identification_number_if_exist
+    note: mvj.paragraph_if_exist
+    ovt_code: mvj.generate_random_numbers_if_exist
+    party_type: null
+    phone: mvj.phone_number_if_exist
+    postal_code: mvj.postcode_if_exist
+    sap_customer_number: mvj.generate_random_numbers_if_exist
+    street_address: mvj.street_address_if_exist
+  landuse_landpolicyprogram:
+    created_at: null
+    default_discount_percentage: null
+    id: null
+    modified_at: null
+    name: null
+  landuse_landuseagreement:
+    authorized_signatory_id: null
+    collateral_multiplier: null
+    created_at: null
+    detailed_plan_id: null
+    detailed_plan_sites: null
+    district_id: null
+    estimated_payment_year: null
+    estimated_presentation_year: null
+    id: null
+    identifier: null
+    includes_housing_obligations: null
+    is_promotion_area: null
+    modified_at: null
+    obligations_deadline: null
+    status: null
+  landuse_landusecompensation:
+    agreement_id: null
+    base_price: null
+    created_at: null
+    demolition_or_other_deduction: null
+    excel_calculation_url: null
+    id: null
+    land_compensation: null
+    land_compensation_description: mvj.paragraph_if_exist
+    land_policy_program_discount_percentage: null
+    land_policy_program_id: null
+    land_use_compensation: null
+    modified_at: null
+    monetary_compensation: null
+    other_compensation: null
+    other_compensation_description: mvj.paragraph_if_exist
+    public_areas_acquisition_value: null
+    public_areas_m2: null
+    total_compensation: null
+    value_before_detailed_plan_proposal: null
+  landuse_mortgagedeedcollateral:
+    additional_information: mvj.paragraph_if_exist
+    amount: null
+    collateral_type: null
+    contract_id: null
+    document_type: null
+    end_date: null
+    id: null
+    institution_identifier: null
+    marked_returned_by: mvj.name_if_exist
+    mortgage_deed_date: null
+    mortgage_document_number: null
+    property_identifiers: null
+    returned_date: null
+    start_date: null
+    subordinate_pledgee_business_id: mvj.business_id_if_exist
+    subordinate_pledgee_name: mvj.company_if_exist
+    target: null
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+  landuse_mortgagedeedcollateral_parties:
+    agreementparty_id: null
+    id: null
+    mortgagedeedcollateral_id: null
+  landuse_othercollateral:
+    additional_information: mvj.paragraph_if_exist
+    amount: null
+    collateral_type: null
+    contract_id: null
+    document_type: null
+    end_date: null
+    id: null
+    marked_returned_by: mvj.name_if_exist
+    pledgor_business_id: mvj.business_id_if_exist
+    pledgor_name: mvj.company_if_exist
+    pledgor_national_identification_number: mvj.national_identification_number_if_exist
+    returned_date: null
+    start_date: null
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+  landuse_othercollateral_parties:
+    agreementparty_id: null
+    id: null
+    othercollateral_id: null
+  landuse_paymentschedule:
+    agreement_id: null
+    base_interest_rate: null
+    contract_id: null
+    created_at: null
+    id: null
+    increase_percentage: null
+    interest_margin: null
+    modified_at: null
+    recipient_party_id: null
+    rejected_reason: mvj.paragraph_if_exist
+    signing_date: null
+    status: null
+  landuse_paymentscheduleinstallment:
+    created_at: null
+    due_date: null
+    id: null
+    installment_count_total: null
+    installment_sequence_number: null
+    interest_calculation_period_end_date: null
+    interest_calculation_period_start_date: null
+    modified_at: null
+    payment_schedule_id: null
+  landuse_paymentscheduleinstallmentitem:
+    amount: null
+    created_at: null
+    description: mvj.paragraph_if_exist
+    id: null
+    installment_id: null
+    item_type: null
+    modified_at: null
+  landuse_personalguaranteecollateral:
+    additional_information: mvj.paragraph_if_exist
+    amount: null
+    collateral_type: null
+    contract_id: null
+    document_type: null
+    end_date: null
+    guarantee_number: null
+    id: null
+    marked_returned_by: mvj.name_if_exist
+    pledgor_business_id: mvj.business_id_if_exist
+    pledgor_name: mvj.company_if_exist
+    pledgor_national_identification_number: mvj.national_identification_number_if_exist
+    returned_date: null
+    start_date: null
+    third_party_pledgor_business_id: mvj.business_id_if_exist
+    third_party_pledgor_name: mvj.company_if_exist
+  landuse_personalguaranteecollateral_parties:
+    agreementparty_id: null
+    id: null
+    personalguaranteecollateral_id: null
+  landuse_shadowsalesledgerentry:
+    created_at: null
+    filing_code: null
+    id: null
+    invoice_id: null
+    modified_at: null
+    paid_amount: null
+    paid_date: null
+  landuse_siteintendeduse:
+    created_at: null
+    id: null
+    modified_at: null
+    name: null
+  landuse_sitetenuretype:
+    created_at: null
+    id: null
+    modified_at: null
+    name: null
   laske_export_laskeexportlog:
     created_at: null
     deleted: null
