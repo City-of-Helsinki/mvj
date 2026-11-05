@@ -102,7 +102,7 @@ class LandUseAgreementViewSet(
                 Prefetch(
                     "contracts",
                     queryset=Contract.objects.prefetch_related(
-                        "changes",
+                        "contract_changes",
                         "mortgagedeedcollateral_collaterals__parties",
                         "cashdepositcollateral_collaterals__parties",
                         "personalguaranteecollateral_collaterals__parties",

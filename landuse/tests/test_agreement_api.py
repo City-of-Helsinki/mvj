@@ -434,15 +434,15 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
     url = reverse("v1:landuse:agreement-contracts", args=(agreement.pk,))
     payload = [
         {
-            "identifier": "C-1",
+            "contract_number": "C-1",
             "title": "Contract",
             "contract_type": "OTHER",
             "decision": decision.pk,
-            "changes": [{"identifier": "C-1A", "decision": decision.pk}],
+            "contract_changes": [{"contract_number": "C-1A", "decision": decision.pk}],
             "other_collaterals": [
                 {
                     "parties": [party.pk],
-                    "guarantor_name": "Guarantor",
+                    "pledgor_name": "Guarantor",
                 }
             ],
         }
@@ -453,7 +453,7 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
     assert response.status_code == status.HTTP_200_OK
     saved = response.json()[0]
     collateral = saved["other_collaterals"][0]
-    assert saved["changes"][0]["identifier"] == "C-1A"
+    assert saved["contract_changes"][0]["contract_number"] == "C-1A"
     assert collateral["parties"] == [party.pk]
     response = admin_client.put(
         url,
@@ -462,7 +462,12 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
                 **payload[0],
                 "id": saved["id"],
                 "title": "Updated contract",
-                "changes": [{"id": saved["changes"][0]["id"], "identifier": "C-1B"}],
+                "contract_changes": [
+                    {
+                        "id": saved["contract_changes"][0]["id"],
+                        "contract_number": "C-1B",
+                    }
+                ],
                 "other_collaterals": [{"id": collateral["id"]}],
             }
         ],
@@ -565,7 +570,7 @@ def test_changed_contact_person_keeps_its_id(admin_client):
 def _put_contract(admin_client, agreement, contract, collaterals_by_key):
     return admin_client.put(
         reverse("v1:landuse:agreement-contracts", args=(agreement.pk,)),
-        [{"id": contract.pk, "identifier": "C-COLL", **collaterals_by_key}],
+        [{"id": contract.pk, "contract_number": "C-COLL", **collaterals_by_key}],
         content_type="application/json",
     )
 
@@ -576,14 +581,14 @@ def test_legacy_flat_collaterals_key_is_rejected(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-COLL-LEGACY")
     contract = Contract.objects.create(agreement=agreement)
     collateral = OtherCollateral.objects.create(
-        contract=contract, guarantee_type="OTHER"
+        contract=contract, collateral_type="OTHER"
     )
 
     response = _put_contract(
         admin_client,
         agreement,
         contract,
-        {"collaterals": [{"guarantee_type": "OTHER"}]},
+        {"collaterals": [{"collateral_type": "OTHER"}]},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -597,7 +602,7 @@ def test_collateral_id_from_another_contract_is_rejected(admin_client):
     contract = Contract.objects.create(agreement=agreement)
     other_contract = Contract.objects.create(agreement=agreement)
     foreign = OtherCollateral.objects.create(
-        contract=other_contract, guarantee_type="OTHER"
+        contract=other_contract, collateral_type="OTHER"
     )
 
     response = _put_contract(
@@ -617,7 +622,7 @@ def test_invalid_collateral_party_rolls_back_whole_contract_write(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-COLL-ROLLBACK")
     contract = Contract.objects.create(agreement=agreement)
     kept = OtherCollateral.objects.create(
-        contract=contract, guarantee_type="OTHER", guarantor_name="Original"
+        contract=contract, collateral_type="OTHER", pledgor_name="Original"
     )
     foreign_party = AgreementParty.objects.create(
         agreement=LandUseAgreement.objects.create(identifier="M-COLL-FOREIGN-PARTY"),
@@ -630,7 +635,7 @@ def test_invalid_collateral_party_rolls_back_whole_contract_write(admin_client):
         contract,
         {
             "other_collaterals": [
-                {"id": kept.pk, "guarantor_name": "Changed"},
+                {"id": kept.pk, "pledgor_name": "Changed"},
                 {"parties": [foreign_party.pk]},
             ]
         },
@@ -638,7 +643,7 @@ def test_invalid_collateral_party_rolls_back_whole_contract_write(admin_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     kept.refresh_from_db()
-    assert kept.guarantor_name == "Original"
+    assert kept.pledgor_name == "Original"
     assert OtherCollateral.objects.filter(contract=contract).count() == 1
 
 
@@ -653,7 +658,7 @@ def test_property_identifiers_rejected_for_facility_target(admin_client):
         agreement,
         contract,
         {
-            "mortgage_deed_collaterals": [
+            "mortgage_document_collaterals": [
                 {
                     "target": MortgageDeedCollateral.CollateralTarget.FACILITY,
                     "property_identifiers": ["123-456"],
@@ -676,11 +681,13 @@ def test_fields_not_applicable_to_collateral_type_are_rejected(admin_client):
         admin_client,
         agreement,
         contract,
-        {"cash_deposit_collaterals": [{"document_category": "X"}]},
+        {"financial_guarantee_collaterals": [{"document_type": "X"}]},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "document_category" in response.json()["0"]["cash_deposit_collaterals"]["0"]
+    assert (
+        "document_type" in response.json()["0"]["financial_guarantee_collaterals"]["0"]
+    )
 
 
 @pytest.mark.parametrize("resource", ["parties", "decisions"])

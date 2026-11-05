@@ -14,7 +14,7 @@ class ContractDetailsBase(models.Model):
     """
 
     # In Finnish: Sopimusnumero
-    identifier = models.CharField(blank=True)
+    contract_number = models.CharField(blank=True)
 
     # In Finnish: Allekirjoituspäivämäärä
     signing_date = models.DateField(null=True, blank=True)
@@ -23,13 +23,13 @@ class ContractDetailsBase(models.Model):
     signing_deadline = models.DateField(null=True, blank=True)
 
     # In Finnish: 1. kutsu lähetetty
-    first_invitation_sent_date = models.DateField(null=True, blank=True)
+    first_call_sent = models.DateField(null=True, blank=True)
 
     # In Finnish: 2. kutsu lähetetty
-    second_invitation_sent_date = models.DateField(null=True, blank=True)
+    second_call_sent = models.DateField(null=True, blank=True)
 
     # In Finnish: 3. kutsu lähetetty
-    third_invitation_sent_date = models.DateField(null=True, blank=True)
+    third_call_sent = models.DateField(null=True, blank=True)
 
     # In Finnish: Toimeenpanija
     executor = models.CharField(null=True, blank=True)
@@ -42,9 +42,6 @@ class ContractDetailsBase(models.Model):
         null=True,
         blank=True,
     )
-
-    # In Finnish: Huomautus
-    note = models.TextField(blank=True)
 
     class Meta:
         abstract = True
@@ -79,6 +76,9 @@ class Contract(ContractDetailsBase):
         blank=True,
     )
 
+    # In Finnish: Huomautus
+    signing_note = models.TextField(blank=True)
+
 
 class ContractChange(ContractDetailsBase):
     """
@@ -89,8 +89,11 @@ class ContractChange(ContractDetailsBase):
     contract = models.ForeignKey(
         Contract,
         on_delete=models.CASCADE,
-        related_name="changes",
+        related_name="contract_changes",
     )
+
+    # In Finnish: Selite
+    description = models.TextField(blank=True)
 
 
 class CollateralBase(models.Model):
@@ -99,11 +102,11 @@ class CollateralBase(models.Model):
     """
 
     class CollateralType(models.TextChoices):
-        MORTGAGE_DEED = ("MORTGAGE_DEED", "Panttikirja")
-        CASH_DEPOSIT = ("CASH_DEPOSIT", "Rahavakuus")
-        PERSONAL_GUARANTEE = ("PERSONAL_GUARANTEE", "Omavelkainen takaus")
-        DEPOSIT_PLEDGE = ("DEPOSIT_PLEDGE", "Tilivarojen panttaus")
-        OTHER = ("OTHER", "Muu vakuus")
+        MORTGAGE_DOCUMENT = ("mortgage_document", "Panttikirja")
+        FINANCIAL_GUARANTEE = ("financial_guarantee", "Rahavakuus")
+        SELF_DEBTOR_GUARANTEE = ("self_debtor_guarantee", "Omavelkainen takaus")
+        PLEDGE_OF_FUNDS = ("pledge_of_funds", "Tilivarojen panttaus")
+        OTHER = ("other", "Muu vakuus")
 
     # In Finnish: Sopimus
     contract = models.ForeignKey(
@@ -113,7 +116,7 @@ class CollateralBase(models.Model):
     )
 
     # In Finnish: Vakuuden tyyppi
-    guarantee_type = models.CharField(choices=CollateralType.choices)
+    collateral_type = models.CharField(choices=CollateralType.choices)
 
     # In Finnish: Osapuolet
     parties = models.ManyToManyField(
@@ -123,12 +126,12 @@ class CollateralBase(models.Model):
     )
 
     # In Finnish: Vierasvelkapanttauksen antajan nimi
-    third_party_pledger_name = models.CharField(
+    third_party_pledgor_name = models.CharField(
         null=True,
         blank=True,
     )
     # In Finnish: Vierasvelkapanttauksen antajan y-tunnus
-    third_party_pledger_business_id = models.CharField(null=True, blank=True)
+    third_party_pledgor_business_id = models.CharField(null=True, blank=True)
 
     # In Finnish: Alkupäivämäärä
     start_date = models.DateField(null=True, blank=True)
@@ -171,7 +174,7 @@ class CollateralBase(models.Model):
         In Finnish: Onko kyseessä vierasvelkapanttaus?
         """
         return bool(
-            self.third_party_pledger_name or self.third_party_pledger_business_id
+            self.third_party_pledgor_name or self.third_party_pledgor_business_id
         )
 
 
@@ -185,7 +188,7 @@ class CollateralDocumentDetailsBase(models.Model):
         PAPER = ("PAPER", "Paperinen")
 
     # In Finnish: Vakuusasiakirjan laji
-    document_category = models.CharField(
+    document_type = models.CharField(
         choices=DocumentCategory,
         blank=True,
     )
@@ -200,13 +203,13 @@ class GuarantorDetailsBase(models.Model):
     """
 
     # In Finnish: Vakuuden antajan nimi
-    guarantor_name = models.CharField(blank=True)
+    pledgor_name = models.CharField(blank=True)
 
     # In Finnish: Vakuuden antajan Y-tunnus
-    guarantor_business_id = models.CharField(blank=True)
+    pledgor_business_id = models.CharField(blank=True)
 
     # In Finnish: Vakuuden antajan henkilötunnus
-    guarantor_national_identification_number = models.CharField(blank=True)
+    pledgor_national_identification_number = models.CharField(blank=True)
 
     class Meta:
         abstract = True
@@ -228,19 +231,19 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     )
 
     # In Finnish: Laitostunnus
-    facility_identifier = models.CharField(null=True, blank=True)
+    institution_identifier = models.CharField(null=True, blank=True)
 
     # In Finnish: Panttikirjan numero
-    mortgage_deed_number = models.CharField()
+    mortgage_document_number = models.CharField()
 
     # In Finnish: Panttikirjan päiväys
     mortgage_deed_date = models.DateField()
 
     # In Finnish: Jälkipantin saajan nimi
-    subsequent_pledgee_name = models.CharField(null=True, blank=True)
+    subordinate_pledgee_name = models.CharField(null=True, blank=True)
 
     # In Finnish: Jälkipantin saajan y-tunnus
-    subsequent_pledgee_business_id = models.CharField(null=True, blank=True)
+    subordinate_pledgee_business_id = models.CharField(null=True, blank=True)
 
     # In Finnish: Panttikirjan kiinteistötunnukset
     property_identifiers = ArrayField(
@@ -252,12 +255,12 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     def save(self, *args: Any, **kwargs: Any) -> None:
         if (
             self.target == MortgageDeedCollateral.CollateralTarget.PROPERTY
-            and self.facility_identifier
+            and self.institution_identifier
         ):
             raise ValueError("Facility identifier cannot be set for property target.")
         if (
             self.target == MortgageDeedCollateral.CollateralTarget.FACILITY
-            and not self.facility_identifier
+            and not self.institution_identifier
         ):
             raise ValueError("Facility identifier must be set for facility target.")
         if (
@@ -291,7 +294,7 @@ class PersonalGuaranteeCollateral(
     """
 
     # In Finnish: Takausnumero
-    guarantee_identifier = models.CharField(blank=True)
+    guarantee_number = models.CharField(blank=True)
 
 
 class DepositPledgeCollateral(
