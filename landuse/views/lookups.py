@@ -17,7 +17,7 @@ from landuse.serializers.agreement import (
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
-ModelType = TypeVar("ModelT", bound=Model)
+ModelType = TypeVar("ModelType", bound=Model)
 
 
 class LandUseLookupViewSet(
