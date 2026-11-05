@@ -31,7 +31,13 @@ def send_invoice_xml(invoice_id: int, xml: str) -> None:
         raise LanduseSapExportDisabledError("Land-use SAP export is disabled.")
 
     filename = _get_export_filename(invoice_id)
-    export_directory = settings.LASKE_SERVERS["landuse_export"]["directory"]
+    try:
+        export_directory = getattr(settings, "LASKE_SERVERS")["landuse_export"][
+            "directory"
+        ]
+    except (ValueError, KeyError):
+        raise ValueError("Landuse Export Directory is not configured in settings.")
+
     remote_path = str(PurePosixPath(export_directory) / filename)
 
     with SFTPManager(profile="landuse_export") as sftp:

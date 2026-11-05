@@ -12,7 +12,7 @@ def test_send_invoice_xml_uploads_in_memory_xml(sftp_manager, settings):
         "sender_id": "1111",
         "sales_org": "2222",
     }
-    settings.LANDUSE_SAP_EXPORT_DIRECTORY = "/sap/export"
+    settings.LASKE_SERVERS["landuse_export"]["directory"] = "/sap/export"
     sftp = MagicMock()
     sftp_manager.return_value.__enter__.return_value = sftp
 
