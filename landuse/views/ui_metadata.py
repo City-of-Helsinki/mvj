@@ -1,6 +1,9 @@
+from typing import Any
+
 from django.conf import settings
 from django_countries import countries
 from rest_framework.permissions import BasePermission
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,7 +31,7 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin
 class CanViewLandUseUiMetadata(BasePermission):
     message = "You do not have permission to access Land Use metadata."
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: APIView) -> bool:
         return request.user.has_perm("landuse.view_landuseagreement")
 
 
@@ -38,10 +41,10 @@ class LandUseUiMetadataView(LandUseApiEnabledFlagMixin, APIView):
     permission_classes = [CanViewLandUseUiMetadata]
 
     @staticmethod
-    def _choices(enum):
+    def _choices(enum: Any) -> list[dict[str, str]]:
         return [{"value": choice.value, "label": str(choice.label)} for choice in enum]
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         payload = {
             "agreement_statuses": self._choices(LandUseAgreementStatus),
             "detailed_plan_processing_stages": self._choices(

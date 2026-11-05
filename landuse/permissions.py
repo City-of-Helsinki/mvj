@@ -1,4 +1,6 @@
 from rest_framework import permissions
+from rest_framework.request import Request
+from rest_framework.views import APIView
 
 from landuse.models.agreement import (
     AgreementAddress,
@@ -15,13 +17,13 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
-from utils.group_permissions import AuthGroupId as AG
+from utils.enums import AuthGroupId as AG
 from utils.group_permissions import GroupModelPermissions
 
 
-def tab_permission(tab):
+def tab_permission(tab: str) -> type[permissions.BasePermission]:
     class HasTabPermission(permissions.BasePermission):
-        def has_permission(self, request, view):
+        def has_permission(self, request: Request, view: APIView) -> bool:
             if request.method == "OPTIONS":
                 return bool(request.user and request.user.is_authenticated)
             verb = {
@@ -31,7 +33,7 @@ def tab_permission(tab):
                 "PATCH": "change",
                 "POST": "change",
                 "DELETE": "change",
-            }.get(request.method)
+            }.get(request.method or "")
             return bool(
                 verb
                 and request.user

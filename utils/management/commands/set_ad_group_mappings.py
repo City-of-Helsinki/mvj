@@ -2,6 +2,7 @@ import logging
 import sys
 import time
 from collections import defaultdict
+from typing import Any
 
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
@@ -64,7 +65,7 @@ ROLE_TO_USER_GROUP_ID_MAP = {
 class Command(BaseCommand):
     help = "Sets predefined AD group mappings for the predefined MVJ groups"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         start = time.monotonic()
         self.clear_existing_mappings()
         self.set_leasing_mappings()
@@ -75,12 +76,12 @@ class Command(BaseCommand):
             f"elapsed: {time.monotonic() - start:.2f}s"
         )
 
-    def clear_existing_mappings(self):
+    def clear_existing_mappings(self) -> None:
         deleted_count, _ = ADGroupMapping.objects.all().delete()
         logger.info(f"Deleted {deleted_count} existing AD group mappings")
 
-    def set_leasing_mappings(self):
-        ad_group_map = defaultdict(list)
+    def set_leasing_mappings(self) -> None:
+        ad_group_map: defaultdict[str, list[int]] = defaultdict(list)
         for service_unit_group_data in SERVICE_UNIT_GROUPS:
             # Ensure group name with some other id does not exist, remove if exists
             # Cascade deletes possible existing AdGroupMappings
@@ -142,12 +143,12 @@ class Command(BaseCommand):
                     name=ad_group_name, display_name=ad_group_name
                 )
 
-            for user_group_id in group_ids:
+            for group_id in group_ids:
                 ADGroupMapping.objects.get_or_create(
-                    ad_group_id=ad_groups[ad_group_name].id, group_id=user_group_id
+                    ad_group_id=ad_groups[ad_group_name].id, group_id=group_id
                 )
 
-    def set_landuse_mappings(self):
+    def set_landuse_mappings(self) -> None:
         """
         Sets permissions for users of Landuse application.
         These users require separate permissions from Leasing,
