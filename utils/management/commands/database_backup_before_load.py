@@ -140,7 +140,8 @@ class Command(BaseCommand):
         for token in api_tokens:
             user = token.user
             user_permissions_codenames = [
-                permission.codename for permission in user.user_permissions.all()
+                f"{permission.content_type.app_label}.{permission.codename}"
+                for permission in user.user_permissions.select_related("content_type")
             ]
             user_data.append(
                 {

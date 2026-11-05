@@ -193,7 +193,7 @@ def test_restore_export_api_users_skips_heluser_accounts(tmp_path: Path):
 def test_restore_export_api_users_restores_user_token_and_permissions(tmp_path: Path):
     backup_file = tmp_path / constants.EXPORT_API_USERS_BACKUP_FILENAME
     backup_file.write_text(
-        '[{"username": "export-user", "api_key": "abc123", "permissions": ["view_thing"]}]'
+        '[{"username": "export-user", "api_key": "abc123", "permissions": ["some_app.view_thing"]}]'
     )
 
     command = RestoreAfterLoadCommand()
@@ -222,7 +222,9 @@ def test_restore_export_api_users_restores_user_token_and_permissions(tmp_path: 
     mock_get_or_create_token.assert_called_once_with(
         user=user, defaults={"key": "abc123"}
     )
-    mock_permission_get.assert_called_once_with(codename="view_thing")
+    mock_permission_get.assert_called_once_with(
+        content_type__app_label="some_app", codename="view_thing"
+    )
     user.user_permissions.add.assert_called_once_with(permission)
 
 

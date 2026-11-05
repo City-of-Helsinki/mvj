@@ -656,6 +656,11 @@ class AgreementSiteListSerializer(ReplaceListSerializer):
     read_related = ("intended_use",)
     read_prefetch = ("tenure_types",)
 
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
+        pass
+
 
 class AgreementSiteWriteSerializer(serializers.ModelSerializer[AgreementSite]):
     id = serializers.IntegerField(required=False)
