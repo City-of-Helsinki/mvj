@@ -33,7 +33,7 @@ def block_landuse_external_services(settings):
     """Prevent land-use tests from using real invoicing integrations."""
     settings.FLAG_LANDUSE_SAP_EXPORT_ENABLED = False
     settings.SAP_LANDUSE_VALUES = None
-    settings.LANDUSE_SAP_EXPORT_DIRECTORY = "/blocked-in-tests"
+    settings.SAP_PAYMENTS_LANDUSE_ROOT = None
     settings.LASKE_SERVERS = {
         "landuse_export": {
             "host": "127.0.0.1",

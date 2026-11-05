@@ -6,6 +6,7 @@ from typing import Any
 
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from helusers.models import ADGroup, ADGroupMapping
 
 from leasing.enums import ServiceUnitId
@@ -65,6 +66,7 @@ ROLE_TO_USER_GROUP_ID_MAP = {
 class Command(BaseCommand):
     help = "Sets predefined AD group mappings for the predefined MVJ groups"
 
+    @transaction.atomic
     def handle(self, *args: Any, **options: Any) -> None:
         start = time.monotonic()
         self.clear_existing_mappings()

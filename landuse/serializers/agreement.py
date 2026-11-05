@@ -659,6 +659,7 @@ class AgreementSiteListSerializer(ReplaceListSerializer):
     def check_replacement(
         self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
     ) -> None:
+        # Nothing to replace in list serializer
         pass
 
 
