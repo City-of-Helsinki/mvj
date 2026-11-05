@@ -456,6 +456,10 @@ LASKE_EXPORT_ROOT = env.str(
     "LASKE_EXPORT_ROOT", default=project_root("laske_export_files")
 )
 
+# Directory not needed for landuse, files not saved locally (needs to be set anyway)
+# TODO: When enabling landuse billing, take into use. NOT BEFORE!
+# SAP_PAYMENTS_LANDUSE_ROOT = None
+
 # Directory where SAP payment imports are stored on the MVJ system.
 LASKE_PAYMENTS_IMPORT_LOCATION = env.str(
     "LASKE_PAYMENTS_IMPORT_LOCATION", default=project_root("sap_payment_imports")
