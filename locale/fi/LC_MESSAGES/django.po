@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 10:13+0300\n"
+"POT-Creation-Date: 2026-11-05 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3082,6 +3082,48 @@ msgstr "Vuokrauksen alkupvm"
 
 msgid "Lease end date"
 msgstr "Vuokrauksen loppupvm"
+
+msgid "Invoice details and forecast"
+msgstr "Lähetetyt ja tulevat laskut"
+
+msgid "Shows invoice details and forecast of future invoices"
+msgstr "Näyttää laskujen tiedot, sekä ennusteen tulevista laskuista."
+
+msgid "Invoice id"
+msgstr "Laskun tunnus"
+
+msgid "District id"
+msgstr "Kaupunginosan tunnus"
+
+msgid "Subject to VAT"
+msgstr "ALV:n alainen"
+
+msgid "Total amount including VAT"
+msgstr "Yhteensä sis. ALV"
+
+msgid "Receivable types"
+msgstr "Saamislajit"
+
+msgid "Share numerator"
+msgstr "Hallintaosuuden jaettava"
+
+msgid "Share denominator"
+msgstr "Hallintaosuuden jakaja"
+
+msgid "Billing contact"
+msgstr "Laskunsaaja"
+
+msgid "Intended uses"
+msgstr "Käyttötarkoitukset"
+
+msgid "Invoice type"
+msgstr "Laskun tyyppi"
+
+msgid "Rent types"
+msgstr "Vuokralajit"
+
+msgid "Rent cycles"
+msgstr "Vuokrakaudet"
 
 msgid ""
 "Show all the payments that have been paid between the start and the end date"

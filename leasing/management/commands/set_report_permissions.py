@@ -63,6 +63,12 @@ DEFAULT_REPORT_PERMS = {
         UG.LASKUTTAJA,
         UG.PAAKAYTTAJA,
     ],
+    "invoice_details_and_forecast": [
+        UG.VALMISTELIJA,
+        UG.PERINTALAKIMIES,
+        UG.LASKUTTAJA,
+        UG.PAAKAYTTAJA,
+    ],
     "lease_basis_of_rent": [
         UG.VALMISTELIJA,
         UG.SOPIMUSVALMISTELIJA,

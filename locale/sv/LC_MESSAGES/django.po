@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 10:13+0300\n"
+"POT-Creation-Date: 2026-11-05 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3078,6 +3078,48 @@ msgstr "Startdatum för arrendering"
 
 msgid "Lease end date"
 msgstr "Slutdatum för arrendering"
+
+msgid "Invoice details and forecast"
+msgstr ""
+
+msgid "Shows invoice details and forecast of future invoices"
+msgstr ""
+
+msgid "Invoice id"
+msgstr ""
+
+msgid "District id"
+msgstr ""
+
+msgid "Subject to VAT"
+msgstr ""
+
+msgid "Total amount including VAT"
+msgstr ""
+
+msgid "Receivable types"
+msgstr ""
+
+msgid "Share numerator"
+msgstr ""
+
+msgid "Share denominator"
+msgstr ""
+
+msgid "Billing contact"
+msgstr ""
+
+msgid "Intended uses"
+msgstr ""
+
+msgid "Invoice type"
+msgstr ""
+
+msgid "Rent types"
+msgstr ""
+
+msgid "Rent cycles"
+msgstr ""
 
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
