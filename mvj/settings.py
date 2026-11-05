@@ -448,7 +448,7 @@ SAP_LANDUSE_VALUES: SapLanduseExportValues = {
     "sales_office": "2826",
     "distribution_channel": "10",
     "division": "10",
-    "pmntterm": None,
+    "pmntterm": "Z100",
 }
 
 # Directory where SAP export files are stored on the MVJ system.
