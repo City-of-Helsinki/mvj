@@ -10,6 +10,9 @@ from rest_framework.viewsets import ViewSet
 
 from leasing.renderers import BrowsableAPIRendererWithoutForms
 from leasing.report.invoice.collaterals_report import CollateralsReport
+from leasing.report.invoice.invoice_details_and_forecast import (
+    InvoiceDetailsAndForecastReport,
+)
 from leasing.report.invoice.invoice_payments import InvoicePaymentsReport
 from leasing.report.invoice.invoices_in_period import InvoicesInPeriodReport
 from leasing.report.invoice.invoicing_review import InvoicingReviewReport
@@ -42,6 +45,7 @@ ENABLED_REPORTS = [
     InvoicesInPeriodReport,
     InvoicingReviewReport,
     LaskeInvoiceCountReport,
+    InvoiceDetailsAndForecastReport,
     LeaseBasisOfRentReport,
     LeaseCountReport,
     LeaseInvoicingDisabledReport,
