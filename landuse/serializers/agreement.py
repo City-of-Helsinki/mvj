@@ -156,10 +156,13 @@ class ReplaceListSerializer(serializers.ListSerializer[Any]):
             .prefetch_related(*self.read_prefetch)
         )
 
-        def check_replacement(
-            self, instance: QuerySet[Any], validated_data: dict[str, Any]
-        ):
-            """Runs reference and status checks before any write."""
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
+        """Runs reference and status checks before any write."""
+        raise NotImplementedError(
+            f"{type(self).__name__} must implement check_replacement()."
+        )
 
     def save_item(self, obj: Model | None, data: dict[str, Any]) -> Model:
         if obj is None:
